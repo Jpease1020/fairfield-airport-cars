@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { createPaymentLink } from '@/lib/square-service';
+import { updateBooking } from '@/lib/booking-service';
 
 export async function POST(request: Request) {
   const { bookingId, amount, currency, description } = await request.json();
@@ -15,6 +16,12 @@ export async function POST(request: Request) {
       amount,
       currency,
       description,
+    });
+
+    // Update booking with Square order id and deposit amount before responding
+    await updateBooking(bookingId, {
+      squareOrderId: paymentLink.orderId,
+      depositAmount: amount / 100,
     });
 
     return NextResponse.json({ paymentLinkUrl: paymentLink.url });

@@ -23,7 +23,7 @@ export default function BookingConfirmationPage() {
           } else {
             setError('Booking not found.');
           }
-        } catch (err) {
+        } catch {
           setError('Failed to fetch booking details.');
         } finally {
           setLoading(false);
@@ -39,7 +39,7 @@ export default function BookingConfirmationPage() {
         await deleteBooking(id as string);
         alert('Booking cancelled successfully.');
         router.push('/');
-      } catch (err) {
+      } catch {
         setError('Failed to cancel booking.');
       }
     }
@@ -54,9 +54,9 @@ export default function BookingConfirmationPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookingId: booking.id,
-          amount: booking.fare * 100, // Assuming fare is in dollars, convert to cents
+          amount: Math.ceil((booking.depositAmount ?? booking.fare / 2) * 100),
           currency: 'USD',
-          description: `Payment for ride from ${booking.pickupLocation} to ${booking.dropoffLocation}`,
+          description: `Deposit for ride from ${booking.pickupLocation} to ${booking.dropoffLocation}`,
         }),
       });
 
@@ -66,7 +66,7 @@ export default function BookingConfirmationPage() {
       } else {
         setError('Failed to create payment link.');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to initiate payment.');
     }
   };
@@ -109,7 +109,7 @@ export default function BookingConfirmationPage() {
                 onClick={handlePayment}
                 className="w-full text-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
-                Pay Now
+                Pay Deposit (${(booking.depositAmount ?? booking.fare / 2).toFixed(2)})
               </button>
               <a
                 href={`/booking/${booking.id}/edit`}

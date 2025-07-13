@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Booking } from '@/types/booking';
-import { createBooking, updateBooking } from '@/lib/booking-service';
+import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/booking-service';
+import { getSettings } from '@/lib/settings-service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -318,17 +319,29 @@ export default function BookingForm({ booking }: BookingFormProps) {
       return;
     }
 
-    const bookingData = {
+    const pickupDate = new Date(pickupDateTime);
+    const settings = await getSettings();
+    const slotFree = await isTimeSlotAvailable(pickupDate, settings.bufferMinutes);
+    if (!slotFree) {
+      setError('Selected time conflicts with another booking. Please choose a different time.');
+      return;
+    }
+
+    const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
       name,
       email,
       phone,
       pickupLocation,
       dropoffLocation,
-      pickupDateTime: new Date(pickupDateTime),
+      pickupDateTime: pickupDate,
       passengers,
       flightNumber,
       notes,
-      fare,
+      fare: fare!,
+      status: 'pending',
+      depositPaid: false,
+      balanceDue: fare! * (1 - settings.depositPercent / 100),
+      depositAmount: fare! * (settings.depositPercent / 100),
     };
 
     try {

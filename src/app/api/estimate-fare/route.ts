@@ -1,15 +1,17 @@
 
 import { NextResponse } from 'next/server';
 import { Client } from '@googlemaps/google-maps-services-js';
+import { getSettings } from '@/lib/settings-service';
 
 const mapsClient = new Client({});
 
-const BASE_FARE = 10; // Base fare in dollars
-const PER_MILE_RATE = 3.5; // Rate per mile in dollars
-const PER_MINUTE_RATE = 0.5; // Rate per minute in dollars
-
 export async function POST(request: Request) {
   const { origin, destination } = await request.json();
+
+  const settings = await getSettings();
+  const BASE_FARE = settings.baseFare;
+  const PER_MILE_RATE = settings.perMile;
+  const PER_MINUTE_RATE = settings.perMinute;
 
   if (!origin || !destination) {
     return NextResponse.json({ error: 'Origin and destination are required' }, { status: 400 });

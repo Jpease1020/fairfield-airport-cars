@@ -99,6 +99,10 @@ const AdminBookingsPage: NextPage = () => {
     }
   };
 
+  const totalRevenue = useMemo(() => bookings.reduce((sum, b) => sum + (b.fare || 0) + (b.tipAmount || 0) - (b.cancellationFee || 0), 0), [bookings]);
+  const totalTips = useMemo(()=> bookings.reduce((s,b)=> s + (b.tipAmount||0),0),[bookings]);
+  const totalCancFees = useMemo(()=> bookings.reduce((s,b)=> s + (b.cancellationFee||0),0),[bookings]);
+
   if (loading) {
     return <div className="min-h-screen bg-background p-8 text-center">Loading...</div>;
   }
@@ -112,6 +116,7 @@ const AdminBookingsPage: NextPage = () => {
       <Card>
         <CardHeader className="pb-4">
           <CardTitle className="text-2xl">Booking Dashboard</CardTitle>
+          <p className="mt-2 text-sm text-gray-600">Month-to-date revenue: <span className="font-semibold">${totalRevenue.toFixed(2)}</span> | Tips: ${totalTips.toFixed(2)} | Cancellation fees: ${totalCancFees.toFixed(2)}</p>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4 pb-4">
@@ -146,6 +151,8 @@ const AdminBookingsPage: NextPage = () => {
                 <TableHead>
                   <Button variant="ghost" onClick={() => requestSort('fare')}>Fare</Button>
                 </TableHead>
+                <TableHead>Tip</TableHead>
+                <TableHead>Cancel Fee</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -175,6 +182,8 @@ const AdminBookingsPage: NextPage = () => {
                     </span>
                   </TableCell>
                   <TableCell>${booking.fare}</TableCell>
+                  <TableCell>${booking.tipAmount ?? 0}</TableCell>
+                  <TableCell>${booking.cancellationFee ?? 0}</TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-2 min-w-[200px]">
                       <Select onValueChange={(value: "pending" | "confirmed" | "completed" | "cancelled") => {

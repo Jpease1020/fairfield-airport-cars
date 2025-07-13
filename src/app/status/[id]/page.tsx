@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc as fsDoc, onSnapshot as fsSnap } from 'firebase/firestore';
+import { doc as fsDocDriver } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Booking } from '@/types/booking';
 
@@ -35,13 +36,14 @@ export default function RideStatusPage() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [driverLoc, setDriverLoc] = useState<{ lat:number; lng:number; updatedAt: Date } | null>(null);
 
   useEffect(() => {
     if (!id) return;
 
-    const docRef = doc(db, 'bookings', id as string);
+    const docRef = fsDoc(db, 'bookings', id as string);
     
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+    const unsubscribe = fsSnap(docRef, (docSnap) => {
       if (docSnap.exists()) {
         setBooking({ id: docSnap.id, ...docSnap.data() } as Booking);
       } else {
@@ -58,6 +60,20 @@ export default function RideStatusPage() {
     return () => unsubscribe();
   }, [id]);
 
+  useEffect(() => {
+    const driverDoc = fsDocDriver(db, 'drivers', 'gregg');
+    const unsubDriver = fsSnap(driverDoc, (snap)=>{
+      if(snap.exists()){
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const d = snap.data() as any;
+        if(d.lat && d.lng && d.updatedAt){
+          setDriverLoc({ lat:d.lat, lng:d.lng, updatedAt: d.updatedAt.toDate() });
+        }
+      }
+    });
+    return () => unsubDriver();
+  }, []);
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading ride status...</div>;
   }
@@ -71,6 +87,7 @@ export default function RideStatusPage() {
   }
 
   const step = getStatusStep(booking.status);
+  const isDriverFresh = driverLoc && (Date.now() - driverLoc.updatedAt.getTime() < 2*60*1000);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -116,6 +133,20 @@ export default function RideStatusPage() {
           <p className="font-semibold text-lg capitalize">{booking.status}</p>
           <p className="text-gray-700">{statusDescriptions[booking.status]}</p>
         </div>
+        {isDriverFresh && (
+  <div className="mt-6">
+    <h2 className="text-lg font-medium mb-2 text-center">Live Driver Location</h2>
+    <iframe
+      title="Driver live location map"
+      width="100%"
+      height="300"
+      style={{ border: 0 }}
+      loading="lazy"
+      allowFullScreen
+      src={`https://maps.google.com/maps?q=${driverLoc!.lat},${driverLoc!.lng}&z=15&output=embed`}
+    ></iframe>
+  </div>
+)}
       </div>
     </div>
   );
