@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import withAuth from "../../withAuth";
 
 const PAGE_KEYS = [
@@ -60,19 +60,19 @@ const PagesCMS = () => {
       // Ensure required pages are always present
       setConfig(cmsConfig);
       setPages({
-        home: cmsConfig.pages.home || {
+        home: cmsConfig.pages.home ?? {
           hero: { title: '', subtitle: '', ctaText: '' },
           features: { title: '', items: [] },
           about: { title: '', content: '' },
           contact: { title: '', content: '', phone: '', email: '' },
         },
-        help: cmsConfig.pages.help || {
+        help: cmsConfig.pages.help ?? {
           faq: [],
           contactInfo: { phone: '', email: '', hours: '' },
         },
-        about: cmsConfig.pages.about || { id: 'about', title: '', content: '', lastUpdated: new Date(), isActive: true },
-        terms: cmsConfig.pages.terms || { id: 'terms', title: '', content: '', lastUpdated: new Date(), isActive: true },
-        privacy: cmsConfig.pages.privacy || { id: 'privacy', title: '', content: '', lastUpdated: new Date(), isActive: true },
+        about: cmsConfig.pages.about ?? { id: 'about', title: '', content: '', lastUpdated: new Date(), isActive: true },
+        terms: cmsConfig.pages.terms ?? { id: 'terms', title: '', content: '', lastUpdated: new Date(), isActive: true },
+        privacy: cmsConfig.pages.privacy ?? { id: 'privacy', title: '', content: '', lastUpdated: new Date(), isActive: true },
       });
     } catch (e) {
       setError("Failed to load CMS content.");
@@ -84,11 +84,37 @@ const PagesCMS = () => {
   const handleChange = (page: EditablePage, field: string, value: any, subfield?: string) => {
     setPages((prev) => {
       const updated = { ...prev };
-      if (!updated[page]) updated[page] = {};
+      
+      // Initialize page with proper defaults based on page type
+      if (!updated[page]) {
+        if (page === 'home') {
+          updated[page] = {
+            hero: { title: '', subtitle: '', ctaText: '' },
+            features: { title: '', items: [] },
+            about: { title: '', content: '' },
+            contact: { title: '', content: '', phone: '', email: '' },
+          };
+        } else if (page === 'help') {
+          updated[page] = {
+            faq: [],
+            contactInfo: { phone: '', email: '', hours: '' },
+          };
+        } else {
+          // For generic pages (about, terms, privacy)
+          updated[page] = {
+            id: page,
+            title: '',
+            content: '',
+            lastUpdated: new Date(),
+            isActive: true,
+          };
+        }
+      }
+      
       if (subfield) {
-        updated[page][field][subfield] = value;
+        (updated[page] as any)[field][subfield] = value;
       } else {
-        updated[page][field] = value;
+        (updated[page] as any)[field] = value;
       }
       return updated;
     });
@@ -101,9 +127,9 @@ const PagesCMS = () => {
     try {
       await cmsService.updateCMSConfiguration({
         pages: {
-          ...config?.pages,
+          ...(config?.pages || {}),
           [page]: pages[page],
-        },
+        } as CMSConfiguration["pages"],
       });
       setSuccess("Saved successfully!");
       setTimeout(() => setSuccess(null), 2000);
@@ -262,14 +288,24 @@ const PagesCMS = () => {
                         }}
                       />
                       <Label>Category</Label>
-                      <Input
+                      <Select
                         value={faq.category}
-                        onChange={(e) => {
+                        onValueChange={(value) => {
                           const faqs = [...helpPage.faq];
-                          faqs[idx] = { ...faqs[idx], category: e.target.value };
+                          faqs[idx] = { ...faqs[idx], category: value as 'booking' | 'payment' | 'cancellation' | 'general' };
                           handleChange("help", "faq", faqs);
                         }}
-                      />
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="booking">Booking</SelectItem>
+                          <SelectItem value="payment">Payment</SelectItem>
+                          <SelectItem value="cancellation">Cancellation</SelectItem>
+                          <SelectItem value="general">General</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   ))}
                   <Label>Contact Phone</Label>
