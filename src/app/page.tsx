@@ -44,7 +44,7 @@ export default function HomePage() {
               <Clock className="h-12 w-12 text-indigo-600" />
               <h3 className="mt-4 text-xl font-bold">Always On Time</h3>
               <p className="mt-2 text-gray-600">
-                We pride ourselves on punctuality, ensuring you're never late.
+                We pride ourselves on punctuality, ensuring you&apos;re never late.
               </p>
             </div>
           </div>

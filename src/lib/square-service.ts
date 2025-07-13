@@ -57,7 +57,6 @@ export const createPaymentLink = async ({ bookingId, amount, currency, descripti
 
     // 2) Generate a hosted checkout/payment link for that order.
     // Use checkoutApi; Type definitions in v43 may not include createPaymentLink, so we cast to any.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const paymentLinkResponse = await (squareClient as any).checkoutApi.createPaymentLink({
       idempotencyKey: uuidv4(),
       orderId,

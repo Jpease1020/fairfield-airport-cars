@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 
 const PromosPage = () => {
   const [promos, setPromos] = useState<PromoCode[]>([]);
-  const [form, setForm] = useState({ code:'', type:'percent', value:0, expiresAt:'', usageLimit:'' });
+  const [form, setForm] = useState({ code:'', type:'percent', value:'', expiresAt:'', usageLimit:'' });
   const [loading, setLoading] = useState(false);
 
   const fetchPromos = async ()=>{
@@ -22,7 +22,7 @@ const PromosPage = () => {
     setLoading(true);
     const body = { ...form, value: Number(form.value), usageLimit: form.usageLimit? Number(form.usageLimit): undefined };
     await fetch('/api/promos', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
-    setForm({ code:'', type:'percent', value:0, expiresAt:'', usageLimit:'' });
+    setForm({ code:'', type:'percent', value:'', expiresAt:'', usageLimit:'' });
     await fetchPromos();
     setLoading(false);
   };
@@ -76,7 +76,7 @@ const PromosPage = () => {
               <td>{p.code}</td>
               <td>{p.type}</td>
               <td>{p.value}</td>
-              <td>{p.expiresAt ? new Date(p.expiresAt as any).toLocaleDateString(): '-'}</td>
+              <td>{p.expiresAt ? new Date(p.expiresAt).toLocaleDateString(): '-'}</td>
               <td>{p.usageCount}/{p.usageLimit ?? '∞'}</td>
               <td><Button variant="destructive" size="sm" onClick={()=>p.id && del(p.id)}>Delete</Button></td>
             </tr>

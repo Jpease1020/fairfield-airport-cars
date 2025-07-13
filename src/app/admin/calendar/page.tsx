@@ -32,9 +32,8 @@ const CalendarPage = () => {
     <div className="min-h-screen p-4 bg-background">
       <h1 className="text-2xl font-bold mb-4">Ride Calendar</h1>
       {typeof window !== 'undefined' && (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <FullCalendar
-          plugins={[dayGridPlugin as any]}
+          plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
           events={events}
           height="auto"

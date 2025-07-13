@@ -23,7 +23,7 @@ export default function EditBookingPage() {
           } else {
             setError('Booking not found.');
           }
-        } catch (err) {
+        } catch {
           setError('Failed to fetch booking details.');
         } finally {
           setLoading(false);

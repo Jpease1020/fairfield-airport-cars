@@ -41,7 +41,7 @@ export async function sendConfirmationEmail(booking: Booking) {
     description: `Ride from ${booking.pickupLocation} to ${booking.dropoffLocation}`,
     location: booking.pickupLocation,
     organizer: { name: 'Fairfield Airport Cars', email: EMAIL_FROM },
-  } as const;
+  };
 
   const { value: icsValue } = await new Promise<{ value: string }>((resolve) => {
     createEvent(event, (error: Error | null, value: string) => {
@@ -62,7 +62,7 @@ export async function sendConfirmationEmail(booking: Booking) {
         contentType: 'text/calendar',
       },
     ],
-  } as const;
+  };
 
   await transporter.sendMail(mailOptions);
 } 

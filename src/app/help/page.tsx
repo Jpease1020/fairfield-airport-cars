@@ -46,7 +46,7 @@ const HelpPage: NextPage = () => {
               Contact Us
             </h2>
             <p className="text-base text-gray-600 mb-6">
-              If you can't find the answer you're looking for, please don't hesitate to reach out.
+              If you can&apos;t find the answer you&apos;re looking for, please don&apos;t hesitate to reach out.
             </p>
             <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
               <a

@@ -44,7 +44,7 @@ export default function FeedbackPage() {
         comments,
       });
       setSubmitted(true);
-    } catch (err) {
+    } catch {
       setError('Sorry, there was an issue submitting your feedback. Please try again later.');
     }
   };

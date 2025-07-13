@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useSearchParams } from 'next/navigation';
@@ -8,13 +8,14 @@ import { useSearchParams } from 'next/navigation';
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';
 
-export default function DriverLocationPage() {
+function DriverLocationContent() {
   const search= useSearchParams();
   const allowed = search.get('key') === process.env.NEXT_PUBLIC_DRIVER_SECRET;
-  if(!allowed) return <div className="min-h-screen flex items-center justify-center">Unauthorized</div>;
-
+  
   const [status, setStatus] = useState('Requesting location permission…');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  if(!allowed) return <div className="min-h-screen flex items-center justify-center">Unauthorized</div>;
 
   useEffect(() => {
     if (!('geolocation' in navigator)) {
@@ -58,5 +59,13 @@ export default function DriverLocationPage() {
         </p>
       )}
     </div>
+  );
+}
+
+export default function DriverLocationPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <DriverLocationContent />
+    </Suspense>
   );
 } 
