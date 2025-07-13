@@ -4,41 +4,138 @@ import Link from 'next/link';
 import { Car, Clock, Star, MapPin, Shield, Users } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { HeroSection, FeatureCard, FAQ, ContactSection } from '@/components/marketing';
+import { useHomePageContent, useBusinessSettings, useCMS } from '@/hooks/useCMS';
+import { LoadingSpinner } from '@/components/data';
+import { useEffect, useState } from 'react';
+import { cmsService } from '@/lib/cms-service';
+// import { useAuth } from '@/hooks/useAuth';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import './page-editable.css';
+
+// Icon mapping for CMS features
+const iconMap = {
+  clock: <Clock className="h-6 w-6" />,
+  car: <Car className="h-6 w-6" />,
+  smartphone: <Star className="h-6 w-6" />,
+  star: <Star className="h-6 w-6" />,
+  shield: <Shield className="h-6 w-6" />,
+  users: <Users className="h-6 w-6" />,
+  map: <MapPin className="h-6 w-6" />
+};
 
 export default function HomePage() {
-  const features = [
-    {
-      title: '5-Star Service',
-      description: 'Experience the highest level of professionalism and customer care.',
-      icon: <Star className="h-6 w-6" />,
-    },
-    {
-      title: 'Luxury Vehicles',
-      description: 'Travel in comfort and style in a modern, spacious black SUV.',
-      icon: <Car className="h-6 w-6" />,
-    },
-    {
-      title: 'Always On Time',
-      description: 'We pride ourselves on punctuality, ensuring you\'re never late.',
-      icon: <Clock className="h-6 w-6" />,
-    },
-    {
-      title: 'Wide Coverage',
-      description: 'Service to all major airports in NY and CT area.',
-      icon: <MapPin className="h-6 w-6" />,
-    },
-    {
-      title: 'Safe & Secure',
-      description: 'Fully insured and licensed transportation service.',
-      icon: <Shield className="h-6 w-6" />,
-    },
-    {
-      title: 'Professional Drivers',
-      description: 'Experienced, courteous, and background-checked drivers.',
-      icon: <Users className="h-6 w-6" />,
-    },
-  ];
+  const { content: homeContent, loading: homeLoading, error: homeError } = useHomePageContent();
+  const { settings: businessSettings, loading: businessLoading } = useBusinessSettings();
+  const { config: cmsConfig } = useCMS();
+  // const { user, isAdmin } = useAuth();
 
+  // Admin detection
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user: User | null) => {
+      // You can add more robust admin checks here
+      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  // Inline editing state
+  const [editMode, setEditMode] = useState(false);
+  const [localContent, setLocalContent] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (homeContent) {
+      setLocalContent(homeContent);
+    }
+  }, [homeContent]);
+
+  const handleFieldChange = (section: string, field: string, value: any, subfield?: string) => {
+    setLocalContent((prev: any) => {
+      const updated = { ...prev };
+      if (subfield) {
+        updated[section][field][subfield] = value;
+      } else if (field) {
+        updated[section][field] = value;
+      } else {
+        updated[section] = value;
+      }
+      return updated;
+    });
+  };
+
+  const handleFeatureChange = (idx: number, field: string, value: string) => {
+    setLocalContent((prev: any) => {
+      const updated = { ...prev };
+      updated.features.items[idx][field] = value;
+      return updated;
+    });
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveMsg(null);
+    try {
+      await cmsService.updateCMSConfiguration({
+        pages: {
+          ...cmsConfig?.pages,
+          help: cmsConfig?.pages.help || { faq: [], contactInfo: { phone: '', email: '', hours: '' } },
+          home: localContent,
+        },
+      });
+      setSaveMsg('Saved!');
+      setTimeout(() => setSaveMsg(null), 2000);
+      setEditMode(false);
+    } catch (e) {
+      setSaveMsg('Failed to save.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setLocalContent(JSON.parse(JSON.stringify(homeContent)));
+    setEditMode(false);
+    setSaveMsg(null);
+  };
+
+  if (homeLoading || businessLoading) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading..." />
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (homeError || !homeContent) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Content Unavailable</h1>
+            <p className="text-gray-600">Please check back later or contact support.</p>
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  // Convert CMS features to component format
+  const features = homeContent.features.items.map((feature, index) => ({
+    title: feature.title,
+    description: feature.description,
+    icon: iconMap[feature.icon as keyof typeof iconMap] || <Star className="h-6 w-6" />,
+  }));
+
+  // Default FAQ items (can be moved to CMS later)
   const faqItems = [
     {
       question: 'Which airports do you serve?',
@@ -62,58 +159,150 @@ export default function HomePage() {
     {
       type: 'phone' as const,
       label: 'Call Us',
-      value: '+1 (203) 555-0123',
-      href: 'tel:+1-203-555-0123',
+      value: businessSettings?.company.phone || '+1 (203) 555-0123',
+      href: `tel:${businessSettings?.company.phone || '+1-203-555-0123'}`,
     },
     {
       type: 'text' as const,
       label: 'Text Us',
-      value: '+1 (203) 555-0123',
-      href: 'sms:+1-203-555-0123',
+      value: businessSettings?.company.phone || '+1 (203) 555-0123',
+      href: `sms:${businessSettings?.company.phone || '+1-203-555-0123'}`,
     },
     {
       type: 'email' as const,
       label: 'Email Us',
-      value: 'info@fairfieldairportcars.com',
-      href: 'mailto:info@fairfieldairportcars.com',
+      value: businessSettings?.company.email || 'info@fairfieldairportcars.com',
+      href: `mailto:${businessSettings?.company.email || 'info@fairfieldairportcars.com'}`,
     },
   ];
 
   return (
     <PageContainer>
-      <HeroSection
-        title="Your Private Airport Car Service"
-        subtitle="Premium Transportation"
-        description="Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area."
-        primaryAction={{
-          label: 'Book Your Ride Now',
-          href: '/book',
-        }}
-        secondaryAction={{
-          label: 'Learn More',
-          href: '/help',
-        }}
-        variant="centered"
-      />
+      {/* Floating Edit Mode Toggle for Admins */}
+      {isAdmin && (
+        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
+          {!editMode ? (
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              onClick={() => setEditMode(true)}
+            >
+              Edit Mode
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+        </div>
+      )}
 
-      <div className="py-20 bg-gray-50">
+      {/* Hero Section */}
+      {editMode ? (
+        <div className="mb-8 bg-white p-6 rounded shadow">
+          <label className="edit-label">Hero Title</label>
+          <input
+            className="editable-input text-4xl font-bold w-full mb-2"
+            value={localContent?.hero.title || ''}
+            onChange={e => handleFieldChange('hero', 'title', e.target.value)}
+          />
+          <label className="edit-label">Hero Subtitle</label>
+          <input
+            className="editable-input text-xl w-full mb-2"
+            value={localContent?.hero.subtitle || ''}
+            onChange={e => handleFieldChange('hero', 'subtitle', e.target.value)}
+          />
+          <label className="edit-label">Hero CTA Text</label>
+          <input
+            className="editable-input w-full mb-2"
+            value={localContent?.hero.ctaText || ''}
+            onChange={e => handleFieldChange('hero', 'ctaText', e.target.value)}
+          />
+        </div>
+      ) : (
+        <section className="py-20 bg-gray-900 text-white text-center">
+          <div className="max-w-3xl mx-auto px-4">
+            <h2 className="text-xl font-bold mb-4 text-blue-400">
+              {homeContent.hero.subtitle}
+            </h2>
+            <h1 className="text-5xl font-extrabold mb-6 text-white">
+              {homeContent.hero.title}
+            </h1>
+            <p className="text-lg mb-8 text-gray-200">
+              Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="/book" className="px-8 py-3 text-lg font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                {homeContent.hero.ctaText}
+              </a>
+              <a href="/help" className="px-8 py-3 text-lg font-medium text-blue-600 bg-white border border-blue-600 rounded-md shadow hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Learn More
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Features Section */}
+      <div className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Us?</h2>
+            {editMode ? (
+              <>
+                <label className="edit-label">Features Title</label>
+                <input
+                  className="editable-input text-3xl font-bold w-full mb-2"
+                  value={localContent?.features.title || ''}
+                  onChange={e => handleFieldChange('features', 'title', e.target.value)}
+                />
+              </>
+            ) : (
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">{homeContent.features.title}</h2>
+            )}
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Experience the difference with our premium airport car service
             </p>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={index}
-                title={feature.title}
-                description={feature.description}
-                icon={feature.icon}
-                variant="default"
-              />
+            {(editMode ? localContent?.features.items : features).map((feature: any, index: number) => (
+              <div key={index} className={editMode ? 'bg-white p-4 rounded shadow' : ''}>
+                {editMode ? (
+                  <>
+                    <label className="edit-label">Feature {index + 1} Title</label>
+                    <input
+                      className="editable-input font-semibold w-full mb-2"
+                      value={feature.title}
+                      onChange={e => handleFeatureChange(index, 'title', e.target.value)}
+                    />
+                    <label className="edit-label">Feature {index + 1} Description</label>
+                    <input
+                      className="editable-input w-full mb-2"
+                      value={feature.description}
+                      onChange={e => handleFeatureChange(index, 'description', e.target.value)}
+                    />
+                  </>
+                ) : (
+                  <FeatureCard
+                    title={feature.title}
+                    description={feature.description}
+                    icon={feature.icon}
+                    variant="default"
+                  />
+                )}
+              </div>
             ))}
           </div>
         </div>
@@ -143,7 +332,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="py-20 bg-gray-50">
+      <div className="py-20 bg-white">
         <FAQ
           title="Frequently Asked Questions"
           subtitle="Everything you need to know about our service"
@@ -152,25 +341,43 @@ export default function HomePage() {
         />
       </div>
 
+      {/* Contact Section */}
       <div className="py-20 bg-white">
-        <ContactSection
-          title="Get in Touch"
-          subtitle="Ready to Book?"
-          description="Contact us for any questions or to make your reservation. We're here to help ensure your journey is smooth and stress-free."
-          contactMethods={contactMethods}
-          variant="centered"
-        />
+        {editMode ? (
+          <div className="bg-white p-6 rounded shadow mb-8">
+            <label className="edit-label">Contact Title</label>
+            <input
+              className="editable-input text-2xl font-bold w-full mb-2"
+              value={localContent?.contact.title || ''}
+              onChange={e => handleFieldChange('contact', 'title', e.target.value)}
+            />
+            <label className="edit-label">Contact Content</label>
+            <textarea
+              className="editable-textarea w-full mb-2"
+              value={localContent?.contact.content || ''}
+              onChange={e => handleFieldChange('contact', 'content', e.target.value)}
+            />
+          </div>
+        ) : (
+          <ContactSection
+            title={homeContent.contact.title}
+            subtitle="Ready to Book?"
+            description={homeContent.contact.content}
+            contactMethods={contactMethods}
+            variant="centered"
+          />
+        )}
       </div>
 
-      <div className="py-20 bg-indigo-600">
+      <div className="py-20 bg-blue-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready for a Stress-Free Ride?</h2>
-          <p className="text-indigo-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-white mb-8 max-w-2xl mx-auto">
             Book your airport transportation today and experience the difference of premium service.
           </p>
           <Link 
             href="/book"
-            className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-indigo-600 bg-white border border-transparent rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+            className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-blue-600 bg-white border border-transparent rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
           >
             Book Now
           </Link>

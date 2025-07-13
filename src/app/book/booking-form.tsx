@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useCMS } from '@/hooks/useCMS';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -89,6 +90,8 @@ const useGoogleMapsScript = (apiKey: string) => {
 
 export default function BookingForm({ booking }: BookingFormProps) {
   const router = useRouter();
+  const { config: cmsConfig, loading: cmsLoading } = useCMS();
+  const bookingFormText = cmsConfig?.bookingForm;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -288,7 +291,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
     const finalDropoffLocation = dropoffLocation || dropoffValue;
 
     if (!finalPickupLocation || !finalDropoffLocation) {
-      alert("Please enter both pickup and drop-off locations.");
+      alert(bookingFormText?.errorEnterLocations || "Please enter both pickup and drop-off locations.");
       return;
     }
     
@@ -306,7 +309,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
       setPickupLocation(finalPickupLocation);
       setDropoffLocation(finalDropoffLocation);
     } else {
-      alert("Could not calculate fare. Please check the addresses.");
+      alert(bookingFormText?.errorCalculateFare || "Could not calculate fare. Please check the addresses.");
       setFare(null);
     }
     setIsCalculating(false);
@@ -315,7 +318,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fare) {
-      alert("Please calculate the fare before booking.");
+      alert(bookingFormText?.errorCalculateBeforeBooking || "Please calculate the fare before booking.");
       return;
     }
 
@@ -323,7 +326,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
     const settings = await getSettings();
     const slotFree = await isTimeSlotAvailable(pickupDate, settings.bufferMinutes);
     if (!slotFree) {
-      setError('Selected time conflicts with another booking. Please choose a different time.');
+      setError(bookingFormText?.errorTimeConflict || 'Selected time conflicts with another booking. Please choose a different time.');
       return;
     }
 
@@ -347,12 +350,12 @@ export default function BookingForm({ booking }: BookingFormProps) {
     try {
       if (isEditMode && booking.id) {
         await updateBooking(booking.id, bookingData);
-        setSuccess('Booking updated successfully!');
+        setSuccess(bookingFormText?.successBookingUpdated || 'Booking updated successfully!');
         router.push(`/booking/${booking.id}`);
       } else {
         const finalBookingData = { ...bookingData, status: 'pending' as const };
         const bookingId = await createBooking(finalBookingData);
-        setSuccess('Booking created successfully! Sending confirmation...');
+        setSuccess(bookingFormText?.successBookingCreated || 'Booking created successfully! Sending confirmation...');
         try {
           await fetch('/api/send-confirmation', {
             method: 'POST',
@@ -365,31 +368,32 @@ export default function BookingForm({ booking }: BookingFormProps) {
         router.push(`/booking/${bookingId}`);
       }
     } catch {
-      setError(isEditMode ? 'Failed to update booking.' : 'Failed to create booking.');
+      setError(isEditMode ? (bookingFormText?.errorUpdateBooking || 'Failed to update booking.') : (bookingFormText?.errorCreateBooking || 'Failed to create booking.'));
     }
   };
 
-  if (loadError) return <div>Could not load locations. Please try again later.</div>;
-  if (!isLoaded) return <div>Loading...</div>;
+  if (cmsLoading) return <div>{bookingFormText?.loading || 'Loading...'}</div>;
+  if (loadError) return <div>{bookingFormText?.errorLoadLocations || 'Could not load locations. Please try again later.'}</div>;
+  if (!isLoaded) return <div>{bookingFormText?.loading || 'Loading...'}</div>;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name">{bookingFormText?.fullNameLabel || 'Full Name'}</Label>
           <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="email">Email Address</Label>
+          <Label htmlFor="email">{bookingFormText?.emailLabel || 'Email Address'}</Label>
           <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="phone">Phone Number</Label>
+        <Label htmlFor="phone">{bookingFormText?.phoneLabel || 'Phone Number'}</Label>
         <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="pickupLocation">Pickup Location</Label>
+        <Label htmlFor="pickupLocation">{bookingFormText?.pickupLocationLabel || 'Pickup Location'}</Label>
         <div className="relative">
           <Input 
             id="pickupLocation" 
@@ -429,7 +433,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
         </div>
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="dropoffLocation">Dropoff Location</Label>
+        <Label htmlFor="dropoffLocation">{bookingFormText?.dropoffLocationLabel || 'Dropoff Location'}</Label>
         <div className="relative">
           <Input 
             id="dropoffLocation" 
@@ -469,19 +473,19 @@ export default function BookingForm({ booking }: BookingFormProps) {
         </div>
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="pickupDateTime">Pickup Date and Time</Label>
+        <Label htmlFor="pickupDateTime">{bookingFormText?.pickupDateTimeLabel || 'Pickup Date and Time'}</Label>
         <Input id="pickupDateTime" type="datetime-local" value={pickupDateTime} onChange={(e) => setPickupDateTime(e.target.value)} required placeholder="MM/DD/YYYY, HH:MM AM/PM" />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="passengers">Passengers</Label>
+        <Label htmlFor="passengers">{bookingFormText?.passengersLabel || 'Passengers'}</Label>
         <Input id="passengers" type="number" value={passengers} onChange={(e) => setPassengers(Number(e.target.value))} min="1" required />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="flightNumber">Flight Number (Optional)</Label>
+        <Label htmlFor="flightNumber">{bookingFormText?.flightNumberLabel || 'Flight Number (Optional)'}</Label>
         <Input id="flightNumber" type="text" value={flightNumber} onChange={(e) => setFlightNumber(e.target.value)} />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="notes">Notes (Optional)</Label>
+        <Label htmlFor="notes">{bookingFormText?.notesLabel || 'Notes (Optional)'}</Label>
         <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="bg-white" />
       </div>
       <div className="flex items-stretch gap-4">
@@ -492,16 +496,16 @@ export default function BookingForm({ booking }: BookingFormProps) {
           disabled={isCalculating}
           className="flex-1 h-16 text-sm"
         >
-          {isCalculating ? 'Calculating...' : 'Calculate Fare'}
+          {isCalculating ? (bookingFormText?.calculatingFareButton || 'Calculating...') : (bookingFormText?.calculateFareButton || 'Calculate Fare')}
         </Button>
         {fare && (
           <div className="flex-1 flex items-center justify-center h-16 bg-gray-50 rounded-md">
-            <p className="text-lg font-semibold">Estimated Fare: <span className="text-indigo-600">${fare}</span></p>
+            <p className="text-lg font-semibold">{bookingFormText?.estimatedFareLabel || 'Estimated Fare:'} <span className="text-blue-600">${fare}</span></p>
           </div>
         )}
       </div>
       <Button type="submit" disabled={!fare} className="w-full">
-        {isEditMode ? 'Update Booking' : 'Book Now'}
+        {isEditMode ? (bookingFormText?.updateBookingButton || 'Update Booking') : (bookingFormText?.bookNowButton || 'Book Now')}
       </Button>
       {error && <p className="text-red-500 text-center mt-4">{error}</p>}
       {success && <p className="text-green-500 text-center mt-4">{success}</p>}

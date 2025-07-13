@@ -1,0 +1,86 @@
+import { useState, useEffect } from 'react';
+import { cmsService } from '@/lib/cms-service';
+import { CMSConfiguration } from '@/types/cms';
+
+export function useCMS() {
+  const [config, setConfig] = useState<CMSConfiguration | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadCMS = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const cmsConfig = await cmsService.getCMSConfiguration();
+        setConfig(cmsConfig);
+      } catch (err) {
+        console.error('Error loading CMS configuration:', err);
+        setError('Failed to load content');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCMS();
+  }, []);
+
+  const refresh = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      cmsService.clearCache();
+      const cmsConfig = await cmsService.getCMSConfiguration();
+      setConfig(cmsConfig);
+    } catch (err) {
+      console.error('Error refreshing CMS configuration:', err);
+      setError('Failed to refresh content');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    config,
+    loading,
+    error,
+    refresh
+  };
+}
+
+// Specific hooks for different content types
+export function useHomePageContent() {
+  const { config, loading, error } = useCMS();
+  return {
+    content: config?.pages.home || null,
+    loading,
+    error
+  };
+}
+
+export function useHelpPageContent() {
+  const { config, loading, error } = useCMS();
+  return {
+    content: config?.pages.help || null,
+    loading,
+    error
+  };
+}
+
+export function useBusinessSettings() {
+  const { config, loading, error } = useCMS();
+  return {
+    settings: config?.business || null,
+    loading,
+    error
+  };
+}
+
+export function usePricingSettings() {
+  const { config, loading, error } = useCMS();
+  return {
+    settings: config?.pricing || null,
+    loading,
+    error
+  };
+} 

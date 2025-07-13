@@ -1,24 +1,42 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { cmsService } from './cms-service';
 import { Settings, DEFAULT_SETTINGS } from '@/types/settings';
-
-const SETTINGS_DOC = doc(db, 'settings', 'global');
 
 export async function getSettings(): Promise<Settings> {
   try {
-    const snap = await getDoc(SETTINGS_DOC);
-    if (!snap.exists()) {
-      // save defaults for first time
-      await setDoc(SETTINGS_DOC, DEFAULT_SETTINGS);
-      return DEFAULT_SETTINGS;
-    }
-    return { ...DEFAULT_SETTINGS, ...(snap.data() as Partial<Settings>) } as Settings;
+    const cmsConfig = await cmsService.getCMSConfiguration();
+    
+    // Convert CMS pricing settings to the old settings format for backward compatibility
+    const settings: Settings = {
+      baseFare: cmsConfig.pricing.baseFare,
+      perMile: cmsConfig.pricing.perMile,
+      perMinute: cmsConfig.pricing.perMinute,
+      depositPercent: cmsConfig.pricing.depositPercent,
+      bufferMinutes: cmsConfig.pricing.bufferMinutes,
+      cancellation: cmsConfig.pricing.cancellation,
+    };
+
+    return settings;
   } catch (err) {
-    console.error('Failed to load settings, falling back to defaults', err);
+    console.error('Failed to load settings from CMS, falling back to defaults', err);
     return DEFAULT_SETTINGS;
   }
 }
 
 export async function updateSettings(partial: Partial<Settings>): Promise<void> {
-  await setDoc(SETTINGS_DOC, partial, { merge: true });
+  try {
+    const cmsConfig = await cmsService.getCMSConfiguration();
+    
+    // Update the pricing section of the CMS config
+    await cmsService.updatePricingSettings({
+      baseFare: partial.baseFare ?? cmsConfig.pricing.baseFare,
+      perMile: partial.perMile ?? cmsConfig.pricing.perMile,
+      perMinute: partial.perMinute ?? cmsConfig.pricing.perMinute,
+      depositPercent: partial.depositPercent ?? cmsConfig.pricing.depositPercent,
+      bufferMinutes: partial.bufferMinutes ?? cmsConfig.pricing.bufferMinutes,
+      cancellation: partial.cancellation ?? cmsConfig.pricing.cancellation,
+    });
+  } catch (err) {
+    console.error('Failed to update settings in CMS', err);
+    throw err;
+  }
 } 

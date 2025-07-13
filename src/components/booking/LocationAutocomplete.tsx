@@ -38,6 +38,7 @@ const LocationAutocomplete = React.forwardRef<HTMLInputElement, LocationAutocomp
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const fieldId = id || `location-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
@@ -71,19 +72,12 @@ const LocationAutocomplete = React.forwardRef<HTMLInputElement, LocationAutocomp
     };
 
     // Debounced version to reduce API calls
-    const debouncedGetPredictions = React.useCallback(
-      React.useMemo(
-        () => {
-          let timeoutId: NodeJS.Timeout;
-          return (input: string) => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => getPlacePredictions(input), 300);
-          };
-        },
-        []
-      ),
-      []
-    );
+    const debouncedGetPredictions = React.useCallback((input: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => getPlacePredictions(input), 300);
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = e.target.value;

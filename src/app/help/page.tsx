@@ -1,28 +1,61 @@
+'use client';
 
 import type { NextPage } from 'next';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/card';
-
-const faqs = [
-  {
-    question: 'Which airports do you serve?',
-    answer: 'We provide service to and from all major airports in the New York and Connecticut area, including JFK, LaGuardia (LGA), Newark (EWR), Westchester (HPN), and Bradley (BDL).',
-  },
-  {
-    question: 'How far in advance should I book my ride?',
-    answer: 'We recommend booking at least 24 hours in advance to ensure availability. However, we will always do our best to accommodate last-minute requests.',
-  },
-  {
-    question: 'What is your cancellation policy?',
-    answer: 'You can cancel for a full refund up to 12 hours before your scheduled pickup time. Cancellations within 12 hours of pickup are non-refundable.',
-  },
-  {
-    question: 'What kind of vehicle will I be riding in?',
-    answer: 'You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers.',
-  },
-];
+import { useHelpPageContent, useBusinessSettings } from '@/hooks/useCMS';
+import { LoadingSpinner } from '@/components/data';
 
 const HelpPage: NextPage = () => {
+  const { content: helpContent, loading: helpLoading, error: helpError } = useHelpPageContent();
+  const { settings: businessSettings, loading: businessLoading } = useBusinessSettings();
+
+  if (helpLoading || businessLoading) {
+    return (
+      <PageContainer maxWidth="xl" padding="lg">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading..." />
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (helpError || !helpContent) {
+    return (
+      <PageContainer maxWidth="xl" padding="lg">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Content Unavailable</h1>
+            <p className="text-gray-600">Please check back later or contact support.</p>
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  // Use CMS FAQ items if available, otherwise fall back to defaults
+  const faqItems = helpContent.faq.length > 0 ? helpContent.faq : [
+    {
+      question: 'Which airports do you serve?',
+      answer: 'We provide service to and from all major airports in the New York and Connecticut area, including JFK, LaGuardia (LGA), Newark (EWR), Westchester (HPN), and Bradley (BDL).',
+    },
+    {
+      question: 'How far in advance should I book my ride?',
+      answer: 'We recommend booking at least 24 hours in advance to ensure availability. However, we will always do our best to accommodate last-minute requests.',
+    },
+    {
+      question: 'What is your cancellation policy?',
+      answer: 'You can cancel for a full refund up to 12 hours before your scheduled pickup time. Cancellations within 12 hours of pickup are non-refundable.',
+    },
+    {
+      question: 'What kind of vehicle will I be riding in?',
+      answer: 'You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers.',
+    },
+  ];
+
+  const contactPhone = businessSettings?.company.phone || helpContent.contactInfo.phone || '+1 (203) 555-0123';
+  const contactEmail = businessSettings?.company.email || helpContent.contactInfo.email || 'info@fairfieldairportcars.com';
+
   return (
     <PageContainer maxWidth="xl" padding="lg">
       <PageHeader 
@@ -36,7 +69,7 @@ const HelpPage: NextPage = () => {
               Frequently Asked Questions
             </h2>
             <div className="space-y-6">
-              {faqs.map((faq, index) => (
+              {faqItems.map((faq, index) => (
                 <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-base text-gray-600">{faq.answer}</p>
@@ -53,13 +86,13 @@ const HelpPage: NextPage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
-                  href="tel:+1-203-555-0123"
+                  href={`tel:${contactPhone}`}
                   className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-center font-medium"
                 >
                   Click to Call
                 </a>
                 <a 
-                  href="sms:+1-203-555-0123"
+                  href={`sms:${contactPhone}`}
                   className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-center font-medium"
                 >
                   Click to Text
