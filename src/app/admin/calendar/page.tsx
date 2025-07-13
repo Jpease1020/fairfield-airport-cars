@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import withAuth from '../withAuth';
+import { listBookings } from '../../../lib/booking-service';
 // Booking type not needed directly here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const FullCalendar = dynamic(() => import('@fullcalendar/react') as any, { ssr: false });
+const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false }) as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
 
@@ -31,7 +32,7 @@ const CalendarPage = () => {
     <div className="min-h-screen p-4 bg-background">
       <h1 className="text-2xl font-bold mb-4">Ride Calendar</h1>
       {typeof window !== 'undefined' && (
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <FullCalendar
           plugins={[dayGridPlugin as any]}
           initialView="dayGridMonth"
