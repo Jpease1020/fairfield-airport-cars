@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getBooking, deleteBooking } from '@/lib/booking-service';
 import { Booking } from '@/types/booking';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { BookingCard } from '@/components/booking';
+import { Alert } from '@/components/feedback';
+import { LoadingSpinner } from '@/components/data';
+import { Button } from '@/components/ui/button';
 
 export default function BookingConfirmationPage() {
   const params = useParams();
@@ -72,61 +77,77 @@ export default function BookingConfirmationPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading booking details...</div>;
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading booking details..." />
+        </div>
+      </PageContainer>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+    return (
+      <PageContainer>
+        <Alert variant="error" title="Error">
+          {error}
+        </Alert>
+      </PageContainer>
+    );
   }
 
   if (!booking) {
-    return <div className="min-h-screen flex items-center justify-center">No booking found.</div>;
+    return (
+      <PageContainer>
+        <Alert variant="error" title="Booking Not Found">
+          No booking found with the provided ID.
+        </Alert>
+      </PageContainer>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center mb-4 text-green-600">Booking Confirmed!</h1>
-        <p className="text-center mb-6">Your ride is booked. Here are the details:</p>
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-medium">Ride Details</h3>
-            <p><strong>From:</strong> {booking.pickupLocation}</p>
-            <p><strong>To:</strong> {booking.dropoffLocation}</p>
-            <p><strong>Date & Time:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</p>
-          </div>
-          <div>
-            <h3 className="text-lg font-medium">Your Information</h3>
-            <p><strong>Name:</strong> {booking.name}</p>
-            <p><strong>Email:</strong> {booking.email}</p>
-            <p><strong>Phone:</strong> {booking.phone}</p>
-          </div>
-          <div>
-            <h3 className="text-lg font-medium">Next Steps</h3>
-            <p>You will receive an SMS confirmation shortly. We will contact you if there are any issues.</p>
-            <div className="mt-6 flex flex-col space-y-2">
-              <button
-                onClick={handlePayment}
-                className="w-full text-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Pay Deposit (${(booking.depositAmount ?? booking.fare / 2).toFixed(2)})
-              </button>
-              <a
-                href={`/booking/${booking.id}/edit`}
-                className="w-full text-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Edit Booking
-              </a>
-              <button
-                onClick={handleCancelBooking}
-                className="w-full text-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Cancel Booking
-              </button>
-            </div>
-          </div>
+    <PageContainer maxWidth="md" padding="lg">
+      <PageHeader 
+        title="Booking Confirmed!" 
+        subtitle="Your ride is booked successfully"
+      />
+      <PageContent>
+        <Alert variant="success" title="Success">
+          You will receive an SMS confirmation shortly. We will contact you if there are any issues.
+        </Alert>
+        
+        <BookingCard 
+          booking={booking} 
+          showActions={false}
+        />
+        
+        <div className="space-y-3">
+          <Button 
+            onClick={handlePayment}
+            className="w-full"
+            size="lg"
+          >
+            Pay Deposit (${(booking.depositAmount ?? booking.fare / 2).toFixed(2)})
+          </Button>
+          
+          <Button 
+            variant="outline"
+            className="w-full"
+            onClick={() => router.push(`/booking/${booking.id}/edit`)}
+          >
+            Edit Booking
+          </Button>
+          
+          <Button 
+            variant="destructive"
+            className="w-full"
+            onClick={handleCancelBooking}
+          >
+            Cancel Booking
+          </Button>
         </div>
-      </div>
-    </div>
+      </PageContent>
+    </PageContainer>
   );
 }

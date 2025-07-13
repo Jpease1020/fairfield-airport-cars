@@ -6,22 +6,13 @@ import { doc as fsDoc, onSnapshot as fsSnap } from 'firebase/firestore';
 import { doc as fsDocDriver } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Booking } from '@/types/booking';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { ProgressIndicator } from '@/components/ui/ProgressIndicator';
+import { Alert } from '@/components/feedback';
+import { LoadingSpinner } from '@/components/data';
+import { Card, CardContent } from '@/components/ui/card';
 
-// Helper to determine the progress percentage for the UI
-const getStatusStep = (status: Booking['status']) => {
-  switch (status) {
-    case 'pending':
-      return 0;
-    case 'confirmed':
-      return 1;
-    case 'completed': // We can add more statuses like 'On The Way' later
-      return 2;
-    case 'cancelled':
-      return -1; // Special case for cancelled
-    default:
-      return 0;
-  }
-};
+// Status step calculation removed as it's handled by ProgressIndicator component
 
 const statusDescriptions = {
   pending: "We've received your booking and will confirm it shortly.",
@@ -75,79 +66,88 @@ export default function RideStatusPage() {
   }, []);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading ride status...</div>;
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading ride status..." />
+        </div>
+      </PageContainer>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+    return (
+      <PageContainer>
+        <Alert variant="error" title="Error">
+          {error}
+        </Alert>
+      </PageContainer>
+    );
   }
 
   if (!booking) {
-    return <div className="min-h-screen flex items-center justify-center">No booking found.</div>;
+    return (
+      <PageContainer>
+        <Alert variant="error" title="Booking Not Found">
+          No booking found with the provided ID.
+        </Alert>
+      </PageContainer>
+    );
   }
 
-  const step = getStatusStep(booking.status);
   const isDriverFresh = driverLoc && (Date.now() - driverLoc.updatedAt.getTime() < 2*60*1000);
 
+  const progressSteps = [
+    { id: 'pending', label: 'Pending', description: 'Booking received' },
+    { id: 'confirmed', label: 'Confirmed', description: 'Ride confirmed' },
+    { id: 'completed', label: 'Completed', description: 'Ride finished' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center mb-2">Your Ride Status</h1>
-        <p className="text-center text-gray-600 mb-8">
-          {new Date(booking.pickupDateTime).toLocaleString()}
-        </p>
-
-        {booking.status === 'cancelled' ? (
-          <div className="text-center text-red-500 font-bold text-xl p-4 border-2 border-red-200 rounded-md">
-            {statusDescriptions.cancelled}
-          </div>
-        ) : (
-          <div className="relative">
-            {/* Progress Bar */}
-            <div className="absolute left-0 top-1/2 w-full h-1 bg-gray-200 transform -translate-y-1/2">
-              <div 
-                className="absolute left-0 h-1 bg-indigo-600 transition-all duration-500"
-                style={{ width: `${(step / 2) * 100}%` }}
-              ></div>
-            </div>
-            
-            {/* Status Steps */}
-            <div className="relative flex justify-between">
-              <div className="text-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${step >= 0 ? 'bg-indigo-600 text-white' : 'bg-gray-200'}`}>1</div>
-                <p className="mt-2 text-sm">Pending</p>
+    <PageContainer maxWidth="md" padding="lg">
+      <PageHeader 
+        title="Your Ride Status" 
+        subtitle={new Date(booking.pickupDateTime).toLocaleString()}
+      />
+      <PageContent>
+        <Card>
+          <CardContent className="p-6">
+            {booking.status === 'cancelled' ? (
+              <Alert variant="error" title="Booking Cancelled">
+                {statusDescriptions.cancelled}
+              </Alert>
+            ) : (
+              <div className="space-y-6">
+                <ProgressIndicator 
+                  steps={progressSteps}
+                  currentStep={booking.status}
+                  showDescriptions={false}
+                />
+                
+                <div className="text-center p-4 bg-gray-50 rounded-md">
+                  <p className="font-semibold text-lg capitalize">{booking.status}</p>
+                  <p className="text-gray-700">{statusDescriptions[booking.status]}</p>
+                </div>
+                
+                {isDriverFresh && (
+                  <div className="mt-6">
+                    <h2 className="text-lg font-medium mb-2 text-center">Live Driver Location</h2>
+                    <iframe
+                      title="Driver live location map"
+                      width="100%"
+                      height="300"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      allowFullScreen
+                      src={`https://maps.google.com/maps?q=${driverLoc!.lat},${driverLoc!.lng}&z=15&output=embed`}
+                    />
+                  </div>
+                )}
               </div>
-              <div className="text-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${step >= 1 ? 'bg-indigo-600 text-white' : 'bg-gray-200'}`}>2</div>
-                <p className="mt-2 text-sm">Confirmed</p>
-              </div>
-              <div className="text-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${step >= 2 ? 'bg-indigo-600 text-white' : 'bg-gray-200'}`}>3</div>
-                <p className="mt-2 text-sm">Completed</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="mt-8 text-center p-4 bg-gray-50 rounded-md">
-          <p className="font-semibold text-lg capitalize">{booking.status}</p>
-          <p className="text-gray-700">{statusDescriptions[booking.status]}</p>
-        </div>
-        {isDriverFresh && (
-  <div className="mt-6">
-    <h2 className="text-lg font-medium mb-2 text-center">Live Driver Location</h2>
-    <iframe
-      title="Driver live location map"
-      width="100%"
-      height="300"
-      style={{ border: 0 }}
-      loading="lazy"
-      allowFullScreen
-      src={`https://maps.google.com/maps?q=${driverLoc!.lat},${driverLoc!.lng}&z=15&output=embed`}
-    ></iframe>
-  </div>
-)}
-      </div>
-    </div>
+            )}
+          </CardContent>
+        </Card>
+      </PageContent>
+    </PageContainer>
   );
 }

@@ -3,15 +3,24 @@
 
 import type { NextPage } from 'next';
 import BookingForm from './booking-form';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { Card, CardContent } from '@/components/ui/card';
 
 const BookPage: NextPage = () => {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-card p-8 rounded-lg shadow-lg border">
-        <h1 className="text-3xl font-bold text-center mb-8 text-card-foreground">Book Your Ride</h1>
-        <BookingForm />
-      </div>
-    </div>
+    <PageContainer maxWidth="2xl" padding="lg">
+      <PageHeader 
+        title="Book Your Ride" 
+        subtitle="Premium airport transportation service"
+      />
+      <PageContent>
+        <Card>
+          <CardContent className="p-8">
+            <BookingForm />
+          </CardContent>
+        </Card>
+      </PageContent>
+    </PageContainer>
   );
 };
 

@@ -5,6 +5,11 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Booking } from '@/types/booking';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { Alert } from '@/components/feedback';
+import { LoadingSpinner } from '@/components/data';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const SuccessPageContent = () => {
   const searchParams = useSearchParams();
@@ -30,47 +35,74 @@ const SuccessPageContent = () => {
 
   if (!bookingId) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="p-6 bg-white rounded shadow">
-          <h1 className="text-xl font-bold mb-2">Payment Successful</h1>
-          <p className="text-gray-700">No booking reference found, but your payment was processed.</p>
-        </div>
-      </div>
+      <PageContainer maxWidth="md" padding="lg">
+        <PageHeader title="Payment Successful" />
+        <PageContent>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <Alert variant="success" title="Payment Successful">
+                No booking reference found, but your payment was processed.
+              </Alert>
+            </CardContent>
+          </Card>
+        </PageContent>
+      </PageContainer>
     );
   }
 
   if (loading || !booking) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-gray-600">Loading your booking...</div>
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading your booking..." />
+        </div>
+      </PageContainer>
     );
   }
 
   const statusText = booking.status === 'pending' ? 'Pending Confirmation' : booking.status === 'confirmed' ? 'Confirmed' : booking.status;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md text-center">
-        <h1 className="text-2xl font-bold text-indigo-600 mb-4">Payment Successful!</h1>
-        <p className="text-gray-700 mb-6">
-          Booking reference <span className="font-mono font-semibold">{bookingId}</span>
-        </p>
-        <p className="text-lg font-semibold mb-4">Current Status: <span className="capitalize">{statusText}</span></p>
-        <button
-          onClick={() => router.push(`/status/${bookingId}`)}
-          className="mt-4 inline-block bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition"
-        >
-          View Detailed Status
-        </button>
-      </div>
-    </div>
+    <PageContainer maxWidth="md" padding="lg">
+      <PageHeader 
+        title="Payment Successful!" 
+        subtitle={`Booking reference: ${bookingId}`}
+      />
+      <PageContent>
+        <Card>
+          <CardContent className="p-8 text-center">
+            <Alert variant="success" title="Payment Processed">
+              Your payment has been successfully processed.
+            </Alert>
+            
+            <div className="mt-6">
+              <p className="text-lg font-semibold mb-4">
+                Current Status: <span className="capitalize">{statusText}</span>
+              </p>
+              
+              <Button 
+                onClick={() => router.push(`/status/${bookingId}`)}
+                size="lg"
+              >
+                View Detailed Status
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </PageContent>
+    </PageContainer>
   );
 };
 
 const SuccessPage = () => {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading..." />
+        </div>
+      </PageContainer>
+    }>
       <SuccessPageContent />
     </Suspense>
   );

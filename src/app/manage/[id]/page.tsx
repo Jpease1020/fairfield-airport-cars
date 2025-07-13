@@ -5,6 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Booking } from '@/types/booking';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { BookingCard } from '@/components/booking';
+import { Alert } from '@/components/feedback';
+import { LoadingSpinner } from '@/components/data';
+import { Button } from '@/components/ui/button';
 
 export default function ManageBookingPage() {
   const { id } = useParams();
@@ -72,37 +77,66 @@ export default function ManageBookingPage() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (error || !booking) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+  if (loading) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading booking details..." />
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (error || !booking) {
+    return (
+      <PageContainer>
+        <Alert variant="error" title="Error">
+          {error || 'Booking not found'}
+        </Alert>
+      </PageContainer>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white p-6 rounded shadow">
-        <h1 className="text-xl font-bold mb-4 text-center">Manage Your Booking</h1>
-        <p className="text-sm text-gray-600 mb-2">Reference: <span className="font-mono">{booking.id}</span></p>
-        <p className="mb-4">Pickup on {new Date(booking.pickupDateTime).toLocaleString()}</p>
-
+    <PageContainer maxWidth="md" padding="lg">
+      <PageHeader 
+        title="Manage Your Booking" 
+        subtitle={`Reference: ${booking.id}`}
+      />
+      <PageContent>
+        <BookingCard 
+          booking={booking} 
+          showActions={false}
+        />
+        
         <div className="space-y-3">
-          <button
+          <Button 
             onClick={handleResend}
-            className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
+            className="w-full"
           >
             Re-send Confirmation Email/SMS
-          </button>
+          </Button>
 
           {booking.status !== 'cancelled' && (
-            <button
+            <Button
+              variant="destructive"
               onClick={handleCancel}
-              className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+              className="w-full"
             >
               Cancel Ride
-            </button>
+            </Button>
           )}
 
           {booking.balanceDue > 0 && booking.status === 'completed' && (
-            <button
+            <Button
+              variant="outline"
+              className="w-full"
               onClick={async () => {
-                const res = await fetch('/api/complete-payment', { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ bookingId: booking.id })});
+                const res = await fetch('/api/complete-payment', { 
+                  method: 'POST', 
+                  headers: { 'Content-Type':'application/json' }, 
+                  body: JSON.stringify({ bookingId: booking.id })
+                });
                 if (res.ok) {
                   const { paymentLinkUrl } = await res.json();
                   window.location.href = paymentLinkUrl;
@@ -110,19 +144,26 @@ export default function ManageBookingPage() {
                   setActionMsg('Failed to create balance payment link');
                 }
               }}
-              className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
             >
               Pay Remaining Balance (${booking.balanceDue.toFixed(2)})
-            </button>
+            </Button>
           )}
         </div>
 
-        {actionMsg && <p className="mt-4 text-center text-sm text-gray-700">{actionMsg}</p>}
+        {actionMsg && (
+          <Alert variant="info" title="Action Result">
+            {actionMsg}
+          </Alert>
+        )}
 
-        <button onClick={() => router.push(`/status/${booking.id}`)} className="mt-6 text-indigo-600 underline w-full text-center">
+        <Button 
+          variant="outline"
+          onClick={() => router.push(`/status/${booking.id}`)}
+          className="w-full"
+        >
           View Status Page
-        </button>
-      </div>
-    </div>
+        </Button>
+      </PageContent>
+    </PageContainer>
   );
 } 

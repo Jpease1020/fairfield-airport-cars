@@ -1,5 +1,7 @@
 
 import type { NextPage } from 'next';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { Card, CardContent } from '@/components/ui/card';
 
 const faqs = [
   {
@@ -22,50 +24,52 @@ const faqs = [
 
 const HelpPage: NextPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-extrabold text-center text-gray-900 mb-8">
-          Help & FAQs
-        </h1>
-
-        <div className="bg-white shadow-md rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <div key={index}>
-                <h3 className="text-lg font-medium text-gray-900">{faq.question}</h3>
-                <p className="mt-2 text-base text-gray-600">{faq.answer}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10 pt-8 border-t border-gray-200">
+    <PageContainer maxWidth="xl" padding="lg">
+      <PageHeader 
+        title="Help & FAQs" 
+        subtitle="Find answers to common questions about our service"
+      />
+      <PageContent>
+        <Card>
+          <CardContent className="p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Contact Us
+              Frequently Asked Questions
             </h2>
-            <p className="text-base text-gray-600 mb-6">
-              If you can&apos;t find the answer you&apos;re looking for, please don&apos;t hesitate to reach out.
-            </p>
-            <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-              <a
-                href="tel:+1-203-555-0123" // Replace with Gregg's actual phone number
-                className="w-full text-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Click to Call
-              </a>
-              <a
-                href="sms:+1-203-555-0123" // Replace with Gregg's actual phone number
-                className="w-full text-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Click to Text
-              </a>
+            <div className="space-y-6">
+              {faqs.map((faq, index) => (
+                <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{faq.question}</h3>
+                  <p className="text-base text-gray-600">{faq.answer}</p>
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
+            <div className="mt-10 pt-8 border-t border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Contact Us
+              </h2>
+              <p className="text-base text-gray-600 mb-6">
+                If you can&apos;t find the answer you&apos;re looking for, please don&apos;t hesitate to reach out.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a 
+                  href="tel:+1-203-555-0123"
+                  className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-center font-medium"
+                >
+                  Click to Call
+                </a>
+                <a 
+                  href="sms:+1-203-555-0123"
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-center font-medium"
+                >
+                  Click to Text
+                </a>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </PageContent>
+    </PageContainer>
   );
 };
 

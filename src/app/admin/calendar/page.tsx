@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import withAuth from '../withAuth';
 import { listBookings } from '../../../lib/booking-service';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { Card, CardContent } from '@/components/ui/card';
 // Booking type not needed directly here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false }) as any;
@@ -29,17 +31,23 @@ const CalendarPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 bg-background">
-      <h1 className="text-2xl font-bold mb-4">Ride Calendar</h1>
-      {typeof window !== 'undefined' && (
-        <FullCalendar
-          plugins={[dayGridPlugin]}
-          initialView="dayGridMonth"
-          events={events}
-          height="auto"
-        />
-      )}
-    </div>
+    <PageContainer>
+      <PageHeader title="Ride Calendar" />
+      <PageContent>
+        <Card>
+          <CardContent className="p-6">
+            {typeof window !== 'undefined' && (
+              <FullCalendar
+                plugins={[dayGridPlugin]}
+                initialView="dayGridMonth"
+                events={events}
+                height="auto"
+              />
+            )}
+          </CardContent>
+        </Card>
+      </PageContent>
+    </PageContainer>
   );
 };
 

@@ -5,6 +5,10 @@ import { useParams } from 'next/navigation';
 import { getBooking } from '@/lib/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { Alert } from '@/components/feedback';
+import { LoadingSpinner } from '@/components/data';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function EditBookingPage() {
   const params = useParams();
@@ -34,23 +38,48 @@ export default function EditBookingPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading booking details...</div>;
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading booking details..." />
+        </div>
+      </PageContainer>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+    return (
+      <PageContainer>
+        <Alert variant="error" title="Error">
+          {error}
+        </Alert>
+      </PageContainer>
+    );
   }
 
   if (!booking) {
-    return <div className="min-h-screen flex items-center justify-center">No booking found.</div>;
+    return (
+      <PageContainer>
+        <Alert variant="error" title="Booking Not Found">
+          No booking found with the provided ID.
+        </Alert>
+      </PageContainer>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Edit Your Booking</h1>
-        <BookingForm booking={booking} />
-      </div>
-    </div>
+    <PageContainer maxWidth="2xl" padding="lg">
+      <PageHeader 
+        title="Edit Your Booking" 
+        subtitle="Update your ride details"
+      />
+      <PageContent>
+        <Card>
+          <CardContent className="p-8">
+            <BookingForm booking={booking} />
+          </CardContent>
+        </Card>
+      </PageContent>
+    </PageContainer>
   );
 }
