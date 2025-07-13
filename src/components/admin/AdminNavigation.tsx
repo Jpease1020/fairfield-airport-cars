@@ -13,7 +13,9 @@ import {
   Users,
   CreditCard,
   Mail,
-  DollarSign
+  DollarSign,
+  HelpCircle,
+  Bot
 } from 'lucide-react';
 
 const AdminNavigation = () => {
@@ -43,6 +45,18 @@ const AdminNavigation = () => {
       href: '/admin/promos',
       icon: Tag,
       current: pathname === '/admin/promos'
+    },
+    {
+      name: 'Help',
+      href: '/admin/help',
+      icon: HelpCircle,
+      current: pathname === '/admin/help'
+    },
+    {
+      name: 'AI Assistant',
+      href: '/admin/ai-assistant',
+      icon: Bot,
+      current: pathname === '/admin/ai-assistant'
     },
     {
       name: 'CMS',

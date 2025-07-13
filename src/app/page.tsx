@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Car, Clock, Star, MapPin, Shield, Users } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
-import { HeroSection, FeatureCard, FAQ, ContactSection } from '@/components/marketing';
+import { FeatureCard, FAQ, ContactSection } from '@/components/marketing';
 import { useHomePageContent, useBusinessSettings, useCMS } from '@/hooks/useCMS';
 import { LoadingSpinner } from '@/components/data';
 import { useEffect, useState } from 'react';
@@ -56,7 +56,7 @@ export default function HomePage() {
     }
   }, [homeContent]);
 
-  const handleFieldChange = (section: string, field: string, value: any, subfield?: string) => {
+  const handleFieldChange = (section: string, field: string, value: unknown, subfield?: string) => {
     setLocalContent((prev: any) => {
       const updated = { ...prev };
       if (subfield) {
@@ -92,7 +92,7 @@ export default function HomePage() {
       setSaveMsg('Saved!');
       setTimeout(() => setSaveMsg(null), 2000);
       setEditMode(false);
-    } catch (e) {
+    } catch {
       setSaveMsg('Failed to save.');
     } finally {
       setSaving(false);
@@ -129,7 +129,7 @@ export default function HomePage() {
   }
 
   // Convert CMS features to component format
-  const features = homeContent.features.items.map((feature, index) => ({
+  const features = homeContent.features.items.map((feature) => ({
     title: feature.title,
     description: feature.description,
     icon: iconMap[feature.icon as keyof typeof iconMap] || <Star className="h-6 w-6" />,

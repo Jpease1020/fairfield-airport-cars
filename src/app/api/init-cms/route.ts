@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cmsService } from '@/lib/cms-service';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Check if CMS is already initialized
     const existingConfig = await cmsService.getCMSConfiguration();

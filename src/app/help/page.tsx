@@ -54,7 +54,6 @@ const HelpPage: NextPage = () => {
   ];
 
   const contactPhone = businessSettings?.company.phone || helpContent.contactInfo.phone || '+1 (203) 555-0123';
-  const contactEmail = businessSettings?.company.email || helpContent.contactInfo.email || 'info@fairfieldairportcars.com';
 
   return (
     <PageContainer maxWidth="xl" padding="lg">

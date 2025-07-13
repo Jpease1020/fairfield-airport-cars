@@ -22,9 +22,7 @@ const PAGE_KEYS = [
 
 type EditablePage = keyof CMSConfiguration["pages"];
 
-type PageState = {
-  [K in EditablePage]?: any;
-};
+// Removed unused PageState type
 
 const PagesCMS = () => {
   const [config, setConfig] = useState<CMSConfiguration | null>(null);
@@ -74,14 +72,14 @@ const PagesCMS = () => {
         terms: cmsConfig.pages.terms ?? { id: 'terms', title: '', content: '', lastUpdated: new Date(), isActive: true },
         privacy: cmsConfig.pages.privacy ?? { id: 'privacy', title: '', content: '', lastUpdated: new Date(), isActive: true },
       });
-    } catch (e) {
+    } catch {
       setError("Failed to load CMS content.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (page: EditablePage, field: string, value: any, subfield?: string) => {
+  const handleChange = (page: EditablePage, field: string, value: unknown, subfield?: string) => {
     setPages((prev) => {
       const updated = { ...prev };
       
@@ -133,7 +131,7 @@ const PagesCMS = () => {
       });
       setSuccess("Saved successfully!");
       setTimeout(() => setSuccess(null), 2000);
-    } catch (e) {
+    } catch {
       setError("Failed to save changes.");
     } finally {
       setSaving(false);
