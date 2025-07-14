@@ -9,6 +9,10 @@ import { BookingCard } from '@/components/booking';
 import { Alert } from '@/components/feedback';
 import { LoadingSpinner } from '@/components/data';
 import { Button } from '@/components/ui/button';
+import { useCMS } from '@/hooks/useCMS';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { cmsService } from '@/lib/cms-service';
 
 export default function BookingConfirmationPage() {
   const params = useParams();
@@ -17,6 +21,94 @@ export default function BookingConfirmationPage() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const { config: cmsConfig } = useCMS();
+  const bookingDetailsContent = cmsConfig?.pages?.bookingDetails;
+
+  // Admin detection and edit mode
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [localContent, setLocalContent] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<string | null>(null);
+
+  // Admin detection
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user: User | null) => {
+      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  // Initialize local content when CMS content loads
+  useEffect(() => {
+    if (bookingDetailsContent) {
+      setLocalContent(bookingDetailsContent);
+    }
+  }, [bookingDetailsContent]);
+
+  // Edit mode handlers
+  const handleFieldChange = (field: string, value: string) => {
+    setLocalContent((prev: any) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveMsg(null);
+    try {
+      await cmsService.updateCMSConfiguration({
+        pages: {
+          home: cmsConfig?.pages.home || {
+            hero: { title: '', subtitle: '', ctaText: '' },
+            features: { title: '', items: [] },
+            about: { title: '', content: '' },
+            contact: { title: '', content: '', phone: '', email: '' },
+          },
+          help: cmsConfig?.pages.help || {
+            faq: [],
+            contactInfo: { phone: '', email: '', hours: '' },
+          },
+          booking: cmsConfig?.pages.booking || {
+            title: 'Book Your Ride',
+            subtitle: 'Premium airport transportation service',
+            description: 'Reserve your luxury airport transportation with our professional drivers.'
+          },
+          success: cmsConfig?.pages.success || {
+            title: 'Payment Successful!',
+            subtitle: 'Your booking has been confirmed',
+            paymentSuccessTitle: 'Payment Processed',
+            paymentSuccessMessage: 'Your payment has been successfully processed.',
+            noBookingTitle: 'Payment Successful',
+            noBookingMessage: 'No booking reference found, but your payment was processed.',
+            currentStatusLabel: 'Current Status:',
+            viewDetailsButton: 'View Detailed Status',
+            loadingMessage: 'Loading your booking...'
+          },
+          bookingDetails: localContent,
+        },
+      });
+      setSaveMsg('Saved!');
+      setTimeout(() => setSaveMsg(null), 2000);
+      setEditMode(false);
+    } catch {
+      setSaveMsg('Failed to save.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setLocalContent(JSON.parse(JSON.stringify(bookingDetailsContent)));
+    setEditMode(false);
+    setSaveMsg(null);
+  };
 
   useEffect(() => {
     if (id) {
@@ -39,10 +131,10 @@ export default function BookingConfirmationPage() {
   }, [id]);
 
   const handleCancelBooking = async () => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
+    if (window.confirm(bookingDetailsContent?.cancelConfirmMessage || 'Are you sure you want to cancel this booking?')) {
       try {
         await deleteBooking(id as string);
-        alert('Booking cancelled successfully.');
+        alert(bookingDetailsContent?.cancelSuccessMessage || 'Booking cancelled successfully.');
         router.push('/');
       } catch {
         setError('Failed to cancel booking.');
@@ -69,7 +161,7 @@ export default function BookingConfirmationPage() {
         const { paymentLinkUrl } = await response.json();
         window.location.href = paymentLinkUrl;
       } else {
-        setError('Failed to create payment link.');
+        setError(bookingDetailsContent?.paymentError || 'Failed to create payment link.');
       }
     } catch {
       setError('Failed to initiate payment.');
@@ -80,7 +172,7 @@ export default function BookingConfirmationPage() {
     return (
       <PageContainer>
         <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading booking details..." />
+          <LoadingSpinner text={bookingDetailsContent?.loadingMessage || "Loading booking details..."} />
         </div>
       </PageContainer>
     );
@@ -100,7 +192,7 @@ export default function BookingConfirmationPage() {
     return (
       <PageContainer>
         <Alert variant="error" title="Booking Not Found">
-          No booking found with the provided ID.
+          {bookingDetailsContent?.notFoundMessage || "No booking found with the provided ID."}
         </Alert>
       </PageContainer>
     );
@@ -108,13 +200,106 @@ export default function BookingConfirmationPage() {
 
   return (
     <PageContainer maxWidth="md" padding="lg">
-      <PageHeader 
-        title="Booking Confirmed!" 
-        subtitle="Your ride is booked successfully"
-      />
+      {/* Floating Edit Mode Toggle for Admins */}
+      {isAdmin && (
+        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
+          {!editMode ? (
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              onClick={() => setEditMode(true)}
+            >
+              Edit Mode
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+        </div>
+      )}
+
+      {/* Page Header */}
+      {editMode ? (
+        <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
+          <label className="edit-label font-semibold">Page Title</label>
+          <input
+            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-14 px-4"
+            value={localContent?.title || ''}
+            onChange={e => handleFieldChange('title', e.target.value)}
+          />
+          <label className="edit-label font-semibold">Page Subtitle</label>
+          <input
+            className="editable-input text-xl text-gray-600 w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+            value={localContent?.subtitle || ''}
+            onChange={e => handleFieldChange('subtitle', e.target.value)}
+          />
+          <label className="edit-label font-semibold">Success Message</label>
+          <textarea
+            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            value={localContent?.successMessage || ''}
+            onChange={e => handleFieldChange('successMessage', e.target.value)}
+            rows={3}
+          />
+          <label className="edit-label font-semibold">Pay Deposit Button Text</label>
+          <input
+            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            value={localContent?.payDepositButton || ''}
+            onChange={e => handleFieldChange('payDepositButton', e.target.value)}
+          />
+          <label className="edit-label font-semibold">Edit Booking Button Text</label>
+          <input
+            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            value={localContent?.editBookingButton || ''}
+            onChange={e => handleFieldChange('editBookingButton', e.target.value)}
+          />
+          <label className="edit-label font-semibold">Cancel Booking Button Text</label>
+          <input
+            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            value={localContent?.cancelBookingButton || ''}
+            onChange={e => handleFieldChange('cancelBookingButton', e.target.value)}
+          />
+          <div className="flex gap-2 mt-4">
+            <button
+              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : 'Save'}
+            </button>
+            <button
+              className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"
+              onClick={handleCancel}
+              disabled={saving}
+            >
+              Cancel
+            </button>
+            {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+          </div>
+        </div>
+      ) : (
+        <PageHeader 
+          title={bookingDetailsContent?.title || "Booking Confirmed!"} 
+          subtitle={bookingDetailsContent?.subtitle || "Your ride is booked successfully"}
+        />
+      )}
+      
       <PageContent>
         <Alert variant="success" title="Success">
-          You will receive an SMS confirmation shortly. We will contact you if there are any issues.
+          {bookingDetailsContent?.successMessage || "You will receive an SMS confirmation shortly. We will contact you if there are any issues."}
         </Alert>
         
         <BookingCard 
@@ -128,7 +313,7 @@ export default function BookingConfirmationPage() {
             className="w-full"
             size="lg"
           >
-            Pay Deposit (${(booking.depositAmount ?? booking.fare / 2).toFixed(2)})
+            {bookingDetailsContent?.payDepositButton || "Pay Deposit"} (${(booking.depositAmount ?? booking.fare / 2).toFixed(2)})
           </Button>
           
           <Button 
@@ -136,7 +321,7 @@ export default function BookingConfirmationPage() {
             className="w-full"
             onClick={() => router.push(`/booking/${booking.id}/edit`)}
           >
-            Edit Booking
+            {bookingDetailsContent?.editBookingButton || "Edit Booking"}
           </Button>
           
           <Button 
@@ -144,7 +329,7 @@ export default function BookingConfirmationPage() {
             className="w-full"
             onClick={handleCancelBooking}
           >
-            Cancel Booking
+            {bookingDetailsContent?.cancelBookingButton || "Cancel Booking"}
           </Button>
         </div>
       </PageContent>

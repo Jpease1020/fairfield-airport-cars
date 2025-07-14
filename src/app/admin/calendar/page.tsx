@@ -6,7 +6,7 @@ import withAuth from '../withAuth';
 import { listBookings } from '../../../lib/booking-service';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/card';
-// Booking type not needed directly here
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false }) as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

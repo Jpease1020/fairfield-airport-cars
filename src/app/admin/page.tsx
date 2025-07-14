@@ -29,7 +29,7 @@ const AdminDashboard = () => {
         const bookingsData = await listBookings();
         setBookings(bookingsData);
       } catch (error) {
-        console.error('Failed to fetch bookings:', error);
+        // Handle error silently or show a user-friendly message
       } finally {
         setLoading(false);
       }

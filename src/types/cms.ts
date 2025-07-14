@@ -24,6 +24,27 @@ export interface HomePageContent {
       icon: string;
     }>;
   };
+  fleet?: {
+    title: string;
+    description: string;
+    vehicles: Array<{
+      title: string;
+      description: string;
+    }>;
+  };
+  faq?: {
+    title: string;
+    subtitle: string;
+    items: Array<{
+      question: string;
+      answer: string;
+    }>;
+  };
+  finalCta?: {
+    title: string;
+    description: string;
+    buttonText: string;
+  };
   about: {
     title: string;
     content: string;
@@ -37,6 +58,9 @@ export interface HomePageContent {
 }
 
 export interface HelpPageContent {
+  title?: string;
+  subtitle?: string;
+  faqTitle?: string;
   faq: Array<{
     question: string;
     answer: string;
@@ -46,6 +70,12 @@ export interface HelpPageContent {
     phone: string;
     email: string;
     hours: string;
+  };
+  contactSection?: {
+    title: string;
+    description: string;
+    callButtonText: string;
+    textButtonText: string;
   };
 }
 
@@ -199,6 +229,89 @@ export interface CMSConfiguration {
   pages: {
     home: HomePageContent;
     help: HelpPageContent;
+    booking?: {
+      title: string;
+      subtitle: string;
+      description?: string;
+    };
+    success?: {
+      title: string;
+      subtitle: string;
+      paymentSuccessTitle: string;
+      paymentSuccessMessage: string;
+      noBookingTitle: string;
+      noBookingMessage: string;
+      currentStatusLabel: string;
+      viewDetailsButton: string;
+      loadingMessage: string;
+    };
+    bookingDetails?: {
+      title: string;
+      subtitle: string;
+      successMessage: string;
+      payDepositButton: string;
+      editBookingButton: string;
+      cancelBookingButton: string;
+      cancelConfirmMessage: string;
+      cancelSuccessMessage: string;
+      paymentError: string;
+      notFoundMessage: string;
+      loadingMessage: string;
+    };
+    feedback?: {
+      title: string;
+      subtitle?: string;
+      rateExperienceTitle: string;
+      rateExperienceDescription: string;
+      commentsTitle: string;
+      commentsLabel: string;
+      commentsPlaceholder: string;
+      submitButton: string;
+      successTitle: string;
+      successMessage: string;
+      errorNoRating: string;
+      errorSubmission: string;
+    };
+    cancel?: {
+      title: string;
+      subtitle?: string;
+      errorTitle: string;
+      errorMessage: string;
+    };
+    manage?: {
+      title: string;
+      subtitle?: string;
+      resendButton: string;
+      cancelButton: string;
+      payBalanceButton: string;
+      viewStatusButton: string;
+      cancelConfirmMessage: string;
+      cancelSuccessMessage: string;
+      resendSuccessMessage: string;
+      resendErrorMessage: string;
+      payBalanceErrorMessage: string;
+      notFoundMessage: string;
+      loadingMessage: string;
+    };
+    status?: {
+      title: string;
+      subtitleLabel: string;
+      stepPending: string;
+      stepConfirmed: string;
+      stepCompleted: string;
+      statusPending: string;
+      statusConfirmed: string;
+      statusCompleted: string;
+      statusCancelled: string;
+      alertCancelledTitle: string;
+      alertCancelledMessage: string;
+      alertNotFoundTitle: string;
+      alertNotFoundMessage: string;
+      alertErrorTitle: string;
+      alertErrorMessage: string;
+      loadingMessage: string;
+      liveDriverHeader: string;
+    };
     about?: PageContent;
     terms?: PageContent;
     privacy?: PageContent;
@@ -247,6 +360,47 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
           }
         ]
       },
+      fleet: {
+        title: "Our Fleet",
+        description: "You will ride in a meticulously maintained Chevrolet Suburban or a similar full-size luxury SUV, offering ample space for passengers and luggage.",
+        vehicles: [
+          {
+            title: "Luxury SUV",
+            description: "Spacious Chevrolet Suburban with premium amenities including complimentary water, Wi-Fi, and phone chargers."
+          },
+          {
+            title: "Professional Service",
+            description: "Experienced drivers with background checks, ensuring your safety and comfort throughout your journey."
+          }
+        ]
+      },
+      faq: {
+        title: "Frequently Asked Questions",
+        subtitle: "Everything you need to know about our service",
+        items: [
+          {
+            question: "Which airports do you serve?",
+            answer: "We provide service to and from all major airports in the New York and Connecticut area, including JFK, LaGuardia (LGA), Newark (EWR), Westchester (HPN), and Bradley (BDL)."
+          },
+          {
+            question: "How far in advance should I book my ride?",
+            answer: "We recommend booking at least 24 hours in advance to ensure availability. However, we will always do our best to accommodate last-minute requests."
+          },
+          {
+            question: "What is your cancellation policy?",
+            answer: "You can cancel for a full refund up to 12 hours before your scheduled pickup time. Cancellations within 12 hours of pickup are non-refundable."
+          },
+          {
+            question: "What kind of vehicle will I be riding in?",
+            answer: "You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers."
+          }
+        ]
+      },
+      finalCta: {
+        title: "Ready for a Stress-Free Ride?",
+        description: "Book your airport transportation today and experience the difference of premium service.",
+        buttonText: "Book Now"
+      },
       about: {
         title: "About Our Service",
         content: "We provide reliable airport transportation services in the Fairfield area. Our professional drivers ensure you arrive at your destination safely and on time."
@@ -259,6 +413,9 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       }
     },
     help: {
+      title: "Help & FAQs",
+      subtitle: "Find answers to common questions about our service",
+      faqTitle: "Frequently Asked Questions",
       faq: [
         {
           question: "How far in advance should I book?",
@@ -275,7 +432,96 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
         phone: "(555) 123-4567",
         email: "support@fairfieldairportcars.com",
         hours: "24/7"
+      },
+      contactSection: {
+        title: "Contact Us",
+        description: "If you can't find the answer you're looking for, please don't hesitate to reach out.",
+        callButtonText: "Click to Call",
+        textButtonText: "Click to Text"
       }
+    },
+    booking: {
+      title: "Book Your Ride",
+      subtitle: "Premium airport transportation service",
+      description: "Reserve your luxury airport transportation with our professional drivers. We serve all major airports in the NY and CT area."
+    },
+    success: {
+      title: "Payment Successful!",
+      subtitle: "Your booking has been confirmed",
+      paymentSuccessTitle: "Payment Processed",
+      paymentSuccessMessage: "Your payment has been successfully processed.",
+      noBookingTitle: "Payment Successful",
+      noBookingMessage: "No booking reference found, but your payment was processed.",
+      currentStatusLabel: "Current Status:",
+      viewDetailsButton: "View Detailed Status",
+      loadingMessage: "Loading your booking..."
+    },
+    bookingDetails: {
+      title: "Booking Confirmed!",
+      subtitle: "Your ride is booked successfully",
+      successMessage: "You will receive an SMS confirmation shortly. We will contact you if there are any issues.",
+      payDepositButton: "Pay Deposit",
+      editBookingButton: "Edit Booking",
+      cancelBookingButton: "Cancel Booking",
+      cancelConfirmMessage: "Are you sure you want to cancel this booking?",
+      cancelSuccessMessage: "Booking cancelled successfully.",
+      paymentError: "Failed to create payment link.",
+      notFoundMessage: "No booking found with the provided ID.",
+      loadingMessage: "Loading booking details..."
+    },
+    feedback: {
+      title: "Leave Feedback",
+      subtitle: "Help us improve our service",
+      rateExperienceTitle: "Rate Your Experience",
+      rateExperienceDescription: "How was your ride?",
+      commentsTitle: "Additional Comments",
+      commentsLabel: "Comments",
+      commentsPlaceholder: "Tell us about your experience...",
+      submitButton: "Submit Feedback",
+      successTitle: "Thank You!",
+      successMessage: "Your feedback is greatly appreciated and helps us improve our service.",
+      errorNoRating: "Please select a star rating.",
+      errorSubmission: "Sorry, there was an issue submitting your feedback. Please try again later."
+    },
+    cancel: {
+      title: "Payment Canceled",
+      subtitle: "Your payment was not completed",
+      errorTitle: "Payment Canceled",
+      errorMessage: "Your payment was canceled. Please try again."
+    },
+    manage: {
+      title: "Manage Your Booking",
+      subtitle: "Reference: {bookingId}",
+      resendButton: "Re-send Confirmation Email/SMS",
+      cancelButton: "Cancel Ride",
+      payBalanceButton: "Pay Remaining Balance",
+      viewStatusButton: "View Status Page",
+      cancelConfirmMessage: "Are you sure you want to cancel this ride? A cancellation fee may apply.",
+      cancelSuccessMessage: "Ride cancelled. You will receive a confirmation shortly.",
+      resendSuccessMessage: "Confirmation sent!",
+      resendErrorMessage: "Failed to send confirmation",
+      payBalanceErrorMessage: "Failed to create balance payment link",
+      notFoundMessage: "Booking not found",
+      loadingMessage: "Loading booking details..."
+    },
+    status: {
+      title: "Your Ride Status",
+      subtitleLabel: "Pickup Time:",
+      stepPending: "Pending",
+      stepConfirmed: "Confirmed",
+      stepCompleted: "Completed",
+      statusPending: "We've received your booking and will confirm it shortly.",
+      statusConfirmed: "Your ride is confirmed! We'll notify you when your driver is on the way.",
+      statusCompleted: "Your ride is complete. Thank you for choosing us!",
+      statusCancelled: "This booking has been cancelled.",
+      alertCancelledTitle: "Booking Cancelled",
+      alertCancelledMessage: "This booking has been cancelled.",
+      alertNotFoundTitle: "Booking Not Found",
+      alertNotFoundMessage: "No booking found with the provided ID.",
+      alertErrorTitle: "Error",
+      alertErrorMessage: "Failed to load booking status.",
+      loadingMessage: "Loading ride status...",
+      liveDriverHeader: "Live Driver Location"
     }
   },
   business: {

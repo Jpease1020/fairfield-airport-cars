@@ -20,7 +20,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: 'Booking already cancelled' });
   }
 
-  // TODO: Determine refund amount based on policy. Placeholder full refund.
   try {
     const settings = await (await import('@/lib/settings-service')).getSettings();
 

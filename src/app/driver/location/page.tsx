@@ -39,12 +39,10 @@ function DriverLocationContent() {
             { merge: true }
           );
         } catch (err) {
-          console.error('Failed to write location', err);
           setStatus('Error updating location');
         }
       },
       (err) => {
-        console.error(err);
         setStatus(err.message);
       },
       { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 }

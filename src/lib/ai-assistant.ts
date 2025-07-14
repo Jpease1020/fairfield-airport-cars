@@ -193,7 +193,5 @@ export const generateLocalResponse = async (message: string, context: AIAssistan
 
 // Future: Integrate with external AI services
 export const callExternalAI = async (message: string, context: AIAssistantContext) => {
-  // This could integrate with OpenAI, Anthropic, or other AI services
-  // For now, we'll use our local logic
   return generateAIResponse(message, context);
 }; 

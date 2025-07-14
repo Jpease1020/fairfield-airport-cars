@@ -20,6 +20,39 @@ A modern, mobile-friendly booking platform for airport car service in Fairfield,
 - **Payment tracking** and Square integration
 - **Calendar view** of all bookings
 
+### Content Management System (CMS)
+The platform features a comprehensive CMS that allows Gregg to edit all customer-facing content without developer intervention:
+
+#### Floating Admin Edit Mode
+- **Real-time editing**: Toggle edit mode on any customer page to make inline changes
+- **Visual feedback**: See changes immediately with styled input fields and textareas
+- **Save/Cancel functionality**: Save changes to the CMS or cancel to revert
+- **Admin detection**: Only authorized admins (justin@fairfieldairportcar.com, gregg@fairfieldairportcar.com) see edit controls
+
+#### Content-Editable Pages
+All customer-facing pages are fully content-editable:
+1. **Homepage** - Hero section, features, fleet, FAQ, contact, final CTA
+2. **Booking Form** - Page headers, form labels, buttons, error messages
+3. **Help/FAQ** - FAQ items, contact information, categories
+4. **Success Page** - Payment success messages, status labels, buttons
+5. **Booking Details** - Confirmation messages, action buttons, alerts
+6. **Feedback Page** - Rating interface, form fields, success/error messages
+7. **Cancel Page** - Error messages and instructions
+8. **Manage Booking Page** - Action buttons, confirmations, messages
+9. **Status Page** - Progress steps, status descriptions, alerts
+
+#### Admin CMS Interface
+- **Comprehensive forms**: Edit all content through organized admin forms at `/admin/cms/pages`
+- **Type-safe editing**: Full TypeScript support with proper validation
+- **Default content**: Complete fallback content for all pages
+- **Real-time preview**: See changes reflected immediately on customer pages
+
+#### CMS Features
+- **Business Settings**: Company info, contact details, social media
+- **Pricing Configuration**: Base fares, per-mile rates, deposit percentages
+- **Page Content**: All text, buttons, messages, and user-facing content
+- **Communication Templates**: Email and SMS templates for automated messages
+
 ## AI Assistant Features
 
 The AI Assistant provides Gregg with intelligent help for his business:

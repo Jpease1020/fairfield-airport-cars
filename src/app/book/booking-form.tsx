@@ -25,7 +25,6 @@ const useGoogleMapsScript = (apiKey: string) => {
 
     // Check if Google Maps is already loaded with Places
     if (window.google && window.google.maps && window.google.maps.places) {
-      console.log('Google Maps with Places already loaded');
       setIsLoaded(true);
       return;
     }
@@ -33,14 +32,10 @@ const useGoogleMapsScript = (apiKey: string) => {
     // Check if script is already being loaded
     const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
     if (existingScript) {
-      console.log('Found existing Google Maps script, waiting for it to load');
-      
       const checkPlaces = () => {
         if (window.google?.maps?.places) {
-          console.log('Places library now available');
           setIsLoaded(true);
         } else {
-          console.log('Still waiting for Places library...');
           setTimeout(checkPlaces, 100);
         }
       };
@@ -50,7 +45,6 @@ const useGoogleMapsScript = (apiKey: string) => {
       return;
     }
 
-    console.log('Loading Google Maps API with Places library');
     const script = document.createElement('script');
     // Ensure Places library is explicitly loaded with loading=async for better performance
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async&callback=initGoogleMaps`;
@@ -59,15 +53,12 @@ const useGoogleMapsScript = (apiKey: string) => {
     
     // Create global callback function
     const initCallback = () => {
-      console.log('Google Maps API loaded via callback');
       
       // Double-check that Places is available
       if (window.google?.maps?.places) {
-        console.log('Places library confirmed available');
         setIsLoaded(true);
       } else {
-        console.error('Places library not available after load');
-        setLoadError('Places library not available');
+        setLoadError('Places library not available after load');
       }
       
       // Clean up the global callback
@@ -77,8 +68,7 @@ const useGoogleMapsScript = (apiKey: string) => {
     (window as typeof window & { initGoogleMaps?: () => void }).initGoogleMaps = initCallback;
     
     script.onerror = () => {
-      console.error('Failed to load Google Maps script');
-      setLoadError('Failed to load Google Maps');
+      setLoadError('Failed to load Google Maps script');
       delete (window as typeof window & { initGoogleMaps?: () => void }).initGoogleMaps;
     };
     
@@ -138,64 +128,35 @@ export default function BookingForm({ booking }: BookingFormProps) {
 
   // Initialize AutocompleteSuggestion when Google Maps is loaded
   useEffect(() => {
-    console.log('UseEffect for AutocompleteSuggestion triggered', {
-      isLoaded,
-      hasGoogle: !!window.google,
-      hasMaps: !!window.google?.maps,
-      hasPlaces: !!window.google?.maps?.places,
-      hasAutocompleteSuggestion: !!window.google?.maps?.places?.AutocompleteSuggestion,
-    });
-
     if (!isLoaded) {
-      console.log('Google Maps not loaded yet');
       return;
     }
 
     if (!window.google?.maps?.places) {
-      console.log('Google Maps Places library not available');
       return;
     }
 
-    console.log('Google Maps and Places library ready for AutocompleteSuggestion');
   }, [isLoaded]);
 
   // Function to get address predictions using the new AutocompleteSuggestion API
   const getPlacePredictions = async (input: string, callback: (predictions: google.maps.places.AutocompletePrediction[]) => void) => {
-    console.log('getPlacePredictions called with:', {
-      input,
-      hasPlaces: !!window.google?.maps?.places,
-      inputTrimmed: input.trim(),
-      inputLength: input.trim().length
-    });
-
     if (!window.google?.maps?.places || !input.trim()) {
-      console.log('No Google Maps Places or empty input');
       callback([]);
       return;
     }
-
     try {
-      // Use the new AutocompleteSuggestion API
-      console.log('Calling AutocompleteSuggestion API with input:', input.trim());
-      
-      // For now, let's try a fetch-based approach to the Places API (New)
       const response = await fetch(`/api/places-autocomplete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ input: input.trim() }),
       });
-
       if (response.ok) {
         const data = await response.json();
-        console.log('Got predictions from API:', data.predictions);
-        console.log('First prediction structure:', data.predictions[0]);
         callback(data.predictions || []);
       } else {
-        console.log('Places API request failed:', response.status);
         callback([]);
       }
     } catch (error) {
-      console.error('Error calling Places API:', error);
       callback([]);
     }
   };
@@ -218,34 +179,26 @@ export default function BookingForm({ booking }: BookingFormProps) {
 
   // Handle pickup input change
   const handlePickupInputChange = (value: string) => {
-    console.log('Pickup input changed:', value);
     setPickupLocation(value);
     if (value.length > 2) {
-      console.log('Getting predictions for pickup:', value);
       debouncedGetPlacePredictions(value, (predictions) => {
-        console.log('Received predictions for pickup:', predictions);
         setPickupSuggestions(predictions);
         setShowPickupSuggestions(true);
       });
     } else {
-      console.log('Input too short, hiding suggestions');
       setShowPickupSuggestions(false);
     }
   };
 
   // Handle dropoff input change
   const handleDropoffInputChange = (value: string) => {
-    console.log('Dropoff input changed:', value);
     setDropoffLocation(value);
     if (value.length > 2) {
-      console.log('Getting predictions for dropoff:', value);
       debouncedGetPlacePredictions(value, (predictions) => {
-        console.log('Received predictions for dropoff:', predictions);
         setDropoffSuggestions(predictions);
         setShowDropoffSuggestions(true);
       });
     } else {
-      console.log('Input too short, hiding suggestions');
       setShowDropoffSuggestions(false);
     }
   };
@@ -254,39 +207,25 @@ export default function BookingForm({ booking }: BookingFormProps) {
   const handlePickupSuggestionSelect = (prediction: google.maps.places.AutocompletePrediction) => {
     setPickupLocation(prediction.description);
     setShowPickupSuggestions(false);
-    console.log('Selected pickup:', prediction.description);
   };
 
   const handleDropoffSuggestionSelect = (prediction: google.maps.places.AutocompletePrediction) => {
     setDropoffLocation(prediction.description);
     setShowDropoffSuggestions(false);
-    console.log('Selected dropoff:', prediction.description);
   };
 
   const handleCalculateFare = async () => {
-    // Debug: Log current state values
-    console.log('Calculate fare called with:', {
-      pickupLocation,
-      dropoffLocation,
-      pickupInputValue: pickupInputRef.current?.value,
-      dropoffInputValue: dropoffInputRef.current?.value,
-    });
-
-    // Try to sync state with input values if they're out of sync
     const pickupValue = pickupInputRef.current?.value || '';
     const dropoffValue = dropoffInputRef.current?.value || '';
     
     if (pickupValue && !pickupLocation) {
-      console.log('Syncing pickup location from input value');
       setPickupLocation(pickupValue);
     }
     
     if (dropoffValue && !dropoffLocation) {
-      console.log('Syncing dropoff location from input value');
       setDropoffLocation(dropoffValue);
     }
 
-    // Use the actual values from inputs if state is empty
     const finalPickupLocation = pickupLocation || pickupValue;
     const finalDropoffLocation = dropoffLocation || dropoffValue;
 

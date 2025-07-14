@@ -42,10 +42,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    // order_id was stored in Square order.metadata.bookingId
-    // For simplicity, assume bookingId === order_id for now (can store metadata retrieval later)
     const bookingId = payment.order_id;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tipCents = (payment as any).tipMoney?.amount || (payment as any).tip_money?.amount || 0;
     await updateBooking(bookingId, {
       status: 'confirmed',
@@ -56,7 +53,6 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ message: 'Booking confirmed' });
   } catch (err) {
-    console.error('Failed to update booking from Square webhook', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 } 

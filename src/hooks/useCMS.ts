@@ -15,7 +15,6 @@ export function useCMS() {
         const cmsConfig = await cmsService.getCMSConfiguration();
         setConfig(cmsConfig);
       } catch (err) {
-        console.error('Error loading CMS configuration:', err);
         setError('Failed to load content');
       } finally {
         setLoading(false);
@@ -33,7 +32,6 @@ export function useCMS() {
       const cmsConfig = await cmsService.getCMSConfiguration();
       setConfig(cmsConfig);
     } catch (err) {
-      console.error('Error refreshing CMS configuration:', err);
       setError('Failed to refresh content');
     } finally {
       setLoading(false);
