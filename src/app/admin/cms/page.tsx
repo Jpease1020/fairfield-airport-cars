@@ -208,7 +208,11 @@ const CMSPage = () => {
             {lastUpdated && (
               <Badge variant="secondary">
                 <Clock className="h-3 w-3 mr-1" />
-                Updated {lastUpdated.toLocaleDateString()}
+                Updated (
+                  {lastUpdated
+                    ? new Date(lastUpdated).toLocaleDateString()
+                    : "Unknown"}
+                )
               </Badge>
             )}
           </div>

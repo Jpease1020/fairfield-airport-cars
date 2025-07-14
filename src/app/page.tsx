@@ -233,22 +233,24 @@ export default function HomePage() {
           />
         </div>
       ) : (
-        <section className="py-20 bg-gray-900 text-white text-center">
-          <div className="max-w-3xl mx-auto px-4">
-            <h2 className="text-xl font-bold mb-4 text-blue-400">
+        <section className="py-24 md:py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white text-center relative overflow-hidden">
+          {/* Background pattern for visual interest */}
+          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-xl md:text-2xl font-semibold mb-6 text-blue-300">
               {homeContent.hero.subtitle}
             </h2>
-            <h1 className="text-5xl font-extrabold mb-6 text-white">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-white leading-tight">
               {homeContent.hero.title}
             </h1>
-            <p className="text-lg mb-8 text-gray-200">
+            <p className="text-lg md:text-xl mb-12 text-gray-200 max-w-3xl mx-auto leading-relaxed">
               Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/book" className="px-8 py-3 text-lg font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <a href="/book" className="px-10 py-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 {homeContent.hero.ctaText}
               </a>
-              <a href="/help" className="px-8 py-3 text-lg font-medium text-blue-600 bg-white border border-blue-600 rounded-md shadow hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              <a href="/help" className="px-10 py-4 text-lg font-semibold text-blue-600 bg-white border-2 border-blue-600 rounded-xl shadow-lg hover:shadow-xl hover:bg-gray-50 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Learn More
               </a>
             </div>
@@ -257,26 +259,26 @@ export default function HomePage() {
       )}
 
       {/* Features Section */}
-      <div className="py-20 bg-white">
+      <div className="py-24 md:py-32 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16 md:mb-20">
             {editMode ? (
               <>
                 <label className="edit-label">Features Title</label>
                 <input
-                  className="editable-input text-3xl font-bold w-full mb-2"
+                  className="editable-input text-3xl md:text-4xl font-bold w-full mb-2"
                   value={localContent?.features.title || ''}
                   onChange={e => handleFieldChange('features', 'title', e.target.value)}
                 />
               </>
             ) : (
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">{homeContent.features.title}</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">{homeContent.features.title}</h2>
             )}
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Experience the difference with our premium airport car service
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
             {(editMode ? localContent?.features.items : features).map((feature: any, index: number) => (
               <div key={index} className={editMode ? 'bg-white p-4 rounded shadow' : ''}>
                 {editMode ? (

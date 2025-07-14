@@ -78,6 +78,27 @@ body {
   background: #fff;
   color: #1a202c; /* Tailwind gray-900 */
   font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+/* Enhanced focus states for better accessibility */
+*:focus {
+  outline: none;
+}
+
+/* Smooth scrolling for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced button hover effects */
+.btn-enhanced {
+  transition: all 0.2s ease;
+}
+
+.btn-enhanced:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .section-bg {

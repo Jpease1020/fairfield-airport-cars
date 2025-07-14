@@ -377,11 +377,18 @@ export default function BookingForm({ booking }: BookingFormProps) {
   if (!isLoaded) return <div>{bookingFormText?.loading || 'Loading...'}</div>;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="grid gap-2">
           <Label htmlFor="name">{bookingFormText?.fullNameLabel || 'Full Name'}</Label>
-          <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          <Input 
+            id="name" 
+            type="text" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            required 
+            className="border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 rounded-lg h-12"
+          />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="email">{bookingFormText?.emailLabel || 'Email Address'}</Label>
@@ -504,7 +511,11 @@ export default function BookingForm({ booking }: BookingFormProps) {
           </div>
         )}
       </div>
-      <Button type="submit" disabled={!fare} className="w-full">
+      <Button 
+        type="submit" 
+        disabled={!fare} 
+        className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+      >
         {isEditMode ? (bookingFormText?.updateBookingButton || 'Update Booking') : (bookingFormText?.bookNowButton || 'Book Now')}
       </Button>
       {error && <p className="text-red-500 text-center mt-4">{error}</p>}
