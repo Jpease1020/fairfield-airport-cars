@@ -23,7 +23,6 @@ export const sendSms = async ({ to, body }: SmsPayload) => {
       from: twilioPhoneNumber,
       to,
     });
-    console.log(`SMS sent successfully to ${to}. Message SID: ${message.sid}`);
     return message;
   } catch (error) {
     console.error(`Failed to send SMS to ${to}:`, error);

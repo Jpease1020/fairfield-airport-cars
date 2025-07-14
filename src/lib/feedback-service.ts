@@ -15,7 +15,6 @@ export const createFeedback = async (feedbackData: FeedbackData) => {
       ...feedbackData,
       createdAt: serverTimestamp(),
     });
-    console.log('Feedback submitted successfully');
   } catch (error) {
     console.error('Error submitting feedback:', error);
     throw new Error('Failed to submit feedback.');

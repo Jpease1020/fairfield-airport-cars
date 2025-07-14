@@ -96,7 +96,6 @@ export async function refundPayment(orderId: string, amount: number, currency: s
     const orderResp = await (squareClient as any).ordersApi.retrieveOrder(orderId);
     const paymentIds: string[] = (orderResp as any).order?.tenders?.map((t: any) => t.paymentId).filter(Boolean) || [];
     if (paymentIds.length === 0) {
-      console.log('No payment found on order; maybe deposit not paid yet.');
       return;
     }
 
@@ -112,7 +111,6 @@ export async function refundPayment(orderId: string, amount: number, currency: s
     } as any;
 
     await (squareClient as any).refundsApi.refundPayment(body);
-    console.log(`[Square] Refund executed for payment ${paymentId}: ${amount} ${currency}`);
   } catch (err) {
     console.error('Square refund error:', err);
     throw err;
