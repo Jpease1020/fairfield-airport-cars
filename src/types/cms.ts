@@ -215,6 +215,7 @@ export interface CMSConfiguration {
   bookingForm: BookingFormText;
   lastUpdated: Date;
   version: string;
+  themeColors?: Record<string, string>; // <-- add this line
 }
 
 // Default configurations

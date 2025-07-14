@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAIAssistantContext, generateAIResponse } from '@/lib/ai-assistant';
+import { getAIAssistantContext, generateAIResponse, generateLocalResponse } from '@/lib/ai-assistant';
 
 export async function POST(request: Request) {
   try {
@@ -10,11 +10,25 @@ export async function POST(request: Request) {
     }
 
     const context = await getAIAssistantContext();
-    const response = await generateAIResponse(message, context);
-
-    return NextResponse.json({ response });
+    try {
+      const response = await generateAIResponse(message, context);
+      return NextResponse.json({ response });
+    } catch (error) {
+      console.error('AI Assistant OpenAI/local error:', error);
+      // Always try local fallback
+      try {
+        const fallback = await generateLocalResponse(message, context);
+        return NextResponse.json({ response: fallback });
+      } catch (fallbackError) {
+        console.error('AI Assistant fallback error:', fallbackError);
+        return NextResponse.json({ 
+          error: 'Failed to process request',
+          response: "I'm sorry, I'm having trouble right now. Please try again or contact your developer for assistance."
+        }, { status: 500 });
+      }
+    }
   } catch (error) {
-    console.error('AI Assistant error:', error);
+    console.error('AI Assistant route error:', error);
     return NextResponse.json({ 
       error: 'Failed to process request',
       response: "I'm sorry, I'm having trouble right now. Please try again or contact your developer for assistance."

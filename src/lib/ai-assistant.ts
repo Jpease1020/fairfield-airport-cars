@@ -56,7 +56,7 @@ export const callOpenAI = async (message: string, context: AIAssistantContext) =
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const systemPrompt = `You are Gregg's AI assistant for his car service business in Fairfield, CT. You help him manage bookings, customers, and business operations.
+  const systemPrompt = `You are Gregg's AI assistant for his car service business in Fairfield, CT. You help him manage bookings, customers, and business operations. You also have knowledge about the technical aspects of the app.
 
 Current business context:
 - Company: ${context.businessInfo.name}
@@ -74,7 +74,21 @@ Available actions:
 - Send customer messages: Admin → Bookings → Click booking → Send Message
 - Update website content: Admin → CMS → Pages
 
-Be helpful, professional, and provide specific actionable advice. Keep responses concise but informative.`;
+Technical knowledge about the app:
+- Built with Next.js 15, TypeScript, and Tailwind CSS
+- Backend: Firebase (Firestore database, Authentication)
+- Payments: Square integration for secure payment processing
+- SMS: Twilio for customer notifications
+- Email: SMTP (Gmail/Google Workspace) for confirmations
+- Maps: Google Maps API for location services
+- Hosting: Vercel for deployment
+- Database: Firestore (NoSQL) for bookings, CMS, settings
+- Admin authentication: Firebase Auth with email/password
+- Voice features: Web Speech API for AI assistant
+- AI: OpenAI integration (optional) with local fallback
+- Mobile-responsive design with modern UI components
+
+Be helpful, professional, and provide specific actionable advice. Keep responses concise but informative. You can explain both business operations and technical aspects of the app.`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4",
@@ -143,18 +157,38 @@ export const generateLocalResponse = async (message: string, context: AIAssistan
     return `To update your website content:\n\n• Homepage: Admin → CMS → Pages → Homepage\n• Help/FAQ: Admin → CMS → Pages → Help Page\n• Business info: Admin → CMS → Business Settings\n• Email/SMS templates: Admin → CMS → Communication`;
   }
 
-  // Technical support responses
-  if (lowerMessage.includes('problem') || lowerMessage.includes('issue') || lowerMessage.includes('not working')) {
-    return `Common troubleshooting:\n\n• Booking form not working? Check Google Maps API key\n• SMS/email not sending? Check Twilio and email credentials\n• Payments not processing? Verify Square credentials\n• Admin login issues? Contact your developer\n\nFor technical support, contact your developer.`;
+  // Technical questions about the app
+  if (lowerMessage.includes('app') || lowerMessage.includes('built') || lowerMessage.includes('technology') || lowerMessage.includes('tech') || lowerMessage.includes('code')) {
+    return `The Fairfield Airport Cars app is built with:\n\n**Frontend:**\n• Next.js 15 (React framework)\n• TypeScript (type-safe JavaScript)\n• Tailwind CSS (styling)\n• Mobile-responsive design\n\n**Backend:**\n• Firebase Firestore (database)\n• Firebase Authentication (admin login)\n• Next.js API routes (server-side logic)\n\n**Integrations:**\n• Square (payments)\n• Twilio (SMS notifications)\n• Google Maps (location services)\n• SMTP email (confirmations)\n• OpenAI (AI assistant)\n\n**Hosting:**\n• Vercel (deployment and hosting)\n• Automatic deployments from GitHub\n\n**Features:**\n• Real-time booking management\n• CMS for editable content\n• Voice-enabled AI assistant\n• Mobile-optimized booking form\n• Admin dashboard with analytics`;
+  }
+
+  // Database questions
+  if (lowerMessage.includes('database') || lowerMessage.includes('data') || lowerMessage.includes('firebase') || lowerMessage.includes('firestore')) {
+    return `The app uses Firebase Firestore as the database:\n\n**What's stored:**\n• Customer bookings and details\n• Business settings and pricing\n• CMS content (pages, business info)\n• Promotional codes\n• Admin user accounts\n\n**Data structure:**\n• Bookings collection (customer info, rides, payments)\n• Settings collection (pricing, business config)\n• CMS collection (website content)\n• Users collection (admin accounts)\n\n**Backup:**\n• Automatic daily backups\n• Data export available\n• Real-time synchronization`;
+  }
+
+  // Security questions
+  if (lowerMessage.includes('security') || lowerMessage.includes('safe') || lowerMessage.includes('secure') || lowerMessage.includes('password')) {
+    return `Security features:\n\n**Data Protection:**\n• All sensitive data encrypted\n• API keys stored server-side only\n• HTTPS required for all connections\n• Admin authentication required\n\n**Payment Security:**\n• Square handles all payment processing\n• No credit card data stored in app\n• PCI compliant payment system\n\n**Admin Access:**\n• Firebase Authentication\n• Email/password login\n• Session management\n• Secure admin routes\n\n**Customer Data:**\n• Customer info encrypted in database\n• SMS/email sent securely\n• Booking confirmations via secure channels`;
+  }
+
+  // Deployment questions
+  if (lowerMessage.includes('deploy') || lowerMessage.includes('host') || lowerMessage.includes('server') || lowerMessage.includes('vercel')) {
+    return `The app is deployed on Vercel:\n\n**Deployment:**\n• Automatic deployments from GitHub\n• Zero-downtime updates\n• Global CDN for fast loading\n• SSL certificates included\n\n**Environment:**\n• Production: https://your-domain.vercel.app\n• Development: Local development server\n• Environment variables for secrets\n\n**Monitoring:**\n• Vercel analytics included\n• Error tracking and logging\n• Performance monitoring\n• Uptime monitoring`;
+  }
+
+  // Troubleshooting responses
+  if (lowerMessage.includes('problem') || lowerMessage.includes('issue') || lowerMessage.includes('not working') || lowerMessage.includes('error')) {
+    return `Common troubleshooting:\n\n**Booking Issues:**\n• Check Google Maps API key configuration\n• Verify Square credentials are set\n• Ensure Firebase connection is working\n\n**Email/SMS Issues:**\n• Check SMTP credentials (Gmail/Google Workspace)\n• Verify Twilio credentials for SMS\n• Test email templates in CMS\n\n**Admin Access:**\n• Reset password via Firebase console\n• Check admin email configuration\n• Verify authentication settings\n\n**Technical Issues:**\n• Check Vercel deployment logs\n• Verify environment variables\n• Contact developer for complex issues`;
   }
 
   // General help
   if (lowerMessage.includes('help') || lowerMessage.includes('how') || lowerMessage.includes('what')) {
-    return `I can help you with:\n\n• Managing bookings and customers\n• Updating website content\n• Understanding your business data\n• Troubleshooting technical issues\n• Setting up payments and communications\n\nTry asking about bookings, pricing, payments, or website updates!`;
+    return `I can help you with:\n\n**Business Operations:**\n• Managing bookings and customers\n• Updating website content\n• Understanding your business data\n• Setting up payments and communications\n\n**Technical Questions:**\n• How the app is built and deployed\n• Database structure and security\n• Integration details (Square, Twilio, etc.)\n• Troubleshooting technical issues\n\nTry asking about bookings, pricing, payments, website updates, or technical aspects of the app!`;
   }
 
   // Default response
-  return `I understand you're asking about "${message}". Let me help you with that. Could you be more specific? I can help with:\n\n• Booking management\n• Business information\n• Customer communication\n• Pricing and payments\n• Website content\n• Technical issues`;
+  return `I understand you're asking about "${message}". Let me help you with that. Could you be more specific? I can help with:\n\n• Booking management\n• Business information\n• Customer communication\n• Pricing and payments\n• Website content\n• Technical aspects of the app\n• Troubleshooting issues`;
 };
 
 // Future: Integrate with external AI services

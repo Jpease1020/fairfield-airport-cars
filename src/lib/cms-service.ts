@@ -301,8 +301,14 @@ export class CMSService {
 export const cmsService = CMSService.getInstance();
 
 // Helper functions for common operations
-export const getCMSConfig = () => cmsService.getCMSConfiguration();
-export const updateCMSConfig = (config: Partial<CMSConfiguration>) => cmsService.updateCMSConfiguration(config);
+export async function getCMSConfig(): Promise<CMSConfiguration & { themeColors?: Record<string, string> }> {
+  const config = await cmsService.getCMSConfiguration();
+  return { ...config, themeColors: config.themeColors };
+}
+
+export async function updateCMSConfig(update: Partial<CMSConfiguration> & { themeColors?: Record<string, string> }) {
+  await cmsService.updateCMSConfiguration({ ...update, themeColors: update.themeColors });
+}
 export const getBusinessConfig = () => cmsService.getBusinessSettings();
 export const getPricingConfig = () => cmsService.getPricingSettings();
 export const getEmailTemplates = () => cmsService.getEmailTemplates();

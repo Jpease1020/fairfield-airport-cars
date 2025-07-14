@@ -115,7 +115,11 @@ const AIAssistantPage = () => {
     "How do I send a message to a customer?",
     "How do I change my pricing?",
     "What if a customer wants to cancel?",
-    "How do payments work?"
+    "How do payments work?",
+    "How is this app built?",
+    "Is my customer data secure?",
+    "How does the database work?",
+    "What if something isn't working?"
   ];
 
   return (
@@ -261,6 +265,10 @@ const AIAssistantPage = () => {
                   <div className="flex items-center gap-2">
                     <Bot className="w-4 h-4" />
                     <span>Website content</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    <span>Technical questions</span>
                   </div>
                 </div>
               </CardContent>
