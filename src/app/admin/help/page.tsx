@@ -128,17 +128,18 @@ const AdminHelpPage = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#f2efef]">
       <PageHeader 
         title="Admin Help & Guide" 
         subtitle="Everything you need to know about managing your car service business"
+        className="text-white"
       />
       <PageContent>
         <div className="grid gap-6">
           {helpSections.map((section, sectionIndex) => (
             <Card key={sectionIndex}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <section.icon className="h-5 w-5" />
                   {section.title}
                 </CardTitle>
@@ -147,8 +148,8 @@ const AdminHelpPage = () => {
                 <div className="space-y-4">
                   {section.items.map((item, itemIndex) => (
                     <div key={itemIndex} className="border-b border-gray-200 pb-4 last:border-b-0">
-                      <h4 className="font-medium text-gray-900 mb-2">{item.question}</h4>
-                      <p className="text-gray-600 text-sm">{item.answer}</p>
+                      <h4 className="font-medium text-white mb-2">{item.question}</h4>
+                      <p className="text-gray-100 text-sm">{item.answer}</p>
                     </div>
                   ))}
                 </div>
@@ -158,27 +159,27 @@ const AdminHelpPage = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Phone className="h-5 w-5" />
                 Need More Help?
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-100 mb-4">
                 If you can&apos;t find the answer you&apos;re looking for, here are additional resources:
               </p>
               <div className="grid gap-3">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">Contact your developer for technical support</span>
+                  <span className="text-sm text-gray-100">Contact your developer for technical support</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">Check the business documentation in your project files</span>
+                  <span className="text-sm text-gray-100">Check the business documentation in your project files</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Settings className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">Review your CMS settings for configuration options</span>
+                  <span className="text-sm text-gray-100">Review your CMS settings for configuration options</span>
                 </div>
               </div>
             </CardContent>

@@ -21,8 +21,8 @@ const PageContainer = React.forwardRef<HTMLDivElement, PageContainerProps>(
     const paddingClasses = {
       none: '',
       sm: 'p-4',
-      md: 'p-6 md:p-8',
-      lg: 'p-8 md:p-12',
+      md: 'p-6 py-6 sm:py-8 md:py-10',
+      lg: 'p-8 py-8 sm:py-10 md:py-12',
     };
 
     return (

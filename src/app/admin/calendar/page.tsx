@@ -31,7 +31,7 @@ const CalendarPage = () => {
   }, []);
 
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#f2efef]">
       <PageHeader title="Ride Calendar" />
       <PageContent>
         <Card>

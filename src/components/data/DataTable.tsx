@@ -23,7 +23,7 @@ interface DataTableProps<T> {
   columns: Column<T>[];
   onRowClick?: (item: T) => void;
   loading?: boolean;
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
   className?: string;
 }
 
@@ -51,7 +51,7 @@ function DataTable<T extends { id?: string }>({
   if (data.length === 0) {
     return (
       <div className={cn('w-full text-center py-8', className)}>
-        <p className="text-gray-500">{emptyMessage}</p>
+        {emptyMessage}
       </div>
     );
   }

@@ -152,7 +152,7 @@ const PricingSettingsPage = () => {
   return (
     <>
       <AdminNavigation />
-      <PageContainer>
+      <PageContainer className="bg-[#f2efef]">
         <PageHeader 
           title="Pricing Settings" 
           subtitle="Manage fare structure, zones, and cancellation policies"

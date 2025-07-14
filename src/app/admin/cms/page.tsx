@@ -181,7 +181,7 @@ const CMSPage = () => {
   return (
     <>
       <AdminNavigation />
-      <PageContainer>
+      <PageContainer className="bg-[#f2efef]">
         <PageHeader 
           title="Content Management System" 
           subtitle="Manage all website content and business settings"
@@ -231,8 +231,8 @@ const CMSPage = () => {
                         <IconComponent className="h-5 w-5" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg">{section.title}</CardTitle>
-                        <p className="text-sm text-gray-600">{section.description}</p>
+                        <CardTitle className="text-lg text-white">{section.title}</CardTitle>
+                        <p className="text-sm text-gray-100">{section.description}</p>
                       </div>
                     </div>
                   </div>

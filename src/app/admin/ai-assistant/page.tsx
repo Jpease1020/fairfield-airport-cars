@@ -123,7 +123,7 @@ const AIAssistantPage = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#f2efef]">
       <PageHeader 
         title="AI Assistant" 
         subtitle="Get help with your car service business"

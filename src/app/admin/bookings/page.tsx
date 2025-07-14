@@ -238,7 +238,7 @@ const AdminBookingsPage: NextPage = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#f2efef]">
       <PageHeader 
         title="Booking Dashboard" 
         subtitle={`Month-to-date revenue: ${formatPrice(totalRevenue)} | Tips: ${formatPrice(totalTips)} | Cancellation fees: ${formatPrice(totalCancFees)}`}
@@ -248,7 +248,7 @@ const AdminBookingsPage: NextPage = () => {
           <CardContent className="p-6">
             <div className="mb-6">
               <SelectField
-                label="Filter by status"
+                label={<span className="text-gray-100">Filter by status</span>}
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as Booking['status'] | 'all')}
                 options={[
@@ -265,7 +265,7 @@ const AdminBookingsPage: NextPage = () => {
               data={sortedAndFilteredBookings}
               columns={columns}
               loading={loading}
-              emptyMessage="No bookings found"
+              emptyMessage={<span className="text-gray-100">No bookings found</span>}
             />
           </CardContent>
         </Card>

@@ -113,7 +113,7 @@ const BusinessSettingsPage = () => {
   return (
     <>
       <AdminNavigation />
-      <PageContainer>
+      <PageContainer className="bg-[#f2efef]">
         <PageHeader 
           title="Business Settings" 
           subtitle="Manage company information, contact details, and branding"

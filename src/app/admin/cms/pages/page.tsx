@@ -413,7 +413,7 @@ const PagesCMS = () => {
   }
 
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#f2efef]">
       <PageHeader title="Manage Page Content" />
       <LayoutPageContent>
         {error && <div className="text-red-500 mb-4">{error}</div>}

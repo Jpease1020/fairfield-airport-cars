@@ -18,7 +18,7 @@ interface SelectFieldProps extends React.SelectHTMLAttributes<HTMLSelectElement>
 
 const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
   ({ className, label, options, error, helperText, required, id, ...props }, ref) => {
-    const fieldId = id || `select-${label.toLowerCase().replace(/\s+/g, '-')}`;
+    const fieldId = id || (typeof label === 'string' ? `select-${label.toLowerCase().replace(/\s+/g, '-')}` : 'select-unknown');
 
     return (
       <div className="space-y-2">

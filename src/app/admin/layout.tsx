@@ -8,7 +8,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminNavigation />
-      <main className="py-6">
+      <main className="">
         {children}
       </main>
     </div>

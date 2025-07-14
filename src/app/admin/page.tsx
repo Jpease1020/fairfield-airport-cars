@@ -231,7 +231,7 @@ const AdminDashboard = () => {
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickActions.map((action) => {
               const IconComponent = action.icon;
@@ -261,7 +261,7 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">Recent Bookings</h2>
             <Link href="/admin/bookings">
-              <Button variant="outline" size="sm" className="text-white border-white hover:bg-white/10">
+              <Button variant="outline" size="sm" className="text-white border-white hover:bg-gray-100 hover:text-gray-900">
                 View All
               </Button>
             </Link>

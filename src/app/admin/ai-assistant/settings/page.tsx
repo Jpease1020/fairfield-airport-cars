@@ -83,7 +83,7 @@ export default function AIAssistantSettingsPage() {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#f2efef]">
       <PageHeader 
         title="AI Assistant Settings" 
         subtitle="Configure your AI assistant preferences"
