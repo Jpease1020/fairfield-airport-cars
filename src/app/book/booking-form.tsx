@@ -319,7 +319,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.fullNameLabel || 'Full Name'}</label>
+          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.fullNameLabel || 'Full Name'}</label>
           <input
             id="name"
             type="text"
@@ -331,7 +331,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
           />
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.emailLabel || 'Email Address'}</label>
+          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.emailLabel || 'Email Address'}</label>
           <input
             id="email"
             type="email"
@@ -344,7 +344,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
         </div>
       </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.phoneLabel || 'Phone Number'}</label>
+        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.phoneLabel || 'Phone Number'}</label>
         <input
           id="phone"
           type="tel"
@@ -356,7 +356,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
         />
       </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.pickupLocationLabel || 'Pickup Location'}</label>
+        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.pickupLocationLabel || 'Pickup Location'}</label>
         <input
           id="pickupLocation"
           ref={pickupInputRef}
@@ -389,7 +389,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
         )}
       </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.dropoffLocationLabel || 'Dropoff Location'}</label>
+        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.dropoffLocationLabel || 'Dropoff Location'}</label>
         <input
           id="dropoffLocation"
           ref={dropoffInputRef}
@@ -422,7 +422,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
         )}
       </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.pickupDateTimeLabel || 'Pickup Date and Time'}</label>
+        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.pickupDateTimeLabel || 'Pickup Date and Time'}</label>
         <input
           id="pickupDateTime"
           type="datetime-local"
@@ -434,7 +434,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.passengersLabel || 'Passengers'}</label>
+          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.passengersLabel || 'Passengers'}</label>
           <input
             id="passengers"
             type="number"
@@ -446,7 +446,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
           />
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.flightNumberLabel || 'Flight Number (Optional)'}</label>
+          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.flightNumberLabel || 'Flight Number (Optional)'}</label>
           <input
             id="flightNumber"
             type="text"
@@ -458,7 +458,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
         </div>
       </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">{bookingFormText?.notesLabel || 'Notes (Optional)'}</label>
+        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.notesLabel || 'Notes (Optional)'}</label>
         <textarea
           id="notes"
           value={notes}

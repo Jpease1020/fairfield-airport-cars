@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import './page-editable.css';
+import '../page-editable.css';
 
 export default function PrivacyPage() {
   const { config: cmsConfig } = useCMS();
@@ -43,8 +43,20 @@ export default function PrivacyPage() {
     setSaveMsg(null);
     try {
       const { cmsService } = await import('@/lib/cms-service');
+      const defaultHome = {
+        hero: { title: '', subtitle: '', ctaText: '' },
+        features: { title: '', items: [] },
+        about: { title: '', content: '' },
+        contact: { title: '', content: '', phone: '', email: '' }
+      };
+      const defaultHelp = {
+        faq: [],
+        contactInfo: { phone: '', email: '', hours: '' }
+      };
       await cmsService.updateCMSConfiguration({
         pages: {
+          home: cmsConfig?.pages?.home || defaultHome,
+          help: cmsConfig?.pages?.help || defaultHelp,
           ...cmsConfig?.pages,
           privacy: localContent,
         },

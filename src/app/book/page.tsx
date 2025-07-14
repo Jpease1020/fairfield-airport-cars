@@ -125,7 +125,7 @@ const BookPage: NextPage = () => {
         </div>
       )}
 
-      <div className="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.1)] rounded-3xl max-w-xl w-full p-8 md:p-12 flex flex-col items-center">
+      <div className="bg-white text-gray-900 shadow-[0_4px_20px_rgba(0,0,0,0.1)] rounded-3xl max-w-xl w-full p-8 md:p-12 flex flex-col items-center">
         {/* Logo Placeholder */}
         <div className="flex justify-center mb-6">
           {/* Replace with your car logo SVG, e.g.: */}
@@ -174,10 +174,10 @@ const BookPage: NextPage = () => {
           </div>
         ) : (
           <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#0B1F3A] mb-2">
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-white mb-2">
               {bookingPageContent?.title || "Book Your Ride"}
             </h1>
-            <p className="text-gray-500 text-lg mb-2">
+            <p className="text-gray-900 text-lg mb-2">
               {bookingPageContent?.subtitle || "Premium airport transportation service"}
             </p>
             {bookingPageContent?.description && (

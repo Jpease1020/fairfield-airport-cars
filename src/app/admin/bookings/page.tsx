@@ -248,7 +248,7 @@ const AdminBookingsPage: NextPage = () => {
           <CardContent className="p-6">
             <div className="mb-6">
               <SelectField
-                label={<span className="text-gray-100">Filter by status</span>}
+                label="Filter by status"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as Booking['status'] | 'all')}
                 options={[
