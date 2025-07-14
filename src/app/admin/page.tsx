@@ -109,7 +109,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#f2efef]">
       <PageHeader 
         title="Admin Dashboard" 
         subtitle="Welcome back! Here's what's happening with your business."
@@ -124,8 +124,8 @@ const AdminDashboard = () => {
                   <BookOpen className="h-6 w-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Today's Bookings</p>
-                  <p className="text-2xl font-bold text-gray-900">{todayBookings.length}</p>
+                  <p className="text-sm font-medium text-white">Today's Bookings</p>
+                  <p className="text-2xl font-bold text-white">{todayBookings.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -138,8 +138,8 @@ const AdminDashboard = () => {
                   <Clock className="h-6 w-6 text-yellow-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-gray-900">{pendingBookings.length}</p>
+                  <p className="text-sm font-medium text-white">Pending</p>
+                  <p className="text-2xl font-bold text-white">{pendingBookings.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -152,8 +152,8 @@ const AdminDashboard = () => {
                   <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Confirmed</p>
-                  <p className="text-2xl font-bold text-gray-900">{confirmedBookings.length}</p>
+                  <p className="text-sm font-medium text-white">Confirmed</p>
+                  <p className="text-2xl font-bold text-white">{confirmedBookings.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -166,8 +166,8 @@ const AdminDashboard = () => {
                   <XCircle className="h-6 w-6 text-red-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Cancelled</p>
-                  <p className="text-2xl font-bold text-gray-900">{cancelledBookings.length}</p>
+                  <p className="text-sm font-medium text-white">Cancelled</p>
+                  <p className="text-2xl font-bold text-white">{cancelledBookings.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -178,7 +178,7 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <DollarSign className="h-5 w-5" />
                 Revenue Overview
               </CardTitle>
@@ -186,16 +186,16 @@ const AdminDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Total Revenue</span>
-                  <span className="font-semibold">${totalRevenue.toFixed(2)}</span>
+                  <span className="text-white">Total Revenue</span>
+                  <span className="font-semibold text-white">${totalRevenue.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Today's Revenue</span>
-                  <span className="font-semibold">${todayRevenue.toFixed(2)}</span>
+                  <span className="text-white">Today's Revenue</span>
+                  <span className="font-semibold text-white">${todayRevenue.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Completed Rides</span>
-                  <span className="font-semibold">{completedBookings.length}</span>
+                  <span className="text-white">Completed Rides</span>
+                  <span className="font-semibold text-white">{completedBookings.length}</span>
                 </div>
               </div>
             </CardContent>
@@ -203,7 +203,7 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Calendar className="h-5 w-5" />
                 Recent Activity
               </CardTitle>
@@ -213,16 +213,16 @@ const AdminDashboard = () => {
                 {todayBookings.slice(0, 3).map((booking) => (
                   <div key={booking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
-                      <p className="font-medium text-sm">{booking.name}</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-sm text-white">{booking.name}</p>
+                      <p className="text-xs text-white">
                         {new Date(booking.pickupDateTime).toLocaleTimeString()}
                       </p>
                     </div>
-                    <span className="text-sm font-medium">${booking.fare}</span>
+                    <span className="text-sm font-medium text-white">${booking.fare}</span>
                   </div>
                 ))}
                 {todayBookings.length === 0 && (
-                  <p className="text-gray-500 text-sm">No bookings today</p>
+                  <p className="text-white text-sm">No bookings today</p>
                 )}
               </div>
             </CardContent>
@@ -244,8 +244,8 @@ const AdminDashboard = () => {
                           <IconComponent className="h-6 w-6 text-white" />
                         </div>
                         <div className="ml-4">
-                          <h3 className="font-semibold text-gray-900">{action.title}</h3>
-                          <p className="text-sm text-gray-600">{action.description}</p>
+                          <h3 className="font-semibold text-white">{action.title}</h3>
+                          <p className="text-sm text-white">{action.description}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -261,7 +261,7 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">Recent Bookings</h2>
             <Link href="/admin/bookings">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="text-white border-white hover:bg-white/10">
                 View All
               </Button>
             </Link>

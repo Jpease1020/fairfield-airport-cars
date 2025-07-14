@@ -80,19 +80,19 @@ const BookPage: NextPage = () => {
 
   if (cmsLoading) {
     return (
-      <PageContainer maxWidth="2xl" padding="lg">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0B1F3A] to-[#1E2C4C]">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full border-2 border-current border-t-transparent w-6 h-6 text-gray-600 mx-auto mb-4"></div>
-            <span className="text-sm text-gray-600">Loading...</span>
+            <span className="text-sm text-gray-200">Loading...</span>
           </div>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer maxWidth="2xl" padding="lg">
+    <div className="min-h-screen bg-gradient-to-b from-[#0B1F3A] to-[#1E2C4C] flex items-center justify-center p-6">
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
@@ -125,70 +125,71 @@ const BookPage: NextPage = () => {
         </div>
       )}
 
-      {/* Page Header */}
-      {editMode ? (
-        <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
-          <label className="edit-label font-semibold">Page Title</label>
-          <input
-            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-14 px-4"
-            value={localContent?.title || ''}
-            onChange={e => handleFieldChange('title', e.target.value)}
-          />
-          <label className="edit-label font-semibold">Page Subtitle</label>
-          <input
-            className="editable-input text-xl w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
-            value={localContent?.subtitle || ''}
-            onChange={e => handleFieldChange('subtitle', e.target.value)}
-          />
-          <label className="edit-label font-semibold">Page Description</label>
-          <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
-            value={localContent?.description || ''}
-            onChange={e => handleFieldChange('description', e.target.value)}
-            rows={3}
-          />
-          <div className="flex gap-2 mt-4">
-            <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"
-              onClick={handleCancel}
-              disabled={saving}
-            >
-              Cancel
-            </button>
-            {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+      <div className="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.1)] rounded-3xl max-w-xl w-full p-8 md:p-12 flex flex-col items-center">
+        {/* Logo Placeholder */}
+        <div className="flex justify-center mb-6">
+          {/* Replace with your car logo SVG, e.g.: */}
+          {/* <img src="/car.svg" alt="Fairfield Car Service Logo" className="h-12 w-auto" /> */}
+          <svg width="48" height="48" fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#0B1F3A" fill-rule="evenodd"/></svg>
+        </div>
+        {/* Page Header */}
+        {editMode ? (
+          <div className="text-center mb-8 flex flex-col gap-4">
+            <label className="edit-label font-semibold">Page Title</label>
+            <input
+              className="editable-input text-3xl md:text-4xl font-serif font-bold w-full mb-2 border-2 border-gray-200 focus:border-[#6B7C93] focus:ring-2 focus:ring-[#6B7C93] rounded-lg h-14 px-4"
+              value={localContent?.title || ''}
+              onChange={e => handleFieldChange('title', e.target.value)}
+            />
+            <label className="edit-label font-semibold">Page Subtitle</label>
+            <input
+              className="editable-input text-lg md:text-xl w-full mb-2 border-2 border-gray-200 focus:border-[#6B7C93] focus:ring-2 focus:ring-[#6B7C93] rounded-lg h-12 px-4"
+              value={localContent?.subtitle || ''}
+              onChange={e => handleFieldChange('subtitle', e.target.value)}
+            />
+            <label className="edit-label font-semibold">Page Description</label>
+            <textarea
+              className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-[#6B7C93] focus:ring-2 focus:ring-[#6B7C93] rounded-lg p-4"
+              value={localContent?.description || ''}
+              onChange={e => handleFieldChange('description', e.target.value)}
+              rows={3}
+            />
+            <div className="flex gap-2 mt-4 justify-center">
+              <button
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+            </div>
           </div>
-        </div>
-      ) : (
-        <PageHeader 
-          title={bookingPageContent?.title || "Book Your Ride"} 
-          subtitle={bookingPageContent?.subtitle || "Premium airport transportation service"}
-        />
-      )}
-
-      {/* Page Description */}
-      {bookingPageContent?.description && !editMode && (
-        <div className="mb-8 text-center">
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            {bookingPageContent.description}
-          </p>
-        </div>
-      )}
-
-      <PageContent>
-        <Card>
-          <CardContent className="p-8">
-            <BookingForm />
-          </CardContent>
-        </Card>
-      </PageContent>
-    </PageContainer>
+        ) : (
+          <div className="text-center mb-10">
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#0B1F3A] mb-2">
+              {bookingPageContent?.title || "Book Your Ride"}
+            </h1>
+            <p className="text-gray-500 text-lg mb-2">
+              {bookingPageContent?.subtitle || "Premium airport transportation service"}
+            </p>
+            {bookingPageContent?.description && (
+              <p className="text-gray-600 text-base max-w-2xl mx-auto mt-2">
+                {bookingPageContent.description}
+              </p>
+            )}
+          </div>
+        )}
+        <BookingForm />
+      </div>
+    </div>
   );
 };
 

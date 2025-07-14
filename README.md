@@ -20,38 +20,38 @@ A modern, mobile-friendly booking platform for airport car service in Fairfield,
 - **Payment tracking** and Square integration
 - **Calendar view** of all bookings
 
-### Content Management System (CMS)
-The platform features a comprehensive CMS that allows Gregg to edit all customer-facing content without developer intervention:
+## CMS & Edit Mode Patterns
 
-#### Floating Admin Edit Mode
-- **Real-time editing**: Toggle edit mode on any customer page to make inline changes
-- **Visual feedback**: See changes immediately with styled input fields and textareas
-- **Save/Cancel functionality**: Save changes to the CMS or cancel to revert
-- **Admin detection**: Only authorized admins (justin@fairfieldairportcar.com, gregg@fairfieldairportcar.com) see edit controls
+### Floating Admin Edit Mode
+- **Toggle Edit Mode**: Admins see a floating "Edit Mode" button on all customer-facing pages. Clicking it enables inline editing for all content on that page.
+- **Inline Editing**: When edit mode is active, all editable fields (titles, subtitles, form labels, FAQ items, etc.) become input fields or textareas, styled for clarity.
+- **Save/Cancel**: Admins can save changes (which update the CMS and reflect instantly) or cancel to revert edits.
+- **Admin Detection**: Only authorized admin users (e.g., justin@fairfieldairportcar.com, gregg@fairfieldairportcar.com) see the edit controls.
 
-#### Content-Editable Pages
-All customer-facing pages are fully content-editable:
-1. **Homepage** - Hero section, features, fleet, FAQ, contact, final CTA
-2. **Booking Form** - Page headers, form labels, buttons, error messages
-3. **Help/FAQ** - FAQ items, contact information, categories
-4. **Success Page** - Payment success messages, status labels, buttons
-5. **Booking Details** - Confirmation messages, action buttons, alerts
-6. **Feedback Page** - Rating interface, form fields, success/error messages
-7. **Cancel Page** - Error messages and instructions
-8. **Manage Booking Page** - Action buttons, confirmations, messages
-9. **Status Page** - Progress steps, status descriptions, alerts
+### List of Content-Editable Pages
+All major customer-facing pages are fully content-editable via the CMS:
+1. **Homepage** – Hero, features, fleet, FAQ, contact, final CTA
+2. **Booking Form** – Page headers, form labels, buttons, error messages
+3. **Help/FAQ** – FAQ items, contact info, categories
+4. **Success Page** – Payment success, status labels, buttons
+5. **Booking Details** – Confirmation messages, action buttons, alerts
+6. **Feedback Page** – Rating interface, form fields, success/error messages
+7. **Cancel Page** – Error messages and instructions
+8. **Manage Booking Page** – Action buttons, confirmations, messages
+9. **Status Page** – Progress steps, status descriptions, alerts
 
-#### Admin CMS Interface
-- **Comprehensive forms**: Edit all content through organized admin forms at `/admin/cms/pages`
-- **Type-safe editing**: Full TypeScript support with proper validation
-- **Default content**: Complete fallback content for all pages
-- **Real-time preview**: See changes reflected immediately on customer pages
+### Admin CMS Interface
+- **Comprehensive Forms**: All content is editable through organized forms at `/admin/cms/pages`.
+- **Type Safety**: All content is fully typed with TypeScript interfaces for safety and validation.
+- **Default Content**: Each page has fallback content to ensure the site always works.
+- **Real-Time Preview**: Changes are reflected immediately on the live site.
 
-#### CMS Features
-- **Business Settings**: Company info, contact details, social media
-- **Pricing Configuration**: Base fares, per-mile rates, deposit percentages
-- **Page Content**: All text, buttons, messages, and user-facing content
-- **Communication Templates**: Email and SMS templates for automated messages
+### Example Edit Mode Flow
+1. Admin logs in and visits any customer-facing page.
+2. "Edit Mode" button appears (floating at top-right).
+3. Admin clicks to enable edit mode; all editable content becomes input fields.
+4. Admin makes changes, then clicks "Save" (or "Cancel" to revert).
+5. Changes are saved to the CMS and instantly reflected for all users.
 
 ## AI Assistant Features
 
