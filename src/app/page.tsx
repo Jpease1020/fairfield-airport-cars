@@ -75,17 +75,24 @@ export default function HomePage() {
     setSaving(true);
     setSaveMsg(null);
     try {
-      await cmsService.updateCMSConfiguration({
+      const user = auth.currentUser;
+      const result = await cmsService.updateCMSConfiguration({
         pages: {
           ...cmsConfig?.pages,
-          help: cmsConfig?.pages.help || { faq: [], contactInfo: { phone: '', email: '', hours: '' } },
           home: localContent,
+          help: cmsConfig?.pages.help || { faq: [], contactInfo: { phone: '', email: '', hours: '' } },
         },
-      });
-      setSaveMsg('Saved!');
-      setTimeout(() => setSaveMsg(null), 2000);
-      setEditMode(false);
-    } catch {
+      }, user?.uid, user?.email || undefined);
+      
+      if (result.success) {
+        setSaveMsg('Saved!');
+        setTimeout(() => setSaveMsg(null), 2000);
+        setEditMode(false);
+      } else {
+        setSaveMsg(`Failed to save: ${result.errors?.join(', ')}`);
+      }
+    } catch (error) {
+      console.error('Save error:', error);
       setSaveMsg('Failed to save.');
     } finally {
       setSaving(false);

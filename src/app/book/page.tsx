@@ -9,6 +9,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { cmsService } from '@/lib/cms-service';
 import { Button } from '@/components/ui/button';
+import { EditableInput, EditableTextarea } from '@/components/forms';
 
 const BookPage: NextPage = () => {
   const { config: cmsConfig, loading: cmsLoading } = useCMS();
@@ -94,7 +95,7 @@ const BookPage: NextPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-[#0B1F3A] to-[#1E2C4C] flex items-center justify-center p-6">
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
-        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
+        <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
           {!editMode ? (
             <Button
               onClick={() => setEditMode(true)}
@@ -135,23 +136,24 @@ const BookPage: NextPage = () => {
         {/* Page Header */}
         {editMode ? (
           <div className="text-center mb-8 flex flex-col gap-4">
-            <label className="edit-label font-semibold">Page Title</label>
-            <input
-              className="editable-input text-3xl md:text-4xl font-serif font-bold w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-14 px-4"
+            <EditableInput
+              label="Page Title"
               value={localContent?.title || ''}
-              onChange={e => handleFieldChange('title', e.target.value)}
+              onChange={(e) => handleFieldChange('title', e.target.value)}
+              size="xl"
+              variant="title"
             />
-            <label className="edit-label font-semibold">Page Subtitle</label>
-            <input
-              className="editable-input text-lg md:text-xl w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
+            <EditableInput
+              label="Page Subtitle"
               value={localContent?.subtitle || ''}
-              onChange={e => handleFieldChange('subtitle', e.target.value)}
+              onChange={(e) => handleFieldChange('subtitle', e.target.value)}
+              size="lg"
+              variant="subtitle"
             />
-            <label className="edit-label font-semibold">Page Description</label>
-            <textarea
-              className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
+            <EditableTextarea
+              label="Page Description"
               value={localContent?.description || ''}
-              onChange={e => handleFieldChange('description', e.target.value)}
+              onChange={(e) => handleFieldChange('description', e.target.value)}
               rows={3}
             />
             <div className="flex gap-2 mt-4 justify-center">

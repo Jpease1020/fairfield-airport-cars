@@ -66,26 +66,29 @@ const HelpPage: NextPage = () => {
     setSaving(true);
     setSaveMsg(null);
     try {
-      await cmsService.updateCMSConfiguration({
+      const user = auth.currentUser;
+      const result = await cmsService.updateCMSConfiguration({
         pages: {
+          ...cmsConfig?.pages,
+          help: localContent,
           home: cmsConfig?.pages.home || {
             hero: { title: '', subtitle: '', ctaText: '' },
             features: { title: '', items: [] },
             about: { title: '', content: '' },
             contact: { title: '', content: '', phone: '', email: '' },
           },
-          help: localContent,
-          booking: cmsConfig?.pages.booking || {
-            title: 'Book Your Ride',
-            subtitle: 'Premium airport transportation service',
-            description: 'Reserve your luxury airport transportation with our professional drivers.'
-          },
         },
-      });
-      setSaveMsg('Saved!');
-      setTimeout(() => setSaveMsg(null), 2000);
-      setEditMode(false);
-    } catch {
+      }, user?.uid, user?.email || undefined);
+      
+      if (result.success) {
+        setSaveMsg('Saved!');
+        setTimeout(() => setSaveMsg(null), 2000);
+        setEditMode(false);
+      } else {
+        setSaveMsg(`Failed to save: ${result.errors?.join(', ')}`);
+      }
+    } catch (error) {
+      console.error('Save error:', error);
       setSaveMsg('Failed to save.');
     } finally {
       setSaving(false);

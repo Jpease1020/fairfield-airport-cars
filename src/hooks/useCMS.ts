@@ -8,6 +8,14 @@ export function useCMS() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Subscribe to real-time updates
+    const unsubscribe = cmsService.subscribeToCMSUpdates((cmsConfig) => {
+      setConfig(cmsConfig);
+      setLoading(false);
+      setError(null);
+    });
+
+    // Initial load
     const loadCMS = async () => {
       try {
         setLoading(true);
@@ -22,6 +30,11 @@ export function useCMS() {
     };
 
     loadCMS();
+
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const refresh = async () => {

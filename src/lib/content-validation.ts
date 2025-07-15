@@ -51,7 +51,7 @@ export class ContentValidator {
     phone: {
       maxLength: 20,
       required: false,
-      pattern: /^[\+]?[1-9][\d]{0,15}$/,
+      pattern: /^$|^[\+]?[1-9][\d]{0,15}$/,
       sanitize: true,
       allowedTags: []
     },
@@ -193,13 +193,21 @@ export class ContentValidator {
         'about.content': { maxLength: 2000, required: false, sanitize: true, allowedTags: ['p', 'b', 'i', 'em', 'strong'] },
         'contact.title': { maxLength: 100, required: false, sanitize: true },
         'contact.content': { maxLength: 1000, required: false, sanitize: true, allowedTags: ['p', 'b', 'i', 'em', 'strong'] },
-        'contact.phone': { maxLength: 20, required: false, pattern: /^[\+]?[1-9][\d]{0,15}$/, sanitize: true },
-        'contact.email': { maxLength: 100, required: false, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, sanitize: true }
+        'contact.phone': { maxLength: 20, required: false, pattern: /^$|^[\+]?[1-9][\d]{0,15}$/, sanitize: true },
+        'contact.email': { maxLength: 100, required: false, pattern: /^$|^[^\s@]+@[^\s@]+\.[^\s@]+$/, sanitize: true }
       },
       booking: {
         title: { maxLength: 100, required: true, sanitize: true },
         subtitle: { maxLength: 200, required: false, sanitize: true },
         description: { maxLength: 1000, required: false, sanitize: true, allowedTags: ['p', 'b', 'i', 'em', 'strong'] }
+      },
+      help: {
+        title: { maxLength: 100, required: false, sanitize: true },
+        subtitle: { maxLength: 200, required: false, sanitize: true },
+        faqTitle: { maxLength: 100, required: false, sanitize: true },
+        'contactInfo.phone': { maxLength: 20, required: false, pattern: /^$|^[\+]?[1-9][\d]{0,15}$/, sanitize: true },
+        'contactInfo.email': { maxLength: 100, required: false, pattern: /^$|^[^\s@]+@[^\s@]+\.[^\s@]+$/, sanitize: true },
+        'contactInfo.hours': { maxLength: 100, required: false, sanitize: true }
       }
     };
 

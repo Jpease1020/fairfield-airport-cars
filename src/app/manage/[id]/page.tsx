@@ -10,6 +10,7 @@ import { BookingCard } from '@/components/booking';
 import { Alert } from '@/components/feedback';
 import { LoadingSpinner } from '@/components/data';
 import { Button } from '@/components/ui/button';
+import { EditableInput } from '@/components/forms';
 import { useCMS } from '@/hooks/useCMS';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -226,7 +227,7 @@ export default function ManageBookingPage() {
     <PageContainer maxWidth="md" padding="lg">
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
-        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
+        <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
           {!editMode ? (
             <Button
               onClick={() => setEditMode(true)}
@@ -258,83 +259,74 @@ export default function ManageBookingPage() {
       {/* Page Header */}
       {editMode ? (
         <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
-          <label className="edit-label font-semibold">Page Title</label>
-          <input
-            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-14 px-4"
+          <EditableInput
+            label="Page Title"
             value={localContent?.title || ''}
-            onChange={e => handleFieldChange('title', e.target.value)}
+            onChange={(e) => handleFieldChange('title', e.target.value)}
+            size="xl"
+            variant="title"
           />
-          <label className="edit-label font-semibold">Page Subtitle</label>
-          <input
-            className="editable-input text-xl text-text-secondary w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
+          <EditableInput
+            label="Page Subtitle"
             value={localContent?.subtitle || ''}
-            onChange={e => handleFieldChange('subtitle', e.target.value)}
+            onChange={(e) => handleFieldChange('subtitle', e.target.value)}
+            size="lg"
+            variant="subtitle"
           />
-          <label className="edit-label font-semibold">Resend Button Text</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Resend Button Text"
             value={localContent?.resendButton || ''}
-            onChange={e => handleFieldChange('resendButton', e.target.value)}
+            onChange={(e) => handleFieldChange('resendButton', e.target.value)}
           />
-          <label className="edit-label font-semibold">Cancel Button Text</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Cancel Button Text"
             value={localContent?.cancelButton || ''}
-            onChange={e => handleFieldChange('cancelButton', e.target.value)}
+            onChange={(e) => handleFieldChange('cancelButton', e.target.value)}
           />
-          <label className="edit-label font-semibold">Pay Balance Button Text</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Pay Balance Button Text"
             value={localContent?.payBalanceButton || ''}
-            onChange={e => handleFieldChange('payBalanceButton', e.target.value)}
+            onChange={(e) => handleFieldChange('payBalanceButton', e.target.value)}
           />
-          <label className="edit-label font-semibold">View Status Button Text</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="View Status Button Text"
             value={localContent?.viewStatusButton || ''}
-            onChange={e => handleFieldChange('viewStatusButton', e.target.value)}
+            onChange={(e) => handleFieldChange('viewStatusButton', e.target.value)}
           />
-          <label className="edit-label font-semibold">Cancel Confirm Message</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Cancel Confirm Message"
             value={localContent?.cancelConfirmMessage || ''}
-            onChange={e => handleFieldChange('cancelConfirmMessage', e.target.value)}
+            onChange={(e) => handleFieldChange('cancelConfirmMessage', e.target.value)}
           />
-          <label className="edit-label font-semibold">Cancel Success Message</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Cancel Success Message"
             value={localContent?.cancelSuccessMessage || ''}
-            onChange={e => handleFieldChange('cancelSuccessMessage', e.target.value)}
+            onChange={(e) => handleFieldChange('cancelSuccessMessage', e.target.value)}
           />
-          <label className="edit-label font-semibold">Resend Success Message</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Resend Success Message"
             value={localContent?.resendSuccessMessage || ''}
-            onChange={e => handleFieldChange('resendSuccessMessage', e.target.value)}
+            onChange={(e) => handleFieldChange('resendSuccessMessage', e.target.value)}
           />
-          <label className="edit-label font-semibold">Resend Error Message</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Resend Error Message"
             value={localContent?.resendErrorMessage || ''}
-            onChange={e => handleFieldChange('resendErrorMessage', e.target.value)}
+            onChange={(e) => handleFieldChange('resendErrorMessage', e.target.value)}
           />
-          <label className="edit-label font-semibold">Pay Balance Error Message</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Pay Balance Error Message"
             value={localContent?.payBalanceErrorMessage || ''}
-            onChange={e => handleFieldChange('payBalanceErrorMessage', e.target.value)}
+            onChange={(e) => handleFieldChange('payBalanceErrorMessage', e.target.value)}
           />
-          <label className="edit-label font-semibold">Not Found Message</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Not Found Message"
             value={localContent?.notFoundMessage || ''}
-            onChange={e => handleFieldChange('notFoundMessage', e.target.value)}
+            onChange={(e) => handleFieldChange('notFoundMessage', e.target.value)}
           />
-          <label className="edit-label font-semibold">Loading Message</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
+          <EditableInput
+            label="Loading Message"
             value={localContent?.loadingMessage || ''}
-            onChange={e => handleFieldChange('loadingMessage', e.target.value)}
+            onChange={(e) => handleFieldChange('loadingMessage', e.target.value)}
           />
           <div className="flex gap-2 mt-4">
             <Button

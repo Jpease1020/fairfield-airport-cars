@@ -1,3 +1,6 @@
+// Design System - Import everything from the comprehensive design system
+export * from './design-system';
+
 // Core UI Components
 export { Button, buttonVariants } from './button';
 export { Input } from './input';
