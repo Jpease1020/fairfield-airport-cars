@@ -7,6 +7,7 @@ import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/booking
 import { getSettings } from '@/lib/settings-service';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import { useCMS } from '@/hooks/useCMS';
 import { FormField } from '@/components/forms/FormField';
 
@@ -447,30 +448,30 @@ export default function BookingForm({ booking }: BookingFormProps) {
         />
       </div>
       <div className="flex items-stretch gap-4">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="lg"
           onClick={handleCalculateFare}
           disabled={isCalculating}
-          className="flex-1 h-16 text-sm border border-brand-primary text-brand-primary bg-transparent rounded-xl font-semibold hover:bg-bg-secondary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 h-16"
         >
           {isCalculating ? (bookingFormText?.calculatingFareButton || 'Calculating...') : (bookingFormText?.calculateFareButton || 'Calculate Fare')}
-        </button>
+        </Button>
         {fare && (
           <div className="flex-1 flex items-center justify-center h-16 bg-bg-secondary rounded-md">
             <p className="text-lg font-semibold">{bookingFormText?.estimatedFareLabel || 'Estimated Fare:'} <span className="text-info">${fare}</span></p>
           </div>
         )}
       </div>
-      <button
+      <Button
         type="submit"
+        size="lg"
         disabled={!fare}
-        style={{ backgroundColor: 'var(--brand-primary)' }}
-        className="w-full py-4 text-text-inverse text-lg font-semibold rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-primary-hover)'}
-        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-primary)'}
+        className="w-full py-4 text-lg font-semibold rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         {isEditMode ? (bookingFormText?.updateBookingButton || 'Update Booking') : (bookingFormText?.bookNowButton || 'Book Now')}
-      </button>
+      </Button>
       {error && <p className="text-error text-center mt-4">{error}</p>}
       {success && <p className="text-success text-center mt-4">{success}</p>}
     </form>

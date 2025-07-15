@@ -147,14 +147,14 @@ const HelpPage: NextPage = () => {
     <PageContainer maxWidth="xl" padding="lg">
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
-        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
+        <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
           {!editMode ? (
-            <button
-              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
+            <Button
               onClick={() => setEditMode(true)}
+              className="bg-brand-primary text-white hover:bg-brand-primary-hover"
             >
               Edit Mode
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
               <Button
@@ -294,7 +294,7 @@ const HelpPage: NextPage = () => {
                   <div className="flex flex-col sm:flex-row gap-4">
                     <a 
                       href={`tel:${contactPhone}`}
-                      className="flex-1 px-4 py-3 bg-brand-primary text-text-inverse rounded-md hover:bg-brand-primary-hover text-center font-medium"
+                      className="flex-1 px-4 py-3 bg-brand-primary text-white rounded-md hover:bg-brand-primary-hover text-center font-medium"
                     >
                       {helpContent.contactSection?.callButtonText || 'Click to Call'}
                     </a>

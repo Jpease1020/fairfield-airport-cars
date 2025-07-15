@@ -1,6 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -42,12 +43,14 @@ const Modal: React.FC<ModalProps> = ({
             <h2 className="text-lg font-semibold text-text-primary">
               {title}
             </h2>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
               className="rounded-md p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-secondary transition-colors"
             >
               <X className="h-5 w-5" />
-            </button>
+            </Button>
           </div>
           
           <div className="px-6 py-4">

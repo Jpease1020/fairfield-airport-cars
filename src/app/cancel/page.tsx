@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Alert } from '@/components/feedback';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useCMS } from '@/hooks/useCMS';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -132,28 +133,27 @@ export default function CancelPage() {
       {isAdmin && (
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
-            <button
-              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
+            <Button
               onClick={() => setEditMode(true)}
             >
               Edit Mode
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
-              <button
-                className="px-4 py-2 bg-success text-text-inverse rounded shadow hover:bg-success-hover"
+              <Button
+                variant="success"
                 onClick={handleSave}
                 disabled={saving}
               >
                 {saving ? 'Saving...' : 'Save Changes'}
-              </button>
-              <button
-                className="px-4 py-2 bg-error text-text-inverse rounded shadow hover:bg-error-hover"
+              </Button>
+              <Button
+                variant="destructive"
                 onClick={handleCancel}
                 disabled={saving}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
           {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
@@ -189,20 +189,21 @@ export default function CancelPage() {
             rows={3}
           />
           <div className="flex gap-2 mt-4">
-            <button
-              className="px-6 py-3 bg-brand-primary text-text-inverse rounded-xl font-semibold shadow hover:bg-brand-primary-hover transition-all"
+            <Button
+              size="lg"
               onClick={handleSave}
               disabled={saving}
             >
               {saving ? 'Saving...' : 'Save Changes'}
-            </button>
-            <button
-              className="px-6 py-3 bg-bg-secondary text-text-primary rounded-xl font-semibold shadow hover:bg-bg-muted transition-all"
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
               onClick={handleCancel}
               disabled={saving}
             >
               Cancel
-            </button>
+            </Button>
             {saveMsg && <div className="mt-2 text-sm text-success">{saveMsg}</div>}
           </div>
         </div>

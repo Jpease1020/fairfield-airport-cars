@@ -2,6 +2,7 @@ import React from 'react';
 import { Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
 import { Booking } from '@/types/booking';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface BookingCardProps {
@@ -124,26 +125,32 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {/* Actions */}
       {showActions && onAction && (
         <div className="flex items-center space-x-2 pt-4 border-t border-border-primary">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => onAction('view')}
             className="text-sm text-brand-primary hover:text-brand-primary-hover font-medium"
           >
             View Details
-          </button>
+          </Button>
           {booking.status === 'pending' && (
             <>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => onAction('edit')}
                 className="text-sm text-brand-primary hover:text-brand-primary-hover font-medium"
               >
                 Edit
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => onAction('cancel')}
                 className="text-sm text-error hover:text-error-hover font-medium"
               >
                 Cancel
-              </button>
+              </Button>
             </>
           )}
         </div>

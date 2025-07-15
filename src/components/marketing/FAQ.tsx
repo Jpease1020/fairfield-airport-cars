@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface FAQItem {
   question: string;
@@ -49,7 +50,8 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
           <div className="space-y-4">
             {items.map((item, index) => (
               <div key={index} className="border border-border-primary rounded-lg">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => toggleItem(index)}
                   className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-bg-secondary transition-colors"
                 >
@@ -65,7 +67,7 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
-                </button>
+                </Button>
                 
                 {openItems.has(index) && (
                   <div className="px-6 pb-4">

@@ -17,13 +17,13 @@ import { Textarea } from '@/components/ui/textarea';
 
 // Icon mapping for CMS features
 const iconMap = {
-  clock: <Clock className="h-6 w-6" />,
-  car: <Car className="h-6 w-6" />,
-  smartphone: <Star className="h-6 w-6" />,
-  star: <Star className="h-6 w-6" />,
-  shield: <Shield className="h-6 w-6" />,
-  users: <Users className="h-6 w-6" />,
-  map: <MapPin className="h-6 w-6" />
+  clock: <Clock className="h-6 w-6 text-white" />,
+  car: <Car className="h-6 w-6 text-white" />,
+  smartphone: <Star className="h-6 w-6 text-white" />,
+  star: <Star className="h-6 w-6 text-white" />,
+  shield: <Shield className="h-6 w-6 text-white" />,
+  users: <Users className="h-6 w-6 text-white" />,
+  map: <MapPin className="h-6 w-6 text-white" />
 };
 
 export default function HomePage() {
@@ -177,14 +177,13 @@ export default function HomePage() {
     <PageContainer>
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
-        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
+        <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
           {!editMode ? (
-            <button
-              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
+            <Button
               onClick={() => setEditMode(true)}
             >
               Edit Mode
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
               <Button

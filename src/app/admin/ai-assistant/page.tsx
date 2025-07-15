@@ -222,13 +222,14 @@ const AIAssistantPage = () => {
                 </h3>
                 <div className="space-y-2">
                   {quickQuestions.map((question, index) => (
-                    <button
+                    <Button
                       key={index}
+                      variant="ghost"
                       onClick={() => setInput(question)}
                       className="w-full text-left p-2 text-sm text-text-secondary hover:bg-bg-secondary rounded-md transition-colors"
                     >
                       {question}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </CardContent>

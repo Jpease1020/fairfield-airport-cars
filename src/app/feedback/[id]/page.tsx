@@ -165,12 +165,11 @@ export default function FeedbackPage() {
       {isAdmin && (
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
-            <button
-              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
+            <Button
               onClick={() => setEditMode(true)}
             >
               Edit Mode
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
               <Button
@@ -330,13 +329,12 @@ export default function FeedbackPage() {
               </FormSection>
 
               <div className="flex justify-center pt-6">
-                <button
+                <Button
                   type="submit"
                   disabled={rating === 0}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {feedbackContent?.submitButton || "Submit Feedback"}
-                </button>
+                </Button>
               </div>
             </form>
             

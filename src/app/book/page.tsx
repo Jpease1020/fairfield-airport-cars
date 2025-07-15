@@ -96,12 +96,11 @@ const BookPage: NextPage = () => {
       {isAdmin && (
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+            <Button
               onClick={() => setEditMode(true)}
             >
               Edit Mode
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
               <Button

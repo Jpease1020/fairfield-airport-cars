@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface LocationAutocompleteProps {
@@ -146,9 +147,9 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           className="absolute z-10 w-full mt-1 bg-bg-primary border border-border-primary rounded-md shadow-lg max-h-60 overflow-auto"
         >
           {suggestions.map((suggestion, index) => (
-            <button
+            <Button
               key={index}
-              type="button"
+              variant="ghost"
               onClick={() => handleSuggestionClick(suggestion)}
               className="w-full px-4 py-2 hover:bg-bg-secondary cursor-pointer border-b border-border-primary last:border-b-0 text-left"
             >
@@ -165,7 +166,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                   )}
                 </div>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       )}

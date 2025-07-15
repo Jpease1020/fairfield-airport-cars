@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { Button } from './button';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -62,12 +63,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
           <p className="text-text-secondary mb-4">
             An unexpected error occurred. Please try refreshing the page.
           </p>
-          <button
+          <Button
             onClick={this.resetError}
-            className="px-4 py-2 bg-brand-primary text-text-inverse rounded-md hover:bg-brand-primary-hover"
           >
             Try again
-          </button>
+          </Button>
         </div>
       );
     }

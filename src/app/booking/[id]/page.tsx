@@ -204,28 +204,27 @@ export default function BookingConfirmationPage() {
       {isAdmin && (
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+            <Button
               onClick={() => setEditMode(true)}
             >
               Edit Mode
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+              <Button
+                variant="success"
                 onClick={handleSave}
                 disabled={saving}
               >
                 {saving ? 'Saving...' : 'Save'}
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={handleCancel}
                 disabled={saving}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
           {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
@@ -273,20 +272,21 @@ export default function BookingConfirmationPage() {
             onChange={e => handleFieldChange('cancelBookingButton', e.target.value)}
           />
           <div className="flex gap-2 mt-4">
-            <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
+            <Button
+              size="lg"
               onClick={handleSave}
               disabled={saving}
             >
               {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
               onClick={handleCancel}
               disabled={saving}
             >
               Cancel
-            </button>
+            </Button>
             {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
           </div>
         </div>

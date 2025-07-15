@@ -223,6 +223,7 @@ html {
 /* Utility classes for the design system */
 .text-brand-primary { color: var(--brand-primary); }
 .text-brand-secondary { color: var(--brand-secondary); }
+.text-text-inverse { color: var(--text-inverse); }
 .text-success { color: var(--text-success); }
 .text-warning { color: var(--text-warning); }
 .text-error { color: var(--text-error); }

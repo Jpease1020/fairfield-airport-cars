@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from './button';
 
 interface HelpTooltipProps {
   content: string;
@@ -25,8 +26,10 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
 
   return (
     <div className="relative inline-block">
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon"
         className={cn(
           'inline-flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors',
           className
@@ -37,7 +40,7 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
         onBlur={() => setIsVisible(false)}
       >
         <HelpCircle className={sizeClasses[size]} />
-      </button>
+      </Button>
       
       {isVisible && (
         <div className="absolute z-50 w-64 p-3 text-sm text-text-inverse bg-bg-inverse rounded-lg shadow-lg -top-2 left-8 transform -translate-y-full">
