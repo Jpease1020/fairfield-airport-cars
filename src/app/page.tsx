@@ -76,6 +76,8 @@ export default function HomePage() {
     setSaveMsg(null);
     try {
       const user = auth.currentUser;
+      console.log('Saving CMS content:', { localContent, user: user?.uid });
+      
       const result = await cmsService.updateCMSConfiguration({
         pages: {
           ...cmsConfig?.pages,
@@ -83,6 +85,8 @@ export default function HomePage() {
           help: cmsConfig?.pages.help || { faq: [], contactInfo: { phone: '', email: '', hours: '' } },
         },
       }, user?.uid, user?.email || undefined);
+      
+      console.log('Save result:', result);
       
       if (result.success) {
         setSaveMsg('Saved!');
@@ -256,23 +260,18 @@ export default function HomePage() {
       ) : (
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-brand-primary via-brand-primary-hover to-brand-primary"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-bold text-text-inverse mb-6">
+              <h1 className="text-4xl md:text-6xl font-bold text-text-inverse mb-4">
                 {heroText?.title || 'Premium Airport Transportation'}
               </h1>
-              <p className="text-xl md:text-2xl text-text-inverse/90 mb-8 max-w-3xl mx-auto">
+              <p className="text-xl md:text-2xl text-text-inverse/90 mb-6 max-w-3xl mx-auto">
                 {heroText?.subtitle || 'Reliable, comfortable rides to and from Fairfield Airport. Book your ride today!'}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex justify-center items-center">
                 <Link href="/book">
-                  <Button size="lg" className="bg-text-inverse text-brand-primary hover:bg-text-inverse/90">
+                  <Button size="lg" className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover px-8 py-3 text-lg font-semibold shadow-lg">
                     {heroText?.ctaText || 'Book Now'}
-                  </Button>
-                </Link>
-                <Link href="/help">
-                  <Button variant="outline" size="lg" className="border-text-inverse text-text-inverse hover:bg-text-inverse hover:text-brand-primary">
-                    Learn More
                   </Button>
                 </Link>
               </div>
@@ -282,10 +281,10 @@ export default function HomePage() {
       )}
 
       {/* Features Section */}
-      <section className="py-16 bg-bg-primary">
+      <section className="py-12 bg-bg-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-3">
               {featuresText?.title || 'Why Choose Us?'}
             </h2>
             <p className="text-lg text-text-secondary max-w-2xl mx-auto">
@@ -307,12 +306,12 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-bg-secondary">
+      <section className="py-12 bg-bg-secondary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-3">
             {ctaText?.title || 'Ready to Book Your Ride?'}
           </h2>
-          <p className="text-lg text-text-secondary mb-8">
+          <p className="text-lg text-text-secondary mb-6">
             Get a quote and book your airport transportation in minutes.
           </p>
           <Link href="/book">
@@ -324,9 +323,9 @@ export default function HomePage() {
       </section>
 
       {/* Fleet Section */}
-      <div className="py-20 bg-white">
+      <div className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             {editMode ? (
               <>
                 <label className="edit-label">Fleet Title</label>
@@ -415,7 +414,7 @@ export default function HomePage() {
       </div>
 
       {/* FAQ Section */}
-      <div className="py-20 bg-white">
+      <div className="py-12 bg-white">
         {editMode ? (
           <div className="bg-white p-6 rounded shadow mb-8">
             <label className="edit-label">FAQ Title</label>
@@ -468,7 +467,7 @@ export default function HomePage() {
       </div>
 
       {/* Contact Section */}
-      <div className="py-20 bg-white">
+      <div className="py-12 bg-white">
         {editMode ? (
           <div className="bg-white p-6 rounded shadow mb-8">
             <label className="edit-label">Contact Title</label>
@@ -496,7 +495,7 @@ export default function HomePage() {
       </div>
 
       {/* Final CTA Section */}
-      <div className="py-20 bg-blue-600">
+      <div className="py-12 bg-brand-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {editMode ? (
             <div className="bg-white p-6 rounded shadow mb-8">
@@ -521,13 +520,13 @@ export default function HomePage() {
             </div>
           ) : (
             <>
-              <h2 className="text-3xl font-bold text-white mb-4">{homeContent.finalCta?.title || 'Ready for a Stress-Free Ride?'}</h2>
-              <p className="text-white mb-8 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-text-inverse mb-4">{homeContent.finalCta?.title || 'Ready for a Stress-Free Ride?'}</h2>
+              <p className="text-text-inverse mb-8 max-w-2xl mx-auto">
                 {homeContent.finalCta?.description || 'Book your airport transportation today and experience the difference of premium service.'}
               </p>
               <Link 
                 href="/book"
-                className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-blue-600 bg-white border border-transparent rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+                className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-text-inverse bg-transparent border border-text-inverse rounded-md shadow-sm hover:bg-text-inverse hover:text-brand-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-text-inverse"
               >
                 {homeContent.finalCta?.buttonText || 'Book Now'}
               </Link>

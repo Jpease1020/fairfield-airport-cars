@@ -451,11 +451,20 @@ export class CMSService {
   // Real-time subscription for CMS updates
   subscribeToCMSUpdates(callback: (config: CMSConfiguration) => void): () => void {
     const docRef = doc(db, 'cms', 'configuration');
+    console.log('Setting up CMS subscription to:', docRef);
     
     return onSnapshot(docRef, (doc) => {
+      console.log('CMS subscription update:', doc.exists() ? 'Document exists' : 'Document does not exist');
       if (doc.exists()) {
-        callback(doc.data() as CMSConfiguration);
+        const data = doc.data();
+        console.log('CMS data received:', data);
+        callback(data as CMSConfiguration);
+      } else {
+        console.log('CMS document does not exist, calling callback with null');
+        callback(null as any);
       }
+    }, (error) => {
+      console.error('CMS subscription error:', error);
     });
   }
 }

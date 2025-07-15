@@ -106,48 +106,42 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
           )}
           
           <div className={cn(
-            'grid gap-6',
+            'grid gap-4',
             variant === 'split' ? 'md:grid-cols-2' : 'md:grid-cols-3',
             showMap && variant === 'split' ? 'md:grid-cols-3' : ''
           )}>
-            <div className={cn(
-              'space-y-4',
-              variant === 'split' ? 'md:col-span-1' : '',
-              showMap && variant === 'split' ? 'md:col-span-1' : ''
-            )}>
-              {contactMethods.map((method, index) => (
-                <a
-                  key={index}
-                  href={method.href}
-                  className={cn(
-                    'flex items-center p-4 rounded-lg border transition-colors',
-                    getContactButtonVariant(method.type) === 'default' 
-                      ? 'bg-brand-primary text-text-inverse border-brand-primary hover:bg-brand-primary-hover' 
-                      : 'bg-bg-primary text-text-primary border-border-primary hover:bg-bg-secondary'
-                  )}
-                >
+            {contactMethods.map((method, index) => (
+              <a
+                key={index}
+                href={method.href}
+                className={cn(
+                  'flex items-center p-4 rounded-lg border transition-colors',
+                  getContactButtonVariant(method.type) === 'default' 
+                    ? 'bg-brand-primary text-text-inverse border-brand-primary hover:bg-brand-primary-hover' 
+                    : 'bg-bg-primary text-text-primary border-border-primary hover:bg-bg-secondary'
+                )}
+              >
+                <div className={cn(
+                  'flex-shrink-0 mr-4',
+                  getContactButtonVariant(method.type) === 'default' 
+                    ? 'text-text-inverse' 
+                    : 'text-brand-primary'
+                )}>
+                  {getContactIcon(method.type)}
+                </div>
+                <div>
+                  <div className="font-medium">{method.label}</div>
                   <div className={cn(
-                    'flex-shrink-0 mr-4',
+                    'text-sm',
                     getContactButtonVariant(method.type) === 'default' 
-                      ? 'text-text-inverse' 
-                      : 'text-brand-primary'
+                      ? 'text-text-inverse/80' 
+                      : 'text-text-secondary'
                   )}>
-                    {getContactIcon(method.type)}
+                    {method.value}
                   </div>
-                  <div>
-                    <div className="font-medium">{method.label}</div>
-                    <div className={cn(
-                      'text-sm',
-                      getContactButtonVariant(method.type) === 'default' 
-                        ? 'text-text-inverse/80' 
-                        : 'text-text-secondary'
-                    )}>
-                      {method.value}
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
+                </div>
+              </a>
+            ))}
             
             {showMap && mapLocation && (
               <div className={cn(
