@@ -6,6 +6,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import '../page-editable.css';
+import { Button } from '@/components/ui/button';
 
 export default function PrivacyPage() {
   const { config: cmsConfig } = useCMS();
@@ -82,20 +83,32 @@ export default function PrivacyPage() {
       {isAdmin && (
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
-            <button className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700" onClick={() => setEditMode(true)}>
+            <Button
+              onClick={() => setEditMode(true)}
+              className="bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+            >
               Edit Mode
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
-              <button className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700" onClick={handleSave} disabled={saving}>
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-success text-text-inverse hover:bg-success-hover"
+              >
                 {saving ? 'Saving...' : 'Save'}
-              </button>
-              <button className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500" onClick={handleCancel} disabled={saving}>
+              </Button>
+              <Button
+                onClick={handleCancel}
+                disabled={saving}
+                variant="outline"
+                className="bg-bg-secondary text-text-primary hover:bg-bg-muted"
+              >
                 Cancel
-              </button>
+              </Button>
+              {saveMsg && <div className="mt-2 text-sm text-success">{saveMsg}</div>}
             </div>
           )}
-          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
         </div>
       )}
       <PageHeader title="Privacy Policy" />

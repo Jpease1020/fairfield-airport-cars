@@ -3,22 +3,28 @@ import { cn } from '@/lib/utils';
 
 interface PageContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  spacing?: 'none' | 'sm' | 'md' | 'lg';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 }
 
 const PageContent = React.forwardRef<HTMLDivElement, PageContentProps>(
-  ({ className, spacing = 'md', children, ...props }, ref) => {
-    const spacingClasses = {
-      none: '',
-      sm: 'space-y-4',
-      md: 'space-y-6',
-      lg: 'space-y-8',
+  ({ className, children, maxWidth = 'full', ...props }, ref) => {
+    const maxWidthClasses = {
+      sm: 'max-w-sm',
+      md: 'max-w-md',
+      lg: 'max-w-lg',
+      xl: 'max-w-xl',
+      '2xl': 'max-w-2xl',
+      full: 'max-w-full',
     };
 
     return (
       <div
         ref={ref}
-        className={cn(spacingClasses[spacing], className)}
+        className={cn(
+          'w-full text-text-primary',
+          maxWidthClasses[maxWidth],
+          className
+        )}
         {...props}
       >
         {children}

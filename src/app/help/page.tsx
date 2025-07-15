@@ -9,6 +9,9 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { cmsService } from '@/lib/cms-service';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const HelpPage: NextPage = () => {
   const { content: helpContent, loading: helpLoading, error: helpError } = useHelpPageContent();
@@ -110,8 +113,8 @@ const HelpPage: NextPage = () => {
       <PageContainer maxWidth="xl" padding="lg">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Content Unavailable</h1>
-            <p className="text-gray-600">Please check back later or contact support.</p>
+            <h1 className="text-2xl font-bold text-text-primary mb-4">Content Unavailable</h1>
+            <p className="text-text-secondary">Please check back later or contact support.</p>
           </div>
         </div>
       </PageContainer>
@@ -147,45 +150,46 @@ const HelpPage: NextPage = () => {
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
             <button
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
               onClick={() => setEditMode(true)}
             >
               Edit Mode
             </button>
           ) : (
             <div className="flex gap-2">
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+              <Button
                 onClick={handleSave}
                 disabled={saving}
+                className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover"
               >
                 {saving ? 'Saving...' : 'Save'}
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+              </Button>
+              <Button
                 onClick={handleCancel}
                 disabled={saving}
+                variant="outline"
+                className="bg-bg-secondary text-text-primary hover:bg-bg-muted"
               >
                 Cancel
-              </button>
+              </Button>
+              {saveMsg && <div className="mt-2 text-sm text-success">{saveMsg}</div>}
             </div>
           )}
-          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
         </div>
       )}
 
       {/* Page Header */}
       {editMode ? (
-        <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
+        <div className="mb-8 bg-bg-primary p-6 rounded shadow flex flex-col gap-4">
           <label className="edit-label font-semibold">Page Title</label>
-          <input
-            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-14 px-4"
+          <Input
+            className="editable-input text-3xl font-bold w-full mb-2 h-14 px-4"
             value={localContent?.title || ''}
             onChange={e => handleFieldChange('title', e.target.value)}
           />
           <label className="edit-label font-semibold">Page Subtitle</label>
-          <input
-            className="editable-input text-xl w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+          <Input
+            className="editable-input text-xl w-full mb-2 h-12 px-4"
             value={localContent?.subtitle || ''}
             onChange={e => handleFieldChange('subtitle', e.target.value)}
           />
@@ -201,24 +205,24 @@ const HelpPage: NextPage = () => {
         <Card>
           <CardContent className="p-8">
             {editMode ? (
-              <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
+              <div className="mb-8 bg-bg-primary p-6 rounded shadow flex flex-col gap-4">
                 <label className="edit-label font-semibold">FAQ Section Title</label>
-                <input
-                  className="editable-input text-2xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+                <Input
+                  className="editable-input text-2xl font-bold w-full mb-2 h-12 px-4"
                   value={localContent?.faqTitle || 'Frequently Asked Questions'}
                   onChange={e => handleFieldChange('faqTitle', e.target.value)}
                 />
                 <div className="space-y-4">
                   {(localContent?.faq || faqItems).map((faq: any, index: number) => (
-                    <div key={index} className="border rounded p-4">
+                    <div key={index} className="border border-border-primary rounded p-4">
                       <label className="edit-label">FAQ {index + 1} Question</label>
-                      <input
+                      <Input
                         className="editable-input font-semibold w-full mb-2"
                         value={faq.question}
                         onChange={e => handleFAQChange(index, 'question', e.target.value)}
                       />
                       <label className="edit-label">FAQ {index + 1} Answer</label>
-                      <textarea
+                      <Textarea
                         className="editable-textarea w-full mb-2"
                         value={faq.answer}
                         onChange={e => handleFAQChange(index, 'answer', e.target.value)}
@@ -230,32 +234,32 @@ const HelpPage: NextPage = () => {
               </div>
             ) : (
               <>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                <h2 className="text-2xl font-bold text-text-primary mb-6">
                   {helpContent.faqTitle || 'Frequently Asked Questions'}
                 </h2>
                 <div className="space-y-6">
                   {faqItems.map((faq, index) => (
-                    <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">{faq.question}</h3>
-                      <p className="text-base text-gray-600">{faq.answer}</p>
+                    <div key={index} className="border-b border-border-primary pb-6 last:border-b-0">
+                      <h3 className="text-lg font-medium text-text-primary mb-2">{faq.question}</h3>
+                      <p className="text-base text-text-secondary">{faq.answer}</p>
                     </div>
                   ))}
                 </div>
               </>
             )}
 
-            <div className="mt-10 pt-8 border-t border-gray-200">
+            <div className="mt-10 pt-8 border-t border-border-primary">
               {editMode ? (
-                <div className="bg-white p-6 rounded shadow flex flex-col gap-4">
+                <div className="bg-bg-primary p-6 rounded shadow flex flex-col gap-4">
                   <label className="edit-label font-semibold">Contact Section Title</label>
-                  <input
-                    className="editable-input text-2xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+                  <Input
+                    className="editable-input text-2xl font-bold w-full mb-2 h-12 px-4"
                     value={localContent?.contactSection?.title || 'Contact Us'}
                     onChange={e => handleFieldChange('contactSection', { ...localContent?.contactSection, title: e.target.value })}
                   />
                   <label className="edit-label font-semibold">Contact Description</label>
-                  <textarea
-                    className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+                  <Textarea
+                    className="editable-textarea w-full mb-2 p-4"
                     value={localContent?.contactSection?.description || ''}
                     onChange={e => handleFieldChange('contactSection', { ...localContent?.contactSection, description: e.target.value })}
                     rows={3}
@@ -263,7 +267,7 @@ const HelpPage: NextPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="edit-label">Call Button Text</label>
-                      <input
+                      <Input
                         className="editable-input w-full mb-2"
                         value={localContent?.contactSection?.callButtonText || 'Click to Call'}
                         onChange={e => handleFieldChange('contactSection', { ...localContent?.contactSection, callButtonText: e.target.value })}
@@ -271,7 +275,7 @@ const HelpPage: NextPage = () => {
                     </div>
                     <div>
                       <label className="edit-label">Text Button Text</label>
-                      <input
+                      <Input
                         className="editable-input w-full mb-2"
                         value={localContent?.contactSection?.textButtonText || 'Click to Text'}
                         onChange={e => handleFieldChange('contactSection', { ...localContent?.contactSection, textButtonText: e.target.value })}
@@ -281,22 +285,22 @@ const HelpPage: NextPage = () => {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  <h2 className="text-2xl font-bold text-text-primary mb-6">
                     {helpContent.contactSection?.title || 'Contact Us'}
                   </h2>
-                  <p className="text-base text-gray-600 mb-6">
+                  <p className="text-base text-text-secondary mb-6">
                     {helpContent.contactSection?.description || "If you can't find the answer you're looking for, please don't hesitate to reach out."}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <a 
                       href={`tel:${contactPhone}`}
-                      className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-center font-medium"
+                      className="flex-1 px-4 py-3 bg-brand-primary text-text-inverse rounded-md hover:bg-brand-primary-hover text-center font-medium"
                     >
                       {helpContent.contactSection?.callButtonText || 'Click to Call'}
                     </a>
                     <a 
                       href={`sms:${contactPhone}`}
-                      className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-center font-medium"
+                      className="flex-1 px-4 py-3 border border-border-primary text-text-primary rounded-md hover:bg-bg-secondary text-center font-medium"
                     >
                       {helpContent.contactSection?.textButtonText || 'Click to Text'}
                     </a>

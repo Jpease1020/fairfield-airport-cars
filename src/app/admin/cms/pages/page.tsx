@@ -145,8 +145,15 @@ const PagesCMS = () => {
     setError(null);
     try {
       const cmsConfig = await cmsService.getCMSConfiguration();
+      
+      if (!cmsConfig) {
+        setError("Failed to load CMS configuration.");
+        return;
+      }
+      
       // Ensure required pages are always present
       setConfig(cmsConfig);
+      
       setPages({
         home: cmsConfig.pages.home ?? {
           hero: { title: '', subtitle: '', ctaText: '' },
@@ -413,11 +420,11 @@ const PagesCMS = () => {
   }
 
   return (
-    <PageContainer className="bg-[#f2efef]">
+    <PageContainer className="bg-bg-secondary">
       <PageHeader title="Manage Page Content" />
       <LayoutPageContent>
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {success && <div className="text-green-600 mb-4">{success}</div>}
+        {error && <div className="text-error mb-4">{error}</div>}
+        {success && <div className="text-success mb-4">{success}</div>}
         {PAGE_KEYS.map(({ key, label }) => {
           const page = pages[key as keyof typeof pages];
           if (!page) return null;

@@ -11,6 +11,9 @@ import { cmsService } from '@/lib/cms-service';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import './page-editable.css';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 // Icon mapping for CMS features
 const iconMap = {
@@ -68,14 +71,6 @@ export default function HomePage() {
     });
   };
 
-  const handleFeatureChange = (idx: number, field: string, value: string) => {
-    setLocalContent((prev: any) => {
-      const updated = { ...prev };
-      updated.features.items[idx][field] = value;
-      return updated;
-    });
-  };
-
   const handleSave = async () => {
     setSaving(true);
     setSaveMsg(null);
@@ -118,8 +113,8 @@ export default function HomePage() {
       <PageContainer>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Content Unavailable</h1>
-            <p className="text-gray-600">Please check back later or contact support.</p>
+            <h1 className="text-2xl font-bold text-text-primary mb-4">Content Unavailable</h1>
+            <p className="text-text-secondary">Please check back later or contact support.</p>
           </div>
         </div>
       </PageContainer>
@@ -174,6 +169,10 @@ export default function HomePage() {
     },
   ];
 
+  const heroText = homeContent.hero;
+  const featuresText = homeContent.features;
+  const ctaText = homeContent.finalCta;
+
   return (
     <PageContainer>
       {/* Floating Edit Mode Toggle for Admins */}
@@ -181,30 +180,30 @@ export default function HomePage() {
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
             <button
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
               onClick={() => setEditMode(true)}
             >
               Edit Mode
             </button>
           ) : (
             <div className="flex gap-2">
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+              <Button
                 onClick={handleSave}
                 disabled={saving}
+                className="bg-success text-text-inverse rounded shadow hover:bg-success-hover"
               >
                 {saving ? 'Saving...' : 'Save'}
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+              </Button>
+              <Button
                 onClick={handleCancel}
                 disabled={saving}
+                className="px-4 py-2 bg-error text-text-inverse rounded shadow hover:bg-error-hover"
               >
                 Cancel
-              </button>
+              </Button>
+              {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
             </div>
           )}
-          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
         </div>
       )}
 
@@ -212,117 +211,111 @@ export default function HomePage() {
       {editMode ? (
         <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
           <label className="edit-label font-semibold">Hero Title</label>
-          <input
-            className="editable-input text-4xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-14 px-4"
+          <Input
+            className="editable-input text-4xl font-bold w-full mb-2 h-14 px-4"
             value={localContent?.hero.title || ''}
             onChange={e => handleFieldChange('hero', 'title', e.target.value)}
           />
           <label className="edit-label font-semibold">Hero Subtitle</label>
-          <input
-            className="editable-input text-xl w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+          <Input
+            className="editable-input text-xl w-full mb-2 h-12 px-4"
             value={localContent?.hero.subtitle || ''}
             onChange={e => handleFieldChange('hero', 'subtitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Hero CTA Text</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+          <Input
+            className="editable-input w-full mb-2 h-12 px-4"
             value={localContent?.hero.ctaText || ''}
             onChange={e => handleFieldChange('hero', 'ctaText', e.target.value)}
           />
           <div className="flex gap-2 mt-4">
-            <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
+            <Button
               onClick={handleSave}
               disabled={saving}
+              className="bg-success text-text-inverse rounded shadow hover:bg-success-hover"
             >
               {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"
+            </Button>
+            <Button
               onClick={handleCancel}
               disabled={saving}
+              variant="outline"
+              className="px-4 py-2 bg-error text-text-inverse rounded shadow hover:bg-error-hover"
             >
               Cancel
-            </button>
+            </Button>
             {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
           </div>
         </div>
       ) : (
-        <section className="py-24 md:py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/20"></div>
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-xl md:text-2xl font-semibold mb-6 text-blue-300">
-              {homeContent.hero.subtitle}
-            </h2>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-white leading-tight">
-              {homeContent.hero.title}
-            </h1>
-            <p className="text-lg md:text-xl mb-12 text-gray-200 max-w-3xl mx-auto leading-relaxed">
-              Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <a href="/book" className="px-10 py-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                {homeContent.hero.ctaText}
-              </a>
-              <a href="/help" className="px-10 py-4 text-lg font-semibold text-blue-600 bg-white border-2 border-blue-600 rounded-xl shadow-lg hover:shadow-xl hover:bg-gray-50 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Learn More
-              </a>
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-primary via-brand-primary-hover to-brand-primary"></div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div className="text-center">
+              <h1 className="text-4xl md:text-6xl font-bold text-text-inverse mb-6">
+                {heroText?.title || 'Premium Airport Transportation'}
+              </h1>
+              <p className="text-xl md:text-2xl text-text-inverse/90 mb-8 max-w-3xl mx-auto">
+                {heroText?.subtitle || 'Reliable, comfortable rides to and from Fairfield Airport. Book your ride today!'}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/book">
+                  <Button size="lg" className="bg-text-inverse text-brand-primary hover:bg-text-inverse/90">
+                    {heroText?.ctaText || 'Book Now'}
+                  </Button>
+                </Link>
+                <Link href="/help">
+                  <Button variant="outline" size="lg" className="border-text-inverse text-text-inverse hover:bg-text-inverse hover:text-brand-primary">
+                    Learn More
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
       )}
 
       {/* Features Section */}
-      <div className="py-24 md:py-32 bg-gray-50">
+      <section className="py-16 bg-bg-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 md:mb-20">
-            {editMode ? (
-              <>
-                <label className="edit-label">Features Title</label>
-                <input
-                  className="editable-input text-3xl md:text-4xl font-bold w-full mb-2"
-                  value={localContent?.features.title || ''}
-                  onChange={e => handleFieldChange('features', 'title', e.target.value)}
-                />
-              </>
-            ) : (
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">{homeContent.features.title}</h2>
-            )}
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Experience the difference with our premium airport car service
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+              {featuresText?.title || 'Why Choose Us?'}
+            </h2>
+            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+              Professional service, reliable transportation, and peace of mind for your airport journey.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-            {(editMode ? localContent?.features.items : features).map((feature: any, index: number) => (
-              <div key={index} className={editMode ? 'bg-white p-4 rounded shadow' : ''}>
-                {editMode ? (
-                  <>
-                    <label className="edit-label">Feature {index + 1} Title</label>
-                    <input
-                      className="editable-input font-semibold w-full mb-2"
-                      value={feature.title}
-                      onChange={e => handleFeatureChange(index, 'title', e.target.value)}
-                    />
-                    <label className="edit-label">Feature {index + 1} Description</label>
-                    <input
-                      className="editable-input w-full mb-2"
-                      value={feature.description}
-                      onChange={e => handleFeatureChange(index, 'description', e.target.value)}
-                    />
-                  </>
-                ) : (
-                  <FeatureCard
-                    title={feature.title}
-                    description={feature.description}
-                    icon={feature.icon}
-                    variant="default"
-                  />
-                )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-primary text-text-inverse rounded-full mb-4">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-text-primary mb-2">{feature.title}</h3>
+                <p className="text-text-secondary">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-bg-secondary">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+            {ctaText?.title || 'Ready to Book Your Ride?'}
+          </h2>
+          <p className="text-lg text-text-secondary mb-8">
+            Get a quote and book your airport transportation in minutes.
+          </p>
+          <Link href="/book">
+            <Button size="lg" className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover">
+              {ctaText?.buttonText || 'Get Started'}
+            </Button>
+          </Link>
+        </div>
+      </section>
 
       {/* Fleet Section */}
       <div className="py-20 bg-white">
@@ -331,22 +324,22 @@ export default function HomePage() {
             {editMode ? (
               <>
                 <label className="edit-label">Fleet Title</label>
-                <input
-                  className="editable-input text-3xl font-bold w-full mb-2"
+                <Input
+                  className="editable-input text-3xl font-bold w-full mb-2 h-14 px-4"
                   value={localContent?.fleet?.title || 'Our Fleet'}
                   onChange={e => handleFieldChange('fleet', 'title', e.target.value)}
                 />
                 <label className="edit-label">Fleet Description</label>
-                <textarea
-                  className="editable-textarea w-full mb-2"
+                <Textarea
+                  className="editable-textarea w-full mb-2 h-24 px-4"
                   value={localContent?.fleet?.description || ''}
                   onChange={e => handleFieldChange('fleet', 'description', e.target.value)}
                 />
               </>
             ) : (
               <>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">{homeContent.fleet?.title || 'Our Fleet'}</h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <h2 className="text-3xl font-bold text-text-primary mb-4">{homeContent.fleet?.title || 'Our Fleet'}</h2>
+                <p className="text-lg text-text-secondary max-w-2xl mx-auto">
                   {homeContent.fleet?.description || 'You will ride in a meticulously maintained Chevrolet Suburban or a similar full-size luxury SUV, offering ample space for passengers and luggage.'}
                 </p>
               </>
@@ -358,8 +351,8 @@ export default function HomePage() {
               <>
                 <div className="bg-white p-4 rounded shadow">
                   <label className="edit-label">Vehicle 1 Title</label>
-                  <input
-                    className="editable-input font-semibold w-full mb-2"
+                  <Input
+                    className="editable-input font-semibold w-full mb-2 h-14 px-4"
                     value={localContent?.fleet?.vehicles?.[0]?.title || 'Luxury SUV'}
                     onChange={e => handleFieldChange('fleet', 'vehicles', [
                       { ...localContent?.fleet?.vehicles?.[0], title: e.target.value },
@@ -367,8 +360,8 @@ export default function HomePage() {
                     ])}
                   />
                   <label className="edit-label">Vehicle 1 Description</label>
-                  <textarea
-                    className="editable-textarea w-full mb-2"
+                  <Textarea
+                    className="editable-textarea w-full mb-2 h-24 px-4"
                     value={localContent?.fleet?.vehicles?.[0]?.description || ''}
                     onChange={e => handleFieldChange('fleet', 'vehicles', [
                       { ...localContent?.fleet?.vehicles?.[0], description: e.target.value },
@@ -378,8 +371,8 @@ export default function HomePage() {
                 </div>
                 <div className="bg-white p-4 rounded shadow">
                   <label className="edit-label">Vehicle 2 Title</label>
-                  <input
-                    className="editable-input font-semibold w-full mb-2"
+                  <Input
+                    className="editable-input font-semibold w-full mb-2 h-14 px-4"
                     value={localContent?.fleet?.vehicles?.[1]?.title || 'Professional Service'}
                     onChange={e => handleFieldChange('fleet', 'vehicles', [
                       localContent?.fleet?.vehicles?.[0],
@@ -387,8 +380,8 @@ export default function HomePage() {
                     ])}
                   />
                   <label className="edit-label">Vehicle 2 Description</label>
-                  <textarea
-                    className="editable-textarea w-full mb-2"
+                  <Textarea
+                    className="editable-textarea w-full mb-2 h-24 px-4"
                     value={localContent?.fleet?.vehicles?.[1]?.description || ''}
                     onChange={e => handleFieldChange('fleet', 'vehicles', [
                       localContent?.fleet?.vehicles?.[0],
@@ -420,14 +413,14 @@ export default function HomePage() {
         {editMode ? (
           <div className="bg-white p-6 rounded shadow mb-8">
             <label className="edit-label">FAQ Title</label>
-            <input
-              className="editable-input text-3xl font-bold w-full mb-2"
+            <Input
+              className="editable-input text-3xl font-bold w-full mb-2 h-14 px-4"
               value={localContent?.faq?.title || 'Frequently Asked Questions'}
               onChange={e => handleFieldChange('faq', 'title', e.target.value)}
             />
             <label className="edit-label">FAQ Subtitle</label>
-              <input
-                className="editable-input text-lg w-full mb-2"
+              <Input
+                className="editable-input text-lg w-full mb-2 h-12 px-4"
                 value={localContent?.faq?.subtitle || 'Everything you need to know about our service'}
                 onChange={e => handleFieldChange('faq', 'subtitle', e.target.value)}
               />
@@ -435,8 +428,8 @@ export default function HomePage() {
               {(localContent?.faq?.items || faqItems).map((faq: any, index: number) => (
                 <div key={index} className="border rounded p-4">
                   <label className="edit-label">FAQ {index + 1} Question</label>
-                  <input
-                    className="editable-input font-semibold w-full mb-2"
+                  <Input
+                    className="editable-input font-semibold w-full mb-2 h-14 px-4"
                     value={faq.question}
                     onChange={e => {
                       const items = [...(localContent?.faq?.items || faqItems)];
@@ -445,8 +438,8 @@ export default function HomePage() {
                     }}
                   />
                   <label className="edit-label">FAQ {index + 1} Answer</label>
-                  <textarea
-                    className="editable-textarea w-full mb-2"
+                  <Textarea
+                    className="editable-textarea w-full mb-2 h-24 px-4"
                     value={faq.answer}
                     onChange={e => {
                       const items = [...(localContent?.faq?.items || faqItems)];
@@ -473,14 +466,14 @@ export default function HomePage() {
         {editMode ? (
           <div className="bg-white p-6 rounded shadow mb-8">
             <label className="edit-label">Contact Title</label>
-            <input
-              className="editable-input text-2xl font-bold w-full mb-2"
+            <Input
+              className="editable-input text-2xl font-bold w-full mb-2 h-14 px-4"
               value={localContent?.contact.title || ''}
               onChange={e => handleFieldChange('contact', 'title', e.target.value)}
             />
             <label className="edit-label">Contact Content</label>
-            <textarea
-              className="editable-textarea w-full mb-2"
+            <Textarea
+              className="editable-textarea w-full mb-2 h-24 px-4"
               value={localContent?.contact.content || ''}
               onChange={e => handleFieldChange('contact', 'content', e.target.value)}
             />
@@ -502,20 +495,20 @@ export default function HomePage() {
           {editMode ? (
             <div className="bg-white p-6 rounded shadow mb-8">
               <label className="edit-label">CTA Title</label>
-              <input
-                className="editable-input text-3xl font-bold w-full mb-2"
+              <Input
+                className="editable-input text-3xl font-bold w-full mb-2 h-14 px-4"
                 value={localContent?.finalCta?.title || 'Ready for a Stress-Free Ride?'}
                 onChange={e => handleFieldChange('finalCta', 'title', e.target.value)}
               />
               <label className="edit-label">CTA Description</label>
-              <textarea
-                className="editable-textarea w-full mb-2"
+              <Textarea
+                className="editable-textarea w-full mb-2 h-24 px-4"
                 value={localContent?.finalCta?.description || ''}
                 onChange={e => handleFieldChange('finalCta', 'description', e.target.value)}
               />
               <label className="edit-label">CTA Button Text</label>
-              <input
-                className="editable-input w-full mb-2"
+              <Input
+                className="editable-input w-full mb-2 h-12 px-4"
                 value={localContent?.finalCta?.buttonText || 'Book Now'}
                 onChange={e => handleFieldChange('finalCta', 'buttonText', e.target.value)}
               />

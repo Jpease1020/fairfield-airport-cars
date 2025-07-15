@@ -102,7 +102,7 @@ const BusinessSettingsPage = () => {
         <PageHeader title="Business Settings" />
         <PageContent>
           <div className="flex items-center justify-center h-64">
-            <AlertCircle className="h-8 w-8 text-red-500" />
+            <AlertCircle className="h-8 w-8 text-error" />
             <span className="ml-2 text-gray-600">Failed to load settings</span>
           </div>
         </PageContent>
@@ -113,14 +113,14 @@ const BusinessSettingsPage = () => {
   return (
     <>
       <AdminNavigation />
-      <PageContainer className="bg-[#f2efef]">
+      <PageContainer className="bg-bg-secondary">
         <PageHeader 
           title="Business Settings" 
           subtitle="Manage company information, contact details, and branding"
         >
         <div className="flex items-center space-x-2">
           {saved && (
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Badge variant="secondary" className="bg-bg-success text-text-success">
               <CheckCircle className="h-3 w-3 mr-1" />
               Saved
             </Badge>

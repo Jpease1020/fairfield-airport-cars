@@ -75,7 +75,7 @@ const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
               <svg
                 className={cn(
                   'w-full h-full',
-                  isFilled ? 'text-yellow-400' : 'text-gray-300'
+                  isFilled ? 'text-warning' : 'text-text-muted'
                 )}
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -86,7 +86,7 @@ const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
           );
         })}
         {showValue && (
-          <span className="ml-2 text-sm text-gray-600">
+          <span className="ml-2 text-sm text-text-secondary">
             {rating}/{maxRating}
           </span>
         )}

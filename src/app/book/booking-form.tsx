@@ -5,11 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Booking } from '@/types/booking';
 import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/booking-service';
 import { getSettings } from '@/lib/settings-service';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCMS } from '@/hooks/useCMS';
+import { FormField } from '@/components/forms/FormField';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -156,7 +155,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
       } else {
         callback([]);
       }
-    } catch (error) {
+    } catch {
       callback([]);
     }
   };
@@ -318,46 +317,37 @@ export default function BookingForm({ booking }: BookingFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.fullNameLabel || 'Full Name'}</label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            placeholder="Enter your full name"
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.emailLabel || 'Email Address'}</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="Enter your email"
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.phoneLabel || 'Phone Number'}</label>
-        <input
-          id="phone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+        <FormField
+          label={bookingFormText?.fullNameLabel || 'Full Name'}
+          id="name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
-          placeholder="(123) 456-7890"
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
+          placeholder="Enter your full name"
+        />
+        <FormField
+          label={bookingFormText?.emailLabel || 'Email Address'}
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="Enter your email"
         />
       </div>
+      <FormField
+        label={bookingFormText?.phoneLabel || 'Phone Number'}
+        id="phone"
+        type="tel"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        required
+        placeholder="(123) 456-7890"
+      />
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.pickupLocationLabel || 'Pickup Location'}</label>
-        <input
+        <label className="block mb-1 text-sm font-medium text-text-primary">{bookingFormText?.pickupLocationLabel || 'Pickup Location'}</label>
+        <Input
           id="pickupLocation"
           ref={pickupInputRef}
           type="text"
@@ -365,22 +355,21 @@ export default function BookingForm({ booking }: BookingFormProps) {
           onChange={(e) => handlePickupInputChange(e.target.value)}
           required
           placeholder="Enter pickup address"
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
           onBlur={() => setTimeout(() => setShowPickupSuggestions(false), 200)}
           onFocus={() => { if (pickupSuggestions.length > 0) setShowPickupSuggestions(true); }}
         />
         {showPickupSuggestions && pickupSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 w-full mt-1 bg-bg-primary border border-border-primary rounded-md shadow-lg max-h-60 overflow-auto">
             {pickupSuggestions.map((prediction) => (
               <div
                 key={prediction.place_id}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
+                className="px-4 py-2 hover:bg-bg-secondary cursor-pointer border-b border-border-primary last:border-b-0"
                 onClick={() => handlePickupSuggestionSelect(prediction)}
               >
-                <div className="font-medium text-sm text-black">
+                <div className="font-medium text-sm text-text-primary">
                   {prediction.structured_formatting?.main_text || prediction.description}
                 </div>
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-text-secondary">
                   {prediction.structured_formatting?.secondary_text || ''}
                 </div>
               </div>
@@ -389,8 +378,8 @@ export default function BookingForm({ booking }: BookingFormProps) {
         )}
       </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.dropoffLocationLabel || 'Dropoff Location'}</label>
-        <input
+        <label className="block mb-1 text-sm font-medium text-text-primary">{bookingFormText?.dropoffLocationLabel || 'Dropoff Location'}</label>
+        <Input
           id="dropoffLocation"
           ref={dropoffInputRef}
           type="text"
@@ -398,22 +387,21 @@ export default function BookingForm({ booking }: BookingFormProps) {
           onChange={(e) => handleDropoffInputChange(e.target.value)}
           required
           placeholder="Enter dropoff address"
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
           onBlur={() => setTimeout(() => setShowDropoffSuggestions(false), 200)}
           onFocus={() => { if (dropoffSuggestions.length > 0) setShowDropoffSuggestions(true); }}
         />
         {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 w-full mt-1 bg-bg-primary border border-border-primary rounded-md shadow-lg max-h-60 overflow-auto">
             {dropoffSuggestions.map((prediction) => (
               <div
                 key={prediction.place_id}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
+                className="px-4 py-2 hover:bg-bg-secondary cursor-pointer border-b border-border-primary last:border-b-0"
                 onClick={() => handleDropoffSuggestionSelect(prediction)}
               >
-                <div className="font-medium text-sm text-black">
+                <div className="font-medium text-sm text-text-primary">
                   {prediction.structured_formatting?.main_text || prediction.description}
                 </div>
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-text-secondary">
                   {prediction.structured_formatting?.secondary_text || ''}
                 </div>
               </div>
@@ -421,80 +409,70 @@ export default function BookingForm({ booking }: BookingFormProps) {
           </div>
         )}
       </div>
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.pickupDateTimeLabel || 'Pickup Date and Time'}</label>
-        <input
-          id="pickupDateTime"
-          type="datetime-local"
-          value={pickupDateTime}
-          onChange={(e) => setPickupDateTime(e.target.value)}
+      <FormField
+        label={bookingFormText?.pickupDateTimeLabel || 'Pickup Date and Time'}
+        id="pickupDateTime"
+        type="datetime-local"
+        value={pickupDateTime}
+        onChange={(e) => setPickupDateTime(e.target.value)}
+        required
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          label={bookingFormText?.passengersLabel || 'Passengers'}
+          id="passengers"
+          type="number"
+          min="1"
+          value={passengers}
+          onChange={(e) => setPassengers(Number(e.target.value))}
           required
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
+        />
+        <FormField
+          label={bookingFormText?.flightNumberLabel || 'Flight Number (Optional)'}
+          id="flightNumber"
+          type="text"
+          value={flightNumber}
+          onChange={(e) => setFlightNumber(e.target.value)}
+          placeholder="AA1234"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.passengersLabel || 'Passengers'}</label>
-          <input
-            id="passengers"
-            type="number"
-            min="1"
-            value={passengers}
-            onChange={(e) => setPassengers(Number(e.target.value))}
-            required
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.flightNumberLabel || 'Flight Number (Optional)'}</label>
-          <input
-            id="flightNumber"
-            type="text"
-            value={flightNumber}
-            onChange={(e) => setFlightNumber(e.target.value)}
-            placeholder="AA1234"
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
-          />
-        </div>
-      </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-900">{bookingFormText?.notesLabel || 'Notes (Optional)'}</label>
-        <textarea
+        <label className="block mb-1 text-sm font-medium text-text-primary">{bookingFormText?.notesLabel || 'Notes (Optional)'}</label>
+        <Textarea
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
           placeholder="Any special instructions?"
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#6B7C93] bg-[#f9f9f9]"
-        ></textarea>
+        />
       </div>
       <div className="flex items-stretch gap-4">
         <button
           type="button"
           onClick={handleCalculateFare}
           disabled={isCalculating}
-          className="flex-1 h-16 text-sm border border-[#0B1F3A] text-[#0B1F3A] bg-transparent rounded-xl font-semibold hover:bg-[#F5F7FA] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 h-16 text-sm border border-brand-primary text-brand-primary bg-transparent rounded-xl font-semibold hover:bg-bg-secondary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isCalculating ? (bookingFormText?.calculatingFareButton || 'Calculating...') : (bookingFormText?.calculateFareButton || 'Calculate Fare')}
         </button>
         {fare && (
-          <div className="flex-1 flex items-center justify-center h-16 bg-gray-50 rounded-md">
-            <p className="text-lg font-semibold">{bookingFormText?.estimatedFareLabel || 'Estimated Fare:'} <span className="text-blue-600">${fare}</span></p>
+          <div className="flex-1 flex items-center justify-center h-16 bg-bg-secondary rounded-md">
+            <p className="text-lg font-semibold">{bookingFormText?.estimatedFareLabel || 'Estimated Fare:'} <span className="text-info">${fare}</span></p>
           </div>
         )}
       </div>
       <button
         type="submit"
         disabled={!fare}
-        style={{ backgroundColor: '#0B1F3A' }}
-        className="w-full py-4 text-white text-lg font-semibold rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#08142A'}
-        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0B1F3A'}
+        style={{ backgroundColor: 'var(--brand-primary)' }}
+        className="w-full py-4 text-text-inverse text-lg font-semibold rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-primary-hover)'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-primary)'}
       >
         {isEditMode ? (bookingFormText?.updateBookingButton || 'Update Booking') : (bookingFormText?.bookNowButton || 'Book Now')}
       </button>
-      {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-      {success && <p className="text-green-500 text-center mt-4">{success}</p>}
+      {error && <p className="text-error text-center mt-4">{error}</p>}
+      {success && <p className="text-success text-center mt-4">{success}</p>}
     </form>
   );
 }

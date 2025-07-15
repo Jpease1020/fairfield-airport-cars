@@ -83,7 +83,7 @@ export default function AIAssistantSettingsPage() {
   };
 
   return (
-    <PageContainer className="bg-[#f2efef]">
+    <PageContainer className="bg-bg-secondary">
       <PageHeader 
         title="AI Assistant Settings" 
         subtitle="Configure your AI assistant preferences"
@@ -102,7 +102,7 @@ export default function AIAssistantSettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="voice-input">Voice Input</Label>
-                  <p className="text-sm text-gray-600">Allow speaking to the AI assistant</p>
+                  <p className="text-sm text-text-secondary">Allow speaking to the AI assistant</p>
                 </div>
                 <Switch
                   id="voice-input"
@@ -116,7 +116,7 @@ export default function AIAssistantSettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="voice-output">Voice Output</Label>
-                  <p className="text-sm text-gray-600">Hear AI responses aloud</p>
+                  <p className="text-sm text-text-secondary">Hear AI responses aloud</p>
                 </div>
                 <Switch
                   id="voice-output"
@@ -130,7 +130,7 @@ export default function AIAssistantSettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="auto-voice">Auto Voice Output</Label>
-                  <p className="text-sm text-gray-600">Automatically speak AI responses</p>
+                  <p className="text-sm text-text-secondary">Automatically speak AI responses</p>
                 </div>
                 <Switch
                   id="auto-voice"
@@ -164,7 +164,7 @@ export default function AIAssistantSettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="use-openai">Use OpenAI (Enhanced AI)</Label>
-                  <p className="text-sm text-gray-600">Enable more sophisticated responses</p>
+                  <p className="text-sm text-text-secondary">Enable more sophisticated responses</p>
                 </div>
                 <Switch
                   id="use-openai"
@@ -187,13 +187,13 @@ export default function AIAssistantSettingsPage() {
                       setSettings(prev => ({ ...prev, openAIKey: e.target.value }))
                     }
                   />
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-text-secondary">
                     Get your API key from{' '}
                     <a 
                       href="https://platform.openai.com/api-keys" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
+                      className="text-info hover:underline"
                     >
                       OpenAI Platform
                     </a>
@@ -218,8 +218,8 @@ export default function AIAssistantSettingsPage() {
           {message && (
             <div className={`p-4 rounded-md ${
               message.type === 'success' 
-                ? 'bg-green-50 text-green-800 border border-green-200' 
-                : 'bg-red-50 text-red-800 border border-red-200'
+                ? 'bg-bg-success text-text-success border border-border-success' 
+                : 'bg-bg-error text-text-error border border-border-error'
             }`}>
               {message.text}
             </div>
@@ -233,7 +233,7 @@ export default function AIAssistantSettingsPage() {
                 Help & Tips
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-gray-600">
+            <CardContent className="space-y-3 text-sm text-text-secondary">
               <div>
                 <strong>Voice Input:</strong> Works best in Chrome, Edge, and Safari. Speak clearly and avoid background noise.
               </div>

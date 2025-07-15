@@ -38,7 +38,7 @@ function DriverLocationContent() {
             { lat, lng, updatedAt: serverTimestamp() },
             { merge: true }
           );
-        } catch (err) {
+        } catch {
           setStatus('Error updating location');
         }
       },

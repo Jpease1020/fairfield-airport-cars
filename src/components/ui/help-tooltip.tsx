@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -10,7 +10,11 @@ interface HelpTooltipProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const HelpTooltip = ({ content, className, size = 'sm' }: HelpTooltipProps) => {
+const HelpTooltip: React.FC<HelpTooltipProps> = ({
+  content,
+  className,
+  size = 'md'
+}) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const sizeClasses = {
@@ -24,7 +28,7 @@ export const HelpTooltip = ({ content, className, size = 'sm' }: HelpTooltipProp
       <button
         type="button"
         className={cn(
-          'text-gray-400 hover:text-gray-600 transition-colors',
+          'inline-flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors',
           className
         )}
         onMouseEnter={() => setIsVisible(true)}
@@ -36,11 +40,13 @@ export const HelpTooltip = ({ content, className, size = 'sm' }: HelpTooltipProp
       </button>
       
       {isVisible && (
-        <div className="absolute z-50 w-64 p-3 text-sm text-white bg-gray-900 rounded-lg shadow-lg -top-2 left-8 transform -translate-y-full">
+        <div className="absolute z-50 w-64 p-3 text-sm text-text-inverse bg-bg-inverse rounded-lg shadow-lg -top-2 left-8 transform -translate-y-full">
           {content}
-          <div className="absolute top-2 -left-1 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+          <div className="absolute top-2 -left-1 w-2 h-2 bg-bg-inverse transform rotate-45"></div>
         </div>
       )}
     </div>
   );
-}; 
+};
+
+export { HelpTooltip }; 

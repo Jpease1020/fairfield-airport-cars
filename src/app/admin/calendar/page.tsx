@@ -7,13 +7,10 @@ import { listBookings } from '../../../lib/booking-service';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/card';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false }) as any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
 
 const CalendarPage = () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
@@ -31,7 +28,7 @@ const CalendarPage = () => {
   }, []);
 
   return (
-    <PageContainer className="bg-[#f2efef]">
+    <PageContainer className="bg-bg-secondary">
       <PageHeader title="Ride Calendar" />
       <PageContent>
         <Card>

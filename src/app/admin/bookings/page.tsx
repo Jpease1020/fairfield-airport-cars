@@ -238,7 +238,7 @@ const AdminBookingsPage: NextPage = () => {
   ];
 
   return (
-    <PageContainer className="bg-[#f2efef]">
+    <PageContainer className="bg-bg-secondary">
       <PageHeader 
         title="Booking Dashboard" 
         subtitle={`Month-to-date revenue: ${formatPrice(totalRevenue)} | Tips: ${formatPrice(totalTips)} | Cancellation fees: ${formatPrice(totalCancFees)}`}
@@ -265,7 +265,7 @@ const AdminBookingsPage: NextPage = () => {
               data={sortedAndFilteredBookings}
               columns={columns}
               loading={loading}
-              emptyMessage={<span className="text-gray-100">No bookings found</span>}
+              emptyMessage={<span className="text-text-secondary">No bookings found</span>}
             />
           </CardContent>
         </Card>

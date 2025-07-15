@@ -2,18 +2,97 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, type, ...props }, ref) => {
+/**
+ * A flexible input component with enhanced accessibility and validation states
+ * 
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <Input placeholder="Enter your name" />
+ * 
+ * // With label and error
+ * <Input
+ *   label="Email"
+ *   type="email"
+ *   error="Please enter a valid email"
+ *   required
+ * />
+ * 
+ * // With helper text
+ * <Input
+ *   label="Password"
+ *   type="password"
+ *   helperText="Must be at least 8 characters"
+ * />
+ * ```
+ */
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  /** The label text for the input */
+  label?: string;
+  /** Error message to display below the input */
+  error?: string;
+  /** Helper text to display below the input */
+  helperText?: string;
+  /** Whether the input is required */
+  required?: boolean;
+  /** The ID for the input element */
+  id?: string;
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ 
+    className, 
+    type, 
+    label,
+    error,
+    helperText,
+    required = false,
+    id,
+    'aria-describedby': ariaDescribedby,
+    ...props 
+  }, ref) => {
+    const inputId = id || `input-${label?.toLowerCase().replace(/\s+/g, '-')}`;
+    const errorId = error ? `${inputId}-error` : undefined;
+    const helperId = helperText ? `${inputId}-helper` : undefined;
+    const describedBy = [ariaDescribedby, errorId, helperId].filter(Boolean).join(' ');
+
     return (
-      <input
-        type={type}
-        className={cn(
-          'flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-white dark:text-gray-900 dark:ring-offset-gray-800 dark:placeholder:text-gray-500 dark:focus-visible:ring-indigo-400',
-          className
+      <div className="space-y-2">
+        {label && (
+          <label 
+            htmlFor={inputId}
+            className="text-sm font-medium text-text-primary"
+          >
+            {label}
+            {required && <span className="text-error ml-1">*</span>}
+          </label>
         )}
-        ref={ref}
-        {...props}
-      />
+        <input
+          type={type}
+          id={inputId}
+          className={cn(
+            'flex h-10 w-full rounded-md border border-border-primary bg-bg-primary px-3 py-2 text-sm text-text-primary ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            error && 'border-error focus-visible:ring-error',
+            className
+          )}
+          ref={ref}
+          aria-invalid={error ? 'true' : 'false'}
+          aria-describedby={describedBy || undefined}
+          required={required}
+          {...props}
+        />
+        {error && (
+          <p id={errorId} className="text-sm text-error" role="alert">
+            {error}
+          </p>
+        )}
+        {helperText && !error && (
+          <p id={helperId} className="text-sm text-text-secondary">
+            {helperText}
+          </p>
+        )}
+      </div>
     );
   }
 );

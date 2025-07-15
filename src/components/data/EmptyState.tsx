@@ -2,33 +2,34 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
+  icon?: React.ReactNode;
   title?: string;
   description?: string;
-  icon?: React.ReactNode;
   action?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
 }
 
 const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
-  ({ 
-    className, 
-    title = 'No data available', 
-    description = 'There are no items to display at the moment.',
-    icon,
-    action,
-    size = 'md',
-    ...props 
-  }, ref) => {
+  ({ className, icon, title, description, action, size = 'md', ...props }, ref) => {
     const sizeClasses = {
-      sm: 'py-8',
-      md: 'py-12',
-      lg: 'py-16',
-    };
-
-    const iconSizeClasses = {
-      sm: 'w-8 h-8',
-      md: 'w-12 h-12',
-      lg: 'w-16 h-16',
+      sm: {
+        container: 'py-8',
+        icon: 'w-8 h-8',
+        title: 'text-lg',
+        description: 'text-sm',
+      },
+      md: {
+        container: 'py-12',
+        icon: 'w-12 h-12',
+        title: 'text-xl',
+        description: 'text-base',
+      },
+      lg: {
+        container: 'py-16',
+        icon: 'w-16 h-16',
+        title: 'text-2xl',
+        description: 'text-lg',
+      },
     };
 
     return (
@@ -36,22 +37,26 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
         ref={ref}
         className={cn(
           'flex flex-col items-center justify-center text-center',
-          sizeClasses[size],
+          sizeClasses[size].container,
           className
         )}
         {...props}
       >
         {icon && (
-          <div className={cn('text-gray-400 mb-4', iconSizeClasses[size])}>
+          <div className={cn('text-text-muted mb-4', sizeClasses[size].icon)}>
             {icon}
           </div>
         )}
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
-          {title}
-        </h3>
-        <p className="text-sm text-gray-500 mb-6 max-w-sm">
-          {description}
-        </p>
+        {title && (
+          <h3 className={cn('font-medium text-text-primary mb-2', sizeClasses[size].title)}>
+            {title}
+          </h3>
+        )}
+        {description && (
+          <p className={cn('text-text-secondary mb-6 max-w-sm', sizeClasses[size].description)}>
+            {description}
+          </p>
+        )}
         {action && (
           <div className="flex items-center justify-center">
             {action}

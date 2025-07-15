@@ -229,7 +229,7 @@ export default function ManageBookingPage() {
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
             <button
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
               onClick={() => setEditMode(true)}
             >
               Edit Mode
@@ -237,14 +237,14 @@ export default function ManageBookingPage() {
           ) : (
             <div className="flex gap-2">
               <button
-                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+                className="px-4 py-2 bg-success text-text-inverse rounded shadow hover:bg-success-hover"
                 onClick={handleSave}
                 disabled={saving}
               >
                 {saving ? 'Saving...' : 'Save'}
               </button>
               <button
-                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+                className="px-4 py-2 bg-error text-text-inverse rounded shadow hover:bg-error-hover"
                 onClick={handleCancel}
                 disabled={saving}
               >
@@ -261,89 +261,89 @@ export default function ManageBookingPage() {
         <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
           <label className="edit-label font-semibold">Page Title</label>
           <input
-            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-14 px-4"
+            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-14 px-4"
             value={localContent?.title || ''}
             onChange={e => handleFieldChange('title', e.target.value)}
           />
           <label className="edit-label font-semibold">Page Subtitle</label>
           <input
-            className="editable-input text-xl text-gray-600 w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+            className="editable-input text-xl text-text-secondary w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
             value={localContent?.subtitle || ''}
             onChange={e => handleFieldChange('subtitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Resend Button Text</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.resendButton || ''}
             onChange={e => handleFieldChange('resendButton', e.target.value)}
           />
           <label className="edit-label font-semibold">Cancel Button Text</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.cancelButton || ''}
             onChange={e => handleFieldChange('cancelButton', e.target.value)}
           />
           <label className="edit-label font-semibold">Pay Balance Button Text</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.payBalanceButton || ''}
             onChange={e => handleFieldChange('payBalanceButton', e.target.value)}
           />
           <label className="edit-label font-semibold">View Status Button Text</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.viewStatusButton || ''}
             onChange={e => handleFieldChange('viewStatusButton', e.target.value)}
           />
           <label className="edit-label font-semibold">Cancel Confirm Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.cancelConfirmMessage || ''}
             onChange={e => handleFieldChange('cancelConfirmMessage', e.target.value)}
           />
           <label className="edit-label font-semibold">Cancel Success Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.cancelSuccessMessage || ''}
             onChange={e => handleFieldChange('cancelSuccessMessage', e.target.value)}
           />
           <label className="edit-label font-semibold">Resend Success Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.resendSuccessMessage || ''}
             onChange={e => handleFieldChange('resendSuccessMessage', e.target.value)}
           />
           <label className="edit-label font-semibold">Resend Error Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.resendErrorMessage || ''}
             onChange={e => handleFieldChange('resendErrorMessage', e.target.value)}
           />
           <label className="edit-label font-semibold">Pay Balance Error Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.payBalanceErrorMessage || ''}
             onChange={e => handleFieldChange('payBalanceErrorMessage', e.target.value)}
           />
           <label className="edit-label font-semibold">Not Found Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.notFoundMessage || ''}
             onChange={e => handleFieldChange('notFoundMessage', e.target.value)}
           />
           <label className="edit-label font-semibold">Loading Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.loadingMessage || ''}
             onChange={e => handleFieldChange('loadingMessage', e.target.value)}
           />
           <div className="flex gap-2 mt-4">
             <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
+              className="px-6 py-3 bg-brand-primary text-text-inverse rounded-xl font-semibold shadow hover:bg-brand-primary-hover transition-all"
               onClick={handleSave}
               disabled={saving}
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Saving...' : 'Save Changes'}
             </button>
             <button
               className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"

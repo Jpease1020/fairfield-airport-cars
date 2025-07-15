@@ -141,7 +141,7 @@ const PricingSettingsPage = () => {
         <PageHeader title="Pricing Settings" />
         <PageContent>
           <div className="flex items-center justify-center h-64">
-            <AlertCircle className="h-8 w-8 text-red-500" />
+            <AlertCircle className="h-8 w-8 text-error" />
             <span className="ml-2 text-gray-600">Failed to load settings</span>
           </div>
         </PageContent>
@@ -152,14 +152,14 @@ const PricingSettingsPage = () => {
   return (
     <>
       <AdminNavigation />
-      <PageContainer className="bg-[#f2efef]">
+      <PageContainer className="bg-bg-secondary">
         <PageHeader 
           title="Pricing Settings" 
           subtitle="Manage fare structure, zones, and cancellation policies"
         >
         <div className="flex items-center space-x-2">
           {saved && (
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Badge variant="secondary" className="bg-bg-success text-text-success">
               <CheckCircle className="h-3 w-3 mr-1" />
               Saved
             </Badge>
@@ -333,7 +333,7 @@ const PricingSettingsPage = () => {
                           onClick={() => removeZone(index)}
                           size="sm"
                           variant="outline"
-                          className="text-red-600 hover:text-red-700"
+                          className="text-error hover:text-error-hover"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

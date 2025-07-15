@@ -22,16 +22,16 @@ const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
 
     return (
       <div className="space-y-2">
-        <Label htmlFor={fieldId} className="text-sm font-medium text-gray-700">
+        <Label htmlFor={fieldId} className="text-sm font-medium text-text-primary">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-error ml-1">*</span>}
         </Label>
         <select
           ref={ref}
           id={fieldId}
           className={cn(
-            'flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-red-500 focus-visible:ring-red-500',
+            'flex h-10 w-full rounded-md border border-border-primary bg-bg-primary px-3 py-2 text-sm text-text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            error && 'border-error focus-visible:ring-error',
             className
           )}
           {...props}
@@ -47,10 +47,10 @@ const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
           ))}
         </select>
         {error && (
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-error">{error}</p>
         )}
         {helperText && !error && (
-          <p className="text-sm text-gray-500">{helperText}</p>
+          <p className="text-sm text-text-secondary">{helperText}</p>
         )}
       </div>
     );

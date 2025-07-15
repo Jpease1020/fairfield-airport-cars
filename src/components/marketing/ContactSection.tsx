@@ -85,20 +85,20 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
           variant === 'centered' ? 'text-center' : ''
         )}>
           {title && (
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-text-primary mb-4">
               {title}
             </h2>
           )}
           
           {subtitle && (
-            <p className="text-lg text-indigo-600 font-semibold mb-4">
+            <p className="text-lg text-brand-primary font-semibold mb-4">
               {subtitle}
             </p>
           )}
           
           {description && (
             <p className={cn(
-              'text-lg text-gray-600 mb-8',
+              'text-lg text-text-secondary mb-8',
               variant === 'centered' ? 'max-w-3xl mx-auto' : 'max-w-2xl'
             )}>
               {description}
@@ -122,15 +122,15 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                   className={cn(
                     'flex items-center p-4 rounded-lg border transition-colors',
                     getContactButtonVariant(method.type) === 'default' 
-                      ? 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700' 
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                      ? 'bg-brand-primary text-text-inverse border-brand-primary hover:bg-brand-primary-hover' 
+                      : 'bg-bg-primary text-text-primary border-border-primary hover:bg-bg-secondary'
                   )}
                 >
                   <div className={cn(
                     'flex-shrink-0 mr-4',
                     getContactButtonVariant(method.type) === 'default' 
-                      ? 'text-white' 
-                      : 'text-indigo-600'
+                      ? 'text-text-inverse' 
+                      : 'text-brand-primary'
                   )}>
                     {getContactIcon(method.type)}
                   </div>
@@ -139,8 +139,8 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                     <div className={cn(
                       'text-sm',
                       getContactButtonVariant(method.type) === 'default' 
-                        ? 'text-indigo-100' 
-                        : 'text-gray-500'
+                        ? 'text-text-inverse/80' 
+                        : 'text-text-secondary'
                     )}>
                       {method.value}
                     </div>
@@ -164,7 +164,7 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                   src={`https://maps.google.com/maps?q=${mapLocation.lat},${mapLocation.lng}&z=15&output=embed`}
                 />
                 {mapLocation.address && (
-                  <div className="mt-2 text-sm text-gray-600">
+                  <div className="mt-2 text-sm text-text-secondary">
                     {mapLocation.address}
                   </div>
                 )}

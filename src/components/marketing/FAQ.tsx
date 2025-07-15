@@ -39,24 +39,24 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
         <div ref={ref} className={cn('space-y-4', className)} {...props}>
           {title && (
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">{title}</h2>
+              <h2 className="text-3xl font-bold text-text-primary mb-2">{title}</h2>
               {subtitle && (
-                <p className="text-lg text-gray-600">{subtitle}</p>
+                <p className="text-lg text-text-secondary">{subtitle}</p>
               )}
             </div>
           )}
           
           <div className="space-y-4">
             {items.map((item, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg">
+              <div key={index} className="border border-border-primary rounded-lg">
                 <button
                   onClick={() => toggleItem(index)}
-                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-bg-secondary transition-colors"
                 >
-                  <span className="font-medium text-gray-900">{item.question}</span>
+                  <span className="font-medium text-text-primary">{item.question}</span>
                   <svg
                     className={cn(
-                      'w-5 h-5 text-gray-500 transition-transform',
+                      'w-5 h-5 text-text-secondary transition-transform',
                       openItems.has(index) ? 'rotate-180' : ''
                     )}
                     fill="none"
@@ -69,7 +69,7 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
                 
                 {openItems.has(index) && (
                   <div className="px-6 pb-4">
-                    <p className="text-gray-600 leading-relaxed">{item.answer}</p>
+                    <p className="text-text-secondary leading-relaxed">{item.answer}</p>
                   </div>
                 )}
               </div>
@@ -84,9 +84,9 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
         <div ref={ref} className={cn('space-y-6', className)} {...props}>
           {title && (
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">{title}</h2>
+              <h2 className="text-3xl font-bold text-text-primary mb-2">{title}</h2>
               {subtitle && (
-                <p className="text-lg text-gray-600">{subtitle}</p>
+                <p className="text-lg text-text-secondary">{subtitle}</p>
               )}
             </div>
           )}
@@ -94,10 +94,10 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
           <div className="space-y-8">
             {items.map((item, index) => (
               <div key={index}>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-text-primary mb-2">
                   {item.question}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-text-secondary leading-relaxed">
                   {item.answer}
                 </p>
               </div>
@@ -112,20 +112,20 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
       <div ref={ref} className={cn('space-y-6', className)} {...props}>
         {title && (
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">{title}</h2>
+            <h2 className="text-3xl font-bold text-text-primary mb-2">{title}</h2>
             {subtitle && (
-              <p className="text-lg text-gray-600">{subtitle}</p>
+              <p className="text-lg text-text-secondary">{subtitle}</p>
             )}
           </div>
         )}
         
         <div className="grid gap-6 md:grid-cols-2">
           {items.map((item, index) => (
-            <div key={index} className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <div key={index} className="bg-bg-primary border border-border-primary rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-text-primary mb-3">
                 {item.question}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-text-secondary leading-relaxed">
                 {item.answer}
               </p>
             </div>

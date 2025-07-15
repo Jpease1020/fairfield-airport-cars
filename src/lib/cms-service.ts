@@ -1,36 +1,29 @@
-import { 
-  doc, 
-  getDoc, 
-  setDoc, 
-  collection, 
-  query, 
-  getDocs,
-  orderBy,
-  where,
-  serverTimestamp 
-} from 'firebase/firestore';
 import { db } from './firebase';
-import { 
-  CMSConfiguration, 
-  DEFAULT_CMS_CONFIG,
-  PageContent,
-  BusinessSettings,
-  PricingSettings,
-  PaymentSettings,
-  EmailTemplates,
-  SMSTemplates,
-  DriverSettings,
-  AnalyticsSettings,
-  BookingFormText
-} from '@/types/cms';
+import { doc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { CMSConfiguration } from '@/types/cms';
+import { BusinessSettings, PricingSettings, EmailTemplates, SMSTemplates } from '@/types/cms';
+import { ContentValidator } from './content-validation';
+import { VersionControl } from './version-control';
+import { authService } from './auth-service';
 
-// CMS Service for managing all content and settings
+// Legacy helper functions for backward compatibility
+export async function getCMSConfig(): Promise<CMSConfiguration & { themeColors?: Record<string, string> }> {
+  const config = await cmsService.getCMSConfiguration();
+  return { ...config, themeColors: config?.themeColors } as any;
+}
+
+export async function updateCMSConfig(update: Partial<CMSConfiguration> & { themeColors?: Record<string, string> }) {
+  await cmsService.updateCMSConfiguration({ ...update, themeColors: update.themeColors });
+}
+
+export const getBusinessConfig = () => cmsService.getBusinessSettings();
+export const getPricingConfig = () => cmsService.getPricingSettings();
+export const getEmailTemplates = () => cmsService.getEmailTemplates();
+export const getSMSTemplates = () => cmsService.getSMSTemplates();
+
 export class CMSService {
   private static instance: CMSService;
-  private cache: Map<string, { data: CMSConfiguration; timestamp: number }> = new Map();
-  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
-
-  private constructor() {}
+  private currentUser: any = null;
 
   static getInstance(): CMSService {
     if (!CMSService.instance) {
@@ -39,277 +32,367 @@ export class CMSService {
     return CMSService.instance;
   }
 
-  // Get the main CMS configuration
-  async getCMSConfiguration(): Promise<CMSConfiguration> {
-    const cacheKey = 'cms-config';
-    const cached = this.cache.get(cacheKey);
-    
-    if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-      return cached.data;
-    }
-
+  async getCMSConfiguration(): Promise<CMSConfiguration | null> {
     try {
-      const docRef = doc(db, 'cms', 'configuration');
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const data = docSnap.data() as CMSConfiguration;
-        this.cache.set(cacheKey, { data, timestamp: Date.now() });
-        return data;
-      } else {
-        // Initialize with default configuration
-        await this.initializeCMS();
-        return DEFAULT_CMS_CONFIG;
-      }
-    } catch (error) {
-      console.error('Error fetching CMS configuration:', error);
-      return DEFAULT_CMS_CONFIG;
-    }
-  }
-
-  // Update the entire CMS configuration
-  async updateCMSConfiguration(config: Partial<CMSConfiguration>): Promise<void> {
-    try {
-      const docRef = doc(db, 'cms', 'configuration');
-      const currentConfig = await this.getCMSConfiguration();
-      
-      const updatedConfig = {
-        ...currentConfig,
-        ...config,
-        lastUpdated: new Date(),
-        version: this.incrementVersion(currentConfig.version)
-      };
-
-      await setDoc(docRef, updatedConfig);
-      this.cache.delete('cms-config');
-    } catch (error) {
-      console.error('Error updating CMS configuration:', error);
-      throw error;
-    }
-  }
-
-  // Page Content Management
-  async getPageContent(pageId: string): Promise<PageContent | null> {
-    try {
-      const docRef = doc(db, 'cms', 'pages', pageId, 'content');
+      const docRef = doc(db, 'cms', 'config');
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
-        return docSnap.data() as PageContent;
+        return docSnap.data() as CMSConfiguration;
       }
+      
       return null;
     } catch (error) {
-      console.error(`Error fetching page content for ${pageId}:`, error);
+      console.error('Error getting CMS configuration:', error as Error);
       return null;
     }
   }
 
-  async updatePageContent(pageId: string, content: Partial<PageContent>): Promise<void> {
-    try {
-      const docRef = doc(db, 'cms', 'pages', pageId, 'content');
-      const currentContent = await this.getPageContent(pageId);
-      
-      const updatedContent = {
-        ...currentContent,
-        ...content,
-        lastUpdated: new Date()
-      };
-
-      await setDoc(docRef, updatedContent);
-    } catch (error) {
-      console.error(`Error updating page content for ${pageId}:`, error);
-      throw error;
-    }
-  }
-
-  // Business Settings Management
-  async getBusinessSettings(): Promise<BusinessSettings> {
+  // Legacy methods for backward compatibility
+  async getBusinessSettings(): Promise<BusinessSettings | null> {
     const config = await this.getCMSConfiguration();
-    return config.business;
+    return config?.business || null;
   }
 
+  async getPricingSettings(): Promise<PricingSettings | null> {
+    const config = await this.getCMSConfiguration();
+    return config?.pricing || null;
+  }
+
+  async getEmailTemplates(): Promise<EmailTemplates | null> {
+    const config = await this.getCMSConfiguration();
+    return config?.communication?.email || null;
+  }
+
+  async getSMSTemplates(): Promise<SMSTemplates | null> {
+    const config = await this.getCMSConfiguration();
+    return config?.communication?.sms || null;
+  }
+
+  // Legacy update methods for backward compatibility
   async updateBusinessSettings(settings: Partial<BusinessSettings>): Promise<void> {
     const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      business: { ...config.business, ...settings }
-    });
-  }
-
-  // Pricing Settings Management
-  async getPricingSettings(): Promise<PricingSettings> {
-    const config = await this.getCMSConfiguration();
-    return config.pricing;
+    if (config) {
+      await this.updateCMSConfiguration({
+        ...config,
+        business: { ...config.business, ...settings }
+      });
+    }
   }
 
   async updatePricingSettings(settings: Partial<PricingSettings>): Promise<void> {
     const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      pricing: { ...config.pricing, ...settings }
-    });
-  }
-
-  // Payment Settings Management
-  async getPaymentSettings(): Promise<PaymentSettings> {
-    const config = await this.getCMSConfiguration();
-    return config.payment;
-  }
-
-  async updatePaymentSettings(settings: Partial<PaymentSettings>): Promise<void> {
-    const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      payment: { ...config.payment, ...settings }
-    });
-  }
-
-  // Email Templates Management
-  async getEmailTemplates(): Promise<EmailTemplates> {
-    const config = await this.getCMSConfiguration();
-    return config.communication.email;
+    if (config) {
+      await this.updateCMSConfiguration({
+        ...config,
+        pricing: { ...config.pricing, ...settings }
+      });
+    }
   }
 
   async updateEmailTemplates(templates: Partial<EmailTemplates>): Promise<void> {
     const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      communication: {
-        ...config.communication,
-        email: { ...config.communication.email, ...templates }
-      }
-    });
-  }
-
-  // SMS Templates Management
-  async getSMSTemplates(): Promise<SMSTemplates> {
-    const config = await this.getCMSConfiguration();
-    return config.communication.sms;
+    if (config) {
+      await this.updateCMSConfiguration({
+        ...config,
+        communication: {
+          ...config.communication,
+          email: { ...config.communication.email, ...templates }
+        }
+      });
+    }
   }
 
   async updateSMSTemplates(templates: Partial<SMSTemplates>): Promise<void> {
     const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      communication: {
-        ...config.communication,
-        sms: { ...config.communication.sms, ...templates }
-      }
-    });
-  }
-
-  // Driver Settings Management
-  async getDriverSettings(): Promise<DriverSettings> {
-    const config = await this.getCMSConfiguration();
-    return config.driver;
-  }
-
-  async updateDriverSettings(settings: Partial<DriverSettings>): Promise<void> {
-    const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      driver: { ...config.driver, ...settings }
-    });
-  }
-
-  // Analytics Settings Management
-  async getAnalyticsSettings(): Promise<AnalyticsSettings> {
-    const config = await this.getCMSConfiguration();
-    return config.analytics;
-  }
-
-  async updateAnalyticsSettings(settings: Partial<AnalyticsSettings>): Promise<void> {
-    const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      analytics: { ...config.analytics, ...settings }
-    });
-  }
-
-  // Booking Form Text Management
-  async getBookingFormText(): Promise<BookingFormText> {
-    const config = await this.getCMSConfiguration();
-    return config.bookingForm;
-  }
-
-  async updateBookingFormText(text: Partial<BookingFormText>): Promise<void> {
-    const config = await this.getCMSConfiguration();
-    await this.updateCMSConfiguration({
-      ...config,
-      bookingForm: { ...config.bookingForm, ...text }
-    });
-  }
-
-  // Content History and Versioning
-  async getContentHistory(pageId?: string): Promise<Array<{ id: string; [key: string]: unknown }>> {
-    try {
-      const collectionRef = collection(db, 'cms', 'history');
-      let q = query(collectionRef, orderBy('timestamp', 'desc'));
-      
-      if (pageId) {
-        q = query(q, where('pageId', '==', pageId));
-      }
-
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-    } catch (error) {
-      console.error('Error fetching content history:', error);
-      return [];
-    }
-  }
-
-  // Initialize CMS with default configuration
-  private async initializeCMS(): Promise<void> {
-    try {
-      const docRef = doc(db, 'cms', 'configuration');
-      await setDoc(docRef, {
-        ...DEFAULT_CMS_CONFIG,
-        lastUpdated: serverTimestamp(),
-        version: '1.0.0'
+    if (config) {
+      await this.updateCMSConfiguration({
+        ...config,
+        communication: {
+          ...config.communication,
+          sms: { ...config.communication.sms, ...templates }
+        }
       });
-    } catch (error) {
-      console.error('Error initializing CMS:', error);
-      throw error;
     }
   }
 
-  // Utility method to increment version
-  private incrementVersion(currentVersion: string): string {
-    const parts = currentVersion.split('.');
-    const patch = parseInt(parts[2] || '0') + 1;
-    return `${parts[0]}.${parts[1]}.${patch}`;
+  async updateCMSConfiguration(
+    updates: Partial<CMSConfiguration>,
+    userId?: string,
+    userEmail?: string
+  ): Promise<{ success: boolean; errors?: string[] }> {
+    try {
+      // Validate user permissions
+      if (userId) {
+        const canEdit = await authService.canEdit(userId);
+        if (!canEdit) {
+          return { success: false, errors: ['Insufficient permissions'] };
+        }
+      }
+
+      // Validate content before saving
+      const validationResults = await this.validateContent(updates);
+      
+      if (!validationResults.isValid) {
+        return {
+          success: false,
+          errors: validationResults.errors.map(error =>
+            typeof error === 'object' && error !== null && 'message' in error
+              ? (error as { message: string }).message
+              : String(error)
+          )
+        };
+      }
+
+      // Save versions for each changed field
+      const currentConfig = await this.getCMSConfiguration();
+      if (currentConfig && userId && userEmail) {
+        await this.saveVersionsForChanges(currentConfig, updates, userId, userEmail);
+      }
+
+      // Update the configuration
+      const docRef = doc(db, 'cms', 'config');
+      await updateDoc(docRef, updates);
+
+      // Log activity
+      if (userId) {
+        await authService.logUserActivity(userId, 'cms_update', {
+          changes: Object.keys(updates),
+          timestamp: new Date()
+        });
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating CMS configuration:', error as Error);
+      return { success: false, errors: ['Failed to update configuration'] };
+    }
   }
 
-  // Clear cache
-  clearCache(): void {
-    this.cache.clear();
+  async updatePageContent(
+    pageType: string,
+    content: any,
+    userId?: string,
+    userEmail?: string
+  ): Promise<{ success: boolean; errors?: string[] }> {
+    try {
+      // Validate user permissions
+      if (userId) {
+        const canEdit = await authService.canEdit(userId);
+        if (!canEdit) {
+          return { success: false, errors: ['Insufficient permissions'] };
+        }
+      }
+
+      // Validate page-specific content
+      const validation = ContentValidator.validatePageContent(pageType, content);
+      
+      if (!validation.isValid) {
+        return {
+          success: false,
+          errors: validation.errors.map(error => error.message)
+        };
+      }
+
+      // Get current content for versioning
+      const currentConfig = await this.getCMSConfiguration();
+      const currentContent = (currentConfig?.pages as any)?.[pageType];
+
+      // Save versions for changes
+      if (currentContent && userId && userEmail) {
+        await this.saveVersionsForPageChanges(
+          pageType,
+          currentContent as unknown,
+          validation.sanitizedContent,
+          userId,
+          userEmail
+        );
+      }
+
+      // Update the configuration
+      const docRef = doc(db, 'cms', 'config');
+      await updateDoc(docRef, {
+        [`pages.${pageType}`]: validation.sanitizedContent
+      });
+
+      // Log activity
+      if (userId) {
+        await authService.logUserActivity(userId, 'page_update', {
+          pageType,
+          changes: Object.keys(validation.sanitizedContent),
+          timestamp: new Date()
+        });
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating page content:', error as Error);
+      return { success: false, errors: ['Failed to update page content'] };
+    }
   }
 
-  // Get cache statistics
-  getCacheStats(): { size: number; keys: string[] } {
+  private async validateContent(
+    content: Partial<CMSConfiguration>
+  ): Promise<{ isValid: boolean; errors: unknown[] }> {
+    const errors: unknown[] = [];
+
+    // Validate pages
+    if (content.pages) {
+      for (const [pageType, pageContent] of Object.entries(content.pages)) {
+        const validation = ContentValidator.validatePageContent(pageType, pageContent as unknown);
+        errors.push(...validation.errors);
+      }
+    }
+
+    // Validate business settings
+    if (content.business) {
+      const businessValidation = ContentValidator.validateContent(content.business as Record<string, any>);
+      errors.push(...businessValidation.errors);
+    }
+
+    // Validate pricing settings
+    if (content.pricing) {
+      const pricingValidation = ContentValidator.validateContent(content.pricing as Record<string, any>);
+      errors.push(...pricingValidation.errors);
+    }
+
     return {
-      size: this.cache.size,
-      keys: Array.from(this.cache.keys())
+      isValid: errors.length === 0,
+      errors
     };
   }
+
+  private async saveVersionsForChanges(
+    currentConfig: CMSConfiguration,
+    updates: Partial<CMSConfiguration>,
+    userId: string,
+    userEmail: string
+  ): Promise<void> {
+    // Save versions for page changes
+    if (updates.pages) {
+      for (const [pageType, pageContent] of Object.entries(updates.pages)) {
+        const currentPageContent = (currentConfig.pages as any)?.[pageType];
+        if (currentPageContent) {
+          await this.saveVersionsForPageChanges(
+            pageType,
+            currentPageContent as unknown,
+            pageContent as unknown,
+            userId,
+            userEmail
+          );
+        }
+      }
+    }
+
+    // Save versions for other changes
+    if (updates.business && currentConfig.business) {
+      await this.saveVersionsForObjectChanges(
+        'business',
+        currentConfig.business as unknown,
+        updates.business as unknown,
+        userId,
+        userEmail
+      );
+    }
+
+    if (updates.pricing && currentConfig.pricing) {
+      await this.saveVersionsForObjectChanges(
+        'pricing',
+        currentConfig.pricing as unknown,
+        updates.pricing as unknown,
+        userId,
+        userEmail
+      );
+    }
+  }
+
+  private async saveVersionsForPageChanges(
+    pageType: string,
+    oldContent: unknown,
+    newContent: unknown,
+    userId: string,
+    userEmail: string
+  ): Promise<void> {
+    const changes = this.detectObjectChanges(
+      oldContent as Record<string, unknown>,
+      newContent as Record<string, unknown>
+    );
+    
+    for (const change of changes) {
+      await VersionControl.saveVersion(
+        pageType,
+        change.field,
+        change.oldValue,
+        change.newValue,
+        userId,
+        userEmail,
+        `Updated ${pageType} ${change.field}`
+      );
+    }
+  }
+
+  private async saveVersionsForObjectChanges(
+    objectType: string,
+    oldObject: unknown,
+    newObject: unknown,
+    userId: string,
+    userEmail: string
+  ): Promise<void> {
+    const changes = this.detectObjectChanges(
+      oldObject as Record<string, unknown>,
+      newObject as Record<string, unknown>
+    );
+    
+    for (const change of changes) {
+      await VersionControl.saveVersion(
+        objectType,
+        change.field,
+        change.oldValue,
+        change.newValue,
+        userId,
+        userEmail,
+        `Updated ${objectType} ${change.field}`
+      );
+    }
+  }
+
+  private detectObjectChanges(oldObj: unknown, newObj: unknown): Array<{
+    field: string;
+    oldValue: unknown;
+    newValue: unknown;
+  }> {
+    const changes: Array<{ field: string; oldValue: unknown; newValue: unknown }> = [];
+    
+    const oldKeys = oldObj && typeof oldObj === 'object' ? Object.keys(oldObj as Record<string, unknown>) : [];
+    const newKeys = newObj && typeof newObj === 'object' ? Object.keys(newObj as Record<string, unknown>) : [];
+    const allKeys = new Set([...oldKeys, ...newKeys]);
+    
+    for (const key of allKeys) {
+      const oldValue = (oldObj as Record<string, unknown>)?.[key];
+      const newValue = (newObj as Record<string, unknown>)?.[key];
+      
+      if (oldValue !== newValue) {
+        changes.push({
+          field: key,
+          oldValue,
+          newValue
+        });
+      }
+    }
+    
+    return changes;
+  }
+
+  // Real-time subscription for CMS updates
+  subscribeToCMSUpdates(callback: (config: CMSConfiguration) => void): () => void {
+    const docRef = doc(db, 'cms', 'config');
+    
+    return onSnapshot(docRef, (doc) => {
+      if (doc.exists()) {
+        callback(doc.data() as CMSConfiguration);
+      }
+    });
+  }
 }
 
-// Export singleton instance
-export const cmsService = CMSService.getInstance();
-
-// Helper functions for common operations
-export async function getCMSConfig(): Promise<CMSConfiguration & { themeColors?: Record<string, string> }> {
-  const config = await cmsService.getCMSConfiguration();
-  return { ...config, themeColors: config.themeColors };
-}
-
-export async function updateCMSConfig(update: Partial<CMSConfiguration> & { themeColors?: Record<string, string> }) {
-  await cmsService.updateCMSConfiguration({ ...update, themeColors: update.themeColors });
-}
-export const getBusinessConfig = () => cmsService.getBusinessSettings();
-export const getPricingConfig = () => cmsService.getPricingSettings();
-export const getEmailTemplates = () => cmsService.getEmailTemplates();
-export const getSMSTemplates = () => cmsService.getSMSTemplates(); 
+export const cmsService = CMSService.getInstance(); 

@@ -123,7 +123,7 @@ const AIAssistantPage = () => {
   ];
 
   return (
-    <PageContainer className="bg-[#f2efef]">
+    <PageContainer className="bg-bg-secondary">
       <PageHeader 
         title="AI Assistant" 
         subtitle="Get help with your car service business"
@@ -145,7 +145,7 @@ const AIAssistantPage = () => {
                         className={`max-w-[80%] rounded-lg p-3 ${
                           message.role === 'user'
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-900'
+                            : 'bg-bg-secondary text-text-primary'
                         }`}
                       >
                         <div className="flex items-start gap-2">
@@ -172,7 +172,7 @@ const AIAssistantPage = () => {
                   ))}
                   {isLoading && (
                     <div className="flex justify-start">
-                      <div className="bg-gray-100 rounded-lg p-3">
+                      <div className="bg-bg-secondary rounded-lg p-3">
                         <div className="flex items-center gap-2">
                           <Bot className="w-4 h-4" />
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -225,7 +225,7 @@ const AIAssistantPage = () => {
                     <button
                       key={index}
                       onClick={() => setInput(question)}
-                      className="w-full text-left p-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md transition-colors"
+                      className="w-full text-left p-2 text-sm text-text-secondary hover:bg-bg-secondary rounded-md transition-colors"
                     >
                       {question}
                     </button>
@@ -249,7 +249,7 @@ const AIAssistantPage = () => {
                     Settings
                   </Button>
                 </div>
-                <div className="space-y-2 text-sm text-gray-600">
+                <div className="space-y-2 text-sm text-text-secondary">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
                     <span>Booking management</span>

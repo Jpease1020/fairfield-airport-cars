@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       updatedAt: new Date(),
     });
     return NextResponse.json({ message: 'Booking confirmed' });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 } 

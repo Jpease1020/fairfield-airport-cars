@@ -14,7 +14,7 @@ export function useCMS() {
         setError(null);
         const cmsConfig = await cmsService.getCMSConfiguration();
         setConfig(cmsConfig);
-      } catch (err) {
+      } catch {
         setError('Failed to load content');
       } finally {
         setLoading(false);
@@ -28,10 +28,9 @@ export function useCMS() {
     try {
       setLoading(true);
       setError(null);
-      cmsService.clearCache();
       const cmsConfig = await cmsService.getCMSConfiguration();
       setConfig(cmsConfig);
-    } catch (err) {
+    } catch {
       setError('Failed to refresh content');
     } finally {
       setLoading(false);

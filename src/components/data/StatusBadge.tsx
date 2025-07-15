@@ -2,60 +2,45 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  status: string;
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'in-progress' | 'success' | 'warning' | 'error';
   size?: 'sm' | 'md' | 'lg';
 }
 
 const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
-  ({ className, status, variant = 'default', size = 'md', ...props }, ref) => {
-    const variantClasses = {
-      default: 'bg-gray-100 text-gray-800',
-      success: 'bg-green-100 text-green-800',
-      warning: 'bg-yellow-100 text-yellow-800',
-      error: 'bg-red-100 text-red-800',
-      info: 'bg-blue-100 text-blue-800',
+  ({ className, status, size = 'md', ...props }, ref) => {
+    const statusClasses = {
+      pending: 'bg-warning text-text-inverse',
+      confirmed: 'bg-info text-text-inverse',
+      completed: 'bg-success text-text-inverse',
+      cancelled: 'bg-error text-text-inverse',
+      'in-progress': 'bg-brand-secondary text-text-inverse',
+      success: 'bg-success text-text-inverse',
+      warning: 'bg-warning text-text-inverse',
+      error: 'bg-error text-text-inverse',
     };
 
     const sizeClasses = {
-      sm: 'px-2 py-0.5 text-xs',
-      md: 'px-2.5 py-1 text-sm',
-      lg: 'px-3 py-1.5 text-base',
+      sm: 'px-2 py-1 text-xs',
+      md: 'px-3 py-1 text-sm',
+      lg: 'px-4 py-2 text-base',
     };
 
-    // Auto-detect variant based on status
-    const getVariant = (status: string): keyof typeof variantClasses => {
-      const statusLower = status.toLowerCase();
-      if (['confirmed', 'success', 'completed', 'active'].includes(statusLower)) {
-        return 'success';
-      }
-      if (['pending', 'warning', 'processing'].includes(statusLower)) {
-        return 'warning';
-      }
-      if (['cancelled', 'error', 'failed', 'inactive'].includes(statusLower)) {
-        return 'error';
-      }
-      if (['info', 'information'].includes(statusLower)) {
-        return 'info';
-      }
-      return 'default';
+    const getStatusText = (status: string) => {
+      return status.charAt(0).toUpperCase() + status.slice(1);
     };
-
-    const autoVariant = getVariant(status);
-    const finalVariant = variant === 'default' ? autoVariant : variant;
 
     return (
       <span
         ref={ref}
         className={cn(
-          'inline-flex items-center rounded-full font-medium',
-          variantClasses[finalVariant],
+          'inline-flex items-center rounded-full font-semibold',
+          statusClasses[status],
           sizeClasses[size],
           className
         )}
         {...props}
       >
-        {status}
+        {getStatusText(status)}
       </span>
     );
   }

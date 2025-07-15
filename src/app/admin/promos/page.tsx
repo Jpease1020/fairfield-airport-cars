@@ -75,12 +75,15 @@ const PromosPage = () => {
           />
         </FormSection>
         
-        <FormActions
-          onSubmit={addPromo}
-          submitText="Add Promo"
-          loading={loading}
-          disabled={!form.code}
-        />
+        <FormActions>
+          <Button 
+            onClick={addPromo}
+            disabled={!form.code || loading}
+            className="w-full sm:w-auto"
+          >
+            {loading ? 'Adding...' : 'Add Promo'}
+          </Button>
+        </FormActions>
 
         <DataTable
           data={promos}

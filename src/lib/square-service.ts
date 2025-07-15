@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SquareClient, SquareEnvironment } from 'square';
 import { v4 as uuidv4 } from 'uuid';
 

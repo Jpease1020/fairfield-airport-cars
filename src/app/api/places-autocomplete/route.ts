@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }));
 
     return NextResponse.json({ predictions });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to get predictions' }, { status: 500 });
   }
 } 

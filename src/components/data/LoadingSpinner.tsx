@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 interface LoadingSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'primary' | 'white';
+  variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error';
   text?: string;
 }
 
@@ -16,31 +16,32 @@ const LoadingSpinner = React.forwardRef<HTMLDivElement, LoadingSpinnerProps>(
     };
 
     const variantClasses = {
-      default: 'text-gray-600',
-      primary: 'text-indigo-600',
-      white: 'text-white',
+      default: 'text-text-secondary',
+      primary: 'text-brand-primary',
+      secondary: 'text-brand-secondary',
+      success: 'text-success',
+      warning: 'text-warning',
+      error: 'text-error',
     };
 
     return (
       <div
         ref={ref}
-        className={cn('flex items-center justify-center', className)}
+        className={cn('flex flex-col items-center justify-center', className)}
         {...props}
       >
-        <div className="flex items-center space-x-2">
-          <div
-            className={cn(
-              'animate-spin rounded-full border-2 border-current border-t-transparent',
-              sizeClasses[size],
-              variantClasses[variant]
-            )}
-          />
-          {text && (
-            <span className={cn('text-sm', variantClasses[variant])}>
-              {text}
-            </span>
+        <div
+          className={cn(
+            'animate-spin rounded-full border-2 border-current border-t-transparent',
+            sizeClasses[size],
+            variantClasses[variant]
           )}
-        </div>
+        />
+        {text && (
+          <span className={cn('text-sm', variantClasses[variant])}>
+            {text}
+          </span>
+        )}
       </div>
     );
   }

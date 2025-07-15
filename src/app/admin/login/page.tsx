@@ -17,7 +17,7 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await login(email, password);
+      await login(email, password);
       router.push('/admin/bookings');
     } catch (error) {
       setError(`Failed to log in: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -26,7 +26,7 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithGoogle();
+      await signInWithGoogle();
       router.push('/admin/bookings');
     } catch (error) {
       setError(`Failed to sign in with Google: ${error instanceof Error ? error.message : 'Unknown error'}`);

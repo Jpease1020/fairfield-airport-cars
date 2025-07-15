@@ -12,6 +12,7 @@ import { useCMS } from '@/hooks/useCMS';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { cmsService } from '@/lib/cms-service';
+import { Button } from '@/components/ui/button';
 
 export default function FeedbackPage() {
   const params = useParams();
@@ -165,30 +166,31 @@ export default function FeedbackPage() {
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
             <button
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
               onClick={() => setEditMode(true)}
             >
               Edit Mode
             </button>
           ) : (
             <div className="flex gap-2">
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+              <Button
                 onClick={handleSave}
                 disabled={saving}
+                className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover"
               >
                 {saving ? 'Saving...' : 'Save'}
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+              </Button>
+              <Button
                 onClick={handleCancel}
                 disabled={saving}
+                variant="outline"
+                className="bg-bg-secondary text-text-primary hover:bg-bg-muted"
               >
                 Cancel
-              </button>
+              </Button>
+              {saveMsg && <div className="mt-2 text-sm text-success">{saveMsg}</div>}
             </div>
           )}
-          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
         </div>
       )}
 
@@ -197,93 +199,94 @@ export default function FeedbackPage() {
         <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
           <label className="edit-label font-semibold">Page Title</label>
           <input
-            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-14 px-4"
+            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-14 px-4"
             value={localContent?.title || ''}
             onChange={e => handleFieldChange('title', e.target.value)}
           />
           <label className="edit-label font-semibold">Page Subtitle</label>
           <input
-            className="editable-input text-xl text-gray-600 w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+            className="editable-input text-xl text-text-secondary w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
             value={localContent?.subtitle || ''}
             onChange={e => handleFieldChange('subtitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Rate Experience Title</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.rateExperienceTitle || ''}
             onChange={e => handleFieldChange('rateExperienceTitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Rate Experience Description</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.rateExperienceDescription || ''}
             onChange={e => handleFieldChange('rateExperienceDescription', e.target.value)}
           />
           <label className="edit-label font-semibold">Comments Title</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.commentsTitle || ''}
             onChange={e => handleFieldChange('commentsTitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Comments Label</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.commentsLabel || ''}
             onChange={e => handleFieldChange('commentsLabel', e.target.value)}
           />
           <label className="edit-label font-semibold">Comments Placeholder</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.commentsPlaceholder || ''}
             onChange={e => handleFieldChange('commentsPlaceholder', e.target.value)}
           />
           <label className="edit-label font-semibold">Submit Button Text</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.submitButton || ''}
             onChange={e => handleFieldChange('submitButton', e.target.value)}
           />
           <label className="edit-label font-semibold">Success Title</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.successTitle || ''}
             onChange={e => handleFieldChange('successTitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Success Message</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.successMessage || ''}
             onChange={e => handleFieldChange('successMessage', e.target.value)}
             rows={3}
           />
           <label className="edit-label font-semibold">Error - No Rating</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.errorNoRating || ''}
             onChange={e => handleFieldChange('errorNoRating', e.target.value)}
           />
           <label className="edit-label font-semibold">Error - Submission Failed</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.errorSubmission || ''}
             onChange={e => handleFieldChange('errorSubmission', e.target.value)}
           />
           <div className="flex gap-2 mt-4">
-            <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
+            <Button
               onClick={handleSave}
               disabled={saving}
+              className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover"
             >
               {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"
+            </Button>
+            <Button
               onClick={handleCancel}
               disabled={saving}
+              variant="outline"
+              className="bg-bg-secondary text-text-primary hover:bg-bg-muted"
             >
               Cancel
-            </button>
-            {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+            </Button>
+            {saveMsg && <div className="mt-2 text-sm text-success">{saveMsg}</div>}
           </div>
         </div>
       ) : (

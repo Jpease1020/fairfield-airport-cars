@@ -1,13 +1,12 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils';
+import React from 'react';
 import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'success' | 'error' | 'warning' | 'info';
   title?: string;
-  children: React.ReactNode;
-  onClose?: () => void;
   dismissible?: boolean;
+  onClose?: () => void;
 }
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
@@ -21,17 +20,17 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     ...props 
   }, ref) => {
     const variantClasses = {
-      success: 'bg-green-50 border-green-200 text-green-800',
-      error: 'bg-red-50 border-red-200 text-red-800',
-      warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-      info: 'bg-blue-50 border-blue-200 text-blue-800',
+      success: 'bg-bg-success border-border-success text-text-success',
+      error: 'bg-bg-error border-border-error text-text-error',
+      warning: 'bg-bg-warning border-border-warning text-text-warning',
+      info: 'bg-bg-info border-border-info text-text-info',
     };
 
     const iconClasses = {
-      success: 'text-green-400',
-      error: 'text-red-400',
-      warning: 'text-yellow-400',
-      info: 'text-blue-400',
+      success: 'text-success',
+      error: 'text-error',
+      warning: 'text-warning',
+      info: 'text-info',
     };
 
     return (

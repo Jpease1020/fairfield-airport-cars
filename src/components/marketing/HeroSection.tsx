@@ -48,23 +48,23 @@ const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url(${backgroundImage})` }}
           >
-            <div className="absolute inset-0 bg-black bg-opacity-50" />
+            <div className="absolute inset-0 bg-bg-inverse bg-opacity-50" />
           </div>
         )}
         
         <div className={contentClasses}>
           {subtitle && (
-            <p className="text-lg text-indigo-600 font-semibold mb-4">
+            <p className="text-lg text-brand-primary font-semibold mb-4">
               {subtitle}
             </p>
           )}
           
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary mb-6">
             {title}
           </h1>
           
           {description && (
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl">
+            <p className="text-xl text-text-secondary mb-8 max-w-2xl">
               {description}
             </p>
           )}
@@ -77,7 +77,7 @@ const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
               {primaryAction && (
                 <a 
                   href={primaryAction.href}
-                  className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-text-inverse bg-brand-primary border border-transparent rounded-md shadow-sm hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
                 >
                   {primaryAction.label}
                 </a>
@@ -86,7 +86,7 @@ const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
               {secondaryAction && (
                 <a 
                   href={secondaryAction.href}
-                  className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-text-primary bg-bg-primary border border-border-primary rounded-md shadow-sm hover:bg-bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
                 >
                   {secondaryAction.label}
                 </a>

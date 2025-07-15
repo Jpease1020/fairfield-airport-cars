@@ -18,13 +18,6 @@ import { cmsService } from '@/lib/cms-service';
 
 // Status step calculation removed as it's handled by ProgressIndicator component
 
-const statusDescriptions = {
-  pending: "We've received your booking and will confirm it shortly.",
-  confirmed: "Your ride is confirmed! We'll notify you when your driver is on the way.",
-  completed: 'Your ride is complete. Thank you for choosing us!',
-  cancelled: 'This booking has been cancelled.',
-};
-
 export default function RideStatusPage() {
   const params = useParams();
   const { id } = params;
@@ -189,7 +182,6 @@ export default function RideStatusPage() {
     const driverDoc = fsDocDriver(db, 'drivers', 'gregg');
     const unsubDriver = fsSnap(driverDoc, (snap)=>{
       if(snap.exists()){
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const d = snap.data() as any;
         if(d.lat && d.lng && d.updatedAt){
           setDriverLoc({ lat:d.lat, lng:d.lng, updatedAt: d.updatedAt.toDate() });
@@ -231,11 +223,20 @@ export default function RideStatusPage() {
 
   const isDriverFresh = driverLoc && (Date.now() - driverLoc.updatedAt.getTime() < 2*60*1000);
 
-  const progressSteps = [
-    { id: 'pending', label: statusContent?.stepPending || 'Pending', description: 'Booking received' },
-    { id: 'confirmed', label: statusContent?.stepConfirmed || 'Confirmed', description: 'Ride confirmed' },
-    { id: 'completed', label: statusContent?.stepCompleted || 'Completed', description: 'Ride finished' },
+  // Remove the object array, use string array for steps
+  const stepLabels = [
+    statusContent?.stepPending || 'Pending',
+    statusContent?.stepConfirmed || 'Confirmed',
+    statusContent?.stepCompleted || 'Completed',
   ];
+
+  // Map booking.status to step index (1-based for ProgressIndicator)
+  const statusToStepIndex: Record<string, number> = {
+    pending: 1,
+    confirmed: 2,
+    completed: 3,
+  };
+  const currentStep = statusToStepIndex[booking.status] || 1;
 
   return (
     <PageContainer maxWidth="md" padding="lg">
@@ -244,7 +245,7 @@ export default function RideStatusPage() {
         <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
           {!editMode ? (
             <button
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              className="px-4 py-2 bg-brand-primary text-text-inverse rounded shadow hover:bg-brand-primary-hover"
               onClick={() => setEditMode(true)}
             >
               Edit Mode
@@ -252,14 +253,14 @@ export default function RideStatusPage() {
           ) : (
             <div className="flex gap-2">
               <button
-                className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+                className="px-4 py-2 bg-success text-text-inverse rounded shadow hover:bg-success-hover"
                 onClick={handleSave}
                 disabled={saving}
               >
                 {saving ? 'Saving...' : 'Save'}
               </button>
               <button
-                className="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500"
+                className="px-4 py-2 bg-error text-text-inverse rounded shadow hover:bg-error-hover"
                 onClick={handleCancel}
                 disabled={saving}
               >
@@ -276,120 +277,120 @@ export default function RideStatusPage() {
         <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
           <label className="edit-label font-semibold">Page Title</label>
           <input
-            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-14 px-4"
+            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-14 px-4"
             value={localContent?.title || ''}
             onChange={e => handleFieldChange('title', e.target.value)}
           />
           <label className="edit-label font-semibold">Subtitle Label</label>
           <input
-            className="editable-input text-xl text-gray-600 w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+            className="editable-input text-xl text-text-secondary w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
             value={localContent?.subtitleLabel || ''}
             onChange={e => handleFieldChange('subtitleLabel', e.target.value)}
           />
           <label className="edit-label font-semibold">Step: Pending</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.stepPending || ''}
             onChange={e => handleFieldChange('stepPending', e.target.value)}
           />
           <label className="edit-label font-semibold">Step: Confirmed</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.stepConfirmed || ''}
             onChange={e => handleFieldChange('stepConfirmed', e.target.value)}
           />
           <label className="edit-label font-semibold">Step: Completed</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.stepCompleted || ''}
             onChange={e => handleFieldChange('stepCompleted', e.target.value)}
           />
           <label className="edit-label font-semibold">Status Description: Pending</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.statusPending || ''}
             onChange={e => handleFieldChange('statusPending', e.target.value)}
             rows={2}
           />
           <label className="edit-label font-semibold">Status Description: Confirmed</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.statusConfirmed || ''}
             onChange={e => handleFieldChange('statusConfirmed', e.target.value)}
             rows={2}
           />
           <label className="edit-label font-semibold">Status Description: Completed</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.statusCompleted || ''}
             onChange={e => handleFieldChange('statusCompleted', e.target.value)}
             rows={2}
           />
           <label className="edit-label font-semibold">Status Description: Cancelled</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.statusCancelled || ''}
             onChange={e => handleFieldChange('statusCancelled', e.target.value)}
             rows={2}
           />
           <label className="edit-label font-semibold">Alert: Cancelled Title</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.alertCancelledTitle || ''}
             onChange={e => handleFieldChange('alertCancelledTitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Alert: Cancelled Message</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.alertCancelledMessage || ''}
             onChange={e => handleFieldChange('alertCancelledMessage', e.target.value)}
             rows={2}
           />
           <label className="edit-label font-semibold">Alert: Not Found Title</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.alertNotFoundTitle || ''}
             onChange={e => handleFieldChange('alertNotFoundTitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Alert: Not Found Message</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.alertNotFoundMessage || ''}
             onChange={e => handleFieldChange('alertNotFoundMessage', e.target.value)}
             rows={2}
           />
           <label className="edit-label font-semibold">Alert: Error Title</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.alertErrorTitle || ''}
             onChange={e => handleFieldChange('alertErrorTitle', e.target.value)}
           />
           <label className="edit-label font-semibold">Alert: Error Message</label>
           <textarea
-            className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
             value={localContent?.alertErrorMessage || ''}
             onChange={e => handleFieldChange('alertErrorMessage', e.target.value)}
             rows={2}
           />
           <label className="edit-label font-semibold">Loading Message</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.loadingMessage || ''}
             onChange={e => handleFieldChange('loadingMessage', e.target.value)}
           />
           <label className="edit-label font-semibold">Live Driver Location Header</label>
           <input
-            className="editable-input w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-10 px-4"
+            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-10 px-4"
             value={localContent?.liveDriverHeader || ''}
             onChange={e => handleFieldChange('liveDriverHeader', e.target.value)}
           />
           <div className="flex gap-2 mt-4">
             <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow hover:bg-blue-700 transition-all"
+              className="px-6 py-3 bg-brand-primary text-text-inverse rounded-xl font-semibold shadow hover:bg-brand-primary-hover transition-all"
               onClick={handleSave}
               disabled={saving}
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Saving...' : 'Save Changes'}
             </button>
             <button
               className="px-6 py-3 bg-gray-400 text-white rounded-xl font-semibold shadow hover:bg-gray-500 transition-all"
@@ -417,13 +418,12 @@ export default function RideStatusPage() {
             ) : (
               <div className="space-y-6">
                 <ProgressIndicator
-                  steps={progressSteps}
-                  currentStep={booking.status}
-                  showDescriptions={false}
+                  steps={stepLabels}
+                  currentStep={currentStep}
+                  totalSteps={stepLabels.length}
                 />
-                <div className="text-center p-4 bg-gray-50 rounded-md">
-                  <p className="font-semibold text-lg capitalize">{booking.status}</p>
-                  <p className="text-gray-700">
+                <div className="text-center p-4 bg-bg-secondary rounded-md">
+                  <p className="text-text-secondary">
                     {booking.status === 'pending' && (statusContent?.statusPending || "We've received your booking and will confirm it shortly.")}
                     {booking.status === 'confirmed' && (statusContent?.statusConfirmed || "Your ride is confirmed! We'll notify you when your driver is on the way.")}
                     {booking.status === 'completed' && (statusContent?.statusCompleted || "Your ride is complete. Thank you for choosing us!")}

@@ -5,31 +5,29 @@ interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   subtitle?: string;
   children?: React.ReactNode;
-  actions?: React.ReactNode;
 }
 
 const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
-  ({ className, title, subtitle, children, actions, ...props }, ref) => {
+  ({ className, title, subtitle, children, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn('mb-6', className)}
+        className={cn('mb-8', className)}
         {...props}
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+            <h1 className="text-2xl font-bold text-text-primary">{title}</h1>
             {subtitle && (
-              <p className="mt-1 text-sm text-gray-600">{subtitle}</p>
+              <p className="mt-1 text-sm text-text-secondary">{subtitle}</p>
             )}
           </div>
-          {actions && (
+          {children && (
             <div className="flex items-center space-x-2">
-              {actions}
+              {children}
             </div>
           )}
         </div>
-        {children}
       </div>
     );
   }

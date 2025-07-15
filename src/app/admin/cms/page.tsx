@@ -38,7 +38,9 @@ const CMSPage = () => {
       setLoading(true);
       const cmsConfig = await cmsService.getCMSConfiguration();
       setConfig(cmsConfig);
-      setLastUpdated(cmsConfig.lastUpdated);
+      if (cmsConfig) {
+        setLastUpdated(cmsConfig.lastUpdated);
+      }
     } catch (error) {
       console.error('Error loading CMS config:', error);
     } finally {
@@ -47,7 +49,6 @@ const CMSPage = () => {
   };
 
   const handleRefresh = () => {
-    cmsService.clearCache();
     loadCMSConfig();
   };
 
@@ -171,7 +172,7 @@ const CMSPage = () => {
         <PageHeader title="Content Management System" />
         <PageContent>
           <div className="flex items-center justify-center h-64">
-            <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
+            <RefreshCw className="h-8 w-8 animate-spin text-text-muted" />
           </div>
         </PageContent>
       </PageContainer>
@@ -181,7 +182,7 @@ const CMSPage = () => {
   return (
     <>
       <AdminNavigation />
-      <PageContainer className="bg-[#f2efef]">
+      <PageContainer className="bg-bg-secondary">
         <PageHeader 
           title="Content Management System" 
           subtitle="Manage all website content and business settings"
@@ -232,7 +233,7 @@ const CMSPage = () => {
                       </div>
                       <div>
                         <CardTitle className="text-lg text-white">{section.title}</CardTitle>
-                        <p className="text-sm text-gray-100">{section.description}</p>
+                        <p className="text-sm text-text-secondary">{section.description}</p>
                       </div>
                     </div>
                   </div>
@@ -240,7 +241,7 @@ const CMSPage = () => {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Status:</span>
+                      <span className="text-text-secondary">Status:</span>
                       <Badge variant="outline">
                         {section.id === 'pricing' && `$${section.stats.baseFare} base fare`}
                         {section.id === 'business' && section.stats.companyName}

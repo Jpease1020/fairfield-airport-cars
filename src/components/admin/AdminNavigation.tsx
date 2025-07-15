@@ -122,11 +122,11 @@ const AdminNavigation = () => {
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40 py-4 md">
+    <nav className="bg-bg-primary border-b border-border-primary shadow-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-8">
-            <Link href="/admin" className="text-2xl font-bold text-gray-900">Admin Panel</Link>
+            <Link href="/admin" className="text-2xl font-bold text-text-primary">Admin Panel</Link>
             {/* Desktop Navigation */}
             <div className="hidden md:flex gap-2">
               {navigationItems.map((item) => {
@@ -138,8 +138,8 @@ const AdminNavigation = () => {
                       className={cn(
                         'flex items-center gap-2 px-3 py-2 rounded-md font-medium transition',
                         item.current
-                          ? 'bg-[var(--primary)] text-white shadow-md'
-                          : 'text-gray-700 hover:bg-gray-100 hover:text-[var(--primary)]'
+                          ? 'bg-brand-primary text-text-inverse shadow-md'
+                          : 'text-text-primary hover:bg-bg-secondary hover:text-brand-primary'
                       )}
                     >
                       <IconComponent className="h-4 w-4" />
@@ -147,7 +147,7 @@ const AdminNavigation = () => {
                     </Link>
                     {/* Dropdown for CMS */}
                     {item.children && item.current && (
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+                      <div className="absolute top-full left-0 mt-2 w-56 bg-bg-primary border border-border-primary rounded-md shadow-lg z-20">
                         <div className="py-2">
                           {item.children.map((child) => {
                             const ChildIconComponent = child.icon;
@@ -158,8 +158,8 @@ const AdminNavigation = () => {
                                 className={cn(
                                   'flex items-center gap-2 px-4 py-2 text-sm rounded-md transition',
                                   child.current
-                                    ? 'bg-[var(--primary)] text-white'
-                                    : 'text-gray-700 hover:bg-gray-100 hover:text-[var(--primary)]'
+                                    ? 'bg-brand-primary text-text-inverse'
+                                    : 'text-text-primary hover:bg-bg-secondary hover:text-brand-primary'
                                 )}
                               >
                                 <ChildIconComponent className="h-4 w-4" />
@@ -177,7 +177,7 @@ const AdminNavigation = () => {
           </div>
           <Link
             href="/"
-            className="ml-auto px-4 py-2 bg-[var(--primary)] text-white rounded-md hover:bg-blue-700 transition hidden md:inline-block"
+            className="ml-auto px-4 py-2 bg-brand-primary text-text-inverse rounded-md hover:bg-brand-primary-hover transition hidden md:inline-block"
           >
             View Site
           </Link>
@@ -199,7 +199,7 @@ const AdminNavigation = () => {
       </div>
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+        <div className="md:hidden bg-bg-primary border-t border-border-primary shadow-lg">
           <div className="py-2 px-2 space-y-1">
             {navigationItems.map((item) => {
               const IconComponent = item.icon;
@@ -210,8 +210,8 @@ const AdminNavigation = () => {
                     className={cn(
                       'flex items-center gap-2 px-4 py-3 rounded-md font-medium',
                       item.current
-                        ? 'bg-[var(--primary)] text-white shadow-md'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-[var(--primary)]'
+                        ? 'bg-brand-primary text-text-inverse shadow-md'
+                        : 'text-text-primary hover:bg-bg-secondary hover:text-brand-primary'
                     )}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -230,8 +230,8 @@ const AdminNavigation = () => {
                             className={cn(
                               'flex items-center gap-2 px-4 py-2 text-sm rounded-md',
                               child.current
-                                ? 'bg-[var(--primary)] text-white'
-                                : 'text-gray-700 hover:bg-gray-100 hover:text-[var(--primary)]'
+                                ? 'bg-brand-primary text-text-inverse'
+                                : 'text-text-primary hover:bg-bg-secondary hover:text-brand-primary'
                             )}
                             onClick={() => setMobileMenuOpen(false)}
                           >
@@ -245,10 +245,10 @@ const AdminNavigation = () => {
                 </div>
               );
             })}
-            <div className="pt-2 border-t border-gray-200">
+            <div className="pt-2 border-t border-border-primary">
               <Link
                 href="/"
-                className="flex items-center gap-2 px-4 py-3 rounded-md font-medium text-gray-700 hover:bg-gray-100 hover:text-[var(--primary)]"
+                className="flex items-center gap-2 px-4 py-3 rounded-md font-medium text-text-primary hover:bg-bg-secondary hover:text-brand-primary"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 View Site
