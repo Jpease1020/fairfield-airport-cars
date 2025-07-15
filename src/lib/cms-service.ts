@@ -34,7 +34,7 @@ export class CMSService {
 
   async getCMSConfiguration(): Promise<CMSConfiguration | null> {
     try {
-      const docRef = doc(db, 'cms', 'config');
+      const docRef = doc(db, 'cms', 'configuration');
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
@@ -151,7 +151,7 @@ export class CMSService {
       }
 
       // Update the configuration
-      const docRef = doc(db, 'cms', 'config');
+      const docRef = doc(db, 'cms', 'configuration');
       await updateDoc(docRef, updates);
 
       // Log activity
@@ -210,7 +210,7 @@ export class CMSService {
       }
 
       // Update the configuration
-      const docRef = doc(db, 'cms', 'config');
+      const docRef = doc(db, 'cms', 'configuration');
       await updateDoc(docRef, {
         [`pages.${pageType}`]: validation.sanitizedContent
       });
@@ -385,7 +385,7 @@ export class CMSService {
 
   // Real-time subscription for CMS updates
   subscribeToCMSUpdates(callback: (config: CMSConfiguration) => void): () => void {
-    const docRef = doc(db, 'cms', 'config');
+    const docRef = doc(db, 'cms', 'configuration');
     
     return onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
