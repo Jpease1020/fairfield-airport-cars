@@ -150,11 +150,11 @@ const HelpPage: NextPage = () => {
     <PageContainer maxWidth="xl" padding="lg">
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
-        <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
+        <div className="fixed top-20 right-6 z-50">
           {!editMode ? (
             <Button
               onClick={() => setEditMode(true)}
-              className="bg-brand-primary text-white hover:bg-brand-primary-hover"
+              className="bg-brand-primary text-white hover:bg-brand-primary-hover shadow-lg"
             >
               Edit Mode
             </Button>
@@ -163,7 +163,7 @@ const HelpPage: NextPage = () => {
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover"
+                className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover shadow-lg"
               >
                 {saving ? 'Saving...' : 'Save'}
               </Button>
@@ -171,7 +171,7 @@ const HelpPage: NextPage = () => {
                 onClick={handleCancel}
                 disabled={saving}
                 variant="outline"
-                className="bg-bg-secondary text-text-primary hover:bg-bg-muted"
+                className="bg-bg-secondary text-text-primary hover:bg-bg-muted shadow-lg"
               >
                 Cancel
               </Button>

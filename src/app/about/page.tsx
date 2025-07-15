@@ -7,6 +7,8 @@ import { auth } from '@/lib/firebase';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import '../page-editable.css';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function AboutPage() {
   const { config: cmsConfig } = useCMS();
@@ -81,13 +83,13 @@ export default function AboutPage() {
   };
 
   return (
-    <PageContainer maxWidth="2xl" padding="lg">
+    <PageContainer maxWidth="xl" padding="lg">
       {isAdmin && (
-        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
+        <div className="fixed top-20 right-6 z-50">
           {!editMode ? (
             <Button
               onClick={() => setEditMode(true)}
-              className="bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+              className="bg-brand-primary text-white hover:bg-brand-primary-hover shadow-lg"
             >
               Edit Mode
             </Button>
@@ -96,7 +98,7 @@ export default function AboutPage() {
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-success text-text-inverse hover:bg-success-hover"
+                className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover shadow-lg"
               >
                 {saving ? 'Saving...' : 'Save'}
               </Button>
@@ -104,7 +106,7 @@ export default function AboutPage() {
                 onClick={handleCancel}
                 disabled={saving}
                 variant="outline"
-                className="bg-bg-secondary text-text-primary hover:bg-bg-muted"
+                className="bg-bg-secondary text-text-primary hover:bg-bg-muted shadow-lg"
               >
                 Cancel
               </Button>
@@ -118,23 +120,25 @@ export default function AboutPage() {
         {editMode ? (
           <div className="flex flex-col gap-4">
             <label className="edit-label font-semibold">Title</label>
-            <input
-              className="editable-input text-2xl font-bold w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg h-12 px-4"
+            <Input
+              className="editable-input text-2xl font-bold w-full mb-2 h-12 px-4"
               value={localContent?.title || ''}
               onChange={e => handleFieldChange('title', e.target.value)}
             />
             <label className="edit-label font-semibold">Content</label>
-            <textarea
-              className="editable-textarea w-full mb-2 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            <Textarea
+              className="editable-textarea w-full mb-2 p-4"
               value={localContent?.content || ''}
               onChange={e => handleFieldChange('content', e.target.value)}
               rows={8}
             />
           </div>
         ) : (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">{aboutContent?.title || 'About Fairfield Airport Car Service'}</h2>
-            <div className="prose max-w-none text-gray-700 whitespace-pre-line">{aboutContent?.content || 'Our company provides premium airport transportation...'}</div>
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold text-text-primary mb-4">{aboutContent?.title || 'About Fairfield Airport Car Service'}</h2>
+            <div className="prose max-w-none text-text-secondary leading-relaxed">
+              {aboutContent?.content || 'Our company provides premium airport transportation services to and from major airports in the New York and Connecticut area. We specialize in reliable, comfortable rides with professional drivers and well-maintained vehicles.'}
+            </div>
           </div>
         )}
       </PageContent>

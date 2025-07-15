@@ -188,10 +188,11 @@ export default function HomePage() {
     <PageContainer>
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
-        <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
+        <div className="fixed top-20 right-6 z-50">
           {!editMode ? (
             <Button
               onClick={() => setEditMode(true)}
+              className="bg-brand-primary text-white hover:bg-brand-primary-hover shadow-lg"
             >
               Edit Mode
             </Button>
