@@ -72,31 +72,31 @@ export default function JarvisDownloadPage() {
           </p>
         </div>
 
-        {/* Download Section */}
+        {/* Access Options */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Download Jarvis
+            Access Jarvis
           </h2>
           
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <div className="text-center">
-              <div className="bg-blue-100 rounded-lg p-6 mb-4">
-                <div className="text-4xl mb-2">🪟</div>
-                <h3 className="text-lg font-semibold mb-2">Windows</h3>
-                <p className="text-gray-600 mb-4">For Windows 10/11 computers</p>
-                <a
-                  href="/api/download/jarvis-windows"
-                  className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              <div className="bg-green-100 rounded-lg p-6 mb-4">
+                <div className="text-4xl mb-2">🌐</div>
+                <h3 className="text-lg font-semibold mb-2">Web Version</h3>
+                <p className="text-gray-600 mb-4">Use Jarvis directly in your browser</p>
+                <Link
+                  href="/jarvis-web"
+                  className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200"
                 >
-                  Download for Windows
-                </a>
+                  Launch Jarvis Web
+                </Link>
               </div>
             </div>
             
             <div className="text-center">
               <div className="bg-gray-100 rounded-lg p-6 mb-4">
                 <div className="text-4xl mb-2">🍎</div>
-                <h3 className="text-lg font-semibold mb-2">Mac</h3>
+                <h3 className="text-lg font-semibold mb-2">Desktop App</h3>
                 <p className="text-gray-600 mb-4">Native macOS desktop app</p>
                 <a
                   href="/api/download/jarvis-mac"
@@ -109,7 +109,7 @@ export default function JarvisDownloadPage() {
           </div>
           
           <div className="text-center text-sm text-gray-500">
-            Free download • No registration required • Works offline
+            Web version recommended • No installation required • Works on any device
           </div>
         </div>
 
@@ -158,8 +158,8 @@ export default function JarvisDownloadPage() {
                 1
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Download & Install</h3>
-                <p className="text-gray-600">Download the desktop app for your operating system and install it</p>
+                <h3 className="font-semibold mb-1">Choose Your Option</h3>
+                <p className="text-gray-600">Use the web version (recommended) or download the desktop app</p>
               </div>
             </div>
             
@@ -168,9 +168,9 @@ export default function JarvisDownloadPage() {
                 2
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Open the App</h3>
+                <h3 className="font-semibold mb-1">Access Jarvis</h3>
                 <p className="text-gray-600">
-                  Double-click the Jarvis app in your Applications folder to launch it
+                  Click "Launch Jarvis Web" to use it in your browser, or download the desktop app
                 </p>
               </div>
             </div>
@@ -180,8 +180,8 @@ export default function JarvisDownloadPage() {
                 3
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Start Using Jarvis</h3>
-                <p className="text-gray-600">The app will open and you can start chatting with your AI assistant</p>
+                <h3 className="font-semibold mb-1">Start Chatting</h3>
+                <p className="text-gray-600">Begin asking Jarvis questions and get AI-powered assistance</p>
               </div>
             </div>
             
@@ -190,8 +190,8 @@ export default function JarvisDownloadPage() {
                 4
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Configure & Use</h3>
-                <p className="text-gray-600">Set up your API keys and connect your work tools to get the full Jarvis experience</p>
+                <h3 className="font-semibold mb-1">Explore Features</h3>
+                <p className="text-gray-600">Discover work analysis, integrations, and smart reporting capabilities</p>
               </div>
             </div>
           </div>
