@@ -4,8 +4,8 @@ import fs from 'fs';
 
 export async function GET(request: NextRequest) {
   try {
-    // Path to the Jarvis Mac ZIP file
-    const jarvisPath = path.join(process.cwd(), 'public', 'Jarvis-Mac.zip');
+    // Path to the Jarvis Mac DMG file
+    const jarvisPath = path.join(process.cwd(), 'public', 'Jarvis-Mac.dmg');
     
     // Check if file exists
     if (!fs.existsSync(jarvisPath)) {
@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
     // Return the file as a download
     return new NextResponse(fileBuffer, {
       headers: {
-        'Content-Type': 'application/zip',
-        'Content-Disposition': 'attachment; filename="Jarvis-Mac.zip"',
+        'Content-Type': 'application/x-apple-diskimage',
+        'Content-Disposition': 'attachment; filename="Jarvis-Mac.dmg"',
         'Content-Length': fileBuffer.length.toString(),
       },
     });
