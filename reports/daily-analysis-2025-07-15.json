@@ -1,0 +1,153 @@
+{
+  "date": "2025-07-15T22:38:54.438Z",
+  "summary": {},
+  "architecture": {
+    "components": {
+      "total": 154,
+      "reusable": 8,
+      "admin": 2,
+      "ui": 1,
+      "layout": 1,
+      "marketing": 1
+    },
+    "dependencies": {
+      "total": 29,
+      "devDeps": 13,
+      "outdated": 0,
+      "security": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "summary": {}
+      }
+    },
+    "codeQuality": {
+      "eslintIssues": {
+        "error": "Command failed: npx eslint src --format json"
+      },
+      "typescriptIssues": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "fileSizes": {
+        "large": 1,
+        "medium": 2,
+        "small": 118
+      },
+      "complexity": {
+        "deepNesting": 0,
+        "largeComponents": 0
+      }
+    },
+    "structure": {
+      "totalFiles": 124,
+      "directories": 60,
+      "depth": 4
+    }
+  },
+  "performance": {
+    "bundleSize": {
+      "estimated": "Requires build analysis"
+    },
+    "buildTime": {
+      "timeMs": 17760,
+      "status": "success"
+    },
+    "lighthouse": {
+      "status": "Requires lighthouse CI setup"
+    },
+    "images": {
+      "total": 6,
+      "optimized": 6,
+      "large": 0
+    }
+  },
+  "security": {
+    "dependencies": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "summary": {}
+    },
+    "environment": {
+      "hasEnvFile": false,
+      "hasEnvExample": false,
+      "hasEnvLocal": true,
+      "hasEnvProd": false
+    },
+    "secrets": {
+      "found": 0,
+      "files": []
+    },
+    "permissions": {
+      "readable": 124,
+      "writable": 124
+    }
+  },
+  "business": {
+    "pages": {
+      "total": 73,
+      "public": 44,
+      "admin": 1,
+      "api": 1
+    },
+    "features": {
+      "booking": true,
+      "cms": true,
+      "payments": true,
+      "notifications": true,
+      "analytics": true
+    },
+    "cms": {
+      "hasCMS": true,
+      "editablePages": 15,
+      "contentTypes": 26
+    },
+    "booking": {
+      "hasBooking": true,
+      "hasPayment": true,
+      "hasConfirmation": true,
+      "hasCancellation": true
+    }
+  },
+  "tests": {
+    "coverage": {
+      "total": 2,
+      "unit": 2,
+      "integration": 0,
+      "e2e": 0
+    },
+    "performance": {
+      "error": "Command failed: npm test -- --passWithNoTests\nerror: unknown option '--passWithNoTests'\n"
+    },
+    "types": {
+      "unit": true,
+      "integration": true,
+      "e2e": true,
+      "visual": true
+    },
+    "status": {
+      "status": "failed",
+      "error": "Command failed: npm test -- --passWithNoTests\nerror: unknown option '--passWithNoTests'\n"
+    }
+  },
+  "todos": [
+    {
+      "category": "Testing",
+      "priority": "high",
+      "task": "Increase test coverage - currently very low",
+      "impact": "Code Quality"
+    }
+  ],
+  "recommendations": []
+}

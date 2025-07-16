@@ -16,7 +16,12 @@
     "test:visual": "playwright test visual.spec.ts",
     "test:customer-pages": "playwright test customer-pages.spec.ts",
     "test:customer-pages-optimized": "playwright test customer-pages-optimized.spec.ts",
-    "test:update": "playwright test --update-snapshots"
+    "test:update": "playwright test --update-snapshots",
+    "analyze": "node scripts/daily-analysis.js",
+    "analyze:setup": "chmod +x scripts/setup-cron.sh && ./scripts/setup-cron.sh",
+    "analyze:run": "node scripts/daily-analysis.js",
+    "analyze:reports": "ls -la reports/",
+    "analyze:logs": "tail -f logs/daily-analysis.log"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",
