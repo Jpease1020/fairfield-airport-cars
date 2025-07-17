@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "export": "next build && next export",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "npm run build && firebase deploy",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "deploy": "npm run build && vercel --prod",
+    "deploy:preview": "npm run build && vercel",
     "init-cms": "node scripts/init-cms.js",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
@@ -17,11 +19,16 @@
     "test:customer-pages": "playwright test customer-pages.spec.ts",
     "test:customer-pages-optimized": "playwright test customer-pages-optimized.spec.ts",
     "test:update": "playwright test --update-snapshots",
+    "test:smoke": "node scripts/smoke-test.js",
+    "test:unit": "node scripts/run-tests.js",
     "analyze": "node scripts/daily-analysis.js",
     "analyze:setup": "chmod +x scripts/setup-cron.sh && ./scripts/setup-cron.sh",
     "analyze:run": "node scripts/daily-analysis.js",
     "analyze:reports": "ls -la reports/",
-    "analyze:logs": "tail -f logs/daily-analysis.log"
+    "analyze:logs": "tail -f logs/daily-analysis.log",
+    "health-check": "node scripts/health-check.js",
+    "backup": "node scripts/backup-data.js",
+    "monitor": "node scripts/monitor-app.js"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",

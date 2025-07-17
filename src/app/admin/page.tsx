@@ -62,6 +62,27 @@ const AdminDashboard = () => {
 
   const totalRevenue = bookings.reduce((sum, b) => sum + (b.fare || 0), 0);
   const todayRevenue = todayBookings.reduce((sum, b) => sum + (b.fare || 0), 0);
+  
+  // Enhanced business intelligence metrics
+  const thisWeek = new Date();
+  thisWeek.setDate(thisWeek.getDate() - 7);
+  const weeklyBookings = bookings.filter(booking => {
+    const bookingDate = new Date(booking.pickupDateTime);
+    return bookingDate >= thisWeek;
+  });
+  const weeklyRevenue = weeklyBookings.reduce((sum, b) => sum + (b.fare || 0), 0);
+  
+  const thisMonth = new Date();
+  thisMonth.setMonth(thisMonth.getMonth() - 1);
+  const monthlyBookings = bookings.filter(booking => {
+    const bookingDate = new Date(booking.pickupDateTime);
+    return bookingDate >= thisMonth;
+  });
+  const monthlyRevenue = monthlyBookings.reduce((sum, b) => sum + (b.fare || 0), 0);
+  
+  // Calculate average fare and conversion rates
+  const averageFare = bookings.length > 0 ? totalRevenue / bookings.length : 0;
+  const completionRate = bookings.length > 0 ? (completedBookings.length / bookings.length) * 100 : 0;
 
   const quickActions = [
     {
@@ -174,7 +195,7 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        {/* Revenue Stats */}
+        {/* Enhanced Revenue Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
             <CardHeader>
@@ -190,8 +211,41 @@ const AdminDashboard = () => {
                   <span className="font-semibold text-text-primary">${totalRevenue.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-text-primary">Today&apos;s Revenue</span>
+                  <span className="text-text-primary">This Month</span>
+                  <span className="font-semibold text-text-primary">${monthlyRevenue.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-primary">This Week</span>
+                  <span className="font-semibold text-text-primary">${weeklyRevenue.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-primary">Today</span>
                   <span className="font-semibold text-text-primary">${todayRevenue.toFixed(2)}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-text-primary">
+                <TrendingUp className="h-5 w-5" />
+                Business Metrics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-text-primary">Average Fare</span>
+                  <span className="font-semibold text-text-primary">${averageFare.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-primary">Completion Rate</span>
+                  <span className="font-semibold text-text-primary">{completionRate.toFixed(1)}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-primary">Total Bookings</span>
+                  <span className="font-semibold text-text-primary">{bookings.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text-primary">Completed Rides</span>

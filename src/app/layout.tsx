@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/layout";
+import { interactionTracker } from "@/lib/interaction-tracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,19 @@ export default function RootLayout({
       >
         <Navigation />
         {children}
+        {/* Initialize interaction tracking */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Initialize interaction tracking
+              if (typeof window !== 'undefined') {
+                setTimeout(() => {
+                  console.log('🔍 Initializing interaction tracking...');
+                }, 100);
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

@@ -19,7 +19,8 @@ import {
   HelpCircle,
   Bot,
   Menu,
-  X
+  X,
+  HardDrive
 } from 'lucide-react';
 
 const AdminNavigation = () => {
@@ -46,6 +47,18 @@ const AdminNavigation = () => {
       current: pathname === '/admin/calendar'
     },
     {
+      name: 'Drivers',
+      href: '/admin/drivers',
+      icon: Users,
+      current: pathname === '/admin/drivers'
+    },
+    {
+      name: 'Backups',
+      href: '/admin/backups',
+      icon: HardDrive,
+      current: pathname === '/admin/backups'
+    },
+    {
       name: 'Promos',
       href: '/admin/promos',
       icon: Tag,
@@ -62,6 +75,12 @@ const AdminNavigation = () => {
       href: '/admin/ai-assistant',
       icon: Bot,
       current: pathname === '/admin/ai-assistant'
+    },
+    {
+      name: 'Analytics',
+      href: '/admin/analytics',
+      icon: BarChart3,
+      current: pathname === '/admin/analytics'
     },
     {
       name: 'CMS',
