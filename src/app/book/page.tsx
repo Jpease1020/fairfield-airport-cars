@@ -2,6 +2,7 @@
 "use client";
 
 import type { NextPage } from 'next';
+import Image from 'next/image';
 import BookingForm from './booking-form';
 import { useCMS } from '@/hooks/useCMS';
 import { useEffect, useState } from 'react';
@@ -127,11 +128,15 @@ const BookPage: NextPage = () => {
       )}
 
       <div className="bg-white text-gray-900 shadow-[0_4px_20px_rgba(0,0,0,0.1)] rounded-3xl max-w-xl w-full p-8 md:p-12 flex flex-col items-center">
-        {/* Logo Placeholder */}
-        <div className="flex justify-center mb-6">
-          {/* Replace with your car logo SVG, e.g.: */}
-          {/* <img src="/car.svg" alt="Fairfield Car Service Logo" className="h-12 w-auto" /> */}
-          <svg width="48" height="48" fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#0B1F3A" fill-rule="evenodd"/></svg>
+        {/* Logo */}
+        <div className="flex justify-center">
+          <Image 
+            src="/NewLogo.svg" 
+            alt="Fairfield Airport Cars Logo" 
+            width={800}
+            height={200}
+            className="h-48 w-auto max-w-[384px]" 
+          />
         </div>
         {/* Page Header */}
         {editMode ? (
@@ -177,7 +182,7 @@ const BookPage: NextPage = () => {
           </div>
         ) : (
           <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-white mb-2">
+            <h1 className="text-3xl md:text-4xl font-serif font-bold mb-2">
               {bookingPageContent?.title || "Book Your Ride"}
             </h1>
             <p className="text-gray-900 text-lg mb-2">

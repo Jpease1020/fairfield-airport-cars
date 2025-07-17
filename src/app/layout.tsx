@@ -16,6 +16,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Fairfield Airport Cars - Premium Airport Transportation",
   description: "Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area. Book your ride today!",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '16x16 32x32' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180' },
+    ],
+    other: [
+      { url: '/android-chrome-192x192.png', sizes: '192x192' },
+      { url: '/android-chrome-512x512.png', sizes: '512x512' },
+    ],
+  },
 };
 
 export default function RootLayout({
