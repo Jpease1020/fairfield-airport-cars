@@ -41,7 +41,6 @@ interface Driver {
 export default function DriversPage() {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddDriver, setShowAddDriver] = useState(false);
 
   useEffect(() => {
     // Mock data for now - will be replaced with real API call
@@ -125,7 +124,7 @@ export default function DriversPage() {
         title="Driver Management" 
         subtitle="Manage your drivers, track their status, and assign rides."
       >
-        <Button onClick={() => setShowAddDriver(true)}>
+        <Button>
           <UserPlus className="w-4 h-4 mr-2" />
           Add Driver
         </Button>

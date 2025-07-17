@@ -1,5 +1,4 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
 import { EditableInput } from './EditableInput';
 import { EditableTextarea } from './EditableTextarea';
 

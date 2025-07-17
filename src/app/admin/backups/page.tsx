@@ -14,9 +14,7 @@ import {
   Clock,
   HardDrive,
   Shield,
-  AlertTriangle,
-  CheckCircle,
-  Play
+  CheckCircle
 } from 'lucide-react';
 
 export default function BackupsPage() {

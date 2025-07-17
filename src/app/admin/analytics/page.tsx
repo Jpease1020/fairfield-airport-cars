@@ -9,11 +9,8 @@ import {
   Activity, 
   AlertTriangle, 
   MousePointer, 
-  Keyboard, 
   FormInput,
-  Globe,
   Clock,
-  TrendingUp,
   TrendingDown,
   RefreshCw
 } from 'lucide-react';

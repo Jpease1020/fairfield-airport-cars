@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './input';
 import { Textarea } from './textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import { Select, SelectContent, SelectTrigger, SelectValue } from './select';
 
 // Enhanced Input Component
 interface EnhancedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -216,8 +216,8 @@ interface SearchInputProps extends Omit<EnhancedInputProps, 'type'> {
 }
 
 const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ onSearch, searchIcon, ...props }, ref) => {
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  ({ onSearch, ...props }, ref) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter' && onSearch) {
         onSearch(e.currentTarget.value);
       }
@@ -228,7 +228,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
         ref={ref}
         type="search"
         placeholder="Search..."
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyDown}
         {...props}
       />
     );

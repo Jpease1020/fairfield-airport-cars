@@ -192,7 +192,7 @@ class InteractionTracker {
     }, true);
 
     // Track navigation
-    let navigationStart = Date.now();
+    const navigationStart = Date.now();
     window.addEventListener('beforeunload', () => {
       this.trackInteraction({
         type: 'navigation',
@@ -313,8 +313,8 @@ class InteractionTracker {
   private getElementInfo(element: HTMLElement) {
     const tagName = element.tagName.toLowerCase();
     let type = tagName;
-    let id = element.id;
-    let className = element.className;
+    const id = element.id;
+    const className = element.className;
 
     // Categorize elements
     if (element.closest('button') || tagName === 'button') {

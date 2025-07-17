@@ -14,6 +14,8 @@ const eslintConfig = [
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      "react/no-deprecated": "error",
+      "react/no-unescaped-entities": "error",
     },
   },
 ];
