@@ -1,8 +1,8 @@
-# Gregg's Jarvis Setup Guide
+# Gregg's project-x Setup Guide
 
 ## Step 1: Get Your API Key
 
-1. **Contact Jarvis** to get your personal API key
+1. **Contact project-x** to get your personal API key
 2. **Save the key** in a secure location
 3. **Never share** the key publicly
 
@@ -11,28 +11,28 @@
 Create a `.env.local` file in the project root with:
 
 ```bash
-# Gregg's Jarvis API Configuration
+# Gregg's project-x API Configuration
 GREGG_API_KEY=your-actual-api-key-here
 
-# Jarvis Backend URL (default to localhost:3001)
-JARVIS_BACKEND_URL=http://localhost:3001
+# project-x Backend URL (default to localhost:3001)
+project-x_BACKEND_URL=http://localhost:3001
 
 # Optional: Configure different environments
 NODE_ENV=development
 ```
 
-## Step 3: Start Jarvis Backend
+## Step 3: Start project-x Backend
 
-Make sure Jarvis is running locally:
+Make sure project-x is running locally:
 
 ```bash
-cd ../jarvis
+cd ../project-x
 npm start
 # or
 node deploy.js gregg
 ```
 
-Jarvis should be available at `http://localhost:3001`
+project-x should be available at `http://localhost:3001`
 
 ## Step 4: Test the Connection
 
@@ -42,13 +42,13 @@ Jarvis should be available at `http://localhost:3001`
    ```
 
 2. **Visit the web interface**:
-   - Go to `http://localhost:3000/jarvis`
+   - Go to `http://localhost:3000/project-x`
    - Enter password: `gregg2024`
-   - Click "Launch Jarvis Web"
+   - Click "Launch project-x Web"
 
 3. **Test a message**:
-   - Type: "Hello Jarvis, can you help me with work analysis?"
-   - You should get a real response from Jarvis
+   - Type: "Hello project-x, can you help me with work analysis?"
+   - You should get a real response from project-x
 
 ## Troubleshooting
 
@@ -57,13 +57,13 @@ Jarvis should be available at `http://localhost:3001`
 - Verify `GREGG_API_KEY` is set correctly
 - Restart the development server
 
-### If you get "Jarvis backend unavailable":
-- Make sure Jarvis is running on `localhost:3001`
+### If you get "project-x backend unavailable":
+- Make sure project-x is running on `localhost:3001`
 - Check that the API key is valid
 - Verify network connectivity
 
-### If you get "Jarvis API error":
-- Check the Jarvis logs for errors
+### If you get "project-x API error":
+- Check the project-x logs for errors
 - Verify the API endpoint is correct
 - Ensure the API key has proper permissions
 
@@ -76,18 +76,18 @@ Jarvis should be available at `http://localhost:3001`
 
 ## Advanced Configuration
 
-### Custom Jarvis Backend URL
-If Jarvis is running on a different port or host:
+### Custom project-x Backend URL
+If project-x is running on a different port or host:
 
 ```bash
-JARVIS_BACKEND_URL=http://your-jarvis-host:port
+project-x_BACKEND_URL=http://your-project-x-host:port
 ```
 
 ### Multiple User Support
 To support multiple users, modify the API route to use different keys:
 
 ```typescript
-// In src/app/api/jarvis/chat/route.ts
+// In src/app/api/project-x/chat/route.ts
 const userApiKeys = {
   gregg: process.env.GREGG_API_KEY,
   alice: process.env.ALICE_API_KEY,
@@ -100,7 +100,7 @@ const apiKey = userApiKeys[user] || process.env.DEFAULT_API_KEY;
 ## Success Indicators
 
 ✅ **Working correctly when:**
-- Messages get real responses from Jarvis
+- Messages get real responses from project-x
 - No "fallback" or "error" messages
 - Responses are contextual and helpful
 - Loading states work properly
@@ -109,7 +109,7 @@ const apiKey = userApiKeys[user] || process.env.DEFAULT_API_KEY;
 
 1. **Test with real questions** about work analysis
 2. **Try file uploads** if implemented
-3. **Explore Jarvis capabilities** through the interface
+3. **Explore project-x capabilities** through the interface
 4. **Provide feedback** on the user experience
 
-Your Jarvis web interface is now connected to the real Jarvis backend! 🚀 
+Your project-x web interface is now connected to the real project-x backend! 🚀 

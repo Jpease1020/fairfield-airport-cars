@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         sessionId,
         email: userEmail,
         isNewUser: true,
-        message: 'Welcome to Jarvis! Your OpenAI account has been connected successfully.'
+        message: 'Welcome to project-x! Your OpenAI account has been connected successfully.'
       });
     }
 

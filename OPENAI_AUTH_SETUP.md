@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Jarvis web interface now supports OpenAI OAuth-style authentication, allowing users to connect their own OpenAI accounts without needing to manually handle API keys.
+The project-x web interface now supports OpenAI OAuth-style authentication, allowing users to connect their own OpenAI accounts without needing to manually handle API keys.
 
 ## How It Works
 
@@ -22,15 +22,15 @@ The Jarvis web interface now supports OpenAI OAuth-style authentication, allowin
 ## API Endpoints
 
 ### Authentication
-- `POST /api/jarvis/auth/openai` - Login/logout/validate sessions
-- `GET /api/jarvis/auth/openai` - Validate existing sessions
+- `POST /api/project-x/auth/openai` - Login/logout/validate sessions
+- `GET /api/project-x/auth/openai` - Validate existing sessions
 
 ### Chat
-- `POST /api/jarvis/chat` - Send messages to Jarvis with user's API key
+- `POST /api/project-x/chat` - Send messages to project-x with user's API key
 
 ## User Flow
 
-1. User visits `/jarvis-web`
+1. User visits `/project-x-web`
 2. User enters their OpenAI API key
 3. System validates the key with OpenAI
 4. User is authenticated and can start chatting
@@ -77,7 +77,7 @@ const testResponse = await fetch('https://api.openai.com/v1/models', {
 
 ### Chat Forwarding
 ```typescript
-const jarvisResponse = await fetch('http://localhost:3001/api/chat', {
+const project-xResponse = await fetch('http://localhost:3001/api/chat', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -101,9 +101,9 @@ const jarvisResponse = await fetch('http://localhost:3001/api/chat', {
 
 ## Usage Instructions
 
-1. Visit `/jarvis-web` in your browser
+1. Visit `/project-x-web` in your browser
 2. Click "Connect OpenAI Account"
 3. Enter your OpenAI API key (get one at https://platform.openai.com/api-keys)
-4. Start chatting with Jarvis!
+4. Start chatting with project-x!
 
 The system will automatically handle all the authentication and API key management for you. 

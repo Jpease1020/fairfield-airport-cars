@@ -175,7 +175,7 @@
 - **Project Management:** GitHub Projects or Notion
 - **Documentation:** GitHub Wiki or Notion
 - **Communication:** Slack/Teams for real-time
-- **AI Assistant:** Jarvis with MCP integration
+- **AI Assistant:** project-x with MCP integration
 
 ### External Services
 - **Payments:** Square

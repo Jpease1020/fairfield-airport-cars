@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
           messages: [
             {
               role: 'system',
-              content: `You are Jarvis, an AI assistant for Fairfield Airport Cars. You help users with:
+              content: `You are project-x, an AI assistant for Fairfield Airport Cars. You help users with:
 - Airport car bookings and transportation
 - General questions and information
 - Customer support and assistance
@@ -114,7 +114,7 @@ Be helpful, friendly, and professional. If users ask about bookings, guide them 
       let suggestions = ['Book a ride', 'Get help', 'Ask a question'];
       
       if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
-        response = 'Hello! I\'m Jarvis, your AI assistant. How can I help you today?';
+        response = 'Hello! I\'m project-x, your AI assistant. How can I help you today?';
         suggestions = ['What can you do?', 'Book a ride', 'Get help'];
       } else if (message.toLowerCase().includes('help') || message.toLowerCase().includes('what can you do')) {
         response = 'I can help you with various tasks including:\n• Answering questions\n• Providing information\n• Assisting with bookings\n• General conversation\n\nWhat would you like to know?';

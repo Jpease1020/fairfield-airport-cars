@@ -76,7 +76,7 @@ npm run dev
 1. **View all bookings** → Booking list loads
 2. **Update booking status** → Status changes work
 3. **CMS editing** → Content can be updated
-4. **AI Assistant** → Jarvis responds to questions
+4. **AI Assistant** → project-x responds to questions
 
 ### Content Management
 1. **Edit homepage** → Content updates work
@@ -146,7 +146,7 @@ firebase deploy
 - **MONITORING_GUIDE.md** - System monitoring
 
 ### Admin Tools
-- **AI Assistant**: `/admin/ai-assistant` - Get help from Jarvis
+- **AI Assistant**: `/admin/ai-assistant` - Get help from project-x
 - **CMS**: `/admin/cms` - Edit website content
 - **Bookings**: `/admin/bookings` - Manage all bookings
 - **Analytics**: `/admin/analytics` - View business metrics

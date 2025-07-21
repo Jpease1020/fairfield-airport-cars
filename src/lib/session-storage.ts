@@ -1,4 +1,4 @@
-// Shared session storage for all Jarvis authentication and chat routes
+// Shared session storage for all project-x authentication and chat routes
 export interface UserSession {
   userId: string;
   email: string;

@@ -21,7 +21,7 @@ interface AuthState {
   isAdmin: boolean;
 }
 
-export default function JarvisPage() {
+export default function project-xPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function JarvisPage() {
 
   // Check for existing session on load
   useEffect(() => {
-    const sessionId = localStorage.getItem('jarvis_google_session_id');
+    const sessionId = localStorage.getItem('project-x_google_session_id');
     if (sessionId) {
       validateSession(sessionId);
     }
@@ -43,7 +43,7 @@ export default function JarvisPage() {
 
   const validateSession = async (sessionId: string) => {
     try {
-      const response = await fetch(`/api/jarvis/auth/google?sessionId=${sessionId}`);
+      const response = await fetch(`/api/project-x/auth/google?sessionId=${sessionId}`);
       const data = await response.json();
       
       if (data.success && data.hasValidSession) {
@@ -55,11 +55,11 @@ export default function JarvisPage() {
           isAdmin: data.isAdmin
         });
       } else {
-        localStorage.removeItem('jarvis_google_session_id');
+        localStorage.removeItem('project-x_google_session_id');
       }
     } catch (error) {
       console.error('Session validation error:', error);
-      localStorage.removeItem('jarvis_google_session_id');
+      localStorage.removeItem('project-x_google_session_id');
     }
   };
 
@@ -70,7 +70,7 @@ export default function JarvisPage() {
       // In production, this would use Firebase Auth or Google OAuth
       const mockIdToken = 'mock-google-token-' + Date.now();
       
-      const response = await fetch('/api/jarvis/auth/google', {
+      const response = await fetch('/api/project-x/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export default function JarvisPage() {
       const data = await response.json();
 
       if (data.success) {
-        localStorage.setItem('jarvis_google_session_id', data.sessionId);
+        localStorage.setItem('project-x_google_session_id', data.sessionId);
         setAuthState({
           isAuthenticated: true,
           sessionId: data.sessionId,
@@ -95,7 +95,7 @@ export default function JarvisPage() {
         
         // Add welcome message
         if (data.isNewUser) {
-          addMessage("Welcome to Jarvis! I'm your AI assistant. How can I help you today?", false);
+          addMessage("Welcome to project-x! I'm your AI assistant. How can I help you today?", false);
         } else {
           addMessage("Welcome back! How can I help you today?", false);
         }
@@ -113,7 +113,7 @@ export default function JarvisPage() {
   const handleLogout = async () => {
     if (authState.sessionId) {
       try {
-        await fetch('/api/jarvis/auth/google', {
+        await fetch('/api/project-x/auth/google', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export default function JarvisPage() {
       }
     }
     
-    localStorage.removeItem('jarvis_google_session_id');
+    localStorage.removeItem('project-x_google_session_id');
     setAuthState({
       isAuthenticated: false,
       sessionId: null,
@@ -158,7 +158,7 @@ export default function JarvisPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/jarvis/chat', {
+      const response = await fetch('/api/project-x/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -206,10 +206,10 @@ export default function JarvisPage() {
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Welcome to Jarvis
+              Welcome to project-x
             </CardTitle>
             <p className="text-gray-600 mt-2">
-              Sign in with your Google account to access Jarvis AI Assistant
+              Sign in with your Google account to access project-x AI Assistant
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -253,7 +253,7 @@ export default function JarvisPage() {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">Jarvis Admin</h1>
+              <h1 className="text-lg font-semibold text-gray-900">project-x Admin</h1>
               <div className="flex items-center space-x-2">
                 <Badge variant="secondary" className="text-xs">
                   <User className="w-3 h-3 mr-1" />
@@ -321,7 +321,7 @@ export default function JarvisPage() {
             <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
               <div className="flex items-center space-x-2">
                 <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                <span className="text-sm text-gray-500">Jarvis is thinking...</span>
+                <span className="text-sm text-gray-500">project-x is thinking...</span>
               </div>
             </div>
           </div>

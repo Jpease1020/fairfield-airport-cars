@@ -88,8 +88,8 @@ export async function POST(request: NextRequest) {
         isNewUser: true,
         isAdmin,
         message: isAdmin 
-          ? 'Welcome to Jarvis! You have admin access.' 
-          : 'Welcome to Jarvis! Your account has been set up with AI capabilities.'
+          ? 'Welcome to project-x! You have admin access.' 
+          : 'Welcome to project-x! Your account has been set up with AI capabilities.'
       });
     }
 

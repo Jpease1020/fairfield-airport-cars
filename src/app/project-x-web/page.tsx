@@ -21,7 +21,7 @@ interface AuthState {
   isNewUser: boolean;
 }
 
-export default function JarvisWebPage() {
+export default function project-xWebPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ export default function JarvisWebPage() {
 
   // Check for existing session on load
   useEffect(() => {
-    const sessionId = localStorage.getItem('jarvis_session_id');
+    const sessionId = localStorage.getItem('project-x_session_id');
     if (sessionId) {
       validateSession(sessionId);
     }
@@ -45,7 +45,7 @@ export default function JarvisWebPage() {
 
   const validateSession = async (sessionId: string) => {
     try {
-      const response = await fetch(`/api/jarvis/auth/openai?sessionId=${sessionId}`);
+      const response = await fetch(`/api/project-x/auth/openai?sessionId=${sessionId}`);
       const data = await response.json();
       
       if (data.success && data.hasValidSession) {
@@ -56,11 +56,11 @@ export default function JarvisWebPage() {
           isNewUser: data.isNewUser
         });
       } else {
-        localStorage.removeItem('jarvis_session_id');
+        localStorage.removeItem('project-x_session_id');
       }
     } catch (error) {
       console.error('Session validation error:', error);
-      localStorage.removeItem('jarvis_session_id');
+      localStorage.removeItem('project-x_session_id');
     }
   };
 
@@ -73,7 +73,7 @@ export default function JarvisWebPage() {
     console.log('Starting login process...');
     setIsLoading(true);
     try {
-      const response = await fetch('/api/jarvis/auth/openai', {
+      const response = await fetch('/api/project-x/auth/openai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ export default function JarvisWebPage() {
 
       if (data.success) {
         console.log('Login successful, sessionId:', data.sessionId);
-        localStorage.setItem('jarvis_session_id', data.sessionId);
+        localStorage.setItem('project-x_session_id', data.sessionId);
         setAuthState({
           isAuthenticated: true,
           sessionId: data.sessionId,
@@ -101,7 +101,7 @@ export default function JarvisWebPage() {
         
         // Add welcome message
         if (data.isNewUser) {
-          addMessage("Welcome to Jarvis! I'm your AI assistant. How can I help you today?", false);
+          addMessage("Welcome to project-x! I'm your AI assistant. How can I help you today?", false);
         } else {
           addMessage("Welcome back! How can I help you today?", false);
         }
@@ -120,7 +120,7 @@ export default function JarvisWebPage() {
   const handleLogout = async () => {
     if (authState.sessionId) {
       try {
-        await fetch('/api/jarvis/auth/openai', {
+        await fetch('/api/project-x/auth/openai', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default function JarvisWebPage() {
       }
     }
     
-    localStorage.removeItem('jarvis_session_id');
+    localStorage.removeItem('project-x_session_id');
     setAuthState({
       isAuthenticated: false,
       sessionId: null,
@@ -173,7 +173,7 @@ export default function JarvisWebPage() {
     console.log('Sending message with sessionId:', authState.sessionId);
 
     try {
-      const response = await fetch('/api/jarvis/chat', {
+      const response = await fetch('/api/project-x/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -226,7 +226,7 @@ export default function JarvisWebPage() {
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Welcome to Jarvis
+              Welcome to project-x
             </CardTitle>
             <p className="text-gray-600 mt-2">
               Connect your OpenAI account to start chatting with your AI assistant
@@ -359,7 +359,7 @@ export default function JarvisWebPage() {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">Jarvis</h1>
+              <h1 className="text-lg font-semibold text-gray-900">project-x</h1>
               <div className="flex items-center space-x-2">
                 <Badge variant="secondary" className="text-xs">
                   <User className="w-3 h-3 mr-1" />
@@ -423,7 +423,7 @@ export default function JarvisWebPage() {
               <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
                 <div className="flex items-center space-x-2">
                   <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                  <span className="text-sm text-gray-500">Jarvis is thinking...</span>
+                  <span className="text-sm text-gray-500">project-x is thinking...</span>
                 </div>
               </div>
             </div>
@@ -434,7 +434,7 @@ export default function JarvisWebPage() {
         <div className="w-80 bg-white border-l border-gray-200 p-4">
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Chat with Jarvis</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Chat with project-x</h3>
               <div className="flex space-x-2">
                 <Input
                   value={inputMessage}
