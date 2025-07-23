@@ -256,37 +256,51 @@ export default function BookingForm({ booking }: BookingFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🔧 BookingForm - Submit attempted', { fare, name, email, phone, pickupLocation, dropoffLocation });
+    
     if (!fare) {
+      console.log('🔧 BookingForm - No fare calculated');
       alert(bookingFormText?.errorCalculateBeforeBooking || "Please calculate the fare before booking.");
       return;
     }
 
-    const pickupDate = new Date(pickupDateTime);
-    const settings = await getSettings();
-    const slotFree = await isTimeSlotAvailable(pickupDate, settings.bufferMinutes);
-    if (!slotFree) {
-      setError(bookingFormText?.errorTimeConflict || 'Selected time conflicts with another booking. Please choose a different time.');
+    // Validate required fields
+    if (!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime) {
+      console.log('🔧 BookingForm - Missing required fields', { name, email, phone, pickupLocation, dropoffLocation, pickupDateTime });
+      setError('Please fill in all required fields.');
       return;
     }
 
-    const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
-      name,
-      email,
-      phone,
-      pickupLocation,
-      dropoffLocation,
-      pickupDateTime: pickupDate,
-      passengers,
-      flightNumber,
-      notes,
-      fare: fare!,
-      status: 'pending',
-      depositPaid: false,
-      balanceDue: fare! * (1 - settings.depositPercent / 100),
-      depositAmount: fare! * (settings.depositPercent / 100),
-    };
-
+    const pickupDate = new Date(pickupDateTime);
+    console.log('🔧 BookingForm - Checking time slot availability');
+    
     try {
+      const settings = await getSettings();
+      const slotFree = await isTimeSlotAvailable(pickupDate, settings.bufferMinutes);
+      if (!slotFree) {
+        setError(bookingFormText?.errorTimeConflict || 'Selected time conflicts with another booking. Please choose a different time.');
+        return;
+      }
+
+      const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
+        name,
+        email,
+        phone,
+        pickupLocation,
+        dropoffLocation,
+        pickupDateTime: pickupDate,
+        passengers,
+        flightNumber,
+        notes,
+        fare: fare!,
+        status: 'pending',
+        depositPaid: false,
+        balanceDue: fare! * (1 - settings.depositPercent / 100),
+        depositAmount: fare! * (settings.depositPercent / 100),
+      };
+
+      console.log('🔧 BookingForm - Creating booking', bookingData);
+
       if (isEditMode && booking.id) {
         await updateBooking(booking.id, bookingData);
         setSuccess(bookingFormText?.successBookingUpdated || 'Booking updated successfully!');
@@ -294,6 +308,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
       } else {
         const finalBookingData = { ...bookingData, status: 'pending' as const };
         const bookingId = await createBooking(finalBookingData);
+        console.log('🔧 BookingForm - Booking created successfully', bookingId);
         setSuccess(bookingFormText?.successBookingCreated || 'Booking created successfully! Sending confirmation...');
         try {
           await fetch('/api/send-confirmation', {
@@ -306,7 +321,8 @@ export default function BookingForm({ booking }: BookingFormProps) {
         }
         router.push(`/booking/${bookingId}`);
       }
-    } catch {
+    } catch (error) {
+      console.error('🔧 BookingForm - Error creating booking:', error);
       setError(isEditMode ? (bookingFormText?.errorUpdateBooking || 'Failed to update booking.') : (bookingFormText?.errorCreateBooking || 'Failed to create booking.'));
     }
   };
@@ -467,10 +483,12 @@ export default function BookingForm({ booking }: BookingFormProps) {
       <Button
         type="submit"
         size="lg"
-        disabled={!fare}
+        disabled={!fare || !name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime}
         className="w-full py-4 text-lg font-semibold rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         {isEditMode ? (bookingFormText?.updateBookingButton || 'Update Booking') : (bookingFormText?.bookNowButton || 'Book Now')}
+        {!fare && ' (Calculate fare first)'}
+        {fare && (!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime) && ' (Fill required fields)'}
       </Button>
       {error && <p className="text-error text-center mt-4">{error}</p>}
       {success && <p className="text-success text-center mt-4">{success}</p>}

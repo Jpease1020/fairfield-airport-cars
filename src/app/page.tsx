@@ -269,6 +269,20 @@ export default function HomePage() {
               <p className="text-xl md:text-2xl text-text-inverse/90 mb-6 max-w-3xl mx-auto">
                 {heroText?.subtitle || 'Reliable, comfortable rides to and from Fairfield Airport. Book your ride today!'}
               </p>
+              
+              {/* Customer Review Section */}
+              <div className="mb-8 bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-2xl mx-auto">
+                <div className="flex items-center justify-center mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-6 w-6 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <blockquote className="text-text-inverse/95 text-lg italic mb-3">
+                  "Fairfield Airport Car Service is top tier. I've used them twice now - once for LaGuardia and once for Newark. Even for a 5am pickup, Gregg, my driver, greeted me with a friendly smile. The car was immaculate and he was punctual both times. I will absolutely be using this company for all my airport runs."
+                </blockquote>
+                <cite className="text-text-inverse/80 text-sm">- Satisfied Customer</cite>
+              </div>
+              
               <div className="flex justify-center items-center">
                 <Link href="/book">
                   <Button size="lg" className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover px-8 py-3 text-lg font-semibold shadow-lg">
