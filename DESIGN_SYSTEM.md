@@ -2,6 +2,155 @@
 
 A comprehensive design system for consistent, accessible, and maintainable UI components.
 
+## 🎯 Grid System Philosophy
+
+### Core Principles
+1. **Margins belong to layouts, not components** - Reusable components should not have margins built-in
+2. **Consistent spacing scale** - Use predefined spacing values for consistency
+3. **Page-level control** - Spacing between components is controlled at the page layout level
+4. **Flexible composition** - Components can be composed with different spacing contexts
+
+### Spacing Scale
+```tsx
+// Spacing values (in rem)
+xs: 0.25rem (4px)
+sm: 0.5rem  (8px)
+md: 1rem    (16px)
+lg: 1.5rem  (24px)
+xl: 2rem    (32px)
+2xl: 3rem   (48px)
+```
+
+## 📦 Enhanced Container & Layout System
+
+### Container with Margin Controls
+```tsx
+import { Container } from '@/components/ui';
+
+// Basic usage
+<Container maxWidth="xl" padding="lg">
+  <p>Content with max width and padding</p>
+</Container>
+
+// With margin controls
+<Container 
+  maxWidth="xl" 
+  padding="lg"
+  margin="md"
+  marginTop="lg"
+  marginBottom="xl"
+>
+  <p>Content with controlled margins</p>
+</Container>
+```
+
+### Box with Margin Controls
+```tsx
+import { Box } from '@/components/ui';
+
+<Box 
+  variant="elevated" 
+  padding="lg" 
+  rounded="lg"
+  margin="md"
+  marginTop="lg"
+>
+  <p>Elevated box with controlled margins</p>
+</Box>
+```
+
+### Section with Margin Controls
+```tsx
+import { Section } from '@/components/ui';
+
+<Section 
+  variant="brand" 
+  padding="xl"
+  margin="lg"
+  marginBottom="xl"
+>
+  <H2>Brand Section</H2>
+  <Text>Content with controlled margins</Text>
+</Section>
+```
+
+### Card with Margin Controls
+```tsx
+import { Card } from '@/components/ui';
+
+<Card 
+  variant="elevated" 
+  padding="lg" 
+  hover
+  margin="md"
+  marginTop="lg"
+>
+  <H3>Card Title</H3>
+  <Text>Card content with controlled margins</Text>
+</Card>
+```
+
+### Stack with Margin Controls
+```tsx
+import { Stack } from '@/components/ui';
+
+<Stack 
+  direction="vertical" 
+  spacing="md" 
+  align="center"
+  margin="lg"
+  marginTop="xl"
+>
+  <Button>Button 1</Button>
+  <Button>Button 2</Button>
+</Stack>
+```
+
+### Grid with Margin Controls
+```tsx
+import { Grid } from '@/components/ui';
+
+<Grid 
+  cols={3} 
+  gap="lg" 
+  responsive
+  margin="md"
+  marginBottom="xl"
+>
+  <Card>Item 1</Card>
+  <Card>Item 2</Card>
+  <Card>Item 3</Card>
+</Grid>
+```
+
+### Layout Component for Page-Level Spacing
+```tsx
+import { Layout } from '@/components/ui';
+
+<Layout spacing="lg" container maxWidth="xl">
+  <HeroSection />
+  <FeaturesSection />
+  <FAQSection />
+  <ContactSection />
+</Layout>
+```
+
+### Spacer Component for Explicit Spacing
+```tsx
+import { Spacer } from '@/components/ui';
+
+// Vertical spacing
+<Spacer size="lg" />
+
+// Horizontal spacing
+<Spacer size="md" axis="horizontal" />
+
+// Between components
+<HeroSection />
+<Spacer size="xl" />
+<FeaturesSection />
+```
+
 ## 🎨 Typography System
 
 ### Headings
@@ -31,81 +180,6 @@ import { Text, Lead, Small, Muted, Inverse } from '@/components/ui';
 // With size variants
 <Text size="lg">Large text</Text>
 <Text size="sm">Small text</Text>
-```
-
-## 📦 Container & Layout System
-
-### Container
-```tsx
-import { Container } from '@/components/ui';
-
-<Container maxWidth="xl" padding="lg">
-  <p>Content with max width and padding</p>
-</Container>
-```
-
-### Box
-```tsx
-import { Box } from '@/components/ui';
-
-<Box variant="elevated" padding="lg" rounded="lg">
-  <p>Elevated box with shadow</p>
-</Box>
-
-<Box variant="outlined" padding="md">
-  <p>Outlined box with border</p>
-</Box>
-```
-
-### Section
-```tsx
-import { Section } from '@/components/ui';
-
-<Section variant="brand" padding="xl">
-  <H2>Brand Section</H2>
-  <Text>Content with brand colors</Text>
-</Section>
-
-<Section variant="alternate" padding="lg">
-  <H2>Alternate Section</H2>
-  <Text>Content with alternate background</Text>
-</Section>
-```
-
-### Card
-```tsx
-import { Card } from '@/components/ui';
-
-<Card variant="elevated" padding="lg" hover>
-  <H3>Card Title</H3>
-  <Text>Card content with hover effect</Text>
-</Card>
-```
-
-### Stack
-```tsx
-import { Stack } from '@/components/ui';
-
-<Stack direction="vertical" spacing="md" align="center">
-  <Button>Button 1</Button>
-  <Button>Button 2</Button>
-</Stack>
-
-<Stack direction="horizontal" spacing="lg" justify="between">
-  <Text>Left content</Text>
-  <Text>Right content</Text>
-</Stack>
-```
-
-### Grid
-```tsx
-import { Grid } from '@/components/ui';
-
-<Grid cols={3} gap="lg" responsive>
-  <Card>Item 1</Card>
-  <Card>Item 2</Card>
-  <Card>Item 3</Card>
-</Grid>
 ```
 
 ## 🎛️ Enhanced Input System
@@ -280,31 +354,71 @@ All components are built with responsive design in mind:
 
 ## 🎯 Usage Guidelines
 
-### 1. Consistency
-- Always use the design system components instead of custom CSS
-- Maintain consistent spacing using the spacing scale
-- Use the typography system for all text
+### 1. Component Design Philosophy
+- **No built-in margins**: Reusable components should not have margins
+- **Composition over configuration**: Use layout components to control spacing
+- **Consistent spacing**: Use the predefined spacing scale
+- **Page-level control**: Manage spacing at the page layout level
 
-### 2. Hierarchy
-- Use heading levels properly (H1 → H2 → H3)
-- Maintain visual hierarchy with size and weight
-- Use color and spacing to create clear sections
+### 2. Layout Patterns
+```tsx
+// ✅ Good - Page controls spacing
+<Layout spacing="lg">
+  <HeroSection />
+  <FeaturesSection />
+  <FAQSection />
+</Layout>
 
-### 3. Forms
-- Always include labels for form fields
-- Provide helpful error messages
-- Use appropriate input types (email, tel, password, etc.)
+// ✅ Good - Explicit spacing
+<HeroSection />
+<Spacer size="xl" />
+<FeaturesSection />
 
-### 4. Buttons
-- Use primary buttons for main actions
-- Use secondary buttons for less important actions
-- Use destructive buttons sparingly for dangerous actions
+// ❌ Bad - Component has built-in margins
+<HeroSection className="mb-8" />
+```
 
-### 5. Layout
-- Use Container for page-level content
-- Use Section for major content blocks
-- Use Card for contained content
-- Use Stack for consistent spacing
+### 3. Grid Usage
+```tsx
+// ✅ Good - Grid controls spacing
+<Grid cols={3} gap="lg" margin="md">
+  <Card>Item 1</Card>
+  <Card>Item 2</Card>
+  <Card>Item 3</Card>
+</Grid>
+
+// ✅ Good - Stack for vertical spacing
+<Stack spacing="md" margin="lg">
+  <Button>Action 1</Button>
+  <Button>Action 2</Button>
+</Stack>
+```
+
+### 4. Container Usage
+```tsx
+// ✅ Good - Container with margin controls
+<Container 
+  maxWidth="xl" 
+  padding="lg"
+  margin="md"
+  marginTop="xl"
+>
+  <Content />
+</Container>
+```
+
+### 5. Section Usage
+```tsx
+// ✅ Good - Section with margin controls
+<Section 
+  variant="brand" 
+  padding="xl"
+  margin="lg"
+  marginBottom="xl"
+>
+  <Content />
+</Section>
+```
 
 ## 🔧 Customization
 
@@ -320,76 +434,119 @@ The design system is built on CSS custom properties, making it easy to customize
 
 ## 📚 Component Examples
 
-### Complete Form Example
+### Complete Page Layout Example
+```tsx
+import { 
+  Layout, 
+  Container, 
+  Stack, 
+  Grid,
+  Card,
+  Button,
+  Spacer
+} from '@/components/ui';
+
+export default function ExamplePage() {
+  return (
+    <Layout spacing="xl" container maxWidth="xl">
+      {/* Hero Section */}
+      <Container padding="lg" margin="none">
+        <Stack spacing="lg" align="center">
+          <H1>Welcome to Our Service</H1>
+          <Text size="lg">Professional airport transportation</Text>
+          <Stack direction="horizontal" spacing="md">
+            <Button size="lg">Book Now</Button>
+            <Button variant="outline" size="lg">Learn More</Button>
+          </Stack>
+        </Stack>
+      </Container>
+
+      <Spacer size="xl" />
+
+      {/* Features Grid */}
+      <Grid cols={3} gap="lg" margin="none">
+        <Card padding="lg">
+          <H3>Feature 1</H3>
+          <Text>Description of feature 1</Text>
+        </Card>
+        <Card padding="lg">
+          <H3>Feature 2</H3>
+          <Text>Description of feature 2</Text>
+        </Card>
+        <Card padding="lg">
+          <H3>Feature 3</H3>
+          <Text>Description of feature 3</Text>
+        </Card>
+      </Grid>
+
+      <Spacer size="xl" />
+
+      {/* Contact Section */}
+      <Section variant="brand" padding="xl" margin="none">
+        <Container padding="none">
+          <Stack spacing="md" align="center">
+            <H2>Contact Us</H2>
+            <Text variant="inverse">Get in touch today</Text>
+            <Button variant="outline" size="lg">
+              Contact Now
+            </Button>
+          </Stack>
+        </Container>
+      </Section>
+    </Layout>
+  );
+}
+```
+
+### Form Layout Example
 ```tsx
 import { 
   Container, 
   Card, 
   Stack, 
   EnhancedInput, 
-  EnhancedTextarea, 
-  Button 
+  Button,
+  Spacer
 } from '@/components/ui';
 
-<Container maxWidth="lg">
-  <Card padding="lg">
-    <Stack spacing="lg">
-      <H2>Contact Form</H2>
-      
-      <EnhancedInput
-        label="Full Name"
-        placeholder="Enter your full name"
-        required
-      />
-      
-      <EmailInput
-        label="Email Address"
-        placeholder="your@email.com"
-        required
-      />
-      
-      <PhoneInput
-        label="Phone Number"
-        placeholder="(555) 123-4567"
-      />
-      
-      <EnhancedTextarea
-        label="Message"
-        placeholder="Enter your message"
-        rows={4}
-      />
-      
-      <Stack direction="horizontal" spacing="md">
-        <Button variant="outline">Cancel</Button>
-        <Button>Submit</Button>
-      </Stack>
-    </Stack>
-  </Card>
-</Container>
+export default function ContactForm() {
+  return (
+    <Container maxWidth="md" padding="lg">
+      <Card padding="lg" margin="none">
+        <Stack spacing="lg">
+          <H2>Contact Form</H2>
+          
+          <Stack spacing="md">
+            <EnhancedInput
+              label="Full Name"
+              placeholder="Enter your full name"
+              required
+            />
+            
+            <EnhancedInput
+              label="Email Address"
+              placeholder="your@email.com"
+              required
+            />
+            
+            <EnhancedTextarea
+              label="Message"
+              placeholder="Enter your message"
+              rows={4}
+            />
+          </Stack>
+
+          <Spacer size="md" />
+
+          <Stack direction="horizontal" spacing="md">
+            <Button variant="outline">Cancel</Button>
+            <Button>Submit</Button>
+          </Stack>
+        </Stack>
+      </Card>
+    </Container>
+  );
+}
 ```
 
-### Hero Section Example
-```tsx
-import { Section, Container, Stack, H1, Text, Button } from '@/components/ui';
-
-<Section variant="brand" padding="xl">
-  <Container>
-    <Stack align="center" spacing="lg">
-      <H1>Premium Airport Transportation</H1>
-      <Text size="lg" variant="inverse">
-        Reliable, comfortable rides to and from Fairfield Airport
-      </Text>
-      <Stack direction="horizontal" spacing="md">
-        <Button variant="outline" size="lg">
-          Learn More
-        </Button>
-        <Button size="lg">
-          Book Now
-        </Button>
-      </Stack>
-    </Stack>
-  </Container>
-</Section>
-```
-
-This design system provides a solid foundation for building consistent, accessible, and maintainable user interfaces across the Fairfield Airport Cars application. 
+This enhanced design system provides a solid foundation for building consistent, accessible, and maintainable user interfaces across the Fairfield Airport Cars application, with proper spacing control at the page layout level. 

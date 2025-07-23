@@ -40,10 +40,10 @@
   --brand-secondary-dark: #4A5B73;
   
   /* Semantic Colors */
-  --success: #10B981;
-  --success-hover: #059669;
-  --success-light: #D1FAE5;
-  --success-dark: #047857;
+  --success: #1F2937;
+  --success-hover: #111827;
+  --success-light: #D1D5DB;
+  --success-dark: #0F172A;
   
   --warning: #F59E0B;
   --warning-hover: #D97706;
@@ -65,7 +65,7 @@
   --text-secondary: #6B7280;
   --text-muted: #9CA3AF;
   --text-inverse: #FFFFFF;
-  --text-success: #059669;
+  --text-success: #0F172A;
   --text-warning: #D97706;
   --text-error: #DC2626;
   --text-info: #2563EB;
@@ -75,7 +75,7 @@
   --bg-secondary: #F9FAFB;
   --bg-muted: #F3F4F6;
   --bg-inverse: #111827;
-  --bg-success: #F0FDF4;
+  --bg-success: #D1D5DB;
   --bg-warning: #FFFBEB;
   --bg-error: #FEF2F2;
   --bg-info: #EFF6FF;
@@ -84,7 +84,7 @@
   --border-primary: #E5E7EB;
   --border-secondary: #D1D5DB;
   --border-muted: #F3F4F6;
-  --border-success: #A7F3D0;
+  --border-success: #6B7280;
   --border-warning: #FCD34D;
   --border-error: #FCA5A5;
   --border-info: #93C5FD;
@@ -235,6 +235,8 @@ html {
 .bg-warning { background-color: var(--bg-warning); }
 .bg-error { background-color: var(--bg-error); }
 .bg-info { background-color: var(--bg-info); }
+.bg-info-dark { background-color: var(--info-dark); }
+.bg-warning-dark { background-color: var(--warning-dark); }
 
 .border-brand-primary { border-color: var(--brand-primary); }
 .border-brand-secondary { border-color: var(--brand-secondary); }

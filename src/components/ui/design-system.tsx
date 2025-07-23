@@ -11,7 +11,9 @@ export {
   Section,
   Card,
   Stack,
-  Grid
+  Grid,
+  Layout,
+  Spacer
 } from './containers';
 
 // Enhanced Input System

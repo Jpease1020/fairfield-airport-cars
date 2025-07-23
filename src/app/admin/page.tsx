@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/data';
 import { listBookings } from '@/lib/booking-service';
 import { Booking } from '@/types/booking';
+import { testFirebaseConnection } from '@/lib/firebase-test';
 import { 
   BookOpen, 
   Calendar, 
@@ -15,13 +16,21 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Receipt
 } from 'lucide-react';
 import Link from 'next/link';
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [firebaseStatus, setFirebaseStatus] = useState<string>('');
+
+  const testFirebase = async () => {
+    setFirebaseStatus('Testing...');
+    const result = await testFirebaseConnection();
+    setFirebaseStatus(result ? '✅ Connected' : '❌ Failed');
+  };
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -126,6 +135,13 @@ const AdminDashboard = () => {
       href: '/admin/help',
       icon: Clock,
       color: 'bg-gray-500'
+    },
+    {
+      title: 'Cost Breakdown',
+      description: 'View all business costs and expenses',
+      href: '/admin/costs',
+      icon: Receipt,
+      color: 'bg-red-500'
     }
   ];
 
@@ -137,7 +153,7 @@ const AdminDashboard = () => {
       />
       <PageContent>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
@@ -189,6 +205,20 @@ const AdminDashboard = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-text-primary">Cancelled</p>
                   <p className="text-2xl font-bold text-text-primary">{cancelledBookings.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Receipt className="h-6 w-6 text-red-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-text-primary">Monthly Costs</p>
+                  <p className="text-2xl font-bold text-text-primary">$250.42</p>
                 </div>
               </div>
             </CardContent>
@@ -278,6 +308,26 @@ const AdminDashboard = () => {
                 {todayBookings.length === 0 && (
                   <p className="text-text-secondary text-sm">No bookings today</p>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Firebase Test */}
+        <div className="mb-6">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-text-primary">Firebase Connection Test</h3>
+                  <p className="text-sm text-text-secondary">Test if Firebase is working properly</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-text-secondary">{firebaseStatus}</span>
+                  <Button onClick={testFirebase} size="sm">
+                    Test Connection
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

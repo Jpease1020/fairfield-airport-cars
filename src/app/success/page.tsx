@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Booking } from '@/types/booking';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Alert } from '@/components/feedback';
 import { LoadingSpinner } from '@/components/data';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,6 +13,7 @@ import { useCMS } from '@/hooks/useCMS';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { cmsService } from '@/lib/cms-service';
+import { Layout, Container, Stack, Section } from '@/components/ui/containers';
 
 const SuccessPageContent = () => {
   const searchParams = useSearchParams();
@@ -57,290 +57,295 @@ const SuccessPageContent = () => {
   };
 
   const handleSave = async () => {
+    if (!localContent) return;
+    
     setSaving(true);
     setSaveMsg(null);
+    
     try {
-      await cmsService.updateCMSConfiguration({
+      const currentConfig = await cmsService.getCMSConfiguration();
+      if (!currentConfig) {
+        setSaveMsg('Error: Could not load current configuration');
+        return;
+      }
+      
+      const updatedConfig = {
+        ...currentConfig,
         pages: {
-          home: cmsConfig?.pages.home || {
-            hero: { title: '', subtitle: '', ctaText: '' },
-            features: { title: '', items: [] },
-            about: { title: '', content: '' },
-            contact: { title: '', content: '', phone: '', email: '' },
-          },
-          help: cmsConfig?.pages.help || {
-            faq: [],
-            contactInfo: { phone: '', email: '', hours: '' },
-          },
-          booking: cmsConfig?.pages.booking || {
-            title: 'Book Your Ride',
-            subtitle: 'Premium airport transportation service',
-            description: 'Reserve your luxury airport transportation with our professional drivers.'
-          },
-          success: localContent,
-        },
-      });
-      setSaveMsg('Saved!');
-      setTimeout(() => setSaveMsg(null), 2000);
-      setEditMode(false);
-    } catch {
-      setSaveMsg('Failed to save.');
+          ...currentConfig.pages,
+          success: localContent
+        }
+      };
+      
+      await cmsService.updateCMSConfiguration(updatedConfig);
+      setSaveMsg('Content saved successfully!');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSaveMsg(null), 3000);
+    } catch (error) {
+      console.error('Error saving content:', error);
+      setSaveMsg('Error saving content. Please try again.');
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    setLocalContent(JSON.parse(JSON.stringify(successPageContent)));
-    setEditMode(false);
+    if (successPageContent) {
+      setLocalContent(successPageContent);
+    }
     setSaveMsg(null);
   };
 
+  const content = localContent || successPageContent || {
+    title: 'Payment Successful!',
+    subtitle: 'Your booking has been confirmed',
+    paymentSuccessTitle: 'Payment Processed',
+    paymentSuccessMessage: 'Your payment has been successfully processed.',
+    noBookingTitle: 'Payment Successful',
+    noBookingMessage: 'No booking reference found, but your payment was processed.',
+    currentStatusLabel: 'Current Status:',
+    viewDetailsButton: 'View Detailed Status',
+    loadingMessage: 'Loading your booking...'
+  };
+
   useEffect(() => {
-    if (!bookingId) return;
+    if (bookingId) {
+      const unsubscribe = onSnapshot(
+        doc(db, 'bookings', bookingId),
+        (doc) => {
+          if (doc.exists()) {
+            setBooking({ id: doc.id, ...doc.data() } as Booking);
+          }
+          setLoading(false);
+        },
+        (error) => {
+          console.error('Error fetching booking:', error);
+          setLoading(false);
+        }
+      );
 
-    const docRef = doc(db, 'bookings', bookingId);
-    const unsubscribe = onSnapshot(docRef, (snap) => {
-      if (snap.exists()) {
-        setBooking({ id: snap.id, ...snap.data() } as Booking);
-      }
+      return () => unsubscribe();
+    } else {
       setLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
   }, [bookingId]);
 
-  if (!bookingId) {
+  if (loading) {
     return (
-      <PageContainer maxWidth="md" padding="lg">
-        {/* Floating Edit Mode Toggle for Admins */}
-        {isAdmin && (
-          <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
-            {!editMode ? (
-              <Button
-                onClick={() => setEditMode(true)}
-              >
-                Edit Mode
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button
-                  variant="success"
-                  onClick={handleSave}
-                  disabled={saving}
-                >
-                  {saving ? 'Saving...' : 'Save'}
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleCancel}
-                  disabled={saving}
-                >
-                  Cancel
-                </Button>
-              </div>
-            )}
-            {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
-          </div>
-        )}
-
-        {/* Page Header */}
-        {editMode ? (
-          <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
-            <label className="edit-label font-semibold">No Booking Title</label>
-            <input
-              className="editable-input text-3xl font-bold w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-14 px-4"
-              value={localContent?.noBookingTitle || ''}
-              onChange={e => handleFieldChange('noBookingTitle', e.target.value)}
-            />
-            <label className="edit-label font-semibold">No Booking Message</label>
-            <textarea
-              className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
-              value={localContent?.noBookingMessage || ''}
-              onChange={e => handleFieldChange('noBookingMessage', e.target.value)}
-              rows={3}
-            />
-            <div className="flex gap-2 mt-4">
-              <Button
-                size="lg"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving ? 'Saving...' : 'Save Changes'}
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={handleCancel}
-                disabled={saving}
-              >
-                Cancel
-              </Button>
-              {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+      <div className="min-h-screen bg-bg-primary">
+        <Layout spacing="none" container maxWidth="xl">
+          <Container padding="lg" margin="none">
+            <div className="flex items-center justify-center min-h-[400px]">
+              <LoadingSpinner text={content.loadingMessage} />
             </div>
-          </div>
-        ) : (
-          <PageHeader title={successPageContent?.noBookingTitle || "Payment Successful"} />
-        )}
-
-        <PageContent>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Alert variant="success" title={successPageContent?.noBookingTitle || "Payment Successful"}>
-                {successPageContent?.noBookingMessage || "No booking reference found, but your payment was processed."}
-              </Alert>
-            </CardContent>
-          </Card>
-        </PageContent>
-      </PageContainer>
+          </Container>
+        </Layout>
+      </div>
     );
   }
-
-  if (loading || !booking) {
-    return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text={successPageContent?.loadingMessage || "Loading your booking..."} />
-        </div>
-      </PageContainer>
-    );
-  }
-
-  const statusText = booking.status === 'pending' ? 'Pending Confirmation' : booking.status === 'confirmed' ? 'Confirmed' : booking.status;
 
   return (
-    <PageContainer maxWidth="md" padding="lg">
-      {/* Floating Edit Mode Toggle for Admins */}
-      {isAdmin && (
-        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
-          {!editMode ? (
-            <Button
-              onClick={() => setEditMode(true)}
-            >
-              Edit Mode
-            </Button>
-          ) : (
-            <div className="flex gap-2">
-              <Button
-                variant="success"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving ? 'Saving...' : 'Save'}
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleCancel}
-                disabled={saving}
-              >
-                Cancel
-              </Button>
-            </div>
-          )}
-          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
-        </div>
-      )}
+    <div className="min-h-screen bg-bg-primary">
+      <Layout spacing="lg" container maxWidth="xl">
+        {/* Admin Edit Controls */}
+        {isAdmin && (
+          <Card>
+            <CardContent className="p-4">
+              <Stack spacing="md">
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => setEditMode(!editMode)}
+                    variant={editMode ? 'destructive' : 'default'}
+                    size="sm"
+                  >
+                    {editMode ? 'Exit Edit Mode' : 'Edit Content'}
+                  </Button>
+                  {editMode && (
+                    <>
+                      <Button 
+                        onClick={handleSave}
+                        disabled={saving}
+                        size="sm"
+                      >
+                        {saving ? 'Saving...' : 'Save'}
+                      </Button>
+                      <Button 
+                        onClick={handleCancel}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  )}
+                </div>
+                {saveMsg && (
+                  <div className={`p-2 rounded text-sm ${
+                    saveMsg.includes('Error') ? 'bg-error text-text-inverse' : 'bg-success text-text-inverse'
+                  }`}>
+                    {saveMsg}
+                  </div>
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Page Header */}
-      {editMode ? (
-        <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
-          <label className="edit-label font-semibold">Page Title</label>
-          <input
-            className="editable-input text-3xl font-bold w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-14 px-4"
-            value={localContent?.title || ''}
-            onChange={e => handleFieldChange('title', e.target.value)}
-          />
-          <label className="edit-label font-semibold">Page Subtitle</label>
-          <input
-            className="editable-input text-xl w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
-            value={localContent?.subtitle || ''}
-            onChange={e => handleFieldChange('subtitle', e.target.value)}
-          />
-          <label className="edit-label font-semibold">Payment Success Title</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
-            value={localContent?.paymentSuccessTitle || ''}
-            onChange={e => handleFieldChange('paymentSuccessTitle', e.target.value)}
-          />
-          <label className="edit-label font-semibold">Payment Success Message</label>
-          <textarea
-            className="editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4"
-            value={localContent?.paymentSuccessMessage || ''}
-            onChange={e => handleFieldChange('paymentSuccessMessage', e.target.value)}
-            rows={3}
-          />
-          <label className="edit-label font-semibold">Current Status Label</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
-            value={localContent?.currentStatusLabel || ''}
-            onChange={e => handleFieldChange('currentStatusLabel', e.target.value)}
-          />
-          <label className="edit-label font-semibold">View Details Button</label>
-          <input
-            className="editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg h-12 px-4"
-            value={localContent?.viewDetailsButton || ''}
-            onChange={e => handleFieldChange('viewDetailsButton', e.target.value)}
-          />
-          <div className="flex gap-2 mt-4">
-            <Button
-              size="lg"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={handleCancel}
-              disabled={saving}
-            >
-              Cancel
-            </Button>
-            {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
-          </div>
-        </div>
-      ) : (
-        <PageHeader 
-          title={successPageContent?.title || "Payment Successful!"} 
-          subtitle={`${successPageContent?.subtitle || "Your booking has been confirmed"} - Booking reference: ${bookingId}`}
-        />
-      )}
+        {/* Success Content */}
+        <Section variant="brand" padding="lg" margin="none">
+          <Container maxWidth="xl" padding="none">
+            <Stack spacing="lg" align="center">
+              {editMode ? (
+                <Stack spacing="md" align="center">
+                  <div>
+                    <label className="edit-label font-semibold">Page Title</label>
+                    <input
+                      className="editable-input text-4xl font-bold text-center w-full mb-2 h-14 px-4"
+                      value={content.title}
+                      onChange={(e) => handleFieldChange('title', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="edit-label font-semibold">Page Subtitle</label>
+                    <input
+                      className="editable-input text-xl text-center w-full mb-2 h-12 px-4"
+                      value={content.subtitle}
+                      onChange={(e) => handleFieldChange('subtitle', e.target.value)}
+                    />
+                  </div>
+                </Stack>
+              ) : (
+                <Stack spacing="md" align="center">
+                  <h1 className="text-4xl font-bold text-text-inverse">
+                    {content.title}
+                  </h1>
+                  <p className="text-xl text-text-inverse">
+                    {content.subtitle}
+                  </p>
+                </Stack>
+              )}
 
-      <PageContent>
-        <Card>
-          <CardContent className="p-8 text-center">
-            <Alert variant="success" title={successPageContent?.paymentSuccessTitle || "Payment Processed"}>
-              {successPageContent?.paymentSuccessMessage || "Your payment has been successfully processed."}
-            </Alert>
-            
-            <div className="mt-6">
-              <p className="text-lg font-semibold mb-4">
-                {successPageContent?.currentStatusLabel || "Current Status:"} <span className="capitalize">{statusText}</span>
-              </p>
-              
-              <Button 
-                onClick={() => router.push(`/status/${bookingId}`)}
-                size="lg"
-              >
-                {successPageContent?.viewDetailsButton || "View Detailed Status"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </PageContent>
-    </PageContainer>
+              {booking ? (
+                <Card>
+                  <CardContent className="p-6">
+                    <Stack spacing="md">
+                      <div className="text-center">
+                        <h2 className="text-2xl font-bold text-text-primary mb-2">
+                          {editMode ? (
+                            <input
+                              className="editable-input text-2xl font-bold text-center w-full mb-2 h-12 px-4"
+                              value={content.paymentSuccessTitle}
+                              onChange={(e) => handleFieldChange('paymentSuccessTitle', e.target.value)}
+                            />
+                          ) : (
+                            content.paymentSuccessTitle
+                          )}
+                        </h2>
+                        <p className="text-text-secondary">
+                          {editMode ? (
+                            <textarea
+                              className="editable-textarea text-center w-full mb-2 p-4"
+                              value={content.paymentSuccessMessage}
+                              onChange={(e) => handleFieldChange('paymentSuccessMessage', e.target.value)}
+                              rows={3}
+                            />
+                          ) : (
+                            content.paymentSuccessMessage
+                          )}
+                        </p>
+                      </div>
+
+                      <div className="border-t border-border-primary pt-4">
+                        <h3 className="text-lg font-semibold text-text-primary mb-2">
+                          {editMode ? (
+                            <input
+                              className="editable-input text-lg font-semibold w-full mb-2 h-10 px-4"
+                              value={content.currentStatusLabel}
+                              onChange={(e) => handleFieldChange('currentStatusLabel', e.target.value)}
+                            />
+                          ) : (
+                            content.currentStatusLabel
+                          )}
+                        </h3>
+                        <p className="text-text-secondary mb-4">{booking.status}</p>
+                        <Button 
+                          onClick={() => router.push(`/booking/${booking.id}`)}
+                          className="w-full"
+                        >
+                          {editMode ? (
+                            <input
+                              className="editable-input text-center w-full"
+                              value={content.viewDetailsButton}
+                              onChange={(e) => handleFieldChange('viewDetailsButton', e.target.value)}
+                            />
+                          ) : (
+                            content.viewDetailsButton
+                          )}
+                        </Button>
+                      </div>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="p-6">
+                    <Stack spacing="md" align="center">
+                      <div className="text-center">
+                        <h2 className="text-2xl font-bold text-text-primary mb-2">
+                          {editMode ? (
+                            <input
+                              className="editable-input text-2xl font-bold text-center w-full mb-2 h-12 px-4"
+                              value={content.noBookingTitle}
+                              onChange={(e) => handleFieldChange('noBookingTitle', e.target.value)}
+                            />
+                          ) : (
+                            content.noBookingTitle
+                          )}
+                        </h2>
+                        <p className="text-text-secondary">
+                          {editMode ? (
+                            <textarea
+                              className="editable-textarea text-center w-full mb-2 p-4"
+                              value={content.noBookingMessage}
+                              onChange={(e) => handleFieldChange('noBookingMessage', e.target.value)}
+                              rows={3}
+                            />
+                          ) : (
+                            content.noBookingMessage
+                          )}
+                        </p>
+                      </div>
+                      <Button 
+                        onClick={() => router.push('/')}
+                        className="w-full"
+                      >
+                        Return to Home
+                      </Button>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              )}
+            </Stack>
+          </Container>
+        </Section>
+      </Layout>
+    </div>
   );
 };
 
 const SuccessPage = () => {
   return (
     <Suspense fallback={
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading..." />
-        </div>
-      </PageContainer>
+      <div className="min-h-screen bg-bg-primary">
+        <Layout spacing="none" container maxWidth="xl">
+          <Container padding="lg" margin="none">
+            <div className="flex items-center justify-center min-h-[400px]">
+              <LoadingSpinner text="Loading..." />
+            </div>
+          </Container>
+        </Layout>
+      </div>
     }>
       <SuccessPageContent />
     </Suspense>

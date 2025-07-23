@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/layout";
+import { AdminProvider } from "@/components/admin/AdminProvider";
+import AdminHamburgerMenu from "@/components/admin/AdminHamburgerMenu";
+import SimpleCommentSystem from "@/components/admin/SimpleCommentSystem";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,8 +48,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navigation />
-        {children}
+        <AdminProvider>
+          <SimpleCommentSystem>
+            <Navigation />
+            <main>{children}</main>
+            <AdminHamburgerMenu />
+          </SimpleCommentSystem>
+        </AdminProvider>
         {/* Initialize interaction tracking */}
         <script
           dangerouslySetInnerHTML={{

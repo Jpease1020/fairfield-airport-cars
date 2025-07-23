@@ -1,12 +1,12 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "fairfield-airport-car-service.firebaseapp.com",
   projectId: "fairfield-airport-car-service",
   storageBucket: "fairfield-airport-car-service.firebasestorage.app",
@@ -16,7 +16,15 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+} catch (error) {
+  // If app already exists, get the existing one
+  const existingApps = getApps();
+  app = existingApps.length > 0 ? existingApps[0] : initializeApp(firebaseConfig);
+}
+
 const db = getFirestore(app);
 const auth = getAuth(app);
 

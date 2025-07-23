@@ -20,7 +20,9 @@ import {
   Bot,
   Menu,
   X,
-  HardDrive
+  HardDrive,
+  Receipt,
+  MessageSquare
 } from 'lucide-react';
 
 const AdminNavigation = () => {
@@ -81,6 +83,24 @@ const AdminNavigation = () => {
       href: '/admin/analytics',
       icon: BarChart3,
       current: pathname === '/admin/analytics'
+    },
+    {
+      name: 'Costs',
+      href: '/admin/costs',
+      icon: Receipt,
+      current: pathname === '/admin/costs'
+    },
+    {
+      name: 'Feedback',
+      href: '/admin/feedback',
+      icon: MessageSquare,
+      current: pathname === '/admin/feedback'
+    },
+    {
+      name: 'Comments',
+      href: '/admin/comments',
+      icon: MessageSquare,
+      current: pathname === '/admin/comments'
     },
     {
       name: 'CMS',

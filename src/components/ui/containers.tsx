@@ -7,10 +7,22 @@ interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
-  ({ className, maxWidth = 'xl', padding = 'md', children, ...props }, ref) => {
+  ({ 
+    className, 
+    maxWidth = 'xl', 
+    padding = 'md', 
+    margin = 'none',
+    marginTop = 'none',
+    marginBottom = 'none',
+    children, 
+    ...props 
+  }, ref) => {
     const maxWidthClasses = {
       sm: 'max-w-sm',
       md: 'max-w-md',
@@ -28,6 +40,36 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
       xl: 'p-12'
     };
 
+    const marginClasses = {
+      none: '',
+      xs: 'm-1',
+      sm: 'm-2',
+      md: 'm-4',
+      lg: 'm-6',
+      xl: 'm-8',
+      '2xl': 'm-12'
+    };
+
+    const marginTopClasses = {
+      none: '',
+      xs: 'mt-1',
+      sm: 'mt-2',
+      md: 'mt-4',
+      lg: 'mt-6',
+      xl: 'mt-8',
+      '2xl': 'mt-12'
+    };
+
+    const marginBottomClasses = {
+      none: '',
+      xs: 'mb-1',
+      sm: 'mb-2',
+      md: 'mb-4',
+      lg: 'mb-6',
+      xl: 'mb-8',
+      '2xl': 'mb-12'
+    };
+
     return (
       <div
         ref={ref}
@@ -35,6 +77,9 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
           'mx-auto',
           maxWidthClasses[maxWidth],
           paddingClasses[padding],
+          marginClasses[margin],
+          marginTopClasses[marginTop],
+          marginBottomClasses[marginBottom],
           className
         )}
         {...props}
@@ -53,10 +98,23 @@ interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 const Box = React.forwardRef<HTMLDivElement, BoxProps>(
-  ({ className, variant = 'default', padding = 'md', rounded = 'md', children, ...props }, ref) => {
+  ({ 
+    className, 
+    variant = 'default', 
+    padding = 'md', 
+    rounded = 'md',
+    margin = 'none',
+    marginTop = 'none',
+    marginBottom = 'none',
+    children, 
+    ...props 
+  }, ref) => {
     const variantClasses = {
       default: 'bg-bg-primary',
       elevated: 'bg-bg-primary shadow-lg',
@@ -81,6 +139,36 @@ const Box = React.forwardRef<HTMLDivElement, BoxProps>(
       full: 'rounded-full'
     };
 
+    const marginClasses = {
+      none: '',
+      xs: 'm-1',
+      sm: 'm-2',
+      md: 'm-4',
+      lg: 'm-6',
+      xl: 'm-8',
+      '2xl': 'm-12'
+    };
+
+    const marginTopClasses = {
+      none: '',
+      xs: 'mt-1',
+      sm: 'mt-2',
+      md: 'mt-4',
+      lg: 'mt-6',
+      xl: 'mt-8',
+      '2xl': 'mt-12'
+    };
+
+    const marginBottomClasses = {
+      none: '',
+      xs: 'mb-1',
+      sm: 'mb-2',
+      md: 'mb-4',
+      lg: 'mb-6',
+      xl: 'mb-8',
+      '2xl': 'mb-12'
+    };
+
     return (
       <div
         ref={ref}
@@ -88,6 +176,9 @@ const Box = React.forwardRef<HTMLDivElement, BoxProps>(
           variantClasses[variant],
           paddingClasses[padding],
           roundedClasses[rounded],
+          marginClasses[margin],
+          marginTopClasses[marginTop],
+          marginBottomClasses[marginBottom],
           className
         )}
         {...props}
@@ -107,10 +198,24 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement> {
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   container?: boolean;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 const Section = React.forwardRef<HTMLElement, SectionProps>(
-  ({ className, variant = 'default', padding = 'lg', container = true, maxWidth = 'xl', children, ...props }, ref) => {
+  ({ 
+    className, 
+    variant = 'default', 
+    padding = 'lg', 
+    container = true, 
+    maxWidth = 'xl',
+    margin = 'none',
+    marginTop = 'none',
+    marginBottom = 'none',
+    children, 
+    ...props 
+  }, ref) => {
     const variantClasses = {
       default: 'bg-bg-primary',
       alternate: 'bg-bg-secondary',
@@ -126,6 +231,36 @@ const Section = React.forwardRef<HTMLElement, SectionProps>(
       xl: 'py-20'
     };
 
+    const marginClasses = {
+      none: '',
+      xs: 'm-1',
+      sm: 'm-2',
+      md: 'm-4',
+      lg: 'm-6',
+      xl: 'm-8',
+      '2xl': 'm-12'
+    };
+
+    const marginTopClasses = {
+      none: '',
+      xs: 'mt-1',
+      sm: 'mt-2',
+      md: 'mt-4',
+      lg: 'mt-6',
+      xl: 'mt-8',
+      '2xl': 'mt-12'
+    };
+
+    const marginBottomClasses = {
+      none: '',
+      xs: 'mb-1',
+      sm: 'mb-2',
+      md: 'mb-4',
+      lg: 'mb-6',
+      xl: 'mb-8',
+      '2xl': 'mb-12'
+    };
+
     const content = container ? (
       <Container maxWidth={maxWidth} padding="none">
         {children}
@@ -138,6 +273,9 @@ const Section = React.forwardRef<HTMLElement, SectionProps>(
         className={cn(
           variantClasses[variant],
           paddingClasses[padding],
+          marginClasses[margin],
+          marginTopClasses[marginTop],
+          marginBottomClasses[marginBottom],
           className
         )}
         {...props}
@@ -156,10 +294,23 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   hover?: boolean;
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'default', padding = 'md', hover = false, children, ...props }, ref) => {
+  ({ 
+    className, 
+    variant = 'default', 
+    padding = 'md', 
+    hover = false,
+    margin = 'none',
+    marginTop = 'none',
+    marginBottom = 'none',
+    children, 
+    ...props 
+  }, ref) => {
     const variantClasses = {
       default: 'bg-bg-primary border border-border-primary',
       elevated: 'bg-bg-primary shadow-lg',
@@ -175,6 +326,36 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       xl: 'p-12'
     };
 
+    const marginClasses = {
+      none: '',
+      xs: 'm-1',
+      sm: 'm-2',
+      md: 'm-4',
+      lg: 'm-6',
+      xl: 'm-8',
+      '2xl': 'm-12'
+    };
+
+    const marginTopClasses = {
+      none: '',
+      xs: 'mt-1',
+      sm: 'mt-2',
+      md: 'mt-4',
+      lg: 'mt-6',
+      xl: 'mt-8',
+      '2xl': 'mt-12'
+    };
+
+    const marginBottomClasses = {
+      none: '',
+      xs: 'mb-1',
+      sm: 'mb-2',
+      md: 'mb-4',
+      lg: 'mb-6',
+      xl: 'mb-8',
+      '2xl': 'mb-12'
+    };
+
     return (
       <div
         ref={ref}
@@ -182,6 +363,9 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           'rounded-lg transition-all duration-200',
           variantClasses[variant],
           paddingClasses[padding],
+          marginClasses[margin],
+          marginTopClasses[marginTop],
+          marginBottomClasses[marginBottom],
           hover && 'hover:shadow-md hover:-translate-y-1',
           className
         )}
@@ -202,10 +386,24 @@ interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   align?: 'start' | 'center' | 'end' | 'stretch';
   justify?: 'start' | 'center' | 'end' | 'between' | 'around';
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 const Stack = React.forwardRef<HTMLDivElement, StackProps>(
-  ({ className, direction = 'vertical', spacing = 'md', align = 'start', justify = 'start', children, ...props }, ref) => {
+  ({ 
+    className, 
+    direction = 'vertical', 
+    spacing = 'md', 
+    align = 'start', 
+    justify = 'start',
+    margin = 'none',
+    marginTop = 'none',
+    marginBottom = 'none',
+    children, 
+    ...props 
+  }, ref) => {
     const directionClasses = {
       horizontal: 'flex flex-row',
       vertical: 'flex flex-col'
@@ -235,6 +433,36 @@ const Stack = React.forwardRef<HTMLDivElement, StackProps>(
       around: 'justify-around'
     };
 
+    const marginClasses = {
+      none: '',
+      xs: 'm-1',
+      sm: 'm-2',
+      md: 'm-4',
+      lg: 'm-6',
+      xl: 'm-8',
+      '2xl': 'm-12'
+    };
+
+    const marginTopClasses = {
+      none: '',
+      xs: 'mt-1',
+      sm: 'mt-2',
+      md: 'mt-4',
+      lg: 'mt-6',
+      xl: 'mt-8',
+      '2xl': 'mt-12'
+    };
+
+    const marginBottomClasses = {
+      none: '',
+      xs: 'mb-1',
+      sm: 'mb-2',
+      md: 'mb-4',
+      lg: 'mb-6',
+      xl: 'mb-8',
+      '2xl': 'mb-12'
+    };
+
     return (
       <div
         ref={ref}
@@ -243,6 +471,9 @@ const Stack = React.forwardRef<HTMLDivElement, StackProps>(
           spacingClasses[spacing],
           alignClasses[align],
           justifyClasses[justify],
+          marginClasses[margin],
+          marginTopClasses[marginTop],
+          marginBottomClasses[marginBottom],
           className
         )}
         {...props}
@@ -261,10 +492,23 @@ interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
   gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   responsive?: boolean;
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 const Grid = React.forwardRef<HTMLDivElement, GridProps>(
-  ({ className, cols = 1, gap = 'md', responsive = true, children, ...props }, ref) => {
+  ({ 
+    className, 
+    cols = 1, 
+    gap = 'md', 
+    responsive = true,
+    margin = 'none',
+    marginTop = 'none',
+    marginBottom = 'none',
+    children, 
+    ...props 
+  }, ref) => {
     const colsClasses = {
       1: 'grid-cols-1',
       2: responsive ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-2',
@@ -284,6 +528,36 @@ const Grid = React.forwardRef<HTMLDivElement, GridProps>(
       xl: 'gap-8'
     };
 
+    const marginClasses = {
+      none: '',
+      xs: 'm-1',
+      sm: 'm-2',
+      md: 'm-4',
+      lg: 'm-6',
+      xl: 'm-8',
+      '2xl': 'm-12'
+    };
+
+    const marginTopClasses = {
+      none: '',
+      xs: 'mt-1',
+      sm: 'mt-2',
+      md: 'mt-4',
+      lg: 'mt-6',
+      xl: 'mt-8',
+      '2xl': 'mt-12'
+    };
+
+    const marginBottomClasses = {
+      none: '',
+      xs: 'mb-1',
+      sm: 'mb-2',
+      md: 'mb-4',
+      lg: 'mb-6',
+      xl: 'mb-8',
+      '2xl': 'mb-12'
+    };
+
     return (
       <div
         ref={ref}
@@ -291,6 +565,9 @@ const Grid = React.forwardRef<HTMLDivElement, GridProps>(
           'grid',
           colsClasses[cols],
           gapClasses[gap],
+          marginClasses[margin],
+          marginTopClasses[marginTop],
+          marginBottomClasses[marginBottom],
           className
         )}
         {...props}
@@ -302,11 +579,91 @@ const Grid = React.forwardRef<HTMLDivElement, GridProps>(
 );
 Grid.displayName = 'Grid';
 
+// Layout Components for Page-Level Spacing
+interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  container?: boolean;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+}
+
+const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
+  ({ 
+    className, 
+    spacing = 'md', 
+    container = true, 
+    maxWidth = 'xl',
+    children, 
+    ...props 
+  }, ref) => {
+    const spacingClasses = {
+      none: '',
+      xs: 'space-y-1',
+      sm: 'space-y-2',
+      md: 'space-y-4',
+      lg: 'space-y-6',
+      xl: 'space-y-8',
+      '2xl': 'space-y-12'
+    };
+
+    const content = container ? (
+      <Container maxWidth={maxWidth} padding="none">
+        {children}
+      </Container>
+    ) : children;
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          spacingClasses[spacing],
+          className
+        )}
+        {...props}
+      >
+        {content}
+      </div>
+    );
+  }
+);
+Layout.displayName = 'Layout';
+
+// Spacer Component for explicit spacing
+interface SpacerProps extends React.HTMLAttributes<HTMLDivElement> {
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  axis?: 'horizontal' | 'vertical';
+}
+
+const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
+  ({ className, size = 'md', axis = 'vertical', ...props }, ref) => {
+    const sizeClasses = {
+      xs: axis === 'vertical' ? 'h-1' : 'w-1',
+      sm: axis === 'vertical' ? 'h-2' : 'w-2',
+      md: axis === 'vertical' ? 'h-4' : 'w-4',
+      lg: axis === 'vertical' ? 'h-6' : 'w-6',
+      xl: axis === 'vertical' ? 'h-8' : 'w-8',
+      '2xl': axis === 'vertical' ? 'h-12' : 'w-12'
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(sizeClasses[size], className)}
+        {...props}
+      />
+    );
+  }
+);
+Spacer.displayName = 'Spacer';
+
 export {
   Container,
   Box,
   Section,
   Card,
   Stack,
-  Grid
+  Grid,
+  Layout,
+  Spacer
 }; 
