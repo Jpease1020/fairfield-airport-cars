@@ -18,29 +18,14 @@ const tests = [
     description: 'Type checking'
   },
   {
-    name: 'Unit Tests',
-    command: 'npm test',
-    description: 'Jest unit tests'
+    name: 'Unit Tests (RTL)',
+    command: 'npm run test:unit',
+    description: 'React Testing Library component tests'
   },
   {
-    name: 'Visual Regression',
-    command: 'npx playwright test tests/visual-regression.spec.ts',
-    description: 'Visual layout and styling tests'
-  },
-  {
-    name: 'Component Integration',
-    command: 'npx playwright test tests/component-integration.spec.ts',
-    description: 'Component interaction tests'
-  },
-  {
-    name: 'CSS Validation',
-    command: 'npx playwright test tests/css-validation.spec.ts',
-    description: 'Tailwind CSS class validation'
-  },
-  {
-    name: 'User Journey',
-    command: 'npx playwright test tests/user-journey.spec.ts',
-    description: 'Complete user flow tests'
+    name: 'E2E Tests',
+    command: 'npm run test:e2e',
+    description: 'Playwright E2E tests'
   },
   {
     name: 'Build Test',

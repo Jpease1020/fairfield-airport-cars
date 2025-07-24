@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Page } from '@playwright/test';
+import { Page, expect as playwrightExpect } from '@playwright/test';
 
 // Test data constants
 export const TEST_CUSTOMER = {
@@ -45,13 +45,16 @@ export const renderWithProviders = (ui: React.ReactElement, options = {}) => {
   return render(ui, { wrapper: AllTheProviders, ...options });
 };
 
+// This function is only used in RTL tests, not Playwright tests
 export const expectBookingFormToBeValid = () => {
+  // This will be called from RTL tests where jest-dom is available
+  const { expect } = require('@jest/globals');
   expect(screen.getByPlaceholderText(/full name/i)).toBeInTheDocument();
   expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
-  expect(screen.getByPlaceholderText(/phone/i)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/\(123\) 456-7890/i)).toBeInTheDocument();
   expect(screen.getByPlaceholderText(/pickup/i)).toBeInTheDocument();
   expect(screen.getByPlaceholderText(/dropoff/i)).toBeInTheDocument();
-  expect(screen.getByRole('combobox', { name: /passengers/i })).toBeInTheDocument();
+  expect(screen.getByRole('spinbutton', { name: /passengers/i })).toBeInTheDocument();
 };
 
 // Playwright Helpers
@@ -100,92 +103,90 @@ export const setupPlaywrightMocks = async (page: Page) => {
 export const fillPlaywrightBookingForm = async (page: Page) => {
   await page.fill('input[placeholder*="full name"]', TEST_CUSTOMER.name);
   await page.fill('input[placeholder*="email"]', TEST_CUSTOMER.email);
-  await page.fill('input[placeholder*="phone"]', TEST_CUSTOMER.phone);
+  await page.fill('input[placeholder*="\\(123\\) 456-7890"]', TEST_CUSTOMER.phone);
   
   await page.fill('input[placeholder*="pickup"]', TEST_CUSTOMER.pickupLocation);
   await page.waitForTimeout(300);
-  await page.click('text=Fairfield Station, Fairfield, CT');
   
   await page.fill('input[placeholder*="dropoff"]', TEST_CUSTOMER.dropoffLocation);
   await page.waitForTimeout(300);
-  await page.click('text=JFK Airport, Queens, NY');
   
   await page.fill('input[type="datetime-local"]', TEST_CUSTOMER.pickupDateTime);
-  await page.selectOption('select[name="passengers"]', TEST_CUSTOMER.passengers.toString());
-  await page.fill('input[name="flightNumber"]', TEST_CUSTOMER.flightNumber);
-  await page.fill('textarea[name="notes"]', TEST_CUSTOMER.notes);
+  await page.fill('input[type="number"]', TEST_CUSTOMER.passengers.toString());
+  
+  await page.fill('input[placeholder*="AA1234"]', TEST_CUSTOMER.flightNumber);
+  await page.fill('textarea[placeholder*="special instructions"]', TEST_CUSTOMER.notes);
 };
 
 export const expectPlaywrightBookingForm = async (page: Page) => {
-  await expect(page.locator('input[placeholder*="full name"]')).toBeVisible();
-  await expect(page.locator('input[placeholder*="email"]')).toBeVisible();
-  await expect(page.locator('input[placeholder*="phone"]')).toBeVisible();
-  await expect(page.locator('input[placeholder*="pickup"]')).toBeVisible();
-  await expect(page.locator('input[placeholder*="dropoff"]')).toBeVisible();
-  await expect(page.locator('select[name="passengers"]')).toBeVisible();
+  await playwrightExpect(page.locator('input[placeholder*="full name"]')).toBeVisible();
+  await playwrightExpect(page.locator('input[placeholder*="email"]')).toBeVisible();
+  await playwrightExpect(page.locator('input[placeholder*="\\(123\\) 456-7890"]')).toBeVisible();
+  await playwrightExpect(page.locator('input[placeholder*="pickup"]')).toBeVisible();
+  await playwrightExpect(page.locator('input[placeholder*="dropoff"]')).toBeVisible();
+  await playwrightExpect(page.locator('input[type="number"]')).toBeVisible();
 };
 
-// Accessibility Helpers
 export const expectAccessibilityCompliance = async (page: Page) => {
-  // Test for proper heading structure
+  // Test for heading structure
   const headings = page.locator('h1, h2, h3, h4, h5, h6');
   const headingCount = await headings.count();
-  expect(headingCount).toBeGreaterThan(0);
+  playwrightExpect(headingCount).toBeGreaterThan(0);
   
   // Test for alt text on images
   const images = page.locator('img');
-  for (let i = 0; i < await images.count(); i++) {
+  const imageCount = await images.count();
+  for (let i = 0; i < imageCount; i++) {
     const alt = await images.nth(i).getAttribute('alt');
-    expect(alt).toBeTruthy();
+    playwrightExpect(alt).toBeTruthy();
   }
   
-  // Test for proper form labels
-  const formInputs = page.locator('input, select, textarea');
-  for (let i = 0; i < await formInputs.count(); i++) {
-    const input = formInputs.nth(i);
+  // Test for form labels
+  const inputs = page.locator('input, textarea, select');
+  const inputCount = await inputs.count();
+  for (let i = 0; i < inputCount; i++) {
+    const input = inputs.nth(i);
     const id = await input.getAttribute('id');
-    const name = await input.getAttribute('name');
-    const ariaLabel = await input.getAttribute('aria-label');
-    
-    expect(id || name || ariaLabel).toBeTruthy();
+    if (id) {
+      const label = page.locator(`label[for="${id}"]`);
+      const hasLabel = await label.count() > 0;
+      const hasAriaLabel = await input.getAttribute('aria-label');
+      playwrightExpect(hasLabel || hasAriaLabel).toBeTruthy();
+    }
   }
 };
 
-// Performance Helpers
 export const measurePageLoadTime = async (page: Page, url: string) => {
   const startTime = Date.now();
   await page.goto(url);
+  await page.waitForLoadState('networkidle');
+  
   const loadTime = Date.now() - startTime;
   
-  expect(loadTime).toBeLessThan(3000);
+  playwrightExpect(loadTime).toBeLessThan(3000);
   return loadTime;
 };
 
-// Visual Regression Helpers
 export const takeVisualSnapshot = async (page: Page, name: string) => {
-  await page.waitForLoadState('networkidle');
-  // Screenshot functionality would be implemented here
-  console.log(`Taking screenshot: ${name}.png`);
+  await page.screenshot({ 
+    path: `test-results/${name}.png`,
+    fullPage: true 
+  });
 };
 
-// Error Handling Helpers
 export const simulateApiError = async (page: Page, endpoint: string) => {
-  await page.route(`**${endpoint}`, async route => {
+  await page.route(endpoint, async route => {
     await route.fulfill({
       status: 500,
       contentType: 'application/json',
-      body: JSON.stringify({ error: 'Server error' })
+      body: JSON.stringify({ error: 'Internal server error' })
     });
   });
 };
 
 export const simulateNetworkTimeout = async (page: Page, endpoint: string) => {
-  await page.route(`**${endpoint}`, async route => {
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(MOCK_API_RESPONSES.fareEstimate)
-    });
+  await page.route(endpoint, async route => {
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    await route.abort();
   });
 }; 

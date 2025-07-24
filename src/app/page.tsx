@@ -68,12 +68,12 @@ export default function HomePage() {
     );
   }
 
-  // Convert CMS features to component format
-  const features = homeContent.features.items.map((feature) => ({
+  // Convert CMS features to component format with proper error handling
+  const features = homeContent.features?.items?.map((feature) => ({
     title: feature.title,
     description: feature.description,
     icon: iconMap[feature.icon as keyof typeof iconMap] || <Star className="h-6 w-6" />,
-  }));
+  })) || [];
 
   // Default FAQ items (can be moved to CMS later)
   const faqItems = [
@@ -116,9 +116,9 @@ export default function HomePage() {
     },
   ];
 
-  const heroText = homeContent.hero;
-  const featuresText = homeContent.features;
-  const ctaText = homeContent.finalCta;
+  const heroText = homeContent.hero || { title: '', subtitle: '', ctaText: '' };
+  const featuresText = homeContent.features || { title: '', subtitle: '' };
+  const ctaText = homeContent.finalCta || { title: '', subtitle: '', buttonText: '' };
 
   return (
     <PageContainer>
@@ -372,9 +372,9 @@ export default function HomePage() {
           </div>
         ) : (
           <ContactSection
-            title={homeContent.contact.title}
+            title={homeContent.contact?.title || 'Contact Us'}
             subtitle="Ready to Book?"
-            description={homeContent.contact.content}
+            description={homeContent.contact?.content || 'Get in touch with us'}
             contactMethods={contactMethods}
             variant="centered"
           />

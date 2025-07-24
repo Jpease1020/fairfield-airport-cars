@@ -2,8 +2,8 @@
 "use client";
 
 import { useEditMode } from '@/components/admin/EditModeProvider';
-import { EditableTitle, EditableSubtitle, EditableContent } from '@/components/admin/EditableField';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { EditableTitle, EditableSubtitle } from '@/components/admin/EditableField';
+import { PageContainer, PageContent } from '@/components/layout';
 import BookingForm from './booking-form';
 
 export default function BookPage() {
