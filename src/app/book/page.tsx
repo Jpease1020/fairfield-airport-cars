@@ -11,20 +11,23 @@ export default function BookPage() {
 
   return (
     <PageContainer>
-      <PageHeader title="Book Your Ride">
-        <EditableTitle
-          value="Book Your Airport Transfer"
-          onChange={(value) => handleFieldChange('book', 'title', value)}
-          className="text-3xl font-bold text-gray-900"
-        />
-        <EditableSubtitle
-          value="Reliable, comfortable transportation to and from Fairfield Airport"
-          onChange={(value) => handleFieldChange('book', 'subtitle', value)}
-          className="text-lg text-gray-600 mt-2"
-        />
-      </PageHeader>
       <PageContent>
         <div className="max-w-4xl mx-auto">
+          {/* Page Header */}
+          <div className="text-center mb-8">
+            <EditableTitle
+              value="Book Your Airport Transfer"
+              onChange={(value) => handleFieldChange('book', 'title', value)}
+              className="text-3xl font-bold text-gray-900 mb-2"
+            />
+            <EditableSubtitle
+              value="Reliable, comfortable transportation to and from Fairfield Airport"
+              onChange={(value) => handleFieldChange('book', 'subtitle', value)}
+              className="text-lg text-gray-600"
+            />
+          </div>
+
+          {/* Why Choose Our Service Section */}
           <EditableContent
             value={`
               <div className="mb-8">
@@ -57,6 +60,8 @@ export default function BookPage() {
             onChange={(value) => handleFieldChange('book', 'content', value)}
             className="prose prose-lg max-w-none mb-8"
           />
+          
+          {/* Booking Form */}
           <BookingForm />
         </div>
       </PageContent>

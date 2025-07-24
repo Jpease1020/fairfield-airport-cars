@@ -11,8 +11,8 @@ interface LogoProps {
 const Logo: React.FC<LogoProps> = ({ 
   className = '', 
   alt = 'Fairfield Airport Cars Logo',
-  width = 260,
-  height = 260,
+  width = 360,
+  height = 360,
   ...props 
 }) => (
   <Image
