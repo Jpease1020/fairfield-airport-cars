@@ -1,20 +1,25 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
+
 import { useSearchParams, useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/utils/firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/lib/utils/firebase';
 import { Booking } from '@/types/booking';
-import { Alert } from '@/components/feedback';
+
 import { LoadingSpinner } from '@/components/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+
 import { useCMS } from '@/hooks/useCMS';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { cmsService } from '@/lib/cms-service';
+
+
+import { cmsService } from '@/lib/services/cms-service';
 import { Layout, Container, Stack, Section } from '@/components/ui/containers';
 
+import { authService } from '@/lib/services/auth-service';
 const SuccessPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -33,8 +38,8 @@ const SuccessPageContent = () => {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
+    const unsub = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user && await authService.isAdmin(user.uid)) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);

@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 
 /**
  * A flexible input component with enhanced accessibility and validation states

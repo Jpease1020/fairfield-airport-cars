@@ -1,325 +1,216 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { LoadingSpinner } from '@/components/data';
-import { realCostTrackingService, type RealCostItem } from '@/lib/real-cost-tracking';
-import { 
-  DollarSign, 
-  Edit, 
-  Save, 
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  RefreshCw
-} from 'lucide-react';
+import { realCostTrackingService } from '@/lib/business/real-cost-tracking';
 
-const ManualCostEntry = () => {
-  const [costs, setCosts] = useState<RealCostItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({
-    actualMonthlyCost: 0,
-    projectedMonthlyCost: 0,
+interface CostEntry {
+  date: string;
+  category: string;
+  description: string;
+  amount: number;
+  notes?: string;
+}
+
+const ManualCostEntryPage = () => {
+  const [formData, setFormData] = useState<CostEntry>({
+    date: new Date().toISOString().split('T')[0],
+    category: '',
+    description: '',
+    amount: 0,
     notes: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    loadCosts();
-  }, []);
-
-  const loadCosts = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
+    setMessage('');
+
     try {
-      const costsData = await realCostTrackingService.getCosts();
-      setCosts(costsData);
+      await realCostTrackingService.addCost({
+        service: formData.category,
+        category: formData.category,
+        description: formData.description,
+        actualMonthlyCost: formData.amount,
+        projectedMonthlyCost: formData.amount,
+        lastBillingDate: formData.date,
+        nextBillingDate: formData.date,
+        billingCycle: 'monthly',
+        provider: 'Manual Entry',
+        accountId: 'manual',
+        plan: 'Manual',
+        dataSource: 'manual',
+        notes: formData.notes || undefined
+      });
+
+      setMessage('Cost entry added successfully!');
+      setFormData({
+        date: new Date().toISOString().split('T')[0],
+        category: '',
+        description: '',
+        amount: 0,
+        notes: ''
+      });
     } catch (error) {
-      console.error('Error loading costs:', error);
+      console.error('Error adding cost entry:', error);
+      setMessage('Failed to add cost entry. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (cost: RealCostItem) => {
-    setEditingId(cost.id);
-    setEditForm({
-      actualMonthlyCost: cost.actualMonthlyCost,
-      projectedMonthlyCost: cost.projectedMonthlyCost,
-      notes: cost.notes || ''
-    });
+  const handleInputChange = (field: keyof CostEntry, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
-
-  const handleSave = async (costId: string) => {
-    setSaving(true);
-    try {
-      await realCostTrackingService.updateCost(costId, {
-        actualMonthlyCost: editForm.actualMonthlyCost,
-        projectedMonthlyCost: editForm.projectedMonthlyCost,
-        notes: editForm.notes
-      });
-      
-      await loadCosts();
-      setEditingId(null);
-      setEditForm({ actualMonthlyCost: 0, projectedMonthlyCost: 0, notes: '' });
-    } catch (error) {
-      console.error('Error saving cost:', error);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditForm({ actualMonthlyCost: 0, projectedMonthlyCost: 0, notes: '' });
-  };
-
-  const getDataSourceColor = (dataSource: string) => {
-    switch (dataSource) {
-      case 'api': return 'bg-blue-100 text-blue-800';
-      case 'manual': return 'bg-warning text-warning-dark';
-      case 'estimated': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getCostStatus = (cost: RealCostItem) => {
-    if (cost.actualMonthlyCost === 0) return 'needs-data';
-    if (cost.actualMonthlyCost > cost.projectedMonthlyCost) return 'over-budget';
-    return 'within-budget';
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'needs-data': return <AlertCircle className="h-4 w-4 text-red-500" />;
-      case 'over-budget': return <AlertCircle className="h-4 w-4 text-orange-500" />;
-      case 'within-budget': return <CheckCircle className="h-4 w-4 text-green-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
-    }
-  };
-
-  if (loading) {
-    return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading cost data..." />
-        </div>
-      </PageContainer>
-    );
-  }
 
   return (
     <PageContainer>
-      <PageHeader 
-        title="Manual Cost Entry" 
-        subtitle="Enter real costs for services that don't have automatic billing APIs"
-      />
+      <PageHeader title="Manual Cost Entry" />
       <PageContent>
-        {/* Instructions */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">How to Enter Real Costs</h3>
-                <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
-                  <li>Log into each service's dashboard (Vercel, GitHub, Namecheap, etc.)</li>
-                  <li>Check your current monthly/annual billing amount</li>
-                  <li>Enter the actual cost in the "Actual Monthly Cost" field</li>
-                  <li>Add any notes about billing cycles or special pricing</li>
-                  <li>Click "Save" to update the cost data</li>
-                </ol>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Cost List */}
-        <div className="space-y-4">
-          {costs.map((cost) => {
-            const status = getCostStatus(cost);
-            const isEditing = editingId === cost.id;
-
-            return (
-              <Card key={cost.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-gray-900">{cost.service}</h3>
-                        <Badge className={getDataSourceColor(cost.dataSource)}>
-                          {cost.dataSource}
-                        </Badge>
-                        {getStatusIcon(status)}
-                      </div>
-
-                      <p className="text-gray-600 mb-3">{cost.description}</p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                        <div>
-                          <label className="text-sm font-medium text-gray-700">Provider</label>
-                          <p className="text-sm text-gray-600">{cost.provider}</p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-700">Plan</label>
-                          <p className="text-sm text-gray-600">{cost.plan}</p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-700">Billing Cycle</label>
-                          <p className="text-sm text-gray-600 capitalize">{cost.billingCycle}</p>
-                        </div>
-                      </div>
-
-                      {cost.notes && (
-                        <div className="mb-3 p-3 bg-blue-50 rounded-lg">
-                          <p className="text-sm text-blue-700">{cost.notes}</p>
-                        </div>
-                      )}
-
-                      {isEditing ? (
-                        <div className="space-y-3">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                                Actual Monthly Cost ($)
-                              </label>
-                              <Input
-                                type="number"
-                                step="0.01"
-                                value={editForm.actualMonthlyCost}
-                                onChange={(e) => setEditForm({
-                                  ...editForm,
-                                  actualMonthlyCost: parseFloat(e.target.value) || 0
-                                })}
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                                Projected Monthly Cost ($)
-                              </label>
-                              <Input
-                                type="number"
-                                step="0.01"
-                                value={editForm.projectedMonthlyCost}
-                                onChange={(e) => setEditForm({
-                                  ...editForm,
-                                  projectedMonthlyCost: parseFloat(e.target.value) || 0
-                                })}
-                                placeholder="0.00"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium text-gray-700 mb-1 block">
-                              Notes
-                            </label>
-                            <Textarea
-                              value={editForm.notes}
-                              onChange={(e) => setEditForm({
-                                ...editForm,
-                                notes: e.target.value
-                              })}
-                              placeholder="Add notes about billing, special pricing, etc."
-                              rows={2}
-                            />
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              onClick={() => handleSave(cost.id)}
-                              disabled={saving}
-                              className="flex items-center gap-2"
-                            >
-                              {saving ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                              {saving ? 'Saving...' : 'Save'}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              onClick={handleCancel}
-                              disabled={saving}
-                            >
-                              Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-sm font-medium text-gray-700">Actual Monthly Cost</label>
-                            <p className="text-lg font-semibold text-gray-900">
-                              ${cost.actualMonthlyCost.toFixed(2)}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium text-gray-700">Projected Monthly Cost</label>
-                            <p className="text-lg font-semibold text-gray-900">
-                              ${cost.projectedMonthlyCost.toFixed(2)}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {!isEditing && (
-                      <div className="ml-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(cost)}
-                          className="flex items-center gap-2"
-                        >
-                          <Edit className="h-4 w-4" />
-                          Edit
-                        </Button>
-                      </div>
-                    )}
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle>Add New Cost Entry</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="date">Date</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => handleInputChange('date', e.target.value)}
+                      required
+                    />
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <Input
+                      id="category"
+                      value={formData.category}
+                      onChange={(e) => handleInputChange('category', e.target.value)}
+                      placeholder="e.g., Fuel, Maintenance, Insurance"
+                      required
+                    />
+                  </div>
+                </div>
 
-        {/* Summary */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
-              Cost Summary
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Actual Monthly</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  ${costs.reduce((sum, cost) => sum + cost.actualMonthlyCost, 0).toFixed(2)}
-                </p>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Input
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    placeholder="Brief description of the cost"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="amount">Amount ($)</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.amount}
+                    onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
+                    placeholder="0.00"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="notes">Notes (Optional)</Label>
+                  <Textarea
+                    id="notes"
+                    value={formData.notes}
+                    onChange={(e) => handleInputChange('notes', e.target.value)}
+                    placeholder="Additional notes or details"
+                    rows={3}
+                  />
+                </div>
+
+                {message && (
+                  <div className={`p-4 rounded-md ${
+                    message.includes('successfully') 
+                      ? 'bg-green-50 text-green-800 border border-green-200' 
+                      : 'bg-red-50 text-red-800 border border-red-200'
+                  }`}>
+                    {message}
+                  </div>
+                )}
+
+                <div className="flex gap-4">
+                  <Button type="submit" disabled={loading}>
+                    {loading ? 'Adding...' : 'Add Cost Entry'}
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={() => {
+                      setFormData({
+                        date: new Date().toISOString().split('T')[0],
+                        category: '',
+                        description: '',
+                        amount: 0,
+                        notes: ''
+                      });
+                      setMessage('');
+                    }}
+                  >
+                    Clear Form
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>Cost Categories</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Vehicle Costs</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• Fuel</li>
+                    <li>• Maintenance & Repairs</li>
+                    <li>• Insurance</li>
+                    <li>• Registration & Licensing</li>
+                    <li>• Vehicle Purchase/Lease</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Operational Costs</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• Driver Wages</li>
+                    <li>• Office Rent</li>
+                    <li>• Utilities</li>
+                    <li>• Software & Technology</li>
+                    <li>• Marketing & Advertising</li>
+                  </ul>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Services with Real Data</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {costs.filter(cost => cost.actualMonthlyCost > 0).length} / {costs.length}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Needs Data Entry</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {costs.filter(cost => cost.actualMonthlyCost === 0).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </PageContent>
     </PageContainer>
   );
 };
 
-export default ManualCostEntry; 
+export default ManualCostEntryPage; 

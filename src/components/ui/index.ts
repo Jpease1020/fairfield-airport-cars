@@ -29,7 +29,7 @@ export { PageContent } from '../layout/PageContent';
 
 // Data Display Components
 export { DataTable } from '../data/DataTable';
-export { LoadingSpinner as DataLoadingSpinner } from '../data/LoadingSpinner';
+export { LoadingSpinner as DataLoadingSpinner } from './LoadingSpinner';
 export { EmptyState } from '../data/EmptyState';
 export { StatusBadge } from '../data/StatusBadge';
 

@@ -1,7 +1,7 @@
 import React, { ComponentType } from 'react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { onAuthChange } from '@/lib/auth-service';
+import { onAuthChange } from '@/lib/services/auth-service';
 import { User } from 'firebase/auth';
 
 const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 
 interface EditableTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;

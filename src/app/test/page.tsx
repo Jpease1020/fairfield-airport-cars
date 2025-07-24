@@ -2,7 +2,7 @@
 
 import { useAdmin } from '@/components/admin/AdminProvider';
 import { Button } from '@/components/ui/button';
-import { Layout, Container, Stack, Card, Spacer } from '@/components/ui/containers';
+import { Layout, Container, Stack, Card } from '@/components/ui/containers';
 
 export default function TestPage() {
   const { isAdmin, editMode, commentMode } = useAdmin();
@@ -80,11 +80,11 @@ export default function TestPage() {
               <Stack spacing="md">
                 <h2 className="text-xl font-semibold text-text-primary">Test Content</h2>
                 <p className="text-text-primary">This is a test page to verify the hamburger menu functionality.</p>
-                <p className="text-text-primary">If you're an admin, you should see a hamburger menu in the top-left corner.</p>
+                <p className="text-text-primary">If you&apos;re an admin, you should see a hamburger menu in the top-left corner.</p>
                 <div className="p-4 bg-bg-info rounded-lg">
                   <h3 className="font-semibold mb-2 text-text-primary">How to test:</h3>
                   <ol className="list-decimal list-inside space-y-1 text-sm text-text-primary">
-                    <li>Click "Enable Admin Mode" above</li>
+                    <li>Click &ldquo;Enable Admin Mode&rdquo; above</li>
                     <li>Look for the hamburger menu in the top-left corner</li>
                     <li>Click the hamburger menu to see the three modes</li>
                     <li>Try switching between Site Mode, Edit Mode, and Comment Mode</li>

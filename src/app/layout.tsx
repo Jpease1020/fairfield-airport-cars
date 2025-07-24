@@ -3,8 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/layout";
 import { AdminProvider } from "@/components/admin/AdminProvider";
+import { EditModeProvider } from "@/components/admin/EditModeProvider";
 import AdminHamburgerMenu from "@/components/admin/AdminHamburgerMenu";
-import SimpleCommentSystem from "@/components/admin/SimpleCommentSystem";
+import CommentWrapper from "@/components/admin/CommentWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,25 +50,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AdminProvider>
-          <SimpleCommentSystem>
-            <Navigation />
-            <main>{children}</main>
-            <AdminHamburgerMenu />
-          </SimpleCommentSystem>
+          <EditModeProvider>
+            <CommentWrapper>
+              <Navigation />
+              <main>{children}</main>
+              <AdminHamburgerMenu />
+            </CommentWrapper>
+          </EditModeProvider>
         </AdminProvider>
-        {/* Initialize interaction tracking */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Initialize interaction tracking
-              if (typeof window !== 'undefined') {
-                setTimeout(() => {
-                  console.log('🔍 Initializing interaction tracking...');
-                }, 100);
-              }
-            `,
-          }}
-        />
       </body>
     </html>
   );

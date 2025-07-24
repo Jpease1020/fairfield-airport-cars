@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { Input } from './input';
 import { Textarea } from './textarea';
 import { Select, SelectContent, SelectTrigger, SelectValue } from './select';
@@ -145,7 +145,7 @@ interface EnhancedSelectProps {
 }
 
 const EnhancedSelect = React.forwardRef<HTMLButtonElement, EnhancedSelectProps>(
-  ({ className, label, error, helper, placeholder, value, onValueChange, children, disabled, size = 'md', ...props }, ref) => {
+  ({ className, label, error, helper, placeholder, value, onValueChange, children, disabled, size = 'md' }) => {
     const sizeClasses = {
       sm: 'h-8 text-sm',
       md: 'h-10 text-base',

@@ -1,12 +1,17 @@
 "use client";
 
 import { useCMS } from '@/hooks/useCMS';
+
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import '../page-editable.css';
 import { Button } from '@/components/ui/button';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/utils/firebase';
+import { User } from 'firebase/auth';
+
+import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { authService } from '@/lib/services/auth-service';
+import '../page-editable.css';
+
 
 export default function PrivacyPage() {
   const { config: cmsConfig } = useCMS();
@@ -19,8 +24,8 @@ export default function PrivacyPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
+    const unsub = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user && await authService.isAdmin(user.uid)) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
@@ -43,7 +48,7 @@ export default function PrivacyPage() {
     setSaving(true);
     setSaveMsg(null);
     try {
-      const { cmsService } = await import('@/lib/cms-service');
+      const { cmsService } = await import('@/lib/services/cms-service');
       const defaultHome = {
         hero: { title: '', subtitle: '', ctaText: '' },
         features: { title: '', items: [] },

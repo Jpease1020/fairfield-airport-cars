@@ -1,48 +1,104 @@
+'use client';
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { useEditMode } from './EditModeProvider';
 
 interface EditableFieldProps {
-  label: string;
   value: string;
   onChange: (value: string) => void;
-  type?: 'text' | 'textarea';
+  label?: string;
   placeholder?: string;
-  required?: boolean;
   className?: string;
+  type?: 'input' | 'textarea';
+  rows?: number;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export const EditableField: React.FC<EditableFieldProps> = ({
-  label,
   value,
   onChange,
-  type = 'text',
+  label,
   placeholder,
-  required = false,
   className = '',
+  type = 'input',
+  rows = 3,
+  size = 'md'
 }) => {
+  const { editMode } = useEditMode();
+
+  const sizeClasses = {
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl'
+  };
+
+  const inputSizeClasses = {
+    sm: 'h-8 px-3',
+    md: 'h-10 px-4',
+    lg: 'h-12 px-4',
+    xl: 'h-14 px-4'
+  };
+
+  if (editMode) {
+    return (
+      <div className="mb-4">
+        {label && (
+          <label className="edit-label font-semibold block mb-2">
+            {label}
+          </label>
+        )}
+        {type === 'textarea' ? (
+          <Textarea
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            className={`editable-textarea w-full ${sizeClasses[size]} ${className}`}
+            rows={rows}
+          />
+        ) : (
+          <Input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            className={`editable-input w-full ${sizeClasses[size]} ${inputSizeClasses[size]} ${className}`}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Display mode
+  if (type === 'textarea') {
+    return (
+      <div className={`${sizeClasses[size]} ${className}`}>
+        {value || placeholder}
+      </div>
+    );
+  }
+
   return (
-    <div className={`space-y-2 ${className}`}>
-      <Label className="edit-label font-semibold">
-        {label}
-        {required && <span className="text-error ml-1">*</span>}
-      </Label>
-      {type === 'textarea' ? (
-        <Textarea
-          className="editable-textarea w-full"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-        />
-      ) : (
-        <Input
-          className="editable-input w-full"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-        />
-      )}
+    <div className={`${sizeClasses[size]} ${className}`}>
+      {value || placeholder}
     </div>
   );
-}; 
+};
+
+// Specialized components for common use cases
+export const EditableTitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
+  <EditableField {...props} type="input" size="xl" className="font-bold" />
+);
+
+export const EditableSubtitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
+  <EditableField {...props} type="input" size="lg" className="text-text-secondary" />
+);
+
+export const EditableContent: React.FC<Omit<EditableFieldProps, 'type' | 'size'> & { rows?: number }> = (props) => (
+  <EditableField {...props} type="textarea" size="md" className="text-text-secondary leading-relaxed" />
+);
+
+export const EditableLabel: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
+  <EditableField {...props} type="input" size="md" className="font-medium" />
+); 

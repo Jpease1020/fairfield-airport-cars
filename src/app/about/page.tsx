@@ -1,146 +1,91 @@
 "use client";
 
-import { useCMS } from '@/hooks/useCMS';
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useEditMode } from '@/components/admin/EditModeProvider';
+import { EditableTitle, EditableContent } from '@/components/admin/EditableField';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import '../page-editable.css';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 
 export default function AboutPage() {
-  const { config: cmsConfig } = useCMS();
-  const aboutContent = cmsConfig?.pages?.about;
-
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [localContent, setLocalContent] = useState<any>(null);
-  const [saving, setSaving] = useState(false);
-  const [saveMsg, setSaveMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
-      }
-    });
-    return () => unsub();
-  }, []);
-
-  useEffect(() => {
-    if (aboutContent) {
-      setLocalContent(aboutContent);
-    }
-  }, [aboutContent]);
-
-  const handleFieldChange = (field: string, value: string) => {
-    setLocalContent((prev: any) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    setSaveMsg(null);
-    try {
-      // Save to CMS
-      // (Assumes cmsService.updateCMSConfiguration is available and works like on other pages)
-      const { cmsService } = await import('@/lib/cms-service');
-      const defaultHome = {
-        hero: { title: '', subtitle: '', ctaText: '' },
-        features: { title: '', items: [] },
-        about: { title: '', content: '' },
-        contact: { title: '', content: '', phone: '', email: '' }
-      };
-      const defaultHelp = {
-        faq: [],
-        contactInfo: { phone: '', email: '', hours: '' }
-      };
-      await cmsService.updateCMSConfiguration({
-        pages: {
-          home: cmsConfig?.pages?.home || defaultHome,
-          help: cmsConfig?.pages?.help || defaultHelp,
-          ...cmsConfig?.pages,
-          about: localContent,
-        },
-      });
-      setSaveMsg('Saved!');
-      setTimeout(() => setSaveMsg(null), 2000);
-      setEditMode(false);
-    } catch {
-      setSaveMsg('Failed to save.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setLocalContent(JSON.parse(JSON.stringify(aboutContent)));
-    setEditMode(false);
-    setSaveMsg(null);
-  };
+  const { handleFieldChange } = useEditMode();
 
   return (
-    <PageContainer maxWidth="xl" padding="lg">
-      {isAdmin && (
-        <div className="fixed top-20 right-6 z-50">
-          {!editMode ? (
-            <Button
-              onClick={() => setEditMode(true)}
-              className="bg-brand-primary text-white hover:bg-brand-primary-hover shadow-lg"
-            >
-              Edit Mode
-            </Button>
-          ) : (
-            <div className="flex gap-2">
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover shadow-lg"
-              >
-                {saving ? 'Saving...' : 'Save'}
-              </Button>
-              <Button
-                onClick={handleCancel}
-                disabled={saving}
-                variant="outline"
-                className="bg-bg-secondary text-text-primary hover:bg-bg-muted shadow-lg"
-              >
-                Cancel
-              </Button>
-              {saveMsg && <div className="mt-2 text-sm text-success">{saveMsg}</div>}
-            </div>
-          )}
-        </div>
-      )}
-      <PageHeader title="About Us" />
+    <PageContainer>
+      <PageHeader title="About Us">
+        <EditableTitle
+          value="About Fairfield Airport Car Service"
+          onChange={(value) => handleFieldChange('about', 'title', value)}
+          className="text-3xl font-bold text-gray-900"
+        />
+      </PageHeader>
       <PageContent>
-        {editMode ? (
-          <div className="flex flex-col gap-4">
-            <label className="edit-label font-semibold">Title</label>
-            <Input
-              className="editable-input text-2xl font-bold w-full mb-2 h-12 px-4"
-              value={localContent?.title || ''}
-              onChange={e => handleFieldChange('title', e.target.value)}
-            />
-            <label className="edit-label font-semibold">Content</label>
-            <Textarea
-              className="editable-textarea w-full mb-2 p-4"
-              value={localContent?.content || ''}
-              onChange={e => handleFieldChange('content', e.target.value)}
-              rows={8}
-            />
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-text-primary mb-4">{aboutContent?.title || 'About Fairfield Airport Car Service'}</h2>
-            <div className="prose max-w-none text-text-secondary leading-relaxed">
-              {aboutContent?.content || 'Our company provides premium airport transportation services to and from major airports in the New York and Connecticut area. We specialize in reliable, comfortable rides with professional drivers and well-maintained vehicles.'}
-            </div>
-          </div>
-        )}
+        <div className="max-w-4xl mx-auto">
+          <EditableContent
+            value={`
+              <h2 className="text-2xl font-semibold mb-6">Our Story</h2>
+              <p className="text-lg text-gray-700 mb-6">
+                Fairfield Airport Car Service has been providing reliable, comfortable, and professional 
+                transportation services to and from Fairfield Airport for over a decade. We understand 
+                that travel can be stressful, which is why we've made it our mission to provide a 
+                seamless and enjoyable experience for every passenger.
+              </p>
+              
+              <h2 className="text-2xl font-semibold mb-6">Our Commitment</h2>
+              <p className="text-lg text-gray-700 mb-6">
+                We are committed to providing the highest level of service with:
+              </p>
+              <ul className="list-disc list-inside text-lg text-gray-700 mb-6 space-y-2">
+                <li>Professional, licensed drivers</li>
+                <li>Well-maintained, comfortable vehicles</li>
+                <li>Punctual pickups and drop-offs</li>
+                <li>Competitive, transparent pricing</li>
+                <li>24/7 customer support</li>
+              </ul>
+              
+              <h2 className="text-2xl font-semibold mb-6">Why Choose Us</h2>
+              <p className="text-lg text-gray-700 mb-6">
+                When you choose Fairfield Airport Car Service, you're choosing:
+              </p>
+              <ul className="list-disc list-inside text-lg text-gray-700 mb-6 space-y-2">
+                <li><strong>Reliability:</strong> We never cancel bookings and always arrive on time</li>
+                <li><strong>Safety:</strong> All our drivers are background-checked and vehicles are regularly inspected</li>
+                <li><strong>Comfort:</strong> Clean, spacious vehicles with climate control</li>
+                <li><strong>Convenience:</strong> Easy online booking and real-time tracking</li>
+                <li><strong>Value:</strong> Competitive rates with no hidden fees</li>
+              </ul>
+              
+              <h2 className="text-2xl font-semibold mb-6">Our Fleet</h2>
+              <p className="text-lg text-gray-700 mb-6">
+                Our modern fleet includes:
+              </p>
+              <ul className="list-disc list-inside text-lg text-gray-700 mb-6 space-y-2">
+                <li>Luxury sedans for individual travelers</li>
+                <li>SUVs for families and groups</li>
+                <li>Vans for larger parties</li>
+                <li>Accessible vehicles for passengers with special needs</li>
+              </ul>
+              
+              <h2 className="text-2xl font-semibold mb-6">Service Areas</h2>
+              <p className="text-lg text-gray-700 mb-6">
+                We serve the greater Fairfield area and surrounding communities, providing reliable 
+                transportation to and from:
+              </p>
+              <ul className="list-disc list-inside text-lg text-gray-700 mb-6 space-y-2">
+                <li>Fairfield Airport</li>
+                <li>Local hotels and accommodations</li>
+                <li>Business districts</li>
+                <li>Residential areas</li>
+                <li>Popular tourist destinations</li>
+              </ul>
+              
+              <h2 className="text-2xl font-semibold mb-6">Contact Us</h2>
+              <p className="text-lg text-gray-700 mb-6">
+                Ready to experience the difference? Contact us today to book your ride or learn more 
+                about our services. We're here to make your journey as smooth and enjoyable as possible.
+              </p>
+            `}
+            onChange={(value) => handleFieldChange('about', 'content', value)}
+            className="prose prose-lg max-w-none"
+          />
+        </div>
       </PageContent>
     </PageContainer>
   );

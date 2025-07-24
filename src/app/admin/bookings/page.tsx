@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { NextPage } from 'next';
 import { Booking } from '@/types/booking';
-import { listBookings, updateBooking, deleteBooking } from '@/lib/booking-service';
+import { listBookings, updateBooking, deleteBooking } from '@/lib/services/booking-service';
 import withAuth from '../withAuth';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { DataTable } from '@/components/data';

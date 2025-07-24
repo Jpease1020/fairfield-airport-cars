@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sessionStorage, UserSession } from '@/lib/session-storage';
+import { sessionStorage, UserSession } from '@/lib/utils/session-storage';
 
 // Admin users (you and Gregg)
 const ADMIN_USERS = [

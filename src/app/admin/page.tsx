@@ -5,9 +5,9 @@ import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/data';
-import { listBookings } from '@/lib/booking-service';
+import { listBookings } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
-import { testFirebaseConnection } from '@/lib/firebase-test';
+import { testFirebaseConnection } from '@/lib/utils/firebase-test';
 import { 
   BookOpen, 
   Calendar, 

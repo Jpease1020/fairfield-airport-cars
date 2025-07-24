@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { useParams } from 'next/navigation';
 import { doc as fsDoc, onSnapshot as fsSnap } from 'firebase/firestore';
 import { doc as fsDocDriver } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/utils/firebase';
 import { Booking } from '@/types/booking';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { ProgressIndicator } from '@/components/ui/ProgressIndicator';
@@ -12,11 +13,16 @@ import { Alert } from '@/components/feedback';
 import { LoadingSpinner } from '@/components/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useCMS } from '@/hooks/useCMS';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { cmsService } from '@/lib/cms-service';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/utils/firebase';
+import { User } from 'firebase/auth';
 
+import { useCMS } from '@/hooks/useCMS';
+
+
+import { cmsService } from '@/lib/services/cms-service';
+
+import { authService } from '@/lib/services/auth-service';
 // Status step calculation removed as it's handled by ProgressIndicator component
 
 export default function RideStatusPage() {
@@ -38,8 +44,8 @@ export default function RideStatusPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
+    const unsub = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user && await authService.isAdmin(user.uid)) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);

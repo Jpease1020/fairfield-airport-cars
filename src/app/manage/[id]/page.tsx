@@ -1,21 +1,27 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { useParams, useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/utils/firebase';
 import { Booking } from '@/types/booking';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { BookingCard } from '@/components/booking';
 import { Alert } from '@/components/feedback';
 import { LoadingSpinner } from '@/components/data';
 import { Button } from '@/components/ui/button';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/utils/firebase';
+import { User } from 'firebase/auth';
+
 import { EditableInput } from '@/components/forms';
 import { useCMS } from '@/hooks/useCMS';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { cmsService } from '@/lib/cms-service';
 
+
+import { cmsService } from '@/lib/services/cms-service';
+
+import { authService } from '@/lib/services/auth-service';
 export default function ManageBookingPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -37,8 +43,8 @@ export default function ManageBookingPage() {
 
   // Admin detection
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
+    const unsub = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user && await authService.isAdmin(user.uid)) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);

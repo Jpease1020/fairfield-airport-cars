@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import withAuth from '../withAuth';
-import { cmsService } from '@/lib/cms-service';
+import { cmsService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

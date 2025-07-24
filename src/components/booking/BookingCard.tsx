@@ -3,7 +3,7 @@ import { Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
 import { Booking } from '@/types/booking';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 
 interface BookingCardProps {
   booking: Booking;

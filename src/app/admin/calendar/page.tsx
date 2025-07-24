@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import withAuth from '../withAuth';
-import { listBookings } from '../../../lib/booking-service';
+import { listBookings } from '../../../lib/services/booking-service';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/card';
 

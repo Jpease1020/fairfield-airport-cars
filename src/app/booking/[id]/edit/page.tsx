@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { getBooking } from '@/lib/booking-service';
+import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';

@@ -2,7 +2,7 @@
 import '@testing-library/jest-dom';
 
 // Mock all external services globally
-jest.mock('@/lib/square-service', () => ({
+jest.mock('@/lib/services/square-service', () => ({
   createCheckoutSession: jest.fn().mockResolvedValue({
     checkoutUrl: 'https://squareup.com/checkout/test-session',
     sessionId: 'test-session-123'
@@ -14,7 +14,7 @@ jest.mock('@/lib/square-service', () => ({
   })
 }));
 
-jest.mock('@/lib/twilio-service', () => ({
+jest.mock('@/lib/services/twilio-service', () => ({
   sendSMS: jest.fn().mockResolvedValue({
     success: true,
     messageId: 'test-sms-123'
@@ -25,7 +25,7 @@ jest.mock('@/lib/twilio-service', () => ({
   })
 }));
 
-jest.mock('@/lib/email-service', () => ({
+jest.mock('@/lib/services/email-service', () => ({
   sendEmail: jest.fn().mockResolvedValue({
     success: true,
     messageId: 'test-email-123'
@@ -36,7 +36,7 @@ jest.mock('@/lib/email-service', () => ({
   })
 }));
 
-jest.mock('@/lib/firebase', () => ({
+jest.mock('@/lib/utils/firebase', () => ({
   auth: {
     onAuthStateChanged: jest.fn(),
     signInWithEmailAndPassword: jest.fn().mockResolvedValue({
@@ -70,7 +70,7 @@ jest.mock('@/lib/firebase', () => ({
   }
 }));
 
-jest.mock('@/lib/ai-assistant', () => ({
+jest.mock('@/lib/services/ai-assistant', () => ({
   processAIQuestion: jest.fn().mockResolvedValue({
     response: 'Test AI response',
     fallback: false
@@ -120,7 +120,7 @@ jest.mock('openai', () => ({
 }));
 
 // Mock environment variables for testing
-process.env.NODE_ENV = 'test';
+// process.env.NODE_ENV = 'test'; // NODE_ENV is read-only
 process.env.NEXT_PUBLIC_FIREBASE_API_KEY = 'test-api-key';
 process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = 'test.firebaseapp.com';
 process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID = 'test-project';

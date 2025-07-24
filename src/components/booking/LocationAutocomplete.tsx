@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 
 interface LocationAutocompleteProps {
   value: string;
@@ -144,14 +144,14 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute z-10 w-full mt-1 bg-bg-primary border border-border-primary rounded-md shadow-lg max-h-60 overflow-auto"
+          className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto"
         >
           {suggestions.map((suggestion, index) => (
             <Button
               key={index}
               variant="ghost"
               onClick={() => handleSuggestionClick(suggestion)}
-              className="w-full px-4 py-2 hover:bg-bg-secondary cursor-pointer border-b border-border-primary last:border-b-0 text-left"
+              className="suggestion-item w-full text-left"
             >
               <div className="flex items-start space-x-3">
                 <MapPin className="h-4 w-4 text-text-secondary flex-shrink-0 mt-0.5" />

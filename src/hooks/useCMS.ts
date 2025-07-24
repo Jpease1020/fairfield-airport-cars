@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { cmsService } from '@/lib/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 
 export function useCMS() {
@@ -8,21 +7,21 @@ export function useCMS() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Subscribe to real-time updates
-    const unsubscribe = cmsService.subscribeToCMSUpdates((cmsConfig) => {
-      setConfig(cmsConfig);
-      setLoading(false);
-      setError(null);
-    });
-
-    // Initial load
     const loadCMS = async () => {
       try {
         setLoading(true);
         setError(null);
-        const cmsConfig = await cmsService.getCMSConfiguration();
+        
+        const response = await fetch('/api/cms/pages');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const cmsConfig = await response.json();
         setConfig(cmsConfig);
-      } catch {
+      } catch (err) {
+        console.error('Failed to load CMS:', err);
         setError('Failed to load content');
       } finally {
         setLoading(false);
@@ -30,20 +29,22 @@ export function useCMS() {
     };
 
     loadCMS();
-
-    // Cleanup subscription on unmount
-    return () => {
-      unsubscribe();
-    };
   }, []);
 
   const refresh = async () => {
     try {
       setLoading(true);
       setError(null);
-      const cmsConfig = await cmsService.getCMSConfiguration();
+      
+      const response = await fetch('/api/cms/pages');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const cmsConfig = await response.json();
       setConfig(cmsConfig);
-    } catch {
+    } catch (err) {
+      console.error('Failed to refresh CMS:', err);
       setError('Failed to refresh content');
     } finally {
       setLoading(false);
@@ -62,7 +63,7 @@ export function useCMS() {
 export function useHomePageContent() {
   const { config, loading, error } = useCMS();
   return {
-    content: config?.pages.home || null,
+    content: config?.pages?.home || null,
     loading,
     error
   };
@@ -71,7 +72,7 @@ export function useHomePageContent() {
 export function useHelpPageContent() {
   const { config, loading, error } = useCMS();
   return {
-    content: config?.pages.help || null,
+    content: config?.pages?.help || null,
     loading,
     error
   };

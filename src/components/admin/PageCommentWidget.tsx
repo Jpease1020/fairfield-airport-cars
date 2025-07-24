@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { feedbackService, type PageComment } from '@/lib/feedback-service';
-import { MessageSquare, X, CheckCircle, AlertCircle, Clock, Star } from 'lucide-react';
+import { feedbackService, type PageComment } from '@/lib/services/feedback-service';
+import { MessageSquare, X, CheckCircle, AlertCircle, Star } from 'lucide-react';
 
 interface PageCommentWidgetProps {
   pageUrl: string;
@@ -85,7 +85,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
         category,
         priority,
         status: 'open',
-        createdBy: 'gregg@fairfieldairportcar.com', // Gregg's email
+        createdBy: 'admin@fairfieldairportcars.com', // Gregg's email
         userAgent: navigator.userAgent
       });
 

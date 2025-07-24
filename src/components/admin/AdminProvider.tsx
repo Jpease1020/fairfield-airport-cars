@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth } from '@/lib/utils/firebase';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -69,6 +69,12 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
           localStorage.setItem('admin-mode', 'true');
         }
       } else {
+        // In development, always enable admin mode
+        if (isDev || isLocalhost) {
+          console.log('🔧 AdminProvider - Enabling admin mode for development');
+          setIsAdmin(true);
+          localStorage.setItem('admin-mode', 'true');
+        }
         setLocalStorageChecked(true);
       }
     }

@@ -21,7 +21,7 @@ interface AuthState {
   isNewUser: boolean;
 }
 
-export default function project-xWebPage() {
+export default function ProjectXWebPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -289,7 +289,7 @@ export default function project-xWebPage() {
             
             <div className="text-center">
               <p className="text-xs text-gray-500">
-                Don't have an API key?{' '}
+                Don&apos;t have an API key?{' '}
                 <a 
                   href="https://platform.openai.com/api-keys" 
                   target="_blank" 
@@ -317,7 +317,7 @@ export default function project-xWebPage() {
                     <strong>OpenAI (ChatGPT, GPT-4, etc.)</strong>
                     <ol className="list-decimal ml-5 mt-1 space-y-1">
                       <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">OpenAI API Keys page</a> and log in.</li>
-                      <li>Click <b>"Create new secret key"</b>.</li>
+                      <li>Click <b>&ldquo;Create new secret key&rdquo;</b>.</li>
                       <li>Copy the key that appears (it starts with <code>sk-...</code>).</li>
                       <li>Paste your key into the field above.</li>
                     </ol>
@@ -326,7 +326,7 @@ export default function project-xWebPage() {
                     <strong>Google Gemini</strong>
                     <ol className="list-decimal ml-5 mt-1 space-y-1">
                       <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google AI Studio</a> and log in.</li>
-                      <li>Click <b>"Create API key"</b>.</li>
+                      <li>Click <b>&ldquo;Create API key&rdquo;</b>.</li>
                       <li>Copy the key that appears.</li>
                       <li>Paste your key into the Gemini field.</li>
                     </ol>
@@ -393,7 +393,7 @@ export default function project-xWebPage() {
             <div className="text-center text-gray-500 mt-8">
               <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p className="text-lg font-medium">Start a conversation</p>
-              <p className="text-sm">Ask me anything and I'll help you out!</p>
+              <p className="text-sm">Ask me anything and I&apos;ll help you out!</p>
             </div>
           ) : (
             messages.map((message) => (

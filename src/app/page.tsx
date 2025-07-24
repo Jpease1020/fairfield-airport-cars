@@ -6,14 +6,13 @@ import { PageContainer } from '@/components/layout';
 import { FeatureCard, FAQ, ContactSection } from '@/components/marketing';
 import { useHomePageContent, useBusinessSettings, useCMS } from '@/hooks/useCMS';
 import { LoadingSpinner } from '@/components/data';
-import { useEffect, useState } from 'react';
-import { cmsService } from '@/lib/cms-service';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import './page-editable.css';
+import { useEffect } from 'react';
+import { useEditMode } from '@/components/admin/EditModeProvider';
+import { EditableTitle, EditableSubtitle, EditableContent, EditableLabel } from '@/components/admin/EditableField';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import './page-editable.css';
 
 // Icon mapping for CMS features
 const iconMap = {
@@ -30,84 +29,21 @@ export default function HomePage() {
   const { content: homeContent, loading: homeLoading, error: homeError } = useHomePageContent();
   const { settings: businessSettings, loading: businessLoading } = useBusinessSettings();
   const { config: cmsConfig } = useCMS();
+  const { 
+    editMode, 
+    localContent, 
+    setLocalContent,
+    handleFieldChange,
+    EditModeToggle,
+    EditModeControls
+  } = useEditMode();
 
-  // Admin detection
-  const [isAdmin, setIsAdmin] = useState(false);
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      // You can add more robust admin checks here
-      if (user && (user.email === 'justin@fairfieldairportcar.com' || user.email === 'gregg@fairfieldairportcar.com')) {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
-      }
-    });
-    return () => unsub();
-  }, []);
-
-  // Inline editing state
-  const [editMode, setEditMode] = useState(false);
-  const [localContent, setLocalContent] = useState<any>(null);
-  const [saving, setSaving] = useState(false);
-  const [saveMsg, setSaveMsg] = useState<string | null>(null);
-
+  // Initialize local content when CMS content loads
   useEffect(() => {
     if (homeContent) {
       setLocalContent(homeContent);
     }
-  }, [homeContent]);
-
-  const handleFieldChange = (section: string, field: string, value: unknown, subfield?: string) => {
-    setLocalContent((prev: any) => {
-      const updated = { ...prev };
-      if (subfield) {
-        updated[section][field][subfield] = value;
-      } else if (field) {
-        updated[section][field] = value;
-      } else {
-        updated[section] = value;
-      }
-      return updated;
-    });
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    setSaveMsg(null);
-    try {
-      const user = auth.currentUser;
-      console.log('Saving CMS content:', { localContent, user: user?.uid });
-      
-      const result = await cmsService.updateCMSConfiguration({
-        pages: {
-          ...cmsConfig?.pages,
-          home: localContent,
-          help: cmsConfig?.pages.help || { faq: [], contactInfo: { phone: '', email: '', hours: '' } },
-        },
-      }, user?.uid, user?.email || undefined);
-      
-      console.log('Save result:', result);
-      
-      if (result.success) {
-        setSaveMsg('Saved!');
-        setTimeout(() => setSaveMsg(null), 2000);
-        setEditMode(false);
-      } else {
-        setSaveMsg(`Failed to save: ${result.errors?.join(', ')}`);
-      }
-    } catch (error) {
-      console.error('Save error:', error);
-      setSaveMsg('Failed to save.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setLocalContent(JSON.parse(JSON.stringify(homeContent)));
-    setEditMode(false);
-    setSaveMsg(null);
-  };
+  }, [homeContent, setLocalContent]);
 
   if (homeLoading || businessLoading) {
     return (
@@ -186,77 +122,37 @@ export default function HomePage() {
 
   return (
     <PageContainer>
-      {/* Floating Edit Mode Toggle for Admins */}
-      {isAdmin && (
-        <div className="fixed top-20 right-6 z-50">
-          {!editMode ? (
-            <Button
-              onClick={() => setEditMode(true)}
-              className="bg-brand-primary text-white hover:bg-brand-primary-hover shadow-lg"
-            >
-              Edit Mode
-            </Button>
-          ) : (
-            <div className="flex gap-2">
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="bg-success text-text-inverse rounded shadow hover:bg-success-hover"
-              >
-                {saving ? 'Saving...' : 'Save'}
-              </Button>
-              <Button
-                onClick={handleCancel}
-                disabled={saving}
-                className="px-4 py-2 bg-error text-text-inverse rounded shadow hover:bg-error-hover"
-              >
-                Cancel
-              </Button>
-              {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
-            </div>
-          )}
-        </div>
+      {/* Standardized Edit Mode Controls */}
+      <EditModeToggle />
+      {editMode && (
+        <EditModeControls 
+          cmsConfig={cmsConfig} 
+          pageType="home" 
+          originalContent={homeContent}
+        />
       )}
 
       {/* Hero Section */}
       {editMode ? (
         <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
-          <label className="edit-label font-semibold">Hero Title</label>
-          <Input
-            className="editable-input text-4xl font-bold w-full mb-2 h-14 px-4"
-            value={localContent?.hero.title || ''}
-            onChange={e => handleFieldChange('hero', 'title', e.target.value)}
+          <EditableTitle
+            value={localContent?.hero?.title || ''}
+            onChange={(value) => handleFieldChange('hero', 'title', value)}
+            label="Hero Title"
+            placeholder="Premium Airport Transportation"
           />
-          <label className="edit-label font-semibold">Hero Subtitle</label>
-          <Input
-            className="editable-input text-xl w-full mb-2 h-12 px-4"
-            value={localContent?.hero.subtitle || ''}
-            onChange={e => handleFieldChange('hero', 'subtitle', e.target.value)}
+          <EditableSubtitle
+            value={localContent?.hero?.subtitle || ''}
+            onChange={(value) => handleFieldChange('hero', 'subtitle', value)}
+            label="Hero Subtitle"
+            placeholder="Reliable, comfortable rides to and from Fairfield Airport"
           />
-          <label className="edit-label font-semibold">Hero CTA Text</label>
-          <Input
-            className="editable-input w-full mb-2 h-12 px-4"
-            value={localContent?.hero.ctaText || ''}
-            onChange={e => handleFieldChange('hero', 'ctaText', e.target.value)}
+          <EditableLabel
+            value={localContent?.hero?.ctaText || ''}
+            onChange={(value) => handleFieldChange('hero', 'ctaText', value)}
+            label="Hero CTA Text"
+            placeholder="Book Your Ride"
           />
-          <div className="flex gap-2 mt-4">
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-success text-text-inverse rounded shadow hover:bg-success-hover"
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </Button>
-            <Button
-              onClick={handleCancel}
-              disabled={saving}
-              variant="outline"
-              className="px-4 py-2 bg-error text-text-inverse rounded shadow hover:bg-error-hover"
-            >
-              Cancel
-            </Button>
-            {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
-          </div>
         </div>
       ) : (
         <div className="relative overflow-hidden">
@@ -278,7 +174,7 @@ export default function HomePage() {
                   ))}
                 </div>
                 <blockquote className="text-text-inverse/95 text-lg italic mb-3">
-                  "Fairfield Airport Car Service is top tier. I've used them twice now - once for LaGuardia and once for Newark. Even for a 5am pickup, Gregg, my driver, greeted me with a friendly smile. The car was immaculate and he was punctual both times. I will absolutely be using this company for all my airport runs."
+                  &ldquo;Fairfield Airport Car Service is top tier. I&apos;ve used them twice now - once for LaGuardia and once for Newark. Even for a 5am pickup, Gregg, my driver, greeted me with a friendly smile. The car was immaculate and he was punctual both times. I will absolutely be using this company for all my airport runs.&rdquo;
                 </blockquote>
                 <cite className="text-text-inverse/80 text-sm">- Satisfied Customer</cite>
               </div>
@@ -344,17 +240,9 @@ export default function HomePage() {
             {editMode ? (
               <>
                 <label className="edit-label">Fleet Title</label>
-                <Input
-                  className="editable-input text-3xl font-bold w-full mb-2 h-14 px-4"
-                  value={localContent?.fleet?.title || 'Our Fleet'}
-                  onChange={e => handleFieldChange('fleet', 'title', e.target.value)}
-                />
+                <EditableTitle value={localContent?.fleet?.title || 'Our Fleet'} onChange={value => handleFieldChange('fleet', 'title', value)} />
                 <label className="edit-label">Fleet Description</label>
-                <Textarea
-                  className="editable-textarea w-full mb-2 h-24 px-4"
-                  value={localContent?.fleet?.description || ''}
-                  onChange={e => handleFieldChange('fleet', 'description', e.target.value)}
-                />
+                <EditableContent value={localContent?.fleet?.description || ''} onChange={value => handleFieldChange('fleet', 'description', value)} />
               </>
             ) : (
               <>
@@ -433,17 +321,9 @@ export default function HomePage() {
         {editMode ? (
           <div className="bg-white p-6 rounded shadow mb-8">
             <label className="edit-label">FAQ Title</label>
-            <Input
-              className="editable-input text-3xl font-bold w-full mb-2 h-14 px-4"
-              value={localContent?.faq?.title || 'Frequently Asked Questions'}
-              onChange={e => handleFieldChange('faq', 'title', e.target.value)}
-            />
+            <EditableTitle value={localContent?.faq?.title || 'Frequently Asked Questions'} onChange={value => handleFieldChange('faq', 'title', value)} />
             <label className="edit-label">FAQ Subtitle</label>
-              <Input
-                className="editable-input text-lg w-full mb-2 h-12 px-4"
-                value={localContent?.faq?.subtitle || 'Everything you need to know about our service'}
-                onChange={e => handleFieldChange('faq', 'subtitle', e.target.value)}
-              />
+              <EditableTitle value={localContent?.faq?.subtitle || 'Everything you need to know about our service'} onChange={value => handleFieldChange('faq', 'subtitle', value)} />
             <div className="space-y-4">
               {(localContent?.faq?.items || faqItems).map((faq: any, index: number) => (
                 <div key={index} className="border rounded p-4">
@@ -486,17 +366,9 @@ export default function HomePage() {
         {editMode ? (
           <div className="bg-white p-6 rounded shadow mb-8">
             <label className="edit-label">Contact Title</label>
-            <Input
-              className="editable-input text-2xl font-bold w-full mb-2 h-14 px-4"
-              value={localContent?.contact.title || ''}
-              onChange={e => handleFieldChange('contact', 'title', e.target.value)}
-            />
+            <EditableTitle value={localContent?.contact.title || ''} onChange={value => handleFieldChange('contact', 'title', value)} />
             <label className="edit-label">Contact Content</label>
-            <Textarea
-              className="editable-textarea w-full mb-2 h-24 px-4"
-              value={localContent?.contact.content || ''}
-              onChange={e => handleFieldChange('contact', 'content', e.target.value)}
-            />
+            <EditableContent value={localContent?.contact.content || ''} onChange={value => handleFieldChange('contact', 'content', value)} />
           </div>
         ) : (
           <ContactSection
@@ -515,23 +387,11 @@ export default function HomePage() {
           {editMode ? (
             <div className="bg-white p-6 rounded shadow mb-8">
               <label className="edit-label">CTA Title</label>
-              <Input
-                className="editable-input text-3xl font-bold w-full mb-2 h-14 px-4"
-                value={localContent?.finalCta?.title || 'Ready for a Stress-Free Ride?'}
-                onChange={e => handleFieldChange('finalCta', 'title', e.target.value)}
-              />
+              <EditableTitle value={localContent?.finalCta?.title || 'Ready for a Stress-Free Ride?'} onChange={value => handleFieldChange('finalCta', 'title', value)} />
               <label className="edit-label">CTA Description</label>
-              <Textarea
-                className="editable-textarea w-full mb-2 h-24 px-4"
-                value={localContent?.finalCta?.description || ''}
-                onChange={e => handleFieldChange('finalCta', 'description', e.target.value)}
-              />
+              <EditableContent value={localContent?.finalCta?.description || ''} onChange={value => handleFieldChange('finalCta', 'description', value)} />
               <label className="edit-label">CTA Button Text</label>
-              <Input
-                className="editable-input w-full mb-2 h-12 px-4"
-                value={localContent?.finalCta?.buttonText || 'Book Now'}
-                onChange={e => handleFieldChange('finalCta', 'buttonText', e.target.value)}
-              />
+              <EditableTitle value={localContent?.finalCta?.buttonText || 'Book Now'} onChange={value => handleFieldChange('finalCta', 'buttonText', value)} />
             </div>
           ) : (
             <>

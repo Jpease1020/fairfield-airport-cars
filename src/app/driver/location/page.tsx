@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/utils/firebase';
 import { useSearchParams } from 'next/navigation';
 import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Alert } from '@/components/feedback';

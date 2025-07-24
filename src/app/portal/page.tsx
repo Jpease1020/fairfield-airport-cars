@@ -327,7 +327,7 @@ export default function CustomerPortal() {
                     )}
 
                     {booking.feedback && (
-                      <p className="text-sm text-text-secondary italic">"{booking.feedback}"</p>
+                      <p className="text-sm text-text-secondary italic">&ldquo;{booking.feedback}&rdquo;</p>
                     )}
                   </div>
                   

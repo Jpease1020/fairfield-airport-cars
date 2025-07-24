@@ -1,70 +1,49 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    // Define specialized agents for Fairfield Airport Cars
+    // Return list of available agents
     const agents = [
       {
-        name: 'Booking Specialist',
-        role: 'Booking system optimization, customer journey improvement, form validation',
-        capabilities: ['booking flow', 'customer experience', 'form validation', 'user testing'],
-        currentTasks: 0,
-        model: 'gpt-4o',
-        focus: 'booking-system'
+        id: 'content-agent',
+        name: 'Content Agent',
+        description: 'Manages and optimizes website content',
+        status: 'active'
       },
       {
-        name: 'Payment Engineer',
-        role: 'Payment processing, Square integration, webhook handling, refund management',
-        capabilities: ['payment processing', 'square integration', 'webhooks', 'security'],
-        currentTasks: 0,
-        model: 'gpt-4o',
-        focus: 'payment-system'
+        id: 'testing-agent',
+        name: 'Testing Agent',
+        description: 'Runs automated tests and reports issues',
+        status: 'active'
       },
       {
-        name: 'Communication Manager',
-        role: 'Email/SMS notifications, template management, automated messaging',
-        capabilities: ['email service', 'sms notifications', 'templates', 'automation'],
-        currentTasks: 0,
-        model: 'gpt-4o',
-        focus: 'communication-system'
+        id: 'fixes-agent',
+        name: 'Fixes Agent',
+        description: 'Automatically fixes common issues',
+        status: 'active'
       },
       {
-        name: 'Admin Dashboard Developer',
-        role: 'Admin interface, booking management, analytics, reporting',
-        capabilities: ['admin dashboard', 'booking management', 'analytics', 'reporting'],
-        currentTasks: 0,
-        model: 'gpt-4o',
-        focus: 'admin-dashboard'
+        id: 'structure-agent',
+        name: 'Structure Agent',
+        description: 'Analyzes and improves code structure',
+        status: 'active'
       },
       {
-        name: 'QA Tester',
-        role: 'End-to-end testing, customer journey validation, bug identification',
-        capabilities: ['testing', 'customer journey', 'bug detection', 'quality assurance'],
-        currentTasks: 0,
-        model: 'gpt-4o-mini',
-        focus: 'testing'
-      },
-      {
-        name: 'Business Analyst',
-        role: 'Business process optimization, cost analysis, performance metrics',
-        capabilities: ['business analysis', 'cost tracking', 'metrics', 'optimization'],
-        currentTasks: 0,
-        model: 'gpt-4o-mini',
-        focus: 'business-analysis'
+        id: 'documentation-agent',
+        name: 'Documentation Agent',
+        description: 'Generates and maintains documentation',
+        status: 'active'
       }
     ];
 
     return NextResponse.json({
-      agents: agents,
-      total: agents.length,
-      project: 'Fairfield Airport Cars',
-      description: 'Specialized agents for car service booking platform development'
+      success: true,
+      agents
     });
-
   } catch (error) {
-    console.error('Agents GET error:', error);
+    console.error('Error getting agents:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to get agents' },
       { status: 500 }
     );
   }

@@ -231,3 +231,49 @@ For technical support or questions about the AI assistant, contact your develope
 ## License
 
 Private - Fairfield Airport Car Service
+
+
+## 🤖 Multi-Agent System
+
+This project uses a sophisticated multi-agent orchestration system for automated development tasks:
+
+### **Available Agents:**
+- **🧹 Cleanup Agent**: File cleanup, duplicate removal, temporary file management
+- **📁 Structure Agent**: Directory reorganization, file moving, import updates
+- **🔧 Fixes Agent**: Bug fixes, TypeScript errors, linting issues
+- **🧪 Testing Agent**: Testing infrastructure, test optimization, coverage analysis
+- **📝 Documentation Agent**: Documentation updates, README maintenance
+- **🎨 Content Agent**: Dynamic content updates and branding
+- **📧 Email Agent**: Communication template management
+- **🔒 Security Agent**: Authentication and security handling
+
+### **Running Agents:**
+```bash
+# Run the full cleanup orchestration
+node scripts/cleanup-orchestration.js
+
+# Run individual agents
+node scripts/agents/cleanup-agent.js --task="Remove temporary build files"
+node scripts/agents/structure-agent.js --task="Create lib subdirectories"
+```
+
+### **Project Structure:**
+```
+src/
+├── lib/
+│   ├── services/     # External service integrations
+│   ├── utils/        # Pure utility functions
+│   ├── validation/   # Data validation
+│   └── business/     # Business logic
+├── components/
+│   ├── ui/          # Core UI components
+│   ├── admin/       # Admin functionality
+│   ├── forms/       # Form components
+│   └── ...
+└── app/
+    ├── api/
+    │   ├── booking/  # Booking-related APIs
+    │   ├── payment/  # Payment processing
+    │   └── admin/    # Admin-only APIs
+    └── ...
+```

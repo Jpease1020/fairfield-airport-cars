@@ -1,43 +1,20 @@
 // Simple unit tests for critical business logic
 // These are fast, reliable, and catch real bugs
 
-import { validateBookingData } from '../../src/lib/booking-validation';
-
-// Simple test runner - no external dependencies
-function describe(name: string, fn: () => void) {
-  console.log(`\n🧪 ${name}`);
-  fn();
-}
-
-function test(name: string, fn: () => void) {
-  console.log(`  ✓ ${name}`);
-  fn();
-}
-
-function expect(value: any) {
-  return {
-    toBe(expected: any) {
-      if (value !== expected) {
-        throw new Error(`Expected ${value} to be ${expected}`);
-      }
-    },
-    toContain(expected: any) {
-      if (!value.includes(expected)) {
-        throw new Error(`Expected ${value} to contain ${expected}`);
-      }
-    }
-  };
-}
+import { validateBookingData } from '../../src/lib/validation/booking-validation';
 
 describe('Booking Validation', () => {
   test('validates required fields', () => {
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 1);
+    
     const validBooking = {
       name: 'John Doe',
       email: 'john@example.com',
       phone: '555-123-4567',
       pickupLocation: 'Fairfield Station',
       dropoffLocation: 'JFK Airport',
-      pickupDateTime: '2024-12-25T10:00',
+      pickupDateTime: futureDate.toISOString(),
       passengers: 2
     };
 

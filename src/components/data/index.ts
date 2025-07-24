@@ -1,4 +1,4 @@
 export { DataTable } from './DataTable';
 export { StatusBadge } from './StatusBadge';
-export { LoadingSpinner } from './LoadingSpinner';
+export { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 export { EmptyState } from './EmptyState'; 

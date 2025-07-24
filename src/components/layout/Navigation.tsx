@@ -3,14 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Phone } from 'lucide-react';
 import Logo from '@/components/Logo';
+import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 
 const Navigation = () => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { getPhoneNumber, getCompanyName } = useBusinessSettings();
 
   const navigationItems = [
     {
@@ -42,8 +44,8 @@ const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <Logo className="h-8 w-auto" />
-              <span className="text-xl font-bold text-brand-primary">Fairfield Airport Cars</span>
+              <Logo className="h-12 w-auto" />
+              <span className="text-xl font-bold text-brand-primary">{getCompanyName()}</span>
             </Link>
           </div>
 
@@ -68,7 +70,7 @@ const Navigation = () => {
           {/* Contact Button */}
           <div className="hidden md:flex items-center space-x-4">
             <a 
-              href="tel:+1-203-555-0123"
+              href={`tel:${getPhoneNumber()}`}
               className="flex items-center space-x-2 px-4 py-2 bg-brand-primary text-white rounded-md hover:bg-brand-primary-hover transition-colors"
             >
               <Phone className="h-4 w-4" />
@@ -114,7 +116,7 @@ const Navigation = () => {
             ))}
             <div className="pt-4 border-t border-border-primary">
               <a 
-                href="tel:+1-203-555-0123"
+                href={`tel:${getPhoneNumber()}`}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium bg-brand-primary text-white hover:bg-brand-primary-hover transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -129,4 +131,4 @@ const Navigation = () => {
   );
 };
 
-export { Navigation }; 
+export { Navigation };

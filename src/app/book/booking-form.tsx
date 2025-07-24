@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Booking } from '@/types/booking';
-import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/booking-service';
-import { getSettings } from '@/lib/settings-service';
+import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/services/booking-service';
+import { getSettings } from '@/lib/business/settings-service';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -46,8 +46,8 @@ const useGoogleMapsScript = (apiKey: string) => {
     }
 
     const script = document.createElement('script');
-    // Ensure Places library is explicitly loaded with loading=async for better performance
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async&callback=initGoogleMaps`;
+    // Load Google Maps with Places library
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleMaps`;
     script.async = true;
     script.defer = true;
     
@@ -105,7 +105,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
   const pickupInputRef = useRef<HTMLInputElement>(null);
   const dropoffInputRef = useRef<HTMLInputElement>(null);
 
-  const { isLoaded, loadError } = useGoogleMapsScript(process.env.NEXT_PUBLIC_GOOGLE_API_KEY!);
+  const { isLoaded, loadError } = useGoogleMapsScript(process.env.NEXT_PUBLIC_GOOGLE_API_KEY || '');
 
   const isEditMode = booking !== undefined;
 
@@ -307,6 +307,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
         router.push(`/booking/${booking.id}`);
       } else {
         const finalBookingData = { ...bookingData, status: 'pending' as const };
+        
         const bookingId = await createBooking(finalBookingData);
         console.log('🔧 BookingForm - Booking created successfully', bookingId);
         setSuccess(bookingFormText?.successBookingCreated || 'Booking created successfully! Sending confirmation...');
@@ -327,12 +328,38 @@ export default function BookingForm({ booking }: BookingFormProps) {
     }
   };
 
-  if (cmsLoading) return <div>{bookingFormText?.loading || 'Loading...'}</div>;
-  if (loadError) return <div>{bookingFormText?.errorLoadLocations || 'Could not load locations. Please try again later.'}</div>;
-  if (!isLoaded) return <div>{bookingFormText?.loading || 'Loading...'}</div>;
+  // Debug loading states
+  console.log('🔧 BookingForm - Loading states:', { cmsLoading, isLoaded, loadError });
+  
+  // Don't wait for CMS loading - just show the form with default text
+  // if (cmsLoading) return <div>{bookingFormText?.loading || 'Loading...'}</div>;
+  
+  // Show error but still allow form submission
+  if (loadError) {
+    console.warn('🔧 BookingForm - Google Maps load error:', loadError);
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {loadError && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">
+                Location autocomplete temporarily unavailable
+              </h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                <p>You can still fill out the form manually. Location suggestions will be restored shortly.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
           label={bookingFormText?.fullNameLabel || 'Full Name'}
@@ -376,11 +403,11 @@ export default function BookingForm({ booking }: BookingFormProps) {
           onFocus={() => { if (pickupSuggestions.length > 0) setShowPickupSuggestions(true); }}
         />
         {showPickupSuggestions && pickupSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-bg-primary border border-border-primary rounded-md shadow-lg max-h-60 overflow-auto">
+          <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto">
             {pickupSuggestions.map((prediction) => (
               <div
                 key={prediction.place_id}
-                className="px-4 py-2 hover:bg-bg-secondary cursor-pointer border-b border-border-primary last:border-b-0"
+                className="suggestion-item"
                 onClick={() => handlePickupSuggestionSelect(prediction)}
               >
                 <div className="font-medium text-sm text-text-primary">
@@ -408,11 +435,11 @@ export default function BookingForm({ booking }: BookingFormProps) {
           onFocus={() => { if (dropoffSuggestions.length > 0) setShowDropoffSuggestions(true); }}
         />
         {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-bg-primary border border-border-primary rounded-md shadow-lg max-h-60 overflow-auto">
+          <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto">
             {dropoffSuggestions.map((prediction) => (
               <div
                 key={prediction.place_id}
-                className="px-4 py-2 hover:bg-bg-secondary cursor-pointer border-b border-border-primary last:border-b-0"
+                className="suggestion-item"
                 onClick={() => handleDropoffSuggestionSelect(prediction)}
               >
                 <div className="font-medium text-sm text-text-primary">

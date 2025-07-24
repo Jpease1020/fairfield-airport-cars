@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cmsService } from "@/lib/cms-service";
+import { cmsService } from "@/lib/services/cms-service";
 import { CMSConfiguration, HomePageContent, HelpPageContent, PageContent } from "@/types/cms";
 import { PageContainer, PageHeader, PageContent as LayoutPageContent } from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

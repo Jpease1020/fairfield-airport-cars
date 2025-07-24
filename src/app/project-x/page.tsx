@@ -21,7 +21,7 @@ interface AuthState {
   isAdmin: boolean;
 }
 
-export default function project-xPage() {
+export default function ProjectXPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -291,7 +291,7 @@ export default function project-xPage() {
           <div className="text-center text-gray-500 mt-8">
             <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <p className="text-lg font-medium">Start a conversation</p>
-            <p className="text-sm">Ask me anything and I'll help you out!</p>
+            <p className="text-sm">Ask me anything and I&apos;ll help you out!</p>
           </div>
         ) : (
           messages.map((message) => (

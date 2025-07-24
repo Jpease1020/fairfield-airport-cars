@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { Button } from './button';
 
 interface HelpTooltipProps {

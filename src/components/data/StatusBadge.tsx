@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 
 interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'in-progress' | 'success' | 'warning' | 'error';

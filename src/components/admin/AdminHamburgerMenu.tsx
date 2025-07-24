@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, Edit3, MessageSquare, X, Globe, Eye } from 'lucide-react';
+import { Menu, Edit3, MessageSquare, X, Globe } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 
 const AdminHamburgerMenu = () => {

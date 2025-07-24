@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, ReactNode } from 'react';
-import { MessageSquare, X, CheckCircle, Clock } from 'lucide-react';
+import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
-import { confluenceCommentsService, type ConfluenceComment } from '@/lib/confluence-comments';
+import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
 
 interface SimpleCommentSystemProps {
   children: ReactNode;
@@ -70,7 +70,6 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
       // Generate unique ID for the element
       const elementId = generateElementId(target);
       const elementText = target.textContent?.trim() || target.tagName.toLowerCase();
-      const elementSelector = generateElementSelector(target);
       
       console.log('💬 CommentSystem - Adding comment to element:', elementText);
       

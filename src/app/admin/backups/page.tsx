@@ -5,7 +5,7 @@ import { PageContainer, PageHeader, PageContent } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/data';
-import { backupService, BackupConfig } from '@/lib/backup-service';
+import { backupService, BackupConfig } from '@/lib/services/backup-service';
 import { 
   Download, 
   Upload, 

@@ -336,7 +336,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
   pages: {
     home: {
       hero: {
-        title: "Fairfield Airport Car Service",
+        title: 'Fairfield Airport Car Service',
         subtitle: "Reliable, comfortable rides to and from Fairfield Airport",
         ctaText: "Book Your Ride"
       },
@@ -563,7 +563,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
   communication: {
     email: {
       bookingConfirmation: {
-        subject: "Your Fairfield Airport Car Service Booking Confirmation",
+        subject: `Your Fairfield Airport Car Service Booking Confirmation`,
         body: "Thank you for booking with us! Your ride is confirmed for {pickupDateTime}.",
         includeCalendarInvite: true
       },
@@ -583,7 +583,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       }
     },
     sms: {
-      bookingConfirmation: "Your Fairfield Airport Car Service booking is confirmed for {pickupDateTime}. Driver details will be sent 30 minutes before pickup.",
+              bookingConfirmation: "Your Fairfield Airport Car Service booking is confirmed for {pickupDateTime}. Driver details will be sent 30 minutes before pickup.",
       bookingReminder: "Reminder: Your airport ride is tomorrow at {pickupDateTime}. Safe travels!",
       driverEnRoute: "Your driver {driverName} is en route and will arrive in approximately {eta} minutes.",
       driverArrived: "Your driver {driverName} has arrived at {pickupLocation}. Safe travels!"

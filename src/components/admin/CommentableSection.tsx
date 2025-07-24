@@ -14,11 +14,10 @@ const CommentableSection = ({
   children, 
   sectionId, 
   sectionTitle, 
-  className = '',
-  showCommentIcon = true 
+  className = ''
 }: CommentableSectionProps) => {
   // Disabled old commenting system - using new Confluence-style system instead
-  const [hasComment, setHasComment] = useState(false);
+  const [hasComment] = useState(false);
 
   return (
     <div 
