@@ -12,7 +12,7 @@ export function useCMS() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('/api/cms/pages');
+        const response = await fetch('/api/admin/cms/pages');
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -36,7 +36,7 @@ export function useCMS() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/cms/pages');
+      const response = await fetch('/api/admin/cms/pages');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

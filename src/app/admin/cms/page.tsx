@@ -55,7 +55,7 @@ const CMSPage = () => {
   const handleInitializeCMS = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/init-cms', {
+      const response = await fetch('/api/admin/init-cms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
