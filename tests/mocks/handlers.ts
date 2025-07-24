@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http } from 'msw';
 
 // Mock data for tests
 export const mockBookingData = {
@@ -60,99 +60,99 @@ export const mockBusinessSettings = {
   }
 };
 
-// API Handlers - Updated to use MSW v1 syntax
+// API Handlers - Updated to use MSW v2 syntax
 export const handlers = [
   // CMS API
-  rest.get('/api/admin/cms/pages', (req, res, ctx) => {
-    return res(ctx.json(mockCMSData));
+  http.get('/api/admin/cms/pages', () => {
+    return Response.json(mockCMSData);
   }),
 
   // Business Settings API
-  rest.get('/api/admin/business-settings', (req, res, ctx) => {
-    return res(ctx.json(mockBusinessSettings));
+  http.get('/api/admin/business-settings', () => {
+    return Response.json(mockBusinessSettings);
   }),
 
   // Booking APIs - Updated to match actual endpoints
-  rest.post('/api/booking/estimate-fare', async (req, res, ctx) => {
-    const body = await req.json();
-    return res(ctx.json({
+  http.post('/api/booking/estimate-fare', async ({ request }) => {
+    const body = await request.json();
+    return Response.json({
       fare: 150,
       distance: '45 miles',
       duration: '1 hour 15 minutes'
-    }));
+    });
   }),
 
-  rest.post('/api/booking/create-booking-simple', async (req, res, ctx) => {
-    const body = await req.json();
-    return res(ctx.json({
+  http.post('/api/booking/create-booking-simple', async ({ request }) => {
+    const body = await request.json();
+    return Response.json({
       id: 'test-booking-123',
       status: 'confirmed',
-      ...body
-    }));
+      ...(body as object)
+    });
   }),
 
-  rest.get('/api/booking/get-bookings-simple', (req, res, ctx) => {
-    return res(ctx.json([mockBookingData]));
+  http.get('/api/booking/get-bookings-simple', () => {
+    return Response.json([mockBookingData]);
   }),
 
   // Places Autocomplete API
-  rest.post('/api/places-autocomplete', async (req, res, ctx) => {
-    const body = await req.json();
-    return res(ctx.json({
+  http.post('/api/places-autocomplete', async ({ request }) => {
+    const body = await request.json();
+    return Response.json({
       predictions: [
         { description: 'Fairfield Station, Fairfield, CT' },
         { description: 'JFK Airport, Queens, NY' },
         { description: 'LaGuardia Airport, Queens, NY' }
       ]
-    }));
+    });
   }),
 
   // Payment APIs
-  rest.post('/api/payment/create-checkout-session', async (req, res, ctx) => {
-    const body = await req.json();
-    return res(ctx.json({
+  http.post('/api/payment/create-checkout-session', async ({ request }) => {
+    const body = await request.json();
+    return Response.json({
       checkoutUrl: 'https://squareup.com/checkout/test-session',
       sessionId: 'test-session-123'
-    }));
+    });
   }),
 
-  rest.post('/api/payment/complete-payment', async (req, res, ctx) => {
-    const body = await req.json();
-    return res(ctx.json({
+  http.post('/api/payment/complete-payment', async ({ request }) => {
+    const body = await request.json();
+    return Response.json({
       success: true,
       paymentId: 'test-payment-123'
-    }));
+    });
   }),
 
   // Notifications API
-  rest.post('/api/notifications/send-confirmation', async (req, res, ctx) => {
-    const body = await req.json();
-    return res(ctx.json({
+  http.post('/api/notifications/send-confirmation', async ({ request }) => {
+    const body = await request.json();
+    return Response.json({
       success: true,
       messageId: 'test-msg-123'
-    }));
+    });
   }),
 
   // Admin APIs
-  rest.get('/api/admin/analytics/summary', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('/api/admin/analytics/summary', () => {
+    return Response.json({
       totalBookings: 150,
       totalRevenue: 22500,
       averageFare: 150
-    }));
+    });
   }),
 
   // Error simulation handlers
-  rest.post('/api/booking/estimate-fare', async (req, res, ctx) => {
+  http.post('/api/booking/estimate-fare', async () => {
     // Simulate network error
-    return res(ctx.status(500));
+    return new Response(null, { status: 500 });
   }),
 
-  rest.post('/api/booking/create-booking-simple', async (req, res, ctx) => {
+  http.post('/api/booking/create-booking-simple', async () => {
     // Simulate validation error
-    return res(
-      ctx.json({ error: 'Invalid booking data' }),
-      ctx.status(400)
+    return Response.json(
+      { error: 'Invalid booking data' },
+      { status: 400 }
     );
   })
 ]; 
