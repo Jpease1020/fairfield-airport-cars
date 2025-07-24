@@ -28,38 +28,32 @@ export default function BookPage() {
           </div>
 
           {/* Why Choose Our Service Section */}
-          <EditableContent
-            value={`
-              <div className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">Why Choose Our Service?</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                  <div className="text-center">
-                    <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">🚗</span>
-                    </div>
-                    <h3 className="font-semibold mb-2">Professional Drivers</h3>
-                    <p className="text-sm text-gray-600">Licensed, background-checked drivers</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">⏰</span>
-                    </div>
-                    <h3 className="font-semibold mb-2">On-Time Guarantee</h3>
-                    <p className="text-sm text-gray-600">We never cancel and always arrive on time</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">💰</span>
-                    </div>
-                    <h3 className="font-semibold mb-2">Transparent Pricing</h3>
-                    <p className="text-sm text-gray-600">No hidden fees, competitive rates</p>
-                  </div>
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">Why Choose Our Service?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="text-center">
+                <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🚗</span>
                 </div>
+                <h3 className="font-semibold mb-2">Professional Drivers</h3>
+                <p className="text-sm text-gray-600">Licensed, background-checked drivers</p>
               </div>
-            `}
-            onChange={(value) => handleFieldChange('book', 'content', value)}
-            className="prose prose-lg max-w-none mb-8"
-          />
+              <div className="text-center">
+                <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">⏰</span>
+                </div>
+                <h3 className="font-semibold mb-2">On-Time Guarantee</h3>
+                <p className="text-sm text-gray-600">We never cancel and always arrive on time</p>
+              </div>
+              <div className="text-center">
+                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">💰</span>
+                </div>
+                <h3 className="font-semibold mb-2">Transparent Pricing</h3>
+                <p className="text-sm text-gray-600">No hidden fees, competitive rates</p>
+              </div>
+            </div>
+          </div>
           
           {/* Booking Form */}
           <BookingForm />

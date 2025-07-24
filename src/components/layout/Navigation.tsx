@@ -44,7 +44,7 @@ const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <Logo className="h-12 w-auto" />
+              <Logo className="h-18 w-auto" />
               <span className="text-xl font-bold text-brand-primary">{getCompanyName()}</span>
             </Link>
           </div>
