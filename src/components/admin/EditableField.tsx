@@ -72,6 +72,18 @@ export const EditableField: React.FC<EditableFieldProps> = ({
 
   // Display mode
   if (type === 'textarea') {
+    // Check if the content contains HTML tags
+    const containsHTML = /<[^>]*>/.test(value);
+    
+    if (containsHTML) {
+      return (
+        <div 
+          className={`${sizeClasses[size]} ${className}`}
+          dangerouslySetInnerHTML={{ __html: value || placeholder || '' }}
+        />
+      );
+    }
+    
     return (
       <div className={`${sizeClasses[size]} ${className}`}>
         {value || placeholder}
