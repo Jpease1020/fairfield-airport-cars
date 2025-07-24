@@ -20,6 +20,8 @@
     "test:headed": "playwright test --headed",
     "test:visual": "playwright test visual.spec.ts",
     "test:comprehensive-suite": "playwright test tests/comprehensive-test-suite.spec.ts",
+    "test:streamlined-e2e": "playwright test tests/e2e/streamlined-test-suite.spec.ts",
+    "test:rtl": "jest --testPathPattern=tests/unit/components",
     "test:comprehensive": "node scripts/test-suite.js",
     "test:cleanup": "node scripts/cleanup-tests.js",
     "test:customer-pages": "playwright test customer-pages.spec.ts",
