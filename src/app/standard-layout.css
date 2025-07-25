@@ -326,6 +326,122 @@ body {
   font-weight: 500;
   text-align: center;
 }
+
+/* ===== LOGIN PAGE STYLES ===== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  padding: var(--spacing-lg);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.login-card {
+  background-color: var(--background-primary);
+  box-shadow: var(--shadow-lg);
+  border: none;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-actions {
+  padding: var(--spacing-lg);
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.login-btn {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.google-btn {
+  border-color: #4285f4;
+  color: #4285f4;
+}
+
+.google-btn:hover {
+  background-color: #4285f4;
+  color: white;
+}
+
+.login-divider {
+  text-align: center;
+  position: relative;
+  margin: var(--spacing-sm) 0;
+}
+
+.login-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.login-divider span {
+  background-color: var(--background-primary);
+  padding: 0 var(--spacing-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.login-footer {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-sm);
+}
+
+.login-footer a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+}
+
+.login-footer a:hover {
+  color: white;
+}
+
+/* Form styling for login */
+.login-card .form-input {
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.login-card .form-input:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.login-card .alert-item {
+  margin-top: var(--spacing-md);
+}
 .standard-navigation {
   background-color: var(--background-primary);
   border-bottom: 1px solid var(--border-color);

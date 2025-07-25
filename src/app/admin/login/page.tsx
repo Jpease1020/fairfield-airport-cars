@@ -4,80 +4,124 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    
     try {
       await login(email, password);
-      router.push('/admin/bookings');
+      router.push('/admin');
     } catch (error) {
       setError(`Failed to log in: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
       await signInWithGoogle();
-      router.push('/admin/bookings');
+      router.push('/admin');
     } catch (error) {
       setError(`Failed to sign in with Google: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Admin Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account.
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleLogin}>
-          <CardContent className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+    <div className="login-page">
+      <div className="login-container">
+        <div className="card login-card">
+          <div className="card-header">
+            <h1 className="card-title">Admin Login</h1>
+            <p className="card-description">
+              Enter your credentials to access the admin dashboard
+            </p>
+          </div>
+          
+          <form onSubmit={handleLogin} className="login-form">
+            <div className="card-body">
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">Email Address</label>
+                <input
+                  id="email"
+                  type="email"
+                  className="form-input"
+                  placeholder="admin@fairfieldairportcars.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  className="form-input"
+                  placeholder="Enter your password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+              
+              {error && (
+                <div className="alert-item error">
+                  <div className="alert-icon">⚠️</div>
+                  <div className="alert-content">
+                    <p className="alert-message">{error}</p>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+            
+            <div className="login-actions">
+              <Button 
+                type="submit" 
+                className="login-btn"
+                disabled={loading}
+              >
+                {loading ? '🔄 Signing In...' : '🔐 Sign In'}
+              </Button>
+              
+              <div className="login-divider">
+                <span>or</span>
+              </div>
+              
+              <Button 
+                type="button"
+                variant="secondary"
+                className="login-btn google-btn"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+              >
+                {loading ? '🔄 Connecting...' : '🔍 Sign In with Google'}
+              </Button>
             </div>
-          </CardContent>
-          <CardFooter className="flex-col gap-2">
-            <Button type="submit" className="w-full">
-              Log In
-            </Button>
-            <p className="text-sm">or</p>
-            <Button variant="secondary" className="w-full" onClick={handleGoogleSignIn}>
-              Sign In with Google
-            </Button>
-          </CardFooter>
-        </form>
-        {error && <p className="text-red-500 text-center pb-4 text-sm">{error}</p>}
-      </Card>
+          </form>
+        </div>
+        
+        <div className="login-footer">
+          <p>Need help? Contact support at <a href="mailto:support@fairfieldairportcars.com">support@fairfieldairportcars.com</a></p>
+        </div>
+      </div>
     </div>
   );
 }
