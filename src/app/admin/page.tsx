@@ -1,152 +1,172 @@
 'use client';
 
 import React from 'react';
-import { StatCard } from '@/components/ui';
+import { 
+  StatCard, 
+  PageHeader, 
+  InfoCard, 
+  ActivityList, 
+  AlertList, 
+  ActionGrid,
+  GridSection
+} from '@/components/ui';
 
 export default function AdminDashboard() {
+  // Data for components
+  const headerActions = [
+    { 
+      label: 'View All Bookings', 
+      href: '/admin/bookings', 
+      variant: 'outline' as const 
+    },
+    { 
+      label: 'Calendar', 
+      href: '/admin/calendar', 
+      variant: 'primary' as const 
+    }
+  ];
+
+  const recentBookings = [
+    {
+      id: 1,
+      icon: "✅",
+      iconType: "success" as const,
+      title: "John Smith → JFK Airport",
+      subtitle: "Today, 2:30 PM",
+      amount: "$85"
+    },
+    {
+      id: 2,
+      icon: "⏱️",
+      iconType: "pending" as const,
+      title: "Sarah Johnson → LaGuardia",
+      subtitle: "Today, 4:15 PM",
+      amount: "$75"
+    },
+    {
+      id: 3,
+      icon: "✅",
+      iconType: "success" as const,
+      title: "Mike Davis → Newark",
+      subtitle: "Yesterday, 1:45 PM",
+      amount: "$95"
+    }
+  ];
+
+  const systemAlerts = [
+    {
+      id: 1,
+      icon: "⚠️",
+      type: "warning" as const,
+      title: "Driver Availability Low",
+      message: "Only 2 drivers available for tomorrow"
+    },
+    {
+      id: 2,
+      icon: "✅",
+      type: "success" as const,
+      title: "Payment System Online",
+      message: "All payment methods working normally"
+    },
+    {
+      id: 3,
+      icon: "📈",
+      type: "info" as const,
+      title: "Revenue Target Met",
+      message: "Monthly revenue target achieved"
+    }
+  ];
+
+  const quickActions = [
+    {
+      id: 1,
+      icon: "📅",
+      label: "Manage Bookings",
+      href: "/admin/bookings"
+    },
+    {
+      id: 2,
+      icon: "📆",
+      label: "View Calendar",
+      href: "/admin/calendar"
+    },
+    {
+      id: 3,
+      icon: "👥",
+      label: "Manage Drivers",
+      href: "/admin/drivers"
+    },
+    {
+      id: 4,
+      icon: "💬",
+      label: "View Feedback",
+      href: "/admin/feedback"
+    }
+  ];
+
   return (
     <div className="admin-dashboard">
-      <div className="section-header">
-        <h1 className="page-title">Admin Dashboard</h1>
-        <p className="page-subtitle">Welcome back! Here's what's happening with your business.</p>
-        <div className="header-actions">
-          <a className="btn btn-outline" href="/admin/bookings">View All Bookings</a>
-          <a className="btn btn-primary" href="/admin/calendar">Calendar</a>
-        </div>
-      </div>
+      <PageHeader
+        title="Admin Dashboard"
+        subtitle="Welcome back! Here's what's happening with your business."
+        actions={headerActions}
+      />
 
-      <section className="stats-section">
-        <div className="grid grid-4">
-          <StatCard
-            title="Total Bookings"
-            icon="📊"
-            statNumber="24"
-            statChange="+12% from last month"
-            changeType="positive"
-          />
-          <StatCard
-            title="Active Drivers"
-            icon="👥"
-            statNumber="8"
-            statChange="+2 from last week"
-            changeType="positive"
-          />
-          <StatCard
-            title="Revenue"
-            icon="💰"
-            statNumber="$12,450"
-            statChange="+8% from last month"
-            changeType="positive"
-          />
-          <StatCard
-            title="Customer Rating"
-            icon="⭐"
-            statNumber="4.9/5"
-            statChange="+0.2 from last month"
-            changeType="positive"
-          />
-        </div>
-      </section>
+      <GridSection variant="stats" columns={4}>
+        <StatCard
+          title="Total Bookings"
+          icon="📊"
+          statNumber="24"
+          statChange="+12% from last month"
+          changeType="positive"
+        />
+        <StatCard
+          title="Active Drivers"
+          icon="👥"
+          statNumber="8"
+          statChange="+2 from last week"
+          changeType="positive"
+        />
+        <StatCard
+          title="Revenue"
+          icon="💰"
+          statNumber="$12,450"
+          statChange="+8% from last month"
+          changeType="positive"
+        />
+        <StatCard
+          title="Customer Rating"
+          icon="⭐"
+          statNumber="4.9/5"
+          statChange="+0.2 from last month"
+          changeType="positive"
+        />
+      </GridSection>
 
-      <section className="activity-section">
-        <div className="grid grid-2">
-          <div className="card">
-            <div className="card-header">
-              <h3 className="card-title">Recent Bookings</h3>
-              <p className="card-description">Latest customer bookings and their status</p>
-            </div>
-            <div className="card-body">
-              <div className="activity-list">
-                <div className="activity-item">
-                  <div className="activity-icon success">✅</div>
-                  <div className="activity-content">
-                    <p className="activity-title">John Smith → JFK Airport</p>
-                    <p className="activity-time">Today, 2:30 PM</p>
-                  </div>
-                  <div className="activity-amount">$85</div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon pending">⏱️</div>
-                  <div className="activity-content">
-                    <p className="activity-title">Sarah Johnson → LaGuardia</p>
-                    <p className="activity-time">Today, 4:15 PM</p>
-                  </div>
-                  <div className="activity-amount">$75</div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon success">✅</div>
-                  <div className="activity-content">
-                    <p className="activity-title">Mike Davis → Newark</p>
-                    <p className="activity-time">Yesterday, 1:45 PM</p>
-                  </div>
-                  <div className="activity-amount">$95</div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <GridSection variant="activity" columns={2}>
+        <InfoCard
+          title="Recent Bookings"
+          description="Latest customer bookings and their status"
+        >
+          <ActivityList activities={recentBookings} />
+        </InfoCard>
 
-          <div className="card">
-            <div className="card-header">
-              <h3 className="card-title">System Alerts</h3>
-              <p className="card-description">Important notifications and updates</p>
-            </div>
-            <div className="card-body">
-              <div className="alert-list">
-                <div className="alert-item warning">
-                  <div className="alert-icon">⚠️</div>
-                  <div className="alert-content">
-                    <p className="alert-title">Driver Availability Low</p>
-                    <p className="alert-message">Only 2 drivers available for tomorrow</p>
-                  </div>
-                </div>
-                <div className="alert-item success">
-                  <div className="alert-icon">✅</div>
-                  <div className="alert-content">
-                    <p className="alert-title">Payment System Online</p>
-                    <p className="alert-message">All payment methods working normally</p>
-                  </div>
-                </div>
-                <div className="alert-item info">
-                  <div className="alert-icon">📈</div>
-                  <div className="alert-content">
-                    <p className="alert-title">Revenue Target Met</p>
-                    <p className="alert-message">Monthly revenue target achieved</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        <InfoCard
+          title="System Alerts"
+          description="Important notifications and updates"
+        >
+          <AlertList alerts={systemAlerts} />
+        </InfoCard>
+      </GridSection>
 
-      <section className="actions-section">
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Quick Actions</h3>
-            <p className="card-description">Common tasks and shortcuts</p>
-          </div>
-          <div className="card-body">
-            <div className="grid grid-4">
-              <a className="action-card" href="/admin/bookings">
-                <div className="action-icon">📅</div>
-                <span className="action-label">Manage Bookings</span>
-              </a>
-              <a className="action-card" href="/admin/calendar">
-                <div className="action-icon">📆</div>
-                <span className="action-label">View Calendar</span>
-              </a>
-              <a className="action-card" href="/admin/drivers">
-                <div className="action-icon">👥</div>
-                <span className="action-label">Manage Drivers</span>
-              </a>
-              <a className="action-card" href="/admin/feedback">
-                <div className="action-icon">💬</div>
-                <span className="action-label">View Feedback</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <GridSection variant="actions" columns={1}>
+        <InfoCard
+          title="Quick Actions"
+          description="Common tasks and shortcuts"
+        >
+          <ActionGrid actions={quickActions} columns={4} />
+        </InfoCard>
+      </GridSection>
     </div>
   );
 } 
