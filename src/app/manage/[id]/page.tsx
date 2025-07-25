@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { Booking } from '@/types/booking';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { PageHeader } from '@/components/ui';
 import { BookingCard } from '@/components/booking';
 import { Alert } from '@/components/feedback';
 import { LoadingSpinner } from '@/components/data';
@@ -22,6 +22,7 @@ import { useCMS } from '@/hooks/useCMS';
 import { cmsService } from '@/lib/services/cms-service';
 
 import { authService } from '@/lib/services/auth-service';
+
 export default function ManageBookingPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -211,26 +212,34 @@ export default function ManageBookingPage() {
 
   if (loading) {
     return (
-      <PageContainer>
+      <div className="admin-dashboard">
+        <PageHeader
+          title="Manage Booking"
+          subtitle="Loading booking details..."
+        />
         <div className="flex items-center justify-center min-h-[400px]">
           <LoadingSpinner text={manageContent?.loadingMessage || "Loading booking details..."} />
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   if (error || !booking) {
     return (
-      <PageContainer>
+      <div className="admin-dashboard">
+        <PageHeader
+          title="Manage Booking"
+          subtitle="Booking not found"
+        />
         <Alert variant="error" title="Error">
           {error || 'Booking not found'}
         </Alert>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer maxWidth="md" padding="lg">
+    <div className="admin-dashboard max-w-2xl mx-auto p-6">
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
         <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
@@ -243,7 +252,7 @@ export default function ManageBookingPage() {
           ) : (
             <div className="flex gap-2">
               <Button
-                variant="success"
+                variant="default"
                 onClick={handleSave}
                 disabled={saving}
               >
@@ -360,7 +369,7 @@ export default function ManageBookingPage() {
         />
       )}
       
-      <PageContent>
+      <div className="standard-content">
         <BookingCard 
           booking={booking} 
           showActions={false}
@@ -420,7 +429,7 @@ export default function ManageBookingPage() {
         >
           {manageContent?.viewStatusButton || "View Status Page"}
         </Button>
-      </PageContent>
-    </PageContainer>
+      </div>
+    </div>
   );
 } 

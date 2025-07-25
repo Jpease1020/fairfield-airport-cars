@@ -4,10 +4,9 @@ import { useEffect, useState, Suspense } from 'react';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { useSearchParams } from 'next/navigation';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { PageHeader, InfoCard } from '@/components/ui';
 import { Alert } from '@/components/feedback';
 import { LoadingSpinner } from '@/components/data';
-import { Card, CardContent } from '@/components/ui/card';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';
@@ -53,44 +52,59 @@ function DriverLocationContent() {
 
   if(!allowed) {
     return (
-      <PageContainer>
+      <div className="admin-dashboard">
+        <PageHeader
+          title="Driver Live Location"
+          subtitle="Unauthorized access"
+        />
         <Alert variant="error" title="Unauthorized">
           You are not authorized to access this page.
         </Alert>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer maxWidth="md" padding="lg">
+    <div className="admin-dashboard">
       <PageHeader 
         title="Driver Live Location" 
         subtitle="Sharing your location with passengers"
       />
-      <PageContent>
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p className="mb-4 text-gray-700">{status}</p>
+      
+      <div className="standard-content max-w-2xl mx-auto">
+        <InfoCard
+          title="📍 Location Status"
+          description="Your current location sharing status"
+        >
+          <div className="text-center p-6">
+            <p className="mb-4 text-gray-700 text-lg">{status}</p>
             {coords && (
-              <p className="text-sm text-gray-500">
-                Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
-              </p>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Current Coordinates:</p>
+                <p className="font-mono text-sm">
+                  Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
+                </p>
+              </div>
             )}
-          </CardContent>
-        </Card>
-      </PageContent>
-    </PageContainer>
+          </div>
+        </InfoCard>
+      </div>
+    </div>
   );
 }
 
 export default function DriverLocationPage() {
   return (
     <Suspense fallback={
-      <PageContainer>
+      <div className="admin-dashboard">
+        <PageHeader
+          title="Driver Live Location"
+          subtitle="Loading..."
+        />
         <div className="flex items-center justify-center min-h-[400px]">
           <LoadingSpinner text="Loading..." />
         </div>
-      </PageContainer>
+      </div>
     }>
       <DriverLocationContent />
     </Suspense>
