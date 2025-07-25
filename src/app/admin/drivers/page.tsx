@@ -1,6 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { 
+  PageHeader, 
+  GridSection, 
+  StatCard, 
+  InfoCard, 
+  ActionGrid
+} from '@/components/ui';
+import { Button } from '@/components/ui/button';
 
 interface Driver {
   id: string;
@@ -70,6 +78,23 @@ export default function DriversPage() {
         rating: 4.9,
         totalRides: 203,
         createdAt: new Date('2024-01-15')
+      },
+      {
+        id: '3',
+        name: 'Mike Davis',
+        phone: '(203) 555-0789',
+        email: 'mike@fairfieldairportcars.com',
+        status: 'offline',
+        vehicle: {
+          make: 'BMW',
+          model: '3 Series',
+          year: 2023,
+          color: 'White',
+          licensePlate: 'CT-GHI789'
+        },
+        rating: 4.7,
+        totalRides: 98,
+        createdAt: new Date('2024-02-01')
       }
     ];
 
@@ -95,9 +120,55 @@ export default function DriversPage() {
     }
   };
 
+  // Header actions
+  const headerActions = [
+    { 
+      label: 'View Locations', 
+      href: '/admin/drivers/locations', 
+      variant: 'outline' as const 
+    },
+    { 
+      label: 'Add Driver', 
+      onClick: () => alert('Add driver functionality coming soon'), 
+      variant: 'primary' as const 
+    }
+  ];
+
+  // Quick actions
+  const quickActions = [
+    {
+      id: 1,
+      icon: "👤",
+      label: "Add New Driver",
+      href: "/admin/drivers/new"
+    },
+    {
+      id: 2,
+      icon: "📍",
+      label: "View Driver Locations",
+      href: "/admin/drivers/locations"
+    },
+    {
+      id: 3,
+      icon: "⏰",
+      label: "Schedule Management",
+      href: "/admin/drivers/schedule"
+    },
+    {
+      id: 4,
+      icon: "📊",
+      label: "Driver Reports",
+      href: "/admin/drivers/reports"
+    }
+  ];
+
   if (loading) {
     return (
       <div className="admin-dashboard">
+        <PageHeader
+          title="Driver Management"
+          subtitle="Loading drivers..."
+        />
         <div className="loading-spinner">
           <div className="loading-spinner-icon">🔄</div>
           <p>Loading drivers...</p>
@@ -106,167 +177,121 @@ export default function DriversPage() {
     );
   }
 
+  const availableDrivers = drivers.filter(d => d.status === 'available').length;
+  const onTripDrivers = drivers.filter(d => d.status === 'on-trip').length;
+  const avgRating = drivers.length > 0 ? (drivers.reduce((sum, d) => sum + d.rating, 0) / drivers.length) : 0;
+
   return (
     <div className="admin-dashboard">
-      <div className="section-header">
-        <h1 className="page-title">Driver Management</h1>
-        <p className="page-subtitle">Manage your drivers, track their status, and assign rides.</p>
-        <div className="header-actions">
-          <button className="btn btn-primary">
-            <span className="btn-icon">👤</span>
-            Add Driver
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Driver Management"
+        subtitle="Manage your drivers, track their status, and assign rides"
+        actions={headerActions}
+      />
 
-      <div className="standard-content">
-        {/* Driver Stats */}
-        <div className="grid grid-4 gap-lg">
-          <div className="card">
-            <div className="card-body">
-              <div className="stat-display">
-                <div className="stat-content">
-                  <div className="stat-label">Total Drivers</div>
-                  <div className="stat-number">{drivers.length}</div>
-                </div>
-                <div className="stat-icon">👥</div>
-              </div>
-            </div>
-          </div>
+      <GridSection variant="stats" columns={4}>
+        <StatCard
+          title="Total Drivers"
+          icon="👥"
+          statNumber={drivers.length.toString()}
+          statChange="Active in system"
+          changeType="neutral"
+        />
+        <StatCard
+          title="Available"
+          icon="📍"
+          statNumber={availableDrivers.toString()}
+          statChange="Ready for rides"
+          changeType="positive"
+        />
+        <StatCard
+          title="On Trip"
+          icon="⏰"
+          statNumber={onTripDrivers.toString()}
+          statChange="Currently driving"
+          changeType="neutral"
+        />
+        <StatCard
+          title="Avg Rating"
+          icon="⭐"
+          statNumber={avgRating.toFixed(1)}
+          statChange="Driver performance"
+          changeType="positive"
+        />
+      </GridSection>
 
-          <div className="card">
-            <div className="card-body">
-              <div className="stat-display">
-                <div className="stat-content">
-                  <div className="stat-label">Available</div>
-                  <div className="stat-number">
-                    {drivers.filter(d => d.status === 'available').length}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="Active Drivers"
+          description={`Showing ${drivers.length} drivers in the system`}
+        >
+          <div className="drivers-list">
+            {drivers.map((driver) => (
+              <div key={driver.id} className="driver-card">
+                <div className="driver-header">
+                  <div className="driver-avatar">
+                    <div className="driver-initials">
+                      {driver.name.split(' ').map(n => n[0]).join('')}
+                    </div>
                   </div>
-                </div>
-                <div className="stat-icon">📍</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-body">
-              <div className="stat-display">
-                <div className="stat-content">
-                  <div className="stat-label">On Trip</div>
-                  <div className="stat-number">
-                    {drivers.filter(d => d.status === 'on-trip').length}
-                  </div>
-                </div>
-                <div className="stat-icon">⏰</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-body">
-              <div className="stat-display">
-                <div className="stat-content">
-                  <div className="stat-label">Avg Rating</div>
-                  <div className="stat-number">
-                    {(drivers.reduce((sum, d) => sum + d.rating, 0) / drivers.length).toFixed(1)}
-                  </div>
-                </div>
-                <div className="stat-icon">⭐</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Drivers List */}
-        <div className="card">
-          <div className="card-header">
-            <h2 className="card-title">Active Drivers</h2>
-          </div>
-          <div className="card-body">
-            <div className="drivers-list">
-              {drivers.map((driver) => (
-                <div key={driver.id} className="driver-card">
-                  <div className="driver-header">
-                    <div className="driver-avatar">
-                      <div className="driver-initials">
-                        {driver.name.split(' ').map(n => n[0]).join('')}
+                  
+                  <div className="driver-info">
+                    <div className="driver-name-row">
+                      <h3 className="driver-name">{driver.name}</h3>
+                      <span className={getStatusColor(driver.status)}>
+                        {getStatusIcon(driver.status)} {driver.status}
+                      </span>
+                    </div>
+                    
+                    <div className="driver-contact">
+                      <div className="contact-item">
+                        <span className="contact-icon">📞</span>
+                        <span>{driver.phone}</span>
+                      </div>
+                      <div className="contact-item">
+                        <span className="contact-icon">📧</span>
+                        <span>{driver.email}</span>
+                      </div>
+                      <div className="contact-item">
+                        <span className="contact-icon">⭐</span>
+                        <span>{driver.rating} ({driver.totalRides} rides)</span>
                       </div>
                     </div>
                     
-                    <div className="driver-info">
-                      <div className="driver-name-row">
-                        <h3 className="driver-name">{driver.name}</h3>
-                        <span className={getStatusColor(driver.status)}>
-                          {getStatusIcon(driver.status)} {driver.status}
-                        </span>
+                    <div className="driver-vehicle">
+                      <div className="vehicle-info">
+                        <span className="vehicle-icon">🚗</span>
+                        <span>{driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model} - {driver.vehicle.color}</span>
                       </div>
-                      
-                      <div className="driver-contact">
-                        <div className="contact-item">
-                          <span className="contact-icon">📞</span>
-                          <span>{driver.phone}</span>
-                        </div>
-                        <div className="contact-item">
-                          <span className="contact-icon">📧</span>
-                          <span>{driver.email}</span>
-                        </div>
-                        <div className="contact-item">
-                          <span className="contact-icon">⭐</span>
-                          <span>{driver.rating} ({driver.totalRides} rides)</span>
-                        </div>
+                      <div className="license-plate">
+                        {driver.vehicle.licensePlate}
                       </div>
-                      
-                      <div className="driver-vehicle">
-                        <div className="vehicle-info">
-                          <span className="vehicle-icon">🚗</span>
-                          <span>{driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model} - {driver.vehicle.color}</span>
-                        </div>
-                        <div className="license-plate">
-                          {driver.vehicle.licensePlate}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="driver-actions">
-                      <button className="btn btn-outline btn-sm">
-                        View Details
-                      </button>
-                      <button className="btn btn-outline btn-sm">
-                        Assign Ride
-                      </button>
                     </div>
                   </div>
+                  
+                  <div className="driver-actions">
+                    <Button variant="outline" size="sm">
+                      View Details
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      Assign Ride
+                    </Button>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </div>
+        </InfoCard>
+      </GridSection>
 
-        {/* Quick Actions */}
-        <div className="card">
-          <div className="card-header">
-            <h2 className="card-title">Quick Actions</h2>
-          </div>
-          <div className="card-body">
-            <div className="quick-actions">
-              <button className="quick-action-card">
-                <div className="action-icon">👤</div>
-                <span className="action-label">Add New Driver</span>
-              </button>
-              
-              <button className="quick-action-card">
-                <div className="action-icon">📍</div>
-                <span className="action-label">View Driver Locations</span>
-              </button>
-              
-              <button className="quick-action-card">
-                <div className="action-icon">⏰</div>
-                <span className="action-label">Schedule Management</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <GridSection variant="actions" columns={1}>
+        <InfoCard
+          title="Quick Actions"
+          description="Common driver management tasks"
+        >
+          <ActionGrid actions={quickActions} columns={4} />
+        </InfoCard>
+      </GridSection>
     </div>
   );
 } 
