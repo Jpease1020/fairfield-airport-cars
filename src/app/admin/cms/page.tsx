@@ -4,24 +4,6 @@ import { useState, useEffect } from 'react';
 import withAuth from '../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { AdminNavigation } from '@/components/admin/AdminNavigation';
-import { 
-  Settings, 
-  FileText, 
-  DollarSign, 
-  CreditCard, 
-  Mail, 
-  Users, 
-  BarChart3,
-  Calendar,
-  Clock,
-  Save,
-  RefreshCw
-} from 'lucide-react';
 import Link from 'next/link';
 
 const CMSPage = () => {
@@ -84,9 +66,9 @@ const CMSPage = () => {
       id: 'pages',
       title: 'Page Content',
       description: 'Edit homepage, help page, and other content',
-      icon: FileText,
+      icon: '📄',
       href: '/admin/cms/pages',
-      color: 'bg-blue-500',
+      color: 'cms-card-blue',
       stats: {
         pages: config?.pages ? Object.keys(config.pages).length : 0,
         lastUpdated: lastUpdated
@@ -96,9 +78,9 @@ const CMSPage = () => {
       id: 'business',
       title: 'Business Settings',
       description: 'Company info, contact details, and branding',
-      icon: Settings,
+      icon: '⚙️',
       href: '/admin/cms/business',
-      color: 'bg-green-500',
+      color: 'cms-card-green',
       stats: {
         companyName: config?.business.company.name || 'Not set',
         lastUpdated: lastUpdated
@@ -108,9 +90,9 @@ const CMSPage = () => {
       id: 'pricing',
       title: 'Pricing & Rates',
       description: 'Fare structure, zones, and cancellation policies',
-      icon: DollarSign,
+      icon: '💰',
       href: '/admin/cms/pricing',
-      color: 'bg-yellow-500',
+      color: 'cms-card-yellow',
       stats: {
         baseFare: config?.pricing.baseFare || 0,
         lastUpdated: lastUpdated
@@ -120,9 +102,9 @@ const CMSPage = () => {
       id: 'payment',
       title: 'Payment Settings',
       description: 'Square and Stripe configuration',
-      icon: CreditCard,
+      icon: '💳',
       href: '/admin/cms/payment',
-      color: 'bg-purple-500',
+      color: 'cms-card-purple',
       stats: {
         configured: config?.payment.square.applicationId ? 'Yes' : 'No',
         lastUpdated: lastUpdated
@@ -132,9 +114,9 @@ const CMSPage = () => {
       id: 'communication',
       title: 'Communication Templates',
       description: 'Email and SMS templates for bookings',
-      icon: Mail,
+      icon: '📧',
       href: '/admin/cms/communication',
-      color: 'bg-red-500',
+      color: 'cms-card-red',
       stats: {
         templates: 4, // Fixed number of template types
         lastUpdated: lastUpdated
@@ -144,9 +126,9 @@ const CMSPage = () => {
       id: 'drivers',
       title: 'Driver Management',
       description: 'Driver requirements, compensation, and scheduling',
-      icon: Users,
+      icon: '👥',
       href: '/admin/cms/drivers',
-      color: 'bg-indigo-500',
+      color: 'cms-card-indigo',
       stats: {
         minAge: config?.driver.requirements.minimumAge || 0,
         lastUpdated: lastUpdated
@@ -156,9 +138,9 @@ const CMSPage = () => {
       id: 'analytics',
       title: 'Analytics & Reporting',
       description: 'Google Analytics and reporting settings',
-      icon: BarChart3,
+      icon: '📊',
       href: '/admin/cms/analytics',
-      color: 'bg-orange-500',
+      color: 'cms-card-orange',
       stats: {
         enabled: config?.analytics.googleAnalytics.enabled ? 'Yes' : 'No',
         lastUpdated: lastUpdated
@@ -168,128 +150,109 @@ const CMSPage = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <PageHeader title="Content Management System" />
-        <PageContent>
-          <div className="flex items-center justify-center h-64">
-            <RefreshCw className="h-8 w-8 animate-spin text-text-muted" />
-          </div>
-        </PageContent>
-      </PageContainer>
+      <div className="admin-dashboard">
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading CMS configuration...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
-      <AdminNavigation />
-      <PageContainer className="bg-bg-secondary">
-        <PageHeader 
-          title="Content Management System" 
-          subtitle="Manage all website content and business settings"
-        >
-                  <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={loading}
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleInitializeCMS}
-              disabled={loading}
-            >
-              <Save className="h-4 w-4 mr-2" />
-              Initialize CMS
-            </Button>
-            {lastUpdated && (
-              <Badge variant="secondary">
-                <Clock className="h-3 w-3 mr-1" />
-                Updated (
-                  {lastUpdated
-                    ? new Date(lastUpdated).toLocaleDateString()
-                    : "Unknown"}
-                )
-              </Badge>
-            )}
-          </div>
-      </PageHeader>
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Content Management System</h1>
+        <p className="page-subtitle">Manage all website content and business settings</p>
+        <div className="header-actions">
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={handleRefresh}
+            disabled={loading}
+          >
+            <span className="btn-icon">🔄</span>
+            Refresh
+          </button>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={handleInitializeCMS}
+            disabled={loading}
+          >
+            <span className="btn-icon">💾</span>
+            Initialize CMS
+          </button>
+          {lastUpdated && (
+            <span className="badge">
+              <span className="badge-icon">⏰</span>
+              Updated ({new Date(lastUpdated).toLocaleDateString()})
+            </span>
+          )}
+        </div>
+      </div>
 
-      <PageContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cmsSections.map((section) => {
-            const IconComponent = section.icon;
-            return (
-              <Card key={section.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-lg ${section.color} text-white`}>
-                        <IconComponent className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg text-white">{section.title}</CardTitle>
-                        <p className="text-sm text-text-secondary">{section.description}</p>
-                      </div>
-                    </div>
+      <div className="standard-content">
+        <div className="grid grid-3 gap-lg">
+          {cmsSections.map((section) => (
+            <div key={section.id} className={`card cms-card ${section.color}`}>
+              <div className="card-header">
+                <div className="cms-card-title-row">
+                  <div className="cms-card-icon-wrapper">
+                    <span className="cms-card-icon">{section.icon}</span>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-text-secondary">Status:</span>
-                      <Badge variant="outline">
-                        {section.id === 'pricing' && `$${section.stats.baseFare} base fare`}
-                        {section.id === 'business' && section.stats.companyName}
-                        {section.id === 'payment' && section.stats.configured}
-                        {section.id === 'communication' && `${section.stats.templates} templates`}
-                        {section.id === 'drivers' && `${section.stats.minAge}+ years`}
-                        {section.id === 'analytics' && section.stats.enabled}
-                        {section.id === 'pages' && `${section.stats.pages} pages`}
-                      </Badge>
-                    </div>
-                    
-                    <Link href={section.href}>
-                      <Button className="w-full" variant="outline">
-                        Manage {section.title}
-                      </Button>
-                    </Link>
+                  <div className="cms-card-info">
+                    <h3 className="card-title">{section.title}</h3>
+                    <p className="card-description">{section.description}</p>
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                </div>
+              </div>
+              <div className="card-body">
+                <div className="cms-card-status">
+                  <div className="status-row">
+                    <span className="status-label">Status:</span>
+                    <span className="badge">
+                      {section.id === 'pricing' && `$${section.stats.baseFare} base fare`}
+                      {section.id === 'business' && section.stats.companyName}
+                      {section.id === 'payment' && section.stats.configured}
+                      {section.id === 'communication' && `${section.stats.templates} templates`}
+                      {section.id === 'drivers' && `${section.stats.minAge}+ years`}
+                      {section.id === 'analytics' && section.stats.enabled}
+                      {section.id === 'pages' && `${section.stats.pages} pages`}
+                    </span>
+                  </div>
+                  
+                  <Link href={section.href} className="btn btn-outline cms-manage-btn">
+                    Manage {section.title}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Quick Actions */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
-                <Save className="h-6 w-6" />
-                <span>Backup Configuration</span>
-              </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
-                <RefreshCw className="h-6 w-6" />
-                <span>Restore Defaults</span>
-              </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
-                <Calendar className="h-6 w-6" />
-                <span>View History</span>
-              </Button>
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Quick Actions</h2>
+          </div>
+          <div className="card-body">
+            <div className="quick-actions">
+              <button className="quick-action-card">
+                <div className="action-icon">💾</div>
+                <span className="action-label">Backup Configuration</span>
+              </button>
+              <button className="quick-action-card">
+                <div className="action-icon">🔄</div>
+                <span className="action-label">Restore Defaults</span>
+              </button>
+              <button className="quick-action-card">
+                <div className="action-icon">📅</div>
+                <span className="action-label">View History</span>
+              </button>
             </div>
-          </CardContent>
-        </Card>
-      </PageContent>
-    </PageContainer>
-    </>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

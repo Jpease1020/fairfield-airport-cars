@@ -1,19 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/data';
-import { 
-  Activity, 
-  AlertTriangle, 
-  MousePointer, 
-  FormInput,
-  Clock,
-  TrendingDown,
-  RefreshCw
-} from 'lucide-react';
 
 interface AnalyticsData {
   totalInteractions: number;
@@ -73,252 +60,255 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading analytics..." />
+      <div className="admin-dashboard">
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading analytics...</p>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
-      <PageHeader 
-        title="Analytics Dashboard"
-        subtitle="User interactions, errors, and performance metrics"
-      >
-        <Button onClick={fetchAnalytics} variant="outline" size="sm">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
-        </Button>
-      </PageHeader>
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Analytics Dashboard</h1>
+        <p className="page-subtitle">User interactions, errors, and performance metrics</p>
+        <div className="header-actions">
+          <button onClick={fetchAnalytics} className="btn btn-outline btn-sm">
+            <span className="btn-icon">🔄</span>
+            Refresh
+          </button>
+        </div>
+      </div>
+      
       {lastUpdated && (
-        <p className="text-sm text-text-secondary mt-2">
-          Last updated: {lastUpdated.toLocaleString()}
-        </p>
+        <div className="analytics-updated">
+          <p>Last updated: {lastUpdated.toLocaleString()}</p>
+        </div>
       )}
 
-      <PageContent>
+      <div className="standard-content">
         {!analytics ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <AlertTriangle className="w-12 h-12 text-warning mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Analytics Data</h3>
-              <p className="text-text-secondary">
-                Analytics data will appear here once users start interacting with the app.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="card">
+            <div className="card-body">
+              <div className="empty-state">
+                <div className="empty-state-icon">⚠️</div>
+                <h3>No Analytics Data</h3>
+                <p>Analytics data will appear here once users start interacting with the app.</p>
+              </div>
+            </div>
+          </div>
         ) : (
-          <div className="space-y-6">
+          <div className="analytics-dashboard">
             {/* Overview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Interactions</CardTitle>
-                  <Activity className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{analytics.totalInteractions.toLocaleString()}</div>
-                  <p className="text-xs text-muted-foreground">
+            <div className="grid grid-4 gap-lg">
+              <div className="card analytics-card">
+                <div className="card-header analytics-card-header">
+                  <h3 className="analytics-card-title">Total Interactions</h3>
+                  <span className="analytics-card-icon">📊</span>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-stat-number">{analytics.totalInteractions.toLocaleString()}</div>
+                  <p className="analytics-stat-description">
                     All user interactions tracked
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Errors</CardTitle>
-                  <AlertTriangle className="h-4 w-4 text-destructive" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-destructive">
+              <div className="card analytics-card">
+                <div className="card-header analytics-card-header">
+                  <h3 className="analytics-card-title">Total Errors</h3>
+                  <span className="analytics-card-icon error">⚠️</span>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-stat-number error">
                     {analytics.totalErrors.toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="analytics-stat-description">
                     Errors detected and tracked
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Error Rate</CardTitle>
-                  <TrendingDown className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+              <div className="card analytics-card">
+                <div className="card-header analytics-card-header">
+                  <h3 className="analytics-card-title">Error Rate</h3>
+                  <span className="analytics-card-icon">📉</span>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-stat-number">
                     {analytics.totalInteractions > 0 
                       ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
                       : '0'
                     }%
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="analytics-stat-description">
                     Percentage of interactions with errors
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Elements</CardTitle>
-                  <MousePointer className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+              <div className="card analytics-card">
+                <div className="card-header analytics-card-header">
+                  <h3 className="analytics-card-title">Active Elements</h3>
+                  <span className="analytics-card-icon">🖱️</span>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-stat-number">
                     {Object.keys(analytics.elementTypes).length}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="analytics-stat-description">
                     Different element types tracked
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             {/* Detailed Metrics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-2 gap-lg">
               {/* Top Interaction Types */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <MousePointer className="w-4 h-4 mr-2" />
+              <div className="card">
+                <div className="card-header">
+                  <h2 className="card-title">
+                    <span className="card-icon">🖱️</span>
                     Top Interaction Types
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                  </h2>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-list">
                     {getTopInteractions().map(([type, count]) => (
-                      <div key={type} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-3 h-3 bg-primary rounded-full" />
-                          <span className="text-sm font-medium capitalize">
+                      <div key={type} className="analytics-list-item">
+                        <div className="analytics-item-info">
+                          <div className="analytics-item-indicator primary"></div>
+                          <span className="analytics-item-label">
                             {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
                           </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="analytics-item-value">
                           {count.toLocaleString()}
                         </span>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Top Error Types */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <AlertTriangle className="w-4 h-4 mr-2" />
+              <div className="card">
+                <div className="card-header">
+                  <h2 className="card-title">
+                    <span className="card-icon">⚠️</span>
                     Top Error Types
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                  </h2>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-list">
                     {getTopErrors().map(([type, count]) => (
-                      <div key={type} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-3 h-3 bg-destructive rounded-full" />
-                          <span className="text-sm font-medium capitalize">
+                      <div key={type} className="analytics-list-item">
+                        <div className="analytics-item-info">
+                          <div className="analytics-item-indicator error"></div>
+                          <span className="analytics-item-label">
                             {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
                           </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="analytics-item-value">
                           {count.toLocaleString()}
                         </span>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Top Element Types */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <FormInput className="w-4 h-4 mr-2" />
+              <div className="card">
+                <div className="card-header">
+                  <h2 className="card-title">
+                    <span className="card-icon">📝</span>
                     Most Interacted Elements
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                  </h2>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-list">
                     {getTopElements().map(([element, count]) => (
-                      <div key={element} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-3 h-3 bg-secondary rounded-full" />
-                          <span className="text-sm font-medium capitalize">
+                      <div key={element} className="analytics-list-item">
+                        <div className="analytics-item-info">
+                          <div className="analytics-item-indicator secondary"></div>
+                          <span className="analytics-item-label">
                             {element}
                           </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="analytics-item-value">
                           {count.toLocaleString()}
                         </span>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Recent Activity */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Clock className="w-4 h-4 mr-2" />
+              <div className="card">
+                <div className="card-header">
+                  <h2 className="card-title">
+                    <span className="card-icon">⏰</span>
                     Recent Activity
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                  </h2>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-list">
                     {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-primary rounded-full" />
-                          <span className="capitalize">
+                      <div key={index} className="analytics-list-item">
+                        <div className="analytics-item-info">
+                          <div className="analytics-item-indicator primary"></div>
+                          <span className="analytics-item-label">
                             {interaction.type} on {interaction.element}
                           </span>
                         </div>
-                        <span className="text-muted-foreground">
+                        <span className="analytics-item-time">
                           {new Date(interaction.timestamp).toLocaleTimeString()}
                         </span>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             {/* Recent Errors */}
             {analytics.recentErrors.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <AlertTriangle className="w-4 h-4 mr-2" />
+              <div className="card">
+                <div className="card-header">
+                  <h2 className="card-title">
+                    <span className="card-icon">⚠️</span>
                     Recent Errors
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
+                  </h2>
+                </div>
+                <div className="card-body">
+                  <div className="analytics-errors">
                     {analytics.recentErrors.slice(0, 10).map((error, index) => (
-                      <div key={index} className="border-l-4 border-destructive pl-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-destructive">
+                      <div key={index} className="analytics-error-item">
+                        <div className="analytics-error-header">
+                          <span className="analytics-error-message">
                             {error.message}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="analytics-error-time">
                             {new Date(error.timestamp).toLocaleString()}
                           </span>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="analytics-error-details">
                           Type: {error.type} • Page: {error.page}
                         </p>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )}
           </div>
         )}
-      </PageContent>
-    </PageContainer>
+      </div>
+    </div>
   );
 } 
