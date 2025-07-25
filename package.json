@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:safe": "./scripts/dev-server.sh",
+    "dev:clean": "./scripts/dev-server.sh --clean",
+    "dev:status": "./scripts/check-dev-status.sh",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -16,6 +19,8 @@
     "test:integration": "jest --testPathPattern=tests/integration --coverage",
     "test:unit": "jest --testPathPattern=tests/unit --coverage",
     "test:e2e": "playwright test tests/e2e/critical-flows/streamlined-user-flows.spec.ts",
+    "test:page-integrity": "playwright test tests/e2e/page-integrity.test.ts",
+    "pre-commit": "./scripts/pre-commit-check.sh",
     "test:user-behavior": "jest --testPathPattern=tests/integration/user-behavior",
     "test:component-integration": "jest --testPathPattern=tests/integration/component-integration",
     "test:user-journeys": "jest --testPathPattern=tests/integration/user-journeys",

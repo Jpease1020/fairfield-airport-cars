@@ -11,8 +11,16 @@ const AdminHamburgerMenu = () => {
 
   console.log('🔍 AdminHamburgerMenu - isAdmin:', isAdmin, 'editMode:', editMode, 'commentMode:', commentMode);
 
-  if (!isAdmin) {
-    console.log('❌ AdminHamburgerMenu - Not rendering because isAdmin is false');
+  // Always show in development mode
+  const isDev = process.env.NODE_ENV === 'development';
+  const isLocalhost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.includes('localhost')
+  );
+
+  if (!isAdmin && !isDev && !isLocalhost) {
+    console.log('❌ AdminHamburgerMenu - Not rendering because isAdmin is false and not in dev mode');
     return null;
   }
 

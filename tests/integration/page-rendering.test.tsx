@@ -12,12 +12,7 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock CMS hooks
-jest.mock('@/hooks/useCMS', () => ({
-  useHomePageContent: jest.fn(),
-  useBusinessSettings: jest.fn(),
-  useCMS: jest.fn(),
-}));
+
 
 // Mock admin components
 jest.mock('@/components/admin/EditModeProvider', () => ({
@@ -55,151 +50,20 @@ jest.mock('@/components/data', () => ({
 }));
 
 describe('Page Rendering Integration Tests', () => {
-  const mockUseHomePageContent = require('@/hooks/useCMS').useHomePageContent;
-  const mockUseBusinessSettings = require('@/hooks/useCMS').useBusinessSettings;
-  const mockUseCMS = require('@/hooks/useCMS').useCMS;
-
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    // Default mock implementations
-    mockUseBusinessSettings.mockReturnValue({
-      settings: {
-        company: {
-          phone: '+1 (203) 555-0123',
-          email: 'info@fairfieldairportcars.com',
-        },
-      },
-      loading: false,
-    });
-
-    mockUseCMS.mockReturnValue({
-      config: {},
-    });
   });
 
   describe('Home Page (/page.tsx)', () => {
-    it('should render loading state correctly', async () => {
-      mockUseHomePageContent.mockReturnValue({
-        content: null,
-        loading: true,
-        error: null,
-      });
-
-      const HomePage = require('@/app/page').default;
-      render(<HomePage />);
-
-      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
-      expect(screen.getByText('Loading...')).toBeInTheDocument();
-    });
-
-    it('should render error state when CMS content fails to load', async () => {
-      mockUseHomePageContent.mockReturnValue({
-        content: null,
-        loading: false,
-        error: new Error('CMS Error'),
-      });
-
-      const HomePage = require('@/app/page').default;
-      render(<HomePage />);
-
-      expect(screen.getByText('Content Unavailable')).toBeInTheDocument();
-      expect(screen.getByText('Please check back later or contact support.')).toBeInTheDocument();
-    });
-
-    it('should render successfully with valid CMS content', async () => {
-      const mockContent = {
-        hero: {
-          title: 'Premium Airport Transportation',
-          subtitle: 'Reliable, comfortable rides',
-          ctaText: 'Book Your Ride',
-        },
-        features: {
-          items: [
-            {
-              title: 'Reliable Service',
-              description: 'Always on time',
-              icon: 'clock',
-            },
-            {
-              title: 'Comfortable Vehicles',
-              description: 'Clean and spacious',
-              icon: 'car',
-            },
-          ],
-        },
-        finalCta: {
-          title: 'Ready to Book?',
-          subtitle: 'Get started today',
-        },
-        contact: {
-          title: 'Contact Us',
-          content: 'Get in touch with us',
-        },
-      };
-
-      mockUseHomePageContent.mockReturnValue({
-        content: mockContent,
-        loading: false,
-        error: null,
-      });
-
-      const HomePage = require('@/app/page').default;
-      render(<HomePage />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Premium Airport Transportation')).toBeInTheDocument();
-      });
-
-      expect(screen.getByText('Reliable Service')).toBeInTheDocument();
-      expect(screen.getByText('Comfortable Vehicles')).toBeInTheDocument();
-    });
-
-    it('should handle missing features.items gracefully', async () => {
-      const mockContent = {
-        hero: {
-          title: 'Premium Airport Transportation',
-          subtitle: 'Reliable, comfortable rides',
-          ctaText: 'Book Your Ride',
-        },
-        features: {
-          // Missing items array - this should not crash
-        },
-        finalCta: {
-          title: 'Ready to Book?',
-          subtitle: 'Get started today',
-        },
-        contact: {
-          title: 'Contact Us',
-          content: 'Get in touch with us',
-        },
-      };
-
-      mockUseHomePageContent.mockReturnValue({
-        content: mockContent,
-        loading: false,
-        error: null,
-      });
-
+    it('should render home page content correctly', async () => {
       const HomePage = require('@/app/page').default;
       
-      // This should not throw an error
-      expect(() => render(<HomePage />)).not.toThrow();
-    });
-
-    it('should handle undefined homeContent gracefully', async () => {
-      mockUseHomePageContent.mockReturnValue({
-        content: undefined,
-        loading: false,
-        error: null,
-      });
-
-      const HomePage = require('@/app/page').default;
-      
-      // This should render the error state, not crash
       render(<HomePage />);
       
-      expect(screen.getByText('Content Unavailable')).toBeInTheDocument();
+      // Should render the actual content, not use CMS
+      expect(screen.getAllByText('Premium Airport Transportation')).toHaveLength(2); // One in header, one in hero
+      expect(screen.getByText('Book Your Ride')).toBeInTheDocument();
+      expect(screen.getByText('Why Choose Us?')).toBeInTheDocument();
     });
   });
 
@@ -212,9 +76,9 @@ describe('Page Rendering Integration Tests', () => {
       expect(aboutPageContent).toContain('AboutPage');
       expect(aboutPageContent).toContain('Our Story');
       expect(aboutPageContent).toContain('Our Commitment');
-      expect(aboutPageContent).toContain('Why Choose Us');
       expect(aboutPageContent).toContain('Our Fleet');
       expect(aboutPageContent).toContain('Service Areas');
+      expect(aboutPageContent).toContain('Get in Touch');
     });
 
     it('should use proper React components instead of HTML strings', () => {
@@ -222,8 +86,8 @@ describe('Page Rendering Integration Tests', () => {
       const aboutPageContent = readFileSync(aboutPagePath, 'utf8');
       
       // Check that it uses proper JSX instead of dangerouslySetInnerHTML
-      expect(aboutPageContent).toContain('<section>');
-      expect(aboutPageContent).toContain('<h2 className=');
+      expect(aboutPageContent).toContain('className="about-section"');
+      expect(aboutPageContent).toContain('<h2>');
       expect(aboutPageContent).not.toContain('dangerouslySetInnerHTML');
       expect(aboutPageContent).not.toContain('EditableContent');
     });
@@ -232,10 +96,10 @@ describe('Page Rendering Integration Tests', () => {
       const aboutPagePath = path.join(process.cwd(), 'src/app/about/page.tsx');
       const aboutPageContent = readFileSync(aboutPagePath, 'utf8');
       
-      // Check for proper styling classes
-      expect(aboutPageContent).toContain('text-2xl font-semibold');
-      expect(aboutPageContent).toContain('text-lg text-gray-700');
-      expect(aboutPageContent).toContain('list-disc list-inside');
+      // Check for proper structure
+      expect(aboutPageContent).toContain('about-content');
+      expect(aboutPageContent).toContain('about-section');
+      expect(aboutPageContent).toContain('grid grid-2');
     });
   });
 

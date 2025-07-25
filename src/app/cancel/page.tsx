@@ -1,4 +1,5 @@
 import { StandardLayout } from '@/components/layout/StandardLayout';
+import Link from 'next/link';
 
 export default function CancelPage() {
   return (
@@ -17,14 +18,14 @@ export default function CancelPage() {
               <h3>Cancellation Details</h3>
               <ul>
                 <li>Your payment has been refunded (if applicable)</li>
-                <li>You'll receive a confirmation email</li>
+                <li>You&apos;ll receive a confirmation email</li>
                 <li>No further charges will be made</li>
               </ul>
             </div>
             
             <div className="cancel-actions">
               <a href="/book" className="btn btn-primary">Book a New Ride</a>
-              <a href="/" className="btn btn-outline">Return to Home</a>
+              <Link href="/" className="btn btn-outline">Return to Home</Link>
             </div>
           </div>
         </section>

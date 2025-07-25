@@ -239,7 +239,8 @@ test.describe('URL Accessibility & Content Verification', () => {
       expect(bodyText).toContain('Fairfield');
       
       // Should have contact information
-      expect(bodyText).toContain('Contact') || expect(bodyText).toContain('Phone');
+      const hasContactInfo = bodyText?.includes('Contact') || bodyText?.includes('Phone');
+      expect(hasContactInfo).toBeTruthy();
     });
   });
 

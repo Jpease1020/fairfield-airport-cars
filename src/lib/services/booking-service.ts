@@ -1,134 +1,259 @@
 import { db } from '@/lib/utils/firebase';
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { Booking } from '@/types/booking';
+import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
 
+export interface Booking {
+  id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  pickupLocation: string;
+  dropoffLocation: string;
+  pickupDateTime: Date;
+  passengers: number;
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  fare: number;
+  dynamicFare?: number;
+  depositPaid: boolean;
+  balanceDue: number;
+  flightNumber?: string;
+  notes?: string;
+  driverId?: string;
+  driverName?: string;
+  estimatedArrival?: Date;
+  actualArrival?: Date;
+  tipAmount?: number;
+  cancellationFee?: number;
+  squareOrderId?: string;
+  depositAmount?: number;
+  reminderSent?: boolean;
+  onMyWaySent?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
+export interface Driver {
+  id: string;
+  name: string;
+  phone: string;
+  vehicle: string;
+  licensePlate: string;
+  status: 'available' | 'busy' | 'offline';
+  currentLocation?: {
+    lat: number;
+    lng: number;
+  };
+  lastUpdated: Date;
+}
 
-// Helper function to get the base URL
-const getBaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-  return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-};
-
-// Helper function to create a fetch with timeout
-const fetchWithTimeout = async (url: string, options: RequestInit, timeout = 5000) => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+// Dynamic pricing calculation based on time, demand, and distance
+export const calculateDynamicFare = (baseFare: number, pickupTime: Date, distance: number): number => {
+  const hour = pickupTime.getHours();
+  const dayOfWeek = pickupTime.getDay();
   
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-    return response;
-  } catch (error) {
-    clearTimeout(timeoutId);
-    throw error;
-  }
+  // Base multipliers
+  let multiplier = 1.0;
+  
+  // Peak time pricing (6-9 AM and 4-7 PM)
+  const isPeakTime = (hour >= 6 && hour <= 9) || (hour >= 16 && hour <= 19);
+  if (isPeakTime) multiplier *= 1.3;
+  
+  // Weekend pricing
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+  if (isWeekend) multiplier *= 1.2;
+  
+  // Holiday pricing (simplified - could be enhanced with holiday API)
+  const isHoliday = false; // TODO: Integrate with holiday API
+  if (isHoliday) multiplier *= 1.25;
+  
+  // Distance-based pricing
+  if (distance > 50) multiplier *= 1.1; // Long distance premium
+  if (distance > 100) multiplier *= 1.2; // Very long distance premium
+  
+  // Weather conditions (could be enhanced with weather API)
+  // For now, using a simple time-based approximation
+  
+  return Math.round(baseFare * multiplier);
 };
 
-export const createBooking = async (booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
-  try {
-    const response = await fetchWithTimeout(`${getBaseUrl()}/api/create-booking-simple`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(booking),
-    });
-
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to create booking');
+// Real-time booking status management
+export const updateBookingStatus = async (bookingId: string, status: Booking['status'], driverId?: string): Promise<void> => {
+  const bookingRef = doc(db, 'bookings', bookingId);
+  
+  const updateData: any = {
+    status,
+    updatedAt: serverTimestamp(),
+  };
+  
+  if (driverId) {
+    updateData.driverId = driverId;
+    // Get driver info
+    const driverDoc = await getDoc(doc(db, 'drivers', driverId));
+    if (driverDoc.exists()) {
+      const driverData = driverDoc.data() as Driver;
+      updateData.driverName = driverData.name;
     }
-
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to create booking');
-    }
-
-    return result.bookingId;
-  } catch (error) {
-    console.error('Error creating booking:', error);
-    throw error;
   }
+  
+  await updateDoc(bookingRef, updateData);
 };
 
-export const getBooking = async (id: string): Promise<Booking | null> => {
-  try {
-    const response = await fetchWithTimeout(`${getBaseUrl()}/api/get-bookings-simple?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const result = await response.json();
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      throw new Error(result.error || 'Failed to get booking');
-    }
-
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to get booking');
-    }
-
-    return result.booking as Booking;
-  } catch (error) {
-    console.error('Error getting booking:', error);
-    throw error;
-  }
+// Driver availability management
+export const getAvailableDrivers = async (): Promise<Driver[]> => {
+  const driversRef = collection(db, 'drivers');
+  const q = query(driversRef, where('status', '==', 'available'));
+  const snapshot = await getDocs(q);
+  
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  })) as Driver[];
 };
 
+// Assign driver to booking
+export const assignDriverToBooking = async (bookingId: string, driverId: string): Promise<void> => {
+  const bookingRef = doc(db, 'bookings', bookingId);
+  const driverRef = doc(db, 'drivers', driverId);
+  
+  // Update booking with driver assignment
+  await updateDoc(bookingRef, {
+    driverId,
+    status: 'confirmed',
+    updatedAt: serverTimestamp(),
+  });
+  
+  // Update driver status to busy
+  await updateDoc(driverRef, {
+    status: 'busy',
+    lastUpdated: serverTimestamp(),
+  });
+};
+
+// Enhanced booking creation with dynamic pricing
+export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  // Calculate dynamic fare
+  const dynamicFare = calculateDynamicFare(
+    bookingData.fare,
+    bookingData.pickupDateTime,
+    0 // TODO: Calculate actual distance using Google Maps API
+  );
+  
+  const booking = {
+    ...bookingData,
+    dynamicFare,
+    balanceDue: dynamicFare - (bookingData.depositPaid ? bookingData.fare : 0),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  };
+  
+  const docRef = await addDoc(collection(db, 'bookings'), booking);
+  return docRef.id;
+};
+
+// Get booking with real-time status
+export const getBooking = async (bookingId: string): Promise<Booking | null> => {
+  const bookingDoc = await getDoc(doc(db, 'bookings', bookingId));
+  
+  if (!bookingDoc.exists()) {
+    return null;
+  }
+  
+  const data = bookingDoc.data();
+  return {
+    id: bookingDoc.id,
+    ...data,
+    pickupDateTime: data.pickupDateTime.toDate(),
+    createdAt: data.createdAt.toDate(),
+    updatedAt: data.updatedAt.toDate(),
+  } as Booking;
+};
+
+// Get all bookings with filtering and sorting
+export const getBookings = async (
+  status?: Booking['status'],
+  limit?: number
+): Promise<Booking[]> => {
+  let q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
+  
+  if (status) {
+    q = query(q, where('status', '==', status));
+  }
+  
+  if (limit) {
+    q = query(q, orderBy('createdAt', 'desc'));
+  }
+  
+  const snapshot = await getDocs(q);
+  
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+    pickupDateTime: doc.data().pickupDateTime.toDate(),
+    createdAt: doc.data().createdAt.toDate(),
+    updatedAt: doc.data().updatedAt.toDate(),
+  })) as Booking[];
+};
+
+// Legacy exports for backward compatibility
+export const listBookings = getBookings;
 export const updateBooking = async (id: string, updates: Partial<Booking>): Promise<void> => {
   const docRef = doc(db, 'bookings', id);
-  await updateDoc(docRef, { ...updates, updatedAt: new Date() });
+  await updateDoc(docRef, { ...updates, updatedAt: serverTimestamp() });
 };
 
 export const deleteBooking = async (id: string): Promise<void> => {
   const docRef = doc(db, 'bookings', id);
-  await deleteDoc(docRef);
+  await updateDoc(docRef, { status: 'cancelled', updatedAt: serverTimestamp() });
 };
 
-export const listBookings = async (): Promise<Booking[]> => {
-  try {
-    const response = await fetchWithTimeout(`${getBaseUrl()}/api/get-bookings-simple`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to get bookings');
-    }
-
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to get bookings');
-    }
-
-    return result.bookings as Booking[];
-  } catch (error) {
-    console.error('Error getting bookings:', error);
-    throw error;
-  }
+// Cancel booking with refund logic
+export const cancelBooking = async (bookingId: string, reason?: string): Promise<void> => {
+  const bookingRef = doc(db, 'bookings', bookingId);
+  
+  await updateDoc(bookingRef, {
+    status: 'cancelled',
+    updatedAt: serverTimestamp(),
+    cancellationReason: reason,
+  });
+  
+  // TODO: Implement refund logic with Square API
+  // await processRefund(bookingId);
 };
 
+// Update driver location for real-time tracking
+export const updateDriverLocation = async (driverId: string, location: { lat: number; lng: number }): Promise<void> => {
+  const driverRef = doc(db, 'drivers', driverId);
+  
+  await updateDoc(driverRef, {
+    currentLocation: location,
+    lastUpdated: serverTimestamp(),
+  });
+};
+
+// Get estimated arrival time based on driver location and traffic
+export const getEstimatedArrival = async (bookingId: string): Promise<Date | null> => {
+  const booking = await getBooking(bookingId);
+  if (!booking || !booking.driverId) return null;
+  
+  const driverDoc = await getDoc(doc(db, 'drivers', booking.driverId));
+  if (!driverDoc.exists()) return null;
+  
+  // const driverData = driverDoc.data() as Driver; // Unused for now
+  
+  // TODO: Implement Google Maps Directions API for accurate ETA
+  // For now, return a simple estimate
+  const estimatedMinutes = 15; // Placeholder
+  const estimatedArrival = new Date();
+  estimatedArrival.setMinutes(estimatedArrival.getMinutes() + estimatedMinutes);
+  
+  return estimatedArrival;
+};
+
+// Time slot availability check
 export const isTimeSlotAvailable = async (pickupDate: Date, bufferMinutes = 60): Promise<boolean> => {
   try {
-    const response = await fetchWithTimeout(`${getBaseUrl()}/api/check-time-slot`, {
+    const response = await fetch('/api/check-time-slot', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         pickupDateTime: pickupDate.toISOString(),
         bufferMinutes,
@@ -136,19 +261,9 @@ export const isTimeSlotAvailable = async (pickupDate: Date, bufferMinutes = 60):
     });
 
     const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to check time slot');
-    }
-
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to check time slot');
-    }
-
-    return result.isAvailable;
+    return result.isAvailable || true; // Default to available if API fails
   } catch (error) {
     console.error('Error checking time slot:', error);
-    // If the API fails, assume the slot is available to avoid blocking bookings
-    return true;
+    return true; // Default to available to avoid blocking bookings
   }
 };

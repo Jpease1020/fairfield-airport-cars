@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - link "Fairfield Airport Cars":
+    - /url: /
+  - link "Home":
+    - /url: /
+  - link "Book":
+    - /url: /book
+  - link "Help":
+    - /url: /help
+  - link "About":
+    - /url: /about
+- main:
+  - heading "Premium Airport Transportation" [level=1]
+  - heading "Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area" [level=2]
+  - heading "Premium Airport Transportation" [level=1]
+  - paragraph: Reliable, comfortable rides to and from Fairfield Airport
+  - link "Book Your Ride":
+    - /url: /book
+  - heading "Why Choose Us?" [level=2]
+  - paragraph: Professional service, reliable transportation, and peace of mind for your airport journey.
+  - text: 🚗
+  - heading "Professional Service" [level=3]
+  - paragraph: Experienced drivers with clean, well-maintained vehicles
+  - text: ⏰
+  - heading "Reliable & On Time" [level=3]
+  - paragraph: We understand the importance of punctuality for airport travel
+  - text: 💳
+  - heading "Easy Booking" [level=3]
+  - paragraph: Simple online booking with secure payment processing
+  - heading "Ready for a Stress-Free Ride?" [level=2]
+  - paragraph: Book your airport transportation today and experience the difference of premium service.
+  - link "Book Now":
+    - /url: /book
+- contentinfo:
+  - heading "Fairfield Airport Cars" [level=3]
+  - paragraph: Premium airport transportation service
+  - heading "Contact" [level=4]
+  - paragraph: "Phone: (203) 555-0123"
+  - paragraph: "Email: info@fairfieldairportcar.com"
+  - heading "Service Areas" [level=4]
+  - paragraph: Fairfield County, CT
+  - paragraph: New York Airports
+  - paragraph: © 2024 Fairfield Airport Cars. All rights reserved.
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+```

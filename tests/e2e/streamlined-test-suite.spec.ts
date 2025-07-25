@@ -4,58 +4,87 @@ import {
   fillPlaywrightBookingForm, 
   expectPlaywrightBookingForm,
   expectAccessibilityCompliance,
-  measurePageLoadTime
+  measurePageLoadTime,
+  simulateApiError,
+  simulateNetworkTimeout
 } from '../utils/test-helpers';
 
 test.describe('Streamlined E2E Test Suite', () => {
+  
   test.beforeEach(async ({ page }) => {
     await setupPlaywrightMocks(page);
   });
 
   test.describe('Core User Journeys', () => {
     test('Complete booking flow - happy path', async ({ page }) => {
-      // 1. Visit homepage
+      // 1. Homepage
       await page.goto('/');
       await expect(page).toHaveTitle(/Fairfield Airport Cars/);
+      await expect(page.locator('h1')).toContainText(/Premium Airport Transportation/);
       
       // 2. Navigate to booking
-      await page.click('a[href="/book"]');
+      await page.click('a[href="/book"], button:has-text("Book Now")');
       await expect(page).toHaveURL('/book');
       
-      // 3. Verify booking form is present
-      await expectPlaywrightBookingForm(page);
+      // 3. Verify booking page layout
+      await expect(page.locator('h1:has-text("Book Your Airport Transfer")')).toBeVisible();
+      await expect(page.locator('h2:has-text("Why Choose Our Service?")')).toBeVisible();
       
-      // 4. Fill out the form
+      // 4. Verify service cards are properly displayed
+      const serviceCards = page.locator('.text-center');
+      await expect(serviceCards).toHaveCount(3);
+      
+      // 5. Verify colored circles with emojis
+      const emojiContainers = page.locator('.bg-blue-100, .bg-green-100, .bg-purple-100');
+      await expect(emojiContainers).toHaveCount(3);
+      
+      // 6. Fill and submit booking form
       await fillPlaywrightBookingForm(page);
       
-      // 5. Calculate fare
+      // 7. Calculate fare
       await page.click('button:has-text("Calculate Fare")');
-      await page.waitForTimeout(1000);
+      await expect(page.locator('text=$150')).toBeVisible();
       
-      // 6. Verify book button is enabled
-      const bookButton = page.locator('button:has-text("Book Now")');
-      await expect(bookButton).toBeEnabled();
+      // 8. Submit booking
+      await page.click('button:has-text("Book Now")');
+      await expect(page).toHaveURL(/\/success/);
     });
 
-    test('Navigation between pages', async ({ page }) => {
-      // Test navigation from homepage
+    test('Navigation flow', async ({ page }) => {
       await page.goto('/');
       
-      // Navigate to book page
-      await page.click('a[href="/book"]');
-      await expect(page).toHaveURL('/book');
+      // Test all navigation links
+      const navLinks = [
+        { href: '/', text: 'Home' },
+        { href: '/book', text: 'Book' },
+        { href: '/help', text: 'Help' },
+        { href: '/about', text: 'About' }
+      ];
       
-      // Navigate to help page
-      await page.click('a[href="/help"]');
-      await expect(page).toHaveURL('/help');
+      for (const link of navLinks) {
+        await page.click(`a[href="${link.href}"]`);
+        await expect(page).toHaveURL(link.href);
+        await expect(page.locator('body')).toBeVisible();
+      }
+    });
+
+    test('Mobile responsive design', async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 667 });
+      await page.goto('/');
       
-      // Navigate to about page
-      await page.click('a[href="/about"]');
-      await expect(page).toHaveURL('/about');
+      // Test mobile navigation
+      await expect(page.locator('button[aria-label="Open menu"]')).toBeVisible();
+      await page.click('button[aria-label="Open menu"]');
       
-      // Navigate back to home
-      await page.click('a[href="/"]');
-      await expect(page).toHaveURL('/');
+      // Verify mobile menu items
+      await expect(page.locator('a[href="/book"]')).toBeVisible();
+      await expect(page.locator('a[href="/help"]')).toBeVisible();
+      await expect(page.locator('a[href="/about"]')).toBeVisible();
+      
+      // Test mobile booking page
+      await page.goto('/book');
+      const gridContainer = page.locator('.grid.grid-cols-1.md\\:grid-cols-3');
+      await expect(gridContainer).toBeVisible();
     });
   });
 
@@ -63,49 +92,136 @@ test.describe('Streamlined E2E Test Suite', () => {
     test('Homepage layout and styling', async ({ page }) => {
       await page.goto('/');
       
-      // Test navigation is present
+      // Test navigation
       await expect(page.locator('nav')).toBeVisible();
+      await expect(page.locator('a[href="/book"]')).toBeVisible();
       
-      // Test logo is present
-      await expect(page.locator('img[alt*="Logo"]')).toBeVisible();
+      // Test hero section
+      await expect(page.locator('h1')).toContainText(/Premium Airport Transportation/);
       
-      // Test phone number is present
-      await expect(page.locator('a[href*="tel:"]')).toBeVisible();
+      // Test features section
+      const featuresGrid = page.locator('.grid.grid-cols-1.md\\:grid-cols-3');
+      await expect(featuresGrid).toBeVisible();
     });
 
     test('Booking page layout and styling', async ({ page }) => {
       await page.goto('/book');
       
       // Wait for content to load
-      await page.waitForSelector('text="Book Your Airport Transfer"');
+      await page.waitForSelector('h1:has-text("Book Your Airport Transfer")');
       
-      // Test form layout
-      const form = page.locator('form');
-      await expect(form).toBeVisible();
-      
-      // Test grid layout for form fields
-      const gridContainer = page.locator('.grid');
+      // Test grid layout
+      const gridContainer = page.locator('.grid.grid-cols-1.md\\:grid-cols-3');
       await expect(gridContainer).toBeVisible();
+      
+      // Test service cards
+      const serviceCards = page.locator('.text-center');
+      await expect(serviceCards).toHaveCount(3);
+      
+      // Test colored circles
+      const emojiContainers = page.locator('.bg-blue-100, .bg-green-100, .bg-purple-100');
+      await expect(emojiContainers).toHaveCount(3);
+      
+      // Test responsive behavior
+      await page.setViewportSize({ width: 768, height: 720 });
+      await expect(gridContainer).toHaveClass(/grid-cols-1/);
+    });
+
+    test('Admin dashboard layout', async ({ page }) => {
+      await page.goto('/admin');
+      
+      // Test admin navigation
+      await expect(page.locator('nav')).toBeVisible();
+      
+      // Test dashboard cards
+      const dashboardCards = page.locator('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4');
+      await expect(dashboardCards).toBeVisible();
     });
   });
 
   test.describe('Component Integration', () => {
-    test('Form validation and interaction', async ({ page }) => {
+    test('EditableContent renders HTML properly', async ({ page }) => {
       await page.goto('/book');
       
-      // Test form fields are interactive
-      const nameInput = page.locator('input[placeholder*="full name"]');
-      await nameInput.fill('John Smith');
-      await expect(nameInput).toHaveValue('John Smith');
+      // Test that HTML content is rendered as actual elements, not raw text
+      const htmlContent = page.locator('.grid.grid-cols-1.md\\:grid-cols-3');
+      await expect(htmlContent).toBeVisible();
       
-      const emailInput = page.locator('input[placeholder*="email"]');
-      await emailInput.fill('john@example.com');
-      await expect(emailInput).toHaveValue('john@example.com');
+      // Test that emojis are rendered as text, not escaped HTML
+      const emojis = page.locator('span:has-text("🚗"), span:has-text("⏰"), span:has-text("💰")');
+      await expect(emojis).toHaveCount(3);
       
-      // Test number input
-      const passengersInput = page.locator('input[type="number"]');
-      await passengersInput.fill('3');
-      await expect(passengersInput).toHaveValue('3');
+      // Test that CSS classes are applied
+      const coloredCircles = page.locator('.bg-blue-100, .bg-green-100, .bg-purple-100');
+      await expect(coloredCircles).toHaveCount(3);
+    });
+
+    test('CMS content loading and display', async ({ page }) => {
+      await page.goto('/book');
+      
+      // Wait for CMS content to load
+      await page.waitForResponse(response => 
+        response.url().includes('/api/admin/cms/pages') && response.status() === 200
+      );
+      
+      // Verify all content sections are displayed
+      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('h2:has-text("Why Choose Our Service?")')).toBeVisible();
+      
+      // Verify service features are displayed
+      await expect(page.locator('span:has-text("🚗")')).toBeVisible();
+      await expect(page.locator('span:has-text("⏰")')).toBeVisible();
+      await expect(page.locator('span:has-text("💰")')).toBeVisible();
+    });
+  });
+
+  test.describe('CSS Validation', () => {
+    test('Tailwind classes are properly applied', async ({ page }) => {
+      await page.goto('/book');
+      
+      // Test grid classes
+      const gridElement = page.locator('.grid.grid-cols-1.md\\:grid-cols-3');
+      await expect(gridElement).toBeVisible();
+      
+      // Test responsive classes
+      const computedStyles = await gridElement.evaluate(el => {
+        const styles = window.getComputedStyle(el);
+        return {
+          display: styles.display,
+          gridTemplateColumns: styles.gridTemplateColumns,
+        };
+      });
+      
+      // Verify grid is working
+      expect(computedStyles.display).toBe('grid');
+      
+      // Test color classes
+      const blueCircle = page.locator('.bg-blue-100');
+      const greenCircle = page.locator('.bg-green-100');
+      const purpleCircle = page.locator('.bg-purple-100');
+      
+      await expect(blueCircle).toBeVisible();
+      await expect(greenCircle).toBeVisible();
+      await expect(purpleCircle).toBeVisible();
+      
+      // Test flexbox classes
+      const flexContainer = page.locator('.flex.items-center.justify-center');
+      await expect(flexContainer).toBeVisible();
+    });
+
+    test('Typography classes are applied', async ({ page }) => {
+      await page.goto('/book');
+      
+      // Test heading classes
+      const mainHeading = page.locator('h1.text-3xl.font-bold');
+      await expect(mainHeading).toBeVisible();
+      
+      const subHeading = page.locator('h2.text-2xl.font-semibold');
+      await expect(subHeading).toBeVisible();
+      
+      // Test text color classes
+      const grayText = page.locator('.text-gray-600');
+      await expect(grayText).toBeVisible();
     });
   });
 
@@ -114,27 +230,38 @@ test.describe('Streamlined E2E Test Suite', () => {
       await page.goto('/book');
       
       // Try to submit without filling required fields
-      const bookButton = page.locator('button:has-text("Book Now")');
-      await expect(bookButton).toBeDisabled();
+      await page.click('button:has-text("Calculate Fare")');
+      
+      // Should show validation errors
+      await expect(page.locator('.text-red-500')).toBeVisible();
     });
 
     test('API error handling', async ({ page }) => {
+      await simulateApiError(page, '/api/booking/estimate-fare');
+      
       await page.goto('/book');
       
-      // Fill form and try to calculate fare with API error
+      // Fill form and try to calculate fare
       await fillPlaywrightBookingForm(page);
       
-      // Simulate API error
-      await page.route('**/api/booking/estimate-fare', async route => {
-        await route.fulfill({
-          status: 500,
-          contentType: 'application/json',
-          body: JSON.stringify({ error: 'Server error' })
-        });
-      });
+      await page.click('button:has-text("Calculate Fare")');
+      
+      // Should show error message
+      await expect(page.locator('text=error')).toBeVisible();
+    });
+
+    test('Network timeout handling', async ({ page }) => {
+      await simulateNetworkTimeout(page, '/api/booking/estimate-fare');
+      
+      await page.goto('/book');
+      
+      // Fill form and try to calculate fare
+      await fillPlaywrightBookingForm(page);
       
       await page.click('button:has-text("Calculate Fare")');
-      await page.waitForTimeout(1000);
+      
+      // Should show loading state
+      await expect(page.locator('text=Calculating')).toBeVisible();
     });
   });
 
@@ -152,6 +279,7 @@ test.describe('Streamlined E2E Test Suite', () => {
     test('Booking form accessibility', async ({ page }) => {
       await page.goto('/book');
       await expectPlaywrightBookingForm(page);
+      await expectAccessibilityCompliance(page);
     });
   });
 }); 

@@ -7,19 +7,24 @@ export interface Booking {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: Date;
-  flightNumber?: string;
   passengers: number;
-  notes?: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
   fare: number;
+  dynamicFare?: number;
   depositPaid: boolean;
-  balanceDue: number; // remaining amount in dollars to be charged post-ride
+  balanceDue: number;
+  flightNumber?: string;
+  notes?: string;
+  driverId?: string;
+  driverName?: string;
+  estimatedArrival?: Date;
+  actualArrival?: Date;
+  tipAmount?: number;
+  cancellationFee?: number;
   squareOrderId?: string;
-  depositAmount?: number; // deposit in dollars
-  cancellationFee?: number; // fee retained on cancellation
-  reminderSent?: boolean; // 24h reminder
-  onMyWaySent?: boolean; // driver en route message
-  tipAmount?: number; // dollars
+  depositAmount?: number;
+  reminderSent?: boolean;
+  onMyWaySent?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

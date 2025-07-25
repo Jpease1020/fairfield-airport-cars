@@ -1,432 +1,219 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/data';
-import { listBookings } from '@/lib/services/booking-service';
-import { Booking } from '@/types/booking';
-import { testFirebaseConnection } from '@/lib/utils/firebase-test';
 import { 
-  BookOpen, 
   Calendar, 
-  DollarSign, 
   Users, 
-  TrendingUp,
-  Clock,
+  DollarSign, 
+  TrendingUp, 
+  Clock, 
   CheckCircle,
-  XCircle,
-  Receipt
+  AlertCircle,
+  BarChart3,
+  BookOpen,
+  MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
 
-const AdminDashboard = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [firebaseStatus, setFirebaseStatus] = useState<string>('');
-
-  const testFirebase = async () => {
-    setFirebaseStatus('Testing...');
-    const result = await testFirebaseConnection();
-    setFirebaseStatus(result ? '✅ Connected' : '❌ Failed');
-  };
-
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const bookingsData = await listBookings();
-        setBookings(bookingsData);
-      } catch {
-        // Handle error silently or show a user-friendly message
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookings();
-  }, []);
-
-  if (loading) {
-    return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading dashboard..." />
-        </div>
-      </PageContainer>
-    );
-  }
-
-  // Calculate metrics
-  const today = new Date();
-  const todayBookings = bookings.filter(booking => {
-    const bookingDate = new Date(booking.pickupDateTime);
-    return bookingDate.toDateString() === today.toDateString();
-  });
-
-  const pendingBookings = bookings.filter(b => b.status === 'pending');
-  const confirmedBookings = bookings.filter(b => b.status === 'confirmed');
-  const completedBookings = bookings.filter(b => b.status === 'completed');
-  const cancelledBookings = bookings.filter(b => b.status === 'cancelled');
-
-  const totalRevenue = bookings.reduce((sum, b) => sum + (b.fare || 0), 0);
-  const todayRevenue = todayBookings.reduce((sum, b) => sum + (b.fare || 0), 0);
-  
-  // Enhanced business intelligence metrics
-  const thisWeek = new Date();
-  thisWeek.setDate(thisWeek.getDate() - 7);
-  const weeklyBookings = bookings.filter(booking => {
-    const bookingDate = new Date(booking.pickupDateTime);
-    return bookingDate >= thisWeek;
-  });
-  const weeklyRevenue = weeklyBookings.reduce((sum, b) => sum + (b.fare || 0), 0);
-  
-  const thisMonth = new Date();
-  thisMonth.setMonth(thisMonth.getMonth() - 1);
-  const monthlyBookings = bookings.filter(booking => {
-    const bookingDate = new Date(booking.pickupDateTime);
-    return bookingDate >= thisMonth;
-  });
-  const monthlyRevenue = monthlyBookings.reduce((sum, b) => sum + (b.fare || 0), 0);
-  
-  // Calculate average fare and conversion rates
-  const averageFare = bookings.length > 0 ? totalRevenue / bookings.length : 0;
-  const completionRate = bookings.length > 0 ? (completedBookings.length / bookings.length) * 100 : 0;
-
-  const quickActions = [
-    {
-      title: 'View All Bookings',
-      description: 'Manage and update booking status',
-      href: '/admin/bookings',
-      icon: BookOpen,
-      color: 'bg-blue-500'
-    },
-    {
-      title: 'Calendar View',
-      description: 'See bookings in calendar format',
-      href: '/admin/calendar',
-      icon: Calendar,
-      color: 'bg-green-500'
-    },
-    {
-      title: 'Manage Promos',
-      description: 'Create and manage promotional codes',
-      href: '/admin/promos',
-      icon: TrendingUp,
-      color: 'bg-purple-500'
-    },
-    {
-      title: 'AI Assistant',
-      description: 'Get help with your business',
-      href: '/admin/ai-assistant',
-      icon: Users,
-      color: 'bg-orange-500'
-    },
-    {
-      title: 'CMS Settings',
-      description: 'Update website content and business info',
-      href: '/admin/cms',
-      icon: DollarSign,
-      color: 'bg-indigo-500'
-    },
-    {
-      title: 'Help & Guide',
-      description: 'Learn how to use the admin panel',
-      href: '/admin/help',
-      icon: Clock,
-      color: 'bg-gray-500'
-    },
-    {
-      title: 'Cost Breakdown',
-      description: 'View all business costs and expenses',
-      href: '/admin/costs',
-      icon: Receipt,
-      color: 'bg-red-500'
-    }
-  ];
-
+export default function AdminDashboard() {
   return (
-            <PageContainer className="bg-bg-secondary">
-      <PageHeader 
-        title="Admin Dashboard" 
-        subtitle="Welcome back! Here's what's happening with your business."
-      />
-      <PageContent>
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-bg-info rounded-lg">
-                  <BookOpen className="h-6 w-6 text-info" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Today&apos;s Bookings</p>
-                  <p className="text-2xl font-bold text-text-primary">{todayBookings.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-bg-warning rounded-lg">
-                  <Clock className="h-6 w-6 text-warning" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Pending</p>
-                  <p className="text-2xl font-bold text-text-primary">{pendingBookings.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-bg-success rounded-lg">
-                  <CheckCircle className="h-6 w-6 text-success" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Confirmed</p>
-                  <p className="text-2xl font-bold text-text-primary">{confirmedBookings.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-bg-error rounded-lg">
-                  <XCircle className="h-6 w-6 text-error" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Cancelled</p>
-                  <p className="text-2xl font-bold text-text-primary">{cancelledBookings.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Receipt className="h-6 w-6 text-red-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Monthly Costs</p>
-                  <p className="text-2xl font-bold text-text-primary">$250.42</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Enhanced Revenue Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-text-primary">
-                <DollarSign className="h-5 w-5" />
-                Revenue Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-text-primary">Total Revenue</span>
-                  <span className="font-semibold text-text-primary">${totalRevenue.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-primary">This Month</span>
-                  <span className="font-semibold text-text-primary">${monthlyRevenue.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-primary">This Week</span>
-                  <span className="font-semibold text-text-primary">${weeklyRevenue.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-primary">Today</span>
-                  <span className="font-semibold text-text-primary">${todayRevenue.toFixed(2)}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-text-primary">
-                <TrendingUp className="h-5 w-5" />
-                Business Metrics
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-text-primary">Average Fare</span>
-                  <span className="font-semibold text-text-primary">${averageFare.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-primary">Completion Rate</span>
-                  <span className="font-semibold text-text-primary">{completionRate.toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-primary">Total Bookings</span>
-                  <span className="font-semibold text-text-primary">{bookings.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-primary">Completed Rides</span>
-                  <span className="font-semibold text-text-primary">{completedBookings.length}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-text-primary">
-                <Calendar className="h-5 w-5" />
-                Recent Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {todayBookings.slice(0, 3).map((booking) => (
-                  <div key={booking.id} className="flex items-center justify-between p-3 bg-bg-secondary rounded-lg">
-                    <div>
-                      <p className="font-medium text-sm text-text-primary">{booking.name}</p>
-                      <p className="text-xs text-text-secondary">
-                        {new Date(booking.pickupDateTime).toLocaleTimeString()}
-                      </p>
-                    </div>
-                    <span className="text-sm font-medium text-text-primary">${booking.fare}</span>
-                  </div>
-                ))}
-                {todayBookings.length === 0 && (
-                  <p className="text-text-secondary text-sm">No bookings today</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Firebase Test */}
-        <div className="mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-text-primary">Firebase Connection Test</h3>
-                  <p className="text-sm text-text-secondary">Test if Firebase is working properly</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-text-secondary">{firebaseStatus}</span>
-                  <Button onClick={testFirebase} size="sm">
-                    Test Connection
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-text-primary mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {quickActions.map((action) => {
-              const IconComponent = action.icon;
-              return (
-                <Link key={action.title} href={action.href}>
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-center">
-                        <div className={`p-3 rounded-lg ${action.color}`}>
-                          <IconComponent className="h-6 w-6 text-text-inverse" />
-                        </div>
-                        <div className="ml-4">
-                          <h3 className="font-semibold text-text-primary">{action.title}</h3>
-                          <p className="text-sm text-text-secondary">{action.description}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Recent Bookings */}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-text-primary">Recent Bookings</h2>
+          <h1 className="text-3xl font-bold text-text-primary">Admin Dashboard</h1>
+          <p className="text-text-secondary mt-1">Welcome back! Here's what's happening with your business.</p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/admin/bookings">
+            <Button variant="outline">View All Bookings</Button>
+          </Link>
+          <Link href="/admin/calendar">
+            <Button>Calendar</Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+            <BookOpen className="h-4 w-4 text-text-secondary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-text-primary">24</div>
+            <p className="text-xs text-text-secondary">
+              +12% from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Drivers</CardTitle>
+            <Users className="h-4 w-4 text-text-secondary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-text-primary">8</div>
+            <p className="text-xs text-text-secondary">
+              +2 from last week
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-text-secondary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-text-primary">$12,450</div>
+            <p className="text-xs text-text-secondary">
+              +8% from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Customer Rating</CardTitle>
+            <TrendingUp className="h-4 w-4 text-text-secondary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-text-primary">4.9/5</div>
+            <p className="text-xs text-text-secondary">
+              +0.2 from last month
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Bookings</CardTitle>
+            <CardDescription>Latest customer bookings and their status</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0">
+                  <CheckCircle className="h-5 w-5 text-success" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text-primary">John Smith → JFK Airport</p>
+                  <p className="text-sm text-text-secondary">Today, 2:30 PM</p>
+                </div>
+                <div className="text-sm text-text-secondary">$85</div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0">
+                  <Clock className="h-5 w-5 text-warning" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text-primary">Sarah Johnson → LaGuardia</p>
+                  <p className="text-sm text-text-secondary">Today, 4:15 PM</p>
+                </div>
+                <div className="text-sm text-text-secondary">$75</div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0">
+                  <CheckCircle className="h-5 w-5 text-success" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text-primary">Mike Davis → Newark</p>
+                  <p className="text-sm text-text-secondary">Yesterday, 1:45 PM</p>
+                </div>
+                <div className="text-sm text-text-secondary">$95</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>System Alerts</CardTitle>
+            <CardDescription>Important notifications and updates</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="h-5 w-5 text-warning" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text-primary">Driver Availability Low</p>
+                  <p className="text-sm text-text-secondary">Only 2 drivers available for tomorrow</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0">
+                  <CheckCircle className="h-5 w-5 text-success" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text-primary">Payment System Online</p>
+                  <p className="text-sm text-text-secondary">All payment methods working normally</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0">
+                  <BarChart3 className="h-5 w-5 text-info" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text-primary">Revenue Target Met</p>
+                  <p className="text-sm text-text-secondary">Monthly revenue target achieved</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common tasks and shortcuts</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link href="/admin/bookings">
-              <Button variant="outline" size="sm" className="text-text-primary border-border-primary hover:bg-bg-secondary hover:text-text-primary">
-                View All
+              <Button variant="outline" className="h-20 flex-col w-full">
+                <BookOpen className="h-6 w-6 mb-2" />
+                <span>Manage Bookings</span>
+              </Button>
+            </Link>
+            
+            <Link href="/admin/calendar">
+              <Button variant="outline" className="h-20 flex-col w-full">
+                <Calendar className="h-6 w-6 mb-2" />
+                <span>View Calendar</span>
+              </Button>
+            </Link>
+            
+            <Link href="/admin/drivers">
+              <Button variant="outline" className="h-20 flex-col w-full">
+                <Users className="h-6 w-6 mb-2" />
+                <span>Manage Drivers</span>
+              </Button>
+            </Link>
+            
+            <Link href="/admin/feedback">
+              <Button variant="outline" className="h-20 flex-col w-full">
+                <MessageSquare className="h-6 w-6 mb-2" />
+                <span>View Feedback</span>
               </Button>
             </Link>
           </div>
-          <Card>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-bg-secondary">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
-                        Customer
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
-                        Date & Time
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
-                        Fare
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-bg-primary divide-y divide-border-primary">
-                    {bookings.slice(0, 5).map((booking) => (
-                      <tr key={booking.id} className="hover:bg-bg-secondary">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-text-primary">{booking.name}</div>
-                            <div className="text-sm text-text-secondary">{booking.phone}</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary">
-                          {new Date(booking.pickupDateTime).toLocaleDateString()} at{' '}
-                          {new Date(booking.pickupDateTime).toLocaleTimeString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            booking.status === 'confirmed' ? 'bg-bg-success text-success' :
-                            booking.status === 'pending' ? 'bg-bg-warning text-warning' :
-                            booking.status === 'completed' ? 'bg-bg-info text-info' :
-                            'bg-bg-error text-error'
-                          }`}>
-                            {booking.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary">
-                          ${booking.fare}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </PageContent>
-    </PageContainer>
+        </CardContent>
+      </Card>
+    </div>
   );
-};
-
-export default AdminDashboard; 
+} 

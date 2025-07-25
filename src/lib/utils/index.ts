@@ -1,7 +1,10 @@
-export * from './utils';
-export { auth, db } from './firebase';
-export { auth as clientAuth, db as clientDb } from './firebase-client';
-export { adminAuth, db as adminDb } from './firebase-admin';
-export * from './firebase-test';
-export * from './session-storage';
-export * from './test-utils';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export { adminAuth, adminDb } from './firebase-admin';
+export { db } from './firebase-client';
+export { testFirebaseConnection } from './firebase-test';

@@ -15,7 +15,7 @@ export default function AboutPage() {
           <p>
             Fairfield Airport Car Service has been providing reliable, comfortable, and professional 
             transportation services to and from Fairfield Airport for over a decade. We understand 
-            that travel can be stressful, which is why we've made it our mission to provide a 
+            that travel can be stressful, which is why we&apos;ve made it our mission to provide a 
             seamless and enjoyable experience for every passenger.
           </p>
         </section>
@@ -36,7 +36,7 @@ export default function AboutPage() {
           <h2>Our Fleet</h2>
           <p>
             We maintain a fleet of modern, well-equipped vehicles to meet your transportation needs. 
-            Whether you're traveling alone or with a group, we have the perfect vehicle for you.
+            Whether you&apos;re traveling alone or with a group, we have the perfect vehicle for you.
           </p>
           <div className="grid grid-2">
             <div className="fleet-info">
