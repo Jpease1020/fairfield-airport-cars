@@ -1,10 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/data';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
 
 const CommentsPage = () => {
@@ -28,53 +24,61 @@ const CommentsPage = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading comments..." />
+      <div className="admin-dashboard">
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading comments...</p>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
-      <PageHeader title="Comments" />
-      <PageContent>
-        <div className="space-y-4">
-          {comments.length === 0 ? (
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-center text-gray-500">No comments found.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            comments.map((comment) => (
-              <Card key={comment.id}>
-                <CardContent className="p-6">
-                                     <div className="flex justify-between items-start mb-4">
-                     <div>
-                       <h3 className="font-semibold text-lg">{comment.createdBy}</h3>
-                       <p className="text-sm text-gray-500">
-                         {new Date(comment.createdAt).toLocaleDateString()} at {new Date(comment.createdAt).toLocaleTimeString()}
-                       </p>
-                       <p className="text-sm text-gray-600 mt-1">
-                         Page: {comment.pageTitle}
-                       </p>
-                     </div>
-                     <Button variant="outline" size="sm">
-                       View Context
-                     </Button>
-                   </div>
-                   <div className="bg-gray-50 p-4 rounded-lg">
-                     <p className="text-gray-700 whitespace-pre-wrap">{comment.comment}</p>
-                   </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-      </PageContent>
-    </PageContainer>
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Comments</h1>
+        <p className="page-subtitle">Manage page comments and feedback</p>
+      </div>
+
+      <div className="standard-content">
+        {comments.length === 0 ? (
+          <div className="card">
+            <div className="card-body">
+              <div className="empty-state">
+                <div className="empty-state-icon">💬</div>
+                <p>No comments found.</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-1 gap-lg">
+            {comments.map((comment) => (
+              <div key={comment.id} className="card">
+                <div className="card-body">
+                  <div className="card-header">
+                    <div>
+                      <h3 className="card-title">{comment.createdBy}</h3>
+                      <p className="card-description">
+                        {new Date(comment.createdAt).toLocaleDateString()} at {new Date(comment.createdAt).toLocaleTimeString()}
+                      </p>
+                      <p className="card-description">
+                        Page: {comment.pageTitle}
+                      </p>
+                    </div>
+                    <button className="btn btn-outline btn-sm">
+                      View Context
+                    </button>
+                  </div>
+                  <div className="comment-content">
+                    <p>{comment.comment}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

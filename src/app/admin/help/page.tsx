@@ -1,23 +1,10 @@
 'use client';
 
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  BookOpen, 
-  Settings, 
-  Mail, 
-  HelpCircle,
-  Phone,
-  MessageSquare,
-  CreditCard,
-  FileText
-} from 'lucide-react';
-
 const AdminHelpPage = () => {
   const helpSections = [
     {
       title: "Managing Bookings",
-      icon: BookOpen,
+      icon: "📖",
       items: [
         {
           question: "How do I view all upcoming rides?",
@@ -39,7 +26,7 @@ const AdminHelpPage = () => {
     },
     {
       title: "Content Management (CMS)",
-      icon: Settings,
+      icon: "⚙️",
       items: [
         {
           question: "How do I update my business information?",
@@ -61,7 +48,7 @@ const AdminHelpPage = () => {
     },
     {
       title: "Customer Communication",
-      icon: Mail,
+      icon: "📧",
       items: [
         {
           question: "What emails do customers receive?",
@@ -83,7 +70,7 @@ const AdminHelpPage = () => {
     },
     {
       title: "Payments & Billing",
-      icon: CreditCard,
+      icon: "💳",
       items: [
         {
           question: "How do payments work?",
@@ -91,7 +78,7 @@ const AdminHelpPage = () => {
         },
         {
           question: "How do I handle refunds?",
-          answer: "Refunds are processed automatically based on your cancellation policy. Full refunds for &gt;24h cancellations, 50% for 3-24h, no refund for &lt;3h."
+          answer: "Refunds are processed automatically based on your cancellation policy. Full refunds for >24h cancellations, 50% for 3-24h, no refund for <3h."
         },
         {
           question: "Can customers tip?",
@@ -105,7 +92,7 @@ const AdminHelpPage = () => {
     },
     {
       title: "Technical Support",
-      icon: HelpCircle,
+      icon: "❓",
       items: [
         {
           question: "What if the booking form isn't working?",
@@ -116,7 +103,7 @@ const AdminHelpPage = () => {
           answer: "Contact your developer to reset your Firebase authentication credentials."
         },
         {
-          question: "What if SMS/email isn&apos;t sending?",
+          question: "What if SMS/email isn't sending?",
           answer: "Check that Twilio and email credentials are configured in environment variables. Contact your developer for setup assistance."
         },
         {
@@ -128,65 +115,65 @@ const AdminHelpPage = () => {
   ];
 
   return (
-            <PageContainer className="bg-bg-secondary">
-      <PageHeader 
-        title="Admin Help & Guide" 
-        subtitle="Everything you need to know about managing your car service business"
-        className="text-text-primary"
-      />
-      <PageContent>
-        <div className="grid gap-6">
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Admin Help & Guide</h1>
+        <p className="page-subtitle">Everything you need to know about managing your car service business</p>
+      </div>
+
+      <div className="standard-content">
+        <div className="grid grid-1 gap-lg">
           {helpSections.map((section, sectionIndex) => (
-            <Card key={sectionIndex}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-text-primary">
-                  <section.icon className="h-5 w-5" />
+            <div key={sectionIndex} className="card">
+              <div className="card-header">
+                <h2 className="card-title">
+                  <span className="card-icon">{section.icon}</span>
                   {section.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+                </h2>
+              </div>
+              <div className="card-body">
+                <div className="help-items">
                   {section.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="border-b border-border-primary pb-4 last:border-b-0">
-                      <h4 className="font-medium text-text-primary mb-2">{item.question}</h4>
-                      <p className="text-text-secondary text-sm">{item.answer}</p>
+                    <div key={itemIndex} className="help-item">
+                      <h4 className="help-question">{item.question}</h4>
+                      <p className="help-answer">{item.answer}</p>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-text-primary">
-                <Phone className="h-5 w-5" />
+          <div className="card">
+            <div className="card-header">
+              <h2 className="card-title">
+                <span className="card-icon">📞</span>
                 Need More Help?
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-text-secondary mb-4">
-                If you can&apos;t find the answer you&apos;re looking for, here are additional resources:
+              </h2>
+            </div>
+            <div className="card-body">
+              <p className="card-description">
+                If you can't find the answer you're looking for, here are additional resources:
               </p>
-              <div className="grid gap-3">
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm text-text-secondary">Contact your developer for technical support</span>
+              <div className="help-resources">
+                <div className="help-resource">
+                  <span className="help-resource-icon">💬</span>
+                  <span>Contact your developer for technical support</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm text-text-secondary">Check the business documentation in your project files</span>
+                <div className="help-resource">
+                  <span className="help-resource-icon">📄</span>
+                  <span>Check the business documentation in your project files</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Settings className="h-4 w-4 text-text-muted" />
-                  <span className="text-sm text-text-secondary">Review your CMS settings for configuration options</span>
+                <div className="help-resource">
+                  <span className="help-resource-icon">⚙️</span>
+                  <span>Review your CMS settings for configuration options</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
-      </PageContent>
-    </PageContainer>
+      </div>
+    </div>
   );
 };
 

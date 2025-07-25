@@ -1,9 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/card';
-import { LoadingSpinner } from '@/components/data';
 
 interface Feedback {
   id: string;
@@ -57,11 +54,12 @@ const FeedbackPage = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading feedback..." />
+      <div className="admin-dashboard">
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading feedback...</p>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
@@ -70,52 +68,59 @@ const FeedbackPage = () => {
   };
 
   return (
-    <PageContainer>
-      <PageHeader title="Customer Feedback" />
-      <PageContent>
-        <div className="space-y-4">
-          {feedback.length === 0 ? (
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-center text-gray-500">No feedback found.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            feedback.map((item) => (
-              <Card key={item.id}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Customer Feedback</h1>
+        <p className="page-subtitle">Reviews and ratings from your customers</p>
+      </div>
+
+      <div className="standard-content">
+        {feedback.length === 0 ? (
+          <div className="card">
+            <div className="card-body">
+              <div className="empty-state">
+                <div className="empty-state-icon">⭐</div>
+                <p>No feedback found.</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-1 gap-lg">
+            {feedback.map((item) => (
+              <div key={item.id} className="card">
+                <div className="card-body">
+                  <div className="card-header">
                     <div>
-                      <h3 className="font-semibold text-lg">{item.customerName}</h3>
-                      <p className="text-sm text-gray-500">
+                      <h3 className="card-title">{item.customerName}</h3>
+                      <p className="card-description">
                         {item.createdAt.toLocaleDateString()} at {item.createdAt.toLocaleTimeString()}
                       </p>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="card-description">
                         Booking ID: {item.bookingId}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <div className="text-yellow-500 text-lg">
+                    <div className="rating-display">
+                      <div className="rating-stars">
                         {getRatingStars(item.rating)}
                       </div>
-                      <p className="text-sm text-gray-600">{item.rating}/5</p>
+                      <p className="rating-score">{item.rating}/5</p>
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-gray-700 whitespace-pre-wrap">{item.comment}</p>
+                  <div className="comment-content">
+                    <p>{item.comment}</p>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">
+                  <div className="contact-info">
+                    <p className="card-description">
                       Contact: {item.customerEmail}
                     </p>
                   </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-      </PageContent>
-    </PageContainer>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

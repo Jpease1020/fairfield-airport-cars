@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import withAuth from '../withAuth';
 import { listBookings } from '../../../lib/services/booking-service';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/card';
 
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false }) as any;
 const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
@@ -28,11 +26,15 @@ const CalendarPage = () => {
   }, []);
 
   return (
-    <PageContainer className="bg-bg-secondary">
-      <PageHeader title="Ride Calendar" />
-      <PageContent>
-        <Card>
-          <CardContent className="p-6">
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Ride Calendar</h1>
+        <p className="page-subtitle">View all bookings in calendar format</p>
+      </div>
+
+      <div className="standard-content">
+        <div className="card">
+          <div className="card-body">
             {typeof window !== 'undefined' && (
               <FullCalendar
                 plugins={[dayGridPlugin]}
@@ -41,10 +43,10 @@ const CalendarPage = () => {
                 height="auto"
               />
             )}
-          </CardContent>
-        </Card>
-      </PageContent>
-    </PageContainer>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
