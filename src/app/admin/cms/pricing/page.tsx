@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { PricingSettings } from '@/types/cms';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { PageHeader } from '@/components/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -122,64 +122,70 @@ const PricingSettingsPage = () => {
     });
   };
 
+  const headerActions = [
+    { 
+      label: 'Back to CMS', 
+      href: '/admin/cms', 
+      variant: 'outline' as const 
+    },
+    { 
+      label: saving ? 'Saving...' : 'Save Changes', 
+      onClick: handleSave, 
+      variant: 'primary' as const,
+      disabled: saving || !settings
+    }
+  ];
+
   if (loading) {
     return (
-      <PageContainer>
-        <PageHeader title="Pricing Settings" />
-        <PageContent>
-          <div className="flex items-center justify-center h-64">
-            <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
-          </div>
-        </PageContent>
-      </PageContainer>
+      <div className="admin-dashboard">
+        <AdminNavigation />
+        <PageHeader
+          title="Pricing Settings"
+          subtitle="Loading pricing configuration..."
+        />
+        <div className="flex items-center justify-center h-64">
+          <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
+        </div>
+      </div>
     );
   }
 
   if (!settings) {
     return (
-      <PageContainer>
-        <PageHeader title="Pricing Settings" />
-        <PageContent>
-          <div className="flex items-center justify-center h-64">
-            <AlertCircle className="h-8 w-8 text-error" />
-            <span className="ml-2 text-gray-600">Failed to load settings</span>
-          </div>
-        </PageContent>
-      </PageContainer>
+      <div className="admin-dashboard">
+        <AdminNavigation />
+        <PageHeader
+          title="Pricing Settings"
+          subtitle="Failed to load settings"
+        />
+        <div className="flex items-center justify-center h-64">
+          <AlertCircle className="h-8 w-8 text-error" />
+          <span className="ml-2 text-gray-600">Failed to load settings</span>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="admin-dashboard bg-bg-secondary">
       <AdminNavigation />
-      <PageContainer className="bg-bg-secondary">
-        <PageHeader 
-          title="Pricing Settings" 
-          subtitle="Manage fare structure, zones, and cancellation policies"
-        >
-        <div className="flex items-center space-x-2">
-          {saved && (
-            <Badge variant="secondary" className="bg-bg-success text-text-success">
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Saved
-            </Badge>
-          )}
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center space-x-2"
-          >
-            {saving ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            <span>{saving ? 'Saving...' : 'Save Changes'}</span>
-          </Button>
-        </div>
-      </PageHeader>
+      <PageHeader
+        title="Pricing Settings"
+        subtitle="Manage fare structure, zones, and cancellation policies"
+        actions={headerActions}
+      />
 
-      <PageContent>
+      {saved && (
+        <div className="mb-6">
+          <Badge variant="secondary" className="bg-bg-success text-text-success">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Pricing settings saved successfully
+          </Badge>
+        </div>
+      )}
+
+      <div className="standard-content">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Base Pricing */}
           <Card>
@@ -392,78 +398,9 @@ const PricingSettingsPage = () => {
               )}
             </CardContent>
           </Card>
-
-          {/* Pricing Preview */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Pricing Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-4 p-4 border rounded-lg">
-                  <h4 className="font-medium text-center">Base Pricing</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Base Fare:</span>
-                      <span className="font-medium">${settings.baseFare.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Per Mile:</span>
-                      <span className="font-medium">${settings.perMile.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Per Minute:</span>
-                      <span className="font-medium">${settings.perMinute.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Deposit:</span>
-                      <span className="font-medium">{settings.depositPercent}%</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4 p-4 border rounded-lg">
-                  <h4 className="font-medium text-center">Cancellation Policy</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Over 24h:</span>
-                      <span className="font-medium">{settings.cancellation.over24hRefundPercent}% refund</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>3-24h:</span>
-                      <span className="font-medium">{settings.cancellation.between3And24hRefundPercent}% refund</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Under 3h:</span>
-                      <span className="font-medium">{settings.cancellation.under3hRefundPercent}% refund</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4 p-4 border rounded-lg">
-                  <h4 className="font-medium text-center">Zones</h4>
-                  <div className="space-y-2 text-sm">
-                    {settings.zones.length === 0 ? (
-                      <p className="text-gray-500 text-center">No zones configured</p>
-                    ) : (
-                      settings.zones.map((zone, index) => (
-                        <div key={index} className="border-t pt-2">
-                          <div className="font-medium">{zone.name}</div>
-                          <div className="text-xs text-gray-600">
-                            ${zone.baseFare} + ${zone.perMile}/mile + ${zone.perMinute}/min
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
-      </PageContent>
-    </PageContainer>
-    </>
+      </div>
+    </div>
   );
 };
 
