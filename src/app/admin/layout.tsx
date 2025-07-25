@@ -1,8 +1,18 @@
+'use client';
+
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { AdminProvider } from '@/components/admin/AdminProvider';
 import AdminHamburgerMenu from '@/components/admin/AdminHamburgerMenu';
+import { usePathname } from 'next/navigation';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  
+  // Skip admin layout for login page
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen bg-bg-secondary">
       {/* Top Navigation Bar */}
