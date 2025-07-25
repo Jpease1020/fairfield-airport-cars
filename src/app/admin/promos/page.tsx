@@ -3,10 +3,6 @@
 import { useEffect, useState } from 'react';
 import withAuth from '../withAuth';
 import { PromoCode } from '@/types/promo';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { FormField, FormSection, FormActions, SelectField } from '@/components/forms';
-import { DataTable } from '@/components/data';
-import { Button } from '@/components/ui/button';
 
 const PromosPage = () => {
   const [promos, setPromos] = useState<PromoCode[]>([]);
@@ -34,90 +30,140 @@ const PromosPage = () => {
   };
 
   return (
-    <PageContainer>
-      <PageHeader title="Promo Codes" />
-      <PageContent>
-        <FormSection title="Add New Promo Code" columns={2}>
-          <FormField
-            label="Code (uppercase)"
-            value={form.code}
-            onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}
-            required
-          />
-          <SelectField
-            label="Type"
-            value={form.type}
-            onChange={(e) => setForm({...form, type: e.target.value})}
-            options={[
-              { value: 'percent', label: 'Percent %' },
-              { value: 'flat', label: 'Flat $' }
-            ]}
-            required
-          />
-          <FormField
-            label="Value"
-            type="number"
-            value={form.value}
-            onChange={(e) => setForm({...form, value: e.target.value})}
-            required
-          />
-          <FormField
-            label="Expires At (optional)"
-            type="date"
-            value={form.expiresAt}
-            onChange={(e) => setForm({...form, expiresAt: e.target.value})}
-          />
-          <FormField
-            label="Usage Limit (optional)"
-            type="number"
-            value={form.usageLimit}
-            onChange={(e) => setForm({...form, usageLimit: e.target.value})}
-          />
-        </FormSection>
-        
-        <FormActions>
-          <Button 
-            onClick={addPromo}
-            disabled={!form.code || loading}
-            className="w-full sm:w-auto"
-          >
-            {loading ? 'Adding...' : 'Add Promo'}
-          </Button>
-        </FormActions>
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Promo Codes</h1>
+        <p className="page-subtitle">Create and manage promotional discount codes</p>
+      </div>
 
-        <DataTable
-          data={promos}
-          columns={[
-            { key: 'code', label: 'Code' },
-            { key: 'type', label: 'Type' },
-            { key: 'value', label: 'Value' },
-            { 
-              key: 'expiresAt', 
-              label: 'Expiry',
-              render: (item) => item.expiresAt ? new Date(item.expiresAt).toLocaleDateString() : '-'
-            },
-            { 
-              key: 'usageCount', 
-              label: 'Uses',
-              render: (item) => `${item.usageCount}/${item.usageLimit ?? '∞'}`
-            },
-            {
-              key: 'actions',
-              label: '',
-              render: (item) => (
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
-                  onClick={() => item.id && del(item.id)}
+      <div className="standard-content">
+        {/* Add New Promo Section */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Add New Promo Code</h2>
+          </div>
+          <div className="card-body">
+            <div className="form-grid-2">
+              <div className="form-group">
+                <label className="form-label">Code (uppercase)</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={form.code}
+                  onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Type</label>
+                <select
+                  className="form-input"
+                  value={form.type}
+                  onChange={(e) => setForm({...form, type: e.target.value})}
+                  required
                 >
-                  Delete
-                </Button>
-              )
-            }
-          ]}
-        />
-      </PageContent>
-    </PageContainer>
+                  <option value="percent">Percent %</option>
+                  <option value="flat">Flat $</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Value</label>
+                <input
+                  type="number"
+                  className="form-input"
+                  value={form.value}
+                  onChange={(e) => setForm({...form, value: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Expires At (optional)</label>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={form.expiresAt}
+                  onChange={(e) => setForm({...form, expiresAt: e.target.value})}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Usage Limit (optional)</label>
+                <input
+                  type="number"
+                  className="form-input"
+                  value={form.usageLimit}
+                  onChange={(e) => setForm({...form, usageLimit: e.target.value})}
+                />
+              </div>
+            </div>
+            
+            <div className="form-actions">
+              <button 
+                className="btn btn-primary"
+                onClick={addPromo}
+                disabled={!form.code || loading}
+              >
+                {loading ? 'Adding...' : 'Add Promo'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Promos Table */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Active Promo Codes</h2>
+          </div>
+          <div className="card-body">
+            {promos.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-state-icon">🎟️</div>
+                <p>No promo codes found.</p>
+              </div>
+            ) : (
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Expiry</th>
+                    <th>Uses</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {promos.map((promo) => (
+                    <tr key={promo.id}>
+                      <td className="promo-code">{promo.code}</td>
+                      <td className="promo-type">{promo.type}</td>
+                      <td className="promo-value">{promo.value}</td>
+                      <td className="promo-expiry">
+                        {promo.expiresAt ? new Date(promo.expiresAt).toLocaleDateString() : '-'}
+                      </td>
+                      <td className="promo-usage">
+                        {promo.usageCount}/{promo.usageLimit ?? '∞'}
+                      </td>
+                      <td className="promo-actions">
+                        <button 
+                          className="btn btn-destructive btn-sm"
+                          onClick={() => promo.id && del(promo.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

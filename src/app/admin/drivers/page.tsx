@@ -1,19 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/data';
-import { 
-  UserPlus, 
-  MapPin, 
-  Clock, 
-  Star,
-  Car,
-  Phone,
-  Mail
-} from 'lucide-react';
 
 interface Driver {
   id: string;
@@ -92,10 +79,10 @@ export default function DriversPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800';
-      case 'on-trip': return 'bg-blue-100 text-blue-800';
-      case 'offline': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'available': return 'status-badge confirmed';
+      case 'on-trip': return 'status-badge pending';
+      case 'offline': return 'badge';
+      default: return 'badge';
     }
   };
 
@@ -110,188 +97,176 @@ export default function DriversPage() {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading drivers..." />
+      <div className="admin-dashboard">
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading drivers...</p>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
-      <PageHeader 
-        title="Driver Management" 
-        subtitle="Manage your drivers, track their status, and assign rides."
-      >
-        <Button>
-          <UserPlus className="w-4 h-4 mr-2" />
-          Add Driver
-        </Button>
-      </PageHeader>
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Driver Management</h1>
+        <p className="page-subtitle">Manage your drivers, track their status, and assign rides.</p>
+        <div className="header-actions">
+          <button className="btn btn-primary">
+            <span className="btn-icon">👤</span>
+            Add Driver
+          </button>
+        </div>
+      </div>
 
-      <PageContent>
+      <div className="standard-content">
         {/* Driver Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <UserPlus className="h-6 w-6 text-green-600" />
+        <div className="grid grid-4 gap-lg">
+          <div className="card">
+            <div className="card-body">
+              <div className="stat-display">
+                <div className="stat-content">
+                  <div className="stat-label">Total Drivers</div>
+                  <div className="stat-number">{drivers.length}</div>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Total Drivers</p>
-                  <p className="text-2xl font-bold text-text-primary">{drivers.length}</p>
-                </div>
+                <div className="stat-icon">👥</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <MapPin className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Available</p>
-                  <p className="text-2xl font-bold text-text-primary">
+          <div className="card">
+            <div className="card-body">
+              <div className="stat-display">
+                <div className="stat-content">
+                  <div className="stat-label">Available</div>
+                  <div className="stat-number">
                     {drivers.filter(d => d.status === 'available').length}
-                  </p>
+                  </div>
                 </div>
+                <div className="stat-icon">📍</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Clock className="h-6 w-6 text-orange-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">On Trip</p>
-                  <p className="text-2xl font-bold text-text-primary">
+          <div className="card">
+            <div className="card-body">
+              <div className="stat-display">
+                <div className="stat-content">
+                  <div className="stat-label">On Trip</div>
+                  <div className="stat-number">
                     {drivers.filter(d => d.status === 'on-trip').length}
-                  </p>
+                  </div>
                 </div>
+                <div className="stat-icon">⏰</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Star className="h-6 w-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-text-primary">Avg Rating</p>
-                  <p className="text-2xl font-bold text-text-primary">
+          <div className="card">
+            <div className="card-body">
+              <div className="stat-display">
+                <div className="stat-content">
+                  <div className="stat-label">Avg Rating</div>
+                  <div className="stat-number">
                     {(drivers.reduce((sum, d) => sum + d.rating, 0) / drivers.length).toFixed(1)}
-                  </p>
+                  </div>
                 </div>
+                <div className="stat-icon">⭐</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Drivers List */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Drivers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Active Drivers</h2>
+          </div>
+          <div className="card-body">
+            <div className="drivers-list">
               {drivers.map((driver) => (
-                <div key={driver.id} className="border border-border-primary rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center">
-                          <span className="text-text-inverse font-semibold">
-                            {driver.name.split(' ').map(n => n[0]).join('')}
-                          </span>
+                <div key={driver.id} className="driver-card">
+                  <div className="driver-header">
+                    <div className="driver-avatar">
+                      <div className="driver-initials">
+                        {driver.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                    </div>
+                    
+                    <div className="driver-info">
+                      <div className="driver-name-row">
+                        <h3 className="driver-name">{driver.name}</h3>
+                        <span className={getStatusColor(driver.status)}>
+                          {getStatusIcon(driver.status)} {driver.status}
+                        </span>
+                      </div>
+                      
+                      <div className="driver-contact">
+                        <div className="contact-item">
+                          <span className="contact-icon">📞</span>
+                          <span>{driver.phone}</span>
+                        </div>
+                        <div className="contact-item">
+                          <span className="contact-icon">📧</span>
+                          <span>{driver.email}</span>
+                        </div>
+                        <div className="contact-item">
+                          <span className="contact-icon">⭐</span>
+                          <span>{driver.rating} ({driver.totalRides} rides)</span>
                         </div>
                       </div>
                       
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="text-lg font-semibold text-text-primary">{driver.name}</h3>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(driver.status)}`}>
-                            {getStatusIcon(driver.status)} {driver.status}
-                          </span>
+                      <div className="driver-vehicle">
+                        <div className="vehicle-info">
+                          <span className="vehicle-icon">🚗</span>
+                          <span>{driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model} - {driver.vehicle.color}</span>
                         </div>
-                        
-                        <div className="flex items-center space-x-4 mt-2 text-sm text-text-secondary">
-                          <div className="flex items-center">
-                            <Phone className="w-4 h-4 mr-1" />
-                            {driver.phone}
-                          </div>
-                          <div className="flex items-center">
-                            <Mail className="w-4 h-4 mr-1" />
-                            {driver.email}
-                          </div>
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 mr-1" />
-                            {driver.rating} ({driver.totalRides} rides)
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center space-x-4 mt-2 text-sm text-text-secondary">
-                          <div className="flex items-center">
-                            <Car className="w-4 h-4 mr-1" />
-                            {driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model} - {driver.vehicle.color}
-                          </div>
-                          <div className="text-xs bg-bg-secondary px-2 py-1 rounded">
-                            {driver.vehicle.licensePlate}
-                          </div>
+                        <div className="license-plate">
+                          {driver.vehicle.licensePlate}
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
+                    <div className="driver-actions">
+                      <button className="btn btn-outline btn-sm">
                         View Details
-                      </Button>
-                      <Button variant="outline" size="sm">
+                      </button>
+                      <button className="btn btn-outline btn-sm">
                         Assign Ride
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold text-text-primary mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-20">
-              <div className="text-center">
-                <UserPlus className="w-6 h-6 mx-auto mb-2" />
-                <span className="text-sm">Add New Driver</span>
-              </div>
-            </Button>
-            
-            <Button variant="outline" className="h-20">
-              <div className="text-center">
-                <MapPin className="w-6 h-6 mx-auto mb-2" />
-                <span className="text-sm">View Driver Locations</span>
-              </div>
-            </Button>
-            
-            <Button variant="outline" className="h-20">
-              <div className="text-center">
-                <Clock className="w-6 h-6 mx-auto mb-2" />
-                <span className="text-sm">Schedule Management</span>
-              </div>
-            </Button>
           </div>
         </div>
-      </PageContent>
-    </PageContainer>
+
+        {/* Quick Actions */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Quick Actions</h2>
+          </div>
+          <div className="card-body">
+            <div className="quick-actions">
+              <button className="quick-action-card">
+                <div className="action-icon">👤</div>
+                <span className="action-label">Add New Driver</span>
+              </button>
+              
+              <button className="quick-action-card">
+                <div className="action-icon">📍</div>
+                <span className="action-label">View Driver Locations</span>
+              </button>
+              
+              <button className="quick-action-card">
+                <div className="action-icon">⏰</div>
+                <span className="action-label">Schedule Management</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 } 

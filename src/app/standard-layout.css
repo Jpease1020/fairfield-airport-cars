@@ -744,6 +744,294 @@ body {
 .help-resource-icon {
   font-size: var(--font-size-md);
 }
+
+/* Costs page specific styles */
+.stat-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-number {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stat-date {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.cost-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: between;
+}
+
+.cost-info {
+  flex: 1;
+}
+
+.cost-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.status-icon {
+  font-size: var(--font-size-lg);
+}
+
+.cost-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  margin: var(--spacing-md) 0;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.detail-value {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.cost-notes {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background-color: #eff6ff;
+  border-radius: var(--border-radius);
+  border-left: 4px solid #2563eb;
+}
+
+.cost-notes p {
+  margin: 0;
+  color: #1e40af;
+  font-size: var(--font-size-sm);
+}
+
+.cost-amounts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.amount-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.amount-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.amount-value {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Promos table specific styles */
+.promo-code {
+  font-family: monospace;
+  font-weight: 600;
+  background-color: var(--background-muted);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+}
+
+.promo-type {
+  text-transform: capitalize;
+}
+
+.promo-value {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.promo-usage {
+  font-family: monospace;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cost-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .cost-amounts {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Drivers page specific styles */
+.drivers-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.driver-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  background-color: var(--background-primary);
+}
+
+.driver-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+}
+
+.driver-avatar {
+  flex-shrink: 0;
+}
+
+.driver-initials {
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}
+
+.driver-info {
+  flex: 1;
+}
+
+.driver-name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.driver-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.driver-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  margin: var(--spacing-sm) 0;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.contact-icon {
+  font-size: var(--font-size-md);
+}
+
+.driver-vehicle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--spacing-sm);
+}
+
+.vehicle-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.vehicle-icon {
+  font-size: var(--font-size-md);
+}
+
+.license-plate {
+  background-color: var(--background-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-family: monospace;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.driver-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  margin-right: var(--spacing-xs);
+}
+
+/* Responsive driver cards */
+@media (max-width: 768px) {
+  .driver-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .driver-actions {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .driver-contact {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .driver-vehicle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+}
 .standard-navigation {
   background-color: var(--background-primary);
   border-bottom: 1px solid var(--border-color);

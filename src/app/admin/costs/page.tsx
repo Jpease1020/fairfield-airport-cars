@@ -1,19 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/data';
 import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';
-import { 
-  DollarSign, 
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Receipt
-} from 'lucide-react';
 import Link from 'next/link';
 
 const CostsPage = () => {
@@ -41,166 +29,167 @@ const CostsPage = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading cost data..." />
+      <div className="admin-dashboard">
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading cost data...</p>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   const getStatusIcon = (cost: RealCostItem) => {
-    if (cost.actualMonthlyCost === 0) return <Clock className="h-4 w-4 text-gray-500" />;
-    if (cost.actualMonthlyCost > cost.projectedMonthlyCost) return <XCircle className="h-4 w-4 text-red-500" />;
-    return <CheckCircle className="h-4 w-4 text-green-500" />;
+    if (cost.actualMonthlyCost === 0) return '⏱️';
+    if (cost.actualMonthlyCost > cost.projectedMonthlyCost) return '❌';
+    return '✅';
   };
 
   const getDataSourceColor = (dataSource: string) => {
     switch (dataSource) {
-      case 'api': return 'bg-blue-100 text-blue-800';
-      case 'manual': return 'bg-yellow-100 text-yellow-800';
-      case 'estimated': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'api': return 'status-badge confirmed';
+      case 'manual': return 'status-badge pending';
+      case 'estimated': return 'badge';
+      default: return 'badge';
     }
   };
 
   return (
-    <PageContainer>
-      <PageHeader title="Cost Tracking" />
-      <PageContent>
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Cost Tracking</h1>
+        <p className="page-subtitle">Monitor your business expenses and projected costs</p>
+      </div>
+
+      <div className="standard-content">
         {/* Summary Cards */}
         {summary && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Total Monthly</p>
-                    <p className="text-2xl font-bold text-gray-900">
+          <div className="grid grid-4 gap-lg">
+            <div className="card">
+              <div className="card-body">
+                <div className="stat-display">
+                  <div className="stat-content">
+                    <div className="stat-label">Total Monthly</div>
+                    <div className="stat-number">
                       ${summary.totalActualMonthly.toFixed(2)}
-                    </p>
+                    </div>
                   </div>
-                  <DollarSign className="h-8 w-8 text-blue-500" />
+                  <div className="stat-icon">💰</div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
             
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Yearly Total</p>
-                    <p className="text-2xl font-bold text-gray-900">
+            <div className="card">
+              <div className="card-body">
+                <div className="stat-display">
+                  <div className="stat-content">
+                    <div className="stat-label">Yearly Total</div>
+                    <div className="stat-number">
                       ${summary.totalYearly.toFixed(2)}
-                    </p>
+                    </div>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-green-500" />
+                  <div className="stat-icon">📈</div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
             
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Services</p>
-                    <p className="text-2xl font-bold text-gray-900">{costs.length}</p>
+            <div className="card">
+              <div className="card-body">
+                <div className="stat-display">
+                  <div className="stat-content">
+                    <div className="stat-label">Services</div>
+                    <div className="stat-number">{costs.length}</div>
                   </div>
-                  <Receipt className="h-8 w-8 text-purple-500" />
+                  <div className="stat-icon">🧾</div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
             
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Last Updated</p>
-                    <p className="text-sm text-gray-600">
+            <div className="card">
+              <div className="card-body">
+                <div className="stat-display">
+                  <div className="stat-content">
+                    <div className="stat-label">Last Updated</div>
+                    <div className="stat-date">
                       {new Date(summary.lastUpdated).toLocaleDateString()}
-                    </p>
+                    </div>
                   </div>
-                  <Clock className="h-8 w-8 text-orange-500" />
+                  <div className="stat-icon">⏰</div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         )}
 
         {/* Quick Actions */}
-        <div className="mb-6">
-          <div className="flex gap-4">
-            <Link href="/admin/costs/manual-entry">
-              <Button>
-                Add Manual Cost
-              </Button>
-            </Link>
-            <Button variant="outline" onClick={loadCosts}>
-              Refresh Data
-            </Button>
-          </div>
+        <div className="form-actions">
+          <Link href="/admin/costs/manual-entry" className="btn btn-primary">
+            Add Manual Cost
+          </Link>
+          <button className="btn btn-outline" onClick={loadCosts}>
+            Refresh Data
+          </button>
         </div>
 
         {/* Cost List */}
-        <div className="space-y-4">
+        <div className="grid grid-1 gap-lg">
           {costs.map((cost) => (
-            <Card key={cost.id}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-semibold text-gray-900">{cost.service}</h3>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDataSourceColor(cost.dataSource)}`}>
+            <div key={cost.id} className="card">
+              <div className="card-body">
+                <div className="cost-header">
+                  <div className="cost-info">
+                    <div className="cost-title-row">
+                      <h3 className="card-title">{cost.service}</h3>
+                      <span className={getDataSourceColor(cost.dataSource)}>
                         {cost.dataSource}
                       </span>
-                      {getStatusIcon(cost)}
+                      <span className="status-icon">{getStatusIcon(cost)}</span>
                     </div>
                     
-                    <p className="text-gray-600 mb-3">{cost.description}</p>
+                    <p className="card-description">{cost.description}</p>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                      <div>
-                        <label className="text-sm font-medium text-gray-700">Provider</label>
-                        <p className="text-sm text-gray-600">{cost.provider}</p>
+                    <div className="cost-details grid-3">
+                      <div className="detail-item">
+                        <div className="detail-label">Provider</div>
+                        <div className="detail-value">{cost.provider}</div>
                       </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-700">Plan</label>
-                        <p className="text-sm text-gray-600">{cost.plan}</p>
+                      <div className="detail-item">
+                        <div className="detail-label">Plan</div>
+                        <div className="detail-value">{cost.plan}</div>
                       </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-700">Billing Cycle</label>
-                        <p className="text-sm text-gray-600 capitalize">{cost.billingCycle}</p>
+                      <div className="detail-item">
+                        <div className="detail-label">Billing Cycle</div>
+                        <div className="detail-value">{cost.billingCycle}</div>
                       </div>
                     </div>
                     
                     {cost.notes && (
-                      <div className="mb-3 p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-blue-700">{cost.notes}</p>
+                      <div className="cost-notes">
+                        <p>{cost.notes}</p>
                       </div>
                     )}
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium text-gray-700">Actual Monthly Cost</label>
-                        <p className="text-lg font-semibold text-gray-900">
+                    <div className="cost-amounts grid-2">
+                      <div className="amount-item">
+                        <div className="amount-label">Actual Monthly Cost</div>
+                        <div className="amount-value">
                           ${cost.actualMonthlyCost.toFixed(2)}
-                        </p>
+                        </div>
                       </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-700">Projected Monthly Cost</label>
-                        <p className="text-lg font-semibold text-gray-900">
+                      <div className="amount-item">
+                        <div className="amount-label">Projected Monthly Cost</div>
+                        <div className="amount-value">
                           ${cost.projectedMonthlyCost.toFixed(2)}
-                        </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
-      </PageContent>
-    </PageContainer>
+      </div>
+    </div>
   );
 };
 
