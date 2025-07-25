@@ -5,6 +5,13 @@ import withAuth from '../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 import Link from 'next/link';
+import { 
+  PageHeader, 
+  GridSection, 
+  InfoCard, 
+  ActionGrid
+} from '@/components/ui';
+import { Button } from '@/components/ui/button';
 
 const CMSPage = () => {
   const [config, setConfig] = useState<CMSConfiguration | null>(null);
@@ -61,6 +68,21 @@ const CMSPage = () => {
     }
   };
 
+  const headerActions = [
+    { 
+      label: 'Refresh', 
+      onClick: handleRefresh, 
+      variant: 'outline' as const,
+      disabled: loading
+    },
+    { 
+      label: 'Initialize CMS', 
+      onClick: handleInitializeCMS, 
+      variant: 'primary' as const,
+      disabled: loading
+    }
+  ];
+
   const cmsSections = [
     {
       id: 'pages',
@@ -68,11 +90,7 @@ const CMSPage = () => {
       description: 'Edit homepage, help page, and other content',
       icon: '📄',
       href: '/admin/cms/pages',
-      color: 'cms-card-blue',
-      stats: {
-        pages: config?.pages ? Object.keys(config.pages).length : 0,
-        lastUpdated: lastUpdated
-      }
+      status: config?.pages ? `${Object.keys(config.pages).length} pages` : 'Not configured'
     },
     {
       id: 'business',
@@ -80,11 +98,7 @@ const CMSPage = () => {
       description: 'Company info, contact details, and branding',
       icon: '⚙️',
       href: '/admin/cms/business',
-      color: 'cms-card-green',
-      stats: {
-        companyName: config?.business.company.name || 'Not set',
-        lastUpdated: lastUpdated
-      }
+      status: config?.business.company.name || 'Not set'
     },
     {
       id: 'pricing',
@@ -92,11 +106,7 @@ const CMSPage = () => {
       description: 'Fare structure, zones, and cancellation policies',
       icon: '💰',
       href: '/admin/cms/pricing',
-      color: 'cms-card-yellow',
-      stats: {
-        baseFare: config?.pricing.baseFare || 0,
-        lastUpdated: lastUpdated
-      }
+      status: config?.pricing.baseFare ? `$${config.pricing.baseFare} base fare` : 'Not configured'
     },
     {
       id: 'payment',
@@ -104,11 +114,7 @@ const CMSPage = () => {
       description: 'Square and Stripe configuration',
       icon: '💳',
       href: '/admin/cms/payment',
-      color: 'cms-card-purple',
-      stats: {
-        configured: config?.payment.square.applicationId ? 'Yes' : 'No',
-        lastUpdated: lastUpdated
-      }
+      status: config?.payment.square.applicationId ? 'Configured' : 'Not configured'
     },
     {
       id: 'communication',
@@ -116,11 +122,7 @@ const CMSPage = () => {
       description: 'Email and SMS templates for bookings',
       icon: '📧',
       href: '/admin/cms/communication',
-      color: 'cms-card-red',
-      stats: {
-        templates: 4, // Fixed number of template types
-        lastUpdated: lastUpdated
-      }
+      status: '4 templates'
     },
     {
       id: 'drivers',
@@ -128,11 +130,7 @@ const CMSPage = () => {
       description: 'Driver requirements, compensation, and scheduling',
       icon: '👥',
       href: '/admin/cms/drivers',
-      color: 'cms-card-indigo',
-      stats: {
-        minAge: config?.driver.requirements.minimumAge || 0,
-        lastUpdated: lastUpdated
-      }
+      status: config?.driver?.requirements?.minimumAge ? `${config.driver.requirements.minimumAge}+ years` : 'Not configured'
     },
     {
       id: 'analytics',
@@ -140,17 +138,44 @@ const CMSPage = () => {
       description: 'Google Analytics and reporting settings',
       icon: '📊',
       href: '/admin/cms/analytics',
-      color: 'cms-card-orange',
-      stats: {
-        enabled: config?.analytics.googleAnalytics.enabled ? 'Yes' : 'No',
-        lastUpdated: lastUpdated
-      }
+      status: config?.analytics?.googleAnalytics?.enabled ? 'Enabled' : 'Disabled'
+    }
+  ];
+
+  const quickActions = [
+    {
+      id: 1,
+      icon: "💾",
+      label: "Backup Configuration",
+      onClick: () => alert('Backup functionality coming soon')
+    },
+    {
+      id: 2,
+      icon: "🔄",
+      label: "Restore Defaults",
+      onClick: () => alert('Restore functionality coming soon')
+    },
+    {
+      id: 3,
+      icon: "📅",
+      label: "View History",
+      onClick: () => alert('History functionality coming soon')
+    },
+    {
+      id: 4,
+      icon: "📋",
+      label: "Export Settings",
+      onClick: () => alert('Export functionality coming soon')
     }
   ];
 
   if (loading) {
     return (
       <div className="admin-dashboard">
+        <PageHeader
+          title="Content Management System"
+          subtitle="Loading CMS configuration..."
+        />
         <div className="loading-spinner">
           <div className="loading-spinner-icon">🔄</div>
           <p>Loading CMS configuration...</p>
@@ -161,97 +186,56 @@ const CMSPage = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="section-header">
-        <h1 className="page-title">Content Management System</h1>
-        <p className="page-subtitle">Manage all website content and business settings</p>
-        <div className="header-actions">
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={handleRefresh}
-            disabled={loading}
-          >
-            <span className="btn-icon">🔄</span>
-            Refresh
-          </button>
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={handleInitializeCMS}
-            disabled={loading}
-          >
-            <span className="btn-icon">💾</span>
-            Initialize CMS
-          </button>
-          {lastUpdated && (
-            <span className="badge">
-              <span className="badge-icon">⏰</span>
-              Updated ({new Date(lastUpdated).toLocaleDateString()})
-            </span>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        title="Content Management System"
+        subtitle="Manage all website content and business settings"
+        actions={headerActions}
+      />
 
-      <div className="standard-content">
-        <div className="grid grid-3 gap-lg">
-          {cmsSections.map((section) => (
-            <div key={section.id} className={`card cms-card ${section.color}`}>
-              <div className="card-header">
-                <div className="cms-card-title-row">
-                  <div className="cms-card-icon-wrapper">
-                    <span className="cms-card-icon">{section.icon}</span>
-                  </div>
-                  <div className="cms-card-info">
-                    <h3 className="card-title">{section.title}</h3>
-                    <p className="card-description">{section.description}</p>
-                  </div>
-                </div>
+      <GridSection variant="content" columns={3}>
+        {cmsSections.map((section) => (
+          <InfoCard
+            key={section.id}
+            title={`${section.icon} ${section.title}`}
+            description={section.description}
+          >
+            <div className="cms-section-content">
+              <div className="status-info mb-4">
+                <div className="status-label text-sm text-gray-600">Status:</div>
+                <div className="status-value font-medium">{section.status}</div>
               </div>
-              <div className="card-body">
-                <div className="cms-card-status">
-                  <div className="status-row">
-                    <span className="status-label">Status:</span>
-                    <span className="badge">
-                      {section.id === 'pricing' && `$${section.stats.baseFare} base fare`}
-                      {section.id === 'business' && section.stats.companyName}
-                      {section.id === 'payment' && section.stats.configured}
-                      {section.id === 'communication' && `${section.stats.templates} templates`}
-                      {section.id === 'drivers' && `${section.stats.minAge}+ years`}
-                      {section.id === 'analytics' && section.stats.enabled}
-                      {section.id === 'pages' && `${section.stats.pages} pages`}
-                    </span>
-                  </div>
-                  
-                  <Link href={section.href} className="btn btn-outline cms-manage-btn">
-                    Manage {section.title}
-                  </Link>
-                </div>
-              </div>
+              
+              <Link href={section.href}>
+                <Button variant="outline" className="w-full">
+                  Manage {section.title}
+                </Button>
+              </Link>
             </div>
-          ))}
-        </div>
+          </InfoCard>
+        ))}
+      </GridSection>
 
-        {/* Quick Actions */}
-        <div className="card">
-          <div className="card-header">
-            <h2 className="card-title">Quick Actions</h2>
-          </div>
-          <div className="card-body">
-            <div className="quick-actions">
-              <button className="quick-action-card">
-                <div className="action-icon">💾</div>
-                <span className="action-label">Backup Configuration</span>
-              </button>
-              <button className="quick-action-card">
-                <div className="action-icon">🔄</div>
-                <span className="action-label">Restore Defaults</span>
-              </button>
-              <button className="quick-action-card">
-                <div className="action-icon">📅</div>
-                <span className="action-label">View History</span>
-              </button>
+      <GridSection variant="actions" columns={1}>
+        <InfoCard
+          title="Quick Actions"
+          description="Common CMS management tasks"
+        >
+          <ActionGrid actions={quickActions} columns={4} />
+        </InfoCard>
+      </GridSection>
+
+      {lastUpdated && (
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="🕒 Last Updated"
+            description={`Configuration last updated on ${new Date(lastUpdated).toLocaleDateString()} at ${new Date(lastUpdated).toLocaleTimeString()}`}
+          >
+            <div className="text-sm text-gray-600">
+              All changes are automatically saved and synchronized across your website.
             </div>
-          </div>
-        </div>
-      </div>
+          </InfoCard>
+        </GridSection>
+      )}
     </div>
   );
 };

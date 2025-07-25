@@ -1,10 +1,13 @@
 'use client';
 
+import { PageHeader, GridSection, InfoCard } from '@/components/ui';
+
 const AdminHelpPage = () => {
   const helpSections = [
     {
       title: "Managing Bookings",
       icon: "📖",
+      description: "Learn how to handle customer bookings efficiently",
       items: [
         {
           question: "How do I view all upcoming rides?",
@@ -27,6 +30,7 @@ const AdminHelpPage = () => {
     {
       title: "Content Management (CMS)",
       icon: "⚙️",
+      description: "Update your business information and website content",
       items: [
         {
           question: "How do I update my business information?",
@@ -49,6 +53,7 @@ const AdminHelpPage = () => {
     {
       title: "Customer Communication",
       icon: "📧",
+      description: "Manage automated messages and customer interactions",
       items: [
         {
           question: "What emails do customers receive?",
@@ -71,6 +76,7 @@ const AdminHelpPage = () => {
     {
       title: "Payments & Billing",
       icon: "💳",
+      description: "Handle payments, refunds, and billing processes",
       items: [
         {
           question: "How do payments work?",
@@ -93,6 +99,7 @@ const AdminHelpPage = () => {
     {
       title: "Technical Support",
       icon: "❓",
+      description: "Troubleshooting and technical assistance",
       items: [
         {
           question: "What if the booking form isn't working?",
@@ -114,65 +121,71 @@ const AdminHelpPage = () => {
     }
   ];
 
+  const headerActions = [
+    { 
+      label: 'View Documentation', 
+      href: '/docs', 
+      variant: 'outline' as const 
+    },
+    { 
+      label: 'Contact Support', 
+      onClick: () => alert('Contact your developer for technical support'), 
+      variant: 'primary' as const 
+    }
+  ];
+
   return (
     <div className="admin-dashboard">
-      <div className="section-header">
-        <h1 className="page-title">Admin Help & Guide</h1>
-        <p className="page-subtitle">Everything you need to know about managing your car service business</p>
-      </div>
+      <PageHeader
+        title="Admin Help & Guide"
+        subtitle="Everything you need to know about managing your car service business"
+        actions={headerActions}
+      />
 
-      <div className="standard-content">
-        <div className="grid grid-1 gap-lg">
-          {helpSections.map((section, sectionIndex) => (
-            <div key={sectionIndex} className="card">
-              <div className="card-header">
-                <h2 className="card-title">
-                  <span className="card-icon">{section.icon}</span>
-                  {section.title}
-                </h2>
-              </div>
-              <div className="card-body">
-                <div className="help-items">
-                  {section.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="help-item">
-                      <h4 className="help-question">{item.question}</h4>
-                      <p className="help-answer">{item.answer}</p>
-                    </div>
-                  ))}
+      <GridSection variant="content" columns={2}>
+        {helpSections.map((section, sectionIndex) => (
+          <InfoCard
+            key={sectionIndex}
+            title={`${section.icon} ${section.title}`}
+            description={section.description}
+          >
+            <div className="help-items">
+              {section.items.map((item, itemIndex) => (
+                <div key={itemIndex} className="help-item">
+                  <h4 className="help-question">{item.question}</h4>
+                  <p className="help-answer">{item.answer}</p>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </InfoCard>
+        ))}
+      </GridSection>
 
-          <div className="card">
-            <div className="card-header">
-              <h2 className="card-title">
-                <span className="card-icon">📞</span>
-                Need More Help?
-              </h2>
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="📞 Need More Help?"
+          description="If you can't find the answer you're looking for, here are additional resources"
+        >
+          <div className="help-resources">
+            <div className="help-resource">
+              <span className="help-resource-icon">💬</span>
+              <span>Contact your developer for technical support</span>
             </div>
-            <div className="card-body">
-              <p className="card-description">
-                If you can't find the answer you're looking for, here are additional resources:
-              </p>
-              <div className="help-resources">
-                <div className="help-resource">
-                  <span className="help-resource-icon">💬</span>
-                  <span>Contact your developer for technical support</span>
-                </div>
-                <div className="help-resource">
-                  <span className="help-resource-icon">📄</span>
-                  <span>Check the business documentation in your project files</span>
-                </div>
-                <div className="help-resource">
-                  <span className="help-resource-icon">⚙️</span>
-                  <span>Review your CMS settings for configuration options</span>
-                </div>
-              </div>
+            <div className="help-resource">
+              <span className="help-resource-icon">📄</span>
+              <span>Check the business documentation in your project files</span>
+            </div>
+            <div className="help-resource">
+              <span className="help-resource-icon">⚙️</span>
+              <span>Review your CMS settings for configuration options</span>
+            </div>
+            <div className="help-resource">
+              <span className="help-resource-icon">📊</span>
+              <span>Use the Admin Dashboard to monitor your business metrics</span>
             </div>
           </div>
-        </div>
-      </div>
+        </InfoCard>
+      </GridSection>
     </div>
   );
 };
