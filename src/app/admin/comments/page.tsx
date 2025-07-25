@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
+import { 
+  PageHeader, 
+  GridSection, 
+  InfoCard
+} from '@/components/ui';
+import { EmptyState } from '@/components/data';
+import { Button } from '@/components/ui/button';
 
 const CommentsPage = () => {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
@@ -22,9 +29,27 @@ const CommentsPage = () => {
     loadComments();
   }, []);
 
+  const headerActions = [
+    { 
+      label: 'Refresh', 
+      onClick: loadComments, 
+      variant: 'outline' as const,
+      disabled: loading
+    },
+    { 
+      label: 'Comment Settings', 
+      href: '/admin/cms/communication', 
+      variant: 'primary' as const 
+    }
+  ];
+
   if (loading) {
     return (
       <div className="admin-dashboard">
+        <PageHeader
+          title="Comments"
+          subtitle="Loading comments..."
+        />
         <div className="loading-spinner">
           <div className="loading-spinner-icon">🔄</div>
           <p>Loading comments...</p>
@@ -35,49 +60,48 @@ const CommentsPage = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="section-header">
-        <h1 className="page-title">Comments</h1>
-        <p className="page-subtitle">Manage page comments and feedback</p>
-      </div>
+      <PageHeader
+        title="Comments"
+        subtitle="Manage page comments and feedback"
+        actions={headerActions}
+      />
 
-      <div className="standard-content">
-        {comments.length === 0 ? (
-          <div className="card">
-            <div className="card-body">
-              <div className="empty-state">
-                <div className="empty-state-icon">💬</div>
-                <p>No comments found.</p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-1 gap-lg">
-            {comments.map((comment) => (
-              <div key={comment.id} className="card">
-                <div className="card-body">
-                  <div className="card-header">
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="Page Comments"
+          description={`Showing ${comments.length} comments from your website`}
+        >
+          {comments.length === 0 ? (
+            <EmptyState
+              icon="💬"
+              title="No comments found"
+              description="Page comments will appear here when visitors leave feedback"
+            />
+          ) : (
+            <div className="comments-list space-y-4">
+              {comments.map((comment) => (
+                <div key={comment.id} className="comment-item border-b pb-4 last:border-b-0">
+                  <div className="comment-header flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="card-title">{comment.createdBy}</h3>
-                      <p className="card-description">
-                        {new Date(comment.createdAt).toLocaleDateString()} at {new Date(comment.createdAt).toLocaleTimeString()}
-                      </p>
-                      <p className="card-description">
-                        Page: {comment.pageTitle}
-                      </p>
+                      <h3 className="font-semibold text-lg">{comment.createdBy}</h3>
+                      <div className="text-sm text-gray-600">
+                        <p>{new Date(comment.createdAt).toLocaleDateString()} at {new Date(comment.createdAt).toLocaleTimeString()}</p>
+                        <p className="font-medium">Page: {comment.pageTitle}</p>
+                      </div>
                     </div>
-                    <button className="btn btn-outline btn-sm">
+                    <Button variant="outline" size="sm">
                       View Context
-                    </button>
+                    </Button>
                   </div>
                   <div className="comment-content">
-                    <p>{comment.comment}</p>
+                    <p className="text-gray-800">{comment.comment}</p>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+        </InfoCard>
+      </GridSection>
     </div>
   );
 };

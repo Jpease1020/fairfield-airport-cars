@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { PageHeader } from '@/components/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
 import { Badge } from '@/components/ui/badge';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { 
@@ -83,64 +82,70 @@ const BusinessSettingsPage = () => {
     });
   };
 
+  const headerActions = [
+    { 
+      label: 'Back to CMS', 
+      href: '/admin/cms', 
+      variant: 'outline' as const 
+    },
+    { 
+      label: saving ? 'Saving...' : 'Save Changes', 
+      onClick: handleSave, 
+      variant: 'primary' as const,
+      disabled: saving || !settings
+    }
+  ];
+
   if (loading) {
     return (
-      <PageContainer>
-        <PageHeader title="Business Settings" />
-        <PageContent>
-          <div className="flex items-center justify-center h-64">
-            <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
-          </div>
-        </PageContent>
-      </PageContainer>
+      <div className="admin-dashboard">
+        <AdminNavigation />
+        <PageHeader
+          title="Business Settings"
+          subtitle="Loading business configuration..."
+        />
+        <div className="flex items-center justify-center h-64">
+          <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
+        </div>
+      </div>
     );
   }
 
   if (!settings) {
     return (
-      <PageContainer>
-        <PageHeader title="Business Settings" />
-        <PageContent>
-          <div className="flex items-center justify-center h-64">
-            <AlertCircle className="h-8 w-8 text-error" />
-            <span className="ml-2 text-gray-600">Failed to load settings</span>
-          </div>
-        </PageContent>
-      </PageContainer>
+      <div className="admin-dashboard">
+        <AdminNavigation />
+        <PageHeader
+          title="Business Settings"
+          subtitle="Failed to load settings"
+        />
+        <div className="flex items-center justify-center h-64">
+          <AlertCircle className="h-8 w-8 text-error" />
+          <span className="ml-2 text-gray-600">Failed to load settings</span>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="admin-dashboard bg-bg-secondary">
       <AdminNavigation />
-      <PageContainer className="bg-bg-secondary">
-        <PageHeader 
-          title="Business Settings" 
-          subtitle="Manage company information, contact details, and branding"
-        >
-        <div className="flex items-center space-x-2">
-          {saved && (
-            <Badge variant="secondary" className="bg-bg-success text-text-success">
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Saved
-            </Badge>
-          )}
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center space-x-2"
-          >
-            {saving ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            <span>{saving ? 'Saving...' : 'Save Changes'}</span>
-          </Button>
-        </div>
-      </PageHeader>
+      <PageHeader
+        title="Business Settings"
+        subtitle="Manage company information, contact details, and branding"
+        actions={headerActions}
+      />
 
-      <PageContent>
+      {saved && (
+        <div className="mb-6">
+          <Badge variant="secondary" className="bg-bg-success text-text-success">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Settings saved successfully
+          </Badge>
+        </div>
+      )}
+
+      <div className="standard-content">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Company Information */}
           <Card>
@@ -157,7 +162,7 @@ const BusinessSettingsPage = () => {
                   id="companyName"
                   value={settings.company.name}
                   onChange={(e) => handleInputChange('company', 'name', e.target.value)}
-                  placeholder="Fairfield Airport Car Service"
+                  placeholder="Your Company Name"
                 />
               </div>
 
@@ -165,9 +170,9 @@ const BusinessSettingsPage = () => {
                 <Label htmlFor="tagline">Tagline</Label>
                 <Input
                   id="tagline"
-                  value={settings.company.tagline}
+                  value={settings.company.tagline || ''}
                   onChange={(e) => handleInputChange('company', 'tagline', e.target.value)}
-                  placeholder="Your reliable airport transportation partner"
+                  placeholder="Your company tagline"
                 />
               </div>
 
@@ -188,7 +193,7 @@ const BusinessSettingsPage = () => {
                   type="email"
                   value={settings.company.email}
                   onChange={(e) => handleInputChange('company', 'email', e.target.value)}
-                  placeholder="info@fairfieldairportcars.com"
+                  placeholder="contact@company.com"
                 />
               </div>
 
@@ -196,9 +201,9 @@ const BusinessSettingsPage = () => {
                 <Label htmlFor="address">Address</Label>
                 <Input
                   id="address"
-                  value={settings.company.address}
+                  value={settings.company.address || ''}
                   onChange={(e) => handleInputChange('company', 'address', e.target.value)}
-                  placeholder="Fairfield, CT"
+                  placeholder="123 Main St, City, State 12345"
                 />
               </div>
 
@@ -206,19 +211,9 @@ const BusinessSettingsPage = () => {
                 <Label htmlFor="hours">Business Hours</Label>
                 <Input
                   id="hours"
-                  value={settings.company.hours}
+                  value={settings.company.hours || ''}
                   onChange={(e) => handleInputChange('company', 'hours', e.target.value)}
-                  placeholder="24/7"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  value={settings.company.website}
-                  onChange={(e) => handleInputChange('company', 'website', e.target.value)}
-                  placeholder="https://fairfieldairportcars.com"
+                  placeholder="Mon-Fri 9am-5pm"
                 />
               </div>
             </CardContent>
@@ -367,9 +362,8 @@ const BusinessSettingsPage = () => {
             </CardContent>
           </Card>
         </div>
-      </PageContent>
-    </PageContainer>
-    </>
+      </div>
+    </div>
   );
 };
 

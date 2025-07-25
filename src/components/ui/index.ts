@@ -22,5 +22,4 @@ export { PageSection } from './PageSection';
 
 // Layout Components (for backward compatibility)
 export { PageContainer } from '../layout/PageContainer';
-export { PageHeader as BasicPageHeader } from '../layout/PageHeader';
 export { PageContent } from '../layout/PageContent'; 

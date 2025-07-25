@@ -3,6 +3,16 @@
 import { useEffect, useState } from 'react';
 import withAuth from '../withAuth';
 import { PromoCode } from '@/types/promo';
+import { 
+  PageHeader, 
+  GridSection, 
+  InfoCard
+} from '@/components/ui';
+import { EmptyState } from '@/components/data';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const PromosPage = () => {
   const [promos, setPromos] = useState<PromoCode[]>([]);
@@ -29,140 +39,164 @@ const PromosPage = () => {
     await fetchPromos();
   };
 
+  const headerActions = [
+    { 
+      label: 'Refresh', 
+      onClick: fetchPromos, 
+      variant: 'outline' as const 
+    },
+    { 
+      label: 'Promo Analytics', 
+      onClick: () => alert('Analytics coming soon'), 
+      variant: 'primary' as const 
+    }
+  ];
+
   return (
     <div className="admin-dashboard">
-      <div className="section-header">
-        <h1 className="page-title">Promo Codes</h1>
-        <p className="page-subtitle">Create and manage promotional discount codes</p>
-      </div>
+      <PageHeader
+        title="Promo Codes"
+        subtitle="Create and manage promotional discount codes"
+        actions={headerActions}
+      />
 
-      <div className="standard-content">
-        {/* Add New Promo Section */}
-        <div className="card">
-          <div className="card-header">
-            <h2 className="card-title">Add New Promo Code</h2>
-          </div>
-          <div className="card-body">
-            <div className="form-grid-2">
-              <div className="form-group">
-                <label className="form-label">Code (uppercase)</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={form.code}
-                  onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Type</label>
-                <select
-                  className="form-input"
-                  value={form.type}
-                  onChange={(e) => setForm({...form, type: e.target.value})}
-                  required
-                >
-                  <option value="percent">Percent %</option>
-                  <option value="flat">Flat $</option>
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Value</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={form.value}
-                  onChange={(e) => setForm({...form, value: e.target.value})}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Expires At (optional)</label>
-                <input
-                  type="date"
-                  className="form-input"
-                  value={form.expiresAt}
-                  onChange={(e) => setForm({...form, expiresAt: e.target.value})}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Usage Limit (optional)</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={form.usageLimit}
-                  onChange={(e) => setForm({...form, usageLimit: e.target.value})}
-                />
-              </div>
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="🎟️ Add New Promo Code"
+          description="Create discount codes for your customers"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="code">Code (uppercase)</Label>
+              <Input
+                id="code"
+                type="text"
+                value={form.code}
+                onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}
+                placeholder="SAVE20"
+                required
+              />
             </div>
             
-            <div className="form-actions">
-              <button 
-                className="btn btn-primary"
-                onClick={addPromo}
-                disabled={!form.code || loading}
-              >
-                {loading ? 'Adding...' : 'Add Promo'}
-              </button>
+            <div className="space-y-2">
+              <Label htmlFor="type">Type</Label>
+              <Select value={form.type} onValueChange={(value) => setForm({...form, type: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="percent">Percent %</SelectItem>
+                  <SelectItem value="flat">Flat $</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="value">Value</Label>
+              <Input
+                id="value"
+                type="number"
+                value={form.value}
+                onChange={(e) => setForm({...form, value: e.target.value})}
+                placeholder="20"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="expires">Expires At (optional)</Label>
+              <Input
+                id="expires"
+                type="date"
+                value={form.expiresAt}
+                onChange={(e) => setForm({...form, expiresAt: e.target.value})}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="limit">Usage Limit (optional)</Label>
+              <Input
+                id="limit"
+                type="number"
+                value={form.usageLimit}
+                onChange={(e) => setForm({...form, usageLimit: e.target.value})}
+                placeholder="100"
+              />
             </div>
           </div>
-        </div>
-
-        {/* Promos Table */}
-        <div className="card">
-          <div className="card-header">
-            <h2 className="card-title">Active Promo Codes</h2>
+          
+          <div className="mt-6 flex justify-end">
+            <Button 
+              onClick={addPromo}
+              disabled={!form.code || loading}
+            >
+              {loading ? 'Adding...' : 'Add Promo Code'}
+            </Button>
           </div>
-          <div className="card-body">
-            {promos.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-state-icon">🎟️</div>
-                <p>No promo codes found.</p>
-              </div>
-            ) : (
-              <table className="data-table">
+        </InfoCard>
+      </GridSection>
+
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="Active Promo Codes"
+          description={`Showing ${promos.length} promo codes`}
+        >
+          {promos.length === 0 ? (
+            <EmptyState
+              icon="🎟️"
+              title="No promo codes found"
+              description="Create your first promotional discount code above"
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
                 <thead>
-                  <tr>
-                    <th>Code</th>
-                    <th>Type</th>
-                    <th>Value</th>
-                    <th>Expiry</th>
-                    <th>Uses</th>
-                    <th>Actions</th>
+                  <tr className="border-b">
+                    <th className="text-left p-3 font-medium">Code</th>
+                    <th className="text-left p-3 font-medium">Type</th>
+                    <th className="text-left p-3 font-medium">Value</th>
+                    <th className="text-left p-3 font-medium">Expiry</th>
+                    <th className="text-left p-3 font-medium">Uses</th>
+                    <th className="text-left p-3 font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {promos.map((promo) => (
-                    <tr key={promo.id}>
-                      <td className="promo-code">{promo.code}</td>
-                      <td className="promo-type">{promo.type}</td>
-                      <td className="promo-value">{promo.value}</td>
-                      <td className="promo-expiry">
-                        {promo.expiresAt ? new Date(promo.expiresAt).toLocaleDateString() : '-'}
+                    <tr key={promo.id} className="border-b hover:bg-gray-50">
+                      <td className="p-3">
+                        <span className="font-mono font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          {promo.code}
+                        </span>
                       </td>
-                      <td className="promo-usage">
-                        {promo.usageCount}/{promo.usageLimit ?? '∞'}
+                      <td className="p-3 capitalize">{promo.type}</td>
+                      <td className="p-3">
+                        {promo.type === 'percent' ? `${promo.value}%` : `$${promo.value}`}
                       </td>
-                      <td className="promo-actions">
-                        <button 
-                          className="btn btn-destructive btn-sm"
+                      <td className="p-3">
+                        {promo.expiresAt ? new Date(promo.expiresAt).toLocaleDateString() : '∞'}
+                      </td>
+                      <td className="p-3">
+                        <span className="text-sm">
+                          {promo.usageCount}/{promo.usageLimit ?? '∞'}
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <Button 
+                          variant="destructive"
+                          size="sm"
                           onClick={() => promo.id && del(promo.id)}
                         >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            )}
-          </div>
-        </div>
-      </div>
+            </div>
+          )}
+        </InfoCard>
+      </GridSection>
     </div>
   );
 };
