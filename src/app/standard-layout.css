@@ -85,6 +85,65 @@ body {
 }
 
 /* ===== STANDARD NAVIGATION ===== */
+
+/* Admin Navigation Styles */
+.admin-nav {
+  background-color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-nav .nav-logo {
+  color: white;
+  font-weight: 600;
+}
+
+.admin-nav .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.2s ease;
+}
+
+.admin-nav .nav-link:hover {
+  color: white;
+}
+
+.admin-nav .nav-link-active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+}
+
+.admin-nav .btn-outline {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-nav .btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.admin-nav .hamburger-line {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-nav .mobile-menu {
+  background-color: var(--primary-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-nav .mobile-menu-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-nav .mobile-menu-link:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-nav .mobile-menu-link-active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
 .standard-navigation {
   background-color: var(--background-primary);
   border-bottom: 1px solid var(--border-color);
@@ -163,6 +222,38 @@ body {
   height: 2px;
   background-color: var(--text-primary);
   transition: all 0.2s ease;
+}
+
+.mobile-menu {
+  display: block;
+  background-color: var(--background-primary);
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+}
+
+.mobile-menu-link {
+  display: block;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-link:hover {
+  color: var(--text-primary);
+  background-color: var(--background-muted);
+}
+
+.mobile-menu-link-active {
+  color: var(--primary-color);
+  background-color: var(--background-muted);
+}
+
+.mobile-menu-actions {
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  margin-top: var(--spacing-md);
 }
 
 .nav-mobile-menu {
@@ -905,6 +996,21 @@ body {
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none;
+  }
+  
+  .nav-actions {
+    display: none;
+  }
+  
+  .nav-mobile-toggle {
+    display: block;
+  }
+}
 @media (max-width: 768px) {
   .nav-menu {
     display: none;
