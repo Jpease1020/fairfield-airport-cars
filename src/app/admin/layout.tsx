@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { AdminProvider } from '@/components/admin/AdminProvider';
 import AdminHamburgerMenu from '@/components/admin/AdminHamburgerMenu';
