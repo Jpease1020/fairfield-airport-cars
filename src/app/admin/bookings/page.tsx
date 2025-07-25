@@ -5,14 +5,6 @@ import type { NextPage } from 'next';
 import { Booking } from '@/types/booking';
 import { listBookings, updateBooking, deleteBooking } from '@/lib/services/booking-service';
 import withAuth from '../withAuth';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { DataTable } from '@/components/data';
-import { StatusBadge } from '@/components/data';
-import { Alert } from '@/components/feedback';
-import { LoadingSpinner } from '@/components/data';
-import { Button } from '@/components/ui/button';
-import { SelectField } from '@/components/forms';
-import { Card, CardContent } from '@/components/ui/card';
 
 const AdminBookingsPage: NextPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -58,8 +50,6 @@ const AdminBookingsPage: NextPage = () => {
     return sortableItems;
   }, [bookings, filterStatus, sortConfig]);
 
-  // Sorting is handled by the DataTable component
-
   const handleStatusChange = async (bookingId: string, newStatus: Booking['status']) => {
     try {
       await updateBooking(bookingId, { status: newStatus });
@@ -103,21 +93,23 @@ const AdminBookingsPage: NextPage = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner text="Loading bookings..." />
+      <div className="admin-dashboard">
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading bookings...</p>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <PageContainer>
-        <Alert variant="error" title="Error">
-          {error}
-        </Alert>
-      </PageContainer>
+      <div className="admin-dashboard">
+        <div className="alert error">
+          <h3>Error</h3>
+          <p>{error}</p>
+        </div>
+      </div>
     );
   }
 
@@ -138,139 +130,154 @@ const AdminBookingsPage: NextPage = () => {
     });
   };
 
-  const columns = [
-    {
-      key: 'customer',
-      label: 'Customer',
-      render: (booking: Booking) => (
-        <div>
-          <div className="font-medium">{booking.name}</div>
-          <div className="text-sm text-gray-600">{booking.email}</div>
-          <div className="text-sm text-gray-600">{booking.phone}</div>
-        </div>
-      ),
-    },
-    {
-      key: 'locations',
-      label: 'Pickup / Drop-off',
-      render: (booking: Booking) => (
-        <div>
-          <div className="text-sm">{booking.pickupLocation}</div>
-          <div className="text-sm text-gray-600">{booking.dropoffLocation}</div>
-        </div>
-      ),
-    },
-    {
-      key: 'pickupDateTime',
-      label: 'Date & Time',
-      render: (booking: Booking) => formatDateTime(booking.pickupDateTime),
-      sortable: true,
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      render: (booking: Booking) => <StatusBadge status={booking.status} />,
-      sortable: true,
-    },
-    {
-      key: 'fare',
-      label: 'Fare',
-      render: (booking: Booking) => formatPrice(booking.fare),
-      sortable: true,
-    },
-    {
-      key: 'tipAmount',
-      label: 'Tip',
-      render: (booking: Booking) => formatPrice(booking.tipAmount || 0),
-    },
-    {
-      key: 'cancellationFee',
-      label: 'Cancel Fee',
-      render: (booking: Booking) => formatPrice(booking.cancellationFee || 0),
-    },
-    {
-      key: 'actions',
-      label: 'Actions',
-      render: (booking: Booking) => (
-        <div className="flex flex-col gap-2 min-w-[200px]">
-          <SelectField
-            label=""
-            value={booking.status}
-            onChange={(e) => {
-              if (booking.id) {
-                handleStatusChange(booking.id, e.target.value as Booking['status']);
-              }
-            }}
-            options={[
-              { value: 'pending', label: 'Pending' },
-              { value: 'confirmed', label: 'Confirmed' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'cancelled', label: 'Cancelled' },
-            ]}
-          />
-          <div className="flex gap-2">
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={() => {
-                if (booking.id) {
-                  handleCancelBooking(booking.id);
-                }
-              }}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => {
-                if (booking.id) {
-                  handleSendFeedbackRequest(booking.id);
-                }
-              }}
-            >
-              Feedback
-            </Button>
-          </div>
-        </div>
-      ),
-    },
-  ];
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'pending': return 'status-badge pending';
+      case 'confirmed': return 'status-badge confirmed';
+      case 'completed': return 'status-badge completed';
+      case 'cancelled': return 'status-badge cancelled';
+      default: return 'status-badge';
+    }
+  };
 
   return (
-    <PageContainer className="bg-bg-secondary">
-      <PageHeader 
-        title="Booking Dashboard" 
-        subtitle={`Month-to-date revenue: ${formatPrice(totalRevenue)} | Tips: ${formatPrice(totalTips)} | Cancellation fees: ${formatPrice(totalCancFees)}`}
-      />
-      <PageContent>
-        <Card>
-          <CardContent className="p-6">
-            <div className="mb-6">
-              <SelectField
-                label="Filter by status"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as Booking['status'] | 'all')}
-                options={[
-                  { value: 'all', label: 'All Statuses' },
-                  { value: 'pending', label: 'Pending' },
-                  { value: 'confirmed', label: 'Confirmed' },
-                  { value: 'completed', label: 'Completed' },
-                  { value: 'cancelled', label: 'Cancelled' },
-                ]}
-              />
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">Booking Dashboard</h1>
+        <p className="page-subtitle">
+          Month-to-date revenue: {formatPrice(totalRevenue)} | Tips: {formatPrice(totalTips)} | Cancellation fees: {formatPrice(totalCancFees)}
+        </p>
+      </div>
+
+      <div className="standard-content">
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">All Bookings</h2>
+            <div className="card-actions">
+              <div className="form-group inline">
+                <label className="form-label">Filter by status:</label>
+                <select
+                  className="form-input"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value as Booking['status'] | 'all')}
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
             </div>
-            
-            <DataTable
-              data={sortedAndFilteredBookings}
-              columns={columns}
-              loading={loading}
-              emptyMessage={<span className="text-text-secondary">No bookings found</span>}
-            />
-          </CardContent>
-        </Card>
-      </PageContent>
-    </PageContainer>
+          </div>
+          <div className="card-body">
+            {sortedAndFilteredBookings.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-state-icon">📅</div>
+                <p>No bookings found</p>
+              </div>
+            ) : (
+              <div className="bookings-table-container">
+                <table className="data-table bookings-table">
+                  <thead>
+                    <tr>
+                      <th>Customer</th>
+                      <th>Pickup / Drop-off</th>
+                      <th>Date & Time</th>
+                      <th>Status</th>
+                      <th>Fare</th>
+                      <th>Tip</th>
+                      <th>Cancel Fee</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedAndFilteredBookings.map((booking) => (
+                      <tr key={booking.id}>
+                        <td className="customer-cell">
+                          <div className="customer-info">
+                            <div className="customer-name">{booking.name}</div>
+                            <div className="customer-contact">{booking.email}</div>
+                            <div className="customer-contact">{booking.phone}</div>
+                          </div>
+                        </td>
+                        <td className="location-cell">
+                          <div className="location-info">
+                            <div className="pickup-location">{booking.pickupLocation}</div>
+                            <div className="dropoff-location">{booking.dropoffLocation}</div>
+                          </div>
+                        </td>
+                        <td className="datetime-cell">
+                          {formatDateTime(booking.pickupDateTime)}
+                        </td>
+                        <td className="status-cell">
+                          <span className={getStatusBadgeClass(booking.status)}>
+                            {booking.status}
+                          </span>
+                        </td>
+                        <td className="fare-cell">
+                          {formatPrice(booking.fare)}
+                        </td>
+                        <td className="tip-cell">
+                          {formatPrice(booking.tipAmount || 0)}
+                        </td>
+                        <td className="fee-cell">
+                          {formatPrice(booking.cancellationFee || 0)}
+                        </td>
+                        <td className="actions-cell">
+                          <div className="booking-actions">
+                            <div className="status-selector">
+                              <select
+                                className="form-input booking-status-select"
+                                value={booking.status}
+                                onChange={(e) => {
+                                  if (booking.id) {
+                                    handleStatusChange(booking.id, e.target.value as Booking['status']);
+                                  }
+                                }}
+                              >
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                              </select>
+                            </div>
+                            <div className="action-buttons">
+                              <button 
+                                className="btn btn-destructive btn-sm"
+                                onClick={() => {
+                                  if (booking.id) {
+                                    handleCancelBooking(booking.id);
+                                  }
+                                }}
+                                title="Cancel booking"
+                              >
+                                ❌
+                              </button>
+                              <button 
+                                className="btn btn-outline btn-sm"
+                                onClick={() => {
+                                  if (booking.id) {
+                                    handleSendFeedbackRequest(booking.id);
+                                  }
+                                }}
+                                title="Send feedback request"
+                              >
+                                📧
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

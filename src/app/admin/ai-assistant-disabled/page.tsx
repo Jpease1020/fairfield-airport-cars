@@ -1,23 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { 
-  Send, 
-  Bot, 
-  User, 
-  Loader2,
-  MessageSquare,
-  HelpCircle,
-  Settings,
-  Calendar,
-  DollarSign
-} from 'lucide-react';
-import { VoiceInput } from '@/components/ui/voice-input';
-import { VoiceOutput } from '@/components/ui/voice-output';
 
 interface Message {
   id: string;
@@ -97,11 +80,6 @@ const AIAssistantPage = () => {
     sendMessage(input);
   };
 
-  const handleVoiceInput = (transcript: string) => {
-    setInput(transcript);
-    sendMessage(transcript);
-  };
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -123,161 +101,156 @@ const AIAssistantPage = () => {
   ];
 
   return (
-    <PageContainer className="bg-bg-secondary">
-      <PageHeader 
-        title="AI Assistant" 
-        subtitle="Get help with your car service business"
-      />
-      <PageContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Chat Interface */}
-          <div className="lg:col-span-2">
-            <Card className="h-[600px] flex flex-col">
-              <CardContent className="flex-1 flex flex-col p-0">
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          message.role === 'user'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-bg-secondary text-text-primary'
-                        }`}
-                      >
-                        <div className="flex items-start gap-2">
-                          {message.role === 'assistant' && (
-                            <Bot className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                          )}
-                          <div className="whitespace-pre-wrap flex-1">{message.content}</div>
-                          {message.role === 'assistant' && (
-                            <VoiceOutput 
-                              text={message.content} 
-                              disabled={isLoading}
-                              className="flex-shrink-0"
-                            />
-                          )}
-                          {message.role === 'user' && (
-                            <User className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                          )}
-                        </div>
-                        <div className="text-xs opacity-70 mt-1">
-                          {message.timestamp.toLocaleTimeString()}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-bg-secondary rounded-lg p-3">
-                        <div className="flex items-center gap-2">
-                          <Bot className="w-4 h-4" />
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span className="text-sm">Thinking...</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
+    <div className="admin-dashboard">
+      <div className="section-header">
+        <h1 className="page-title">AI Assistant</h1>
+        <p className="page-subtitle">Get help with your car service business</p>
+      </div>
 
-                {/* Input */}
-                <div className="border-t p-4">
-                  <div className="flex gap-2">
-                    <Input
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Ask me anything about your business..."
-                      disabled={isLoading}
-                      className="flex-1"
-                    />
-                    <VoiceInput
-                      onTranscript={handleVoiceInput}
-                      disabled={isLoading}
-                    />
-                    <Button
-                      onClick={handleSendMessage}
-                      disabled={!input.trim() || isLoading}
-                      size="icon"
-                    >
-                      <Send className="w-4 h-4" />
-                    </Button>
+      <div className="standard-content">
+        <div className="ai-assistant-layout">
+          {/* Chat Interface */}
+          <div className="chat-section">
+            <div className="chat-container">
+              <div className="chat-messages">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
+                  >
+                    <div className="message-bubble">
+                      <div className="message-header">
+                        <span className="message-icon">
+                          {message.role === 'assistant' ? '🤖' : '👤'}
+                        </span>
+                        <div className="message-content">
+                          {message.content}
+                        </div>
+                        <button className="message-voice-btn" title="Read aloud">
+                          🔊
+                        </button>
+                      </div>
+                      <div className="message-timestamp">
+                        {message.timestamp.toLocaleTimeString()}
+                      </div>
+                    </div>
                   </div>
+                ))}
+                {isLoading && (
+                  <div className="chat-message assistant-message">
+                    <div className="message-bubble loading">
+                      <div className="message-header">
+                        <span className="message-icon">🤖</span>
+                        <div className="typing-indicator">
+                          <span className="typing-dot"></span>
+                          <span className="typing-dot"></span>
+                          <span className="typing-dot"></span>
+                          <span className="typing-text">Thinking...</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input */}
+              <div className="chat-input-section">
+                <div className="chat-input-container">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Ask me anything about your business..."
+                    disabled={isLoading}
+                    className="chat-input"
+                    rows={1}
+                  />
+                  <button
+                    className="voice-input-btn"
+                    disabled={isLoading}
+                    title="Voice input"
+                  >
+                    🎤
+                  </button>
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={!input.trim() || isLoading}
+                    className="send-btn"
+                  >
+                    📤
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Quick Actions & Help */}
-          <div className="space-y-4">
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4" />
+          {/* Sidebar */}
+          <div className="ai-sidebar">
+            <div className="card">
+              <div className="card-header">
+                <h3 className="card-title">
+                  <span className="card-icon">❓</span>
                   Quick Questions
                 </h3>
-                <div className="space-y-2">
+              </div>
+              <div className="card-body">
+                <div className="quick-questions">
                   {quickQuestions.map((question, index) => (
-                    <Button
+                    <button
                       key={index}
-                      variant="ghost"
+                      className="quick-question-btn"
                       onClick={() => setInput(question)}
-                      className="w-full text-left p-2 text-sm text-text-secondary hover:bg-bg-secondary rounded-md transition-colors"
                     >
                       {question}
-                    </Button>
+                    </button>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Settings className="w-4 h-4" />
-                    What I Can Help With
-                  </h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.location.href = '/admin/ai-assistant/settings'}
-                  >
-                    Settings
-                  </Button>
-                </div>
-                <div className="space-y-2 text-sm text-text-secondary">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
+            <div className="card">
+              <div className="card-header">
+                <h3 className="card-title">
+                  <span className="card-icon">⚙️</span>
+                  What I Can Help With
+                </h3>
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => window.location.href = '/admin/ai-assistant/settings'}
+                >
+                  Settings
+                </button>
+              </div>
+              <div className="card-body">
+                <div className="help-topics">
+                  <div className="help-topic">
+                    <span className="help-topic-icon">📅</span>
                     <span>Booking management</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4" />
+                  <div className="help-topic">
+                    <span className="help-topic-icon">💬</span>
                     <span>Customer communication</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4" />
+                  <div className="help-topic">
+                    <span className="help-topic-icon">💰</span>
                     <span>Payment & pricing</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Bot className="w-4 h-4" />
+                  <div className="help-topic">
+                    <span className="help-topic-icon">🤖</span>
                     <span>Website content</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Settings className="w-4 h-4" />
+                  <div className="help-topic">
+                    <span className="help-topic-icon">⚙️</span>
                     <span>Technical questions</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
-      </PageContent>
-    </PageContainer>
+      </div>
+    </div>
   );
 };
 

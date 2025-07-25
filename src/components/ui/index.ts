@@ -10,6 +10,7 @@ export { Badge } from './badge';
 export { Textarea } from './textarea';
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+export { StatCard } from './StatCard';
 
 // Utility Components
 export { ErrorBoundary } from './ErrorBoundary';

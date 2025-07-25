@@ -11,7 +11,7 @@ export default function HomePage() {
     >
       {/* Hero Section */}
       <section className="hero-section">
-        {/* <div className="hero-content">
+        <div className="hero-content">
           <h1 className="hero-title">Premium Airport Transportation</h1>
           <p className="hero-subtitle">
             Reliable, comfortable rides to and from Fairfield Airport
@@ -21,13 +21,7 @@ export default function HomePage() {
               Book Your Ride
             </Link>
           </div>
-        </div> */}
-
-{/* <div className="hero-cta"> */}
-            <Link href="/book" className="btn btn-primary">
-              Book Your Ride
-            </Link>
-          {/* </div> */}
+        </div>
       </section>
 
       {/* Features Section */}
