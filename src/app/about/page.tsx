@@ -31,29 +31,6 @@ export default function AboutPage() {
           </p>
         </section>
 
-        {/* Why Choose Us Section */}
-        <section className="about-section">
-          <h2>Why Choose Us?</h2>
-          <div className="grid grid-2">
-            <div className="about-card">
-              <h3>Professional Service</h3>
-              <p>Our drivers are licensed, insured, and undergo regular training to ensure the highest standards of service.</p>
-            </div>
-            <div className="about-card">
-              <h3>Reliable Transportation</h3>
-              <p>We understand the importance of punctuality, especially for airport travel. We monitor flight status and adjust pickup times accordingly.</p>
-            </div>
-            <div className="about-card">
-              <h3>Clean Vehicles</h3>
-              <p>Our fleet consists of well-maintained, clean vehicles equipped with modern amenities for your comfort.</p>
-            </div>
-            <div className="about-card">
-              <h3>Competitive Pricing</h3>
-              <p>We offer transparent, competitive pricing with no hidden fees. What you see is what you pay.</p>
-            </div>
-          </div>
-        </section>
-
         {/* Our Fleet Section */}
         <section className="about-section">
           <h2>Our Fleet</h2>

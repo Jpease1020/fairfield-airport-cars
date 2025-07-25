@@ -31,23 +31,15 @@ export default function HelpPage() {
               <h3>What payment methods do you accept?</h3>
               <p>We accept all major credit cards, debit cards, and cash payments.</p>
             </div>
-          </div>
-        </section>
-        
-        <section className="help-section">
-          <h2>Contact Information</h2>
-          <div className="contact-info">
-            <div className="contact-item">
-              <h3>Phone</h3>
-              <p>(203) 555-0123</p>
+            
+            <div className="faq-item">
+              <h3>What if I need to cancel my booking?</h3>
+              <p>Cancellations within 12 hours of pickup time are non-refundable. Earlier cancellations may be eligible for a refund.</p>
             </div>
-            <div className="contact-item">
-              <h3>Email</h3>
-              <p>info@fairfieldairportcar.com</p>
-            </div>
-            <div className="contact-item">
-              <h3>Service Hours</h3>
-              <p>24/7 Service Available</p>
+            
+            <div className="faq-item">
+              <h3>Do you provide service to all airports?</h3>
+              <p>We service all major airports in the NY and CT area including JFK, LGA, EWR, HPN, BDL, and HVN.</p>
             </div>
           </div>
         </section>
