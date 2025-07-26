@@ -1,21 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import withAuth from '../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 import Link from 'next/link';
 import { 
-  PageHeader, 
+  AdminPageWrapper,
   GridSection, 
   InfoCard, 
   ActionGrid
 } from '@/components/ui';
-import { Button } from '@/components/ui/button';
 
 const CMSPage = () => {
   const [config, setConfig] = useState<CMSConfiguration | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -24,26 +23,30 @@ const CMSPage = () => {
 
   const loadCMSConfig = async () => {
     try {
+      setError(null);
       setLoading(true);
+      console.log('⚙️ Loading CMS configuration...');
+      
       const cmsConfig = await cmsService.getCMSConfiguration();
       setConfig(cmsConfig);
       if (cmsConfig) {
         setLastUpdated(cmsConfig.lastUpdated);
       }
-    } catch (error) {
-      console.error('Error loading CMS config:', error);
+      
+      console.log('✅ CMS configuration loaded');
+    } catch (err) {
+      console.error('❌ Error loading CMS config:', err);
+      setError('Failed to load CMS configuration. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRefresh = () => {
-    loadCMSConfig();
-  };
-
   const handleInitializeCMS = async () => {
     try {
       setLoading(true);
+      console.log('🔄 Initializing CMS...');
+      
       const response = await fetch('/api/admin/init-cms', {
         method: 'POST',
         headers: {
@@ -54,15 +57,15 @@ const CMSPage = () => {
       const result = await response.json();
       
       if (result.success) {
-        // Reload the CMS config
         await loadCMSConfig();
         alert('CMS initialized successfully!');
+        console.log('✅ CMS initialized successfully');
       } else {
-        alert('Failed to initialize CMS: ' + result.message);
+        throw new Error(result.message);
       }
-    } catch (error) {
-      console.error('Error initializing CMS:', error);
-      alert('Failed to initialize CMS. Please check the console for details.');
+    } catch (err) {
+      console.error('❌ Error initializing CMS:', err);
+      alert('Failed to initialize CMS: ' + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
@@ -71,9 +74,14 @@ const CMSPage = () => {
   const headerActions = [
     { 
       label: 'Refresh', 
-      onClick: handleRefresh, 
+      onClick: loadCMSConfig, 
       variant: 'outline' as const,
       disabled: loading
+    },
+    { 
+      label: 'Export Config', 
+      onClick: () => alert('Export functionality coming soon'), 
+      variant: 'outline' as const 
     },
     { 
       label: 'Initialize CMS', 
@@ -109,12 +117,12 @@ const CMSPage = () => {
       status: config?.pricing.baseFare ? `$${config.pricing.baseFare} base fare` : 'Not configured'
     },
     {
-      id: 'payment',
-      title: 'Payment Settings',
-      description: 'Square and Stripe configuration',
-      icon: '💳',
-      href: '/admin/cms/payment',
-      status: config?.payment.square.applicationId ? 'Configured' : 'Not configured'
+      id: 'colors',
+      title: 'Brand & Colors',
+      description: 'Website colors, fonts, and visual branding',
+      icon: '🎨',
+      href: '/admin/cms/colors',
+      status: 'Theme configured'
     },
     {
       id: 'communication',
@@ -131,14 +139,6 @@ const CMSPage = () => {
       icon: '👥',
       href: '/admin/cms/drivers',
       status: config?.driver?.requirements?.minimumAge ? `${config.driver.requirements.minimumAge}+ years` : 'Not configured'
-    },
-    {
-      id: 'analytics',
-      title: 'Analytics & Reporting',
-      description: 'Google Analytics and reporting settings',
-      icon: '📊',
-      href: '/admin/cms/analytics',
-      status: config?.analytics?.googleAnalytics?.enabled ? 'Enabled' : 'Disabled'
     }
   ];
 
@@ -153,45 +153,33 @@ const CMSPage = () => {
       id: 2,
       icon: "🔄",
       label: "Restore Defaults",
-      onClick: () => alert('Restore functionality coming soon')
+      onClick: () => confirm('This will reset all CMS settings to defaults. Continue?') && alert('Restore functionality coming soon')
     },
     {
       id: 3,
       icon: "📅",
-      label: "View History",
-      onClick: () => alert('History functionality coming soon')
+      label: "View Change History",
+      onClick: () => alert('Change history functionality coming soon')
     },
     {
       id: 4,
       icon: "📋",
-      label: "Export Settings",
+      label: "Export All Settings",
       onClick: () => alert('Export functionality coming soon')
     }
   ];
 
-  if (loading) {
-    return (
-      <div className="admin-dashboard">
-        <PageHeader
-          title="Content Management System"
-          subtitle="Loading CMS configuration..."
-        />
-        <div className="loading-spinner">
-          <div className="loading-spinner-icon">🔄</div>
-          <p>Loading CMS configuration...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Content Management System"
-        subtitle="Manage all website content and business settings"
-        actions={headerActions}
-      />
-
+    <AdminPageWrapper
+      title="Content Management System"
+      subtitle="Manage all website content and business settings"
+      actions={headerActions}
+      loading={loading}
+      error={error}
+      loadingMessage="Loading CMS configuration..."
+      errorTitle="CMS Load Error"
+    >
+      {/* CMS Sections Grid */}
       <GridSection variant="content" columns={3}>
         {cmsSections.map((section) => (
           <InfoCard
@@ -199,45 +187,106 @@ const CMSPage = () => {
             title={`${section.icon} ${section.title}`}
             description={section.description}
           >
-            <div className="cms-section-content">
-              <div className="status-info mb-4">
-                <div className="status-label text-sm text-gray-600">Status:</div>
-                <div className="status-value font-medium">{section.status}</div>
+            <div style={{ marginTop: 'var(--spacing-md)' }}>
+              <div style={{ 
+                marginBottom: 'var(--spacing-md)',
+                padding: 'var(--spacing-sm)',
+                backgroundColor: 'var(--background-secondary)',
+                borderRadius: 'var(--border-radius)',
+                border: '1px solid var(--border-color)'
+              }}>
+                <div style={{ 
+                  fontSize: 'var(--font-size-xs)', 
+                  color: 'var(--text-secondary)',
+                  marginBottom: 'var(--spacing-xs)'
+                }}>
+                  Status:
+                </div>
+                <div style={{ fontWeight: '500', fontSize: 'var(--font-size-sm)' }}>
+                  {section.status}
+                </div>
               </div>
               
               <Link href={section.href}>
-                <Button variant="outline" className="w-full">
+                <button className="btn btn-outline" style={{ width: '100%' }}>
                   Manage {section.title}
-                </Button>
+                </button>
               </Link>
             </div>
           </InfoCard>
         ))}
       </GridSection>
 
+      {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
         <InfoCard
-          title="Quick Actions"
-          description="Common CMS management tasks"
+          title="⚡ Quick Actions"
+          description="Common CMS management and maintenance tasks"
         >
           <ActionGrid actions={quickActions} columns={4} />
         </InfoCard>
       </GridSection>
 
+      {/* Last Updated Info */}
       {lastUpdated && (
         <GridSection variant="content" columns={1}>
           <InfoCard
-            title="🕒 Last Updated"
-            description={`Configuration last updated on ${new Date(lastUpdated).toLocaleDateString()} at ${new Date(lastUpdated).toLocaleTimeString()}`}
+            title="🕒 Configuration Status"
+            description="CMS configuration and update information"
           >
-            <div className="text-sm text-gray-600">
-              All changes are automatically saved and synchronized across your website.
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: 'var(--spacing-md)',
+              marginTop: 'var(--spacing-md)'
+            }}>
+              <div style={{
+                padding: 'var(--spacing-md)',
+                backgroundColor: 'var(--background-secondary)',
+                borderRadius: 'var(--border-radius)',
+                border: '1px solid var(--border-color)'
+              }}>
+                <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+                  Last Updated
+                </div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+                  {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
+                </div>
+              </div>
+              
+              <div style={{
+                padding: 'var(--spacing-md)',
+                backgroundColor: 'var(--background-secondary)',
+                borderRadius: 'var(--border-radius)',
+                border: '1px solid var(--border-color)'
+              }}>
+                <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+                  Configuration Status
+                </div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+                  {config ? 'Fully Configured' : 'Needs Setup'}
+                </div>
+              </div>
+              
+              <div style={{
+                padding: 'var(--spacing-md)',
+                backgroundColor: 'var(--background-secondary)',
+                borderRadius: 'var(--border-radius)',
+                border: '1px solid var(--border-color)'
+              }}>
+                <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+                  Auto-Save
+                </div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+                  All changes are automatically saved and synchronized
+                </div>
+              </div>
             </div>
           </InfoCard>
         </GridSection>
       )}
-    </div>
+    </AdminPageWrapper>
   );
 };
 
-export default withAuth(CMSPage); 
+export default CMSPage; 

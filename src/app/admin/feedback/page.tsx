@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { 
-  PageHeader, 
+  AdminPageWrapper,
   GridSection, 
   StatCard, 
-  InfoCard
+  InfoCard,
+  DataTable,
+  DataTableColumn,
+  DataTableAction
 } from '@/components/ui';
-import { EmptyState } from '@/components/data';
 
 interface Feedback {
   id: string;
@@ -22,11 +24,15 @@ interface Feedback {
 const FeedbackPage = () => {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadFeedback = async () => {
     try {
-      // For now, we'll use mock data since the feedback service is for page comments
-      // In a real implementation, this would fetch actual customer feedback
+      setError(null);
+      setLoading(true);
+      console.log('💬 Loading customer feedback...');
+
+      // Mock data - in real implementation, this would fetch from feedback service
       const mockFeedback: Feedback[] = [
         {
           id: '1',
@@ -63,11 +69,32 @@ const FeedbackPage = () => {
           createdAt: new Date('2024-01-12'),
           customerName: 'Sarah Wilson',
           customerEmail: 'sarah@example.com'
+        },
+        {
+          id: '5',
+          bookingId: 'BK005',
+          rating: 5,
+          comment: 'Outstanding service from start to finish! Professional driver, luxury vehicle, and excellent customer service.',
+          createdAt: new Date('2024-01-11'),
+          customerName: 'Robert Brown',
+          customerEmail: 'robert@example.com'
+        },
+        {
+          id: '6',
+          bookingId: 'BK006',
+          rating: 2,
+          comment: 'Driver was late and seemed unprepared. Vehicle was okay but service could be much better.',
+          createdAt: new Date('2024-01-10'),
+          customerName: 'Lisa Davis',
+          customerEmail: 'lisa@example.com'
         }
       ];
+      
+      console.log('✅ Feedback loaded:', mockFeedback.length, 'reviews');
       setFeedback(mockFeedback);
-    } catch (error) {
-      console.error('Failed to load feedback:', error);
+    } catch (err) {
+      console.error('❌ Error loading feedback:', err);
+      setError('Failed to load customer feedback. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -102,59 +129,164 @@ const FeedbackPage = () => {
     };
   }, [feedback]);
 
-  const headerActions = [
-    { 
-      label: 'Export Feedback', 
-      onClick: () => alert('Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Send Feedback Request', 
-      href: '/admin/bookings', 
-      variant: 'primary' as const 
-    }
-  ];
-
   const getRatingStars = (rating: number) => {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   };
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 5) return 'text-green-600';
-    if (rating >= 4) return 'text-yellow-600';
-    if (rating >= 3) return 'text-orange-600';
-    return 'text-red-600';
+    if (rating >= 5) return '#166534'; // green
+    if (rating >= 4) return '#ca8a04'; // yellow
+    if (rating >= 3) return '#ea580c'; // orange
+    return '#dc2626'; // red
   };
 
-  if (loading) {
+  const renderRating = (rating: number) => {
     return (
-      <div className="admin-dashboard">
-        <PageHeader
-          title="Customer Feedback"
-          subtitle="Loading feedback..."
-        />
-        <div className="loading-spinner">
-          <div className="loading-spinner-icon">🔄</div>
-          <p>Loading feedback...</p>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
+        <span style={{ 
+          color: getRatingColor(rating), 
+          fontSize: 'var(--font-size-lg)',
+          fontWeight: '500'
+        }}>
+          {getRatingStars(rating)}
+        </span>
+        <span style={{ 
+          fontSize: 'var(--font-size-sm)', 
+          color: 'var(--text-secondary)',
+          fontWeight: '500'
+        }}>
+          {rating}/5
+        </span>
       </div>
     );
-  }
+  };
+
+  const headerActions = [
+    { 
+      label: 'Refresh', 
+      onClick: loadFeedback, 
+      variant: 'outline' as const,
+      disabled: loading
+    },
+    { 
+      label: 'Export Report', 
+      onClick: () => alert('Export functionality coming soon'), 
+      variant: 'outline' as const 
+    },
+    { 
+      label: 'Send Request', 
+      href: '/admin/bookings', 
+      variant: 'primary' as const 
+    }
+  ];
+
+  // Table columns
+  const columns: DataTableColumn<Feedback>[] = [
+    {
+      key: 'customerName',
+      label: 'Customer',
+      sortable: true,
+      render: (_, feedback) => (
+        <div>
+          <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+            {feedback.customerName}
+          </div>
+          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+            📧 {feedback.customerEmail}
+          </div>
+          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+            🎫 {feedback.bookingId}
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'rating',
+      label: 'Rating',
+      sortable: true,
+      render: (value) => renderRating(value)
+    },
+    {
+      key: 'comment',
+      label: 'Feedback',
+      sortable: false,
+      render: (value) => (
+        <div style={{ 
+          maxWidth: '300px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }}>
+          {value}
+        </div>
+      )
+    },
+    {
+      key: 'createdAt',
+      label: 'Date',
+      sortable: true,
+      render: (value) => {
+        const date = new Date(value);
+        return (
+          <div>
+            <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500' }}>
+              {date.toLocaleDateString()}
+            </div>
+            <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>
+              {date.toLocaleTimeString()}
+            </div>
+          </div>
+        );
+      }
+    }
+  ];
+
+  // Table actions
+  const actions: DataTableAction<Feedback>[] = [
+    {
+      label: 'View Full',
+      icon: '👁️',
+      onClick: (feedback) => alert(`Full feedback from ${feedback.customerName}:\n\n"${feedback.comment}"`),
+      variant: 'outline'
+    },
+    {
+      label: 'Reply',
+      icon: '💬',
+      onClick: (feedback) => alert(`Opening email to reply to ${feedback.customerName} at ${feedback.customerEmail}`),
+      variant: 'primary'
+    },
+    {
+      label: 'View Booking',
+      icon: '🎫',
+      onClick: (feedback) => window.open(`/booking/${feedback.bookingId}`, '_blank'),
+      variant: 'outline'
+    },
+    {
+      label: 'Flag',
+      icon: '🚩',
+      onClick: (feedback) => alert(`Flagging feedback from ${feedback.customerName} for review`),
+      variant: 'destructive',
+      condition: (feedback) => feedback.rating <= 2
+    }
+  ];
 
   return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Customer Feedback"
-        subtitle="Reviews and ratings from your customers"
-        actions={headerActions}
-      />
-
+    <AdminPageWrapper
+      title="Customer Feedback"
+      subtitle="Reviews and ratings from your customers"
+      actions={headerActions}
+      loading={loading}
+      error={error}
+      loadingMessage="Loading customer feedback..."
+      errorTitle="Feedback Load Error"
+    >
+      {/* Feedback Statistics */}
       <GridSection variant="stats" columns={4}>
         <StatCard
           title="Total Reviews"
           icon="📝"
           statNumber={feedbackStats.totalFeedback.toString()}
-          statChange="Customer reviews"
+          statChange="Customer reviews collected"
           changeType="neutral"
         />
         <StatCard
@@ -168,7 +300,7 @@ const FeedbackPage = () => {
           title="5-Star Reviews"
           icon="🌟"
           statNumber={feedbackStats.fiveStarCount.toString()}
-          statChange="Excellent ratings"
+          statChange={`${((feedbackStats.fiveStarCount / feedbackStats.totalFeedback) * 100).toFixed(0)}% of total`}
           changeType="positive"
         />
         <StatCard
@@ -180,51 +312,71 @@ const FeedbackPage = () => {
         />
       </GridSection>
 
+      {/* Feedback Table */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="Customer Reviews"
-          description={`Showing ${feedback.length} reviews from customers`}
+          title="💬 Customer Reviews"
+          description="Search, sort, and manage customer feedback and ratings"
         >
-          {feedback.length === 0 ? (
-            <EmptyState
-              icon="⭐"
-              title="No feedback found"
-              description="Customer reviews will appear here once submitted"
-            />
-          ) : (
-            <div className="feedback-list space-y-4">
-              {feedback.map((item) => (
-                <div key={item.id} className="feedback-item border-b pb-4 last:border-b-0">
-                  <div className="feedback-header flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="font-semibold text-lg">{item.customerName}</h3>
-                      <div className="text-sm text-gray-600">
-                        <p>{item.createdAt.toLocaleDateString()} at {item.createdAt.toLocaleTimeString()}</p>
-                        <p>Booking ID: {item.bookingId}</p>
-                      </div>
-                    </div>
-                    <div className="rating-display text-right">
-                      <div className={`rating-stars text-xl ${getRatingColor(item.rating)}`}>
-                        {getRatingStars(item.rating)}
-                      </div>
-                      <p className="rating-score text-sm font-medium">{item.rating}/5</p>
-                    </div>
-                  </div>
-                  <div className="comment-content mb-3">
-                    <p className="text-gray-800">{item.comment}</p>
-                  </div>
-                  <div className="contact-info">
-                    <p className="text-sm text-gray-600">
-                      Contact: {item.customerEmail}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <DataTable
+            data={feedback}
+            columns={columns}
+            actions={actions}
+            loading={loading}
+            searchPlaceholder="Search by customer name, email, or feedback text..."
+            emptyMessage="No customer feedback available yet. Reviews will appear here once customers submit them."
+            emptyIcon="⭐"
+            pageSize={10}
+            rowClassName={(feedback) => 
+              feedback.rating <= 2 ? 'border-l-4 border-red-500' : 
+              feedback.rating >= 5 ? 'border-l-4 border-green-500' : ''
+            }
+            onRowClick={(feedback) => console.log('Clicked feedback from:', feedback.customerName)}
+          />
         </InfoCard>
       </GridSection>
-    </div>
+
+      {/* Rating Distribution */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="📊 Rating Distribution"
+          description="Breakdown of customer ratings"
+        >
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(5, 1fr)', 
+            gap: 'var(--spacing-md)',
+            marginTop: 'var(--spacing-md)'
+          }}>
+            {[5, 4, 3, 2, 1].map(rating => {
+              const count = feedback.filter(f => f.rating === rating).length;
+              const percentage = feedback.length > 0 ? (count / feedback.length) * 100 : 0;
+              
+              return (
+                <div key={rating} style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    fontSize: 'var(--font-size-xl)', 
+                    color: getRatingColor(rating),
+                    marginBottom: 'var(--spacing-xs)'
+                  }}>
+                    {'★'.repeat(rating)}
+                  </div>
+                  <div style={{ fontWeight: '500', fontSize: 'var(--font-size-lg)' }}>
+                    {count}
+                  </div>
+                  <div style={{ 
+                    fontSize: 'var(--font-size-sm)', 
+                    color: 'var(--text-secondary)' 
+                  }}>
+                    {percentage.toFixed(0)}%
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </InfoCard>
+      </GridSection>
+    </AdminPageWrapper>
   );
 };
 

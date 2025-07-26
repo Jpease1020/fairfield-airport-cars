@@ -1,75 +1,360 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import withAuth from '../withAuth';
 import { PromoCode } from '@/types/promo';
 import { 
-  PageHeader, 
+  AdminPageWrapper,
   GridSection, 
-  InfoCard
+  InfoCard,
+  StatCard,
+  DataTable,
+  DataTableColumn,
+  DataTableAction,
+  FormSection
 } from '@/components/ui';
-import { EmptyState } from '@/components/data';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const PromosPage = () => {
   const [promos, setPromos] = useState<PromoCode[]>([]);
-  const [form, setForm] = useState({ code:'', type:'percent', value:'', expiresAt:'', usageLimit:'' });
-  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ 
+    code: '', 
+    type: 'percent', 
+    value: '', 
+    expiresAt: '', 
+    usageLimit: '' 
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const fetchPromos = async ()=>{
-    const res = await fetch('/api/promos');
-    if(res.ok) setPromos(await res.json());
+  const fetchPromos = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      console.log('🎟️ Loading promo codes...');
+      
+      const res = await fetch('/api/promos');
+      if (res.ok) {
+        const promoData = await res.json();
+        console.log('✅ Promos loaded:', promoData.length, 'codes');
+        setPromos(promoData);
+      } else {
+        throw new Error('Failed to fetch promo codes');
+      }
+    } catch (err) {
+      console.error('❌ Error loading promos:', err);
+      setError('Failed to load promo codes. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
-  useEffect(()=>{ fetchPromos(); },[]);
 
-  const addPromo = async ()=>{
-    setLoading(true);
-    const body = { ...form, value: Number(form.value), usageLimit: form.usageLimit? Number(form.usageLimit): undefined };
-    await fetch('/api/promos', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
-    setForm({ code:'', type:'percent', value:'', expiresAt:'', usageLimit:'' });
-    await fetchPromos();
-    setLoading(false);
+  useEffect(() => {
+    fetchPromos();
+  }, []);
+
+  const addPromo = async () => {
+    if (!form.code || !form.value) {
+      alert('Please fill in required fields');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      const body = { 
+        ...form, 
+        value: Number(form.value), 
+        usageLimit: form.usageLimit ? Number(form.usageLimit) : undefined 
+      };
+      
+      const res = await fetch('/api/promos', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(body) 
+      });
+
+      if (res.ok) {
+        setForm({ code: '', type: 'percent', value: '', expiresAt: '', usageLimit: '' });
+        await fetchPromos();
+        alert('Promo code created successfully!');
+      } else {
+        throw new Error('Failed to create promo code');
+      }
+    } catch (err) {
+      console.error('❌ Error creating promo:', err);
+      alert('Failed to create promo code. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const del = async(id:string)=>{
-    await fetch(`/api/promos/${id}`, { method:'DELETE' });
-    await fetchPromos();
+  const deletePromo = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this promo code?')) return;
+
+    try {
+      const res = await fetch(`/api/promos/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        await fetchPromos();
+        alert('Promo code deleted successfully!');
+      } else {
+        throw new Error('Failed to delete promo code');
+      }
+    } catch (err) {
+      console.error('❌ Error deleting promo:', err);
+      alert('Failed to delete promo code. Please try again.');
+    }
+  };
+
+  const formatPromoValue = (promo: PromoCode) => {
+    return promo.type === 'percent' ? `${promo.value}%` : `$${promo.value}`;
+  };
+
+  const getPromoStatus = (promo: PromoCode) => {
+    const now = new Date();
+    const expires = promo.expiresAt ? new Date(promo.expiresAt) : null;
+    
+    if (expires && now > expires) return 'Expired';
+    if (promo.usageLimit && promo.usageCount >= promo.usageLimit) return 'Limit Reached';
+    if (expires && expires.getTime() - now.getTime() < 7 * 24 * 60 * 60 * 1000) return 'Expiring Soon';
+    return 'Active';
+  };
+
+  const renderStatus = (promo: PromoCode) => {
+    const status = getPromoStatus(promo);
+    let statusStyle = {
+      backgroundColor: '#dcfce7',
+      color: '#166534',
+      border: '1px solid #4ade80'
+    };
+
+    switch (status) {
+      case 'Expired':
+      case 'Limit Reached':
+        statusStyle = {
+          backgroundColor: '#fee2e2',
+          color: '#dc2626',
+          border: '1px solid #f87171'
+        };
+        break;
+      case 'Expiring Soon':
+        statusStyle = {
+          backgroundColor: '#fef3c7',
+          color: '#92400e',
+          border: '1px solid #fcd34d'
+        };
+        break;
+    }
+
+    return (
+      <span
+        style={{
+          ...statusStyle,
+          padding: 'var(--spacing-xs) var(--spacing-sm)',
+          borderRadius: 'var(--border-radius)',
+          fontSize: 'var(--font-size-xs)',
+          fontWeight: '500'
+        }}
+      >
+        {status}
+      </span>
+    );
   };
 
   const headerActions = [
     { 
       label: 'Refresh', 
       onClick: fetchPromos, 
+      variant: 'outline' as const,
+      disabled: loading
+    },
+    { 
+      label: 'Export Report', 
+      onClick: () => alert('Export functionality coming soon'), 
       variant: 'outline' as const 
     },
     { 
-      label: 'Promo Analytics', 
-      onClick: () => alert('Analytics coming soon'), 
+      label: 'Analytics', 
+      onClick: () => alert('Promo analytics dashboard coming soon'), 
       variant: 'primary' as const 
     }
   ];
 
-  return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Promo Codes"
-        subtitle="Create and manage promotional discount codes"
-        actions={headerActions}
-      />
+  // Table columns
+  const columns: DataTableColumn<PromoCode>[] = [
+    {
+      key: 'code',
+      label: 'Promo Code',
+      sortable: true,
+      render: (value) => (
+        <span style={{
+          fontFamily: 'monospace',
+          fontWeight: '600',
+          backgroundColor: '#dbeafe',
+          color: '#1e40af',
+          padding: 'var(--spacing-xs) var(--spacing-sm)',
+          borderRadius: 'var(--border-radius)',
+          fontSize: 'var(--font-size-sm)'
+        }}>
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'type',
+      label: 'Type',
+      sortable: true,
+      render: (value) => (
+        <span style={{ 
+          textTransform: 'capitalize',
+          fontWeight: '500'
+        }}>
+          {value === 'percent' ? 'Percentage' : 'Fixed Amount'}
+        </span>
+      )
+    },
+    {
+      key: 'value',
+      label: 'Discount',
+      sortable: true,
+      render: (_, promo) => (
+        <span style={{ 
+          fontWeight: '500',
+          color: 'var(--primary-color)'
+        }}>
+          {formatPromoValue(promo)}
+        </span>
+      )
+    },
+    {
+      key: 'expiresAt',
+      label: 'Expiry',
+      sortable: true,
+      render: (value) => value ? new Date(value).toLocaleDateString() : 'No expiry'
+    },
+    {
+      key: 'usageCount',
+      label: 'Usage',
+      sortable: true,
+      render: (_, promo) => (
+        <div>
+          <span style={{ fontWeight: '500' }}>
+            {promo.usageCount || 0}
+          </span>
+          <span style={{ color: 'var(--text-secondary)' }}>
+            /{promo.usageLimit || '∞'}
+          </span>
+        </div>
+      )
+    },
+    {
+      key: 'actions',
+      label: 'Status',
+      sortable: false,
+      render: (_, promo) => renderStatus(promo)
+    }
+  ];
 
+  // Table actions
+  const actions: DataTableAction<PromoCode>[] = [
+    {
+      label: 'Copy Code',
+      icon: '📋',
+      onClick: (promo) => {
+        navigator.clipboard.writeText(promo.code);
+        alert(`Promo code "${promo.code}" copied to clipboard!`);
+      },
+      variant: 'outline'
+    },
+    {
+      label: 'View Usage',
+      icon: '📊',
+      onClick: (promo) => alert(`Usage statistics for ${promo.code} coming soon`),
+      variant: 'outline'
+    },
+    {
+      label: 'Edit',
+      icon: '✏️',
+      onClick: (promo) => alert(`Edit functionality for ${promo.code} coming soon`),
+      variant: 'primary'
+    },
+    {
+      label: 'Delete',
+      icon: '🗑️',
+      onClick: (promo) => promo.id && deletePromo(promo.id),
+      variant: 'destructive'
+    }
+  ];
+
+  // Calculate stats
+  const activePromos = promos.filter(p => getPromoStatus(p) === 'Active').length;
+  const totalUsage = promos.reduce((sum, p) => sum + (p.usageCount || 0), 0);
+  const expiringPromos = promos.filter(p => getPromoStatus(p) === 'Expiring Soon').length;
+
+  return (
+    <AdminPageWrapper
+      title="Promo Codes"
+      subtitle="Create and manage promotional discount codes"
+      actions={headerActions}
+      loading={loading}
+      error={error}
+      loadingMessage="Loading promo codes..."
+      errorTitle="Promo Load Error"
+    >
+      {/* Promo Statistics */}
+      <GridSection variant="stats" columns={4}>
+        <StatCard
+          title="Total Promos"
+          icon="🎟️"
+          statNumber={promos.length.toString()}
+          statChange="Created codes"
+          changeType="neutral"
+        />
+        <StatCard
+          title="Active Promos"
+          icon="✅"
+          statNumber={activePromos.toString()}
+          statChange="Currently usable"
+          changeType="positive"
+        />
+        <StatCard
+          title="Total Usage"
+          icon="📊"
+          statNumber={totalUsage.toString()}
+          statChange="Times used"
+          changeType="positive"
+        />
+        <StatCard
+          title="Expiring Soon"
+          icon="⏰"
+          statNumber={expiringPromos.toString()}
+          statChange="Within 7 days"
+          changeType={expiringPromos > 0 ? 'negative' : 'neutral'}
+        />
+      </GridSection>
+
+      {/* Add New Promo Form */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🎟️ Add New Promo Code"
-          description="Create discount codes for your customers"
+        <FormSection
+          title="🎟️ Create New Promo Code"
+          description="Add a new promotional discount code for your customers"
+          icon="🎟️"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="code">Code (uppercase)</Label>
-              <Input
-                id="code"
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 'var(--spacing-md)',
+            marginBottom: 'var(--spacing-lg)'
+          }}>
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: 'var(--spacing-xs)',
+                fontWeight: '500',
+                fontSize: 'var(--font-size-sm)'
+              }}>
+                Code (uppercase) *
+              </label>
+              <input
+                className="form-input"
                 type="text"
                 value={form.code}
                 onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}
@@ -78,23 +363,36 @@ const PromosPage = () => {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
-              <Select value={form.type} onValueChange={(value) => setForm({...form, type: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="percent">Percent %</SelectItem>
-                  <SelectItem value="flat">Flat $</SelectItem>
-                </SelectContent>
-              </Select>
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: 'var(--spacing-xs)',
+                fontWeight: '500',
+                fontSize: 'var(--font-size-sm)'
+              }}>
+                Type *
+              </label>
+              <select 
+                className="form-input"
+                value={form.type} 
+                onChange={(e) => setForm({...form, type: e.target.value})}
+              >
+                <option value="percent">Percentage %</option>
+                <option value="flat">Fixed Amount $</option>
+              </select>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="value">Value</Label>
-              <Input
-                id="value"
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: 'var(--spacing-xs)',
+                fontWeight: '500',
+                fontSize: 'var(--font-size-sm)'
+              }}>
+                Value *
+              </label>
+              <input
+                className="form-input"
                 type="number"
                 value={form.value}
                 onChange={(e) => setForm({...form, value: e.target.value})}
@@ -103,20 +401,34 @@ const PromosPage = () => {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="expires">Expires At (optional)</Label>
-              <Input
-                id="expires"
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: 'var(--spacing-xs)',
+                fontWeight: '500',
+                fontSize: 'var(--font-size-sm)'
+              }}>
+                Expires At
+              </label>
+              <input
+                className="form-input"
                 type="date"
                 value={form.expiresAt}
                 onChange={(e) => setForm({...form, expiresAt: e.target.value})}
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="limit">Usage Limit (optional)</Label>
-              <Input
-                id="limit"
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: 'var(--spacing-xs)',
+                fontWeight: '500',
+                fontSize: 'var(--font-size-sm)'
+              }}>
+                Usage Limit
+              </label>
+              <input
+                className="form-input"
                 type="number"
                 value={form.usageLimit}
                 onChange={(e) => setForm({...form, usageLimit: e.target.value})}
@@ -125,80 +437,45 @@ const PromosPage = () => {
             </div>
           </div>
           
-          <div className="mt-6 flex justify-end">
-            <Button 
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button 
+              className="btn btn-primary"
               onClick={addPromo}
-              disabled={!form.code || loading}
+              disabled={!form.code || !form.value || submitting}
             >
-              {loading ? 'Adding...' : 'Add Promo Code'}
-            </Button>
+              {submitting ? 'Creating...' : 'Create Promo Code'}
+            </button>
           </div>
-        </InfoCard>
+        </FormSection>
       </GridSection>
 
+      {/* Promo Codes Table */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="Active Promo Codes"
-          description={`Showing ${promos.length} promo codes`}
+          title="🎟️ All Promo Codes"
+          description="Search, sort, and manage your promotional discount codes"
         >
-          {promos.length === 0 ? (
-            <EmptyState
-              icon="🎟️"
-              title="No promo codes found"
-              description="Create your first promotional discount code above"
-            />
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-medium">Code</th>
-                    <th className="text-left p-3 font-medium">Type</th>
-                    <th className="text-left p-3 font-medium">Value</th>
-                    <th className="text-left p-3 font-medium">Expiry</th>
-                    <th className="text-left p-3 font-medium">Uses</th>
-                    <th className="text-left p-3 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {promos.map((promo) => (
-                    <tr key={promo.id} className="border-b hover:bg-gray-50">
-                      <td className="p-3">
-                        <span className="font-mono font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                          {promo.code}
-                        </span>
-                      </td>
-                      <td className="p-3 capitalize">{promo.type}</td>
-                      <td className="p-3">
-                        {promo.type === 'percent' ? `${promo.value}%` : `$${promo.value}`}
-                      </td>
-                      <td className="p-3">
-                        {promo.expiresAt ? new Date(promo.expiresAt).toLocaleDateString() : '∞'}
-                      </td>
-                      <td className="p-3">
-                        <span className="text-sm">
-                          {promo.usageCount}/{promo.usageLimit ?? '∞'}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        <Button 
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => promo.id && del(promo.id)}
-                        >
-                          Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <DataTable
+            data={promos}
+            columns={columns}
+            actions={actions}
+            loading={loading}
+            searchPlaceholder="Search by promo code or type..."
+            emptyMessage="No promo codes created yet. Create your first promotional discount code above."
+            emptyIcon="🎟️"
+            pageSize={10}
+            rowClassName={(promo) => 
+              getPromoStatus(promo) === 'Expired' || getPromoStatus(promo) === 'Limit Reached' 
+                ? 'opacity-60' : 
+              getPromoStatus(promo) === 'Expiring Soon' 
+                ? 'border-l-4 border-yellow-500' : ''
+            }
+            onRowClick={(promo) => console.log('Clicked promo:', promo.code)}
+          />
         </InfoCard>
       </GridSection>
-    </div>
+    </AdminPageWrapper>
   );
 };
 
-export default withAuth(PromosPage); 
+export default PromosPage; 

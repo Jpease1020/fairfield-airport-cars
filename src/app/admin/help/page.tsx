@@ -1,6 +1,6 @@
 'use client';
 
-import { PageHeader, GridSection, InfoCard } from '@/components/ui';
+import { AdminPageWrapper, GridSection, InfoCard } from '@/components/ui';
 
 const AdminHelpPage = () => {
   const helpSections = [
@@ -123,7 +123,12 @@ const AdminHelpPage = () => {
 
   const headerActions = [
     { 
-      label: 'View Documentation', 
+      label: 'Print Guide', 
+      onClick: () => window.print(), 
+      variant: 'outline' as const 
+    },
+    { 
+      label: 'Documentation', 
       href: '/docs', 
       variant: 'outline' as const 
     },
@@ -135,13 +140,12 @@ const AdminHelpPage = () => {
   ];
 
   return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Admin Help & Guide"
-        subtitle="Everything you need to know about managing your car service business"
-        actions={headerActions}
-      />
-
+    <AdminPageWrapper
+      title="Admin Help & Guide"
+      subtitle="Everything you need to know about managing your car service business"
+      actions={headerActions}
+    >
+      {/* Help Sections */}
       <GridSection variant="content" columns={2}>
         {helpSections.map((section, sectionIndex) => (
           <InfoCard
@@ -149,11 +153,31 @@ const AdminHelpPage = () => {
             title={`${section.icon} ${section.title}`}
             description={section.description}
           >
-            <div className="help-items">
+            <div style={{ marginTop: 'var(--spacing-md)' }}>
               {section.items.map((item, itemIndex) => (
-                <div key={itemIndex} className="help-item">
-                  <h4 className="help-question">{item.question}</h4>
-                  <p className="help-answer">{item.answer}</p>
+                <div 
+                  key={itemIndex} 
+                  style={{ 
+                    marginBottom: 'var(--spacing-lg)',
+                    paddingBottom: 'var(--spacing-md)',
+                    borderBottom: itemIndex < section.items.length - 1 ? '1px solid var(--border-color)' : 'none'
+                  }}
+                >
+                  <h4 style={{ 
+                    fontWeight: '600',
+                    fontSize: 'var(--font-size-sm)',
+                    marginBottom: 'var(--spacing-sm)',
+                    color: 'var(--text-primary)'
+                  }}>
+                    {item.question}
+                  </h4>
+                  <p style={{ 
+                    fontSize: 'var(--font-size-sm)',
+                    color: 'var(--text-secondary)',
+                    lineHeight: '1.5'
+                  }}>
+                    {item.answer}
+                  </p>
                 </div>
               ))}
             </div>
@@ -161,32 +185,117 @@ const AdminHelpPage = () => {
         ))}
       </GridSection>
 
+      {/* Additional Resources */}
       <GridSection variant="content" columns={1}>
         <InfoCard
           title="📞 Need More Help?"
           description="If you can't find the answer you're looking for, here are additional resources"
         >
-          <div className="help-resources">
-            <div className="help-resource">
-              <span className="help-resource-icon">💬</span>
-              <span>Contact your developer for technical support</span>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: 'var(--spacing-md)',
+            marginTop: 'var(--spacing-md)'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-sm)',
+              padding: 'var(--spacing-md)',
+              backgroundColor: 'var(--background-secondary)',
+              borderRadius: 'var(--border-radius)',
+              border: '1px solid var(--border-color)'
+            }}>
+              <span style={{ fontSize: 'var(--font-size-xl)' }}>💬</span>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+                Contact your developer for technical support
+              </span>
             </div>
-            <div className="help-resource">
-              <span className="help-resource-icon">📄</span>
-              <span>Check the business documentation in your project files</span>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-sm)',
+              padding: 'var(--spacing-md)',
+              backgroundColor: 'var(--background-secondary)',
+              borderRadius: 'var(--border-radius)',
+              border: '1px solid var(--border-color)'
+            }}>
+              <span style={{ fontSize: 'var(--font-size-xl)' }}>📄</span>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+                Check the business documentation in your project files
+              </span>
             </div>
-            <div className="help-resource">
-              <span className="help-resource-icon">⚙️</span>
-              <span>Review your CMS settings for configuration options</span>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-sm)',
+              padding: 'var(--spacing-md)',
+              backgroundColor: 'var(--background-secondary)',
+              borderRadius: 'var(--border-radius)',
+              border: '1px solid var(--border-color)'
+            }}>
+              <span style={{ fontSize: 'var(--font-size-xl)' }}>⚙️</span>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+                Review your CMS settings for configuration options
+              </span>
             </div>
-            <div className="help-resource">
-              <span className="help-resource-icon">📊</span>
-              <span>Use the Admin Dashboard to monitor your business metrics</span>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-sm)',
+              padding: 'var(--spacing-md)',
+              backgroundColor: 'var(--background-secondary)',
+              borderRadius: 'var(--border-radius)',
+              border: '1px solid var(--border-color)'
+            }}>
+              <span style={{ fontSize: 'var(--font-size-xl)' }}>📊</span>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+                Use the Admin Dashboard to monitor your business metrics
+              </span>
             </div>
           </div>
         </InfoCard>
       </GridSection>
-    </div>
+
+      {/* Quick Navigation */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="🎯 Quick Navigation"
+          description="Jump directly to common admin tasks"
+        >
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 'var(--spacing-sm)',
+            marginTop: 'var(--spacing-md)'
+          }}>
+            <a href="/admin/bookings" style={{ textDecoration: 'none' }}>
+              <button className="btn btn-outline" style={{ width: '100%' }}>
+                📖 Manage Bookings
+              </button>
+            </a>
+            <a href="/admin/cms" style={{ textDecoration: 'none' }}>
+              <button className="btn btn-outline" style={{ width: '100%' }}>
+                ⚙️ CMS Settings
+              </button>
+            </a>
+            <a href="/admin/drivers" style={{ textDecoration: 'none' }}>
+              <button className="btn btn-outline" style={{ width: '100%' }}>
+                🚗 Driver Management
+              </button>
+            </a>
+            <a href="/admin/feedback" style={{ textDecoration: 'none' }}>
+              <button className="btn btn-outline" style={{ width: '100%' }}>
+                ⭐ Customer Feedback
+              </button>
+            </a>
+          </div>
+        </InfoCard>
+      </GridSection>
+    </AdminPageWrapper>
   );
 };
 

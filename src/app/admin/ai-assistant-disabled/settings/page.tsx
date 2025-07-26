@@ -1,255 +1,308 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Settings, Mic, Bot, Save } from 'lucide-react';
+import { useMemo } from 'react';
+import { 
+  AdminPageWrapper,
+  SettingSection,
+  SettingToggle,
+  SettingInput,
+  StatusMessage,
+  HelpCard,
+  ActionButtonGroup,
+  ToastProvider,
+  useToast
+} from '@/components/ui';
+import { useSettings } from '@/hooks/useSettings';
+import { useBrowserFeatures } from '@/hooks/useBrowserFeatures';
+import { createTestRunner } from '@/utils/testRunner';
 
-export default function AIAssistantSettingsPage() {
-  const [settings, setSettings] = useState({
-    useOpenAI: false,
-    autoVoiceOutput: false,
-    voiceInputEnabled: true,
-    voiceOutputEnabled: true,
-    openAIKey: '',
+interface AISettings {
+  useOpenAI: boolean;
+  autoVoiceOutput: boolean;
+  voiceInputEnabled: boolean;
+  voiceOutputEnabled: boolean;
+  openAIKey: string;
+}
+
+const defaultSettings: AISettings = {
+  useOpenAI: false,
+  autoVoiceOutput: false,
+  voiceInputEnabled: true,
+  voiceOutputEnabled: true,
+  openAIKey: '',
+};
+
+function AIAssistantSettingsContent() {
+  const { addToast } = useToast();
+  const { features, createFeatureTest, createAPITest } = useBrowserFeatures();
+  
+  const {
+    settings,
+    updateSetting,
+    resetSettings,
+    saveSettings,
+    isSaving,
+    error,
+    success,
+    clearMessages
+  } = useSettings({
+    defaultSettings,
+    persistKey: 'ai-assistant-settings',
+    onSave: async (settings) => {
+      console.log('🤖 Saving AI assistant settings...');
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('✅ AI settings saved:', settings);
+    }
   });
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  // Create test runner with toast notifications
+  const testRunner = useMemo(() => createTestRunner({
+    showToast: addToast
+  }), [addToast]);
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    setMessage(null);
+  // Create feature tests
+  const voiceInputTest = useMemo(() => 
+    createFeatureTest('voiceInput'), [createFeatureTest]);
+  
+  const voiceOutputTest = useMemo(() => 
+    createFeatureTest('voiceOutput'), [createFeatureTest]);
 
-    try {
-      // In a real app, you'd save to your database
-      // For now, we'll just simulate saving
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setMessage({ type: 'success', text: 'Settings saved successfully!' });
-    } catch {
-      setMessage({ type: 'error', text: 'Failed to save settings. Please try again.' });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const testVoiceInput = () => {
-    if ('webkitSpeechRecognition' in window) {
-      alert('Voice input is supported in your browser!');
-    } else {
-      alert('Voice input is not supported in your browser.');
-    }
-  };
-
-  const testVoiceOutput = () => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance('Voice output is working correctly!');
-      window.speechSynthesis.speak(utterance);
-    } else {
-      alert('Voice output is not supported in your browser.');
-    }
-  };
-
-  const testOpenAI = async () => {
-    if (!settings.openAIKey) {
-      alert('Please enter your OpenAI API key first.');
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/ai-assistant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: 'Test message',
-          testOpenAI: true,
-          openAIKey: settings.openAIKey
-        })
-      });
-
-      if (response.ok) {
-        alert('OpenAI connection successful!');
-      } else {
-        alert('OpenAI connection failed. Please check your API key.');
+  // Create OpenAI API test
+  const openAITest = useMemo(() => createAPITest(
+    'OpenAI Connection',
+    async () => {
+      if (!settings.openAIKey) {
+        addToast('warning', 'Please enter your OpenAI API key first.');
+        return false;
       }
-    } catch {
-      alert('Failed to test OpenAI connection.');
+
+      try {
+        const response = await fetch('/api/ai-assistant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            message: 'Test message',
+            testOpenAI: true,
+            openAIKey: settings.openAIKey
+          })
+        });
+
+        return response.ok;
+      } catch {
+        return false;
+      }
+    },
+    'OpenAI connection successful!',
+    'OpenAI connection failed. Please check your API key.'
+  ), [settings.openAIKey, addToast, createAPITest]);
+
+  // Header actions
+  const headerActions = useMemo(() => [
+    {
+      label: 'Reset to Defaults',
+      onClick: () => {
+        if (confirm('Reset all settings to defaults?')) {
+          resetSettings();
+          addToast('info', 'Settings reset to defaults');
+        }
+      },
+      variant: 'outline' as const
+    },
+    {
+      label: isSaving ? 'Saving...' : 'Save Settings',
+      onClick: saveSettings,
+      variant: 'primary' as const,
+      disabled: isSaving
     }
-  };
+  ], [resetSettings, saveSettings, isSaving, addToast]);
+
+  // Voice test buttons
+  const voiceTestButtons = useMemo(() => [
+    {
+      label: 'Test Input',
+      onClick: () => testRunner.run(voiceInputTest),
+      variant: 'outline' as const,
+      icon: '🎙️',
+      disabled: !features.voiceInput
+    },
+    {
+      label: 'Test Output',
+      onClick: () => testRunner.run(voiceOutputTest),
+      variant: 'outline' as const,
+      icon: '🔊',
+      disabled: !features.voiceOutput
+    }
+  ], [testRunner, voiceInputTest, voiceOutputTest, features]);
+
+  // Help cards data
+  const helpCards = useMemo(() => [
+    {
+      icon: '🎙️',
+      title: 'Voice Input',
+      description: `${features.voiceInput ? '✅ Supported' : '❌ Not supported'} - Works best in Chrome, Edge, and Safari. Speak clearly and avoid background noise for optimal recognition.`
+    },
+    {
+      icon: '🔊',
+      title: 'Voice Output',
+      description: `${features.voiceOutput ? '✅ Supported' : '❌ Not supported'} - Works in all modern browsers. Perfect for hands-free operation while driving or multitasking.`
+    },
+    {
+      icon: '🤖',
+      title: 'Enhanced AI',
+      description: 'Provides more sophisticated responses but requires an API key. The assistant works without it using local logic.'
+    },
+    {
+      icon: '🔒',
+      title: 'Security',
+      description: 'Your OpenAI API key is stored securely and never exposed to the client or browser console.'
+    }
+  ], [features]);
 
   return (
-    <PageContainer className="bg-bg-secondary">
-      <PageHeader 
-        title="AI Assistant Settings" 
-        subtitle="Configure your AI assistant preferences"
-      />
-      <PageContent>
-        <div className="max-w-2xl space-y-6">
-          {/* Voice Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mic className="w-5 h-5" />
-                Voice Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="voice-input">Voice Input</Label>
-                  <p className="text-sm text-text-secondary">Allow speaking to the AI assistant</p>
-                </div>
-                <Switch
-                  id="voice-input"
-                  checked={settings.voiceInputEnabled}
-                  onCheckedChange={(checked: boolean) => 
-                    setSettings(prev => ({ ...prev, voiceInputEnabled: checked }))
-                  }
-                />
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="voice-output">Voice Output</Label>
-                  <p className="text-sm text-text-secondary">Hear AI responses aloud</p>
-                </div>
-                <Switch
-                  id="voice-output"
-                  checked={settings.voiceOutputEnabled}
-                  onCheckedChange={(checked: boolean) => 
-                    setSettings(prev => ({ ...prev, voiceOutputEnabled: checked }))
-                  }
-                />
-              </div>
+    <AdminPageWrapper
+      title="AI Assistant Settings"
+      subtitle="Configure your AI assistant preferences and capabilities"
+      actions={headerActions}
+      loading={false}
+      error={error}
+      errorTitle="Settings Error"
+    >
+      {/* Success Message */}
+      {success && (
+        <StatusMessage 
+          type="success" 
+          message={success} 
+          onDismiss={clearMessages} 
+        />
+      )}
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="auto-voice">Auto Voice Output</Label>
-                  <p className="text-sm text-text-secondary">Automatically speak AI responses</p>
-                </div>
-                <Switch
-                  id="auto-voice"
-                  checked={settings.autoVoiceOutput}
-                  onCheckedChange={(checked: boolean) => 
-                    setSettings(prev => ({ ...prev, autoVoiceOutput: checked }))
-                  }
-                />
-              </div>
+      {/* Voice Settings Section */}
+      <SettingSection
+        title="Voice Settings"
+        description="Configure voice input and output capabilities"
+        icon="🎤"
+        actions={<ActionButtonGroup buttons={voiceTestButtons} />}
+      >
+        <SettingToggle
+          id="voice-input"
+          label="Voice Input"
+          description="Allow speaking to the AI assistant using your microphone"
+          checked={settings.voiceInputEnabled}
+          onChange={(checked) => updateSetting('voiceInputEnabled', checked)}
+          disabled={!features.voiceInput}
+          icon="🎙️"
+        />
 
-              <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" onClick={testVoiceInput}>
-                  Test Voice Input
-                </Button>
-                <Button variant="outline" size="sm" onClick={testVoiceOutput}>
-                  Test Voice Output
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <SettingToggle
+          id="voice-output"
+          label="Voice Output"
+          description="Hear AI responses spoken aloud through your speakers"
+          checked={settings.voiceOutputEnabled}
+          onChange={(checked) => updateSetting('voiceOutputEnabled', checked)}
+          disabled={!features.voiceOutput}
+          icon="🔊"
+        />
 
-          {/* AI Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="w-5 h-5" />
-                AI Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="use-openai">Use OpenAI (Enhanced AI)</Label>
-                  <p className="text-sm text-text-secondary">Enable more sophisticated responses</p>
-                </div>
-                <Switch
-                  id="use-openai"
-                  checked={settings.useOpenAI}
-                  onCheckedChange={(checked: boolean) => 
-                    setSettings(prev => ({ ...prev, useOpenAI: checked }))
-                  }
-                />
-              </div>
+        <SettingToggle
+          id="auto-voice"
+          label="Auto Voice Output"
+          description="Automatically speak AI responses without clicking play"
+          checked={settings.autoVoiceOutput}
+          onChange={(checked) => updateSetting('autoVoiceOutput', checked)}
+          disabled={!settings.voiceOutputEnabled || !features.voiceOutput}
+          icon="🔄"
+        />
+      </SettingSection>
 
-              {settings.useOpenAI && (
-                <div className="space-y-2">
-                  <Label htmlFor="openai-key">OpenAI API Key</Label>
-                  <Input
-                    id="openai-key"
-                    type="password"
-                    placeholder="sk-..."
-                    value={settings.openAIKey}
-                    onChange={(e) => 
-                      setSettings(prev => ({ ...prev, openAIKey: e.target.value }))
-                    }
-                  />
-                  <p className="text-xs text-text-secondary">
-                    Get your API key from{' '}
-                    <a 
-                      href="https://platform.openai.com/api-keys" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-info hover:underline"
-                    >
-                      OpenAI Platform
-                    </a>
-                  </p>
-                  <Button variant="outline" size="sm" onClick={testOpenAI}>
-                    Test OpenAI Connection
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+      {/* AI Enhancement Settings */}
+      <SettingSection
+        title="AI Enhancement"
+        description="Advanced AI capabilities and integrations"
+        icon="🤖"
+        actions={
+          settings.useOpenAI ? (
+            <ActionButtonGroup 
+              buttons={[{
+                label: 'Test Connection',
+                onClick: () => testRunner.run(openAITest),
+                variant: 'outline' as const,
+                icon: '🔗',
+                disabled: !settings.openAIKey
+              }]}
+            />
+          ) : undefined
+        }
+      >
+        <SettingToggle
+          id="use-openai"
+          label="Enhanced AI (OpenAI)"
+          description="Enable more sophisticated responses using OpenAI's language models"
+          checked={settings.useOpenAI}
+          onChange={(checked) => updateSetting('useOpenAI', checked)}
+          icon="✨"
+        />
 
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2">
-              <Save className="w-4 h-4" />
-              {isSaving ? 'Saving...' : 'Save Settings'}
-            </Button>
-          </div>
+        {settings.useOpenAI && (
+          <SettingInput
+            id="openai-key"
+            label="OpenAI API Key"
+            description="Your secret API key for accessing OpenAI services"
+            type="password"
+            value={settings.openAIKey}
+            onChange={(value) => updateSetting('openAIKey', value)}
+            placeholder="sk-..."
+            icon="🔑"
+            actions={
+              <ActionButtonGroup 
+                buttons={[{
+                  label: 'Test',
+                  onClick: () => testRunner.run(openAITest),
+                  variant: 'outline' as const,
+                  icon: '🧪',
+                  disabled: !settings.openAIKey
+                }]}
+              />
+            }
+            helpText="Get your API key from"
+            helpLink={{
+              text: "OpenAI Platform",
+              href: "https://platform.openai.com/api-keys"
+            }}
+          />
+        )}
+      </SettingSection>
 
-          {/* Message */}
-          {message && (
-            <div className={`p-4 rounded-md ${
-              message.type === 'success' 
-                ? 'bg-bg-success text-text-success border border-border-success' 
-                : 'bg-bg-error text-text-error border border-border-error'
-            }`}>
-              {message.text}
-            </div>
-          )}
-
-          {/* Help */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-                Help & Tips
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-text-secondary">
-              <div>
-                <strong>Voice Input:</strong> Works best in Chrome, Edge, and Safari. Speak clearly and avoid background noise.
-              </div>
-              <div>
-                <strong>Voice Output:</strong> Works in all modern browsers. Perfect for hands-free operation while driving.
-              </div>
-              <div>
-                <strong>OpenAI:</strong> Provides more sophisticated responses but requires an API key. The assistant works without it using local logic.
-              </div>
-              <div>
-                <strong>Security:</strong> Your OpenAI API key is stored securely and never exposed to the client.
-              </div>
-            </CardContent>
-          </Card>
+      {/* Help & Compatibility */}
+      <SettingSection
+        title="Help & Compatibility"
+        description="Browser support and troubleshooting information"
+        icon="ℹ️"
+      >
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: 'var(--spacing-md)',
+          padding: 'var(--spacing-md) 0'
+        }}>
+          {helpCards.map((card, index) => (
+            <HelpCard
+              key={index}
+              icon={card.icon}
+              title={card.title}
+              description={card.description}
+            />
+          ))}
         </div>
-      </PageContent>
-    </PageContainer>
+      </SettingSection>
+    </AdminPageWrapper>
+  );
+}
+
+export default function AIAssistantSettingsPage() {
+  return (
+    <ToastProvider>
+      <AIAssistantSettingsContent />
+    </ToastProvider>
   );
 } 
