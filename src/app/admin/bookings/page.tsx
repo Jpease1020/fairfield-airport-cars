@@ -13,7 +13,6 @@ import {
   DataTableColumn,
   DataTableAction
 } from '@/components/ui';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 const AdminBookingsPage: NextPage = () => {
@@ -208,24 +207,54 @@ const AdminBookingsPage: NextPage = () => {
 
   // Status badge renderer
   const renderStatus = (status: string) => {
-    const variants = {
-      pending: 'secondary',
-      confirmed: 'default', 
-      completed: 'default',
-      cancelled: 'destructive'
-    } as const;
-    
-    const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800'
+    const getStatusStyle = (status: string) => {
+      switch (status) {
+        case 'pending':
+          return {
+            backgroundColor: '#fef3c7',
+            color: '#92400e',
+            border: '1px solid #fcd34d'
+          };
+        case 'confirmed':
+          return {
+            backgroundColor: '#dbeafe',
+            color: '#1e40af',
+            border: '1px solid #60a5fa'
+          };
+        case 'completed':
+          return {
+            backgroundColor: '#dcfce7',
+            color: '#166534',
+            border: '1px solid #4ade80'
+          };
+        case 'cancelled':
+          return {
+            backgroundColor: '#fee2e2',
+            color: '#dc2626',
+            border: '1px solid #f87171'
+          };
+        default:
+          return {
+            backgroundColor: '#f3f4f6',
+            color: '#374151',
+            border: '1px solid #d1d5db'
+          };
+      }
     };
 
     return (
-      <Badge className={colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'}>
+      <span
+        style={{
+          ...getStatusStyle(status),
+          padding: 'var(--spacing-xs) var(--spacing-sm)',
+          borderRadius: 'var(--border-radius)',
+          fontSize: 'var(--font-size-xs)',
+          fontWeight: '500',
+          display: 'inline-block'
+        }}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
+      </span>
     );
   };
 

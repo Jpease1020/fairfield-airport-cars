@@ -1,8 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { Button } from './button';
-import { Input } from './input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
-import { Badge } from './badge';
 
 export interface DataTableColumn<T> {
   key: keyof T | 'actions';
@@ -123,11 +119,9 @@ export function DataTable<T extends Record<string, any>>({
   if (loading) {
     return (
       <div className={`data-table-container ${className}`}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading data...</p>
-          </div>
+        <div className="loading-spinner">
+          <div className="loading-spinner-icon">🔄</div>
+          <p>Loading data...</p>
         </div>
       </div>
     );
@@ -136,10 +130,10 @@ export function DataTable<T extends Record<string, any>>({
   if (data.length === 0) {
     return (
       <div className={`data-table-container ${className}`}>
-        <div className="text-center py-12">
-          <div className="text-4xl mb-4">{emptyIcon}</div>
-          <h3 className="text-lg font-medium text-gray-700 mb-2">No Data</h3>
-          <p className="text-gray-500">{emptyMessage}</p>
+        <div style={{ textAlign: 'center', padding: 'var(--spacing-xl)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-md)' }}>{emptyIcon}</div>
+          <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: '500', marginBottom: 'var(--spacing-sm)' }}>No Data</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>{emptyMessage}</p>
         </div>
       </div>
     );
@@ -149,134 +143,169 @@ export function DataTable<T extends Record<string, any>>({
     <div className={`data-table-container ${className}`}>
       {/* Search and Controls */}
       {searchable && (
-        <div className="mb-4 flex justify-between items-center">
-          <div className="flex-1 max-w-sm">
-            <Input
+        <div style={{ 
+          marginBottom: 'var(--spacing-md)', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center' 
+        }}>
+          <div style={{ flex: 1, maxWidth: '300px' }}>
+            <input
               type="text"
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
+              className="form-input"
+              style={{ width: '100%' }}
             />
           </div>
-          <div className="text-sm text-gray-500 ml-4">
+          <div style={{ 
+            fontSize: 'var(--font-size-sm)', 
+            color: 'var(--text-secondary)', 
+            marginLeft: 'var(--spacing-md)' 
+          }}>
             {filteredData.length} {filteredData.length === 1 ? 'item' : 'items'}
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto border rounded-lg">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
+      <table className="data-table">
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th
+                key={String(column.key)}
+                className={column.className || ''}
+                style={{ width: column.width }}
+              >
+                {column.sortable ? (
+                  <button
+                    onClick={() => handleSort(String(column.key))}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--spacing-xs)',
+                      fontSize: 'inherit',
+                      fontWeight: 'inherit',
+                      color: 'inherit'
+                    }}
+                  >
+                    <span>{column.label}</span>
+                    <span style={{ fontSize: 'var(--font-size-xs)' }}>
+                      {getSortIcon(String(column.key))}
+                    </span>
+                  </button>
+                ) : (
+                  column.label
+                )}
+              </th>
+            ))}
+            {actions.length > 0 && (
+              <th>Actions</th>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedData.map((row, index) => (
+            <tr
+              key={index}
+              style={{
+                cursor: onRowClick ? 'pointer' : 'default'
+              }}
+              className={rowClassName ? rowClassName(row, index) : ''}
+              onClick={() => onRowClick?.(row, index)}
+            >
               {columns.map((column) => (
-                <th
+                <td
                   key={String(column.key)}
-                  className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${column.className || ''}`}
-                  style={{ width: column.width }}
+                  className={column.className || ''}
                 >
-                  {column.sortable ? (
-                    <button
-                      onClick={() => handleSort(String(column.key))}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>{column.label}</span>
-                      <span className="text-xs">{getSortIcon(String(column.key))}</span>
-                    </button>
-                  ) : (
-                    column.label
-                  )}
-                </th>
+                  {column.render
+                    ? column.render(row[column.key], row, index)
+                    : String(row[column.key] || '-')}
+                </td>
               ))}
               {actions.length > 0 && (
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <td>
+                  <div style={{ display: 'flex', gap: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
+                    {actions
+                      .filter(action => !action.condition || action.condition(row))
+                      .map((action, actionIndex) => (
+                        action.href ? (
+                          <a
+                            key={actionIndex}
+                            href={action.href}
+                            className={`btn btn-${action.variant === 'destructive' ? 'outline' : action.variant || 'outline'}`}
+                            style={{
+                              fontSize: 'var(--font-size-xs)',
+                              padding: 'var(--spacing-xs) var(--spacing-sm)',
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 'var(--spacing-xs)',
+                              ...(action.variant === 'destructive' && {
+                                color: '#dc3545',
+                                borderColor: '#dc3545'
+                              })
+                            }}
+                          >
+                            {action.icon && <span>{action.icon}</span>}
+                            {action.label}
+                          </a>
+                        ) : (
+                          <button
+                            key={actionIndex}
+                            onClick={() => action.onClick(row)}
+                            className={`btn btn-${action.variant === 'destructive' ? 'outline' : action.variant || 'outline'}`}
+                            style={{
+                              fontSize: 'var(--font-size-xs)',
+                              padding: 'var(--spacing-xs) var(--spacing-sm)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 'var(--spacing-xs)',
+                              ...(action.variant === 'destructive' && {
+                                color: '#dc3545',
+                                borderColor: '#dc3545'
+                              })
+                            }}
+                          >
+                            {action.icon && <span>{action.icon}</span>}
+                            {action.label}
+                          </button>
+                        )
+                      ))}
+                  </div>
+                </td>
               )}
             </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {paginatedData.map((row, index) => (
-              <tr
-                key={index}
-                className={`hover:bg-gray-50 ${
-                  onRowClick ? 'cursor-pointer' : ''
-                } ${rowClassName ? rowClassName(row, index) : ''}`}
-                onClick={() => onRowClick?.(row, index)}
-              >
-                {columns.map((column) => (
-                  <td
-                    key={String(column.key)}
-                    className={`px-4 py-3 whitespace-nowrap ${column.className || ''}`}
-                  >
-                    {column.render
-                      ? column.render(row[column.key], row, index)
-                      : String(row[column.key] || '-')}
-                  </td>
-                ))}
-                {actions.length > 0 && (
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex space-x-2">
-                      {actions
-                        .filter(action => !action.condition || action.condition(row))
-                        .map((action, actionIndex) => (
-                          action.href ? (
-                            <a
-                              key={actionIndex}
-                              href={action.href}
-                              className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
-                                action.variant === 'destructive'
-                                  ? 'bg-red-100 text-red-800 hover:bg-red-200'
-                                  : action.variant === 'primary'
-                                  ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                              }`}
-                            >
-                              {action.icon && <span className="mr-1">{action.icon}</span>}
-                              {action.label}
-                            </a>
-                          ) : (
-                            <button
-                              key={actionIndex}
-                              onClick={() => action.onClick(row)}
-                              className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
-                                action.variant === 'destructive'
-                                  ? 'bg-red-100 text-red-800 hover:bg-red-200'
-                                  : action.variant === 'primary'
-                                  ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                              }`}
-                            >
-                              {action.icon && <span className="mr-1">{action.icon}</span>}
-                              {action.label}
-                            </button>
-                          )
-                        ))}
-                    </div>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
 
       {/* Pagination */}
       {pagination && totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+        <div style={{
+          marginTop: 'var(--spacing-md)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
             Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, sortedData.length)} of {sortedData.length} entries
           </div>
-          <div className="flex space-x-1">
-            <Button
-              variant="outline"
-              size="sm"
+          <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
+            <button
+              className="btn btn-outline"
+              style={{ fontSize: 'var(--font-size-sm)', padding: 'var(--spacing-xs) var(--spacing-sm)' }}
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
             >
               Previous
-            </Button>
+            </button>
             
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const pageNum = currentPage <= 3 
@@ -288,25 +317,25 @@ export function DataTable<T extends Record<string, any>>({
               if (pageNum < 1 || pageNum > totalPages) return null;
               
               return (
-                <Button
+                <button
                   key={pageNum}
-                  variant={currentPage === pageNum ? "default" : "outline"}
-                  size="sm"
+                  className={`btn btn-${currentPage === pageNum ? "primary" : "outline"}`}
+                  style={{ fontSize: 'var(--font-size-sm)', padding: 'var(--spacing-xs) var(--spacing-sm)' }}
                   onClick={() => setCurrentPage(pageNum)}
                 >
                   {pageNum}
-                </Button>
+                </button>
               );
             })}
             
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              className="btn btn-outline"
+              style={{ fontSize: 'var(--font-size-sm)', padding: 'var(--spacing-xs) var(--spacing-sm)' }}
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
             >
               Next
-            </Button>
+            </button>
           </div>
         </div>
       )}
