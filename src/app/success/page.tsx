@@ -1,74 +1,58 @@
 'use client';
 
-import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { StandardLayout } from '@/components/layout/StandardLayout';
+import { UniversalLayout } from '@/components/layout/UniversalLayout';
+import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
 
-function SuccessContent() {
+export default function SuccessPage() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
 
   return (
-    <div className="success-content">
-      <section className="success-section">
-        <div className="success-message">
-          <h2>🎉 Booking Confirmed!</h2>
-          <p>Your airport transportation has been successfully booked.</p>
-          
-          {bookingId && (
-            <div className="booking-id">
-              <h3>Booking Reference</h3>
-              <p className="booking-id-display">{bookingId}</p>
-              <p className="booking-id-note">Please save this reference number for your records.</p>
-            </div>
-          )}
-          
-          <div className="success-details">
-            <h3>What happens next?</h3>
-            <ul>
-              <li>You&apos;ll receive a confirmation email with booking details</li>
-              <li>We&apos;ll send you an SMS reminder 24 hours before pickup</li>
-              <li>Your driver will contact you 30 minutes before pickup</li>
-              <li>Payment will be processed securely</li>
-            </ul>
-          </div>
-          
-          <div className="success-actions">
+    <LayoutEnforcer>
+      <UniversalLayout 
+        layoutType="standard"
+        title="Booking Confirmed"
+        subtitle="Your airport transportation has been successfully booked"
+      >
+        <section className="content-section">
+          <div className="success-content">
+            <div className="success-icon">✅</div>
+            <h1>Booking Confirmed!</h1>
+            <p>Thank you for choosing Fairfield Airport Cars. Your booking has been successfully confirmed.</p>
+            
             {bookingId && (
-              <Link href={`/portal?bookingId=${bookingId}`} className="btn btn-primary">
-                View Booking Details
-              </Link>
-            )}
-            <Link href="/" className="btn btn-outline">Return to Home</Link>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-export default function SuccessPage() {
-  return (
-    <StandardLayout 
-      title="Payment Successful"
-      subtitle="Your booking has been confirmed"
-    >
-      <Suspense fallback={
-        <div className="success-content">
-          <section className="success-section">
-            <div className="success-message">
-              <h2>🎉 Booking Confirmed!</h2>
-              <p>Your airport transportation has been successfully booked.</p>
-              <div className="success-actions">
-                <Link href="/" className="btn btn-outline">Return to Home</Link>
+              <div className="booking-reference">
+                <h2>Your Booking Reference</h2>
+                <div className="booking-id">{bookingId}</div>
+                <p className="booking-note">Please save this reference number for your records.</p>
               </div>
+            )}
+            
+            <div className="next-steps">
+              <h2>What happens next?</h2>
+              <ul>
+                <li>You'll receive a confirmation email with all booking details</li>
+                <li>We'll send you SMS updates about your driver and pickup time</li>
+                <li>Our driver will contact you 15 minutes before arrival</li>
+                <li>You can manage your booking or contact us if needed</li>
+              </ul>
             </div>
-          </section>
-        </div>
-      }>
-        <SuccessContent />
-      </Suspense>
-    </StandardLayout>
+            
+            <div className="action-buttons">
+              <Link href="/" className="btn btn-primary">
+                Back to Home
+              </Link>
+              {bookingId && (
+                <Link href={`/booking/${bookingId}`} className="btn btn-outline">
+                  View Booking Details
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      </UniversalLayout>
+    </LayoutEnforcer>
   );
 }
