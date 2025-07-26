@@ -10,10 +10,13 @@ import {
   DataTable,
   DataTableColumn,
   DataTableAction,
-  FormSection
+  FormSection,
+  ToastProvider,
+  useToast
 } from '@/components/ui';
 
-const PromosPage = () => {
+function PromosPageContent() {
+  const { addToast } = useToast();
   const [promos, setPromos] = useState<PromoCode[]>([]);
   const [form, setForm] = useState({ 
     code: '', 
@@ -54,7 +57,7 @@ const PromosPage = () => {
 
   const addPromo = async () => {
     if (!form.code || !form.value) {
-      alert('Please fill in required fields');
+              addToast('error', 'Please fill in required fields');
       return;
     }
 
@@ -75,13 +78,13 @@ const PromosPage = () => {
       if (res.ok) {
         setForm({ code: '', type: 'percent', value: '', expiresAt: '', usageLimit: '' });
         await fetchPromos();
-        alert('Promo code created successfully!');
+        addToast('success', 'Promo code created successfully!');
       } else {
         throw new Error('Failed to create promo code');
       }
     } catch (err) {
       console.error('❌ Error creating promo:', err);
-      alert('Failed to create promo code. Please try again.');
+              addToast('error', 'Failed to create promo code. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -475,6 +478,14 @@ const PromosPage = () => {
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
+  );
+}
+
+const PromosPage = () => {
+  return (
+    <ToastProvider>
+      <PromosPageContent />
+    </ToastProvider>
   );
 };
 

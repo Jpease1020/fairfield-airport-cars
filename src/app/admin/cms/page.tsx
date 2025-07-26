@@ -8,10 +8,13 @@ import {
   AdminPageWrapper,
   GridSection, 
   InfoCard, 
-  ActionGrid
+  ActionGrid,
+  ToastProvider,
+  useToast
 } from '@/components/ui';
 
-const CMSPage = () => {
+function CMSPageContent() {
+  const { addToast } = useToast();
   const [config, setConfig] = useState<CMSConfiguration | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,14 +61,14 @@ const CMSPage = () => {
       
       if (result.success) {
         await loadCMSConfig();
-        alert('CMS initialized successfully!');
+        addToast('success', 'CMS initialized successfully!');
         console.log('✅ CMS initialized successfully');
       } else {
         throw new Error(result.message);
       }
     } catch (err) {
       console.error('❌ Error initializing CMS:', err);
-      alert('Failed to initialize CMS: ' + (err instanceof Error ? err.message : 'Unknown error'));
+      addToast('error', 'Failed to initialize CMS: ' + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
@@ -80,7 +83,7 @@ const CMSPage = () => {
     },
     { 
       label: 'Export Config', 
-      onClick: () => alert('Export functionality coming soon'), 
+      onClick: () => addToast('info', 'Export functionality coming soon'), 
       variant: 'outline' as const 
     },
     { 
@@ -147,25 +150,29 @@ const CMSPage = () => {
       id: 1,
       icon: "💾",
       label: "Backup Configuration",
-      onClick: () => alert('Backup functionality coming soon')
+      onClick: () => addToast('info', 'Backup functionality coming soon')
     },
     {
       id: 2,
       icon: "🔄",
       label: "Restore Defaults",
-      onClick: () => confirm('This will reset all CMS settings to defaults. Continue?') && alert('Restore functionality coming soon')
+      onClick: () => {
+        if (window.confirm('This will reset all CMS settings to defaults. Continue?')) {
+          addToast('info', 'Restore functionality coming soon');
+        }
+      }
     },
     {
       id: 3,
       icon: "📅",
       label: "View Change History",
-      onClick: () => alert('Change history functionality coming soon')
+      onClick: () => addToast('info', 'Change history functionality coming soon')
     },
     {
       id: 4,
       icon: "📋",
       label: "Export All Settings",
-      onClick: () => alert('Export functionality coming soon')
+      onClick: () => addToast('info', 'Export functionality coming soon')
     }
   ];
 
@@ -286,6 +293,14 @@ const CMSPage = () => {
         </GridSection>
       )}
     </AdminPageWrapper>
+  );
+}
+
+const CMSPage = () => {
+  return (
+    <ToastProvider>
+      <CMSPageContent />
+    </ToastProvider>
   );
 };
 
