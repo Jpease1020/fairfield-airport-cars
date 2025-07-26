@@ -3,7 +3,7 @@ import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
 import { PageHeader } from '@/components/ui/layout/PageHeader';
 import { PageContent } from '@/components/ui/layout/PageContent';
-import { Container, Section, H1, H2, H3, Lead, Card, CardContent, Grid } from '@/components/ui/design-system';
+import { Card, CardContent } from '@/components/ui';
 
 interface CMSContentPageProps {
   cmsConfig: CMSConfiguration;
