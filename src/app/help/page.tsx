@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { UnifiedLayout } from '@/components/layout';
 import {
   GridSection,
@@ -88,14 +89,12 @@ function HelpPageContent() {
           title="❓ Frequently Asked Questions"
           description="Quick answers to common questions"
         >
-          <div>
-            {faqItems.map((item, index) => (
-              <div key={index}>
-                <h4>{item.question}</h4>
-                <p>{item.answer}</p>
-              </div>
-            ))}
-          </div>
+          {faqItems.map((item, index) => (
+            <React.Fragment key={index}>
+              <h4>{item.question}</h4>
+              <p>{item.answer}</p>
+            </React.Fragment>
+          ))}
         </InfoCard>
       </GridSection>
 
