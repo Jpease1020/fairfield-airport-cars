@@ -4,6 +4,7 @@ import { UnifiedLayout } from '@/components/layout';
 import {
   GridSection,
   InfoCard,
+  ActionButtonGroup,
   ToastProvider,
   useToast,
   FeatureGrid
@@ -87,35 +88,11 @@ function HelpPageContent() {
           title="❓ Frequently Asked Questions"
           description="Quick answers to common questions"
         >
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--spacing-lg)',
-            padding: 'var(--spacing-lg) 0'
-          }}>
+          <div>
             {faqItems.map((item, index) => (
-              <div key={index} style={{
-                padding: 'var(--spacing-md)',
-                backgroundColor: 'var(--bg-secondary)',
-                borderRadius: 'var(--border-radius)',
-                border: '1px solid var(--border-primary)'
-              }}>
-                <h4 style={{
-                  color: 'var(--text-primary)',
-                  marginBottom: 'var(--spacing-sm)',
-                  fontSize: 'var(--font-size-base)',
-                  fontWeight: '600'
-                }}>
-                  {item.question}
-                </h4>
-                <p style={{
-                  color: 'var(--text-secondary)',
-                  margin: 0,
-                  fontSize: 'var(--font-size-sm)',
-                  lineHeight: '1.5'
-                }}>
-                  {item.answer}
-                </p>
+              <div key={index}>
+                <h4>{item.question}</h4>
+                <p>{item.answer}</p>
               </div>
             ))}
           </div>
@@ -128,67 +105,30 @@ function HelpPageContent() {
           title="📞 Still Need Help?"
           description="Contact our support team for personalized assistance"
         >
-          <div style={{
-            textAlign: 'center',
-            padding: 'var(--spacing-lg)'
-          }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: 'var(--spacing-lg)',
-              marginBottom: 'var(--spacing-lg)'
-            }}>
-              <div>
-                <h4 style={{ 
-                  margin: '0 0 var(--spacing-sm) 0',
-                  color: 'var(--text-primary)'
-                }}>📞 Phone Support</h4>
-                <p style={{ 
-                  margin: 0,
-                  fontSize: 'var(--font-size-lg)',
-                  fontWeight: '600',
-                  color: 'var(--brand-primary)'
-                }}>
-                  (203) 555-0123
-                </p>
-                <p style={{
-                  fontSize: 'var(--font-size-sm)',
-                  color: 'var(--text-secondary)',
-                  margin: 'var(--spacing-xs) 0 0 0'
-                }}>
-                  Available 24/7
-                </p>
-              </div>
-              
-              <div>
-                <h4 style={{ 
-                  margin: '0 0 var(--spacing-sm) 0',
-                  color: 'var(--text-primary)'
-                }}>✉️ Email Support</h4>
-                <p style={{ 
-                  margin: 0,
-                  fontSize: 'var(--font-size-base)',
-                  color: 'var(--brand-primary)'
-                }}>
-                  support@fairfieldairportcars.com
-                </p>
-                <p style={{
-                  fontSize: 'var(--font-size-sm)',
-                  color: 'var(--text-secondary)',
-                  margin: 'var(--spacing-xs) 0 0 0'
-                }}>
-                  Response within 2 hours
-                </p>
-              </div>
-            </div>
-            
-            <button 
-              className=""
-              onClick={() => window.location.href = '/book'}
-            >
-              📅 Book Your Ride Now
-            </button>
-          </div>
+          <FeatureGrid 
+            features={[
+              {
+                icon: "📞",
+                title: "Phone Support",
+                description: "(203) 555-0123 - Available 24/7"
+              },
+              {
+                icon: "✉️",
+                title: "Email Support",
+                description: "support@fairfieldairportcars.com - Response within 2 hours"
+              }
+            ]} 
+            columns={2} 
+          />
+          
+          <ActionButtonGroup buttons={[
+            {
+              label: 'Book Your Ride Now',
+              onClick: () => window.location.href = '/book',
+              variant: 'primary' as const,
+              icon: '📅'
+            }
+          ]} />
         </InfoCard>
       </GridSection>
     </UnifiedLayout>

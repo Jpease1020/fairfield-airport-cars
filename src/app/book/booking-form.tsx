@@ -398,20 +398,20 @@ function BookingFormContent({ booking }: BookingFormProps) {
   }
 
   return (
-    <div className="">
+    <div className="booking-form-container">
       {loadError && (
-        <div className="">
-          <div className="">
-            <div className="">
-              <svg className="" viewBox="0 0 20 20" fill="currentColor">
+        <div className="booking-form-error">
+          <div className="booking-form-error-content">
+            <div className="booking-form-error-icon">
+              <svg className="booking-form-error-svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
-            <div className="">
-              <h3 className="">
+            <div className="booking-form-error-text">
+              <h3 className="booking-form-error-title">
                 Location autocomplete temporarily unavailable
               </h3>
-              <div className="">
+              <div className="booking-form-error-description">
                 <p>You can still fill out the form manually. Location suggestions will be restored shortly.</p>
               </div>
             </div>
@@ -419,18 +419,14 @@ function BookingFormContent({ booking }: BookingFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="">
+      <form onSubmit={handleSubmit} className="booking-form">
         {/* Personal Information */}
         <SettingSection
           title="Personal Information"
           description="Please provide your contact details for the booking"
           icon="👤"
         >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 'var(--spacing-lg)'
-          }}>
+          <div className="booking-form-row">
             <SettingInput
               id="name"
               label="Full Name"
@@ -471,8 +467,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           icon="🚗"
         >
           {/* Location Fields - Improved Layout */}
-          <div className="">
-            <div className="">
+          <div className="booking-form-location-row">
+            <div className="booking-form-location-field">
               <SettingInput
                 id="pickupLocation"
                 label="Pickup Location"
@@ -483,17 +479,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="📍"
               />
               {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                <div className="">
+                <div className="booking-form-suggestions">
                   {pickupSuggestions.map((prediction) => (
                     <div
                       key={prediction.place_id}
-                      className=""
+                      className="booking-form-suggestion-item"
                       onClick={() => handlePickupSuggestionSelect(prediction)}
                     >
-                      <div className="">
+                      <div className="booking-form-suggestion-main">
                         {prediction.structured_formatting?.main_text || prediction.description}
                       </div>
-                      <div className="">
+                      <div className="booking-form-suggestion-secondary">
                         {prediction.structured_formatting?.secondary_text || ''}
                       </div>
                     </div>
@@ -502,7 +498,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               )}
             </div>
             
-            <div className="relative">
+            <div className="booking-form-location-field">
               <SettingInput
                 id="dropoffLocation"
                 label="Destination"
@@ -513,17 +509,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="🎯"
               />
               {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-                <div className="">
+                <div className="booking-form-suggestions">
                   {dropoffSuggestions.map((prediction) => (
                     <div
                       key={prediction.place_id}
-                      className=""
+                      className="booking-form-suggestion-item"
                       onClick={() => handleDropoffSuggestionSelect(prediction)}
                     >
-                      <div className="">
+                      <div className="booking-form-suggestion-main">
                         {prediction.structured_formatting?.main_text || prediction.description}
                       </div>
-                      <div className="">
+                      <div className="booking-form-suggestion-secondary">
                         {prediction.structured_formatting?.secondary_text || ''}
                       </div>
                     </div>
@@ -534,35 +530,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </div>
           
           {/* Pickup Date and Time - Styled like SettingInput */}
-          <div style={{
-            padding: 'var(--spacing-md) 0',
-            borderBottom: '1px solid var(--border-color)'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--spacing-sm)',
-              marginBottom: 'var(--spacing-sm)'
-            }}>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>📅</span>
+          <div className="booking-form-datetime-section">
+            <div className="booking-form-datetime-header">
+              <span className="booking-form-datetime-icon">📅</span>
               <label 
                 htmlFor="pickupDateTime"
-                style={{
-                  fontWeight: '500',
-                  fontSize: 'var(--font-size-sm)',
-                  color: 'var(--text-primary)'
-                }}
+                className="booking-form-datetime-label"
               >
                 Pickup Date and Time
               </label>
             </div>
             
-            <p style={{
-              fontSize: 'var(--font-size-xs)',
-              color: 'var(--text-secondary)',
-              margin: '0 0 var(--spacing-sm) 0',
-              lineHeight: '1.4'
-            }}>
+            <p className="booking-form-datetime-description">
               When do you need to be picked up?
             </p>
             
@@ -573,8 +552,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               value={pickupDateTime}
               onChange={(e) => setPickupDateTime(e.target.value)}
               required
-              className="form-input"
-              style={{ width: '100%' }}
+              className="booking-form-datetime-input"
             />
           </div>
         </SettingSection>
@@ -588,35 +566,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <div className="">
             <div className="">
               {/* Passengers - Styled like SettingInput */}
-              <div style={{
-                padding: 'var(--spacing-md) 0',
-                borderBottom: '1px solid var(--border-color)'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 'var(--spacing-sm)',
-                  marginBottom: 'var(--spacing-sm)'
-                }}>
-                  <span style={{ fontSize: 'var(--font-size-sm)' }}>👥</span>
+              <div className="booking-form-datetime-section">
+                <div className="booking-form-datetime-header">
+                  <span className="booking-form-datetime-icon">👥</span>
                   <label 
                     htmlFor="passengers"
-                    style={{
-                      fontWeight: '500',
-                      fontSize: 'var(--font-size-sm)',
-                      color: 'var(--text-primary)'
-                    }}
+                    className="booking-form-datetime-label"
                   >
                     Passengers
                   </label>
                 </div>
                 
-                <p style={{
-                  fontSize: 'var(--font-size-xs)',
-                  color: 'var(--text-secondary)',
-                  margin: '0 0 var(--spacing-sm) 0',
-                  lineHeight: '1.4'
-                }}>
+                <p className="booking-form-datetime-description">
                   Number of people traveling
                 </p>
                 
@@ -625,8 +586,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   name="passengers"
                   value={passengers}
                   onChange={(e) => setPassengers(Number(e.target.value))}
-                  className="form-input"
-                  style={{ width: '100%' }}
+                  className="booking-form-datetime-input"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
                     <option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</option>

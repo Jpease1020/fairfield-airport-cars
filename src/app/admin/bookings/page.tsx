@@ -17,7 +17,7 @@ import {
 } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 
-
+function AdminBookingsPageContent() {
   const { addToast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -213,52 +213,23 @@ import { Button } from '@/components/ui/button';
 
   // Status badge renderer
   const renderStatus = (status: string) => {
-    const getStatusStyle = (status: string) => {
+    const getStatusClass = (status: string) => {
       switch (status) {
         case 'pending':
-          return {
-            backgroundColor: '#fef3c7',
-            color: '#92400e',
-            border: '1px solid #fcd34d'
-          };
+          return 'status-badge-pending';
         case 'confirmed':
-          return {
-            backgroundColor: '#dbeafe',
-            color: '#1e40af',
-            border: '1px solid #60a5fa'
-          };
+          return 'status-badge-confirmed';
         case 'completed':
-          return {
-            backgroundColor: '#dcfce7',
-            color: '#166534',
-            border: '1px solid #4ade80'
-          };
+          return 'status-badge-completed';
         case 'cancelled':
-          return {
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            border: '1px solid #f87171'
-          };
+          return 'status-badge-cancelled';
         default:
-          return {
-            backgroundColor: '#f3f4f6',
-            color: '#374151',
-            border: '1px solid #d1d5db'
-          };
+          return 'status-badge-default';
       }
     };
 
     return (
-      <span
-        style={{
-          ...getStatusStyle(status),
-          padding: 'var(--spacing-xs) var(--spacing-sm)',
-          borderRadius: 'var(--border-radius)',
-          fontSize: 'var(--font-size-xs)',
-          fontWeight: '500',
-          display: 'inline-block'
-        }}
-      >
+      <span className={`status-badge ${getStatusClass(status)}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
@@ -271,9 +242,9 @@ import { Button } from '@/components/ui/button';
       label: 'Customer',
       sortable: true,
       render: (_, booking) => (
-        <div>
-          <div className="">{booking.name}</div>
-          <div className="">{booking.email}</div>
+        <div className="table-cell-content">
+          <div className="table-cell-primary">{booking.name}</div>
+          <div className="table-cell-secondary">{booking.email}</div>
         </div>
       )
     },
@@ -282,9 +253,9 @@ import { Button } from '@/components/ui/button';
       label: 'Route',
       sortable: true,
       render: (_, booking) => (
-        <div>
-          <div className="">{booking.pickupLocation}</div>
-          <div className="">→ {booking.dropoffLocation}</div>
+        <div className="table-cell-route">
+          <div className="table-cell-primary">{booking.pickupLocation}</div>
+          <div className="table-cell-route-arrow">→ {booking.dropoffLocation}</div>
         </div>
       )
     },
@@ -295,9 +266,9 @@ import { Button } from '@/components/ui/button';
       render: (value) => {
         const date = new Date(value);
         return (
-          <div>
-            <div className="">{date.toLocaleDateString()}</div>
-            <div className="">{date.toLocaleTimeString()}</div>
+          <div className="table-cell-datetime">
+            <div className="table-cell-primary">{date.toLocaleDateString()}</div>
+            <div className="table-cell-secondary">{date.toLocaleTimeString()}</div>
           </div>
         );
       }
@@ -307,7 +278,7 @@ import { Button } from '@/components/ui/button';
       label: 'Fare',
       sortable: true,
       render: (value) => (
-        <span className="">${(value || 0).toFixed(2)}</span>
+        <span className="table-cell-amount">${(value || 0).toFixed(2)}</span>
       )
     },
     {
@@ -427,3 +398,6 @@ const AdminBookingsPage: NextPage = () => {
       <AdminBookingsPageContent />
     </ToastProvider>
   );
+};
+
+export default AdminBookingsPage;

@@ -12,11 +12,7 @@ export default function BookPage() {
       description="Fill out the form below to book your reliable and comfortable ride to or from the airport."
       centerContent={false}
     >
-      <div style={{
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: 'var(--spacing-lg) 0'
-      }}>
+      <div className="booking-page-container">
         <BookingForm />
       </div>
     </UnifiedLayout>

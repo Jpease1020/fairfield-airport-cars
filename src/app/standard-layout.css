@@ -4005,6 +4005,173 @@ body {
   }
 }
 
+/* ===== STATUS BADGES ===== */
+.status-badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.status-badge-confirmed {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #60a5fa;
+}
+
+.status-badge-completed {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #4ade80;
+}
+
+.status-badge-cancelled {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #f87171;
+}
+
+.status-badge-default {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+/* ===== TABLE CELL CONTENT ===== */
+.table-cell-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.table-cell-primary {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.table-cell-secondary {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.table-cell-route {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.table-cell-route-arrow {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.table-cell-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.table-cell-amount {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ===== CALENDAR COMPONENTS ===== */
+.calendar-container {
+  margin-top: var(--spacing-md);
+}
+
+.calendar-empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-secondary);
+}
+
+.calendar-empty-icon {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.calendar-empty-title {
+  margin-bottom: var(--spacing-sm);
+}
+
+.calendar-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.calendar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.calendar-legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.calendar-legend-color-pending {
+  background-color: #d97706;
+}
+
+.calendar-legend-color-confirmed {
+  background-color: #059669;
+}
+
+.calendar-legend-color-completed {
+  background-color: #0d9488;
+}
+
+.calendar-legend-color-cancelled {
+  background-color: #dc2626;
+}
+
+.calendar-legend-text {
+  font-size: var(--font-size-sm);
+}
+
+/* ===== BOOKING PAGE ===== */
+.booking-page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) 0;
+}
+
+
+
+
+
+
+
+
+
+/* Responsive booking form */
+@media (max-width: 768px) {
+  .booking-form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .booking-form-content {
+    padding: var(--spacing-lg);
+  }
+  
+  .booking-form-header {
+    padding: var(--spacing-lg);
+  }
+}
+
 /* Responsive Grid Sections */
 @media (max-width: 768px) {
   .grid-columns-2,

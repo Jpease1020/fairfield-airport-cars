@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { listBookings } from '../../../lib/services/booking-service';
 import { AdminPageWrapper, InfoCard, GridSection } from '@/components/ui';
 
- ssr: false }) as any;
+const FullCalendar = dynamic(() => import('@fullcalendar/react') as any, { ssr: false });
 const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
 
 const CalendarPage = () => {
@@ -89,7 +89,7 @@ const CalendarPage = () => {
           description={`Showing ${events.length} bookings with color-coded status`}
         >
           {!loading && !error && (
-            <div className="" style={{ marginTop: 'var(--spacing-md)' }}>
+            <div className="calendar-container">
               {typeof window !== 'undefined' && (
                 <FullCalendar
                   plugins={[dayGridPlugin]}
@@ -116,13 +116,9 @@ const CalendarPage = () => {
           )}
 
           {!loading && !error && events.length === 0 && (
-            <div style={{ 
-              textAlign: 'center', 
-              padding: 'var(--spacing-xl)',
-              color: 'var(--text-secondary)' 
-            }}>
-              <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-md)' }}>📅</div>
-              <h3 style={{ marginBottom: 'var(--spacing-sm)' }}>No bookings found</h3>
+            <div className="calendar-empty-state">
+              <div className="calendar-empty-icon">📅</div>
+              <h3 className="calendar-empty-title">No bookings found</h3>
               <p>No bookings scheduled for this month.</p>
             </div>
           )}
@@ -135,50 +131,28 @@ const CalendarPage = () => {
           title="📊 Status Legend"
           description="Color coding for booking statuses"
         >
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-            gap: 'var(--spacing-md)',
-            marginTop: 'var(--spacing-md)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-              <div style={{ 
-                width: '16px', 
-                height: '16px', 
-                backgroundColor: '#d97706', 
-                borderRadius: '4px' 
-              }}></div>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>Pending</span>
+          <div className="calendar-legend">
+            <div className="calendar-legend-item">
+              <div className="calendar-legend-color calendar-legend-color-pending"></div>
+              <span className="calendar-legend-text">Pending</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-              <div style={{ 
-                width: '16px', 
-                height: '16px', 
-                backgroundColor: '#059669', 
-                borderRadius: '4px' 
-              }}></div>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>Confirmed</span>
+            <div className="calendar-legend-item">
+              <div className="calendar-legend-color calendar-legend-color-confirmed"></div>
+              <span className="calendar-legend-text">Confirmed</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-              <div style={{ 
-                width: '16px', 
-                height: '16px', 
-                backgroundColor: '#0d9488', 
-                borderRadius: '4px' 
-              }}></div>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>Completed</span>
+            <div className="calendar-legend-item">
+              <div className="calendar-legend-color calendar-legend-color-completed"></div>
+              <span className="calendar-legend-text">Completed</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-              <div style={{ 
-                width: '16px', 
-                height: '16px', 
-                backgroundColor: '#dc2626', 
-                borderRadius: '4px' 
-              }}></div>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>Cancelled</span>
+            <div className="calendar-legend-item">
+              <div className="calendar-legend-color calendar-legend-color-cancelled"></div>
+              <span className="calendar-legend-text">Cancelled</span>
             </div>
           </div>
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
   );
+};
+
+export default CalendarPage;
