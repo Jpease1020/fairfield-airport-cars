@@ -10,10 +10,13 @@ import {
   ActionGrid,
   DataTable,
   DataTableColumn,
-  DataTableAction
+  DataTableAction,
+  ToastProvider,
+  useToast
 } from '@/components/ui';
 
-const CostsPage = () => {
+function CostsPageContent() {
+  const { addToast } = useToast();
   const [costs, setCosts] = useState<RealCostItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +126,7 @@ const CostsPage = () => {
     },
     { 
       label: 'Export Report', 
-      onClick: () => alert('Export functionality coming soon'), 
+      onClick: () => addToast('info', 'Export functionality coming soon'), 
       variant: 'outline' as const 
     },
     { 
@@ -204,19 +207,19 @@ const CostsPage = () => {
     {
       label: 'View Details',
       icon: '👁️',
-      onClick: (cost) => alert(`Viewing details for: ${cost.category}`),
+      onClick: (cost) => addToast('info', `Detailed cost breakdown for ${cost.category} coming soon`),
       variant: 'outline'
     },
     {
       label: 'Update Cost',
       icon: '✏️',
-      onClick: (cost) => alert(`Updating cost for: ${cost.category}`),
+      onClick: (cost) => addToast('info', `Cost updating for ${cost.category} coming soon`),
       variant: 'primary'
     },
     {
       label: 'View History',
       icon: '📊',
-      onClick: (cost) => alert(`Viewing history for: ${cost.category}`),
+      onClick: (cost) => addToast('info', `Cost history for ${cost.category} coming soon`),
       variant: 'outline'
     }
   ];
@@ -226,13 +229,13 @@ const CostsPage = () => {
       id: 1,
       icon: "📊",
       label: "Cost Analytics",
-      onClick: () => alert('Analytics dashboard coming soon')
+      onClick: () => addToast('info', 'Analytics dashboard coming soon')
     },
     {
       id: 2,
       icon: "📋",
       label: "Export Report",
-      onClick: () => alert('Export functionality coming soon')
+      onClick: () => addToast('info', 'Export functionality coming soon')
     },
     {
       id: 3,
@@ -244,7 +247,7 @@ const CostsPage = () => {
       id: 4,
       icon: "📅",
       label: "Monthly Reports",
-      onClick: () => alert('Monthly reports coming soon')
+      onClick: () => addToast('info', 'Monthly reports coming soon')
     }
   ];
 
@@ -333,6 +336,14 @@ const CostsPage = () => {
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
+  );
+}
+
+const CostsPage = () => {
+  return (
+    <ToastProvider>
+      <CostsPageContent />
+    </ToastProvider>
   );
 };
 

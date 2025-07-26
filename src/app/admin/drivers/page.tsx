@@ -9,7 +9,9 @@ import {
   ActionGrid,
   DataTable,
   DataTableColumn,
-  DataTableAction
+  DataTableAction,
+  ToastProvider,
+  useToast
 } from '@/components/ui';
 
 interface Driver {
@@ -35,7 +37,8 @@ interface Driver {
   createdAt: Date;
 }
 
-export default function DriversPage() {
+function DriversPageContent() {
+  const { addToast } = useToast();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -209,7 +212,7 @@ export default function DriversPage() {
     },
     { 
       label: 'Add Driver', 
-      onClick: () => alert('Add driver functionality coming soon'), 
+      onClick: () => addToast('info', 'Add driver functionality coming soon'), 
       variant: 'primary' as const 
     }
   ];
@@ -280,27 +283,27 @@ export default function DriversPage() {
     {
       label: 'View',
       icon: '👁️',
-      onClick: (driver) => alert(`Viewing driver: ${driver.name}`),
+      onClick: (driver) => addToast('info', `Viewing driver profile for ${driver.name}`),
       variant: 'outline'
     },
     {
       label: 'Assign Ride',
       icon: '🚗',
-      onClick: (driver) => alert(`Assigning ride to: ${driver.name}`),
+      onClick: (driver) => addToast('success', `Ride assignment feature for ${driver.name} coming soon`),
       variant: 'primary',
       condition: (driver) => driver.status === 'available'
     },
     {
       label: 'Location',
       icon: '📍',
-      onClick: (driver) => alert(`Viewing location for: ${driver.name}`),
+      onClick: (driver) => addToast('info', `Live location tracking for ${driver.name} coming soon`),
       variant: 'outline',
       condition: (driver) => driver.status !== 'offline'
     },
     {
       label: 'Edit',
       icon: '✏️',
-      onClick: (driver) => alert(`Editing driver: ${driver.name}`),
+      onClick: (driver) => addToast('info', `Driver editing for ${driver.name} coming soon`),
       variant: 'outline'
     }
   ];
@@ -412,4 +415,12 @@ export default function DriversPage() {
       </GridSection>
     </AdminPageWrapper>
   );
-} 
+}
+
+export default function DriversPage() {
+  return (
+    <ToastProvider>
+      <DriversPageContent />
+    </ToastProvider>
+  );
+}
