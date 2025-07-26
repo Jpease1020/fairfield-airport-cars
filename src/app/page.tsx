@@ -6,12 +6,11 @@ import {
   InfoCard,
   ActionButtonGroup,
   ToastProvider,
-  useToast,
   FeatureGrid
 } from '@/components/ui';
 
 function HomePageContent() {
-  const { addToast } = useToast();
+
 
   const heroActions = [
     {

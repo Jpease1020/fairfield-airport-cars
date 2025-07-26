@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from 'react';
 import { 
   AdminPageWrapper,
   SettingSection,
-  SettingInput,
   ActionButtonGroup,
   StatusMessage,
   ToastProvider,
@@ -73,6 +72,18 @@ function AdminColorsPageContent() {
   const handleColorChange = (key: string, value: string) => {
     setColors((prev) => ({ ...prev, [key]: value }));
     setCSSVar(key, value);
+    
+    // Update CSS custom properties for preview
+    document.documentElement.style.setProperty('--color-swatch', value);
+    if (key === '--background') {
+      document.documentElement.style.setProperty('--preview-background', value);
+    }
+    if (key === '--foreground') {
+      document.documentElement.style.setProperty('--preview-foreground', value);
+    }
+    if (key === '--primary') {
+      document.documentElement.style.setProperty('--preview-primary', value);
+    }
   };
 
   const handleSave = async () => {
@@ -161,7 +172,7 @@ function AdminColorsPageContent() {
                   <div className="admin-color-header">
                     <div
                       className="admin-color-swatch"
-                      style={{ backgroundColor: colors[key] || '#ffffff' }}
+                      data-color={colors[key] || '#ffffff'}
                     />
                     <strong className="admin-color-label">
                       {label}
@@ -200,14 +211,12 @@ function AdminColorsPageContent() {
           >
             <div 
               className="admin-colors-preview"
-              style={{
-                backgroundColor: colors['--background'] || 'var(--background-primary)',
-                color: colors['--foreground'] || 'var(--text-primary)'
-              }}
+              data-background={colors['--background'] || 'var(--background-primary)'}
+              data-foreground={colors['--foreground'] || 'var(--text-primary)'}
             >
               <h2 
                 className="admin-colors-preview-title"
-                style={{ color: colors['--primary'] || 'var(--primary-color)' }}
+                data-primary={colors['--primary'] || 'var(--primary-color)'}
               >
                 Primary Color Example
               </h2>

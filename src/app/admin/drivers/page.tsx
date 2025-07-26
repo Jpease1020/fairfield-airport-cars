@@ -141,35 +141,6 @@ function DriversPageContent() {
   };
 
   const renderStatus = (status: string) => {
-    const getStatusStyle = (status: string) => {
-      switch (status) {
-        case 'available':
-          return {
-            backgroundColor: '#dcfce7',
-            color: '#166534',
-            border: '1px solid #22c55e'
-          };
-        case 'on-trip':
-          return {
-            backgroundColor: '#dbeafe',
-            color: '#1e40af',
-            border: '1px solid #3b82f6'
-          };
-        case 'offline':
-          return {
-            backgroundColor: '#fee2e2',
-            color: '#991b1b',
-            border: '1px solid #ef4444'
-          };
-        default:
-          return {
-            backgroundColor: '#f3f4f6',
-            color: '#374151',
-            border: '1px solid #d1d5db'
-          };
-      }
-    };
-
     const getStatusIcon = (status: string) => {
       switch (status) {
         case 'available':

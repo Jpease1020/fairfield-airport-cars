@@ -74,40 +74,20 @@ const AIAssistantSettingsPage = () => {
           title="⚙️ AI Assistant Configuration"
           description="Current status and available options"
         >
-          <div style={{
-            padding: 'var(--spacing-lg)',
-            backgroundColor: 'var(--background-secondary)',
-            borderRadius: 'var(--border-radius)',
-            border: '1px solid var(--border-color)'
-          }}>
-            <h3 style={{
-              margin: '0 0 var(--spacing-md) 0',
-              color: 'var(--text-primary)'
-            }}>
+          <div className="ai-assistant-settings-container">
+            <h3 className="ai-assistant-settings-title">
               🚫 Feature Not Available
             </h3>
-            <p style={{
-              margin: '0 0 var(--spacing-md) 0',
-              color: 'var(--text-secondary)',
-              lineHeight: '1.5'
-            }}>
+            <p className="ai-assistant-settings-description">
               The AI assistant feature is currently disabled for your account. This may be due to:
             </p>
-            <ul style={{
-              margin: '0 0 var(--spacing-md) 0',
-              paddingLeft: 'var(--spacing-lg)',
-              color: 'var(--text-secondary)'
-            }}>
+            <ul className="ai-assistant-settings-list">
               <li>Subscription plan limitations</li>
               <li>Regional availability restrictions</li>
               <li>System maintenance or updates</li>
               <li>Account configuration settings</li>
             </ul>
-            <p style={{
-              margin: 0,
-              color: 'var(--text-secondary)',
-              fontSize: 'var(--font-size-sm)'
-            }}>
+            <p className="ai-assistant-settings-note">
               Contact support for information about enabling this feature.
             </p>
           </div>

@@ -84,32 +84,14 @@ const AIAssistantDisabledPage = () => {
           title="🤖 AI Assistant Status"
           description="Information about AI assistant availability and activation"
         >
-          <div style={{
-            padding: 'var(--spacing-lg)',
-            textAlign: 'center',
-            borderRadius: 'var(--border-radius)',
-            backgroundColor: 'var(--background-secondary)',
-            border: '1px solid var(--border-color)'
-          }}>
-            <div style={{
-              fontSize: 'var(--font-size-xl)',
-              marginBottom: 'var(--spacing-md)',
-              color: 'var(--text-secondary)'
-            }}>
+          <div className="ai-assistant-disabled-container">
+            <div className="ai-assistant-disabled-icon">
               🚫
             </div>
-            <h3 style={{
-              margin: '0 0 var(--spacing-sm) 0',
-              color: 'var(--text-primary)'
-            }}>
+            <h3 className="ai-assistant-disabled-title">
               AI Assistant Not Available
             </h3>
-            <p style={{
-              margin: 0,
-              color: 'var(--text-secondary)',
-              fontSize: 'var(--font-size-sm)',
-              lineHeight: '1.5'
-            }}>
+            <p className="ai-assistant-disabled-description">
               The AI assistant feature is currently disabled for your account. 
               This feature may be enabled in future updates or through your subscription plan.
             </p>

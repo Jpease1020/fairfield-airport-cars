@@ -133,11 +133,7 @@ function FeedbackPageContent() {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   };
 
-  const getRatingColor = (rating: number) => {
-    if (rating >= 4) return '#16a34a'; // green
-    if (rating >= 3) return '#ca8a04'; // yellow
-    return '#dc2626'; // red
-  };
+
 
   const renderRating = (rating: number) => {
     return (

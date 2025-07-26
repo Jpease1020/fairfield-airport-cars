@@ -159,22 +159,14 @@ function ManualCostEntryPageContent() {
       )}
 
       <GridSection variant="content" columns={1}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--spacing-lg)'
-        }}>
+        <div className="costs-manual-entry-container">
           {/* Cost Entry Form */}
           <SettingSection
             title="Add New Cost Entry"
             description="Enter details for your business expense"
             icon="💰"
           >
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 'var(--spacing-md)'
-            }}>
+            <div className="costs-form-grid">
               <SettingInput
                 id="cost-date"
                 label="Date"
@@ -235,11 +227,7 @@ function ManualCostEntryPageContent() {
             description="Common expense categories to help organize your costs"
             icon="📊"
           >
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 'var(--spacing-md)'
-            }}>
+            <div className="costs-categories-grid">
               {costCategories.map((category, index) => (
                 <HelpCard
                   key={index}
@@ -257,11 +245,7 @@ function ManualCostEntryPageContent() {
             description="Common cost entry shortcuts"
             icon="⚡"
           >
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 'var(--spacing-sm)'
-            }}>
+            <div className="costs-quick-actions">
               <ActionButtonGroup
                 buttons={[
                   {

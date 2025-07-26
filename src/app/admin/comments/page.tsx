@@ -56,35 +56,6 @@ function CommentsPageContent() {
 
   const renderStatus = (comment: ConfluenceComment) => {
     const status = getCommentStatus(comment);
-    let statusStyle = {
-      backgroundColor: '#dcfce7',
-      color: '#166534',
-      border: '1px solid #4ade80'
-    };
-
-    switch (status) {
-      case 'Long':
-        statusStyle = {
-          backgroundColor: '#dbeafe',
-          color: '#1e40af',
-          border: '1px solid #60a5fa'
-        };
-        break;
-      case 'Question':
-        statusStyle = {
-          backgroundColor: '#fef3c7',
-          color: '#92400e',
-          border: '1px solid #fcd34d'
-        };
-        break;
-      case 'Urgent':
-        statusStyle = {
-          backgroundColor: '#fee2e2',
-          color: '#dc2626',
-          border: '1px solid #f87171'
-        };
-        break;
-    }
 
     return (
       <span className="status-badge">

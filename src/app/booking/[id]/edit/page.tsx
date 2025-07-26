@@ -5,10 +5,8 @@ import { useParams } from 'next/navigation';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Alert } from '@/components/feedback';
-import { LoadingSpinner } from '@/components/data';
-import { Card, CardContent } from '@/components/ui/card';
+import { UnifiedLayout } from '@/components/layout';
+import { GridSection, InfoCard, LoadingSpinner } from '@/components/ui';
 
 export default function EditBookingPage() {
   const params = useParams();
@@ -39,47 +37,78 @@ export default function EditBookingPage() {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="">
-          <LoadingSpinner text="Loading booking details..." />
-        </div>
-      </PageContainer>
+      <UnifiedLayout
+        layoutType="standard"
+        title="Edit Booking"
+        subtitle="Loading booking details..."
+      >
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="Loading..." description="Fetching booking details">
+            <div className="edit-booking-loading">
+              <LoadingSpinner text="Loading booking details..." />
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
     );
   }
 
   if (error) {
     return (
-      <PageContainer>
-        <Alert variant="error" title="Error">
-          {error}
-        </Alert>
-      </PageContainer>
+      <UnifiedLayout
+        layoutType="standard"
+        title="Edit Booking"
+        subtitle="Error occurred"
+      >
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="❌ Error" description="Failed to load booking">
+            <div className="edit-booking-error">
+              <p className="edit-booking-error-message">
+                {error}
+              </p>
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
     );
   }
 
   if (!booking) {
     return (
-      <PageContainer>
-        <Alert variant="error" title="Booking Not Found">
-          No booking found with the provided ID.
-        </Alert>
-      </PageContainer>
+      <UnifiedLayout
+        layoutType="standard"
+        title="Edit Booking"
+        subtitle="Booking not found"
+      >
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="❌ Booking Not Found" description="No booking found with the provided ID">
+            <div className="edit-booking-not-found">
+              <p className="edit-booking-not-found-message">
+                No booking found with the provided ID.
+              </p>
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
     );
   }
 
   return (
-    <PageContainer maxWidth="2xl" padding="lg">
-      <PageHeader 
-        title="Edit Your Booking" 
-        subtitle="Update your ride details"
-      />
-      <PageContent>
-        <Card>
-          <CardContent className="p-8">
+    <UnifiedLayout
+      layoutType="standard"
+      title="Edit Your Booking"
+      subtitle="Update your ride details"
+    >
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="✏️ Edit Booking Details"
+          description="Update your ride information"
+        >
+          <div className="edit-booking-form-container">
             <BookingForm booking={booking} />
-          </CardContent>
-        </Card>
-      </PageContent>
-    </PageContainer>
+          </div>
+        </InfoCard>
+      </GridSection>
+    </UnifiedLayout>
   );
 }

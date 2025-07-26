@@ -17,7 +17,7 @@ import {
   BookingPageEditor,
   HelpPageEditor
 } from "@/components/cms/PageEditors";
-import withAuth from "../../withAuth";
+
 
 const PAGE_KEYS = [
   { key: "home", label: "Homepage", icon: "🏠" },

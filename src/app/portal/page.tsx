@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
   InfoCard,
-  ActionButtonGroup,
   FeatureGrid,
   ToastProvider,
   useToast
@@ -13,8 +12,7 @@ import {
 
 function PortalPageContent() {
   const { addToast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
 
   const portalActions = [
     {

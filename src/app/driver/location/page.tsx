@@ -7,7 +7,6 @@ import { useSearchParams } from 'next/navigation';
 import { 
   GridSection,
   InfoCard,
-  StatusMessage,
   LoadingSpinner
 } from '@/components/ui';
 import { UnifiedLayout } from '@/components/layout';

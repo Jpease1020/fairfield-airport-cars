@@ -6,12 +6,11 @@ import {
   InfoCard,
   ActionButtonGroup,
   FeatureGrid,
-  ToastProvider,
-  useToast
+  ToastProvider
 } from '@/components/ui';
 
 function AboutPageContent() {
-  const { addToast } = useToast();
+
 
   const heroActions = [
     {
@@ -47,13 +46,13 @@ function AboutPageContent() {
         >
           <p>
             Fairfield Airport Cars has been providing premium transportation services to the Fairfield County area for years.
-            We understand that getting to and from the airport can be stressful, which is why we're committed to making your
+            We understand that getting to and from the airport can be stressful, which is why we&apos;re committed to making your
             journey as smooth and comfortable as possible.
           </p>
           
           <blockquote>
-            "To provide reliable, professional, and comfortable transportation services that exceed our customers' expectations.
-            We believe in punctuality, safety, and superior customer service."
+            &quot;To provide reliable, professional, and comfortable transportation services that exceed our customers&apos; expectations.
+            We believe in punctuality, safety, and superior customer service.&quot;
           </blockquote>
         </InfoCard>
       </GridSection>

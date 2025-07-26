@@ -121,38 +121,6 @@ function PromosPageContent() {
 
   const renderStatus = (promo: PromoCode) => {
     const status = getPromoStatus(promo);
-    let statusStyle = {};
-    
-    switch (status) {
-      case 'Active':
-        statusStyle = {
-          backgroundColor: '#dcfce7',
-          color: '#166534',
-          border: '1px solid #22c55e'
-        };
-        break;
-      case 'Expired':
-        statusStyle = {
-          backgroundColor: '#fee2e2',
-          color: '#991b1b',
-          border: '1px solid #ef4444'
-        };
-        break;
-      case 'Limit Reached':
-        statusStyle = {
-          backgroundColor: '#fef3c7',
-          color: '#92400e',
-          border: '1px solid #f59e0b'
-        };
-        break;
-      case 'Expiring Soon':
-        statusStyle = {
-          backgroundColor: '#fef3c7',
-          color: '#92400e',
-          border: '1px solid #fcd34d'
-        };
-        break;
-    }
 
     return (
       <span className="status-badge">

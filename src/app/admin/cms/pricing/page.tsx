@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import withAuth from '../../withAuth';
+
 import { cmsService } from '@/lib/services/cms-service';
 import { PricingSettings } from '@/types/cms';
 import { 
@@ -9,20 +9,13 @@ import {
   GridSection,
   InfoCard,
   ActionButtonGroup,
-  StatusMessage,
   ToastProvider,
   useToast
 } from '@/components/ui';
 import { 
-  Save, 
-  RefreshCw, 
-  DollarSign, 
   MapPin, 
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Plus,
-  Trash2
+  Trash2,
+  CheckCircle
 } from 'lucide-react';
 
 function PricingSettingsContent() {

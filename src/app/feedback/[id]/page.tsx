@@ -106,7 +106,7 @@ function FeedbackPageContent() {
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
-                  className="star-rating-button"
+                  className="feedback-star-rating-button"
                   aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
                 >
                   <Star />
@@ -134,7 +134,7 @@ function FeedbackPageContent() {
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Tell us about your experience..."
                 rows={4}
-                className="form-input"
+                className="feedback-form-textarea"
               />
             </p>
 
@@ -142,7 +142,7 @@ function FeedbackPageContent() {
               <button
                 type="submit"
                 disabled={loading || rating === 0}
-                className="action-button"
+                className="feedback-submit-button"
               >
                 {loading ? 'Submitting...' : '⭐ Submit Feedback'}
               </button>

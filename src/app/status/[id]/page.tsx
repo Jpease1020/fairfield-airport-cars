@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { UnifiedLayout } from '@/components/layout';
 import { 
@@ -39,17 +39,7 @@ function BookingStatusPageContent() {
     }
   };
 
-  const getStatusColor = (status: any) => {
-    const statusText = getStatusText(status);
-    switch (statusText.toLowerCase()) {
-      case 'confirmed': return 'var(--success-color)';
-      case 'en-route': return 'var(--warning-color)';
-      case 'arrived': return 'var(--primary-color)';
-      case 'completed': return 'var(--success-color)';
-      case 'cancelled': return 'var(--error-color)';
-      default: return 'var(--text-secondary)';
-    }
-  };
+
 
   const quickActions = [
     {
@@ -176,7 +166,7 @@ function BookingStatusPageContent() {
           <p>
             <button
               onClick={() => setShowDetails(!showDetails)}
-              className="toggle-button"
+              className="status-toggle-button"
             >
               {showDetails ? 'Hide' : 'Show'} Booking Details
             </button>

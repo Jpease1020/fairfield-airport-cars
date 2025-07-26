@@ -4,12 +4,11 @@ import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
   InfoCard,
-  ToastProvider,
-  useToast
+  ToastProvider
 } from '@/components/ui';
 
 function PrivacyPageContent() {
-  const { addToast } = useToast();
+
 
   return (
     <UnifiedLayout 

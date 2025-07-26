@@ -2859,6 +2859,23 @@ body {
   margin: 0;
 }
 
+/* Admin Stat Value Colors */
+.admin-stat-value-total-bookings {
+  color: var(--success-base);
+}
+
+.admin-stat-value-active-drivers {
+  color: var(--brand-primary);
+}
+
+.admin-stat-value-revenue-this-month {
+  color: var(--warning-base);
+}
+
+.admin-stat-value-customer-rating {
+  color: var(--success-base);
+}
+
 /* Admin Activity Placeholder */
 .admin-activity-placeholder {
   padding: var(--spacing-lg);
@@ -3444,6 +3461,23 @@ body {
   height: 24px;
   border-radius: 4px;
   border: 1px solid var(--border-color);
+  background-color: var(--color-swatch);
+}
+
+.admin-color-swatch[data-color] {
+  background-color: var(--color-swatch);
+}
+
+.admin-colors-preview[data-background] {
+  background-color: var(--preview-background);
+}
+
+.admin-colors-preview[data-foreground] {
+  color: var(--preview-foreground);
+}
+
+.admin-colors-preview-title[data-primary] {
+  color: var(--preview-primary);
 }
 
 .admin-color-label {
@@ -3726,6 +3760,125 @@ body {
 /* Driver Location Loading */
 .driver-location-loading {
   text-align: center;
+  padding: var(--spacing-lg);
+}
+
+/* ===== AI ASSISTANT PAGES ===== */
+
+/* AI Assistant Disabled */
+.ai-assistant-disabled-container {
+  padding: var(--spacing-lg);
+  text-align: center;
+  border-radius: var(--border-radius);
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.ai-assistant-disabled-icon {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-md);
+  color: var(--text-secondary);
+}
+
+.ai-assistant-disabled-title {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--text-primary);
+}
+
+.ai-assistant-disabled-description {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+/* AI Assistant Settings */
+.ai-assistant-settings-container {
+  padding: var(--spacing-lg);
+  background-color: var(--background-secondary);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.ai-assistant-settings-title {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-primary);
+}
+
+.ai-assistant-settings-description {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.ai-assistant-settings-list {
+  margin: 0 0 var(--spacing-md) 0;
+  padding-left: var(--spacing-lg);
+  color: var(--text-secondary);
+}
+
+.ai-assistant-settings-note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== COSTS MANUAL ENTRY ===== */
+
+.costs-manual-entry-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.costs-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.costs-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.costs-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+/* ===== EDIT BOOKING PAGE ===== */
+
+.edit-booking-loading {
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.edit-booking-error {
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.edit-booking-error-message {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  margin: 0;
+}
+
+.edit-booking-not-found {
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.edit-booking-not-found-message {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  margin: 0;
+}
+
+.edit-booking-form-container {
   padding: var(--spacing-lg);
 }
 
@@ -5404,4 +5557,220 @@ body {
     right: var(--spacing-sm);
     max-width: none;
   }
+}
+
+/* ===== NEW COMPONENT STYLES ===== */
+
+/* Login Form Styles */
+.login-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.login-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.login-form-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.login-form-input {
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  transition: border-color 0.2s ease;
+}
+
+.login-form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.1);
+}
+
+.login-form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--border-radius);
+  color: #dc2626;
+}
+
+.login-form-error-icon {
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+}
+
+.login-form-error-content {
+  flex: 1;
+}
+
+.login-form-error-message {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.login-form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.login-form-submit-btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login-form-submit-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.login-form-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-form-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.login-form-divider::before,
+.login-form-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.login-form-divider span {
+  padding: 0 var(--spacing-md);
+}
+
+.login-form-google-btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: white;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login-form-google-btn:hover:not(:disabled) {
+  background-color: var(--background-secondary);
+}
+
+.login-form-google-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Login Layout Styles */
+.login-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-secondary);
+}
+
+/* Auth Loading Styles */
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+}
+
+/* Feedback Form Styles */
+.feedback-star-rating-button {
+  background: none;
+  border: none;
+  font-size: var(--font-size-2xl);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  transition: transform 0.2s ease;
+}
+
+.feedback-star-rating-button:hover {
+  transform: scale(1.1);
+}
+
+.feedback-form-textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.feedback-form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.1);
+}
+
+.feedback-submit-button {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.feedback-submit-button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.feedback-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Status Toggle Button */
+.status-toggle-button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.status-toggle-button:hover {
+  background-color: var(--secondary-hover);
 }

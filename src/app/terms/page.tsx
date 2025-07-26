@@ -1,15 +1,14 @@
 'use client';
 
 import { UnifiedLayout } from '@/components/layout';
-import {
+import { 
   GridSection,
   InfoCard,
-  ToastProvider,
-  useToast
+  ToastProvider
 } from '@/components/ui';
 
 function TermsPageContent() {
-  const { addToast } = useToast();
+
 
   return (
     <UnifiedLayout 

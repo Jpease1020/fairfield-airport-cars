@@ -16,9 +16,7 @@ function CancelPageContent() {
   const { addToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [bookingId, setBookingId] = useState('');
-  const [cancellationReason, setCancellationReason] = useState('');
+  const [bookingId] = useState('');
 
   const handleCancel = async () => {
     if (!bookingId.trim()) {
@@ -27,8 +25,6 @@ function CancelPageContent() {
     }
 
     setLoading(true);
-    setError(null);
-
     try {
       // Simulate cancellation API call
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -42,7 +38,6 @@ function CancelPageContent() {
     } catch (error) {
       console.error('Cancellation error:', error);
       const errorMsg = 'Failed to cancel booking. Please contact customer support.';
-      setError(errorMsg);
       addToast('error', errorMsg);
     } finally {
       setLoading(false);
@@ -71,14 +66,7 @@ function CancelPageContent() {
     }
   ];
 
-  const cancellationReasons = [
-    'Flight cancelled or delayed',
-    'Plans changed',
-    'Found alternative transportation',
-    'Emergency situation',
-    'Booking made in error',
-    'Other'
-  ];
+
 
   // REFACTORED: Using structured feature data for FeatureGrid
   const alternativeOptions = [

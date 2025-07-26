@@ -7,8 +7,7 @@ import {
   GridSection,
   InfoCard,
   ActionButtonGroup,
-  LoadingSpinner,
-  StatusMessage
+  LoadingSpinner
 } from '@/components/ui';
 import { Booking } from '@/types/booking';
 

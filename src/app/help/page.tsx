@@ -7,12 +7,11 @@ import {
   InfoCard,
   ActionButtonGroup,
   ToastProvider,
-  useToast,
   FeatureGrid
 } from '@/components/ui';
 
 function HelpPageContent() {
-  const { addToast } = useToast();
+
 
   const helpSections = [
     {

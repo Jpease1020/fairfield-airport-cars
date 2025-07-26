@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
-import { Button } from '@/components/ui/button';
+import { UnifiedLayout } from '@/components/layout';
+import { GridSection, InfoCard } from '@/components/ui';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -41,25 +42,30 @@ export default function LoginPage() {
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleLogin(e);
+  };
+
   return (
-    <div className="login-page">
-      <div className="">
-        <div className="card login-card">
-          <div className="card-header">
-            <h1 className="card-title">Admin Login</h1>
-            <p className="card-description">
-              Enter your credentials to access the admin dashboard
-            </p>
-          </div>
-          
-          <form onSubmit={handleLogin} className="login-form">
-            <div className="card-body">
-              <div className="form-group">
-                <label htmlFor="email" className="form-label">Email Address</label>
+    <UnifiedLayout
+      layoutType="standard"
+      title="Admin Login"
+      subtitle="Enter your credentials to access the admin dashboard"
+    >
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="🔐 Admin Authentication"
+          description="Sign in to access the admin dashboard"
+        >
+          <form onSubmit={handleFormSubmit} className="login-form">
+            <div className="login-form-fields">
+              <div className="login-form-group">
+                <label htmlFor="email" className="login-form-label">Email Address</label>
                 <input
                   id="email"
                   type="email"
-                  className="form-input"
+                  className="login-form-input"
                   placeholder="admin@fairfieldairportcars.com"
                   required
                   value={email}
@@ -68,12 +74,12 @@ export default function LoginPage() {
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="password" className="form-label">Password</label>
+              <div className="login-form-group">
+                <label htmlFor="password" className="login-form-label">Password</label>
                 <input
                   id="password"
                   type="password"
-                  className="form-input"
+                  className="login-form-input"
                   placeholder="Enter your password"
                   required
                   value={password}
@@ -83,45 +89,40 @@ export default function LoginPage() {
               </div>
               
               {error && (
-                <div className="alert-item error">
-                  <div className="alert-icon">⚠️</div>
-                  <div className="alert-content">
-                    <p className="alert-message">{error}</p>
+                <div className="login-form-error">
+                  <div className="login-form-error-icon">⚠️</div>
+                  <div className="login-form-error-content">
+                    <p className="login-form-error-message">{error}</p>
                   </div>
                 </div>
               )}
             </div>
             
-            <div className="login-actions">
-              <Button 
+            <div className="login-form-actions">
+              <button 
                 type="submit" 
-                className="login-btn"
+                className="login-form-submit-btn"
                 disabled={loading}
               >
                 {loading ? '🔄 Signing In...' : '🔐 Sign In'}
-              </Button>
+              </button>
               
-              <div className="login-divider">
+              <div className="login-form-divider">
                 <span>or</span>
               </div>
               
-              <Button 
+              <button 
                 type="button"
-                variant="secondary"
-                className="login-btn google-btn"
+                className="login-form-google-btn"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
               >
                 {loading ? '🔄 Connecting...' : '🔍 Sign In with Google'}
-              </Button>
+              </button>
             </div>
           </form>
-        </div>
-        
-        <div className="login-footer">
-          <p>Need help? Contact support at <a href="mailto:support@fairfieldairportcars.com">support@fairfieldairportcars.com</a></p>
-        </div>
-      </div>
-    </div>
+        </InfoCard>
+      </GridSection>
+    </UnifiedLayout>
   );
 }

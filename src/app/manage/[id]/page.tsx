@@ -1,17 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/utils/firebase';
+import { useRouter } from 'next/navigation';
+
+
 import { Booking } from '@/types/booking';
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
   InfoCard,
   ActionButtonGroup,
-  LoadingSpinner,
-  StatusMessage
+  LoadingSpinner
 } from '@/components/ui';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/utils/firebase';
@@ -23,13 +22,13 @@ import { authService } from '@/lib/services/auth-service';
 import { ToastProvider, useToast } from '@/components/ui';
 
 function ManageBookingPageContent() {
-  const { id } = useParams();
+
   const router = useRouter();
   const { addToast } = useToast();
 
   const [booking, setBooking] = useState<Booking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading] = useState(true);
+  const [error] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState<string | null>(null);
   
   const { config: cmsConfig } = useCMS();

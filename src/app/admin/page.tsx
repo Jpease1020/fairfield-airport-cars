@@ -6,12 +6,11 @@ import {
   GridSection,
   InfoCard,
   ActionButtonGroup,
-  ToastProvider,
-  useToast
+  ToastProvider
 } from '@/components/ui';
 
 function AdminDashboardContent() {
-  const { addToast } = useToast();
+
 
   const quickActions = [
     {
@@ -71,7 +70,7 @@ function AdminDashboardContent() {
               description={stat.value}
             >
               <div className="admin-stat-card">
-                <div className="admin-stat-value" style={{ color: stat.color }}>
+                <div className={`admin-stat-value admin-stat-value-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}>
                   {stat.value}
                 </div>
                 <p className="admin-stat-title">
