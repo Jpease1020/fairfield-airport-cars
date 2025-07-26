@@ -10,7 +10,8 @@ import {
   InfoCard, 
   ActionGrid,
   ToastProvider,
-  useToast
+  useToast,
+  ActionButtonGroup
 } from '@/components/ui';
 
 function CMSPageContent() {
@@ -214,11 +215,14 @@ function CMSPageContent() {
                 </div>
               </div>
               
-              <Link href={section.href}>
-                <button className="btn btn-outline" style={{ width: '100%' }}>
-                  Manage {section.title}
-                </button>
-              </Link>
+              <ActionButtonGroup
+                buttons={[{
+                  label: `Manage ${section.title}`,
+                  onClick: () => window.location.href = section.href,
+                  variant: 'outline' as const,
+                  icon: section.icon
+                }]}
+              />
             </div>
           </InfoCard>
         ))}

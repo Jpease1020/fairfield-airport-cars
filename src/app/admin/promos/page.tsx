@@ -12,7 +12,8 @@ import {
   DataTableAction,
   FormSection,
   ToastProvider,
-  useToast
+  useToast,
+  ActionButtonGroup
 } from '@/components/ui';
 
 function PromosPageContent() {
@@ -441,13 +442,15 @@ function PromosPageContent() {
           </div>
           
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button 
-              className="btn btn-primary"
-              onClick={addPromo}
-              disabled={!form.code || !form.value || submitting}
-            >
-              {submitting ? 'Creating...' : 'Create Promo Code'}
-            </button>
+            <ActionButtonGroup
+              buttons={[{
+                label: submitting ? 'Creating...' : 'Create Promo Code',
+                onClick: addPromo,
+                variant: 'primary' as const,
+                disabled: !form.code || !form.value || submitting,
+                icon: '💳'
+              }]}
+            />
           </div>
         </FormSection>
       </GridSection>

@@ -264,41 +264,30 @@ function AdminColorsPageContent() {
                 This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
               </p>
               
-              <div style={{
-                display: 'flex',
-                gap: 'var(--spacing-sm)',
-                flexWrap: 'wrap'
-              }}>
-                <button
-                  className="btn btn-primary"
-                  style={{
-                    backgroundColor: colors['--primary'] || 'var(--primary-color)',
-                    borderColor: colors['--primary'] || 'var(--primary-color)'
-                  }}
-                >
-                  Primary Button
-                </button>
-                
-                <button
-                  className="btn btn-outline"
-                  style={{
-                    borderColor: colors['--primary'] || 'var(--primary-color)',
-                    color: colors['--primary'] || 'var(--primary-color)'
-                  }}
-                >
-                  Outline Button
-                </button>
-                
-                <button
-                  className="btn btn-secondary"
-                  style={{
-                    backgroundColor: colors['--secondary'] || 'var(--secondary-color)',
-                    borderColor: colors['--secondary'] || 'var(--secondary-color)'
-                  }}
-                >
-                  Secondary Button
-                </button>
-              </div>
+              <ActionButtonGroup
+                buttons={[
+                  {
+                    label: 'Primary Gradient',
+                    onClick: () => addToast('info', 'This is how primary buttons look'),
+                    variant: 'primary' as const,
+                    icon: '🎨'
+                  },
+                  {
+                    label: 'Outline Style',
+                    onClick: () => addToast('info', 'This is how outline buttons look'),
+                    variant: 'outline' as const,
+                    icon: '⭕'
+                  },
+                  {
+                    label: 'Secondary Color',
+                    onClick: () => addToast('info', 'This is how secondary buttons look'),
+                    variant: 'secondary' as const,
+                    icon: '🔘'
+                  }
+                ]}
+                orientation="horizontal"
+                spacing="sm"
+              />
             </div>
           </SettingSection>
         </div>
