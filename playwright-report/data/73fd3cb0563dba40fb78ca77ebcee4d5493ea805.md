@@ -1,0 +1,56 @@
+# Page snapshot
+
+```yaml
+- button "Toggle accessibility options (Alt + A)": ♿
+- link "Skip to main content":
+  - /url: "#main-content"
+- button "Toggle accessibility options (Alt + A)": ♿
+- link "Skip to main content":
+  - /url: "#main-content"
+- banner:
+  - navigation:
+    - link "Fairfield Airport Cars Logo Fairfield Airport Car Service":
+      - /url: /
+      - img "Fairfield Airport Cars Logo"
+      - text: Fairfield Airport Car Service
+    - button "Open menu"
+- heading "🚗 Premium Airport Transportation" [level=1]
+- paragraph: Reliable, comfortable rides to and from Fairfield Airport with professional drivers
+- paragraph: Experience luxury, reliability, and professional service for all your airport transportation needs.
+- main:
+  - heading "🎯 Ready to Experience Premium Transportation?" [level=3]
+  - paragraph: Join thousands of satisfied customers who trust us for reliable airport transportation. Professional drivers, clean vehicles, and on-time service for all your airport travel needs.
+  - button "🚗 Book Your Ride"
+  - button "ℹ️ Learn More"
+  - heading "✨ Why Choose Us?" [level=3]
+  - paragraph: Professional service, reliable transportation, and peace of mind for your airport journey
+  - text: 🚗
+  - heading "Professional Service" [level=4]
+  - paragraph: Experienced drivers with clean, well-maintained vehicles for your comfort and safety
+  - text: ⏰
+  - heading "Reliable & On Time" [level=4]
+  - paragraph: We understand the importance of punctuality for airport travel and never let you down
+  - text: 💳
+  - heading "Easy Booking" [level=4]
+  - paragraph: Simple online booking with secure payment processing and instant confirmation
+  - heading "🎯 Ready to Book Your Ride?" [level=3]
+  - paragraph: Experience the difference that professional service makes. Get started with your reliable airport transportation today.
+  - button "🚀 Book Your Ride Today"
+- contentinfo:
+  - contentinfo:
+    - heading "Fairfield Airport Cars" [level=3]
+    - paragraph: Premium airport transportation service
+    - heading "Contact" [level=4]
+    - paragraph: "Phone: (203) 555-0123"
+    - paragraph: "Email: info@fairfieldairportcar.com"
+    - heading "Service Areas" [level=4]
+    - paragraph: Fairfield County, CT
+    - paragraph: New York Airports
+    - paragraph: © 2024 Fairfield Airport Cars. All rights reserved.
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+- button "Open issues overlay": 1 Issue
+- button "Collapse issues badge":
+  - img
+```
