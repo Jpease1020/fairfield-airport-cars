@@ -2,9 +2,11 @@
 
 import { UniversalLayout } from '@/components/layout/UniversalLayout';
 import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
-import { GridSection, InfoCard } from '@/components/ui';
+import { GridSection, InfoCard, ToastProvider, useToast } from '@/components/ui';
 
-export default function TermsPage() {
+function TermsPageContent() {
+  const { addToast } = useToast();
+
   return (
     <LayoutEnforcer>
       <UniversalLayout 
@@ -110,5 +112,13 @@ export default function TermsPage() {
         </GridSection>
       </UniversalLayout>
     </LayoutEnforcer>
+  );
+}
+
+export default function TermsPage() {
+  return (
+    <ToastProvider>
+      <TermsPageContent />
+    </ToastProvider>
   );
 }
