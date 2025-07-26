@@ -1,21 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
+import { useEffect, useState, useMemo } from 'react';
+import { 
+  AdminPageWrapper,
+  SettingSection,
+  SettingInput,
+  ActionButtonGroup,
+  StatusMessage,
+  ToastProvider,
+  useToast,
+  GridSection
+} from '@/components/ui';
 import { getCMSConfig, updateCMSConfig } from '@/lib/services/cms-service';
 
 const COLOR_VARIABLES = [
-  { key: '--primary', label: 'Primary' },
-  { key: '--secondary', label: 'Secondary' },
-  { key: '--accent', label: 'Accent' },
-  { key: '--background', label: 'Background' },
-  { key: '--foreground', label: 'Foreground' },
-  { key: '--muted', label: 'Muted' },
-  { key: '--destructive', label: 'Destructive' },
-  { key: '--border', label: 'Border' },
+  { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
+  { key: '--secondary', label: 'Secondary', description: 'Secondary brand color for accents' },
+  { key: '--accent', label: 'Accent', description: 'Accent color for highlights and emphasis' },
+  { key: '--background', label: 'Background', description: 'Main background color' },
+  { key: '--foreground', label: 'Foreground', description: 'Main text color' },
+  { key: '--muted', label: 'Muted', description: 'Subtle text and element colors' },
+  { key: '--destructive', label: 'Destructive', description: 'Error and warning colors' },
+  { key: '--border', label: 'Border', description: 'Border and divider colors' },
 ];
 
 const getCSSVar = (key: string) =>
@@ -29,24 +35,40 @@ const setCSSVar = (key: string, value: string) => {
   }
 };
 
-export default function AdminColorsPage() {
+function AdminColorsPageContent() {
+  const { addToast } = useToast();
   const [colors, setColors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load from Firestore (CMS config) or CSS vars
-    const loadColors = async () => {
+    loadColors();
+  }, []);
+
+  const loadColors = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
       const config = await getCMSConfig();
       const saved = config?.themeColors || {};
       const initial: Record<string, string> = {};
+      
       for (const { key } of COLOR_VARIABLES) {
         initial[key] = saved[key] || getCSSVar(key) || '#ffffff';
       }
+      
       setColors(initial);
-    };
-    loadColors();
-  }, []);
+      addToast('success', 'Color scheme loaded successfully');
+    } catch {
+      const errorMsg = 'Failed to load color scheme';
+      setError(errorMsg);
+      addToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleColorChange = (key: string, value: string) => {
     setColors((prev) => ({ ...prev, [key]: value }));
@@ -55,77 +77,240 @@ export default function AdminColorsPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    setMessage(null);
+    setError(null);
+    
     try {
       await updateCMSConfig({ themeColors: colors });
-      setMessage('Color scheme saved!');
+      addToast('success', 'Color scheme saved successfully!');
     } catch {
-      setMessage('Failed to save color scheme.');
+      const errorMsg = 'Failed to save color scheme';
+      setError(errorMsg);
+      addToast('error', errorMsg);
     } finally {
       setSaving(false);
     }
   };
 
   const handleReset = () => {
-    COLOR_VARIABLES.forEach(({ key }) => {
-      setCSSVar(key, '');
-    });
-    window.location.reload();
+    if (confirm('Reset all colors to default? This will reload the page.')) {
+      COLOR_VARIABLES.forEach(({ key }) => {
+        setCSSVar(key, '');
+      });
+      addToast('info', 'Colors reset to default');
+      setTimeout(() => window.location.reload(), 1000);
+    }
   };
 
+  const handleReload = () => {
+    loadColors();
+  };
+
+  // Header actions
+  const headerActions = useMemo(() => [
+    {
+      label: 'Reload',
+      onClick: handleReload,
+      variant: 'outline' as const,
+      icon: '🔄'
+    },
+    {
+      label: 'Reset to Default',
+      onClick: handleReset,
+      variant: 'secondary' as const,
+      icon: '↩️'
+    },
+    {
+      label: saving ? 'Saving...' : 'Save Colors',
+      onClick: handleSave,
+      variant: 'primary' as const,
+      disabled: saving,
+      icon: '💾'
+    }
+  ], [saving, handleSave, handleReload, handleReset]);
+
   return (
-    <PageContainer>
-      <PageHeader title="Color Scheme" subtitle="Customize your admin and site colors" />
-      <PageContent>
-        <Card>
-          <CardHeader>
-            <CardTitle>Theme Colors</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {COLOR_VARIABLES.map(({ key, label }) => (
-                <div key={key} className="flex items-center gap-4">
-                  <label className="w-32 font-medium">{label}</label>
-                  <Input
-                    type="color"
-                    value={colors[key] || '#ffffff'}
-                    onChange={(e) => handleColorChange(key, e.target.value)}
-                    className="w-12 h-12 p-0 border-none bg-transparent"
-                  />
-                  <Input
-                    type="text"
-                    value={colors[key] || ''}
-                    onChange={(e) => handleColorChange(key, e.target.value)}
-                    className="w-32"
-                  />
+    <AdminPageWrapper
+      title="Color Scheme"
+      subtitle="Customize your admin and site colors"
+      actions={headerActions}
+      loading={loading}
+      error={error}
+      errorTitle="Color Scheme Error"
+      loadingMessage="Loading color configuration..."
+    >
+      {/* Error Message */}
+      {error && (
+        <StatusMessage 
+          type="error" 
+          message={error} 
+          onDismiss={() => setError(null)} 
+        />
+      )}
+
+      <GridSection variant="content" columns={1}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-lg)'
+        }}>
+          {/* Color Configuration */}
+          <SettingSection
+            title="Theme Colors"
+            description="Configure the main colors used throughout your application"
+            icon="🎨"
+          >
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 'var(--spacing-md)'
+            }}>
+              {COLOR_VARIABLES.map(({ key, label, description }) => (
+                <div key={key} style={{
+                  padding: 'var(--spacing-md)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  backgroundColor: 'var(--background-secondary)'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--spacing-sm)',
+                    marginBottom: 'var(--spacing-sm)'
+                  }}>
+                    <div
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '4px',
+                        backgroundColor: colors[key] || '#ffffff',
+                        border: '1px solid var(--border-color)'
+                      }}
+                    />
+                    <strong style={{ fontSize: 'var(--font-size-sm)' }}>
+                      {label}
+                    </strong>
+                  </div>
+                  
+                  <p style={{
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--text-secondary)',
+                    margin: '0 0 var(--spacing-sm) 0'
+                  }}>
+                    {description}
+                  </p>
+                  
+                  <div style={{
+                    display: 'flex',
+                    gap: 'var(--spacing-sm)',
+                    alignItems: 'center'
+                  }}>
+                    <input
+                      type="color"
+                      value={colors[key] || '#ffffff'}
+                      onChange={(e) => handleColorChange(key, e.target.value)}
+                      style={{
+                        width: '40px',
+                        height: '32px',
+                        padding: 0,
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 'var(--border-radius)',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <input
+                      type="text"
+                      value={colors[key] || ''}
+                      onChange={(e) => handleColorChange(key, e.target.value)}
+                      placeholder="#ffffff"
+                      className="form-input"
+                      style={{
+                        flex: 1,
+                        fontFamily: 'monospace',
+                        fontSize: 'var(--font-size-sm)'
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
-            <div className="flex gap-4 mt-6">
-              <Button onClick={handleSave} disabled={saving}>
-                {saving ? 'Saving...' : 'Save'}
-              </Button>
-              <Button variant="outline" onClick={handleReset}>
-                Reset to Default
-              </Button>
-              {message && <span className="ml-4 text-sm text-gray-600">{message}</span>}
+          </SettingSection>
+
+          {/* Live Preview */}
+          <SettingSection
+            title="Live Preview"
+            description="See how your color scheme looks in real-time"
+            icon="👀"
+          >
+            <div style={{
+              padding: 'var(--spacing-xl)',
+              borderRadius: 'var(--border-radius)',
+              border: '1px solid var(--border-color)',
+              backgroundColor: colors['--background'] || 'var(--background-primary)',
+              color: colors['--foreground'] || 'var(--text-primary)'
+            }}>
+              <h2 style={{
+                fontSize: 'var(--font-size-xl)',
+                fontWeight: '600',
+                marginBottom: 'var(--spacing-md)',
+                color: colors['--primary'] || 'var(--primary-color)'
+              }}>
+                Primary Color Example
+              </h2>
+              
+              <p style={{
+                marginBottom: 'var(--spacing-md)',
+                lineHeight: '1.5'
+              }}>
+                This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
+              </p>
+              
+              <div style={{
+                display: 'flex',
+                gap: 'var(--spacing-sm)',
+                flexWrap: 'wrap'
+              }}>
+                <button
+                  className="btn btn-primary"
+                  style={{
+                    backgroundColor: colors['--primary'] || 'var(--primary-color)',
+                    borderColor: colors['--primary'] || 'var(--primary-color)'
+                  }}
+                >
+                  Primary Button
+                </button>
+                
+                <button
+                  className="btn btn-outline"
+                  style={{
+                    borderColor: colors['--primary'] || 'var(--primary-color)',
+                    color: colors['--primary'] || 'var(--primary-color)'
+                  }}
+                >
+                  Outline Button
+                </button>
+                
+                <button
+                  className="btn btn-secondary"
+                  style={{
+                    backgroundColor: colors['--secondary'] || 'var(--secondary-color)',
+                    borderColor: colors['--secondary'] || 'var(--secondary-color)'
+                  }}
+                >
+                  Secondary Button
+                </button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-        <div className="mt-10">
-          <h3 className="text-lg font-semibold mb-2">Live Preview</h3>
-          <div className="p-8 rounded-lg border" style={{
-            background: colors['--background'],
-            color: colors['--foreground'],
-            borderColor: colors['--border'],
-          }}>
-            <h2 className="text-2xl font-bold mb-2" style={{ color: colors['--primary'] }}>Primary Color Example</h2>
-            <p className="mb-2">This is a preview of your current color scheme.</p>
-            <Button style={{ background: colors['--primary'], color: colors['--primary-foreground'] }}>Primary Button</Button>
-            <Button variant="outline" style={{ borderColor: colors['--primary'], color: colors['--primary'] }}>Outline Button</Button>
-          </div>
+          </SettingSection>
         </div>
-      </PageContent>
-    </PageContainer>
+      </GridSection>
+    </AdminPageWrapper>
+  );
+}
+
+export default function AdminColorsPage() {
+  return (
+    <ToastProvider>
+      <AdminColorsPageContent />
+    </ToastProvider>
   );
 } 

@@ -1,12 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { useState, useMemo } from 'react';
+import { 
+  AdminPageWrapper,
+  SettingSection,
+  SettingInput,
+  ActionButtonGroup,
+  StatusMessage,
+  ToastProvider,
+  useToast,
+  GridSection,
+  HelpCard
+} from '@/components/ui';
 import { realCostTrackingService } from '@/lib/business/real-cost-tracking';
 
 interface CostEntry {
@@ -17,7 +22,8 @@ interface CostEntry {
   notes?: string;
 }
 
-const ManualCostEntryPage = () => {
+function ManualCostEntryPageContent() {
+  const { addToast } = useToast();
   const [formData, setFormData] = useState<CostEntry>({
     date: new Date().toISOString().split('T')[0],
     category: '',
@@ -26,12 +32,16 @@ const ManualCostEntryPage = () => {
     notes: ''
   });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (!formData.category || !formData.description || formData.amount <= 0) {
+      setError('Please fill in all required fields with valid values');
+      return;
+    }
+
     setLoading(true);
-    setMessage('');
+    setError(null);
 
     try {
       await realCostTrackingService.addCost({
@@ -50,7 +60,9 @@ const ManualCostEntryPage = () => {
         notes: formData.notes || undefined
       });
 
-      setMessage('Cost entry added successfully!');
+      addToast('success', 'Cost entry added successfully!');
+      
+      // Reset form
       setFormData({
         date: new Date().toISOString().split('T')[0],
         category: '',
@@ -60,10 +72,24 @@ const ManualCostEntryPage = () => {
       });
     } catch (error) {
       console.error('Error adding cost entry:', error);
-      setMessage('Failed to add cost entry. Please try again.');
+      const errorMsg = 'Failed to add cost entry. Please try again.';
+      setError(errorMsg);
+      addToast('error', errorMsg);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClearForm = () => {
+    setFormData({
+      date: new Date().toISOString().split('T')[0],
+      category: '',
+      description: '',
+      amount: 0,
+      notes: ''
+    });
+    setError(null);
+    addToast('info', 'Form cleared');
   };
 
   const handleInputChange = (field: keyof CostEntry, value: string | number) => {
@@ -73,143 +99,215 @@ const ManualCostEntryPage = () => {
     }));
   };
 
+  // Header actions
+  const headerActions = useMemo(() => [
+    {
+      label: 'Clear Form',
+      onClick: handleClearForm,
+      variant: 'outline' as const,
+      icon: '🗑️'
+    },
+    {
+      label: loading ? 'Adding...' : 'Add Cost Entry',
+      onClick: handleSubmit,
+      variant: 'primary' as const,
+      disabled: loading,
+      icon: '💰'
+    }
+  ], [loading, handleSubmit, handleClearForm]);
+
+  // Cost category help cards
+  const costCategories = useMemo(() => [
+    {
+      icon: '🚗',
+      title: 'Vehicle Costs',
+      description: 'Fuel, Maintenance & Repairs, Insurance, Registration & Licensing, Vehicle Purchase/Lease'
+    },
+    {
+      icon: '⚙️',
+      title: 'Operational Costs',
+      description: 'Driver Wages, Office Rent, Utilities, Software & Technology, Marketing & Advertising'
+    },
+    {
+      icon: '📊',
+      title: 'Administrative',
+      description: 'Legal Fees, Accounting, Business License, Professional Services, Banking Fees'
+    },
+    {
+      icon: '🛡️',
+      title: 'Safety & Compliance',
+      description: 'Safety Equipment, Training, Compliance Audits, Background Checks, Drug Testing'
+    }
+  ], []);
+
   return (
-    <PageContainer>
-      <PageHeader title="Manual Cost Entry" />
-      <PageContent>
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Add New Cost Entry</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="date">Date</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => handleInputChange('date', e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="category">Category</Label>
-                    <Input
-                      id="category"
-                      value={formData.category}
-                      onChange={(e) => handleInputChange('category', e.target.value)}
-                      placeholder="e.g., Fuel, Maintenance, Insurance"
-                      required
-                    />
-                  </div>
-                </div>
+    <AdminPageWrapper
+      title="Manual Cost Entry"
+      subtitle="Add new operational costs to track your business expenses"
+      actions={headerActions}
+      loading={false}
+      error={error}
+      errorTitle="Cost Entry Error"
+    >
+      {/* Error Message */}
+      {error && (
+        <StatusMessage 
+          type="error" 
+          message={error} 
+          onDismiss={() => setError(null)} 
+        />
+      )}
 
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    placeholder="Brief description of the cost"
-                    required
-                  />
-                </div>
+      <GridSection variant="content" columns={1}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-lg)'
+        }}>
+          {/* Cost Entry Form */}
+          <SettingSection
+            title="Add New Cost Entry"
+            description="Enter details for your business expense"
+            icon="💰"
+          >
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: 'var(--spacing-md)'
+            }}>
+              <SettingInput
+                id="cost-date"
+                label="Date"
+                description="When this cost was incurred"
+                type="text"
+                value={formData.date}
+                onChange={(value) => handleInputChange('date', value)}
+                icon="📅"
+              />
+              
+              <SettingInput
+                id="cost-category"
+                label="Category *"
+                description="Type of expense (e.g., Fuel, Maintenance)"
+                value={formData.category}
+                onChange={(value) => handleInputChange('category', value)}
+                placeholder="e.g., Fuel, Maintenance, Insurance"
+                icon="🏷️"
+              />
+            </div>
 
-                <div>
-                  <Label htmlFor="amount">Amount ($)</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.amount}
-                    onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-                    placeholder="0.00"
-                    required
-                  />
-                </div>
+            <SettingInput
+              id="cost-description"
+              label="Description *"
+              description="Brief description of the expense"
+              value={formData.description}
+              onChange={(value) => handleInputChange('description', value)}
+              placeholder="Brief description of the cost"
+              icon="📝"
+            />
 
-                <div>
-                  <Label htmlFor="notes">Notes (Optional)</Label>
-                  <Textarea
-                    id="notes"
-                    value={formData.notes}
-                    onChange={(e) => handleInputChange('notes', e.target.value)}
-                    placeholder="Additional notes or details"
-                    rows={3}
-                  />
-                </div>
+            <SettingInput
+              id="cost-amount"
+              label="Amount ($) *"
+              description="Cost amount in dollars"
+              type="number"
+              value={formData.amount.toString()}
+              onChange={(value) => handleInputChange('amount', parseFloat(value) || 0)}
+              placeholder="0.00"
+              icon="💲"
+            />
 
-                {message && (
-                  <div className={`p-4 rounded-md ${
-                    message.includes('successfully') 
-                      ? 'bg-green-50 text-green-800 border border-green-200' 
-                      : 'bg-red-50 text-red-800 border border-red-200'
-                  }`}>
-                    {message}
-                  </div>
-                )}
+            <SettingInput
+              id="cost-notes"
+              label="Notes (Optional)"
+              description="Additional details or context"
+              type="text"
+              value={formData.notes || ''}
+              onChange={(value) => handleInputChange('notes', value)}
+              placeholder="Additional notes or details"
+              icon="📋"
+            />
+          </SettingSection>
 
-                <div className="flex gap-4">
-                  <Button type="submit" disabled={loading}>
-                    {loading ? 'Adding...' : 'Add Cost Entry'}
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline"
-                    onClick={() => {
-                      setFormData({
-                        date: new Date().toISOString().split('T')[0],
-                        category: '',
-                        description: '',
-                        amount: 0,
-                        notes: ''
-                      });
-                      setMessage('');
-                    }}
-                  >
-                    Clear Form
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+          {/* Cost Categories Guide */}
+          <SettingSection
+            title="Cost Categories"
+            description="Common expense categories to help organize your costs"
+            icon="📊"
+          >
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: 'var(--spacing-md)'
+            }}>
+              {costCategories.map((category, index) => (
+                <HelpCard
+                  key={index}
+                  icon={category.icon}
+                  title={category.title}
+                  description={category.description}
+                />
+              ))}
+            </div>
+          </SettingSection>
 
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Cost Categories</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold mb-2">Vehicle Costs</h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>• Fuel</li>
-                    <li>• Maintenance & Repairs</li>
-                    <li>• Insurance</li>
-                    <li>• Registration & Licensing</li>
-                    <li>• Vehicle Purchase/Lease</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Operational Costs</h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>• Driver Wages</li>
-                    <li>• Office Rent</li>
-                    <li>• Utilities</li>
-                    <li>• Software & Technology</li>
-                    <li>• Marketing & Advertising</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Quick Add Actions */}
+          <SettingSection
+            title="Quick Actions"
+            description="Common cost entry shortcuts"
+            icon="⚡"
+          >
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'var(--spacing-sm)'
+            }}>
+              <ActionButtonGroup
+                buttons={[
+                  {
+                    label: 'Add Fuel Cost',
+                    onClick: () => {
+                      setFormData(prev => ({ ...prev, category: 'Fuel', description: 'Vehicle fuel expense' }));
+                      addToast('info', 'Fuel cost template applied');
+                    },
+                    variant: 'outline',
+                    size: 'sm'
+                  },
+                  {
+                    label: 'Add Maintenance',
+                    onClick: () => {
+                      setFormData(prev => ({ ...prev, category: 'Maintenance', description: 'Vehicle maintenance and repairs' }));
+                      addToast('info', 'Maintenance template applied');
+                    },
+                    variant: 'outline',
+                    size: 'sm'
+                  },
+                  {
+                    label: 'Add Insurance',
+                    onClick: () => {
+                      setFormData(prev => ({ ...prev, category: 'Insurance', description: 'Vehicle insurance payment' }));
+                      addToast('info', 'Insurance template applied');
+                    },
+                    variant: 'outline',
+                    size: 'sm'
+                  }
+                ]}
+                orientation="horizontal"
+                spacing="sm"
+              />
+            </div>
+          </SettingSection>
         </div>
-      </PageContent>
-    </PageContainer>
+      </GridSection>
+    </AdminPageWrapper>
+  );
+}
+
+const ManualCostEntryPage = () => {
+  return (
+    <ToastProvider>
+      <ManualCostEntryPageContent />
+    </ToastProvider>
   );
 };
 

@@ -49,6 +49,20 @@ export type { ChatInputProps } from './ChatInput';
 export { ChatContainer } from './ChatContainer';
 export type { ChatContainerProps } from './ChatContainer';
 
+// CMS Components (Phase 7)
+export { 
+  GenericPageEditor,
+  HomePageEditor,
+  BookingPageEditor,
+  HelpPageEditor
+} from '../cms/PageEditors';
+export type { 
+  GenericPageEditorProps,
+  HomePageEditorProps,
+  BookingPageEditorProps,
+  HelpPageEditorProps
+} from '../cms/PageEditors';
+
 // Base UI Components
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
 export { LoadingSpinner } from './LoadingSpinner';
