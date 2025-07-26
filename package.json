@@ -21,6 +21,7 @@
     "test:integration": "jest --testPathPattern=tests/integration --coverage",
     "test:unit": "jest --testPathPattern=tests/unit --coverage",
     "test:e2e": "playwright test tests/e2e/critical-flows/streamlined-user-flows.spec.ts",
+    "test:perfected-pages": "playwright test tests/e2e/perfected-pages-test.spec.ts",
     "test:page-integrity": "playwright test tests/e2e/page-integrity.test.ts",
     "pre-commit": "./scripts/pre-commit-check.sh",
     "test:user-behavior": "jest --testPathPattern=tests/integration/user-behavior",

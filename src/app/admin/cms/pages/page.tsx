@@ -8,7 +8,8 @@ import {
   StatusMessage,
   ToastProvider,
   useToast,
-  GridSection
+  GridSection,
+  InfoCard
 } from "@/components/ui";
 import { 
   GenericPageEditor,
@@ -18,7 +19,8 @@ import {
 } from "@/components/cms/PageEditors";
 import withAuth from "../../withAuth";
 
- key: "home", label: "Homepage", icon: "🏠" },
+const PAGE_KEYS = [
+  { key: "home", label: "Homepage", icon: "🏠" },
   { key: "help", label: "Help Page", icon: "❓" },
   { key: "booking", label: "Booking Page", icon: "📅" },
   { key: "success", label: "Success Page", icon: "✅" },
@@ -186,11 +188,7 @@ function PagesCMSContent() {
       )}
 
       <GridSection variant="content" columns={1}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--spacing-xl)'
-        }}>
+        <div className="admin-cms-pages-container">
           {PAGE_KEYS.map(({ key, label, icon }) => {
             const pageData = pages[key as keyof typeof pages];
             if (!pageData) return null;
@@ -248,34 +246,17 @@ function PagesCMSContent() {
 
             // For complex pages that need custom editors, show a placeholder for now
             return (
-              <div
+              <InfoCard
                 key={key}
-                style={{
-                  padding: 'var(--spacing-lg)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  backgroundColor: 'var(--background-secondary)',
-                  textAlign: 'center'
-                }}
+                title={`${icon} ${label}`}
+                description="Custom editor for this page type coming soon..."
               >
-                <h3 style={{ 
-                  margin: '0 0 var(--spacing-sm) 0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 'var(--spacing-sm)'
-                }}>
-                  <span>{icon}</span>
-                  {label}
-                </h3>
-                <p style={{ 
-                  margin: 0,
-                  color: 'var(--text-secondary)',
-                  fontSize: 'var(--font-size-sm)'
-                }}>
-                  Custom editor for this page type coming soon...
-                </p>
-              </div>
+                <div className="admin-cms-page-placeholder">
+                  <p className="admin-cms-page-placeholder-text">
+                    Custom editor for this page type coming soon...
+                  </p>
+                </div>
+              </InfoCard>
             );
           })}
         </div>
@@ -284,9 +265,10 @@ function PagesCMSContent() {
   );
 }
 
-const PagesCMS = () => {
+export default function PagesCMS() {
   return (
     <ToastProvider>
       <PagesCMSContent />
     </ToastProvider>
   );
+}

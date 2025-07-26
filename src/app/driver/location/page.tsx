@@ -4,9 +4,13 @@ import { useEffect, useState, Suspense } from 'react';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { useSearchParams } from 'next/navigation';
-import { PageHeader, InfoCard } from '@/components/ui';
-import { Alert } from '@/components/feedback';
-import { LoadingSpinner } from '@/components/data';
+import { 
+  GridSection,
+  InfoCard,
+  StatusMessage,
+  LoadingSpinner
+} from '@/components/ui';
+import { UnifiedLayout } from '@/components/layout';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';
@@ -52,59 +56,68 @@ function DriverLocationContent() {
 
   if(!allowed) {
     return (
-      <div className="admin-dashboard">
-        <PageHeader
-          title="Driver Live Location"
-          subtitle="Unauthorized access"
-        />
-        <Alert variant="error" title="Unauthorized">
-          You are not authorized to access this page.
-        </Alert>
-      </div>
+      <UnifiedLayout
+        layoutType="standard"
+        title="Driver Live Location"
+        subtitle="Unauthorized access"
+      >
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="❌ Unauthorized" description="You are not authorized to access this page">
+            <div className="driver-location-unauthorized">
+              <p className="driver-location-unauthorized-text">
+                You are not authorized to access this page.
+              </p>
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
     );
   }
 
   return (
-    <div className="admin-dashboard">
-      <PageHeader 
-        title="Driver Live Location" 
-        subtitle="Sharing your location with passengers"
-      />
-      
-      <div className="">
+    <UnifiedLayout
+      layoutType="standard"
+      title="Driver Live Location"
+      subtitle="Sharing your location with passengers"
+    >
+      <GridSection variant="content" columns={1}>
         <InfoCard
           title="📍 Location Status"
           description="Your current location sharing status"
         >
-          <div className="">
-            <p className="">{status}</p>
+          <div className="driver-location-status">
+            <p className="driver-location-status-text">{status}</p>
             {coords && (
-              <div className="">
-                <p className="">Current Coordinates:</p>
-                <p className="">
+              <div className="driver-location-coordinates">
+                <p className="driver-location-coordinates-label">Current Coordinates:</p>
+                <p className="driver-location-coordinates-value">
                   Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
                 </p>
               </div>
             )}
           </div>
         </InfoCard>
-      </div>
-    </div>
+      </GridSection>
+    </UnifiedLayout>
   );
 }
 
 export default function DriverLocationPage() {
   return (
     <Suspense fallback={
-      <div className="admin-dashboard">
-        <PageHeader
-          title="Driver Live Location"
-          subtitle="Loading..."
-        />
-        <div className="">
-          <LoadingSpinner text="Loading..." />
-        </div>
-      </div>
+      <UnifiedLayout
+        layoutType="standard"
+        title="Driver Live Location"
+        subtitle="Loading..."
+      >
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="Loading..." description="Initializing location services">
+            <div className="driver-location-loading">
+              <LoadingSpinner text="Loading..." />
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
     }>
       <DriverLocationContent />
     </Suspense>

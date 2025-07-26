@@ -563,8 +563,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Help us provide the best service for your trip"
           icon="⚙️"
         >
-          <div className="">
-            <div className="">
+          <div className="booking-form-additional-details">
+            <div className="booking-form-passengers-section">
               {/* Passengers - Styled like SettingInput */}
               <div className="booking-form-datetime-section">
                 <div className="booking-form-datetime-header">
@@ -606,35 +606,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </div>
             
             {/* Special Instructions - Styled like SettingInput */}
-            <div style={{
-              padding: 'var(--spacing-md) 0',
-              borderBottom: '1px solid var(--border-color)'
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--spacing-sm)',
-                marginBottom: 'var(--spacing-sm)'
-              }}>
-                <span style={{ fontSize: 'var(--font-size-sm)' }}>📝</span>
+            <div className="booking-form-notes-section">
+              <div className="booking-form-notes-header">
+                <span className="booking-form-notes-icon">📝</span>
                 <label 
                   htmlFor="notes"
-                  style={{
-                    fontWeight: '500',
-                    fontSize: 'var(--font-size-sm)',
-                    color: 'var(--text-primary)'
-                  }}
+                  className="booking-form-notes-label"
                 >
                   Special Instructions (Optional)
                 </label>
               </div>
               
-              <p style={{
-                fontSize: 'var(--font-size-xs)',
-                color: 'var(--text-secondary)',
-                margin: '0 0 var(--spacing-sm) 0',
-                lineHeight: '1.4'
-              }}>
+              <p className="booking-form-notes-description">
                 Let us know about any special requirements
               </p>
               
@@ -645,12 +628,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
                 placeholder="Any special instructions or requests?"
-                className="form-input"
-                style={{ 
-                  width: '100%',
-                  resize: 'vertical',
-                  minHeight: '100px'
-                }}
+                className="booking-form-notes-textarea"
               />
             </div>
           </div>
@@ -662,18 +640,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Calculate your fare and complete your booking"
           icon="💳"
         >
-          <div className="">
+          <div className="booking-form-actions">
             <button
               type="button"
               onClick={handleCalculateFare}
               disabled={isCalculating}
-              className=""
+              className="booking-form-calculate-btn"
             >
               {isCalculating ? (
-                <span className="">
-                  <svg className="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <span className="booking-form-loading">
+                  <svg className="booking-form-loading-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="booking-form-loading-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="booking-form-loading-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                   Calculating...
                 </span>
@@ -682,9 +660,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
               )}
             </button>
             {fare && (
-              <div className="">
-                <p className="">
-                  Estimated Fare: <span className="">${fare}</span>
+              <div className="booking-form-fare-display">
+                <p className="booking-form-fare-text">
+                  Estimated Fare: <span className="booking-form-fare-amount">${fare}</span>
                 </p>
               </div>
             )}
@@ -693,7 +671,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {fare && (
             <button
               type="submit"
-              className=""
+              className="booking-form-submit-btn"
             >
               🚗 Book Now - ${fare}
             </button>

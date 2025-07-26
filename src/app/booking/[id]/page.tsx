@@ -2,27 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { PageContainer, PageHeader, PageContent } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { LoadingSpinner } from '@/components/data';
-import { Booking } from '@/types/booking';
+import { UnifiedLayout } from '@/components/layout';
 import { 
-  Calendar, 
-  MapPin, 
-  User, 
-  Phone, 
-  Mail, 
-  DollarSign,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle
-} from 'lucide-react';
-import Link from 'next/link';
+  GridSection,
+  InfoCard,
+  ActionButtonGroup,
+  LoadingSpinner,
+  StatusMessage
+} from '@/components/ui';
+import { Booking } from '@/types/booking';
 
-
+function BookingDetailsContent() {
   const params = useParams();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,58 +39,29 @@ import Link from 'next/link';
     }
   }, [params.id]);
 
-  if (loading) {
-    return (
-      <PageContainer>
-        <div className="">
-          <LoadingSpinner text="Loading booking details..." />
-        </div>
-      </PageContainer>
-    );
-  }
-
-  if (error || !booking) {
-    return (
-      <PageContainer>
-        <div className="">
-          <div className="">
-            <AlertCircle className="" />
-            <h2 className="">Booking Not Found</h2>
-            <p className="">
-              {error || 'The booking you are looking for could not be found.'}
-            </p>
-            <Link href="/book">
-              <Button>Book a New Ride</Button>
-            </Link>
-          </div>
-        </div>
-      </PageContainer>
-    );
-  }
-
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <CheckCircle className="" />;
+        return '✅';
       case 'cancelled':
-        return <XCircle className="" />;
+        return '❌';
       case 'completed':
-        return <CheckCircle className="" />;
+        return '✅';
       default:
-        return <Clock className="" />;
+        return '⏰';
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusClass = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-green-100 text-green-800';
+        return 'booking-status-confirmed';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'booking-status-cancelled';
       case 'completed':
-        return 'bg-blue-100 text-blue-800';
+        return 'booking-status-completed';
       default:
-        return 'bg-yellow-100 text-yellow-800';
+        return 'booking-status-pending';
     }
   };
 
@@ -115,114 +76,189 @@ import Link from 'next/link';
     });
   };
 
+  if (loading) {
+    return (
+      <UnifiedLayout 
+        layoutType="standard"
+        title="Loading Booking Details"
+        subtitle="Please wait while we fetch your booking information"
+      >
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="Loading..." description="Fetching booking details">
+            <div className="booking-loading-container">
+              <LoadingSpinner text="Loading booking details..." />
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
+    );
+  }
+
+  if (error || !booking) {
+    return (
+      <UnifiedLayout 
+        layoutType="standard"
+        title="Booking Not Found"
+        subtitle="We couldn't find the booking you're looking for"
+      >
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="❌ Booking Not Found" description="The booking could not be found">
+            <div className="booking-error-container">
+              <p className="booking-error-message">
+                {error || 'The booking you are looking for could not be found.'}
+              </p>
+              <ActionButtonGroup buttons={[
+                {
+                  label: 'Book a New Ride',
+                  onClick: () => window.location.href = '/book',
+                  variant: 'primary' as const,
+                  icon: '🚗'
+                }
+              ]} />
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
+    );
+  }
+
+  const actionButtons = [
+    {
+      label: 'Manage Booking',
+      onClick: () => window.location.href = `/manage/${booking.id}`,
+      variant: 'outline' as const,
+      icon: '⚙️'
+    },
+    {
+      label: 'Check Status',
+      onClick: () => window.location.href = `/status/${booking.id}`,
+      variant: 'outline' as const,
+      icon: '📊'
+    },
+    {
+      label: 'Book Another Ride',
+      onClick: () => window.location.href = '/book',
+      variant: 'primary' as const,
+      icon: '🚗'
+    }
+  ];
+
   return (
-    <PageContainer>
-      <PageHeader title="Booking Details" />
-      <PageContent>
-        <div className="">
-          <Card>
-            <CardHeader>
-              <div className="">
-                <CardTitle className="">Booking #{booking.id}</CardTitle>
-                <Badge className={getStatusColor(booking.status)}>
-                  <div className="">
-                    {getStatusIcon(booking.status)}
-                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                  </div>
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="">
-              {/* Trip Details */}
-              <div className="">
-                <div className="">
-                  <div className="">
-                    <MapPin className="" />
-                    <div>
-                      <h3 className="">Pickup Location</h3>
-                      <p className="">{booking.pickupLocation}</p>
-                    </div>
-                  </div>
-                  <div className="">
-                    <MapPin className="" />
-                    <div>
-                      <h3 className="">Dropoff Location</h3>
-                      <p className="text-gray-600">{booking.dropoffLocation}</p>
-                    </div>
-                  </div>
-                  <div className="">
-                    <Calendar className="" />
-                    <div>
-                      <h3 className="">Pickup Date & Time</h3>
-                      <p className="">{formatDateTime(booking.pickupDateTime)}</p>
-                    </div>
-                  </div>
-                </div>
+    <UnifiedLayout 
+      layoutType="standard"
+      title="Booking Details"
+      subtitle={`Booking #${booking.id}`}
+    >
+      {/* Booking Status */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard 
+          title={`${getStatusIcon(booking.status)} Booking Status`}
+          description={`Your booking is currently ${booking.status}`}
+        >
+          <div className={`booking-status-badge ${getStatusClass(booking.status)}`}>
+            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+          </div>
+        </InfoCard>
+      </GridSection>
 
-                <div className="">
-                                     <div className="">
-                     <User className="" />
-                     <div>
-                       <h3 className="">Passenger</h3>
-                       <p className="">{booking.name}</p>
-                     </div>
-                   </div>
-                   <div className="">
-                     <Phone className="" />
-                     <div>
-                       <h3 className="">Phone</h3>
-                       <p className="">{booking.phone}</p>
-                     </div>
-                   </div>
-                   <div className="">
-                     <Mail className="" />
-                     <div>
-                       <h3 className="">Email</h3>
-                       <p className="">{booking.email}</p>
-                     </div>
-                   </div>
-                </div>
+      {/* Trip Details */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard 
+          title="📍 Trip Details"
+          description="Your pickup and dropoff information"
+        >
+          <div className="booking-trip-details">
+            <div className="booking-location-item">
+              <span className="booking-location-icon">📍</span>
+              <div className="booking-location-content">
+                <h3 className="booking-location-title">Pickup Location</h3>
+                <p className="booking-location-address">{booking.pickupLocation}</p>
               </div>
+            </div>
+            <div className="booking-location-item">
+              <span className="booking-location-icon">🎯</span>
+              <div className="booking-location-content">
+                <h3 className="booking-location-title">Dropoff Location</h3>
+                <p className="booking-location-address">{booking.dropoffLocation}</p>
+              </div>
+            </div>
+            <div className="booking-location-item">
+              <span className="booking-location-icon">📅</span>
+              <div className="booking-location-content">
+                <h3 className="booking-location-title">Pickup Date & Time</h3>
+                <p className="booking-location-address">{formatDateTime(booking.pickupDateTime)}</p>
+              </div>
+            </div>
+          </div>
+        </InfoCard>
+      </GridSection>
 
-              {/* Fare Information */}
-              <div className="">
-                <div className="">
-                  <div className="">
-                    <DollarSign className="" />
-                    <div>
-                      <h3 className="">Total Fare</h3>
-                      <p className="">Includes all fees and taxes</p>
-                    </div>
-                  </div>
-                  <div className="">
-                    <p className="">${booking.fare?.toFixed(2)}</p>
-                  </div>
-                </div>
+      {/* Passenger Information */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard 
+          title="👤 Passenger Information"
+          description="Your contact details for this booking"
+        >
+          <div className="booking-passenger-details">
+            <div className="booking-passenger-item">
+              <span className="booking-passenger-icon">👤</span>
+              <div className="booking-passenger-content">
+                <h3 className="booking-passenger-title">Passenger</h3>
+                <p className="booking-passenger-value">{booking.name}</p>
               </div>
+            </div>
+            <div className="booking-passenger-item">
+              <span className="booking-passenger-icon">📞</span>
+              <div className="booking-passenger-content">
+                <h3 className="booking-passenger-title">Phone</h3>
+                <p className="booking-passenger-value">{booking.phone}</p>
+              </div>
+            </div>
+            <div className="booking-passenger-item">
+              <span className="booking-passenger-icon">✉️</span>
+              <div className="booking-passenger-content">
+                <h3 className="booking-passenger-title">Email</h3>
+                <p className="booking-passenger-value">{booking.email}</p>
+              </div>
+            </div>
+          </div>
+        </InfoCard>
+      </GridSection>
 
-              {/* Actions */}
-              <div className="">
-                <div className="">
-                  <Link href={`/manage/${booking.id}`}>
-                    <Button variant="outline">
-                      Manage Booking
-                    </Button>
-                  </Link>
-                  <Link href={`/status/${booking.id}`}>
-                    <Button variant="outline">
-                      Check Status
-                    </Button>
-                  </Link>
-                  <Link href="/book">
-                    <Button>
-                      Book Another Ride
-                    </Button>
-                  </Link>
-                </div>
+      {/* Fare Information */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard 
+          title="💰 Fare Information"
+          description="Payment details for your trip"
+        >
+          <div className="booking-fare-details">
+            <div className="booking-fare-item">
+              <span className="booking-fare-icon">💳</span>
+              <div className="booking-fare-content">
+                <h3 className="booking-fare-title">Total Fare</h3>
+                <p className="booking-fare-description">Includes all fees and taxes</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </PageContent>
-    </PageContainer>
+              <div className="booking-fare-amount">
+                ${booking.fare?.toFixed(2)}
+              </div>
+            </div>
+          </div>
+        </InfoCard>
+      </GridSection>
+
+      {/* Actions */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard 
+          title="🎯 Quick Actions"
+          description="Manage your booking or book another ride"
+        >
+          <ActionButtonGroup buttons={actionButtons} />
+        </InfoCard>
+      </GridSection>
+    </UnifiedLayout>
   );
+}
+
+export default function BookingDetailsPage() {
+  return <BookingDetailsContent />;
+}

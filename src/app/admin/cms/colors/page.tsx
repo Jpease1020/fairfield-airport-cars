@@ -13,7 +13,8 @@ import {
 } from '@/components/ui';
 import { getCMSConfig, updateCMSConfig } from '@/lib/services/cms-service';
 
- key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
+const COLOR_VARIABLES = [
+  { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
   { key: '--secondary', label: 'Secondary', description: 'Secondary brand color for accents' },
   { key: '--accent', label: 'Accent', description: 'Accent color for highlights and emphasis' },
   { key: '--background', label: 'Background', description: 'Main background color' },
@@ -147,86 +148,43 @@ function AdminColorsPageContent() {
       )}
 
       <GridSection variant="content" columns={1}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--spacing-lg)'
-        }}>
+        <div className="admin-colors-container">
           {/* Color Configuration */}
           <SettingSection
             title="Theme Colors"
             description="Configure the main colors used throughout your application"
             icon="🎨"
           >
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: 'var(--spacing-md)'
-            }}>
+            <div className="admin-colors-grid">
               {COLOR_VARIABLES.map(({ key, label, description }) => (
-                <div key={key} style={{
-                  padding: 'var(--spacing-md)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  backgroundColor: 'var(--background-secondary)'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--spacing-sm)',
-                    marginBottom: 'var(--spacing-sm)'
-                  }}>
+                <div key={key} className="admin-color-item">
+                  <div className="admin-color-header">
                     <div
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '4px',
-                        backgroundColor: colors[key] || '#ffffff',
-                        border: '1px solid var(--border-color)'
-                      }}
+                      className="admin-color-swatch"
+                      style={{ backgroundColor: colors[key] || '#ffffff' }}
                     />
-                    <strong style={{ fontSize: 'var(--font-size-sm)' }}>
+                    <strong className="admin-color-label">
                       {label}
                     </strong>
                   </div>
                   
-                  <p style={{
-                    fontSize: 'var(--font-size-xs)',
-                    color: 'var(--text-secondary)',
-                    margin: '0 0 var(--spacing-sm) 0'
-                  }}>
+                  <p className="admin-color-description">
                     {description}
                   </p>
                   
-                  <div style={{
-                    display: 'flex',
-                    gap: 'var(--spacing-sm)',
-                    alignItems: 'center'
-                  }}>
+                  <div className="admin-color-controls">
                     <input
                       type="color"
                       value={colors[key] || '#ffffff'}
                       onChange={(e) => handleColorChange(key, e.target.value)}
-                      style={{
-                        width: '40px',
-                        height: '32px',
-                        padding: 0,
-                        border: '1px solid var(--border-color)',
-                        borderRadius: 'var(--border-radius)',
-                        cursor: 'pointer'
-                      }}
+                      className="admin-color-picker"
                     />
                     <input
                       type="text"
                       value={colors[key] || ''}
                       onChange={(e) => handleColorChange(key, e.target.value)}
                       placeholder="#ffffff"
-                      className="form-input"
-                      style={{
-                        flex: 1,
-                        fontFamily: 'monospace',
-                        fontSize: 'var(--font-size-sm)'
-                      }}
+                      className="admin-color-input"
                     />
                   </div>
                 </div>
@@ -240,26 +198,21 @@ function AdminColorsPageContent() {
             description="See how your color scheme looks in real-time"
             icon="👀"
           >
-            <div style={{
-              padding: 'var(--spacing-xl)',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--border-color)',
-              backgroundColor: colors['--background'] || 'var(--background-primary)',
-              color: colors['--foreground'] || 'var(--text-primary)'
-            }}>
-              <h2 style={{
-                fontSize: 'var(--font-size-xl)',
-                fontWeight: '600',
-                marginBottom: 'var(--spacing-md)',
-                color: colors['--primary'] || 'var(--primary-color)'
-              }}>
+            <div 
+              className="admin-colors-preview"
+              style={{
+                backgroundColor: colors['--background'] || 'var(--background-primary)',
+                color: colors['--foreground'] || 'var(--text-primary)'
+              }}
+            >
+              <h2 
+                className="admin-colors-preview-title"
+                style={{ color: colors['--primary'] || 'var(--primary-color)' }}
+              >
                 Primary Color Example
               </h2>
               
-              <p style={{
-                marginBottom: 'var(--spacing-md)',
-                lineHeight: '1.5'
-              }}>
+              <p className="admin-colors-preview-description">
                 This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
               </p>
               
@@ -301,3 +254,4 @@ export default function AdminColorsPage() {
       <AdminColorsPageContent />
     </ToastProvider>
   );
+}

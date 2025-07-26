@@ -2,7 +2,7 @@
 
 import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup } from '@/components/ui';
 
-
+function AdminHelpPage() {
   const helpSections = [
     {
       title: "Managing Bookings",
@@ -153,29 +153,16 @@ import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGr
             title={`${section.icon} ${section.title}`}
             description={section.description}
           >
-            <div style={{ marginTop: 'var(--spacing-md)' }}>
+            <div className="admin-help-section">
               {section.items.map((item, itemIndex) => (
                 <div 
                   key={itemIndex} 
-                  style={{ 
-                    marginBottom: 'var(--spacing-lg)',
-                    paddingBottom: 'var(--spacing-md)',
-                    borderBottom: itemIndex < section.items.length - 1 ? '1px solid var(--border-color)' : 'none'
-                  }}
+                  className={`admin-help-item ${itemIndex < section.items.length - 1 ? 'admin-help-item-with-border' : ''}`}
                 >
-                  <h4 style={{ 
-                    fontWeight: '600',
-                    fontSize: 'var(--font-size-sm)',
-                    marginBottom: 'var(--spacing-sm)',
-                    color: 'var(--text-primary)'
-                  }}>
+                  <h4 className="admin-help-question">
                     {item.question}
                   </h4>
-                  <p style={{ 
-                    fontSize: 'var(--font-size-sm)',
-                    color: 'var(--text-secondary)',
-                    lineHeight: '1.5'
-                  }}>
+                  <p className="admin-help-answer">
                     {item.answer}
                   </p>
                 </div>
@@ -191,68 +178,31 @@ import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGr
           title="📞 Need More Help?"
           description="If you can't find the answer you're looking for, here are additional resources"
         >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: 'var(--spacing-md)',
-            marginTop: 'var(--spacing-md)'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--spacing-sm)',
-              padding: 'var(--spacing-md)',
-              backgroundColor: 'var(--background-secondary)',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--border-color)'
-            }}>
-              <span style={{ fontSize: 'var(--font-size-xl)' }}>💬</span>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+          <div className="admin-help-resources">
+            <div className="admin-help-resource-item">
+              <span className="admin-help-resource-icon">💬</span>
+              <span className="admin-help-resource-text">
                 Contact your developer for technical support
               </span>
             </div>
             
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--spacing-sm)',
-              padding: 'var(--spacing-md)',
-              backgroundColor: 'var(--background-secondary)',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--border-color)'
-            }}>
-              <span style={{ fontSize: 'var(--font-size-xl)' }}>📄</span>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+            <div className="admin-help-resource-item">
+              <span className="admin-help-resource-icon">📄</span>
+              <span className="admin-help-resource-text">
                 Check the business documentation in your project files
               </span>
             </div>
             
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--spacing-sm)',
-              padding: 'var(--spacing-md)',
-              backgroundColor: 'var(--background-secondary)',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--border-color)'
-            }}>
-              <span style={{ fontSize: 'var(--font-size-xl)' }}>⚙️</span>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+            <div className="admin-help-resource-item">
+              <span className="admin-help-resource-icon">⚙️</span>
+              <span className="admin-help-resource-text">
                 Review your CMS settings for configuration options
               </span>
             </div>
             
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--spacing-sm)',
-              padding: 'var(--spacing-md)',
-              backgroundColor: 'var(--background-secondary)',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--border-color)'
-            }}>
-              <span style={{ fontSize: 'var(--font-size-xl)' }}>📊</span>
-              <span style={{ fontSize: 'var(--font-size-sm)' }}>
+            <div className="admin-help-resource-item">
+              <span className="admin-help-resource-icon">📊</span>
+              <span className="admin-help-resource-text">
                 Use the Admin Dashboard to monitor your business metrics
               </span>
             </div>
@@ -299,3 +249,6 @@ import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGr
       </SettingSection>
     </AdminPageWrapper>
   );
+}
+
+export default AdminHelpPage;

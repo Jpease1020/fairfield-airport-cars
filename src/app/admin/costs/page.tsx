@@ -15,7 +15,7 @@ import {
   useToast
 } from '@/components/ui';
 
-
+function CostsPageContent() {
   const { addToast } = useToast();
   const [costs, setCosts] = useState<RealCostItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,53 +65,41 @@ import {
     return ((actual - projected) / projected) * 100;
   };
 
-  const renderStatus = (cost: RealCostItem) => {
+  const getStatusClass = (cost: RealCostItem) => {
     const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
-    const icon = getStatusIcon(cost);
     
-    let statusText = 'On Track';
-    let statusStyle = {
-      backgroundColor: '#dcfce7',
-      color: '#166534',
-      border: '1px solid #4ade80'
-    };
-
     if (cost.actualMonthlyCost === 0) {
-      statusText = 'Pending';
-      statusStyle = {
-        backgroundColor: '#fef3c7',
-        color: '#92400e',
-        border: '1px solid #fcd34d'
-      };
+      return 'cost-status-pending';
     } else if (variance > 10) {
-      statusText = 'Over Budget';
-      statusStyle = {
-        backgroundColor: '#fee2e2',
-        color: '#dc2626',
-        border: '1px solid #f87171'
-      };
+      return 'cost-status-over-budget';
     } else if (variance > 0) {
-      statusText = 'Slightly Over';
-      statusStyle = {
-        backgroundColor: '#fed7aa',
-        color: '#c2410c',
-        border: '1px solid #fb923c'
-      };
+      return 'cost-status-slightly-over';
+    } else {
+      return 'cost-status-on-track';
     }
+  };
 
+  const getStatusText = (cost: RealCostItem) => {
+    const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
+    
+    if (cost.actualMonthlyCost === 0) {
+      return 'Pending';
+    } else if (variance > 10) {
+      return 'Over Budget';
+    } else if (variance > 0) {
+      return 'Slightly Over';
+    } else {
+      return 'On Track';
+    }
+  };
+
+  const renderStatus = (cost: RealCostItem) => {
+    const icon = getStatusIcon(cost);
+    const statusText = getStatusText(cost);
+    const statusClass = getStatusClass(cost);
+    
     return (
-      <span
-        style={{
-          ...statusStyle,
-          padding: 'var(--spacing-xs) var(--spacing-sm)',
-          borderRadius: 'var(--border-radius)',
-          fontSize: 'var(--font-size-xs)',
-          fontWeight: '500',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 'var(--spacing-xs)'
-        }}
-      >
+      <span className={`cost-status-badge ${statusClass}`}>
         {icon} {statusText}
       </span>
     );
@@ -143,11 +131,11 @@ import {
       label: 'Category',
       sortable: true,
       render: (_, cost) => (
-        <div>
-          <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+        <div className="cost-category-cell">
+          <div className="cost-category-name">
             {cost.category}
           </div>
-          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+          <div className="cost-category-description">
             {cost.description}
           </div>
         </div>
@@ -158,7 +146,7 @@ import {
       label: 'Projected',
       sortable: true,
       render: (value) => (
-        <div style={{ fontWeight: '500' }}>
+        <div className="cost-amount-cell">
           {formatCurrency(value)}
         </div>
       )
@@ -168,7 +156,7 @@ import {
       label: 'Actual',
       sortable: true,
       render: (value) => (
-        <div style={{ fontWeight: '500' }}>
+        <div className="cost-amount-cell">
           {formatCurrency(value)}
         </div>
       )
@@ -181,13 +169,19 @@ import {
         const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
         const isPositive = variance >= 0;
         
+        let varianceClass = 'cost-variance-neutral';
+        if (cost.actualMonthlyCost === 0) {
+          varianceClass = 'cost-variance-pending';
+        } else if (variance > 10) {
+          varianceClass = 'cost-variance-over';
+        } else if (variance > 0) {
+          varianceClass = 'cost-variance-slightly-over';
+        } else {
+          varianceClass = 'cost-variance-under';
+        }
+        
         return (
-          <div style={{ 
-            fontWeight: '500',
-            color: cost.actualMonthlyCost === 0 ? 'var(--text-secondary)' : 
-                   variance > 10 ? '#dc2626' : 
-                   variance > 0 ? '#c2410c' : '#166534'
-          }}>
+          <div className={`cost-variance-cell ${varianceClass}`}>
             {cost.actualMonthlyCost === 0 ? 'N/A' : 
              `${isPositive ? '+' : ''}${variance.toFixed(1)}%`}
           </div>
@@ -318,8 +312,8 @@ import {
             emptyIcon="💰"
             pageSize={15}
             rowClassName={(cost) => 
-              cost.actualMonthlyCost > cost.projectedMonthlyCost ? 'border-l-4 border-red-500' : 
-              cost.actualMonthlyCost === 0 ? 'opacity-75' : ''
+              cost.actualMonthlyCost > cost.projectedMonthlyCost ? 'cost-row-over-budget' : 
+              cost.actualMonthlyCost === 0 ? 'cost-row-pending' : 'cost-row-normal'
             }
             onRowClick={(cost) => console.log('Clicked cost category:', cost.category)}
           />
@@ -339,9 +333,10 @@ import {
   );
 }
 
-const CostsPage = () => {
+export default function CostsPage() {
   return (
     <ToastProvider>
       <CostsPageContent />
     </ToastProvider>
   );
+}

@@ -4,13 +4,15 @@ import { useState, useEffect } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { PricingSettings } from '@/types/cms';
-import { PageHeader } from '@/components/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { AdminNavigation } from '@/components/admin/AdminNavigation';
+import { 
+  AdminPageWrapper,
+  GridSection,
+  InfoCard,
+  ActionButtonGroup,
+  StatusMessage,
+  ToastProvider,
+  useToast
+} from '@/components/ui';
 import { 
   Save, 
   RefreshCw, 
@@ -23,7 +25,8 @@ import {
   Trash2
 } from 'lucide-react';
 
-
+function PricingSettingsContent() {
+  const { addToast } = useToast();
   const [settings, setSettings] = useState<PricingSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -38,8 +41,10 @@ import {
       setLoading(true);
       const pricingSettings = await cmsService.getPricingSettings();
       setSettings(pricingSettings);
+      addToast('success', 'Pricing settings loaded successfully');
     } catch (error) {
       console.error('Error loading pricing settings:', error);
+      addToast('error', 'Failed to load pricing settings');
     } finally {
       setLoading(false);
     }
@@ -52,9 +57,11 @@ import {
       setSaving(true);
       await cmsService.updatePricingSettings(settings);
       setSaved(true);
+      addToast('success', 'Pricing settings saved successfully!');
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
       console.error('Error saving pricing settings:', error);
+      addToast('error', 'Failed to save pricing settings');
     } finally {
       setSaving(false);
     }
@@ -125,7 +132,7 @@ import {
   const headerActions = [
     { 
       label: 'Back to CMS', 
-      href: '/admin/cms', 
+      onClick: () => window.location.href = '/admin/cms', 
       variant: 'outline' as const 
     },
     { 
@@ -138,267 +145,267 @@ import {
 
   if (loading) {
     return (
-      <div className="admin-dashboard">
-        <AdminNavigation />
-        <PageHeader
-          title="Pricing Settings"
-          subtitle="Loading pricing configuration..."
-        />
-        <div className="">
-          <RefreshCw className="" />
-        </div>
-      </div>
+      <AdminPageWrapper
+        title="Pricing Settings"
+        subtitle="Loading pricing configuration..."
+        loading={true}
+        loadingMessage="Loading pricing settings..."
+      >
+        <div />
+      </AdminPageWrapper>
     );
   }
 
   if (!settings) {
     return (
-      <div className="admin-dashboard">
-        <AdminNavigation />
-        <PageHeader
-          title="Pricing Settings"
-          subtitle="Failed to load settings"
-        />
-        <div className="">
-          <AlertCircle className="" />
-          <span className="">Failed to load settings</span>
-        </div>
-      </div>
+      <AdminPageWrapper
+        title="Pricing Settings"
+        subtitle="Failed to load settings"
+        error="Failed to load pricing settings"
+        errorTitle="Load Error"
+      >
+        <div />
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="">
-      <AdminNavigation />
-      <PageHeader
-        title="Pricing Settings"
-        subtitle="Manage fare structure, zones, and cancellation policies"
-        actions={headerActions}
-      />
-
+    <AdminPageWrapper
+      title="Pricing Settings"
+      subtitle="Manage fare structure, zones, and cancellation policies"
+      actions={headerActions}
+    >
+      {/* Success Message */}
       {saved && (
-        <div className="">
-          <Badge variant="secondary" className="">
-            <CheckCircle className="" />
-            Pricing settings saved successfully
-          </Badge>
-        </div>
+        <GridSection variant="content" columns={1}>
+          <InfoCard title="✅ Settings Saved" description="Pricing settings saved successfully">
+            <div className="pricing-save-success">
+              <CheckCircle className="pricing-save-icon" />
+              <span className="pricing-save-text">Pricing settings saved successfully</span>
+            </div>
+          </InfoCard>
+        </GridSection>
       )}
 
-      <div className="standard-content">
-        <div className="">
-          {/* Base Pricing */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="">
-                <DollarSign className="" />
-                <span>Base Pricing</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="">
-              <div className="">
-                <Label htmlFor="baseFare">Base Fare ($)</Label>
-                <Input
-                  id="baseFare"
-                  type="number"
-                  step="0.01"
-                  value={settings.baseFare}
-                  onChange={(e) => handleBasePricingChange('baseFare', parseFloat(e.target.value) || 0)}
-                  placeholder="10.00"
-                />
-              </div>
+      {/* Base Pricing */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="💰 Base Pricing"
+          description="Configure your base fare structure and rates"
+        >
+          <div className="pricing-base-section">
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">Base Fare ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={settings.baseFare}
+                onChange={(e) => handleBasePricingChange('baseFare', parseFloat(e.target.value) || 0)}
+                placeholder="10.00"
+                className="pricing-field-input"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="perMile">Per Mile Rate ($)</Label>
-                <Input
-                  id="perMile"
-                  type="number"
-                  step="0.01"
-                  value={settings.perMile}
-                  onChange={(e) => handleBasePricingChange('perMile', parseFloat(e.target.value) || 0)}
-                  placeholder="3.50"
-                />
-              </div>
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">Per Mile Rate ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={settings.perMile}
+                onChange={(e) => handleBasePricingChange('perMile', parseFloat(e.target.value) || 0)}
+                placeholder="3.50"
+                className="pricing-field-input"
+              />
+            </div>
 
-              <div className="">
-                <Label htmlFor="perMinute">Per Minute Rate ($)</Label>
-                <Input
-                  id="perMinute"
-                  type="number"
-                  step="0.01"
-                  value={settings.perMinute}
-                  onChange={(e) => handleBasePricingChange('perMinute', parseFloat(e.target.value) || 0)}
-                  placeholder="0.50"
-                />
-              </div>
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">Per Minute Rate ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={settings.perMinute}
+                onChange={(e) => handleBasePricingChange('perMinute', parseFloat(e.target.value) || 0)}
+                placeholder="0.50"
+                className="pricing-field-input"
+              />
+            </div>
 
-              <div className="">
-                <Label htmlFor="depositPercent">Deposit Percentage (%)</Label>
-                <Input
-                  id="depositPercent"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={settings.depositPercent}
-                  onChange={(e) => handleBasePricingChange('depositPercent', parseInt(e.target.value) || 0)}
-                  placeholder="50"
-                />
-              </div>
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">Deposit Percentage (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={settings.depositPercent}
+                onChange={(e) => handleBasePricingChange('depositPercent', parseInt(e.target.value) || 0)}
+                placeholder="50"
+                className="pricing-field-input"
+              />
+            </div>
 
-              <div className="">
-                <Label htmlFor="bufferMinutes">Buffer Minutes</Label>
-                <Input
-                  id="bufferMinutes"
-                  type="number"
-                  value={settings.bufferMinutes}
-                  onChange={(e) => handleBasePricingChange('bufferMinutes', parseInt(e.target.value) || 0)}
-                  placeholder="60"
-                />
-              </div>
-            </CardContent>
-          </Card>
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">Buffer Minutes</label>
+              <input
+                type="number"
+                value={settings.bufferMinutes}
+                onChange={(e) => handleBasePricingChange('bufferMinutes', parseInt(e.target.value) || 0)}
+                placeholder="60"
+                className="pricing-field-input"
+              />
+            </div>
+          </div>
+        </InfoCard>
+      </GridSection>
 
-          {/* Cancellation Policy */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="">
-                <Clock className="" />
-                <span>Cancellation Policy</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="">
-                <Label htmlFor="over24h">Over 24h Refund (%)</Label>
-                <Input
-                  id="over24h"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={settings.cancellation.over24hRefundPercent}
-                  onChange={(e) => handleCancellationChange('over24hRefundPercent', parseInt(e.target.value) || 0)}
-                  placeholder="100"
-                />
-              </div>
+      {/* Cancellation Policy */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="⏰ Cancellation Policy"
+          description="Set refund percentages for different cancellation timeframes"
+        >
+          <div className="pricing-cancellation-section">
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">Over 24h Refund (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={settings.cancellation.over24hRefundPercent}
+                onChange={(e) => handleCancellationChange('over24hRefundPercent', parseInt(e.target.value) || 0)}
+                placeholder="100"
+                className="pricing-field-input"
+              />
+            </div>
 
-              <div className="">
-                <Label htmlFor="between3And24h">3-24h Refund (%)</Label>
-                <Input
-                  id="between3And24h"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={settings.cancellation.between3And24hRefundPercent}
-                  onChange={(e) => handleCancellationChange('between3And24hRefundPercent', parseInt(e.target.value) || 0)}
-                  placeholder="50"
-                />
-              </div>
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">3-24h Refund (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={settings.cancellation.between3And24hRefundPercent}
+                onChange={(e) => handleCancellationChange('between3And24hRefundPercent', parseInt(e.target.value) || 0)}
+                placeholder="50"
+                className="pricing-field-input"
+              />
+            </div>
 
-              <div className="">
-                <Label htmlFor="under3h">Under 3h Refund (%)</Label>
-                <Input
-                  id="under3h"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={settings.cancellation.under3hRefundPercent}
-                  onChange={(e) => handleCancellationChange('under3hRefundPercent', parseInt(e.target.value) || 0)}
-                  placeholder="0"
-                />
-              </div>
-            </CardContent>
-          </Card>
+            <div className="pricing-field-group">
+              <label className="pricing-field-label">Under 3h Refund (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={settings.cancellation.under3hRefundPercent}
+                onChange={(e) => handleCancellationChange('under3hRefundPercent', parseInt(e.target.value) || 0)}
+                placeholder="0"
+                className="pricing-field-input"
+              />
+            </div>
+          </div>
+        </InfoCard>
+      </GridSection>
 
-          {/* Pricing Zones */}
-          <Card className="">
-            <CardHeader>
-              <CardTitle className="">
-                <div className="">
-                  <MapPin className="" />
-                  <span>Pricing Zones</span>
-                </div>
-                <Button onClick={addZone} size="sm" variant="outline">
-                  <Plus className="" />
-                  Add Zone
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {settings.zones.length === 0 ? (
-                <div className="">
-                  <MapPin className="" />
-                  <p>No pricing zones configured</p>
-                  <p className="">Add zones for different areas with custom pricing</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {settings.zones.map((zone, index) => (
-                    <div key={index} className="">
-                      <div className="">
-                        <h4 className="">Zone {index + 1}</h4>
-                        <Button
-                          onClick={() => removeZone(index)}
-                          size="sm"
-                          variant="outline"
-                          className=""
-                        >
-                          <Trash2 className="" />
-                        </Button>
+      {/* Pricing Zones */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="📍 Pricing Zones"
+          description="Configure custom pricing for different geographic areas"
+        >
+          <div className="pricing-zones-section">
+            <div className="pricing-zones-header">
+              <ActionButtonGroup buttons={[
+                {
+                  label: 'Add Zone',
+                  onClick: addZone,
+                  variant: 'outline' as const,
+                  icon: '➕'
+                }
+              ]} />
+            </div>
+
+            {settings.zones.length === 0 ? (
+              <div className="pricing-zones-empty">
+                <MapPin className="pricing-zones-empty-icon" />
+                <p className="pricing-zones-empty-title">No pricing zones configured</p>
+                <p className="pricing-zones-empty-description">Add zones for different areas with custom pricing</p>
+              </div>
+            ) : (
+              <div className="pricing-zones-list">
+                {settings.zones.map((zone, index) => (
+                  <div key={index} className="pricing-zone-item">
+                    <div className="pricing-zone-header">
+                      <h4 className="pricing-zone-title">Zone {index + 1}</h4>
+                      <button
+                        onClick={() => removeZone(index)}
+                        className="pricing-zone-remove-btn"
+                      >
+                        <Trash2 className="pricing-zone-remove-icon" />
+                      </button>
+                    </div>
+                    
+                    <div className="pricing-zone-fields">
+                      <div className="pricing-field-group">
+                        <label className="pricing-field-label">Zone Name</label>
+                        <input
+                          value={zone.name}
+                          onChange={(e) => updateZone(index, 'name', e.target.value)}
+                          placeholder="Downtown"
+                          className="pricing-field-input"
+                        />
                       </div>
                       
-                      <div className="">
-                        <div className="">
-                          <Label htmlFor={`zone-${index}-name`}>Zone Name</Label>
-                          <Input
-                            id={`zone-${index}-name`}
-                            value={zone.name}
-                            onChange={(e) => updateZone(index, 'name', e.target.value)}
-                            placeholder="Downtown"
-                          />
-                        </div>
-                        
-                        <div className="">
-                          <Label htmlFor={`zone-${index}-baseFare`}>Base Fare ($)</Label>
-                          <Input
-                            id={`zone-${index}-baseFare`}
-                            type="number"
-                            step="0.01"
-                            value={zone.baseFare}
-                            onChange={(e) => updateZone(index, 'baseFare', parseFloat(e.target.value) || 0)}
-                            placeholder="10.00"
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor={`zone-${index}-perMile`}>Per Mile ($)</Label>
-                          <Input
-                            id={`zone-${index}-perMile`}
-                            type="number"
-                            step="0.01"
-                            value={zone.perMile}
-                            onChange={(e) => updateZone(index, 'perMile', parseFloat(e.target.value) || 0)}
-                            placeholder="3.50"
-                          />
-                        </div>
-                        
-                        <div className="">
-                          <Label htmlFor={`zone-${index}-perMinute`}>Per Minute ($)</Label>
-                          <Input
-                            id={`zone-${index}-perMinute`}
-                            type="number"
-                            step="0.01"
-                            value={zone.perMinute}
-                            onChange={(e) => updateZone(index, 'perMinute', parseFloat(e.target.value) || 0)}
-                            placeholder="0.50"
-                          />
-                        </div>
+                      <div className="pricing-field-group">
+                        <label className="pricing-field-label">Base Fare ($)</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={zone.baseFare}
+                          onChange={(e) => updateZone(index, 'baseFare', parseFloat(e.target.value) || 0)}
+                          placeholder="10.00"
+                          className="pricing-field-input"
+                        />
+                      </div>
+                      
+                      <div className="pricing-field-group">
+                        <label className="pricing-field-label">Per Mile ($)</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={zone.perMile}
+                          onChange={(e) => updateZone(index, 'perMile', parseFloat(e.target.value) || 0)}
+                          placeholder="3.50"
+                          className="pricing-field-input"
+                        />
+                      </div>
+                      
+                      <div className="pricing-field-group">
+                        <label className="pricing-field-label">Per Minute ($)</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={zone.perMinute}
+                          onChange={(e) => updateZone(index, 'perMinute', parseFloat(e.target.value) || 0)}
+                          placeholder="0.50"
+                          className="pricing-field-input"
+                        />
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </InfoCard>
+      </GridSection>
+    </AdminPageWrapper>
   );
+}
+
+export default function PricingSettingsPage() {
+  return (
+    <ToastProvider>
+      <PricingSettingsContent />
+    </ToastProvider>
+  );
+}

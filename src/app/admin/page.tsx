@@ -70,23 +70,11 @@ function AdminDashboardContent() {
               title={`${stat.icon} ${stat.title}`}
               description={stat.value}
             >
-              <div style={{
-                textAlign: 'center',
-                padding: 'var(--spacing-lg)'
-              }}>
-                <div style={{
-                  fontSize: 'var(--font-size-2xl)',
-                  fontWeight: '700',
-                  color: stat.color,
-                  marginBottom: 'var(--spacing-sm)'
-                }}>
+              <div className="admin-stat-card">
+                <div className="admin-stat-value" style={{ color: stat.color }}>
                   {stat.value}
                 </div>
-                <p style={{
-                  fontSize: 'var(--font-size-sm)',
-                  color: 'var(--text-secondary)',
-                  margin: 0
-                }}>
+                <p className="admin-stat-title">
                   {stat.title}
                 </p>
               </div>
@@ -100,15 +88,8 @@ function AdminDashboardContent() {
             title="📈 Recent Activity"
             description="Latest bookings and system updates"
           >
-            <div style={{
-              padding: 'var(--spacing-lg)',
-              textAlign: 'center'
-            }}>
-              <p style={{
-                fontSize: 'var(--font-size-base)',
-                color: 'var(--text-secondary)',
-                margin: 0
-              }}>
+            <div className="admin-activity-placeholder">
+              <p className="admin-activity-text">
                 Recent activity data will be displayed here once the booking system is fully integrated.
               </p>
             </div>
