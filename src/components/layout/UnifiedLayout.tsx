@@ -150,41 +150,27 @@ export function UnifiedLayout({
 
       {/* Page Header */}
       {(title || subtitle || description) && (
-        <div className="border-b bg-white/95 backdrop-blur-sm">
+        <section className="border-b bg-white/95 backdrop-blur-sm">
           <div className={containerClasses}>
-            <div className="py-8">
+            <div className="py-8 text-center">
               {title && (
-                <h1 style={{
-                  fontSize: 'var(--font-size-2xl)',
-                  fontWeight: '700',
-                  color: 'var(--text-primary)',
-                  marginBottom: subtitle || description ? 'var(--spacing-sm)' : '0'
-                }}>
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">
                   {title}
                 </h1>
               )}
               {subtitle && (
-                <p style={{
-                  fontSize: 'var(--font-size-lg)',
-                  color: 'var(--text-secondary)',
-                  marginBottom: description ? 'var(--spacing-sm)' : '0'
-                }}>
+                <p className="text-xl text-gray-600 mb-2">
                   {subtitle}
                 </p>
               )}
               {description && (
-                <p style={{
-                  fontSize: 'var(--font-size-base)',
-                  color: 'var(--text-muted)',
-                  maxWidth: '600px',
-                  margin: centerContent ? '0 auto' : '0'
-                }}>
+                <p className="text-base text-gray-500 max-w-2xl mx-auto">
                   {description}
                 </p>
               )}
             </div>
           </div>
-        </div>
+        </section>
       )}
 
       {/* Main Content */}
