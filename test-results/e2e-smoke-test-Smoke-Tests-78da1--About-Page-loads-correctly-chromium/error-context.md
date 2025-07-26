@@ -1,0 +1,55 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - link "Fairfield Airport Cars":
+    - /url: /
+  - link "Home":
+    - /url: /
+  - link "Book":
+    - /url: /book
+  - link "Help":
+    - /url: /help
+  - link "About":
+    - /url: /about
+- main:
+  - heading "About Fairfield Airport Cars" [level=1]
+  - heading "Professional airport transportation service serving Fairfield County and beyond" [level=2]
+  - heading "Our Story" [level=2]
+  - paragraph: Fairfield Airport Cars has been providing premium transportation services to the Fairfield County area for years. We understand that getting to and from the airport can be stressful, which is why we're committed to making your journey as smooth and comfortable as possible.
+  - heading "Our Mission" [level=2]
+  - paragraph: To provide reliable, professional, and comfortable transportation services that exceed our customers' expectations. We believe in punctuality, safety, and superior customer service.
+  - heading "Why Choose Us?" [level=2]
+  - heading "Professional Drivers" [level=3]
+  - paragraph: All our drivers are licensed, insured, and professionally trained to provide excellent service.
+  - heading "Clean Vehicles" [level=3]
+  - paragraph: Our fleet is regularly maintained and cleaned to ensure a comfortable ride every time.
+  - heading "On-Time Service" [level=3]
+  - paragraph: We track flights and traffic to ensure you arrive at your destination on time.
+  - heading "24/7 Availability" [level=3]
+  - paragraph: We provide transportation services around the clock to accommodate any schedule.
+  - heading "Service Areas" [level=2]
+  - paragraph: "We proudly serve Fairfield County, CT and surrounding areas, providing transportation to all major airports including:"
+  - list:
+    - listitem: John F. Kennedy International Airport (JFK)
+    - listitem: LaGuardia Airport (LGA)
+    - listitem: Newark Liberty International Airport (EWR)
+    - listitem: Bradley International Airport (BDL)
+    - listitem: Westchester County Airport (HPN)
+- contentinfo:
+  - heading "Fairfield Airport Cars" [level=3]
+  - paragraph: Premium airport transportation service
+  - heading "Contact" [level=4]
+  - paragraph: "Phone: (203) 555-0123"
+  - paragraph: "Email: info@fairfieldairportcar.com"
+  - heading "Service Areas" [level=4]
+  - paragraph: Fairfield County, CT
+  - paragraph: New York Airports
+  - paragraph: © 2024 Fairfield Airport Cars. All rights reserved.
+- button "Toggle accessibility options (Alt + A)": ♿
+- link "Skip to main content":
+  - /url: "#main-content"
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+```

@@ -5,13 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Booking } from '@/types/booking';
 import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/services/booking-service';
 import { getSettings } from '@/lib/business/settings-service';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
 import { 
   StatusMessage,
   ToastProvider,
-  useToast
+  useToast,
+  SettingSection,
+  SettingInput
 } from '@/components/ui';
 import { useCMS } from '@/hooks/useCMS';
 import { FormField } from '@/components/forms/FormField';
@@ -399,7 +398,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="space-y-8">
       {loadError && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
           <div className="flex">
@@ -419,178 +418,259 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </div>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          label={bookingFormText?.fullNameLabel || 'Full Name'}
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          placeholder="Enter your full name"
-        />
-        <FormField
-          label={bookingFormText?.emailLabel || 'Email Address'}
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="Enter your email"
-        />
-      </div>
-      <FormField
-        label={bookingFormText?.phoneLabel || 'Phone Number'}
-        id="phone"
-        type="tel"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        required
-        placeholder="(123) 456-7890"
-      />
-      <div>
-        <label className="block mb-1 text-sm font-medium text-text-primary">{bookingFormText?.pickupLocationLabel || 'Pickup Location'}</label>
-        <Input
-          id="pickupLocation"
-          ref={pickupInputRef}
-          type="text"
-          value={pickupLocation}
-          onChange={(e) => handlePickupInputChange(e.target.value)}
-          required
-          placeholder="Enter pickup address"
-          onBlur={() => setTimeout(() => setShowPickupSuggestions(false), 200)}
-          onFocus={() => { if (pickupSuggestions.length > 0) setShowPickupSuggestions(true); }}
-        />
-        {showPickupSuggestions && pickupSuggestions.length > 0 && (
-          <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto">
-            {pickupSuggestions.map((prediction) => (
-              <div
-                key={prediction.place_id}
-                className="suggestion-item"
-                onClick={() => handlePickupSuggestionSelect(prediction)}
-              >
-                <div className="font-medium text-sm text-text-primary">
-                  {prediction.structured_formatting?.main_text || prediction.description}
-                </div>
-                <div className="text-xs text-text-secondary">
-                  {prediction.structured_formatting?.secondary_text || ''}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      <div>
-        <label className="block mb-1 text-sm font-medium text-text-primary">{bookingFormText?.dropoffLocationLabel || 'Dropoff Location'}</label>
-        <Input
-          id="dropoffLocation"
-          ref={dropoffInputRef}
-          type="text"
-          value={dropoffLocation}
-          onChange={(e) => handleDropoffInputChange(e.target.value)}
-          required
-          placeholder="Enter dropoff address"
-          onBlur={() => setTimeout(() => setShowDropoffSuggestions(false), 200)}
-          onFocus={() => { if (dropoffSuggestions.length > 0) setShowDropoffSuggestions(true); }}
-        />
-        {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-          <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto">
-            {dropoffSuggestions.map((prediction) => (
-              <div
-                key={prediction.place_id}
-                className="suggestion-item"
-                onClick={() => handleDropoffSuggestionSelect(prediction)}
-              >
-                <div className="font-medium text-sm text-text-primary">
-                  {prediction.structured_formatting?.main_text || prediction.description}
-                </div>
-                <div className="text-xs text-text-secondary">
-                  {prediction.structured_formatting?.secondary_text || ''}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      <FormField
-        label={bookingFormText?.pickupDateTimeLabel || 'Pickup Date and Time'}
-        id="pickupDateTime"
-        type="datetime-local"
-        value={pickupDateTime}
-        onChange={(e) => setPickupDateTime(e.target.value)}
-        required
-      />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          label={bookingFormText?.passengersLabel || 'Passengers'}
-          id="passengers"
-          type="number"
-          min="1"
-          value={passengers}
-          onChange={(e) => setPassengers(Number(e.target.value))}
-          required
-        />
-        <FormField
-          label={bookingFormText?.flightNumberLabel || 'Flight Number (Optional)'}
-          id="flightNumber"
-          type="text"
-          value={flightNumber}
-          onChange={(e) => setFlightNumber(e.target.value)}
-          placeholder="AA1234"
-        />
-      </div>
-      <div>
-        <label className="block mb-1 text-sm font-medium text-text-primary">{bookingFormText?.notesLabel || 'Notes (Optional)'}</label>
-        <Textarea
-          id="notes"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          rows={3}
-          placeholder="Any special instructions?"
-        />
-      </div>
-      <div className="flex items-stretch gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          onClick={handleCalculateFare}
-          disabled={isCalculating}
-          className="flex-1 h-16"
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Personal Information */}
+        <SettingSection
+          title="Personal Information"
+          description="Please provide your contact details for the booking"
+          icon="👤"
         >
-          {isCalculating ? (bookingFormText?.calculatingFareButton || 'Calculating...') : (bookingFormText?.calculateFareButton || 'Calculate Fare')}
-        </Button>
-        {fare && (
-          <div className="flex-1 flex items-center justify-center h-16 bg-bg-secondary rounded-md">
-            <p className="text-lg font-semibold">{bookingFormText?.estimatedFareLabel || 'Estimated Fare:'} <span className="text-info">${fare}</span></p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 'var(--spacing-lg)'
+          }}>
+            <SettingInput
+              id="name"
+              label="Full Name"
+              description="Your complete name as it appears on ID"
+              value={name}
+              onChange={setName}
+              placeholder="Enter your full name"
+              icon="👤"
+            />
+            
+            <SettingInput
+              id="email"
+              label="Email Address"
+              description="We'll send your booking confirmation here"
+              type="email"
+              value={email}
+              onChange={setEmail}
+              placeholder="Enter your email"
+              icon="✉️"
+            />
           </div>
+          
+          <SettingInput
+            id="phone"
+            label="Phone Number"
+            description="Your driver will contact you on this number"
+            value={phone}
+            onChange={setPhone}
+            placeholder="(123) 456-7890"
+            icon="📞"
+          />
+        </SettingSection>
+
+        {/* Trip Details */}
+        <SettingSection
+          title="Trip Details"
+          description="Tell us where you need to go and when"
+          icon="🚗"
+        >
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 'var(--spacing-lg)'
+          }}>
+            <div className="relative">
+              <SettingInput
+                id="pickupLocation"
+                label="Pickup Location"
+                description="Where should we pick you up?"
+                value={pickupLocation}
+                onChange={handlePickupInputChange}
+                placeholder="Enter pickup address"
+                icon="📍"
+              />
+              {showPickupSuggestions && pickupSuggestions.length > 0 && (
+                <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto z-10 bg-white border border-gray-200 rounded-md shadow-lg">
+                  {pickupSuggestions.map((prediction) => (
+                    <div
+                      key={prediction.place_id}
+                      className="suggestion-item p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                      onClick={() => handlePickupSuggestionSelect(prediction)}
+                    >
+                      <div className="font-medium text-sm text-text-primary">
+                        {prediction.structured_formatting?.main_text || prediction.description}
+                      </div>
+                      <div className="text-xs text-text-secondary">
+                        {prediction.structured_formatting?.secondary_text || ''}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="relative">
+              <SettingInput
+                id="dropoffLocation"
+                label="Destination"
+                description="Where are you going?"
+                value={dropoffLocation}
+                onChange={handleDropoffInputChange}
+                placeholder="Enter destination address"
+                icon="🎯"
+              />
+              {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
+                <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto z-10 bg-white border border-gray-200 rounded-md shadow-lg">
+                  {dropoffSuggestions.map((prediction) => (
+                    <div
+                      key={prediction.place_id}
+                      className="suggestion-item p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                      onClick={() => handleDropoffSuggestionSelect(prediction)}
+                    >
+                      <div className="font-medium text-sm text-text-primary">
+                        {prediction.structured_formatting?.main_text || prediction.description}
+                      </div>
+                      <div className="text-xs text-text-secondary">
+                        {prediction.structured_formatting?.secondary_text || ''}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-2">
+              📅 Pickup Date and Time *
+            </label>
+            <input
+              id="pickupDateTime"
+              name="pickupDateTime"
+              type="datetime-local"
+              value={pickupDateTime}
+              onChange={(e) => setPickupDateTime(e.target.value)}
+              required
+              className="w-full h-12 px-4 py-2 border border-border-primary rounded-lg bg-bg-primary text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
+            />
+            <p className="text-xs text-text-secondary mt-1">When do you need to be picked up?</p>
+          </div>
+        </SettingSection>
+
+        {/* Additional Details */}
+        <SettingSection
+          title="Additional Details"
+          description="Help us provide the best service for your trip"
+          icon="⚙️"
+        >
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: 'var(--spacing-lg)'
+          }}>
+            <div>
+              <label className="block text-sm font-medium text-text-primary mb-2">
+                Passengers
+              </label>
+              <select
+                id="passengers"
+                name="passengers"
+                value={passengers}
+                onChange={(e) => setPassengers(Number(e.target.value))}
+                className="w-full h-12 px-4 py-2 border border-border-primary rounded-lg bg-bg-primary text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                  <option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</option>
+                ))}
+              </select>
+              <p className="text-xs text-text-secondary mt-1">Number of people traveling</p>
+            </div>
+            
+            <SettingInput
+              id="flightNumber"
+              label="Flight Number (Optional)"
+              description="We'll track your flight for delays"
+              value={flightNumber}
+              onChange={setFlightNumber}
+              placeholder="AA1234"
+              icon="✈️"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-2">
+              Special Instructions (Optional)
+            </label>
+            <textarea
+              id="notes"
+              name="notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              placeholder="Any special instructions or requests?"
+              className="w-full px-4 py-3 border border-border-primary rounded-lg bg-bg-primary text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200 resize-none"
+            />
+            <p className="text-xs text-text-secondary mt-1">Let us know about any special requirements</p>
+          </div>
+        </SettingSection>
+
+        {/* Action Buttons */}
+        <SettingSection
+          title="Book Your Ride"
+          description="Calculate your fare and complete your booking"
+          icon="💳"
+        >
+          <div className="flex items-stretch gap-4">
+            <button
+              type="button"
+              onClick={handleCalculateFare}
+              disabled={isCalculating}
+              className="flex-1 h-16 bg-gradient-to-r from-brand-secondary to-brand-primary text-white rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isCalculating ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Calculating...
+                </span>
+              ) : (
+                'Calculate Fare'
+              )}
+            </button>
+            {fare && (
+              <div className="flex-1 flex items-center justify-center h-16 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border-2 border-green-200">
+                <p className="text-xl font-bold text-green-700">
+                  Estimated Fare: <span className="text-2xl">${fare}</span>
+                </p>
+              </div>
+            )}
+          </div>
+          
+          {fare && (
+            <button
+              type="submit"
+              className="w-full h-16 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-lg font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 mt-4"
+            >
+              🚗 Book Now - ${fare}
+            </button>
+          )}
+        </SettingSection>
+        
+        {error && (
+          <StatusMessage 
+            type="error" 
+            message={error} 
+            onDismiss={() => setError(null)}
+          />
         )}
-      </div>
-      <Button
-        type="submit"
-        size="lg"
-        disabled={!fare || !name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime}
-        className="w-full py-4 text-lg font-semibold rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-      >
-        {isEditMode ? (bookingFormText?.updateBookingButton || 'Update Booking') : (bookingFormText?.bookNowButton || 'Book Now')}
-        {!fare && ' (Calculate fare first)'}
-        {fare && (!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime) && ' (Fill required fields)'}
-      </Button>
-      {error && (
-        <StatusMessage 
-          type="error" 
-          message={error} 
-          onDismiss={() => setError(null)}
-        />
-      )}
-      {success && (
-        <StatusMessage 
-          type="success" 
-          message={success} 
-          onDismiss={() => setSuccess(null)}
-        />
-      )}
-    </form>
+        
+        {success && (
+          <StatusMessage 
+            type="success" 
+            message={success} 
+            onDismiss={() => setSuccess(null)}
+          />
+        )}
+      </form>
+    </div>
   );
 }
 

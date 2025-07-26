@@ -1,0 +1,74 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - link "Fairfield Airport Cars":
+    - /url: /
+  - link "Home":
+    - /url: /
+  - link "Book":
+    - /url: /book
+  - link "Help":
+    - /url: /help
+  - link "About":
+    - /url: /about
+- main:
+  - heading "Book Your Airport Transfer" [level=1]
+  - heading "Reserve your luxury airport transportation with professional drivers" [level=2]
+  - heading "🚗 Book Your Ride" [level=3]
+  - paragraph: Complete the form below to reserve your airport transportation
+  - text: Full Name *
+  - textbox "Full Name *": John Smith
+  - text: Email Address *
+  - textbox "Email Address *": john@example.com
+  - text: Phone Number *
+  - textbox "Phone Number *"
+  - text: Pickup Location *
+  - textbox "Pickup Location *"
+  - text: Destination *
+  - textbox "Destination *"
+  - text: Pickup Date and Time *
+  - textbox "Pickup Date and Time *"
+  - text: Passengers
+  - combobox "Passengers":
+    - option "1 passenger" [selected]
+    - option "2 passengers"
+    - option "3 passengers"
+    - option "4 passengers"
+    - option "5 passengers"
+    - option "6 passengers"
+    - option "7 passengers"
+    - option "8 passengers"
+  - text: Flight Number (Optional)
+  - textbox "Flight Number (Optional)"
+  - text: Special Instructions (Optional)
+  - textbox "Special Instructions (Optional)"
+  - button "Calculate Fare"
+  - heading "✨ Why Choose Us?" [level=3]
+  - paragraph: Professional service you can count on
+  - text: ⏰
+  - heading "Always On Time" [level=4]
+  - paragraph: We track your flight and traffic to ensure punctual service
+  - text: 🚗
+  - heading "Premium Vehicles" [level=4]
+  - paragraph: Clean, comfortable cars with professional drivers
+  - text: 💳
+  - heading "Secure Payment" [level=4]
+  - paragraph: Safe and secure online payment processing
+- contentinfo:
+  - heading "Fairfield Airport Cars" [level=3]
+  - paragraph: Premium airport transportation service
+  - heading "Contact" [level=4]
+  - paragraph: "Phone: (203) 555-0123"
+  - paragraph: "Email: info@fairfieldairportcar.com"
+  - heading "Service Areas" [level=4]
+  - paragraph: Fairfield County, CT
+  - paragraph: New York Airports
+  - paragraph: © 2024 Fairfield Airport Cars. All rights reserved.
+- button "Toggle accessibility options (Alt + A)": ♿
+- link "Skip to main content":
+  - /url: "#main-content"
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+```
