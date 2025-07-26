@@ -20,6 +20,12 @@ export { ActionGrid } from './ActionGrid';
 export { GridSection } from './GridSection';
 export { PageSection } from './PageSection';
 
+// New Reusable Admin Components (Phase 1)
+export { AdminPageWrapper } from './AdminPageWrapper';
+export { FormSection } from './FormSection';
+export { LoadingState } from './LoadingState';
+export { ErrorState } from './ErrorState';
+
 // Layout Components (for backward compatibility)
 export { PageContainer } from '../layout/PageContainer';
 export { PageContent } from '../layout/PageContent'; 

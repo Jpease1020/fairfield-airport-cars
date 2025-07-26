@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface PageAction {
+export interface PageAction {
   label: string;
   href?: string;
   onClick?: () => void;
