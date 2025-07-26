@@ -12,7 +12,7 @@ import {
   DataTableAction
 } from '@/components/ui';
 
-
+function CommentsPageContent() {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,15 +87,7 @@ import {
     }
 
     return (
-      <span
-        style={{
-          ...statusStyle,
-          padding: 'var(--spacing-xs) var(--spacing-sm)',
-          borderRadius: 'var(--border-radius)',
-          fontSize: 'var(--font-size-xs)',
-          fontWeight: '500'
-        }}
-      >
+      <span className="status-badge">
         {status}
       </span>
     );
@@ -109,13 +101,13 @@ import {
       disabled: loading
     },
     { 
-      label: 'Export Comments', 
+      label: 'Export Report', 
       onClick: () => alert('Export functionality coming soon'), 
       variant: 'outline' as const 
     },
     { 
-      label: 'Comment Settings', 
-      href: '/admin/cms/communication', 
+      label: 'Moderation', 
+      onClick: () => alert('Comment moderation dashboard coming soon'), 
       variant: 'primary' as const 
     }
   ];
@@ -127,11 +119,11 @@ import {
       label: 'Author',
       sortable: true,
       render: (_, comment) => (
-        <div>
-          <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+        <div className="author-info">
+          <div className="author-name">
             {comment.createdBy}
           </div>
-          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+          <div className="author-page">
             📄 {comment.pageTitle}
           </div>
         </div>
@@ -142,12 +134,7 @@ import {
       label: 'Comment',
       sortable: false,
       render: (value) => (
-        <div style={{ 
-          maxWidth: '350px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap'
-        }}>
+        <div className="comment-text">
           {value}
         </div>
       )
@@ -159,11 +146,11 @@ import {
       render: (value) => {
         const { date, time } = formatDate(value);
         return (
-          <div>
-            <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500' }}>
+          <div className="comment-date">
+            <div className="date-day">
               {date}
             </div>
-            <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>
+            <div className="date-time">
               {time}
             </div>
           </div>
@@ -220,8 +207,8 @@ import {
 
   return (
     <AdminPageWrapper
-      title="Comments Management"
-      subtitle="Manage page comments and visitor feedback"
+      title="Page Comments"
+      subtitle="Monitor and manage comments across all pages"
       actions={headerActions}
       loading={loading}
       error={error}
@@ -234,28 +221,28 @@ import {
           title="Total Comments"
           icon="💬"
           statNumber={totalComments.toString()}
-          statChange="All time comments"
+          statChange="All comments"
           changeType="neutral"
         />
         <StatCard
           title="Recent Comments"
-          icon="📅"
+          icon="🆕"
           statNumber={recentComments.toString()}
-          statChange="Past 7 days"
+          statChange="Last 7 days"
           changeType="positive"
         />
         <StatCard
-          title="Active Pages"
+          title="Pages with Comments"
           icon="📄"
           statNumber={uniquePages.toString()}
-          statChange="Pages with comments"
+          statChange="Active pages"
           changeType="neutral"
         />
         <StatCard
-          title="Contributors"
+          title="Unique Authors"
           icon="👥"
           statNumber={uniqueAuthors.toString()}
-          statChange="Unique commenters"
+          statChange="Comment contributors"
           changeType="positive"
         />
       </GridSection>
@@ -263,18 +250,18 @@ import {
       {/* Comments Table */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="💬 Page Comments"
-          description="Search, sort, and manage visitor comments and feedback"
+          title="💬 All Comments"
+          description="Search, sort, and manage comments across all pages"
         >
           <DataTable
             data={comments}
             columns={columns}
             actions={actions}
             loading={loading}
-            searchPlaceholder="Search by author, comment text, or page title..."
-            emptyMessage="No page comments available yet. Comments will appear here when visitors leave feedback on your website."
+            searchPlaceholder="Search by author, page, or comment text..."
+            emptyMessage="No comments found. Comments will appear here once users start commenting on pages."
             emptyIcon="💬"
-            pageSize={15}
+            pageSize={10}
             rowClassName={(comment) => 
               getCommentStatus(comment) === 'Urgent' ? 'border-l-4 border-red-500' : 
               getCommentStatus(comment) === 'Question' ? 'border-l-4 border-yellow-500' : ''
@@ -284,99 +271,61 @@ import {
         </InfoCard>
       </GridSection>
 
-      {/* Quick Insights */}
-      <GridSection variant="content" columns={2}>
+      {/* Comment Analytics */}
+      <GridSection variant="content" columns={1}>
         <InfoCard
-          title="📊 Top Pages"
-          description="Pages with most comments"
+          title="📊 Comment Analytics"
+          description="Insights into comment activity and engagement"
         >
-          {comments.length > 0 ? (
-            <div style={{ marginTop: 'var(--spacing-md)' }}>
-              {Object.entries(
-                comments.reduce((acc, comment) => {
-                  acc[comment.pageTitle] = (acc[comment.pageTitle] || 0) + 1;
-                  return acc;
-                }, {} as Record<string, number>)
-              )
-              .sort(([,a], [,b]) => b - a)
-              .slice(0, 5)
-              .map(([page, count]) => (
-                <div key={page} style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  padding: 'var(--spacing-sm) 0',
-                  borderBottom: '1px solid var(--border-color)'
-                }}>
-                  <span style={{ fontSize: 'var(--font-size-sm)' }}>{page}</span>
-                  <span style={{ 
-                    fontWeight: '500',
-                    backgroundColor: 'var(--background-secondary)',
-                    padding: 'var(--spacing-xs) var(--spacing-sm)',
-                    borderRadius: 'var(--border-radius)',
-                    fontSize: 'var(--font-size-xs)'
-                  }}>
-                    {count}
-                  </span>
-                </div>
-              ))}
+          <div className="analytics-section">
+            <div className="analytics-item">
+              <span className="analytics-label">Most Active Pages:</span>
+              <div className="analytics-content">
+                {Array.from(new Set(comments.map(c => c.pageTitle)))
+                  .map(page => ({
+                    page,
+                    count: comments.filter(c => c.pageTitle === page).length
+                  }))
+                  .sort((a, b) => b.count - a.count)
+                  .slice(0, 5)
+                  .map(({ page, count }) => (
+                    <div key={page} className="page-stat">
+                      <span className="page-name">{page}</span>
+                      <span className="page-count">{count} comments</span>
+                    </div>
+                  ))}
+              </div>
             </div>
-          ) : (
-            <p style={{ 
-              textAlign: 'center', 
-              color: 'var(--text-secondary)',
-              padding: 'var(--spacing-lg)'
-            }}>
-              No data available
-            </p>
-          )}
-        </InfoCard>
-
-        <InfoCard
-          title="👥 Active Contributors"
-          description="Most active commenters"
-        >
-          {comments.length > 0 ? (
-            <div style={{ marginTop: 'var(--spacing-md)' }}>
-              {Object.entries(
-                comments.reduce((acc, comment) => {
-                  acc[comment.createdBy] = (acc[comment.createdBy] || 0) + 1;
-                  return acc;
-                }, {} as Record<string, number>)
-              )
-              .sort(([,a], [,b]) => b - a)
-              .slice(0, 5)
-              .map(([author, count]) => (
-                <div key={author} style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  padding: 'var(--spacing-sm) 0',
-                  borderBottom: '1px solid var(--border-color)'
-                }}>
-                  <span style={{ fontSize: 'var(--font-size-sm)' }}>{author}</span>
-                  <span style={{ 
-                    fontWeight: '500',
-                    backgroundColor: 'var(--background-secondary)',
-                    padding: 'var(--spacing-xs) var(--spacing-sm)',
-                    borderRadius: 'var(--border-radius)',
-                    fontSize: 'var(--font-size-xs)'
-                  }}>
-                    {count}
-                  </span>
-                </div>
-              ))}
+            
+            <div className="analytics-item">
+              <span className="analytics-label">Top Commenters:</span>
+              <div className="analytics-content">
+                {Array.from(new Set(comments.map(c => c.createdBy)))
+                  .map(author => ({
+                    author,
+                    count: comments.filter(c => c.createdBy === author).length
+                  }))
+                  .sort((a, b) => b.count - a.count)
+                  .slice(0, 5)
+                  .map(({ author, count }) => (
+                    <div key={author} className="author-stat">
+                      <span className="author-name">{author}</span>
+                      <span className="author-count">{count} comments</span>
+                    </div>
+                  ))}
+              </div>
             </div>
-          ) : (
-            <p style={{ 
-              textAlign: 'center', 
-              color: 'var(--text-secondary)',
-              padding: 'var(--spacing-lg)'
-            }}>
-              No data available
-            </p>
-          )}
+          </div>
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
   );
+}
+
+const CommentsPage = () => {
+  return (
+    <CommentsPageContent />
+  );
+};
+
+export default CommentsPage;

@@ -14,7 +14,7 @@ import {
   ActionButtonGroup
 } from '@/components/ui';
 
-
+function CMSPageContent() {
   const { addToast } = useToast();
   const [config, setConfig] = useState<CMSConfiguration | null>(null);
   const [loading, setLoading] = useState(true);
@@ -98,81 +98,77 @@ import {
   const cmsSections = [
     {
       id: 'pages',
-      title: 'Page Content',
-      description: 'Edit homepage, help page, and other content',
+      title: 'Pages',
+      description: 'Manage website pages and content',
       icon: '📄',
       href: '/admin/cms/pages',
-      status: config?.pages ? `${Object.keys(config.pages).length} pages` : 'Not configured'
+      status: config?.pages ? 'Configured' : 'Not Set Up'
     },
     {
       id: 'business',
-      title: 'Business Settings',
-      description: 'Company info, contact details, and branding',
-      icon: '⚙️',
+      title: 'Business Info',
+      description: 'Company details and contact information',
+      icon: '🏢',
       href: '/admin/cms/business',
-      status: config?.business.company.name || 'Not set'
+      status: config?.business ? 'Configured' : 'Not Set Up'
     },
     {
       id: 'pricing',
-      title: 'Pricing & Rates',
-      description: 'Fare structure, zones, and cancellation policies',
+      title: 'Pricing',
+      description: 'Service rates and pricing structure',
       icon: '💰',
       href: '/admin/cms/pricing',
-      status: config?.pricing.baseFare ? `$${config.pricing.baseFare} base fare` : 'Not configured'
+      status: config?.pricing ? 'Configured' : 'Not Set Up'
     },
     {
       id: 'colors',
-      title: 'Brand & Colors',
-      description: 'Website colors, fonts, and visual branding',
+      title: 'Colors',
+      description: 'Brand colors and design system',
       icon: '🎨',
       href: '/admin/cms/colors',
-      status: 'Theme configured'
+      status: config?.themeColors ? 'Configured' : 'Not Set Up'
     },
     {
       id: 'communication',
-      title: 'Communication Templates',
-      description: 'Email and SMS templates for bookings',
+      title: 'Communication',
+      description: 'Email and SMS templates',
       icon: '📧',
       href: '/admin/cms/communication',
-      status: '4 templates'
+      status: config?.communication ? 'Configured' : 'Not Set Up'
     },
     {
-      id: 'drivers',
-      title: 'Driver Management',
-      description: 'Driver requirements, compensation, and scheduling',
-      icon: '👥',
-      href: '/admin/cms/drivers',
-      status: config?.driver?.requirements?.minimumAge ? `${config.driver.requirements.minimumAge}+ years` : 'Not configured'
+      id: 'analytics',
+      title: 'Analytics',
+      description: 'Tracking and reporting settings',
+      icon: '📊',
+      href: '/admin/cms/analytics',
+      status: config?.analytics ? 'Configured' : 'Not Set Up'
     }
   ];
 
   const quickActions = [
     {
       id: 1,
-      icon: "💾",
-      label: "Backup Configuration",
-      onClick: () => addToast('info', 'Backup functionality coming soon')
+      icon: "🔄",
+      label: "Sync Content",
+      onClick: () => addToast('info', 'Content sync functionality coming soon')
     },
     {
       id: 2,
-      icon: "🔄",
-      label: "Restore Defaults",
-      onClick: () => {
-        if (window.confirm('This will reset all CMS settings to defaults. Continue?')) {
-          addToast('info', 'Restore functionality coming soon');
-        }
-      }
+      icon: "📊",
+      label: "Analytics",
+      href: "/admin/cms/analytics"
     },
     {
       id: 3,
-      icon: "📅",
-      label: "View Change History",
-      onClick: () => addToast('info', 'Change history functionality coming soon')
+      icon: "🔧",
+      label: "Backup",
+      onClick: () => addToast('info', 'Backup functionality coming soon')
     },
     {
       id: 4,
-      icon: "📋",
-      label: "Export All Settings",
+      icon: "📤",
+      label: "Export",
       onClick: () => addToast('info', 'Export functionality coming soon')
     }
   ];
@@ -180,7 +176,7 @@ import {
   return (
     <AdminPageWrapper
       title="Content Management System"
-      subtitle="Manage all website content and business settings"
+      subtitle="Manage website content, branding, and configuration"
       actions={headerActions}
       loading={loading}
       error={error}
@@ -195,22 +191,12 @@ import {
             title={`${section.icon} ${section.title}`}
             description={section.description}
           >
-            <div style={{ marginTop: 'var(--spacing-md)' }}>
-              <div style={{ 
-                marginBottom: 'var(--spacing-md)',
-                padding: 'var(--spacing-sm)',
-                backgroundColor: 'var(--background-secondary)',
-                borderRadius: 'var(--border-radius)',
-                border: '1px solid var(--border-color)'
-              }}>
-                <div style={{ 
-                  fontSize: 'var(--font-size-xs)', 
-                  color: 'var(--text-secondary)',
-                  marginBottom: 'var(--spacing-xs)'
-                }}>
+            <div className="cms-section-content">
+              <div className="status-card">
+                <div className="status-label">
                   Status:
                 </div>
-                <div style={{ fontWeight: '500', fontSize: 'var(--font-size-sm)' }}>
+                <div className="status-value">
                   {section.status}
                 </div>
               </div>
@@ -245,51 +231,31 @@ import {
             title="🕒 Configuration Status"
             description="CMS configuration and update information"
           >
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 'var(--spacing-md)',
-              marginTop: 'var(--spacing-md)'
-            }}>
-              <div style={{
-                padding: 'var(--spacing-md)',
-                backgroundColor: 'var(--background-secondary)',
-                borderRadius: 'var(--border-radius)',
-                border: '1px solid var(--border-color)'
-              }}>
-                <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+            <div className="config-status-grid">
+              <div className="config-status-item">
+                <div className="status-title">
                   Last Updated
                 </div>
-                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+                <div className="status-detail">
                   {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
                 </div>
               </div>
               
-              <div style={{
-                padding: 'var(--spacing-md)',
-                backgroundColor: 'var(--background-secondary)',
-                borderRadius: 'var(--border-radius)',
-                border: '1px solid var(--border-color)'
-              }}>
-                <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+              <div className="config-status-item">
+                <div className="status-title">
                   Configuration Status
                 </div>
-                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+                <div className="status-detail">
                   {config ? 'Fully Configured' : 'Needs Setup'}
                 </div>
               </div>
               
-              <div style={{
-                padding: 'var(--spacing-md)',
-                backgroundColor: 'var(--background-secondary)',
-                borderRadius: 'var(--border-radius)',
-                border: '1px solid var(--border-color)'
-              }}>
-                <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+              <div className="config-status-item">
+                <div className="status-title">
                   Auto-Save
                 </div>
-                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
-                  All changes are automatically saved and synchronized
+                <div className="status-detail">
+                  Enabled
                 </div>
               </div>
             </div>
@@ -306,3 +272,6 @@ const CMSPage = () => {
       <CMSPageContent />
     </ToastProvider>
   );
+};
+
+export default CMSPage;

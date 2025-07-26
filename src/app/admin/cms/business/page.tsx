@@ -15,7 +15,7 @@ import {
   GridSection
 } from '@/components/ui';
 
-
+function BusinessPageContent() {
   const { addToast } = useToast();
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -98,55 +98,83 @@ import {
     { 
       label: 'Reload Settings',
       onClick: loadBusinessSettings,
-      variant: 'secondary' as const,
+      variant: 'outline' as const,
+      disabled: loading,
       icon: '🔄'
     },
     { 
-      label: saving ? 'Saving...' : 'Save Changes',
+      label: 'Save Changes',
       onClick: handleSave,
       variant: 'primary' as const,
-      disabled: saving || !settings,
+      disabled: !settings || saving,
       icon: '💾'
     }
-  ], [saving, settings, handleSave]);
+  ], [settings, loading, saving]);
+
+  if (loading) {
+    return (
+      <AdminPageWrapper
+        title="Business Settings"
+        subtitle="Configure your company information and branding"
+        loading={true}
+        loadingMessage="Loading business settings..."
+      >
+        <div />
+      </AdminPageWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminPageWrapper
+        title="Business Settings"
+        subtitle="Configure your company information and branding"
+        error={error}
+        errorTitle="Settings Load Error"
+      >
+        <div />
+      </AdminPageWrapper>
+    );
+  }
+
+  if (!settings) {
+    return (
+      <AdminPageWrapper
+        title="Business Settings"
+        subtitle="Configure your company information and branding"
+        error="No business settings found"
+        errorTitle="Settings Not Found"
+      >
+        <div />
+      </AdminPageWrapper>
+    );
+  }
 
   return (
     <AdminPageWrapper
       title="Business Settings"
-      subtitle="Manage company information, contact details, and branding"
+      subtitle="Configure your company information and branding"
       actions={headerActions}
-      loading={loading}
-      error={error}
-      errorTitle="Business Settings Error"
-      loadingMessage="Loading business configuration..."
+      loading={saving}
+      loadingMessage="Saving business settings..."
     >
-      {/* Error Message */}
-      {error && (
-        <StatusMessage 
-          type="error" 
-          message={error} 
-          onDismiss={() => setError(null)} 
+      {saving && (
+        <StatusMessage
+          type="info"
+          message="Please wait while we save your business settings..."
         />
       )}
 
       {settings && (
         <GridSection variant="content" columns={1}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--spacing-lg)'
-          }}>
+          <div className="settings-container">
             {/* Company Information */}
             <SettingSection
               title="Company Information"
               description="Basic company details and contact information"
               icon="🏢"
             >
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: 'var(--spacing-md)'
-              }}>
+              <div className="settings-grid">
                 <SettingInput
                   id="company-name"
                   label="Company Name"
@@ -216,11 +244,7 @@ import {
               description="Links to your social media profiles"
               icon="📱"
             >
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: 'var(--spacing-md)'
-              }}>
+              <div className="settings-grid">
                 <SettingInput
                   id="social-facebook"
                   label="Facebook URL"
@@ -234,7 +258,7 @@ import {
                 <SettingInput
                   id="social-instagram"
                   label="Instagram URL"
-                  description="Link to your Instagram business profile"
+                  description="Link to your Instagram business account"
                   value={settings.social.instagram || ''}
                   onChange={(value) => handleSocialChange('instagram', value)}
                   placeholder="https://instagram.com/yourpage"
@@ -259,17 +283,8 @@ import {
               description="Visual identity and brand colors"
               icon="🎨"
             >
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: 'var(--spacing-md)'
-              }}>
-                <div style={{
-                  padding: 'var(--spacing-md)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  backgroundColor: 'var(--background-secondary)'
-                }}>
+              <div className="settings-grid">
+                <div className="color-preview-card">
                   <SettingInput
                     id="brand-primary-color"
                     label="Primary Color"
@@ -279,29 +294,13 @@ import {
                     placeholder="#1f2937"
                     icon="🎨"
                   />
-                  <div style={{
-                    marginTop: 'var(--spacing-sm)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--spacing-sm)'
-                  }}>
-                    <span style={{ fontSize: 'var(--font-size-sm)' }}>Preview:</span>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: 'var(--border-radius)',
-                      border: '1px solid var(--border-color)',
-                      backgroundColor: settings.branding.primaryColor
-                    }} />
+                  <div className="color-preview">
+                    <span className="preview-label">Preview:</span>
+                    <div className="color-swatch" />
                   </div>
                 </div>
                 
-                <div style={{
-                  padding: 'var(--spacing-md)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  backgroundColor: 'var(--background-secondary)'
-                }}>
+                <div className="color-preview-card">
                   <SettingInput
                     id="brand-secondary-color"
                     label="Secondary Color"
@@ -311,20 +310,9 @@ import {
                     placeholder="#3b82f6"
                     icon="🎨"
                   />
-                  <div style={{
-                    marginTop: 'var(--spacing-sm)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--spacing-sm)'
-                  }}>
-                    <span style={{ fontSize: 'var(--font-size-sm)' }}>Preview:</span>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: 'var(--border-radius)',
-                      border: '1px solid var(--border-color)',
-                      backgroundColor: settings.branding.secondaryColor
-                    }} />
+                  <div className="color-preview">
+                    <span className="preview-label">Preview:</span>
+                    <div className="color-swatch" />
                   </div>
                 </div>
                 
@@ -346,119 +334,19 @@ import {
               description="How your business information will appear to customers"
               icon="👀"
             >
-              <div style={{
-                padding: 'var(--spacing-xl)',
-                border: '2px solid var(--border-color)',
-                borderRadius: 'var(--border-radius)',
-                backgroundColor: 'var(--background-secondary)',
-                textAlign: 'center',
-                maxWidth: '400px',
-                margin: '0 auto'
-              }}>
-                <h2 style={{
-                  fontSize: 'var(--font-size-xl)',
-                  fontWeight: '600',
-                  marginBottom: 'var(--spacing-xs)',
-                  color: settings.branding.primaryColor
-                }}>
-                  {settings.company.name}
-                </h2>
-                
-                {settings.company.tagline && (
-                  <p style={{
-                    fontSize: 'var(--font-size-sm)',
-                    color: 'var(--text-secondary)',
-                    marginBottom: 'var(--spacing-md)',
-                    fontStyle: 'italic'
-                  }}>
-                    {settings.company.tagline}
-                  </p>
-                )}
-                
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 'var(--spacing-xs)',
-                  fontSize: 'var(--font-size-sm)',
-                  textAlign: 'left'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontWeight: '500' }}>📞 Phone:</span>
-                    <span>{settings.company.phone}</span>
+              <div className="business-preview">
+                <div className="preview-card">
+                  <div className="preview-header">
+                    <h3 className="preview-company-name">{settings.company.name}</h3>
+                    <p className="preview-tagline">{settings.company.tagline}</p>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontWeight: '500' }}>✉️ Email:</span>
-                    <span>{settings.company.email}</span>
+                  <div className="preview-contact">
+                    <p className="preview-phone">📞 {settings.company.phone}</p>
+                    <p className="preview-email">✉️ {settings.company.email}</p>
+                    <p className="preview-address">📍 {settings.company.address}</p>
+                    <p className="preview-hours">🕒 {settings.company.hours}</p>
                   </div>
-                  {settings.company.hours && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontWeight: '500' }}>🕒 Hours:</span>
-                      <span>{settings.company.hours}</span>
-                    </div>
-                  )}
-                  {settings.company.address && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontWeight: '500' }}>📍 Address:</span>
-                      <span>{settings.company.address}</span>
-                    </div>
-                  )}
                 </div>
-
-                {Object.values(settings.social).some(url => url) && (
-                  <div style={{
-                    marginTop: 'var(--spacing-md)',
-                    paddingTop: 'var(--spacing-md)',
-                    borderTop: '1px solid var(--border-color)'
-                  }}>
-                    <p style={{
-                      fontSize: 'var(--font-size-xs)',
-                      color: 'var(--text-secondary)',
-                      marginBottom: 'var(--spacing-sm)'
-                    }}>
-                      Social Media:
-                    </p>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      gap: 'var(--spacing-xs)',
-                      flexWrap: 'wrap'
-                    }}>
-                      {settings.social.facebook && (
-                        <span style={{
-                          padding: '4px 8px',
-                          backgroundColor: 'var(--background-primary)',
-                          border: '1px solid var(--border-color)',
-                          borderRadius: '4px',
-                          fontSize: 'var(--font-size-xs)'
-                        }}>
-                          📘 Facebook
-                        </span>
-                      )}
-                      {settings.social.instagram && (
-                        <span style={{
-                          padding: '4px 8px',
-                          backgroundColor: 'var(--background-primary)',
-                          border: '1px solid var(--border-color)',
-                          borderRadius: '4px',
-                          fontSize: 'var(--font-size-xs)'
-                        }}>
-                          📷 Instagram
-                        </span>
-                      )}
-                      {settings.social.twitter && (
-                        <span style={{
-                          padding: '4px 8px',
-                          backgroundColor: 'var(--background-primary)',
-                          border: '1px solid var(--border-color)',
-                          borderRadius: '4px',
-                          fontSize: 'var(--font-size-xs)'
-                        }}>
-                          🐦 Twitter
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
             </SettingSection>
           </div>
@@ -468,9 +356,12 @@ import {
   );
 }
 
-const BusinessSettingsPage = () => {
+const BusinessPage = () => {
   return (
     <ToastProvider>
-      <BusinessSettingsPageContent />
+      <BusinessPageContent />
     </ToastProvider>
   );
+};
+
+export default withAuth(BusinessPage);
