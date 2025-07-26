@@ -2,211 +2,350 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { StandardLayout } from '@/components/layout/StandardLayout';
+import { UniversalLayout } from '@/components/layout/UniversalLayout';
+import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { 
+  GridSection,
+  InfoCard,
+  StatusMessage,
+  ToastProvider,
+  useToast,
+  ActionButtonGroup,
+  LoadingSpinner
+} from '@/components/ui';
 import { useBookingStatus, useEstimatedArrival } from '@/hooks/useBookingStatus';
-import { BookingCardSkeleton } from '@/components/ui/skeleton';
 
-export default function BookingStatusPage() {
+function BookingStatusPageContent() {
+  const { addToast } = useToast();
   const params = useParams();
   const bookingId = params.id as string;
   
   const { status, loading, error } = useBookingStatus(bookingId);
   const { estimatedArrival } = useEstimatedArrival(bookingId);
+  const [showDetails, setShowDetails] = useState(false);
 
-  const [showSkeleton, setShowSkeleton] = useState(true);
+  const getStatusText = (status: any) => {
+    if (!status) return 'Unknown';
+    return typeof status === 'string' ? status : status.status || 'Unknown';
+  };
 
-  useEffect(() => {
-    // Show skeleton for first 2 seconds to prevent flash
-    const timer = setTimeout(() => {
-      setShowSkeleton(false);
-    }, 2000);
+  const getStatusIcon = (status: any) => {
+    const statusText = getStatusText(status);
+    switch (statusText.toLowerCase()) {
+      case 'confirmed': return '✅';
+      case 'en-route': return '🚗';
+      case 'arrived': return '📍';
+      case 'completed': return '🏁';
+      case 'cancelled': return '❌';
+      default: return '📋';
+    }
+  };
 
-    return () => clearTimeout(timer);
-  }, []);
+  const getStatusColor = (status: any) => {
+    const statusText = getStatusText(status);
+    switch (statusText.toLowerCase()) {
+      case 'confirmed': return 'var(--success-color)';
+      case 'en-route': return 'var(--warning-color)';
+      case 'arrived': return 'var(--primary-color)';
+      case 'completed': return 'var(--success-color)';
+      case 'cancelled': return 'var(--error-color)';
+      default: return 'var(--text-secondary)';
+    }
+  };
 
-  if (showSkeleton || loading) {
+  const quickActions = [
+    {
+      label: 'Refresh Status',
+      onClick: () => {
+        window.location.reload();
+        addToast('info', 'Refreshing booking status...');
+      },
+      variant: 'outline' as const,
+      icon: '🔄'
+    },
+    {
+      label: 'Contact Driver',
+      onClick: () => addToast('info', 'Driver contact feature coming soon'),
+      variant: 'primary' as const,
+      icon: '📞'
+    },
+    {
+      label: 'Get Directions',
+      onClick: () => addToast('info', 'Opening directions in maps app...'),
+      variant: 'outline' as const,
+      icon: '🗺️'
+    }
+  ];
+
+  if (loading) {
     return (
-      <StandardLayout 
-        title="Booking Status"
-        subtitle="Track your airport transportation"
-      >
-        <div className="status-content">
-          <BookingCardSkeleton />
-        </div>
-      </StandardLayout>
+      <LayoutEnforcer>
+        <UniversalLayout 
+          layoutType="standard"
+          title="Booking Status"
+          subtitle="Track your airport transportation"
+        >
+          <GridSection variant="content" columns={1}>
+            <InfoCard
+              title="📋 Loading Booking Status"
+              description="Retrieving your booking information..."
+            >
+              <div style={{ textAlign: 'center', padding: 'var(--spacing-xl)' }}>
+                <LoadingSpinner />
+                <p style={{ marginTop: 'var(--spacing-md)', color: 'var(--text-secondary)' }}>
+                  Please wait while we fetch your booking details...
+                </p>
+              </div>
+            </InfoCard>
+          </GridSection>
+        </UniversalLayout>
+      </LayoutEnforcer>
     );
   }
 
   if (error) {
     return (
-      <StandardLayout 
-        title="Booking Status"
-        subtitle="Track your airport transportation"
-      >
-        <div className="status-content">
-          <div className="error-state">
-            <h2>Unable to Load Booking</h2>
-            <p>{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="btn btn-primary"
+      <LayoutEnforcer>
+        <UniversalLayout 
+          layoutType="standard"
+          title="Booking Status"
+          subtitle="Track your airport transportation"
+        >
+          <GridSection variant="content" columns={1}>
+            <StatusMessage 
+              type="error" 
+              message={error}
+              onDismiss={() => window.location.reload()}
+            />
+          </GridSection>
+
+          <GridSection variant="content" columns={1}>
+            <InfoCard
+              title="❌ Unable to Load Booking"
+              description="We couldn't retrieve your booking information"
             >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </StandardLayout>
+              <div style={{ textAlign: 'center', padding: 'var(--spacing-lg)' }}>
+                <p style={{ marginBottom: 'var(--spacing-lg)', color: 'var(--text-secondary)' }}>
+                  This could be due to an invalid booking ID or a temporary system issue.
+                </p>
+                <ActionButtonGroup buttons={[
+                  {
+                    label: 'Try Again',
+                    onClick: () => window.location.reload(),
+                    variant: 'primary',
+                    icon: '🔄'
+                  },
+                  {
+                    label: 'Contact Support',
+                    onClick: () => addToast('info', 'Support: (203) 555-0123'),
+                    variant: 'outline',
+                    icon: '📞'
+                  }
+                ]} />
+              </div>
+            </InfoCard>
+          </GridSection>
+        </UniversalLayout>
+      </LayoutEnforcer>
     );
   }
-
-  if (!status) {
-    return (
-      <StandardLayout 
-        title="Booking Status"
-        subtitle="Track your airport transportation"
-      >
-        <div className="status-content">
-          <div className="not-found">
-            <h2>Booking Not Found</h2>
-            <p>The booking you&apos;re looking for doesn&apos;t exist or has been removed.</p>
-          </div>
-        </div>
-      </StandardLayout>
-    );
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'text-green-600 bg-green-100';
-      case 'in-progress': return 'text-blue-600 bg-blue-100';
-      case 'completed': return 'text-gray-600 bg-gray-100';
-      case 'cancelled': return 'text-red-600 bg-red-100';
-      default: return 'text-yellow-600 bg-yellow-100';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'confirmed': return '✅';
-      case 'in-progress': return '🚗';
-      case 'completed': return '🎉';
-      case 'cancelled': return '❌';
-      default: return '⏳';
-    }
-  };
-
-  const formatDateTime = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date);
-  };
-
-  const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date);
-  };
 
   return (
-    <StandardLayout 
-      title="Booking Status"
-      subtitle="Track your airport transportation"
-    >
-      <div className="status-content">
-        <div className="booking-status-card">
-          <div className="status-header">
-            <h2>Booking #{bookingId.slice(-8)}</h2>
-            <div className={`status-badge ${getStatusColor(status.status)}`}>
-              <span className="status-icon">{getStatusIcon(status.status)}</span>
-              <span className="status-text">{status.status.replace('-', ' ').toUpperCase()}</span>
+    <LayoutEnforcer>
+      <UniversalLayout 
+        layoutType="standard"
+        title="Booking Status"
+        subtitle={`Tracking booking #${bookingId}`}
+      >
+        {/* Current Status */}
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title={`${getStatusIcon(status)} Current Status: ${getStatusText(status)}`}
+            description="Live tracking of your airport transportation"
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--spacing-lg)',
+              padding: 'var(--spacing-lg)'
+            }}>
+              <div style={{
+                textAlign: 'center',
+                padding: 'var(--spacing-xl)',
+                backgroundColor: 'var(--background-secondary)',
+                borderRadius: 'var(--border-radius)',
+                border: `2px solid ${getStatusColor(status)}`
+              }}>
+                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-md)' }}>
+                  {getStatusIcon(status)}
+                </div>
+                <h2 style={{ 
+                  margin: '0 0 var(--spacing-sm) 0', 
+                  color: getStatusColor(status),
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}                >
+                  {getStatusText(status)}
+                </h2>
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
+                  {getStatusText(status) === 'confirmed' && 'Your ride is confirmed and driver assigned'}
+                  {getStatusText(status) === 'en-route' && 'Your driver is on the way to pick you up'}
+                  {getStatusText(status) === 'arrived' && 'Your driver has arrived at the pickup location'}
+                  {getStatusText(status) === 'completed' && 'Your ride has been completed successfully'}
+                  {getStatusText(status) === 'cancelled' && 'This booking has been cancelled'}
+                  {getStatusText(status) === 'Unknown' && 'We are processing your booking request'}
+                </p>
+              </div>
+
+              {estimatedArrival && (
+                <div style={{
+                  padding: 'var(--spacing-md)',
+                  backgroundColor: 'var(--background-primary)',
+                  borderRadius: 'var(--border-radius)',
+                  border: '1px solid var(--border-color)',
+                  textAlign: 'center'
+                }}>
+                  <h4 style={{ margin: '0 0 var(--spacing-sm) 0' }}>⏰ Estimated Arrival</h4>
+                  <p style={{ 
+                    margin: 0, 
+                    fontSize: 'var(--font-size-lg)', 
+                    fontWeight: '600',
+                    color: 'var(--primary-color)'
+                  }}>
+                                         {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}
+                  </p>
+                </div>
+              )}
             </div>
-          </div>
+          </InfoCard>
+        </GridSection>
 
-          <div className="status-details">
-            {status.driverName && (
-              <div className="detail-row">
-                <span className="label">Driver:</span>
-                <span className="value">{status.driverName}</span>
-              </div>
-            )}
+        {/* Quick Actions */}
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="🎯 Quick Actions"
+            description="Manage your booking and get assistance"
+          >
+            <ActionButtonGroup buttons={quickActions} />
+          </InfoCard>
+        </GridSection>
 
-            {estimatedArrival && (
-              <div className="detail-row">
-                <span className="label">Estimated Arrival:</span>
-                <span className="value">{formatTime(estimatedArrival)}</span>
-              </div>
-            )}
+        {/* Booking Details Toggle */}
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="📋 Booking Information"
+            description="View complete booking details and timeline"
+          >
+            <div style={{ padding: 'var(--spacing-md)' }}>
+              <button
+                onClick={() => setShowDetails(!showDetails)}
+                style={{
+                  padding: 'var(--spacing-md)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  backgroundColor: 'var(--background-secondary)',
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer',
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <span>{showDetails ? 'Hide' : 'Show'} Booking Details</span>
+                <span>{showDetails ? '▲' : '▼'}</span>
+              </button>
 
-            {status.lastUpdated && (
-              <div className="detail-row">
-                <span className="label">Last Updated:</span>
-                <span className="value">{formatDateTime(status.lastUpdated)}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Real-time status updates */}
-          <div className="status-timeline">
-            <h3>Booking Timeline</h3>
-            <div className="timeline">
-              <div className={`timeline-item ${status.status !== 'pending' ? 'completed' : ''}`}>
-                <div className="timeline-icon">📝</div>
-                <div className="timeline-content">
-                  <h4>Booking Created</h4>
-                  <p>Your booking has been received and is being processed</p>
+              {showDetails && (
+                <div style={{
+                  marginTop: 'var(--spacing-md)',
+                  padding: 'var(--spacing-lg)',
+                  backgroundColor: 'var(--background-primary)',
+                  borderRadius: 'var(--border-radius)',
+                  border: '1px solid var(--border-color)'
+                }}>
+                  <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
+                    <div>
+                      <strong>Booking ID:</strong> {bookingId}
+                    </div>
+                                         <div>
+                       <strong>Status:</strong> <span style={{ color: getStatusColor(status) }}>{getStatusText(status)}</span>
+                     </div>
+                    {estimatedArrival && (
+                      <div>
+                                                 <strong>Estimated Arrival:</strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}
+                      </div>
+                    )}
+                    <div>
+                      <strong>Support:</strong> (203) 555-0123
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className={`timeline-item ${['confirmed', 'in-progress', 'completed'].includes(status.status) ? 'completed' : ''}`}>
-                <div className="timeline-icon">✅</div>
-                <div className="timeline-content">
-                  <h4>Booking Confirmed</h4>
-                  <p>Your booking has been confirmed and a driver has been assigned</p>
-                </div>
-              </div>
-
-              <div className={`timeline-item ${['in-progress', 'completed'].includes(status.status) ? 'completed' : ''}`}>
-                <div className="timeline-icon">🚗</div>
-                <div className="timeline-content">
-                  <h4>Driver En Route</h4>
-                  <p>Your driver is on the way to your pickup location</p>
-                </div>
-              </div>
-
-              <div className={`timeline-item ${status.status === 'completed' ? 'completed' : ''}`}>
-                <div className="timeline-icon">🎉</div>
-                <div className="timeline-content">
-                  <h4>Journey Complete</h4>
-                  <p>Your airport transportation has been completed successfully</p>
-                </div>
-              </div>
+              )}
             </div>
-          </div>
+          </InfoCard>
+        </GridSection>
 
-          {/* Action buttons */}
-          <div className="status-actions">
-            <button 
-              onClick={() => window.history.back()} 
-              className="btn btn-secondary"
-            >
-              Back to Booking
-            </button>
-            
-            <button 
-              onClick={() => window.location.reload()} 
-              className="btn btn-outline"
-            >
-              Refresh Status
-            </button>
-          </div>
-        </div>
-      </div>
-    </StandardLayout>
+        {/* Status Timeline */}
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="📈 Booking Timeline"
+            description="Track the progress of your ride"
+          >
+            <div style={{
+              padding: 'var(--spacing-lg)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--spacing-md)'
+            }}>
+              {[
+                { status: 'confirmed', label: 'Booking Confirmed', icon: '✅' },
+                { status: 'en-route', label: 'Driver En Route', icon: '🚗' },
+                { status: 'arrived', label: 'Driver Arrived', icon: '📍' },
+                { status: 'completed', label: 'Trip Completed', icon: '🏁' }
+              ].map((step, index) => (
+                <div 
+                  key={step.status}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--spacing-md)',
+                                         opacity: getStatusText(status) === step.status ? 1 : 0.5
+                  }}
+                >
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                                         backgroundColor: getStatusText(status) === step.status ? 'var(--primary-color)' : 'var(--background-secondary)',
+                     color: getStatusText(status) === step.status ? 'white' : 'var(--text-secondary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.2rem'
+                  }}>
+                    {step.icon}
+                  </div>
+                  <span style={{
+                                         fontWeight: getStatusText(status) === step.status ? '600' : 'normal',
+                     color: getStatusText(status) === step.status ? 'var(--text-primary)' : 'var(--text-secondary)'
+                  }}>
+                    {step.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </InfoCard>
+        </GridSection>
+      </UniversalLayout>
+    </LayoutEnforcer>
+  );
+}
+
+export default function BookingStatusPage() {
+  return (
+    <ToastProvider>
+      <BookingStatusPageContent />
+    </ToastProvider>
   );
 }
