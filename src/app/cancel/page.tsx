@@ -3,20 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UnifiedLayout } from '@/components/layout';
-import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { 
   GridSection,
   InfoCard,
-  StatusMessage,
-  ToastProvider,
-  useToast,
   ActionButtonGroup,
-  FeatureGrid
+  FeatureGrid,
+  ToastProvider,
+  useToast
 } from '@/components/ui';
-import { FormField } from '@/components/forms/FormField';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-
+function CancelPageContent() {
   const { addToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -103,104 +99,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
     }
   ];
 
-  return (<UnifiedLayout 
-      layoutType="standard"
+  return (
+    <UnifiedLayout 
+      layoutType="content"
       title="Cancel Booking"
-      subtitle="Cancel your reservation"
+      subtitle="We're sorry to see you need to cancel your ride"
+      description="Please provide your booking details to process the cancellation"
     >
-      <UniversalLayout 
-        layoutType="standard"
-        title="Cancel Booking"
-        subtitle="We're sorry to see you need to cancel your ride"
-      >
-        {/* Error Display */}
-        {error && (
-          <GridSection variant="content" columns={1}>
-            <StatusMessage 
-              type="error" 
-              message={error} 
-              onDismiss={() => setError(null)}
-            />
-          </GridSection>
-        )}
+      {/* Cancellation Form */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="📝 Cancel Your Booking"
+          description="Please provide your booking details to process the cancellation"
+        >
+          <p>
+            <strong>Booking ID:</strong> Enter your booking reference number
+          </p>
+          <p>
+            <strong>Reason:</strong> Select a reason for cancellation (optional)
+          </p>
+          
+          <ActionButtonGroup buttons={quickActions} />
+        </InfoCard>
+      </GridSection>
 
-        {/* Cancellation Form */}
-        <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="📝 Cancel Your Booking"
-            description="Please provide your booking details to process the cancellation"
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--spacing-lg)'
-            }}>
-              {/* REFACTORED: Using FormField instead of manual input */}
-              <FormField
-                label="Booking ID"
-                id="booking-id"
-                type="text"
-                value={bookingId}
-                onChange={(e) => setBookingId(e.target.value)}
-                placeholder="Enter your booking reference number"
-                required
-              />
+      {/* Cancellation Policy */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="📋 Cancellation Policy"
+          description="Important information about our cancellation terms"
+        >
+          <ul>
+            <li>
+              <strong>Free Cancellation:</strong> Cancel up to 2 hours before pickup time with no charge
+            </li>
+            <li>
+              <strong>Late Cancellation:</strong> Cancellations within 2 hours may incur a fee
+            </li>
+            <li>
+              <strong>Emergency Cancellations:</strong> Contact us directly for special circumstances
+            </li>
+            <li>
+              <strong>Refund Processing:</strong> Refunds typically process within 3-5 business days
+            </li>
+            <li>
+              <strong>Weather/Flight Delays:</strong> No charge for cancellations due to circumstances beyond your control
+            </li>
+          </ul>
+        </InfoCard>
+      </GridSection>
 
-              {/* REFACTORED: Using proper select component */}
-              <div className="">
-                <label className="">
-                  Reason for Cancellation (Optional)
-                </label>
-                <Select value={cancellationReason} onValueChange={setCancellationReason}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a reason..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cancellationReasons.map(reason => (
-                      <SelectItem key={reason} value={reason}>{reason}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <ActionButtonGroup buttons={quickActions} />
-            </div>
-          </InfoCard>
-        </GridSection>
-
-        {/* Cancellation Policy */}
-        <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="📋 Cancellation Policy"
-            description="Important information about our cancellation terms"
-          >
-            <div style={{
-              fontSize: 'var(--font-size-sm)',
-              lineHeight: '1.6',
-              color: 'var(--text-primary)'
-            }}>
-              <ul style={{ paddingLeft: 'var(--spacing-lg)' }}>
-                <li>
-                  <strong>Free Cancellation:</strong> Cancel up to 2 hours before pickup time with no charge
-                </li>
-                <li>
-                  <strong>Late Cancellation:</strong> Cancellations within 2 hours may incur a fee
-                </li>
-                <li>
-                  <strong>Emergency Cancellations:</strong> Contact us directly for special circumstances
-                </li>
-                <li>
-                  <strong>Refund Processing:</strong> Refunds typically process within 3-5 business days
-                </li>
-                <li>
-                  <strong>Weather/Flight Delays:</strong> No charge for cancellations due to circumstances beyond your control
-                </li>
-              </ul>
-            </div>
-          </InfoCard>
-        </GridSection>
-
-        {/* Alternative Options */}
+      {/* Alternative Options */}
         <GridSection variant="content" columns={1}>
           <InfoCard
             title="🔄 Alternative Options"
@@ -211,7 +160,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
           </InfoCard>
         </GridSection>
     </UnifiedLayout>
-    </LayoutEnforcer>
   );
 }
 
@@ -221,3 +169,4 @@ export default function CancelPage() {
       <CancelPageContent />
     </ToastProvider>
   );
+}
