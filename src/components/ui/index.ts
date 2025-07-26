@@ -72,4 +72,7 @@ export { Input } from './input';
 export { Label } from './label';
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 export { Switch } from './switch';
-export { Textarea } from './textarea'; 
+export { Textarea } from './textarea';
+
+// Accessibility
+export { AccessibilityEnhancer } from './AccessibilityEnhancer'; 
