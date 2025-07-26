@@ -41,6 +41,14 @@ export type { ActionButtonGroupProps, ActionButton } from './ActionButtonGroup';
 export { ToastProvider, useToast } from './ToastProvider';
 export type { Toast } from './ToastProvider';
 
+// Chat System (Phase 6)
+export { ChatMessage } from './ChatMessage';
+export type { ChatMessage as ChatMessageType, ChatMessageProps } from './ChatMessage';
+export { ChatInput } from './ChatInput';
+export type { ChatInputProps } from './ChatInput';
+export { ChatContainer } from './ChatContainer';
+export type { ChatContainerProps } from './ChatContainer';
+
 // Base UI Components
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
 export { LoadingSpinner } from './LoadingSpinner';
