@@ -8,6 +8,11 @@ import { getSettings } from '@/lib/business/settings-service';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { 
+  StatusMessage,
+  ToastProvider,
+  useToast
+} from '@/components/ui';
 import { useCMS } from '@/hooks/useCMS';
 import { FormField } from '@/components/forms/FormField';
 
@@ -78,8 +83,9 @@ const useGoogleMapsScript = (apiKey: string) => {
   return { isLoaded, loadError };
 };
 
-export default function BookingForm({ booking }: BookingFormProps) {
+function BookingFormContent({ booking }: BookingFormProps) {
   const router = useRouter();
+  const { addToast } = useToast();
   const { config: cmsConfig, loading: cmsLoading } = useCMS();
   const bookingFormText = cmsConfig?.bookingForm;
   const [name, setName] = useState('');
@@ -260,7 +266,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
     
     if (!fare) {
       console.log('🔧 BookingForm - No fare calculated');
-      alert(bookingFormText?.errorCalculateBeforeBooking || "Please calculate the fare before booking.");
+      addToast('error', bookingFormText?.errorCalculateBeforeBooking || "Please calculate the fare before booking.");
       return;
     }
 
@@ -268,6 +274,7 @@ export default function BookingForm({ booking }: BookingFormProps) {
     if (!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime) {
       console.log('🔧 BookingForm - Missing required fields', { name, email, phone, pickupLocation, dropoffLocation, pickupDateTime });
       setError('Please fill in all required fields.');
+      addToast('error', 'Please fill in all required fields.');
       return;
     }
 
@@ -303,28 +310,41 @@ export default function BookingForm({ booking }: BookingFormProps) {
 
       if (isEditMode && booking.id) {
         await updateBooking(booking.id, bookingData);
-        setSuccess(bookingFormText?.successBookingUpdated || 'Booking updated successfully!');
-        router.push(`/booking/${booking.id}`);
+        const successMsg = bookingFormText?.successBookingUpdated || 'Booking updated successfully!';
+        setSuccess(successMsg);
+        addToast('success', successMsg);
+        
+        // Brief delay to show toast before redirect
+        setTimeout(() => router.push(`/booking/${booking.id}`), 1500);
       } else {
         const finalBookingData = { ...bookingData, status: 'pending' as const };
         
         const bookingId = await createBooking(finalBookingData);
         console.log('🔧 BookingForm - Booking created successfully', bookingId);
-        setSuccess(bookingFormText?.successBookingCreated || 'Booking created successfully! Sending confirmation...');
+        const successMsg = bookingFormText?.successBookingCreated || 'Booking created successfully! Sending confirmation...';
+        setSuccess(successMsg);
+        addToast('success', successMsg);
+        
         try {
           await fetch('/api/send-confirmation', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ bookingId }),
           });
+          addToast('info', 'Confirmation message sent to your phone!');
         } catch (smsError) {
           console.error('Failed to send SMS confirmation:', smsError);
+          addToast('warning', 'Booking created but SMS notification failed. Please save your booking details.');
         }
-        router.push(`/booking/${bookingId}`);
+        
+        // Brief delay to show toasts before redirect
+        setTimeout(() => router.push(`/booking/${bookingId}`), 2000);
       }
     } catch (error) {
       console.error('🔧 BookingForm - Error creating booking:', error);
-      setError(isEditMode ? (bookingFormText?.errorUpdateBooking || 'Failed to update booking.') : (bookingFormText?.errorCreateBooking || 'Failed to create booking.'));
+      const errorMsg = isEditMode ? (bookingFormText?.errorUpdateBooking || 'Failed to update booking.') : (bookingFormText?.errorCreateBooking || 'Failed to create booking.');
+      setError(errorMsg);
+      addToast('error', errorMsg);
     }
   };
 
@@ -517,8 +537,28 @@ export default function BookingForm({ booking }: BookingFormProps) {
         {!fare && ' (Calculate fare first)'}
         {fare && (!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime) && ' (Fill required fields)'}
       </Button>
-      {error && <p className="text-error text-center mt-4">{error}</p>}
-      {success && <p className="text-success text-center mt-4">{success}</p>}
+      {error && (
+        <StatusMessage 
+          type="error" 
+          message={error} 
+          onDismiss={() => setError(null)}
+        />
+      )}
+      {success && (
+        <StatusMessage 
+          type="success" 
+          message={success} 
+          onDismiss={() => setSuccess(null)}
+        />
+      )}
     </form>
+  );
+}
+
+export default function BookingForm(props: BookingFormProps) {
+  return (
+    <ToastProvider>
+      <BookingFormContent {...props} />
+    </ToastProvider>
   );
 }
