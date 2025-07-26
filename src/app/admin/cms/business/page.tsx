@@ -1,43 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
-import { PageHeader } from '@/components/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { 
-  Save, 
-  RefreshCw, 
-  Building2, 
-  Palette, 
-  Share2,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+  AdminPageWrapper,
+  SettingSection,
+  SettingInput,
+  ActionButtonGroup,
+  StatusMessage,
+  ToastProvider,
+  useToast,
+  GridSection
+} from '@/components/ui';
 
-const BusinessSettingsPage = () => {
+function BusinessSettingsPageContent() {
+  const { addToast } = useToast();
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadBusinessSettings();
   }, []);
 
   const loadBusinessSettings = async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      setLoading(true);
       const businessSettings = await cmsService.getBusinessSettings();
       setSettings(businessSettings);
+      addToast('success', 'Business settings loaded successfully');
     } catch (error) {
       console.error('Error loading business settings:', error);
+      const errorMsg = 'Failed to load business settings';
+      setError(errorMsg);
+      addToast('error', errorMsg);
     } finally {
       setLoading(false);
     }
@@ -46,13 +47,17 @@ const BusinessSettingsPage = () => {
   const handleSave = async () => {
     if (!settings) return;
     
+    setSaving(true);
+    setError(null);
+    
     try {
-      setSaving(true);
       await cmsService.updateBusinessSettings(settings);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      addToast('success', 'Business settings saved successfully!');
     } catch (error) {
       console.error('Error saving business settings:', error);
+      const errorMsg = 'Failed to save business settings';
+      setError(errorMsg);
+      addToast('error', errorMsg);
     } finally {
       setSaving(false);
     }
@@ -82,288 +87,392 @@ const BusinessSettingsPage = () => {
     });
   };
 
-  const headerActions = [
+  // Header actions
+  const headerActions = useMemo(() => [
     { 
-      label: 'Back to CMS', 
-      href: '/admin/cms', 
-      variant: 'outline' as const 
+      label: 'Back to CMS',
+      onClick: () => window.location.href = '/admin/cms',
+      variant: 'outline' as const,
+      icon: '🔙'
     },
     { 
-      label: saving ? 'Saving...' : 'Save Changes', 
-      onClick: handleSave, 
+      label: 'Reload Settings',
+      onClick: loadBusinessSettings,
+      variant: 'secondary' as const,
+      icon: '🔄'
+    },
+    { 
+      label: saving ? 'Saving...' : 'Save Changes',
+      onClick: handleSave,
       variant: 'primary' as const,
-      disabled: saving || !settings
+      disabled: saving || !settings,
+      icon: '💾'
     }
-  ];
-
-  if (loading) {
-    return (
-      <div className="admin-dashboard">
-        <AdminNavigation />
-        <PageHeader
-          title="Business Settings"
-          subtitle="Loading business configuration..."
-        />
-        <div className="flex items-center justify-center h-64">
-          <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!settings) {
-    return (
-      <div className="admin-dashboard">
-        <AdminNavigation />
-        <PageHeader
-          title="Business Settings"
-          subtitle="Failed to load settings"
-        />
-        <div className="flex items-center justify-center h-64">
-          <AlertCircle className="h-8 w-8 text-error" />
-          <span className="ml-2 text-gray-600">Failed to load settings</span>
-        </div>
-      </div>
-    );
-  }
+  ], [saving, settings, handleSave]);
 
   return (
-    <div className="admin-dashboard bg-bg-secondary">
-      <AdminNavigation />
-      <PageHeader
-        title="Business Settings"
-        subtitle="Manage company information, contact details, and branding"
-        actions={headerActions}
-      />
-
-      {saved && (
-        <div className="mb-6">
-          <Badge variant="secondary" className="bg-bg-success text-text-success">
-            <CheckCircle className="h-3 w-3 mr-1" />
-            Settings saved successfully
-          </Badge>
-        </div>
+    <AdminPageWrapper
+      title="Business Settings"
+      subtitle="Manage company information, contact details, and branding"
+      actions={headerActions}
+      loading={loading}
+      error={error}
+      errorTitle="Business Settings Error"
+      loadingMessage="Loading business configuration..."
+    >
+      {/* Error Message */}
+      {error && (
+        <StatusMessage 
+          type="error" 
+          message={error} 
+          onDismiss={() => setError(null)} 
+        />
       )}
 
-      <div className="standard-content">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Company Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Building2 className="h-5 w-5" />
-                <span>Company Information</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="companyName">Company Name</Label>
-                <Input
-                  id="companyName"
+      {settings && (
+        <GridSection variant="content" columns={1}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--spacing-lg)'
+          }}>
+            {/* Company Information */}
+            <SettingSection
+              title="Company Information"
+              description="Basic company details and contact information"
+              icon="🏢"
+            >
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 'var(--spacing-md)'
+              }}>
+                <SettingInput
+                  id="company-name"
+                  label="Company Name"
+                  description="Your official business name"
                   value={settings.company.name}
-                  onChange={(e) => handleInputChange('company', 'name', e.target.value)}
+                  onChange={(value) => handleInputChange('company', 'name', value)}
                   placeholder="Your Company Name"
+                  icon="🏢"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tagline">Tagline</Label>
-                <Input
-                  id="tagline"
+                
+                <SettingInput
+                  id="company-tagline"
+                  label="Tagline"
+                  description="A brief description of your business"
                   value={settings.company.tagline || ''}
-                  onChange={(e) => handleInputChange('company', 'tagline', e.target.value)}
+                  onChange={(value) => handleInputChange('company', 'tagline', value)}
                   placeholder="Your company tagline"
+                  icon="💬"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
+                
+                <SettingInput
+                  id="company-phone"
+                  label="Phone Number"
+                  description="Primary contact phone number"
                   value={settings.company.phone}
-                  onChange={(e) => handleInputChange('company', 'phone', e.target.value)}
+                  onChange={(value) => handleInputChange('company', 'phone', value)}
                   placeholder="(555) 123-4567"
+                  icon="📞"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
+                
+                <SettingInput
+                  id="company-email"
+                  label="Email Address"
+                  description="Primary contact email address"
                   type="email"
                   value={settings.company.email}
-                  onChange={(e) => handleInputChange('company', 'email', e.target.value)}
+                  onChange={(value) => handleInputChange('company', 'email', value)}
                   placeholder="contact@company.com"
+                  icon="✉️"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
+                
+                <SettingInput
+                  id="company-address"
+                  label="Address"
+                  description="Business physical address"
                   value={settings.company.address || ''}
-                  onChange={(e) => handleInputChange('company', 'address', e.target.value)}
+                  onChange={(value) => handleInputChange('company', 'address', value)}
                   placeholder="123 Main St, City, State 12345"
+                  icon="📍"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="hours">Business Hours</Label>
-                <Input
-                  id="hours"
+                
+                <SettingInput
+                  id="company-hours"
+                  label="Business Hours"
+                  description="Operating hours for customers"
                   value={settings.company.hours || ''}
-                  onChange={(e) => handleInputChange('company', 'hours', e.target.value)}
+                  onChange={(value) => handleInputChange('company', 'hours', value)}
                   placeholder="Mon-Fri 9am-5pm"
+                  icon="🕒"
                 />
               </div>
-            </CardContent>
-          </Card>
+            </SettingSection>
 
-          {/* Social Media */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Share2 className="h-5 w-5" />
-                <span>Social Media</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="facebook">Facebook URL</Label>
-                <Input
-                  id="facebook"
+            {/* Social Media */}
+            <SettingSection
+              title="Social Media"
+              description="Links to your social media profiles"
+              icon="📱"
+            >
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 'var(--spacing-md)'
+              }}>
+                <SettingInput
+                  id="social-facebook"
+                  label="Facebook URL"
+                  description="Link to your Facebook business page"
                   value={settings.social.facebook || ''}
-                  onChange={(e) => handleSocialChange('facebook', e.target.value)}
+                  onChange={(value) => handleSocialChange('facebook', value)}
                   placeholder="https://facebook.com/yourpage"
+                  icon="📘"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="instagram">Instagram URL</Label>
-                <Input
-                  id="instagram"
+                
+                <SettingInput
+                  id="social-instagram"
+                  label="Instagram URL"
+                  description="Link to your Instagram business profile"
                   value={settings.social.instagram || ''}
-                  onChange={(e) => handleSocialChange('instagram', e.target.value)}
+                  onChange={(value) => handleSocialChange('instagram', value)}
                   placeholder="https://instagram.com/yourpage"
+                  icon="📷"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="twitter">Twitter URL</Label>
-                <Input
-                  id="twitter"
+                
+                <SettingInput
+                  id="social-twitter"
+                  label="Twitter URL"
+                  description="Link to your Twitter business account"
                   value={settings.social.twitter || ''}
-                  onChange={(e) => handleSocialChange('twitter', e.target.value)}
+                  onChange={(value) => handleSocialChange('twitter', value)}
                   placeholder="https://twitter.com/yourpage"
+                  icon="🐦"
                 />
               </div>
-            </CardContent>
-          </Card>
+            </SettingSection>
 
-          {/* Branding */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Palette className="h-5 w-5" />
-                <span>Branding</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="primaryColor">Primary Color</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    id="primaryColor"
+            {/* Branding */}
+            <SettingSection
+              title="Branding"
+              description="Visual identity and brand colors"
+              icon="🎨"
+            >
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 'var(--spacing-md)'
+              }}>
+                <div style={{
+                  padding: 'var(--spacing-md)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  backgroundColor: 'var(--background-secondary)'
+                }}>
+                  <SettingInput
+                    id="brand-primary-color"
+                    label="Primary Color"
+                    description="Main brand color for buttons and accents"
                     value={settings.branding.primaryColor}
-                    onChange={(e) => handleInputChange('branding', 'primaryColor', e.target.value)}
+                    onChange={(value) => handleInputChange('branding', 'primaryColor', value)}
                     placeholder="#1f2937"
+                    icon="🎨"
                   />
-                  <div 
-                    className="w-10 h-10 rounded border"
-                    style={{ backgroundColor: settings.branding.primaryColor }}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="secondaryColor">Secondary Color</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    id="secondaryColor"
-                    value={settings.branding.secondaryColor}
-                    onChange={(e) => handleInputChange('branding', 'secondaryColor', e.target.value)}
-                    placeholder="#3b82f6"
-                  />
-                  <div 
-                    className="w-10 h-10 rounded border"
-                    style={{ backgroundColor: settings.branding.secondaryColor }}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="logoUrl">Logo URL</Label>
-                <Input
-                  id="logoUrl"
-                  value={settings.branding.logoUrl || ''}
-                  onChange={(e) => handleInputChange('branding', 'logoUrl', e.target.value)}
-                  placeholder="https://example.com/logo.png"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
-                <div className="text-center">
-                  <h2 className="text-xl font-bold" style={{ color: settings.branding.primaryColor }}>
-                    {settings.company.name}
-                  </h2>
-                  <p className="text-sm text-gray-600 mt-1">{settings.company.tagline}</p>
+                  <div style={{
+                    marginTop: 'var(--spacing-sm)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--spacing-sm)'
+                  }}>
+                    <span style={{ fontSize: 'var(--font-size-sm)' }}>Preview:</span>
+                    <div style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: 'var(--border-radius)',
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: settings.branding.primaryColor
+                    }} />
+                  </div>
                 </div>
                 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Phone:</span>
+                <div style={{
+                  padding: 'var(--spacing-md)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  backgroundColor: 'var(--background-secondary)'
+                }}>
+                  <SettingInput
+                    id="brand-secondary-color"
+                    label="Secondary Color"
+                    description="Secondary brand color for highlights"
+                    value={settings.branding.secondaryColor}
+                    onChange={(value) => handleInputChange('branding', 'secondaryColor', value)}
+                    placeholder="#3b82f6"
+                    icon="🎨"
+                  />
+                  <div style={{
+                    marginTop: 'var(--spacing-sm)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--spacing-sm)'
+                  }}>
+                    <span style={{ fontSize: 'var(--font-size-sm)' }}>Preview:</span>
+                    <div style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: 'var(--border-radius)',
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: settings.branding.secondaryColor
+                    }} />
+                  </div>
+                </div>
+                
+                <SettingInput
+                  id="brand-logo-url"
+                  label="Logo URL"
+                  description="Direct link to your company logo image"
+                  value={settings.branding.logoUrl || ''}
+                  onChange={(value) => handleInputChange('branding', 'logoUrl', value)}
+                  placeholder="https://example.com/logo.png"
+                  icon="🖼️"
+                />
+              </div>
+            </SettingSection>
+
+            {/* Business Preview */}
+            <SettingSection
+              title="Business Card Preview"
+              description="How your business information will appear to customers"
+              icon="👀"
+            >
+              <div style={{
+                padding: 'var(--spacing-xl)',
+                border: '2px solid var(--border-color)',
+                borderRadius: 'var(--border-radius)',
+                backgroundColor: 'var(--background-secondary)',
+                textAlign: 'center',
+                maxWidth: '400px',
+                margin: '0 auto'
+              }}>
+                <h2 style={{
+                  fontSize: 'var(--font-size-xl)',
+                  fontWeight: '600',
+                  marginBottom: 'var(--spacing-xs)',
+                  color: settings.branding.primaryColor
+                }}>
+                  {settings.company.name}
+                </h2>
+                
+                {settings.company.tagline && (
+                  <p style={{
+                    fontSize: 'var(--font-size-sm)',
+                    color: 'var(--text-secondary)',
+                    marginBottom: 'var(--spacing-md)',
+                    fontStyle: 'italic'
+                  }}>
+                    {settings.company.tagline}
+                  </p>
+                )}
+                
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--spacing-xs)',
+                  fontSize: 'var(--font-size-sm)',
+                  textAlign: 'left'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontWeight: '500' }}>📞 Phone:</span>
                     <span>{settings.company.phone}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Email:</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontWeight: '500' }}>✉️ Email:</span>
                     <span>{settings.company.email}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Hours:</span>
-                    <span>{settings.company.hours}</span>
-                  </div>
+                  {settings.company.hours && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontWeight: '500' }}>🕒 Hours:</span>
+                      <span>{settings.company.hours}</span>
+                    </div>
+                  )}
+                  {settings.company.address && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontWeight: '500' }}>📍 Address:</span>
+                      <span>{settings.company.address}</span>
+                    </div>
+                  )}
                 </div>
 
                 {Object.values(settings.social).some(url => url) && (
-                  <div className="pt-2 border-t">
-                    <p className="text-xs text-gray-500 mb-2">Social Media:</p>
-                    <div className="flex space-x-2">
+                  <div style={{
+                    marginTop: 'var(--spacing-md)',
+                    paddingTop: 'var(--spacing-md)',
+                    borderTop: '1px solid var(--border-color)'
+                  }}>
+                    <p style={{
+                      fontSize: 'var(--font-size-xs)',
+                      color: 'var(--text-secondary)',
+                      marginBottom: 'var(--spacing-sm)'
+                    }}>
+                      Social Media:
+                    </p>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: 'var(--spacing-xs)',
+                      flexWrap: 'wrap'
+                    }}>
                       {settings.social.facebook && (
-                        <Badge variant="outline" className="text-xs">Facebook</Badge>
+                        <span style={{
+                          padding: '4px 8px',
+                          backgroundColor: 'var(--background-primary)',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '4px',
+                          fontSize: 'var(--font-size-xs)'
+                        }}>
+                          📘 Facebook
+                        </span>
                       )}
                       {settings.social.instagram && (
-                        <Badge variant="outline" className="text-xs">Instagram</Badge>
+                        <span style={{
+                          padding: '4px 8px',
+                          backgroundColor: 'var(--background-primary)',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '4px',
+                          fontSize: 'var(--font-size-xs)'
+                        }}>
+                          📷 Instagram
+                        </span>
                       )}
                       {settings.social.twitter && (
-                        <Badge variant="outline" className="text-xs">Twitter</Badge>
+                        <span style={{
+                          padding: '4px 8px',
+                          backgroundColor: 'var(--background-primary)',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '4px',
+                          fontSize: 'var(--font-size-xs)'
+                        }}>
+                          🐦 Twitter
+                        </span>
                       )}
                     </div>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+            </SettingSection>
+          </div>
+        </GridSection>
+      )}
+    </AdminPageWrapper>
+  );
+}
+
+const BusinessSettingsPage = () => {
+  return (
+    <ToastProvider>
+      <BusinessSettingsPageContent />
+    </ToastProvider>
   );
 };
 
