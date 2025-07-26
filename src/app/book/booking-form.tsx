@@ -470,11 +470,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Tell us where you need to go and when"
           icon="🚗"
         >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 'var(--spacing-lg)'
-          }}>
+          {/* Location Fields - Improved Layout */}
+          <div className="space-y-6">
             <div className="relative">
               <SettingInput
                 id="pickupLocation"
@@ -536,7 +533,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </div>
           </div>
           
-          <div>
+          <div className="mt-6">
             <label className="block text-sm font-medium text-text-primary mb-2">
               📅 Pickup Date and Time *
             </label>
@@ -559,54 +556,52 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Help us provide the best service for your trip"
           icon="⚙️"
         >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: 'var(--spacing-lg)'
-          }}>
-            <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
-                Passengers
-              </label>
-              <select
-                id="passengers"
-                name="passengers"
-                value={passengers}
-                onChange={(e) => setPassengers(Number(e.target.value))}
-                className="w-full h-12 px-4 py-2 border border-border-primary rounded-lg bg-bg-primary text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                  <option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</option>
-                ))}
-              </select>
-              <p className="text-xs text-text-secondary mt-1">Number of people traveling</p>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  👥 Passengers
+                </label>
+                <select
+                  id="passengers"
+                  name="passengers"
+                  value={passengers}
+                  onChange={(e) => setPassengers(Number(e.target.value))}
+                  className="w-full h-12 px-4 py-2 border border-border-primary rounded-lg bg-bg-primary text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
+                >
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                    <option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-text-secondary mt-1">Number of people traveling</p>
+              </div>
+              
+              <SettingInput
+                id="flightNumber"
+                label="Flight Number (Optional)"
+                description="We'll track your flight for delays"
+                value={flightNumber}
+                onChange={setFlightNumber}
+                placeholder="AA1234"
+                icon="✈️"
+              />
             </div>
             
-            <SettingInput
-              id="flightNumber"
-              label="Flight Number (Optional)"
-              description="We'll track your flight for delays"
-              value={flightNumber}
-              onChange={setFlightNumber}
-              placeholder="AA1234"
-              icon="✈️"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              Special Instructions (Optional)
-            </label>
-            <textarea
-              id="notes"
-              name="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              placeholder="Any special instructions or requests?"
-              className="w-full px-4 py-3 border border-border-primary rounded-lg bg-bg-primary text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200 resize-none"
-            />
-            <p className="text-xs text-text-secondary mt-1">Let us know about any special requirements</p>
+            <div>
+              <label className="block text-sm font-medium text-text-primary mb-2">
+                📝 Special Instructions (Optional)
+              </label>
+              <textarea
+                id="notes"
+                name="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={4}
+                placeholder="Any special instructions or requests?"
+                className="w-full px-4 py-3 border border-border-primary rounded-lg bg-bg-primary text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200 resize-none"
+              />
+              <p className="text-xs text-text-secondary mt-1">Let us know about any special requirements</p>
+            </div>
           </div>
         </SettingSection>
 
