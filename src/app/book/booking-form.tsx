@@ -533,10 +533,39 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </div>
           </div>
           
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              📅 Pickup Date and Time *
-            </label>
+          {/* Pickup Date and Time - Styled like SettingInput */}
+          <div style={{
+            padding: 'var(--spacing-md) 0',
+            borderBottom: '1px solid var(--border-color)'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-sm)',
+              marginBottom: 'var(--spacing-sm)'
+            }}>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>📅</span>
+              <label 
+                htmlFor="pickupDateTime"
+                style={{
+                  fontWeight: '500',
+                  fontSize: 'var(--font-size-sm)',
+                  color: 'var(--text-primary)'
+                }}
+              >
+                Pickup Date and Time
+              </label>
+            </div>
+            
+            <p style={{
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--text-secondary)',
+              margin: '0 0 var(--spacing-sm) 0',
+              lineHeight: '1.4'
+            }}>
+              When do you need to be picked up?
+            </p>
+            
             <input
               id="pickupDateTime"
               name="pickupDateTime"
@@ -544,9 +573,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
               value={pickupDateTime}
               onChange={(e) => setPickupDateTime(e.target.value)}
               required
-              className="w-full h-12 px-4 py-2 border border-border-primary rounded-lg bg-bg-primary text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
+              className="form-input"
+              style={{ width: '100%' }}
             />
-            <p className="text-xs text-text-secondary mt-1">When do you need to be picked up?</p>
           </div>
         </SettingSection>
 
@@ -558,22 +587,51 @@ function BookingFormContent({ booking }: BookingFormProps) {
         >
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">
-                  👥 Passengers
-                </label>
+              {/* Passengers - Styled like SettingInput */}
+              <div style={{
+                padding: 'var(--spacing-md) 0',
+                borderBottom: '1px solid var(--border-color)'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--spacing-sm)',
+                  marginBottom: 'var(--spacing-sm)'
+                }}>
+                  <span style={{ fontSize: 'var(--font-size-sm)' }}>👥</span>
+                  <label 
+                    htmlFor="passengers"
+                    style={{
+                      fontWeight: '500',
+                      fontSize: 'var(--font-size-sm)',
+                      color: 'var(--text-primary)'
+                    }}
+                  >
+                    Passengers
+                  </label>
+                </div>
+                
+                <p style={{
+                  fontSize: 'var(--font-size-xs)',
+                  color: 'var(--text-secondary)',
+                  margin: '0 0 var(--spacing-sm) 0',
+                  lineHeight: '1.4'
+                }}>
+                  Number of people traveling
+                </p>
+                
                 <select
                   id="passengers"
                   name="passengers"
                   value={passengers}
                   onChange={(e) => setPassengers(Number(e.target.value))}
-                  className="w-full h-12 px-4 py-2 border border-border-primary rounded-lg bg-bg-primary text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
+                  className="form-input"
+                  style={{ width: '100%' }}
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
                     <option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</option>
                   ))}
                 </select>
-                <p className="text-xs text-text-secondary mt-1">Number of people traveling</p>
               </div>
               
               <SettingInput
@@ -587,10 +645,39 @@ function BookingFormContent({ booking }: BookingFormProps) {
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
-                📝 Special Instructions (Optional)
-              </label>
+            {/* Special Instructions - Styled like SettingInput */}
+            <div style={{
+              padding: 'var(--spacing-md) 0',
+              borderBottom: '1px solid var(--border-color)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--spacing-sm)',
+                marginBottom: 'var(--spacing-sm)'
+              }}>
+                <span style={{ fontSize: 'var(--font-size-sm)' }}>📝</span>
+                <label 
+                  htmlFor="notes"
+                  style={{
+                    fontWeight: '500',
+                    fontSize: 'var(--font-size-sm)',
+                    color: 'var(--text-primary)'
+                  }}
+                >
+                  Special Instructions (Optional)
+                </label>
+              </div>
+              
+              <p style={{
+                fontSize: 'var(--font-size-xs)',
+                color: 'var(--text-secondary)',
+                margin: '0 0 var(--spacing-sm) 0',
+                lineHeight: '1.4'
+              }}>
+                Let us know about any special requirements
+              </p>
+              
               <textarea
                 id="notes"
                 name="notes"
@@ -598,9 +685,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
                 placeholder="Any special instructions or requests?"
-                className="w-full px-4 py-3 border border-border-primary rounded-lg bg-bg-primary text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200 resize-none"
+                className="form-input"
+                style={{ 
+                  width: '100%',
+                  resize: 'vertical',
+                  minHeight: '100px'
+                }}
               />
-              <p className="text-xs text-text-secondary mt-1">Let us know about any special requirements</p>
             </div>
           </div>
         </SettingSection>
