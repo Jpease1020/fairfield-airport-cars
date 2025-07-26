@@ -22,10 +22,12 @@ import { useCMS } from '@/hooks/useCMS';
 import { cmsService } from '@/lib/services/cms-service';
 
 import { authService } from '@/lib/services/auth-service';
+import { ToastProvider, useToast } from '@/components/ui';
 
-export default function ManageBookingPage() {
+function ManageBookingPageContent() {
   const { id } = useParams();
   const router = useRouter();
+  const { addToast } = useToast();
 
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -407,7 +409,9 @@ export default function ManageBookingPage() {
                   const { paymentLinkUrl } = await res.json();
                   window.location.href = paymentLinkUrl;
                 } else {
-                  setActionMsg(manageContent?.payBalanceErrorMessage || 'Failed to create balance payment link');
+                  const errorMsg = manageContent?.payBalanceErrorMessage || 'Failed to create balance payment link';
+                  setActionMsg(errorMsg);
+                  addToast('error', errorMsg);
                 }
               }}
             >
@@ -431,5 +435,13 @@ export default function ManageBookingPage() {
         </Button>
       </div>
     </div>
+  );
+}
+
+export default function ManageBookingPage() {
+  return (
+    <ToastProvider>
+      <ManageBookingPageContent />
+    </ToastProvider>
   );
 } 
