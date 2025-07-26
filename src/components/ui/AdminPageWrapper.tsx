@@ -25,7 +25,7 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
   error = null,
   loadingMessage = 'Loading...',
   errorTitle = 'Error',
-  showNavigation = true,
+  showNavigation = false, // Default to false since admin layout provides navigation
   maxWidth = 'full',
   children
 }) => {
