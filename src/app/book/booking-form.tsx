@@ -321,24 +321,63 @@ function BookingFormContent({ booking }: BookingFormProps) {
         
         const bookingId = await createBooking(finalBookingData);
         console.log('🔧 BookingForm - Booking created successfully', bookingId);
-        const successMsg = bookingFormText?.successBookingCreated || 'Booking created successfully! Sending confirmation...';
-        setSuccess(successMsg);
-        addToast('success', successMsg);
+        
+        // 🔥 NEW: INTEGRATE SQUARE PAYMENT PROCESSING
+        const depositAmount = Math.ceil((bookingData.depositAmount || 0) * 100); // Convert to cents
+        const paymentDescription = `Deposit for airport ride from ${pickupLocation} to ${dropoffLocation}`;
         
         try {
-          await fetch('/api/send-confirmation', {
+          console.log('🔧 BookingForm - Creating Square payment session');
+          const paymentResponse = await fetch('/api/payment/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ bookingId }),
+            body: JSON.stringify({
+              bookingId,
+              amount: depositAmount,
+              currency: 'USD',
+              description: paymentDescription,
+              buyerEmail: email
+            }),
           });
-          addToast('info', 'Confirmation message sent to your phone!');
-        } catch (smsError) {
-          console.error('Failed to send SMS confirmation:', smsError);
-          addToast('warning', 'Booking created but SMS notification failed. Please save your booking details.');
+
+          const paymentData = await paymentResponse.json();
+
+          if (paymentResponse.ok && paymentData.paymentLinkUrl) {
+            // Show success message and redirect to payment
+            const successMsg = bookingFormText?.successBookingCreated || 'Booking created successfully! Redirecting to secure payment...';
+            setSuccess(successMsg);
+            addToast('success', successMsg);
+            
+            // Send confirmation SMS in background
+            try {
+              await fetch('/api/send-confirmation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingId }),
+              });
+            } catch (smsError) {
+              console.error('Failed to send SMS confirmation:', smsError);
+              // Don't block payment flow for SMS failure
+            }
+            
+            // Redirect to Square payment page
+            console.log('🔧 BookingForm - Redirecting to payment:', paymentData.paymentLinkUrl);
+            setTimeout(() => {
+              window.location.href = paymentData.paymentLinkUrl;
+            }, 2000);
+          } else {
+            throw new Error(paymentData.error || 'Failed to create payment session');
+          }
+        } catch (paymentError) {
+          console.error('🔧 BookingForm - Payment creation failed:', paymentError);
+          
+          // Booking was created but payment failed - give user options
+          setError('Booking created but payment setup failed. You can complete payment later.');
+          addToast('warning', 'Booking saved! Please contact us to complete payment or try again later.');
+          
+          // Still redirect to booking page so they have their booking ID
+          setTimeout(() => router.push(`/booking/${bookingId}`), 3000);
         }
-        
-        // Brief delay to show toasts before redirect
-        setTimeout(() => router.push(`/booking/${bookingId}`), 2000);
       }
     } catch (error) {
       console.error('🔧 BookingForm - Error creating booking:', error);

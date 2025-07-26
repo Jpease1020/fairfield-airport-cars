@@ -43,7 +43,8 @@ function CancelPageContent() {
       setTimeout(() => {
         router.push('/');
       }, 2000);
-    } catch (err) {
+    } catch (error) {
+      console.error('Cancellation error:', error);
       const errorMsg = 'Failed to cancel booking. Please contact customer support.';
       setError(errorMsg);
       addToast('error', errorMsg);
