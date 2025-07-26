@@ -12,8 +12,7 @@ export { StandardFooter } from './StandardFooter';
 
 // Page structure components
 export { PageContainer } from './PageContainer';
-// Commented out to avoid duplicate export with UI components
-// export { PageHeader } from './PageHeader';
+export { PageHeader } from './PageHeader';
 export { PageContent } from './PageContent';
 
 /**

@@ -91,7 +91,7 @@ function BusinessSettingsPageContent() {
   const headerActions = useMemo(() => [
     { 
       label: 'Back to CMS',
-      onClick: () => window.location.href = '/admin/cms',
+      onClick: (): void => { window.location.href = '/admin/cms'; },
       variant: 'outline' as const,
       icon: '🔙'
     },
