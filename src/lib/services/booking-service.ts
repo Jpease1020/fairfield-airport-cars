@@ -1,6 +1,28 @@
 import { db } from '@/lib/utils/firebase';
 import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
 
+// Helper function to safely convert Firestore dates to JavaScript Date objects
+const safeToDate = (dateField: any): Date => {
+  if (!dateField) return new Date();
+  
+  // If it's already a Date
+  if (dateField instanceof Date) return dateField;
+  
+  // If it's a Firestore Timestamp
+  if (dateField && typeof dateField.toDate === 'function') {
+    return dateField.toDate();
+  }
+  
+  // If it's a string or number, try to parse it
+  if (typeof dateField === 'string' || typeof dateField === 'number') {
+    const parsed = new Date(dateField);
+    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  }
+  
+  // Fallback to current date
+  return new Date();
+};
+
 export interface Booking {
   id?: string;
   name: string;
@@ -158,12 +180,13 @@ export const getBooking = async (bookingId: string): Promise<Booking | null> => 
   }
   
   const data = bookingDoc.data();
+  
   return {
     id: bookingDoc.id,
     ...data,
-    pickupDateTime: data.pickupDateTime.toDate(),
-    createdAt: data.createdAt.toDate(),
-    updatedAt: data.updatedAt.toDate(),
+    pickupDateTime: safeToDate(data.pickupDateTime),
+    createdAt: safeToDate(data.createdAt),
+    updatedAt: safeToDate(data.updatedAt),
   } as Booking;
 };
 
@@ -184,13 +207,17 @@ export const getBookings = async (
   
   const snapshot = await getDocs(q);
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-    pickupDateTime: doc.data().pickupDateTime.toDate(),
-    createdAt: doc.data().createdAt.toDate(),
-    updatedAt: doc.data().updatedAt.toDate(),
-  })) as Booking[];
+  return snapshot.docs.map(doc => {
+    const data = doc.data();
+    
+    return {
+      id: doc.id,
+      ...data,
+      pickupDateTime: safeToDate(data.pickupDateTime),
+      createdAt: safeToDate(data.createdAt),
+      updatedAt: safeToDate(data.updatedAt),
+    };
+  }) as Booking[];
 };
 
 // Legacy exports for backward compatibility
