@@ -20,11 +20,13 @@ export { ActionGrid } from './ActionGrid';
 export { GridSection } from './GridSection';
 export { PageSection } from './PageSection';
 
-// New Reusable Admin Components (Phase 1)
+// New Reusable Admin Components (Phase 1 & 2)
 export { AdminPageWrapper } from './AdminPageWrapper';
 export { FormSection } from './FormSection';
 export { LoadingState } from './LoadingState';
 export { ErrorState } from './ErrorState';
+export { DataTable } from './DataTable';
+export type { DataTableColumn, DataTableAction } from './DataTable';
 
 // Layout Components (for backward compatibility)
 export { PageContainer } from '../layout/PageContainer';

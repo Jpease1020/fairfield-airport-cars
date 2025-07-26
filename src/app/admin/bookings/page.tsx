@@ -1,356 +1,281 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import type { NextPage } from 'next';
-import { Booking } from '@/types/booking';
+import { useState, useEffect } from 'react';
+import { NextPage } from 'next';
 import { listBookings, updateBooking, deleteBooking } from '@/lib/services/booking-service';
-import withAuth from '../withAuth';
-import { 
-  PageHeader, 
-  GridSection, 
-  StatCard, 
-  InfoCard
+import { Booking } from '@/types/booking';
+import {
+  AdminPageWrapper,
+  GridSection,
+  StatCard,
+  InfoCard,
+  DataTable,
+  DataTableColumn,
+  DataTableAction
 } from '@/components/ui';
-import { EmptyState } from '@/components/data';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 const AdminBookingsPage: NextPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<Booking['status'] | 'all'>('all');
-  const [sortConfig] = useState<{ key: keyof Booking; direction: 'ascending' | 'descending' } | null>({ key: 'pickupDateTime', direction: 'ascending' });
-
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      const bookingsData = await listBookings();
-      setBookings(bookingsData);
-    } catch {
-      setError('Failed to fetch bookings.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchBookings();
   }, []);
 
-  const sortedAndFilteredBookings = useMemo(() => {
-    let sortableItems = [...bookings];
-    if (filterStatus !== 'all') {
-      sortableItems = sortableItems.filter(booking => booking.status === filterStatus);
-    }
-    if (sortConfig) {
-      sortableItems.sort((a, b) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
-        if (aValue && bValue && aValue < bValue) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (aValue && bValue && aValue > bValue) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableItems;
-  }, [bookings, filterStatus, sortConfig]);
-
-  const handleStatusChange = async (bookingId: string, newStatus: Booking['status']) => {
+  const fetchBookings = async () => {
     try {
-      await updateBooking(bookingId, { status: newStatus });
-      fetchBookings();
-    } catch {
-      setError('Failed to update booking status.');
+      setError(null);
+      setLoading(true);
+      const fetchedBookings = await listBookings();
+      setBookings(fetchedBookings);
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+      setError('Failed to load bookings. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCancelBooking = async (bookingId: string) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
-      try {
-        await deleteBooking(bookingId);
-        fetchBookings();
-      } catch {
-        setError('Failed to cancel booking.');
-      }
+  const handleStatusUpdate = async (booking: Booking, newStatus: Booking['status']) => {
+    if (!booking.id) {
+      alert('Cannot update booking: missing ID');
+      return;
     }
-  };
-
-  const handleSendFeedbackRequest = async (bookingId: string) => {
+    
     try {
-      const response = await fetch('/api/send-feedback-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId }),
-      });
-      if (response.ok) {
-        alert('Feedback request sent successfully!');
-      } else {
-        throw new Error('Failed to send feedback request.');
-      }
-    } catch {
-      setError('Failed to send feedback request.');
+      await updateBooking(booking.id, { status: newStatus });
+      await fetchBookings(); // Refresh data
+    } catch (err) {
+      console.error('Error updating booking:', err);
+      alert('Failed to update booking status');
     }
   };
 
-  // Calculate metrics
-  const totalRevenue = useMemo(() => bookings.reduce((sum, b) => sum + (b.fare || 0) + (b.tipAmount || 0) - (b.cancellationFee || 0), 0), [bookings]);
-  const totalTips = useMemo(() => bookings.reduce((s, b) => s + (b.tipAmount || 0), 0), [bookings]);
-  const totalCancFees = useMemo(() => bookings.reduce((s, b) => s + (b.cancellationFee || 0), 0), [bookings]);
-  const totalBookings = bookings.length;
+  const handleDeleteBooking = async (booking: Booking) => {
+    if (!booking.id) {
+      alert('Cannot delete booking: missing ID');
+      return;
+    }
+    
+    if (!confirm(`Are you sure you want to delete booking for ${booking.name}?`)) {
+      return;
+    }
+    
+    try {
+      await deleteBooking(booking.id);
+      await fetchBookings(); // Refresh data
+    } catch (err) {
+      console.error('Error deleting booking:', err);
+      alert('Failed to delete booking');
+    }
+  };
 
   // Header actions
   const headerActions = [
-    { 
-      label: 'Export Data', 
-      onClick: () => alert('Export functionality coming soon'), 
-      variant: 'outline' as const 
+    {
+      label: 'Refresh',
+      onClick: fetchBookings,
+      variant: 'outline' as const,
+      disabled: loading
     },
-    { 
-      label: 'Add Booking', 
-      href: '/admin/bookings/new', 
-      variant: 'primary' as const 
+    {
+      label: 'Export CSV',
+      onClick: () => alert('Export functionality coming soon'),
+      variant: 'primary' as const
     }
   ];
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(price);
+  // Calculate stats
+  const totalBookings = bookings.length;
+  const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.fare || 0), 0);
+  const totalTips = bookings.reduce((sum, booking) => sum + (booking.tipAmount || 0), 0);
+  const totalCancFees = bookings.reduce((sum, booking) => sum + (booking.cancellationFee || 0), 0);
+
+  const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+  const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
+  const completedBookings = bookings.filter(b => b.status === 'completed').length;
+
+  // Status badge renderer
+  const renderStatus = (status: string) => {
+    const variants = {
+      pending: 'secondary',
+      confirmed: 'default', 
+      completed: 'default',
+      cancelled: 'destructive'
+    } as const;
+    
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      confirmed: 'bg-blue-100 text-blue-800',
+      completed: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800'
+    };
+
+    return (
+      <Badge className={colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
   };
 
-  const formatDateTime = (date: Date | string) => {
-    const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'pending': return 'status-badge pending';
-      case 'confirmed': return 'status-badge confirmed';
-      case 'completed': return 'status-badge completed';
-      case 'cancelled': return 'status-badge cancelled';
-      default: return 'status-badge';
+  // Table columns configuration
+  const columns: DataTableColumn<Booking>[] = [
+    {
+      key: 'name',
+      label: 'Customer',
+      sortable: true,
+      render: (_, booking) => (
+        <div>
+          <div className="font-medium">{booking.name}</div>
+          <div className="text-sm text-gray-500">{booking.email}</div>
+        </div>
+      )
+    },
+    {
+      key: 'pickupLocation',
+      label: 'Route',
+      sortable: true,
+      render: (_, booking) => (
+        <div>
+          <div className="text-sm font-medium">{booking.pickupLocation}</div>
+          <div className="text-xs text-gray-500">→ {booking.dropoffLocation}</div>
+        </div>
+      )
+    },
+    {
+      key: 'pickupDateTime',
+      label: 'Pickup Time',
+      sortable: true,
+      render: (value) => {
+        const date = new Date(value);
+        return (
+          <div>
+            <div className="text-sm">{date.toLocaleDateString()}</div>
+            <div className="text-xs text-gray-500">{date.toLocaleTimeString()}</div>
+          </div>
+        );
+      }
+    },
+    {
+      key: 'fare',
+      label: 'Fare',
+      sortable: true,
+      render: (value) => (
+        <span className="font-medium">${(value || 0).toFixed(2)}</span>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      sortable: true,
+      render: (value) => renderStatus(value)
     }
-  };
+  ];
 
-  // Loading state
-  if (loading) {
-    return (
-      <div className="admin-dashboard">
-        <PageHeader
-          title="Booking Dashboard"
-          subtitle="Loading bookings..."
-        />
-        <div className="loading-spinner">
-          <div className="loading-spinner-icon">🔄</div>
-          <p>Loading bookings...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="admin-dashboard">
-        <PageHeader
-          title="Booking Dashboard"
-          subtitle="Error loading bookings"
-        />
-        <div className="alert error">
-          <h3>Error</h3>
-          <p>{error}</p>
-        </div>
-      </div>
-    );
-  }
+  // Table actions
+  const actions: DataTableAction<Booking>[] = [
+    {
+      label: 'View',
+      icon: '👁️',
+      onClick: (booking) => window.open(`/booking/${booking.id}`, '_blank'),
+      variant: 'outline'
+    },
+    {
+      label: 'Confirm',
+      icon: '✅',
+      onClick: (booking) => handleStatusUpdate(booking, 'confirmed'),
+      variant: 'primary',
+      condition: (booking) => booking.status === 'pending'
+    },
+    {
+      label: 'Complete',
+      icon: '🏁',
+      onClick: (booking) => handleStatusUpdate(booking, 'completed'),
+      variant: 'primary', 
+      condition: (booking) => booking.status === 'confirmed'
+    },
+    {
+      label: 'Cancel',
+      icon: '❌',
+      onClick: (booking) => handleStatusUpdate(booking, 'cancelled'),
+      variant: 'destructive',
+      condition: (booking) => booking.status !== 'completed' && booking.status !== 'cancelled'
+    },
+    {
+      label: 'Delete',
+      icon: '🗑️',
+      onClick: handleDeleteBooking,
+      variant: 'destructive'
+    }
+  ];
 
   return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Booking Dashboard"
-        subtitle="Manage customer bookings and track business metrics"
-        actions={headerActions}
-      />
-
+    <AdminPageWrapper
+      title="Booking Dashboard"
+      subtitle="Manage customer bookings and reservations"
+      actions={headerActions}
+      loading={loading}
+      error={error}
+      loadingMessage="Loading bookings..."
+      errorTitle="Booking Load Error"
+    >
+      {/* Stats Overview */}
       <GridSection variant="stats" columns={4}>
         <StatCard
           title="Total Bookings"
           icon="📊"
           statNumber={totalBookings.toString()}
-          statChange="This month"
+          statChange={`${pendingBookings} pending, ${confirmedBookings} confirmed`}
           changeType="neutral"
         />
         <StatCard
           title="Total Revenue"
           icon="💰"
-          statNumber={formatPrice(totalRevenue)}
-          statChange="Month-to-date"
+          statNumber={`$${totalRevenue.toFixed(2)}`}
+          statChange={`${completedBookings} completed bookings`}
           changeType="positive"
         />
         <StatCard
-          title="Tips Earned"
-          icon="💝"
-          statNumber={formatPrice(totalTips)}
-          statChange="Month-to-date"
+          title="Tips Collected"
+          icon="💵"
+          statNumber={`$${totalTips.toFixed(2)}`}
+          statChange="From completed rides"
           changeType="positive"
         />
         <StatCard
           title="Cancellation Fees"
-          icon="📋"
-          statNumber={formatPrice(totalCancFees)}
-          statChange="Month-to-date"
+          icon="⚠️"
+          statNumber={`$${totalCancFees.toFixed(2)}`}
+          statChange="From cancelled bookings"
           changeType="neutral"
         />
       </GridSection>
 
+      {/* Bookings Table */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="All Bookings"
-          description={`Showing ${sortedAndFilteredBookings.length} of ${totalBookings} bookings`}
+          title="📅 All Bookings"
+          description="Search, sort, and manage customer bookings"
         >
-          <div className="card-actions mb-4">
-            <div className="form-group inline">
-              <label className="form-label">Filter by status:</label>
-              <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as Booking['status'] | 'all')}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="confirmed">Confirmed</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {sortedAndFilteredBookings.length === 0 ? (
-            <EmptyState
-              icon="📅"
-              title="No bookings found"
-              description="No bookings match your current filter criteria"
-            />
-          ) : (
-            <div className="bookings-table-container">
-              <table className="data-table bookings-table">
-                <thead>
-                  <tr>
-                    <th>Customer</th>
-                    <th>Pickup / Drop-off</th>
-                    <th>Date & Time</th>
-                    <th>Status</th>
-                    <th>Fare</th>
-                    <th>Tip</th>
-                    <th>Cancel Fee</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedAndFilteredBookings.map((booking) => (
-                    <tr key={booking.id}>
-                      <td className="customer-cell">
-                        <div className="customer-info">
-                          <div className="customer-name">{booking.name}</div>
-                          <div className="customer-contact">{booking.email}</div>
-                          <div className="customer-contact">{booking.phone}</div>
-                        </div>
-                      </td>
-                      <td className="location-cell">
-                        <div className="location-info">
-                          <div className="pickup-location">{booking.pickupLocation}</div>
-                          <div className="dropoff-location">{booking.dropoffLocation}</div>
-                        </div>
-                      </td>
-                      <td className="datetime-cell">
-                        {formatDateTime(booking.pickupDateTime)}
-                      </td>
-                      <td className="status-cell">
-                        <span className={getStatusBadgeClass(booking.status)}>
-                          {booking.status}
-                        </span>
-                      </td>
-                      <td className="fare-cell">
-                        {formatPrice(booking.fare)}
-                      </td>
-                      <td className="tip-cell">
-                        {formatPrice(booking.tipAmount || 0)}
-                      </td>
-                      <td className="fee-cell">
-                        {formatPrice(booking.cancellationFee || 0)}
-                      </td>
-                      <td className="actions-cell">
-                        <div className="booking-actions">
-                          <div className="status-selector">
-                            <Select
-                              value={booking.status}
-                              onValueChange={(value) => {
-                                if (booking.id) {
-                                  handleStatusChange(booking.id, value as Booking['status']);
-                                }
-                              }}
-                            >
-                              <SelectTrigger className="w-32">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="confirmed">Confirmed</SelectItem>
-                                <SelectItem value="completed">Completed</SelectItem>
-                                <SelectItem value="cancelled">Cancelled</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="action-buttons flex gap-2 mt-2">
-                            <Button 
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => {
-                                if (booking.id) {
-                                  handleCancelBooking(booking.id);
-                                }
-                              }}
-                              title="Cancel booking"
-                            >
-                              ❌
-                            </Button>
-                            <Button 
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                if (booking.id) {
-                                  handleSendFeedbackRequest(booking.id);
-                                }
-                              }}
-                              title="Send feedback request"
-                            >
-                              📧
-                            </Button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <DataTable
+            data={bookings}
+            columns={columns}
+            actions={actions}
+            loading={loading}
+            searchPlaceholder="Search by customer, location, or status..."
+            emptyMessage="No bookings found. Create your first booking to get started."
+            emptyIcon="📅"
+            pageSize={10}
+            rowClassName={(booking) => booking.status === 'cancelled' ? 'opacity-60' : ''}
+            onRowClick={(booking) => console.log('Clicked booking:', booking.id)}
+          />
         </InfoCard>
       </GridSection>
-    </div>
+    </AdminPageWrapper>
   );
 };
 
-export default withAuth(AdminBookingsPage);
+export default AdminBookingsPage;
