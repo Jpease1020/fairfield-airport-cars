@@ -1,7 +1,7 @@
 import React from 'react';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { PageHeader, PageAction } from './PageHeader';
-import { LoadingSpinner } from '@/components/data';
+import { LoadingSpinner } from './LoadingSpinner';
 import { Alert } from '@/components/feedback';
 
 interface AdminPageWrapperProps {
