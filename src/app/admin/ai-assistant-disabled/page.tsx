@@ -1,263 +1,132 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { 
-  AdminPageWrapper,
-  InfoCard,
-  ActionButtonGroup,
-  HelpCard,
-  ChatContainer,
-  ChatInput,
-  ToastProvider,
-  useToast,
-  GridSection
-} from '@/components/ui';
-import { useChat } from '@/hooks/useChat';
-import { useBrowserFeatures } from '@/hooks/useBrowserFeatures';
+import { useEffect, useMemo, useState } from 'react';
+import { AdminPageWrapper, InfoCard, GridSection, ActionGrid } from '@/components/ui';
 
-function AIAssistantContent() {
-  const { addToast } = useToast();
-  const { features } = useBrowserFeatures();
-  const [input, setInput] = useState('');
+const AIAssistantDisabledPage = () => {
+  const [isClient, setIsClient] = useState(false);
 
-  // Initialize chat with welcome message
-  const initialMessages = useMemo(() => [{
-    id: '1',
-    role: 'assistant' as const,
-    content: "Hi Gregg! I'm your AI assistant. I can help you with:\n\n• Managing bookings and customers\n• Updating your website content\n• Understanding your business data\n• Troubleshooting technical issues\n• Setting up payments and communications\n\nWhat would you like to know?",
-    timestamp: new Date()
-  }], []);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-  const { messages, isLoading, sendMessage, clearMessages } = useChat({
-    apiEndpoint: '/api/ai-assistant',
-    initialMessages,
-    onError: (error) => addToast('error', `Connection error: ${error}`)
-  });
-
-  // Handle message sending and clear input
-  const handleSendMessage = async (messageText: string) => {
-    await sendMessage(messageText);
-    setInput(''); // Clear input after sending
-  };
-
-  // Quick questions data
-  const quickQuestions = useMemo(() => [
-    "How do I update my business information?",
-    "What bookings do I have today?",
-    "How do I send a message to a customer?",
-    "How do I change my pricing?",
-    "What if a customer wants to cancel?",
-    "How do payments work?",
-    "How is this app built?",
-    "Is my customer data secure?",
-    "How does the database work?",
-    "What if something isn't working?"
-  ], []);
-
-  // Convert questions to ActionButtonGroup format
-  const quickQuestionButtons = useMemo(() => 
-    quickQuestions.map(question => ({
-      label: question,
-      onClick: () => setInput(question),
-      variant: 'outline' as const,
-      size: 'sm' as const
-    })), [quickQuestions]
-  );
-
-  // Help topics data
-  const helpTopics = useMemo(() => [
-    {
-      icon: '📅',
-      title: 'Booking Management',
-      description: 'View, edit, and manage customer bookings and schedules'
-    },
-    {
-      icon: '💬',
-      title: 'Customer Communication',
-      description: 'Send messages, confirmations, and updates to customers'
-    },
-    {
-      icon: '💰',
-      title: 'Payment & Pricing',
-      description: 'Configure rates, process payments, and track earnings'
-    },
-    {
-      icon: '🤖',
-      title: 'Website Content',
-      description: 'Update your site content, pages, and business information'
-    },
-    {
-      icon: '⚙️',
-      title: 'Technical Questions',
-      description: 'Get help with app features, troubleshooting, and setup'
-    }
-  ], []);
-
-  // Header actions
   const headerActions = useMemo(() => [
-    {
-      label: 'Clear Chat',
-      onClick: (): void => {
-        if (confirm('Clear all messages?')) {
-          clearMessages();
-          addToast('info', 'Chat cleared');
+    { 
+      label: 'Back to Dashboard',
+      onClick: () => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/admin';
         }
       },
-      variant: 'outline' as const
+      variant: 'outline' as const,
+      icon: '🔙'
+    },
+    { 
+      label: 'Contact Support', 
+      onClick: () => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/admin/help';
+        }
+      },
+      variant: 'primary' as const,
+      icon: '📞'
+    }
+  ], []);
+
+  const quickActions = [
+    {
+      id: 1,
+      icon: "📋",
+      label: "View Documentation",
+      href: "/admin/help"
     },
     {
-      label: 'Settings',
-      onClick: (): void => {
-        window.location.href = '/admin/ai-assistant-disabled/settings';
-      },
-      variant: 'primary' as const
+      id: 2,
+      icon: "🔧",
+      label: "System Settings",
+      href: "/admin/cms"
+    },
+    {
+      id: 3,
+      icon: "📊",
+      label: "View Dashboard",
+      href: "/admin"
+    },
+    {
+      id: 4,
+      icon: "💬",
+      label: "Contact Support",
+      href: "/admin/help"
     }
-  ], [clearMessages, addToast]);
+  ];
 
-  // Voice play handler
-  const handleVoicePlay = (content: string) => {
-    if (features.voiceOutput && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(content);
-      window.speechSynthesis.speak(utterance);
-      addToast('info', 'Playing message...');
-    } else {
-      addToast('warning', 'Voice output not supported in your browser');
-    }
-  };
+  if (!isClient) {
+    return (
+      <AdminPageWrapper
+        title="AI Assistant"
+        subtitle="Loading AI assistant configuration..."
+        actions={[]}
+        loading={true}
+      >
+        <div>Loading...</div>
+      </AdminPageWrapper>
+    );
+  }
 
   return (
     <AdminPageWrapper
-      title="AI Assistant"
-      subtitle="Get help with your car service business"
+      title="AI Assistant Disabled"
+      subtitle="The AI assistant feature is currently disabled for your account"
       actions={headerActions}
-      loading={false}
-      error={null}
     >
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 300px',
-        gap: 'var(--spacing-lg)',
-        height: '70vh',
-        minHeight: '500px'
-      }}>
-        {/* Main Chat Interface */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%'
-        }}>
-          <ChatContainer
-            messages={messages}
-            isLoading={isLoading}
-            onVoicePlay={handleVoicePlay}
-            isVoiceSupported={features.voiceOutput}
-            loadingMessage="Thinking..."
-          />
-          
-          <ChatInput
-            value={input}
-            onChange={setInput}
-            onSend={handleSendMessage}
-            disabled={isLoading}
-            placeholder="Ask me anything about your business..."
-            isVoiceSupported={features.voiceInput}
-            maxRows={4}
-          />
-        </div>
-
-        {/* Sidebar */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--spacing-md)',
-          height: '100%',
-          overflowY: 'auto'
-        }}>
-          {/* Quick Questions */}
-          <InfoCard
-            title="Quick Questions"
-            icon="❓"
-            subtitle="Click any question to ask it"
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--spacing-xs)',
-              maxHeight: '200px',
-              overflowY: 'auto'
-            }}>
-              <ActionButtonGroup 
-                buttons={quickQuestionButtons}
-                orientation="vertical"
-                spacing="xs"
-              />
-            </div>
-          </InfoCard>
-
-          {/* What I Can Help With */}
-          <InfoCard
-            title="What I Can Help With"
-            icon="⚙️"
-            subtitle="Areas where I can assist you"
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--spacing-sm)'
-            }}>
-              {helpTopics.map((topic, index) => (
-                <HelpCard
-                  key={index}
-                  icon={topic.icon}
-                  title={topic.title}
-                  description={topic.description}
-                />
-              ))}
-            </div>
-          </InfoCard>
-        </div>
-      </div>
-
-      {/* Browser Support Info */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="Browser Features"
-          icon="🌐"
-          subtitle="Your browser's AI assistant capabilities"
+          title="🤖 AI Assistant Status"
+          description="Information about AI assistant availability and activation"
         >
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 'var(--spacing-sm)',
-            fontSize: 'var(--font-size-sm)'
+            padding: 'var(--spacing-lg)',
+            textAlign: 'center',
+            borderRadius: 'var(--border-radius)',
+            backgroundColor: 'var(--background-secondary)',
+            border: '1px solid var(--border-color)'
           }}>
-            <div style={{ 
-              padding: 'var(--spacing-sm)',
-              backgroundColor: features.voiceInput ? '#dcfce7' : '#fee2e2',
-              borderRadius: 'var(--border-radius)',
-              textAlign: 'center'
+            <div style={{
+              fontSize: 'var(--font-size-xl)',
+              marginBottom: 'var(--spacing-md)',
+              color: 'var(--text-secondary)'
             }}>
-              🎤 Voice Input: {features.voiceInput ? '✅ Supported' : '❌ Not Available'}
+              🚫
             </div>
-            <div style={{ 
-              padding: 'var(--spacing-sm)',
-              backgroundColor: features.voiceOutput ? '#dcfce7' : '#fee2e2',
-              borderRadius: 'var(--border-radius)',
-              textAlign: 'center'
+            <h3 style={{
+              margin: '0 0 var(--spacing-sm) 0',
+              color: 'var(--text-primary)'
             }}>
-              🔊 Voice Output: {features.voiceOutput ? '✅ Supported' : '❌ Not Available'}
-            </div>
+              AI Assistant Not Available
+            </h3>
+            <p style={{
+              margin: 0,
+              color: 'var(--text-secondary)',
+              fontSize: 'var(--font-size-sm)',
+              lineHeight: '1.5'
+            }}>
+              The AI assistant feature is currently disabled for your account. 
+              This feature may be enabled in future updates or through your subscription plan.
+            </p>
           </div>
+        </InfoCard>
+      </GridSection>
+
+      <GridSection variant="actions" columns={1}>
+        <InfoCard
+          title="⚡ Available Actions"
+          description="Alternative tools and features you can access"
+        >
+          <ActionGrid actions={quickActions} columns={4} />
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
   );
-}
+};
 
-export default function AIAssistantPage() {
-  return (
-    <ToastProvider>
-      <AIAssistantContent />
-    </ToastProvider>
-  );
-} 
+export default AIAssistantDisabledPage; 
