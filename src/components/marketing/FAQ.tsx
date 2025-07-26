@@ -39,23 +39,23 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
       return (
         <div ref={ref} className={cn('space-y-4', className)} {...props}>
           {title && (
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-text-primary mb-2">{title}</h2>
+            <div className="">
+              <h2 className="">{title}</h2>
               {subtitle && (
-                <p className="text-lg text-text-secondary">{subtitle}</p>
+                <p className="">{subtitle}</p>
               )}
             </div>
           )}
           
-          <div className="space-y-4">
+          <div className="">
             {items.map((item, index) => (
-              <div key={index} className="border border-border-primary rounded-lg">
+              <div key={index} className="">
                 <Button
                   variant="ghost"
                   onClick={() => toggleItem(index)}
-                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-bg-secondary transition-colors"
+                  className=""
                 >
-                  <span className="font-medium text-text-primary">{item.question}</span>
+                  <span className="">{item.question}</span>
                   <svg
                     className={cn(
                       'w-5 h-5 text-text-secondary transition-transform',
@@ -70,8 +70,8 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
                 </Button>
                 
                 {openItems.has(index) && (
-                  <div className="px-6 pb-4">
-                    <p className="text-text-secondary leading-relaxed">{item.answer}</p>
+                  <div className="">
+                    <p className="">{item.answer}</p>
                   </div>
                 )}
               </div>
@@ -85,21 +85,21 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
       return (
         <div ref={ref} className={cn('space-y-6', className)} {...props}>
           {title && (
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-text-primary mb-2">{title}</h2>
+            <div className="">
+              <h2 className="">{title}</h2>
               {subtitle && (
-                <p className="text-lg text-text-secondary">{subtitle}</p>
+                <p className="">{subtitle}</p>
               )}
             </div>
           )}
           
-          <div className="space-y-8">
+          <div className="">
             {items.map((item, index) => (
               <div key={index}>
-                <h3 className="text-lg font-semibold text-text-primary mb-2">
+                <h3 className="">
                   {item.question}
                 </h3>
-                <p className="text-text-secondary leading-relaxed">
+                <p className="">
                   {item.answer}
                 </p>
               </div>
@@ -113,21 +113,21 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
     return (
       <div ref={ref} className={cn('space-y-6', className)} {...props}>
         {title && (
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-text-primary mb-2">{title}</h2>
+          <div className="">
+            <h2 className="">{title}</h2>
             {subtitle && (
-              <p className="text-lg text-text-secondary">{subtitle}</p>
+              <p className="">{subtitle}</p>
             )}
           </div>
         )}
         
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="">
           {items.map((item, index) => (
-            <div key={index} className="bg-bg-primary border border-border-primary rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-3">
+            <div key={index} className="">
+              <h3 className="">
                 {item.question}
               </h3>
-              <p className="text-text-secondary leading-relaxed">
+              <p className="">
                 {item.answer}
               </p>
             </div>

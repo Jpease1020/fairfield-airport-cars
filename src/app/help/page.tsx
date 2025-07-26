@@ -183,7 +183,7 @@ function HelpPageContent() {
             </div>
             
             <button 
-              className="w-full h-12 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              className=""
               onClick={() => window.location.href = '/book'}
             >
               📅 Book Your Ride Now

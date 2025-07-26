@@ -62,9 +62,9 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
       {showProgressIndicator && (
         <Section variant="muted" padding="md">
           <Container maxWidth={containerMaxWidth}>
-            <div className="flex items-center justify-center space-x-4">
+            <div className="">
               {Array.from({ length: totalSteps }, (_, index) => (
-                <div key={index} className="flex items-center">
+                <div key={index} className="">
                   <div className={`
                     w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
                     ${index + 1 <= currentStep 
@@ -93,7 +93,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
           {/* Header */}
           <PageHeader align="center" padding="lg" margin="none">
             {pageTitle && (
-              <H1 className="mb-4">
+              <H1 className="">
                 {pageTitle}
               </H1>
             )}
@@ -103,16 +103,16 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
               </H2>
             )}
             {pageDescription && (
-              <Lead className="mb-8">
+              <Lead className="">
                 {pageDescription}
               </Lead>
             )}
           </PageHeader>
 
           {/* Conversion Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="">
             {/* Main Form/Content */}
-            <div className="lg:col-span-2">
+            <div className="">
               <Card variant="elevated" padding="xl">
                 <CardContent>
                   {children}
@@ -122,36 +122,36 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
 
             {/* Trust Signals Sidebar */}
             {showTrustSignals && (
-              <div className="space-y-6">
+              <div className="">
                 <Card variant="outlined" padding="lg">
                   <CardContent>
-                    <H2 className="text-lg mb-4">Why Choose Us?</H2>
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-6 h-6 bg-success-base rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-white text-xs">✓</span>
+                    <H2 className="">Why Choose Us?</H2>
+                    <div className="">
+                      <div className="">
+                        <div className="">
+                          <span className="">✓</span>
                         </div>
                         <div>
-                          <p className="font-medium text-sm">Professional Drivers</p>
-                          <p className="text-xs text-text-secondary">Background checked & licensed</p>
+                          <p className="">Professional Drivers</p>
+                          <p className="">Background checked & licensed</p>
                         </div>
                       </div>
-                      <div className="flex items-start space-x-3">
-                        <div className="w-6 h-6 bg-success-base rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-white text-xs">✓</span>
+                      <div className="">
+                        <div className="">
+                          <span className="">✓</span>
                         </div>
                         <div>
-                          <p className="font-medium text-sm">Reliable Service</p>
-                          <p className="text-xs text-text-secondary">On-time pickups guaranteed</p>
+                          <p className="">Reliable Service</p>
+                          <p className="">On-time pickups guaranteed</p>
                         </div>
                       </div>
-                      <div className="flex items-start space-x-3">
-                        <div className="w-6 h-6 bg-success-base rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-white text-xs">✓</span>
+                      <div className="">
+                        <div className="">
+                          <span className="">✓</span>
                         </div>
                         <div>
-                          <p className="font-medium text-sm">Clean Vehicles</p>
-                          <p className="text-xs text-text-secondary">Well-maintained luxury SUVs</p>
+                          <p className="">Clean Vehicles</p>
+                          <p className="">Well-maintained luxury SUVs</p>
                         </div>
                       </div>
                     </div>
@@ -160,19 +160,19 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
 
                 <Card variant="outlined" padding="lg">
                   <CardContent>
-                    <H2 className="text-lg mb-4">Need Help?</H2>
-                    <p className="text-sm text-text-secondary mb-4">
+                    <H2 className="">Need Help?</H2>
+                    <p className="">
                       Our team is here to assist you with your booking.
                     </p>
                     <div className="space-y-2">
-                      <p className="text-sm">
-                        <span className="font-medium">Phone:</span> (203) 555-0123
+                      <p className="">
+                        <span className="">Phone:</span> (203) 555-0123
                       </p>
-                      <p className="text-sm">
-                        <span className="font-medium">Email:</span> info@fairfieldairportcar.com
+                      <p className="">
+                        <span className="">Email:</span> info@fairfieldairportcar.com
                       </p>
-                      <p className="text-sm">
-                        <span className="font-medium">Hours:</span> 24/7 Service
+                      <p className="">
+                        <span className="">Hours:</span> 24/7 Service
                       </p>
                     </div>
                   </CardContent>

@@ -2,6 +2,23 @@
 
 This guide covers our comprehensive component system built with React, TypeScript, and our design system.
 
+## 🚨 CRITICAL COMPONENT REFACTORING RULES
+
+**NEVER remove reusable components during refactoring!**
+
+### **FORBIDDEN:**
+- ❌ Replacing `<GridSection>`, `<InfoCard>`, `<ActionButtonGroup>` with custom HTML
+- ❌ Removing component architecture for styling purposes
+- ❌ Breaking component reusability
+
+### **REQUIRED:**
+- ✅ Keep reusable components intact
+- ✅ Refactor components internally (replace Tailwind/inline styles with semantic CSS)
+- ✅ Maintain component props and interfaces
+- ✅ Preserve component architecture and reusability
+
+**See: `docs/development/COMPONENT_REFACTORING_RULES.md` for detailed guidelines.**
+
 ## 🎯 Design Principles
 
 ### 1. **Single Responsibility**

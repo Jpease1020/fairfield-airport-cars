@@ -49,8 +49,8 @@ export const createContentPageTemplate = (
 
     if (!cmsConfig) {
       return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
+        <div className="">
+          <div className="">
             <H2>Loading...</H2>
             <Text variant="muted">Please wait while we load the content.</Text>
           </div>
@@ -93,8 +93,8 @@ export const createConversionPageTemplate = (
 
     if (!cmsConfig) {
       return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
+        <div className="">
+          <div className="">
             <H2>Loading...</H2>
             <Text variant="muted">Please wait while we load the form.</Text>
           </div>
@@ -140,8 +140,8 @@ export const createStatusPageTemplate = (
 
     if (!cmsConfig) {
       return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
+        <div className="">
+          <div className="">
             <H2>Loading...</H2>
             <Text variant="muted">Please wait while we load your status.</Text>
           </div>
@@ -187,9 +187,9 @@ export const createSection = (
   const IconComponent = icon;
   
   return (
-    <section id={id} className="mb-12">
-      <H2 className="mb-6 flex items-center">
-        {IconComponent && <IconComponent className="w-6 h-6 text-brand-primary mr-3" />}
+    <section id={id} className="">
+      <H2 className="">
+        {IconComponent && <IconComponent className="" />}
         {title}
       </H2>
       {content}
@@ -206,17 +206,17 @@ export const createStatsSection = (stats: Array<{
   label: string;
 }>) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="">
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
           <Card key={index} variant="outlined" padding="lg">
-            <CardContent className="text-center">
-              <div className="w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <IconComponent className="w-6 h-6 text-white" />
+            <CardContent className="">
+              <div className="">
+                <IconComponent className="" />
               </div>
-              <H3 className="mb-2">{stat.value}</H3>
-              <Text variant="small" className="text-text-secondary">
+              <H3 className="">{stat.value}</H3>
+              <Text variant="small" className="">
                 {stat.label}
               </Text>
             </CardContent>
@@ -237,7 +237,7 @@ export const createContactSection = (contacts: Array<{
   action: { text: string; href: string; type: 'tel' | 'mailto' | 'link' };
 }>) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="">
       {contacts.map((contact, index) => {
         const IconComponent = contact.icon;
         const ActionComponent = contact.action.type === 'link' ? Link : 'a';
@@ -247,11 +247,11 @@ export const createContactSection = (contacts: Array<{
 
         return (
           <Card key={index} variant="elevated" padding="lg">
-            <CardContent className="text-center">
-              <div className="w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <IconComponent className="w-6 h-6 text-white" />
+            <CardContent className="">
+              <div className="">
+                <IconComponent className="" />
               </div>
-              <H3 className="mb-2">{contact.title}</H3>
+              <H3 className="">{contact.title}</H3>
               <Text className="mb-4">{contact.value}</Text>
               <ActionComponent {...actionProps}>
                 <Button variant="outline" size="sm">
@@ -275,12 +275,12 @@ export const createFAQSection = (faqs: Array<{
   category?: string;
 }>) => {
   return (
-    <div className="space-y-4">
+    <div className="">
       {faqs.map((faq, index) => (
         <Card key={index} variant="outlined" padding="lg">
           <CardContent>
-            <H3 className="mb-3">{faq.question}</H3>
-            <Text variant="small" className="text-text-secondary">
+            <H3 className="">{faq.question}</H3>
+            <Text variant="small" className="">
               {faq.answer}
             </Text>
           </CardContent>
@@ -299,21 +299,21 @@ export const createFeaturesSection = (features: Array<{
   description: string;
 }>) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="">
       {features.map((feature, index) => {
         const IconComponent = feature.icon;
         return (
           <Card key={index} variant="elevated" padding="lg">
             <CardContent>
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center mr-4">
-                  <IconComponent className="w-6 h-6 text-white" />
+              <div className="">
+                <div className="">
+                  <IconComponent className="" />
                 </div>
                 <div>
                   <H3>{feature.title}</H3>
                 </div>
               </div>
-              <Text variant="small" className="text-text-secondary">
+              <Text variant="small" className="">
                 {feature.description}
               </Text>
             </CardContent>

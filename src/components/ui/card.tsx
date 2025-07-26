@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils/utils';
  * </Card>
  * 
  * // With custom styling
- * <Card className="bg-bg-secondary border-brand-primary">
+ * <Card className="">
  *   <CardContent>
  *     <p>Custom styled card</p>
  *   </CardContent>

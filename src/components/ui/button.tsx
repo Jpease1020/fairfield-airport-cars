@@ -52,7 +52,7 @@ const buttonVariants = cva(
  * 
  * // Icon button
  * <Button variant="ghost" size="icon" aria-label="Close">
- *   <X className="h-4 w-4" />
+ *   <X className="" />
  * </Button>
  * ```
  */
@@ -78,7 +78,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && loadingSpinner ? (
-          <div className="flex items-center gap-2">
+          <div className="">
             {loadingSpinner}
             {children}
           </div>

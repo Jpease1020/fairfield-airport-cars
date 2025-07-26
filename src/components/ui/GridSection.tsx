@@ -18,16 +18,17 @@ export const GridSection: React.FC<GridSectionProps> = ({
   theme = 'light'
 }) => {
   const sectionClass = [
-    `${variant}-section`,
-    `spacing-${spacing}`,
-    theme === 'dark' ? 'dark-theme' : '',
+    'grid-section',
+    `grid-section-${variant}`,
+    `grid-section-${spacing}`,
+    theme === 'dark' ? 'grid-section-dark' : 'grid-section-light',
     className
   ].filter(Boolean).join(' ');
 
   const gridClass = [
-    'grid',
-    `grid-${columns}`,
-    `gap-${spacing}`
+    'grid-container',
+    `grid-columns-${columns}`,
+    `grid-spacing-${spacing}`
   ].filter(Boolean).join(' ');
 
   return (

@@ -144,8 +144,8 @@ import {
           title="Pricing Settings"
           subtitle="Loading pricing configuration..."
         />
-        <div className="flex items-center justify-center h-64">
-          <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
+        <div className="">
+          <RefreshCw className="" />
         </div>
       </div>
     );
@@ -159,16 +159,16 @@ import {
           title="Pricing Settings"
           subtitle="Failed to load settings"
         />
-        <div className="flex items-center justify-center h-64">
-          <AlertCircle className="h-8 w-8 text-error" />
-          <span className="ml-2 text-gray-600">Failed to load settings</span>
+        <div className="">
+          <AlertCircle className="" />
+          <span className="">Failed to load settings</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="admin-dashboard bg-bg-secondary">
+    <div className="">
       <AdminNavigation />
       <PageHeader
         title="Pricing Settings"
@@ -177,26 +177,26 @@ import {
       />
 
       {saved && (
-        <div className="mb-6">
-          <Badge variant="secondary" className="bg-bg-success text-text-success">
-            <CheckCircle className="h-3 w-3 mr-1" />
+        <div className="">
+          <Badge variant="secondary" className="">
+            <CheckCircle className="" />
             Pricing settings saved successfully
           </Badge>
         </div>
       )}
 
       <div className="standard-content">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="">
           {/* Base Pricing */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <DollarSign className="h-5 w-5" />
+              <CardTitle className="">
+                <DollarSign className="" />
                 <span>Base Pricing</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
+            <CardContent className="">
+              <div className="">
                 <Label htmlFor="baseFare">Base Fare ($)</Label>
                 <Input
                   id="baseFare"
@@ -220,7 +220,7 @@ import {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="">
                 <Label htmlFor="perMinute">Per Minute Rate ($)</Label>
                 <Input
                   id="perMinute"
@@ -232,7 +232,7 @@ import {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="">
                 <Label htmlFor="depositPercent">Deposit Percentage (%)</Label>
                 <Input
                   id="depositPercent"
@@ -245,7 +245,7 @@ import {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="">
                 <Label htmlFor="bufferMinutes">Buffer Minutes</Label>
                 <Input
                   id="bufferMinutes"
@@ -261,13 +261,13 @@ import {
           {/* Cancellation Policy */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Clock className="h-5 w-5" />
+              <CardTitle className="">
+                <Clock className="" />
                 <span>Cancellation Policy</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
+              <div className="">
                 <Label htmlFor="over24h">Over 24h Refund (%)</Label>
                 <Input
                   id="over24h"
@@ -280,7 +280,7 @@ import {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="">
                 <Label htmlFor="between3And24h">3-24h Refund (%)</Label>
                 <Input
                   id="between3And24h"
@@ -293,7 +293,7 @@ import {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="">
                 <Label htmlFor="under3h">Under 3h Refund (%)</Label>
                 <Input
                   id="under3h"
@@ -309,44 +309,44 @@ import {
           </Card>
 
           {/* Pricing Zones */}
-          <Card className="lg:col-span-2">
+          <Card className="">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <MapPin className="h-5 w-5" />
+              <CardTitle className="">
+                <div className="">
+                  <MapPin className="" />
                   <span>Pricing Zones</span>
                 </div>
                 <Button onClick={addZone} size="sm" variant="outline">
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="" />
                   Add Zone
                 </Button>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {settings.zones.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <div className="">
+                  <MapPin className="" />
                   <p>No pricing zones configured</p>
-                  <p className="text-sm">Add zones for different areas with custom pricing</p>
+                  <p className="">Add zones for different areas with custom pricing</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {settings.zones.map((zone, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium">Zone {index + 1}</h4>
+                    <div key={index} className="">
+                      <div className="">
+                        <h4 className="">Zone {index + 1}</h4>
                         <Button
                           onClick={() => removeZone(index)}
                           size="sm"
                           variant="outline"
-                          className="text-error hover:text-error-hover"
+                          className=""
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="" />
                         </Button>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="space-y-2">
+                      <div className="">
+                        <div className="">
                           <Label htmlFor={`zone-${index}-name`}>Zone Name</Label>
                           <Input
                             id={`zone-${index}-name`}
@@ -356,7 +356,7 @@ import {
                           />
                         </div>
                         
-                        <div className="space-y-2">
+                        <div className="">
                           <Label htmlFor={`zone-${index}-baseFare`}>Base Fare ($)</Label>
                           <Input
                             id={`zone-${index}-baseFare`}
@@ -380,7 +380,7 @@ import {
                           />
                         </div>
                         
-                        <div className="space-y-2">
+                        <div className="">
                           <Label htmlFor={`zone-${index}-perMinute`}>Per Minute ($)</Label>
                           <Input
                             id={`zone-${index}-perMinute`}

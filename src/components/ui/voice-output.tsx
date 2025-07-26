@@ -84,7 +84,7 @@ export const VoiceOutput = ({ text, disabled = false, className, autoPlay = fals
         className={cn("text-gray-400", className)}
         title="Voice output not supported"
       >
-        <VolumeX className="w-4 h-4" />
+        <VolumeX className="" />
       </Button>
     );
   }
@@ -102,9 +102,9 @@ export const VoiceOutput = ({ text, disabled = false, className, autoPlay = fals
       title={isSpeaking ? "Click to stop speaking" : "Click to hear response"}
     >
       {isSpeaking ? (
-        <VolumeX className="w-4 h-4" />
+        <VolumeX className="" />
       ) : (
-        <Volume2 className="w-4 h-4" />
+        <Volume2 className="" />
       )}
     </Button>
   );

@@ -52,7 +52,7 @@ import Link from 'next/link';
   if (loading) {
     return (
       <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="">
           <LoadingSpinner text="Loading booking details..." />
         </div>
       </PageContainer>
@@ -62,11 +62,11 @@ import Link from 'next/link';
   if (error || !booking) {
     return (
       <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
-            <p className="text-gray-600 mb-4">
+        <div className="">
+          <div className="">
+            <AlertCircle className="" />
+            <h2 className="">Booking Not Found</h2>
+            <p className="">
               {error || 'The booking you are looking for could not be found.'}
             </p>
             <Link href="/book">
@@ -81,13 +81,13 @@ import Link from 'next/link';
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="" />;
       case 'cancelled':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="" />;
       case 'completed':
-        return <CheckCircle className="h-4 w-4 text-blue-500" />;
+        return <CheckCircle className="" />;
       default:
-        return <Clock className="h-4 w-4 text-yellow-500" />;
+        return <Clock className="" />;
     }
   };
 
@@ -119,90 +119,90 @@ import Link from 'next/link';
     <PageContainer>
       <PageHeader title="Booking Details" />
       <PageContent>
-        <div className="max-w-4xl mx-auto">
+        <div className="">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl">Booking #{booking.id}</CardTitle>
+              <div className="">
+                <CardTitle className="">Booking #{booking.id}</CardTitle>
                 <Badge className={getStatusColor(booking.status)}>
-                  <div className="flex items-center gap-1">
+                  <div className="">
                     {getStatusIcon(booking.status)}
                     {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                   </div>
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="">
               {/* Trip Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-blue-500 mt-1" />
+              <div className="">
+                <div className="">
+                  <div className="">
+                    <MapPin className="" />
                     <div>
-                      <h3 className="font-semibold text-gray-900">Pickup Location</h3>
-                      <p className="text-gray-600">{booking.pickupLocation}</p>
+                      <h3 className="">Pickup Location</h3>
+                      <p className="">{booking.pickupLocation}</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-red-500 mt-1" />
+                  <div className="">
+                    <MapPin className="" />
                     <div>
-                      <h3 className="font-semibold text-gray-900">Dropoff Location</h3>
+                      <h3 className="">Dropoff Location</h3>
                       <p className="text-gray-600">{booking.dropoffLocation}</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <Calendar className="h-5 w-5 text-green-500 mt-1" />
+                  <div className="">
+                    <Calendar className="" />
                     <div>
-                      <h3 className="font-semibold text-gray-900">Pickup Date & Time</h3>
-                      <p className="text-gray-600">{formatDateTime(booking.pickupDateTime)}</p>
+                      <h3 className="">Pickup Date & Time</h3>
+                      <p className="">{formatDateTime(booking.pickupDateTime)}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                                     <div className="flex items-start gap-3">
-                     <User className="h-5 w-5 text-purple-500 mt-1" />
+                <div className="">
+                                     <div className="">
+                     <User className="" />
                      <div>
-                       <h3 className="font-semibold text-gray-900">Passenger</h3>
-                       <p className="text-gray-600">{booking.name}</p>
+                       <h3 className="">Passenger</h3>
+                       <p className="">{booking.name}</p>
                      </div>
                    </div>
-                   <div className="flex items-start gap-3">
-                     <Phone className="h-5 w-5 text-gray-500 mt-1" />
+                   <div className="">
+                     <Phone className="" />
                      <div>
-                       <h3 className="font-semibold text-gray-900">Phone</h3>
-                       <p className="text-gray-600">{booking.phone}</p>
+                       <h3 className="">Phone</h3>
+                       <p className="">{booking.phone}</p>
                      </div>
                    </div>
-                   <div className="flex items-start gap-3">
-                     <Mail className="h-5 w-5 text-gray-500 mt-1" />
+                   <div className="">
+                     <Mail className="" />
                      <div>
-                       <h3 className="font-semibold text-gray-900">Email</h3>
-                       <p className="text-gray-600">{booking.email}</p>
+                       <h3 className="">Email</h3>
+                       <p className="">{booking.email}</p>
                      </div>
                    </div>
                 </div>
               </div>
 
               {/* Fare Information */}
-              <div className="border-t pt-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="h-6 w-6 text-green-500" />
+              <div className="">
+                <div className="">
+                  <div className="">
+                    <DollarSign className="" />
                     <div>
-                      <h3 className="font-semibold text-gray-900">Total Fare</h3>
-                      <p className="text-sm text-gray-600">Includes all fees and taxes</p>
+                      <h3 className="">Total Fare</h3>
+                      <p className="">Includes all fees and taxes</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-3xl font-bold text-gray-900">${booking.fare?.toFixed(2)}</p>
+                  <div className="">
+                    <p className="">${booking.fare?.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="border-t pt-6">
-                <div className="flex gap-4">
+              <div className="">
+                <div className="">
                   <Link href={`/manage/${booking.id}`}>
                     <Button variant="outline">
                       Manage Booking

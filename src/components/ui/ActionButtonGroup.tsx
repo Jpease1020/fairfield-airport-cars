@@ -22,35 +22,24 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
   spacing = 'xs',
   className = ''
 }) => {
-  const getSpacingValue = () => {
-    switch (spacing) {
-      case 'xs': return 'var(--spacing-xs)';
-      case 'sm': return 'var(--spacing-sm)';
-      case 'md': return 'var(--spacing-md)';
-      case 'lg': return 'var(--spacing-lg)';
-      default: return 'var(--spacing-xs)';
-    }
-  };
-
   const getButtonClass = (button: ActionButton) => {
-    const baseClass = 'btn';
-    const variantClass = button.variant === 'primary' ? 'btn-primary' : 
-                       button.variant === 'secondary' ? 'btn-secondary' : 'btn-outline';
-    const sizeClass = button.size ? `btn-${button.size}` : 'btn-sm';
+    const baseClass = 'action-button';
+    const variantClass = button.variant === 'primary' ? 'action-button-primary' : 
+                       button.variant === 'secondary' ? 'action-button-secondary' : 'action-button-outline';
+    const sizeClass = button.size ? `action-button-${button.size}` : 'action-button-sm';
     
     return `${baseClass} ${variantClass} ${sizeClass}`;
   };
 
+  const containerClass = [
+    'action-button-group',
+    `action-button-group-${orientation}`,
+    `action-button-group-${spacing}`,
+    className
+  ].filter(Boolean).join(' ');
+
   return (
-    <div 
-      className={className}
-      style={{
-        display: 'flex',
-        flexDirection: orientation === 'horizontal' ? 'row' : 'column',
-        gap: getSpacingValue(),
-        alignItems: orientation === 'horizontal' ? 'center' : 'stretch'
-      }}
-    >
+    <div className={containerClass}>
       {buttons.map((button, index) => (
         <button
           key={index}
@@ -59,11 +48,13 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
           disabled={button.disabled}
         >
           {button.icon && (
-            <span style={{ marginRight: 'var(--spacing-xs)' }}>
+            <span className="action-button-icon">
               {button.icon}
             </span>
           )}
-          {button.label}
+          <span className="action-button-label">
+            {button.label}
+          </span>
         </button>
       ))}
     </div>

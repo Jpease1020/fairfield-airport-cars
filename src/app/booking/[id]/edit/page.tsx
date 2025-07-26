@@ -40,7 +40,7 @@ export default function EditBookingPage() {
   if (loading) {
     return (
       <PageContainer>
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="">
           <LoadingSpinner text="Loading booking details..." />
         </div>
       </PageContainer>

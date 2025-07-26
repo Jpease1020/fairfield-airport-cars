@@ -170,7 +170,7 @@ export function DataTable<T extends Record<string, any>>({
       )}
 
       {/* Table */}
-      <table className="data-table">
+      <table className="">
         <thead>
           <tr>
             {columns.map((column) => (

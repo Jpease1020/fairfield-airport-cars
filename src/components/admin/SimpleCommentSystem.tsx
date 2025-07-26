@@ -180,13 +180,13 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
   const getStatusIcon = (status: ConfluenceComment['status']) => {
     switch (status) {
       case 'open':
-        return <Clock className="h-3 w-3 text-orange-500" />;
+        return <Clock className="" />;
       case 'in-progress':
-        return <Clock className="h-3 w-3 text-blue-500" />;
+        return <Clock className="" />;
       case 'resolved':
-        return <CheckCircle className="h-3 w-3 text-green-500" />;
+        return <CheckCircle className="" />;
       default:
-        return <Clock className="h-3 w-3 text-gray-500" />;
+        return <Clock className="" />;
     }
   };
 
@@ -300,14 +300,14 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
       {activeCommentBox && selectedElement && (
         <div
           ref={commentBoxRef}
-          className="fixed z-[99999] bg-white border border-gray-300 rounded-lg shadow-xl p-4 min-w-80 max-w-sm max-h-96 overflow-y-auto"
+          className=""
           style={{
             top: selectedElement.getBoundingClientRect().top - 10,
             left: selectedElement.getBoundingClientRect().right + 10,
           }}
         >
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-semibold text-gray-900">
+          <div className="">
+            <h4 className="">
               {existingComments.length > 0 ? `Comments (${existingComments.length})` : 'Add Comment'}
             </h4>
             <button
@@ -315,23 +315,23 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                 setActiveCommentBox(null);
                 setSelectedElement(null);
               }}
-              className="text-gray-400 hover:text-gray-600"
+              className=""
             >
-              <X className="h-4 w-4" />
+              <X className="" />
             </button>
           </div>
           
-          <div className="mb-3 p-2 bg-gray-50 rounded text-xs text-gray-600">
+          <div className="">
             <strong>Element:</strong> {selectedElement.textContent?.slice(0, 50) || selectedElement.tagName.toLowerCase()}
           </div>
           
           {/* Existing Comments */}
           {existingComments.length > 0 && (
-            <div className="mb-4 space-y-3">
+            <div className="">
               {existingComments.map(comment => (
-                <div key={comment.id} className="border border-gray-200 rounded p-3 bg-gray-50">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
+                <div key={comment.id} className="">
+                  <div className="">
+                    <div className="">
                       {getStatusIcon(comment.status)}
                       <span className={`text-xs px-2 py-1 rounded ${getStatusColor(comment.status)}`}>
                         {comment.status}
@@ -339,24 +339,24 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                     </div>
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
-                      className="text-red-400 hover:text-red-600 text-xs"
+                      className=""
                     >
-                      <X className="h-3 w-3" />
+                      <X className="" />
                     </button>
                   </div>
                   
                   <textarea
                     value={comment.comment}
                     onChange={(e) => handleEditComment(comment.id, e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                    className=""
                     rows={2}
                   />
                   
-                  <div className="flex gap-1 mt-2">
+                  <div className="">
                     <select
                       value={comment.status}
                       onChange={(e) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
-                      className="text-xs border border-gray-300 rounded px-2 py-1"
+                      className=""
                     >
                       <option value="open">Open</option>
                       <option value="in-progress">In Progress</option>
@@ -369,21 +369,21 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
           )}
           
           {/* New Comment Input */}
-          <div className="space-y-3">
+          <div className="">
             <textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Add a new comment..."
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className=""
               rows={3}
               autoFocus
             />
             
-            <div className="flex gap-2">
+            <div className="">
               <button
                 onClick={handleAddComment}
                 disabled={!commentText.trim()}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-3 py-2 rounded-md text-sm font-medium"
+                className=""
               >
                 Add Comment
               </button>
@@ -392,7 +392,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                   setActiveCommentBox(null);
                   setSelectedElement(null);
                 }}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+                className=""
               >
                 Close
               </button>

@@ -11,7 +11,7 @@ import { Loader2 } from 'lucide-react';
  * <LoadingSpinner />
  * 
  * // With custom size and color
- * <LoadingSpinner size="lg" className="text-brand-primary" />
+ * <LoadingSpinner size="lg" className="" />
  * 
  * // With text
  * <LoadingSpinner text="Loading..." />
@@ -51,7 +51,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     switch (variant) {
       case 'dots':
         return (
-          <div className="flex space-x-1">
+          <div className="">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
@@ -94,17 +94,17 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   const content = (
-    <div className="flex items-center gap-2">
+    <div className="">
       <SpinnerComponent />
       {text && (
-        <span className="text-sm text-text-secondary">{text}</span>
+        <span className="">{text}</span>
       )}
     </div>
   );
 
   if (centered) {
     return (
-      <div className="flex items-center justify-center p-4">
+      <div className="">
         {content}
       </div>
     );

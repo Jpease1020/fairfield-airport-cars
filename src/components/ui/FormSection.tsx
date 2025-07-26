@@ -19,15 +19,15 @@ export const FormSection: React.FC<FormSectionProps> = ({
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          {icon && <span className="text-xl">{icon}</span>}
+        <CardTitle className="">
+          {icon && <span className="">{icon}</span>}
           <span>{title}</span>
         </CardTitle>
         {description && (
-          <p className="text-sm text-gray-600 mt-1">{description}</p>
+          <p className="">{description}</p>
         )}
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="">
         {children}
       </CardContent>
     </Card>

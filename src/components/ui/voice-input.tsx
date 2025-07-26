@@ -90,13 +90,13 @@ export const VoiceInput = ({ onTranscript, disabled = false, className }: VoiceI
         className={cn("text-gray-400", className)}
         title="Voice recognition not supported"
       >
-        <MicOff className="w-4 h-4" />
+        <MicOff className="" />
       </Button>
     );
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="">
       <Button
         variant={isListening ? "destructive" : "outline"}
         size="icon"
@@ -109,15 +109,15 @@ export const VoiceInput = ({ onTranscript, disabled = false, className }: VoiceI
         title={isListening ? "Click to stop listening" : "Click to start voice input"}
       >
         {isProcessing ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <Loader2 className="" />
         ) : isListening ? (
-          <MicOff className="w-4 h-4" />
+          <MicOff className="" />
         ) : (
-          <Mic className="w-4 h-4" />
+          <Mic className="" />
         )}
       </Button>
       {error && (
-        <span className="text-xs text-red-500">{error}</span>
+        <span className="">{error}</span>
       )}
     </div>
   );

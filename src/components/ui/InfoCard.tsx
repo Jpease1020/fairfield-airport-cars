@@ -22,10 +22,9 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   variant = 'default'
 }) => {
   const cardClass = [
-    'card',
-    variant === 'outlined' ? 'card-outlined' : '',
-    variant === 'elevated' ? 'card-elevated' : '',
-    theme === 'dark' ? 'dark-theme' : '',
+    'info-card',
+    `info-card-${variant}`,
+    theme === 'dark' ? 'info-card-dark' : 'info-card-light',
     className
   ].filter(Boolean).join(' ');
 
@@ -34,30 +33,22 @@ export const InfoCard: React.FC<InfoCardProps> = ({
 
   return (
     <div className={cardClass}>
-      <div className="card-header">
-        <h3 className="card-title" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: icon ? 'var(--spacing-sm)' : '0'
-        }}>
+      <div className="info-card-header">
+        <h3 className="info-card-title">
           {icon && (
-            <span className="card-icon" style={{ fontSize: 'var(--font-size-lg)' }}>
+            <span className="info-card-icon">
               {icon}
             </span>
           )}
           {title}
         </h3>
         {cardDescription && (
-          <p className="card-description" style={{
-            margin: 'var(--spacing-xs) 0 0 0',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--text-secondary)'
-          }}>
+          <p className="info-card-description">
             {cardDescription}
           </p>
         )}
       </div>
-      <div className="card-body">
+      <div className="info-card-body">
         {children}
       </div>
     </div>

@@ -272,8 +272,8 @@ import { Button } from '@/components/ui/button';
       sortable: true,
       render: (_, booking) => (
         <div>
-          <div className="font-medium">{booking.name}</div>
-          <div className="text-sm text-gray-500">{booking.email}</div>
+          <div className="">{booking.name}</div>
+          <div className="">{booking.email}</div>
         </div>
       )
     },
@@ -283,8 +283,8 @@ import { Button } from '@/components/ui/button';
       sortable: true,
       render: (_, booking) => (
         <div>
-          <div className="text-sm font-medium">{booking.pickupLocation}</div>
-          <div className="text-xs text-gray-500">→ {booking.dropoffLocation}</div>
+          <div className="">{booking.pickupLocation}</div>
+          <div className="">→ {booking.dropoffLocation}</div>
         </div>
       )
     },
@@ -296,8 +296,8 @@ import { Button } from '@/components/ui/button';
         const date = new Date(value);
         return (
           <div>
-            <div className="text-sm">{date.toLocaleDateString()}</div>
-            <div className="text-xs text-gray-500">{date.toLocaleTimeString()}</div>
+            <div className="">{date.toLocaleDateString()}</div>
+            <div className="">{date.toLocaleTimeString()}</div>
           </div>
         );
       }
@@ -307,7 +307,7 @@ import { Button } from '@/components/ui/button';
       label: 'Fare',
       sortable: true,
       render: (value) => (
-        <span className="font-medium">${(value || 0).toFixed(2)}</span>
+        <span className="">${(value || 0).toFixed(2)}</span>
       )
     },
     {

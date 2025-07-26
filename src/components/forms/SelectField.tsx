@@ -21,10 +21,10 @@ const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
     const fieldId = id || (typeof label === 'string' ? `select-${label.toLowerCase().replace(/\s+/g, '-')}` : 'select-unknown');
 
     return (
-      <div className="space-y-2">
-        <Label htmlFor={fieldId} className="text-sm font-medium text-text-primary">
+      <div className="">
+        <Label htmlFor={fieldId} className="">
           {label}
-          {required && <span className="text-error ml-1">*</span>}
+          {required && <span className="">*</span>}
         </Label>
         <select
           ref={ref}
@@ -47,10 +47,10 @@ const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
           ))}
         </select>
         {error && (
-          <p className="text-sm text-error">{error}</p>
+          <p className="">{error}</p>
         )}
         {helperText && !error && (
-          <p className="text-sm text-text-secondary">{helperText}</p>
+          <p className="">{helperText}</p>
         )}
       </div>
     );

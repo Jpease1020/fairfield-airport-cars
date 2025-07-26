@@ -19,7 +19,7 @@ export const AdminNavigation: React.FC = () => {
 
   return (
     <nav className="standard-navigation admin-nav">
-      <div className="nav-container">
+      <div className="">
         <div className="nav-brand">
           <Link href="/admin" className="nav-logo">
             Admin Panel

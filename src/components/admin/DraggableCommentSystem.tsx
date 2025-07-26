@@ -95,16 +95,16 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
   return (
     <>
       {/* Add Comment Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="">
         <Button
           onClick={() => setIsAddingComment(true)}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg rounded-full w-14 h-14 flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className=""
           title="Add Comment (Drag to position)"
         >
-          <Plus className="h-6 w-6" />
+          <Plus className="" />
         </Button>
         {comments.length > 0 && (
-          <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+          <div className="">
             {comments.length}
           </div>
         )}
@@ -112,13 +112,13 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
 
       {/* Add Comment Modal */}
       {isAddingComment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-            <div className="flex items-center gap-2 mb-4">
-              <MessageCircle className="h-5 w-5 text-yellow-500" />
-              <h3 className="text-lg font-semibold">Add Comment</h3>
+        <div className="">
+          <div className="">
+            <div className="">
+              <MessageCircle className="" />
+              <h3 className="">Add Comment</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="">
               Type your feedback below. After adding, you can drag the comment icon to any element on the page.
             </p>
             <Textarea
@@ -129,11 +129,11 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
               className="mb-4"
               autoFocus
             />
-            <div className="flex gap-2">
+            <div className="">
               <Button
                 onClick={handleAddComment}
                 disabled={!newCommentText.trim()}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                className=""
               >
                 Add Comment
               </Button>
@@ -155,7 +155,7 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
       {comments.map((comment) => (
         <div
           key={comment.id}
-          className="fixed z-40 cursor-move"
+          className=""
           style={{
             left: comment.x,
             top: comment.y,
@@ -163,24 +163,24 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
           }}
           onMouseDown={(e) => handleMouseDown(e, comment.id)}
         >
-          <div className="relative group">
+          <div className="">
             {/* Comment Icon */}
-            <div className="bg-yellow-500 hover:bg-yellow-600 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 border-2 border-white">
-              <MessageCircle className="h-5 w-5 text-white" />
+            <div className="">
+              <MessageCircle className="" />
             </div>
             
             {/* Comment Tooltip */}
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
-              <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xl max-w-xs">
-                <div className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+            <div className="">
+              <div className="">
+                <div className="">
                   {comment.text}
                 </div>
-                <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-100">
+                <div className="">
                   {comment.createdAt.toLocaleDateString()} at {comment.createdAt.toLocaleTimeString()}
                 </div>
               </div>
               {/* Arrow pointing down */}
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
+              <div className=""></div>
             </div>
             
             {/* Delete Button */}
@@ -189,10 +189,10 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
                 e.stopPropagation();
                 handleDeleteComment(comment.id);
               }}
-              className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg"
+              className=""
               title="Delete comment"
             >
-              <X className="h-3 w-3" />
+              <X className="" />
             </button>
           </div>
         </div>

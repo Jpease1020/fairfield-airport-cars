@@ -70,3 +70,16 @@ npm run build
 # Deploy (configure your deployment platform)
 npm run deploy
 ```
+
+## 🚨 CRITICAL DEVELOPMENT RULES
+
+### **Component Refactoring:**
+- **NEVER** remove reusable components during refactoring
+- **ALWAYS** refactor components internally (replace Tailwind/inline styles with semantic CSS)
+- **ALWAYS** maintain component architecture and reusability
+- See: `docs/development/COMPONENT_REFACTORING_RULES.md`
+
+### **Code Quality:**
+- **ALWAYS** run tests before committing
+- **ALWAYS** update documentation for new features
+- **ALWAYS** follow the established component patterns

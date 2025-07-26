@@ -24,9 +24,9 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     };
 
     return (
-      <div className="w-full">
+      <div className="">
         {label && (
-          <label className="edit-label font-semibold block mb-2">
+          <label className="">
             {label}
           </label>
         )}

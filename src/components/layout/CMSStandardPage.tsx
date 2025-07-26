@@ -61,7 +61,7 @@ export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
               </H1>
             )}
             {'subtitle' in pageContent && pageContent.subtitle && (
-              <H2 className="mb-6">
+              <H2 className="">
                 {pageContent.subtitle}
               </H2>
             )}

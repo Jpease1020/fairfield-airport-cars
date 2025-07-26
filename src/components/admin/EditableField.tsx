@@ -46,7 +46,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
     return (
       <div className="mb-4">
         {label && (
-          <label className="edit-label font-semibold block mb-2">
+          <label className="">
             {label}
           </label>
         )}
@@ -100,17 +100,17 @@ export const EditableField: React.FC<EditableFieldProps> = ({
 
 // Specialized components for common use cases
 export const EditableTitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
-  <EditableField {...props} type="input" size="xl" className="font-bold" />
+  <EditableField {...props} type="input" size="xl" className="" />
 );
 
 export const EditableSubtitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
-  <EditableField {...props} type="input" size="lg" className="text-text-secondary" />
+  <EditableField {...props} type="input" size="lg" className="" />
 );
 
 export const EditableContent: React.FC<Omit<EditableFieldProps, 'type' | 'size'> & { rows?: number }> = (props) => (
-  <EditableField {...props} type="textarea" size="md" className="text-text-secondary leading-relaxed" />
+  <EditableField {...props} type="textarea" size="md" className="" />
 );
 
 export const EditableLabel: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
-  <EditableField {...props} type="input" size="md" className="font-medium" />
+  <EditableField {...props} type="input" size="md" className="" />
 ); 

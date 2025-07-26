@@ -43,7 +43,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <div className="login-container">
+      <div className="">
         <div className="card login-card">
           <div className="card-header">
             <h1 className="card-title">Admin Login</h1>

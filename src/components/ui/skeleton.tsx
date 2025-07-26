@@ -27,14 +27,14 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 
 // Pre-built skeleton components for common use cases
 export const BookingFormSkeleton = () => (
-  <div className="space-y-6 animate-pulse">
-    <div className="space-y-4">
-      <Skeleton className="h-4 w-1/4" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="">
+    <div className="">
+      <Skeleton className="" />
+      <div className="">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="space-y-2">
-            <Skeleton className="h-4 w-1/3" />
-            <Skeleton className="h-10 w-full" />
+          <div key={i} className="">
+            <Skeleton className="" />
+            <Skeleton className="" />
           </div>
         ))}
       </div>
@@ -44,49 +44,49 @@ export const BookingFormSkeleton = () => (
 );
 
 export const BookingCardSkeleton = () => (
-  <div className="border rounded-lg p-6 space-y-4 animate-pulse">
-    <div className="flex justify-between items-start">
-      <div className="space-y-2">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-4 w-24" />
+  <div className="">
+    <div className="">
+      <div className="">
+        <Skeleton className="" />
+        <Skeleton className="" />
       </div>
-      <Skeleton className="h-6 w-16" />
+      <Skeleton className="" />
     </div>
-    <div className="space-y-2">
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-3/4" />
+    <div className="">
+      <Skeleton className="" />
+      <Skeleton className="" />
     </div>
-    <div className="flex justify-between items-center">
-      <Skeleton className="h-4 w-20" />
-      <Skeleton className="h-8 w-24" />
+    <div className="">
+      <Skeleton className="" />
+      <Skeleton className="" />
     </div>
   </div>
 );
 
 export const AdminDashboardSkeleton = () => (
-  <div className="space-y-6 animate-pulse">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+  <div className="">
+    <div className="">
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="p-6 border rounded-lg">
-          <div className="flex items-center space-x-4">
-            <Skeleton className="h-10 w-10 rounded-lg" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-6 w-12" />
+        <div key={i} className="">
+          <div className="">
+            <Skeleton className="" />
+            <div className="">
+              <Skeleton className="" />
+              <Skeleton className="" />
             </div>
           </div>
         </div>
       ))}
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="">
       {[...Array(2)].map((_, i) => (
-        <div key={i} className="p-6 border rounded-lg space-y-4">
-          <Skeleton className="h-5 w-32" />
-          <div className="space-y-3">
+        <div key={i} className="">
+          <Skeleton className="" />
+          <div className="">
             {[...Array(4)].map((_, j) => (
-              <div key={j} className="flex justify-between">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-4 w-16" />
+              <div key={j} className="">
+                <Skeleton className="" />
+                <Skeleton className="" />
               </div>
             ))}
           </div>
@@ -97,19 +97,19 @@ export const AdminDashboardSkeleton = () => (
 );
 
 export const PageSkeleton = () => (
-  <div className="space-y-6 animate-pulse">
+  <div className="">
     <div className="space-y-4">
-      <Skeleton className="h-8 w-1/3" />
-      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="" />
+      <Skeleton className="" />
     </div>
-    <div className="space-y-4">
+    <div className="">
       {[...Array(3)].map((_, i) => (
-        <Skeleton key={i} className="h-4 w-full" />
+        <Skeleton key={i} className="" />
       ))}
     </div>
-    <div className="flex space-x-4">
-      <Skeleton className="h-10 w-24" />
-      <Skeleton className="h-10 w-32" />
+    <div className="">
+      <Skeleton className="" />
+      <Skeleton className="" />
     </div>
   </div>
 ); 

@@ -99,7 +99,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div className="chat-input-section">
-      <div className="chat-input-container" style={{
+      <div className="" style={{
         display: 'flex',
         alignItems: 'flex-end',
         gap: 'var(--spacing-sm)',

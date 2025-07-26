@@ -17,9 +17,9 @@ const FormSection = React.forwardRef<HTMLDivElement, FormSectionProps>(
         {...props}
       >
         <div>
-          <h3 className="text-lg font-medium text-text-primary">{title}</h3>
+          <h3 className="">{title}</h3>
           {description && (
-            <p className="text-sm text-text-secondary">{description}</p>
+            <p className="">{description}</p>
           )}
         </div>
         <div className={cn('space-y-4', columns && `grid grid-cols-1 md:grid-cols-${columns} gap-4`)}>

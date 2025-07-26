@@ -47,10 +47,10 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
           title={title}
           subtitle={loadingMessage}
         />
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
+        <div className="">
+          <div className="">
             <LoadingSpinner />
-            <p className="mt-4 text-gray-600">{loadingMessage}</p>
+            <p className="">{loadingMessage}</p>
           </div>
         </div>
       </div>
@@ -77,7 +77,7 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
 
   // Normal state
   return (
-    <div className="admin-dashboard bg-bg-secondary">
+    <div className="">
       {showNavigation && <AdminNavigation />}
       <PageHeader
         title={title}

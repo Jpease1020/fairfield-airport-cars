@@ -24,7 +24,7 @@ const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
     }, [router]);
 
     if (loading) {
-      return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+      return <div className="">Loading...</div>;
     }
 
     if (!user) {

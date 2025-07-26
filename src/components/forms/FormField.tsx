@@ -64,10 +64,10 @@ const FormFieldComponent = React.forwardRef<HTMLInputElement, FormFieldProps>(
 
     return (
       <ErrorBoundary fallback={errorFallback}>
-        <div className="space-y-2">
-          <Label htmlFor={fieldId} className="text-sm font-medium text-text-primary">
+        <div className="">
+          <Label htmlFor={fieldId} className="">
             {label}
-            {required && <span className="text-error ml-1">*</span>}
+            {required && <span className="">*</span>}
           </Label>
           <Input
             ref={ref}

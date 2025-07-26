@@ -58,14 +58,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const describedBy = [ariaDescribedby, errorId, helperId].filter(Boolean).join(' ');
 
     return (
-      <div className="space-y-2">
+      <div className="">
         {label && (
           <label 
             htmlFor={inputId}
-            className="text-sm font-medium text-text-primary"
+            className=""
           >
             {label}
-            {required && <span className="text-error ml-1">*</span>}
+            {required && <span className="">*</span>}
           </label>
         )}
         <input
@@ -83,12 +83,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {error && (
-          <p id={errorId} className="text-sm text-error" role="alert">
+          <p id={errorId} className="" role="alert">
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p id={helperId} className="text-sm text-text-secondary">
+          <p id={helperId} className="">
             {helperText}
           </p>
         )}

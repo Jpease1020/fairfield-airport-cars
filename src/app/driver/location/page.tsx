@@ -71,17 +71,17 @@ function DriverLocationContent() {
         subtitle="Sharing your location with passengers"
       />
       
-      <div className="standard-content max-w-2xl mx-auto">
+      <div className="">
         <InfoCard
           title="📍 Location Status"
           description="Your current location sharing status"
         >
-          <div className="text-center p-6">
-            <p className="mb-4 text-gray-700 text-lg">{status}</p>
+          <div className="">
+            <p className="">{status}</p>
             {coords && (
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Current Coordinates:</p>
-                <p className="font-mono text-sm">
+              <div className="">
+                <p className="">Current Coordinates:</p>
+                <p className="">
                   Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export default function DriverLocationPage() {
           title="Driver Live Location"
           subtitle="Loading..."
         />
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="">
           <LoadingSpinner text="Loading..." />
         </div>
       </div>

@@ -55,7 +55,7 @@ export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
           <Container maxWidth={containerMaxWidth}>
             <PageHeader align={headerAlign} padding="none" margin="none">
               {homeContent.hero?.title && (
-                <H1 className="mb-6">
+                <H1 className="">
                   {homeContent.hero.title}
                 </H1>
               )}
@@ -65,7 +65,7 @@ export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
                 </H2>
               )}
               {homeContent.hero?.ctaText && (
-                <Lead className="mb-8">
+                <Lead className="">
                   {homeContent.hero.ctaText}
                 </Lead>
               )}

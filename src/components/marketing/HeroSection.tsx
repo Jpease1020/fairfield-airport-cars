@@ -45,26 +45,26 @@ const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
       <div ref={ref} className={containerClasses} {...props}>
         {backgroundImage && (
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            className=""
             style={{ backgroundImage: `url(${backgroundImage})` }}
           >
-            <div className="absolute inset-0 bg-bg-inverse bg-opacity-50" />
+            <div className="" />
           </div>
         )}
         
         <div className={contentClasses}>
           {subtitle && (
-            <p className="text-lg text-brand-primary font-semibold mb-4">
+            <p className="">
               {subtitle}
             </p>
           )}
           
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary mb-6">
+          <h1 className="">
             {title}
           </h1>
           
           {description && (
-            <p className="text-xl text-text-secondary mb-8 max-w-2xl">
+            <p className="">
               {description}
             </p>
           )}
@@ -77,7 +77,7 @@ const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
               {primaryAction && (
                 <a 
                   href={primaryAction.href}
-                  className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-text-inverse bg-brand-primary border border-transparent rounded-md shadow-sm hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
+                  className=""
                 >
                   {primaryAction.label}
                 </a>
@@ -86,7 +86,7 @@ const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
               {secondaryAction && (
                 <a 
                   href={secondaryAction.href}
-                  className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-text-primary bg-bg-primary border border-border-primary rounded-md shadow-sm hover:bg-bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
+                  className=""
                 >
                   {secondaryAction.label}
                 </a>

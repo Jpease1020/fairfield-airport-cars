@@ -21,17 +21,17 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   if (variant === 'minimal') {
     return (
       <div className={cn('w-full', className)}>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-text-primary">
+        <div className="">
+          <span className="">
             Step {currentStep} of {totalSteps}
           </span>
-          <span className="text-sm text-text-secondary">
+          <span className="">
             {Math.round(progress)}%
           </span>
         </div>
-        <div className="w-full bg-bg-secondary rounded-full h-2">
+        <div className="">
           <div 
-            className="h-2 bg-brand-primary rounded-full transition-all duration-500"
+            className=""
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -42,22 +42,22 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   if (variant === 'detailed') {
     return (
       <div className={cn('w-full', className)}>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-text-primary">
+        <div className="">
+          <h3 className="">
             {steps[currentStep - 1]}
           </h3>
-          <span className="text-sm text-text-secondary">
+          <span className="">
             {currentStep} of {totalSteps}
           </span>
         </div>
-        <div className="relative">
-          <div className="absolute left-0 top-1/2 w-full h-1 bg-bg-secondary transform -translate-y-1/2">
+        <div className="">
+          <div className="">
             <div 
-              className="absolute left-0 h-1 bg-brand-primary transition-all duration-500"
+              className=""
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="relative flex justify-between">
+          <div className="">
             {steps.map((step, index) => (
               <div
                 key={index}
@@ -75,7 +75,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             ))}
           </div>
         </div>
-        <div className="mt-4 flex justify-between">
+        <div className="">
           {steps.map((step, index) => (
             <div
               key={index}
@@ -99,17 +99,17 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   // Default variant
   return (
     <div className={cn('w-full', className)}>
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-text-primary">
+      <div className="">
+        <span className="">
           {steps[currentStep - 1]}
         </span>
-        <span className="text-sm text-text-secondary">
+        <span className="">
           {currentStep} of {totalSteps}
         </span>
       </div>
-      <div className="w-full bg-bg-secondary rounded-full h-2">
+      <div className="">
         <div 
-          className="h-2 bg-brand-primary rounded-full transition-all duration-500"
+          className=""
           style={{ width: `${progress}%` }}
         />
       </div>

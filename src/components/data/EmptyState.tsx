@@ -58,7 +58,7 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
           </p>
         )}
         {action && (
-          <div className="flex items-center justify-center">
+          <div className="">
             {action}
           </div>
         )}

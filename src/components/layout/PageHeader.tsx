@@ -15,15 +15,15 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
         className={cn('mb-8', className)}
         {...props}
       >
-        <div className="flex items-center justify-between">
+        <div className="">
           <div>
-            <h1 className="text-2xl font-bold text-text-primary">{title}</h1>
+            <h1 className="">{title}</h1>
             {subtitle && (
-              <p className="mt-1 text-sm text-text-secondary">{subtitle}</p>
+              <p className="">{subtitle}</p>
             )}
           </div>
           {children && (
-            <div className="flex items-center space-x-2">
+            <div className="">
               {children}
             </div>
           )}

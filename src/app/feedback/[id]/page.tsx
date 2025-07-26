@@ -219,7 +219,7 @@ import { Star } from 'lucide-react';
               <button
                 type="submit"
                 disabled={loading || rating === 0}
-                className="w-full h-16 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-lg font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className=""
               >
                 {loading ? (
                   <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

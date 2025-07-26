@@ -44,12 +44,12 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         )}
         {...props}
       >
-        <div className="flex items-start">
-          <div className="flex-1">
+        <div className="">
+          <div className="">
             {title && (
-              <h4 className="font-medium mb-1">{title}</h4>
+              <h4 className="">{title}</h4>
             )}
-            <div className="text-sm">
+            <div className="">
               {children}
             </div>
           </div>
@@ -63,7 +63,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
                 iconClasses[variant]
               )}
             >
-              <X className="h-4 w-4" />
+              <X className="" />
             </Button>
           )}
         </div>

@@ -23,7 +23,7 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
       <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
         <Button
           onClick={onEdit}
-          className="bg-brand-primary text-text-inverse hover:bg-brand-primary-hover"
+          className=""
         >
           Edit Mode
         </Button>
@@ -33,11 +33,11 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
 
   return (
     <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 50 }}>
-      <div className="flex gap-2">
+      <div className="">
         <Button
           onClick={onSave}
           disabled={saving}
-          className="bg-success text-text-inverse hover:bg-success-hover"
+          className=""
         >
           {saving ? 'Saving...' : 'Save'}
         </Button>
@@ -45,12 +45,12 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
           onClick={onCancel}
           disabled={saving}
           variant="outline"
-          className="bg-bg-secondary text-text-primary hover:bg-bg-muted"
+          className=""
         >
           Cancel
         </Button>
       </div>
-      {saveMsg && <div className="mt-2 text-sm text-success">{saveMsg}</div>}
+      {saveMsg && <div className="">{saveMsg}</div>}
     </div>
   );
 }; 

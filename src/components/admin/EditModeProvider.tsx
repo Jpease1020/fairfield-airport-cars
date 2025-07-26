@@ -116,15 +116,15 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
         {!editMode ? (
           <Button
             onClick={() => setEditMode(true)}
-            className="bg-brand-primary text-white hover:bg-brand-primary-hover shadow-lg"
+            className=""
           >
             Edit Mode
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div className="">
             <Button
               onClick={() => setEditMode(false)}
-              className="bg-error text-white hover:bg-error-hover"
+              className=""
             >
               Exit Edit Mode
             </Button>
@@ -143,25 +143,25 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
     if (!isAdmin || !editMode) return null;
 
     return (
-      <div className="fixed top-20 right-6 z-50">
-        <div className="flex gap-2">
+      <div className="">
+        <div className="">
           <Button
             onClick={() => handleSave(cmsConfig, pageType)}
             disabled={saving}
-            className="bg-success text-white hover:bg-success-hover"
+            className=""
           >
             {saving ? 'Saving...' : 'Save'}
           </Button>
           <Button
             onClick={() => handleCancel(originalContent)}
             variant="outline"
-            className="bg-error text-white hover:bg-error-hover"
+            className=""
           >
             Cancel
           </Button>
         </div>
         {saveMsg && (
-          <div className="mt-2 text-sm text-green-600 bg-white p-2 rounded shadow">
+          <div className="">
             {saveMsg}
           </div>
         )}

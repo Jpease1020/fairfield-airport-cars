@@ -89,7 +89,7 @@ const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
           );
         })}
         {showValue && (
-          <span className="ml-2 text-sm text-text-secondary">
+          <span className="">
             {rating}/{maxRating}
           </span>
         )}

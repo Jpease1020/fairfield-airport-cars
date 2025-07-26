@@ -55,12 +55,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       }
 
       return (
-        <div className="flex flex-col items-center justify-center p-8 text-center">
-          <AlertTriangle className="h-12 w-12 text-error mb-4" />
-          <h2 className="text-lg font-semibold text-text-primary mb-2">
+        <div className="">
+          <AlertTriangle className="" />
+          <h2 className="">
             Something went wrong
           </h2>
-          <p className="text-text-secondary mb-4">
+          <p className="">
             An unexpected error occurred. Please try refreshing the page.
           </p>
           <Button

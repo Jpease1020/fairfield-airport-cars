@@ -102,7 +102,7 @@ export default function AnalyticsPage() {
         ) : (
           <div className="analytics-dashboard">
             {/* Overview Cards */}
-            <div className="grid grid-4 gap-lg">
+            <div className="">
               <div className="card analytics-card">
                 <div className="card-header analytics-card-header">
                   <h3 className="analytics-card-title">Total Interactions</h3>
@@ -166,7 +166,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Detailed Metrics */}
-            <div className="grid grid-2 gap-lg">
+            <div className="">
               {/* Top Interaction Types */}
               <div className="card">
                 <div className="card-header">

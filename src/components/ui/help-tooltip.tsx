@@ -25,7 +25,7 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
   };
 
   return (
-    <div className="relative inline-block">
+    <div className="">
       <Button
         type="button"
         variant="ghost"
@@ -43,9 +43,9 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
       </Button>
       
       {isVisible && (
-        <div className="absolute z-50 w-64 p-3 text-sm text-text-inverse bg-bg-inverse rounded-lg shadow-lg -top-2 left-8 transform -translate-y-full">
+        <div className="">
           {content}
-          <div className="absolute top-2 -left-1 w-2 h-2 bg-bg-inverse transform rotate-45"></div>
+          <div className=""></div>
         </div>
       )}
     </div>

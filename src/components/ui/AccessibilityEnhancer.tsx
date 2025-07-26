@@ -318,19 +318,29 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
         /* Skip Links */
         .skip-link {
           position: absolute;
-          top: -40px;
-          left: 6px;
-          background: var(--background-primary);
-          color: var(--text-primary);
-          padding: 8px;
+          top: -50px;
+          left: 20px;
+          background: var(--primary-color);
+          color: white;
+          padding: 8px 12px;
           text-decoration: none;
-          border-radius: 4px;
+          border-radius: var(--border-radius);
           z-index: 10000;
-          border: 2px solid var(--border-color);
+          border: 2px solid var(--primary-color);
+          font-weight: 600;
+          font-size: var(--font-size-sm);
+          box-shadow: var(--shadow-md);
+          transition: all 0.2s ease;
         }
 
         .skip-link:focus {
-          top: 6px;
+          top: 8px;
+          transform: translateY(0);
+        }
+
+        .skip-link:hover {
+          background: var(--primary-hover);
+          border-color: var(--primary-hover);
         }
 
         /* Touch Target Sizes */

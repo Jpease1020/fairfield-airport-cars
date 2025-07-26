@@ -147,8 +147,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
               />
 
               {/* REFACTORED: Using proper select component */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-text-primary">
+              <div className="">
+                <label className="">
                   Reason for Cancellation (Optional)
                 </label>
                 <Select value={cancellationReason} onValueChange={setCancellationReason}>

@@ -398,20 +398,20 @@ function BookingFormContent({ booking }: BookingFormProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="">
       {loadError && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+        <div className="">
+          <div className="">
+            <div className="">
+              <svg className="" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">
+            <div className="">
+              <h3 className="">
                 Location autocomplete temporarily unavailable
               </h3>
-              <div className="mt-2 text-sm text-yellow-700">
+              <div className="">
                 <p>You can still fill out the form manually. Location suggestions will be restored shortly.</p>
               </div>
             </div>
@@ -419,7 +419,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="">
         {/* Personal Information */}
         <SettingSection
           title="Personal Information"
@@ -471,8 +471,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           icon="🚗"
         >
           {/* Location Fields - Improved Layout */}
-          <div className="space-y-6">
-            <div className="relative">
+          <div className="">
+            <div className="">
               <SettingInput
                 id="pickupLocation"
                 label="Pickup Location"
@@ -483,17 +483,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="📍"
               />
               {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto z-10 bg-white border border-gray-200 rounded-md shadow-lg">
+                <div className="">
                   {pickupSuggestions.map((prediction) => (
                     <div
                       key={prediction.place_id}
-                      className="suggestion-item p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                      className=""
                       onClick={() => handlePickupSuggestionSelect(prediction)}
                     >
-                      <div className="font-medium text-sm text-text-primary">
+                      <div className="">
                         {prediction.structured_formatting?.main_text || prediction.description}
                       </div>
-                      <div className="text-xs text-text-secondary">
+                      <div className="">
                         {prediction.structured_formatting?.secondary_text || ''}
                       </div>
                     </div>
@@ -513,17 +513,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="🎯"
               />
               {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-                <div className="autocomplete-dropdown absolute w-full mt-1 max-h-60 overflow-auto z-10 bg-white border border-gray-200 rounded-md shadow-lg">
+                <div className="">
                   {dropoffSuggestions.map((prediction) => (
                     <div
                       key={prediction.place_id}
-                      className="suggestion-item p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                      className=""
                       onClick={() => handleDropoffSuggestionSelect(prediction)}
                     >
-                      <div className="font-medium text-sm text-text-primary">
+                      <div className="">
                         {prediction.structured_formatting?.main_text || prediction.description}
                       </div>
-                      <div className="text-xs text-text-secondary">
+                      <div className="">
                         {prediction.structured_formatting?.secondary_text || ''}
                       </div>
                     </div>
@@ -585,8 +585,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Help us provide the best service for your trip"
           icon="⚙️"
         >
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="">
+            <div className="">
               {/* Passengers - Styled like SettingInput */}
               <div style={{
                 padding: 'var(--spacing-md) 0',
@@ -702,18 +702,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Calculate your fare and complete your booking"
           icon="💳"
         >
-          <div className="flex items-stretch gap-4">
+          <div className="">
             <button
               type="button"
               onClick={handleCalculateFare}
               disabled={isCalculating}
-              className="flex-1 h-16 bg-gradient-to-r from-brand-secondary to-brand-primary text-white rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className=""
             >
               {isCalculating ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <span className="">
+                  <svg className="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                   Calculating...
                 </span>
@@ -722,9 +722,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
               )}
             </button>
             {fare && (
-              <div className="flex-1 flex items-center justify-center h-16 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border-2 border-green-200">
-                <p className="text-xl font-bold text-green-700">
-                  Estimated Fare: <span className="text-2xl">${fare}</span>
+              <div className="">
+                <p className="">
+                  Estimated Fare: <span className="">${fare}</span>
                 </p>
               </div>
             )}
@@ -733,7 +733,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {fare && (
             <button
               type="submit"
-              className="w-full h-16 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-lg font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 mt-4"
+              className=""
             >
               🚗 Book Now - ${fare}
             </button>

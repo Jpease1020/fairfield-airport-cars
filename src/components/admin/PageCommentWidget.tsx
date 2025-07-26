@@ -106,11 +106,11 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
   const getCategoryIcon = (cat: string) => {
     switch (cat) {
-      case 'bug': return <AlertCircle className="h-4 w-4" />;
-      case 'design': return <Star className="h-4 w-4" />;
-      case 'copy': return <MessageSquare className="h-4 w-4" />;
-      case 'feature': return <CheckCircle className="h-4 w-4" />;
-      default: return <MessageSquare className="h-4 w-4" />;
+      case 'bug': return <AlertCircle className="" />;
+      case 'design': return <Star className="" />;
+      case 'copy': return <MessageSquare className="" />;
+      case 'feature': return <CheckCircle className="" />;
+      default: return <MessageSquare className="" />;
     }
   };
 
@@ -129,51 +129,51 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
   return (
     <>
       {/* Floating Comment Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="">
         <Button
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-full w-14 h-14 shadow-lg bg-brand-primary hover:bg-brand-primary-hover"
+          className=""
           aria-label="Add page comment"
         >
-          <MessageSquare className="h-6 w-6" />
+          <MessageSquare className="" />
         </Button>
       </div>
 
       {/* Comment Widget */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div ref={widgetRef} className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+        <div className="">
+          <div ref={widgetRef} className="">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg">Add Page Comment</CardTitle>
+              <CardHeader className="">
+                <CardTitle className="">Add Page Comment</CardTitle>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="h-8 w-8 p-0"
+                  className=""
                 >
-                  <X className="h-4 w-4" />
+                  <X className="" />
                 </Button>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="">
                     Page: {pageTitle}
                   </label>
                 </div>
 
                 {/* Element Selection */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="">
                     Element (Optional)
                   </label>
-                  <div className="flex gap-2">
+                  <div className="">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleElementSelect}
                       disabled={isElementSelectMode}
-                      className="flex-1"
+                      className=""
                     >
                       {selectedElement ? 'Change Element' : 'Select Element'}
                     </Button>
@@ -182,19 +182,19 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelectedElement('')}
-                        className="text-red-600"
+                        className=""
                       >
                         Clear
                       </Button>
                     )}
                   </div>
                   {selectedElement && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="">
                       Selected: {selectedElement}
                     </p>
                   )}
                   {isElementSelectMode && (
-                    <p className="text-xs text-blue-600 mt-1">
+                    <p className="">
                       Click on any element to select it
                     </p>
                   )}
@@ -202,7 +202,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Category */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="">
                     Category
                   </label>
                   <Select value={category} onValueChange={(value: PageComment['category']) => setCategory(value)}>
@@ -211,32 +211,32 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="general">
-                        <div className="flex items-center gap-2">
-                          <MessageSquare className="h-4 w-4" />
+                        <div className="">
+                          <MessageSquare className="" />
                           General
                         </div>
                       </SelectItem>
                       <SelectItem value="bug">
-                        <div className="flex items-center gap-2">
-                          <AlertCircle className="h-4 w-4" />
+                        <div className="">
+                          <AlertCircle className="" />
                           Bug
                         </div>
                       </SelectItem>
                       <SelectItem value="design">
-                        <div className="flex items-center gap-2">
+                        <div className="">
                           <Star className="h-4 w-4" />
                           Design
                         </div>
                       </SelectItem>
                       <SelectItem value="copy">
-                        <div className="flex items-center gap-2">
-                          <MessageSquare className="h-4 w-4" />
+                        <div className="">
+                          <MessageSquare className="" />
                           Copy/Text
                         </div>
                       </SelectItem>
                       <SelectItem value="feature">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4" />
+                        <div className="">
+                          <CheckCircle className="" />
                           Feature Request
                         </div>
                       </SelectItem>
@@ -246,7 +246,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Priority */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="">
                     Priority
                   </label>
                   <Select value={priority} onValueChange={(value: PageComment['priority']) => setPriority(value)}>
@@ -264,7 +264,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Comment */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="">
                     Comment
                   </label>
                   <Textarea
@@ -272,29 +272,29 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Describe what you'd like to change or improve..."
                     rows={4}
-                    className="resize-none"
+                    className=""
                   />
                 </div>
 
                 {/* Preview */}
                 {comment && (
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className="">
+                    <div className="">
                       {getCategoryIcon(category)}
                       <Badge className={getPriorityColor(priority)}>
                         {priority}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-700">{comment}</p>
+                    <p className="">{comment}</p>
                   </div>
                 )}
 
                 {/* Submit Button */}
-                <div className="flex gap-2 pt-2">
+                <div className="">
                   <Button
                     onClick={handleSubmit}
                     disabled={!comment.trim() || isSubmitting}
-                    className="flex-1"
+                    className=""
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit Comment'}
                   </Button>
@@ -314,10 +314,10 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
       {/* Success Message */}
       {showSuccess && (
-        <div className="fixed top-6 right-6 z-50">
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
+        <div className="">
+          <div className="">
+            <div className="">
+              <CheckCircle className="" />
               Comment submitted successfully!
             </div>
           </div>

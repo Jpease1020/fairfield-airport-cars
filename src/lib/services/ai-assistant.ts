@@ -75,7 +75,7 @@ Available actions:
 - Update website content: Admin → CMS → Pages
 
 Technical knowledge about the app:
-- Built with Next.js 15, TypeScript, and Tailwind CSS
+- Built with Next.js 15, TypeScript, and custom CSS design system
 - Backend: Firebase (Firestore database, Authentication)
 - Payments: Square integration for secure payment processing
 - SMS: Twilio for customer notifications
@@ -159,7 +159,7 @@ export const generateLocalResponse = async (message: string, context: AIAssistan
 
   // Technical questions about the app
   if (lowerMessage.includes('app') || lowerMessage.includes('built') || lowerMessage.includes('technology') || lowerMessage.includes('tech') || lowerMessage.includes('code')) {
-    return `The ${context.businessInfo.name || 'Fairfield Airport Cars'} app is built with:\n\n**Frontend:**\n• Next.js 15 (React framework)\n• TypeScript (type-safe JavaScript)\n• Tailwind CSS (styling)\n• Mobile-responsive design\n\n**Backend:**\n• Firebase Firestore (database)\n• Firebase Authentication (admin login)\n• Next.js API routes (server-side logic)\n\n**Integrations:**\n• Square (payments)\n• Twilio (SMS notifications)\n• Google Maps (location services)\n• SMTP email (confirmations)\n• OpenAI (AI assistant)\n\n**Hosting:**\n• Vercel (deployment and hosting)\n• Automatic deployments from GitHub\n\n**Features:**\n• Real-time booking management\n• CMS for editable content\n• Voice-enabled AI assistant\n• Mobile-optimized booking form\n• Admin dashboard with analytics`;
+    return `The ${context.businessInfo.name || 'Fairfield Airport Cars'} app is built with:\n\n**Frontend:**\n• Next.js 15 (React framework)\n• TypeScript (type-safe JavaScript)\n• Custom CSS design system (styling)\n• Mobile-responsive design\n\n**Backend:**\n• Firebase Firestore (database)\n• Firebase Authentication (admin login)\n• Next.js API routes (server-side logic)\n\n**Integrations:**\n• Square (payments)\n• Twilio (SMS notifications)\n• Google Maps (location services)\n• SMTP email (confirmations)\n• OpenAI (AI assistant)\n\n**Hosting:**\n• Vercel (deployment and hosting)\n• Automatic deployments from GitHub\n\n**Features:**\n• Real-time booking management\n• CMS for editable content\n• Voice-enabled AI assistant\n• Mobile-optimized booking form\n• Admin dashboard with analytics`;
   }
 
   // Database questions

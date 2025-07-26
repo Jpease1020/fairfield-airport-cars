@@ -17,7 +17,7 @@ export const StandardNavigation: React.FC = () => {
 
   return (
     <nav className="standard-navigation">
-      <div className="nav-container">
+      <div className="">
         <div className="nav-brand">
           <Link href="/" className="nav-logo">
             Fairfield Airport Cars

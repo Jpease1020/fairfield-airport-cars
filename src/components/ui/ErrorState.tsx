@@ -28,11 +28,11 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       </Alert>
       
       {showRetryButton && retry && (
-        <div className="flex justify-center">
+        <div className="">
           <Button 
             onClick={retry}
             variant="outline"
-            className="flex items-center space-x-2"
+            className=""
           >
             <span>🔄</span>
             <span>{retryLabel}</span>

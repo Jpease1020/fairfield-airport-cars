@@ -32,58 +32,26 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({
   columns = 3, 
   className = '' 
 }) => {
+  const gridClass = [
+    'feature-grid',
+    `feature-grid-${columns}`,
+    className
+  ].filter(Boolean).join(' ');
+
   return (
-    <div 
-      className={`feature-grid ${className}`}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(auto-fit, minmax(${columns === 2 ? '300px' : columns === 3 ? '250px' : '200px'}, 1fr))`,
-        gap: 'var(--spacing-lg)',
-        padding: 'var(--spacing-lg) 0'
-      }}
-    >
+    <div className={gridClass}>
       {features.map((feature, index) => (
         <div 
           key={feature.id || index}
           className="feature-item"
-          style={{ 
-            textAlign: 'center',
-            padding: 'var(--spacing-md)',
-            borderRadius: 'var(--border-radius)',
-            backgroundColor: 'var(--background-secondary)',
-            border: '1px solid var(--border-color)',
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = 'var(--shadow-md)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
         >
-          <div style={{ 
-            fontSize: '2rem', 
-            marginBottom: 'var(--spacing-sm)',
-            lineHeight: '1'
-          }}>
+          <div className="feature-icon">
             {feature.icon}
           </div>
-          <h4 style={{ 
-            margin: '0 0 var(--spacing-sm) 0',
-            color: 'var(--text-primary)',
-            fontSize: 'var(--font-size-lg)',
-            fontWeight: '600'
-          }}>
+          <h4 className="feature-title">
             {feature.title}
           </h4>
-          <p style={{ 
-            margin: 0,
-            color: 'var(--text-secondary)',
-            fontSize: 'var(--font-size-sm)',
-            lineHeight: '1.5'
-          }}>
+          <p className="feature-description">
             {feature.description}
           </p>
         </div>

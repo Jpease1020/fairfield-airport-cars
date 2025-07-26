@@ -29,9 +29,9 @@ const CommentableSection = ({
       
       {/* Comment indicator (shows when comment exists) */}
       {hasComment && (
-        <div className="absolute top-2 right-2 z-50">
+        <div className="">
           <div 
-            className="bg-warning text-text-inverse text-xs px-2 py-1 rounded-full shadow-lg cursor-pointer hover:bg-warning-hover transition-colors"
+            className=""
             onClick={(e) => {
               e.stopPropagation();
               // Using new Confluence-style commenting system instead

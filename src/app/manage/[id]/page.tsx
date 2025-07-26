@@ -219,7 +219,7 @@ import { ToastProvider, useToast } from '@/components/ui';
           title="Manage Booking"
           subtitle="Loading booking details..."
         />
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="">
           <LoadingSpinner text={manageContent?.loadingMessage || "Loading booking details..."} />
         </div>
       </div>
@@ -241,7 +241,7 @@ import { ToastProvider, useToast } from '@/components/ui';
   }
 
   return (
-    <div className="admin-dashboard max-w-2xl mx-auto p-6">
+    <div className="">
       {/* Floating Edit Mode Toggle for Admins */}
       {isAdmin && (
         <div style={{ position: 'fixed', top: 88, right: 24, zIndex: 50 }}>
@@ -252,7 +252,7 @@ import { ToastProvider, useToast } from '@/components/ui';
               Edit Mode
             </Button>
           ) : (
-            <div className="flex gap-2">
+            <div className="">
               <Button
                 variant="default"
                 onClick={handleSave}
@@ -269,13 +269,13 @@ import { ToastProvider, useToast } from '@/components/ui';
               </Button>
             </div>
           )}
-          {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+          {saveMsg && <div className="">{saveMsg}</div>}
         </div>
       )}
 
       {/* Page Header */}
       {editMode ? (
-        <div className="mb-8 bg-white p-6 rounded shadow flex flex-col gap-4">
+        <div className="">
           <EditableInput
             label="Page Title"
             value={localContent?.title || ''}
@@ -345,7 +345,7 @@ import { ToastProvider, useToast } from '@/components/ui';
             value={localContent?.loadingMessage || ''}
             onChange={(e) => handleFieldChange('loadingMessage', e.target.value)}
           />
-          <div className="flex gap-2 mt-4">
+          <div className="">
             <Button
               size="lg"
               onClick={handleSave}
@@ -361,7 +361,7 @@ import { ToastProvider, useToast } from '@/components/ui';
             >
               Cancel
             </Button>
-            {saveMsg && <div className="mt-2 text-sm text-green-600">{saveMsg}</div>}
+            {saveMsg && <div className="">{saveMsg}</div>}
           </div>
         </div>
       ) : (
@@ -377,10 +377,10 @@ import { ToastProvider, useToast } from '@/components/ui';
           showActions={false}
         />
         
-        <div className="space-y-3">
+        <div className="">
           <Button 
             onClick={handleResend}
-            className="w-full"
+            className=""
           >
             {manageContent?.resendButton || "Re-send Confirmation Email/SMS"}
           </Button>
@@ -389,7 +389,7 @@ import { ToastProvider, useToast } from '@/components/ui';
             <Button
               variant="destructive"
               onClick={handleCancelBooking}
-              className="w-full"
+              className=""
             >
               {manageContent?.cancelButton || "Cancel Ride"}
             </Button>
@@ -398,7 +398,7 @@ import { ToastProvider, useToast } from '@/components/ui';
           {booking.balanceDue > 0 && booking.status === 'completed' && (
             <Button
               variant="outline"
-              className="w-full"
+              className=""
               onClick={async () => {
                 const res = await fetch('/api/complete-payment', { 
                   method: 'POST', 

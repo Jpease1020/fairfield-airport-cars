@@ -103,7 +103,7 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
       {/* Status Section */}
       <Section variant="muted" padding="xl">
         <Container maxWidth={containerMaxWidth}>
-          <div className="text-center">
+          <div className="">
             {/* Status Icon */}
             {showStatusIcon && (
               <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${currentStatus.bgColor} ${currentStatus.borderColor} border-2 mb-6`}>
@@ -114,7 +114,7 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
             {/* Header */}
             <PageHeader align="center" padding="lg" margin="none">
               {pageTitle && (
-                <H1 className="mb-4">
+                <H1 className="">
                   {pageTitle}
                 </H1>
               )}
@@ -124,7 +124,7 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
                 </H2>
               )}
               {pageDescription && (
-                <Lead className="mb-8">
+                <Lead className="">
                   {pageDescription}
                 </Lead>
               )}
@@ -132,7 +132,7 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
 
             {/* Action Buttons */}
             {showActionButtons && (primaryAction || secondaryAction) && (
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="">
                 {primaryAction && (
                   <a href={primaryAction.href}>
                     <Button 

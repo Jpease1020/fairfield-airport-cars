@@ -42,13 +42,13 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-text-primary mb-2">
+          <label className="">
             {label}
           </label>
         )}
-        <div className="relative">
+        <div className="">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted">
+            <div className="">
               {leftIcon}
             </div>
           )}
@@ -58,16 +58,16 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-muted">
+            <div className="">
               {rightIcon}
             </div>
           )}
         </div>
         {error && (
-          <p className="mt-1 text-sm text-error">{error}</p>
+          <p className="">{error}</p>
         )}
         {helper && !error && (
-          <p className="mt-1 text-sm text-text-muted">{helper}</p>
+          <p className="">{helper}</p>
         )}
       </div>
     );
@@ -107,9 +107,9 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
     );
 
     return (
-      <div className="w-full">
+      <div className="">
         {label && (
-          <label className="block text-sm font-medium text-text-primary mb-2">
+          <label className="">
             {label}
           </label>
         )}
@@ -119,10 +119,10 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
           {...props}
         />
         {error && (
-          <p className="mt-1 text-sm text-error">{error}</p>
+          <p className="">{error}</p>
         )}
         {helper && !error && (
-          <p className="mt-1 text-sm text-text-muted">{helper}</p>
+          <p className="">{helper}</p>
         )}
       </div>
     );
@@ -153,9 +153,9 @@ const EnhancedSelect = React.forwardRef<HTMLButtonElement, EnhancedSelectProps>(
     };
 
     return (
-      <div className="w-full">
+      <div className="">
         {label && (
-          <label className="block text-sm font-medium text-text-primary mb-2">
+          <label className="">
             {label}
           </label>
         )}
@@ -168,10 +168,10 @@ const EnhancedSelect = React.forwardRef<HTMLButtonElement, EnhancedSelectProps>(
           </SelectContent>
         </Select>
         {error && (
-          <p className="mt-1 text-sm text-error">{error}</p>
+          <p className="">{error}</p>
         )}
         {helper && !error && (
-          <p className="mt-1 text-sm text-text-muted">{helper}</p>
+          <p className="">{helper}</p>
         )}
       </div>
     );
@@ -193,17 +193,17 @@ const FormField: React.FC<FormFieldProps> = ({ label, error, helper, required, c
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label className="block text-sm font-medium text-text-primary mb-2">
+        <label className="">
           {label}
-          {required && <span className="text-error ml-1">*</span>}
+          {required && <span className="">*</span>}
         </label>
       )}
       {children}
       {error && (
-        <p className="mt-1 text-sm text-error">{error}</p>
+        <p className="">{error}</p>
       )}
       {helper && !error && (
-        <p className="mt-1 text-sm text-text-muted">{helper}</p>
+        <p className="">{helper}</p>
       )}
     </div>
   );
@@ -245,13 +245,13 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
   ({ countryCode = '+1', ...props }, ref) => {
     return (
       <div className="relative">
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted text-sm">
+        <div className="">
           {countryCode}
         </div>
         <EnhancedInput
           ref={ref}
           type="tel"
-          className="pl-12"
+          className=""
           {...props}
         />
       </div>

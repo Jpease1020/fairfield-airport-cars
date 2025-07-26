@@ -89,7 +89,7 @@ const CalendarPage = () => {
           description={`Showing ${events.length} bookings with color-coded status`}
         >
           {!loading && !error && (
-            <div className="calendar-container" style={{ marginTop: 'var(--spacing-md)' }}>
+            <div className="" style={{ marginTop: 'var(--spacing-md)' }}>
               {typeof window !== 'undefined' && (
                 <FullCalendar
                   plugins={[dayGridPlugin]}
