@@ -38,28 +38,30 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-white border-b border-border-primary shadow-sm sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+    <nav className="bg-white border-b-2 border-gray-100 shadow-lg sticky top-0 z-50 backdrop-blur-md bg-white/95">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="flex justify-between h-20 items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <Logo className="h-18 w-auto" />
-              <span className="text-xl font-bold text-brand-primary">{getCompanyName()}</span>
+            <Link href="/" className="flex items-center space-x-3 group">
+              <Logo className="h-12 w-auto transition-transform group-hover:scale-105" />
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+                {getCompanyName()}
+              </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-12">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'text-sm font-medium transition-colors',
+                  'text-base font-semibold transition-all duration-200 hover:scale-105',
                   item.current
-                    ? 'text-brand-primary'
-                    : 'text-text-secondary hover:text-brand-primary'
+                    ? 'text-blue-900 border-b-2 border-blue-900 pb-1'
+                    : 'text-gray-700 hover:text-blue-900 hover:border-b-2 hover:border-blue-300 pb-1'
                 )}
               >
                 {item.name}
@@ -71,10 +73,10 @@ const Navigation = () => {
           <div className="hidden md:flex items-center space-x-4">
             <a 
               href={`tel:${getPhoneNumber()}`}
-              className="flex items-center space-x-2 px-4 py-2 bg-brand-primary text-white rounded-md hover:bg-brand-primary-hover transition-colors"
+              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-900 to-blue-700 text-white rounded-xl hover:from-blue-800 hover:to-blue-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
             >
-              <Phone className="h-4 w-4" />
-              <span className="text-sm font-medium">Call Now</span>
+              <Phone className="h-5 w-5" />
+              <span>Call Now</span>
             </a>
           </div>
 
@@ -82,14 +84,14 @@ const Navigation = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="md:hidden"
+            className="md:hidden p-3 hover:bg-blue-50 rounded-xl"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Open menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
+              <X className="h-6 w-6 text-gray-700" />
             ) : (
-              <Menu className="h-6 w-6" />
+              <Menu className="h-6 w-6 text-gray-700" />
             )}
           </Button>
         </div>
@@ -97,30 +99,30 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-border-primary shadow-lg">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-xl">
+          <div className="px-6 pt-4 pb-6 space-y-3">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'block px-3 py-2 rounded-md text-base font-medium transition-colors',
+                  'block px-4 py-3 rounded-xl text-base font-semibold transition-all duration-200',
                   item.current
-                    ? 'bg-brand-primary text-white'
-                    : 'text-text-secondary hover:bg-bg-secondary hover:text-brand-primary'
+                    ? 'bg-blue-900 text-white shadow-lg'
+                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            <div className="pt-4 border-t border-border-primary">
+            <div className="pt-4 border-t border-gray-200">
               <a 
                 href={`tel:${getPhoneNumber()}`}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium bg-brand-primary text-white hover:bg-brand-primary-hover transition-colors"
+                className="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl text-base font-semibold bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg transition-all duration-200"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Phone className="h-4 w-4" />
+                <Phone className="h-5 w-5" />
                 <span>Call Now</span>
               </a>
             </div>

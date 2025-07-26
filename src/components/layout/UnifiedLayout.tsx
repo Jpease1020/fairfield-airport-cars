@@ -150,21 +150,21 @@ export function UnifiedLayout({
 
       {/* Page Header */}
       {(title || subtitle || description) && (
-        <section className="border-b bg-white/95 backdrop-blur-sm">
+        <section className="bg-gradient-to-b from-blue-50 to-white border-b-2 border-blue-100">
           <div className={containerClasses}>
-            <div className="py-8 text-center">
+            <div className="py-16 text-center">
               {title && (
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 bg-clip-text text-transparent mb-6 leading-tight">
                   {title}
                 </h1>
               )}
               {subtitle && (
-                <p className="text-xl text-gray-600 mb-2">
+                <p className="text-xl md:text-2xl text-gray-700 mb-4 font-medium max-w-4xl mx-auto leading-relaxed">
                   {subtitle}
                 </p>
               )}
               {description && (
-                <p className="text-base text-gray-500 max-w-2xl mx-auto">
+                <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
                   {description}
                 </p>
               )}
