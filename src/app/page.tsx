@@ -1,10 +1,62 @@
 'use client';
 
-import Link from 'next/link';
 import { UniversalLayout } from '@/components/layout/UniversalLayout';
 import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { 
+  GridSection,
+  InfoCard,
+  ActionButtonGroup,
+  ToastProvider,
+  useToast,
+  FeatureGrid
+} from '@/components/ui';
 
-export default function HomePage() {
+function HomePageContent() {
+  const { addToast } = useToast();
+
+  const heroActions = [
+    {
+      label: 'Book Your Ride',
+      onClick: () => window.location.href = '/book',
+      variant: 'primary' as const,
+      icon: '🚗'
+    },
+    {
+      label: 'Learn More',
+      onClick: () => window.location.href = '/about',
+      variant: 'outline' as const,
+      icon: 'ℹ️'
+    }
+  ];
+
+  // REFACTORED: Using structured feature data for FeatureGrid
+  const features = [
+    {
+      icon: "🚗",
+      title: "Professional Service",
+      description: "Experienced drivers with clean, well-maintained vehicles"
+    },
+    {
+      icon: "⏰",
+      title: "Reliable & On Time",
+      description: "We understand the importance of punctuality for airport travel"
+    },
+    {
+      icon: "💳",
+      title: "Easy Booking",
+      description: "Simple online booking with secure payment processing"
+    }
+  ];
+
+  const finalCTAActions = [
+    {
+      label: 'Book Now',
+      onClick: () => window.location.href = '/book',
+      variant: 'primary' as const,
+      icon: '🚀'
+    }
+  ];
+
   return (
     <LayoutEnforcer>
       <UniversalLayout 
@@ -13,59 +65,74 @@ export default function HomePage() {
         subtitle="Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area"
       >
         {/* Hero Section */}
-        <section className="content-section">
-          <div className="hero-content">
-            <h1 className="hero-title">Premium Airport Transportation</h1>
-            <p className="hero-subtitle">
-              Reliable, comfortable rides to and from Fairfield Airport
-            </p>
-            <div className="hero-cta">
-              <Link href="/book" className="btn btn-primary">
-                Book Your Ride
-              </Link>
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="🚗 Premium Airport Transportation"
+            description="Reliable, comfortable rides to and from Fairfield Airport with professional drivers"
+          >
+            <div style={{
+              textAlign: 'center',
+              padding: 'var(--spacing-xl) 0'
+            }}>
+              <p style={{
+                fontSize: 'var(--font-size-lg)',
+                color: 'var(--text-secondary)',
+                marginBottom: 'var(--spacing-lg)',
+                maxWidth: '600px',
+                margin: '0 auto var(--spacing-lg) auto'
+              }}>
+                Experience luxury, reliability, and professional service for all your airport transportation needs.
+                Our professional drivers ensure you arrive on time, every time.
+              </p>
+              
+              <ActionButtonGroup buttons={heroActions} />
             </div>
-          </div>
-        </section>
+          </InfoCard>
+        </GridSection>
 
         {/* Features Section */}
-        <section className="content-section">
-          <div className="section-header">
-            <h2>Why Choose Us?</h2>
-            <p>Professional service, reliable transportation, and peace of mind for your airport journey.</p>
-          </div>
-          
-          <div className="grid grid-3">
-            <div className="feature-card">
-              <div className="feature-icon">🚗</div>
-              <h3>Professional Service</h3>
-              <p>Experienced drivers with clean, well-maintained vehicles</p>
-            </div>
-            
-            <div className="feature-card">
-              <div className="feature-icon">⏰</div>
-              <h3>Reliable & On Time</h3>
-              <p>We understand the importance of punctuality for airport travel</p>
-            </div>
-            
-            <div className="feature-card">
-              <div className="feature-icon">💳</div>
-              <h3>Easy Booking</h3>
-              <p>Simple online booking with secure payment processing</p>
-            </div>
-          </div>
-        </section>
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="✨ Why Choose Us?"
+            description="Professional service, reliable transportation, and peace of mind for your airport journey"
+          >
+            {/* REFACTORED: Using FeatureGrid instead of manual CSS grid */}
+            <FeatureGrid features={features} columns={3} />
+          </InfoCard>
+        </GridSection>
 
         {/* Final CTA Section */}
-        <section className="content-section">
-          <div className="cta-section">
-            <h2>Ready to Book Your Ride?</h2>
-            <p>Get started with your airport transportation booking today</p>
-            <Link href="/book" className="btn btn-primary btn-lg">
-              Book Now
-            </Link>
-          </div>
-        </section>
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="🎯 Ready to Book Your Ride?"
+            description="Get started with your airport transportation booking today"
+          >
+            <div style={{
+              textAlign: 'center',
+              padding: 'var(--spacing-lg) 0'
+            }}>
+              <p style={{
+                fontSize: 'var(--font-size-base)',
+                color: 'var(--text-secondary)',
+                marginBottom: 'var(--spacing-lg)'
+              }}>
+                Join thousands of satisfied customers who trust us for their airport transportation needs.
+                Professional, reliable, and always on time.
+              </p>
+              
+              <ActionButtonGroup buttons={finalCTAActions} />
+            </div>
+          </InfoCard>
+        </GridSection>
       </UniversalLayout>
     </LayoutEnforcer>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <ToastProvider>
+      <HomePageContent />
+    </ToastProvider>
   );
 }
