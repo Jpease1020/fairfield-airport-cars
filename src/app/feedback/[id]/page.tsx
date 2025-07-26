@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { UnifiedLayout } from '@/components/layout';
-import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { 
   GridSection,
   InfoCard,
@@ -13,7 +12,7 @@ import {
 } from '@/components/ui';
 import { Star } from 'lucide-react';
 
-
+function FeedbackPageContent() {
   const params = useParams();
   const { addToast } = useToast();
   const [rating, setRating] = useState(0);
@@ -65,179 +64,93 @@ import { Star } from 'lucide-react';
   ];
 
   if (submitted) {
-    return (<UnifiedLayout 
-      layoutType="standard"
-      title="Share Feedback"
-      subtitle="Tell us about your experience"
-    >
-      <UniversalLayout 
-          layoutType="standard"
-          title="🎉 Thank You!"
-          subtitle="Your feedback has been submitted successfully"
-        >
-          <GridSection variant="content" columns={1}>
-            <InfoCard
-              title="✅ Feedback Submitted"
-              description="We appreciate you taking the time to share your experience"
-            >
-              <div style={{
-                textAlign: 'center',
-                padding: 'var(--spacing-xl)'
-              }}>
-                <div style={{ fontSize: '4rem', marginBottom: 'var(--spacing-lg)' }}>⭐</div>
-                <h3 style={{ margin: '0 0 var(--spacing-md) 0', color: 'var(--text-primary)' }}>
-                  Thank you for your feedback!
-                </h3>
-                <p style={{ 
-                  margin: '0 0 var(--spacing-lg) 0', 
-                  color: 'var(--text-secondary)',
-                  maxWidth: '500px',
-                  marginLeft: 'auto',
-                  marginRight: 'auto'
-                }}>
-                  Your rating and comments help us improve our service and provide the best 
-                  possible experience for all our customers.
-                </p>
-                
-                <ActionButtonGroup buttons={homeActions} />
-              </div>
-            </InfoCard>
-          </GridSection>
-    </UnifiedLayout>
-      </LayoutEnforcer>
-    );
-  }
-
-  return (<UnifiedLayout 
-      layoutType="standard"
-      title="Share Feedback"
-      subtitle="Tell us about your experience"
-    >
-      <UniversalLayout 
+    return (
+      <UnifiedLayout 
         layoutType="standard"
-        title="Leave Feedback"
-        subtitle="Help us improve by sharing your experience"
+        title="🎉 Thank You!"
+        subtitle="Your feedback has been submitted successfully"
       >
         <GridSection variant="content" columns={1}>
           <InfoCard
-            title="⭐ Rate Your Experience"
-            description="How was your ride with Fairfield Airport Cars?"
+            title="✅ Feedback Submitted"
+            description="We appreciate you taking the time to share your experience"
           >
-            <form onSubmit={handleSubmit} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--spacing-lg)',
-              padding: 'var(--spacing-lg) 0'
-            }}>
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: 'var(--font-size-sm)',
-                  fontWeight: '500',
-                  color: 'var(--text-primary)',
-                  marginBottom: 'var(--spacing-md)'
-                }}>
-                  How was your ride?
-                </label>
-                <div style={{
-                  display: 'flex',
-                  gap: 'var(--spacing-sm)',
-                  justifyContent: 'center',
-                  marginBottom: 'var(--spacing-sm)'
-                }}>
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setRating(star)}
-                      style={{
-                        padding: 'var(--spacing-sm)',
-                        borderRadius: 'var(--border-radius)',
-                        border: 'none',
-                        backgroundColor: star <= rating ? 'var(--yellow-50)' : 'transparent',
-                        color: star <= rating ? 'var(--yellow-500)' : 'var(--text-muted)',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseOver={(e) => {
-                        if (star > rating) {
-                          e.currentTarget.style.color = 'var(--yellow-400)';
-                        }
-                      }}
-                      onMouseOut={(e) => {
-                        if (star > rating) {
-                          e.currentTarget.style.color = 'var(--text-muted)';
-                        }
-                      }}
-                    >
-                      <Star style={{ width: '2rem', height: '2rem' }} />
-                    </button>
-                  ))}
-                </div>
-                <p style={{
-                  fontSize: 'var(--font-size-sm)',
-                  color: 'var(--text-secondary)',
-                  textAlign: 'center'
-                }}>
-                  {rating === 0 && 'Click a star to rate'}
-                  {rating === 1 && 'Poor'}
-                  {rating === 2 && 'Fair'}
-                  {rating === 3 && 'Good'}
-                  {rating === 4 && 'Very Good'}
-                  {rating === 5 && 'Excellent'}
-                </p>
-              </div>
+            <p>Your rating and comments help us improve our service and provide the best possible experience for all our customers.</p>
+            <ActionButtonGroup buttons={homeActions} />
+          </InfoCard>
+        </GridSection>
+      </UnifiedLayout>
+    );
+  }
 
-              <div>
-                <label 
-                  htmlFor="comment" 
-                  style={{
-                    display: 'block',
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: '500',
-                    color: 'var(--text-primary)',
-                    marginBottom: 'var(--spacing-sm)'
-                  }}
+  return (
+    <UnifiedLayout 
+      layoutType="standard"
+      title="Leave Feedback"
+      subtitle="Help us improve by sharing your experience"
+    >
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="⭐ Rate Your Experience"
+          description="How was your ride with Fairfield Airport Cars?"
+        >
+          <form onSubmit={handleSubmit}>
+            <p>
+              <label htmlFor="rating">
+                How was your ride?
+              </label>
+            </p>
+            <p>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  className="star-rating-button"
+                  aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
                 >
-                  Additional Comments (Optional)
-                </label>
-                <textarea
-                  id="comment"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Tell us about your experience..."
-                  rows={4}
-                  className="form-input"
-                  style={{
-                    width: '100%',
-                    resize: 'vertical',
-                    minHeight: '100px'
-                  }}
-                />
-              </div>
+                  <Star />
+                </button>
+              ))}
+            </p>
+            <p>
+              {rating === 0 && 'Click a star to rate'}
+              {rating === 1 && 'Poor'}
+              {rating === 2 && 'Fair'}
+              {rating === 3 && 'Good'}
+              {rating === 4 && 'Very Good'}
+              {rating === 5 && 'Excellent'}
+            </p>
 
+            <p>
+              <label htmlFor="comment">
+                Additional Comments (Optional)
+              </label>
+            </p>
+            <p>
+              <textarea
+                id="comment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Tell us about your experience..."
+                rows={4}
+                className="form-input"
+              />
+            </p>
+
+            <p>
               <button
                 type="submit"
                 disabled={loading || rating === 0}
-                className=""
+                className="action-button"
               >
-                {loading ? (
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg style={{ animation: 'spin 1s linear infinite', marginRight: 'var(--spacing-sm)', width: '1.25rem', height: '1.25rem' }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Submitting...
-                  </span>
-                ) : (
-                  '⭐ Submit Feedback'
-                )}
+                {loading ? 'Submitting...' : '⭐ Submit Feedback'}
               </button>
-            </form>
-          </InfoCard>
-        </GridSection>
+            </p>
+          </form>
+        </InfoCard>
+      </GridSection>
     </UnifiedLayout>
-    </LayoutEnforcer>
   );
 }
 
@@ -247,3 +160,4 @@ export default function FeedbackPage() {
       <FeedbackPageContent />
     </ToastProvider>
   );
+}
