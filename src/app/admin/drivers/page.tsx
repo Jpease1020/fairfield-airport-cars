@@ -14,30 +14,7 @@ import {
   useToast
 } from '@/components/ui';
 
-interface Driver {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  status: 'available' | 'on-trip' | 'offline';
-  vehicle: {
-    make: string;
-    model: string;
-    year: number;
-    color: string;
-    licensePlate: string;
-  };
-  rating: number;
-  totalRides: number;
-  location?: {
-    lat: number;
-    lng: number;
-    timestamp: Date;
-  };
-  createdAt: Date;
-}
 
-function DriversPageContent() {
   const { addToast } = useToast();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
@@ -423,4 +400,3 @@ export default function DriversPage() {
       <DriversPageContent />
     </ToastProvider>
   );
-}

@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { listBookings } from '../../../lib/services/booking-service';
 import { AdminPageWrapper, InfoCard, GridSection } from '@/components/ui';
 
-const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false }) as any;
+ ssr: false }) as any;
 const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
 
 const CalendarPage = () => {
@@ -182,6 +182,3 @@ const CalendarPage = () => {
       </GridSection>
     </AdminPageWrapper>
   );
-};
-
-export default CalendarPage; 

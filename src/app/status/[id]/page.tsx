@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
-import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { UnifiedLayout } from '@/components/layout';
+import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { 
   GridSection,
   InfoCard,
@@ -15,7 +15,7 @@ import {
 } from '@/components/ui';
 import { useBookingStatus, useEstimatedArrival } from '@/hooks/useBookingStatus';
 
-function BookingStatusPageContent() {
+
   const { addToast } = useToast();
   const params = useParams();
   const bookingId = params.id as string;
@@ -78,9 +78,12 @@ function BookingStatusPageContent() {
   ];
 
   if (loading) {
-    return (
-      <LayoutEnforcer>
-        <UniversalLayout 
+    return (<UnifiedLayout 
+      layoutType="status"
+      title="Booking Status"
+      subtitle="Track your ride"
+    >
+      <UniversalLayout 
           layoutType="standard"
           title="Booking Status"
           subtitle="Track your airport transportation"
@@ -98,15 +101,18 @@ function BookingStatusPageContent() {
               </div>
             </InfoCard>
           </GridSection>
-        </UniversalLayout>
+    </UnifiedLayout>
       </LayoutEnforcer>
     );
   }
 
   if (error) {
-    return (
-      <LayoutEnforcer>
-        <UniversalLayout 
+    return (<UnifiedLayout 
+      layoutType="status"
+      title="Booking Status"
+      subtitle="Track your ride"
+    >
+      <UniversalLayout 
           layoutType="standard"
           title="Booking Status"
           subtitle="Track your airport transportation"
@@ -145,13 +151,16 @@ function BookingStatusPageContent() {
               </div>
             </InfoCard>
           </GridSection>
-        </UniversalLayout>
+    </UnifiedLayout>
       </LayoutEnforcer>
     );
   }
 
-  return (
-    <LayoutEnforcer>
+  return (<UnifiedLayout 
+      layoutType="status"
+      title="Booking Status"
+      subtitle="Track your ride"
+    >
       <UniversalLayout 
         layoutType="standard"
         title="Booking Status"
@@ -337,7 +346,7 @@ function BookingStatusPageContent() {
             </div>
           </InfoCard>
         </GridSection>
-      </UniversalLayout>
+    </UnifiedLayout>
     </LayoutEnforcer>
   );
 }
@@ -348,4 +357,3 @@ export default function BookingStatusPage() {
       <BookingStatusPageContent />
     </ToastProvider>
   );
-}

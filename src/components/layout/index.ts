@@ -1,18 +1,16 @@
-// 🎨 Universal Design System Components
-// All pages MUST use these components for consistent design
+// 🎯 UNIFIED LAYOUT SYSTEM - THE SINGLE SYSTEM FOR ALL PAGES
+export { UnifiedLayout } from './UnifiedLayout';
 
-// CMS-Aware Layout Components (NEW - from other computer)
+// CMS-Aware Layout Components (Legacy - use UnifiedLayout instead)
 export { CMSStandardPage } from './CMSStandardPage';
 export { CMSMarketingPage } from './CMSMarketingPage';
 export { CMSConversionPage } from './CMSConversionPage';
 export { CMSContentPage } from './CMSContentPage';
 export { CMSStatusPage } from './CMSStatusPage';
 
-// Universal Layout System (Primary approach)
+// Legacy components - use UnifiedLayout instead
 export { UniversalLayout } from './UniversalLayout';
 export { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
-
-// Legacy components - use UniversalLayout or CMS components instead
 export { StandardLayout } from './StandardLayout';
 export { StandardNavigation } from './StandardNavigation';
 export { StandardHeader } from './StandardHeader';
@@ -24,37 +22,36 @@ export { PageHeader } from './PageHeader';
 export { Navigation } from './Navigation';
 
 /**
- * 🚨 IMPORTANT: Choose the right layout approach
+ * 🚨 IMPORTANT: Use UnifiedLayout for ALL pages
  * 
- * FOR CMS-INTEGRATED PAGES:
- * import { CMSStandardPage, CMSMarketingPage } from '@/components/layout';
+ * ✅ CORRECT - The Single System:
+ * import { UnifiedLayout } from '@/components/layout';
  * 
- * FOR UNIVERSAL DESIGN SYSTEM:
- * import { UniversalLayout, LayoutEnforcer } from '@/components/layout';
- * 
- * ✅ CMS Layout usage:
  * export default function MyPage() {
  *   return (
- *     <CMSStandardPage title="My Page" pageType="content">
- *       // Your content - CMS will handle layout
- *     </CMSStandardPage>
+ *     <UnifiedLayout
+ *       layoutType="standard"
+ *       title="My Page"
+ *       subtitle="Page description"
+ *     >
+ *       // Your content here
+ *     </UnifiedLayout>
  *   );
  * }
  * 
- * ✅ Universal Layout usage:
- * export default function MyPage() {
- *   return (
- *     <LayoutEnforcer>
- *       <UniversalLayout layoutType="standard" title="My Page">
- *         <section className="content-section">
- *           // Your content using standard CSS classes
- *         </section>
- *       </UniversalLayout>
- *     </LayoutEnforcer>
- *   );
- * }
+ * Layout Types for Different Pages:
+ * - "standard" - Public customer pages
+ * - "admin" - Admin dashboard pages
+ * - "minimal" - Login, error pages
+ * - "marketing" - Homepage, about page
+ * - "content" - Help, terms, privacy
+ * - "status" - Booking status, success pages
  * 
- * Layout Types:
- * - CMS: "content", "marketing", "conversion", "status"
- * - Universal: "standard", "admin", "minimal"
+ * Features:
+ * ✅ CMS color control from /admin/cms/colors
+ * ✅ Consistent spacing and typography
+ * ✅ Responsive design
+ * ✅ Accessibility built-in
+ * ✅ Navigation/footer control
+ * ✅ Multiple visual variants
  */ 

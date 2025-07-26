@@ -13,8 +13,7 @@ import {
 } from '@/components/ui';
 import { getCMSConfig, updateCMSConfig } from '@/lib/services/cms-service';
 
-const COLOR_VARIABLES = [
-  { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
+ key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
   { key: '--secondary', label: 'Secondary', description: 'Secondary brand color for accents' },
   { key: '--accent', label: 'Accent', description: 'Accent color for highlights and emphasis' },
   { key: '--background', label: 'Background', description: 'Main background color' },
@@ -302,4 +301,3 @@ export default function AdminColorsPage() {
       <AdminColorsPageContent />
     </ToastProvider>
   );
-} 

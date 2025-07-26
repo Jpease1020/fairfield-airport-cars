@@ -1,14 +1,17 @@
 'use client';
 
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
-import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { UnifiedLayout } from '@/components/layout';
+import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { GridSection, InfoCard, ToastProvider, useToast } from '@/components/ui';
 
-function PrivacyPageContent() {
+
   const { addToast } = useToast();
 
-  return (
-    <LayoutEnforcer>
+  return (<UnifiedLayout 
+      layoutType="content"
+      title="Privacy Policy"
+      subtitle="How we protect your information"
+    >
       <UniversalLayout 
         layoutType="standard"
         title="Privacy Policy"
@@ -136,7 +139,7 @@ function PrivacyPageContent() {
             </div>
           </InfoCard>
         </GridSection>
-      </UniversalLayout>
+    </UnifiedLayout>
     </LayoutEnforcer>
   );
 }
@@ -147,4 +150,3 @@ export default function PrivacyPage() {
       <PrivacyPageContent />
     </ToastProvider>
   );
-}

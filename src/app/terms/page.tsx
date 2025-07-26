@@ -1,117 +1,87 @@
 'use client';
 
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
-import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
-import { GridSection, InfoCard, ToastProvider, useToast } from '@/components/ui';
+import { UnifiedLayout } from '@/components/layout';
+import {
+  GridSection,
+  InfoCard,
+  ToastProvider,
+  useToast
+} from '@/components/ui';
 
 function TermsPageContent() {
   const { addToast } = useToast();
 
   return (
-    <LayoutEnforcer>
-      <UniversalLayout 
-        layoutType="standard"
-        title="Terms of Service"
-        subtitle="Please read these terms carefully before using our transportation services"
-      >
-        <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="📋 Terms of Service"
-            description="Effective Date: [Current Date] | Last Updated: [Current Date]"
-          >
-            <div style={{
-              fontSize: 'var(--font-size-sm)',
-              lineHeight: '1.6',
-              color: 'var(--text-primary)'
-            }}>
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>1. Acceptance of Terms</h3>
-                <p>
-                  By using Fairfield Airport Cars transportation services, you agree to be bound by these Terms of Service. 
-                  If you do not agree to these terms, please do not use our services.
-                </p>
-              </section>
+    <UnifiedLayout 
+      layoutType="content"
+      title="Terms of Service"
+      subtitle="Our terms and conditions"
+      description="Please review our terms of service for using Fairfield Airport Cars transportation services."
+    >
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="📋 Terms of Service"
+          description="Effective Date: January 1, 2024"
+        >
+          <div style={{
+            fontSize: 'var(--font-size-base)',
+            lineHeight: '1.6',
+            color: 'var(--text-primary)',
+            padding: 'var(--spacing-lg) 0'
+          }}>
+            <section style={{ marginBottom: 'var(--spacing-xl)' }}>
+              <h3 style={{ color: 'var(--brand-primary)', marginBottom: 'var(--spacing-md)' }}>
+                1. Service Agreement
+              </h3>
+              <p style={{ marginBottom: 'var(--spacing-md)' }}>
+                By using Fairfield Airport Cars transportation services, you agree to be bound by these terms of service. 
+                Our services are provided subject to your acceptance of and compliance with these terms.
+              </p>
+            </section>
 
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>2. Service Description</h3>
-                <p>
-                  Fairfield Airport Cars provides professional transportation services to and from airports and other destinations 
-                  in the Fairfield County, Connecticut area. Our services include scheduled pickups, airport transfers, and 
-                  ground transportation.
-                </p>
-              </section>
+            <section style={{ marginBottom: 'var(--spacing-xl)' }}>
+              <h3 style={{ color: 'var(--brand-primary)', marginBottom: 'var(--spacing-md)' }}>
+                2. Booking and Payment
+              </h3>
+              <p style={{ marginBottom: 'var(--spacing-md)' }}>
+                All bookings must be made through our official booking system. Payment is required at the time of booking. 
+                We accept major credit cards and process payments securely through our payment partners.
+              </p>
+            </section>
 
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>3. Booking and Payment</h3>
-                <ul>
-                  <li>All bookings must be made through our official booking system or authorized representatives</li>
-                  <li>Payment is required at the time of booking unless otherwise arranged</li>
-                  <li>Cancellations must be made at least 2 hours prior to scheduled pickup time</li>
-                  <li>Late cancellations may result in charges as outlined in our cancellation policy</li>
-                </ul>
-              </section>
+            <section style={{ marginBottom: 'var(--spacing-xl)' }}>
+              <h3 style={{ color: 'var(--brand-primary)', marginBottom: 'var(--spacing-md)' }}>
+                3. Cancellation Policy
+              </h3>
+              <p style={{ marginBottom: 'var(--spacing-md)' }}>
+                Bookings may be cancelled up to 4 hours before the scheduled pickup time for a full refund. 
+                Cancellations made within 4 hours of pickup time may be subject to a cancellation fee.
+              </p>
+            </section>
 
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>4. Customer Responsibilities</h3>
-                <ul>
-                  <li>Provide accurate pickup and destination information</li>
-                  <li>Be ready at the designated pickup time and location</li>
-                  <li>Respect our vehicles and drivers</li>
-                  <li>Follow all safety instructions provided by our drivers</li>
-                  <li>Pay all fees and charges in accordance with our pricing</li>
-                </ul>
-              </section>
+            <section style={{ marginBottom: 'var(--spacing-xl)' }}>
+              <h3 style={{ color: 'var(--brand-primary)', marginBottom: 'var(--spacing-md)' }}>
+                4. Liability and Insurance
+              </h3>
+              <p style={{ marginBottom: 'var(--spacing-md)' }}>
+                Fairfield Airport Cars maintains comprehensive commercial insurance coverage. 
+                Our liability is limited to the extent permitted by law. Passengers are responsible for their personal belongings.
+              </p>
+            </section>
 
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>5. Service Standards</h3>
-                <p>
-                  We strive to provide reliable, professional, and safe transportation services. While we make every effort 
-                  to meet scheduled pickup times, we cannot guarantee exact timing due to factors beyond our control such 
-                  as traffic, weather, or flight delays.
-                </p>
-              </section>
-
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>6. Liability and Insurance</h3>
-                <p>
-                  Fairfield Airport Cars maintains appropriate commercial insurance coverage. Our liability is limited to 
-                  the extent permitted by law. Customers are responsible for their personal belongings during transportation.
-                </p>
-              </section>
-
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>7. Privacy Policy</h3>
-                <p>
-                  Your privacy is important to us. Please review our Privacy Policy to understand how we collect, use, 
-                  and protect your personal information.
-                </p>
-              </section>
-
-              <section style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h3>8. Changes to Terms</h3>
-                <p>
-                  We reserve the right to modify these terms at any time. Continued use of our services following 
-                  any changes constitutes acceptance of the new terms.
-                </p>
-              </section>
-
-              <section>
-                <h3>9. Contact Information</h3>
-                <p>
-                  If you have questions about these Terms of Service, please contact us at:
-                  <br />
-                  <strong>Fairfield Airport Cars</strong>
-                  <br />
-                  Phone: (203) 555-0123
-                  <br />
-                  Email: info@fairfieldairportcars.com
-                </p>
-              </section>
-            </div>
-          </InfoCard>
-        </GridSection>
-      </UniversalLayout>
-    </LayoutEnforcer>
+            <section style={{ marginBottom: 'var(--spacing-xl)' }}>
+              <h3 style={{ color: 'var(--brand-primary)', marginBottom: 'var(--spacing-md)' }}>
+                5. Contact Information
+              </h3>
+              <p style={{ margin: 0 }}>
+                For questions about these terms, please contact us at (203) 555-0123 or 
+                email support@fairfieldairportcars.com.
+              </p>
+            </section>
+          </div>
+        </InfoCard>
+      </GridSection>
+    </UnifiedLayout>
   );
 }
 

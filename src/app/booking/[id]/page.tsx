@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function BookingPage() {
+
   const params = useParams();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -226,4 +226,3 @@ export default function BookingPage() {
       </PageContent>
     </PageContainer>
   );
-}

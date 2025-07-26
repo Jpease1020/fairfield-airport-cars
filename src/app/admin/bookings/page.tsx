@@ -17,7 +17,7 @@ import {
 } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 
-function AdminBookingsPageContent() {
+
   const { addToast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -427,6 +427,3 @@ const AdminBookingsPage: NextPage = () => {
       <AdminBookingsPageContent />
     </ToastProvider>
   );
-};
-
-export default AdminBookingsPage;

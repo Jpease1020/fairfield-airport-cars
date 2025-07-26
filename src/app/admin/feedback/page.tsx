@@ -11,17 +11,7 @@ import {
   DataTableAction
 } from '@/components/ui';
 
-interface Feedback {
-  id: string;
-  bookingId: string;
-  rating: number;
-  comment: string;
-  createdAt: Date;
-  customerName: string;
-  customerEmail: string;
-}
 
-const FeedbackPage = () => {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -378,6 +368,3 @@ const FeedbackPage = () => {
       </GridSection>
     </AdminPageWrapper>
   );
-};
-
-export default FeedbackPage; 

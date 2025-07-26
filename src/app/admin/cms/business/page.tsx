@@ -15,7 +15,7 @@ import {
   GridSection
 } from '@/components/ui';
 
-function BusinessSettingsPageContent() {
+
   const { addToast } = useToast();
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -474,6 +474,3 @@ const BusinessSettingsPage = () => {
       <BusinessSettingsPageContent />
     </ToastProvider>
   );
-};
-
-export default withAuth(BusinessSettingsPage); 

@@ -14,7 +14,7 @@ import {
   ActionButtonGroup
 } from '@/components/ui';
 
-function CMSPageContent() {
+
   const { addToast } = useToast();
   const [config, setConfig] = useState<CMSConfiguration | null>(null);
   const [loading, setLoading] = useState(true);
@@ -306,6 +306,3 @@ const CMSPage = () => {
       <CMSPageContent />
     </ToastProvider>
   );
-};
-
-export default CMSPage; 

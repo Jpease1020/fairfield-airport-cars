@@ -16,7 +16,7 @@ import {
   ActionButtonGroup
 } from '@/components/ui';
 
-function PromosPageContent() {
+
   const { addToast } = useToast();
   const [promos, setPromos] = useState<PromoCode[]>([]);
   const [form, setForm] = useState({ 
@@ -490,6 +490,3 @@ const PromosPage = () => {
       <PromosPageContent />
     </ToastProvider>
   );
-};
-
-export default PromosPage; 

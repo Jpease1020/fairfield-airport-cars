@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
-import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { UnifiedLayout } from '@/components/layout';
+import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { 
   GridSection,
   InfoCard,
@@ -16,7 +16,7 @@ import {
 import { FormField } from '@/components/forms/FormField';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-function CancelPageContent() {
+
   const { addToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -103,8 +103,11 @@ function CancelPageContent() {
     }
   ];
 
-  return (
-    <LayoutEnforcer>
+  return (<UnifiedLayout 
+      layoutType="standard"
+      title="Cancel Booking"
+      subtitle="Cancel your reservation"
+    >
       <UniversalLayout 
         layoutType="standard"
         title="Cancel Booking"
@@ -207,7 +210,7 @@ function CancelPageContent() {
             <FeatureGrid features={alternativeOptions} columns={3} />
           </InfoCard>
         </GridSection>
-      </UniversalLayout>
+    </UnifiedLayout>
     </LayoutEnforcer>
   );
 }
@@ -218,4 +221,3 @@ export default function CancelPage() {
       <CancelPageContent />
     </ToastProvider>
   );
-}

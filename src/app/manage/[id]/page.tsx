@@ -24,7 +24,7 @@ import { cmsService } from '@/lib/services/cms-service';
 import { authService } from '@/lib/services/auth-service';
 import { ToastProvider, useToast } from '@/components/ui';
 
-function ManageBookingPageContent() {
+
   const { id } = useParams();
   const router = useRouter();
   const { addToast } = useToast();
@@ -444,4 +444,3 @@ export default function ManageBookingPage() {
       <ManageBookingPageContent />
     </ToastProvider>
   );
-} 

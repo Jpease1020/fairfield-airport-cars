@@ -2,8 +2,8 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
-import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { UnifiedLayout } from '@/components/layout';
+import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { 
   GridSection,
   InfoCard,
@@ -12,7 +12,7 @@ import {
   LoadingSpinner
 } from '@/components/ui';
 
-export default function SuccessPage() {
+
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
   const [booking, setBooking] = useState<any>(null);
@@ -66,9 +66,12 @@ export default function SuccessPage() {
   ];
 
   if (loading) {
-    return (
-      <LayoutEnforcer>
-        <UniversalLayout 
+    return (<UnifiedLayout 
+      layoutType="status"
+      title="Booking Confirmed"
+      subtitle="Your ride has been successfully booked"
+    >
+      <UniversalLayout 
           layoutType="standard"
           title="Processing..."
           subtitle="Loading your booking confirmation"
@@ -81,13 +84,16 @@ export default function SuccessPage() {
               </p>
             </div>
           </GridSection>
-        </UniversalLayout>
+    </UnifiedLayout>
       </LayoutEnforcer>
     );
   }
 
-  return (
-    <LayoutEnforcer>
+  return (<UnifiedLayout 
+      layoutType="status"
+      title="Booking Confirmed"
+      subtitle="Your ride has been successfully booked"
+    >
       <UniversalLayout 
         layoutType="standard"
         title="🎉 Booking Confirmed!"
@@ -257,7 +263,6 @@ export default function SuccessPage() {
             </div>
           </InfoCard>
         </GridSection>
-      </UniversalLayout>
+    </UnifiedLayout>
     </LayoutEnforcer>
   );
-}

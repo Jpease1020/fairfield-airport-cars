@@ -12,7 +12,7 @@ import {
   DataTableAction
 } from '@/components/ui';
 
-const CommentsPage = () => {
+
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -380,6 +380,3 @@ const CommentsPage = () => {
       </GridSection>
     </AdminPageWrapper>
   );
-};
-
-export default CommentsPage; 

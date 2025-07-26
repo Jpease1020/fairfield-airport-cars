@@ -15,7 +15,7 @@ import {
   useToast
 } from '@/components/ui';
 
-function CostsPageContent() {
+
   const { addToast } = useToast();
   const [costs, setCosts] = useState<RealCostItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -345,6 +345,3 @@ const CostsPage = () => {
       <CostsPageContent />
     </ToastProvider>
   );
-};
-
-export default CostsPage; 

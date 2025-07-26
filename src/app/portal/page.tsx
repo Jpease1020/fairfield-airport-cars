@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
-import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { UnifiedLayout } from '@/components/layout';
+import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { 
   GridSection,
   InfoCard,
@@ -12,7 +12,7 @@ import {
   useToast
 } from '@/components/ui';
 
-function PortalPageContent() {
+
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,8 +66,11 @@ function PortalPageContent() {
     }
   ];
 
-  return (
-    <LayoutEnforcer>
+  return (<UnifiedLayout 
+      layoutType="standard"
+      title="Customer Portal"
+      subtitle="Manage your bookings and account"
+    >
       <UniversalLayout 
         layoutType="standard"
         title="Customer Portal"
@@ -150,7 +153,7 @@ function PortalPageContent() {
             </div>
           </InfoCard>
         </GridSection>
-      </UniversalLayout>
+    </UnifiedLayout>
     </LayoutEnforcer>
   );
 }
@@ -161,4 +164,3 @@ export default function PortalPage() {
       <PortalPageContent />
     </ToastProvider>
   );
-}

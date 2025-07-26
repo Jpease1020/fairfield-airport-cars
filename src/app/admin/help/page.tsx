@@ -2,7 +2,7 @@
 
 import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup } from '@/components/ui';
 
-const AdminHelpPage = () => {
+
   const helpSections = [
     {
       title: "Managing Bookings",
@@ -299,6 +299,3 @@ const AdminHelpPage = () => {
       </SettingSection>
     </AdminPageWrapper>
   );
-};
-
-export default AdminHelpPage; 

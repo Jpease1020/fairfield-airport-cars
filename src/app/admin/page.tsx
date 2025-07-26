@@ -1,177 +1,128 @@
 'use client';
 
-import React from 'react';
-import { 
+import { UnifiedLayout } from '@/components/layout';
+import {
   AdminPageWrapper,
-  StatCard, 
-  InfoCard, 
-  ActivityList, 
-  AlertList, 
-  ActionGrid,
-  GridSection
+  GridSection,
+  InfoCard,
+  ActionButtonGroup,
+  ToastProvider,
+  useToast
 } from '@/components/ui';
 
-export default function AdminDashboard() {
-  // Data for components
-  const headerActions = [
-    { 
-      label: 'View All Bookings', 
-      href: '/admin/bookings', 
-      variant: 'outline' as const,
-      icon: '📅'
-    },
-    { 
-      label: 'Calendar View', 
-      href: '/admin/calendar', 
-      variant: 'primary' as const,
-      icon: '📆'
-    }
-  ];
-
-  const recentBookings = [
-    {
-      id: 1,
-      icon: "✅",
-      iconType: "success" as const,
-      title: "John Smith → JFK Airport",
-      subtitle: "Today, 2:30 PM",
-      amount: "$85"
-    },
-    {
-      id: 2,
-      icon: "⏱️",
-      iconType: "pending" as const,
-      title: "Sarah Johnson → LaGuardia",
-      subtitle: "Today, 4:15 PM",
-      amount: "$75"
-    },
-    {
-      id: 3,
-      icon: "✅",
-      iconType: "success" as const,
-      title: "Mike Davis → Newark",
-      subtitle: "Yesterday, 1:45 PM",
-      amount: "$95"
-    }
-  ];
-
-  const systemAlerts = [
-    {
-      id: 1,
-      icon: "⚠️",
-      type: "warning" as const,
-      title: "Driver Availability Low",
-      message: "Only 2 drivers available for tomorrow"
-    },
-    {
-      id: 2,
-      icon: "✅",
-      type: "success" as const,
-      title: "Payment System Online",
-      message: "All payment methods working normally"
-    },
-    {
-      id: 3,
-      icon: "📈",
-      type: "info" as const,
-      title: "Revenue Target Met",
-      message: "Monthly revenue target achieved"
-    }
-  ];
+function AdminDashboardContent() {
+  const { addToast } = useToast();
 
   const quickActions = [
     {
-      id: 1,
-      icon: "📅",
-      label: "Manage Bookings",
-      href: "/admin/bookings"
+      label: 'View Bookings',
+      onClick: () => window.location.href = '/admin/bookings',
+      variant: 'primary' as const,
+      icon: '📅'
     },
     {
-      id: 2,
-      icon: "📆",
-      label: "View Calendar",
-      href: "/admin/calendar"
+      label: 'Manage CMS',
+      onClick: () => window.location.href = '/admin/cms',
+      variant: 'secondary' as const,
+      icon: '⚙️'
     },
     {
-      id: 3,
-      icon: "👥",
-      label: "Manage Drivers",
-      href: "/admin/drivers"
-    },
-    {
-      id: 4,
-      icon: "💬",
-      label: "View Feedback",
-      href: "/admin/feedback"
+      label: 'Colors & Design',
+      onClick: () => window.location.href = '/admin/cms/colors',
+      variant: 'outline' as const,
+      icon: '🎨'
     }
   ];
 
+  const statsCards = [
+    { title: 'Total Bookings', value: '245', icon: '📊', color: 'var(--success-base)' },
+    { title: 'Active Drivers', value: '12', icon: '🚗', color: 'var(--brand-primary)' },
+    { title: 'Revenue This Month', value: '$8,450', icon: '💰', color: 'var(--warning-base)' },
+    { title: 'Customer Rating', value: '4.9/5', icon: '⭐', color: 'var(--success-base)' }
+  ];
+
   return (
-    <AdminPageWrapper
-      title="Admin Dashboard"
-      subtitle="Welcome back! Here's what's happening with your business."
-      actions={headerActions}
-      loading={false}
-      error={null}
+    <UnifiedLayout 
+      layoutType="admin"
+      title="🏠 Admin Dashboard"
+      subtitle="Manage your airport transportation business"
+      description="Overview of bookings, revenue, and business operations"
+      showNavigation={false}
+      showFooter={false}
+      maxWidth="full"
     >
-      {/* Business Stats Overview */}
-      <GridSection variant="stats" columns={4}>
-        <StatCard
-          title="Total Bookings"
-          icon="📊"
-          statNumber="24"
-          statChange="+12% from last month"
-          changeType="positive"
-        />
-        <StatCard
-          title="Active Drivers"
-          icon="👥"
-          statNumber="8"
-          statChange="+2 from last week"
-          changeType="positive"
-        />
-        <StatCard
-          title="Revenue"
-          icon="💰"
-          statNumber="$12,450"
-          statChange="+8% from last month"
-          changeType="positive"
-        />
-        <StatCard
-          title="Customer Rating"
-          icon="⭐"
-          statNumber="4.9/5"
-          statChange="+0.2 from last month"
-          changeType="positive"
-        />
-      </GridSection>
+      <AdminPageWrapper title="Dashboard" subtitle="Business overview and quick actions">
+        {/* Quick Actions */}
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="⚡ Quick Actions"
+            description="Common administrative tasks"
+          >
+            <ActionButtonGroup buttons={quickActions} />
+          </InfoCard>
+        </GridSection>
 
-      {/* Activity and Alerts */}
-      <GridSection variant="activity" columns={2}>
-        <InfoCard
-          title="📋 Recent Bookings"
-          description="Latest customer bookings and their status"
-        >
-          <ActivityList activities={recentBookings} />
-        </InfoCard>
+        {/* Statistics Cards */}
+        <GridSection variant="content" columns={4}>
+          {statsCards.map((stat, index) => (
+            <InfoCard
+              key={index}
+              title={`${stat.icon} ${stat.title}`}
+              description={stat.value}
+            >
+              <div style={{
+                textAlign: 'center',
+                padding: 'var(--spacing-lg)'
+              }}>
+                <div style={{
+                  fontSize: 'var(--font-size-2xl)',
+                  fontWeight: '700',
+                  color: stat.color,
+                  marginBottom: 'var(--spacing-sm)'
+                }}>
+                  {stat.value}
+                </div>
+                <p style={{
+                  fontSize: 'var(--font-size-sm)',
+                  color: 'var(--text-secondary)',
+                  margin: 0
+                }}>
+                  {stat.title}
+                </p>
+              </div>
+            </InfoCard>
+          ))}
+        </GridSection>
 
-        <InfoCard
-          title="🔔 System Alerts"
-          description="Important notifications and updates"
-        >
-          <AlertList alerts={systemAlerts} />
-        </InfoCard>
-      </GridSection>
+        {/* Recent Activity */}
+        <GridSection variant="content" columns={1}>
+          <InfoCard
+            title="📈 Recent Activity"
+            description="Latest bookings and system updates"
+          >
+            <div style={{
+              padding: 'var(--spacing-lg)',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                fontSize: 'var(--font-size-base)',
+                color: 'var(--text-secondary)',
+                margin: 0
+              }}>
+                Recent activity data will be displayed here once the booking system is fully integrated.
+              </p>
+            </div>
+          </InfoCard>
+        </GridSection>
+      </AdminPageWrapper>
+    </UnifiedLayout>
+  );
+}
 
-      {/* Quick Actions */}
-      <GridSection variant="actions" columns={1}>
-        <InfoCard
-          title="🎯 Quick Actions"
-          description="Common tasks and shortcuts for efficient management"
-        >
-          <ActionGrid actions={quickActions} columns={4} />
-        </InfoCard>
-      </GridSection>
-    </AdminPageWrapper>
+export default function AdminDashboard() {
+  return (
+    <ToastProvider>
+      <AdminDashboardContent />
+    </ToastProvider>
   );
 } 

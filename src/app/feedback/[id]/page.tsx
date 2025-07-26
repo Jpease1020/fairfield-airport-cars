@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
-import { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
+import { UnifiedLayout } from '@/components/layout';
+import { UnifiedLayout } from '@/lib/design-system/UnifiedLayout';
 import { 
   GridSection,
   InfoCard,
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui';
 import { Star } from 'lucide-react';
 
-function FeedbackPageContent() {
+
   const params = useParams();
   const { addToast } = useToast();
   const [rating, setRating] = useState(0);
@@ -65,9 +65,12 @@ function FeedbackPageContent() {
   ];
 
   if (submitted) {
-    return (
-      <LayoutEnforcer>
-        <UniversalLayout 
+    return (<UnifiedLayout 
+      layoutType="standard"
+      title="Share Feedback"
+      subtitle="Tell us about your experience"
+    >
+      <UniversalLayout 
           layoutType="standard"
           title="🎉 Thank You!"
           subtitle="Your feedback has been submitted successfully"
@@ -100,13 +103,16 @@ function FeedbackPageContent() {
               </div>
             </InfoCard>
           </GridSection>
-        </UniversalLayout>
+    </UnifiedLayout>
       </LayoutEnforcer>
     );
   }
 
-  return (
-    <LayoutEnforcer>
+  return (<UnifiedLayout 
+      layoutType="standard"
+      title="Share Feedback"
+      subtitle="Tell us about your experience"
+    >
       <UniversalLayout 
         layoutType="standard"
         title="Leave Feedback"
@@ -230,7 +236,7 @@ function FeedbackPageContent() {
             </form>
           </InfoCard>
         </GridSection>
-      </UniversalLayout>
+    </UnifiedLayout>
     </LayoutEnforcer>
   );
 }
@@ -241,4 +247,3 @@ export default function FeedbackPage() {
       <FeedbackPageContent />
     </ToastProvider>
   );
-}

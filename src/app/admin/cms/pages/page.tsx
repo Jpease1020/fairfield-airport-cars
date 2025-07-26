@@ -18,8 +18,7 @@ import {
 } from "@/components/cms/PageEditors";
 import withAuth from "../../withAuth";
 
-const PAGE_KEYS = [
-  { key: "home", label: "Homepage", icon: "🏠" },
+ key: "home", label: "Homepage", icon: "🏠" },
   { key: "help", label: "Help Page", icon: "❓" },
   { key: "booking", label: "Booking Page", icon: "📅" },
   { key: "success", label: "Success Page", icon: "✅" },
@@ -291,6 +290,3 @@ const PagesCMS = () => {
       <PagesCMSContent />
     </ToastProvider>
   );
-};
-
-export default withAuth(PagesCMS); 

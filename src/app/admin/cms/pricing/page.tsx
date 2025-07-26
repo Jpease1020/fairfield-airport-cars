@@ -23,7 +23,7 @@ import {
   Trash2
 } from 'lucide-react';
 
-const PricingSettingsPage = () => {
+
   const [settings, setSettings] = useState<PricingSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -402,6 +402,3 @@ const PricingSettingsPage = () => {
       </div>
     </div>
   );
-};
-
-export default withAuth(PricingSettingsPage); 
