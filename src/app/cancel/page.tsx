@@ -10,8 +10,11 @@ import {
   StatusMessage,
   ToastProvider,
   useToast,
-  ActionButtonGroup
+  ActionButtonGroup,
+  FeatureGrid
 } from '@/components/ui';
+import { FormField } from '@/components/forms/FormField';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 function CancelPageContent() {
   const { addToast } = useToast();
@@ -80,6 +83,25 @@ function CancelPageContent() {
     'Other'
   ];
 
+  // REFACTORED: Using structured feature data for FeatureGrid
+  const alternativeOptions = [
+    {
+      icon: "⏰",
+      title: "Reschedule",
+      description: "Change your pickup time or date instead of cancelling"
+    },
+    {
+      icon: "📍",
+      title: "Modify Location",
+      description: "Update pickup or dropoff locations if your plans changed"
+    },
+    {
+      icon: "💬",
+      title: "Contact Support",
+      description: "Speak with our team about flexible options"
+    }
+  ];
+
   return (
     <LayoutEnforcer>
       <UniversalLayout 
@@ -109,67 +131,32 @@ function CancelPageContent() {
               flexDirection: 'column',
               gap: 'var(--spacing-lg)'
             }}>
-              <div>
-                <label 
-                  htmlFor="booking-id"
-                  style={{
-                    display: 'block',
-                    marginBottom: 'var(--spacing-sm)',
-                    fontWeight: '500',
-                    color: 'var(--text-primary)'
-                  }}
-                >
-                  Booking ID *
-                </label>
-                <input
-                  id="booking-id"
-                  type="text"
-                  value={bookingId}
-                  onChange={(e) => setBookingId(e.target.value)}
-                  placeholder="Enter your booking reference number"
-                  style={{
-                    width: '100%',
-                    padding: 'var(--spacing-md)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--border-radius)',
-                    fontSize: 'var(--font-size-base)',
-                    backgroundColor: 'var(--background-primary)',
-                    color: 'var(--text-primary)'
-                  }}
-                />
-              </div>
+              {/* REFACTORED: Using FormField instead of manual input */}
+              <FormField
+                label="Booking ID"
+                id="booking-id"
+                type="text"
+                value={bookingId}
+                onChange={(e) => setBookingId(e.target.value)}
+                placeholder="Enter your booking reference number"
+                required
+              />
 
-              <div>
-                <label 
-                  htmlFor="cancellation-reason"
-                  style={{
-                    display: 'block',
-                    marginBottom: 'var(--spacing-sm)',
-                    fontWeight: '500',
-                    color: 'var(--text-primary)'
-                  }}
-                >
+              {/* REFACTORED: Using proper select component */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-primary">
                   Reason for Cancellation (Optional)
                 </label>
-                <select
-                  id="cancellation-reason"
-                  value={cancellationReason}
-                  onChange={(e) => setCancellationReason(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: 'var(--spacing-md)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--border-radius)',
-                    fontSize: 'var(--font-size-base)',
-                    backgroundColor: 'var(--background-primary)',
-                    color: 'var(--text-primary)'
-                  }}
-                >
-                  <option value="">Select a reason...</option>
-                  {cancellationReasons.map(reason => (
-                    <option key={reason} value={reason}>{reason}</option>
-                  ))}
-                </select>
+                <Select value={cancellationReason} onValueChange={setCancellationReason}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a reason..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cancellationReasons.map(reason => (
+                      <SelectItem key={reason} value={reason}>{reason}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <ActionButtonGroup buttons={quickActions} />
@@ -215,36 +202,8 @@ function CancelPageContent() {
             title="🔄 Alternative Options"
             description="Consider these alternatives before cancelling"
           >
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 'var(--spacing-lg)',
-              padding: 'var(--spacing-lg) 0'
-            }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-sm)' }}>⏰</div>
-                <h4>Reschedule</h4>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  Change your pickup time or date instead of cancelling
-                </p>
-              </div>
-              
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-sm)' }}>📍</div>
-                <h4>Modify Location</h4>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  Update pickup or dropoff locations if your plans changed
-                </p>
-              </div>
-              
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-sm)' }}>💬</div>
-                <h4>Contact Support</h4>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  Speak with our team about flexible options
-                </p>
-              </div>
-            </div>
+            {/* REFACTORED: Using FeatureGrid instead of manual grid */}
+            <FeatureGrid features={alternativeOptions} columns={3} />
           </InfoCard>
         </GridSection>
       </UniversalLayout>

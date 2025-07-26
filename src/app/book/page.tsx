@@ -9,7 +9,8 @@ import {
   InfoCard,
   StatusMessage,
   ToastProvider,
-  useToast
+  useToast,
+  FeatureGrid
 } from '@/components/ui';
 import BookingForm from './booking-form';
 
@@ -124,6 +125,25 @@ function BookPageContent() {
     }
   };
 
+  // REFACTORED: Using structured feature data for FeatureGrid
+  const features = [
+    {
+      icon: "⏰",
+      title: "Always On Time",
+      description: "We track your flight and traffic to ensure punctual service"
+    },
+    {
+      icon: "🚗",
+      title: "Premium Vehicles",
+      description: "Clean, comfortable cars with professional drivers"
+    },
+    {
+      icon: "💳",
+      title: "Secure Payment",
+      description: "Safe and secure online payment processing"
+    }
+  ];
+
   return (
     <LayoutEnforcer>
       <UniversalLayout 
@@ -145,30 +165,8 @@ function BookPageContent() {
             title="✨ Why Choose Us?"
             description="Professional service you can count on"
           >
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 'var(--spacing-lg)',
-              padding: 'var(--spacing-lg) 0'
-            }}>
-              <div className="feature-item">
-                <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-sm)' }}>⏰</div>
-                <h3>Always On Time</h3>
-                <p>We track your flight and traffic to ensure punctual service</p>
-              </div>
-              
-              <div className="feature-item">
-                <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-sm)' }}>🚗</div>
-                <h3>Premium Vehicles</h3>
-                <p>Clean, comfortable cars with professional drivers</p>
-              </div>
-              
-              <div className="feature-item">
-                <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-sm)' }}>💳</div>
-                <h3>Secure Payment</h3>
-                <p>Safe and secure online payment processing</p>
-              </div>
-            </div>
+            {/* REFACTORED: Using FeatureGrid instead of manual grid */}
+            <FeatureGrid features={features} columns={3} />
           </InfoCard>
         </GridSection>
 

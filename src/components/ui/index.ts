@@ -75,4 +75,7 @@ export { Switch } from './switch';
 export { Textarea } from './textarea';
 
 // Accessibility
-export { AccessibilityEnhancer } from './AccessibilityEnhancer'; 
+export { AccessibilityEnhancer } from './AccessibilityEnhancer';
+
+// Reusable Patterns
+export { FeatureGrid } from './FeatureGrid'; 
