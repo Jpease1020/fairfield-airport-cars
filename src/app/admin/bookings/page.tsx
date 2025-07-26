@@ -11,11 +11,14 @@ import {
   InfoCard,
   DataTable,
   DataTableColumn,
-  DataTableAction
+  DataTableAction,
+  ToastProvider,
+  useToast
 } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 
-const AdminBookingsPage: NextPage = () => {
+function AdminBookingsPageContent() {
+  const { addToast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -148,35 +151,38 @@ const AdminBookingsPage: NextPage = () => {
 
   const handleStatusUpdate = async (booking: Booking, newStatus: Booking['status']) => {
     if (!booking.id) {
-      alert('Cannot update booking: missing ID');
+      addToast('error', 'Cannot update booking: missing ID');
       return;
     }
     
     try {
       await updateBooking(booking.id, { status: newStatus });
+      addToast('success', `Booking status updated to ${newStatus}`);
       await fetchBookings(); // Refresh data
     } catch (err) {
       console.error('Error updating booking:', err);
-      alert('Failed to update booking status');
+      addToast('error', 'Failed to update booking status');
     }
   };
 
   const handleDeleteBooking = async (booking: Booking) => {
     if (!booking.id) {
-      alert('Cannot delete booking: missing ID');
+      addToast('error', 'Cannot delete booking: missing ID');
       return;
     }
     
-    if (!confirm(`Are you sure you want to delete booking for ${booking.name}?`)) {
+    // Use window.confirm for now - can be enhanced with a proper modal later
+    if (!window.confirm(`Are you sure you want to delete booking for ${booking.name}? This action cannot be undone.`)) {
       return;
     }
     
     try {
       await deleteBooking(booking.id);
+      addToast('success', `Booking for ${booking.name} has been deleted`);
       await fetchBookings(); // Refresh data
     } catch (err) {
       console.error('Error deleting booking:', err);
-      alert('Failed to delete booking');
+      addToast('error', 'Failed to delete booking');
     }
   };
 
@@ -190,7 +196,7 @@ const AdminBookingsPage: NextPage = () => {
     },
     {
       label: 'Export CSV',
-      onClick: () => alert('Export functionality coming soon'),
+      onClick: () => addToast('info', 'Export functionality coming soon'),
       variant: 'primary' as const
     }
   ];
@@ -412,6 +418,14 @@ const AdminBookingsPage: NextPage = () => {
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
+  );
+}
+
+const AdminBookingsPage: NextPage = () => {
+  return (
+    <ToastProvider>
+      <AdminBookingsPageContent />
+    </ToastProvider>
   );
 };
 

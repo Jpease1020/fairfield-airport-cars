@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { 
+  AdminPageWrapper,
   StatCard, 
-  PageHeader, 
   InfoCard, 
   ActivityList, 
   AlertList, 
@@ -17,12 +17,14 @@ export default function AdminDashboard() {
     { 
       label: 'View All Bookings', 
       href: '/admin/bookings', 
-      variant: 'outline' as const 
+      variant: 'outline' as const,
+      icon: '📅'
     },
     { 
-      label: 'Calendar', 
+      label: 'Calendar View', 
       href: '/admin/calendar', 
-      variant: 'primary' as const 
+      variant: 'primary' as const,
+      icon: '📆'
     }
   ];
 
@@ -105,13 +107,14 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Admin Dashboard"
-        subtitle="Welcome back! Here's what's happening with your business."
-        actions={headerActions}
-      />
-
+    <AdminPageWrapper
+      title="Admin Dashboard"
+      subtitle="Welcome back! Here's what's happening with your business."
+      actions={headerActions}
+      loading={false}
+      error={null}
+    >
+      {/* Business Stats Overview */}
       <GridSection variant="stats" columns={4}>
         <StatCard
           title="Total Bookings"
@@ -143,30 +146,32 @@ export default function AdminDashboard() {
         />
       </GridSection>
 
+      {/* Activity and Alerts */}
       <GridSection variant="activity" columns={2}>
         <InfoCard
-          title="Recent Bookings"
+          title="📋 Recent Bookings"
           description="Latest customer bookings and their status"
         >
           <ActivityList activities={recentBookings} />
         </InfoCard>
 
         <InfoCard
-          title="System Alerts"
+          title="🔔 System Alerts"
           description="Important notifications and updates"
         >
           <AlertList alerts={systemAlerts} />
         </InfoCard>
       </GridSection>
 
+      {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
         <InfoCard
-          title="Quick Actions"
-          description="Common tasks and shortcuts"
+          title="🎯 Quick Actions"
+          description="Common tasks and shortcuts for efficient management"
         >
           <ActionGrid actions={quickActions} columns={4} />
         </InfoCard>
       </GridSection>
-    </div>
+    </AdminPageWrapper>
   );
 } 
