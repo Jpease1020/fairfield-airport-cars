@@ -42,7 +42,14 @@
     "monitor": "node scripts/monitor-app.js",
     "design-check": "npm run lint && npm run design-validate",
     "design-validate": "node scripts/validate-design-system.js",
-    "design-fix": "node scripts/fix-design-violations.js"
+    "design-fix": "node scripts/fix-design-violations.js",
+    "test:watch": "jest --watch",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "deploy:staging": "vercel",
+    "deploy:production": "./scripts/deploy-production.sh",
+    "build:analyze": "ANALYZE=true npm run build",
+    "lighthouse": "lighthouse http://localhost:3001 --view"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",
