@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import withAuth from '../withAuth';
 import { listBookings } from '../../../lib/services/booking-service';
-import { PageHeader, InfoCard, GridSection } from '@/components/ui';
+import { AdminPageWrapper, InfoCard, GridSection } from '@/components/ui';
 
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false }) as any;
 const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
@@ -12,30 +11,58 @@ const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ss
 const CalendarPage = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const bookings = await listBookings();
-        const ev = bookings.map((b) => ({
-          id: b.id,
-          title: `${b.name} – $${b.fare}`,
-          start: b.pickupDateTime,
-          url: `/booking/${b.id}`,
-          backgroundColor: b.status === 'cancelled' ? '#fca5a5' : b.status === 'confirmed' ? '#6ee7b7' : '#fcd34d',
-        }));
-        setEvents(ev);
-      } catch (error) {
-        console.error('Failed to load bookings:', error);
-      } finally {
-        setLoading(false);
-      }
-    })();
+    fetchCalendarData();
   }, []);
+
+  const fetchCalendarData = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      console.log('📅 Loading calendar data...');
+      
+      const bookings = await listBookings();
+      const calendarEvents = bookings.map((booking) => ({
+        id: booking.id,
+        title: `${booking.name} – $${booking.fare}`,
+        start: booking.pickupDateTime,
+        url: `/booking/${booking.id}`,
+        backgroundColor: getEventColor(booking.status),
+        borderColor: getEventColor(booking.status),
+        textColor: '#ffffff'
+      }));
+      
+      console.log('✅ Calendar events loaded:', calendarEvents.length);
+      setEvents(calendarEvents);
+    } catch (err) {
+      console.error('❌ Failed to load calendar data:', err);
+      setError('Failed to load calendar data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getEventColor = (status: string) => {
+    switch (status) {
+      case 'cancelled': return '#dc2626';
+      case 'confirmed': return '#059669';
+      case 'completed': return '#0d9488';
+      case 'pending': return '#d97706';
+      default: return '#6b7280';
+    }
+  };
 
   const headerActions = [
     { 
-      label: 'View Bookings List', 
+      label: 'Refresh',
+      onClick: fetchCalendarData,
+      variant: 'outline' as const,
+      disabled: loading
+    },
+    { 
+      label: 'View Bookings', 
       href: '/admin/bookings', 
       variant: 'outline' as const 
     },
@@ -47,25 +74,22 @@ const CalendarPage = () => {
   ];
 
   return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Ride Calendar"
-        subtitle="View all bookings in calendar format"
-        actions={headerActions}
-      />
-
+    <AdminPageWrapper
+      title="Ride Calendar"
+      subtitle="View all bookings in calendar format"
+      actions={headerActions}
+      loading={loading}
+      error={error}
+      loadingMessage="Loading calendar data..."
+      errorTitle="Calendar Load Error"
+    >
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="Monthly Booking Calendar"
-          description={`Showing ${events.length} bookings this month`}
+          title="📅 Monthly Booking Calendar"
+          description={`Showing ${events.length} bookings with color-coded status`}
         >
-          {loading ? (
-            <div className="loading-spinner py-8">
-              <div className="loading-spinner-icon">🔄</div>
-              <p>Loading calendar...</p>
-            </div>
-          ) : (
-            <div className="calendar-container">
+          {!loading && !error && (
+            <div className="calendar-container" style={{ marginTop: 'var(--spacing-md)' }}>
               {typeof window !== 'undefined' && (
                 <FullCalendar
                   plugins={[dayGridPlugin]}
@@ -83,14 +107,81 @@ const CalendarPage = () => {
                       info.jsEvent.preventDefault();
                     }
                   }}
+                  eventDisplay="block"
+                  dayMaxEvents={3}
+                  moreLinkClick="popover"
                 />
               )}
             </div>
           )}
+
+          {!loading && !error && events.length === 0 && (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: 'var(--spacing-xl)',
+              color: 'var(--text-secondary)' 
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-md)' }}>📅</div>
+              <h3 style={{ marginBottom: 'var(--spacing-sm)' }}>No bookings found</h3>
+              <p>No bookings scheduled for this month.</p>
+            </div>
+          )}
         </InfoCard>
       </GridSection>
-    </div>
+
+      {/* Calendar Legend */}
+      <GridSection variant="content" columns={1}>
+        <InfoCard
+          title="📊 Status Legend"
+          description="Color coding for booking statuses"
+        >
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+            gap: 'var(--spacing-md)',
+            marginTop: 'var(--spacing-md)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+              <div style={{ 
+                width: '16px', 
+                height: '16px', 
+                backgroundColor: '#d97706', 
+                borderRadius: '4px' 
+              }}></div>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>Pending</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+              <div style={{ 
+                width: '16px', 
+                height: '16px', 
+                backgroundColor: '#059669', 
+                borderRadius: '4px' 
+              }}></div>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>Confirmed</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+              <div style={{ 
+                width: '16px', 
+                height: '16px', 
+                backgroundColor: '#0d9488', 
+                borderRadius: '4px' 
+              }}></div>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>Completed</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+              <div style={{ 
+                width: '16px', 
+                height: '16px', 
+                backgroundColor: '#dc2626', 
+                borderRadius: '4px' 
+              }}></div>
+              <span style={{ fontSize: 'var(--font-size-sm)' }}>Cancelled</span>
+            </div>
+          </div>
+        </InfoCard>
+      </GridSection>
+    </AdminPageWrapper>
   );
 };
 
-export default withAuth(CalendarPage); 
+export default CalendarPage; 

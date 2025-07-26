@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';
-import Link from 'next/link';
 import { 
   AdminPageWrapper,
   GridSection, 
   StatCard, 
   InfoCard, 
-  ActionGrid
+  ActionGrid,
+  DataTable,
+  DataTableColumn,
+  DataTableAction
 } from '@/components/ui';
-import { Button } from '@/components/ui/button';
 
 const CostsPage = () => {
   const [costs, setCosts] = useState<RealCostItem[]>([]);
@@ -26,30 +27,197 @@ const CostsPage = () => {
     try {
       setError(null);
       setLoading(true);
+      console.log('💰 Loading costs data...');
+      
       const costsData = await realCostTrackingService.getCosts();
       setCosts(costsData);
       
       const summaryData = await realCostTrackingService.getRealCostSummary();
       setSummary(summaryData);
+      
+      console.log('✅ Costs loaded:', costsData.length, 'categories');
     } catch (err) {
+      console.error('❌ Error loading costs:', err);
       setError('Failed to load costs data. Please try again.');
-      console.error('Error loading costs:', err);
     } finally {
       setLoading(false);
     }
   };
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
+
+  const getStatusIcon = (cost: RealCostItem) => {
+    if (cost.actualMonthlyCost === 0) return '⏱️';
+    if (cost.actualMonthlyCost > cost.projectedMonthlyCost) return '❌';
+    return '✅';
+  };
+
+  const getVariance = (actual: number, projected: number) => {
+    if (projected === 0) return 0;
+    return ((actual - projected) / projected) * 100;
+  };
+
+  const renderStatus = (cost: RealCostItem) => {
+    const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
+    const icon = getStatusIcon(cost);
+    
+    let statusText = 'On Track';
+    let statusStyle = {
+      backgroundColor: '#dcfce7',
+      color: '#166534',
+      border: '1px solid #4ade80'
+    };
+
+    if (cost.actualMonthlyCost === 0) {
+      statusText = 'Pending';
+      statusStyle = {
+        backgroundColor: '#fef3c7',
+        color: '#92400e',
+        border: '1px solid #fcd34d'
+      };
+    } else if (variance > 10) {
+      statusText = 'Over Budget';
+      statusStyle = {
+        backgroundColor: '#fee2e2',
+        color: '#dc2626',
+        border: '1px solid #f87171'
+      };
+    } else if (variance > 0) {
+      statusText = 'Slightly Over';
+      statusStyle = {
+        backgroundColor: '#fed7aa',
+        color: '#c2410c',
+        border: '1px solid #fb923c'
+      };
+    }
+
+    return (
+      <span
+        style={{
+          ...statusStyle,
+          padding: 'var(--spacing-xs) var(--spacing-sm)',
+          borderRadius: 'var(--border-radius)',
+          fontSize: 'var(--font-size-xs)',
+          fontWeight: '500',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 'var(--spacing-xs)'
+        }}
+      >
+        {icon} {statusText}
+      </span>
+    );
+  };
+
   const headerActions = [
     { 
-      label: 'Refresh Data', 
+      label: 'Refresh', 
       onClick: loadCosts, 
       variant: 'outline' as const,
       disabled: loading
     },
     { 
-      label: 'Add Manual Cost', 
+      label: 'Export Report', 
+      onClick: () => alert('Export functionality coming soon'), 
+      variant: 'outline' as const 
+    },
+    { 
+      label: 'Add Cost', 
       href: '/admin/costs/manual-entry', 
       variant: 'primary' as const 
+    }
+  ];
+
+  // Table columns
+  const columns: DataTableColumn<RealCostItem>[] = [
+    {
+      key: 'category',
+      label: 'Category',
+      sortable: true,
+      render: (_, cost) => (
+        <div>
+          <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+            {cost.category}
+          </div>
+          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+            {cost.description}
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'projectedMonthlyCost',
+      label: 'Projected',
+      sortable: true,
+      render: (value) => (
+        <div style={{ fontWeight: '500' }}>
+          {formatCurrency(value)}
+        </div>
+      )
+    },
+    {
+      key: 'actualMonthlyCost',
+      label: 'Actual',
+      sortable: true,
+      render: (value) => (
+        <div style={{ fontWeight: '500' }}>
+          {formatCurrency(value)}
+        </div>
+      )
+    },
+    {
+      key: 'actions',
+      label: 'Variance',
+      sortable: false,
+      render: (_, cost) => {
+        const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
+        const isPositive = variance >= 0;
+        
+        return (
+          <div style={{ 
+            fontWeight: '500',
+            color: cost.actualMonthlyCost === 0 ? 'var(--text-secondary)' : 
+                   variance > 10 ? '#dc2626' : 
+                   variance > 0 ? '#c2410c' : '#166534'
+          }}>
+            {cost.actualMonthlyCost === 0 ? 'N/A' : 
+             `${isPositive ? '+' : ''}${variance.toFixed(1)}%`}
+          </div>
+        );
+      }
+    },
+    {
+      key: 'actions',
+      label: 'Status',
+      sortable: false,
+      render: (_, cost) => renderStatus(cost)
+    }
+  ];
+
+  // Table actions
+  const actions: DataTableAction<RealCostItem>[] = [
+    {
+      label: 'View Details',
+      icon: '👁️',
+      onClick: (cost) => alert(`Viewing details for: ${cost.category}`),
+      variant: 'outline'
+    },
+    {
+      label: 'Update Cost',
+      icon: '✏️',
+      onClick: (cost) => alert(`Updating cost for: ${cost.category}`),
+      variant: 'primary'
+    },
+    {
+      label: 'View History',
+      icon: '📊',
+      onClick: (cost) => alert(`Viewing history for: ${cost.category}`),
+      variant: 'outline'
     }
   ];
 
@@ -58,7 +226,7 @@ const CostsPage = () => {
       id: 1,
       icon: "📊",
       label: "Cost Analytics",
-      onClick: () => alert('Analytics coming soon')
+      onClick: () => alert('Analytics dashboard coming soon')
     },
     {
       id: 2,
@@ -75,23 +243,13 @@ const CostsPage = () => {
     {
       id: 4,
       icon: "📅",
-      label: "Cost History",
-      onClick: () => alert('History coming soon')
+      label: "Monthly Reports",
+      onClick: () => alert('Monthly reports coming soon')
     }
   ];
 
-  const getStatusIcon = (cost: RealCostItem) => {
-    if (cost.actualMonthlyCost === 0) return '⏱️';
-    if (cost.actualMonthlyCost > cost.projectedMonthlyCost) return '❌';
-    return '✅';
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
+  const overBudgetItems = costs.filter(c => c.actualMonthlyCost > c.projectedMonthlyCost).length;
+  const pendingItems = costs.filter(c => c.actualMonthlyCost === 0).length;
 
   return (
     <AdminPageWrapper
@@ -127,9 +285,9 @@ const CostsPage = () => {
         <StatCard
           title="Over Budget Items"
           icon="⚠️"
-          statNumber={costs.filter(c => c.actualMonthlyCost > c.projectedMonthlyCost).length.toString()}
-          statChange={`${costs.filter(c => c.actualMonthlyCost === 0).length} pending`}
-          changeType={costs.filter(c => c.actualMonthlyCost > c.projectedMonthlyCost).length > 0 ? 'negative' : 'positive'}
+          statNumber={overBudgetItems.toString()}
+          statChange={`${pendingItems} pending updates`}
+          changeType={overBudgetItems > 0 ? 'negative' : 'positive'}
         />
         
         <StatCard
@@ -141,41 +299,27 @@ const CostsPage = () => {
         />
       </GridSection>
 
-      {/* Cost Breakdown */}
+      {/* Cost Breakdown Table */}
       <GridSection variant="content" columns={1}>
         <InfoCard
           title="💰 Cost Breakdown"
-          description="Individual cost categories and their status"
+          description="Search, sort, and manage your business cost categories"
         >
-          {costs.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <p className="text-lg">📊 No cost data available</p>
-              <p className="text-sm mt-2">Add some manual cost entries to get started</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {costs.map((cost, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xl">{getStatusIcon(cost)}</span>
-                    <div>
-                      <h4 className="font-medium">{cost.category}</h4>
-                      <p className="text-sm text-gray-600">{cost.description}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="font-medium">
-                      {formatCurrency(cost.actualMonthlyCost)} / {formatCurrency(cost.projectedMonthlyCost)}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      Actual / Projected
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <DataTable
+            data={costs}
+            columns={columns}
+            actions={actions}
+            loading={loading}
+            searchPlaceholder="Search by cost category or description..."
+            emptyMessage="No cost data available. Add some manual cost entries to get started."
+            emptyIcon="💰"
+            pageSize={15}
+            rowClassName={(cost) => 
+              cost.actualMonthlyCost > cost.projectedMonthlyCost ? 'border-l-4 border-red-500' : 
+              cost.actualMonthlyCost === 0 ? 'opacity-75' : ''
+            }
+            onRowClick={(cost) => console.log('Clicked cost category:', cost.category)}
+          />
         </InfoCard>
       </GridSection>
 
@@ -183,9 +327,9 @@ const CostsPage = () => {
       <GridSection variant="actions" columns={1}>
         <InfoCard
           title="⚡ Quick Actions"
-          description="Manage your cost tracking and analysis"
+          description="Manage your cost tracking and generate reports"
         >
-          <ActionGrid actions={quickActions} />
+          <ActionGrid actions={quickActions} columns={4} />
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
