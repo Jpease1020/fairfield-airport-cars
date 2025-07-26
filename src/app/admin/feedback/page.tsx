@@ -11,7 +11,17 @@ import {
   DataTableAction
 } from '@/components/ui';
 
+interface Feedback {
+  id: string;
+  bookingId: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+  customerName: string;
+  customerEmail: string;
+}
 
+function FeedbackPageContent() {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,14 +115,14 @@ import {
       };
     }
 
-    const totalRating = feedback.reduce((sum, item) => sum + item.rating, 0);
-    const averageRating = totalRating / feedback.length;
-    const fiveStarCount = feedback.filter(item => item.rating === 5).length;
-    const positiveCount = feedback.filter(item => item.rating >= 4).length;
-    const positivePercentage = (positiveCount / feedback.length) * 100;
+    const totalFeedback = feedback.length;
+    const averageRating = feedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback;
+    const fiveStarCount = feedback.filter(f => f.rating === 5).length;
+    const positiveCount = feedback.filter(f => f.rating >= 4).length;
+    const positivePercentage = (positiveCount / totalFeedback) * 100;
 
     return {
-      totalFeedback: feedback.length,
+      totalFeedback,
       averageRating,
       fiveStarCount,
       positivePercentage
@@ -124,27 +134,18 @@ import {
   };
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 5) return '#166534'; // green
-    if (rating >= 4) return '#ca8a04'; // yellow
-    if (rating >= 3) return '#ea580c'; // orange
+    if (rating >= 4) return '#16a34a'; // green
+    if (rating >= 3) return '#ca8a04'; // yellow
     return '#dc2626'; // red
   };
 
   const renderRating = (rating: number) => {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
-        <span style={{ 
-          color: getRatingColor(rating), 
-          fontSize: 'var(--font-size-lg)',
-          fontWeight: '500'
-        }}>
+      <div className="rating-display">
+        <span className="rating-stars">
           {getRatingStars(rating)}
         </span>
-        <span style={{ 
-          fontSize: 'var(--font-size-sm)', 
-          color: 'var(--text-secondary)',
-          fontWeight: '500'
-        }}>
+        <span className="rating-score">
           {rating}/5
         </span>
       </div>
@@ -177,14 +178,14 @@ import {
       label: 'Customer',
       sortable: true,
       render: (_, feedback) => (
-        <div>
-          <div style={{ fontWeight: '500', marginBottom: 'var(--spacing-xs)' }}>
+        <div className="customer-info">
+          <div className="customer-name">
             {feedback.customerName}
           </div>
-          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+          <div className="customer-contact">
             📧 {feedback.customerEmail}
           </div>
-          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+          <div className="customer-booking">
             🎫 {feedback.bookingId}
           </div>
         </div>
@@ -201,12 +202,7 @@ import {
       label: 'Feedback',
       sortable: false,
       render: (value) => (
-        <div style={{ 
-          maxWidth: '300px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap'
-        }}>
+        <div className="feedback-comment">
           {value}
         </div>
       )
@@ -218,11 +214,11 @@ import {
       render: (value) => {
         const date = new Date(value);
         return (
-          <div>
-            <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500' }}>
+          <div className="feedback-date">
+            <div className="date-day">
               {date.toLocaleDateString()}
             </div>
-            <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>
+            <div className="date-time">
               {date.toLocaleTimeString()}
             </div>
           </div>
@@ -234,28 +230,22 @@ import {
   // Table actions
   const actions: DataTableAction<Feedback>[] = [
     {
-      label: 'View Full',
+      label: 'View Details',
       icon: '👁️',
-      onClick: (feedback) => alert(`Full feedback from ${feedback.customerName}:\n\n"${feedback.comment}"`),
+      onClick: (feedback) => alert(`Viewing feedback details for ${feedback.customerName}`),
       variant: 'outline'
     },
     {
       label: 'Reply',
       icon: '💬',
-      onClick: (feedback) => alert(`Opening email to reply to ${feedback.customerName} at ${feedback.customerEmail}`),
+      onClick: (feedback) => alert(`Reply functionality for ${feedback.customerName} coming soon`),
       variant: 'primary'
-    },
-    {
-      label: 'View Booking',
-      icon: '🎫',
-      onClick: (feedback) => window.open(`/booking/${feedback.bookingId}`, '_blank'),
-      variant: 'outline'
     },
     {
       label: 'Flag',
       icon: '🚩',
-      onClick: (feedback) => alert(`Flagging feedback from ${feedback.customerName} for review`),
-      variant: 'destructive',
+      onClick: (feedback) => alert(`Flag feedback from ${feedback.customerName} coming soon`),
+      variant: 'outline',
       condition: (feedback) => feedback.rating <= 2
     }
   ];
@@ -263,7 +253,7 @@ import {
   return (
     <AdminPageWrapper
       title="Customer Feedback"
-      subtitle="Reviews and ratings from your customers"
+      subtitle="Monitor and manage customer reviews and ratings"
       actions={headerActions}
       loading={loading}
       error={error}
@@ -332,32 +322,20 @@ import {
           title="📊 Rating Distribution"
           description="Breakdown of customer ratings"
         >
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(5, 1fr)', 
-            gap: 'var(--spacing-md)',
-            marginTop: 'var(--spacing-md)'
-          }}>
+          <div className="rating-distribution">
             {[5, 4, 3, 2, 1].map(rating => {
               const count = feedback.filter(f => f.rating === rating).length;
               const percentage = feedback.length > 0 ? (count / feedback.length) * 100 : 0;
               
               return (
-                <div key={rating} style={{ textAlign: 'center' }}>
-                  <div style={{ 
-                    fontSize: 'var(--font-size-xl)', 
-                    color: getRatingColor(rating),
-                    marginBottom: 'var(--spacing-xs)'
-                  }}>
+                <div key={rating} className="rating-item">
+                  <div className="rating-stars-display">
                     {'★'.repeat(rating)}
                   </div>
-                  <div style={{ fontWeight: '500', fontSize: 'var(--font-size-lg)' }}>
+                  <div className="rating-count">
                     {count}
                   </div>
-                  <div style={{ 
-                    fontSize: 'var(--font-size-sm)', 
-                    color: 'var(--text-secondary)' 
-                  }}>
+                  <div className="rating-percentage">
                     {percentage.toFixed(0)}%
                   </div>
                 </div>
@@ -368,3 +346,12 @@ import {
       </GridSection>
     </AdminPageWrapper>
   );
+}
+
+const FeedbackPage = () => {
+  return (
+    <FeedbackPageContent />
+  );
+};
+
+export default FeedbackPage;

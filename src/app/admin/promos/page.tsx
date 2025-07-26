@@ -16,7 +16,7 @@ import {
   ActionButtonGroup
 } from '@/components/ui';
 
-
+function PromosPageContent() {
   const { addToast } = useToast();
   const [promos, setPromos] = useState<PromoCode[]>([]);
   const [form, setForm] = useState({ 
@@ -58,7 +58,7 @@ import {
 
   const addPromo = async () => {
     if (!form.code || !form.value) {
-              addToast('error', 'Please fill in required fields');
+      addToast('error', 'Please fill in required fields');
       return;
     }
 
@@ -85,7 +85,7 @@ import {
       }
     } catch (err) {
       console.error('❌ Error creating promo:', err);
-              addToast('error', 'Failed to create promo code. Please try again.');
+      addToast('error', 'Failed to create promo code. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -98,13 +98,13 @@ import {
       const res = await fetch(`/api/promos/${id}`, { method: 'DELETE' });
       if (res.ok) {
         await fetchPromos();
-        alert('Promo code deleted successfully!');
+        addToast('success', 'Promo code deleted successfully!');
       } else {
         throw new Error('Failed to delete promo code');
       }
     } catch (err) {
       console.error('❌ Error deleting promo:', err);
-      alert('Failed to delete promo code. Please try again.');
+      addToast('error', 'Failed to delete promo code. Please try again.');
     }
   };
 
@@ -113,30 +113,36 @@ import {
   };
 
   const getPromoStatus = (promo: PromoCode) => {
-    const now = new Date();
-    const expires = promo.expiresAt ? new Date(promo.expiresAt) : null;
-    
-    if (expires && now > expires) return 'Expired';
-    if (promo.usageLimit && promo.usageCount >= promo.usageLimit) return 'Limit Reached';
-    if (expires && expires.getTime() - now.getTime() < 7 * 24 * 60 * 60 * 1000) return 'Expiring Soon';
+    if (promo.expiresAt && new Date(promo.expiresAt) < new Date()) return 'Expired';
+    if (promo.usageLimit && (promo.usageCount || 0) >= promo.usageLimit) return 'Limit Reached';
+    if (promo.expiresAt && new Date(promo.expiresAt) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) return 'Expiring Soon';
     return 'Active';
   };
 
   const renderStatus = (promo: PromoCode) => {
     const status = getPromoStatus(promo);
-    let statusStyle = {
-      backgroundColor: '#dcfce7',
-      color: '#166534',
-      border: '1px solid #4ade80'
-    };
-
+    let statusStyle = {};
+    
     switch (status) {
+      case 'Active':
+        statusStyle = {
+          backgroundColor: '#dcfce7',
+          color: '#166534',
+          border: '1px solid #22c55e'
+        };
+        break;
       case 'Expired':
-      case 'Limit Reached':
         statusStyle = {
           backgroundColor: '#fee2e2',
-          color: '#dc2626',
-          border: '1px solid #f87171'
+          color: '#991b1b',
+          border: '1px solid #ef4444'
+        };
+        break;
+      case 'Limit Reached':
+        statusStyle = {
+          backgroundColor: '#fef3c7',
+          color: '#92400e',
+          border: '1px solid #f59e0b'
         };
         break;
       case 'Expiring Soon':
@@ -149,15 +155,7 @@ import {
     }
 
     return (
-      <span
-        style={{
-          ...statusStyle,
-          padding: 'var(--spacing-xs) var(--spacing-sm)',
-          borderRadius: 'var(--border-radius)',
-          fontSize: 'var(--font-size-xs)',
-          fontWeight: '500'
-        }}
-      >
+      <span className="status-badge">
         {status}
       </span>
     );
@@ -189,15 +187,7 @@ import {
       label: 'Promo Code',
       sortable: true,
       render: (value) => (
-        <span style={{
-          fontFamily: 'monospace',
-          fontWeight: '600',
-          backgroundColor: '#dbeafe',
-          color: '#1e40af',
-          padding: 'var(--spacing-xs) var(--spacing-sm)',
-          borderRadius: 'var(--border-radius)',
-          fontSize: 'var(--font-size-sm)'
-        }}>
+        <span className="promo-code">
           {value}
         </span>
       )
@@ -207,10 +197,7 @@ import {
       label: 'Type',
       sortable: true,
       render: (value) => (
-        <span style={{ 
-          textTransform: 'capitalize',
-          fontWeight: '500'
-        }}>
+        <span className="promo-type">
           {value === 'percent' ? 'Percentage' : 'Fixed Amount'}
         </span>
       )
@@ -220,10 +207,7 @@ import {
       label: 'Discount',
       sortable: true,
       render: (_, promo) => (
-        <span style={{ 
-          fontWeight: '500',
-          color: 'var(--primary-color)'
-        }}>
+        <span className="promo-value">
           {formatPromoValue(promo)}
         </span>
       )
@@ -239,11 +223,11 @@ import {
       label: 'Usage',
       sortable: true,
       render: (_, promo) => (
-        <div>
-          <span style={{ fontWeight: '500' }}>
+        <div className="usage-display">
+          <span className="usage-count">
             {promo.usageCount || 0}
           </span>
-          <span style={{ color: 'var(--text-secondary)' }}>
+          <span className="usage-limit">
             /{promo.usageLimit || '∞'}
           </span>
         </div>
@@ -342,19 +326,9 @@ import {
           description="Add a new promotional discount code for your customers"
           icon="🎟️"
         >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 'var(--spacing-md)',
-            marginBottom: 'var(--spacing-lg)'
-          }}>
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: 'var(--spacing-xs)',
-                fontWeight: '500',
-                fontSize: 'var(--font-size-sm)'
-              }}>
+          <div className="form-grid">
+            <div className="form-field">
+              <label className="form-label">
                 Code (uppercase) *
               </label>
               <input
@@ -367,13 +341,8 @@ import {
               />
             </div>
             
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: 'var(--spacing-xs)',
-                fontWeight: '500',
-                fontSize: 'var(--font-size-sm)'
-              }}>
+            <div className="form-field">
+              <label className="form-label">
                 Type *
               </label>
               <select 
@@ -386,13 +355,8 @@ import {
               </select>
             </div>
             
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: 'var(--spacing-xs)',
-                fontWeight: '500',
-                fontSize: 'var(--font-size-sm)'
-              }}>
+            <div className="form-field">
+              <label className="form-label">
                 Value *
               </label>
               <input
@@ -405,13 +369,8 @@ import {
               />
             </div>
             
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: 'var(--spacing-xs)',
-                fontWeight: '500',
-                fontSize: 'var(--font-size-sm)'
-              }}>
+            <div className="form-field">
+              <label className="form-label">
                 Expires At
               </label>
               <input
@@ -422,13 +381,8 @@ import {
               />
             </div>
             
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: 'var(--spacing-xs)',
-                fontWeight: '500',
-                fontSize: 'var(--font-size-sm)'
-              }}>
+            <div className="form-field">
+              <label className="form-label">
                 Usage Limit
               </label>
               <input
@@ -441,7 +395,7 @@ import {
             </div>
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div className="form-actions">
             <ActionButtonGroup
               buttons={[{
                 label: submitting ? 'Creating...' : 'Create Promo Code',
@@ -490,3 +444,6 @@ const PromosPage = () => {
       <PromosPageContent />
     </ToastProvider>
   );
+};
+
+export default PromosPage;
