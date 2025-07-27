@@ -100,8 +100,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
       {/* Related Links Section */}
       {showRelatedLinks && (
         <Section variant="muted" padding="xl">
-          <Container maxWidth={containerMaxWidth}>
-            <Container spacing="lg">
+          <Container maxWidth={containerMaxWidth} spacing="lg">
               <H2>Related Information</H2>
               <Lead>Find more helpful resources and information</Lead>
               
@@ -137,7 +136,6 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
                 </Container>
               </Stack>
             </Container>
-          </Container>
         </Section>
       )}
     </CMSLayout>

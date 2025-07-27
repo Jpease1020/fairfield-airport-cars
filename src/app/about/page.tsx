@@ -8,8 +8,10 @@ import {
   FeatureGrid,
   ActionButtonGroup,
   ToastProvider,
-  Text
+  Text,
+  Container
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 function AboutPageContent() {
   const ctaActions = [
@@ -100,13 +102,13 @@ function AboutPageContent() {
           title="✈️ Airport Destinations"
           description="We serve all major airports in the region:"
         >
-          <ul>
-            <li>John F. Kennedy International Airport (JFK)</li>
-            <li>LaGuardia Airport (LGA)</li>
-            <li>Newark Liberty International Airport (EWR)</li>
-            <li>Bradley International Airport (BDL)</li>
-            <li>Westchester County Airport (HPN)</li>
-          </ul>
+          <Stack spacing="sm">
+            <Container>• John F. Kennedy International Airport (JFK)</Container>
+            <Container>• LaGuardia Airport (LGA)</Container>
+            <Container>• Newark Liberty International Airport (EWR)</Container>
+            <Container>• Bradley International Airport (BDL)</Container>
+            <Container>• Westchester County Airport (HPN)</Container>
+          </Stack>
         </InfoCard>
       </GridSection>
 
