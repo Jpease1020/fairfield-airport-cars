@@ -58,6 +58,7 @@
     "check:components": "node scripts/check-component-rules.js",
     "monitor:agents": "node scripts/monitor-agents.js",
     "reorganize:layout": "node scripts/reorganize-layout-design.js",
+    "cleanup:structural": "node scripts/structural-cleanup.js",
     "pre-commit": "./scripts/pre-commit-check.sh && npm run check:components"
   },
   "dependencies": {
