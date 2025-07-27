@@ -14,7 +14,8 @@ import {
   ToastProvider,
   useToast,
   Container,
-  Text
+  Text,
+  Span
 } from '@/components/ui';
 
 function CostsPageContent() {
@@ -86,9 +87,9 @@ function CostsPageContent() {
     const statusText = getStatusText(cost);
     
     return (
-      <span>
+      <Span>
         {icon} {statusText}
-      </span>
+      </Span>
     );
   };
 
