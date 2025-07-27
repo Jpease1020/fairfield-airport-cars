@@ -5,6 +5,7 @@ import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
 import { Textarea, Select, Option, Container } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface SimpleCommentSystemProps {
   children: ReactNode;
@@ -181,13 +182,13 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
   const getStatusIcon = (status: ConfluenceComment['status']) => {
     switch (status) {
       case 'open':
-        return <Clock className="w-4 h-4" />;
+        return <Clock  />;
       case 'in-progress':
-        return <Clock className="w-4 h-4" />;
+        return <Clock  />;
       case 'resolved':
-        return <CheckCircle className="w-4 h-4" />;
+        return <CheckCircle  />;
       default:
-        return <Clock className="w-4 h-4" />;
+        return <Clock  />;
     }
   };
 
@@ -299,16 +300,15 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
 
       {/* Comment Box */}
       {activeCommentBox && selectedElement && (
-        <div
+        <Container
           ref={commentBoxRef}
-          className=""
           style={{
             top: selectedElement.getBoundingClientRect().top - 10,
             left: selectedElement.getBoundingClientRect().right + 10,
           }}
         >
-          <div className="">
-            <h4 className="">
+          <Stack direction="horizontal" align="center" justify="between">
+            <h4>
               {existingComments.length > 0 ? `Comments (${existingComments.length})` : 'Add Comment'}
             </h4>
             <button
@@ -316,90 +316,83 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                 setActiveCommentBox(null);
                 setSelectedElement(null);
               }}
-              className=""
             >
-              <X className="" />
+              <X />
             </button>
-          </div>
+          </Stack>
           
-          <div className="">
+          <Container>
             <strong>Element:</strong> {selectedElement.textContent?.slice(0, 50) || selectedElement.tagName.toLowerCase()}
-          </div>
+          </Container>
           
           {/* Existing Comments */}
           {existingComments.length > 0 && (
-            <div className="">
+            <Stack spacing="md">
               {existingComments.map(comment => (
-                <div key={comment.id} className="">
-                  <div className="">
-                    <div className="">
+                <Container key={comment.id}>
+                  <Stack direction="horizontal" align="center" justify="between">
+                    <Container>
                       {getStatusIcon(comment.status)}
-                      <span className={`text-xs px-2 py-1 rounded ${getStatusColor(comment.status)}`}>
+                      <span>
                         {comment.status}
                       </span>
-                    </div>
+                    </Container>
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
-                      className=""
                     >
-                      <X className="" />
+                      <X />
                     </button>
-                  </div>
+                  </Stack>
                   
                   <Textarea
                     value={comment.comment}
                     onChange={(e) => handleEditComment(comment.id, e.target.value)}
-                    className="w-full mb-2"
                     rows={2}
                   />
                   
-                  <Container className="flex items-center space-x-2">
+                  <Container>
                     <Select
                       value={comment.status}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
-                      className="flex-1"
                     >
                       <Option value="open">Open</Option>
                       <Option value="in-progress">In Progress</Option>
                       <Option value="resolved">Resolved</Option>
                     </Select>
                   </Container>
-                </div>
+                </Container>
               ))}
-            </div>
+            </Stack>
           )}
           
           {/* New Comment Input */}
-          <Container className="space-y-3">
+          <Container>
             <Textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Add a new comment..."
-              className="w-full"
               rows={3}
               autoFocus
             />
             
-            <Container className="flex space-x-2">
-                              <button
-                  onClick={handleAddComment}
-                  disabled={!commentText.trim()}
-                  className="flex-1 btn btn-primary disabled:opacity-50"
-                >
-                  Add Comment
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveCommentBox(null);
-                    setSelectedElement(null);
-                  }}
-                  className="flex-1 btn btn-secondary"
-                >
-                  Close
-                </button>
-            </Container>
+            <Stack direction="horizontal" spacing="sm">
+              <button
+                onClick={handleAddComment}
+                disabled={!commentText.trim()}
+              >
+                Add Comment
+              </button>
+              <button
+                onClick={() => {
+                  setActiveCommentBox(null);
+                  setSelectedElement(null);
+                }}
+              >
+                Close
+              </button>
+            </Stack>
           </Container>
-        </div>
+        </Container>
       )}
 
       {/* Global Styles */}

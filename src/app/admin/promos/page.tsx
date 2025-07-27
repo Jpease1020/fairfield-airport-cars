@@ -17,8 +17,12 @@ import {
   Input,
   Label,
   Select,
-  Option
+  Option,
+  Container,
+  Text,
+  Span
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 function PromosPageContent() {
   const { addToast } = useToast();
@@ -127,9 +131,9 @@ function PromosPageContent() {
     const status = getPromoStatus(promo);
 
     return (
-      <span className="status-badge">
+      <Span>
         {status}
-      </span>
+      </Span>
     );
   };
 
@@ -159,9 +163,9 @@ function PromosPageContent() {
       label: 'Promo Code',
       sortable: true,
       render: (value) => (
-        <span className="promo-code">
+        <Span>
           {value}
-        </span>
+        </Span>
       )
     },
     {
@@ -169,9 +173,9 @@ function PromosPageContent() {
       label: 'Type',
       sortable: true,
       render: (value) => (
-        <span className="promo-type">
+        <Span>
           {value === 'percent' ? 'Percentage' : 'Fixed Amount'}
-        </span>
+        </Span>
       )
     },
     {
@@ -179,9 +183,9 @@ function PromosPageContent() {
       label: 'Discount',
       sortable: true,
       render: (_, promo) => (
-        <span className="promo-value">
+        <Span>
           {formatPromoValue(promo)}
-        </span>
+        </Span>
       )
     },
     {
@@ -195,14 +199,14 @@ function PromosPageContent() {
       label: 'Usage',
       sortable: true,
       render: (_, promo) => (
-        <div className="usage-display">
-          <span className="usage-count">
+        <Container>
+          <Span>
             {promo.usageCount || 0}
-          </span>
-          <span className="usage-limit">
+          </Span>
+          <Span>
             /{promo.usageLimit || '∞'}
-          </span>
-        </div>
+          </Span>
+        </Container>
       )
     },
     {
@@ -240,7 +244,7 @@ function PromosPageContent() {
       label: 'Delete',
       icon: '🗑️',
       onClick: (promo) => promo.id && deletePromo(promo.id),
-      variant: 'destructive'
+      variant: 'outline'
     }
   ];
 
@@ -298,76 +302,71 @@ function PromosPageContent() {
           description="Add a new promotional discount code for your customers"
           icon="🎟️"
         >
-          <div className="form-grid">
-            <div className="form-field">
-              <label className="form-label">
+          <Stack spacing="md">
+            <Container>
+              <Label>
                 Code (uppercase) *
-              </label>
+              </Label>
               <input
-                className="form-input"
                 type="text"
                 value={form.code}
                 onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}
                 placeholder="SAVE20"
                 required
               />
-            </div>
+            </Container>
             
-            <div className="form-field">
-              <Label className="form-label">
+            <Container>
+              <Label>
                 Type *
               </Label>
               <Select 
-                className="form-input"
                 value={form.type} 
-                onChange={(e) => setForm({...form, type: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, type: e.target.value})}
               >
                 <Option value="percent">Percentage %</Option>
                 <Option value="flat">Fixed Amount $</Option>
               </Select>
-            </div>
+            </Container>
             
-            <div className="form-field">
-              <Label className="form-label">
+            <Container>
+              <Label>
                 Value *
               </Label>
               <Input
-                className="form-input"
                 type="number"
                 value={form.value}
                 onChange={(e) => setForm({...form, value: e.target.value})}
                 placeholder="20"
                 required
               />
-            </div>
+            </Container>
             
-            <div className="form-field">
-              <Label className="form-label">
+            <Container>
+              <Label>
                 Expires At
               </Label>
               <Input
-                className="form-input"
                 type="date"
                 value={form.expiresAt}
                 onChange={(e) => setForm({...form, expiresAt: e.target.value})}
               />
-            </div>
+            </Container>
             
-            <div className="form-field">
-              <Label className="form-label">
+            <Container>
+              <Label>
                 Usage Limit
               </Label>
               <Input
-                className="form-input"
                 type="number"
                 value={form.usageLimit}
                 onChange={(e) => setForm({...form, usageLimit: e.target.value})}
                 placeholder="100"
               />
-            </div>
-          </div>
+            </Container>
+          </Stack>
           
-          <div className="form-actions">
+          <Container>
             <ActionButtonGroup
               buttons={[{
                 label: submitting ? 'Creating...' : 'Create Promo Code',
@@ -377,7 +376,7 @@ function PromosPageContent() {
                 icon: '💳'
               }]}
             />
-          </div>
+          </Container>
         </FormSection>
       </GridSection>
 

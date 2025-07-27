@@ -61,7 +61,7 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
   // Error state
   if (error) {
     return (
-      <div className="admin-dashboard">
+      <div >
         {showNavigation && <AdminNavigation />}
         <PageHeader
           title={title}
@@ -78,7 +78,7 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
 
   // Normal state
   return (
-    <div className="">
+    <div >
       {showNavigation && <AdminNavigation />}
       <PageHeader
         title={title}

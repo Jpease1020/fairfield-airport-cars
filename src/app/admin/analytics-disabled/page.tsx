@@ -69,9 +69,9 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <Container className="admin-dashboard">
-        <Container className="loading-spinner">
-          <Container className="loading-spinner-icon">🔄</Container>
+      <Container >
+        <Container >
+          <Container>🔄</Container>
           <Text>Loading analytics...</Text>
         </Container>
       </Container>
@@ -79,95 +79,95 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <Container className="admin-dashboard">
-      <Container className="section-header">
-        <H1 className="page-title">Analytics Dashboard</H1>
-        <Text className="page-subtitle">User interactions, errors, and performance metrics</Text>
-        <Container className="header-actions">
+    <Container >
+      <Container >
+        <H1>Analytics Dashboard</H1>
+        <Text>User interactions, errors, and performance metrics</Text>
+        <Container >
           <Button onClick={fetchAnalytics} variant="outline" size="sm">
-            <Span className="btn-icon">🔄</Span>
+            <Span>🔄</Span>
             Refresh
           </Button>
         </Container>
       </Container>
       
       {lastUpdated && (
-        <Container className="analytics-updated">
+        <Container>
           <Text>Last updated: {lastUpdated.toLocaleString()}</Text>
         </Container>
       )}
 
-      <Container className="standard-content">
+      <Container >
         {!analytics ? (
-          <Container className="card">
-            <Container className="card-body">
-              <Container className="empty-state">
-                <Container className="empty-state-icon">⚠️</Container>
+          <Container >
+            <Container >
+              <Container >
+                <Container >⚠️</Container>
                 <H3>No Analytics Data</H3>
                 <Text>Analytics data will appear here once users start interacting with the app.</Text>
               </Container>
             </Container>
           </Container>
         ) : (
-          <Container className="analytics-dashboard">
+          <Container>
             {/* Overview Cards */}
-            <Container className="analytics-overview-grid">
-              <Container className="card analytics-card">
-                <Container className="card-header analytics-card-header">
-                  <H3 className="analytics-card-title">Total Interactions</H3>
-                  <Span className="analytics-card-icon">📊</Span>
+            <Container>
+              <Container >
+                <Container >
+                  <H3 >Total Interactions</H3>
+                  <Span >📊</Span>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-stat-number">{analytics.totalInteractions.toLocaleString()}</Container>
-                  <Text className="analytics-stat-description">
+                <Container >
+                  <Container >{analytics.totalInteractions.toLocaleString()}</Container>
+                  <Text >
                     All user interactions tracked
                   </Text>
                 </Container>
               </Container>
 
-              <Container className="card analytics-card">
-                <Container className="card-header analytics-card-header">
-                  <H3 className="analytics-card-title">Total Errors</H3>
-                  <Span className="analytics-card-icon error">⚠️</Span>
+              <Container >
+                <Container >
+                  <H3 >Total Errors</H3>
+                  <Span>⚠️</Span>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-stat-number error">
+                <Container >
+                  <Container>
                     {analytics.totalErrors.toLocaleString()}
                   </Container>
-                  <Text className="analytics-stat-description">
+                  <Text >
                     Errors detected and tracked
                   </Text>
                 </Container>
               </Container>
 
-              <Container className="card analytics-card">
-                <Container className="card-header analytics-card-header">
-                  <H3 className="analytics-card-title">Error Rate</H3>
-                  <Span className="analytics-card-icon">📉</Span>
+              <Container >
+                <Container >
+                  <H3 >Error Rate</H3>
+                  <Span >📉</Span>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-stat-number">
+                <Container >
+                  <Container >
                     {analytics.totalInteractions > 0 
                       ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
                       : '0'
                     }%
                   </Container>
-                  <Text className="analytics-stat-description">
+                  <Text >
                     Percentage of interactions with errors
                   </Text>
                 </Container>
               </Container>
 
-              <Container className="card analytics-card">
-                <Container className="card-header analytics-card-header">
-                  <H3 className="analytics-card-title">Active Elements</H3>
-                  <Span className="analytics-card-icon">🖱️</Span>
+              <Container >
+                <Container >
+                  <H3 >Active Elements</H3>
+                  <Span >🖱️</Span>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-stat-number">
+                <Container >
+                  <Container >
                     {Object.keys(analytics.elementTypes).length}
                   </Container>
-                  <Text className="analytics-stat-description">
+                  <Text >
                     Different element types tracked
                   </Text>
                 </Container>
@@ -175,26 +175,26 @@ export default function AnalyticsPage() {
             </Container>
 
             {/* Detailed Metrics */}
-            <Container className="analytics-detailed-metrics">
+            <Container>
               {/* Top Interaction Types */}
-              <Container className="card">
-                <Container className="card-header">
-                  <H2 className="card-title">
-                    <Span className="card-icon">🖱️</Span>
+              <Container >
+                <Container >
+                  <H2 >
+                    <Span >🖱️</Span>
                     Top Interaction Types
                   </H2>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-list">
+                <Container >
+                  <Container >
                     {getTopInteractions().map(([type, count]) => (
-                      <Container key={type} className="analytics-list-item">
-                        <Container className="analytics-item-info">
-                          <div className="analytics-item-indicator primary"></div>
-                          <Span className="analytics-item-label">
+                      <Container key={type} >
+                        <Container >
+                          <div ></div>
+                          <Span >
                             {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
                           </Span>
                         </Container>
-                        <Span className="analytics-item-value">
+                        <Span >
                           {count.toLocaleString()}
                         </Span>
                       </Container>
@@ -204,24 +204,24 @@ export default function AnalyticsPage() {
               </Container>
 
               {/* Top Error Types */}
-              <Container className="card">
-                <Container className="card-header">
-                  <H2 className="card-title">
-                    <Span className="card-icon">⚠️</Span>
+              <Container >
+                <Container >
+                  <H2 >
+                    <Span >⚠️</Span>
                     Top Error Types
                   </H2>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-list">
+                <Container >
+                  <Container >
                     {getTopErrors().map(([type, count]) => (
-                      <Container key={type} className="analytics-list-item">
-                        <Container className="analytics-item-info">
-                          <div className="analytics-item-indicator error"></div>
-                          <Span className="analytics-item-label">
+                      <Container key={type} >
+                        <Container >
+                          <div></div>
+                          <Span >
                             {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
                           </Span>
                         </Container>
-                        <Span className="analytics-item-value">
+                        <Span >
                           {count.toLocaleString()}
                         </Span>
                       </Container>
@@ -231,24 +231,24 @@ export default function AnalyticsPage() {
               </Container>
 
               {/* Top Element Types */}
-              <Container className="card">
-                <Container className="card-header">
-                  <H2 className="card-title">
-                    <Span className="card-icon">📝</Span>
+              <Container >
+                <Container >
+                  <H2 >
+                    <Span >📝</Span>
                     Most Interacted Elements
                   </H2>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-list">
+                <Container >
+                  <Container >
                     {getTopElements().map(([element, count]) => (
-                      <Container key={element} className="analytics-list-item">
-                        <Container className="analytics-item-info">
-                          <div className="analytics-item-indicator secondary"></div>
-                          <Span className="analytics-item-label">
+                      <Container key={element} >
+                        <Container >
+                          <div></div>
+                          <Span >
                             {element}
                           </Span>
                         </Container>
-                        <Span className="analytics-item-value">
+                        <Span >
                           {count.toLocaleString()}
                         </Span>
                       </Container>
@@ -258,24 +258,24 @@ export default function AnalyticsPage() {
               </Container>
 
               {/* Recent Activity */}
-              <Container className="card">
-                <Container className="card-header">
-                  <H2 className="card-title">
-                    <Span className="card-icon">⏰</Span>
+              <Container >
+                <Container >
+                  <H2 >
+                    <Span >⏰</Span>
                     Recent Activity
                   </H2>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-list">
+                <Container >
+                  <Container >
                     {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
-                      <Container key={index} className="analytics-list-item">
-                        <Container className="analytics-item-info">
-                          <div className="analytics-item-indicator primary"></div>
-                          <Span className="analytics-item-label">
+                      <Container key={index} >
+                        <Container >
+                          <div ></div>
+                          <Span >
                             {interaction.type} on {interaction.element}
                           </Span>
                         </Container>
-                        <Span className="analytics-item-time">
+                        <Span>
                           {new Date(interaction.timestamp).toLocaleTimeString()}
                         </Span>
                       </Container>
@@ -287,26 +287,26 @@ export default function AnalyticsPage() {
 
             {/* Recent Errors */}
             {analytics.recentErrors.length > 0 && (
-              <Container className="card">
-                <Container className="card-header">
-                  <H2 className="card-title">
-                    <Span className="card-icon">⚠️</Span>
+              <Container >
+                <Container >
+                  <H2 >
+                    <Span >⚠️</Span>
                     Recent Errors
                   </H2>
                 </Container>
-                <Container className="card-body">
-                  <Container className="analytics-errors">
+                <Container >
+                  <Container>
                     {analytics.recentErrors.slice(0, 10).map((error, index) => (
-                      <Container key={index} className="analytics-error-item">
-                        <Container className="analytics-error-header">
-                          <Span className="analytics-error-message">
+                      <Container key={index}>
+                        <Container>
+                          <Span>
                             {error.message}
                           </Span>
-                          <Span className="analytics-error-time">
+                          <Span>
                             {new Date(error.timestamp).toLocaleString()}
                           </Span>
                         </Container>
-                        <Text className="analytics-error-details">
+                        <Text>
                           Type: {error.type} • Page: {error.page}
                         </Text>
                       </Container>

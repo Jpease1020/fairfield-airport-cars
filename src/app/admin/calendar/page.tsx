@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import { listBookings } from '../../../lib/services/booking-service';
 import { 
   AdminPageWrapper, 
@@ -12,9 +13,6 @@ import {
   Text,
   Span
 } from '@/components/ui';
-
-const FullCalendar = dynamic(() => import('@fullcalendar/react') as any, { ssr: false });
-const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
 
 const CalendarPage = () => {
   const [events, setEvents] = useState<any[]>([]);
@@ -97,7 +95,7 @@ const CalendarPage = () => {
           description={`Showing ${events.length} bookings with color-coded status`}
         >
           {!loading && !error && (
-            <Container className="calendar-container">
+            <Container>
               {typeof window !== 'undefined' && (
                 <FullCalendar
                   plugins={[dayGridPlugin]}
@@ -124,9 +122,9 @@ const CalendarPage = () => {
           )}
 
           {!loading && !error && events.length === 0 && (
-            <Container className="calendar-empty-state">
-              <Container className="calendar-empty-icon">📅</Container>
-              <H3 className="calendar-empty-title">No bookings found</H3>
+            <Container>
+              <Container>📅</Container>
+              <H3>No bookings found</H3>
               <Text>No bookings scheduled for this month.</Text>
             </Container>
           )}
@@ -139,22 +137,22 @@ const CalendarPage = () => {
           title="📊 Status Legend"
           description="Color coding for booking statuses"
         >
-          <Container className="calendar-legend">
-            <Container className="calendar-legend-item">
-              <Container className="calendar-legend-color calendar-legend-color-pending"></Container>
-              <Span className="calendar-legend-text">Pending</Span>
+          <Container>
+            <Container >
+              <Span>🟡</Span>
+              <Span >Pending</Span>
             </Container>
-            <Container className="calendar-legend-item">
-              <Container className="calendar-legend-color calendar-legend-color-confirmed"></Container>
-              <Span className="calendar-legend-text">Confirmed</Span>
+            <Container >
+              <Span>🟢</Span>
+              <Span >Confirmed</Span>
             </Container>
-            <Container className="calendar-legend-item">
-              <Container className="calendar-legend-color calendar-legend-color-completed"></Container>
-              <Span className="calendar-legend-text">Completed</Span>
+            <Container >
+              <Span>🔵</Span>
+              <Span >Completed</Span>
             </Container>
-            <Container className="calendar-legend-item">
-              <Container className="calendar-legend-color calendar-legend-color-cancelled"></Container>
-              <Span className="calendar-legend-text">Cancelled</Span>
+            <Container >
+              <Span>🔴</Span>
+              <Span >Cancelled</Span>
             </Container>
           </Container>
         </InfoCard>

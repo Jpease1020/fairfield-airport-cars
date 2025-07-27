@@ -5,6 +5,8 @@ import { PageHeader } from '@/components/ui/layout/PageHeader';
 import { Section, Container, H1, H2, Lead } from '@/components/ui';
 import { Card } from '@/components/ui/containers';
 import { CardBody } from '@/components/ui/card';
+import { Stack } from '@/components/ui/containers';
+import { Text, Span } from '@/components/ui';
 
 interface CMSConversionPageProps {
   cmsConfig: CMSConfiguration;
@@ -63,27 +65,20 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
       {showProgressIndicator && (
         <Section variant="muted" padding="md">
           <Container maxWidth={containerMaxWidth}>
-            <div className="">
+            <Stack direction="horizontal" align="center" spacing="sm">
               {Array.from({ length: totalSteps }, (_, index) => (
-                <div key={index} className="">
-                  <div className={`
-                    w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                    ${index + 1 <= currentStep 
-                      ? 'bg-brand-primary text-white' 
-                      : 'bg-bg-secondary text-text-secondary'
-                    }
-                  `}>
+                <Container key={index}>
+                  <Container>
                     {index + 1}
-                  </div>
+                  </Container>
                   {index < totalSteps - 1 && (
-                    <div className={`
-                      w-12 h-0.5 mx-2
-                      ${index + 1 < currentStep ? 'bg-brand-primary' : 'bg-border-primary'}
-                    `} />
+                    <Container>
+                      <span>-</span>
+                    </Container>
                   )}
-                </div>
+                </Container>
               ))}
-            </div>
+            </Stack>
           </Container>
         </Section>
       )}
@@ -94,93 +89,93 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
           {/* Header */}
           <PageHeader align="center" padding="lg" margin="none">
             {pageTitle && (
-              <H1 className="">
+              <H1>
                 {pageTitle}
               </H1>
             )}
             {pageSubtitle && (
-              <H2 className="mb-4">
+              <H2>
                 {pageSubtitle}
               </H2>
             )}
             {pageDescription && (
-              <Lead className="">
+              <Lead>
                 {pageDescription}
               </Lead>
             )}
           </PageHeader>
 
           {/* Conversion Content */}
-          <div className="">
+          <Stack direction="horizontal" spacing="lg">
             {/* Main Form/Content */}
-            <div className="">
+            <Container>
               <Card variant="elevated" padding="xl">
                 <CardBody>
                   {children}
                 </CardBody>
               </Card>
-            </div>
+            </Container>
 
             {/* Trust Signals Sidebar */}
             {showTrustSignals && (
-              <div className="">
+              <Stack spacing="lg">
                 <Card variant="outlined" padding="lg">
                   <CardBody>
-                    <H2 className="">Why Choose Us?</H2>
-                    <div className="">
-                      <div className="">
-                        <div className="">
-                          <span className="">✓</span>
-                        </div>
-                        <div>
-                          <p className="">Professional Drivers</p>
-                          <p className="">Background checked & licensed</p>
-                        </div>
-                      </div>
-                      <div className="">
-                        <div className="">
-                          <span className="">✓</span>
-                        </div>
-                        <div>
-                          <p className="">Reliable Service</p>
-                          <p className="">On-time pickups guaranteed</p>
-                        </div>
-                      </div>
-                      <div className="">
-                        <div className="">
-                          <span className="">✓</span>
-                        </div>
-                        <div>
-                          <p className="">Clean Vehicles</p>
-                          <p className="">Well-maintained luxury SUVs</p>
-                        </div>
-                      </div>
-                    </div>
+                    <H2>Why Choose Us?</H2>
+                    <Stack spacing="md">
+                      <Stack direction="horizontal" align="center" spacing="sm">
+                        <Container>
+                          <Span>✓</Span>
+                        </Container>
+                        <Container>
+                          <Text>Professional Drivers</Text>
+                          <Text size="sm">Background checked & licensed</Text>
+                        </Container>
+                      </Stack>
+                      <Stack direction="horizontal" align="center" spacing="sm">
+                        <Container>
+                          <Span>✓</Span>
+                        </Container>
+                        <Container>
+                          <Text>Reliable Service</Text>
+                          <Text size="sm">On-time pickups guaranteed</Text>
+                        </Container>
+                      </Stack>
+                      <Stack direction="horizontal" align="center" spacing="sm">
+                        <Container>
+                          <Span>✓</Span>
+                        </Container>
+                        <Container>
+                          <Text>Clean Vehicles</Text>
+                          <Text size="sm">Well-maintained luxury SUVs</Text>
+                        </Container>
+                      </Stack>
+                    </Stack>
                   </CardBody>
                 </Card>
 
                 <Card variant="outlined" padding="lg">
                   <CardBody>
-                    <H2 className="">Need Help?</H2>
-                    <p className="">
+                    <H2>Need Help?</H2>
+                    <Text>
                       Our team is here to assist you with your booking.
-                    </p>
-                    <div className="space-y-2">
-                      <p className="">
-                        <span className="">Phone:</span> (203) 555-0123
-                      </p>
-                      <p className="">
-                        <span className="">Email:</span> info@fairfieldairportcar.com
-                      </p>
-                      <p className="">
-                        <span className="">Hours:</span> 24/7 Service
-                      </p>
-                    </div>
+                    </Text>
+                    <Stack spacing="sm">
+                      <Text>
+                        <Span>Phone:</Span> (203) 555-0123
+                      </Text>
+                      <Text>
+                        <Span>Email:</Span> info@fairfieldairportcar.com
+                      </Text>
+                      <Text>
+                        <Span>Hours:</Span> 24/7 Service
+                      </Text>
+                    </Stack>
                   </CardBody>
                 </Card>
-              </div>
+              </Stack>
             )}
-          </div>
+          </Stack>
         </Container>
       </Section>
     </CMSLayout>

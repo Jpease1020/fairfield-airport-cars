@@ -41,13 +41,13 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
     );
 
     return (
-      <div className="w-full">
+      <div >
         {label && (
           <Label>
             {label}
           </Label>
         )}
-        <div className="relative">
+        <div >
           {leftIcon && (
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
               {leftIcon}
@@ -107,7 +107,7 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
     );
 
     return (
-      <div className="w-full">
+      <div >
         {label && (
           <Label>
             {label}
@@ -176,7 +176,7 @@ const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
   );
 
   return (
-    <div className="w-full">
+    <div >
       {label && (
         <Label>
           {label}
@@ -252,7 +252,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
       type="search"
       onKeyDown={handleKeyDown}
       leftIcon={searchIcon || (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg  fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       )}

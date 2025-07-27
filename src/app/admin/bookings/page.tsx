@@ -233,9 +233,9 @@ function AdminBookingsPageContent() {
       label: 'Customer',
       sortable: true,
       render: (_, booking) => (
-        <div className="table-cell-content">
-          <div className="table-cell-primary">{booking.name}</div>
-          <div className="table-cell-secondary">{booking.email}</div>
+        <div >
+          <div >{booking.name}</div>
+          <div >{booking.email}</div>
         </div>
       )
     },
@@ -244,9 +244,9 @@ function AdminBookingsPageContent() {
       label: 'Route',
       sortable: true,
       render: (_, booking) => (
-        <div className="table-cell-route">
-          <div className="table-cell-primary">{booking.pickupLocation}</div>
-          <div className="table-cell-route-arrow">→ {booking.dropoffLocation}</div>
+        <div >
+          <div >{booking.pickupLocation}</div>
+          <div >→ {booking.dropoffLocation}</div>
         </div>
       )
     },
@@ -257,9 +257,9 @@ function AdminBookingsPageContent() {
       render: (value) => {
         const date = new Date(value);
         return (
-          <div className="table-cell-datetime">
-            <div className="table-cell-primary">{date.toLocaleDateString()}</div>
-            <div className="table-cell-secondary">{date.toLocaleTimeString()}</div>
+          <div >
+            <div >{date.toLocaleDateString()}</div>
+            <div >{date.toLocaleTimeString()}</div>
           </div>
         );
       }
@@ -269,7 +269,7 @@ function AdminBookingsPageContent() {
       label: 'Fare',
       sortable: true,
       render: (value) => (
-        <Span className="table-cell-amount">${(value || 0).toFixed(2)}</Span>
+        <Span >${(value || 0).toFixed(2)}</Span>
       )
     },
     {

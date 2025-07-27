@@ -58,7 +58,7 @@ function CommentsPageContent() {
     const status = getCommentStatus(comment);
 
     return (
-      <span className="status-badge">
+      <span >
         {status}
       </span>
     );
@@ -90,11 +90,11 @@ function CommentsPageContent() {
       label: 'Author',
       sortable: true,
       render: (_, comment) => (
-        <div className="author-info">
-          <div className="author-name">
+        <div>
+          <div>
             {comment.createdBy}
           </div>
-          <div className="author-page">
+          <div>
             📄 {comment.pageTitle}
           </div>
         </div>
@@ -105,7 +105,7 @@ function CommentsPageContent() {
       label: 'Comment',
       sortable: false,
       render: (value) => (
-        <div className="comment-text">
+        <div>
           {value}
         </div>
       )
@@ -117,11 +117,11 @@ function CommentsPageContent() {
       render: (value) => {
         const { date, time } = formatDate(value);
         return (
-          <div className="comment-date">
-            <div className="date-day">
+          <div>
+            <div >
               {date}
             </div>
-            <div className="date-time">
+            <div >
               {time}
             </div>
           </div>
@@ -160,7 +160,7 @@ function CommentsPageContent() {
       label: 'Moderate',
       icon: '🛡️',
       onClick: (comment) => alert(`Moderating comment from ${comment.createdBy}`),
-      variant: 'destructive'
+      variant: 'outline'
     }
   ];
 
@@ -248,10 +248,10 @@ function CommentsPageContent() {
           title="📊 Comment Analytics"
           description="Insights into comment activity and engagement"
         >
-          <div className="analytics-section">
-            <div className="analytics-item">
-              <span className="analytics-label">Most Active Pages:</span>
-              <div className="analytics-content">
+          <div>
+            <div >
+              <span >Most Active Pages:</span>
+              <div >
                 {Array.from(new Set(comments.map(c => c.pageTitle)))
                   .map(page => ({
                     page,
@@ -260,17 +260,17 @@ function CommentsPageContent() {
                   .sort((a, b) => b.count - a.count)
                   .slice(0, 5)
                   .map(({ page, count }) => (
-                    <div key={page} className="page-stat">
-                      <span className="page-name">{page}</span>
-                      <span className="page-count">{count} comments</span>
+                    <div key={page} >
+                      <span >{page}</span>
+                      <span >{count} comments</span>
                     </div>
                   ))}
               </div>
             </div>
             
-            <div className="analytics-item">
-              <span className="analytics-label">Top Commenters:</span>
-              <div className="analytics-content">
+            <div >
+              <span >Top Commenters:</span>
+              <div >
                 {Array.from(new Set(comments.map(c => c.createdBy)))
                   .map(author => ({
                     author,
@@ -279,9 +279,9 @@ function CommentsPageContent() {
                   .sort((a, b) => b.count - a.count)
                   .slice(0, 5)
                   .map(({ author, count }) => (
-                    <div key={author} className="author-stat">
-                      <span className="author-name">{author}</span>
-                      <span className="author-count">{count} comments</span>
+                    <div key={author}>
+                      <span >{author}</span>
+                      <span>{count} comments</span>
                     </div>
                   ))}
               </div>

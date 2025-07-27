@@ -18,9 +18,9 @@ const EditableTextarea = React.forwardRef<HTMLTextAreaElement, EditableTextareaP
     };
 
     return (
-      <div className="">
+      <div >
         {label && (
-          <label className="">
+          <label >
             {label}
           </label>
         )}

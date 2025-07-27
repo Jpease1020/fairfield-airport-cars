@@ -88,7 +88,7 @@ function BookingDetailsContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="Loading..." description="Fetching booking details">
-            <Container className="booking-loading-container">
+            <Container>
               <LoadingSpinner text="Loading booking details..." />
             </Container>
           </InfoCard>
@@ -106,8 +106,8 @@ function BookingDetailsContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Booking Not Found" description="The booking could not be found">
-            <Container className="booking-error-container">
-              <Text className="booking-error-message">
+            <Container>
+              <Text>
                 {error || 'The booking you are looking for could not be found.'}
               </Text>
               <ActionButtonGroup buttons={[
@@ -158,7 +158,7 @@ function BookingDetailsContent() {
           title={`${getStatusIcon(booking.status)} Booking Status`}
           description={`Your booking is currently ${booking.status}`}
         >
-          <Container className={`booking-status-badge ${getStatusClass(booking.status)}`}>
+          <Container>
             {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
           </Container>
         </InfoCard>
@@ -170,26 +170,26 @@ function BookingDetailsContent() {
           title="📍 Trip Details"
           description="Your pickup and dropoff information"
         >
-          <Container className="booking-trip-details">
-            <Container className="booking-location-item">
-              <Span className="booking-location-icon">📍</Span>
-              <Container className="booking-location-content">
-                <H3 className="booking-location-title">Pickup Location</H3>
-                <Text className="booking-location-address">{booking.pickupLocation}</Text>
+          <Container>
+            <Container >
+              <Span >📍</Span>
+              <Container >
+                <H3 >Pickup Location</H3>
+                <Text >{booking.pickupLocation}</Text>
               </Container>
             </Container>
-            <Container className="booking-location-item">
-              <Span className="booking-location-icon">🎯</Span>
-              <Container className="booking-location-content">
-                <H3 className="booking-location-title">Dropoff Location</H3>
-                <Text className="booking-location-address">{booking.dropoffLocation}</Text>
+            <Container >
+              <Span >🎯</Span>
+              <Container >
+                <H3 >Dropoff Location</H3>
+                <Text >{booking.dropoffLocation}</Text>
               </Container>
             </Container>
-            <Container className="booking-location-item">
-              <Span className="booking-location-icon">📅</Span>
-              <Container className="booking-location-content">
-                <H3 className="booking-location-title">Pickup Date & Time</H3>
-                <Text className="booking-location-address">{formatDateTime(booking.pickupDateTime)}</Text>
+            <Container >
+              <Span >📅</Span>
+              <Container >
+                <H3 >Pickup Date & Time</H3>
+                <Text >{formatDateTime(booking.pickupDateTime)}</Text>
               </Container>
             </Container>
           </Container>
@@ -202,26 +202,26 @@ function BookingDetailsContent() {
           title="👤 Passenger Information"
           description="Your contact details for this booking"
         >
-          <Container className="booking-passenger-details">
-            <Container className="booking-passenger-item">
-              <Span className="booking-passenger-icon">👤</Span>
-              <Container className="booking-passenger-content">
-                <H3 className="booking-passenger-title">Passenger</H3>
-                <Text className="booking-passenger-value">{booking.name}</Text>
+          <Container>
+            <Container >
+              <Span >👤</Span>
+              <Container >
+                <H3 >Passenger</H3>
+                <Text >{booking.name}</Text>
               </Container>
             </Container>
-            <Container className="booking-passenger-item">
-              <Span className="booking-passenger-icon">📞</Span>
-              <Container className="booking-passenger-content">
-                <H3 className="booking-passenger-title">Phone</H3>
-                <Text className="booking-passenger-value">{booking.phone}</Text>
+            <Container >
+              <Span >📞</Span>
+              <Container >
+                <H3 >Phone</H3>
+                <Text >{booking.phone}</Text>
               </Container>
             </Container>
-            <Container className="booking-passenger-item">
-              <Span className="booking-passenger-icon">✉️</Span>
-              <Container className="booking-passenger-content">
-                <H3 className="booking-passenger-title">Email</H3>
-                <Text className="booking-passenger-value">{booking.email}</Text>
+            <Container >
+              <Span >✉️</Span>
+              <Container >
+                <H3 >Email</H3>
+                <Text >{booking.email}</Text>
               </Container>
             </Container>
           </Container>
@@ -234,14 +234,14 @@ function BookingDetailsContent() {
           title="💰 Fare Information"
           description="Payment details for your trip"
         >
-          <Container className="booking-fare-details">
-            <Container className="booking-fare-item">
-              <Span className="booking-fare-icon">💳</Span>
-              <Container className="booking-fare-content">
-                <H3 className="booking-fare-title">Total Fare</H3>
-                <Text className="booking-fare-description">Includes all fees and taxes</Text>
+          <Container>
+            <Container>
+              <Span>💳</Span>
+              <Container>
+                <H3>Total Fare</H3>
+                <Text>Includes all fees and taxes</Text>
               </Container>
-              <Container className="booking-fare-amount">
+              <Container>
                 ${booking.fare?.toFixed(2)}
               </Container>
             </Container>

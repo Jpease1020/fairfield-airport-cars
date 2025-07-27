@@ -39,8 +39,8 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
   if (actions.length === 0) {
     return (
       <div className={gridClass}>
-        <div className="empty-state">
-          <span className="empty-state-icon">⚡</span>
+        <div >
+          <span >⚡</span>
           <p>{emptyMessage}</p>
         </div>
       </div>

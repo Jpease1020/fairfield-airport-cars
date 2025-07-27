@@ -34,8 +34,8 @@ export const ActivityList: React.FC<ActivityListProps> = ({
   if (activities.length === 0) {
     return (
       <div className={listClass}>
-        <div className="empty-state">
-          <span className="empty-state-icon">📭</span>
+        <div >
+          <span >📭</span>
           <p>{emptyMessage}</p>
         </div>
       </div>

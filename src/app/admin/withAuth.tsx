@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { onAuthChange } from '@/lib/services/auth-service';
 import { User } from 'firebase/auth';
+import { Container, Text } from '@/components/ui';
 
 const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
   const WithAuthComponent = (props: P) => {
@@ -24,7 +25,11 @@ const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
     }, [router]);
 
     if (loading) {
-      return <div className="auth-loading">Loading...</div>;
+      return (
+        <Container>
+          <Text>Loading...</Text>
+        </Container>
+      );
     }
 
     if (!user) {

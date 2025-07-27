@@ -32,26 +32,17 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({
   columns = 3, 
   className = '' 
 }) => {
-  const gridClass = [
-    'feature-grid',
-    `feature-grid-${columns}`,
-    className
-  ].filter(Boolean).join(' ');
-
   return (
-    <div className={gridClass}>
+    <div className={className}>
       {features.map((feature, index) => (
-        <div 
-          key={feature.id || index}
-          className="feature-item"
-        >
-          <div className="feature-icon">
+        <div key={feature.id || index}>
+          <div>
             {feature.icon}
           </div>
-          <h4 className="feature-title">
+          <h4>
             {feature.title}
           </h4>
-          <p className="feature-description">
+          <p>
             {feature.description}
           </p>
         </div>

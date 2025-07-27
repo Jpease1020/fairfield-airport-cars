@@ -51,39 +51,38 @@ const AdminHamburgerMenu = () => {
   };
 
   return (
-    <div className="admin-hamburger-menu">
+    <div>
       {/* Hamburger Button */}
       <button
         onClick={toggleMenu}
-        className="hamburger-btn"
         aria-label="Admin menu"
       >
-        <span className="hamburger-icon">{isOpen ? '✕' : '☰'}</span>
+        <span>{isOpen ? '✕' : '☰'}</span>
       </button>
 
       {/* Menu Dropdown */}
       {isOpen && (
-        <div className="hamburger-dropdown">
-          <div className="dropdown-header">
-            <H3 className="dropdown-title">Admin Tools</H3>
-            <Text className="dropdown-subtitle">Website management</Text>
+        <div>
+          <div>
+            <H3>Admin Tools</H3>
+            <Text>Website management</Text>
           </div>
 
           {/* Site Mode Toggle */}
           <Button
             onClick={handleSiteModeToggle}
             variant="ghost"
-            className={`dropdown-item ${!editMode && !commentMode ? 'active' : ''}`}
+
           >
-            <span className="item-icon">🌐</span>
-            <div className="item-content">
-              <div className="item-title">Site Mode</div>
-              <div className="item-description">
+            <span >🌐</span>
+            <div >
+              <div >Site Mode</div>
+              <div >
                 {!editMode && !commentMode ? 'Currently viewing' : 'View normal site'}
               </div>
             </div>
             {!editMode && !commentMode && (
-              <div className="status-indicator active"></div>
+              <div ></div>
             )}
           </Button>
 
@@ -92,20 +91,20 @@ const AdminHamburgerMenu = () => {
             onClick={handleEditModeToggle}
             variant="ghost"
             disabled={commentMode && !editMode}
-            className={`dropdown-item ${editMode ? 'active edit-mode' : ''} ${commentMode && !editMode ? 'disabled' : ''}`}
+
           >
-            <span className="item-icon">✏️</span>
-            <div className="item-content">
-              <div className="item-title">Edit Content</div>
-              <div className="item-description">
+            <span >✏️</span>
+            <div >
+              <div >Edit Content</div>
+              <div >
                 {editMode ? 'Currently editing' : commentMode ? 'Disabled - Comment mode active' : 'Modify page content'}
               </div>
             </div>
             {editMode && (
-              <div className="status-indicator active edit-mode"></div>
+              <div ></div>
             )}
             {commentMode && !editMode && (
-              <div className="status-indicator disabled"></div>
+              <div ></div>
             )}
           </Button>
 
@@ -114,42 +113,42 @@ const AdminHamburgerMenu = () => {
             onClick={handleCommentModeToggle}
             variant="ghost"
             disabled={editMode && !commentMode}
-            className={`dropdown-item ${commentMode ? 'active comment-mode' : ''} ${editMode && !commentMode ? 'disabled' : ''}`}
+
           >
-            <span className="item-icon">💬</span>
-            <div className="item-content">
-              <div className="item-title">UI Change Requests</div>
-              <div className="item-description">
+            <span >💬</span>
+            <div >
+              <div >UI Change Requests</div>
+              <div >
                 {commentMode ? 'Comment mode active' : editMode ? 'Disabled - Edit mode active' : 'Request UI changes'}
               </div>
             </div>
             {commentMode && (
-              <div className="status-indicator active comment-mode"></div>
+              <div ></div>
             )}
             {editMode && !commentMode && (
-              <div className="status-indicator disabled"></div>
+              <div ></div>
             )}
           </Button>
 
           {/* Divider */}
-          <div className="dropdown-divider"></div>
+          <div></div>
 
           {/* Status Indicators */}
-          <div className="status-section">
-            <div className="status-item">
-              <div className={`status-dot ${!editMode && !commentMode ? 'active' : ''}`}></div>
+          <div >
+            <div >
+              <div></div>
               <span>Site Mode: {!editMode && !commentMode ? 'ON' : 'OFF'}</span>
             </div>
-            <div className="status-item">
-              <div className={`status-dot edit-mode ${editMode ? 'active' : ''}`}></div>
+            <div >
+              <div></div>
               <span>Edit Mode: {editMode ? 'ON' : 'OFF'}</span>
             </div>
-            <div className="status-item">
-              <div className={`status-dot comment-mode ${commentMode ? 'active' : ''}`}></div>
+            <div >
+              <div></div>
               <span>Comment Mode: {commentMode ? 'ON' : 'OFF'}</span>
             </div>
-            <div className="status-note">
-              <div className="note-dot"></div>
+            <div >
+              <div ></div>
               <span>Edit & Comment modes are mutually exclusive</span>
             </div>
           </div>
@@ -157,15 +156,15 @@ const AdminHamburgerMenu = () => {
       )}
 
       {/* Status Indicators on Button */}
-      <div className="button-indicators">
+      <div>
         {!editMode && !commentMode && (
-          <div className="indicator-dot active"></div>
+          <div></div>
         )}
         {editMode && (
-          <div className="indicator-dot edit-mode"></div>
+          <div></div>
         )}
         {commentMode && (
-          <div className="indicator-dot comment-mode"></div>
+          <div></div>
         )}
       </div>
     </div>

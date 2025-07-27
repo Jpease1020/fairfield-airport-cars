@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, InfoCard, GridSection, ActionGrid } from '@/components/ui';
+import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 const AIAssistantSettingsPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -74,23 +75,23 @@ const AIAssistantSettingsPage = () => {
           title="⚙️ AI Assistant Configuration"
           description="Current status and available options"
         >
-          <div className="ai-assistant-settings-container">
-            <h3 className="ai-assistant-settings-title">
+          <Container>
+            <H3>
               🚫 Feature Not Available
-            </h3>
-            <p className="ai-assistant-settings-description">
+            </H3>
+            <Text>
               The AI assistant feature is currently disabled for your account. This may be due to:
-            </p>
-            <ul className="ai-assistant-settings-list">
-              <li>Subscription plan limitations</li>
-              <li>Regional availability restrictions</li>
-              <li>System maintenance or updates</li>
-              <li>Account configuration settings</li>
-            </ul>
-            <p className="ai-assistant-settings-note">
+            </Text>
+            <Stack spacing="sm">
+              <Text>• Subscription plan limitations</Text>
+              <Text>• Regional availability restrictions</Text>
+              <Text>• System maintenance or updates</Text>
+              <Text>• Account configuration settings</Text>
+            </Stack>
+            <Text>
               Contact support for information about enabling this feature.
-            </p>
-          </div>
+            </Text>
+          </Container>
         </InfoCard>
       </GridSection>
 

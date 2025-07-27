@@ -15,6 +15,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { generateCSSVariables } from '@/lib/design';
 import { AccessibilityEnhancer } from '@/components/ui/AccessibilityEnhancer';
 import { Container, H1, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import Navigation from './Navigation';
 import { StandardFooter } from './StandardFooter';
 
@@ -139,39 +140,39 @@ export function UnifiedLayout({
   // Temporarily disable loading state to fix the stuck loading issue
   // if (!cmsReady) {
   //   return (
-  //     <div className="unified-layout-loading">
-  //       <div className="unified-layout-loading-spinner"></div>
+  //     <div >
+  //       <div ></div>
   //     </div>
   //   );
   // }
 
   return (
     <AccessibilityEnhancer>
-      <Container className={`unified-layout ${variantStyles[variant]}`}>
+      <Container>
         {/* Navigation */}
         {shouldShowNav && (
-          <header className="unified-layout-header">
+          <header>
             <Navigation />
           </header>
         )}
 
         {/* Page Header */}
         {(title || subtitle || description) && (
-          <section className="unified-layout-page-header">
-            <Container className={containerClasses}>
-              <Container className="unified-layout-page-header-content">
+          <section>
+            <Container>
+              <Container>
                 {title && (
-                  <H1 className="unified-layout-page-title">
+                  <H1>
                     {title}
                   </H1>
                 )}
                 {subtitle && (
-                  <Text className="unified-layout-page-subtitle">
+                  <Text>
                     {subtitle}
                   </Text>
                 )}
                 {description && (
-                  <Text className="unified-layout-page-description">
+                  <Text>
                     {description}
                   </Text>
                 )}
@@ -181,15 +182,15 @@ export function UnifiedLayout({
         )}
 
         {/* Main Content */}
-        <main id="main-content" className="unified-layout-main">
-          <Container className={containerClasses}>
+        <main id="main-content">
+          <Container>
             {children}
           </Container>
         </main>
 
         {/* Footer */}
         {shouldShowFooter && (
-          <footer className="unified-layout-footer">
+          <footer>
             <StandardFooter />
           </footer>
         )}

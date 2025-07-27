@@ -10,8 +10,10 @@ import {
   ToastProvider,
   useToast,
   GridSection,
-  HelpCard
+  HelpCard,
+  Container
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { realCostTrackingService } from '@/lib/business/real-cost-tracking';
 
 interface CostEntry {
@@ -159,14 +161,14 @@ function ManualCostEntryPageContent() {
       )}
 
       <GridSection variant="content" columns={1}>
-        <div className="costs-manual-entry-container">
+        <Container>
           {/* Cost Entry Form */}
           <SettingSection
             title="Add New Cost Entry"
             description="Enter details for your business expense"
             icon="💰"
           >
-            <div className="costs-form-grid">
+            <Stack spacing="md">
               <SettingInput
                 id="cost-date"
                 label="Date"
@@ -186,7 +188,7 @@ function ManualCostEntryPageContent() {
                 placeholder="e.g., Fuel, Maintenance, Insurance"
                 icon="🏷️"
               />
-            </div>
+            </Stack>
 
             <SettingInput
               id="cost-description"
@@ -227,7 +229,7 @@ function ManualCostEntryPageContent() {
             description="Common expense categories to help organize your costs"
             icon="📊"
           >
-            <div className="costs-categories-grid">
+            <Stack spacing="md">
               {costCategories.map((category, index) => (
                 <HelpCard
                   key={index}
@@ -236,7 +238,7 @@ function ManualCostEntryPageContent() {
                   description={category.description}
                 />
               ))}
-            </div>
+            </Stack>
           </SettingSection>
 
           {/* Quick Add Actions */}
@@ -245,7 +247,7 @@ function ManualCostEntryPageContent() {
             description="Common cost entry shortcuts"
             icon="⚡"
           >
-            <div className="costs-quick-actions">
+            <Container>
               <ActionButtonGroup
                 buttons={[
                   {
@@ -279,9 +281,9 @@ function ManualCostEntryPageContent() {
                 orientation="horizontal"
                 spacing="sm"
               />
-            </div>
+            </Container>
           </SettingSection>
-        </div>
+        </Container>
       </GridSection>
     </AdminPageWrapper>
   );

@@ -12,8 +12,10 @@ import {
   Textarea,
   Button,
   ToastProvider,
-  Text
+  Text,
+  Container
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { Star } from 'lucide-react';
 
 function FeedbackPageContent() {
@@ -112,7 +114,6 @@ function FeedbackPageContent() {
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
-                  className="feedback-star-rating-button"
                   variant="ghost"
                   size="sm"
                 >
@@ -141,7 +142,6 @@ function FeedbackPageContent() {
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
                 placeholder="Tell us about your experience..."
                 rows={4}
-                className="feedback-form-textarea"
               />
             </Text>
 
@@ -149,7 +149,6 @@ function FeedbackPageContent() {
               <Button
                 type="submit"
                 disabled={loading || rating === 0}
-                className="feedback-submit-button"
                 variant="primary"
                 size="lg"
               >

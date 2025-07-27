@@ -111,13 +111,13 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
 
       {/* Add Comment Modal */}
       {isAddingComment && (
-        <div className="">
-          <div className="">
-            <div className="">
-              <MessageCircle className="" />
-              <h3 className="">Add Comment</h3>
+        <div >
+          <div >
+            <div >
+              <MessageCircle  />
+              <h3 >Add Comment</h3>
             </div>
-            <p className="">
+            <p >
               Type your feedback below. After adding, you can drag the comment icon to any element on the page.
             </p>
             <Textarea
@@ -125,14 +125,14 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
               onChange={(e) => setNewCommentText(e.target.value)}
               placeholder="Type your comment here... (e.g., 'This text is too small', 'Change this color', 'Add more spacing here')"
               rows={4}
-              className="mb-4"
+              
               autoFocus
             />
-            <div className="">
+            <div >
               <Button
                 onClick={handleAddComment}
                 disabled={!newCommentText.trim()}
-                className=""
+                
               >
                 Add Comment
               </Button>
@@ -154,7 +154,7 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
       {comments.map((comment) => (
         <div
           key={comment.id}
-          className=""
+          
           style={{
             left: comment.x,
             top: comment.y,
@@ -162,24 +162,24 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
           }}
           onMouseDown={(e) => handleMouseDown(e, comment.id)}
         >
-          <div className="">
+          <div >
             {/* Comment Icon */}
-            <div className="">
-              <MessageCircle className="" />
+            <div >
+              <MessageCircle  />
             </div>
             
             {/* Comment Tooltip */}
-            <div className="">
-              <div className="">
-                <div className="">
+            <div >
+              <div >
+                <div >
                   {comment.text}
                 </div>
-                <div className="">
+                <div >
                   {comment.createdAt.toLocaleDateString()} at {comment.createdAt.toLocaleTimeString()}
                 </div>
               </div>
               {/* Arrow pointing down */}
-              <div className=""></div>
+              <div ></div>
             </div>
             
             {/* Delete Button */}
@@ -188,10 +188,10 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
                 e.stopPropagation();
                 handleDeleteComment(comment.id);
               }}
-              className=""
+              
               title="Delete comment"
             >
-              <X className="" />
+              <X  />
             </button>
           </div>
         </div>

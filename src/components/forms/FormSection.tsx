@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
 import { Container, H3, Text, Grid } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface FormSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -13,22 +14,23 @@ const FormSection = React.forwardRef<HTMLDivElement, FormSectionProps>(
   ({ className, title, description, columns, children, ...props }, ref) => {
     return (
       <Container
-        className={cn('space-y-4 p-6 border border-border-primary rounded-lg bg-bg-primary', className)}
+        className={className}
         {...props}
       >
-        <div>
-          <H3 className="">{title}</H3>
-          {description && (
-            <Text className="">{description}</Text>
-          )}
-        </div>
-        <Grid 
-          columns={(columns as 1 | 2 | 3 | 4 | 6) || 1} 
-          spacing="md" 
-          className={cn('space-y-4', columns && `grid grid-cols-1 md:grid-cols-${columns} gap-4`)}
-        >
-          {children}
-        </Grid>
+        <Stack spacing="md">
+          <Container>
+            <H3>{title}</H3>
+            {description && (
+              <Text>{description}</Text>
+            )}
+          </Container>
+          <Grid 
+            columns={(columns as 1 | 2 | 3 | 4 | 6) || 1} 
+            spacing="md"
+          >
+            {children}
+          </Grid>
+        </Stack>
       </Container>
     );
   }

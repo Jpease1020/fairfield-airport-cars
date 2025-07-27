@@ -161,43 +161,40 @@ function AdminColorsPageContent() {
       )}
 
       <GridSection variant="content" columns={1}>
-        <div className="admin-colors-container">
+        <div>
           {/* Color Configuration */}
           <SettingSection
             title="Theme Colors"
             description="Configure the main colors used throughout your application"
             icon="🎨"
           >
-            <div className="admin-colors-grid">
+            <div>
               {COLOR_VARIABLES.map(({ key, label, description }) => (
-                <div key={key} className="admin-color-item">
-                  <div className="admin-color-header">
+                <div key={key}>
+                  <div>
                     <div
-                      className="admin-color-swatch"
                       data-color={colors[key] || '#ffffff'}
                     />
-                    <strong className="admin-color-label">
+                    <strong>
                       {label}
                     </strong>
                   </div>
                   
-                  <Text className="admin-color-description">
+                  <Text>
                     {description}
                   </Text>
                   
-                  <div className="admin-color-controls">
+                  <div>
                     <Input
                       type="color"
                       value={colors[key] || '#ffffff'}
                       onChange={(e) => handleColorChange(key, e.target.value)}
-                      className="admin-color-picker"
                     />
                     <Input
                       type="text"
                       value={colors[key] || ''}
                       onChange={(e) => handleColorChange(key, e.target.value)}
                       placeholder="#ffffff"
-                      className="admin-color-input"
                     />
                   </div>
                 </div>
@@ -212,18 +209,16 @@ function AdminColorsPageContent() {
             icon="👀"
           >
             <div 
-              className="admin-colors-preview"
               data-background={colors['--background'] || 'var(--background-primary)'}
               data-foreground={colors['--foreground'] || 'var(--text-primary)'}
             >
               <h2 
-                className="admin-colors-preview-title"
                 data-primary={colors['--primary'] || 'var(--primary-color)'}
               >
                 Primary Color Example
               </h2>
               
-              <Text className="admin-colors-preview-description">
+              <Text>
                 This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
               </Text>
               

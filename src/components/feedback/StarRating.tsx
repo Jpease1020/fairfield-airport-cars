@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Container, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface StarRatingProps extends React.HTMLAttributes<HTMLDivElement> {
   rating: number;
@@ -50,11 +51,7 @@ const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
     };
 
     return (
-      <Container
-        className={cn('flex items-center space-x-1', className)}
-        onMouseLeave={handleMouseLeave}
-        {...props}
-      >
+      <Stack direction="horizontal" align="center" spacing="sm" className={className} onMouseLeave={handleMouseLeave} {...props}>
         {[...Array(maxRating)].map((_, index) => {
           const starValue = index + 1;
           const isFilled = starValue <= (hoverRating || rating);
@@ -66,18 +63,8 @@ const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
               onClick={() => handleStarClick(starValue)}
               onMouseEnter={() => handleStarHover(starValue)}
               disabled={!interactive}
-              className={cn(
-                'transition-colors duration-200 bg-transparent border-none p-0',
-                sizeClasses[size],
-                interactive && 'cursor-pointer hover:scale-110',
-                !interactive && 'cursor-default'
-              )}
             >
               <svg
-                className={cn(
-                  'w-full h-full',
-                  isFilled ? 'text-warning' : 'text-text-muted'
-                )}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -87,11 +74,11 @@ const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
           );
         })}
         {showValue && (
-                <Span>
-        {rating}/{maxRating}
-      </Span>
+          <Span>
+            {rating}/{maxRating}
+          </Span>
         )}
-      </Container>
+      </Stack>
     );
   }
 );

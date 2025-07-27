@@ -31,7 +31,7 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
   }];
 
   return (
-    <div className="page-editor-container">
+    <div >
       <SettingSection
         title={pageTitle}
         description="Edit the content and settings for this page"
@@ -106,7 +106,7 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
   }];
 
   return (
-    <div className="page-editor-container">
+    <div >
       {/* Hero Section */}
       <SettingSection
         title="Hero Section"
@@ -232,7 +232,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
   }];
 
   return (
-    <div className="page-editor-container">
+    <div >
       <SettingSection
         title="Booking Page"
         description="Edit the content and settings for the booking page"
@@ -299,7 +299,7 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
   }];
 
   return (
-    <div className="page-editor-container">
+    <div >
       <SettingSection
         title="Help Page"
         description="Edit the help page content and sections"

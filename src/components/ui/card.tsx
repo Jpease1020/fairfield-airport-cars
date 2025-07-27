@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, H3, Text } from '@/components/ui';
 
 export interface CardProps {
   children: React.ReactNode;
@@ -69,32 +70,32 @@ export const Card: React.FC<CardProps> = ({
 
 export const CardHeader: React.FC<CardHeaderProps> = ({ children, className = '' }) => {
   return (
-    <div className={`info-card-header ${className}`}>
+    <Container>
       {children}
-    </div>
+    </Container>
   );
 };
 
 export const CardBody: React.FC<CardBodyProps> = ({ children, className = '' }) => {
   return (
-    <div className={`info-card-body ${className}`}>
+    <Container>
       {children}
-    </div>
+    </Container>
   );
 };
 
 export const CardTitle: React.FC<CardTitleProps> = ({ children, className = '' }) => {
   return (
-    <h3 className={`info-card-title ${className}`}>
+    <H3>
       {children}
-    </h3>
+    </H3>
   );
 };
 
 export const CardDescription: React.FC<CardDescriptionProps> = ({ children, className = '' }) => {
   return (
-    <p className={`info-card-description ${className}`}>
+    <Text>
       {children}
-    </p>
+    </Text>
   );
 }; 

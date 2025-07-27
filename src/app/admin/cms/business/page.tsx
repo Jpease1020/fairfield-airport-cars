@@ -11,8 +11,13 @@ import {
   StatusMessage,
   ToastProvider,
   useToast,
-  GridSection
+  GridSection,
+  Container,
+  Text,
+  H3,
+  Span
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 function BusinessPageContent() {
   const { addToast } = useToast();
@@ -166,14 +171,14 @@ function BusinessPageContent() {
 
       {settings && (
         <GridSection variant="content" columns={1}>
-          <div className="settings-container">
+          <Container>
             {/* Company Information */}
             <SettingSection
               title="Company Information"
               description="Basic company details and contact information"
               icon="🏢"
             >
-              <div className="settings-grid">
+              <Stack spacing="md">
                 <SettingInput
                   id="company-name"
                   label="Company Name"
@@ -234,7 +239,7 @@ function BusinessPageContent() {
                   placeholder="Mon-Fri 9am-5pm"
                   icon="🕒"
                 />
-              </div>
+              </Stack>
             </SettingSection>
 
             {/* Social Media */}
@@ -243,7 +248,7 @@ function BusinessPageContent() {
               description="Links to your social media profiles"
               icon="📱"
             >
-              <div className="settings-grid">
+              <Stack spacing="md">
                 <SettingInput
                   id="social-facebook"
                   label="Facebook URL"
@@ -273,7 +278,7 @@ function BusinessPageContent() {
                   placeholder="https://twitter.com/yourpage"
                   icon="🐦"
                 />
-              </div>
+              </Stack>
             </SettingSection>
 
             {/* Branding */}
@@ -282,8 +287,8 @@ function BusinessPageContent() {
               description="Visual identity and brand colors"
               icon="🎨"
             >
-              <div className="settings-grid">
-                <div className="color-preview-card">
+              <Stack spacing="md">
+                <Container>
                   <SettingInput
                     id="brand-primary-color"
                     label="Primary Color"
@@ -293,13 +298,15 @@ function BusinessPageContent() {
                     placeholder="#1f2937"
                     icon="🎨"
                   />
-                  <div className="color-preview">
-                    <span className="preview-label">Preview:</span>
-                    <div className="color-swatch" />
-                  </div>
-                </div>
+                  <Container>
+                    <Span>Preview:</Span>
+                    <Container>
+                      <span>Color preview</span>
+                    </Container>
+                  </Container>
+                </Container>
                 
-                <div className="color-preview-card">
+                <Container>
                   <SettingInput
                     id="brand-secondary-color"
                     label="Secondary Color"
@@ -309,11 +316,13 @@ function BusinessPageContent() {
                     placeholder="#3b82f6"
                     icon="🎨"
                   />
-                  <div className="color-preview">
-                    <span className="preview-label">Preview:</span>
-                    <div className="color-swatch" />
-                  </div>
-                </div>
+                  <Container>
+                    <Span>Preview:</Span>
+                    <Container>
+                      <span>Color preview</span>
+                    </Container>
+                  </Container>
+                </Container>
                 
                 <SettingInput
                   id="brand-logo-url"
@@ -324,7 +333,7 @@ function BusinessPageContent() {
                   placeholder="https://example.com/logo.png"
                   icon="🖼️"
                 />
-              </div>
+              </Stack>
             </SettingSection>
 
             {/* Business Preview */}
@@ -333,22 +342,22 @@ function BusinessPageContent() {
               description="How your business information will appear to customers"
               icon="👀"
             >
-              <div className="business-preview">
-                <div className="preview-card">
-                  <div className="preview-header">
-                    <h3 className="preview-company-name">{settings.company.name}</h3>
-                    <p className="preview-tagline">{settings.company.tagline}</p>
-                  </div>
-                  <div className="preview-contact">
-                    <p className="preview-phone">📞 {settings.company.phone}</p>
-                    <p className="preview-email">✉️ {settings.company.email}</p>
-                    <p className="preview-address">📍 {settings.company.address}</p>
-                    <p className="preview-hours">🕒 {settings.company.hours}</p>
-                  </div>
-                </div>
-              </div>
+              <Container>
+                <Container>
+                  <Container>
+                    <H3>{settings.company.name}</H3>
+                    <Text>{settings.company.tagline}</Text>
+                  </Container>
+                  <Container>
+                    <Text>📞 {settings.company.phone}</Text>
+                    <Text>✉️ {settings.company.email}</Text>
+                    <Text>📍 {settings.company.address}</Text>
+                    <Text>🕒 {settings.company.hours}</Text>
+                  </Container>
+                </Container>
+              </Container>
             </SettingSection>
-          </div>
+          </Container>
         </GridSection>
       )}
     </AdminPageWrapper>

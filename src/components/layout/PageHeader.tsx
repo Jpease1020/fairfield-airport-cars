@@ -15,15 +15,15 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
         className={cn('mb-8', className)}
         {...props}
       >
-        <div className="">
+        <div >
           <div>
-            <h1 className="">{title}</h1>
+            <h1 >{title}</h1>
             {subtitle && (
-              <p className="">{subtitle}</p>
+              <p >{subtitle}</p>
             )}
           </div>
           {children && (
-            <div className="">
+            <div >
               {children}
             </div>
           )}

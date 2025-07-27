@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Container, H4, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'success' | 'error' | 'warning' | 'info';
@@ -36,38 +37,30 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     };
 
     return (
-      <div
-        className={cn(
-          'rounded-lg border p-4',
-          variantClasses[variant],
-          className
-        )}
+      <Container
+        className={className}
         {...props}
       >
-        <div className="flex">
-          <div className="flex-1">
+        <Stack direction="horizontal" align="center" justify="between">
+          <Container>
             {title && (
-              <H4 className="font-medium mb-1">{title}</H4>
+              <H4>{title}</H4>
             )}
             <Text size="sm">
               {children}
             </Text>
-          </div>
+          </Container>
           {dismissible && onClose && (
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className={cn(
-                'ml-3 flex-shrink-0 rounded-md p-1.5 hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-offset-2',
-                iconClasses[variant]
-              )}
             >
-              <X className="h-4 w-4" />
+              <X />
             </Button>
           )}
-        </div>
-      </div>
+        </Stack>
+      </Container>
     );
   }
 );

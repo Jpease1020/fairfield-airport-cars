@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/ui/layout/PageHeader';
 import { Section, Container, H1, H2, Lead, Button } from '@/components/ui';
 import { Card } from '@/components/ui/containers';
 import { CardBody } from '@/components/ui/card';
+import { Stack } from '@/components/ui/containers';
 import { CheckCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
 interface CMSStatusPageProps {
@@ -104,28 +105,28 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
       {/* Status Section */}
       <Section variant="muted" padding="xl">
         <Container maxWidth={containerMaxWidth}>
-          <div className="">
+          <Stack align="center" spacing="lg">
             {/* Status Icon */}
             {showStatusIcon && (
-              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${currentStatus.bgColor} ${currentStatus.borderColor} border-2 mb-6`}>
-                <StatusIcon className={`w-8 h-8 ${currentStatus.color}`} />
-              </div>
+              <Container>
+                <StatusIcon />
+              </Container>
             )}
 
             {/* Header */}
             <PageHeader align="center" padding="lg" margin="none">
               {pageTitle && (
-                <H1 className="">
+                <H1>
                   {pageTitle}
                 </H1>
               )}
               {pageSubtitle && (
-                <H2 className="mb-4">
+                <H2>
                   {pageSubtitle}
                 </H2>
               )}
               {pageDescription && (
-                <Lead className="">
+                <Lead>
                   {pageDescription}
                 </Lead>
               )}
@@ -133,7 +134,7 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
 
             {/* Action Buttons */}
             {showActionButtons && (primaryAction || secondaryAction) && (
-              <div className="">
+              <Stack direction="horizontal" spacing="md">
                 {primaryAction && (
                   <a href={primaryAction.href}>
                     <Button 
@@ -154,9 +155,9 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
                     </Button>
                   </a>
                 )}
-              </div>
+              </Stack>
             )}
-          </div>
+          </Stack>
         </Container>
       </Section>
 

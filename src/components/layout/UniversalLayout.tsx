@@ -59,12 +59,12 @@ export const UniversalLayout: React.FC<UniversalLayoutProps> = ({
     <div className={layoutClasses}>
       {showNavigation && <NavigationComponent />}
       
-      <main className="standard-main">
+      <main >
         {showHeader && (title || subtitle) && layoutType !== 'minimal' && (
           <StandardHeader title={title} subtitle={subtitle} />
         )}
         
-        <div className="standard-content">
+        <div >
           {children}
         </div>
       </main>

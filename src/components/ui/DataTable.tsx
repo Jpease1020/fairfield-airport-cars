@@ -138,7 +138,7 @@ export function DataTable<T extends Record<string, any>>({
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-input"
+              
             />
           </div>
           <div className="data-table-count">
@@ -227,7 +227,7 @@ export function DataTable<T extends Record<string, any>>({
             size="sm"
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className="data-table-pagination-button"
+            
           >
             Previous
           </Button>
@@ -241,7 +241,7 @@ export function DataTable<T extends Record<string, any>>({
             size="sm"
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="data-table-pagination-button"
+            
           >
             Next
           </Button>

@@ -45,49 +45,49 @@ export const BookingFormSkeleton = () => (
 );
 
 export const BookingCardSkeleton = () => (
-  <div className="">
-    <div className="">
-      <div className="">
-        <Skeleton className="" />
-        <Skeleton className="" />
+  <div >
+    <div >
+      <div >
+        <Skeleton  />
+        <Skeleton  />
       </div>
-      <Skeleton className="" />
+      <Skeleton  />
     </div>
-    <div className="">
-      <Skeleton className="" />
-      <Skeleton className="" />
+    <div >
+      <Skeleton  />
+      <Skeleton  />
     </div>
-    <div className="">
-      <Skeleton className="" />
-      <Skeleton className="" />
+    <div >
+      <Skeleton  />
+      <Skeleton  />
     </div>
   </div>
 );
 
 export const AdminDashboardSkeleton = () => (
-  <div className="">
-    <div className="">
+  <div >
+    <div >
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="">
-          <div className="">
-            <Skeleton className="" />
-            <div className="">
-              <Skeleton className="" />
-              <Skeleton className="" />
+        <div key={i} >
+          <div >
+            <Skeleton  />
+            <div >
+              <Skeleton  />
+              <Skeleton  />
             </div>
           </div>
         </div>
       ))}
     </div>
-    <div className="">
+    <div >
       {[...Array(2)].map((_, i) => (
-        <div key={i} className="">
-          <Skeleton className="" />
-          <div className="">
+        <div key={i} >
+          <Skeleton  />
+          <div >
             {[...Array(4)].map((_, j) => (
-              <div key={j} className="">
-                <Skeleton className="" />
-                <Skeleton className="" />
+              <div key={j} >
+                <Skeleton  />
+                <Skeleton  />
               </div>
             ))}
           </div>
@@ -98,19 +98,19 @@ export const AdminDashboardSkeleton = () => (
 );
 
 export const PageSkeleton = () => (
-  <div className="">
-    <div className="space-y-4">
-      <Skeleton className="" />
-      <Skeleton className="" />
+  <div >
+    <div >
+      <Skeleton  />
+      <Skeleton  />
     </div>
-    <div className="">
+    <div >
       {[...Array(3)].map((_, i) => (
-        <Skeleton key={i} className="" />
+        <Skeleton key={i}  />
       ))}
     </div>
-    <div className="">
-      <Skeleton className="" />
-      <Skeleton className="" />
+    <div >
+      <Skeleton  />
+      <Skeleton  />
     </div>
   </div>
 ); 

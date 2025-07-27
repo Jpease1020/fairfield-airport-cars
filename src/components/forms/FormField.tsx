@@ -66,10 +66,10 @@ const FormFieldComponent = React.forwardRef<HTMLInputElement, FormFieldProps>(
 
     return (
       <ErrorBoundary fallback={errorFallback}>
-        <Container className="">
-          <Label htmlFor={fieldId} className="">
+        <Container >
+          <Label htmlFor={fieldId} >
             {label}
-            {required && <Span className="">*</Span>}
+            {required && <Span >*</Span>}
           </Label>
           <Input
             id={fieldId}

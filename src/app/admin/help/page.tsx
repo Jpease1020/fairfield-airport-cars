@@ -1,6 +1,7 @@
 'use client';
 
-import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup } from '@/components/ui';
+import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup, H4, Text, Container } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 function AdminHelpPage() {
   const helpSections = [
@@ -153,21 +154,14 @@ function AdminHelpPage() {
             title={`${section.icon} ${section.title}`}
             description={section.description}
           >
-            <div className="admin-help-section">
+            <Stack spacing="md">
               {section.items.map((item, itemIndex) => (
-                <div 
-                  key={itemIndex} 
-                  className={`admin-help-item ${itemIndex < section.items.length - 1 ? 'admin-help-item-with-border' : ''}`}
-                >
-                  <h4 className="admin-help-question">
-                    {item.question}
-                  </h4>
-                  <p className="admin-help-answer">
-                    {item.answer}
-                  </p>
-                </div>
+                <Container key={itemIndex}>
+                  <H4>{item.question}</H4>
+                  <Text>{item.answer}</Text>
+                </Container>
               ))}
-            </div>
+            </Stack>
           </InfoCard>
         ))}
       </GridSection>
@@ -178,35 +172,35 @@ function AdminHelpPage() {
           title="📞 Need More Help?"
           description="If you can't find the answer you're looking for, here are additional resources"
         >
-          <div className="admin-help-resources">
-            <div className="admin-help-resource-item">
-              <span className="admin-help-resource-icon">💬</span>
-              <span className="admin-help-resource-text">
+          <Stack spacing="md">
+            <Container>
+              <span>💬</span>
+              <span>
                 Contact your developer for technical support
               </span>
-            </div>
+            </Container>
             
-            <div className="admin-help-resource-item">
-              <span className="admin-help-resource-icon">📄</span>
-              <span className="admin-help-resource-text">
+            <Container>
+              <span>📄</span>
+              <span>
                 Check the business documentation in your project files
               </span>
-            </div>
+            </Container>
             
-            <div className="admin-help-resource-item">
-              <span className="admin-help-resource-icon">⚙️</span>
-              <span className="admin-help-resource-text">
+            <Container>
+              <span>⚙️</span>
+              <span>
                 Review your CMS settings for configuration options
               </span>
-            </div>
+            </Container>
             
-            <div className="admin-help-resource-item">
-              <span className="admin-help-resource-icon">📊</span>
-              <span className="admin-help-resource-text">
+            <Container>
+              <span>📊</span>
+              <span>
                 Use the Admin Dashboard to monitor your business metrics
               </span>
-            </div>
-          </div>
+            </Container>
+          </Stack>
         </InfoCard>
       </GridSection>
 

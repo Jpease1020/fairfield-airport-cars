@@ -26,12 +26,12 @@ export const StandardLayout: React.FC<StandardLayoutProps> = ({
     <div className={`standard-layout ${className}`}>
       {showNavigation && <StandardNavigation />}
       
-      <main className="standard-main">
+      <main >
         {showHeader && (title || subtitle) && (
           <StandardHeader title={title} subtitle={subtitle} />
         )}
         
-        <div className="standard-content">
+        <div >
           {children}
         </div>
       </main>

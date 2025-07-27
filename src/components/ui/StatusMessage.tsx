@@ -28,9 +28,9 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
   return (
     <GridSection variant="content" columns={1}>
       <div className={`status-message status-message-${type}`}>
-        <div className="status-message-content">
-          <span className="status-message-icon">{icon || getDefaultIcon()}</span>
-          <span className="status-message-text">{message}</span>
+        <div >
+          <span >{icon || getDefaultIcon()}</span>
+          <span >{message}</span>
         </div>
         
         {onDismiss && (
@@ -38,7 +38,7 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
             onClick={onDismiss}
             variant="ghost"
             size="sm"
-            className="status-message-dismiss-button"
+            
           >
             ×
           </Button>

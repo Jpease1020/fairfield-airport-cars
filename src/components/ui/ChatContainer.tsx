@@ -57,20 +57,20 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
         
         {isLoading && (
           <div className="chat-message assistant-message">
-            <div className="message-bubble loading" style={{
+            <div  style={{
               padding: 'var(--spacing-md)',
               backgroundColor: 'var(--background-secondary)',
               borderRadius: 'var(--border-radius)',
               border: '1px solid var(--border-color)',
               maxWidth: '80%'
             }}>
-              <div className="message-header" style={{
+              <div  style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 'var(--spacing-sm)'
               }}>
-                <span className="message-icon">🤖</span>
-                <div className="typing-indicator" style={{
+                <span >🤖</span>
+                <div  style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 'var(--spacing-xs)'
@@ -79,7 +79,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                     display: 'flex',
                     gap: '2px'
                   }}>
-                    <span className="typing-dot" style={{
+                    <span  style={{
                       width: '6px',
                       height: '6px',
                       backgroundColor: 'var(--primary-color)',
@@ -87,7 +87,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                       animation: 'typing 1.4s infinite ease-in-out',
                       animationDelay: '0ms'
                     }}></span>
-                    <span className="typing-dot" style={{
+                    <span  style={{
                       width: '6px',
                       height: '6px',
                       backgroundColor: 'var(--primary-color)',
@@ -95,7 +95,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                       animation: 'typing 1.4s infinite ease-in-out',
                       animationDelay: '200ms'
                     }}></span>
-                    <span className="typing-dot" style={{
+                    <span  style={{
                       width: '6px',
                       height: '6px',
                       backgroundColor: 'var(--primary-color)',
@@ -104,7 +104,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                       animationDelay: '400ms'
                     }}></span>
                   </div>
-                  <span className="typing-text" style={{
+                  <span  style={{
                     fontSize: 'var(--font-size-sm)',
                     color: 'var(--text-secondary)',
                     marginLeft: 'var(--spacing-xs)'

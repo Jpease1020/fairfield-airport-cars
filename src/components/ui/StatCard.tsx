@@ -24,12 +24,12 @@ export const StatCard: React.FC<StatCardProps> = ({
 }) => {
   const cardContent = (
     <>
-      <Container className="card-header">
-        <H3 className="card-title">{title}</H3>
-        <span className="card-icon">{icon}</span>
+      <Container >
+        <H3 >{title}</H3>
+        <span >{icon}</span>
       </Container>
-      <Container className="card-body">
-        <div className="stat-number">{statNumber}</div>
+      <Container >
+        <div >{statNumber}</div>
         {statChange && (
           <Text className={`stat-change ${changeType}`}>{statChange}</Text>
         )}

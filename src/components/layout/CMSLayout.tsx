@@ -32,7 +32,7 @@ export const CMSLayout: React.FC<CMSLayoutProps> = ({
       style={cssVars}
     >
       {/* Header will be added here */}
-      <main className="">
+      <main >
         {children}
       </main>
       {/* Footer will be added here */}

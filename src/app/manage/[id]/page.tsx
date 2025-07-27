@@ -13,6 +13,7 @@ import {
   Span,
   Container
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { EditableInput } from '@/components/forms';
 
 function ManageBookingPageContent() {
@@ -259,7 +260,7 @@ function ManageBookingPageContent() {
       {isAdmin && (
         <GridSection variant="content" columns={1}>
           <InfoCard title="🔧 Admin Controls" description="Edit page content">
-            <Container className="manage-booking-admin-controls">
+            <Container>
               {!editMode ? (
                 <ActionButtonGroup buttons={[
                   {
@@ -270,7 +271,7 @@ function ManageBookingPageContent() {
                   }
                 ]} />
               ) : (
-                <Container className="manage-booking-edit-controls">
+                <Container>
                   <ActionButtonGroup buttons={[
                     {
                       label: 'Save Changes',
@@ -285,7 +286,7 @@ function ManageBookingPageContent() {
                       icon: '❌'
                     }
                   ]} />
-                  <Container className="manage-booking-edit-fields">
+                  <Stack spacing="md">
                     <EditableInput
                       label="Page Title"
                       value={localContent?.title || ''}
@@ -336,7 +337,7 @@ function ManageBookingPageContent() {
                       value={localContent?.loadingMessage || ''}
                       onChange={(e) => handleFieldChange('loadingMessage', e.target.value)}
                     />
-                  </Container>
+                  </Stack>
                 </Container>
               )}
             </Container>

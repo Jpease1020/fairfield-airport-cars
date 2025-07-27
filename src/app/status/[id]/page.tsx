@@ -193,7 +193,7 @@ function BookingStatusPageContent() {
           <Text>
             <button
               onClick={() => setShowDetails(!showDetails)}
-              className="status-toggle-button"
+              
             >
               {showDetails ? 'Hide' : 'Show'} Booking Details
             </button>

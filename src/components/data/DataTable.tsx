@@ -10,6 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Container, Text, H3 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 /**
  * Column configuration for the data table
@@ -94,12 +95,16 @@ interface DataTableProps<T> {
  */
 const LoadingSkeleton: React.FC<{ className?: string }> = ({ className }) => (
       <Container>
-      <div className="animate-pulse space-y-3">
-        <div className="h-4 bg-gray-200 rounded"></div>
+      <Stack spacing="md">
+        <Container>
+          <span>Loading...</span>
+        </Container>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-4 bg-gray-200 rounded"></div>
+          <Container key={i}>
+            <span>Loading row {i + 1}...</span>
+          </Container>
         ))}
-      </div>
+      </Stack>
     </Container>
 );
 
@@ -139,7 +144,7 @@ function DataTableComponent<T extends { id?: string }>({
   }
 
   return (
-    <Container className={cn('w-full', className)}>
+    <Container className={className}>
       <Table>
         <TableHeader>
           <TableRow>
@@ -147,10 +152,6 @@ function DataTableComponent<T extends { id?: string }>({
               <TableHead
                 key={column.key}
                 style={{ width: column.width }}
-                className={cn(
-                  column.sortable && 'cursor-pointer hover:bg-bg-secondary',
-                  column.hideOnMobile && 'hidden md:table-cell'
-                )}
               >
                 {column.label}
               </TableHead>
@@ -161,10 +162,6 @@ function DataTableComponent<T extends { id?: string }>({
           {data.map((item, index) => (
             <TableRow
               key={item.id || index}
-              className={cn(
-                onRowClick && 'cursor-pointer',
-                hoverable && 'hover:bg-bg-secondary'
-              )}
               onClick={() => onRowClick?.(item)}
               role={onRowClick ? 'button' : undefined}
               tabIndex={onRowClick ? 0 : undefined}
@@ -178,9 +175,6 @@ function DataTableComponent<T extends { id?: string }>({
               {visibleColumns.map((column) => (
                 <TableCell 
                   key={column.key}
-                  className={cn(
-                    column.hideOnMobile && 'hidden md:table-cell'
-                  )}
                 >
                   {column.render
                     ? column.render(item)

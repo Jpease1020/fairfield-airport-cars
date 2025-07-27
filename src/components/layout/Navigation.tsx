@@ -38,21 +38,21 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="navigation">
-      <Container className="navigation-container">
-        <Container className="navigation-content">
+    <nav >
+      <Container >
+        <Container >
           {/* Logo */}
-          <Container className="navigation-brand">
-            <Link href="/" className="navigation-logo">
-              <Logo className="navigation-logo-icon" />
-              <Text className="navigation-logo-text">
+          <Container >
+            <Link href="/" >
+              <Logo  />
+              <Text >
                 {getCompanyName()}
               </Text>
             </Link>
           </Container>
 
           {/* Desktop Navigation */}
-          <Container className="navigation-menu">
+          <Container >
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
@@ -65,13 +65,13 @@ const Navigation = () => {
           </Container>
 
           {/* Contact Button */}
-          <Container className="navigation-actions">
+          <Container >
             <a 
               href={`tel:${getPhoneNumber()}`}
-              className="navigation-contact-button"
+              
             >
-              <Phone className="navigation-contact-icon" />
-              <Text className="navigation-contact-text">Call Now</Text>
+              <Phone  />
+              <Text >Call Now</Text>
             </a>
           </Container>
 
@@ -79,14 +79,14 @@ const Navigation = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="navigation-mobile-toggle"
+            
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Open menu"
           >
             {mobileMenuOpen ? (
-              <X className="navigation-mobile-icon" />
+              <X  />
             ) : (
-              <Menu className="navigation-mobile-icon" />
+              <Menu  />
             )}
           </Button>
         </Container>
@@ -94,8 +94,8 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <Container className="navigation-mobile-menu">
-          <Container className="navigation-mobile-content">
+        <Container >
+          <Container >
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
@@ -107,14 +107,14 @@ const Navigation = () => {
               </Link>
             ))}
             
-            <Container className="navigation-mobile-actions">
+            <Container >
               <a 
                 href={`tel:${getPhoneNumber()}`}
-                className="navigation-mobile-contact-button"
+                
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Phone className="navigation-mobile-contact-icon" />
-                <Text className="navigation-mobile-contact-text">Call Now</Text>
+                <Phone  />
+                <Text >Call Now</Text>
               </a>
             </Container>
           </Container>

@@ -88,12 +88,12 @@ export const createConversionPageTemplate = (
 
     if (!cmsConfig) {
       return (
-        <div className="">
-          <div className="">
+        <Container>
+          <Container>
             <H2>Loading...</H2>
-            <Text variant="muted">Please wait while we load the form.</Text>
-          </div>
-        </div>
+            <Text>Please wait while we load the form.</Text>
+          </Container>
+        </Container>
       );
     }
 
@@ -135,8 +135,8 @@ export const createStatusPageTemplate = (
 
     if (!cmsConfig) {
       return (
-        <div className="">
-          <div className="">
+        <div >
+          <div >
             <H2>Loading...</H2>
             <Text variant="muted">Please wait while we load your status.</Text>
           </div>
@@ -182,9 +182,9 @@ export const createSection = (
   const IconComponent = icon;
   
   return (
-    <section id={id} className="">
-      <H2 className="">
-        {IconComponent && <IconComponent className="" />}
+    <section id={id} >
+      <H2 >
+        {IconComponent && <IconComponent  />}
         {title}
       </H2>
       {content}
@@ -201,17 +201,17 @@ export const createStatsSection = (stats: Array<{
   label: string;
 }>) => {
   return (
-    <div className="">
+    <div >
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
           <Card key={index} variant="outlined" padding="lg">
-            <CardContent className="">
-              <div className="">
-                <IconComponent className="" />
+            <CardContent >
+              <div >
+                <IconComponent  />
               </div>
-              <H3 className="">{stat.value}</H3>
-              <Text variant="small" className="">
+              <H3 >{stat.value}</H3>
+              <Text variant="small" >
                 {stat.label}
               </Text>
             </CardContent>
@@ -232,7 +232,7 @@ export const createContactSection = (contacts: Array<{
   action: { text: string; href: string; type: 'tel' | 'mailto' | 'link' };
 }>) => {
   return (
-    <div className="">
+    <div >
       {contacts.map((contact, index) => {
         const IconComponent = contact.icon;
         const ActionComponent = contact.action.type === 'link' ? Link : 'a';
@@ -242,12 +242,12 @@ export const createContactSection = (contacts: Array<{
 
         return (
           <Card key={index} variant="elevated" padding="lg">
-            <CardContent className="">
-              <div className="">
-                <IconComponent className="" />
+            <CardContent >
+              <div >
+                <IconComponent  />
               </div>
-              <H3 className="">{contact.title}</H3>
-              <Text className="mb-4">{contact.value}</Text>
+              <H3 >{contact.title}</H3>
+              <Text >{contact.value}</Text>
               <ActionComponent {...actionProps}>
                 <Button variant="outline" size="sm">
                   {contact.action.text}
@@ -270,12 +270,12 @@ export const createFAQSection = (faqs: Array<{
   category?: string;
 }>) => {
   return (
-    <div className="">
+    <div >
       {faqs.map((faq, index) => (
         <Card key={index} variant="outlined" padding="lg">
           <CardContent>
-            <H3 className="">{faq.question}</H3>
-            <Text variant="small" className="">
+            <H3 >{faq.question}</H3>
+            <Text variant="small" >
               {faq.answer}
             </Text>
           </CardContent>
@@ -294,21 +294,21 @@ export const createFeaturesSection = (features: Array<{
   description: string;
 }>) => {
   return (
-    <div className="">
+    <div >
       {features.map((feature, index) => {
         const IconComponent = feature.icon;
         return (
           <Card key={index} variant="elevated" padding="lg">
             <CardContent>
-              <div className="">
-                <div className="">
-                  <IconComponent className="" />
+              <div >
+                <div >
+                  <IconComponent  />
                 </div>
                 <div>
                   <H3>{feature.title}</H3>
                 </div>
               </div>
-              <Text variant="small" className="">
+              <Text variant="small" >
                 {feature.description}
               </Text>
             </CardContent>

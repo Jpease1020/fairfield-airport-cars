@@ -32,33 +32,23 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
     const content = (
       <>
         {icon && (
-          <Container className={cn(
-            'flex items-center justify-center w-12 h-12 rounded-lg mb-4',
-            variant === 'highlighted' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600',
-            'group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors'
-          )}>
+          <Container>
             {icon}
           </Container>
         )}
         
-        <H3 className={cn(
-          'text-lg font-semibold mb-2',
-          variant === 'highlighted' ? 'text-indigo-900' : 'text-gray-900'
-        )}>
+        <H3>
           {title}
         </H3>
         
-        <Text className={cn(
-          'text-sm leading-relaxed',
-          variant === 'highlighted' ? 'text-indigo-700' : 'text-gray-600'
-        )}>
+        <Text>
           {description}
         </Text>
         
         {href && (
-          <Container className="flex items-center mt-4">
-            <Span className="mr-2">Learn more</Span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Container>
+            <Span>Learn more</Span>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </Container>
@@ -68,14 +58,14 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
 
     if (href) {
       return (
-        <a href={href} className={cardClasses}>
+        <a href={href} className={className}>
           {content}
         </a>
       );
     }
 
     return (
-      <Container className={cardClasses} {...props}>
+      <Container className={className} {...props}>
         {content}
       </Container>
     );

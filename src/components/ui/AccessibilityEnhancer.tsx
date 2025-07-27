@@ -168,41 +168,41 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
           <CardBody>
             <div className="accessibility-settings">
               {/* High Contrast */}
-              <label className="accessibility-setting-item">
+              <label >
                 <Input
                   type="checkbox"
                   checked={settings.highContrast}
                   onChange={(e) => updateSetting('highContrast', e.target.checked)}
-                  className="accessibility-setting-checkbox"
+                  
                 />
-                <span className="accessibility-setting-label">High Contrast Mode</span>
+                <span >High Contrast Mode</span>
               </label>
 
               {/* Reduce Motion */}
-              <label className="accessibility-setting-item">
+              <label >
                 <Input
                   type="checkbox"
                   checked={settings.reduceMotion}
                   onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
-                  className="accessibility-setting-checkbox"
+                  
                 />
-                <span className="accessibility-setting-label">Reduce Motion</span>
+                <span >Reduce Motion</span>
               </label>
 
               {/* Enhanced Focus */}
-              <label className="accessibility-setting-item">
+              <label >
                 <Input
                   type="checkbox"
                   checked={settings.focusIndicators}
                   onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
-                  className="accessibility-setting-checkbox"
+                  
                 />
-                <span className="accessibility-setting-label">Enhanced Focus Indicators</span>
+                <span >Enhanced Focus Indicators</span>
               </label>
 
               {/* Font Size */}
               <div className="accessibility-setting-group">
-                <Label htmlFor="font-size-select" className="accessibility-setting-label">
+                <Label htmlFor="font-size-select" >
                   Font Size
                 </Label>
                 <Select
@@ -222,7 +222,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
       )}
 
       {/* Skip to main content link */}
-      <a href="#main-content" className="skip-link">
+      <a href="#main-content" >
         Skip to main content
       </a>
     </>

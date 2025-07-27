@@ -19,16 +19,16 @@ export const AdminNavigation: React.FC = () => {
   ];
 
   return (
-    <nav className="standard-navigation admin-nav">
+    <nav >
       <Container maxWidth="xl">
-        <div className="flex items-center justify-between">
-          <div className="nav-brand">
-            <Link href="/admin" className="nav-logo">
+        <div >
+          <div >
+            <Link href="/admin" >
               Admin Panel
             </Link>
           </div>
 
-          <div className="nav-menu">
+          <div >
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
@@ -40,7 +40,7 @@ export const AdminNavigation: React.FC = () => {
             ))}
           </div>
 
-          <div className="nav-actions">
+          <div >
             <Link href="/">
               <Button variant="outline" size="sm">
                 View Site
@@ -48,22 +48,22 @@ export const AdminNavigation: React.FC = () => {
             </Link>
           </div>
 
-          <div className="nav-mobile-toggle">
+          <div >
             <button
-              className="mobile-menu-button"
+              
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle mobile menu"
             >
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
+              <span ></span>
+              <span ></span>
+              <span ></span>
             </button>
           </div>
         </div>
       </Container>
 
       {mobileMenuOpen && (
-        <div className="mobile-menu">
+        <div >
           {navigationItems.map((item) => (
             <Link
               key={item.name}
@@ -74,7 +74,7 @@ export const AdminNavigation: React.FC = () => {
               {item.name}
             </Link>
           ))}
-          <div className="mobile-menu-actions">
+          <div >
             <Link 
               href="/" 
               onClick={() => setMobileMenuOpen(false)}

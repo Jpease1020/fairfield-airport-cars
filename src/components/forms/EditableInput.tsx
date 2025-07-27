@@ -24,9 +24,9 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     };
 
     return (
-      <div className="">
+      <div >
         {label && (
-          <label className="">
+          <label >
             {label}
           </label>
         )}

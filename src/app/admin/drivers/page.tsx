@@ -11,8 +11,12 @@ import {
   DataTableColumn,
   DataTableAction,
   ToastProvider,
-  useToast
+  useToast,
+  Container,
+  Text,
+  Span
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface Driver {
   id: string;
@@ -155,9 +159,9 @@ function DriversPageContent() {
     };
 
     return (
-      <span className="status-badge">
+      <Span>
         {getStatusIcon(status)} {status}
-      </span>
+      </Span>
     );
   };
 
@@ -176,17 +180,17 @@ function DriversPageContent() {
       label: 'Driver',
       sortable: true,
       render: (_, driver) => (
-        <div className="driver-info">
-          <div className="driver-name">
+        <Container>
+          <Text>
             {driver.name}
-          </div>
-          <div className="driver-contact">
+          </Text>
+          <Text size="sm">
             📞 {driver.phone}
-          </div>
-          <div className="driver-contact">
+          </Text>
+          <Text size="sm">
             📧 {driver.email}
-          </div>
-        </div>
+          </Text>
+        </Container>
       )
     },
     {
@@ -194,17 +198,17 @@ function DriversPageContent() {
       label: 'Vehicle',
       sortable: false,
       render: (_, driver) => (
-        <div className="vehicle-info">
-          <div className="vehicle-name">
+        <Container>
+          <Text>
             🚗 {driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model}
-          </div>
-          <div className="vehicle-details">
+          </Text>
+          <Text size="sm">
             Color: {driver.vehicle.color}
-          </div>
-          <div className="vehicle-details">
+          </Text>
+          <Text size="sm">
             Plate: {driver.vehicle.licensePlate}
-          </div>
-        </div>
+          </Text>
+        </Container>
       )
     },
     {
@@ -218,14 +222,14 @@ function DriversPageContent() {
       label: 'Rating',
       sortable: true,
       render: (_, driver) => (
-        <div className="rating-info">
-          <div className="rating-score">
+        <Container>
+          <Text>
             ⭐ {driver.rating.toFixed(1)}
-          </div>
-          <div className="rating-rides">
+          </Text>
+          <Text size="sm">
             {driver.totalRides} rides
-          </div>
-        </div>
+          </Text>
+        </Container>
       )
     }
   ];

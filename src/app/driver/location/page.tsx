@@ -64,8 +64,8 @@ function DriverLocationContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Unauthorized" description="You are not authorized to access this page">
-            <Container className="driver-location-unauthorized">
-              <Text className="driver-location-unauthorized-text">
+            <Container>
+              <Text>
                 You are not authorized to access this page.
               </Text>
             </Container>
@@ -86,12 +86,12 @@ function DriverLocationContent() {
           title="📍 Location Status"
           description="Your current location sharing status"
         >
-          <Container className="driver-location-status">
-            <Text className="driver-location-status-text">{status}</Text>
+          <Container>
+            <Text>{status}</Text>
             {coords && (
-              <Container className="driver-location-coordinates">
-                <Text className="driver-location-coordinates-label">Current Coordinates:</Text>
-                <Text className="driver-location-coordinates-value">
+              <Container>
+                <Text>Current Coordinates:</Text>
+                <Text>
                   Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
                 </Text>
               </Container>
@@ -113,7 +113,7 @@ export default function DriverLocationPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="Loading..." description="Initializing location services">
-            <Container className="driver-location-loading">
+            <Container>
               <LoadingSpinner text="Loading..." />
             </Container>
           </InfoCard>

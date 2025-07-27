@@ -20,7 +20,7 @@ const Logo: React.FC<LogoProps> = ({
     alt={alt}
     width={width}
     height={height}
-    className={`logo-image ${className}`}
+    className={className}
     {...props}
   />
 );

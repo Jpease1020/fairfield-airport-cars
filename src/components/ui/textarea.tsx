@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container } from '@/components/ui';
 
 export interface TextareaProps {
   placeholder?: string;
@@ -61,7 +62,7 @@ export const Textarea: React.FC<TextareaProps> = ({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className="form-textarea-wrapper">
+    <Container>
       <textarea
         placeholder={placeholder}
         value={value}
@@ -73,7 +74,6 @@ export const Textarea: React.FC<TextareaProps> = ({
         required={required}
         name={name}
         id={id}
-        className={classes}
         rows={rows}
         cols={cols}
         maxLength={maxLength}
@@ -81,8 +81,8 @@ export const Textarea: React.FC<TextareaProps> = ({
         autoFocus={autoFocus}
       />
       {error && errorMessage && (
-        <div className="error-message">{errorMessage}</div>
+        <Container>{errorMessage}</Container>
       )}
-    </div>
+    </Container>
   );
 }; 

@@ -36,7 +36,7 @@ export const FAQ: React.FC<FAQProps> = ({
     };
 
     return (
-      <Section className={cn('space-y-4', className)} {...props}>
+      <Section className={className} {...props}>
         <Container maxWidth="lg">
           {title && (
             <Container>
@@ -49,17 +49,13 @@ export const FAQ: React.FC<FAQProps> = ({
           
           <Container>
             {items.map((item, index) => (
-              <Container key={index} className="card">
+              <Container key={index}>
                 <Button
                   variant="ghost"
                   onClick={() => toggleItem(index)}
                 >
                   <span>{item.question}</span>
                   <svg
-                    className={cn(
-                      'w-5 h-5 transition-transform',
-                      openItems.has(index) ? 'rotate-180' : ''
-                    )}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -83,7 +79,7 @@ export const FAQ: React.FC<FAQProps> = ({
 
   if (variant === 'simple') {
     return (
-      <Section className={cn('space-y-6', className)} {...props}>
+      <Section className={className} {...props}>
         <Container maxWidth="lg">
           {title && (
             <Container>
@@ -113,7 +109,7 @@ export const FAQ: React.FC<FAQProps> = ({
 
   // Default variant
   return (
-    <Section className={cn('space-y-6', className)} {...props}>
+    <Section className={className} {...props}>
       <Container maxWidth="lg">
         {title && (
           <Container>
@@ -126,7 +122,7 @@ export const FAQ: React.FC<FAQProps> = ({
         
         <Container>
           {items.map((item, index) => (
-            <Container key={index} className="border-b border-border-color pb-6 last:border-b-0">
+            <Container key={index}>
               <H3>
                 {item.question}
               </H3>

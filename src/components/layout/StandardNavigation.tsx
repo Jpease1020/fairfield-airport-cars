@@ -17,15 +17,15 @@ export const StandardNavigation: React.FC = () => {
   ];
 
   return (
-    <nav className="standard-navigation">
-      <Container className="">
-        <Container className="nav-brand">
-          <Link href="/" className="nav-logo">
+    <nav >
+      <Container >
+        <Container >
+          <Link href="/" >
             Fairfield Airport Cars
           </Link>
         </Container>
 
-        <Container className="nav-menu">
+        <Container >
           {navigationItems.map((item) => (
             <Link
               key={item.name}
@@ -37,21 +37,21 @@ export const StandardNavigation: React.FC = () => {
           ))}
         </Container>
 
-        <Container className="nav-mobile-toggle">
+        <Container >
           <Button
-            className="mobile-menu-button"
+            
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
+            <span ></span>
+            <span ></span>
+            <span ></span>
           </Button>
         </Container>
       </Container>
 
       {mobileMenuOpen && (
-        <Container className="nav-mobile-menu">
+        <Container >
           {navigationItems.map((item) => (
             <Link
               key={item.name}

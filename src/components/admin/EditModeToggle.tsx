@@ -20,11 +20,8 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
 }) => {
   if (!editMode) {
     return (
-      <div className="edit-mode-toggle edit-mode-toggle-inactive">
-        <Button
-          onClick={onEdit}
-          className="edit-mode-toggle-button"
-        >
+      <div>
+        <Button onClick={onEdit}>
           Edit Mode
         </Button>
       </div>
@@ -32,25 +29,16 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
   }
 
   return (
-    <div className="edit-mode-toggle edit-mode-toggle-active">
-      <div className="edit-mode-toggle-actions">
-        <Button
-          onClick={onSave}
-          disabled={saving}
-          className="edit-mode-toggle-save-button"
-        >
+    <div>
+      <div>
+        <Button onClick={onSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}
         </Button>
-        <Button
-          onClick={onCancel}
-          disabled={saving}
-          variant="outline"
-          className="edit-mode-toggle-cancel-button"
-        >
+        <Button onClick={onCancel} disabled={saving} variant="outline">
           Cancel
         </Button>
       </div>
-      {saveMsg && <div className="edit-mode-toggle-message">{saveMsg}</div>}
+      {saveMsg && <div>{saveMsg}</div>}
     </div>
   );
 }; 

@@ -60,7 +60,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onRemove }) => 
   if (toasts.length === 0) return null;
 
   return (
-    <div className="toast-container">
+    <div >
       {toasts.map(toast => (
         <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
       ))}
@@ -92,14 +92,14 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
 
   return (
     <div className={getToastClass()}>
-      <div className="toast-content">
-        <span className="toast-icon">{getIcon()}</span>
-        <span className="toast-message">{toast.message}</span>
+      <div >
+        <span >{getIcon()}</span>
+        <span >{toast.message}</span>
       </div>
       
       <button
         onClick={() => onRemove(toast.id)}
-        className="toast-close-button"
+        
       >
         ×
       </button>

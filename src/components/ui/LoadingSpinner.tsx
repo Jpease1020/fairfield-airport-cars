@@ -64,7 +64,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   const content = (
-    <div className="loading-spinner">
+    <div >
       <SpinnerComponent />
       {text && (
         <span className="loading-spinner-text">{text}</span>

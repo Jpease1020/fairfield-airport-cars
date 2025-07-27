@@ -90,13 +90,13 @@ export const VoiceInput = ({ onTranscript, disabled = false, className }: VoiceI
         className={cn("text-gray-400", className)}
         title="Voice recognition not supported"
       >
-        <MicOff className="" />
+        <MicOff  />
       </Button>
     );
   }
 
   return (
-    <div className="">
+    <div >
       <Button
         variant={isListening ? "destructive" : "outline"}
         size="icon"
@@ -109,15 +109,15 @@ export const VoiceInput = ({ onTranscript, disabled = false, className }: VoiceI
         title={isListening ? "Click to stop listening" : "Click to start voice input"}
       >
         {isProcessing ? (
-          <Loader2 className="" />
+          <Loader2  />
         ) : isListening ? (
-          <MicOff className="" />
+          <MicOff  />
         ) : (
-          <Mic className="" />
+          <Mic  />
         )}
       </Button>
       {error && (
-        <span className="">{error}</span>
+        <span >{error}</span>
       )}
     </div>
   );

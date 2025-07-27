@@ -44,7 +44,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
 
   if (editMode) {
     return (
-      <div className="mb-4">
+      <div>
         {label && (
           <Label>
             {label}
@@ -55,7 +55,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
             value={value}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
             placeholder={placeholder}
-            className={`editable-textarea w-full ${sizeClasses[size]} ${className}`}
+            className={className}
             rows={rows}
           />
         ) : (
@@ -63,7 +63,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
             value={value}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
             placeholder={placeholder}
-            className={`editable-input w-full ${sizeClasses[size]} ${inputSizeClasses[size]} ${className}`}
+            className={className}
           />
         )}
       </div>
@@ -78,21 +78,21 @@ export const EditableField: React.FC<EditableFieldProps> = ({
     if (containsHTML) {
       return (
         <div 
-          className={`${sizeClasses[size]} ${className}`}
+          className={className}
           dangerouslySetInnerHTML={{ __html: value || placeholder || '' }}
         />
       );
     }
     
     return (
-      <div className={`${sizeClasses[size]} ${className}`}>
+      <div className={className}>
         {value || placeholder}
       </div>
     );
   }
 
   return (
-    <div className={`${sizeClasses[size]} ${className}`}>
+    <div className={className}>
       {value || placeholder}
     </div>
   );
@@ -100,7 +100,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
 
 // Specialized components for common use cases
 export const EditableTitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
-  <EditableField {...props} type="input" size="xl" className="font-bold text-2xl" />
+  <EditableField {...props} type="input" size="xl" />
 );
 
 export const EditableSubtitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
@@ -108,7 +108,7 @@ export const EditableSubtitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'
 );
 
 export const EditableContent: React.FC<Omit<EditableFieldProps, 'type' | 'size'> & { rows?: number }> = (props) => (
-  <EditableField {...props} type="textarea" size="md" className="leading-relaxed" />
+  <EditableField {...props} type="textarea" size="md" />
 );
 
 export const EditableLabel: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (

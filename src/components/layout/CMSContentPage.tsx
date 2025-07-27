@@ -60,17 +60,17 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
         <Container maxWidth={containerMaxWidth}>
           <PageHeader align="center" padding="lg" margin="none">
             {pageTitle && (
-              <H1 className="">
+              <H1 >
                 {pageTitle}
               </H1>
             )}
             {pageSubtitle && (
-              <H2 className="mb-4">
+              <H2 >
                 {pageSubtitle}
               </H2>
             )}
             {pageDescription && (
-              <Lead className="">
+              <Lead >
                 {pageDescription}
               </Lead>
             )}
@@ -81,22 +81,22 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
       {/* Main Content */}
       <Section padding="xl">
         <Container maxWidth={containerMaxWidth}>
-          <div className="">
+          <div >
             {/* Table of Contents */}
             {showTableOfContents && (
-              <div className="">
-                <div className="">
+              <div >
+                <div >
                   <Card variant="outlined" padding="lg">
                     <CardBody>
-                      <H3 className="">On This Page</H3>
-                      <nav className="">
-                        <a href="#overview" className="">
+                      <H3 >On This Page</H3>
+                      <nav >
+                        <a href="#overview" >
                           Overview
                         </a>
-                        <a href="#details" className="">
+                        <a href="#details" >
                           Details
                         </a>
-                        <a href="#contact" className="">
+                        <a href="#contact" >
                           Contact
                         </a>
                       </nav>
@@ -108,7 +108,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
 
             {/* Main Content */}
             <div className={showTableOfContents ? 'lg:col-span-3' : 'lg:col-span-4'}>
-              <div className="">
+              <div >
                 {children}
               </div>
             </div>
@@ -120,19 +120,19 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
       {showRelatedLinks && (
         <Section variant="muted" padding="xl">
           <Container maxWidth={containerMaxWidth}>
-            <div className="">
+            <div >
               <H2>Related Information</H2>
               <Lead>Find more helpful resources and information</Lead>
             </div>
             
-            <div className="">
+            <div >
               <Card variant="outlined" padding="lg">
                 <CardBody>
-                  <H3 className="mb-3">Booking Information</H3>
-                  <p className="">
+                  <H3 >Booking Information</H3>
+                  <p >
                     Learn about our booking process, policies, and what to expect.
                   </p>
-                  <a href="/book" className="">
+                  <a href="/book" >
                     Book Your Ride →
                   </a>
                 </CardBody>
@@ -140,11 +140,11 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
               
               <Card variant="outlined" padding="lg">
                 <CardBody>
-                  <H3 className="">Service Areas</H3>
-                  <p className="">
+                  <H3 >Service Areas</H3>
+                  <p >
                     See all the airports and areas we serve in the region.
                   </p>
-                  <a href="/about" className="">
+                  <a href="/about" >
                     View Service Areas →
                   </a>
                 </CardBody>
@@ -152,11 +152,11 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
               
               <Card variant="outlined" padding="lg">
                 <CardBody>
-                  <H3 className="">Contact Support</H3>
-                  <p className="">
+                  <H3 >Contact Support</H3>
+                  <p >
                     Need help? Our support team is available 24/7.
                   </p>
-                  <a href="/help" className="">
+                  <a href="/help" >
                     Get Help →
                   </a>
                 </CardBody>

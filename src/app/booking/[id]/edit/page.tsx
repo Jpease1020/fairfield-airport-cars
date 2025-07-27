@@ -44,7 +44,7 @@ export default function EditBookingPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="Loading..." description="Fetching booking details">
-            <div className="edit-booking-loading">
+            <div>
               <LoadingSpinner text="Loading booking details..." />
             </div>
           </InfoCard>
@@ -62,8 +62,8 @@ export default function EditBookingPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Error" description="Failed to load booking">
-            <div className="edit-booking-error">
-              <p className="edit-booking-error-message">
+            <div>
+              <p>
                 {error}
               </p>
             </div>
@@ -82,8 +82,8 @@ export default function EditBookingPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Booking Not Found" description="No booking found with the provided ID">
-            <div className="edit-booking-not-found">
-              <p className="edit-booking-not-found-message">
+            <div>
+              <p>
                 No booking found with the provided ID.
               </p>
             </div>
@@ -104,7 +104,7 @@ export default function EditBookingPage() {
           title="✏️ Edit Booking Details"
           description="Update your ride information"
         >
-          <div className="edit-booking-form-container">
+          <div>
             <BookingForm booking={booking} />
           </div>
         </InfoCard>

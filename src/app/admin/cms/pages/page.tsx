@@ -9,8 +9,11 @@ import {
   ToastProvider,
   useToast,
   GridSection,
-  InfoCard
+  InfoCard,
+  Container,
+  Text
 } from "@/components/ui";
+import { Stack } from '@/components/ui/containers';
 import { 
   GenericPageEditor,
   HomePageEditor,
@@ -188,7 +191,7 @@ function PagesCMSContent() {
       )}
 
       <GridSection variant="content" columns={1}>
-        <div className="admin-cms-pages-container">
+        <Container>
           {PAGE_KEYS.map(({ key, label, icon }) => {
             const pageData = pages[key as keyof typeof pages];
             if (!pageData) return null;
@@ -251,15 +254,15 @@ function PagesCMSContent() {
                 title={`${icon} ${label}`}
                 description="Custom editor for this page type coming soon..."
               >
-                <div className="admin-cms-page-placeholder">
-                  <p className="admin-cms-page-placeholder-text">
+                <Container>
+                  <Text>
                     Custom editor for this page type coming soon...
-                  </p>
-                </div>
+                  </Text>
+                </Container>
               </InfoCard>
             );
           })}
-        </div>
+        </Container>
       </GridSection>
     </AdminPageWrapper>
   );

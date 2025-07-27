@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container } from '@/components/ui';
 
 export default function LoginLayout({
   children,
@@ -6,8 +7,8 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="login-layout">
+    <Container>
       {children}
-    </div>
+    </Container>
   );
 } 

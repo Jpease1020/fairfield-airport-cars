@@ -77,7 +77,7 @@ export const LayoutEnforcer: React.FC<LayoutValidationProps> = ({ children }) =>
  *   return (
  *     <LayoutEnforcer>
  *       <UniversalLayout title="My Page">
- *         <div className="page-content">
+ *         <div >
  *           // Your content here
  *         </div>
  *       </UniversalLayout>

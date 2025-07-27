@@ -32,22 +32,22 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
 
   const content = (
     <>
-      <div className={`activity-icon ${iconType}`}>
+      <div>
         {icon}
       </div>
-      <div className="activity-content">
-        <p className="activity-title">{title}</p>
-        {subtitle && <p className="activity-time">{subtitle}</p>}
+      <div>
+        <p>{title}</p>
+        {subtitle && <p>{subtitle}</p>}
       </div>
       {amount && (
-        <div className="activity-amount">{amount}</div>
+        <div>{amount}</div>
       )}
     </>
   );
 
   if (href) {
     return (
-      <a href={href} className={itemClass}>
+      <a href={href} className={className}>
         {content}
       </a>
     );
@@ -55,14 +55,14 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
 
   if (onClick) {
     return (
-      <button onClick={onClick} className={itemClass}>
+      <button onClick={onClick} className={className}>
         {content}
       </button>
     );
   }
 
   return (
-    <div className={itemClass}>
+    <div className={className}>
       {content}
     </div>
   );

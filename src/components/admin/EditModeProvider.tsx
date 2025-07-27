@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/utils/firebase';
 import { Button } from '@/components/ui/button';
+import { Container } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { cmsService } from '@/lib/services/cms-service';
 import { authService } from '@/lib/services/auth-service';
 
@@ -112,25 +114,25 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
     if (!isAdmin) return null;
 
     return (
-      <div className={`fixed top-20 right-6 z-50 ${className}`}>
+      <Container className={className}>
         {!editMode ? (
           <Button
             onClick={() => setEditMode(true)}
-                          variant="primary"
+            variant="primary"
           >
             Edit Mode
           </Button>
         ) : (
-          <div className="flex space-x-2">
+          <Container>
             <Button
               onClick={() => setEditMode(false)}
               variant="outline"
             >
               Exit Edit Mode
             </Button>
-          </div>
+          </Container>
         )}
-      </div>
+      </Container>
     );
   };
 
@@ -143,29 +145,28 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
     if (!isAdmin || !editMode) return null;
 
     return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="flex space-x-2">
+      <Container>
+        <Stack direction="horizontal" spacing="sm">
           <Button
             onClick={() => handleSave(cmsConfig, pageType)}
             disabled={saving}
-                          variant="primary"
+            variant="primary"
           >
             {saving ? 'Saving...' : 'Save'}
           </Button>
           <Button
             onClick={() => handleCancel(originalContent)}
             variant="outline"
-            className="bg-white border-gray-300 hover:bg-gray-50"
           >
             Cancel
           </Button>
-        </div>
+        </Stack>
         {saveMsg && (
-                      <div>
+          <Container>
             {saveMsg}
-          </div>
+          </Container>
         )}
-      </div>
+      </Container>
     );
   };
 

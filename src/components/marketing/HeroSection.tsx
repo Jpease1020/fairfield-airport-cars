@@ -30,48 +30,31 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const contentClasses = `hero-content ${variant === 'centered' ? 'hero-content-centered' : ''}`;
 
   return (
-    <Section variant="brand" padding="xl" className="hero-section">
+    <Section variant="brand" padding="xl">
       {backgroundImage && (
-        <div 
-          className="hero-background"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
-        >
-          <div className="hero-background-overlay" />
+        <div style={{ backgroundImage: `url(${backgroundImage})` }}>
+          <div />
         </div>
       )}
       
-      <Container maxWidth="xl" className={contentClasses}>
-        <H1 className="hero-title">{title}</H1>
-        {subtitle && <Text className="hero-subtitle">{subtitle}</Text>}
-        {description && <Text className="hero-description">{description}</Text>}
+      <Container maxWidth="xl">
+        <H1>{title}</H1>
+        {subtitle && <Text>{subtitle}</Text>}
+        {description && <Text>{description}</Text>}
         
         {(primaryAction || secondaryAction) && (
-          <div className="hero-actions">
+          <div>
             {primaryAction && (
-              <a 
-                href={primaryAction.href}
-                className="hero-primary-action"
-              >
-                <Button 
-                  variant="primary"
-                  size="lg"
-                  className="hero-primary-action"
-                >
+              <a href={primaryAction.href}>
+                <Button variant="primary" size="lg">
                   {primaryAction.label}
                 </Button>
               </a>
             )}
             
             {secondaryAction && (
-              <a 
-                href={secondaryAction.href}
-                className="hero-secondary-action"
-              >
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="hero-secondary-action"
-                >
+              <a href={secondaryAction.href}>
+                <Button variant="outline" size="lg">
                   {secondaryAction.label} <span aria-hidden="true">→</span>
                 </Button>
               </a>

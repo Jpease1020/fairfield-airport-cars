@@ -56,17 +56,17 @@ export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
         {showHeader && hasStandardProps && (
           <PageHeader align={headerAlign} padding="lg" margin="none">
             {'title' in pageContent && pageContent.title && (
-              <H1 className="mb-4">
+              <H1 >
                 {pageContent.title}
               </H1>
             )}
             {'subtitle' in pageContent && pageContent.subtitle && (
-              <H2 className="">
+              <H2 >
                 {pageContent.subtitle}
               </H2>
             )}
             {'description' in pageContent && pageContent.description && (
-              <Lead className="mb-8">
+              <Lead >
                 {pageContent.description}
               </Lead>
             )}

@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Container, H2 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface ModalProps {
   isOpen: boolean;
@@ -29,37 +30,32 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <Container>
       <Container>
         <div 
-          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
           onClick={onClose}
         />
         
-        <div className={cn(
-          'relative transform overflow-hidden rounded-lg bg-bg-primary text-left shadow-xl transition-all sm:my-8 sm:w-full',
-          sizeClasses[size]
-        )}>
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                    <H2>
-          {title}
-        </H2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          className="hover:opacity-70"
-        >
-          <X className="h-5 w-5" />
-        </Button>
-          </div>
+        <Container>
+          <Stack direction="horizontal" align="center" justify="between">
+            <H2>
+              {title}
+            </H2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+            >
+              <X />
+            </Button>
+          </Stack>
           
-          <div className="px-6 py-4">
+          <Container>
             {children}
-          </div>
-        </div>
+          </Container>
+        </Container>
       </Container>
-    </div>
+    </Container>
   );
 };
 

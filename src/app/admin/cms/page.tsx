@@ -11,8 +11,12 @@ import {
   ActionGrid,
   ToastProvider,
   useToast,
-  ActionButtonGroup
+  ActionButtonGroup,
+  Container,
+  Text,
+  Span
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 function CMSPageContent() {
   const { addToast } = useToast();
@@ -191,25 +195,27 @@ function CMSPageContent() {
             title={`${section.icon} ${section.title}`}
             description={section.description}
           >
-            <div className="cms-section-content">
-              <div className="status-card">
-                <div className="status-label">
-                  Status:
-                </div>
-                <div className="status-value">
-                  {section.status}
-                </div>
-              </div>
-              
-              <ActionButtonGroup
-                buttons={[{
-                  label: `Manage ${section.title}`,
-                  onClick: () => window.location.href = section.href,
-                  variant: 'outline' as const,
-                  icon: section.icon
-                }]}
-              />
-            </div>
+            <Container>
+              <Stack direction="horizontal" align="center" justify="between">
+                <Container>
+                  <Text>
+                    Status:
+                  </Text>
+                  <Text>
+                    {section.status}
+                  </Text>
+                </Container>
+                
+                <ActionButtonGroup
+                  buttons={[{
+                    label: `Manage ${section.title}`,
+                    onClick: () => window.location.href = section.href,
+                    variant: 'outline' as const,
+                    icon: section.icon
+                  }]}
+                />
+              </Stack>
+            </Container>
           </InfoCard>
         ))}
       </GridSection>
@@ -231,34 +237,40 @@ function CMSPageContent() {
             title="🕒 Configuration Status"
             description="CMS configuration and update information"
           >
-            <div className="config-status-grid">
-              <div className="config-status-item">
-                <div className="status-title">
-                  Last Updated
-                </div>
-                <div className="status-detail">
-                  {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
-                </div>
-              </div>
+            <Stack spacing="md">
+              <Stack direction="horizontal" align="center" justify="between">
+                <Container>
+                  <Text>
+                    Last Updated
+                  </Text>
+                  <Text>
+                    {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
+                  </Text>
+                </Container>
+              </Stack>
               
-              <div className="config-status-item">
-                <div className="status-title">
-                  Configuration Status
-                </div>
-                <div className="status-detail">
-                  {config ? 'Fully Configured' : 'Needs Setup'}
-                </div>
-              </div>
+              <Stack direction="horizontal" align="center" justify="between">
+                <Container>
+                  <Text>
+                    Configuration Status
+                  </Text>
+                  <Text>
+                    {config ? 'Fully Configured' : 'Needs Setup'}
+                  </Text>
+                </Container>
+              </Stack>
               
-              <div className="config-status-item">
-                <div className="status-title">
-                  Auto-Save
-                </div>
-                <div className="status-detail">
-                  Enabled
-                </div>
-              </div>
-            </div>
+              <Stack direction="horizontal" align="center" justify="between">
+                <Container>
+                  <Text>
+                    Auto-Save
+                  </Text>
+                  <Text>
+                    Enabled
+                  </Text>
+                </Container>
+              </Stack>
+            </Stack>
           </InfoCard>
         </GridSection>
       )}

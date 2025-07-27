@@ -52,10 +52,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
 
   return (
     <div className={`section-header ${theme === 'dark' ? 'dark-theme' : ''} ${className}`.trim()}>
-      <h1 className="page-title">{title}</h1>
-      {subtitle && <p className="page-subtitle">{subtitle}</p>}
+      <h1 >{title}</h1>
+      {subtitle && <p >{subtitle}</p>}
       {actions.length > 0 && (
-        <div className="header-actions">
+        <div >
           {actions.map(renderAction)}
         </div>
       )}

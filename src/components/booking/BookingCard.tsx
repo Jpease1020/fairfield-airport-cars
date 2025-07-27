@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils/utils';
 import { Container, H3, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface BookingCardProps {
   booking: Booking;
@@ -51,57 +52,54 @@ const BookingCard: React.FC<BookingCardProps> = ({
   };
 
   return (
-    <Container className={cn(
-      'bg-bg-primary border border-border-primary rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow',
-      className
-    )}>
+    <Container className={className}>
       {/* Header */}
-      <Container className="flex items-center justify-between mb-4">
+      <Stack direction="horizontal" align="center" justify="between" spacing="md">
         <Container>
-          <H3 className="page-title">
+          <H3>
             {booking.name}
           </H3>
-          <Text className="page-subtitle">
+          <Text>
             Booking #{booking.id}
           </Text>
         </Container>
-        <Badge className={getStatusColor(booking.status)}>
+        <Badge>
           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
         </Badge>
-      </Container>
+      </Stack>
 
       {/* Date and Time */}
-      <Container className="space-y-2 mb-4">
+      <Stack direction="horizontal" spacing="md">
         <Container>
-          <Calendar className="w-4 h-4" />
+          <Calendar />
           <Text size="sm">{formatDate(booking.pickupDateTime.toString())}</Text>
         </Container>
         <Container>
-          <Clock className="w-4 h-4" />
+          <Clock />
           <Text size="sm">{formatTime(booking.pickupDateTime.toString())}</Text>
         </Container>
-      </Container>
+      </Stack>
 
       {/* Locations */}
-      <Container className="space-y-3 mb-4">
+      <Stack spacing="md">
         <Container>
-          <MapPin className="w-4 h-4" />
+          <MapPin />
           <Container>
             <Text size="xs">Pickup:</Text>
             <Text size="sm">{booking.pickupLocation}</Text>
           </Container>
         </Container>
         <Container>
-          <MapPin className="w-4 h-4" />
+          <MapPin />
           <Container>
             <Text size="xs">Drop-off:</Text>
             <Text size="sm">{booking.dropoffLocation}</Text>
           </Container>
         </Container>
-      </Container>
+      </Stack>
 
       {/* Passenger Info */}
-      <Container className="space-y-2 mb-4">
+      <Container>
         <Text size="sm">
           Passengers: {booking.passengers}
         </Text>
@@ -114,22 +112,21 @@ const BookingCard: React.FC<BookingCardProps> = ({
       </Container>
 
       {/* Price */}
-      <Container className="flex items-center space-x-2 mb-4">
-        <DollarSign className="w-4 h-4" />
+      <Stack direction="horizontal" align="center" spacing="sm">
+        <DollarSign />
         <Text size="sm">Total Fare:</Text>
         <Text size="lg">
           ${booking.fare}
         </Text>
-      </Container>
+      </Stack>
 
       {/* Actions */}
       {showActions && onAction && (
-        <Container className="flex space-x-2">
+        <Stack direction="horizontal" spacing="sm">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onAction('view')}
-            className="flex-1"
           >
             View Details
           </Button>
@@ -139,7 +136,6 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('edit')}
-                className="flex-1"
               >
                 Edit
               </Button>
@@ -147,13 +143,12 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('cancel')}
-                className="flex-1"
               >
                 Cancel
               </Button>
             </>
           )}
-        </Container>
+        </Stack>
       )}
     </Container>
   );

@@ -331,17 +331,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="📍"
               />
               {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                <div className="booking-form-suggestions">
+                <div >
                   {pickupSuggestions.map((prediction) => (
                     <div
                       key={prediction.place_id}
-                      className="booking-form-suggestion-item"
+                      
                       onClick={() => handlePickupSuggestionSelect(prediction)}
                     >
-                      <div className="booking-form-suggestion-main">
+                      <div >
                         {prediction.structured_formatting?.main_text || prediction.description}
                       </div>
-                      <div className="booking-form-suggestion-secondary">
+                      <div >
                         {prediction.structured_formatting?.secondary_text || ''}
                       </div>
                     </div>
@@ -350,7 +350,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               )}
             </GridItem>
             
-            <GridItem className="booking-form-location-field">
+            <GridItem>
               <SettingInput
                 id="dropoffLocation"
                 label="Destination"
@@ -361,17 +361,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="🎯"
               />
               {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-                <div className="booking-form-suggestions">
+                <div >
                   {dropoffSuggestions.map((prediction) => (
                     <div
                       key={prediction.place_id}
-                      className="booking-form-suggestion-item"
+                      
                       onClick={() => handleDropoffSuggestionSelect(prediction)}
                     >
-                      <div className="booking-form-suggestion-main">
+                      <div >
                         {prediction.structured_formatting?.main_text || prediction.description}
                       </div>
-                      <div className="booking-form-suggestion-secondary">
+                      <div >
                         {prediction.structured_formatting?.secondary_text || ''}
                       </div>
                     </div>
@@ -382,18 +382,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </Grid>
           
           {/* Pickup Date and Time - Styled like SettingInput */}
-          <div className="booking-form-datetime-section">
-            <div className="booking-form-datetime-header">
-              <Span className="booking-form-datetime-icon">📅</Span>
+          <div >
+            <div >
+              <Span >📅</Span>
               <label 
                 htmlFor="pickupDateTime"
-                className="booking-form-datetime-label"
+                
               >
                 Pickup Date and Time
               </label>
             </div>
             
-            <Text className="booking-form-datetime-description">
+            <Text >
               When do you need to be picked up?
             </Text>
             
@@ -404,7 +404,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               value={pickupDateTime}
               onChange={(e) => setPickupDateTime(e.target.value)}
               required
-              className="booking-form-datetime-input"
+              
             />
           </div>
         </SettingSection>
@@ -415,21 +415,21 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Help us provide the best service for your trip"
           icon="⚙️"
         >
-          <Grid columns={2} spacing="md" className="booking-form-additional-details">
-            <GridItem className="booking-form-passengers-section">
+          <Grid columns={2} spacing="md">
+            <GridItem>
               {/* Passengers - Styled like SettingInput */}
-              <div className="booking-form-datetime-section">
-                <div className="booking-form-datetime-header">
-                  <Span className="booking-form-datetime-icon">👥</Span>
+              <div >
+                <div >
+                  <Span >👥</Span>
                   <label 
                     htmlFor="passengers"
-                    className="booking-form-datetime-label"
+                    
                   >
                     Passengers
                   </label>
                 </div>
                 
-                <Text className="booking-form-datetime-description">
+                <Text >
                   Number of people traveling
                 </Text>
                 
@@ -438,7 +438,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   name="passengers"
                   value={passengers}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(Number(e.target.value))}
-                  className="booking-form-datetime-input"
+                  
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
                     <Option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</Option>
@@ -461,18 +461,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </Grid>
             
             {/* Special Instructions - Styled like SettingInput */}
-            <div className="booking-form-notes-section">
-              <div className="booking-form-notes-header">
-                <Span className="booking-form-notes-icon">📝</Span>
-                <label 
-                  htmlFor="notes"
-                  className="booking-form-notes-label"
-                >
+            <div>
+              <div>
+                <Span>📝</Span>
+                                  <label 
+                    htmlFor="notes"
+                  >
                   Special Instructions (Optional)
                 </label>
               </div>
               
-              <Text className="booking-form-notes-description">
+              <Text>
                 Let us know about any special requirements
               </Text>
               
@@ -483,7 +482,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
                 placeholder="Any special instructions or requests?"
-                className="booking-form-notes-textarea"
+
               />
             </div>
         </SettingSection>
@@ -494,7 +493,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Calculate your fare and complete your booking"
           icon="💳"
         >
-          <div className="booking-form-actions">
+          <div>
             <Button
               type="button"
               onClick={handleCalculateFare}
@@ -505,10 +504,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
             >
               {isCalculating ? (
                 <>
-                  <Span className="booking-form-loading">
-                    <svg className="booking-form-loading-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="booking-form-loading-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="booking-form-loading-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <Span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   </Span>
                   Calculating...
@@ -518,9 +517,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
               )}
             </Button>
             {fare && (
-              <div className="booking-form-fare-display">
-                <Text className="booking-form-fare-text">
-                  Estimated Fare: <Span className="booking-form-fare-amount">${fare}</Span>
+              <div>
+                <Text>
+                  Estimated Fare: <Span>${fare}</Span>
                 </Text>
               </div>
             )}

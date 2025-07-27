@@ -17,34 +17,34 @@ export const SettingSection: React.FC<SettingSectionProps> = ({
   actions
 }) => {
   return (
-    <Card className="setting-section">
-      <CardHeader className="setting-section-header">
-        <div className="setting-section-content">
-          <div className="setting-section-title-row">
+    <Card >
+      <CardHeader >
+        <div >
+          <div >
             {icon && (
-              <span className="setting-section-icon">
+              <span >
                 {icon}
               </span>
             )}
-            <h3 className="setting-section-title">
+            <h3 >
               {title}
             </h3>
           </div>
           {description && (
-            <p className="setting-section-description">
+            <p >
               {description}
             </p>
           )}
         </div>
         
         {actions && (
-          <div className="setting-section-actions">
+          <div >
             {actions}
           </div>
         )}
       </CardHeader>
       
-      <CardBody className="setting-section-body">
+      <CardBody >
         {children}
       </CardBody>
     </Card>

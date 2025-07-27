@@ -25,7 +25,7 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
   };
 
   return (
-    <div className="">
+    <div >
       <button
         type="button"
         className={cn(
@@ -41,9 +41,9 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
       </button>
       
       {isVisible && (
-        <div className="">
+        <div >
           {content}
-          <div className=""></div>
+          <div ></div>
         </div>
       )}
     </div>

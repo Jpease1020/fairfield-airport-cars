@@ -55,12 +55,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       )}
     >
       {title && (
-        <h1 className="">
+        <h1 >
           {title}
         </h1>
       )}
       {subtitle && (
-        <p className="">
+        <p >
           {subtitle}
         </p>
       )}

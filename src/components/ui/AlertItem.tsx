@@ -33,16 +33,15 @@ export const AlertItem: React.FC<AlertItemProps> = ({
 
   const content = (
     <>
-      <div className="alert-icon">
+      <div>
         {icon}
       </div>
-      <div className="alert-content">
-        <p className="alert-title">{title}</p>
-        <p className="alert-message">{message}</p>
+      <div>
+        <p>{title}</p>
+        <p>{message}</p>
       </div>
       {onDismiss && (
         <button 
-          className="alert-dismiss"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -58,7 +57,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({
 
   if (href) {
     return (
-      <a href={href} className={itemClass}>
+      <a href={href} className={className}>
         {content}
       </a>
     );
@@ -66,14 +65,14 @@ export const AlertItem: React.FC<AlertItemProps> = ({
 
   if (onClick) {
     return (
-      <button onClick={onClick} className={itemClass}>
+      <button onClick={onClick} className={className}>
         {content}
       </button>
     );
   }
 
   return (
-    <div className={itemClass}>
+    <div className={className}>
       {content}
     </div>
   );

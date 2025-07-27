@@ -137,11 +137,11 @@ function FeedbackPageContent() {
 
   const renderRating = (rating: number) => {
     return (
-      <div className="rating-display">
-        <span className="rating-stars">
+      <div>
+        <span>
           {getRatingStars(rating)}
         </span>
-        <span className="rating-score">
+        <span>
           {rating}/5
         </span>
       </div>
@@ -174,14 +174,14 @@ function FeedbackPageContent() {
       label: 'Customer',
       sortable: true,
       render: (_, feedback) => (
-        <div className="customer-info">
-          <div className="customer-name">
+        <div>
+          <div>
             {feedback.customerName}
           </div>
-          <div className="customer-contact">
+          <div>
             📧 {feedback.customerEmail}
           </div>
-          <div className="customer-booking">
+          <div>
             🎫 {feedback.bookingId}
           </div>
         </div>
@@ -198,7 +198,7 @@ function FeedbackPageContent() {
       label: 'Feedback',
       sortable: false,
       render: (value) => (
-        <div className="feedback-comment">
+        <div>
           {value}
         </div>
       )
@@ -210,11 +210,11 @@ function FeedbackPageContent() {
       render: (value) => {
         const date = new Date(value);
         return (
-          <div className="feedback-date">
-            <div className="date-day">
+          <div>
+            <div>
               {date.toLocaleDateString()}
             </div>
-            <div className="date-time">
+            <div>
               {date.toLocaleTimeString()}
             </div>
           </div>
@@ -318,20 +318,20 @@ function FeedbackPageContent() {
           title="📊 Rating Distribution"
           description="Breakdown of customer ratings"
         >
-          <div className="rating-distribution">
+          <div>
             {[5, 4, 3, 2, 1].map(rating => {
               const count = feedback.filter(f => f.rating === rating).length;
               const percentage = feedback.length > 0 ? (count / feedback.length) * 100 : 0;
               
               return (
-                <div key={rating} className="rating-item">
-                  <div className="rating-stars-display">
+                <div key={rating}>
+                  <div>
                     {'★'.repeat(rating)}
                   </div>
-                  <div className="rating-count">
+                  <div>
                     {count}
                   </div>
-                  <div className="rating-percentage">
+                  <div>
                     {percentage.toFixed(0)}%
                   </div>
                 </div>

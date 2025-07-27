@@ -19,16 +19,13 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   if (variant === 'minimal') {
     return (
-      <div className={`progress-indicator progress-indicator-minimal ${className || ''}`}>
-        <div className="progress-indicator-header">
-          <span className="progress-indicator-step">Step {currentStep} of {totalSteps}</span>
-          <span className="progress-indicator-percentage">{Math.round(progress)}%</span>
+      <div className={className}>
+        <div>
+          <span>Step {currentStep} of {totalSteps}</span>
+          <span>{Math.round(progress)}%</span>
         </div>
-        <div className="progress-indicator-bar">
-          <div 
-            className="progress-indicator-fill"
-            style={{ width: `${progress}%` }}
-          />
+        <div>
+          <div style={{ width: `${progress}%` }} />
         </div>
       </div>
     );
@@ -36,51 +33,30 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   if (variant === 'detailed') {
     return (
-      <div className={`progress-indicator progress-indicator-detailed ${className || ''}`}>
-        <div className="progress-indicator-header">
-          <h3 className="progress-indicator-title">
+      <div className={className}>
+        <div>
+          <h3>
             {steps[currentStep - 1]}
           </h3>
-          <span className="progress-indicator-step">
+          <span>
             {currentStep} of {totalSteps}
           </span>
         </div>
-        <div className="progress-indicator-content">
-          <div className="progress-indicator-bar">
-            <div 
-              className="progress-indicator-fill"
-              style={{ width: `${progress}%` }}
-            />
+        <div>
+          <div>
+            <div style={{ width: `${progress}%` }} />
           </div>
-          <div className="progress-indicator-steps">
+          <div>
             {steps.map((step, index) => (
-              <div
-                key={index}
-                className={`progress-indicator-step-item ${
-                  index < currentStep
-                    ? 'progress-indicator-step-completed'
-                    : index === currentStep
-                    ? 'progress-indicator-step-current'
-                    : 'progress-indicator-step-pending'
-                }`}
-              >
+              <div key={index}>
                 {index + 1}
               </div>
             ))}
           </div>
         </div>
-        <div className="progress-indicator-labels">
+        <div>
           {steps.map((step, index) => (
-            <div
-              key={index}
-              className={`progress-indicator-label ${
-                index < currentStep
-                  ? 'progress-indicator-label-completed'
-                  : index === currentStep
-                  ? 'progress-indicator-label-current'
-                  : 'progress-indicator-label-pending'
-              }`}
-            >
+            <div key={index}>
               {step}
             </div>
           ))}
@@ -91,20 +67,17 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   // Default variant
   return (
-    <div className={`progress-indicator progress-indicator-default ${className || ''}`}>
-      <div className="progress-indicator-header">
-        <span className="progress-indicator-title">
+    <div className={className}>
+      <div>
+        <span>
           {steps[currentStep - 1]}
         </span>
-        <span className="progress-indicator-step">
+        <span>
           {currentStep} of {totalSteps}
         </span>
       </div>
-      <div className="progress-indicator-bar">
-        <div 
-          className="progress-indicator-fill"
-          style={{ width: `${progress}%` }}
-        />
+      <div>
+        <div style={{ width: `${progress}%` }} />
       </div>
     </div>
   );

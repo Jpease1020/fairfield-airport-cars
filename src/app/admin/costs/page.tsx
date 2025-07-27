@@ -12,8 +12,11 @@ import {
   DataTableColumn,
   DataTableAction,
   ToastProvider,
-  useToast
+  useToast,
+  Container,
+  Text
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 function CostsPageContent() {
   const { addToast } = useToast();
@@ -99,7 +102,7 @@ function CostsPageContent() {
     const statusClass = getStatusClass(cost);
     
     return (
-      <span className={`cost-status-badge ${statusClass}`}>
+      <span>
         {icon} {statusText}
       </span>
     );
@@ -131,14 +134,10 @@ function CostsPageContent() {
       label: 'Category',
       sortable: true,
       render: (_, cost) => (
-        <div className="cost-category-cell">
-          <div className="cost-category-name">
-            {cost.category}
-          </div>
-          <div className="cost-category-description">
-            {cost.description}
-          </div>
-        </div>
+        <Container>
+          <Text>{cost.category}</Text>
+          <Text size="sm">{cost.description}</Text>
+        </Container>
       )
     },
     {
@@ -146,9 +145,9 @@ function CostsPageContent() {
       label: 'Projected',
       sortable: true,
       render: (value) => (
-        <div className="cost-amount-cell">
+        <Container>
           {formatCurrency(value)}
-        </div>
+        </Container>
       )
     },
     {
@@ -156,9 +155,9 @@ function CostsPageContent() {
       label: 'Actual',
       sortable: true,
       render: (value) => (
-        <div className="cost-amount-cell">
+        <Container>
           {formatCurrency(value)}
-        </div>
+        </Container>
       )
     },
     {
@@ -181,10 +180,10 @@ function CostsPageContent() {
         }
         
         return (
-          <div className={`cost-variance-cell ${varianceClass}`}>
+          <Container>
             {cost.actualMonthlyCost === 0 ? 'N/A' : 
              `${isPositive ? '+' : ''}${variance.toFixed(1)}%`}
-          </div>
+          </Container>
         );
       }
     },
