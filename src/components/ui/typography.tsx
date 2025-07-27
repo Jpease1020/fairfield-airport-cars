@@ -12,7 +12,7 @@ const H1 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     <h1
       ref={ref}
       className={cn(
-        'text-4xl md:text-6xl font-bold text-text-primary leading-tight',
+        'text-4xl md:text-6xl font-bold leading-tight',
         className
       )}
       {...props}
@@ -28,7 +28,7 @@ const H2 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     <h2
       ref={ref}
       className={cn(
-        'text-3xl md:text-4xl font-bold text-text-primary leading-tight',
+        'text-3xl md:text-4xl font-bold leading-tight',
         className
       )}
       {...props}
@@ -44,7 +44,7 @@ const H3 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     <h3
       ref={ref}
       className={cn(
-        'text-2xl md:text-3xl font-semibold text-text-primary leading-tight',
+        'text-2xl md:text-3xl font-semibold leading-tight',
         className
       )}
       {...props}
@@ -60,7 +60,7 @@ const H4 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     <h4
       ref={ref}
       className={cn(
-        'text-xl md:text-2xl font-semibold text-text-primary leading-tight',
+        'text-xl md:text-2xl font-semibold leading-tight',
         className
       )}
       {...props}
@@ -76,7 +76,7 @@ const H5 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     <h5
       ref={ref}
       className={cn(
-        'text-lg md:text-xl font-medium text-text-primary leading-tight',
+        'text-lg md:text-xl font-medium leading-tight',
         className
       )}
       {...props}
@@ -92,7 +92,7 @@ const H6 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     <h6
       ref={ref}
       className={cn(
-        'text-base md:text-lg font-medium text-text-primary leading-tight',
+        'text-base md:text-lg font-medium leading-tight',
         className
       )}
       {...props}
@@ -114,11 +114,11 @@ interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
 const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
   ({ className, children, variant = 'body', size = 'base', ...props }, ref) => {
     const variantClasses = {
-      body: 'text-text-primary',
-      lead: 'text-lg text-text-primary font-medium',
-      small: 'text-sm text-text-secondary',
-      muted: 'text-text-muted',
-      inverse: 'text-text-inverse'
+      body: '',
+      lead: 'text-lg font-medium',
+      small: 'text-sm',
+      muted: 'text-gray-500',
+      inverse: 'text-white'
     };
 
     const sizeClasses = {
