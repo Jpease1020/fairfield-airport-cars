@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container } from '@/components/ui';
 
 export interface InputProps {
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'datetime-local' | 'date' | 'time' | 'file' | 'color' | 'range' | 'checkbox';
@@ -50,20 +51,12 @@ export const Input: React.FC<InputProps> = ({
     lg: 'form-input-lg',
   };
 
-  const classes = [
-    baseClasses,
-    sizeClasses[size],
-    error ? 'form-input-error' : '',
-    fullWidth ? 'w-full' : '',
-    icon ? 'form-input-with-icon' : '',
-    iconPosition === 'right' ? 'form-input-icon-right' : '',
-    className,
-  ].filter(Boolean).join(' ');
+
 
   return (
-    <div className="form-input-wrapper">
+    <Container>
       {icon && iconPosition === 'left' && (
-        <span className="form-input-icon form-input-icon-left">{icon}</span>
+        <span>{icon}</span>
       )}
       <input
         type={type}
@@ -78,14 +71,13 @@ export const Input: React.FC<InputProps> = ({
         required={required}
         name={name}
         id={id}
-        className={classes}
       />
       {icon && iconPosition === 'right' && (
-        <span className="form-input-icon form-input-icon-right">{icon}</span>
+        <span>{icon}</span>
       )}
       {error && errorMessage && (
-        <div className="error-message">{errorMessage}</div>
+        <Container>{errorMessage}</Container>
       )}
-    </div>
+    </Container>
   );
 }; 
