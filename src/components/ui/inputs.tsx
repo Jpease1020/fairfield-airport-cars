@@ -216,7 +216,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, error, helper, required, c
       {label && (
         <Label>
           {label}
-          {required && <span className="text-error-color ml-1">*</span>}
+          {required && <span>*</span>}
         </Label>
       )}
       {children}
@@ -274,7 +274,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     <EnhancedInput
       type="tel"
       leftIcon={
-        <span className="text-sm font-medium">{countryCode}</span>
+        <span>{countryCode}</span>
       }
       {...props}
     />

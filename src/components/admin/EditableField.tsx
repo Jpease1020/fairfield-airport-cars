@@ -104,7 +104,7 @@ export const EditableTitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> 
 );
 
 export const EditableSubtitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
-  <EditableField {...props} type="input" size="lg" className="font-semibold text-xl" />
+  <EditableField {...props} type="input" size="lg" />
 );
 
 export const EditableContent: React.FC<Omit<EditableFieldProps, 'type' | 'size'> & { rows?: number }> = (props) => (

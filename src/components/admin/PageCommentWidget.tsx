@@ -314,7 +314,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
       {/* Success Message */}
       {showSuccess && (
-        <div className="fixed top-4 right-4 z-50 bg-success-color border border-success-color text-white px-4 py-3 rounded">
+        <div className="fixed top-4 right-4 z-50 px-4 py-3 rounded">
           <div className="flex items-center">
             <CheckCircle className="mr-2" />
             <span>Comment submitted successfully!</span>

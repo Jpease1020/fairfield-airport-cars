@@ -112,7 +112,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       <Container className="relative">
         <div className="relative">
           {isLoading && (
-            <Loader2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary animate-spin" />
+            <Loader2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin" />
           )}
           <input
             ref={inputRef}
@@ -129,7 +129,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             )}
           />
           {!isLoading && (
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary" />
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" />
           )}
         </div>
         
@@ -155,13 +155,13 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
               className="w-full text-left p-3 hover:bg-background-secondary"
             >
               <div className="flex items-start space-x-3">
-                <MapPin className="w-4 h-4 text-text-secondary mt-0.5 flex-shrink-0" />
+                <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium">
                     {suggestion.structured_formatting?.main_text || suggestion.description}
                   </div>
                   {suggestion.structured_formatting?.secondary_text && (
-                    <div className="text-text-secondary text-sm">
+                    <div className="text-sm">
                       {suggestion.structured_formatting.secondary_text}
                     </div>
                   )}
