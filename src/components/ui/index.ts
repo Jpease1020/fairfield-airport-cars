@@ -63,8 +63,8 @@ export type {
   HelpPageEditorProps
 } from '../cms/PageEditors';
 
-// Base UI Components
-export { Card, CardBody, CardHeader, CardTitle, CardDescription } from './card';
+// Base UI Components (Card exported from containers - bulletproof!)  
+export { CardBody, CardHeader, CardTitle, CardDescription } from './card';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Badge } from './badge';
 export { Button } from './button';
