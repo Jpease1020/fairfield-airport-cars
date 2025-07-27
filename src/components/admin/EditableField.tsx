@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Input } from '@/components/ui';
+import { Input, Label } from '@/components/ui';
 import { Textarea } from '@/components/ui';
 import { useEditMode } from './EditModeProvider';
 
@@ -46,9 +46,9 @@ export const EditableField: React.FC<EditableFieldProps> = ({
     return (
       <div className="mb-4">
         {label && (
-          <label className="block text-sm font-medium mb-2">
+          <Label>
             {label}
-          </label>
+          </Label>
         )}
         {type === 'textarea' ? (
           <Textarea

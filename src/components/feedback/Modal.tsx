@@ -41,7 +41,7 @@ const Modal: React.FC<ModalProps> = ({
           sizeClasses[size]
         )}>
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                    <H2 className="text-lg font-medium">
+                    <H2>
           {title}
         </H2>
         <Button

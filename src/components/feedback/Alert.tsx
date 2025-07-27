@@ -2,7 +2,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
-import { Container, H4 } from '@/components/ui';
+import { Container, H4, Text } from '@/components/ui';
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'success' | 'error' | 'warning' | 'info';
@@ -49,9 +49,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
             {title && (
               <H4 className="font-medium mb-1">{title}</H4>
             )}
-            <div className="text-sm">
+            <Text size="sm">
               {children}
-            </div>
+            </Text>
           </div>
           {dismissible && onClose && (
             <Button

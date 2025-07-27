@@ -1,8 +1,9 @@
 import React from 'react';
-import { cn } from '@/lib/utils/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectTrigger, SelectValue } from './select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label, Text } from '@/components/ui';
+import { cn } from '@/lib/utils/utils';
 
 // Enhanced Input Component
 interface EnhancedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -24,31 +25,31 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
     };
 
     const sizeClasses = {
-      sm: 'h-8 text-sm px-3',
-      md: 'h-10 text-base px-4',
-      lg: 'h-12 text-lg px-4'
+      sm: 'text-sm p-3',
+      md: 'text-base p-4',
+      lg: 'text-lg p-4'
     };
 
     const inputClasses = cn(
       'w-full transition-colors duration-200',
       variantClasses[variant],
       sizeClasses[size],
+      error && 'border-error focus:border-error',
       leftIcon && 'pl-10',
       rightIcon && 'pr-10',
-      error && 'border-error focus:border-error',
       className
     );
 
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium mb-2">
+          <Label>
             {label}
-          </label>
+          </Label>
         )}
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
               {leftIcon}
             </div>
           )}
@@ -57,16 +58,16 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
             {...(props as any)}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary">
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
               {rightIcon}
             </div>
           )}
         </div>
         {error && (
-          <p className="text-error-color text-sm mt-1">{error}</p>
+          <Text size="sm">{error}</Text>
         )}
         {helper && !error && (
-          <p className="text-text-secondary text-sm mt-1">{helper}</p>
+          <Text size="sm">{helper}</Text>
         )}
       </div>
     );
@@ -108,19 +109,19 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium mb-2">
+          <Label>
             {label}
-          </label>
+          </Label>
         )}
         <Textarea
           className={textareaClasses}
           {...(props as any)}
         />
         {error && (
-          <p className="text-error-color text-sm mt-1">{error}</p>
+          <Text size="sm">{error}</Text>
         )}
         {helper && !error && (
-          <p className="text-text-secondary text-sm mt-1">{helper}</p>
+          <Text size="sm">{helper}</Text>
         )}
       </div>
     );
@@ -137,45 +138,67 @@ interface EnhancedSelectProps {
   value?: string;
   onValueChange?: (value: string) => void;
   children: React.ReactNode;
-  disabled?: boolean;
+  variant?: 'default' | 'filled' | 'outlined';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
-const EnhancedSelect = React.forwardRef<HTMLButtonElement, EnhancedSelectProps>(
-  ({ className, label, error, helper, placeholder, value, onValueChange, children, disabled, size = 'md' }) => {
-    const sizeClasses = {
-      sm: 'h-8 text-sm',
-      md: 'h-10 text-base',
-      lg: 'h-12 text-lg'
-    };
+const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
+  label,
+  error,
+  helper,
+  placeholder,
+  value,
+  onValueChange,
+  children,
+  variant = 'default',
+  size = 'md',
+  className
+}) => {
+  const variantClasses = {
+    default: 'border-border-primary focus:border-brand-primary',
+    filled: 'bg-bg-secondary border-border-primary focus:border-brand-primary',
+    outlined: 'border-2 border-border-primary focus:border-brand-primary'
+  };
 
-    return (
-      <div className="">
-        {label && (
-          <label className="">
-            {label}
-          </label>
-        )}
-        <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-          <SelectTrigger className={cn(sizeClasses[size], error && 'border-error', className)}>
-            <SelectValue placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent>
-            {children}
-          </SelectContent>
-        </Select>
-        {error && (
-          <p className="">{error}</p>
-        )}
-        {helper && !error && (
-          <p className="">{helper}</p>
-        )}
-      </div>
-    );
-  }
-);
-EnhancedSelect.displayName = 'EnhancedSelect';
+  const sizeClasses = {
+    sm: 'text-sm p-3',
+    md: 'text-base p-4',
+    lg: 'text-lg p-4'
+  };
+
+  const selectClasses = cn(
+    'w-full transition-colors duration-200',
+    variantClasses[variant],
+    sizeClasses[size],
+    error && 'border-error focus:border-error',
+    className
+  );
+
+  return (
+    <div className="w-full">
+      {label && (
+        <Label>
+          {label}
+        </Label>
+      )}
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger className={selectClasses}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {children}
+        </SelectContent>
+      </Select>
+      {error && (
+        <Text size="sm">{error}</Text>
+      )}
+      {helper && !error && (
+        <Text size="sm">{helper}</Text>
+      )}
+    </div>
+  );
+};
 
 // Form Field Component
 interface FormFieldProps {
@@ -191,17 +214,17 @@ const FormField: React.FC<FormFieldProps> = ({ label, error, helper, required, c
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label className="">
+        <Label>
           {label}
-          {required && <span className="">*</span>}
-        </label>
+          {required && <span className="text-error-color ml-1">*</span>}
+        </Label>
       )}
       {children}
       {error && (
-        <p className="">{error}</p>
+        <Text size="sm">{error}</Text>
       )}
       {helper && !error && (
-        <p className="">{helper}</p>
+        <Text size="sm">{helper}</Text>
       )}
     </div>
   );
@@ -213,82 +236,50 @@ interface SearchInputProps extends Omit<EnhancedInputProps, 'type'> {
   searchIcon?: React.ReactNode;
 }
 
-const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ onSearch, ...props }, ref) => {
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' && onSearch) {
-        onSearch(e.currentTarget.value);
-      }
-    };
+const SearchInput: React.FC<SearchInputProps> = ({
+  onSearch,
+  searchIcon,
+  ...props
+}) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && onSearch) {
+      onSearch(e.currentTarget.value);
+    }
+  };
 
-    return (
-      <EnhancedInput
-        ref={ref}
-        type="search"
-        placeholder="Search..."
-        onKeyDown={handleKeyDown}
-        {...props}
-      />
-    );
-  }
-);
-SearchInput.displayName = 'SearchInput';
+  return (
+    <EnhancedInput
+      type="search"
+      onKeyDown={handleKeyDown}
+      leftIcon={searchIcon || (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      )}
+      {...props}
+    />
+  );
+};
 
 // Phone Input Component
 interface PhoneInputProps extends Omit<EnhancedInputProps, 'type'> {
   countryCode?: string;
 }
 
-const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
-  ({ countryCode = '+1', ...props }, ref) => {
-    return (
-      <div className="relative">
-        <div className="">
-          {countryCode}
-        </div>
-        <EnhancedInput
-          ref={ref}
-          type="tel"
-          className=""
-          {...props}
-        />
-      </div>
-    );
-  }
-);
-PhoneInput.displayName = 'PhoneInput';
-
-// Email Input Component
-const EmailInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
-  (props, ref) => {
-    return <EnhancedInput ref={ref} type="email" {...props} />;
-  }
-);
-EmailInput.displayName = 'EmailInput';
-
-// Password Input Component
-const PasswordInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
-  (props, ref) => {
-    return <EnhancedInput ref={ref} type="password" {...props} />;
-  }
-);
-PasswordInput.displayName = 'PasswordInput';
-
-// Number Input Component
-const NumberInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
-  (props, ref) => {
-    return <EnhancedInput ref={ref} type="number" {...props} />;
-  }
-);
-NumberInput.displayName = 'NumberInput';
-
-// URL Input Component
-const URLInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
-  (props, ref) => {
-    return <EnhancedInput ref={ref} type="url" {...props} />;
-  }
-);
-URLInput.displayName = 'URLInput';
+const PhoneInput: React.FC<PhoneInputProps> = ({
+  countryCode = '+1',
+  ...props
+}) => {
+  return (
+    <EnhancedInput
+      type="tel"
+      leftIcon={
+        <span className="text-sm font-medium">{countryCode}</span>
+      }
+      {...props}
+    />
+  );
+};
 
 export {
   EnhancedInput,
@@ -296,9 +287,5 @@ export {
   EnhancedSelect,
   FormField,
   SearchInput,
-  PhoneInput,
-  EmailInput,
-  PasswordInput,
-  NumberInput,
-  URLInput
+  PhoneInput
 }; 
