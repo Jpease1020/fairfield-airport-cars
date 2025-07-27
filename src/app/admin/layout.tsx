@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import '../standard-layout.css';
+import '.@/style@/styles/standard-layout.css';
 import '../globals.css';
 import { UnifiedLayout } from '@/components/layout';
 import { AdminProvider } from '@/components/admin/AdminProvider';

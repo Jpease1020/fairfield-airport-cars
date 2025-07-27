@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
 import { Container, Text, Span } from '@/components/ui';
-import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection, StatCard, InfoCard } from '@/components/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 import { Stack } from '@/components/ui/containers';

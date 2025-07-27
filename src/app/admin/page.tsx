@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { UnifiedLayout } from '@/components/layout/core/UnifiedLayout';
-import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { 
   GridSection, 
   InfoCard, 

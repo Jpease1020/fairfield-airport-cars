@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Text, Span, H2 } from '@/components/ui';
-import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection } from '@/components/ui';
 import { SettingSection } from '@/components/ui/SettingSection';
 import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';

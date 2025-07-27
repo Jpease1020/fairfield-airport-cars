@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { NextPage } from 'next';
 import { Container, Text, Span } from '@/components/ui';
-import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection, StatCard, InfoCard } from '@/components/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 import { Stack } from '@/components/ui/containers';

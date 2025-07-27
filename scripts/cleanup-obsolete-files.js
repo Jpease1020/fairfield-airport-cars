@@ -65,10 +65,12 @@ function main() {
 
   obsoleteJsxScripts.forEach(script => {
     const filePath = path.join(projectRoot, script);
-    if (removeFile(filePath)) {
-      removedCount++;
+    if (fs.existsSync(filePath)) {
       const stats = fs.statSync(filePath);
       totalSize += stats.size;
+    }
+    if (removeFile(filePath)) {
+      removedCount++;
     }
   });
 
@@ -85,10 +87,12 @@ function main() {
 
   obsoleteMultiAgentScripts.forEach(script => {
     const filePath = path.join(projectRoot, script);
-    if (removeFile(filePath)) {
-      removedCount++;
+    if (fs.existsSync(filePath)) {
       const stats = fs.statSync(filePath);
       totalSize += stats.size;
+    }
+    if (removeFile(filePath)) {
+      removedCount++;
     }
   });
 
@@ -104,10 +108,12 @@ function main() {
 
   completedEditModeScripts.forEach(script => {
     const filePath = path.join(projectRoot, script);
-    if (removeFile(filePath)) {
-      removedCount++;
+    if (fs.existsSync(filePath)) {
       const stats = fs.statSync(filePath);
       totalSize += stats.size;
+    }
+    if (removeFile(filePath)) {
+      removedCount++;
     }
   });
 
@@ -127,10 +133,12 @@ function main() {
 
   redundantBookingScripts.forEach(script => {
     const filePath = path.join(projectRoot, script);
-    if (removeFile(filePath)) {
-      removedCount++;
+    if (fs.existsSync(filePath)) {
       const stats = fs.statSync(filePath);
       totalSize += stats.size;
+    }
+    if (removeFile(filePath)) {
+      removedCount++;
     }
   });
 
@@ -147,10 +155,12 @@ function main() {
 
   outdatedCursorDocs.forEach(doc => {
     const filePath = path.join(projectRoot, doc);
-    if (removeFile(filePath)) {
-      removedCount++;
+    if (fs.existsSync(filePath)) {
       const stats = fs.statSync(filePath);
       totalSize += stats.size;
+    }
+    if (removeFile(filePath)) {
+      removedCount++;
     }
   });
 
@@ -190,10 +200,12 @@ function main() {
 
   outdatedDocs.forEach(doc => {
     const filePath = path.join(projectRoot, doc);
-    if (removeFile(filePath)) {
-      removedCount++;
+    if (fs.existsSync(filePath)) {
       const stats = fs.statSync(filePath);
       totalSize += stats.size;
+    }
+    if (removeFile(filePath)) {
+      removedCount++;
     }
   });
 

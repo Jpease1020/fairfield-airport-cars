@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Text, Span, H2, H1, H3 } from '@/components/ui';
-import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection, StatCard } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Button } from '@/components/ui/button';
