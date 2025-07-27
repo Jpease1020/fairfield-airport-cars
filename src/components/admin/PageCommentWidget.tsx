@@ -265,7 +265,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Comment */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium text-text-primary mb-2">
+                  <Text className="text-sm font-medium mb-2">
                     Comment
                   </Text>
                   <Textarea

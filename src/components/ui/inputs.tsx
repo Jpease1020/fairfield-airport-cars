@@ -42,7 +42,7 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-text-primary mb-2">
+          <label className="block text-sm font-medium mb-2">
             {label}
           </label>
         )}
@@ -108,7 +108,7 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-text-primary mb-2">
+          <label className="block text-sm font-medium mb-2">
             {label}
           </label>
         )}
