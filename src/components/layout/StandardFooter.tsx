@@ -1,30 +1,31 @@
 import React from 'react';
+import { Container, H3, H4, Text } from '@/components/ui';
 
 export const StandardFooter: React.FC = () => {
   return (
     <footer className="standard-footer">
-      <div className="footer-content">
-        <div className="footer-section">
-          <h3>Fairfield Airport Cars</h3>
-          <p>Premium airport transportation service</p>
-        </div>
+      <Container className="footer-content">
+        <Container className="footer-section">
+          <H3>Fairfield Airport Cars</H3>
+          <Text>Premium airport transportation service</Text>
+        </Container>
         
-        <div className="footer-section">
-          <h4>Contact</h4>
-          <p>Phone: (203) 555-0123</p>
-          <p>Email: info@fairfieldairportcar.com</p>
-        </div>
+        <Container className="footer-section">
+          <H4>Contact</H4>
+          <Text>Phone: (203) 555-0123</Text>
+          <Text>Email: info@fairfieldairportcar.com</Text>
+        </Container>
         
-        <div className="footer-section">
-          <h4>Service Areas</h4>
-          <p>Fairfield County, CT</p>
-          <p>New York Airports</p>
-        </div>
-      </div>
+        <Container className="footer-section">
+          <H4>Service Areas</H4>
+          <Text>Fairfield County, CT</Text>
+          <Text>New York Airports</Text>
+        </Container>
+      </Container>
       
-      <div className="footer-bottom">
-        <p>&copy; 2024 Fairfield Airport Cars. All rights reserved.</p>
-      </div>
+      <Container className="footer-bottom">
+        <Text>&copy; 2024 Fairfield Airport Cars. All rights reserved.</Text>
+      </Container>
     </footer>
   );
 }; 

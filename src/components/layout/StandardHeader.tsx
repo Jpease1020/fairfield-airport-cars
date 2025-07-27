@@ -1,4 +1,5 @@
 import React from 'react';
+import { H1, H2 } from '@/components/ui';
 
 interface StandardHeaderProps {
   title?: string;
@@ -10,8 +11,8 @@ export const StandardHeader: React.FC<StandardHeaderProps> = ({ title, subtitle 
 
   return (
     <header className="standard-header">
-      {title && <h1 className="standard-title">{title}</h1>}
-      {subtitle && <h2 className="standard-subtitle">{subtitle}</h2>}
+      {title && <H1 className="standard-title">{title}</H1>}
+      {subtitle && <H2 className="standard-subtitle">{subtitle}</H2>}
     </header>
   );
 }; 

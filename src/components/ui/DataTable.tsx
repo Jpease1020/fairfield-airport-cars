@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Button } from './button';
 
 export interface DataTableColumn<T> {
   key: keyof T | 'actions';
@@ -12,7 +13,7 @@ export interface DataTableColumn<T> {
 export interface DataTableAction<T> {
   label: string;
   onClick: (row: T) => void;
-  variant?: 'primary' | 'secondary' | 'destructive' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   icon?: string;
   href?: string;
   condition?: (row: T) => boolean;
@@ -50,11 +51,11 @@ export function DataTable<T extends Record<string, any>>({
   onRowClick
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortColumn, setSortColumn] = useState<string>('');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  // Filter data based on search
+  // Filter data based on search term
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
     
@@ -73,21 +74,9 @@ export function DataTable<T extends Record<string, any>>({
       const aValue = a[sortColumn];
       const bValue = b[sortColumn];
       
-      if (aValue == null) return 1;
-      if (bValue == null) return -1;
-      
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-      }
-      
-      const aStr = String(aValue).toLowerCase();
-      const bStr = String(bValue).toLowerCase();
-      
-      if (sortDirection === 'asc') {
-        return aStr.localeCompare(bStr);
-      } else {
-        return bStr.localeCompare(aStr);
-      }
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
     });
   }, [filteredData, sortColumn, sortDirection]);
 
@@ -95,9 +84,8 @@ export function DataTable<T extends Record<string, any>>({
   const paginatedData = useMemo(() => {
     if (!pagination) return sortedData;
     
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    return sortedData.slice(start, end);
+    const startIndex = (currentPage - 1) * pageSize;
+    return sortedData.slice(startIndex, startIndex + pageSize);
   }, [sortedData, currentPage, pageSize, pagination]);
 
   const totalPages = Math.ceil(sortedData.length / pageSize);
@@ -118,10 +106,10 @@ export function DataTable<T extends Record<string, any>>({
 
   if (loading) {
     return (
-      <div className={`data-table-container ${className}`}>
-        <div className="loading-spinner">
-          <div className="loading-spinner-icon">🔄</div>
-          <p>Loading data...</p>
+      <div className={`data-table-container data-table-loading ${className}`}>
+        <div className="data-table-loading-content">
+          <div className="data-table-loading-icon">⏳</div>
+          <p className="data-table-loading-text">Loading...</p>
         </div>
       </div>
     );
@@ -130,10 +118,10 @@ export function DataTable<T extends Record<string, any>>({
   if (data.length === 0) {
     return (
       <div className={`data-table-container ${className}`}>
-        <div style={{ textAlign: 'center', padding: 'var(--spacing-xl)' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-md)' }}>{emptyIcon}</div>
-          <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: '500', marginBottom: 'var(--spacing-sm)' }}>No Data</h3>
-          <p style={{ color: 'var(--text-secondary)' }}>{emptyMessage}</p>
+        <div className="data-table-empty">
+          <div className="data-table-empty-icon">{emptyIcon}</div>
+          <h3 className="data-table-empty-title">No Data</h3>
+          <p className="data-table-empty-message">{emptyMessage}</p>
         </div>
       </div>
     );
@@ -143,59 +131,39 @@ export function DataTable<T extends Record<string, any>>({
     <div className={`data-table-container ${className}`}>
       {/* Search and Controls */}
       {searchable && (
-        <div style={{ 
-          marginBottom: 'var(--spacing-md)', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center' 
-        }}>
-          <div style={{ flex: 1, maxWidth: '300px' }}>
+        <div className="data-table-controls">
+          <div className="data-table-search">
             <input
               type="text"
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="form-input"
-              style={{ width: '100%' }}
             />
           </div>
-          <div style={{ 
-            fontSize: 'var(--font-size-sm)', 
-            color: 'var(--text-secondary)', 
-            marginLeft: 'var(--spacing-md)' 
-          }}>
+          <div className="data-table-count">
             {filteredData.length} {filteredData.length === 1 ? 'item' : 'items'}
           </div>
         </div>
       )}
 
       {/* Table */}
-      <table className="">
+      <table className="data-table">
         <thead>
           <tr>
             {columns.map((column) => (
               <th
                 key={String(column.key)}
-                className={column.className || ''}
+                className={`data-table-header ${column.className || ''}`}
                 style={{ width: column.width }}
               >
                 {column.sortable ? (
                   <button
                     onClick={() => handleSort(String(column.key))}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 'var(--spacing-xs)',
-                      fontSize: 'inherit',
-                      fontWeight: 'inherit',
-                      color: 'inherit'
-                    }}
+                    className="data-table-sort-button"
                   >
-                    <span>{column.label}</span>
-                    <span style={{ fontSize: 'var(--font-size-xs)' }}>
+                    <span className="data-table-sort-label">{column.label}</span>
+                    <span className="data-table-sort-icon">
                       {getSortIcon(String(column.key))}
                     </span>
                   </button>
@@ -205,7 +173,7 @@ export function DataTable<T extends Record<string, any>>({
               </th>
             ))}
             {actions.length > 0 && (
-              <th>Actions</th>
+              <th className="data-table-header">Actions</th>
             )}
           </tr>
         </thead>
@@ -213,16 +181,13 @@ export function DataTable<T extends Record<string, any>>({
           {paginatedData.map((row, index) => (
             <tr
               key={index}
-              style={{
-                cursor: onRowClick ? 'pointer' : 'default'
-              }}
-              className={rowClassName ? rowClassName(row, index) : ''}
+              className={`data-table-row ${onRowClick ? 'data-table-row-clickable' : ''} ${rowClassName ? rowClassName(row, index) : ''}`}
               onClick={() => onRowClick?.(row, index)}
             >
               {columns.map((column) => (
                 <td
                   key={String(column.key)}
-                  className={column.className || ''}
+                  className={`data-table-cell ${column.className || ''}`}
                 >
                   {column.render
                     ? column.render(row[column.key], row, index)
@@ -230,53 +195,21 @@ export function DataTable<T extends Record<string, any>>({
                 </td>
               ))}
               {actions.length > 0 && (
-                <td>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
+                <td className="data-table-cell data-table-actions">
+                  <div className="data-table-action-buttons">
                     {actions
                       .filter(action => !action.condition || action.condition(row))
                       .map((action, actionIndex) => (
-                        action.href ? (
-                          <a
-                            key={actionIndex}
-                            href={action.href}
-                            className={`btn btn-${action.variant === 'destructive' ? 'outline' : action.variant || 'outline'}`}
-                            style={{
-                              fontSize: 'var(--font-size-xs)',
-                              padding: 'var(--spacing-xs) var(--spacing-sm)',
-                              textDecoration: 'none',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 'var(--spacing-xs)',
-                              ...(action.variant === 'destructive' && {
-                                color: '#dc3545',
-                                borderColor: '#dc3545'
-                              })
-                            }}
-                          >
-                            {action.icon && <span>{action.icon}</span>}
-                            {action.label}
-                          </a>
-                        ) : (
-                          <button
-                            key={actionIndex}
-                            onClick={() => action.onClick(row)}
-                            className={`btn btn-${action.variant === 'destructive' ? 'outline' : action.variant || 'outline'}`}
-                            style={{
-                              fontSize: 'var(--font-size-xs)',
-                              padding: 'var(--spacing-xs) var(--spacing-sm)',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 'var(--spacing-xs)',
-                              ...(action.variant === 'destructive' && {
-                                color: '#dc3545',
-                                borderColor: '#dc3545'
-                              })
-                            }}
-                          >
-                            {action.icon && <span>{action.icon}</span>}
-                            {action.label}
-                          </button>
-                        )
+                        <Button
+                          key={actionIndex}
+                          variant={action.variant || 'secondary'}
+                          size="sm"
+                          onClick={() => action.onClick(row)}
+                          className="data-table-action-button"
+                        >
+                          {action.icon && <span className="data-table-action-icon">{action.icon}</span>}
+                          {action.label}
+                        </Button>
                       ))}
                   </div>
                 </td>
@@ -288,55 +221,30 @@ export function DataTable<T extends Record<string, any>>({
 
       {/* Pagination */}
       {pagination && totalPages > 1 && (
-        <div style={{
-          marginTop: 'var(--spacing-md)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
-            Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, sortedData.length)} of {sortedData.length} entries
+        <div className="data-table-pagination">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="data-table-pagination-button"
+          >
+            Previous
+          </Button>
+          
+          <div className="data-table-pagination-info">
+            Page {currentPage} of {totalPages}
           </div>
-          <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
-            <button
-              className="btn btn-outline"
-              style={{ fontSize: 'var(--font-size-sm)', padding: 'var(--spacing-xs) var(--spacing-sm)' }}
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = currentPage <= 3 
-                ? i + 1 
-                : currentPage >= totalPages - 2
-                ? totalPages - 4 + i
-                : currentPage - 2 + i;
-                
-              if (pageNum < 1 || pageNum > totalPages) return null;
-              
-              return (
-                <button
-                  key={pageNum}
-                  className={`btn btn-${currentPage === pageNum ? "primary" : "outline"}`}
-                  style={{ fontSize: 'var(--font-size-sm)', padding: 'var(--spacing-xs) var(--spacing-sm)' }}
-                  onClick={() => setCurrentPage(pageNum)}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
-            
-            <button
-              className="btn btn-outline"
-              style={{ fontSize: 'var(--font-size-sm)', padding: 'var(--spacing-xs) var(--spacing-sm)' }}
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="data-table-pagination-button"
+          >
+            Next
+          </Button>
         </div>
       )}
     </div>

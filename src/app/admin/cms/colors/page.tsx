@@ -8,7 +8,10 @@ import {
   StatusMessage,
   ToastProvider,
   useToast,
-  GridSection
+  GridSection,
+  Input,
+  Label,
+  Text
 } from '@/components/ui';
 import { getCMSConfig, updateCMSConfig } from '@/lib/services/cms-service';
 
@@ -179,18 +182,18 @@ function AdminColorsPageContent() {
                     </strong>
                   </div>
                   
-                  <p className="admin-color-description">
+                  <Text className="admin-color-description">
                     {description}
-                  </p>
+                  </Text>
                   
                   <div className="admin-color-controls">
-                    <input
+                    <Input
                       type="color"
                       value={colors[key] || '#ffffff'}
                       onChange={(e) => handleColorChange(key, e.target.value)}
                       className="admin-color-picker"
                     />
-                    <input
+                    <Input
                       type="text"
                       value={colors[key] || ''}
                       onChange={(e) => handleColorChange(key, e.target.value)}
@@ -221,9 +224,9 @@ function AdminColorsPageContent() {
                 Primary Color Example
               </h2>
               
-              <p className="admin-colors-preview-description">
+              <Text className="admin-colors-preview-description">
                 This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
-              </p>
+              </Text>
               
               <ActionButtonGroup
                 buttons={[

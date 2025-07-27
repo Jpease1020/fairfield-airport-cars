@@ -1,42 +1,46 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import React from 'react';
 
-import { cn } from "@/lib/utils/utils"
-
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-transparent bg-brand-primary text-text-inverse hover:bg-brand-primary-hover",
-        secondary:
-          "border-transparent bg-bg-secondary text-text-primary hover:bg-bg-muted",
-        destructive:
-          "border-transparent bg-error text-text-inverse hover:bg-error-hover",
-        outline: "text-text-primary border-border-primary",
-        success:
-          "border-transparent bg-success text-text-inverse hover:bg-success-hover",
-        warning:
-          "border-transparent bg-warning text-text-inverse hover:bg-warning-hover",
-        info:
-          "border-transparent bg-info text-text-inverse hover:bg-info-hover",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
-
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  )
+export interface BadgeProps {
+  children: React.ReactNode;
+  variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
-export { Badge, badgeVariants } 
+export const Badge: React.FC<BadgeProps> = ({
+  children,
+  variant = 'default',
+  size = 'md',
+  className = '',
+}) => {
+  const baseClasses = 'status-badge';
+  const variantClasses = {
+    default: 'status-badge-default',
+    success: 'status-badge-success',
+    warning: 'status-badge-warning',
+    error: 'status-badge-error',
+    info: 'status-badge-info',
+    pending: 'status-badge-pending',
+    confirmed: 'status-badge-confirmed',
+    completed: 'status-badge-completed',
+    cancelled: 'status-badge-cancelled',
+  };
+  const sizeClasses = {
+    sm: 'status-badge-sm',
+    md: 'status-badge-md',
+    lg: 'status-badge-lg',
+  };
+
+  const classes = [
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size],
+    className,
+  ].filter(Boolean).join(' ');
+
+  return (
+    <span className={classes}>
+      {children}
+    </span>
+  );
+}; 

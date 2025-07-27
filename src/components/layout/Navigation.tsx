@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Phone } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { useBusinessSettings } from '@/hooks/useBusinessSettings';
+import { Container, Text } from '@/components/ui';
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -39,46 +39,41 @@ const Navigation = () => {
 
   return (
     <nav className="navigation">
-      <div className="navigation-container">
-        <div className="navigation-content">
+      <Container className="navigation-container">
+        <Container className="navigation-content">
           {/* Logo */}
-          <div className="navigation-brand">
+          <Container className="navigation-brand">
             <Link href="/" className="navigation-logo">
               <Logo className="navigation-logo-icon" />
-              <span className="navigation-logo-text">
+              <Text className="navigation-logo-text">
                 {getCompanyName()}
-              </span>
+              </Text>
             </Link>
-          </div>
+          </Container>
 
           {/* Desktop Navigation */}
-          <div className="navigation-menu">
+          <Container className="navigation-menu">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={cn(
-                  'navigation-link',
-                  item.current
-                    ? 'navigation-link-active'
-                    : 'navigation-link-inactive'
-                )}
+                className={`navigation-link ${item.current ? 'navigation-link-active' : 'navigation-link-inactive'}`}
               >
                 {item.name}
               </Link>
             ))}
-          </div>
+          </Container>
 
           {/* Contact Button */}
-          <div className="navigation-actions">
+          <Container className="navigation-actions">
             <a 
               href={`tel:${getPhoneNumber()}`}
               className="navigation-contact-button"
             >
               <Phone className="navigation-contact-icon" />
-              <span className="navigation-contact-text">Call Now</span>
+              <Text className="navigation-contact-text">Call Now</Text>
             </a>
-          </div>
+          </Container>
 
           {/* Mobile menu button */}
           <Button
@@ -94,43 +89,39 @@ const Navigation = () => {
               <Menu className="navigation-mobile-icon" />
             )}
           </Button>
-        </div>
-      </div>
+        </Container>
+      </Container>
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="navigation-mobile-menu">
-          <div className="navigation-mobile-content">
+        <Container className="navigation-mobile-menu">
+          <Container className="navigation-mobile-content">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={cn(
-                  'navigation-mobile-link',
-                  item.current
-                    ? 'navigation-mobile-link-active'
-                    : 'navigation-mobile-link-inactive'
-                )}
+                className={`navigation-mobile-link ${item.current ? 'navigation-mobile-link-active' : 'navigation-mobile-link-inactive'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            <div className="navigation-mobile-actions">
+            
+            <Container className="navigation-mobile-actions">
               <a 
                 href={`tel:${getPhoneNumber()}`}
                 className="navigation-mobile-contact-button"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Phone className="navigation-mobile-contact-icon" />
-                <span className="navigation-mobile-contact-text">Call Now</span>
+                <Text className="navigation-mobile-contact-text">Call Now</Text>
               </a>
-            </div>
-          </div>
-        </div>
+            </Container>
+          </Container>
+        </Container>
       )}
     </nav>
   );
 };
 
-export { Navigation };
+export default Navigation;

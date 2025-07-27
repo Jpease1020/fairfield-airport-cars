@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Button } from './button';
+import { Card, CardBody, CardHeader, CardTitle } from './card';
+import { Input, Label, Select, Option } from './index';
 
 interface AccessibilityEnhancerProps {
   children: React.ReactNode;
@@ -12,6 +15,13 @@ interface AccessibilitySettings {
   fontSize: 'normal' | 'large' | 'extra-large';
   focusIndicators: boolean;
 }
+
+const defaultSettings: AccessibilitySettings = {
+  highContrast: false,
+  reduceMotion: false,
+  fontSize: 'normal',
+  focusIndicators: false,
+};
 
 /**
  * AccessibilityEnhancer - Provides comprehensive accessibility features
@@ -32,86 +42,75 @@ interface AccessibilitySettings {
  * - 4.1.3 Status Messages
  */
 export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ children }) => {
-  const [settings, setSettings] = useState<AccessibilitySettings>({
-    highContrast: false,
-    reduceMotion: false,
-    fontSize: 'normal',
-    focusIndicators: true,
-  });
+  const [settings, setSettings] = useState<AccessibilitySettings>(defaultSettings);
   const [showPanel, setShowPanel] = useState(false);
 
-  // Load accessibility preferences from localStorage
+  // Load settings from localStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('accessibility-settings');
-      if (saved) {
-        try {
-          setSettings(JSON.parse(saved));
-        } catch (error) {
-          console.warn('Failed to load accessibility settings:', error);
-        }
+    const savedSettings = localStorage.getItem('accessibility-settings');
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        setSettings({ ...defaultSettings, ...parsedSettings });
+      } catch (error) {
+        console.error('Failed to parse accessibility settings:', error);
       }
-
-      // Respect system preferences
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
-
-      setSettings(prev => ({
-        ...prev,
-        reduceMotion: prev.reduceMotion || prefersReducedMotion,
-        highContrast: prev.highContrast || prefersHighContrast,
-      }));
     }
   }, []);
 
-  // Save settings to localStorage and apply to document
+  // Apply accessibility settings to document
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('accessibility-settings', JSON.stringify(settings));
-
-      // Apply accessibility classes to document
-      const root = document.documentElement;
-      
-      // High contrast
-      root.classList.toggle('accessibility-high-contrast', settings.highContrast);
-      
-      // Reduced motion
-      root.classList.toggle('accessibility-reduce-motion', settings.reduceMotion);
-      
-      // Font size
-      root.classList.remove('accessibility-font-large', 'accessibility-font-extra-large');
-      if (settings.fontSize === 'large') {
-        root.classList.add('accessibility-font-large');
-      } else if (settings.fontSize === 'extra-large') {
-        root.classList.add('accessibility-font-extra-large');
-      }
-      
-      // Enhanced focus indicators
-      root.classList.toggle('accessibility-enhanced-focus', settings.focusIndicators);
+    const root = document.documentElement;
+    
+    // Apply high contrast
+    if (settings.highContrast) {
+      root.classList.add('high-contrast');
+    } else {
+      root.classList.remove('high-contrast');
     }
+
+    // Apply reduce motion
+    if (settings.reduceMotion) {
+      root.classList.add('reduce-motion');
+    } else {
+      root.classList.remove('reduce-motion');
+    }
+
+    // Apply font size
+    root.classList.remove('font-size-normal', 'font-size-large', 'font-size-extra-large');
+    root.classList.add(`font-size-${settings.fontSize}`);
+
+    // Apply focus indicators
+    if (settings.focusIndicators) {
+      root.classList.add('enhanced-focus');
+    } else {
+      root.classList.remove('enhanced-focus');
+    }
+
+    // Save settings to localStorage
+    localStorage.setItem('accessibility-settings', JSON.stringify(settings));
   }, [settings]);
 
-  // Keyboard navigation for accessibility panel
+  // Keyboard shortcut handler
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Alt + A to toggle accessibility panel
       if (event.altKey && event.key === 'a') {
         event.preventDefault();
-        setShowPanel(prev => !prev);
-        announceToScreenReader('Accessibility panel toggled');
+        setShowPanel(!showPanel);
       }
-      
+
       // Escape to close panel
       if (event.key === 'Escape' && showPanel) {
         setShowPanel(false);
-        announceToScreenReader('Accessibility panel closed');
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [showPanel]);
 
+  // Screen reader announcement
   const announceToScreenReader = (message: string) => {
     const announcement = document.createElement('div');
     announcement.setAttribute('aria-live', 'polite');
@@ -132,236 +131,101 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
     value: AccessibilitySettings[K]
   ) => {
     setSettings(prev => ({ ...prev, [key]: value }));
-    announceToScreenReader(`${key} setting changed to ${value}`);
+    
+    // Announce changes to screen readers
+    const settingNames = {
+      highContrast: 'High contrast mode',
+      reduceMotion: 'Reduce motion',
+      fontSize: 'Font size',
+      focusIndicators: 'Enhanced focus indicators'
+    };
+    
+    const action = value ? 'enabled' : 'disabled';
+    announceToScreenReader(`${settingNames[key]} ${action}`);
   };
 
   return (
-    <div className="accessibility-enhancer">
+    <>
       {children}
       
       {/* Accessibility Panel Toggle */}
-      <button
-        className="accessibility-toggle"
+      <Button
         onClick={() => setShowPanel(!showPanel)}
+        variant="outline"
+        size="sm"
+        className="accessibility-toggle-button"
         aria-label="Toggle accessibility options (Alt + A)"
-        title="Accessibility Options (Alt + A)"
-        style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 9999,
-          background: 'var(--background-primary)',
-          border: '2px solid var(--border-color)',
-          borderRadius: '50%',
-          width: '48px',
-          height: '48px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '20px',
-          cursor: 'pointer',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-        }}
       >
         ♿
-      </button>
+      </Button>
 
       {/* Accessibility Settings Panel */}
       {showPanel && (
-        <div
-          className="accessibility-panel"
-          role="dialog"
-          aria-labelledby="accessibility-panel-title"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            top: '80px',
-            right: '20px',
-            zIndex: 9998,
-            background: 'var(--background-primary)',
-            border: '2px solid var(--border-color)',
-            borderRadius: 'var(--border-radius)',
-            padding: 'var(--spacing-lg)',
-            width: '300px',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-          }}
-        >
-          <h2 id="accessibility-panel-title" style={{ margin: '0 0 var(--spacing-md) 0' }}>
-            Accessibility Options
-          </h2>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
-            {/* High Contrast */}
-            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-              <input
-                type="checkbox"
-                checked={settings.highContrast}
-                onChange={(e) => updateSetting('highContrast', e.target.checked)}
-                style={{ width: '18px', height: '18px' }}
-              />
-              <span>High Contrast Mode</span>
-            </label>
-
-            {/* Reduce Motion */}
-            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-              <input
-                type="checkbox"
-                checked={settings.reduceMotion}
-                onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
-                style={{ width: '18px', height: '18px' }}
-              />
-              <span>Reduce Motion</span>
-            </label>
-
-            {/* Enhanced Focus */}
-            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-              <input
-                type="checkbox"
-                checked={settings.focusIndicators}
-                onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
-                style={{ width: '18px', height: '18px' }}
-              />
-              <span>Enhanced Focus Indicators</span>
-            </label>
-
-            {/* Font Size */}
-            <div>
-              <label htmlFor="font-size-select" style={{ display: 'block', marginBottom: 'var(--spacing-xs)' }}>
-                Font Size
+        <Card className="accessibility-panel">
+          <CardHeader>
+            <CardTitle>Accessibility Options</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <div className="accessibility-settings">
+              {/* High Contrast */}
+              <label className="accessibility-setting-item">
+                <Input
+                  type="checkbox"
+                  checked={settings.highContrast}
+                  onChange={(e) => updateSetting('highContrast', e.target.checked)}
+                  className="accessibility-setting-checkbox"
+                />
+                <span className="accessibility-setting-label">High Contrast Mode</span>
               </label>
-              <select
-                id="font-size-select"
-                value={settings.fontSize}
-                onChange={(e) => updateSetting('fontSize', e.target.value as AccessibilitySettings['fontSize'])}
-                style={{
-                  width: '100%',
-                  padding: 'var(--spacing-sm)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--background-primary)',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                <option value="normal">Normal</option>
-                <option value="large">Large</option>
-                <option value="extra-large">Extra Large</option>
-              </select>
-            </div>
 
-            {/* Close Button */}
-            <button
-              onClick={() => setShowPanel(false)}
-              style={{
-                marginTop: 'var(--spacing-md)',
-                padding: 'var(--spacing-sm) var(--spacing-md)',
-                border: '1px solid var(--border-color)',
-                borderRadius: 'var(--border-radius)',
-                background: 'var(--background-secondary)',
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-              }}
-            >
-              Close (Esc)
-            </button>
-          </div>
-        </div>
+              {/* Reduce Motion */}
+              <label className="accessibility-setting-item">
+                <Input
+                  type="checkbox"
+                  checked={settings.reduceMotion}
+                  onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
+                  className="accessibility-setting-checkbox"
+                />
+                <span className="accessibility-setting-label">Reduce Motion</span>
+              </label>
+
+              {/* Enhanced Focus */}
+              <label className="accessibility-setting-item">
+                <Input
+                  type="checkbox"
+                  checked={settings.focusIndicators}
+                  onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
+                  className="accessibility-setting-checkbox"
+                />
+                <span className="accessibility-setting-label">Enhanced Focus Indicators</span>
+              </label>
+
+              {/* Font Size */}
+              <div className="accessibility-setting-group">
+                <Label htmlFor="font-size-select" className="accessibility-setting-label">
+                  Font Size
+                </Label>
+                <Select
+                  id="font-size-select"
+                  value={settings.fontSize}
+                  onChange={(e) => updateSetting('fontSize', e.target.value as AccessibilitySettings['fontSize'])}
+                  className="accessibility-setting-select"
+                >
+                  <Option value="normal">Normal</Option>
+                  <Option value="large">Large</Option>
+                  <Option value="extra-large">Extra Large</Option>
+                </Select>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       )}
 
-      {/* Accessibility CSS Styles */}
-      <style jsx global>{`
-        /* High Contrast Mode */
-        .accessibility-high-contrast {
-          --text-primary: #000000;
-          --text-secondary: #333333;
-          --background-primary: #ffffff;
-          --background-secondary: #f5f5f5;
-          --border-color: #000000;
-          --primary-color: #0000ff;
-          --success-color: #008000;
-          --error-color: #ff0000;
-          --warning-color: #ff8c00;
-        }
-
-        /* Reduced Motion */
-        .accessibility-reduce-motion * {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-          scroll-behavior: auto !important;
-        }
-
-        /* Font Size Adjustments */
-        .accessibility-font-large {
-          font-size: 18px;
-        }
-        
-        .accessibility-font-extra-large {
-          font-size: 22px;
-        }
-
-        /* Enhanced Focus Indicators */
-        .accessibility-enhanced-focus *:focus {
-          outline: 3px solid var(--primary-color) !important;
-          outline-offset: 2px !important;
-        }
-
-        .accessibility-enhanced-focus button:focus,
-        .accessibility-enhanced-focus input:focus,
-        .accessibility-enhanced-focus select:focus,
-        .accessibility-enhanced-focus textarea:focus,
-        .accessibility-enhanced-focus a:focus {
-          box-shadow: 0 0 0 3px var(--primary-color) !important;
-        }
-
-        /* Skip Links */
-        .skip-link {
-          position: absolute;
-          top: -50px;
-          left: 20px;
-          background: var(--primary-color);
-          color: white;
-          padding: 8px 12px;
-          text-decoration: none;
-          border-radius: var(--border-radius);
-          z-index: 10000;
-          border: 2px solid var(--primary-color);
-          font-weight: 600;
-          font-size: var(--font-size-sm);
-          box-shadow: var(--shadow-md);
-          transition: all 0.2s ease;
-        }
-
-        .skip-link:focus {
-          top: 8px;
-          transform: translateY(0);
-        }
-
-        .skip-link:hover {
-          background: var(--primary-hover);
-          border-color: var(--primary-hover);
-        }
-
-        /* Touch Target Sizes */
-        @media (pointer: coarse) {
-          button,
-          input[type="button"],
-          input[type="submit"],
-          input[type="reset"],
-          .btn,
-          .accessibility-toggle {
-            min-height: 44px;
-            min-width: 44px;
-          }
-        }
-      `}</style>
-
-      {/* Skip Navigation Link */}
+      {/* Skip to main content link */}
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-    </div>
+    </>
   );
 };
 

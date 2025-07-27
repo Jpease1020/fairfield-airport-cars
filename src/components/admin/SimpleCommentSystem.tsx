@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
+import { Textarea, Select, Option } from '@/components/ui';
 
 interface SimpleCommentSystemProps {
   children: ReactNode;
@@ -345,7 +346,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                     </button>
                   </div>
                   
-                  <textarea
+                  <Textarea
                     value={comment.comment}
                     onChange={(e) => handleEditComment(comment.id, e.target.value)}
                     className=""
@@ -353,15 +354,15 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                   />
                   
                   <div className="">
-                    <select
+                    <Select
                       value={comment.status}
                       onChange={(e) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
                       className=""
                     >
-                      <option value="open">Open</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="resolved">Resolved</option>
-                    </select>
+                      <Option value="open">Open</Option>
+                      <Option value="in-progress">In Progress</Option>
+                      <Option value="resolved">Resolved</Option>
+                    </Select>
                   </div>
                 </div>
               ))}
@@ -370,7 +371,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
           
           {/* New Comment Input */}
           <div className="">
-            <textarea
+            <Textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Add a new comment..."

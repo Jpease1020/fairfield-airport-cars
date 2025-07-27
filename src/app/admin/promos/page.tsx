@@ -13,7 +13,11 @@ import {
   FormSection,
   ToastProvider,
   useToast,
-  ActionButtonGroup
+  ActionButtonGroup,
+  Input,
+  Label,
+  Select,
+  Option
 } from '@/components/ui';
 
 function PromosPageContent() {
@@ -310,24 +314,24 @@ function PromosPageContent() {
             </div>
             
             <div className="form-field">
-              <label className="form-label">
+              <Label className="form-label">
                 Type *
-              </label>
-              <select 
+              </Label>
+              <Select 
                 className="form-input"
                 value={form.type} 
                 onChange={(e) => setForm({...form, type: e.target.value})}
               >
-                <option value="percent">Percentage %</option>
-                <option value="flat">Fixed Amount $</option>
-              </select>
+                <Option value="percent">Percentage %</Option>
+                <Option value="flat">Fixed Amount $</Option>
+              </Select>
             </div>
             
             <div className="form-field">
-              <label className="form-label">
+              <Label className="form-label">
                 Value *
-              </label>
-              <input
+              </Label>
+              <Input
                 className="form-input"
                 type="number"
                 value={form.value}
@@ -338,10 +342,10 @@ function PromosPageContent() {
             </div>
             
             <div className="form-field">
-              <label className="form-label">
+              <Label className="form-label">
                 Expires At
-              </label>
-              <input
+              </Label>
+              <Input
                 className="form-input"
                 type="date"
                 value={form.expiresAt}
@@ -350,10 +354,10 @@ function PromosPageContent() {
             </div>
             
             <div className="form-field">
-              <label className="form-label">
+              <Label className="form-label">
                 Usage Limit
-              </label>
-              <input
+              </Label>
+              <Input
                 className="form-input"
                 type="number"
                 value={form.usageLimit}

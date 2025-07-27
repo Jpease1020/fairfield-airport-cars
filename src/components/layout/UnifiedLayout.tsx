@@ -11,10 +11,11 @@
 
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { generateCSSVariables } from '@/lib/design';
 import { AccessibilityEnhancer } from '@/components/ui/AccessibilityEnhancer';
-import { Navigation } from './Navigation';
+import { Container, H1, Text } from '@/components/ui';
+import Navigation from './Navigation';
 import { StandardFooter } from './StandardFooter';
 
 interface UnifiedLayoutProps {
@@ -62,38 +63,46 @@ export function UnifiedLayout({
 
   // Apply CMS design system
   useEffect(() => {
-    const applyCMSDesign = () => {
-      try {
-        let cmsConfig = {};
-        
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('cmsConfig');
-          if (stored) {
-            try {
-              cmsConfig = JSON.parse(stored);
-            } catch (e) {
-              console.warn('Using default design system');
-            }
-          }
-        }
-        
-        if (typeof window !== 'undefined') {
-          const cssVars = generateCSSVariables(cmsConfig);
-          const rootElement = document.documentElement;
-          
-          Object.entries(cssVars).forEach(([property, value]) => {
-            rootElement.style.setProperty(property, String(value));
-          });
-        }
-        
-        setCmsReady(true);
-      } catch (error) {
-        console.warn('CMS design system failed, using defaults');
-        setCmsReady(true);
-      }
-    };
+    // Temporarily bypass CMS loading to fix the stuck loading issue
+    setCmsReady(true);
+    
+    // TODO: Re-enable CMS design system once import issues are resolved
+    // const applyCMSDesign = () => {
+    //   try {
+    //     let cmsConfig = {};
+    //     
+    //     if (typeof window !== 'undefined') {
+    //       const stored = localStorage.getItem('cmsConfig');
+    //       if (stored) {
+    //         try {
+    //           cmsConfig = JSON.parse(stored);
+    //         } catch (e) {
+    //           console.warn('Using default design system');
+    //         }
+    //       }
+    //       
+    //       if (typeof window !== 'undefined') {
+    //         const cssVars = generateCSSVariables(cmsConfig);
+    //         const rootElement = document.documentElement;
+    //           
+    //         Object.entries(cssVars).forEach(([property, value]) => {
+    //           rootElement.style.setProperty(property, String(value));
+    //         });
+    //       }
+    //       
+    //       setCmsReady(true);
+    //     } catch (error) {
+    //       console.warn('CMS design system failed, using defaults');
+    //       setCmsReady(true);
+    //     }
+    //   };
+    //   
+    //   // Apply design system in background
+    //   setTimeout(() => {
+    //     applyCMSDesign();
+    //   }, 100);
 
-    applyCMSDesign();
+    return () => {};
   }, []);
 
   // Layout-specific configurations
@@ -127,65 +136,64 @@ export function UnifiedLayout({
     elevated: 'unified-layout-elevated'
   };
 
-  if (!cmsReady) {
-    return (
-      <div className="unified-layout-loading">
-        <div className="unified-layout-loading-spinner"></div>
-      </div>
-    );
-  }
+  // Temporarily disable loading state to fix the stuck loading issue
+  // if (!cmsReady) {
+  //   return (
+  //     <div className="unified-layout-loading">
+  //       <div className="unified-layout-loading-spinner"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div className={`unified-layout ${variantStyles[variant]}`}>
-      <AccessibilityEnhancer>
-        <></>
-      </AccessibilityEnhancer>
-      
-      {/* Navigation */}
-      {shouldShowNav && (
-        <header className="unified-layout-header">
-          <Navigation />
-        </header>
-      )}
+    <AccessibilityEnhancer>
+      <Container className={`unified-layout ${variantStyles[variant]}`}>
+        {/* Navigation */}
+        {shouldShowNav && (
+          <header className="unified-layout-header">
+            <Navigation />
+          </header>
+        )}
 
-      {/* Page Header */}
-      {(title || subtitle || description) && (
-        <section className="unified-layout-page-header">
-          <div className={containerClasses}>
-            <div className="unified-layout-page-header-content">
-              {title && (
-                <h1 className="unified-layout-page-title">
-                  {title}
-                </h1>
-              )}
-              {subtitle && (
-                <p className="unified-layout-page-subtitle">
-                  {subtitle}
-                </p>
-              )}
-              {description && (
-                <p className="unified-layout-page-description">
-                  {description}
-                </p>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
+        {/* Page Header */}
+        {(title || subtitle || description) && (
+          <section className="unified-layout-page-header">
+            <Container className={containerClasses}>
+              <Container className="unified-layout-page-header-content">
+                {title && (
+                  <H1 className="unified-layout-page-title">
+                    {title}
+                  </H1>
+                )}
+                {subtitle && (
+                  <Text className="unified-layout-page-subtitle">
+                    {subtitle}
+                  </Text>
+                )}
+                {description && (
+                  <Text className="unified-layout-page-description">
+                    {description}
+                  </Text>
+                )}
+              </Container>
+            </Container>
+          </section>
+        )}
 
-      {/* Main Content */}
-      <main id="main-content" className="unified-layout-main">
-        <div className={containerClasses}>
-          {children}
-        </div>
-      </main>
+        {/* Main Content */}
+        <main id="main-content" className="unified-layout-main">
+          <Container className={containerClasses}>
+            {children}
+          </Container>
+        </main>
 
-      {/* Footer */}
-      {shouldShowFooter && (
-        <footer className="unified-layout-footer">
-          <StandardFooter />
-        </footer>
-      )}
-    </div>
+        {/* Footer */}
+        {shouldShowFooter && (
+          <footer className="unified-layout-footer">
+            <StandardFooter />
+          </footer>
+        )}
+      </Container>
+    </AccessibilityEnhancer>
   );
 } 

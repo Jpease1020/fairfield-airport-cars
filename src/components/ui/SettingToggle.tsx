@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input, Label, Text } from './index';
 
 export interface SettingToggleProps {
   id: string;
@@ -20,89 +21,37 @@ export const SettingToggle: React.FC<SettingToggleProps> = ({
   icon
 }) => {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: 'var(--spacing-md) 0',
-      borderBottom: '1px solid var(--border-color)',
-      opacity: disabled ? 0.6 : 1
-    }}>
-      <div style={{ flex: 1 }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--spacing-sm)',
-          marginBottom: 'var(--spacing-xs)'
-        }}>
+    <div className={`setting-toggle ${disabled ? 'setting-toggle-disabled' : ''}`}>
+      <div className="setting-toggle-content">
+        <div className="setting-toggle-header">
           {icon && (
-            <span style={{ fontSize: 'var(--font-size-sm)' }}>
+            <span className="setting-toggle-icon">
               {icon}
             </span>
           )}
-          <label 
+          <Label 
             htmlFor={id}
-            style={{
-              fontWeight: '500',
-              fontSize: 'var(--font-size-sm)',
-              color: 'var(--text-primary)',
-              cursor: disabled ? 'not-allowed' : 'pointer'
-            }}
+            className="setting-toggle-label"
           >
             {label}
-          </label>
+          </Label>
         </div>
-        <p style={{
-          fontSize: 'var(--font-size-xs)',
-          color: 'var(--text-secondary)',
-          margin: 0,
-          lineHeight: '1.4'
-        }}>
+        <Text className="setting-toggle-description">
           {description}
-        </p>
+        </Text>
       </div>
       
-      <div style={{ marginLeft: 'var(--spacing-lg)' }}>
-        <label style={{ 
-          position: 'relative', 
-          display: 'inline-block', 
-          width: '48px', 
-          height: '24px',
-          cursor: disabled ? 'not-allowed' : 'pointer'
-        }}>
-          <input
+      <div className="setting-toggle-control">
+        <label className="setting-toggle-switch">
+          <Input
             type="checkbox"
             id={id}
             checked={checked}
             onChange={(e) => onChange(e.target.checked)}
             disabled={disabled}
-            style={{
-              opacity: 0,
-              width: 0,
-              height: 0
-            }}
+            className="setting-toggle-input"
           />
-          <span style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: checked ? 'var(--primary-color)' : '#ccc',
-            transition: '0.3s',
-            borderRadius: '24px'
-          }} />
-          <span style={{
-            position: 'absolute',
-            height: '18px',
-            width: '18px',
-            left: checked ? '27px' : '3px',
-            top: '3px',
-            backgroundColor: 'white',
-            transition: '0.3s',
-            borderRadius: '50%',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-          }} />
+          <span className={`setting-toggle-slider ${checked ? 'setting-toggle-slider-checked' : ''}`} />
         </label>
       </div>
     </div>

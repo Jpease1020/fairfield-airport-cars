@@ -1,18 +1,30 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Booking } from '@/types/booking';
 import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/services/booking-service';
 import { getSettings } from '@/lib/business/settings-service';
 import { 
-  StatusMessage,
-  ToastProvider,
   useToast,
   SettingSection,
-  SettingInput
+  SettingInput,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Input,
+  Textarea,
+  Badge,
+  StatusMessage,
+  ToastProvider,
+  Form,
+  Select,
+  Option
 } from '@/components/ui';
 import { useCMS } from '@/hooks/useCMS';
+import { LocationAutocomplete } from '@/components/booking';
 
 
 interface BookingFormProps {
@@ -419,7 +431,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="booking-form">
+      <Form onSubmit={handleSubmit} className="booking-form">
         {/* Personal Information */}
         <SettingSection
           title="Personal Information"
@@ -545,7 +557,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               When do you need to be picked up?
             </p>
             
-            <input
+            <Input
               id="pickupDateTime"
               name="pickupDateTime"
               type="datetime-local"
@@ -581,17 +593,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   Number of people traveling
                 </p>
                 
-                <select
+                <Select
                   id="passengers"
                   name="passengers"
                   value={passengers}
-                  onChange={(e) => setPassengers(Number(e.target.value))}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(Number(e.target.value))}
                   className="booking-form-datetime-input"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                    <option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</option>
+                    <Option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</Option>
                   ))}
-                </select>
+                </Select>
               </div>
               
               <SettingInput
@@ -621,7 +633,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 Let us know about any special requirements
               </p>
               
-              <textarea
+              <Textarea
                 id="notes"
                 name="notes"
                 value={notes}
@@ -641,24 +653,28 @@ function BookingFormContent({ booking }: BookingFormProps) {
           icon="💳"
         >
           <div className="booking-form-actions">
-            <button
+            <Button
               type="button"
               onClick={handleCalculateFare}
               disabled={isCalculating}
-              className="booking-form-calculate-btn"
+              loading={isCalculating}
+              fullWidth
+              size="lg"
             >
               {isCalculating ? (
-                <span className="booking-form-loading">
-                  <svg className="booking-form-loading-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="booking-form-loading-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="booking-form-loading-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                <>
+                  <span className="booking-form-loading">
+                    <svg className="booking-form-loading-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="booking-form-loading-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="booking-form-loading-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </span>
                   Calculating...
-                </span>
+                </>
               ) : (
                 'Calculate Fare'
               )}
-            </button>
+            </Button>
             {fare && (
               <div className="booking-form-fare-display">
                 <p className="booking-form-fare-text">
@@ -669,12 +685,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </div>
           
           {fare && (
-            <button
+            <Button
               type="submit"
-              className="booking-form-submit-btn"
+              disabled={!fare}
+              loading={false} // isSubmitting is not defined in this component, so it's always false for now
+              fullWidth
+              size="lg"
+              variant="primary"
             >
               🚗 Book Now - ${fare}
-            </button>
+            </Button>
           )}
         </SettingSection>
         
@@ -693,7 +713,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
             onDismiss={() => setSuccess(null)}
           />
         )}
-      </form>
+              </Form>
     </div>
   );
 }

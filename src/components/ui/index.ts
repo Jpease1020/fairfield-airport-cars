@@ -64,15 +64,37 @@ export type {
 } from '../cms/PageEditors';
 
 // Base UI Components
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
+export { Card, CardBody, CardHeader, CardTitle, CardDescription } from './card';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Badge } from './badge';
 export { Button } from './button';
 export { Input } from './input';
-export { Label } from './label';
-export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
-export { Switch } from './switch';
 export { Textarea } from './textarea';
+export { Grid, GridItem } from './Grid';
+
+// Form Components
+export { 
+  Form, 
+  FormGroup, 
+  Label, 
+  Fieldset, 
+  Legend, 
+  Select, 
+  Option, 
+  OptGroup 
+} from './form';
+
+// Text and Layout Components
+export { 
+  H1, H2, H3, H4, H5, H6,
+  Text, 
+  Paragraph, 
+  Lead, 
+  Link, 
+  Container, 
+  Section,
+  Span
+} from './text';
 
 // Accessibility
 export { AccessibilityEnhancer } from './AccessibilityEnhancer';

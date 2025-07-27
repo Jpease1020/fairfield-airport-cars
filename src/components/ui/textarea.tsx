@@ -1,22 +1,88 @@
+import React from 'react';
 
-import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
+export interface TextareaProps {
+  placeholder?: string;
+  value?: string;
+  defaultValue?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  disabled?: boolean;
+  required?: boolean;
+  name?: string;
+  id?: string;
+  className?: string;
+  error?: boolean;
+  errorMessage?: string;
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
+  rows?: number;
+  cols?: number;
+  maxLength?: number;
+  minLength?: number;
+  autoFocus?: boolean;
+}
 
-const Textarea = React.forwardRef<
-  HTMLTextAreaElement,
-  React.TextareaHTMLAttributes<HTMLTextAreaElement>
->(({ className, ...props }, ref) => {
+export const Textarea: React.FC<TextareaProps> = ({
+  placeholder,
+  value,
+  defaultValue,
+  onChange,
+  onBlur,
+  onFocus,
+  disabled = false,
+  required = false,
+  name,
+  id,
+  className = '',
+  error = false,
+  errorMessage,
+  size = 'md',
+  fullWidth = false,
+  rows = 4,
+  cols,
+  maxLength,
+  minLength,
+  autoFocus,
+}) => {
+  const baseClasses = 'form-textarea';
+  const sizeClasses = {
+    sm: 'form-textarea-sm',
+    md: 'form-textarea-md',
+    lg: 'form-textarea-lg',
+  };
+
+  const classes = [
+    baseClasses,
+    sizeClasses[size],
+    error ? 'form-textarea-error' : '',
+    fullWidth ? 'w-full' : '',
+    className,
+  ].filter(Boolean).join(' ');
+
   return (
-    <textarea
-      className={cn(
-        'flex min-h-[80px] w-full rounded-md border border-border-primary bg-bg-primary px-3 py-2 text-sm text-text-primary ring-offset-bg-primary placeholder:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-        className
+    <div className="form-textarea-wrapper">
+      <textarea
+        placeholder={placeholder}
+        value={value}
+        defaultValue={defaultValue}
+        onChange={onChange}
+        onBlur={onBlur}
+        onFocus={onFocus}
+        disabled={disabled}
+        required={required}
+        name={name}
+        id={id}
+        className={classes}
+        rows={rows}
+        cols={cols}
+        maxLength={maxLength}
+        minLength={minLength}
+        autoFocus={autoFocus}
+      />
+      {error && errorMessage && (
+        <div className="error-message">{errorMessage}</div>
       )}
-      ref={ref}
-      {...props}
-    />
+    </div>
   );
-});
-Textarea.displayName = 'Textarea';
-
-export { Textarea };
+}; 

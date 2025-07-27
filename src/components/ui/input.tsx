@@ -1,101 +1,91 @@
+import React from 'react';
 
-import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
-
-/**
- * A flexible input component with enhanced accessibility and validation states
- * 
- * @example
- * ```tsx
- * // Basic usage
- * <Input placeholder="Enter your name" />
- * 
- * // With label and error
- * <Input
- *   label="Email"
- *   type="email"
- *   error="Please enter a valid email"
- *   required
- * />
- * 
- * // With helper text
- * <Input
- *   label="Password"
- *   type="password"
- *   helperText="Must be at least 8 characters"
- * />
- * ```
- */
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  /** The label text for the input */
-  label?: string;
-  /** Error message to display below the input */
-  error?: string;
-  /** Helper text to display below the input */
-  helperText?: string;
-  /** Whether the input is required */
+export interface InputProps {
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'datetime-local' | 'date' | 'time' | 'file' | 'color' | 'range' | 'checkbox';
+  placeholder?: string;
+  value?: string;
+  defaultValue?: string;
+  checked?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
   required?: boolean;
-  /** The ID for the input element */
+  name?: string;
   id?: string;
+  className?: string;
+  error?: boolean;
+  errorMessage?: string;
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ 
-    className, 
-    type, 
-    label,
-    error,
-    helperText,
-    required = false,
-    id,
-    'aria-describedby': ariaDescribedby,
-    ...props 
-  }, ref) => {
-    const inputId = id || `input-${label?.toLowerCase().replace(/\s+/g, '-')}`;
-    const errorId = error ? `${inputId}-error` : undefined;
-    const helperId = helperText ? `${inputId}-helper` : undefined;
-    const describedBy = [ariaDescribedby, errorId, helperId].filter(Boolean).join(' ');
+export const Input: React.FC<InputProps> = ({
+  type = 'text',
+  placeholder,
+  value,
+  defaultValue,
+  checked,
+  onChange,
+  onBlur,
+  onFocus,
+  disabled = false,
+  required = false,
+  name,
+  id,
+  className = '',
+  error = false,
+  errorMessage,
+  size = 'md',
+  fullWidth = false,
+  icon,
+  iconPosition = 'left',
+}) => {
+  const baseClasses = 'form-input';
+  const sizeClasses = {
+    sm: 'form-input-sm',
+    md: 'form-input-md',
+    lg: 'form-input-lg',
+  };
 
-    return (
-      <div className="">
-        {label && (
-          <label 
-            htmlFor={inputId}
-            className=""
-          >
-            {label}
-            {required && <span className="">*</span>}
-          </label>
-        )}
-        <input
-          type={type}
-          id={inputId}
-          className={cn(
-            'flex h-10 w-full rounded-md border border-border-primary bg-bg-primary px-3 py-2 text-sm text-text-primary ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-error focus-visible:ring-error',
-            className
-          )}
-          ref={ref}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={describedBy || undefined}
-          required={required}
-          {...props}
-        />
-        {error && (
-          <p id={errorId} className="" role="alert">
-            {error}
-          </p>
-        )}
-        {helperText && !error && (
-          <p id={helperId} className="">
-            {helperText}
-          </p>
-        )}
-      </div>
-    );
-  }
-);
-Input.displayName = 'Input';
+  const classes = [
+    baseClasses,
+    sizeClasses[size],
+    error ? 'form-input-error' : '',
+    fullWidth ? 'w-full' : '',
+    icon ? 'form-input-with-icon' : '',
+    iconPosition === 'right' ? 'form-input-icon-right' : '',
+    className,
+  ].filter(Boolean).join(' ');
 
-export { Input };
+  return (
+    <div className="form-input-wrapper">
+      {icon && iconPosition === 'left' && (
+        <span className="form-input-icon form-input-icon-left">{icon}</span>
+      )}
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        defaultValue={defaultValue}
+        checked={checked}
+        onChange={onChange}
+        onBlur={onBlur}
+        onFocus={onFocus}
+        disabled={disabled}
+        required={required}
+        name={name}
+        id={id}
+        className={classes}
+      />
+      {icon && iconPosition === 'right' && (
+        <span className="form-input-icon form-input-icon-right">{icon}</span>
+      )}
+      {error && errorMessage && (
+        <div className="error-message">{errorMessage}</div>
+      )}
+    </div>
+  );
+}; 

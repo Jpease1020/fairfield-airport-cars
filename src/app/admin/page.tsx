@@ -1,17 +1,18 @@
 'use client';
 
-import { UnifiedLayout } from '@/components/layout';
-import {
-  AdminPageWrapper,
-  GridSection,
-  InfoCard,
+import React from 'react';
+import { UnifiedLayout } from '@/components/layout/UnifiedLayout';
+import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { 
+  GridSection, 
+  InfoCard, 
   ActionButtonGroup,
-  ToastProvider
+  ToastProvider,
+  Container,
+  Text
 } from '@/components/ui';
 
 function AdminDashboardContent() {
-
-
   const quickActions = [
     {
       label: 'View Bookings',
@@ -69,14 +70,14 @@ function AdminDashboardContent() {
               title={`${stat.icon} ${stat.title}`}
               description={stat.value}
             >
-              <div className="admin-stat-card">
-                <div className={`admin-stat-value admin-stat-value-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}>
+              <Container className="admin-stat-card">
+                <Container className={`admin-stat-value admin-stat-value-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}>
                   {stat.value}
-                </div>
-                <p className="admin-stat-title">
+                </Container>
+                <Text className="admin-stat-title">
                   {stat.title}
-                </p>
-              </div>
+                </Text>
+              </Container>
             </InfoCard>
           ))}
         </GridSection>
@@ -87,11 +88,11 @@ function AdminDashboardContent() {
             title="📈 Recent Activity"
             description="Latest bookings and system updates"
           >
-            <div className="admin-activity-placeholder">
-              <p className="admin-activity-text">
+            <Container className="admin-activity-placeholder">
+              <Text className="admin-activity-text">
                 Recent activity data will be displayed here once the booking system is fully integrated.
-              </p>
-            </div>
+              </Text>
+            </Container>
           </InfoCard>
         </GridSection>
       </AdminPageWrapper>

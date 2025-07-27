@@ -2,11 +2,12 @@
 export { UnifiedLayout } from './UnifiedLayout';
 
 // CMS-Aware Layout Components (Legacy - use UnifiedLayout instead)
-export { CMSStandardPage } from './CMSStandardPage';
-export { CMSMarketingPage } from './CMSMarketingPage';
-export { CMSConversionPage } from './CMSConversionPage';
-export { CMSContentPage } from './CMSContentPage';
-export { CMSStatusPage } from './CMSStatusPage';
+// Temporarily disabled due to import errors
+// export { CMSStandardPage } from './CMSStandardPage';
+// export { CMSMarketingPage } from './CMSMarketingPage';
+// export { CMSConversionPage } from './CMSConversionPage';
+// export { CMSContentPage } from './CMSContentPage';
+// export { CMSStatusPage } from './CMSStatusPage';
 
 // Legacy components - use UnifiedLayout instead
 export { UniversalLayout } from './UniversalLayout';
@@ -19,7 +20,7 @@ export { StandardFooter } from './StandardFooter';
 // Page structure components
 export { PageContainer } from './PageContainer';
 export { PageHeader } from './PageHeader';
-export { Navigation } from './Navigation';
+export { default as Navigation } from './Navigation';
 
 /**
  * 🚨 IMPORTANT: Use UnifiedLayout for ALL pages

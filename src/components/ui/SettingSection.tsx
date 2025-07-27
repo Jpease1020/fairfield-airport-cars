@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card, CardHeader, CardBody } from './card';
 
 export interface SettingSectionProps {
   title: string;
@@ -16,69 +17,36 @@ export const SettingSection: React.FC<SettingSectionProps> = ({
   actions
 }) => {
   return (
-    <div className="card" style={{
-      backgroundColor: 'var(--background-primary)',
-      border: '1px solid var(--border-color)',
-      borderRadius: 'var(--border-radius)',
-      overflow: 'hidden'
-    }}>
-      {/* Header */}
-      <div style={{
-        padding: 'var(--spacing-lg)',
-        borderBottom: '1px solid var(--border-color)',
-        backgroundColor: 'var(--background-secondary)'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--spacing-sm)',
-              marginBottom: description ? 'var(--spacing-xs)' : 0
-            }}>
-              {icon && (
-                <span style={{ fontSize: 'var(--font-size-lg)' }}>
-                  {icon}
-                </span>
-              )}
-              <h3 style={{
-                margin: 0,
-                fontSize: 'var(--font-size-lg)',
-                fontWeight: '600',
-                color: 'var(--text-primary)'
-              }}>
-                {title}
-              </h3>
-            </div>
-            {description && (
-              <p style={{
-                margin: 0,
-                fontSize: 'var(--font-size-sm)',
-                color: 'var(--text-secondary)'
-              }}>
-                {description}
-              </p>
+    <Card className="setting-section">
+      <CardHeader className="setting-section-header">
+        <div className="setting-section-content">
+          <div className="setting-section-title-row">
+            {icon && (
+              <span className="setting-section-icon">
+                {icon}
+              </span>
             )}
+            <h3 className="setting-section-title">
+              {title}
+            </h3>
           </div>
-          
-          {actions && (
-            <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-              {actions}
-            </div>
+          {description && (
+            <p className="setting-section-description">
+              {description}
+            </p>
           )}
         </div>
-      </div>
+        
+        {actions && (
+          <div className="setting-section-actions">
+            {actions}
+          </div>
+        )}
+      </CardHeader>
       
-      {/* Content */}
-      <div style={{
-        padding: 'var(--spacing-lg)'
-      }}>
+      <CardBody className="setting-section-body">
         {children}
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   );
 }; 

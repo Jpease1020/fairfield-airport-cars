@@ -1,7 +1,6 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
+import React from 'react';
 
-interface HeroSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+interface HeroSectionProps {
   title: string;
   subtitle?: string;
   description?: string;
@@ -14,90 +13,58 @@ interface HeroSectionProps extends React.HTMLAttributes<HTMLDivElement> {
     href: string;
   };
   backgroundImage?: string;
-  variant?: 'default' | 'centered' | 'split';
+  variant?: 'default' | 'centered';
 }
 
-const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
-  ({ 
-    className, 
-    title, 
-    subtitle, 
-    description,
-    primaryAction,
-    secondaryAction,
-    backgroundImage,
-    variant = 'default',
-    ...props 
-  }, ref) => {
-    const containerClasses = cn(
-      'relative overflow-hidden',
-      variant === 'centered' ? 'text-center' : '',
-      className
-    );
+export const HeroSection: React.FC<HeroSectionProps> = ({
+  title,
+  subtitle,
+  description,
+  primaryAction,
+  secondaryAction,
+  backgroundImage,
+  variant = 'default'
+}) => {
+  const contentClasses = `hero-content ${variant === 'centered' ? 'hero-content-centered' : ''}`;
 
-    const contentClasses = cn(
-      'relative z-10',
-      variant === 'centered' ? 'max-w-3xl mx-auto' : 'max-w-2xl',
-      'py-16 px-4 sm:px-6 lg:px-8'
-    );
-
-    return (
-      <div ref={ref} className={containerClasses} {...props}>
-        {backgroundImage && (
-          <div 
-            className=""
-            style={{ backgroundImage: `url(${backgroundImage})` }}
-          >
-            <div className="" />
+  return (
+    <div className="hero-section">
+      {backgroundImage && (
+        <div 
+          className="hero-background"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        >
+          <div className="hero-background-overlay" />
+        </div>
+      )}
+      
+      <div className={contentClasses}>
+        <h1 className="hero-title">{title}</h1>
+        {subtitle && <p className="hero-subtitle">{subtitle}</p>}
+        {description && <p className="hero-description">{description}</p>}
+        
+        {(primaryAction || secondaryAction) && (
+          <div className="hero-actions">
+            {primaryAction && (
+              <a 
+                href={primaryAction.href}
+                className="hero-primary-action"
+              >
+                {primaryAction.label}
+              </a>
+            )}
+            
+            {secondaryAction && (
+              <a 
+                href={secondaryAction.href}
+                className="hero-secondary-action"
+              >
+                {secondaryAction.label} <span aria-hidden="true">→</span>
+              </a>
+            )}
           </div>
         )}
-        
-        <div className={contentClasses}>
-          {subtitle && (
-            <p className="">
-              {subtitle}
-            </p>
-          )}
-          
-          <h1 className="">
-            {title}
-          </h1>
-          
-          {description && (
-            <p className="">
-              {description}
-            </p>
-          )}
-          
-          {(primaryAction || secondaryAction) && (
-            <div className={cn(
-              'flex flex-col sm:flex-row gap-4',
-              variant === 'centered' ? 'justify-center' : ''
-            )}>
-              {primaryAction && (
-                <a 
-                  href={primaryAction.href}
-                  className=""
-                >
-                  {primaryAction.label}
-                </a>
-              )}
-              
-              {secondaryAction && (
-                <a 
-                  href={secondaryAction.href}
-                  className=""
-                >
-                  {secondaryAction.label}
-                </a>
-              )}
-            </div>
-          )}
-        </div>
       </div>
-    );
-  }
-);
-HeroSection.displayName = 'HeroSection';
-
-export { HeroSection }; 
+    </div>
+  );
+};

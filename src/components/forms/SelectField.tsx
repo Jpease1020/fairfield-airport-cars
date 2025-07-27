@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
 import { Label } from '@/components/ui/label';
+import { Select, Option, Text } from '@/components/ui';
 
 interface SelectOption {
   value: string;
@@ -26,7 +27,7 @@ const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
           {label}
           {required && <span className="">*</span>}
         </Label>
-        <select
+        <Select
           ref={ref}
           id={fieldId}
           className={cn(
@@ -37,20 +38,20 @@ const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
           {...props}
         >
           {options.map((option) => (
-            <option
+            <Option
               key={option.value}
               value={option.value}
               disabled={option.disabled}
             >
               {option.label}
-            </option>
+            </Option>
           ))}
-        </select>
+        </Select>
         {error && (
-          <p className="">{error}</p>
+          <Text className="">{error}</Text>
         )}
         {helperText && !error && (
-          <p className="">{helperText}</p>
+          <Text className="">{helperText}</Text>
         )}
       </div>
     );

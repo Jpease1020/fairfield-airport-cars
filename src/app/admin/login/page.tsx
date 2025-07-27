@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard } from '@/components/ui';
+import { GridSection, InfoCard, Form, Input, Label, Button } from '@/components/ui';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -58,11 +58,11 @@ export default function LoginPage() {
           title="🔐 Admin Authentication"
           description="Sign in to access the admin dashboard"
         >
-          <form onSubmit={handleFormSubmit} className="login-form">
+          <Form onSubmit={handleFormSubmit} className="login-form">
             <div className="login-form-fields">
               <div className="login-form-group">
-                <label htmlFor="email" className="login-form-label">Email Address</label>
-                <input
+                <Label htmlFor="email" className="login-form-label">Email Address</Label>
+                <Input
                   id="email"
                   type="email"
                   className="login-form-input"
@@ -75,8 +75,8 @@ export default function LoginPage() {
               </div>
               
               <div className="login-form-group">
-                <label htmlFor="password" className="login-form-label">Password</label>
-                <input
+                <Label htmlFor="password" className="login-form-label">Password</Label>
+                <Input
                   id="password"
                   type="password"
                   className="login-form-input"
@@ -99,28 +99,32 @@ export default function LoginPage() {
             </div>
             
             <div className="login-form-actions">
-              <button 
+              <Button 
                 type="submit" 
                 className="login-form-submit-btn"
                 disabled={loading}
+                variant="primary"
+                size="lg"
               >
                 {loading ? '🔄 Signing In...' : '🔐 Sign In'}
-              </button>
+              </Button>
               
               <div className="login-form-divider">
                 <span>or</span>
               </div>
               
-              <button 
+              <Button 
                 type="button"
                 className="login-form-google-btn"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
+                variant="outline"
+                size="lg"
               >
                 {loading ? '🔄 Connecting...' : '🔍 Sign In with Google'}
-              </button>
+              </Button>
             </div>
-          </form>
+          </Form>
         </InfoCard>
       </GridSection>
     </UnifiedLayout>

@@ -10,7 +10,11 @@ import {
   InfoCard,
   ActionButtonGroup,
   ToastProvider,
-  useToast
+  useToast,
+  Input,
+  Label,
+  H4,
+  Text
 } from '@/components/ui';
 import { 
   MapPin, 
@@ -188,11 +192,11 @@ function PricingSettingsContent() {
         >
           <div className="pricing-base-section">
             <div className="pricing-field-group">
-              <label className="pricing-field-label">Base Fare ($)</label>
-              <input
+              <Label htmlFor="baseFare">Base Fare ($)</Label>
+              <Input
+                id="baseFare"
                 type="number"
-                step="0.01"
-                value={settings.baseFare}
+                value={settings.baseFare.toString()}
                 onChange={(e) => handleBasePricingChange('baseFare', parseFloat(e.target.value) || 0)}
                 placeholder="10.00"
                 className="pricing-field-input"
@@ -200,11 +204,11 @@ function PricingSettingsContent() {
             </div>
 
             <div className="pricing-field-group">
-              <label className="pricing-field-label">Per Mile Rate ($)</label>
-              <input
+              <Label htmlFor="perMile">Per Mile Rate ($)</Label>
+              <Input
+                id="perMile"
                 type="number"
-                step="0.01"
-                value={settings.perMile}
+                value={settings.perMile.toString()}
                 onChange={(e) => handleBasePricingChange('perMile', parseFloat(e.target.value) || 0)}
                 placeholder="3.50"
                 className="pricing-field-input"
@@ -212,11 +216,11 @@ function PricingSettingsContent() {
             </div>
 
             <div className="pricing-field-group">
-              <label className="pricing-field-label">Per Minute Rate ($)</label>
-              <input
+              <Label htmlFor="perMinute">Per Minute Rate ($)</Label>
+              <Input
+                id="perMinute"
                 type="number"
-                step="0.01"
-                value={settings.perMinute}
+                value={settings.perMinute.toString()}
                 onChange={(e) => handleBasePricingChange('perMinute', parseFloat(e.target.value) || 0)}
                 placeholder="0.50"
                 className="pricing-field-input"
@@ -224,12 +228,11 @@ function PricingSettingsContent() {
             </div>
 
             <div className="pricing-field-group">
-              <label className="pricing-field-label">Deposit Percentage (%)</label>
-              <input
+              <Label htmlFor="depositPercent">Deposit Percentage (%)</Label>
+              <Input
+                id="depositPercent"
                 type="number"
-                min="0"
-                max="100"
-                value={settings.depositPercent}
+                value={settings.depositPercent.toString()}
                 onChange={(e) => handleBasePricingChange('depositPercent', parseInt(e.target.value) || 0)}
                 placeholder="50"
                 className="pricing-field-input"
@@ -237,10 +240,11 @@ function PricingSettingsContent() {
             </div>
 
             <div className="pricing-field-group">
-              <label className="pricing-field-label">Buffer Minutes</label>
-              <input
+              <Label htmlFor="bufferMinutes">Buffer Minutes</Label>
+              <Input
+                id="bufferMinutes"
                 type="number"
-                value={settings.bufferMinutes}
+                value={settings.bufferMinutes.toString()}
                 onChange={(e) => handleBasePricingChange('bufferMinutes', parseInt(e.target.value) || 0)}
                 placeholder="60"
                 className="pricing-field-input"
@@ -258,12 +262,11 @@ function PricingSettingsContent() {
         >
           <div className="pricing-cancellation-section">
             <div className="pricing-field-group">
-              <label className="pricing-field-label">Over 24h Refund (%)</label>
-              <input
+              <Label htmlFor="over24hRefund">Over 24h Refund (%)</Label>
+              <Input
+                id="over24hRefund"
                 type="number"
-                min="0"
-                max="100"
-                value={settings.cancellation.over24hRefundPercent}
+                value={settings.cancellation.over24hRefundPercent.toString()}
                 onChange={(e) => handleCancellationChange('over24hRefundPercent', parseInt(e.target.value) || 0)}
                 placeholder="100"
                 className="pricing-field-input"
@@ -271,12 +274,11 @@ function PricingSettingsContent() {
             </div>
 
             <div className="pricing-field-group">
-              <label className="pricing-field-label">3-24h Refund (%)</label>
-              <input
+              <Label htmlFor="between3And24hRefund">3-24h Refund (%)</Label>
+              <Input
+                id="between3And24hRefund"
                 type="number"
-                min="0"
-                max="100"
-                value={settings.cancellation.between3And24hRefundPercent}
+                value={settings.cancellation.between3And24hRefundPercent.toString()}
                 onChange={(e) => handleCancellationChange('between3And24hRefundPercent', parseInt(e.target.value) || 0)}
                 placeholder="50"
                 className="pricing-field-input"
@@ -284,12 +286,11 @@ function PricingSettingsContent() {
             </div>
 
             <div className="pricing-field-group">
-              <label className="pricing-field-label">Under 3h Refund (%)</label>
-              <input
+              <Label htmlFor="under3hRefund">Under 3h Refund (%)</Label>
+              <Input
+                id="under3hRefund"
                 type="number"
-                min="0"
-                max="100"
-                value={settings.cancellation.under3hRefundPercent}
+                value={settings.cancellation.under3hRefundPercent.toString()}
                 onChange={(e) => handleCancellationChange('under3hRefundPercent', parseInt(e.target.value) || 0)}
                 placeholder="0"
                 className="pricing-field-input"
@@ -320,15 +321,15 @@ function PricingSettingsContent() {
             {settings.zones.length === 0 ? (
               <div className="pricing-zones-empty">
                 <MapPin className="pricing-zones-empty-icon" />
-                <p className="pricing-zones-empty-title">No pricing zones configured</p>
-                <p className="pricing-zones-empty-description">Add zones for different areas with custom pricing</p>
+                <Text className="pricing-zones-empty-title">No pricing zones configured</Text>
+                <Text className="pricing-zones-empty-description">Add zones for different areas with custom pricing</Text>
               </div>
             ) : (
               <div className="pricing-zones-list">
                 {settings.zones.map((zone, index) => (
                   <div key={index} className="pricing-zone-item">
                     <div className="pricing-zone-header">
-                      <h4 className="pricing-zone-title">Zone {index + 1}</h4>
+                      <H4 className="pricing-zone-title">Zone {index + 1}</H4>
                       <button
                         onClick={() => removeZone(index)}
                         className="pricing-zone-remove-btn"
@@ -339,8 +340,9 @@ function PricingSettingsContent() {
                     
                     <div className="pricing-zone-fields">
                       <div className="pricing-field-group">
-                        <label className="pricing-field-label">Zone Name</label>
-                        <input
+                        <Label htmlFor={`zone-name-${index}`}>Zone Name</Label>
+                        <Input
+                          id={`zone-name-${index}`}
                           value={zone.name}
                           onChange={(e) => updateZone(index, 'name', e.target.value)}
                           placeholder="Downtown"
@@ -349,11 +351,11 @@ function PricingSettingsContent() {
                       </div>
                       
                       <div className="pricing-field-group">
-                        <label className="pricing-field-label">Base Fare ($)</label>
-                        <input
+                        <Label htmlFor={`zone-baseFare-${index}`}>Base Fare ($)</Label>
+                        <Input
+                          id={`zone-baseFare-${index}`}
                           type="number"
-                          step="0.01"
-                          value={zone.baseFare}
+                          value={zone.baseFare.toString()}
                           onChange={(e) => updateZone(index, 'baseFare', parseFloat(e.target.value) || 0)}
                           placeholder="10.00"
                           className="pricing-field-input"
@@ -361,11 +363,11 @@ function PricingSettingsContent() {
                       </div>
                       
                       <div className="pricing-field-group">
-                        <label className="pricing-field-label">Per Mile ($)</label>
-                        <input
+                        <Label htmlFor={`zone-perMile-${index}`}>Per Mile ($)</Label>
+                        <Input
+                          id={`zone-perMile-${index}`}
                           type="number"
-                          step="0.01"
-                          value={zone.perMile}
+                          value={zone.perMile.toString()}
                           onChange={(e) => updateZone(index, 'perMile', parseFloat(e.target.value) || 0)}
                           placeholder="3.50"
                           className="pricing-field-input"
@@ -373,11 +375,11 @@ function PricingSettingsContent() {
                       </div>
                       
                       <div className="pricing-field-group">
-                        <label className="pricing-field-label">Per Minute ($)</label>
-                        <input
+                        <Label htmlFor={`zone-perMinute-${index}`}>Per Minute ($)</Label>
+                        <Input
+                          id={`zone-perMinute-${index}`}
                           type="number"
-                          step="0.01"
-                          value={zone.perMinute}
+                          value={zone.perMinute.toString()}
                           onChange={(e) => updateZone(index, 'perMinute', parseFloat(e.target.value) || 0)}
                           placeholder="0.50"
                           className="pricing-field-input"

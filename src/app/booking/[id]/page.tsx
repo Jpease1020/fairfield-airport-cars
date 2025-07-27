@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout';
+import { UnifiedLayout } from '@/components/layout/UnifiedLayout';
 import { 
-  GridSection,
-  InfoCard,
+  GridSection, 
+  InfoCard, 
   ActionButtonGroup,
+  Container,
+  H3,
+  Text,
+  Span,
   LoadingSpinner
 } from '@/components/ui';
 import { Booking } from '@/types/booking';
@@ -166,29 +170,29 @@ function BookingDetailsContent() {
           title="📍 Trip Details"
           description="Your pickup and dropoff information"
         >
-          <div className="booking-trip-details">
-            <div className="booking-location-item">
-              <span className="booking-location-icon">📍</span>
-              <div className="booking-location-content">
-                <h3 className="booking-location-title">Pickup Location</h3>
-                <p className="booking-location-address">{booking.pickupLocation}</p>
-              </div>
-            </div>
-            <div className="booking-location-item">
-              <span className="booking-location-icon">🎯</span>
-              <div className="booking-location-content">
-                <h3 className="booking-location-title">Dropoff Location</h3>
-                <p className="booking-location-address">{booking.dropoffLocation}</p>
-              </div>
-            </div>
-            <div className="booking-location-item">
-              <span className="booking-location-icon">📅</span>
-              <div className="booking-location-content">
-                <h3 className="booking-location-title">Pickup Date & Time</h3>
-                <p className="booking-location-address">{formatDateTime(booking.pickupDateTime)}</p>
-              </div>
-            </div>
-          </div>
+          <Container className="booking-trip-details">
+            <Container className="booking-location-item">
+              <Span className="booking-location-icon">📍</Span>
+              <Container className="booking-location-content">
+                <H3 className="booking-location-title">Pickup Location</H3>
+                <Text className="booking-location-address">{booking.pickupLocation}</Text>
+              </Container>
+            </Container>
+            <Container className="booking-location-item">
+              <Span className="booking-location-icon">🎯</Span>
+              <Container className="booking-location-content">
+                <H3 className="booking-location-title">Dropoff Location</H3>
+                <Text className="booking-location-address">{booking.dropoffLocation}</Text>
+              </Container>
+            </Container>
+            <Container className="booking-location-item">
+              <Span className="booking-location-icon">📅</Span>
+              <Container className="booking-location-content">
+                <H3 className="booking-location-title">Pickup Date & Time</H3>
+                <Text className="booking-location-address">{formatDateTime(booking.pickupDateTime)}</Text>
+              </Container>
+            </Container>
+          </Container>
         </InfoCard>
       </GridSection>
 
@@ -198,29 +202,29 @@ function BookingDetailsContent() {
           title="👤 Passenger Information"
           description="Your contact details for this booking"
         >
-          <div className="booking-passenger-details">
-            <div className="booking-passenger-item">
-              <span className="booking-passenger-icon">👤</span>
-              <div className="booking-passenger-content">
-                <h3 className="booking-passenger-title">Passenger</h3>
-                <p className="booking-passenger-value">{booking.name}</p>
-              </div>
-            </div>
-            <div className="booking-passenger-item">
-              <span className="booking-passenger-icon">📞</span>
-              <div className="booking-passenger-content">
-                <h3 className="booking-passenger-title">Phone</h3>
-                <p className="booking-passenger-value">{booking.phone}</p>
-              </div>
-            </div>
-            <div className="booking-passenger-item">
-              <span className="booking-passenger-icon">✉️</span>
-              <div className="booking-passenger-content">
-                <h3 className="booking-passenger-title">Email</h3>
-                <p className="booking-passenger-value">{booking.email}</p>
-              </div>
-            </div>
-          </div>
+          <Container className="booking-passenger-details">
+            <Container className="booking-passenger-item">
+              <Span className="booking-passenger-icon">👤</Span>
+              <Container className="booking-passenger-content">
+                <H3 className="booking-passenger-title">Passenger</H3>
+                <Text className="booking-passenger-value">{booking.name}</Text>
+              </Container>
+            </Container>
+            <Container className="booking-passenger-item">
+              <Span className="booking-passenger-icon">📞</Span>
+              <Container className="booking-passenger-content">
+                <H3 className="booking-passenger-title">Phone</H3>
+                <Text className="booking-passenger-value">{booking.phone}</Text>
+              </Container>
+            </Container>
+            <Container className="booking-passenger-item">
+              <Span className="booking-passenger-icon">✉️</Span>
+              <Container className="booking-passenger-content">
+                <H3 className="booking-passenger-title">Email</H3>
+                <Text className="booking-passenger-value">{booking.email}</Text>
+              </Container>
+            </Container>
+          </Container>
         </InfoCard>
       </GridSection>
 
@@ -230,18 +234,18 @@ function BookingDetailsContent() {
           title="💰 Fare Information"
           description="Payment details for your trip"
         >
-          <div className="booking-fare-details">
-            <div className="booking-fare-item">
-              <span className="booking-fare-icon">💳</span>
-              <div className="booking-fare-content">
-                <h3 className="booking-fare-title">Total Fare</h3>
-                <p className="booking-fare-description">Includes all fees and taxes</p>
-              </div>
-              <div className="booking-fare-amount">
+          <Container className="booking-fare-details">
+            <Container className="booking-fare-item">
+              <Span className="booking-fare-icon">💳</Span>
+              <Container className="booking-fare-content">
+                <H3 className="booking-fare-title">Total Fare</H3>
+                <Text className="booking-fare-description">Includes all fees and taxes</Text>
+              </Container>
+              <Container className="booking-fare-amount">
                 ${booking.fare?.toFixed(2)}
-              </div>
-            </div>
-          </div>
+              </Container>
+            </Container>
+          </Container>
         </InfoCard>
       </GridSection>
 

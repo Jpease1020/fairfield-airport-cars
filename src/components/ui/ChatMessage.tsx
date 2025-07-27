@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './button';
 
 export interface ChatMessage {
   id: string;
@@ -38,23 +39,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             {message.content}
           </div>
           {isVoiceSupported && (
-            <button 
-              className="message-voice-btn" 
+            <Button 
               onClick={handleVoicePlay}
-              title="Read aloud"
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 'var(--font-size-sm)',
-                padding: 'var(--spacing-xs)',
-                opacity: 0.7
-              }}
-              onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
-              onMouseOut={(e) => e.currentTarget.style.opacity = '0.7'}
+              variant="ghost"
+              size="sm"
+              className="message-voice-button"
             >
               🔊
-            </button>
+            </Button>
           )}
         </div>
         <div className="message-timestamp">

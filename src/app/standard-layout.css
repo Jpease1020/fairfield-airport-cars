@@ -1855,6 +1855,12 @@ body {
   background-color: var(--background-muted);
 }
 
+/* Logo styles */
+.logo-image {
+  max-height: 40px;
+  width: auto;
+}
+
 .navigation {
   background-color: var(--background-primary);
   border-bottom: 1px solid var(--border-color);
@@ -2749,30 +2755,31 @@ body {
 }
 
 .booking-form-calculate-btn {
-  width: 100%;
-  padding: var(--spacing-md);
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
+  width: 100% !important;
+  padding: var(--spacing-md) !important;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: var(--border-radius) !important;
+  font-size: var(--font-size-lg) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--spacing-sm) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .booking-form-calculate-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .booking-form-calculate-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
 }
 
 .booking-form-loading {

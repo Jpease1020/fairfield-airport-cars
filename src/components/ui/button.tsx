@@ -1,94 +1,67 @@
-
 import React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils/utils';
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
-  {
-    variants: {
-      variant: {
-        default: 'bg-brand-primary text-text-inverse hover:bg-brand-primary-hover',
-        destructive: 'bg-error text-text-inverse hover:bg-error-hover',
-        outline: 'border border-border-primary bg-bg-primary hover:bg-bg-secondary hover:text-text-primary',
-        secondary: 'bg-bg-secondary text-text-primary hover:bg-bg-muted',
-        ghost: 'hover:bg-bg-secondary hover:text-text-primary',
-        link: 'text-brand-primary underline-offset-4 hover:underline',
-        success: 'bg-success text-text-inverse hover:bg-success-hover',
-        warning: 'bg-warning text-text-inverse hover:bg-warning-hover',
-        info: 'bg-info text-text-inverse hover:bg-info-hover',
-      },
-      size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
-  }
-);
-
-/**
- * A flexible button component with multiple variants, sizes, and states
- * 
- * @example
- * ```tsx
- * // Basic usage
- * <Button onClick={handleClick}>Click me</Button>
- * 
- * // With variant and size
- * <Button variant="outline" size="lg" onClick={handleClick}>
- *   Large Outline Button
- * </Button>
- * 
- * // Loading state
- * <Button loading disabled>
- *   Processing...
- * </Button>
- * 
- * // Icon button
- * <Button variant="ghost" size="icon" aria-label="Close">
- *   <X className="" />
- * </Button>
- * ```
- */
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  /** Whether the button is in a loading state */
+export interface ButtonProps {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
   loading?: boolean;
-  /** The loading spinner component to show when loading */
-  loadingSpinner?: React.ReactNode;
+  fullWidth?: boolean;
+  icon?: React.ReactNode;
+  onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
+  className?: string;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, loading = false, loadingSpinner, children, disabled, ...props }, ref) => {
-    const isDisabled = disabled || loading;
-    
-    return (
-      <button
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        disabled={isDisabled}
-        aria-disabled={isDisabled}
-        {...props}
-      >
-        {loading && loadingSpinner ? (
-          <div className="">
-            {loadingSpinner}
-            {children}
-          </div>
-        ) : (
-          children
-        )}
-      </button>
-    );
-  }
-);
-Button.displayName = 'Button';
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  disabled = false,
+  loading = false,
+  fullWidth = false,
+  icon,
+  onClick,
+  type = 'button',
+  className = '',
+}) => {
+  const baseClasses = 'action-button';
+  const variantClasses = {
+    primary: 'action-button-primary',
+    secondary: 'action-button-secondary',
+    outline: 'action-button-outline',
+    ghost: 'action-button-ghost',
+  };
+  const sizeClasses = {
+    sm: 'action-button-sm',
+    md: 'action-button-md',
+    lg: 'action-button-lg',
+  };
 
-export { Button, buttonVariants };
+  const classes = [
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size],
+    fullWidth ? 'w-full' : '',
+    disabled || loading ? 'disabled' : '',
+    className,
+  ].filter(Boolean).join(' ');
+
+  return (
+    <button
+      type={type}
+      className={classes}
+      disabled={disabled || loading}
+      onClick={onClick}
+    >
+      {loading && (
+        <svg className="action-button-loading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      )}
+      {icon && !loading && <span className="action-button-icon">{icon}</span>}
+      <span className="action-button-label">{children}</span>
+    </button>
+  );
+}; 

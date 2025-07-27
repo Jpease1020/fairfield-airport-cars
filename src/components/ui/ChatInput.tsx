@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { Button } from './button';
 
 export interface ChatInputProps {
   value: string;
@@ -25,8 +26,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const recognitionRef = useRef<any>(null);
 
   const handleSend = () => {
-    if (!value.trim() || disabled) return;
-    onSend(value.trim());
+    if (value.trim() && !disabled) {
+      onSend(value.trim());
+      onChange('');
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -37,42 +40,45 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const startVoiceInput = () => {
-    if (!isVoiceSupported || !('webkitSpeechRecognition' in window)) {
-      alert('Voice input is not supported in your browser.');
-      return;
+    if (!isVoiceSupported || disabled) return;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognitionRef.current.onresult = (event: any) => {
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        if (finalTranscript) {
+          onChange(value + finalTranscript);
+          onVoiceInput?.(finalTranscript);
+        }
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current.start();
     }
-
-    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    const recognition = new SpeechRecognition();
-    
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
-
-    recognition.onresult = (event: any) => {
-      const text = event.results[0][0].transcript;
-      if (onVoiceInput) {
-        onVoiceInput(text);
-      } else {
-        onChange(value + (value ? ' ' : '') + text);
-      }
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognitionRef.current = recognition;
-    recognition.start();
   };
 
   const stopVoiceInput = () => {
@@ -99,14 +105,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div className="chat-input-section">
-      <div className="" style={{
-        display: 'flex',
-        alignItems: 'flex-end',
-        gap: 'var(--spacing-sm)',
-        padding: 'var(--spacing-md)',
-        backgroundColor: 'var(--background-primary)',
-        borderTop: '1px solid var(--border-color)'
-      }}>
+      <div className="chat-input-container">
         <textarea
           ref={textareaRef}
           value={value}
@@ -117,62 +116,31 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
           disabled={disabled}
-          className="chat-input"
-          style={{
-            flex: 1,
-            minHeight: '40px',
-            maxHeight: `${maxRows * 24}px`,
-            resize: 'none',
-            border: '1px solid var(--border-color)',
-            borderRadius: 'var(--border-radius)',
-            padding: 'var(--spacing-sm)',
-            fontSize: 'var(--font-size-sm)',
-            lineHeight: '1.5',
-            outline: 'none'
-          }}
+          className="chat-input-textarea"
+          rows={1}
         />
         
         {isVoiceSupported && (
-          <button
-            className="voice-input-btn"
+          <Button
             onClick={isListening ? stopVoiceInput : startVoiceInput}
             disabled={disabled}
-            title={isListening ? 'Stop listening' : 'Voice input'}
-            style={{
-              padding: 'var(--spacing-sm)',
-              border: '1px solid var(--border-color)',
-              borderRadius: 'var(--border-radius)',
-              backgroundColor: isListening ? 'var(--primary-color)' : 'var(--background-secondary)',
-              color: isListening ? 'white' : 'var(--text-primary)',
-              cursor: disabled ? 'not-allowed' : 'pointer',
-              fontSize: 'var(--font-size-sm)',
-              minWidth: '40px',
-              height: '40px'
-            }}
+            variant={isListening ? 'primary' : 'outline'}
+            size="sm"
+            className="chat-input-voice-button"
           >
             {isListening ? '🛑' : '🎤'}
-          </button>
+          </Button>
         )}
         
-        <button
+        <Button
           onClick={handleSend}
           disabled={!value.trim() || disabled}
-          className="send-btn"
-          title="Send message"
-          style={{
-            padding: 'var(--spacing-sm)',
-            border: '1px solid var(--primary-color)',
-            borderRadius: 'var(--border-radius)',
-            backgroundColor: !value.trim() || disabled ? 'var(--background-secondary)' : 'var(--primary-color)',
-            color: !value.trim() || disabled ? 'var(--text-secondary)' : 'white',
-            cursor: !value.trim() || disabled ? 'not-allowed' : 'pointer',
-            fontSize: 'var(--font-size-sm)',
-            minWidth: '40px',
-            height: '40px'
-          }}
+          variant="primary"
+          size="sm"
+          className="chat-input-send-button"
         >
           📤
-        </button>
+        </Button>
       </div>
     </div>
   );

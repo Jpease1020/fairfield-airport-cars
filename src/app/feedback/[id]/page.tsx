@@ -8,7 +8,11 @@ import {
   InfoCard,
   ActionButtonGroup,
   ToastProvider,
-  useToast
+  useToast,
+  Form,
+  Label,
+  Button,
+  Textarea
 } from '@/components/ui';
 import { Star } from 'lucide-react';
 
@@ -94,23 +98,24 @@ function FeedbackPageContent() {
           title="⭐ Rate Your Experience"
           description="How was your ride with Fairfield Airport Cars?"
         >
-          <form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit}>
             <p>
-              <label htmlFor="rating">
+              <Label htmlFor="rating">
                 How was your ride?
-              </label>
+              </Label>
             </p>
             <p>
               {[1, 2, 3, 4, 5].map((star) => (
-                <button
+                <Button
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
                   className="feedback-star-rating-button"
-                  aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                  variant="ghost"
+                  size="sm"
                 >
                   <Star />
-                </button>
+                </Button>
               ))}
             </p>
             <p>
@@ -123,15 +128,15 @@ function FeedbackPageContent() {
             </p>
 
             <p>
-              <label htmlFor="comment">
+              <Label htmlFor="comment">
                 Additional Comments (Optional)
-              </label>
+              </Label>
             </p>
             <p>
-              <textarea
+              <Textarea
                 id="comment"
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
                 placeholder="Tell us about your experience..."
                 rows={4}
                 className="feedback-form-textarea"
@@ -139,15 +144,17 @@ function FeedbackPageContent() {
             </p>
 
             <p>
-              <button
+              <Button
                 type="submit"
                 disabled={loading || rating === 0}
                 className="feedback-submit-button"
+                variant="primary"
+                size="lg"
               >
                 {loading ? 'Submitting...' : '⭐ Submit Feedback'}
-              </button>
+              </Button>
             </p>
-          </form>
+          </Form>
         </InfoCard>
       </GridSection>
     </UnifiedLayout>

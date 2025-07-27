@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './card';
+import { Card, CardBody, CardHeader, CardTitle } from './card';
 
 interface FormSectionProps {
   title: string;
@@ -27,9 +27,9 @@ export const FormSection: React.FC<FormSectionProps> = ({
           <p className="">{description}</p>
         )}
       </CardHeader>
-      <CardContent className="">
+      <CardBody className="">
         {children}
-      </CardContent>
+      </CardBody>
     </Card>
   );
 }; 

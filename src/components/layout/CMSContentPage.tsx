@@ -3,7 +3,7 @@ import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
 import { PageHeader } from '@/components/ui/layout/PageHeader';
 import { PageContent } from '@/components/ui/layout/PageContent';
-import { Card, CardContent } from '@/components/ui';
+import { Card, CardBody } from '@/components/ui';
 
 interface CMSContentPageProps {
   cmsConfig: CMSConfiguration;
@@ -86,7 +86,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
               <div className="">
                 <div className="">
                   <Card variant="outlined" padding="lg">
-                    <CardContent>
+                    <CardBody>
                       <H3 className="">On This Page</H3>
                       <nav className="">
                         <a href="#overview" className="">
@@ -99,7 +99,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
                           Contact
                         </a>
                       </nav>
-                    </CardContent>
+                    </CardBody>
                   </Card>
                 </div>
               </div>
@@ -126,7 +126,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
             
             <div className="">
               <Card variant="outlined" padding="lg">
-                <CardContent>
+                <CardBody>
                   <H3 className="mb-3">Booking Information</H3>
                   <p className="">
                     Learn about our booking process, policies, and what to expect.
@@ -134,11 +134,11 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
                   <a href="/book" className="">
                     Book Your Ride →
                   </a>
-                </CardContent>
+                </CardBody>
               </Card>
               
               <Card variant="outlined" padding="lg">
-                <CardContent>
+                <CardBody>
                   <H3 className="">Service Areas</H3>
                   <p className="">
                     See all the airports and areas we serve in the region.
@@ -146,11 +146,11 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
                   <a href="/about" className="">
                     View Service Areas →
                   </a>
-                </CardContent>
+                </CardBody>
               </Card>
               
               <Card variant="outlined" padding="lg">
-                <CardContent>
+                <CardBody>
                   <H3 className="">Contact Support</H3>
                   <p className="">
                     Need help? Our support team is available 24/7.
@@ -158,7 +158,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
                   <a href="/help" className="">
                     Get Help →
                   </a>
-                </CardContent>
+                </CardBody>
               </Card>
             </div>
           </Container>

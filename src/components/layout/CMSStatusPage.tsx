@@ -3,7 +3,7 @@ import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
 import { PageHeader } from '@/components/ui/layout/PageHeader';
 import { PageContent } from '@/components/ui/layout/PageContent';
-import { Card, CardContent, Button } from '@/components/ui';
+import { Card, CardBody, Button } from '@/components/ui';
 import { CheckCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
 interface CMSStatusPageProps {
@@ -163,9 +163,9 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
       <Section padding="xl">
         <Container maxWidth={containerMaxWidth}>
           <Card variant="elevated" padding="xl">
-            <CardContent>
+            <CardBody>
               {children}
-            </CardContent>
+            </CardBody>
           </Card>
         </Container>
       </Section>
