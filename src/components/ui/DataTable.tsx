@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from './button';
+import { Container, Span, Text, Input } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface DataTableColumn<T> {
   key: keyof T | 'actions';
@@ -30,7 +32,6 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   emptyMessage?: string;
   emptyIcon?: string;
-  className?: string;
   rowClassName?: (row: T, index: number) => string;
   onRowClick?: (row: T, index: number) => void;
 }
@@ -46,7 +47,6 @@ export function DataTable<T extends Record<string, any>>({
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data available',
   emptyIcon = '📊',
-  className = '',
   rowClassName,
   onRowClick
 }: DataTableProps<T>) {
@@ -106,147 +106,114 @@ export function DataTable<T extends Record<string, any>>({
 
   if (loading) {
     return (
-      <div className={`data-table-container data-table-loading ${className}`}>
-        <div className="data-table-loading-content">
-          <div className="data-table-loading-icon">⏳</div>
-          <p className="data-table-loading-text">Loading...</p>
-        </div>
-      </div>
+      <Container>
+        <Stack align="center" spacing="md">
+          <Container>
+            <Span>⏳</Span>
+          </Container>
+          <Text>Loading...</Text>
+        </Stack>
+      </Container>
     );
   }
 
   if (data.length === 0) {
     return (
-      <div className={`data-table-container ${className}`}>
-        <div className="data-table-empty">
-          <div className="data-table-empty-icon">{emptyIcon}</div>
-          <h3 className="data-table-empty-title">No Data</h3>
-          <p className="data-table-empty-message">{emptyMessage}</p>
-        </div>
-      </div>
+      <Container>
+        <Stack align="center" spacing="md">
+          <Container>
+            <Span>{emptyIcon}</Span>
+          </Container>
+          <Text>No Data</Text>
+          <Text>{emptyMessage}</Text>
+        </Stack>
+      </Container>
     );
   }
 
   return (
-    <div className={`data-table-container ${className}`}>
+    <Container>
       {/* Search and Controls */}
       {searchable && (
-        <div className="data-table-controls">
-          <div className="data-table-search">
-            <input
+        <Stack direction="horizontal" spacing="md" justify="between">
+          <Container>
+            <Input
               type="text"
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              
             />
-          </div>
-          <div className="data-table-count">
-            {filteredData.length} {filteredData.length === 1 ? 'item' : 'items'}
-          </div>
-        </div>
+          </Container>
+          <Container>
+            <Text>{filteredData.length} {filteredData.length === 1 ? 'item' : 'items'}</Text>
+          </Container>
+        </Stack>
       )}
 
       {/* Table */}
-      <table className="data-table">
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th
-                key={String(column.key)}
-                className={`data-table-header ${column.className || ''}`}
-                style={{ width: column.width }}
-              >
-                {column.sortable ? (
-                  <button
-                    onClick={() => handleSort(String(column.key))}
-                    className="data-table-sort-button"
-                  >
-                    <span className="data-table-sort-label">{column.label}</span>
-                    <span className="data-table-sort-icon">
-                      {getSortIcon(String(column.key))}
-                    </span>
-                  </button>
-                ) : (
-                  column.label
-                )}
-              </th>
-            ))}
-            {actions.length > 0 && (
-              <th className="data-table-header">Actions</th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
+      <Container>
+        <Stack direction="vertical" spacing="md">
           {paginatedData.map((row, index) => (
-            <tr
-              key={index}
-              className={`data-table-row ${onRowClick ? 'data-table-row-clickable' : ''} ${rowClassName ? rowClassName(row, index) : ''}`}
-              onClick={() => onRowClick?.(row, index)}
-            >
-              {columns.map((column) => (
-                <td
-                  key={String(column.key)}
-                  className={`data-table-cell ${column.className || ''}`}
-                >
-                  {column.render
-                    ? column.render(row[column.key], row, index)
-                    : String(row[column.key] || '-')}
-                </td>
-              ))}
-              {actions.length > 0 && (
-                <td className="data-table-cell data-table-actions">
-                  <div className="data-table-action-buttons">
-                    {actions
-                      .filter(action => !action.condition || action.condition(row))
-                      .map((action, actionIndex) => (
-                        <Button
-                          key={actionIndex}
-                          variant={action.variant || 'secondary'}
-                          size="sm"
-                          onClick={() => action.onClick(row)}
-                          className="data-table-action-button"
-                        >
-                          {action.icon && <span className="data-table-action-icon">{action.icon}</span>}
-                          {action.label}
-                        </Button>
-                      ))}
-                  </div>
-                </td>
-              )}
-            </tr>
+            <Container key={index}>
+              <Stack direction="horizontal" spacing="md">
+                {columns.map((column) => (
+                  <Container key={String(column.key)}>
+                    {column.render
+                      ? column.render(row[column.key], row, index)
+                      : String(row[column.key] || '-')}
+                  </Container>
+                ))}
+                {actions.length > 0 && (
+                  <Container>
+                    <Stack direction="horizontal" spacing="sm">
+                      {actions
+                        .filter(action => !action.condition || action.condition(row))
+                        .map((action, actionIndex) => (
+                          <Button
+                            key={actionIndex}
+                            variant={action.variant || 'secondary'}
+                            size="sm"
+                            onClick={() => action.onClick(row)}
+                          >
+                            {action.icon && <Span>{action.icon}</Span>}
+                            {action.label}
+                          </Button>
+                        ))}
+                    </Stack>
+                  </Container>
+                )}
+              </Stack>
+            </Container>
           ))}
-        </tbody>
-      </table>
+        </Stack>
+      </Container>
 
       {/* Pagination */}
       {pagination && totalPages > 1 && (
-        <div className="data-table-pagination">
+        <Stack direction="horizontal" spacing="md" align="center" justify="between">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
-            
           >
             Previous
           </Button>
           
-          <div className="data-table-pagination-info">
-            Page {currentPage} of {totalPages}
-          </div>
+          <Container>
+            <Text>Page {currentPage} of {totalPages}</Text>
+          </Container>
           
           <Button
             variant="outline"
             size="sm"
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            
           >
             Next
           </Button>
-        </div>
+        </Stack>
       )}
-    </div>
+    </Container>
   );
 } 

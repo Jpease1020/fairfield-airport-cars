@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface ActionButton {
   label: string;
@@ -13,50 +15,38 @@ export interface ActionButtonGroupProps {
   buttons: ActionButton[];
   orientation?: 'horizontal' | 'vertical';
   spacing?: 'xs' | 'sm' | 'md' | 'lg';
-  className?: string;
 }
 
 export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
   buttons,
   orientation = 'horizontal',
-  spacing = 'xs',
-  className = ''
+  spacing = 'xs'
 }) => {
-  const getButtonClass = (button: ActionButton) => {
-    const baseClass = 'action-button';
-    const variantClass = button.variant === 'primary' ? 'action-button-primary' : 
-                       button.variant === 'secondary' ? 'action-button-secondary' : 'action-button-outline';
-    const sizeClass = button.size ? `action-button-${button.size}` : 'action-button-sm';
-    
-    return `${baseClass} ${variantClass} ${sizeClass}`;
-  };
 
-  const containerClass = [
-    'action-button-group',
-    `action-button-group-${orientation}`,
-    `action-button-group-${spacing}`,
-    className
-  ].filter(Boolean).join(' ');
 
   return (
-    <div className={containerClass}>
+    <Stack 
+      direction={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
+      spacing={spacing}
+    >
       {buttons.map((button, index) => (
-        <button
+        <Button
           key={index}
-          className={getButtonClass(button)}
+          variant={button.variant || 'outline'}
+          size={button.size || 'sm'}
           onClick={button.onClick}
           disabled={button.disabled}
         >
           {button.icon && (
-            <span className="action-button-icon">
+            <Span>
               {button.icon}
-            </span>
+            </Span>
           )}
-          <span className="action-button-label">
+          <Span>
             {button.label}
-          </span>
-        </button>
+          </Span>
+        </Button>
       ))}
-    </div>
+    </Stack>
   );
 }; 

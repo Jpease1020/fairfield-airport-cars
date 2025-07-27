@@ -1,8 +1,9 @@
 import React from 'react';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label, Text } from '@/components/ui';
+import { Container, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { Input } from './input';
+import { Textarea } from './textarea';
+import { Label } from './form';
 import { cn } from '@/lib/utils/utils';
 
 // Enhanced Input Component
@@ -35,42 +36,39 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
       variantClasses[variant],
       sizeClasses[size],
       error && 'border-error focus:border-error',
-      leftIcon && 'pl-10',
-      rightIcon && 'pr-10',
       className
     );
 
-    return (
-      <div >
-        {label && (
-          <Label>
-            {label}
-          </Label>
+      return (
+    <Stack spacing="sm">
+      {label && (
+        <Label>
+          {label}
+        </Label>
+      )}
+      <Container>
+        {leftIcon && (
+          <Container>
+            {leftIcon}
+          </Container>
         )}
-        <div >
-          {leftIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-              {leftIcon}
-            </div>
-          )}
-          <Input
-            className={inputClasses}
-            {...(props as any)}
-          />
-          {rightIcon && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              {rightIcon}
-            </div>
-          )}
-        </div>
-        {error && (
-          <Text size="sm">{error}</Text>
+        <Input
+          {...(props as any)}
+        />
+        {rightIcon && (
+          <Container>
+            {rightIcon}
+          </Container>
         )}
-        {helper && !error && (
-          <Text size="sm">{helper}</Text>
-        )}
-      </div>
-    );
+      </Container>
+      {error && (
+        <Text size="sm">{error}</Text>
+      )}
+      {helper && !error && (
+        <Text size="sm">{helper}</Text>
+      )}
+    </Stack>
+  );
   }
 );
 EnhancedInput.displayName = 'EnhancedInput';
@@ -107,14 +105,13 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
     );
 
     return (
-      <div >
+      <Stack spacing="sm">
         {label && (
           <Label>
             {label}
           </Label>
         )}
         <Textarea
-          className={textareaClasses}
           {...(props as any)}
         />
         {error && (
@@ -123,7 +120,7 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
         {helper && !error && (
           <Text size="sm">{helper}</Text>
         )}
-      </div>
+      </Stack>
     );
   }
 );
@@ -137,10 +134,9 @@ interface EnhancedSelectProps {
   placeholder?: string;
   value?: string;
   onValueChange?: (value: string) => void;
-  children: React.ReactNode;
   variant?: 'default' | 'filled' | 'outlined';
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
+  children: React.ReactNode;
 }
 
 const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
@@ -152,8 +148,7 @@ const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
   onValueChange,
   children,
   variant = 'default',
-  size = 'md',
-  className
+  size = 'md'
 }) => {
   const variantClasses = {
     default: 'border-border-primary focus:border-brand-primary',
@@ -171,32 +166,36 @@ const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
     'w-full transition-colors duration-200',
     variantClasses[variant],
     sizeClasses[size],
-    error && 'border-error focus:border-error',
-    className
+    error && 'border-error focus:border-error'
   );
 
   return (
-    <div >
+    <Stack spacing="sm">
       {label && (
         <Label>
           {label}
         </Label>
       )}
-      <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className={selectClasses}>
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
+      <Container className={selectClasses}>
+        <select
+          value={value}
+          onChange={(e) => onValueChange?.(e.target.value)}
+        >
+          {placeholder && (
+            <option value="" disabled>
+              {placeholder}
+            </option>
+          )}
           {children}
-        </SelectContent>
-      </Select>
+        </select>
+      </Container>
       {error && (
         <Text size="sm">{error}</Text>
       )}
       {helper && !error && (
         <Text size="sm">{helper}</Text>
       )}
-    </div>
+    </Stack>
   );
 };
 
@@ -207,26 +206,28 @@ interface FormFieldProps {
   helper?: string;
   required?: boolean;
   children: React.ReactNode;
-  className?: string;
 }
 
-const FormField: React.FC<FormFieldProps> = ({ label, error, helper, required, children, className }) => {
+const FormField: React.FC<FormFieldProps> = ({ label, error, helper, required, children }) => {
   return (
-    <div className={cn('w-full', className)}>
+    <Stack spacing="sm">
       {label && (
-        <Label>
+        <Label required={required}>
           {label}
-          {required && <span>*</span>}
         </Label>
       )}
       {children}
       {error && (
-        <Text size="sm">{error}</Text>
+        <Text size="sm" variant="muted">
+          {error}
+        </Text>
       )}
       {helper && !error && (
-        <Text size="sm">{helper}</Text>
+        <Text size="sm" variant="muted">
+          {helper}
+        </Text>
       )}
-    </div>
+    </Stack>
   );
 };
 
@@ -242,20 +243,16 @@ const SearchInput: React.FC<SearchInputProps> = ({
   ...props
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && onSearch) {
-      onSearch(e.currentTarget.value);
+    if (e.key === 'Enter') {
+      onSearch?.(e.currentTarget.value);
     }
   };
 
   return (
     <EnhancedInput
       type="search"
+      rightIcon={searchIcon || <Span>🔍</Span>}
       onKeyDown={handleKeyDown}
-      leftIcon={searchIcon || (
-        <svg  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      )}
       {...props}
     />
   );
@@ -273,9 +270,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   return (
     <EnhancedInput
       type="tel"
-      leftIcon={
-        <span>{countryCode}</span>
-      }
+      leftIcon={<Span>{countryCode}</Span>}
       {...props}
     />
   );

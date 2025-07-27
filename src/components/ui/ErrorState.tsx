@@ -1,6 +1,8 @@
 import React from 'react';
 import { Alert } from '@/components/feedback';
 import { Button } from './button';
+import { Container, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface ErrorStateProps {
   title?: string;
@@ -9,7 +11,6 @@ interface ErrorStateProps {
   retryLabel?: string;
   showRetryButton?: boolean;
   variant?: 'error' | 'warning';
-  className?: string;
 }
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
@@ -18,27 +19,25 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   retry,
   retryLabel = 'Try Again',
   showRetryButton = false,
-  variant = 'error',
-  className = ''
+  variant = 'error'
 }) => {
   return (
-    <div className={`space-y-4 ${className}`}>
+    <Stack spacing="lg">
       <Alert variant={variant} title={title}>
         {message}
       </Alert>
       
       {showRetryButton && retry && (
-        <div >
+        <Container>
           <Button 
             onClick={retry}
             variant="outline"
-            
           >
-            <span>🔄</span>
-            <span>{retryLabel}</span>
+            <Span>🔄</Span>
+            <Span>{retryLabel}</Span>
           </Button>
-        </div>
+        </Container>
       )}
-    </div>
+    </Stack>
   );
 }; 

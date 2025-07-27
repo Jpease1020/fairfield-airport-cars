@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
-import { Label } from '@/components/ui/label';
+import { Container, Text, Span, Label } from '@/components/ui';
 import { Button } from '@/components/ui/button';
-import { Container, Text, Span } from '@/components/ui';
 
 interface LocationAutocompleteProps {
   value: string;
@@ -32,24 +31,26 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
+  // State-based click outside detection
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        suggestionsRef.current &&
-        !suggestionsRef.current.contains(event.target as Node) &&
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Element;
+      const isInputClick = target.closest('[data-autocomplete-input]');
+      const isSuggestionClick = target.closest('[data-suggestions]');
+      
+      if (!isInputClick && !isSuggestionClick) {
         setShowSuggestions(false);
+        setIsFocused(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isFocused || showSuggestions) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isFocused, showSuggestions]);
 
   const searchPlaces = async (query: string) => {
     if (!query.trim()) {
@@ -90,17 +91,25 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       onSelect(suggestion);
     }
     setShowSuggestions(false);
-    setSuggestions([]);
+    setIsFocused(false);
   };
 
   const handleInputFocus = () => {
+    setIsFocused(true);
     if (suggestions.length > 0) {
       setShowSuggestions(true);
     }
   };
 
+  const handleInputBlur = () => {
+    // Delay to allow suggestion clicks
+    setTimeout(() => {
+      setIsFocused(false);
+    }, 100);
+  };
+
   return (
-    <Container className={className}>
+    <Container>
       {label && (
         <Label htmlFor={fieldId}>
           {label}
@@ -109,23 +118,24 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       )}
       
       <Container>
-        <div>
+        <Container>
           {isLoading && (
             <Loader2 />
           )}
           <input
-            ref={inputRef}
+            data-autocomplete-input
             id={fieldId}
             type="text"
             value={value}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
             placeholder={placeholder}
           />
           {!isLoading && (
             <MapPin />
           )}
-        </div>
+        </Container>
         
         {error && (
           <Text size="sm">{error}</Text>
@@ -137,29 +147,29 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       </Container>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div ref={suggestionsRef}>
+        <Container data-suggestions>
           {suggestions.map((suggestion, index) => (
             <Button
               key={index}
               variant="ghost"
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              <div>
+              <Container>
                 <MapPin />
-                <div>
-                  <div>
+                <Container>
+                  <Container>
                     {suggestion.structured_formatting?.main_text || suggestion.description}
-                  </div>
+                  </Container>
                   {suggestion.structured_formatting?.secondary_text && (
                     <Text size="sm">
                       {suggestion.structured_formatting.secondary_text}
                     </Text>
                   )}
-                </div>
-              </div>
+                </Container>
+              </Container>
             </Button>
           ))}
-        </div>
+        </Container>
       )}
     </Container>
   );

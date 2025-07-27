@@ -1,6 +1,7 @@
 import React from 'react';
-import { Container, Text, Span } from '@/components/ui';
+import { Container, Text, Span, Link } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
+import { Button } from './button';
 
 interface ActivityItemProps {
   icon: string;
@@ -10,7 +11,6 @@ interface ActivityItemProps {
   amount?: string | number;
   href?: string;
   onClick?: () => void;
-  className?: string;
   theme?: 'light' | 'dark';
 }
 
@@ -22,16 +22,8 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   amount,
   href,
   onClick,
-  className = '',
   theme = 'light'
 }) => {
-  const itemClass = [
-    'activity-item',
-    theme === 'dark' ? 'dark-theme' : '',
-    (href || onClick) ? 'activity-item-clickable' : '',
-    className
-  ].filter(Boolean).join(' ');
-
   const content = (
     <>
       <Container>
@@ -51,22 +43,22 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
 
   if (href) {
     return (
-      <a href={href} className={className}>
+      <Link href={href}>
         {content}
-      </a>
+      </Link>
     );
   }
 
   if (onClick) {
     return (
-      <button onClick={onClick} className={className}>
+      <Button onClick={onClick}>
         {content}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <Container className={className}>
+    <Container>
       {content}
     </Container>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Container, Text, Span } from '@/components/ui';
+import { Container, Text, Span, Link } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
+import { Button } from './button';
 
 interface AlertItemProps {
   icon: string;
@@ -10,7 +11,6 @@ interface AlertItemProps {
   href?: string;
   onClick?: () => void;
   onDismiss?: () => void;
-  className?: string;
   theme?: 'light' | 'dark';
 }
 
@@ -22,17 +22,8 @@ export const AlertItem: React.FC<AlertItemProps> = ({
   href,
   onClick,
   onDismiss,
-  className = '',
   theme = 'light'
 }) => {
-  const itemClass = [
-    'alert-item',
-    type,
-    theme === 'dark' ? 'dark-theme' : '',
-    (href || onClick) ? 'alert-item-clickable' : '',
-    className
-  ].filter(Boolean).join(' ');
-
   const content = (
     <>
       <Container>
@@ -43,38 +34,34 @@ export const AlertItem: React.FC<AlertItemProps> = ({
         <Text>{message}</Text>
       </Stack>
       {onDismiss && (
-        <button 
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            onDismiss();
-          }}
+        <Button 
+          onClick={() => onDismiss()}
           aria-label="Dismiss alert"
         >
           ✕
-        </button>
+        </Button>
       )}
     </>
   );
 
   if (href) {
     return (
-      <a href={href} className={className}>
+      <Link href={href}>
         {content}
-      </a>
+      </Link>
     );
   }
 
   if (onClick) {
     return (
-      <button onClick={onClick} className={className}>
+      <Button onClick={onClick}>
         {content}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <Container className={className}>
+    <Container>
       {content}
     </Container>
   );

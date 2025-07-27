@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './button';
-import { Container } from '@/components/ui';
+import { Container, Span } from '@/components/ui';
 
 export interface ChatMessage {
   id: string;
@@ -33,9 +33,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     <Container>
       <Container>
         <Container>
-          <span>
+          <Span>
             {message.role === 'assistant' ? '🤖' : '👤'}
-          </span>
+          </Span>
           <Container>
             {message.content}
           </Container>

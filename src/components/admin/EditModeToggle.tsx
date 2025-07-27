@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Container } from '@/components/ui';
 
 interface EditModeToggleProps {
   editMode: boolean;
@@ -20,25 +21,23 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
 }) => {
   if (!editMode) {
     return (
-      <div>
+      <Container>
         <Button onClick={onEdit}>
           Edit Mode
         </Button>
-      </div>
+      </Container>
     );
   }
 
   return (
-    <div>
-      <div>
-        <Button onClick={onSave} disabled={saving}>
-          {saving ? 'Saving...' : 'Save'}
-        </Button>
-        <Button onClick={onCancel} disabled={saving} variant="outline">
-          Cancel
-        </Button>
-      </div>
-      {saveMsg && <div>{saveMsg}</div>}
-    </div>
+    <Container>
+      <Button onClick={onSave} disabled={saving}>
+        {saving ? 'Saving...' : 'Save'}
+      </Button>
+      <Button onClick={onCancel} disabled={saving} variant="outline">
+        Cancel
+      </Button>
+      {saveMsg && <Container>{saveMsg}</Container>}
+    </Container>
   );
 }; 

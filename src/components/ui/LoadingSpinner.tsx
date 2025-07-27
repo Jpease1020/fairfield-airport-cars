@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 /**
  * A flexible loading spinner component with multiple variants and sizes
@@ -22,8 +23,6 @@ interface LoadingSpinnerProps {
   variant?: 'spinner' | 'dots' | 'pulse';
   /** Text to display with the spinner */
   text?: string;
-  /** Additional CSS classes */
-  className?: string;
   /** Whether the spinner should be centered */
   centered?: boolean;
 }
@@ -32,35 +31,34 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'md',
   variant = 'spinner',
   text,
-  className,
   centered = false,
 }) => {
   const SpinnerComponent = () => {
     switch (variant) {
       case 'dots':
         return (
-          <Container className="loading-spinner-dots">
+          <Stack direction="horizontal" spacing="xs">
             {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className={`loading-spinner-dot loading-spinner-dot-${size}`}
-                style={{
-                  animationDelay: `${i * 0.2}s`,
-                }}
-              />
+              <Container key={i}>
+                <Span />
+              </Container>
             ))}
-          </Container>
+          </Stack>
         );
 
       case 'pulse':
         return (
-          <div className={`loading-spinner-pulse loading-spinner-pulse-${size}`} />
+          <Container>
+            <Span />
+          </Container>
         );
 
       default:
-        return (
-          <div className={`loading-spinner-icon loading-spinner-icon-${size} ${className || ''}`} />
-        );
+          return (
+    <Container>
+      <Span />
+    </Container>
+  );
     }
   };
 
@@ -68,16 +66,16 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     <Container>
       <SpinnerComponent />
       {text && (
-        <Span className="loading-spinner-text">{text}</Span>
+        <Span>{text}</Span>
       )}
     </Container>
   );
 
   if (centered) {
     return (
-      <Container className="loading-spinner-centered">
+      <Stack align="center">
         {content}
-      </Container>
+      </Stack>
     );
   }
 

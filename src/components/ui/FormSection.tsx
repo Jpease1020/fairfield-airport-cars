@@ -1,28 +1,26 @@
 import React from 'react';
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
-import { Text } from '@/components/ui';
+import { Text, Span } from '@/components/ui';
 
 interface FormSectionProps {
   title: string;
   description?: string;
   icon?: string;
   children: React.ReactNode;
-  className?: string;
 }
 
 export const FormSection: React.FC<FormSectionProps> = ({
   title,
   description,
   icon,
-  children,
-  className = ''
+  children
 }) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {icon && <span>{icon}</span>}
-          <span>{title}</span>
+          {icon && <Span>{icon}</Span>}
+          <Span>{title}</Span>
         </CardTitle>
         {description && (
           <Text>{description}</Text>

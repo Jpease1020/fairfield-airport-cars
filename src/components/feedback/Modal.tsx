@@ -41,9 +41,7 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
             </Button>
           </Stack>
           
-          <Container>
-            {children}
-          </Container>
+          {children}
         </Container>
       </Container>
     </Container>

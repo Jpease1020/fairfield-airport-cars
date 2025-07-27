@@ -15,20 +15,16 @@ export const HelpCard: React.FC<HelpCardProps> = ({
   className = ''
 }) => {
   return (
-    <Card className={`help-card ${className}`}>
-      <CardBody className="help-card-body">
-        <div className="help-card-header">
-          <span className="help-card-icon">
+    <Card>
+      <Stack spacing="sm">
+        <Stack direction="horizontal" spacing="sm" align="center">
+          <Span>
             {icon}
-          </span>
-          <strong className="help-card-title">
-            {title}
-          </strong>
-        </div>
-        <p className="help-card-description">
-          {description}
-        </p>
-      </CardBody>
+          </Span>
+          <Text>{title}</Text>
+        </Stack>
+        <Text>{description}</Text>
+      </Stack>
     </Card>
   );
 }; 

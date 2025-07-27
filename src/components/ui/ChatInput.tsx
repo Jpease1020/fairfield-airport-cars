@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Button } from './button';
-import { Container } from '@/components/ui';
+import { Container, Textarea } from '@/components/ui';
 
 export interface ChatInputProps {
   value: string;
@@ -107,8 +107,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <Container>
       <Container>
-        <textarea
-          ref={textareaRef}
+        <Textarea
           value={value}
           onChange={(e) => {
             onChange(e.target.value);

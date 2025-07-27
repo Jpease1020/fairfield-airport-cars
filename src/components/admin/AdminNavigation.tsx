@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Container, Button } from '@/components/ui';
+import { Container, Button, Span, EditableText } from '@/components/ui';
 
 export const AdminNavigation: React.FC = () => {
   const pathname = usePathname();
@@ -19,73 +19,59 @@ export const AdminNavigation: React.FC = () => {
   ];
 
   return (
-    <nav >
-      <Container maxWidth="xl">
-        <div >
-          <div >
-            <Link href="/admin" >
-              Admin Panel
-            </Link>
-          </div>
+    <Container maxWidth="xl">
+      <Link href="/admin">
+        <EditableText field="adminNavigation.title">Admin Panel</EditableText>
+      </Link>
 
-          <div >
-            {navigationItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`nav-link ${item.current ? 'nav-link-active' : ''}`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+      {navigationItems.map((item) => (
+        <Link
+          key={item.name}
+          href={item.href}
+        >
+          <EditableText field={`adminNavigation.${item.name.toLowerCase()}`}>
+            {item.name}
+          </EditableText>
+        </Link>
+      ))}
 
-          <div >
-            <Link href="/">
-              <Button variant="outline" size="sm">
-                View Site
-              </Button>
-            </Link>
-          </div>
+      <Link href="/">
+        <Button variant="outline" size="sm">
+          <EditableText field="adminNavigation.viewSiteButton">View Site</EditableText>
+        </Button>
+      </Link>
 
-          <div >
-            <button
-              
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle mobile menu"
-            >
-              <span ></span>
-              <span ></span>
-              <span ></span>
-            </button>
-          </div>
-        </div>
-      </Container>
+      <Button
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        variant="ghost"
+        size="sm"
+      >
+        <Span>☰</Span>
+      </Button>
 
       {mobileMenuOpen && (
-        <div >
+        <>
           {navigationItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`mobile-menu-link ${item.current ? 'mobile-menu-link-active' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
-              {item.name}
+              <EditableText field={`adminNavigation.mobile.${item.name.toLowerCase()}`}>
+                {item.name}
+              </EditableText>
             </Link>
           ))}
-          <div >
-            <Link 
-              href="/" 
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Button variant="outline" size="sm">
-                View Site
-              </Button>
-            </Link>
-          </div>
-        </div>
+          <Link 
+            href="/" 
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <Button variant="outline" size="sm">
+              <EditableText field="adminNavigation.mobile.viewSiteButton">View Site</EditableText>
+            </Button>
+          </Link>
+        </>
       )}
-    </nav>
+    </Container>
   );
 }; 

@@ -8,11 +8,11 @@ export interface TextareaProps {
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onKeyPress?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   disabled?: boolean;
   required?: boolean;
   name?: string;
   id?: string;
-  className?: string;
   error?: boolean;
   errorMessage?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -31,11 +31,11 @@ export const Textarea: React.FC<TextareaProps> = ({
   onChange,
   onBlur,
   onFocus,
+  onKeyPress,
   disabled = false,
   required = false,
   name,
   id,
-  className = '',
   error = false,
   errorMessage,
   size = 'md',
@@ -58,28 +58,21 @@ export const Textarea: React.FC<TextareaProps> = ({
     sizeClasses[size],
     error ? 'form-textarea-error' : '',
     fullWidth ? 'w-full' : '',
-    className,
   ].filter(Boolean).join(' ');
 
   return (
     <Container>
-      <textarea
-        placeholder={placeholder}
-        value={value}
-        defaultValue={defaultValue}
-        onChange={onChange}
-        onBlur={onBlur}
-        onFocus={onFocus}
-        disabled={disabled}
-        required={required}
-        name={name}
-        id={id}
-        rows={rows}
-        cols={cols}
-        maxLength={maxLength}
-        minLength={minLength}
-        autoFocus={autoFocus}
-      />
+      <Container>
+        {placeholder}
+        {value}
+        {defaultValue}
+        {name}
+        {id}
+        {rows}
+        {cols}
+        {maxLength}
+        {minLength}
+      </Container>
       {error && errorMessage && (
         <Container>{errorMessage}</Container>
       )}

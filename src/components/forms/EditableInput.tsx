@@ -1,5 +1,6 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
+import { Container, Label } from '@/components/ui';
 import { cn } from '@/lib/utils/utils';
 
 interface EditableInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -24,13 +25,13 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     };
 
     return (
-      <div >
+      <Container>
         {label && (
-          <label >
+          <Label>
             {label}
-          </label>
+          </Label>
         )}
-        <Input
+        <input
           ref={ref}
           className={cn(
             'editable-input w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg px-4',
@@ -40,7 +41,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
           )}
           {...props}
         />
-      </div>
+      </Container>
     );
   }
 );

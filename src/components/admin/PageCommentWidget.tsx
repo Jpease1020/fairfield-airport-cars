@@ -6,7 +6,7 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui';
-import { Container, Text } from '@/components/ui';
+import { Container, Text, EditableText, Span } from '@/components/ui';
 import { feedbackService, type PageComment } from '@/lib/services/feedback-service';
 import { MessageSquare, X, CheckCircle, AlertCircle, Star } from 'lucide-react';
 
@@ -154,179 +154,177 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
       {/* Comment Widget */}
       {isOpen && (
         <Container>
-          <Container>
-            <Card>
-              <CardHeader>
-                <CardTitle>Add Page Comment</CardTitle>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <EditableText field="pageCommentWidget.title">Add Page Comment</EditableText>
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsOpen(false)}
+              >
+                <X />
+              </Button>
+            </CardHeader>
+            <CardBody>
+              <Text size="sm">
+                <EditableText field="pageCommentWidget.pageLabel">Page:</EditableText> {pageTitle}
+              </Text>
+
+              {/* Element Selection */}
+              <Text size="sm">
+                <EditableText field="pageCommentWidget.elementLabel">Element (Optional)</EditableText>
+              </Text>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleElementSelect}
+                disabled={isElementSelectMode}
+              >
+                <EditableText field="pageCommentWidget.selectElementButton">
+                  {selectedElement ? 'Change Element' : 'Select Element'}
+                </EditableText>
+              </Button>
+              {selectedElement && (
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setSelectedElement('')}
                 >
-                  <X />
+                  <EditableText field="pageCommentWidget.clearButton">Clear</EditableText>
                 </Button>
-              </CardHeader>
-              <CardBody>
-                <Container>
-                  <Text size="sm">
-                    Page: {pageTitle}
-                  </Text>
-                </Container>
+              )}
+              {selectedElement && (
+                <Text size="sm">
+                  <EditableText field="pageCommentWidget.selectedLabel">Selected:</EditableText> {selectedElement}
+                </Text>
+              )}
+              {isElementSelectMode && (
+                <Text size="sm">
+                  <EditableText field="pageCommentWidget.selectInstruction">Click on any element to select it</EditableText>
+                </Text>
+              )}
 
-                {/* Element Selection */}
-                <Container>
-                  <Text size="sm">
-                    Element (Optional)
-                  </Text>
-                  <Container>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleElementSelect}
-                      disabled={isElementSelectMode}
-                    >
-                      {selectedElement ? 'Change Element' : 'Select Element'}
-                    </Button>
-                    {selectedElement && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedElement('')}
-                      >
-                        Clear
-                      </Button>
-                    )}
-                  </Container>
-                  {selectedElement && (
-                    <Text size="sm">
-                      Selected: {selectedElement}
+              {/* Category */}
+              <Text size="sm">
+                <EditableText field="pageCommentWidget.categoryLabel">Category</EditableText>
+              </Text>
+              <Select value={category} onValueChange={(value: PageComment['category']) => setCategory(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="general">
+                    <MessageSquare />
+                    <Text>
+                      <EditableText field="pageCommentWidget.category.general">General</EditableText>
                     </Text>
-                  )}
-                  {isElementSelectMode && (
-                    <Text size="sm">
-                      Click on any element to select it
+                  </SelectItem>
+                  <SelectItem value="bug">
+                    <AlertCircle />
+                    <Text>
+                      <EditableText field="pageCommentWidget.category.bug">Bug</EditableText>
                     </Text>
-                  )}
-                </Container>
+                  </SelectItem>
+                  <SelectItem value="design">
+                    <Star />
+                    <Text>
+                      <EditableText field="pageCommentWidget.category.design">Design</EditableText>
+                    </Text>
+                  </SelectItem>
+                  <SelectItem value="copy">
+                    <MessageSquare />
+                    <Text>
+                      <EditableText field="pageCommentWidget.category.copy">Copy/Text</EditableText>
+                    </Text>
+                  </SelectItem>
+                  <SelectItem value="feature">
+                    <CheckCircle />
+                    <Text>
+                      <EditableText field="pageCommentWidget.category.feature">Feature Request</EditableText>
+                    </Text>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
 
-                {/* Category */}
+              {/* Priority */}
+              <Text size="sm">
+                <EditableText field="pageCommentWidget.priorityLabel">Priority</EditableText>
+              </Text>
+              <Select value={priority} onValueChange={(value: PageComment['priority']) => setPriority(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">
+                    <EditableText field="pageCommentWidget.priority.low">Low</EditableText>
+                  </SelectItem>
+                  <SelectItem value="medium">
+                    <EditableText field="pageCommentWidget.priority.medium">Medium</EditableText>
+                  </SelectItem>
+                  <SelectItem value="high">
+                    <EditableText field="pageCommentWidget.priority.high">High</EditableText>
+                  </SelectItem>
+                  <SelectItem value="urgent">
+                    <EditableText field="pageCommentWidget.priority.urgent">Urgent</EditableText>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Comment */}
+              <Text size="sm">
+                <EditableText field="pageCommentWidget.commentLabel">Comment</EditableText>
+              </Text>
+              <Textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Describe what you'd like to change or improve..."
+                rows={4}
+              />
+
+              {/* Preview */}
+              {comment && (
                 <Container>
-                  <Text size="sm">
-                    Category
-                  </Text>
-                  <Select value={category} onValueChange={(value: PageComment['category']) => setCategory(value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="general">
-                        <Container>
-                          <MessageSquare />
-                          <Text>General</Text>
-                        </Container>
-                      </SelectItem>
-                      <SelectItem value="bug">
-                        <Container>
-                          <AlertCircle />
-                          <Text>Bug</Text>
-                        </Container>
-                      </SelectItem>
-                      <SelectItem value="design">
-                        <Container>
-                          <Star />
-                          <Text>Design</Text>
-                        </Container>
-                      </SelectItem>
-                      <SelectItem value="copy">
-                        <Container>
-                          <MessageSquare />
-                          <Text>Copy/Text</Text>
-                        </Container>
-                      </SelectItem>
-                      <SelectItem value="feature">
-                        <Container>
-                          <CheckCircle />
-                          <Text>Feature Request</Text>
-                        </Container>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {getCategoryIcon(category)}
+                  <Badge>
+                    {priority}
+                  </Badge>
+                  <Text>{comment}</Text>
                 </Container>
+              )}
 
-                {/* Priority */}
-                <Container>
-                  <Text size="sm">
-                    Priority
-                  </Text>
-                  <Select value={priority} onValueChange={(value: PageComment['priority']) => setPriority(value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="urgent">Urgent</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Container>
-
-                {/* Comment */}
-                <Container>
-                  <Text size="sm">
-                    Comment
-                  </Text>
-                  <Textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Describe what you'd like to change or improve..."
-                    rows={4}
-                  />
-                </Container>
-
-                {/* Preview */}
-                {comment && (
-                  <Container>
-                    <Container>
-                      {getCategoryIcon(category)}
-                      <Badge>
-                        {priority}
-                      </Badge>
-                    </Container>
-                    <Text>{comment}</Text>
-                  </Container>
-                )}
-
-                {/* Submit Button */}
-                <Container>
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={!comment.trim() || isSubmitting}
-                  >
+              {/* Submit Button */}
+              <Container>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!comment.trim() || isSubmitting}
+                >
+                  <EditableText field="pageCommentWidget.submitButton">
                     {isSubmitting ? 'Submitting...' : 'Submit Comment'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsOpen(false)}
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </Button>
-                </Container>
-              </CardBody>
-            </Card>
-          </Container>
+                  </EditableText>
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsOpen(false)}
+                  disabled={isSubmitting}
+                >
+                  <EditableText field="pageCommentWidget.cancelButton">Cancel</EditableText>
+                </Button>
+              </Container>
+            </CardBody>
+          </Card>
         </Container>
       )}
 
       {/* Success Message */}
       {showSuccess && (
-        <div>
-          <div>
+        <Container>
+          <Container>
             <CheckCircle />
-            <span>Comment submitted successfully!</span>
-          </div>
-        </div>
+            <Span>Comment submitted successfully!</Span>
+          </Container>
+        </Container>
       )}
       
 

@@ -96,6 +96,9 @@ export {
   Span
 } from './text';
 
+// Database-ready editable text component
+export { EditableText } from './EditableText';
+
 // Accessibility
 export { AccessibilityEnhancer } from './AccessibilityEnhancer';
 

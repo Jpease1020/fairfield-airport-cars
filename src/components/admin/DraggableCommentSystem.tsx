@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/form';
-import { Container } from '@/components/ui';
+import { Textarea } from '@/components/ui/textarea';
+import { Container, Text, H3, EditableText } from '@/components/ui';
 import { useEditMode } from './EditModeProvider';
 
 interface Comment {
@@ -111,90 +111,54 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
 
       {/* Add Comment Modal */}
       {isAddingComment && (
-        <div >
-          <div >
-            <div >
-              <MessageCircle  />
-              <h3 >Add Comment</h3>
-            </div>
-            <p >
-              Type your feedback below. After adding, you can drag the comment icon to any element on the page.
-            </p>
-            <Textarea
-              value={newCommentText}
-              onChange={(e) => setNewCommentText(e.target.value)}
-              placeholder="Type your comment here... (e.g., 'This text is too small', 'Change this color', 'Add more spacing here')"
-              rows={4}
-              
-              autoFocus
-            />
-            <div >
-              <Button
-                onClick={handleAddComment}
-                disabled={!newCommentText.trim()}
-                
-              >
-                Add Comment
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsAddingComment(false);
-                  setNewCommentText('');
-                }}
-                variant="outline"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Container>
+          <MessageCircle />
+          <H3>Add Comment</H3>
+          <Text>
+            Type your feedback below. After adding, you can drag the comment icon to any element on the page.
+          </Text>
+          <Textarea
+            value={newCommentText}
+            onChange={(e) => setNewCommentText(e.target.value)}
+            placeholder="Type your comment here... (e.g., 'This text is too small', 'Change this color', 'Add more spacing here')"
+            rows={4}
+            autoFocus
+          />
+          <Button
+            onClick={handleAddComment}
+            disabled={!newCommentText.trim()}
+          >
+            Add Comment
+          </Button>
+          <Button
+            onClick={() => {
+              setIsAddingComment(false);
+              setNewCommentText('');
+            }}
+            variant="outline"
+          >
+            Cancel
+          </Button>
+        </Container>
       )}
 
       {/* Draggable Comments */}
       {comments.map((comment) => (
-        <div
-          key={comment.id}
-          
-          style={{
-            left: comment.x,
-            top: comment.y,
-            transform: 'translate(-50%, -50%)'
-          }}
-          onMouseDown={(e) => handleMouseDown(e, comment.id)}
-        >
-          <div >
-            {/* Comment Icon */}
-            <div >
-              <MessageCircle  />
-            </div>
-            
-            {/* Comment Tooltip */}
-            <div >
-              <div >
-                <div >
-                  {comment.text}
-                </div>
-                <div >
-                  {comment.createdAt.toLocaleDateString()} at {comment.createdAt.toLocaleTimeString()}
-                </div>
-              </div>
-              {/* Arrow pointing down */}
-              <div ></div>
-            </div>
-            
-            {/* Delete Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteComment(comment.id);
-              }}
-              
-              title="Delete comment"
-            >
-              <X  />
-            </button>
-          </div>
-        </div>
+        <Container key={comment.id}>
+          <MessageCircle />
+          <Text>{comment.text}</Text>
+          <Text>
+            {comment.createdAt.toLocaleDateString()} at {comment.createdAt.toLocaleTimeString()}
+          </Text>
+          <Text>▼</Text>
+          <Button
+            onClick={() => handleDeleteComment(comment.id)}
+            variant="ghost"
+            size="sm"
+          >
+            <X />
+          </Button>
+        </Container>
       ))}
     </>
   );

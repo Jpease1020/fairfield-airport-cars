@@ -15,16 +15,9 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   height 
 }) => {
   return (
-    <div
-      className={cn(
-        "animate-pulse rounded-md bg-gray-200 dark:bg-gray-700",
-        className
-      )}
-      style={{
-        width: width,
-        height: height,
-      }}
-    />
+    <Container>
+      <Span />
+    </Container>
   );
 };
 

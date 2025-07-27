@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertItem } from './AlertItem';
-import { Container, Text } from '@/components/ui';
+import { Container, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface AlertData {
   id: string | number;
@@ -15,36 +16,28 @@ interface AlertData {
 
 interface AlertListProps {
   alerts: AlertData[];
-  className?: string;
   theme?: 'light' | 'dark';
   emptyMessage?: string;
 }
 
 export const AlertList: React.FC<AlertListProps> = ({
   alerts,
-  className = '',
   theme = 'light',
   emptyMessage = 'No alerts to display'
 }) => {
-  const listClass = [
-    'alert-list',
-    theme === 'dark' ? 'dark-theme' : '',
-    className
-  ].filter(Boolean).join(' ');
-
   if (alerts.length === 0) {
     return (
       <Container>
-        <Container>
-          <span>🔔</span>
+        <Stack align="center" spacing="md">
+          <Span>🔔</Span>
           <Text>{emptyMessage}</Text>
-        </Container>
+        </Stack>
       </Container>
     );
   }
 
   return (
-    <div className={listClass}>
+    <Stack spacing="md">
       {alerts.map((alert) => (
         <AlertItem
           key={alert.id}
@@ -58,6 +51,6 @@ export const AlertList: React.FC<AlertListProps> = ({
           theme={theme}
         />
       ))}
-    </div>
+    </Stack>
   );
 }; 

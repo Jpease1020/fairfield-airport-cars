@@ -34,21 +34,17 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(({
       className={className}
       {...props}
     >
-      <Container>
-        {getIcon()}
-      </Container>
-      <Container>
-        {title && (
-          <H3>
-            {title}
-          </H3>
-        )}
-        {children && (
-          <Text>
-            {children}
-          </Text>
-        )}
-      </Container>
+      {getIcon()}
+      {title && (
+        <H3>
+          {title}
+        </H3>
+      )}
+      {children && (
+        <Text>
+          {children}
+        </Text>
+      )}
     </Container>
   );
 });

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './button';
 import { Card, CardBody, CardHeader, CardTitle } from './card';
 import { Input, Label, Select, Option } from './index';
-import { Container, Span } from '@/components/ui';
+import { Container, Span, Link } from '@/components/ui';
 
 interface AccessibilityEnhancerProps {
   children: React.ReactNode;
@@ -169,34 +169,34 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
           <CardBody>
             <Container className="accessibility-settings">
               {/* High Contrast */}
-              <label >
+              <Container>
                 <Input
                   type="checkbox"
                   checked={settings.highContrast}
                   onChange={(e) => updateSetting('highContrast', e.target.checked)}
                 />
                 <Span>High Contrast Mode</Span>
-              </label>
+              </Container>
 
               {/* Reduce Motion */}
-              <label >
+              <Container>
                 <Input
                   type="checkbox"
                   checked={settings.reduceMotion}
                   onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
                 />
                 <Span>Reduce Motion</Span>
-              </label>
+              </Container>
 
               {/* Enhanced Focus */}
-              <label >
+              <Container>
                 <Input
                   type="checkbox"
                   checked={settings.focusIndicators}
                   onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
                 />
                 <Span>Enhanced Focus Indicators</Span>
-              </label>
+              </Container>
 
               {/* Font Size */}
               <Container className="accessibility-setting-group">
@@ -220,9 +220,9 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
       )}
 
       {/* Skip to main content link */}
-      <a href="#main-content" >
+      <Link href="#main-content">
         Skip to main content
-      </a>
+      </Link>
     </>
   );
 };

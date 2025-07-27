@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Input, Label } from '@/components/ui';
+import { Input, Label, Container, Span } from '@/components/ui';
 import { Textarea } from '@/components/ui';
 import { useEditMode } from './EditModeProvider';
 
@@ -10,7 +10,6 @@ interface EditableFieldProps {
   onChange: (value: string) => void;
   label?: string;
   placeholder?: string;
-  className?: string;
   type?: 'input' | 'textarea';
   rows?: number;
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -21,7 +20,6 @@ export const EditableField: React.FC<EditableFieldProps> = ({
   onChange,
   label,
   placeholder,
-  className = '',
   type = 'input',
   rows = 3
 }) => {
@@ -29,7 +27,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
 
   if (editMode) {
     return (
-      <div>
+      <Container>
         {label && (
           <Label>
             {label}
@@ -40,7 +38,6 @@ export const EditableField: React.FC<EditableFieldProps> = ({
             value={value}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
             placeholder={placeholder}
-            className={className}
             rows={rows}
           />
         ) : (
@@ -48,10 +45,9 @@ export const EditableField: React.FC<EditableFieldProps> = ({
             value={value}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
             placeholder={placeholder}
-            className={className}
           />
         )}
-      </div>
+      </Container>
     );
   }
 
@@ -62,24 +58,23 @@ export const EditableField: React.FC<EditableFieldProps> = ({
     
     if (containsHTML) {
       return (
-        <div 
-          className={className}
-          dangerouslySetInnerHTML={{ __html: value || placeholder || '' }}
-        />
+        <Container>
+          <span dangerouslySetInnerHTML={{ __html: value || placeholder || '' }} />
+        </Container>
       );
     }
     
     return (
-      <div className={className}>
+      <Container>
         {value || placeholder}
-      </div>
+      </Container>
     );
   }
 
   return (
-    <div className={className}>
+    <Container>
       {value || placeholder}
-    </div>
+    </Container>
   );
 };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
+import { Container, Label } from '@/components/ui';
 import { cn } from '@/lib/utils/utils';
 
 interface EditableTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -18,13 +19,13 @@ const EditableTextarea = React.forwardRef<HTMLTextAreaElement, EditableTextareaP
     };
 
     return (
-      <div >
+      <Container>
         {label && (
-          <label >
+          <Label>
             {label}
-          </label>
+          </Label>
         )}
-        <Textarea
+        <textarea
           ref={ref}
           className={cn(
             'editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4',
@@ -34,7 +35,7 @@ const EditableTextarea = React.forwardRef<HTMLTextAreaElement, EditableTextareaP
           rows={rows}
           {...props}
         />
-      </div>
+      </Container>
     );
   }
 );

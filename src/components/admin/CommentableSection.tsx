@@ -1,27 +1,25 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
+import { Container } from '@/components/ui';
 
 interface CommentableSectionProps {
   children: ReactNode;
   sectionId: string;
   sectionTitle: string;
-  className?: string;
   showCommentIcon?: boolean;
 }
 
 const CommentableSection = ({ 
   children, 
   sectionId, 
-  sectionTitle, 
-  className = ''
+  sectionTitle
 }: CommentableSectionProps) => {
   // Disabled old commenting system - using new Confluence-style system instead
   const [hasComment] = useState(false);
 
   return (
-    <div 
-      className={`commentable-section ${className}`}
+    <Container
       data-section-id={sectionId}
       data-section-title={sectionTitle}
     >
@@ -29,20 +27,11 @@ const CommentableSection = ({
       
       {/* Comment indicator (shows when comment exists) */}
       {hasComment && (
-        <div className="absolute top-2 right-2 z-10">
-          <div 
-            
-            onClick={(e) => {
-              e.stopPropagation();
-              // Using new Confluence-style commenting system instead
-            }}
-            title="Click to view comment"
-          >
-            💬
-          </div>
-        </div>
+        <Container>
+          💬
+        </Container>
       )}
-    </div>
+    </Container>
   );
 };
 

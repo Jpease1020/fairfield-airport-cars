@@ -8,14 +8,12 @@ import { Stack } from '@/components/ui/containers';
 
 interface BookingCardProps {
   booking: Booking;
-  className?: string;
   showActions?: boolean;
   onAction?: (action: 'edit' | 'cancel' | 'view') => void;
 }
 
 const BookingCard: React.FC<BookingCardProps> = ({
   booking,
-  className,
   showActions = false,
   onAction
 }) => {
@@ -49,17 +47,15 @@ const BookingCard: React.FC<BookingCardProps> = ({
   };
 
   return (
-    <Container className={className}>
+    <Container>
       {/* Header */}
       <Stack direction="horizontal" align="center" justify="between" spacing="md">
-        <Container>
-          <H3>
-            {booking.name}
-          </H3>
-          <Text>
-            Booking #{booking.id}
-          </Text>
-        </Container>
+        <H3>
+          {booking.name}
+        </H3>
+        <Text>
+          Booking #{booking.id}
+        </Text>
         <Badge>
           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
         </Badge>
@@ -67,32 +63,28 @@ const BookingCard: React.FC<BookingCardProps> = ({
 
       {/* Date and Time */}
       <Stack direction="horizontal" spacing="md">
-        <Container>
+        <Stack>
           <Calendar />
           <Text size="sm">{formatDate(booking.pickupDateTime.toString())}</Text>
-        </Container>
-        <Container>
+        </Stack>
+        <Stack>
           <Clock />
           <Text size="sm">{formatTime(booking.pickupDateTime.toString())}</Text>
-        </Container>
+        </Stack>
       </Stack>
 
       {/* Locations */}
       <Stack spacing="md">
-        <Container>
+        <Stack>
           <MapPin />
-          <Container>
-            <Text size="xs">Pickup:</Text>
-            <Text size="sm">{booking.pickupLocation}</Text>
-          </Container>
-        </Container>
-        <Container>
+          <Text size="xs">Pickup:</Text>
+          <Text size="sm">{booking.pickupLocation}</Text>
+        </Stack>
+        <Stack>
           <MapPin />
-          <Container>
-            <Text size="xs">Drop-off:</Text>
-            <Text size="sm">{booking.dropoffLocation}</Text>
-          </Container>
-        </Container>
+          <Text size="xs">Drop-off:</Text>
+          <Text size="sm">{booking.dropoffLocation}</Text>
+        </Stack>
       </Stack>
 
       {/* Passenger Info */}

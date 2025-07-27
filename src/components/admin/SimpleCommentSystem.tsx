@@ -4,8 +4,9 @@ import { useState, useEffect, useRef, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
-import { Textarea, Select, Option, Container } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Textarea, Select, Option, Container, H4, Span } from '@/components/ui';
+import { Stack, Card } from '@/components/ui/containers';
+import { Button } from '@/components/ui/button';
 
 interface SimpleCommentSystemProps {
   children: ReactNode;
@@ -17,7 +18,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
-  const commentBoxRef = useRef<HTMLDivElement>(null);
+  const [commentBoxPosition, setCommentBoxPosition] = useState({ top: 0, left: 0 });
 
   // Load comments from Firebase
   useEffect(() => {
@@ -75,6 +76,13 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
       
       console.log('💬 CommentSystem - Adding comment to element:', elementText);
       
+      // Calculate position for comment box
+      const rect = target.getBoundingClientRect();
+      setCommentBoxPosition({
+        top: rect.top - 10,
+        left: rect.right + 10
+      });
+      
       setSelectedElement(target);
       setActiveCommentBox(elementId);
       setCommentText('');
@@ -87,15 +95,20 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
   // Close comment box when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (commentBoxRef.current && !commentBoxRef.current.contains(e.target as Node)) {
+      const target = e.target as Element;
+      const isCommentBoxClick = target.closest('[data-comment-box]');
+      
+      if (!isCommentBoxClick) {
         setActiveCommentBox(null);
         setSelectedElement(null);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (activeCommentBox) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [activeCommentBox]);
 
   const generateElementId = (element: HTMLElement): string => {
     // Create a unique ID based on element properties
@@ -259,9 +272,9 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
         }
         
         icon.innerHTML = `
-          <div class="${iconColor} text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-lg transition-colors">
+          <Container class="${iconColor} text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-lg transition-colors">
             💬
-          </div>
+          </Container>
         `;
         icon.onclick = (e) => {
           e.stopPropagation();
@@ -285,102 +298,106 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
     <>
       {children}
 
-      {/* Comment Box */}
-      {activeCommentBox && selectedElement && (
-        <Container
-          ref={commentBoxRef}
-          style={{
-            top: selectedElement.getBoundingClientRect().top - 10,
-            left: selectedElement.getBoundingClientRect().right + 10,
-          }}
-        >
-          <Stack direction="horizontal" align="center" justify="between">
-            <h4>
+              {/* Comment Box */}
+        {activeCommentBox && selectedElement && (
+          <div
+            data-comment-box
+            style={{
+              position: 'absolute',
+              top: commentBoxPosition.top,
+              left: commentBoxPosition.left,
+              zIndex: 1000,
+            }}
+          >
+            <Container>
+                      <Stack direction="horizontal" align="center" justify="between">
+            <H4>
               {existingComments.length > 0 ? `Comments (${existingComments.length})` : 'Add Comment'}
-            </h4>
-            <button
+            </H4>
+            <Button
               onClick={() => {
                 setActiveCommentBox(null);
                 setSelectedElement(null);
               }}
             >
               <X />
-            </button>
+            </Button>
           </Stack>
-          
-          <Container>
-            <strong>Element:</strong> {selectedElement.textContent?.slice(0, 50) || selectedElement.tagName.toLowerCase()}
-          </Container>
-          
-          {/* Existing Comments */}
-          {existingComments.length > 0 && (
-            <Stack spacing="md">
-              {existingComments.map(comment => (
-                <Container key={comment.id}>
-                  <Stack direction="horizontal" align="center" justify="between">
-                    <Container>
-                      {getStatusIcon(comment.status)}
-                      <span>
-                        {comment.status}
-                      </span>
-                    </Container>
-                    <button
-                      onClick={() => handleDeleteComment(comment.id)}
-                    >
-                      <X />
-                    </button>
-                  </Stack>
-                  
-                  <Textarea
-                    value={comment.comment}
-                    onChange={(e) => handleEditComment(comment.id, e.target.value)}
-                    rows={2}
-                  />
-                  
-                  <Container>
-                    <Select
-                      value={comment.status}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
-                    >
-                      <Option value="open">Open</Option>
-                      <Option value="in-progress">In Progress</Option>
-                      <Option value="resolved">Resolved</Option>
-                    </Select>
-                  </Container>
-                </Container>
-              ))}
-            </Stack>
-          )}
-          
-          {/* New Comment Input */}
-          <Container>
-            <Textarea
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Add a new comment..."
-              rows={3}
-              autoFocus
-            />
-            
-            <Stack direction="horizontal" spacing="sm">
-              <button
-                onClick={handleAddComment}
-                disabled={!commentText.trim()}
-              >
-                Add Comment
-              </button>
-              <button
-                onClick={() => {
-                  setActiveCommentBox(null);
-                  setSelectedElement(null);
-                }}
-              >
-                Close
-              </button>
-            </Stack>
-          </Container>
+        
+        <Container>
+          <strong>Element:</strong> {selectedElement.textContent?.slice(0, 50) || selectedElement.tagName.toLowerCase()}
         </Container>
-      )}
+        
+        {/* Existing Comments */}
+        {existingComments.length > 0 && (
+          <Stack spacing="md">
+            {existingComments.map(comment => (
+              <Card key={comment.id}>
+                <Stack direction="horizontal" align="center" justify="between">
+                  <Container>
+                    {getStatusIcon(comment.status)}
+                    <Span>
+                      {comment.status}
+                    </Span>
+                  </Container>
+                  <Button
+                    onClick={() => handleDeleteComment(comment.id)}
+                  >
+                    <X />
+                  </Button>
+                </Stack>
+                
+                <Textarea
+                  value={comment.comment}
+                  onChange={(e) => handleEditComment(comment.id, e.target.value)}
+                  rows={2}
+                />
+                
+                <Container>
+                  <Select
+                    value={comment.status}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
+                  >
+                    <Option value="open">Open</Option>
+                    <Option value="in-progress">In Progress</Option>
+                    <Option value="resolved">Resolved</Option>
+                  </Select>
+                </Container>
+              </Card>
+            ))}
+          </Stack>
+        )}
+        
+        {/* New Comment Input */}
+        <Container>
+          <Textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Add a new comment..."
+            rows={3}
+            autoFocus
+          />
+          
+          <Stack direction="horizontal" spacing="sm">
+            <Button
+              onClick={handleAddComment}
+              disabled={!commentText.trim()}
+            >
+              Add Comment
+            </Button>
+            <Button
+              onClick={() => {
+                setActiveCommentBox(null);
+                setSelectedElement(null);
+              }}
+            >
+              Close
+            </Button>
+          </Stack>
+        </Container>
+      </Container>
+    </div>
+  )}
 
       {/* Global Styles */}
       <style jsx global>{`

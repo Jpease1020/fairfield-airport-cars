@@ -1,6 +1,7 @@
 import React from 'react';
-import { Container, Text, Span } from '@/components/ui';
+import { Container, Text, Span, Link } from '@/components/ui';
 import { Stack, Card } from '@/components/ui/containers';
+import { Button } from './button';
 
 interface ActionCardProps {
   icon: string;
@@ -47,21 +48,21 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   if (href) {
     return (
-      <a href={href}>
+      <Link href={href}>
         <Card variant="outlined" padding={size}>
           {content}
         </Card>
-      </a>
+      </Link>
     );
   }
 
   if (onClick) {
     return (
-      <button onClick={onClick}>
+      <Button onClick={onClick}>
         <Card variant="outlined" padding={size}>
           {content}
         </Card>
-      </button>
+      </Button>
     );
   }
 

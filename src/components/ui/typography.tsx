@@ -1,174 +1,614 @@
 import React from 'react';
-import { cn } from '@/lib/utils/utils';
+import { Container } from '@/components/ui';
 
 // Heading Components
-interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
+interface HeadingProps {
   children: React.ReactNode;
-  className?: string;
+  variant?: 'default' | 'brand' | 'muted' | 'inverse';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  align?: 'left' | 'center' | 'right';
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  margin?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  marginTop?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  marginBottom?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const H1 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ className, children, ...props }, ref) => (
-    <h1
-      ref={ref}
-      className={cn(
-        'text-4xl md:text-6xl font-bold leading-tight',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </h1>
-  )
-);
-H1.displayName = 'H1';
+const H1: React.FC<HeadingProps> = ({
+  children,
+  variant = 'default',
+  size = '4xl',
+  align = 'left',
+  weight = 'bold',
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'lg'
+}) => {
+  const variantClass = {
+    default: 'text-primary',
+    brand: 'text-brand-primary',
+    muted: 'text-muted',
+    inverse: 'text-inverse'
+  }[variant];
 
-const H2 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ className, children, ...props }, ref) => (
-    <h2
-      ref={ref}
-      className={cn(
-        'text-3xl md:text-4xl font-bold leading-tight',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </h2>
-  )
-);
-H2.displayName = 'H2';
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl'
+  }[size];
 
-const H3 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ className, children, ...props }, ref) => (
-    <h3
-      ref={ref}
-      className={cn(
-        'text-2xl md:text-3xl font-semibold leading-tight',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </h3>
-  )
-);
-H3.displayName = 'H3';
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  }[weight];
 
-const H4 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ className, children, ...props }, ref) => (
-    <h4
-      ref={ref}
-      className={cn(
-        'text-xl md:text-2xl font-semibold leading-tight',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </h4>
-  )
-);
-H4.displayName = 'H4';
+  const marginClass = {
+    none: '',
+    sm: 'm-sm',
+    md: 'm-md',
+    lg: 'm-lg',
+    xl: 'm-xl'
+  }[margin];
 
-const H5 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ className, children, ...props }, ref) => (
-    <h5
-      ref={ref}
-      className={cn(
-        'text-lg md:text-xl font-medium leading-tight',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </h5>
-  )
-);
-H5.displayName = 'H5';
+  const marginTopClass = {
+    none: '',
+    sm: 'mt-sm',
+    md: 'mt-md',
+    lg: 'mt-lg',
+    xl: 'mt-xl'
+  }[marginTop];
 
-const H6 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ className, children, ...props }, ref) => (
-    <h6
-      ref={ref}
-      className={cn(
-        'text-base md:text-lg font-medium leading-tight',
-        className
-      )}
-      {...props}
-    >
+  const marginBottomClass = {
+    none: '',
+    sm: 'mb-sm',
+    md: 'mb-md',
+    lg: 'mb-lg',
+    xl: 'mb-xl'
+  }[marginBottom];
+
+  const alignClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }[align];
+
+  const classes = [
+    variantClass,
+    sizeClass,
+    weightClass,
+    marginClass,
+    marginTopClass,
+    marginBottomClass,
+    alignClass,
+    'leading-tight',
+    'm-0'
+  ].filter(Boolean).join(' ');
+
+  return (
+    <Container>
       {children}
-    </h6>
-  )
-);
-H6.displayName = 'H6';
+    </Container>
+  );
+};
+
+const H2: React.FC<HeadingProps> = ({
+  children,
+  variant = 'default',
+  size = '3xl',
+  align = 'left',
+  weight = 'bold',
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'lg'
+}) => {
+  const variantClass = {
+    default: 'text-primary',
+    brand: 'text-brand-primary',
+    muted: 'text-muted',
+    inverse: 'text-inverse'
+  }[variant];
+
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl'
+  }[size];
+
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  }[weight];
+
+  const marginClass = {
+    none: '',
+    sm: 'm-sm',
+    md: 'm-md',
+    lg: 'm-lg',
+    xl: 'm-xl'
+  }[margin];
+
+  const marginTopClass = {
+    none: '',
+    sm: 'mt-sm',
+    md: 'mt-md',
+    lg: 'mt-lg',
+    xl: 'mt-xl'
+  }[marginTop];
+
+  const marginBottomClass = {
+    none: '',
+    sm: 'mb-sm',
+    md: 'mb-md',
+    lg: 'mb-lg',
+    xl: 'mb-xl'
+  }[marginBottom];
+
+  const alignClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }[align];
+
+  const classes = [
+    variantClass,
+    sizeClass,
+    weightClass,
+    marginClass,
+    marginTopClass,
+    marginBottomClass,
+    alignClass,
+    'leading-tight',
+    'm-0'
+  ].filter(Boolean).join(' ');
+
+  return (
+    <Container>
+      {children}
+    </Container>
+  );
+};
+
+const H3: React.FC<HeadingProps> = ({
+  children,
+  variant = 'default',
+  size = '2xl',
+  align = 'left',
+  weight = 'semibold',
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'md'
+}) => {
+  const variantClass = {
+    default: 'text-primary',
+    brand: 'text-brand-primary',
+    muted: 'text-muted',
+    inverse: 'text-inverse'
+  }[variant];
+
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl'
+  }[size];
+
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  }[weight];
+
+  const marginClass = {
+    none: '',
+    sm: 'm-sm',
+    md: 'm-md',
+    lg: 'm-lg',
+    xl: 'm-xl'
+  }[margin];
+
+  const marginTopClass = {
+    none: '',
+    sm: 'mt-sm',
+    md: 'mt-md',
+    lg: 'mt-lg',
+    xl: 'mt-xl'
+  }[marginTop];
+
+  const marginBottomClass = {
+    none: '',
+    sm: 'mb-sm',
+    md: 'mb-md',
+    lg: 'mb-lg',
+    xl: 'mb-xl'
+  }[marginBottom];
+
+  const alignClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }[align];
+
+  const classes = [
+    variantClass,
+    sizeClass,
+    weightClass,
+    marginClass,
+    marginTopClass,
+    marginBottomClass,
+    alignClass,
+    'leading-tight',
+    'm-0'
+  ].filter(Boolean).join(' ');
+
+  return (
+    <Container>
+      {children}
+    </Container>
+  );
+};
+
+const H4: React.FC<HeadingProps> = ({
+  children,
+  variant = 'default',
+  size = 'xl',
+  align = 'left',
+  weight = 'semibold',
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'md'
+}) => {
+  const variantClass = {
+    default: 'text-primary',
+    brand: 'text-brand-primary',
+    muted: 'text-muted',
+    inverse: 'text-inverse'
+  }[variant];
+
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl'
+  }[size];
+
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  }[weight];
+
+  const marginClass = {
+    none: '',
+    sm: 'm-sm',
+    md: 'm-md',
+    lg: 'm-lg',
+    xl: 'm-xl'
+  }[margin];
+
+  const marginTopClass = {
+    none: '',
+    sm: 'mt-sm',
+    md: 'mt-md',
+    lg: 'mt-lg',
+    xl: 'mt-xl'
+  }[marginTop];
+
+  const marginBottomClass = {
+    none: '',
+    sm: 'mb-sm',
+    md: 'mb-md',
+    lg: 'mb-lg',
+    xl: 'mb-xl'
+  }[marginBottom];
+
+  const alignClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }[align];
+
+  const classes = [
+    variantClass,
+    sizeClass,
+    weightClass,
+    marginClass,
+    marginTopClass,
+    marginBottomClass,
+    alignClass,
+    'leading-tight',
+    'm-0'
+  ].filter(Boolean).join(' ');
+
+  return (
+    <Container>
+      {children}
+    </Container>
+  );
+};
+
+const H5: React.FC<HeadingProps> = ({
+  children,
+  variant = 'default',
+  size = 'lg',
+  align = 'left',
+  weight = 'medium',
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'sm'
+}) => {
+  const variantClass = {
+    default: 'text-primary',
+    brand: 'text-brand-primary',
+    muted: 'text-muted',
+    inverse: 'text-inverse'
+  }[variant];
+
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl'
+  }[size];
+
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  }[weight];
+
+  const marginClass = {
+    none: '',
+    sm: 'm-sm',
+    md: 'm-md',
+    lg: 'm-lg',
+    xl: 'm-xl'
+  }[margin];
+
+  const marginTopClass = {
+    none: '',
+    sm: 'mt-sm',
+    md: 'mt-md',
+    lg: 'mt-lg',
+    xl: 'mt-xl'
+  }[marginTop];
+
+  const marginBottomClass = {
+    none: '',
+    sm: 'mb-sm',
+    md: 'mb-md',
+    lg: 'mb-lg',
+    xl: 'mb-xl'
+  }[marginBottom];
+
+  const alignClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }[align];
+
+  const classes = [
+    variantClass,
+    sizeClass,
+    weightClass,
+    marginClass,
+    marginTopClass,
+    marginBottomClass,
+    alignClass,
+    'leading-tight',
+    'm-0'
+  ].filter(Boolean).join(' ');
+
+  return (
+    <Container>
+      {children}
+    </Container>
+  );
+};
+
+const H6: React.FC<HeadingProps> = ({
+  children,
+  variant = 'default',
+  size = 'md',
+  align = 'left',
+  weight = 'medium',
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'sm'
+}) => {
+  const variantClass = {
+    default: 'text-primary',
+    brand: 'text-brand-primary',
+    muted: 'text-muted',
+    inverse: 'text-inverse'
+  }[variant];
+
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl'
+  }[size];
+
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  }[weight];
+
+  const marginClass = {
+    none: '',
+    sm: 'm-sm',
+    md: 'm-md',
+    lg: 'm-lg',
+    xl: 'm-xl'
+  }[margin];
+
+  const marginTopClass = {
+    none: '',
+    sm: 'mt-sm',
+    md: 'mt-md',
+    lg: 'mt-lg',
+    xl: 'mt-xl'
+  }[marginTop];
+
+  const marginBottomClass = {
+    none: '',
+    sm: 'mb-sm',
+    md: 'mb-md',
+    lg: 'mb-lg',
+    xl: 'mb-xl'
+  }[marginBottom];
+
+  const alignClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }[align];
+
+  const classes = [
+    variantClass,
+    sizeClass,
+    weightClass,
+    marginClass,
+    marginTopClass,
+    marginBottomClass,
+    alignClass,
+    'leading-tight',
+    'm-0'
+  ].filter(Boolean).join(' ');
+
+  return (
+    <Container>
+      {children}
+    </Container>
+  );
+};
 
 // Text Components
-interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
+interface TextProps {
   children: React.ReactNode;
-  className?: string;
   variant?: 'body' | 'lead' | 'small' | 'muted' | 'inverse';
   size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl';
+  align?: 'left' | 'center' | 'right';
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  margin?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  marginTop?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  marginBottom?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
-  ({ className, children, variant = 'body', size = 'base', ...props }, ref) => {
-    const variantClasses = {
-      body: '',
-      lead: 'text-lg font-medium',
-      small: 'text-sm',
-      muted: 'text-gray-500',
-      inverse: 'text-white'
-    };
+const Text: React.FC<TextProps> = ({
+  children,
+  variant = 'body',
+  size = 'base',
+  align = 'left',
+  weight = 'normal',
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'md'
+}) => {
+  const variantClass = {
+    body: 'text-primary',
+    lead: 'text-primary text-lg',
+    small: 'text-primary text-sm',
+    muted: 'text-muted',
+    inverse: 'text-inverse'
+  }[variant];
 
-    const sizeClasses = {
-      xs: 'text-xs',
-      sm: 'text-sm',
-      base: 'text-base',
-      lg: 'text-lg',
-      xl: 'text-xl'
-    };
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    base: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl'
+  }[size];
 
-    return (
-      <p
-        ref={ref}
-        className={cn(
-          'leading-relaxed',
-          variantClasses[variant],
-          sizeClasses[size],
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </p>
-    );
-  }
-);
-Text.displayName = 'Text';
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  }[weight];
 
-// Specialized Text Components
-const Lead = React.forwardRef<HTMLParagraphElement, Omit<TextProps, 'variant'>>(
-  (props, ref) => <Text ref={ref} variant="lead" {...props} />
-);
-Lead.displayName = 'Lead';
+  const marginClass = {
+    none: '',
+    sm: 'm-sm',
+    md: 'm-md',
+    lg: 'm-lg',
+    xl: 'm-xl'
+  }[margin];
 
-const Small = React.forwardRef<HTMLParagraphElement, Omit<TextProps, 'variant'>>(
-  (props, ref) => <Text ref={ref} variant="small" {...props} />
-);
-Small.displayName = 'Small';
+  const marginTopClass = {
+    none: '',
+    sm: 'mt-sm',
+    md: 'mt-md',
+    lg: 'mt-lg',
+    xl: 'mt-xl'
+  }[marginTop];
 
-const Muted = React.forwardRef<HTMLParagraphElement, Omit<TextProps, 'variant'>>(
-  (props, ref) => <Text ref={ref} variant="muted" {...props} />
-);
-Muted.displayName = 'Muted';
+  const marginBottomClass = {
+    none: '',
+    sm: 'mb-sm',
+    md: 'mb-md',
+    lg: 'mb-lg',
+    xl: 'mb-xl'
+  }[marginBottom];
 
-const Inverse = React.forwardRef<HTMLParagraphElement, Omit<TextProps, 'variant'>>(
-  (props, ref) => <Text ref={ref} variant="inverse" {...props} />
-);
-Inverse.displayName = 'Inverse';
+  const alignClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }[align];
 
-export {
-  H1, H2, H3, H4, H5, H6,
-  Text, Lead, Small, Muted, Inverse
-}; 
+  const classes = [
+    variantClass,
+    sizeClass,
+    weightClass,
+    marginClass,
+    marginTopClass,
+    marginBottomClass,
+    alignClass,
+    'leading-relaxed',
+    'm-0'
+  ].filter(Boolean).join(' ');
+
+  return (
+    <Container>
+      {children}
+    </Container>
+  );
+};
+
+export { H1, H2, H3, H4, H5, H6, Text }; 

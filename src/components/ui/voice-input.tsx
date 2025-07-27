@@ -2,16 +2,16 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Container, Span } from '@/components/ui';
 import { Mic, MicOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils/utils';
 
 interface VoiceInputProps {
   onTranscript: (text: string) => void;
   disabled?: boolean;
-  className?: string;
 }
 
-export const VoiceInput = ({ onTranscript, disabled = false, className }: VoiceInputProps) => {
+export const VoiceInput = ({ onTranscript, disabled = false }: VoiceInputProps) => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,16 +62,16 @@ export const VoiceInput = ({ onTranscript, disabled = false, className }: VoiceI
     };
   }, [onTranscript]);
 
-      const startListening = () => {
-      if (recognitionRef.current && !isListening && !disabled) {
-        try {
-          recognitionRef.current.start();
-        } catch {
-          console.error('Failed to start speech recognition');
-          setError('Failed to start voice recognition');
-        }
+  const startListening = () => {
+    if (recognitionRef.current && !isListening && !disabled) {
+      try {
+        recognitionRef.current.start();
+      } catch {
+        console.error('Failed to start speech recognition');
+        setError('Failed to start voice recognition');
       }
-    };
+    }
+  };
 
   const stopListening = () => {
     if (recognitionRef.current && isListening) {
@@ -85,40 +85,33 @@ export const VoiceInput = ({ onTranscript, disabled = false, className }: VoiceI
     return (
       <Button
         variant="outline"
-        size="icon"
+        size="sm"
         disabled
-        className={cn("text-gray-400", className)}
-        title="Voice recognition not supported"
       >
-        <MicOff  />
+        <MicOff />
       </Button>
     );
   }
 
   return (
-    <div >
+    <Container>
       <Button
-        variant={isListening ? "destructive" : "outline"}
-        size="icon"
+        variant="outline"
+        size="sm"
         onClick={isListening ? stopListening : startListening}
         disabled={disabled || isProcessing}
-        className={cn(
-          isListening && "animate-pulse",
-          className
-        )}
-        title={isListening ? "Click to stop listening" : "Click to start voice input"}
       >
         {isProcessing ? (
-          <Loader2  />
+          <Loader2 className="h-4 w-4 animate-spin" />
         ) : isListening ? (
-          <MicOff  />
+          <Mic className="h-4 w-4 text-red-500" />
         ) : (
-          <Mic  />
+          <Mic className="h-4 w-4" />
         )}
       </Button>
       {error && (
-        <span >{error}</span>
+        <Span>{error}</Span>
       )}
-    </div>
+    </Container>
   );
 }; 

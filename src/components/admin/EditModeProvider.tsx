@@ -110,11 +110,11 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
   };
 
   // Standardized edit mode toggle component
-  const EditModeToggle: React.FC<{ className?: string }> = ({ className = '' }) => {
+  const EditModeToggle: React.FC = () => {
     if (!isAdmin) return null;
 
     return (
-      <Container className={className}>
+      <Container>
         {!editMode ? (
           <Button
             onClick={() => setEditMode(true)}

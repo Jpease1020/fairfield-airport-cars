@@ -31,15 +31,6 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
   maxWidth = 'full',
   children
 }) => {
-  const maxWidthClass = {
-    'sm': 'max-w-sm',
-    'md': 'max-w-2xl',
-    'lg': 'max-w-4xl',
-    'xl': 'max-w-6xl',
-    '2xl': 'max-w-7xl',
-    'full': ''
-  }[maxWidth];
-
   // Loading state
   if (loading) {
     return (
@@ -68,7 +59,7 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
           title={title}
           subtitle="Error occurred"
         />
-        <Container className={`standard-content ${maxWidthClass} mx-auto`}>
+        <Container maxWidth={maxWidth}>
           <Alert variant="error" title={errorTitle}>
             {error}
           </Alert>
@@ -87,7 +78,7 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
         actions={actions}
       />
       
-      <Container className={`standard-content ${maxWidthClass} ${maxWidthClass ? 'mx-auto' : ''}`}>
+      <Container maxWidth={maxWidth}>
         {children}
       </Container>
     </Container>

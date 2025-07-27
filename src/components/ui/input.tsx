@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@/components/ui';
+import { Container, Span } from '@/components/ui';
 
 export interface InputProps {
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'datetime-local' | 'date' | 'time' | 'file' | 'color' | 'range' | 'checkbox';
@@ -14,7 +14,6 @@ export interface InputProps {
   required?: boolean;
   name?: string;
   id?: string;
-  className?: string;
   error?: boolean;
   errorMessage?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -36,7 +35,6 @@ export const Input: React.FC<InputProps> = ({
   required = false,
   name,
   id,
-  className = '',
   error = false,
   errorMessage,
   size = 'md',
@@ -51,12 +49,10 @@ export const Input: React.FC<InputProps> = ({
     lg: 'form-input-lg',
   };
 
-
-
   return (
     <Container>
       {icon && iconPosition === 'left' && (
-        <span>{icon}</span>
+        <Span>{icon}</Span>
       )}
       <input
         type={type}
@@ -73,7 +69,7 @@ export const Input: React.FC<InputProps> = ({
         id={id}
       />
       {icon && iconPosition === 'right' && (
-        <span>{icon}</span>
+        <Span>{icon}</Span>
       )}
       {error && errorMessage && (
         <Container>{errorMessage}</Container>

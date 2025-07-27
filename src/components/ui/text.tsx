@@ -93,9 +93,9 @@ export const Text: React.FC<TextProps> = ({
   };
 
   return (
-    <span style={style} className={className}>
+    <Span>
       {children}
-    </span>
+    </Span>
   );
 };
 
@@ -117,12 +117,9 @@ export const Span: React.FC<TextProps> = ({
   };
 
   return (
-    <span 
-      className={`text ${variantClasses[variant]} ${className}`}
-      {...props}
-    >
+    <Span>
       {children}
-    </span>
+    </Span>
   );
 };
 
@@ -273,9 +270,9 @@ export const Container: React.FC<ContainerProps> = ({
   };
 
   return (
-    <div style={style} className={className}>
+    <Container>
       {children}
-    </div>
+    </Container>
   );
 };
 

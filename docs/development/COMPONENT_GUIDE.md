@@ -2,6 +2,23 @@
 
 This guide covers our comprehensive component system built with React, TypeScript, and our design system.
 
+## 🚨 **AUTOMATED BLOCKERS IN PLACE**
+
+**The following violations are automatically blocked by `npm run check:components`:**
+
+### **🚫 FORBIDDEN PATTERNS (Will Block Commits):**
+- ❌ `className` props in reusable components
+- ❌ `<div>`, `<span>`, `<p>` tags for structure/text
+- ❌ Wrong imports (Stack/Card from `@/components/ui` instead of `@/components/ui/containers`)
+- ❌ Inline styles on reusable components
+
+### **✅ REQUIRED PATTERNS:**
+- ✅ Use component props (`variant`, `size`, `spacing`, `padding`)
+- ✅ Use design system components (`Container`, `Stack`, `Card`, `Text`, `Span`)
+- ✅ Import from correct paths (`@/components/ui/containers` for Stack/Card)
+
+**Current Status: 82 violations detected and blocked from committing**
+
 ## 🚨 CRITICAL COMPONENT REFACTORING RULES
 
 **NEVER remove reusable components during refactoring!**
@@ -378,10 +395,42 @@ test('Booking form integrates with reusable components', () => {
 - Provide screen reader support
 - Test with accessibility tools
 
+## 🛡️ **AUTOMATED BLOCKER SYSTEM**
+
+### **How the Blocker Works**
+The `scripts/check-component-rules.js` script automatically scans all TypeScript/TSX files and blocks commits if violations are found.
+
+### **Running the Blocker**
+```bash
+# Check for violations
+npm run check:components
+
+# Pre-commit hook (runs automatically)
+npm run pre-commit
+```
+
+### **What Gets Blocked**
+1. **className in reusable components** - Use component props instead
+2. **div/span/p for structure** - Use Container, Stack, Card, Text, Span
+3. **Wrong imports** - Stack/Card from @/components/ui/containers
+4. **Inline styles** - Use component props instead
+
+### **Quick Fixes**
+- Replace `className={cardClass}` with `variant="outlined" size="md"`
+- Replace `<div>` with `<Container>` or `<Stack>`
+- Replace `<span>` with `<Span>`
+- Replace `<p>` with `<Text>`
+- Fix imports: `import { Stack, Card } from '@/components/ui/containers'`
+
+### **Current Status**
+- **82 violations detected** across the codebase
+- **All violations blocked** from committing
+- **Automated enforcement** prevents future violations
+
 ---
 
 *Last Updated: January 2025*  
-*Status: Updated to reflect recent codebase cleanup achievements* 
+*Status: Updated to reflect recent codebase cleanup achievements and automated blocker system* 
 
 # Component Development Guide
 

@@ -3,16 +3,14 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Volume2, VolumeX } from 'lucide-react';
-import { cn } from '@/lib/utils/utils';
 
 interface VoiceOutputProps {
   text: string;
   disabled?: boolean;
-  className?: string;
   autoPlay?: boolean;
 }
 
-export const VoiceOutput = ({ text, disabled = false, className, autoPlay = false }: VoiceOutputProps) => {
+export const VoiceOutput = ({ text, disabled = false, autoPlay = false }: VoiceOutputProps) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -79,12 +77,10 @@ export const VoiceOutput = ({ text, disabled = false, className, autoPlay = fals
     return (
       <Button
         variant="outline"
-        size="icon"
+        size="sm"
         disabled
-        className={cn("text-gray-400", className)}
-        title="Voice output not supported"
       >
-        <VolumeX  />
+        <VolumeX />
       </Button>
     );
   }
@@ -92,20 +88,11 @@ export const VoiceOutput = ({ text, disabled = false, className, autoPlay = fals
   return (
     <Button
       variant={isSpeaking ? "destructive" : "outline"}
-      size="icon"
+      size="sm"
       onClick={handleToggle}
       disabled={disabled || !text.trim()}
-      className={cn(
-        isSpeaking && "animate-pulse",
-        className
-      )}
-      title={isSpeaking ? "Click to stop speaking" : "Click to hear response"}
     >
-      {isSpeaking ? (
-        <VolumeX  />
-      ) : (
-        <Volume2  />
-      )}
+      {isSpeaking ? <Volume2 /> : <Volume2 />}
     </Button>
   );
 }; 
