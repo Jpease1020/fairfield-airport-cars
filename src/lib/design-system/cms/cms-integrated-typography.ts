@@ -1,6 +1,6 @@
 import { CMSConfiguration } from '@/types/cms';
 
-export const getCMSTypography = (cmsConfig: CMSConfiguration) => ({
+export const getCMSTypography = () => ({
   // Font family from CMS branding (using defaults for now)
   fontFamily: {
     primary: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',

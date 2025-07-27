@@ -102,7 +102,7 @@ class PerformanceOptimizer {
   }
 
   // Optimize images
-  optimizeImage(src: string, width: number, height: number): string {
+  optimizeImage(src: string, width: number): string {
     if (!this.config.enableImageOptimization) return src;
 
     // Use Next.js Image optimization
@@ -111,8 +111,7 @@ class PerformanceOptimizer {
 
   // Lazy load components
   lazyLoadComponent<T extends React.ComponentType<any>>(
-    importFunc: () => Promise<{ default: T }>,
-    fallback?: React.ReactNode
+    importFunc: () => Promise<{ default: T }>
   ): React.LazyExoticComponent<T> {
     return React.lazy(() => 
       importFunc().then(module => ({

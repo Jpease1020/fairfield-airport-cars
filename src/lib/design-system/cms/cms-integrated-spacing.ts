@@ -1,6 +1,6 @@
 import { CMSConfiguration } from '@/types/cms';
 
-export const getCMSSpacing = (cmsConfig: CMSConfiguration) => ({
+export const getCMSSpacing = () => ({
   // Base spacing scale (consistent)
   base: {
     xs: '0.25rem',

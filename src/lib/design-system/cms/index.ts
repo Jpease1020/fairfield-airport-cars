@@ -1,6 +1,6 @@
-import { getCMSColors, defaultColors } from './cms-integrated-colors';
-import { getCMSTypography, defaultTypography } from './cms-integrated-typography';
-import { getCMSSpacing, defaultSpacing } from './cms-integrated-spacing';
+import { getCMSColors } from './cms-integrated-colors';
+import { getCMSTypography } from './cms-integrated-typography';
+import { getCMSSpacing } from './cms-integrated-spacing';
 
 // CMS-Integrated Design System
 export { getCMSColors, defaultColors } from './cms-integrated-colors';
@@ -8,15 +8,15 @@ export { getCMSTypography, defaultTypography } from './cms-integrated-typography
 export { getCMSSpacing, defaultSpacing } from './cms-integrated-spacing';
 
 // Design system utilities
-export const getDesignTokens = () => ({
-  colors: getCMSColors(),
+export const getDesignTokens = (cmsConfig: any) => ({
+  colors: getCMSColors(cmsConfig),
   typography: getCMSTypography(),
   spacing: getCMSSpacing(),
 });
 
 // CSS custom properties generator
-export const generateCSSVariables = () => {
-  const colors = getCMSColors();
+export const generateCSSVariables = (cmsConfig: any) => {
+  const colors = getCMSColors(cmsConfig);
   const typography = getCMSTypography();
   const spacing = getCMSSpacing();
 
@@ -92,8 +92,8 @@ export const generateCSSVariables = () => {
 };
 
 // Utility function to apply design tokens to a component
-export const applyDesignTokens = (componentProps: any = {}) => {
-  const cssVars = generateCSSVariables();
+export const applyDesignTokens = (cmsConfig: any, componentProps: any = {}) => {
+  const cssVars = generateCSSVariables(cmsConfig);
   
   return {
     ...componentProps,

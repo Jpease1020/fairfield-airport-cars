@@ -8,12 +8,13 @@ import {
   getDocs, 
   addDoc, 
   updateDoc, 
+  deleteDoc, 
   query, 
   where, 
   orderBy, 
   limit,
-  serverTimestamp,
-  Timestamp 
+  onSnapshot,
+  writeBatch
 } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 
@@ -259,7 +260,7 @@ class EnhancedBookingService {
     }
 
     // Check weather conditions (would need weather API integration)
-    const weatherMultiplier = await this.getWeatherMultiplier(pickupDateTime);
+    const weatherMultiplier = await this.getWeatherMultiplier();
     multiplier *= weatherMultiplier;
 
     // Check traffic conditions
@@ -267,7 +268,7 @@ class EnhancedBookingService {
     multiplier *= trafficMultiplier;
 
     // Check for special events
-    const eventMultiplier = await this.getSpecialEventMultiplier(pickupDateTime);
+    const eventMultiplier = await this.getSpecialEventMultiplier();
     multiplier *= eventMultiplier;
 
     // Cap at maximum multiplier
@@ -295,7 +296,7 @@ class EnhancedBookingService {
   }
 
   // Get weather multiplier (placeholder for weather API integration)
-  private async getWeatherMultiplier(dateTime: Date): Promise<number> {
+  private async getWeatherMultiplier(): Promise<number> {
     // This would integrate with a weather API
     // For now, return base multiplier
     return 1.0;
@@ -314,7 +315,7 @@ class EnhancedBookingService {
   }
 
   // Get special event multiplier (placeholder for event API integration)
-  private async getSpecialEventMultiplier(dateTime: Date): Promise<number> {
+  private async getSpecialEventMultiplier(): Promise<number> {
     // This would integrate with an events API
     // For now, return base multiplier
     return 1.0;
@@ -367,7 +368,7 @@ class EnhancedBookingService {
   }
 
   // Find available drivers
-  async findAvailableDrivers(pickupDateTime: Date, location: string): Promise<Driver[]> {
+  async findAvailableDrivers(pickupDateTime: Date): Promise<Driver[]> {
     const driversRef = collection(db, 'drivers');
     const q = query(
       driversRef,
