@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container } from '@/components/ui';
 
 export interface FormProps {
   children: React.ReactNode;
@@ -29,7 +30,7 @@ export const Form: React.FC<FormProps> = ({
       encType={encType}
       target={target}
       noValidate={noValidate}
-      className={`form ${className}`}
+
     >
       {children}
     </form>
@@ -50,10 +51,10 @@ export const FormGroup: React.FC<FormGroupProps> = ({
   required = false,
 }) => {
   return (
-    <div className={`form-group ${error ? 'form-group-error' : ''} ${className}`}>
+    <Container>
       {children}
-      {error && <div className="form-error-message">{error}</div>}
-    </div>
+      {error && <Container>{error}</Container>}
+    </Container>
   );
 };
 
