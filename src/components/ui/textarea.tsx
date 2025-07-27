@@ -28,54 +28,27 @@ export const Textarea: React.FC<TextareaProps> = ({
   placeholder,
   value,
   defaultValue,
-  onChange,
-  onBlur,
-  onFocus,
-  onKeyPress,
-  disabled = false,
-  required = false,
   name,
   id,
-  error = false,
-  errorMessage,
-  size = 'md',
-  fullWidth = false,
   rows = 4,
   cols,
   maxLength,
   minLength,
-  autoFocus,
 }) => {
-  const baseClasses = 'form-textarea';
-  const sizeClasses = {
-    sm: 'form-textarea-sm',
-    md: 'form-textarea-md',
-    lg: 'form-textarea-lg',
-  };
-
-  const classes = [
-    baseClasses,
-    sizeClasses[size],
-    error ? 'form-textarea-error' : '',
-    fullWidth ? 'w-full' : '',
-  ].filter(Boolean).join(' ');
 
   return (
     <Container>
-      <Container>
-        {placeholder}
-        {value}
-        {defaultValue}
-        {name}
-        {id}
-        {rows}
-        {cols}
-        {maxLength}
-        {minLength}
-      </Container>
-      {error && errorMessage && (
-        <Container>{errorMessage}</Container>
-      )}
+      <textarea
+        placeholder={placeholder}
+        value={value}
+        defaultValue={defaultValue}
+        name={name}
+        id={id}
+        rows={rows}
+        cols={cols}
+        maxLength={maxLength}
+        minLength={minLength}
+      />
     </Container>
   );
 }; 

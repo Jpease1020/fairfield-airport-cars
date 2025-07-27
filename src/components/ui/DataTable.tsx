@@ -52,15 +52,10 @@ export function DataTable<T extends Record<string, any>>({
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data available',
   emptyIcon = '📊',
-  rowVariant,
-  onRowClick,
-  size = 'md',
-  spacing = 'normal'
+
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortColumn, setSortColumn] = useState<string>('');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // Filter data based on search term
   const filteredData = useMemo(() => {
@@ -75,17 +70,8 @@ export function DataTable<T extends Record<string, any>>({
 
   // Sort data
   const sortedData = useMemo(() => {
-    if (!sortColumn) return filteredData;
-    
-    return [...filteredData].sort((a, b) => {
-      const aValue = a[sortColumn];
-      const bValue = b[sortColumn];
-      
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [filteredData, sortColumn, sortDirection]);
+    return filteredData;
+  }, [filteredData]);
 
   // Paginate data
   const paginatedData = useMemo(() => {
@@ -97,19 +83,7 @@ export function DataTable<T extends Record<string, any>>({
 
   const totalPages = Math.ceil(sortedData.length / pageSize);
 
-  const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(column);
-      setSortDirection('asc');
-    }
-  };
 
-  const getSortIcon = (column: string) => {
-    if (sortColumn !== column) return '↕️';
-    return sortDirection === 'asc' ? '↑' : '↓';
-  };
 
   if (loading) {
     return (

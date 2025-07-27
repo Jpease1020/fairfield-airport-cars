@@ -20,11 +20,8 @@ export const StatCard: React.FC<StatCardProps> = ({
   icon,
   statNumber,
   statChange,
-  changeType = 'neutral',
   description,
   href,
-  variant = 'default',
-  size = 'md'
 }) => {
   const cardContent = (
     <>
@@ -35,10 +32,10 @@ export const StatCard: React.FC<StatCardProps> = ({
       <Stack>
         <Span>{statNumber}</Span>
         {statChange && (
-          <Text className={`stat-change ${changeType}`}>{statChange}</Text>
+          <Text>{statChange}</Text>
         )}
         {description && (
-          <Text className="card-description">{description}</Text>
+          <Text>{description}</Text>
         )}
       </Stack>
     </>
@@ -46,14 +43,14 @@ export const StatCard: React.FC<StatCardProps> = ({
 
   if (href) {
     return (
-      <a href={href} className={`card ${className}`.trim()}>
+      <a href={href} className="card">
         {cardContent}
       </a>
     );
   }
 
   return (
-    <Container className={`card ${className}`.trim()}>
+    <Container>
       {cardContent}
     </Container>
   );

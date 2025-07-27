@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
@@ -300,7 +300,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
 
               {/* Comment Box */}
         {activeCommentBox && selectedElement && (
-          <Container
+          <div
             data-comment-box
             style={{
               position: 'absolute',
@@ -394,9 +394,9 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
               Close
             </Button>
           </Stack>
-      </Container>
-    </div>
-  )}
+        </Container>
+      </div>
+    )}
 
       {/* Global Styles */}
       <style jsx global>{`

@@ -159,9 +159,9 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
         
         {/* Feature Items */}
         {pageData.features.items.map((item: any, idx: number) => (
-          <Card key={idx} className="feature-item-card">
+          <Card key={idx}>
             <CardHeader>
-              <CardTitle className="feature-item-title">Feature {idx + 1}</CardTitle>
+              <CardTitle>Feature {idx + 1}</CardTitle>
             </CardHeader>
             <CardBody>
               <SettingInput
@@ -317,9 +317,9 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
         
         {/* Help Sections */}
         {pageData.sections.map((section: any, idx: number) => (
-          <Card key={idx} className="help-section-card">
+          <Card key={idx}>
             <CardHeader>
-              <CardTitle className="help-section-title">Section {idx + 1}</CardTitle>
+              <CardTitle>Section {idx + 1}</CardTitle>
             </CardHeader>
             <CardBody>
               <SettingInput

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from './button';
-import { Container, H2, Text } from '@/components/ui';
+import { H2, Text } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface ErrorBoundaryState {

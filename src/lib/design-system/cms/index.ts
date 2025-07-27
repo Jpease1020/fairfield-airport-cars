@@ -8,17 +8,17 @@ export { getCMSTypography, defaultTypography } from './cms-integrated-typography
 export { getCMSSpacing, defaultSpacing } from './cms-integrated-spacing';
 
 // Design system utilities
-export const getDesignTokens = (cmsConfig: any) => ({
-  colors: getCMSColors(cmsConfig),
-  typography: getCMSTypography(cmsConfig),
-  spacing: getCMSSpacing(cmsConfig),
+export const getDesignTokens = () => ({
+  colors: getCMSColors(),
+  typography: getCMSTypography(),
+  spacing: getCMSSpacing(),
 });
 
 // CSS custom properties generator
-export const generateCSSVariables = (cmsConfig: any) => {
-  const colors = getCMSColors(cmsConfig);
-  const typography = getCMSTypography(cmsConfig);
-  const spacing = getCMSSpacing(cmsConfig);
+export const generateCSSVariables = () => {
+  const colors = getCMSColors();
+  const typography = getCMSTypography();
+  const spacing = getCMSSpacing();
 
   return {
     // Brand colors
@@ -92,9 +92,8 @@ export const generateCSSVariables = (cmsConfig: any) => {
 };
 
 // Utility function to apply design tokens to a component
-export const applyDesignTokens = (cmsConfig: any, componentProps: any = {}) => {
-  const tokens = getDesignTokens(cmsConfig);
-  const cssVars = generateCSSVariables(cmsConfig);
+export const applyDesignTokens = (componentProps: any = {}) => {
+  const cssVars = generateCSSVariables();
   
   return {
     ...componentProps,

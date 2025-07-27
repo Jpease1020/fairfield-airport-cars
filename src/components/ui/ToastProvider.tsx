@@ -62,7 +62,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onRemove }) => 
   if (toasts.length === 0) return null;
 
   return (
-    <Container className="toast-container">
+    <Container>
       {toasts.map(toast => (
         <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
       ))}
@@ -76,12 +76,6 @@ interface ToastItemProps {
 }
 
 const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
-  const getToastClass = () => {
-    const baseClass = 'toast-item';
-    const typeClass = `toast-item-${toast.type}`;
-    return `${baseClass} ${typeClass}`;
-  };
-
   const getIcon = () => {
     switch (toast.type) {
       case 'success': return '✅';
@@ -93,7 +87,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
   };
 
   return (
-    <Container className={getToastClass()}>
+    <Container>
       <Stack direction="horizontal" spacing="sm" align="center">
         <Span>{getIcon()}</Span>
         <Span>{toast.message}</Span>

@@ -4,7 +4,6 @@ import { Stack } from '@/components/ui/containers';
 import { Input } from './input';
 import { Textarea } from './textarea';
 import { Label } from './form';
-import { cn } from '@/lib/utils/utils';
 
 // Enhanced Input Component
 interface EnhancedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -18,26 +17,7 @@ interface EnhancedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 }
 
 const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
-  ({ className, label, error, helper, variant = 'default', size = 'md', leftIcon, rightIcon, ...props }, ref) => {
-    const variantClasses = {
-      default: 'border-border-primary focus:border-brand-primary',
-      filled: 'bg-bg-secondary border-border-primary focus:border-brand-primary',
-      outlined: 'border-2 border-border-primary focus:border-brand-primary'
-    };
-
-    const sizeClasses = {
-      sm: 'text-sm p-3',
-      md: 'text-base p-4',
-      lg: 'text-lg p-4'
-    };
-
-    const inputClasses = cn(
-      'w-full transition-colors duration-200',
-      variantClasses[variant],
-      sizeClasses[size],
-      error && 'border-error focus:border-error',
-      className
-    );
+  ({ label, error, helper, leftIcon, rightIcon, ...props }, ref) => {
 
       return (
     <Stack spacing="sm">
@@ -53,6 +33,7 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
           </Container>
         )}
         <Input
+          ref={ref}
           {...(props as any)}
         />
         {rightIcon && (
@@ -83,26 +64,7 @@ interface EnhancedTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAre
 }
 
 const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaProps>(
-  ({ className, label, error, helper, variant = 'default', size = 'md', ...props }, ref) => {
-    const variantClasses = {
-      default: 'border-border-primary focus:border-brand-primary',
-      filled: 'bg-bg-secondary border-border-primary focus:border-brand-primary',
-      outlined: 'border-2 border-border-primary focus:border-brand-primary'
-    };
-
-    const sizeClasses = {
-      sm: 'text-sm p-3',
-      md: 'text-base p-4',
-      lg: 'text-lg p-4'
-    };
-
-    const textareaClasses = cn(
-      'w-full transition-colors duration-200',
-      variantClasses[variant],
-      sizeClasses[size],
-      error && 'border-error focus:border-error',
-      className
-    );
+  ({ label, error, helper, ...props }, ref) => {
 
     return (
       <Stack spacing="sm">
@@ -112,6 +74,7 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
           </Label>
         )}
         <Textarea
+          ref={ref}
           {...(props as any)}
         />
         {error && (
@@ -147,27 +110,7 @@ const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
   value,
   onValueChange,
   children,
-  variant = 'default',
-  size = 'md'
 }) => {
-  const variantClasses = {
-    default: 'border-border-primary focus:border-brand-primary',
-    filled: 'bg-bg-secondary border-border-primary focus:border-brand-primary',
-    outlined: 'border-2 border-border-primary focus:border-brand-primary'
-  };
-
-  const sizeClasses = {
-    sm: 'text-sm p-3',
-    md: 'text-base p-4',
-    lg: 'text-lg p-4'
-  };
-
-  const selectClasses = cn(
-    'w-full transition-colors duration-200',
-    variantClasses[variant],
-    sizeClasses[size],
-    error && 'border-error focus:border-error'
-  );
 
   return (
     <Stack spacing="sm">
@@ -176,7 +119,7 @@ const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
           {label}
         </Label>
       )}
-      <Container className={selectClasses}>
+      <Container>
         <select
           value={value}
           onChange={(e) => onValueChange?.(e.target.value)}

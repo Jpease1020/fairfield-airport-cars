@@ -14,26 +14,7 @@ interface GridSectionProps {
 
 export const GridSection: React.FC<GridSectionProps> = ({
   children,
-  columns = 4,
-  variant = 'content',
-  spacing = 'lg',
-  theme = 'light',
-  padding = 'lg',
-  gap = 'md'
 }) => {
-  const sectionClass = [
-    'grid-section',
-    `grid-section-${variant}`,
-    `grid-section-${spacing}`,
-    theme === 'dark' ? 'grid-section-dark' : 'grid-section-light',
-    className
-  ].filter(Boolean).join(' ');
-
-  const gridClass = [
-    'grid-container',
-    `grid-columns-${columns}`,
-    `grid-spacing-${spacing}`
-  ].filter(Boolean).join(' ');
 
   return (
     <Section>

@@ -1,15 +1,13 @@
 import React from 'react';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
-import { PageHeader, PageAction } from './PageHeader';
-import { LoadingSpinner } from './LoadingSpinner';
-import { Alert } from '@/components/feedback';
+import { PageHeader } from '@/components/layout/structure/PageHeader';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Container, Text } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface AdminPageWrapperProps {
   title: string;
   subtitle?: string;
-  actions?: PageAction[];
   loading?: boolean;
   error?: string | null;
   loadingMessage?: string;
@@ -22,7 +20,6 @@ interface AdminPageWrapperProps {
 export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
   title,
   subtitle,
-  actions,
   loading = false,
   error = null,
   loadingMessage = 'Loading...',
@@ -60,9 +57,10 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
           subtitle="Error occurred"
         />
         <Container maxWidth={maxWidth}>
-          <Alert variant="error" title={errorTitle}>
-            {error}
-          </Alert>
+          <div>
+            <h3>{errorTitle}</h3>
+            <p>{error}</p>
+          </div>
         </Container>
       </Container>
     );
@@ -75,7 +73,6 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
       <PageHeader
         title={title}
         subtitle={subtitle}
-        actions={actions}
       />
       
       <Container maxWidth={maxWidth}>

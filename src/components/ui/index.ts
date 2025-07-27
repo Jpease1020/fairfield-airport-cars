@@ -1,7 +1,7 @@
 // Layout Components (Moved)
 export { PageHeader } from '../layout/structure/PageHeader';
 export { PageSection } from '../layout/structure/PageSection';
-export { AdminPageWrapper } from '../admin/AdminPageWrapper';
+export { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 // Layout Components
 
 export { GridSection } from './GridSection';
@@ -74,7 +74,7 @@ export { Badge } from './badge';
 export { Button } from './button';
 export { Input } from './input';
 export { Textarea } from './textarea';
-export { Grid, GridItem } from './containers';
+
 
 // Form Components
 export { 
@@ -93,11 +93,13 @@ export {
   H1, H2, H3, H4, H5, H6,
   Text, 
   Paragraph, 
-  Span
+  Span,
+  Link
 } from './text';
 
 // BULLETPROOF Layout Components (NEVER from text.tsx!)
 export { Container, Section, Stack, Card, Box, Grid, Layout, Spacer } from './containers';
+export { GridItem } from './Grid';
 
 // Database-ready editable text component
 export { EditableText } from './EditableText';
@@ -115,8 +117,7 @@ export { EmptyState } from './EmptyState';
 export { StarRating } from './StarRating';
 export { Alert } from './Alert';
 export { Modal } from './Modal';
-export { Logo } from './Logo';
-export { CommentIcon } from './CommentIcon';
+
 export { LocationAutocomplete } from './LocationAutocomplete';
 
 // Reusable Patterns

@@ -10,8 +10,7 @@ interface StatusBadgeProps {
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ 
     status, 
-    size = 'md', 
-    variant = 'default' 
+    size = 'md'
   }) => {
     const statusClasses = {
       pending: 'bg-warning text-text-inverse',
@@ -36,20 +35,16 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 
     return (
       <span
-        ref={ref}
         className={cn(
           'inline-flex items-center rounded-full font-semibold',
           statusClasses[status],
-          sizeClasses[size],
-          className
+          sizeClasses[size]
         )}
-        {...props}
       >
         {getStatusText(status)}
       </span>
     );
-  }
-);
+  };
 StatusBadge.displayName = 'StatusBadge';
 
 export { StatusBadge }; 

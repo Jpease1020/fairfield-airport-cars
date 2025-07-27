@@ -529,7 +529,7 @@ interface GridProps {
   as?: 'div' | 'section' | 'article';
 }
 
-const Grid: React.FC<GridProps> = ({ 
+const Grid = React.forwardRef<HTMLDivElement, GridProps>(({ 
     cols = 1, 
     gap = 'md', 
     responsive = true,
@@ -537,8 +537,9 @@ const Grid: React.FC<GridProps> = ({
     marginTop = 'none',
     marginBottom = 'none',
     as: Component = 'div',
-    children
-  }) => {
+    children,
+    ...props
+  }, ref) => {
     const colsClasses = {
       1: 'grid-cols-1',
       2: responsive ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-2',
@@ -589,7 +590,7 @@ const Grid: React.FC<GridProps> = ({
     };
 
     return (
-      <div
+      <Component
         ref={ref}
         className={cn(
           'grid',
@@ -597,13 +598,12 @@ const Grid: React.FC<GridProps> = ({
           gapClasses[gap],
           marginClasses[margin],
           marginTopClasses[marginTop],
-          marginBottomClasses[marginBottom],
-          className
+          marginBottomClasses[marginBottom]
         )}
         {...props}
       >
         {children}
-      </div>
+      </Component>
     );
   }
 );
@@ -620,7 +620,6 @@ interface LayoutProps {
 
 const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
   ({ 
-    className, 
     spacing = 'md', 
     container = true, 
     maxWidth = 'xl',
@@ -647,8 +646,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
       <div
         ref={ref}
         className={cn(
-          spacingClasses[spacing],
-          className
+          spacingClasses[spacing]
         )}
         {...props}
       >
@@ -666,7 +664,7 @@ interface SpacerProps {
 }
 
 const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
-  ({ className, size = 'md', axis = 'vertical', ...props }, ref) => {
+  ({ size = 'md', axis = 'vertical', ...props }, ref) => {
     const sizeClasses = {
       xs: axis === 'vertical' ? 'h-1' : 'w-1',
       sm: axis === 'vertical' ? 'h-2' : 'w-2',
@@ -679,7 +677,7 @@ const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
     return (
       <div
         ref={ref}
-        className={cn(sizeClasses[size], className)}
+        className={cn(sizeClasses[size])}
         {...props}
       />
     );

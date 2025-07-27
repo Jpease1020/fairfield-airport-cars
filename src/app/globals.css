@@ -1,7 +1,7 @@
 /* Global styles for Fairfield Airport Cars */
 
 /* Import the standard layout system */
-@import './standard-layout.css';
+@import '../styles/standard-layout.css';
 
 /* Additional global styles */
 html {

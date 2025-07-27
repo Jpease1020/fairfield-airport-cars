@@ -43,7 +43,6 @@ export interface FormGroupProps {
 export const FormGroup: React.FC<FormGroupProps> = ({
   children,
   error,
-  required = false,
 }) => {
   return (
     <Container>
@@ -67,7 +66,7 @@ export const Label: React.FC<LabelProps> = ({
   return (
     <label htmlFor={htmlFor}>
       {children}
-      {required && <Span className="form-label-required-indicator">*</Span>}
+      {required && <Span>*</Span>}
     </label>
   );
 };

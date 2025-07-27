@@ -37,17 +37,9 @@ export const Input: React.FC<InputProps> = ({
   id,
   error = false,
   errorMessage,
-  size = 'md',
-  fullWidth = false,
   icon,
   iconPosition = 'left',
 }) => {
-  const baseClasses = 'form-input';
-  const sizeClasses = {
-    sm: 'form-input-sm',
-    md: 'form-input-md',
-    lg: 'form-input-lg',
-  };
 
   return (
     <Container>

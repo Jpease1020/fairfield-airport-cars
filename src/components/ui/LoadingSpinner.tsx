@@ -28,7 +28,6 @@ interface LoadingSpinnerProps {
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = 'md',
   variant = 'spinner',
   text,
   centered = false,
@@ -40,7 +39,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           <Stack direction="horizontal" spacing="xs">
             {[...Array(3)].map((_, i) => (
               <Container key={i}>
-                <Span />
+                <Span>•</Span>
               </Container>
             ))}
           </Stack>
@@ -49,14 +48,14 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       case 'pulse':
         return (
           <Container>
-            <Span />
+            <Span>●</Span>
           </Container>
         );
 
       default:
           return (
     <Container>
-      <Span />
+      <Span>○</Span>
     </Container>
   );
     }

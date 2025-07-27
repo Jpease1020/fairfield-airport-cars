@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { ChatMessage, ChatMessageProps } from './ChatMessage';
-import { Container, Span, Text } from '@/components/ui';
+import { Container, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 export interface ChatContainerProps {
@@ -47,9 +47,9 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                 <Span>🤖</Span>
                 <Stack direction="horizontal" spacing="xs" align="center">
                   <Stack direction="horizontal" spacing="xs">
-                    <Span />
-                    <Span />
-                    <Span />
+                    <Span>•</Span>
+                    <Span>•</Span>
+                    <Span>•</Span>
                   </Stack>
                   <Span>
                     {loadingMessage}

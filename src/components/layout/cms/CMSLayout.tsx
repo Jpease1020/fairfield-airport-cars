@@ -13,7 +13,6 @@ interface CMSLayoutProps {
 
 export const CMSLayout: React.FC<CMSLayoutProps> = ({
   cmsConfig,
-  pageType,
   children,
   variant = 'standard',
   className

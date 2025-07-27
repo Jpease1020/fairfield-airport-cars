@@ -121,7 +121,7 @@ jest.mock('openai', () => ({
 }));
 
 // Mock StandardNavigation component to avoid usePathname issues
-jest.mock('@/components/layout/StandardNavigation', () => ({
+jest.mock('@/components/layout/navigation/StandardNavigation', () => ({
   StandardNavigation: () => '<nav data-testid="mock-navigation">Mock Navigation</nav>',
 }));
 

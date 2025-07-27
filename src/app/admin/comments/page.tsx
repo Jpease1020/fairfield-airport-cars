@@ -7,7 +7,6 @@ import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection, StatCard, InfoCard } from '@/components/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 import { Stack } from '@/components/ui/containers';
-import { useAdmin } from '@/components/admin/AdminProvider';
 
 function CommentsPageContent() {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
@@ -61,24 +60,7 @@ function CommentsPageContent() {
     );
   };
 
-  const headerActions = [
-    { 
-      label: 'Refresh', 
-      onClick: loadComments, 
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: 'Export Report', 
-      onClick: () => alert('Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Moderation', 
-      onClick: () => alert('Comment moderation dashboard coming soon'), 
-      variant: 'primary' as const 
-    }
-  ];
+
 
   // Table columns
   const columns: DataTableColumn<ConfluenceComment>[] = [
@@ -181,7 +163,6 @@ function CommentsPageContent() {
     <AdminPageWrapper
       title="Page Comments"
       subtitle="Monitor and manage comments across all pages"
-      actions={headerActions}
       loading={loading}
       error={error}
       loadingMessage="Loading page comments..."
@@ -234,11 +215,7 @@ function CommentsPageContent() {
             emptyMessage="No comments found. Comments will appear here once users start commenting on pages."
             emptyIcon="💬"
             pageSize={10}
-            rowClassName={(comment) => 
-              getCommentStatus(comment) === 'Urgent' ? 'border-l-4 border-red-500' : 
-              getCommentStatus(comment) === 'Question' ? 'border-l-4 border-yellow-500' : ''
-            }
-            onRowClick={(comment) => console.log('Clicked comment from:', comment.createdBy)}
+            onRowClick={(comment: ConfluenceComment) => console.log('Clicked comment from:', comment.createdBy)}
           />
         </InfoCard>
       </GridSection>

@@ -286,7 +286,7 @@ function ManageBookingPageContent() {
                       icon: '❌'
                     }
                   ]} />
-                  <Stack spacing="md">
+                  <Container spacing="md">
                     <EditableInput
                       label="Page Title"
                       value={localContent?.title || ''}
@@ -337,7 +337,7 @@ function ManageBookingPageContent() {
                       value={localContent?.loadingMessage || ''}
                       onChange={(e) => handleFieldChange('loadingMessage', e.target.value)}
                     />
-                  </Stack>
+                  </Container>
                 </Container>
               )}
             </Container>

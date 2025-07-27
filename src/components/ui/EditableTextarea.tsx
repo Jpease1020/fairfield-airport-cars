@@ -1,5 +1,4 @@
 import React from 'react';
-import { Textarea } from '@/components/ui/textarea';
 import { Container, Label } from '@/components/ui';
 import { cn } from '@/lib/utils/utils';
 
@@ -22,8 +21,7 @@ const EditableTextarea: React.FC<EditableTextareaProps> = ({
     value, 
     onChange, 
     placeholder, 
-    disabled = false, 
-    spacing = 'md' 
+    disabled = false
   }) => {
     const sizeClasses = {
       sm: 'text-sm min-h-[80px]',
@@ -40,19 +38,19 @@ const EditableTextarea: React.FC<EditableTextareaProps> = ({
           </Label>
         )}
         <textarea
-          ref={ref}
           className={cn(
             'editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4',
-            sizeClasses[size],
-            className
+            sizeClasses[size]
           )}
           rows={rows}
-          {...props}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
         />
       </Container>
     );
-  }
-);
+  };
 
 EditableTextarea.displayName = 'EditableTextarea';
 

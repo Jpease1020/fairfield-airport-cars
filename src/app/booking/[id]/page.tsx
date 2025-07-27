@@ -182,7 +182,7 @@ function BookingDetailsContent() {
           title="👤 Passenger Information"
           description="Your contact details for this booking"
         >
-          <Stack direction="vertical" spacing="lg">
+          <Container spacing="lg">
             <Stack direction="horizontal" align="center" spacing="md">
               <Span>👤</Span>
               <H3>Passenger</H3>
@@ -198,7 +198,7 @@ function BookingDetailsContent() {
               <H3>Email</H3>
               <Text>{booking.email}</Text>
             </Stack>
-          </Stack>
+          </Container>
         </InfoCard>
       </GridSection>
 

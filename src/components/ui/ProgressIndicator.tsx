@@ -17,14 +17,12 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   totalSteps,
   steps,
   variant = 'default',
-  size = 'md',
-  color = 'primary'
 }) => {
   const progress = (currentStep / totalSteps) * 100;
 
   if (variant === 'minimal') {
     return (
-      <Container className={className}>
+      <Container>
         <Stack direction="horizontal" justify="between" align="center">
           <Span>Step {currentStep} of {totalSteps}</Span>
           <Span>{Math.round(progress)}%</Span>
@@ -38,7 +36,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   if (variant === 'detailed') {
     return (
-      <Container className={className}>
+      <Container>
         <Stack spacing="md">
           <Stack direction="horizontal" justify="between" align="center">
             <H3>
@@ -74,7 +72,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   // Default variant
   return (
-    <Container className={className}>
+    <Container>
       <Stack direction="horizontal" justify="between" align="center">
         <Span>
           {steps[currentStep - 1]}

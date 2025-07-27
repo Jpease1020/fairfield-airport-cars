@@ -85,7 +85,6 @@ const Navigation = () => {
           )}
         </Button>
       </Stack>
-    </Container>
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (

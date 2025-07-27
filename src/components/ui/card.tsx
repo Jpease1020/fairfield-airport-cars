@@ -39,7 +39,6 @@ export const Card: React.FC<CardProps> = ({
   children,
   variant = 'default',
   size = 'md',
-  className = '',
   onClick,
   hoverable = false,
 }) => {
@@ -63,7 +62,6 @@ export const Card: React.FC<CardProps> = ({
     sizeClasses[size],
     hoverable ? 'info-card-hoverable' : '',
     onClick ? 'info-card-clickable' : '',
-    className,
   ].filter(Boolean).join(' ');
 
   return (
@@ -73,7 +71,7 @@ export const Card: React.FC<CardProps> = ({
   );
 };
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ children, className = '' }) => {
+export const CardHeader: React.FC<CardHeaderProps> = ({ children }) => {
   return (
     <Container>
       {children}
@@ -81,7 +79,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ children, className = ''
   );
 };
 
-export const CardBody: React.FC<CardBodyProps> = ({ children, className = '' }) => {
+export const CardBody: React.FC<CardBodyProps> = ({ children }) => {
   return (
     <Container>
       {children}
@@ -89,7 +87,7 @@ export const CardBody: React.FC<CardBodyProps> = ({ children, className = '' }) 
   );
 };
 
-export const CardTitle: React.FC<CardTitleProps> = ({ children, className = '' }) => {
+export const CardTitle: React.FC<CardTitleProps> = ({ children }) => {
   return (
     <H3>
       {children}
@@ -97,7 +95,7 @@ export const CardTitle: React.FC<CardTitleProps> = ({ children, className = '' }
   );
 };
 
-export const CardDescription: React.FC<CardDescriptionProps> = ({ children, className = '' }) => {
+export const CardDescription: React.FC<CardDescriptionProps> = ({ children }) => {
   return (
     <Text>
       {children}

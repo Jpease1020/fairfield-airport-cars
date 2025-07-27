@@ -13,7 +13,6 @@ interface LocationAutocompleteProps {
   required?: boolean;
   error?: string;
   helperText?: string;
-  className?: string;
   fieldId?: string;
 }
 
@@ -26,7 +25,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   required = false,
   error,
   helperText,
-  className,
   fieldId
 }) => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -119,8 +117,16 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       )}
       
       <Container spacing="xs">
-        <div className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
-          {isLoading && <Loader2 className="w-4 h-4 text-gray-400" />}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.5rem 0.75rem',
+          border: '1px solid #d1d5db',
+          borderRadius: '0.375rem',
+          transition: 'border-color 0.2s, box-shadow 0.2s'
+        }}>
+          {isLoading && <Loader2 style={{ width: '1rem', height: '1rem', color: '#9ca3af' }} />}
           <input
             data-autocomplete-input
             id={fieldId}
@@ -130,9 +136,14 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder={placeholder}
-            className="flex-1 border-0 outline-none bg-transparent"
+            style={{
+              flex: '1',
+              border: '0',
+              outline: 'none',
+              backgroundColor: 'transparent'
+            }}
           />
-          {!isLoading && <MapPin className="w-4 h-4 text-gray-400" />}
+          {!isLoading && <MapPin style={{ width: '1rem', height: '1rem', color: '#9ca3af' }} />}
         </div>
         
         {error && <Text size="sm" color="error">{error}</Text>}

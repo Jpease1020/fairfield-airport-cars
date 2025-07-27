@@ -17,18 +17,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
   showActions = false,
   onAction
 }) => {
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return '✅';
-      case 'pending':
-        return '⏳';
-      case 'cancelled':
-        return '❌';
-      default:
-        return '❓';
-    }
-  };
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

@@ -5,24 +5,20 @@ import { Button } from './button';
 
 interface ActivityItemProps {
   icon: string;
-  iconType?: 'success' | 'pending' | 'warning' | 'error' | 'info';
   title: string;
   subtitle?: string;
   amount?: string | number;
   href?: string;
   onClick?: () => void;
-  theme?: 'light' | 'dark';
 }
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({
   icon,
-  iconType = 'info',
   title,
   subtitle,
   amount,
   href,
   onClick,
-  theme = 'light'
 }) => {
   const content = (
     <>

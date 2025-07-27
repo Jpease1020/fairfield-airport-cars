@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardBody } from './card';
+import { Stack, Span, Text } from '@/components/ui';
 
 // HelpCard Component - BULLETPROOF TYPE SAFETY!
 export interface HelpCardProps {
@@ -14,20 +15,20 @@ export const HelpCard: React.FC<HelpCardProps> = ({
   icon,
   title,
   description,
-  variant = 'default',
-  size = 'md'
 }) => {
   return (
     <Card>
-      <Stack spacing="sm">
-        <Stack direction="horizontal" spacing="sm" align="center">
-          <Span>
-            {icon}
-          </Span>
-          <Text>{title}</Text>
+      <CardBody>
+        <Stack spacing="sm">
+          <Stack direction="horizontal" spacing="sm" align="center">
+            <Span>
+              {icon}
+            </Span>
+            <Text>{title}</Text>
+          </Stack>
+          <Text>{description}</Text>
         </Stack>
-        <Text>{description}</Text>
-      </Stack>
+      </CardBody>
     </Card>
   );
 }; 

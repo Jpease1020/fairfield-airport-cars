@@ -1,6 +1,6 @@
 import React from 'react';
-import { EditableInput } from './EditableInput';
-import { EditableTextarea } from './EditableTextarea';
+import { EditableInput } from '@/components/ui/EditableInput';
+import { EditableTextarea } from '@/components/ui/EditableTextarea';
 
 // Clean EditableField - CASCADE EFFECT COMPLIANCE!
 interface EditableFieldProps {

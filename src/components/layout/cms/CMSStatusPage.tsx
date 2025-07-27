@@ -1,11 +1,12 @@
 import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
-import { CMSLayout } from '@/components/ui/layout/CMSLayout';
-import { PageHeader } from '@/components/layout/structure/PageHeader';
-import { Section, Container, H1, H2, Lead, Button, Link } from '@/components/ui';
+import { CMSLayout } from './CMSLayout';
+import { PageHeader } from '../structure/PageHeader';
+import { Section, Container, H1, H2, Button } from '@/components/ui';
 import { Card } from '@/components/ui/containers';
 import { CardBody } from '@/components/ui/card';
 import { Stack } from '@/components/ui/containers';
+import { Text, Link } from '@/components/ui/text';
 import { CheckCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
 interface CMSStatusPageProps {
@@ -29,9 +30,6 @@ interface CMSStatusPageProps {
     variant?: 'primary' | 'outline' | 'secondary';
   };
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  className?: string;
-  isEditable?: boolean;
-  onFieldChange?: (field: string, value: string) => void;
 }
 
 export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
@@ -46,18 +44,9 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
   showActionButtons = true,
   primaryAction,
   secondaryAction,
-  containerMaxWidth = 'lg',
-  className,
-  isEditable = false,
-  onFieldChange
+  containerMaxWidth = 'lg'
 }) => {
   const pageContent = cmsConfig.pages[pageType];
-  
-  const handleFieldChange = (field: string, value: string) => {
-    if (onFieldChange) {
-      onFieldChange(field, value);
-    }
-  };
 
   // Get page-specific content
   const pageTitle = title || (pageContent && 'title' in pageContent ? pageContent.title : '');
@@ -100,7 +89,6 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
       cmsConfig={cmsConfig} 
       pageType={pageType} 
       variant="status"
-      className={className}
     >
       {/* Status Section */}
       <Section variant="muted" padding="xl">
@@ -126,9 +114,9 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
                 </H2>
               )}
               {pageDescription && (
-                <Lead>
-                  {pageDescription}
-                </Lead>
+                              <Text>
+                {pageDescription}
+              </Text>
               )}
             </PageHeader>
 

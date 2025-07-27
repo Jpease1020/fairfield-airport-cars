@@ -9,9 +9,7 @@ interface ActionCardProps {
   href?: string;
   onClick?: () => void;
   description?: string;
-  variant?: 'default' | 'outlined' | 'filled';
   size?: 'sm' | 'md' | 'lg';
-  theme?: 'light' | 'dark';
   disabled?: boolean;
 }
 
@@ -21,9 +19,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   href,
   onClick,
   description,
-  variant = 'default',
   size = 'md',
-  theme = 'light',
   disabled = false
 }) => {
   const content = (

@@ -18,15 +18,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   subtitle,
   message,
   showSpinner = true,
-  size = 'md',
-  variant = 'centered',
-  spacing = 'normal'
 }) => {
-  const sizeClasses = {
-    'sm': 'h-32',
-    'md': 'h-64',
-    'lg': 'h-96'
-  }[size];
 
   return (
         <Container>

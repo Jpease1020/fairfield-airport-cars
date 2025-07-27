@@ -5,24 +5,20 @@ import { Button } from './button';
 
 interface AlertItemProps {
   icon: string;
-  type?: 'success' | 'warning' | 'error' | 'info';
   title: string;
   message: string;
   href?: string;
   onClick?: () => void;
   onDismiss?: () => void;
-  theme?: 'light' | 'dark';
 }
 
 export const AlertItem: React.FC<AlertItemProps> = ({
   icon,
-  type = 'info',
   title,
   message,
   href,
   onClick,
   onDismiss,
-  theme = 'light'
 }) => {
   const content = (
     <>

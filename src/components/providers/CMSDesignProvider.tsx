@@ -21,7 +21,7 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
           if (stored) {
             try {
               cmsConfig = JSON.parse(stored);
-            } catch (e) {
+            } catch {
               console.warn('Invalid stored CMS config, using defaults');
             }
           }

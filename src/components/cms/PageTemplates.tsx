@@ -20,7 +20,6 @@ export const createContentPageTemplate = (
 ) => {
   return function ContentPageTemplate() {
     const { config: cmsConfig } = useCMS();
-    const { editMode, handleFieldChange } = useEditMode();
     
     const pageContent = cmsConfig?.pages?.[pageType];
 
@@ -73,7 +72,6 @@ export const createConversionPageTemplate = (
 ) => {
   return function ConversionPageTemplate() {
     const { config: cmsConfig } = useCMS();
-    const { editMode, handleFieldChange } = useEditMode();
     
     const pageContent = cmsConfig?.pages?.[pageType];
 

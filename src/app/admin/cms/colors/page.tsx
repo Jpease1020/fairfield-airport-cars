@@ -7,12 +7,10 @@ import { GridSection } from '@/components/ui';
 import { SettingSection } from '@/components/ui/SettingSection';
 import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
 import { StatusMessage } from '@/components/ui/StatusMessage';
 import { Stack } from '@/components/ui/containers';
-import { useAdmin } from '@/components/admin/AdminProvider';
-import { getCMSConfig, updateCMSConfig } from '@/lib/services/cms-service';
+import { getCMSConfig } from '@/lib/services/cms-service';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
@@ -40,7 +38,6 @@ function AdminColorsPageContent() {
   const { addToast } = useToast();
   const [colors, setColors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -88,64 +85,14 @@ function AdminColorsPageContent() {
     }
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    setError(null);
-    
-    try {
-      await updateCMSConfig({ themeColors: colors });
-      addToast('success', 'Color scheme saved successfully!');
-    } catch {
-      const errorMsg = 'Failed to save color scheme';
-      setError(errorMsg);
-      addToast('error', errorMsg);
-    } finally {
-      setSaving(false);
-    }
-  };
 
-  const handleReset = () => {
-    if (confirm('Reset all colors to default? This will reload the page.')) {
-      COLOR_VARIABLES.forEach(({ key }) => {
-        setCSSVar(key, '');
-      });
-      addToast('info', 'Colors reset to default');
-      setTimeout(() => window.location.reload(), 1000);
-    }
-  };
 
-  const handleReload = () => {
-    loadColors();
-  };
 
-  // Header actions
-  const headerActions = React.useMemo(() => [
-    {
-      label: 'Reload',
-      onClick: handleReload,
-      variant: 'outline' as const,
-      icon: '🔄'
-    },
-    {
-      label: 'Reset to Default',
-      onClick: handleReset,
-      variant: 'secondary' as const,
-      icon: '↩️'
-    },
-    {
-      label: saving ? 'Saving...' : 'Save Colors',
-      onClick: handleSave,
-      variant: 'primary' as const,
-      disabled: saving,
-      icon: '💾'
-    }
-  ], [saving, handleSave, handleReload, handleReset]);
 
   return (
     <AdminPageWrapper
       title="Color Scheme"
       subtitle="Customize your admin and site colors"
-      actions={headerActions}
       loading={loading}
       error={error}
       errorTitle="Color Scheme Error"

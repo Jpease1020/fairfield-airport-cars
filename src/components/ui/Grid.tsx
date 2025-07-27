@@ -14,8 +14,6 @@ export interface GridItemProps {
 
 export const Grid: React.FC<GridProps> = ({
   children,
-  columns = 1,
-  spacing = 'md',
 }) => {
   return (
     <Container>
@@ -26,7 +24,6 @@ export const Grid: React.FC<GridProps> = ({
 
 export const GridItem: React.FC<GridItemProps> = ({
   children,
-  span = 1,
 }) => {
   return (
     <Container>

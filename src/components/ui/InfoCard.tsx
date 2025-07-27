@@ -17,8 +17,6 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   subtitle,
   icon,
   children,
-  theme = 'light',
-  variant = 'default'
 }) => {
   // Use subtitle as fallback for description
   const cardDescription = description || subtitle;

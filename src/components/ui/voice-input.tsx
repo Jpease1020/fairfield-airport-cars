@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Container, Span } from '@/components/ui';
 import { Mic, MicOff, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils/utils';
 
 interface VoiceInputProps {
   onTranscript: (text: string) => void;

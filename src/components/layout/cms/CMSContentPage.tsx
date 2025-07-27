@@ -1,10 +1,10 @@
 import React from 'react';
-import { Container, Span, H2, H3, Lead, Link } from '@/components/ui';
+import { Container, H2, H3 } from '@/components/ui';
+import { Link } from '@/components/ui/text';
 import { Section, Stack } from '@/components/ui/containers';
-import { Card, CardBody } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { CMSLayout } from './CMSLayout';
-import { PageHeader } from './PageHeader';
+import { PageHeader } from '../structure/PageHeader';
 import { CMSConfiguration } from '@/types/cms';
 
 interface CMSContentPageProps {
@@ -17,9 +17,6 @@ interface CMSContentPageProps {
   showTableOfContents?: boolean;
   showRelatedLinks?: boolean;
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  variant?: 'default' | 'compact' | 'wide';
-  isEditable?: boolean;
-  onFieldChange?: (field: string, value: string) => void;
 }
 
 export const CMSContentPage: React.FC<CMSContentPageProps> = ({
@@ -31,18 +28,9 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
   description,
   showTableOfContents = false,
   showRelatedLinks = false,
-  containerMaxWidth = 'xl',
-  variant = 'default',
-  isEditable = false,
-  onFieldChange
+  containerMaxWidth = 'xl'
 }) => {
   const pageContent = cmsConfig.pages[pageType];
-  
-  const handleFieldChange = (field: string, value: string) => {
-    if (onFieldChange) {
-      onFieldChange(field, value);
-    }
-  };
 
   // Get page-specific content
   const pageTitle = title || (pageContent && 'title' in pageContent ? pageContent.title : '');
@@ -50,24 +38,24 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
   const pageDescription = description || (pageContent && 'description' in pageContent ? pageContent.description : '');
   
   return (
-    <CMSLayout 
-      cmsConfig={cmsConfig} 
-      pageType={pageType} 
-      variant={variant === 'wide' ? 'wide' : 'content'}
-    >
+          <CMSLayout 
+        cmsConfig={cmsConfig} 
+        pageType={pageType} 
+        variant="content"
+      >
       {/* Header Section */}
       <Section variant="default" padding="xl">
         <Container maxWidth={containerMaxWidth}>
           <PageHeader title={pageTitle || "Page Header"}>
             {pageSubtitle && (
-              <Lead>
+              <Text>
                 {pageSubtitle}
-              </Lead>
+              </Text>
             )}
             {pageDescription && (
-              <Lead>
+              <Text>
                 {pageDescription}
-              </Lead>
+              </Text>
             )}
           </PageHeader>
         </Container>
@@ -102,7 +90,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
         <Section variant="muted" padding="xl">
           <Container maxWidth={containerMaxWidth} spacing="lg">
               <H2>Related Information</H2>
-              <Lead>Find more helpful resources and information</Lead>
+                              <Text>Find more helpful resources and information</Text>
               
               <Stack direction="horizontal" spacing="lg">
                 <Container>

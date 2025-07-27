@@ -234,7 +234,7 @@ function CMSPageContent() {
             title="🕒 Configuration Status"
             description="CMS configuration and update information"
           >
-            <Stack spacing="md">
+            <Container spacing="md">
               <Stack direction="horizontal" align="center" justify="between">
                 <Text>
                   Last Updated
@@ -265,7 +265,7 @@ function CMSPageContent() {
                   </Text>
                 </Container>
               </Stack>
-            </Stack>
+            </Container>
           </InfoCard>
         </GridSection>
       )}

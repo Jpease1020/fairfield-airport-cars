@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, H1, Text, Button, Span, Link } from '@/components/ui';
+import { Container, H1, Text, Button, Link } from '@/components/ui';
 import { Section, Stack } from '@/components/ui/containers';
 
 interface HeroSectionProps {
@@ -14,8 +14,6 @@ interface HeroSectionProps {
     label: string;
     href: string;
   };
-  backgroundImage?: string;
-  variant?: 'default' | 'centered';
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -23,21 +21,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   subtitle,
   description,
   primaryAction,
-  secondaryAction,
-  backgroundImage,
-  variant = 'default'
+  secondaryAction
 }) => {
-  const contentClasses = `hero-content ${variant === 'centered' ? 'hero-content-centered' : ''}`;
-
   return (
     <Section 
       variant="brand" 
       padding="xl"
-      style={backgroundImage ? { 
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      } : undefined}
     >
       <Container maxWidth="xl">
         <H1>{title}</H1>
@@ -47,17 +36,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {(primaryAction || secondaryAction) && (
           <Stack direction="horizontal" spacing="md">
             {primaryAction && (
-              <Link href={primaryAction.href}>
-                <Button variant="primary" size="lg">
-                  {primaryAction.label}
-                </Button>
-              </Link>
+              <Button variant="primary" size="lg">
+                {primaryAction.label}
+              </Button>
             )}
-            
             {secondaryAction && (
               <Link href={secondaryAction.href}>
                 <Button variant="outline" size="lg">
-                  {secondaryAction.label} <Span aria-hidden="true">→</Span>
+                  {secondaryAction.label}
                 </Button>
               </Link>
             )}

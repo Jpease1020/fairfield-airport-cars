@@ -15,8 +15,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   subtitle,
   padding = 'lg',
-  margin = 'none',
-  align = 'left'
+  margin = 'none'
 }) => {
   return (
     <Container as="header" padding={padding} margin={margin}>

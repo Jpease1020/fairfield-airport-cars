@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
 import { Container, H3, Text, Span, Link } from '@/components/ui';
 
 interface FeatureCardProps {

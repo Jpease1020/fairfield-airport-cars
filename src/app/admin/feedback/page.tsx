@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { NextPage } from 'next';
 import { Container, Text, Span } from '@/components/ui';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection, StatCard, InfoCard } from '@/components/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 import { Stack } from '@/components/ui/containers';
-import { useAdmin } from '@/components/admin/AdminProvider';
 
 interface Feedback {
   id: string;
@@ -148,24 +146,7 @@ function FeedbackPageContent() {
     );
   };
 
-  const headerActions = [
-    { 
-      label: 'Refresh', 
-      onClick: loadFeedback, 
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: 'Export Report', 
-      onClick: () => alert('Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Send Request', 
-      href: '/admin/bookings', 
-      variant: 'primary' as const 
-    }
-  ];
+
 
   // Table columns
   const columns: DataTableColumn<Feedback>[] = [
@@ -254,7 +235,6 @@ function FeedbackPageContent() {
     <AdminPageWrapper
       title="Customer Feedback"
       subtitle="Monitor and manage customer reviews and ratings"
-      actions={headerActions}
       loading={loading}
       error={error}
       loadingMessage="Loading customer feedback..."
@@ -307,11 +287,7 @@ function FeedbackPageContent() {
             emptyMessage="No customer feedback available yet. Reviews will appear here once customers submit them."
             emptyIcon="⭐"
             pageSize={10}
-            rowClassName={(feedback) => 
-              feedback.rating <= 2 ? 'border-l-4 border-red-500' : 
-              feedback.rating >= 5 ? 'border-l-4 border-green-500' : ''
-            }
-            onRowClick={(feedback) => console.log('Clicked feedback from:', feedback.customerName)}
+            onRowClick={(feedback: Feedback) => console.log('Clicked feedback from:', feedback.customerName)}
           />
         </InfoCard>
       </GridSection>

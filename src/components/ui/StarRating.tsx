@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
-import { Stack, Container } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/containers';
 import { Span } from '@/components/ui';
 
 // Clean StarRating Component - No className Props Allowed!
@@ -21,7 +21,6 @@ export const StarRating: React.FC<StarRatingProps> = ({
   maxRating = 5,
   size = 'md',
   spacing = 'sm',
-  variant = 'default',
   showValue = false
 }) => {
   const [hoverRating, setHoverRating] = React.useState(0);
@@ -51,12 +50,12 @@ export const StarRating: React.FC<StarRatingProps> = ({
   };
 
   return (
-    <Stack 
-      direction="horizontal" 
-      align="center" 
-      spacing={spacing}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div onMouseLeave={handleMouseLeave}>
+      <Stack 
+        direction="horizontal" 
+        align="center" 
+        spacing={spacing}
+      >
       {[...Array(maxRating)].map((_, index) => {
         const starValue = index + 1;
         const isFilled = starValue <= (hoverRating || rating);
@@ -82,8 +81,9 @@ export const StarRating: React.FC<StarRatingProps> = ({
         </Span>
       )}
     </Stack>
+    </div>
   );
-});
+};
 StarRating.displayName = 'StarRating';
 
  

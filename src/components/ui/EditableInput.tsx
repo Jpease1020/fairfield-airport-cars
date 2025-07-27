@@ -1,7 +1,6 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Container, Label } from '@/components/ui';
-import { cn } from '@/lib/utils/utils';
 
 // EditableInput Component - BULLETPROOF TYPE SAFETY!
 interface EditableInputProps {
@@ -18,8 +17,6 @@ interface EditableInputProps {
 
 const EditableInput: React.FC<EditableInputProps> = ({ 
     label, 
-    size = 'md', 
-    variant = 'normal', 
     value, 
     onChange, 
     placeholder, 
@@ -27,18 +24,6 @@ const EditableInput: React.FC<EditableInputProps> = ({
     type = 'text', 
     spacing = 'md' 
   }) => {
-    const sizeClasses = {
-      sm: 'h-8 text-sm',
-      md: 'h-10 text-base',
-      lg: 'h-12 text-lg',
-      xl: 'h-14 text-xl'
-    };
-
-    const variantClasses = {
-      title: 'text-3xl font-bold',
-      subtitle: 'text-xl font-semibold',
-      normal: 'text-base'
-    };
 
     return (
       <Container spacing={spacing}>
@@ -48,8 +33,6 @@ const EditableInput: React.FC<EditableInputProps> = ({
           </Label>
         )}
         <Input
-          variant={variant === 'normal' ? 'default' : 'enhanced'}
-          size={size}
           value={value}
           onChange={onChange}
           placeholder={placeholder}

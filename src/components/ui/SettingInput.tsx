@@ -35,28 +35,32 @@ export const SettingInput: React.FC<SettingInputProps> = ({
   helpLink
 }) => {
   return (
-    <Container className="setting-input">
-      <Stack direction="horizontal" spacing="sm" align="center" className="setting-input-header">
+    <Container>
+      <Stack direction="horizontal" spacing="sm" align="center">
         {icon && (
-          <Span className="setting-input-icon">
+          <Span>
             {icon}
           </Span>
         )}
         <label 
           htmlFor={id}
-          className="setting-input-label"
+          style={{
+            fontWeight: '500',
+            fontSize: '0.875rem',
+            color: '#374151'
+          }}
         >
           {label}
         </label>
       </Stack>
       
       {description && (
-        <Text className="setting-input-description">
+        <Text>
           {description}
         </Text>
       )}
       
-      <Stack direction="horizontal" spacing="sm" align="stretch" className="setting-input-controls">
+      <Stack direction="horizontal" spacing="sm" align="stretch">
         <input
           id={id}
           type={type}
@@ -64,18 +68,28 @@ export const SettingInput: React.FC<SettingInputProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
-          className={`setting-input-field ${disabled ? 'disabled' : ''}`}
+          style={{
+            flex: '1',
+            padding: '0.5rem 0.75rem',
+            border: '1px solid #d1d5db',
+            borderRadius: '0.375rem',
+            fontSize: '0.875rem',
+            backgroundColor: disabled ? '#f9fafb' : 'white',
+            color: disabled ? '#6b7280' : '#374151',
+            outline: 'none',
+            transition: 'border-color 0.2s'
+          }}
         />
         
         {actions && (
-          <Container className="setting-input-actions">
+          <Container>
             {actions}
           </Container>
         )}
       </Stack>
       
       {helpText && (
-        <Text className="setting-input-help">
+        <Text>
           {helpText}
           {helpLink && (
             <>
@@ -84,7 +98,10 @@ export const SettingInput: React.FC<SettingInputProps> = ({
                 href={helpLink.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="setting-input-help-link"
+                style={{
+                  color: '#2563eb',
+                  textDecoration: 'underline'
+                }}
               >
                 {helpLink.text}
               </a>

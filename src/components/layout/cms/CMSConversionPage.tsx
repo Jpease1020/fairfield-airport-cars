@@ -3,8 +3,6 @@ import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from './CMSLayout';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { Section, Container, H1, H2 } from '@/components/ui';
-import { Card } from '@/components/ui/containers';
-import { CardBody } from '@/components/ui/card';
 import { Stack } from '@/components/ui/containers';
 import { Text, Span } from '@/components/ui';
 
@@ -17,12 +15,9 @@ interface CMSConversionPageProps {
   description?: string;
   showTrustSignals?: boolean;
   showProgressIndicator?: boolean;
-  currentStep?: number;
   totalSteps?: number;
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   variant?: 'default' | 'compact' | 'focused';
-  isEditable?: boolean;
-  onFieldChange?: (field: string, value: string) => void;
 }
 
 export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
@@ -34,20 +29,11 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
   description,
   showTrustSignals = true,
   showProgressIndicator = false,
-  currentStep = 1,
   totalSteps = 3,
   containerMaxWidth = 'lg',
-  variant = 'default',
-  isEditable = false,
-  onFieldChange
+  variant = 'default'
 }) => {
   const pageContent = cmsConfig.pages[pageType];
-  
-  const handleFieldChange = (field: string, value: string) => {
-    if (onFieldChange) {
-      onFieldChange(field, value);
-    }
-  };
 
   // Get page-specific content
   const pageTitle = title || (pageContent && 'title' in pageContent ? pageContent.title : '');
@@ -113,7 +99,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
             {showTrustSignals && (
               <Container spacing="lg">
                 <H2>Why Choose Us?</H2>
-                <Stack spacing="md">
+                <Container spacing="md">
                   <Stack direction="horizontal" align="center" spacing="sm">
                     <Span>✓</Span>
                     <Text>Professional Drivers</Text>
@@ -129,7 +115,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
                     <Text>Clean Vehicles</Text>
                     <Text size="sm">Well-maintained luxury SUVs</Text>
                   </Stack>
-                </Stack>
+                </Container>
               </Container>
             )}
 

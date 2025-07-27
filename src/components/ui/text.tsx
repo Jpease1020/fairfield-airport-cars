@@ -186,25 +186,25 @@ export const H3: React.FC<HeadingProps> = ({
   );
 };
 
-export const H4: React.FC<HeadingProps> = ({ children, className = '', id }) => {
+export const H4: React.FC<HeadingProps> = ({ children, id }) => {
   return (
-    <h4 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-xl)', fontWeight: '600' }} className={className}>
+    <h4 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-xl)', fontWeight: '600' }}>
       {children}
     </h4>
   );
 };
 
-export const H5: React.FC<HeadingProps> = ({ children, className = '', id }) => {
+export const H5: React.FC<HeadingProps> = ({ children, id }) => {
   return (
-    <h5 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-lg)', fontWeight: '600' }} className={className}>
+    <h5 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-lg)', fontWeight: '600' }}>
       {children}
     </h5>
   );
 };
 
-export const H6: React.FC<HeadingProps> = ({ children, className = '', id }) => {
+export const H6: React.FC<HeadingProps> = ({ children, id }) => {
   return (
-    <h6 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-base)', fontWeight: '600' }} className={className}>
+    <h6 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>
       {children}
     </h6>
   );
@@ -432,7 +432,6 @@ export const Paragraph: React.FC<ParagraphProps> = ({
 export interface LinkProps {
   children: React.ReactNode;
   href: string;
-  className?: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
   rel?: string;
   variant?: 'primary' | 'secondary' | 'muted' | 'underline' | 'button';
@@ -443,7 +442,6 @@ export interface LinkProps {
 export const Link: React.FC<LinkProps> = ({
   children,
   href,
-  className = '',
   target = '_self',
   rel,
   variant = 'primary',
@@ -455,12 +453,20 @@ export const Link: React.FC<LinkProps> = ({
     `link-${variant}`,
     `link-size-${size}`,
     external ? 'link-external' : '',
-    className,
   ].filter(Boolean).join(' ');
 
   const linkRel = external ? 'noopener noreferrer' : rel;
 
-  // Component DELETED - violations detected
+  return (
+    <a 
+      href={href}
+      target={target}
+      rel={linkRel}
+      className={classes}
+    >
+      {children}
+    </a>
+  );
 };
 
 // Container component DELETED - BROKEN RECURSIVE INFINITE LOOP! 

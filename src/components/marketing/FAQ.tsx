@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Section, Container, H2, H3, Text, Button, Span } from '@/components/ui';
-import { cn } from '@/lib/utils/utils';
 
 interface FAQItem {
   question: string;

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Container, Text, H3, EditableText } from '@/components/ui';
+import { Container, Text, H3 } from '@/components/ui';
 import { useEditMode } from './EditModeProvider';
 
 interface Comment {
@@ -28,7 +28,7 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
   const [draggedComment, setDraggedComment] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [dragOffset] = useState({ x: 0, y: 0 });
 
   const handleAddComment = () => {
     if (newCommentText.trim()) {
@@ -48,17 +48,6 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
 
   const handleDeleteComment = (commentId: string) => {
     onCommentsChange(comments.filter(c => c.id !== commentId));
-  };
-
-  const handleMouseDown = (e: React.MouseEvent, commentId: string) => {
-    e.preventDefault();
-    setDraggedComment(commentId);
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    });
   };
 
   const handleMouseMove = useCallback((e: MouseEvent) => {

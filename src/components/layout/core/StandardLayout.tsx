@@ -1,7 +1,7 @@
 import React from 'react';
-import { StandardHeader } from './StandardHeader';
-import { StandardFooter } from './StandardFooter';
-import { StandardNavigation } from './StandardNavigation';
+import { StandardHeader } from '../structure/StandardHeader';
+import { StandardFooter } from '../structure/StandardFooter';
+import { StandardNavigation } from '../navigation/StandardNavigation';
 import { Container } from '@/components/ui';
 
 interface StandardLayoutProps {
@@ -22,11 +22,10 @@ export const StandardLayout: React.FC<StandardLayoutProps> = ({
   showHeader = true,
   showFooter = true,
   showNavigation = true,
-  variant = 'default',
   maxWidth = 'xl'
 }) => {
   return (
-    <Container variant={variant} maxWidth={maxWidth}>
+    <Container variant="default" maxWidth={maxWidth}>
       {showNavigation && <StandardNavigation />}
       
       <Container variant="main">

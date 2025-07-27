@@ -22,7 +22,7 @@ interface EditModeContextType {
   handleFieldChange: (section: string, field: string, value: unknown, subfield?: string) => void;
   handleSave: (cmsConfig: any, pageType: string) => Promise<void>;
   handleCancel: (originalContent: any) => void;
-  EditModeToggle: React.FC<{ className?: string }>;
+  EditModeToggle: React.FC;
   EditModeControls: React.FC<{ cmsConfig: any; pageType: string; originalContent: any }>;
 }
 

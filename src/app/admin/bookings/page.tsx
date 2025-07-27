@@ -14,12 +14,10 @@ import {
   ToastProvider,
   useToast,
   Span,
-  Container,
-  Text
+  Container
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
-import { useAdmin } from '@/components/admin/AdminProvider';
 
 function AdminBookingsPageContent() {
   const { addToast } = useToast();
@@ -190,41 +188,10 @@ function AdminBookingsPageContent() {
     .filter(b => b.status === 'cancelled')
     .reduce((sum, b) => sum + (b.cancellationFee || 0), 0);
 
-  // Header actions
-  const headerActions = [
-    {
-      label: 'Refresh',
-      icon: '🔄',
-      onClick: fetchBookings,
-      variant: 'outline' as const
-    },
-    {
-      label: 'Export',
-      icon: '📊',
-      onClick: () => addToast('info', 'Export feature coming soon'),
-      variant: 'outline' as const
-    }
-  ];
-
   // Status renderer
   const renderStatus = (status: string) => {
-    const getStatusClass = (status: string) => {
-      switch (status.toLowerCase()) {
-        case 'confirmed':
-          return 'status-badge-confirmed';
-        case 'pending':
-          return 'status-badge-pending';
-        case 'completed':
-          return 'status-badge-completed';
-        case 'cancelled':
-          return 'status-badge-cancelled';
-        default:
-          return 'status-badge-default';
-      }
-    };
-
     return (
-      <Span className={`status-badge ${getStatusClass(status)}`}>
+      <Span>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Span>
     );
@@ -331,7 +298,6 @@ function AdminBookingsPageContent() {
     <AdminPageWrapper
       title="Booking Dashboard"
       subtitle="Manage customer bookings and reservations"
-      actions={headerActions}
       loading={loading}
       error={error}
       loadingMessage="Loading bookings..."
@@ -384,8 +350,7 @@ function AdminBookingsPageContent() {
             emptyMessage="No bookings found. Create your first booking to get started."
             emptyIcon="📅"
             pageSize={10}
-            rowClassName={(booking) => booking.status === 'cancelled' ? 'opacity-60' : ''}
-            onRowClick={(booking) => console.log('Clicked booking:', booking.id)}
+            onRowClick={(booking: Booking) => console.log('Clicked booking:', booking.id)}
           />
         </InfoCard>
       </GridSection>

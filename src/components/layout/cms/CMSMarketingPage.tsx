@@ -1,9 +1,9 @@
 import React from 'react';
 import { CMSConfiguration, HomePageContent } from '@/types/cms';
-import { CMSLayout } from '@/components/ui/layout/CMSLayout';
-import { PageHeader } from '@/components/layout/structure/PageHeader';
-import { PageContent } from '@/components/ui/layout/PageContent';
-import { Container, Section, H1, H2, Lead } from '@/lib/design-system/components';
+import { CMSLayout } from './CMSLayout';
+import { PageHeader } from '../structure/PageHeader';
+import { Container, Section, H1, H2 } from '@/components/ui';
+import { Text } from '@/components/ui/text';
 
 interface CMSMarketingPageProps {
   cmsConfig: CMSConfiguration;
@@ -13,9 +13,6 @@ interface CMSMarketingPageProps {
   heroVariant?: 'default' | 'brand' | 'alternate' | 'muted';
   headerAlign?: 'left' | 'center' | 'right';
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  className?: string;
-  isEditable?: boolean;
-  onFieldChange?: (field: string, value: string) => void;
 }
 
 export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
@@ -25,18 +22,9 @@ export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
   showHero = true,
   heroVariant = 'brand',
   headerAlign = 'center',
-  containerMaxWidth = 'xl',
-  className,
-  isEditable = false,
-  onFieldChange
+  containerMaxWidth = 'xl'
 }) => {
   const pageContent = cmsConfig.pages[pageType];
-  
-  const handleFieldChange = (field: string, value: string) => {
-    if (onFieldChange) {
-      onFieldChange(field, value);
-    }
-  };
   
   // Check if this is a HomePageContent with hero section
   const hasHero = pageType === 'home' && pageContent && 'hero' in pageContent;
@@ -47,7 +35,6 @@ export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
       cmsConfig={cmsConfig} 
       pageType={pageType} 
       variant="marketing"
-      className={className}
     >
       {/* Hero Section */}
       {showHero && hasHero && homeContent && (
@@ -65,9 +52,9 @@ export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
                 </H2>
               )}
               {homeContent.hero?.ctaText && (
-                <Lead>
+                <Text>
                   {homeContent.hero.ctaText}
-                </Lead>
+                </Text>
               )}
             </PageHeader>
           </Container>
@@ -77,9 +64,7 @@ export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
       {/* Main Content */}
       <Section padding="xl">
         <Container maxWidth={containerMaxWidth}>
-          <PageContent padding="none" margin="none">
-            {children}
-          </PageContent>
+          {children}
         </Container>
       </Section>
     </CMSLayout>

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -70,7 +69,6 @@ interface FormFieldProps {
 const FormFieldComponent: React.FC<FormFieldProps> = ({ 
     label, 
     error, 
-    helperText, 
     required = false,
     type = 'text',
     value,
@@ -93,7 +91,8 @@ const FormFieldComponent: React.FC<FormFieldProps> = ({
           </Label>
           <Input
             id={fieldId}
-            variant={error ? 'error' : 'default'}
+            error={!!error}
+            errorMessage={error}
             size={size}
             required={required}
             type={type}
@@ -106,8 +105,7 @@ const FormFieldComponent: React.FC<FormFieldProps> = ({
         </Container>
       </ErrorBoundary>
     );
-  }
-);
+  };
 FormFieldComponent.displayName = 'FormField';
 
 // Memoize the component for better performance

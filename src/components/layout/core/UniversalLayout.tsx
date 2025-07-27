@@ -1,7 +1,7 @@
 import React from 'react';
-import { StandardHeader } from './StandardHeader';
-import { StandardFooter } from './StandardFooter';
-import { StandardNavigation } from './StandardNavigation';
+import { StandardHeader } from '../structure/StandardHeader';
+import { StandardFooter } from '../structure/StandardFooter';
+import { StandardNavigation } from '../navigation/StandardNavigation';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { Container } from '@/components/ui';
 
@@ -42,14 +42,13 @@ export const UniversalLayout: React.FC<UniversalLayoutProps> = ({
   showHeader = true,
   showFooter = true,
   showNavigation = true,
-  layoutType = 'standard',
-  variant = 'standard'
+  layoutType = 'standard'
 }) => {
   // Determine navigation component based on layout type
   const NavigationComponent = layoutType === 'admin' ? AdminNavigation : StandardNavigation;
 
   return (
-    <Container variant={variant}>
+    <Container variant="default">
       {showNavigation && <NavigationComponent />}
       
       <Container variant="main">

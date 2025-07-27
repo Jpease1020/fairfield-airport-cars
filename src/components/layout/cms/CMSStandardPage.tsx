@@ -1,9 +1,9 @@
 import React from 'react';
-import { CMSConfiguration, PageContent } from '@/types/cms';
-import { CMSLayout } from '@/components/ui/layout/CMSLayout';
-import { PageHeader } from '@/components/layout/structure/PageHeader';
-import { PageContent as LayoutPageContent } from '@/components/ui/layout/PageContent';
-import { Container, H1, H2, Lead } from '@/lib/design-system/components';
+import { CMSConfiguration } from '@/types/cms';
+import { CMSLayout } from './CMSLayout';
+import { PageHeader } from '../structure/PageHeader';
+import { Container, H1, H2 } from '@/components/ui';
+import { Text } from '@/components/ui/text';
 
 interface CMSStandardPageProps {
   cmsConfig: CMSConfiguration;
@@ -14,8 +14,6 @@ interface CMSStandardPageProps {
   headerAlign?: 'left' | 'center' | 'right';
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   className?: string;
-  isEditable?: boolean;
-  onFieldChange?: (field: string, value: string) => void;
 }
 
 export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
@@ -26,17 +24,9 @@ export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
   showHeader = true,
   headerAlign = 'left',
   containerMaxWidth = 'xl',
-  className,
-  isEditable = false,
-  onFieldChange
+  className
 }) => {
   const pageContent = cmsConfig.pages[pageType];
-  
-  const handleFieldChange = (field: string, value: string) => {
-    if (onFieldChange) {
-      onFieldChange(field, value);
-    }
-  };
   
   // Check if this page has standard title/subtitle/description properties
   const hasStandardProps = pageContent && (
@@ -66,16 +56,14 @@ export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
               </H2>
             )}
             {'description' in pageContent && pageContent.description && (
-              <Lead >
+              <Text >
                 {pageContent.description}
-              </Lead>
+              </Text>
             )}
           </PageHeader>
         )}
         
-        <LayoutPageContent padding="lg" margin="none">
-          {children}
-        </LayoutPageContent>
+        {children}
       </Container>
     </CMSLayout>
   );

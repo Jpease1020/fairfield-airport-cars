@@ -29,7 +29,7 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
 
   return (
     <GridSection variant="content" columns={1}>
-      <Container className={`status-message status-message-${type}`}>
+      <Container>
         <Stack direction="horizontal" spacing="sm" align="center">
           <Span>{icon || getDefaultIcon()}</Span>
           <Span>{message}</Span>
@@ -40,7 +40,6 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
             onClick={onDismiss}
             variant="ghost"
             size="sm"
-            className="status-message-dismiss"
           >
             ×
           </Button>

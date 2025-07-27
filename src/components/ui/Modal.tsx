@@ -12,24 +12,40 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
+const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(({
   isOpen,
   onClose,
   title,
   children
-}, ref) => {
+}) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div style={{
+      position: 'fixed',
+      inset: '0',
+      zIndex: '50',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black bg-opacity-50"
+        style={{
+          position: 'absolute',
+          inset: '0',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)'
+        }}
         onClick={onClose}
       />
         
       {/* Modal Content */}
-      <div className="relative max-w-lg w-full mx-4">
+      <div style={{
+        position: 'relative',
+        maxWidth: '32rem',
+        width: '100%',
+        margin: '0 1rem'
+      }}>
         <Container variant="elevated" padding="lg">
           <Stack direction="horizontal" align="center" justify="between">
             <H2>
@@ -49,4 +65,8 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
         </div>
       </div>
   );
-}); 
+});
+
+ModalComponent.displayName = 'Modal';
+
+export const Modal = ModalComponent; 
