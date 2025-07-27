@@ -60,6 +60,7 @@
     "reorganize:layout": "node scripts/reorganize-layout-design.js",
     "cleanup:structural": "node scripts/structural-cleanup.js",
     "cleanup:obsolete": "node scripts/cleanup-obsolete-files.js",
+    "fix:ui-components": "node scripts/fix-ui-components.js",
     "pre-commit": "./scripts/pre-commit-check.sh && npm run check:components"
   },
   "dependencies": {

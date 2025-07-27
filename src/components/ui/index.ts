@@ -1,7 +1,11 @@
+// Layout Components (Moved)
+export { PageHeader } from '../layout/structure/PageHeader';
+export { PageSection } from '../layout/structure/PageSection';
+export { AdminPageWrapper } from '../admin/AdminPageWrapper';
 // Layout Components
-export { PageHeader } from './PageHeader';
+
 export { GridSection } from './GridSection';
-export { PageSection } from './PageSection';
+
 
 // Data Display Components  
 export { StatCard } from './StatCard';
@@ -14,7 +18,7 @@ export { ActionCard } from './ActionCard';
 export { ActionGrid } from './ActionGrid';
 
 // New Reusable Admin Components (Phase 1 & 2)
-export { AdminPageWrapper } from './AdminPageWrapper';
+
 export { FormSection } from './FormSection';
 export { LoadingState } from './LoadingState';
 export { ErrorState } from './ErrorState';
@@ -70,7 +74,7 @@ export { Badge } from './badge';
 export { Button } from './button';
 export { Input } from './input';
 export { Textarea } from './textarea';
-export { Grid, GridItem } from './Grid';
+export { Grid, GridItem } from './containers';
 
 // Form Components
 export { 
