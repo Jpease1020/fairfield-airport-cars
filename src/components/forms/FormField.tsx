@@ -37,7 +37,8 @@ import { Container, Span } from '@/components/ui';
  * />
  * ```
  */
-interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+// Clean FormField Component - CASCADE EFFECT FORCES COMPLIANCE!
+interface FormFieldProps {
   /** The label text for the field */
   label: string;
   /** Error message to display below the field */
@@ -46,46 +47,61 @@ interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   helperText?: string;
   /** Whether the field is required */
   required?: boolean;
+  /** Input type */
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
+  /** Input value */
+  value?: string;
+  /** Placeholder text */
+  placeholder?: string;
+  /** Change handler */
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Container spacing */
+  spacing?: 'sm' | 'md' | 'lg';
+  /** Disabled state */
+  disabled?: boolean;
+  /** Field name */
+  name?: string;
   /** Custom error boundary fallback */
   errorFallback?: React.ComponentType<{ error?: Error; resetError: () => void }>;
 }
 
-const FormFieldComponent = React.forwardRef<HTMLInputElement, FormFieldProps>(
-  ({ 
-    className, 
+const FormFieldComponent: React.FC<FormFieldProps> = ({ 
     label, 
     error, 
     helperText, 
-    required = false, 
-    id, 
-    errorFallback,
-    type,
-    ...props 
-  }, ref) => {
-    const fieldId = id || `field-${label.toLowerCase().replace(/\s+/g, '-')}`;
+    required = false,
+    type = 'text',
+    value,
+    placeholder,
+    onChange,
+    size = 'md',
+    spacing = 'md',
+    disabled = false,
+    name,
+    errorFallback
+  }) => {
+    const fieldId = `field-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
     return (
       <ErrorBoundary fallback={errorFallback}>
-        <Container >
-          <Label htmlFor={fieldId} >
+        <Container spacing={spacing}>
+          <Label htmlFor={fieldId}>
             {label}
-            {required && <Span >*</Span>}
+            {required && <Span color="error">*</Span>}
           </Label>
           <Input
             id={fieldId}
-            className={cn(
-              error && 'border-error focus-visible:ring-error',
-              className
-            )}
+            variant={error ? 'error' : 'default'}
+            size={size}
             required={required}
-            type={type as any}
-            placeholder={props.placeholder}
-            value={props.value as string}
-            onChange={props.onChange}
-            onBlur={props.onBlur}
-            onFocus={props.onFocus}
-            disabled={props.disabled}
-            name={props.name}
+            type={type}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
+            name={name}
           />
         </Container>
       </ErrorBoundary>
