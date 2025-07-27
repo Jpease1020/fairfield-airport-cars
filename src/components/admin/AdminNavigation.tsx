@@ -21,7 +21,7 @@ export const AdminNavigation: React.FC = () => {
   return (
     <nav className="standard-navigation admin-nav">
       <Container maxWidth="xl">
-        <div className="">
+        <div className="flex items-center justify-between">
           <div className="nav-brand">
             <Link href="/admin" className="nav-logo">
               Admin Panel

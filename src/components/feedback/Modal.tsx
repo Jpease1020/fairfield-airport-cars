@@ -29,37 +29,37 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <Container className="">
-      <Container className="">
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
         <div 
-          className=""
+          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
           onClick={onClose}
         />
         
-        <Container className={cn(
+        <div className={cn(
           'relative transform overflow-hidden rounded-lg bg-bg-primary text-left shadow-xl transition-all sm:my-8 sm:w-full',
           sizeClasses[size]
         )}>
-          <Container className="">
-            <H2 className="">
-              {title}
-            </H2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className=""
-            >
-              <X className="" />
-            </Button>
-          </Container>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                    <H2 className="text-lg font-medium text-text-primary">
+          {title}
+        </H2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="text-text-light hover:text-text-secondary"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+          </div>
           
-          <Container className="">
+          <div className="px-6 py-4">
             {children}
-          </Container>
-        </Container>
-      </Container>
-    </Container>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

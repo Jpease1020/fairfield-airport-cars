@@ -88,9 +88,9 @@ function BookingDetailsContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="Loading..." description="Fetching booking details">
-            <div className="booking-loading-container">
+            <Container className="booking-loading-container">
               <LoadingSpinner text="Loading booking details..." />
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -106,10 +106,10 @@ function BookingDetailsContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Booking Not Found" description="The booking could not be found">
-            <div className="booking-error-container">
-              <p className="booking-error-message">
+            <Container className="booking-error-container">
+              <Text className="booking-error-message">
                 {error || 'The booking you are looking for could not be found.'}
-              </p>
+              </Text>
               <ActionButtonGroup buttons={[
                 {
                   label: 'Book a New Ride',
@@ -118,7 +118,7 @@ function BookingDetailsContent() {
                   icon: '🚗'
                 }
               ]} />
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -158,9 +158,9 @@ function BookingDetailsContent() {
           title={`${getStatusIcon(booking.status)} Booking Status`}
           description={`Your booking is currently ${booking.status}`}
         >
-          <div className={`booking-status-badge ${getStatusClass(booking.status)}`}>
+          <Container className={`booking-status-badge ${getStatusClass(booking.status)}`}>
             {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-          </div>
+          </Container>
         </InfoCard>
       </GridSection>
 

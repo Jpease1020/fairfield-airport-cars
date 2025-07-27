@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
-import { Textarea, Select, Option } from '@/components/ui';
+import { Textarea, Select, Option, Container } from '@/components/ui';
 
 interface SimpleCommentSystemProps {
   children: ReactNode;
@@ -181,13 +181,13 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
   const getStatusIcon = (status: ConfluenceComment['status']) => {
     switch (status) {
       case 'open':
-        return <Clock className="" />;
+        return <Clock className="w-4 h-4" />;
       case 'in-progress':
-        return <Clock className="" />;
+        return <Clock className="w-4 h-4" />;
       case 'resolved':
-        return <CheckCircle className="" />;
+        return <CheckCircle className="w-4 h-4" />;
       default:
-        return <Clock className="" />;
+        return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -349,56 +349,56 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                   <Textarea
                     value={comment.comment}
                     onChange={(e) => handleEditComment(comment.id, e.target.value)}
-                    className=""
+                    className="w-full mb-2"
                     rows={2}
                   />
                   
-                  <div className="">
+                  <Container className="flex items-center space-x-2">
                     <Select
                       value={comment.status}
-                      onChange={(e) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
-                      className=""
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
+                      className="flex-1"
                     >
                       <Option value="open">Open</Option>
                       <Option value="in-progress">In Progress</Option>
                       <Option value="resolved">Resolved</Option>
                     </Select>
-                  </div>
+                  </Container>
                 </div>
               ))}
             </div>
           )}
           
           {/* New Comment Input */}
-          <div className="">
+          <Container className="space-y-3">
             <Textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Add a new comment..."
-              className=""
+              className="w-full"
               rows={3}
               autoFocus
             />
             
-            <div className="">
-              <button
-                onClick={handleAddComment}
-                disabled={!commentText.trim()}
-                className=""
-              >
-                Add Comment
-              </button>
-              <button
-                onClick={() => {
-                  setActiveCommentBox(null);
-                  setSelectedElement(null);
-                }}
-                className=""
-              >
-                Close
-              </button>
-            </div>
-          </div>
+            <Container className="flex space-x-2">
+                              <button
+                  onClick={handleAddComment}
+                  disabled={!commentText.trim()}
+                  className="flex-1 btn btn-primary disabled:opacity-50"
+                >
+                  Add Comment
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveCommentBox(null);
+                    setSelectedElement(null);
+                  }}
+                  className="flex-1 btn btn-secondary"
+                >
+                  Close
+                </button>
+            </Container>
+          </Container>
         </div>
       )}
 

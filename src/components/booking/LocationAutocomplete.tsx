@@ -103,16 +103,16 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   return (
     <Container className={cn('relative', className)}>
       {label && (
-        <Label htmlFor={fieldId} className="">
+        <Label htmlFor={fieldId} className="block text-sm font-medium text-text-primary mb-2">
           {label}
-          {required && <Span className="">*</Span>}
+          {required && <Span className="text-error-color ml-1">*</Span>}
         </Label>
       )}
       
-      <Container className="">
+      <Container className="relative">
         <div className="relative">
           {isLoading && (
-            <Loader2 className="" />
+            <Loader2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary animate-spin" />
           )}
           <input
             ref={inputRef}
@@ -129,39 +129,39 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             )}
           />
           {!isLoading && (
-            <MapPin className="" />
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary" />
           )}
         </div>
         
         {error && (
-          <Text className="">{error}</Text>
+          <Text className="text-error-color text-sm mt-1">{error}</Text>
         )}
         
         {helperText && !error && (
-          <Text className="">{helperText}</Text>
+          <Text className="text-text-secondary text-sm mt-1">{helperText}</Text>
         )}
       </Container>
 
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className=""
+          className="absolute z-10 w-full mt-1 bg-background-primary border border-border-color rounded-md shadow-lg max-h-60 overflow-y-auto"
         >
           {suggestions.map((suggestion, index) => (
             <Button
               key={index}
               variant="ghost"
               onClick={() => handleSuggestionClick(suggestion)}
-              className=""
+              className="w-full text-left p-3 hover:bg-background-secondary"
             >
-              <div className="">
-                <MapPin className="" />
-                <div>
-                  <div className="">
+              <div className="flex items-start space-x-3">
+                <MapPin className="w-4 h-4 text-text-secondary mt-0.5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-text-primary font-medium">
                     {suggestion.structured_formatting?.main_text || suggestion.description}
                   </div>
                   {suggestion.structured_formatting?.secondary_text && (
-                    <div className="">
+                    <div className="text-text-secondary text-sm">
                       {suggestion.structured_formatting.secondary_text}
                     </div>
                   )}

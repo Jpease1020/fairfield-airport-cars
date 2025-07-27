@@ -41,26 +41,26 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
         <Section className={cn('space-y-4', className)} {...props}>
           <Container maxWidth="lg">
             {title && (
-              <div className="">
-                <H2 className="">{title}</H2>
+              <Container className="text-center mb-4">
+                <H2 className="page-title">{title}</H2>
                 {subtitle && (
-                  <Text className="">{subtitle}</Text>
+                  <Text className="page-subtitle">{subtitle}</Text>
                 )}
-              </div>
+              </Container>
             )}
             
-            <div className="">
+            <Container className="space-y-4">
               {items.map((item, index) => (
-                <div key={index} className="">
+                <Container key={index} className="card">
                   <Button
                     variant="ghost"
                     onClick={() => toggleItem(index)}
-                    className=""
+                    className="w-full flex items-center justify-between p-4 text-left hover:bg-background-secondary"
                   >
-                    <span className="">{item.question}</span>
+                    <span className="font-medium">{item.question}</span>
                     <svg
                       className={cn(
-                        'w-5 h-5 text-text-secondary transition-transform',
+                        'w-5 h-5 transition-transform',
                         openItems.has(index) ? 'rotate-180' : ''
                       )}
                       fill="none"
@@ -72,13 +72,13 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
                   </Button>
                   
                   {openItems.has(index) && (
-                    <div className="">
-                      <Text className="">{item.answer}</Text>
-                    </div>
+                    <Container className="px-4 pb-4">
+                      <Text className="leading-relaxed">{item.answer}</Text>
+                    </Container>
                   )}
-                </div>
+                </Container>
               ))}
-            </div>
+            </Container>
           </Container>
         </Section>
       );
@@ -89,26 +89,26 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
         <Section className={cn('space-y-6', className)} {...props}>
           <Container maxWidth="lg">
             {title && (
-              <div className="">
-                <H2 className="">{title}</H2>
+              <Container className="text-center mb-4">
+                <H2 className="page-title">{title}</H2>
                 {subtitle && (
-                  <Text className="">{subtitle}</Text>
+                  <Text className="page-subtitle">{subtitle}</Text>
                 )}
-              </div>
+              </Container>
             )}
             
-            <div className="">
+            <Container className="space-y-6">
               {items.map((item, index) => (
-                <div key={index}>
-                  <H3 className="">
+                <Container key={index} className="text-center">
+                  <H3 className="text-xl font-semibold mb-2">
                     {item.question}
                   </H3>
-                  <Text className="">
+                  <Text className="leading-relaxed">
                     {item.answer}
                   </Text>
-                </div>
+                </Container>
               ))}
-            </div>
+            </Container>
           </Container>
         </Section>
       );
@@ -119,26 +119,26 @@ const FAQ = React.forwardRef<HTMLDivElement, FAQProps>(
       <Section className={cn('space-y-6', className)} {...props}>
         <Container maxWidth="lg">
           {title && (
-            <div className="">
-              <H2 className="">{title}</H2>
+            <Container className="text-center mb-4">
+              <H2 className="page-title">{title}</H2>
               {subtitle && (
-                <Text className="">{subtitle}</Text>
+                <Text className="page-subtitle">{subtitle}</Text>
               )}
-            </div>
+            </Container>
           )}
           
-          <div className="">
+          <Container className="space-y-6">
             {items.map((item, index) => (
-              <div key={index} className="">
-                <H3 className="">
+              <Container key={index} className="border-b border-border-color pb-6 last:border-b-0">
+                <H3 className="text-xl font-semibold mb-3">
                   {item.question}
                 </H3>
-                <Text className="">
+                <Text className="leading-relaxed">
                   {item.answer}
                 </Text>
-              </div>
+              </Container>
             ))}
-          </div>
+          </Container>
         </Container>
       </Section>
     );

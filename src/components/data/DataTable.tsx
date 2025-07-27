@@ -94,10 +94,10 @@ interface DataTableProps<T> {
  */
 const LoadingSkeleton: React.FC<{ className?: string }> = ({ className }) => (
   <Container className={cn('w-full', className)}>
-    <div className="">
-      <div className=""></div>
+    <div className="animate-pulse space-y-3">
+      <div className="h-4 bg-gray-200 rounded"></div>
       {[...Array(5)].map((_, i) => (
-        <div key={i} className=""></div>
+        <div key={i} className="h-4 bg-gray-200 rounded"></div>
       ))}
     </div>
   </Container>

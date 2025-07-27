@@ -7,7 +7,9 @@ import { useSearchParams } from 'next/navigation';
 import { 
   GridSection,
   InfoCard,
-  LoadingSpinner
+  LoadingSpinner,
+  Container,
+  Text
 } from '@/components/ui';
 import { UnifiedLayout } from '@/components/layout';
 
@@ -62,11 +64,11 @@ function DriverLocationContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Unauthorized" description="You are not authorized to access this page">
-            <div className="driver-location-unauthorized">
-              <p className="driver-location-unauthorized-text">
+            <Container className="driver-location-unauthorized">
+              <Text className="driver-location-unauthorized-text">
                 You are not authorized to access this page.
-              </p>
-            </div>
+              </Text>
+            </Container>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -84,17 +86,17 @@ function DriverLocationContent() {
           title="📍 Location Status"
           description="Your current location sharing status"
         >
-          <div className="driver-location-status">
-            <p className="driver-location-status-text">{status}</p>
+          <Container className="driver-location-status">
+            <Text className="driver-location-status-text">{status}</Text>
             {coords && (
-              <div className="driver-location-coordinates">
-                <p className="driver-location-coordinates-label">Current Coordinates:</p>
-                <p className="driver-location-coordinates-value">
+              <Container className="driver-location-coordinates">
+                <Text className="driver-location-coordinates-label">Current Coordinates:</Text>
+                <Text className="driver-location-coordinates-value">
                   Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
-                </p>
-              </div>
+                </Text>
+              </Container>
             )}
-          </div>
+          </Container>
         </InfoCard>
       </GridSection>
     </UnifiedLayout>
@@ -111,9 +113,9 @@ export default function DriverLocationPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="Loading..." description="Initializing location services">
-            <div className="driver-location-loading">
+            <Container className="driver-location-loading">
               <LoadingSpinner text="Loading..." />
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>

@@ -36,7 +36,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     };
 
     return (
-      <Container
+      <div
         className={cn(
           'rounded-lg border p-4',
           variantClasses[variant],
@@ -44,15 +44,15 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         )}
         {...props}
       >
-        <Container className="">
-          <Container className="">
+        <div className="flex">
+          <div className="flex-1">
             {title && (
-              <H4 className="">{title}</H4>
+              <H4 className="font-medium mb-1">{title}</H4>
             )}
-            <Container className="">
+            <div className="text-sm">
               {children}
-            </Container>
-          </Container>
+            </div>
+          </div>
           {dismissible && onClose && (
             <Button
               variant="ghost"
@@ -63,11 +63,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
                 iconClasses[variant]
               )}
             >
-              <X className="" />
+              <X className="h-4 w-4" />
             </Button>
           )}
-        </Container>
-      </Container>
+        </div>
+      </div>
     );
   }
 );

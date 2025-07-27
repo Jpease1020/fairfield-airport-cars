@@ -26,21 +26,21 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   }[size];
 
   return (
-    <Container className={`flex items-center justify-center ${sizeClasses} ${className}`}>
-      <Container className="">
+    <div className={`flex items-center justify-center ${sizeClasses} ${className}`}>
+      <div className="text-center">
         {showSpinner && (
-          <Container className="">
+          <div className="mb-4">
             <LoadingSpinner />
-          </Container>
+          </div>
         )}
-        <H3 className="">{title}</H3>
+        <H3 className="text-lg font-medium text-text-primary mb-2">{title}</H3>
         {subtitle && (
-          <Text className="">{subtitle}</Text>
+          <Text className="text-text-secondary mb-2">{subtitle}</Text>
         )}
         {message && (
-          <Text className="">{message}</Text>
+          <Text className="text-text-light">{message}</Text>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 }; 

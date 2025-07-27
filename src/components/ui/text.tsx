@@ -9,7 +9,7 @@ export interface HeadingProps {
 
 export const H1: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h1 id={id} className={`heading heading-1 ${className}`}>
+    <h1 id={id} className={`page-title ${className}`}>
       {children}
     </h1>
   );
@@ -17,7 +17,7 @@ export const H1: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H2: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h2 id={id} className={`heading heading-2 ${className}`}>
+    <h2 id={id} className={`page-title ${className}`}>
       {children}
     </h2>
   );
@@ -25,7 +25,7 @@ export const H2: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H3: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h3 id={id} className={`heading heading-3 ${className}`}>
+    <h3 id={id} className={`text-xl font-semibold ${className}`}>
       {children}
     </h3>
   );
@@ -33,7 +33,7 @@ export const H3: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H4: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h4 id={id} className={`heading heading-4 ${className}`}>
+    <h4 id={id} className={`text-lg font-semibold ${className}`}>
       {children}
     </h4>
   );
@@ -41,7 +41,7 @@ export const H4: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H5: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h5 id={id} className={`heading heading-5 ${className}`}>
+    <h5 id={id} className={`text-base font-semibold ${className}`}>
       {children}
     </h5>
   );
@@ -49,7 +49,7 @@ export const H5: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H6: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h6 id={id} className={`heading heading-6 ${className}`}>
+    <h6 id={id} className={`text-sm font-semibold ${className}`}>
       {children}
     </h6>
   );
@@ -68,17 +68,27 @@ export interface TextProps {
 export const Text: React.FC<TextProps> = ({
   children,
   className = '',
-  variant = 'body',
   size = 'base',
   align = 'left',
-  color = 'primary',
 }) => {
+  const sizeClasses = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    base: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl'
+  };
+
+  const alignClasses = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right',
+    justify: 'text-justify'
+  };
+
   const classes = [
-    'text',
-    `text-${variant}`,
-    `text-size-${size}`,
-    `text-align-${align}`,
-    `text-color-${color}`,
+    sizeClasses[size],
+    alignClasses[align],
     className,
   ].filter(Boolean).join(' ');
 
@@ -239,11 +249,27 @@ export const Container: React.FC<ContainerProps> = ({
   center = true,
   fluid = false,
 }) => {
+  const maxWidthClasses = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
+    full: 'max-w-full'
+  };
+
+  const paddingClasses = {
+    none: '',
+    sm: 'p-2',
+    md: 'p-4',
+    lg: 'p-6',
+    xl: 'p-8'
+  };
+
   const classes = [
-    'container',
-    fluid ? 'container-fluid' : `container-max-width-${maxWidth}`,
-    padding !== 'none' ? `container-padding-${padding}` : '',
-    center ? 'container-center' : '',
+    center ? 'mx-auto' : '',
+    !fluid ? maxWidthClasses[maxWidth] : '',
+    paddingClasses[padding],
     className,
   ].filter(Boolean).join(' ');
 
@@ -269,15 +295,26 @@ export const Section: React.FC<SectionProps> = ({
   className = '',
   padding = 'lg',
   margin = 'none',
-  variant = 'default',
-  background = 'default',
 }) => {
+  const paddingClasses = {
+    none: '',
+    sm: 'py-4',
+    md: 'py-6',
+    lg: 'py-8',
+    xl: 'py-12'
+  };
+
+  const marginClasses = {
+    none: '',
+    sm: 'my-4',
+    md: 'my-6',
+    lg: 'my-8',
+    xl: 'my-12'
+  };
+
   const classes = [
-    'section',
-    `section-${variant}`,
-    `section-background-${background}`,
-    padding !== 'none' ? `section-padding-${padding}` : '',
-    margin !== 'none' ? `section-margin-${margin}` : '',
+    paddingClasses[padding],
+    marginClasses[margin],
     className,
   ].filter(Boolean).join(' ');
 

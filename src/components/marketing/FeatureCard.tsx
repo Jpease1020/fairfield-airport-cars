@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
-import { Container, H3, Text } from '@/components/ui';
+import { Container, H3, Text, Span } from '@/components/ui';
 
 interface FeatureCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -56,9 +56,9 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
         </Text>
         
         {href && (
-          <Container className="">
-            Learn more
-            <svg className="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Container className="flex items-center mt-4">
+            <Span className="mr-2">Learn more</Span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </Container>

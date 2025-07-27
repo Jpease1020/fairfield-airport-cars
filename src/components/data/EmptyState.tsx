@@ -57,11 +57,11 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
             {description}
           </Text>
         )}
-        {action && (
-          <div className="">
-            {action}
-          </div>
-        )}
+                        {action && (
+                  <Container className="mt-4">
+                    {action}
+                  </Container>
+                )}
       </Container>
     );
   }

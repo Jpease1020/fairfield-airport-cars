@@ -56,81 +56,80 @@ const BookingCard: React.FC<BookingCardProps> = ({
       className
     )}>
       {/* Header */}
-      <div className="">
-        <div>
-          <H3 className="">
+      <Container className="flex items-center justify-between mb-4">
+        <Container>
+          <H3 className="page-title">
             {booking.name}
           </H3>
-          <Text className="">
+          <Text className="page-subtitle">
             Booking #{booking.id}
           </Text>
-        </div>
+        </Container>
         <Badge className={getStatusColor(booking.status)}>
           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
         </Badge>
-      </div>
+      </Container>
 
       {/* Date and Time */}
-      <div className="">
-        <div className="">
-          <Calendar className="" />
-          <span>{formatDate(booking.pickupDateTime.toString())}</span>
-        </div>
-        <div className="">
-          <Clock className="" />
-          <span>{formatTime(booking.pickupDateTime.toString())}</span>
-        </div>
-      </div>
+      <Container className="space-y-2 mb-4">
+        <Container className="flex items-center space-x-2">
+          <Calendar className="w-4 h-4" />
+          <Text className="text-sm">{formatDate(booking.pickupDateTime.toString())}</Text>
+        </Container>
+        <Container className="flex items-center space-x-2">
+          <Clock className="w-4 h-4" />
+          <Text className="text-sm">{formatTime(booking.pickupDateTime.toString())}</Text>
+        </Container>
+      </Container>
 
       {/* Locations */}
-      <div className="">
-        <div className="">
-          <MapPin className="" />
-          <div>
-            <span className="">Pickup:</span>
-            <span className="">{booking.pickupLocation}</span>
-          </div>
-        </div>
-        <div className="">
-          <MapPin className="" />
-          <div>
-            <span className="">Drop-off:</span>
-            <span className="">{booking.dropoffLocation}</span>
-          </div>
-        </div>
-      </div>
+      <Container className="space-y-3 mb-4">
+        <Container className="flex items-start space-x-2">
+          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <Container className="flex-1">
+            <Text className="text-xs mb-1">Pickup:</Text>
+            <Text className="text-sm">{booking.pickupLocation}</Text>
+          </Container>
+        </Container>
+        <Container className="flex items-start space-x-2">
+          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <Container className="flex-1">
+            <Text className="text-xs mb-1">Drop-off:</Text>
+            <Text className="text-sm">{booking.dropoffLocation}</Text>
+          </Container>
+        </Container>
+      </Container>
 
       {/* Passenger Info */}
-      <div className="">
-        <div className="">
-          <span>Passengers: {booking.passengers}</span>
-        </div>
+      <Container className="space-y-2 mb-4">
+        <Text className="text-sm">
+          Passengers: {booking.passengers}
+        </Text>
         {booking.notes && (
-          <div className="">
-            <span className="">Notes:</span> {booking.notes}
-          </div>
+          <Container>
+            <Text className="text-xs mb-1">Notes:</Text>
+            <Text className="text-sm">{booking.notes}</Text>
+          </Container>
         )}
-      </div>
+      </Container>
 
       {/* Price */}
-      <div className="">
-        <div className="">
-          <DollarSign className="" />
-          <span>Total Fare:</span>
-          <span className="">
-            ${booking.fare}
-          </span>
-        </div>
-      </div>
+      <Container className="flex items-center space-x-2 mb-4">
+        <DollarSign className="w-4 h-4" />
+        <Text className="text-sm">Total Fare:</Text>
+        <Text className="text-lg font-semibold">
+          ${booking.fare}
+        </Text>
+      </Container>
 
       {/* Actions */}
       {showActions && onAction && (
-        <div className="">
+        <Container className="flex space-x-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onAction('view')}
-            className=""
+            className="flex-1"
           >
             View Details
           </Button>
@@ -140,7 +139,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('edit')}
-                className=""
+                className="flex-1"
               >
                 Edit
               </Button>
@@ -148,13 +147,13 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('cancel')}
-                className=""
+                className="flex-1"
               >
                 Cancel
               </Button>
             </>
           )}
-        </div>
+        </Container>
       )}
     </Container>
   );

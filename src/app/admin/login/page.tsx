@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard, Form, Input, Label, Button } from '@/components/ui';
+import { GridSection, InfoCard, Form, Input, Label, Button, Container, Text } from '@/components/ui';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -59,8 +59,8 @@ export default function LoginPage() {
           description="Sign in to access the admin dashboard"
         >
           <Form onSubmit={handleFormSubmit} className="login-form">
-            <div className="login-form-fields">
-              <div className="login-form-group">
+            <Container className="login-form-fields">
+              <Container className="login-form-group">
                 <Label htmlFor="email" className="login-form-label">Email Address</Label>
                 <Input
                   id="email"
@@ -72,9 +72,9 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                 />
-              </div>
+              </Container>
               
-              <div className="login-form-group">
+              <Container className="login-form-group">
                 <Label htmlFor="password" className="login-form-label">Password</Label>
                 <Input
                   id="password"
@@ -86,19 +86,19 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
                 />
-              </div>
+              </Container>
               
               {error && (
-                <div className="login-form-error">
-                  <div className="login-form-error-icon">⚠️</div>
-                  <div className="login-form-error-content">
-                    <p className="login-form-error-message">{error}</p>
-                  </div>
-                </div>
+                <Container className="login-form-error">
+                  <Container className="login-form-error-icon">⚠️</Container>
+                  <Container className="login-form-error-content">
+                    <Text className="login-form-error-message">{error}</Text>
+                  </Container>
+                </Container>
               )}
-            </div>
+            </Container>
             
-            <div className="login-form-actions">
+            <Container className="login-form-actions">
               <Button 
                 type="submit" 
                 className="login-form-submit-btn"
@@ -109,9 +109,9 @@ export default function LoginPage() {
                 {loading ? '🔄 Signing In...' : '🔐 Sign In'}
               </Button>
               
-              <div className="login-form-divider">
+              <Container className="login-form-divider">
                 <span>or</span>
-              </div>
+              </Container>
               
               <Button 
                 type="button"
@@ -123,7 +123,7 @@ export default function LoginPage() {
               >
                 {loading ? '🔄 Connecting...' : '🔍 Sign In with Google'}
               </Button>
-            </div>
+            </Container>
           </Form>
         </InfoCard>
       </GridSection>

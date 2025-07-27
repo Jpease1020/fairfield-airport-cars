@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils/utils';
-import { Input } from './input';
-import { Textarea } from './textarea';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectTrigger, SelectValue } from './select';
 
 // Enhanced Input Component
@@ -42,32 +42,31 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="">
+          <label className="block text-sm font-medium text-text-primary mb-2">
             {label}
           </label>
         )}
-        <div className="">
+        <div className="relative">
           {leftIcon && (
-            <div className="">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">
               {leftIcon}
             </div>
           )}
           <Input
-            ref={ref}
             className={inputClasses}
-            {...props}
+            {...(props as any)}
           />
           {rightIcon && (
-            <div className="">
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary">
               {rightIcon}
             </div>
           )}
         </div>
         {error && (
-          <p className="">{error}</p>
+          <p className="text-error-color text-sm mt-1">{error}</p>
         )}
         {helper && !error && (
-          <p className="">{helper}</p>
+          <p className="text-text-secondary text-sm mt-1">{helper}</p>
         )}
       </div>
     );
@@ -107,22 +106,21 @@ const EnhancedTextarea = React.forwardRef<HTMLTextAreaElement, EnhancedTextareaP
     );
 
     return (
-      <div className="">
+      <div className="w-full">
         {label && (
-          <label className="">
+          <label className="block text-sm font-medium text-text-primary mb-2">
             {label}
           </label>
         )}
         <Textarea
-          ref={ref}
           className={textareaClasses}
-          {...props}
+          {...(props as any)}
         />
         {error && (
-          <p className="">{error}</p>
+          <p className="text-error-color text-sm mt-1">{error}</p>
         )}
         {helper && !error && (
-          <p className="">{helper}</p>
+          <p className="text-text-secondary text-sm mt-1">{helper}</p>
         )}
       </div>
     );
