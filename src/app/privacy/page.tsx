@@ -67,59 +67,59 @@ function PrivacyPageContent() {
               </Stack>
             </Container>
 
-            <section>
+            <Container>
               <H3>4. Data Security</H3>
               <Text>
                 We implement appropriate security measures to protect your personal information against unauthorized 
                 access, alteration, disclosure, or destruction. This includes:
               </Text>
-              <ul>
-                <li>Encrypted data transmission</li>
-                <li>Secure payment processing</li>
-                <li>Limited access to personal information</li>
-                <li>Regular security assessments</li>
-              </ul>
-            </section>
+              <Stack spacing="sm" direction="vertical">
+                <Container>Encrypted data transmission</Container>
+                <Container>Secure payment processing</Container>
+                <Container>Limited access to personal information</Container>
+                <Container>Regular security assessments</Container>
+              </Stack>
+            </Container>
 
-            <section>
+            <Container>
               <H3>5. Data Retention</H3>
               <Text>
                 We retain your personal information for as long as necessary to provide our services and comply 
                 with legal obligations. Booking information is typically retained for accounting and customer 
                 service purposes.
               </Text>
-            </section>
+            </Container>
 
-            <section>
+            <Container>
               <H3>6. Your Rights</H3>
               <Text>You have the right to:</Text>
-              <ul>
-                <li>Access and review your personal information</li>
-                <li>Request corrections to inaccurate information</li>
-                <li>Request deletion of your information (subject to legal requirements)</li>
-                <li>Opt out of marketing communications</li>
-                <li>File a complaint with relevant authorities</li>
-              </ul>
-            </section>
+              <Stack spacing="sm" direction="vertical">
+                <Container>Access and review your personal information</Container>
+                <Container>Request corrections to inaccurate information</Container>
+                <Container>Request deletion of your information (subject to legal requirements)</Container>
+                <Container>Opt out of marketing communications</Container>
+                <Container>File a complaint with relevant authorities</Container>
+              </Stack>
+            </Container>
 
-            <section>
+            <Container>
               <H3>7. Cookies and Tracking</H3>
               <Text>
                 Our website may use cookies and similar technologies to improve your browsing experience, 
                 remember your preferences, and analyze website traffic. You can control cookie settings 
                 through your browser.
               </Text>
-            </section>
+            </Container>
 
-            <section>
+            <Container>
               <H3>8. Third-Party Links</H3>
               <Text>
                 Our website may contain links to third-party websites. We are not responsible for the privacy 
                 practices of these external sites. We encourage you to review their privacy policies.
               </Text>
-            </section>
+            </Container>
 
-            <section>
+            <Container>
               <H3>9. Contact Us</H3>
               <Text>
                 If you have questions about this Privacy Policy or how we handle your information, please contact us:
@@ -132,7 +132,7 @@ function PrivacyPageContent() {
                 <br />
                 Address: [Business Address]
               </Text>
-            </section>
+            </Container>
           </InfoCard>
         </GridSection>
     </UnifiedLayout>
