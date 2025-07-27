@@ -9,8 +9,10 @@ import {
   ActionButtonGroup,
   FeatureGrid,
   ToastProvider,
-  useToast
+  useToast,
+  Text
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 function CancelPageContent() {
   const { addToast } = useToast();
@@ -117,23 +119,23 @@ function CancelPageContent() {
           title="📋 Cancellation Policy"
           description="Important information about our cancellation terms"
         >
-          <ul>
-            <li>
+          <Stack spacing="sm">
+            <Text>
               <strong>Free Cancellation:</strong> Cancel up to 2 hours before pickup time with no charge
-            </li>
-            <li>
+            </Text>
+            <Text>
               <strong>Late Cancellation:</strong> Cancellations within 2 hours may incur a fee
-            </li>
-            <li>
+            </Text>
+            <Text>
               <strong>Emergency Cancellations:</strong> Contact us directly for special circumstances
-            </li>
-            <li>
+            </Text>
+            <Text>
               <strong>Refund Processing:</strong> Refunds typically process within 3-5 business days
-            </li>
-            <li>
+            </Text>
+            <Text>
               <strong>Weather/Flight Delays:</strong> No charge for cancellations due to circumstances beyond your control
-            </li>
-          </ul>
+            </Text>
+          </Stack>
         </InfoCard>
       </GridSection>
 

@@ -30,15 +30,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const contentClasses = `hero-content ${variant === 'centered' ? 'hero-content-centered' : ''}`;
 
   return (
-    <Section variant="brand" padding="xl">
-      {backgroundImage && (
-        <Container style={{ backgroundImage: `url(${backgroundImage})` }}>
-          <Container>
-            <Span>Background</Span>
-          </Container>
-        </Container>
-      )}
-      
+    <Section 
+      variant="brand" 
+      padding="xl"
+      style={backgroundImage ? { 
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      } : undefined}
+    >
       <Container maxWidth="xl">
         <H1>{title}</H1>
         {subtitle && <Text>{subtitle}</Text>}

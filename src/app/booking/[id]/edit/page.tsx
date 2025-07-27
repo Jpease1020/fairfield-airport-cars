@@ -6,7 +6,7 @@ import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
 import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard, LoadingSpinner } from '@/components/ui';
+import { GridSection, InfoCard, LoadingSpinner, Text } from '@/components/ui';
 
 export default function EditBookingPage() {
   const params = useParams();
@@ -62,11 +62,9 @@ export default function EditBookingPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Error" description="Failed to load booking">
-            <div>
-              <p>
-                {error}
-              </p>
-            </div>
+            <Text>
+              {error}
+            </Text>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -82,11 +80,9 @@ export default function EditBookingPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Booking Not Found" description="No booking found with the provided ID">
-            <div>
-              <p>
-                No booking found with the provided ID.
-              </p>
-            </div>
+            <Text>
+              No booking found with the provided ID.
+            </Text>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>

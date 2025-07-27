@@ -112,32 +112,31 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
             {/* Trust Signals Sidebar */}
             {showTrustSignals && (
               <Container spacing="lg">
-                <Container>
-                  <H2>Why Choose Us?</H2>
-                  <Container spacing="md">
-                    <Stack direction="horizontal" align="center" spacing="sm">
-                      <Span>✓</Span>
-                      <Container>
-                        <Text>Professional Drivers</Text>
-                        <Text size="sm">Background checked & licensed</Text>
-                      </Container>
+                <H2>Why Choose Us?</H2>
+                <Stack spacing="md">
+                  <Stack direction="horizontal" align="center" spacing="sm">
+                    <Span>✓</Span>
+                    <Stack>
+                      <Text>Professional Drivers</Text>
+                      <Text size="sm">Background checked & licensed</Text>
                     </Stack>
+                  </Stack>
                     <Stack direction="horizontal" align="center" spacing="sm">
                       <Span>✓</Span>
-                      <Container>
+                      <Stack>
                         <Text>Reliable Service</Text>
                         <Text size="sm">On-time pickups guaranteed</Text>
-                      </Container>
+                      </Stack>
                     </Stack>
                     <Stack direction="horizontal" align="center" spacing="sm">
                       <Span>✓</Span>
-                      <Container>
+                      <Stack>
                         <Text>Clean Vehicles</Text>
                         <Text size="sm">Well-maintained luxury SUVs</Text>
-                      </Container>
+                      </Stack>
                     </Stack>
-                  </Container>
-                </Container>
+                </Stack>
+              </Container>
 
                 <Container>
                   <H2>Need Help?</H2>
