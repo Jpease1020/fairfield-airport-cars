@@ -152,7 +152,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
               key={index}
               variant="ghost"
               onClick={() => handleSuggestionClick(suggestion)}
-              className="w-full text-left p-3 hover:bg-background-secondary"
             >
               <div className="flex items-start space-x-3">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
