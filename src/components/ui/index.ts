@@ -101,5 +101,16 @@ export { EditableText } from './EditableText';
 // Accessibility
 export { AccessibilityEnhancer } from './AccessibilityEnhancer';
 
+// Moved Components (Now Properly Located in UI!)
+export { EditableInput } from './EditableInput';
+export { EditableTextarea } from './EditableTextarea';
+export { FormField } from './FormField';
+export { SelectField } from './SelectField';
+export { StatusBadge } from './StatusBadge';
+export { EmptyState } from './EmptyState';
+export { StarRating } from './StarRating';
+export { Alert } from './Alert';
+export { Modal } from './Modal';
+
 // Reusable Patterns
 export { FeatureGrid } from './FeatureGrid'; 
