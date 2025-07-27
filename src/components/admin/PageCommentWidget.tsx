@@ -158,14 +158,14 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
               </CardHeader>
               <CardBody className="space-y-4">
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium text-text-primary">
+                  <Text className="text-sm font-medium">
                     Page: {pageTitle}
                   </Text>
                 </Container>
 
                 {/* Element Selection */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium text-text-primary mb-2">
+                  <Text className="text-sm font-medium mb-2">
                     Element (Optional)
                   </Text>
                   <Container className="flex items-center space-x-2">
@@ -203,7 +203,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Category */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium text-text-primary mb-2">
+                  <Text className="text-sm font-medium mb-2">
                     Category
                   </Text>
                   <Select value={category} onValueChange={(value: PageComment['category']) => setCategory(value)}>
@@ -247,7 +247,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Priority */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium text-text-primary mb-2">
+                  <Text className="text-sm font-medium mb-2">
                     Priority
                   </Text>
                   <Select value={priority} onValueChange={(value: PageComment['priority']) => setPriority(value)}>
@@ -286,7 +286,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                         {priority}
                       </Badge>
                     </Container>
-                    <Text className="text-text-primary">{comment}</Text>
+                    <Text>{comment}</Text>
                   </Container>
                 )}
 
