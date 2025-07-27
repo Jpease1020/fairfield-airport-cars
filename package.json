@@ -56,6 +56,7 @@
     "build:analyze": "ANALYZE=true npm run build",
     "lighthouse": "lighthouse http://localhost:3001 --view",
     "check:components": "node scripts/check-component-rules.js",
+    "monitor:agents": "node scripts/monitor-cursor-agents-progress.js",
     "pre-commit": "./scripts/pre-commit-check.sh && npm run check:components"
   },
   "dependencies": {
