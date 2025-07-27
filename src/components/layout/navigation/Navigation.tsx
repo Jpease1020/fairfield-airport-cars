@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Phone } from 'lucide-react';
-import Logo from '@/components/Logo';
+import Logo from '@/components/ui/Logo';
 import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 import { Container, Text } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
@@ -39,14 +39,16 @@ const Navigation = () => {
   ];
 
   return (
-    <Container as="nav" variant="header" padding="md">
+    <Container as="nav" variant="navigation" padding="md">
       <Stack direction="horizontal" justify="between" align="center">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <Logo size="sm" />
-          <Text size="lg" weight="bold">
-            {getCompanyName()}
-          </Text>
+        <Link href="/">
+          <Stack direction="horizontal" spacing="sm" align="center">
+            <Logo size="sm" />
+            <Text size="lg" weight="bold">
+              {getCompanyName()}
+            </Text>
+          </Stack>
         </Link>
 
         {/* Desktop Navigation */}
@@ -55,17 +57,18 @@ const Navigation = () => {
             <Link
               key={item.name}
               href={item.href}
-              className={`navigation-link ${item.current ? 'navigation-link-active' : 'navigation-link-inactive'}`}
             >
               {item.name}
             </Link>
-                    ))}
+          ))}
         </Stack>
 
         {/* Contact Button */}
-        <Link href={`tel:${getPhoneNumber()}`} className="flex items-center space-x-1">
-          <Phone size={16} />
-          <Text size="sm">Call Now</Text>
+        <Link href={`tel:${getPhoneNumber()}`}>
+          <Stack direction="horizontal" spacing="sm" align="center">
+            <Phone size={16} />
+            <Text size="sm">Call Now</Text>
+          </Stack>
         </Link>
 
                   {/* Mobile menu button */}
@@ -86,33 +89,31 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <Container >
-          <Container >
+        <Container padding="md">
+          <Stack direction="vertical" spacing="md">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`navigation-mobile-link ${item.current ? 'navigation-mobile-link-active' : 'navigation-mobile-link-inactive'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
             
-            <Container >
-              <a 
-                href={`tel:${getPhoneNumber()}`}
-                
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Phone  />
-                <Text >Call Now</Text>
-              </a>
-            </Container>
-          </Container>
+            <Link 
+              href={`tel:${getPhoneNumber()}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Stack direction="horizontal" spacing="sm" align="center">
+                <Phone size={16} />
+                <Text size="sm">Call Now</Text>
+              </Stack>
+            </Link>
+          </Stack>
         </Container>
       )}
-    </nav>
+    </Container>
   );
 };
 

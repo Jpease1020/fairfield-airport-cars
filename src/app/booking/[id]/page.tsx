@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout/UnifiedLayout';
+import { UnifiedLayout } from '@/components/layout/core/UnifiedLayout';
 import { 
   GridSection, 
   InfoCard, 

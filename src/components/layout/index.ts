@@ -1,44 +1,34 @@
 // 🎯 UNIFIED LAYOUT SYSTEM - THE SINGLE SYSTEM FOR ALL PAGES
-export { UnifiedLayout } from './UnifiedLayout';
-
-// CMS-Aware Layout Components (Legacy - use UnifiedLayout instead)
-// Temporarily disabled due to import errors
-// export { CMSStandardPage } from './CMSStandardPage';
-// export { CMSMarketingPage } from './CMSMarketingPage';
-// export { CMSConversionPage } from './CMSConversionPage';
-// export { CMSContentPage } from './CMSContentPage';
-// export { CMSStatusPage } from './CMSStatusPage';
+export { UnifiedLayout } from './core/UnifiedLayout';
 
 // Legacy components - use UnifiedLayout instead
-export { UniversalLayout } from './UniversalLayout';
-export { LayoutEnforcer } from '@/lib/design-system/LayoutEnforcer';
-export { StandardLayout } from './StandardLayout';
-export { StandardNavigation } from './StandardNavigation';
-export { StandardHeader } from './StandardHeader';
-export { StandardFooter } from './StandardFooter';
+export { UniversalLayout } from './core/UniversalLayout';
+export { StandardLayout } from './core/StandardLayout';
 
-// Page structure components
-export { PageContainer } from './PageContainer';
-export { PageHeader } from './PageHeader';
-export { default as Navigation } from './Navigation';
+// Navigation components
+export { default as Navigation } from './navigation/Navigation';
+export { StandardNavigation } from './navigation/StandardNavigation';
+
+// Structure components
+export { PageContainer } from './structure/PageContainer';
+export { PageHeader } from './structure/PageHeader';
+export { PageContent } from './structure/PageContent';
+export { StandardFooter } from './structure/StandardFooter';
+export { StandardHeader } from './structure/StandardHeader';
+
+// CMS Layout components
+export { CMSContentPage } from './cms/CMSContentPage';
+export { CMSConversionPage } from './cms/CMSConversionPage';
+export { CMSMarketingPage } from './cms/CMSMarketingPage';
+export { CMSStandardPage } from './cms/CMSStandardPage';
+export { CMSStatusPage } from './cms/CMSStatusPage';
+export { CMSLayout } from './cms/CMSLayout';
 
 /**
  * 🚨 IMPORTANT: Use UnifiedLayout for ALL pages
  * 
  * ✅ CORRECT - The Single System:
  * import { UnifiedLayout } from '@/components/layout';
- * 
- * export default function MyPage() {
- *   return (
- *     <UnifiedLayout
- *       layoutType="standard"
- *       title="My Page"
- *       subtitle="Page description"
- *     >
- *       // Your content here
- *     </UnifiedLayout>
- *   );
- * }
  * 
  * Layout Types for Different Pages:
  * - "standard" - Public customer pages
@@ -47,12 +37,4 @@ export { default as Navigation } from './Navigation';
  * - "marketing" - Homepage, about page
  * - "content" - Help, terms, privacy
  * - "status" - Booking status, success pages
- * 
- * Features:
- * ✅ CMS color control from /admin/cms/colors
- * ✅ Consistent spacing and typography
- * ✅ Responsive design
- * ✅ Accessibility built-in
- * ✅ Navigation/footer control
- * ✅ Multiple visual variants
- */ 
+ */

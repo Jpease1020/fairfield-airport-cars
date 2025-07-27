@@ -1,7 +1,7 @@
 import React from 'react';
 import { CMSConfiguration, HomePageContent } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
-import { PageHeader } from '@/components/ui/layout/PageHeader';
+import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { PageContent } from '@/components/ui/layout/PageContent';
 import { Container, Section, H1, H2, Lead } from '@/components/ui/design-system';
 

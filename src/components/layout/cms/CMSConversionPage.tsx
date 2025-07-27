@@ -1,7 +1,7 @@
 import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
-import { PageHeader } from '@/components/ui/layout/PageHeader';
+import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { Section, Container, H1, H2, Lead } from '@/components/ui';
 import { Card } from '@/components/ui/containers';
 import { CardBody } from '@/components/ui/card';

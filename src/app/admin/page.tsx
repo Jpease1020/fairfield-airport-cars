@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { UnifiedLayout } from '@/components/layout/UnifiedLayout';
+import { UnifiedLayout } from '@/components/layout/core/UnifiedLayout';
 import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
 import { 
   GridSection, 
