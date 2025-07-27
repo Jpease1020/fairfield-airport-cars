@@ -135,13 +135,11 @@ export default function AnalyticsPage() {
             {/* Detailed Metrics */}
             <Container>
               {/* Top Interaction Types */}
-              <Container >
-                <Container >
-                  <H2 >
-                    <Span >🖱️</Span>
-                    Top Interaction Types
-                  </H2>
-                </Container>
+              <Stack spacing="md">
+                <H2>
+                  <Span>🖱️</Span>
+                  Top Interaction Types
+                </H2>
                 <Stack direction="vertical" spacing="sm">
                   {getTopInteractions().map(([type, count]) => (
                     <Stack key={type} direction="horizontal" justify="between" align="center">
@@ -157,7 +155,7 @@ export default function AnalyticsPage() {
                     </Stack>
                   ))}
                 </Stack>
-              </Container>
+              </Stack>
 
               {/* Top Error Types */}
               <Container>

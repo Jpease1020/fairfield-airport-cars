@@ -15,7 +15,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { generateCSSVariables } from '@/lib/design';
 import { AccessibilityEnhancer } from '@/components/ui/AccessibilityEnhancer';
 import { Container, H1, Text } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack, Section } from '@/components/ui/containers';
 import Navigation from './Navigation';
 import { StandardFooter } from './StandardFooter';
 
@@ -158,27 +158,25 @@ export function UnifiedLayout({
 
         {/* Page Header */}
         {(title || subtitle || description) && (
-          <section>
-            <Container>
-              <Container>
-                {title && (
-                  <H1>
-                    {title}
-                  </H1>
-                )}
-                {subtitle && (
-                  <Text>
-                    {subtitle}
-                  </Text>
-                )}
-                {description && (
-                  <Text>
-                    {description}
-                  </Text>
-                )}
-              </Container>
+          <Section variant="default" padding="lg">
+            <Container maxWidth="xl">
+              {title && (
+                <H1>
+                  {title}
+                </H1>
+              )}
+              {subtitle && (
+                <Text>
+                  {subtitle}
+                </Text>
+              )}
+              {description && (
+                <Text>
+                  {description}
+                </Text>
+              )}
             </Container>
-          </section>
+          </Section>
         )}
 
         {/* Main Content */}

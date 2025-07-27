@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 const AIAssistantDisabledPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -84,10 +85,8 @@ const AIAssistantDisabledPage = () => {
           title="🤖 AI Assistant Status"
           description="Information about AI assistant availability and activation"
         >
-          <Container>
-            <Container>
-              🚫
-            </Container>
+          <Stack spacing="md" align="center">
+            <Text size="xl">🚫</Text>
             <H3>
               AI Assistant Not Available
             </H3>
@@ -95,7 +94,7 @@ const AIAssistantDisabledPage = () => {
               The AI assistant feature is currently disabled for your account. 
               This feature may be enabled in future updates or through your subscription plan.
             </Text>
-          </Container>
+          </Stack>
         </InfoCard>
       </GridSection>
 
