@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertItem } from './AlertItem';
+import { Container, Text } from '@/components/ui';
 
 interface AlertData {
   id: string | number;
@@ -33,12 +34,12 @@ export const AlertList: React.FC<AlertListProps> = ({
 
   if (alerts.length === 0) {
     return (
-      <div className={listClass}>
-        <div className="empty-state">
-          <span className="empty-state-icon">🔔</span>
-          <p>{emptyMessage}</p>
-        </div>
-      </div>
+      <Container>
+        <Container>
+          <span>🔔</span>
+          <Text>{emptyMessage}</Text>
+        </Container>
+      </Container>
     );
   }
 
