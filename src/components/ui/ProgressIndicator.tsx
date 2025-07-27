@@ -2,20 +2,23 @@ import React from 'react';
 import { Container, Text, Span, H3 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
+// ProgressIndicator Component - BULLETPROOF TYPE SAFETY!
 interface ProgressIndicatorProps {
   currentStep: number;
   totalSteps: number;
   steps: string[];
-  className?: string;
   variant?: 'default' | 'minimal' | 'detailed';
+  size?: 'sm' | 'md' | 'lg';
+  color?: 'primary' | 'success' | 'warning' | 'info';
 }
 
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   currentStep,
   totalSteps,
   steps,
-  className,
-  variant = 'default'
+  variant = 'default',
+  size = 'md',
+  color = 'primary'
 }) => {
   const progress = (currentStep / totalSteps) * 100;
 

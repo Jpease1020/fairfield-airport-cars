@@ -1,18 +1,19 @@
 import React from 'react';
 
+// PageSection Component - BULLETPROOF TYPE SAFETY!
 interface PageSectionProps {
   children: React.ReactNode;
   variant?: 'default' | 'stats' | 'activity' | 'actions' | 'full-width';
-  className?: string;
   spacing?: 'sm' | 'md' | 'lg' | 'xl';
   background?: 'default' | 'elevated' | 'muted';
   theme?: 'light' | 'dark';
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 }
 
 export const PageSection: React.FC<PageSectionProps> = ({
   children,
   variant = 'default',
-  className = '',
   spacing = 'lg',
   background = 'default',
   theme = 'light'
