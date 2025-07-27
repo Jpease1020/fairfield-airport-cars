@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, H1, Text, Button, Span } from '@/components/ui';
+import { Container, H1, Text, Button, Span, Link } from '@/components/ui';
 import { Section, Stack } from '@/components/ui/containers';
 
 interface HeroSectionProps {
@@ -47,19 +47,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {(primaryAction || secondaryAction) && (
           <Stack direction="horizontal" spacing="md">
             {primaryAction && (
-              <a href={primaryAction.href}>
+              <Link href={primaryAction.href}>
                 <Button variant="primary" size="lg">
                   {primaryAction.label}
                 </Button>
-              </a>
+              </Link>
             )}
             
             {secondaryAction && (
-              <a href={secondaryAction.href}>
+              <Link href={secondaryAction.href}>
                 <Button variant="outline" size="lg">
                   {secondaryAction.label} <Span aria-hidden="true">→</Span>
                 </Button>
-              </a>
+              </Link>
             )}
           </Stack>
         )}
