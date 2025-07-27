@@ -20,7 +20,7 @@ interface CMSConversionPageProps {
   currentStep?: number;
   totalSteps?: number;
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  className?: string;
+  variant?: 'default' | 'compact' | 'focused';
   isEditable?: boolean;
   onFieldChange?: (field: string, value: string) => void;
 }
@@ -37,7 +37,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
   currentStep = 1,
   totalSteps = 3,
   containerMaxWidth = 'lg',
-  className,
+  variant = 'default',
   isEditable = false,
   onFieldChange
 }) => {
@@ -58,8 +58,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
     <CMSLayout 
       cmsConfig={cmsConfig} 
       pageType={pageType} 
-      variant="conversion"
-      className={className}
+      variant={variant === 'focused' ? 'focused' : 'conversion'}
     >
       {/* Progress Indicator */}
       {showProgressIndicator && (
@@ -67,16 +66,14 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
           <Container maxWidth={containerMaxWidth}>
             <Stack direction="horizontal" align="center" spacing="sm">
               {Array.from({ length: totalSteps }, (_, index) => (
-                <Container key={index}>
+                <React.Fragment key={index}>
                   <Container>
                     {index + 1}
                   </Container>
                   {index < totalSteps - 1 && (
-                    <Container>
-                      <span>-</span>
-                    </Container>
+                    <Span>→</Span>
                   )}
-                </Container>
+                </React.Fragment>
               ))}
             </Stack>
           </Container>
@@ -108,29 +105,25 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
           {/* Conversion Content */}
           <Stack direction="horizontal" spacing="lg">
             {/* Main Form/Content */}
-            <Container>
-              <Card variant="elevated" padding="xl">
-                <CardBody>
-                  {children}
-                </CardBody>
-              </Card>
-            </Container>
+            <Card variant="elevated" padding="xl">
+              <CardBody>
+                {children}
+              </CardBody>
+            </Card>
 
             {/* Trust Signals Sidebar */}
-            {showTrustSignals && (
-              <Stack spacing="lg">
-                <Card variant="outlined" padding="lg">
-                  <CardBody>
-                    <H2>Why Choose Us?</H2>
-                    <Stack spacing="md">
-                      <Stack direction="horizontal" align="center" spacing="sm">
-                        <Container>
+                          {showTrustSignals && (
+                <Stack spacing="lg">
+                  <Card variant="outlined" padding="lg">
+                    <CardBody>
+                      <H2>Why Choose Us?</H2>
+                      <Stack spacing="md">
+                        <Stack direction="horizontal" align="center" spacing="sm">
                           <Span>✓</Span>
-                        </Container>
-                        <Container>
-                          <Text>Professional Drivers</Text>
-                          <Text size="sm">Background checked & licensed</Text>
-                        </Container>
+                          <Stack direction="vertical" spacing="xs">
+                            <Text>Professional Drivers</Text>
+                            <Text size="sm">Background checked & licensed</Text>
+                          </Stack>
                       </Stack>
                       <Stack direction="horizontal" align="center" spacing="sm">
                         <Container>
@@ -142,13 +135,11 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
                         </Container>
                       </Stack>
                       <Stack direction="horizontal" align="center" spacing="sm">
-                        <Container>
-                          <Span>✓</Span>
-                        </Container>
-                        <Container>
+                        <Span>✓</Span>
+                        <Stack direction="vertical" spacing="xs">
                           <Text>Clean Vehicles</Text>
                           <Text size="sm">Well-maintained luxury SUVs</Text>
-                        </Container>
+                        </Stack>
                       </Stack>
                     </Stack>
                   </CardBody>
