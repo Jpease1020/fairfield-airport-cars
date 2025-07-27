@@ -42,26 +42,26 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
         )}
         {...props}
       >
-        {icon && (
-          <div className={cn('mb-4', sizeClasses[size].icon)}>
+                {icon && (
+          <Container>
             {icon}
-          </div>
+          </Container>
         )}
         {title && (
-          <H3 className={cn('font-medium mb-2', sizeClasses[size].title)}>
+          <H3>
             {title}
           </H3>
         )}
         {description && (
-          <Text className={cn('mb-6 max-w-sm', sizeClasses[size].description)}>
+          <Text>
             {description}
           </Text>
         )}
-                        {action && (
-                  <Container className="mt-4">
-                    {action}
-                  </Container>
-                )}
+        {action && (
+          <Container>
+            {action}
+          </Container>
+        )}
       </Container>
     );
   }

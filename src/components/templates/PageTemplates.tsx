@@ -12,8 +12,8 @@ import {
   CMSStatusPage 
 } from '@/components/layout/CMSStatusPage';
 import { 
-  H2, Text
-} from '@/components/ui/design-system';
+  H2, Text, Container
+} from '@/components/ui';
 import { 
   Star,
   Users,
@@ -44,12 +44,12 @@ export const createContentPageTemplate = (
 
     if (!cmsConfig) {
       return (
-        <div className="">
-          <div className="">
+        <Container>
+          <Container>
             <H2>Loading...</H2>
-            <Text variant="muted">Please wait while we load the content.</Text>
-          </div>
-        </div>
+            <Text>Please wait while we load the content.</Text>
+          </Container>
+        </Container>
       );
     }
 

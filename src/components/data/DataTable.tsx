@@ -93,14 +93,14 @@ interface DataTableProps<T> {
  * Default loading skeleton component
  */
 const LoadingSkeleton: React.FC<{ className?: string }> = ({ className }) => (
-  <Container className={cn('w-full', className)}>
-    <div className="animate-pulse space-y-3">
-      <div className="h-4 bg-gray-200 rounded"></div>
-      {[...Array(5)].map((_, i) => (
-        <div key={i} className="h-4 bg-gray-200 rounded"></div>
-      ))}
-    </div>
-  </Container>
+      <Container>
+      <div className="animate-pulse space-y-3">
+        <div className="h-4 bg-gray-200 rounded"></div>
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-4 bg-gray-200 rounded"></div>
+        ))}
+      </div>
+    </Container>
 );
 
 /**
@@ -110,7 +110,7 @@ const EmptyState: React.FC<{ message: React.ReactNode; className?: string }> = (
   message, 
   className 
 }) => (
-  <Container className={cn('w-full text-center py-8 text-text-secondary', className)}>
+  <Container>
     <Text>{message}</Text>
   </Container>
 );

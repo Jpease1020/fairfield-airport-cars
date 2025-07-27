@@ -163,7 +163,7 @@ function ManageBookingPageContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="⏳ Loading" description="Loading your booking information">
-            <Container className="manage-booking-loading">
+            <Container>
               Loading...
             </Container>
           </InfoCard>
@@ -181,8 +181,8 @@ function ManageBookingPageContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Error" description="Booking could not be found">
-            <Container className="manage-booking-error">
-              <Text className="manage-booking-error-message">
+            <Container>
+              <Text>
                 {error || localContent?.notFoundMessage || 'Booking not found'}
               </Text>
               <ActionButtonGroup buttons={[
