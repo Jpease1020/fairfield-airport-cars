@@ -163,7 +163,7 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                   loading="lazy"
                 />
                 {mapLocation.address && (
-                  <Container className="p-4 bg-background-primary border-t border-border-color">
+                  <Container>
                     <Text size="sm">{mapLocation.address}</Text>
                   </Container>
                 )}

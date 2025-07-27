@@ -277,7 +277,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Preview */}
                 {comment && (
-                  <Container className="mb-4 p-4 bg-gray-50 rounded-lg">
+                  <Container>
                     <Container className="flex items-center space-x-2 mb-2">
                       {getCategoryIcon(category)}
                       <Badge className={getPriorityColor(priority)}>
