@@ -113,30 +113,28 @@ const Container: React.FC<ContainerProps> = ({
 };
 Container.displayName = 'Container';
 
-// Box Component
-interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
+// Box Component - BULLETPROOF TYPE SAFETY!
+interface BoxProps {
   children: React.ReactNode;
-  className?: string;
   variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  as?: 'div' | 'section' | 'article' | 'aside';
 }
 
-const Box = React.forwardRef<HTMLDivElement, BoxProps>(
-  ({ 
-    className, 
+const Box: React.FC<BoxProps> = ({ 
     variant = 'default', 
     padding = 'md', 
     rounded = 'md',
     margin = 'none',
     marginTop = 'none',
     marginBottom = 'none',
-    children, 
-    ...props 
-  }, ref) => {
+    as: Component = 'div',
+    children
+  }) => {
     const variantClasses = {
       default: 'bg-bg-primary',
       elevated: 'bg-bg-primary shadow-lg',
@@ -192,24 +190,20 @@ const Box = React.forwardRef<HTMLDivElement, BoxProps>(
     };
 
     return (
-      <div
-        ref={ref}
+      <Component
         className={cn(
           variantClasses[variant],
           paddingClasses[padding],
           roundedClasses[rounded],
           marginClasses[margin],
           marginTopClasses[marginTop],
-          marginBottomClasses[marginBottom],
-          className
+          marginBottomClasses[marginBottom]
         )}
-        {...props}
       >
         {children}
-      </div>
+      </Component>
     );
-  }
-);
+  };
 Box.displayName = 'Box';
 
 // Section Component - Clean Reusable Component (No className!)
@@ -310,30 +304,28 @@ const Section: React.FC<SectionProps> = ({
 };
 Section.displayName = 'Section';
 
-// Card Component
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+// Card Component - BULLETPROOF TYPE SAFETY!
+interface CardProps {
   children: React.ReactNode;
-  className?: string;
   variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   hover?: boolean;
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  as?: 'div' | 'article' | 'section';
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ 
-    className, 
+const Card: React.FC<CardProps> = ({ 
     variant = 'default', 
     padding = 'md', 
     hover = false,
     margin = 'none',
     marginTop = 'none',
     marginBottom = 'none',
-    children, 
-    ...props 
-  }, ref) => {
+    as: Component = 'div',
+    children
+  }) => {
     const variantClasses = {
       default: 'bg-bg-primary border border-border-primary',
       elevated: 'bg-bg-primary shadow-lg',
@@ -380,8 +372,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     };
 
     return (
-      <div
-        ref={ref}
+      <Component
         className={cn(
           'rounded-lg transition-all duration-200',
           variantClasses[variant],
@@ -389,16 +380,13 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           marginClasses[margin],
           marginTopClasses[marginTop],
           marginBottomClasses[marginBottom],
-          hover && 'hover:shadow-md hover:-translate-y-1',
-          className
+          hover && 'hover:shadow-md hover:-translate-y-1'
         )}
-        {...props}
       >
         {children}
-      </div>
+      </Component>
     );
-  }
-);
+  };
 Card.displayName = 'Card';
 
 // Stack Component for consistent spacing - Clean Reusable Component (No className!)
@@ -529,30 +517,28 @@ const Stack: React.FC<StackProps> = ({
 };
 Stack.displayName = 'Stack';
 
-// Grid Component
-interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
+// Grid Component - BULLETPROOF TYPE SAFETY!
+interface GridProps {
   children: React.ReactNode;
-  className?: string;
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
   gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   responsive?: boolean;
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  as?: 'div' | 'section' | 'article';
 }
 
-const Grid = React.forwardRef<HTMLDivElement, GridProps>(
-  ({ 
-    className, 
+const Grid: React.FC<GridProps> = ({ 
     cols = 1, 
     gap = 'md', 
     responsive = true,
     margin = 'none',
     marginTop = 'none',
     marginBottom = 'none',
-    children, 
-    ...props 
-  }, ref) => {
+    as: Component = 'div',
+    children
+  }) => {
     const colsClasses = {
       1: 'grid-cols-1',
       2: responsive ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-2',
@@ -624,9 +610,9 @@ const Grid = React.forwardRef<HTMLDivElement, GridProps>(
 Grid.displayName = 'Grid';
 
 // Layout Components for Page-Level Spacing
-interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
+// Layout Component - BULLETPROOF TYPE SAFETY!
+interface LayoutProps {
   children: React.ReactNode;
-  className?: string;
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   container?: boolean;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
@@ -673,8 +659,8 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
 );
 Layout.displayName = 'Layout';
 
-// Spacer Component for explicit spacing
-interface SpacerProps extends React.HTMLAttributes<HTMLDivElement> {
+// Spacer Component - BULLETPROOF TYPE SAFETY!
+interface SpacerProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   axis?: 'horizontal' | 'vertical';
 }
