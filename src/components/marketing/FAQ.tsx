@@ -56,13 +56,11 @@ export const FAQ: React.FC<FAQProps> = ({
                   onClick={() => toggleItem(index)}
                 >
                   <Span>{item.question}</Span>
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <Span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </Span>
                 </Button>
                 
                 {openItems.has(index) && (

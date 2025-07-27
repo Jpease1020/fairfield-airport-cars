@@ -13,7 +13,6 @@ interface CMSStandardPageProps {
   showHeader?: boolean;
   headerAlign?: 'left' | 'center' | 'right';
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  className?: string;
 }
 
 export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
@@ -23,8 +22,7 @@ export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
   variant = 'standard',
   showHeader = true,
   headerAlign = 'left',
-  containerMaxWidth = 'xl',
-  className
+  containerMaxWidth = 'xl'
 }) => {
   const pageContent = cmsConfig.pages[pageType];
   
@@ -40,23 +38,22 @@ export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
       cmsConfig={cmsConfig} 
       pageType={pageType} 
       variant={variant}
-      className={className}
     >
       <Container maxWidth={containerMaxWidth} padding="lg">
         {showHeader && hasStandardProps && (
           <PageHeader align={headerAlign} padding="lg" margin="none">
             {'title' in pageContent && pageContent.title && (
-              <H1 >
+              <H1>
                 {pageContent.title}
               </H1>
             )}
             {'subtitle' in pageContent && pageContent.subtitle && (
-              <H2 >
+              <H2>
                 {pageContent.subtitle}
               </H2>
             )}
             {'description' in pageContent && pageContent.description && (
-              <Text >
+              <Text>
                 {pageContent.description}
               </Text>
             )}

@@ -1,5 +1,3 @@
-import { CMSConfiguration } from '@/types/cms';
-
 export const getCMSTypography = () => ({
   // Font family from CMS branding (using defaults for now)
   fontFamily: {

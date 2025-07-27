@@ -5,7 +5,7 @@ interface FeatureCardProps {
   title: string;
   description: string;
   icon?: React.ReactNode;
-  variant?: 'default' | 'highlighted' | 'minimal';
+  variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated';
   href?: string;
   size?: 'sm' | 'md' | 'lg';
   padding?: 'sm' | 'md' | 'lg' | 'xl';
@@ -17,11 +17,10 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
   variant = 'default',
   href,
-  size = 'md',
   padding = 'lg'
 }) => {
   const content = (
-    <Container variant={variant} size={size} padding={padding}>
+    <Container variant={variant} padding={padding}>
       {icon && (
         <Container>
           {icon}
@@ -38,10 +37,11 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       
       {href && (
         <Container>
-          <Span>Learn more</Span>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          <Span>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Span>
         </Container>
       )}
     </Container>

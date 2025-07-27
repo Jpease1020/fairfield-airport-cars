@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
@@ -26,11 +26,7 @@ function BusinessPageContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadBusinessSettings();
-  }, []);
-
-  const loadBusinessSettings = async () => {
+  const loadBusinessSettings = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -46,9 +42,13 @@ function BusinessPageContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
 
-  const handleSave = async () => {
+  useEffect(() => {
+    loadBusinessSettings();
+  }, [loadBusinessSettings]);
+
+  const handleSave = useCallback(async () => {
     if (!settings) return;
     
     setSaving(true);
@@ -65,7 +65,7 @@ function BusinessPageContent() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [settings, addToast]);
 
   const handleInputChange = (section: keyof BusinessSettings, field: string, value: string) => {
     if (!settings) return;
@@ -113,7 +113,7 @@ function BusinessPageContent() {
       disabled: !settings || saving,
       icon: '💾'
     }
-  ], [settings, loading, saving]);
+  ], [settings, loading, saving, loadBusinessSettings, handleSave]);
 
   if (loading) {
     return (

@@ -72,9 +72,9 @@ export function UnifiedLayout({
   // Temporarily disable loading state to fix the stuck loading issue
   // if (!cmsReady) {
   //   return (
-  //     <div >
-  //       <div ></div>
-  //     </div>
+  //     <Container>
+  //       <Container></Container>
+  //     </Container>
   //   );
   // }
 

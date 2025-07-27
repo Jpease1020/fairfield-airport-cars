@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { cmsService } from "@/lib/services/cms-service";
 import { CMSConfiguration, HomePageContent, HelpPageContent, PageContent } from "@/types/cms";
 import { 
@@ -46,11 +46,7 @@ function PagesCMSContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadPages();
-  }, []);
-
-  const loadPages = async () => {
+  const loadPages = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -72,7 +68,11 @@ function PagesCMSContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadPages();
+  }, [loadPages]);
 
   const handlePageFieldChange = (page: EditablePage, field: string, value: any, subfield?: string) => {
     setPages((prev) => {
@@ -156,7 +156,7 @@ function PagesCMSContent() {
       variant: 'secondary' as const,
       icon: '📤'
     }
-  ], [addToast]);
+  ], [addToast, loadPages]);
 
   if (loading) {
     return (

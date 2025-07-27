@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Text, Span, H2 } from '@/components/ui';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection } from '@/components/ui';
@@ -40,11 +40,7 @@ function AdminColorsPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadColors();
-  }, []);
-
-  const loadColors = async () => {
+  const loadColors = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -66,7 +62,11 @@ function AdminColorsPageContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadColors();
+  }, [loadColors]);
 
   const handleColorChange = (key: string, value: string) => {
     setColors((prev) => ({ ...prev, [key]: value }));
@@ -119,10 +119,11 @@ function AdminColorsPageContent() {
               {COLOR_VARIABLES.map(({ key, label, description }) => (
                 <Container key={key}>
                   <Stack direction="horizontal" spacing="sm" align="center">
-                    <span
+                    <Span
                       data-color={colors[key] || '#ffffff'}
-                      style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: colors[key] || '#ffffff' }}
-                    />
+                    >
+                      ●
+                    </Span>
                     <Span>
                       {label}
                     </Span>

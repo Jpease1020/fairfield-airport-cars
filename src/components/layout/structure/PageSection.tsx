@@ -1,9 +1,10 @@
 import React from 'react';
+import { Section } from '@/components/ui/containers';
 
 // PageSection Component - BULLETPROOF TYPE SAFETY!
 interface PageSectionProps {
   children: React.ReactNode;
-  variant?: 'default' | 'stats' | 'activity' | 'actions' | 'full-width';
+  variant?: 'default' | 'alternate' | 'brand' | 'muted' | 'hero' | 'cta';
   spacing?: 'sm' | 'md' | 'lg' | 'xl';
   background?: 'default' | 'elevated' | 'muted';
   theme?: 'light' | 'dark';
@@ -14,22 +15,14 @@ interface PageSectionProps {
 export const PageSection: React.FC<PageSectionProps> = ({
   children,
   variant = 'default',
-  spacing = 'lg',
-  background = 'default',
-  theme = 'light'
+  spacing = 'lg'
 }) => {
-  const sectionClass = [
-    'page-section',
-    `page-section-${variant}`,
-    `spacing-${spacing}`,
-    background !== 'default' ? `bg-${background}` : '',
-    theme === 'dark' ? 'dark-theme' : '',
-    className
-  ].filter(Boolean).join(' ');
-
   return (
-    <section className={sectionClass}>
+    <Section 
+      variant={variant}
+      padding={spacing}
+    >
       {children}
-    </section>
+    </Section>
   );
 }; 

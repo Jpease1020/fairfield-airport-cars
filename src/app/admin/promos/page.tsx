@@ -306,7 +306,7 @@ function PromosPageContent() {
               <Label>
                 Code (uppercase) *
               </Label>
-              <input
+              <Input
                 type="text"
                 value={form.code}
                 onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}

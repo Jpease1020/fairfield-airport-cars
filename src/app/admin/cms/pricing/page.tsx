@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { cmsService } from '@/lib/services/cms-service';
 import { PricingSettings } from '@/types/cms';
@@ -33,11 +33,7 @@ function PricingSettingsContent() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  useEffect(() => {
-    loadPricingSettings();
-  }, []);
-
-  const loadPricingSettings = async () => {
+  const loadPricingSettings = useCallback(async () => {
     try {
       setLoading(true);
       const pricingSettings = await cmsService.getPricingSettings();
@@ -49,7 +45,11 @@ function PricingSettingsContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadPricingSettings();
+  }, [loadPricingSettings]);
 
   const handleSave = async () => {
     if (!settings) return;

@@ -133,27 +133,24 @@ export default function AnalyticsPage() {
             {/* Detailed Metrics */}
             <Container>
               {/* Top Interaction Types */}
-              <Stack spacing="md">
+              <Container>
                 <H2>
                   <Span>🖱️</Span>
                   Top Interaction Types
                 </H2>
-                <Stack direction="vertical" spacing="sm">
+                <Container>
                   {getTopInteractions().map(([type, count]) => (
-                    <Stack key={type} direction="horizontal" justify="between" align="center">
-                      <Stack direction="horizontal" spacing="sm" align="center">
-                        <Span>●</Span>
+                    <Container key={type}>
+                      <Stack direction="horizontal" justify="between" align="center">
+                        <Span>● {type.replace(/([A-Z])/g, ' $1').toLowerCase()}</Span>
                         <Span>
-                          {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                          {count.toLocaleString()}
                         </Span>
                       </Stack>
-                      <Span>
-                        {count.toLocaleString()}
-                      </Span>
-                    </Stack>
+                    </Container>
                   ))}
-                </Stack>
-              </Stack>
+                </Container>
+              </Container>
 
               {/* Top Error Types */}
               <Container>
@@ -161,14 +158,16 @@ export default function AnalyticsPage() {
                   <Span>⚠️</Span>
                   Top Error Types
                 </H2>
-                <Stack direction="vertical" spacing="sm">
+                <Container>
                   {getTopErrors().map(([type, count]) => (
-                    <Stack key={type} direction="horizontal" justify="between" align="center">
-                      <Span>● {type.replace(/([A-Z])/g, ' $1').toLowerCase()}</Span>
-                      <Span>{count.toLocaleString()}</Span>
-                    </Stack>
+                    <Container key={type}>
+                      <Stack direction="horizontal" justify="between" align="center">
+                        <Span>● {type.replace(/([A-Z])/g, ' $1').toLowerCase()}</Span>
+                        <Span>{count.toLocaleString()}</Span>
+                      </Stack>
+                    </Container>
                   ))}
-                </Stack>
+                </Container>
               </Container>
 
               {/* Top Element Types */}
@@ -177,14 +176,16 @@ export default function AnalyticsPage() {
                   <Span>📝</Span>
                   Most Interacted Elements
                 </H2>
-                <Stack direction="vertical" spacing="sm">
+                <Container>
                   {getTopElements().map(([element, count]) => (
-                    <Stack key={element} direction="horizontal" justify="between" align="center">
-                      <Span>● {element}</Span>
-                      <Span>{count.toLocaleString()}</Span>
-                    </Stack>
+                    <Container key={element}>
+                      <Stack direction="horizontal" justify="between" align="center">
+                        <Span>● {element}</Span>
+                        <Span>{count.toLocaleString()}</Span>
+                      </Stack>
+                    </Container>
                   ))}
-                </Stack>
+                </Container>
               </Container>
 
               {/* Recent Activity */}
@@ -193,14 +194,16 @@ export default function AnalyticsPage() {
                   <Span>⏰</Span>
                   Recent Activity
                 </H2>
-                <Stack direction="vertical" spacing="sm">
+                <Container>
                   {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
-                    <Stack key={index} direction="horizontal" justify="between" align="center">
-                      <Span>● {interaction.type} on {interaction.element}</Span>
-                      <Span>{new Date(interaction.timestamp).toLocaleTimeString()}</Span>
-                    </Stack>
+                    <Container key={index}>
+                      <Stack direction="horizontal" justify="between" align="center">
+                        <Span>● {interaction.type} on {interaction.element}</Span>
+                        <Span>{new Date(interaction.timestamp).toLocaleTimeString()}</Span>
+                      </Stack>
+                    </Container>
                   ))}
-                </Stack>
+                </Container>
               </Container>
             </Container>
 
@@ -211,7 +214,7 @@ export default function AnalyticsPage() {
                   <Span>⚠️</Span>
                   Recent Errors
                 </H2>
-                <Stack direction="vertical" spacing="md">
+                <Container>
                   {analytics.recentErrors.slice(0, 10).map((error, index) => (
                     <Container key={index}>
                       <Stack direction="horizontal" justify="between" align="center">
@@ -221,7 +224,7 @@ export default function AnalyticsPage() {
                       <Text>Type: {error.type} • Page: {error.page}</Text>
                     </Container>
                   ))}
-                </Stack>
+                </Container>
               </Container>
             )}
           </Container>

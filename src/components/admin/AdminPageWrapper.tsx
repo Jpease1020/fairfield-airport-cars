@@ -2,7 +2,7 @@ import React from 'react';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Container, Text } from '@/components/ui';
+import { Container, Text, H3 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface AdminPageWrapperProps {
@@ -57,10 +57,8 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
           subtitle="Error occurred"
         />
         <Container maxWidth={maxWidth}>
-          <div>
-            <h3>{errorTitle}</h3>
-            <p>{error}</p>
-          </div>
+          <H3>{errorTitle}</H3>
+          <Text>{error}</Text>
         </Container>
       </Container>
     );

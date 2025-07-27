@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Text, Span } from '@/components/ui';
+import { Container, Text, Span, Link } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 export interface SettingInputProps {
@@ -94,17 +94,13 @@ export const SettingInput: React.FC<SettingInputProps> = ({
           {helpLink && (
             <>
               {' '}
-              <a 
+              <Link 
                 href={helpLink.href}
                 target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: '#2563eb',
-                  textDecoration: 'underline'
-                }}
+                external
               >
                 {helpLink.text}
-              </a>
+              </Link>
             </>
           )}
         </Text>

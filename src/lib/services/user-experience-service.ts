@@ -1,8 +1,6 @@
 // User Experience Service
 // Handles real-time tracking, offline capabilities, accessibility, and mobile optimization
 
-import { performanceOptimizer } from './performance-optimizer';
-
 interface UserPreferences {
   accessibility: {
     highContrast: boolean;
@@ -347,7 +345,7 @@ class UserExperienceService {
   private startLocationUpdates(bookingId: string): void {
     // This would integrate with driver's GPS
     // For now, simulate location updates
-    const locationInterval = setInterval(() => {
+    setInterval(() => {
       // Simulate driver location updates
       const mockLocation = {
         lat: 40.7128 + (Math.random() - 0.5) * 0.01,

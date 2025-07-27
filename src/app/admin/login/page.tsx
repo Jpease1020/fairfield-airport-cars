@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard, Form, Input, Label, Button, Container, Text } from '@/components/ui';
+import { GridSection, InfoCard, Form, Input, Label, Button, Container, Text, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 export default function LoginPage() {
@@ -102,7 +102,7 @@ export default function LoginPage() {
               </Button>
               
               <Container>
-                <span>or</span>
+                <Span>or</Span>
               </Container>
               
               <Button 

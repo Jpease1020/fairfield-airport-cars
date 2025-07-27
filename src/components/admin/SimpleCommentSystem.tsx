@@ -18,7 +18,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
-  const [commentBoxPosition, setCommentBoxPosition] = useState({ top: 0, left: 0 });
+
 
   // Load comments from Firebase
   useEffect(() => {
@@ -77,11 +77,6 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
       console.log('💬 CommentSystem - Adding comment to element:', elementText);
       
       // Calculate position for comment box
-      const rect = target.getBoundingClientRect();
-      setCommentBoxPosition({
-        top: rect.top - 10,
-        left: rect.right + 10
-      });
       
       setSelectedElement(target);
       setActiveCommentBox(elementId);
@@ -300,15 +295,10 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
 
               {/* Comment Box */}
         {activeCommentBox && selectedElement && (
-          <div
+          <Container
             data-comment-box
-            style={{
-              position: 'absolute',
-              top: commentBoxPosition.top,
-              left: commentBoxPosition.left,
-              zIndex: 1000,
-            }}
-            className="bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-80 max-w-96"
+            variant="elevated"
+            padding="md"
           >
             <Stack direction="horizontal" align="center" justify="between">
             <H4>
@@ -395,7 +385,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
             </Button>
           </Stack>
         </Container>
-      </div>
+      </Container>
     )}
 
       {/* Global Styles */}

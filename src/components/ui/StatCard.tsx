@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, H3, Text, Span } from '@/components/ui';
+import { Container, H3, Text, Span, Link } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 // StatCard Component - BULLETPROOF TYPE SAFETY!
@@ -43,9 +43,11 @@ export const StatCard: React.FC<StatCardProps> = ({
 
   if (href) {
     return (
-      <a href={href} className="card">
-        {cardContent}
-      </a>
+      <Link href={href}>
+        <Container>
+          {cardContent}
+        </Container>
+      </Link>
     );
   }
 

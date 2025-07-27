@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
 import { listBookings, updateBooking, deleteBooking } from '@/lib/services/booking-service';
 import { 
@@ -25,11 +25,7 @@ function AdminBookingsPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       setError(null);
       setLoading(true);
@@ -122,12 +118,15 @@ function AdminBookingsPageContent() {
       }
     } catch (err) {
       console.error('❌ Error fetching bookings:', err);
-      setError('Failed to load bookings. Please try again.');
-      addToast('error', 'Failed to load bookings');
+      setError('Failed to load bookings');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   const handleStatusUpdate = async (booking: Booking, newStatus: Booking['status']) => {
     try {
