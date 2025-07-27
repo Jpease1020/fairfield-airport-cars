@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
 
-interface FormActionsProps extends React.HTMLAttributes<HTMLDivElement> {
+// FormActions Component - BULLETPROOF TYPE SAFETY!
+interface FormActionsProps {
   children: React.ReactNode;
   align?: 'left' | 'center' | 'right';
   spacing?: 'sm' | 'md' | 'lg';

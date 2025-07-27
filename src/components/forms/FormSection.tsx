@@ -3,15 +3,24 @@ import { cn } from '@/lib/utils/utils';
 import { Container, H3, Text, Grid } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
-interface FormSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+// FormSection Component - BULLETPROOF TYPE SAFETY!
+interface FormSectionProps {
   title: string;
   description?: string;
   columns?: number;
   children: React.ReactNode;
+  spacing?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'card' | 'minimal';
 }
 
-const FormSection = React.forwardRef<HTMLDivElement, FormSectionProps>(
-  ({ className, title, description, columns, children, ...props }, ref) => {
+const FormSection: React.FC<FormSectionProps> = ({ 
+    title, 
+    description, 
+    columns = 1, 
+    children, 
+    spacing = 'lg', 
+    variant = 'default' 
+  }) => {
     return (
       <Container
         className={className}

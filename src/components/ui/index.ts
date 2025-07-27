@@ -111,6 +111,9 @@ export { EmptyState } from './EmptyState';
 export { StarRating } from './StarRating';
 export { Alert } from './Alert';
 export { Modal } from './Modal';
+export { Logo } from './Logo';
+export { CommentIcon } from './CommentIcon';
+export { LocationAutocomplete } from './LocationAutocomplete';
 
 // Reusable Patterns
 export { FeatureGrid } from './FeatureGrid'; 

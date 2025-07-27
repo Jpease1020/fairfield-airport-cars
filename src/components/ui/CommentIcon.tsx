@@ -2,10 +2,12 @@
 
 
 
+// CommentIcon Component - BULLETPROOF TYPE SAFETY!
 interface CommentIconProps {
   sectionId?: string;
   sectionTitle?: string;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'subtle' | 'prominent';
 }
 
 const CommentIcon = ({ }: CommentIconProps) => {
