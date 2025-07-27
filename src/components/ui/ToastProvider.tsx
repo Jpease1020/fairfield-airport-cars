@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { Container, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface Toast {
   id: string;
@@ -60,11 +62,11 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onRemove }) => 
   if (toasts.length === 0) return null;
 
   return (
-    <div >
+    <Container className="toast-container">
       {toasts.map(toast => (
         <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
       ))}
-    </div>
+    </Container>
   );
 };
 
@@ -91,18 +93,18 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
   };
 
   return (
-    <div className={getToastClass()}>
-      <div >
-        <span >{getIcon()}</span>
-        <span >{toast.message}</span>
-      </div>
+    <Container className={getToastClass()}>
+      <Stack direction="horizontal" spacing="sm" align="center">
+        <Span>{getIcon()}</Span>
+        <Span>{toast.message}</Span>
+      </Stack>
       
       <button
         onClick={() => onRemove(toast.id)}
-        
+        className="toast-close-button"
       >
         ×
       </button>
-    </div>
+    </Container>
   );
 }; 

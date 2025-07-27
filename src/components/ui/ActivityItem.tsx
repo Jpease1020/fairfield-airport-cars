@@ -1,4 +1,6 @@
 import React from 'react';
+import { Container, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface ActivityItemProps {
   icon: string;
@@ -32,15 +34,17 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
 
   const content = (
     <>
-      <div>
-        {icon}
-      </div>
-      <div>
-        <p>{title}</p>
-        {subtitle && <p>{subtitle}</p>}
-      </div>
+      <Container>
+        <Span>{icon}</Span>
+      </Container>
+      <Stack>
+        <Text>{title}</Text>
+        {subtitle && <Text>{subtitle}</Text>}
+      </Stack>
       {amount && (
-        <div>{amount}</div>
+        <Container>
+          <Span>{amount}</Span>
+        </Container>
       )}
     </>
   );
@@ -62,8 +66,8 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   }
 
   return (
-    <div className={className}>
+    <Container className={className}>
       {content}
-    </div>
+    </Container>
   );
 }; 

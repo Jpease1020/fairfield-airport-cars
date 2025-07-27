@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Text } from '@/components/ui';
+import { Container, Text, Span } from '@/components/ui';
+import { Stack, Card } from '@/components/ui/containers';
 
 interface ActionCardProps {
   icon: string;
@@ -9,7 +10,6 @@ interface ActionCardProps {
   description?: string;
   variant?: 'default' | 'outlined' | 'filled';
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
   theme?: 'light' | 'dark';
   disabled?: boolean;
 }
@@ -22,58 +22,52 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   description,
   variant = 'default',
   size = 'md',
-  className = '',
   theme = 'light',
   disabled = false
 }) => {
-  const cardClass = [
-    'action-card',
-    `action-card-${size}`,
-    variant !== 'default' ? `action-card-${variant}` : '',
-    theme === 'dark' ? 'dark-theme' : '',
-    disabled ? 'action-card-disabled' : '',
-    className
-  ].filter(Boolean).join(' ');
-
   const content = (
-    <>
+    <Stack spacing="sm" align="center">
       <Container>
-        {icon}
+        <Span>{icon}</Span>
       </Container>
-      <span>{label}</span>
+      <Span>{label}</Span>
       {description && (
-        <Text>{description}</Text>
+        <Text variant="muted">{description}</Text>
       )}
-    </>
+    </Stack>
   );
 
   if (disabled) {
     return (
-      <div className={cardClass}>
+      <Card variant="outlined" padding={size}>
         {content}
-      </div>
+      </Card>
     );
   }
 
   if (href) {
     return (
-      <a href={href} className={cardClass}>
-        {content}
+      <a href={href}>
+        <Card variant="outlined" padding={size}>
+          {content}
+        </Card>
       </a>
     );
   }
 
   if (onClick) {
     return (
-      <button onClick={onClick} className={cardClass}>
-        {content}
+      <button onClick={onClick}>
+        <Card variant="outlined" padding={size}>
+          {content}
+        </Card>
       </button>
     );
   }
 
   return (
-    <div className={cardClass}>
+    <Card variant="outlined" padding={size}>
       {content}
-    </div>
+    </Card>
   );
 }; 

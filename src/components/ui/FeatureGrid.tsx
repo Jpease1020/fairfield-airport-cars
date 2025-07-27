@@ -1,4 +1,6 @@
 import React from 'react';
+import { Container, Text, H4 } from '@/components/ui';
+import { Grid, Stack } from '@/components/ui/containers';
 
 interface Feature {
   id?: string | number;
@@ -10,7 +12,6 @@ interface Feature {
 interface FeatureGridProps {
   features: Feature[];
   columns?: 2 | 3 | 4;
-  className?: string;
 }
 
 /**
@@ -29,25 +30,20 @@ interface FeatureGridProps {
  */
 export const FeatureGrid: React.FC<FeatureGridProps> = ({ 
   features, 
-  columns = 3, 
-  className = '' 
+  columns = 3
 }) => {
   return (
-    <div className={className}>
+    <Grid cols={columns as 1 | 2 | 3 | 4 | 5 | 6 | 12} gap="lg">
       {features.map((feature, index) => (
-        <div key={feature.id || index}>
-          <div>
-            {feature.icon}
-          </div>
-          <h4>
-            {feature.title}
-          </h4>
-          <p>
-            {feature.description}
-          </p>
-        </div>
+        <Stack key={feature.id || index} spacing="md" align="center">
+          <Container>
+            <Text>{feature.icon}</Text>
+          </Container>
+          <H4>{feature.title}</H4>
+          <Text variant="muted">{feature.description}</Text>
+        </Stack>
       ))}
-    </div>
+    </Grid>
   );
 };
 

@@ -1,5 +1,7 @@
 import React from 'react';
 import { ActionCard } from './ActionCard';
+import { Container, Text, Span } from '@/components/ui';
+import { Grid, Stack } from '@/components/ui/containers';
 
 interface ActionData {
   id: string | number;
@@ -16,7 +18,6 @@ interface ActionGridProps {
   actions: ActionData[];
   columns?: 2 | 3 | 4 | 6;
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
   theme?: 'light' | 'dark';
   emptyMessage?: string;
 }
@@ -25,30 +26,22 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
   actions,
   columns = 4,
   size = 'md',
-  className = '',
   theme = 'light',
   emptyMessage = 'No actions available'
 }) => {
-  const gridClass = [
-    'grid',
-    `grid-${columns}`,
-    theme === 'dark' ? 'dark-theme' : '',
-    className
-  ].filter(Boolean).join(' ');
-
   if (actions.length === 0) {
     return (
-      <div className={gridClass}>
-        <div >
-          <span >⚡</span>
-          <p>{emptyMessage}</p>
-        </div>
-      </div>
+      <Container>
+        <Stack align="center" spacing="md">
+          <Span>⚡</Span>
+          <Text variant="muted">{emptyMessage}</Text>
+        </Stack>
+      </Container>
     );
   }
 
   return (
-    <div className={gridClass}>
+    <Grid cols={columns as 1 | 2 | 3 | 4 | 5 | 6 | 12} gap="md">
       {actions.map((action) => (
         <ActionCard
           key={action.id}
@@ -63,6 +56,6 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
           disabled={action.disabled}
         />
       ))}
-    </div>
+    </Grid>
   );
 }; 

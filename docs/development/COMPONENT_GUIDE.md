@@ -382,3 +382,125 @@ test('Booking form integrates with reusable components', () => {
 
 *Last Updated: January 2025*  
 *Status: Updated to reflect recent codebase cleanup achievements* 
+
+# Component Development Guide
+
+## 🚫 **CRITICAL RULES - NEVER BREAK THESE**
+
+### **1. NEVER Use `className` in Reusable Components**
+- ❌ **FORBIDDEN**: `className={cardClass}` in reusable components
+- ✅ **CORRECT**: Use component props like `variant`, `size`, `spacing`
+- ✅ **CORRECT**: `Container` uses `maxWidth`, `padding`, `margin` props
+- ✅ **CORRECT**: `Stack` uses `direction`, `spacing`, `align`, `justify` props
+- ✅ **CORRECT**: `Card` uses `variant`, `padding`, `hover` props
+
+### **2. NEVER Use Generic HTML Tags for Structure**
+- ❌ **FORBIDDEN**: `<div>`, `<span>`, `<p>`, `<h1-h6>` for layout
+- ✅ **CORRECT**: Use `Container`, `Stack`, `Text`, `Span`, `H1-H6`
+- ✅ **CORRECT**: Only use HTML tags for interactive elements (`button`, `a`, `input`)
+
+### **3. NEVER Revert to Generic HTML When Components Don't Support Props**
+- ❌ **FORBIDDEN**: "This component doesn't support `style`, so I'll use `div`"
+- ✅ **CORRECT**: Find the right component or use `className` with CSS classes
+- ✅ **CORRECT**: Use `Card` instead of `Container` for card-like styling
+- ✅ **CORRECT**: Use `Grid` instead of `Container` for grid layouts
+
+### **4. ALWAYS Use Design System Components**
+- ✅ **CORRECT**: Import from `@/components/ui` and `@/components/ui/containers`
+- ✅ **CORRECT**: Use `Stack` from `@/components/ui/containers`
+- ✅ **CORRECT**: Use `Card` from `@/components/ui/containers`
+- ✅ **CORRECT**: Use `Grid` from `@/components/ui/containers`
+
+## 🔧 **Component Usage Examples**
+
+### **Container Component**
+```typescript
+// ✅ CORRECT
+<Container maxWidth="xl" padding="lg" margin="md">
+  <Text>Content</Text>
+</Container>
+
+// ❌ FORBIDDEN
+<Container className="custom-class">
+  <div>Content</div>
+</Container>
+```
+
+### **Stack Component**
+```typescript
+// ✅ CORRECT
+<Stack direction="horizontal" spacing="md" align="center">
+  <Span>Item 1</Span>
+  <Span>Item 2</Span>
+</Stack>
+
+// ❌ FORBIDDEN
+<div className="flex items-center space-x-4">
+  <span>Item 1</span>
+  <span>Item 2</span>
+</div>
+```
+
+### **Card Component**
+```typescript
+// ✅ CORRECT
+<Card variant="outlined" padding="md" hover>
+  <Text>Card content</Text>
+</Card>
+
+// ❌ FORBIDDEN
+<Container className="card-styles">
+  <div>Card content</div>
+</Container>
+```
+
+## 🚨 **BLOCKERS - These Will Stop You**
+
+### **Before Every Edit, Ask:**
+1. **"Am I using `className` in a reusable component?"** → STOP, use props instead
+2. **"Am I using `div` for structure?"** → STOP, use `Container` or `Stack`
+3. **"Am I using `span` for text?"** → STOP, use `Span` component
+4. **"Am I using `p` for text?"** → STOP, use `Text` component
+5. **"Am I reverting to HTML because of prop issues?"** → STOP, find the right component
+
+### **Component Selection Guide**
+- **Layout**: Use `Container`, `Stack`, `Grid`
+- **Cards**: Use `Card` (not `Container` with className)
+- **Text**: Use `Text`, `Span`, `H1-H6`
+- **Lists**: Use `Stack` with `spacing`
+- **Grids**: Use `Grid` component
+- **Interactive**: Use `button`, `a`, `input` (HTML is OK for these)
+
+## 📋 **Checklist Before Committing**
+
+- [ ] No `className` props in reusable components
+- [ ] No `div` tags for structure
+- [ ] No `span` tags for text
+- [ ] No `p` tags for text
+- [ ] All imports from correct paths
+- [ ] Using proper component props
+- [ ] No inline styles on reusable components
+
+## 🎯 **Quick Reference**
+
+| **Need** | **Use Component** | **From** |
+|----------|-------------------|----------|
+| Layout container | `Container` | `@/components/ui` |
+| Vertical/horizontal stack | `Stack` | `@/components/ui/containers` |
+| Card-like container | `Card` | `@/components/ui/containers` |
+| Grid layout | `Grid` | `@/components/ui/containers` |
+| Text content | `Text` | `@/components/ui` |
+| Inline text | `Span` | `@/components/ui` |
+| Headings | `H1-H6` | `@/components/ui` |
+
+## 🚫 **NEVER DO THIS AGAIN**
+
+The following patterns are **FORBIDDEN** and will result in immediate rollback:
+
+1. **Adding `className` to reusable components**
+2. **Using `div` for structure instead of `Container`**
+3. **Using `span` for text instead of `Span`**
+4. **Reverting to HTML when components don't support props**
+5. **Using inline styles on reusable components**
+
+**Remember**: When in doubt, check the component definition and use the right props, not `className`! 

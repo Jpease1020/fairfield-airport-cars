@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './button';
 import { Card, CardBody, CardHeader, CardTitle } from './card';
 import { Input, Label, Select, Option } from './index';
+import { Container, Span } from '@/components/ui';
 
 interface AccessibilityEnhancerProps {
   children: React.ReactNode;
@@ -166,16 +167,15 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
             <CardTitle>Accessibility Options</CardTitle>
           </CardHeader>
           <CardBody>
-            <div className="accessibility-settings">
+            <Container className="accessibility-settings">
               {/* High Contrast */}
               <label >
                 <Input
                   type="checkbox"
                   checked={settings.highContrast}
                   onChange={(e) => updateSetting('highContrast', e.target.checked)}
-                  
                 />
-                <span >High Contrast Mode</span>
+                <Span>High Contrast Mode</Span>
               </label>
 
               {/* Reduce Motion */}
@@ -184,9 +184,8 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
                   type="checkbox"
                   checked={settings.reduceMotion}
                   onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
-                  
                 />
-                <span >Reduce Motion</span>
+                <Span>Reduce Motion</Span>
               </label>
 
               {/* Enhanced Focus */}
@@ -195,28 +194,27 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
                   type="checkbox"
                   checked={settings.focusIndicators}
                   onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
-                  
                 />
-                <span >Enhanced Focus Indicators</span>
+                <Span>Enhanced Focus Indicators</Span>
               </label>
 
               {/* Font Size */}
-              <div className="accessibility-setting-group">
+              <Container className="accessibility-setting-group">
                 <Label htmlFor="font-size-select" >
                   Font Size
                 </Label>
                 <Select
                   id="font-size-select"
                   value={settings.fontSize}
-                  onChange={(e) => updateSetting('fontSize', e.target.value as AccessibilitySettings['fontSize'])}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateSetting('fontSize', e.target.value as AccessibilitySettings['fontSize'])}
                   className="accessibility-setting-select"
                 >
                   <Option value="normal">Normal</Option>
                   <Option value="large">Large</Option>
                   <Option value="extra-large">Extra Large</Option>
                 </Select>
-              </div>
-            </div>
+              </Container>
+            </Container>
           </CardBody>
         </Card>
       )}

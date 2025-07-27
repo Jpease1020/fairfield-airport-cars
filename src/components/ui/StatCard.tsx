@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, H3, Text } from '@/components/ui';
+import { Container, H3, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface StatCardProps {
   title: string;
@@ -24,19 +25,19 @@ export const StatCard: React.FC<StatCardProps> = ({
 }) => {
   const cardContent = (
     <>
-      <Container >
-        <H3 >{title}</H3>
-        <span >{icon}</span>
-      </Container>
-      <Container >
-        <div >{statNumber}</div>
+      <Stack direction="horizontal" justify="between" align="center">
+        <H3>{title}</H3>
+        <Span>{icon}</Span>
+      </Stack>
+      <Stack>
+        <Span>{statNumber}</Span>
         {statChange && (
           <Text className={`stat-change ${changeType}`}>{statChange}</Text>
         )}
         {description && (
           <Text className="card-description">{description}</Text>
         )}
-      </Container>
+      </Stack>
     </>
   );
 

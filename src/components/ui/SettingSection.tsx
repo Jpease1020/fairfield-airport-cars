@@ -1,5 +1,7 @@
 import React from 'react';
 import { Card, CardHeader, CardBody } from './card';
+import { Container, Text, H3, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface SettingSectionProps {
   title: string;
@@ -17,34 +19,36 @@ export const SettingSection: React.FC<SettingSectionProps> = ({
   actions
 }) => {
   return (
-    <Card >
-      <CardHeader >
-        <div >
-          <div >
-            {icon && (
-              <span >
-                {icon}
-              </span>
+    <Card>
+      <CardHeader>
+        <Stack direction="horizontal" justify="between" align="start">
+          <Stack>
+            <Stack direction="horizontal" spacing="sm" align="center">
+              {icon && (
+                <Span>
+                  {icon}
+                </Span>
+              )}
+              <H3>
+                {title}
+              </H3>
+            </Stack>
+            {description && (
+              <Text>
+                {description}
+              </Text>
             )}
-            <h3 >
-              {title}
-            </h3>
-          </div>
-          {description && (
-            <p >
-              {description}
-            </p>
+          </Stack>
+          
+          {actions && (
+            <Container>
+              {actions}
+            </Container>
           )}
-        </div>
-        
-        {actions && (
-          <div >
-            {actions}
-          </div>
-        )}
+        </Stack>
       </CardHeader>
       
-      <CardBody >
+      <CardBody>
         {children}
       </CardBody>
     </Card>

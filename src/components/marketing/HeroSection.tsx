@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, H1, Text, Button } from '@/components/ui';
-import { Section } from '@/components/ui/containers';
+import { Container, H1, Text, Button, Span } from '@/components/ui';
+import { Section, Stack } from '@/components/ui/containers';
 
 interface HeroSectionProps {
   title: string;
@@ -32,9 +32,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <Section variant="brand" padding="xl">
       {backgroundImage && (
-        <div style={{ backgroundImage: `url(${backgroundImage})` }}>
-          <div />
-        </div>
+        <Container style={{ backgroundImage: `url(${backgroundImage})` }}>
+          <Container>
+            <Span>Background</Span>
+          </Container>
+        </Container>
       )}
       
       <Container maxWidth="xl">
@@ -43,7 +45,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {description && <Text>{description}</Text>}
         
         {(primaryAction || secondaryAction) && (
-          <div>
+          <Stack direction="horizontal" spacing="md">
             {primaryAction && (
               <a href={primaryAction.href}>
                 <Button variant="primary" size="lg">
@@ -55,11 +57,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {secondaryAction && (
               <a href={secondaryAction.href}>
                 <Button variant="outline" size="lg">
-                  {secondaryAction.label} <span aria-hidden="true">→</span>
+                  {secondaryAction.label} <Span aria-hidden="true">→</Span>
                 </Button>
               </a>
             )}
-          </div>
+          </Stack>
         )}
       </Container>
     </Section>

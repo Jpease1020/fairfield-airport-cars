@@ -1,4 +1,6 @@
 import React from 'react';
+import { Container, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface AlertItemProps {
   icon: string;
@@ -33,13 +35,13 @@ export const AlertItem: React.FC<AlertItemProps> = ({
 
   const content = (
     <>
-      <div>
-        {icon}
-      </div>
-      <div>
-        <p>{title}</p>
-        <p>{message}</p>
-      </div>
+      <Container>
+        <Span>{icon}</Span>
+      </Container>
+      <Stack>
+        <Text>{title}</Text>
+        <Text>{message}</Text>
+      </Stack>
       {onDismiss && (
         <button 
           onClick={(e) => {
@@ -72,8 +74,8 @@ export const AlertItem: React.FC<AlertItemProps> = ({
   }
 
   return (
-    <div className={className}>
+    <Container className={className}>
       {content}
-    </div>
+    </Container>
   );
 }; 

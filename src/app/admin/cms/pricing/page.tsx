@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { cmsService } from '@/lib/services/cms-service';
 import { PricingSettings } from '@/types/cms';
@@ -14,8 +14,12 @@ import {
   Input,
   Label,
   H4,
-  Text
+  Text,
+  Container,
+  Span
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { Button } from '@/components/ui/button';
 import { 
   MapPin, 
   Trash2,
@@ -148,7 +152,9 @@ function PricingSettingsContent() {
         loading={true}
         loadingMessage="Loading pricing settings..."
       >
-        <div />
+        <Container>
+          <Span>Loading...</Span>
+        </Container>
       </AdminPageWrapper>
     );
   }
@@ -161,7 +167,9 @@ function PricingSettingsContent() {
         error="Failed to load pricing settings"
         errorTitle="Load Error"
       >
-        <div />
+        <Container>
+          <Span>Error loading settings</Span>
+        </Container>
       </AdminPageWrapper>
     );
   }
@@ -176,10 +184,12 @@ function PricingSettingsContent() {
       {saved && (
         <GridSection variant="content" columns={1}>
           <InfoCard title="✅ Settings Saved" description="Pricing settings saved successfully">
-            <div >
-              <CheckCircle  />
-              <span >Pricing settings saved successfully</span>
-            </div>
+            <Container>
+              <Stack direction="horizontal" spacing="sm">
+                <CheckCircle />
+                <Span>Pricing settings saved successfully</Span>
+              </Stack>
+            </Container>
           </InfoCard>
         </GridSection>
       )}
@@ -190,67 +200,72 @@ function PricingSettingsContent() {
           title="💰 Base Pricing"
           description="Configure your base fare structure and rates"
         >
-          <div >
-            <div >
-              <Label htmlFor="baseFare">Base Fare ($)</Label>
-              <Input
-                id="baseFare"
-                type="number"
-                value={settings.baseFare.toString()}
-                onChange={(e) => handleBasePricingChange('baseFare', parseFloat(e.target.value) || 0)}
-                placeholder="10.00"
-                
-              />
-            </div>
+          <Stack spacing="md">
+            <Container>
+              <Stack>
+                <Label htmlFor="baseFare">Base Fare ($)</Label>
+                <Input
+                  id="baseFare"
+                  type="number"
+                  value={settings.baseFare.toString()}
+                  onChange={(e) => handleBasePricingChange('baseFare', parseFloat(e.target.value) || 0)}
+                  placeholder="10.00"
+                />
+              </Stack>
+            </Container>
 
-            <div >
-              <Label htmlFor="perMile">Per Mile Rate ($)</Label>
-              <Input
-                id="perMile"
-                type="number"
-                value={settings.perMile.toString()}
-                onChange={(e) => handleBasePricingChange('perMile', parseFloat(e.target.value) || 0)}
-                placeholder="3.50"
-                
-              />
-            </div>
+            <Container>
+              <Stack>
+                <Label htmlFor="perMile">Per Mile Rate ($)</Label>
+                <Input
+                  id="perMile"
+                  type="number"
+                  value={settings.perMile.toString()}
+                  onChange={(e) => handleBasePricingChange('perMile', parseFloat(e.target.value) || 0)}
+                  placeholder="3.50"
+                />
+              </Stack>
+            </Container>
 
-            <div >
-              <Label htmlFor="perMinute">Per Minute Rate ($)</Label>
-              <Input
-                id="perMinute"
-                type="number"
-                value={settings.perMinute.toString()}
-                onChange={(e) => handleBasePricingChange('perMinute', parseFloat(e.target.value) || 0)}
-                placeholder="0.50"
-                
-              />
-            </div>
+            <Container>
+              <Stack>
+                <Label htmlFor="perMinute">Per Minute Rate ($)</Label>
+                <Input
+                  id="perMinute"
+                  type="number"
+                  value={settings.perMinute.toString()}
+                  onChange={(e) => handleBasePricingChange('perMinute', parseFloat(e.target.value) || 0)}
+                  placeholder="0.50"
+                />
+              </Stack>
+            </Container>
 
-            <div >
-              <Label htmlFor="depositPercent">Deposit Percentage (%)</Label>
-              <Input
-                id="depositPercent"
-                type="number"
-                value={settings.depositPercent.toString()}
-                onChange={(e) => handleBasePricingChange('depositPercent', parseInt(e.target.value) || 0)}
-                placeholder="50"
-                
-              />
-            </div>
+            <Container>
+              <Stack>
+                <Label htmlFor="depositPercent">Deposit Percentage (%)</Label>
+                <Input
+                  id="depositPercent"
+                  type="number"
+                  value={settings.depositPercent.toString()}
+                  onChange={(e) => handleBasePricingChange('depositPercent', parseInt(e.target.value) || 0)}
+                  placeholder="50"
+                />
+              </Stack>
+            </Container>
 
-            <div >
-              <Label htmlFor="bufferMinutes">Buffer Minutes</Label>
-              <Input
-                id="bufferMinutes"
-                type="number"
-                value={settings.bufferMinutes.toString()}
-                onChange={(e) => handleBasePricingChange('bufferMinutes', parseInt(e.target.value) || 0)}
-                placeholder="60"
-                
-              />
-            </div>
-          </div>
+            <Container>
+              <Stack>
+                <Label htmlFor="bufferMinutes">Buffer Minutes</Label>
+                <Input
+                  id="bufferMinutes"
+                  type="number"
+                  value={settings.bufferMinutes.toString()}
+                  onChange={(e) => handleBasePricingChange('bufferMinutes', parseInt(e.target.value) || 0)}
+                  placeholder="60"
+                />
+              </Stack>
+            </Container>
+          </Stack>
         </InfoCard>
       </GridSection>
 
@@ -260,43 +275,46 @@ function PricingSettingsContent() {
           title="⏰ Cancellation Policy"
           description="Set refund percentages for different cancellation timeframes"
         >
-          <div >
-            <div >
-              <Label htmlFor="over24hRefund">Over 24h Refund (%)</Label>
-              <Input
-                id="over24hRefund"
-                type="number"
-                value={settings.cancellation.over24hRefundPercent.toString()}
-                onChange={(e) => handleCancellationChange('over24hRefundPercent', parseInt(e.target.value) || 0)}
-                placeholder="100"
-                
-              />
-            </div>
+          <Stack spacing="md">
+            <Container>
+              <Stack>
+                <Label htmlFor="over24hRefund">Over 24h Refund (%)</Label>
+                <Input
+                  id="over24hRefund"
+                  type="number"
+                  value={settings.cancellation.over24hRefundPercent.toString()}
+                  onChange={(e) => handleCancellationChange('over24hRefundPercent', parseInt(e.target.value) || 0)}
+                  placeholder="100"
+                />
+              </Stack>
+            </Container>
 
-            <div >
-              <Label htmlFor="between3And24hRefund">3-24h Refund (%)</Label>
-              <Input
-                id="between3And24hRefund"
-                type="number"
-                value={settings.cancellation.between3And24hRefundPercent.toString()}
-                onChange={(e) => handleCancellationChange('between3And24hRefundPercent', parseInt(e.target.value) || 0)}
-                placeholder="50"
-                
-              />
-            </div>
+            <Container>
+              <Stack>
+                <Label htmlFor="between3And24hRefund">3-24h Refund (%)</Label>
+                <Input
+                  id="between3And24hRefund"
+                  type="number"
+                  value={settings.cancellation.between3And24hRefundPercent.toString()}
+                  onChange={(e) => handleCancellationChange('between3And24hRefundPercent', parseInt(e.target.value) || 0)}
+                  placeholder="50"
+                />
+              </Stack>
+            </Container>
 
-            <div >
-              <Label htmlFor="under3hRefund">Under 3h Refund (%)</Label>
-              <Input
-                id="under3hRefund"
-                type="number"
-                value={settings.cancellation.under3hRefundPercent.toString()}
-                onChange={(e) => handleCancellationChange('under3hRefundPercent', parseInt(e.target.value) || 0)}
-                placeholder="0"
-                
-              />
-            </div>
-          </div>
+            <Container>
+              <Stack>
+                <Label htmlFor="under3hRefund">Under 3h Refund (%)</Label>
+                <Input
+                  id="under3hRefund"
+                  type="number"
+                  value={settings.cancellation.under3hRefundPercent.toString()}
+                  onChange={(e) => handleCancellationChange('under3hRefundPercent', parseInt(e.target.value) || 0)}
+                  placeholder="0"
+                />
+              </Stack>
+            </Container>
+          </Stack>
         </InfoCard>
       </GridSection>
 
@@ -306,8 +324,8 @@ function PricingSettingsContent() {
           title="📍 Pricing Zones"
           description="Configure custom pricing for different geographic areas"
         >
-          <div >
-            <div >
+          <Stack spacing="md">
+            <Container>
               <ActionButtonGroup buttons={[
                 {
                   label: 'Add Zone',
@@ -316,81 +334,84 @@ function PricingSettingsContent() {
                   icon: '➕'
                 }
               ]} />
-            </div>
+            </Container>
 
             {settings.zones.length === 0 ? (
-              <div >
-                <MapPin  />
-                <Text >No pricing zones configured</Text>
-                <Text >Add zones for different areas with custom pricing</Text>
-              </div>
+              <Container>
+                <MapPin />
+                <Text>No pricing zones configured</Text>
+                <Text>Add zones for different areas with custom pricing</Text>
+              </Container>
             ) : (
-              <div >
+              <Stack spacing="md">
                 {settings.zones.map((zone, index) => (
-                  <div key={index} >
-                    <div >
-                      <H4 >Zone {index + 1}</H4>
+                  <Container key={index}>
+                    <Stack direction="horizontal" justify="between" align="center">
+                      <H4>Zone {index + 1}</H4>
                       <button
                         onClick={() => removeZone(index)}
-                        
                       >
-                        <Trash2  />
+                        <Trash2 />
                       </button>
-                    </div>
+                    </Stack>
                     
-                    <div >
-                      <div >
-                        <Label htmlFor={`zone-name-${index}`}>Zone Name</Label>
-                        <Input
-                          id={`zone-name-${index}`}
-                          value={zone.name}
-                          onChange={(e) => updateZone(index, 'name', e.target.value)}
-                          placeholder="Downtown"
-                          
-                        />
-                      </div>
+                    <Stack spacing="md">
+                      <Container>
+                        <Stack>
+                          <Label htmlFor={`zone-name-${index}`}>Zone Name</Label>
+                          <Input
+                            id={`zone-name-${index}`}
+                            value={zone.name}
+                            onChange={(e) => updateZone(index, 'name', e.target.value)}
+                            placeholder="Downtown"
+                          />
+                        </Stack>
+                      </Container>
                       
-                      <div >
-                        <Label htmlFor={`zone-baseFare-${index}`}>Base Fare ($)</Label>
-                        <Input
-                          id={`zone-baseFare-${index}`}
-                          type="number"
-                          value={zone.baseFare.toString()}
-                          onChange={(e) => updateZone(index, 'baseFare', parseFloat(e.target.value) || 0)}
-                          placeholder="10.00"
-                          
-                        />
-                      </div>
+                      <Container>
+                        <Stack>
+                          <Label htmlFor={`zone-baseFare-${index}`}>Base Fare ($)</Label>
+                          <Input
+                            id={`zone-baseFare-${index}`}
+                            type="number"
+                            value={zone.baseFare.toString()}
+                            onChange={(e) => updateZone(index, 'baseFare', parseFloat(e.target.value) || 0)}
+                            placeholder="10.00"
+                          />
+                        </Stack>
+                      </Container>
                       
-                      <div >
-                        <Label htmlFor={`zone-perMile-${index}`}>Per Mile ($)</Label>
-                        <Input
-                          id={`zone-perMile-${index}`}
-                          type="number"
-                          value={zone.perMile.toString()}
-                          onChange={(e) => updateZone(index, 'perMile', parseFloat(e.target.value) || 0)}
-                          placeholder="3.50"
-                          
-                        />
-                      </div>
+                      <Container>
+                        <Stack>
+                          <Label htmlFor={`zone-perMile-${index}`}>Per Mile ($)</Label>
+                          <Input
+                            id={`zone-perMile-${index}`}
+                            type="number"
+                            value={zone.perMile.toString()}
+                            onChange={(e) => updateZone(index, 'perMile', parseFloat(e.target.value) || 0)}
+                            placeholder="3.50"
+                          />
+                        </Stack>
+                      </Container>
                       
-                      <div >
-                        <Label htmlFor={`zone-perMinute-${index}`}>Per Minute ($)</Label>
-                        <Input
-                          id={`zone-perMinute-${index}`}
-                          type="number"
-                          value={zone.perMinute.toString()}
-                          onChange={(e) => updateZone(index, 'perMinute', parseFloat(e.target.value) || 0)}
-                          placeholder="0.50"
-                          
-                        />
-                      </div>
-                    </div>
-                  </div>
+                      <Container>
+                        <Stack>
+                          <Label htmlFor={`zone-perMinute-${index}`}>Per Minute ($)</Label>
+                          <Input
+                            id={`zone-perMinute-${index}`}
+                            type="number"
+                            value={zone.perMinute.toString()}
+                            onChange={(e) => updateZone(index, 'perMinute', parseFloat(e.target.value) || 0)}
+                            placeholder="0.50"
+                          />
+                        </Stack>
+                      </Container>
+                    </Stack>
+                  </Container>
                 ))}
-              </div>
+              </Stack>
             )}
-          </div>
+          </Stack>
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>

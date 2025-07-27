@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import { listBookings, updateBooking, deleteBooking } from '@/lib/services/booking-service';
-import { Booking } from '@/types/booking';
-import {
+import { 
   AdminPageWrapper,
   GridSection,
   StatCard,
@@ -14,8 +13,13 @@ import {
   DataTableAction,
   ToastProvider,
   useToast,
-  Span
+  Span,
+  Container,
+  Text
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { Booking } from '@/types/booking';
+import { useAdmin } from '@/components/admin/AdminProvider';
 
 function AdminBookingsPageContent() {
   const { addToast } = useToast();
@@ -233,10 +237,12 @@ function AdminBookingsPageContent() {
       label: 'Customer',
       sortable: true,
       render: (_, booking) => (
-        <div >
-          <div >{booking.name}</div>
-          <div >{booking.email}</div>
-        </div>
+        <Container>
+          <Stack>
+            <Span>{booking.name}</Span>
+            <Span>{booking.email}</Span>
+          </Stack>
+        </Container>
       )
     },
     {
@@ -244,10 +250,12 @@ function AdminBookingsPageContent() {
       label: 'Route',
       sortable: true,
       render: (_, booking) => (
-        <div >
-          <div >{booking.pickupLocation}</div>
-          <div >→ {booking.dropoffLocation}</div>
-        </div>
+        <Container>
+          <Stack>
+            <Span>{booking.pickupLocation}</Span>
+            <Span>→ {booking.dropoffLocation}</Span>
+          </Stack>
+        </Container>
       )
     },
     {
@@ -257,10 +265,12 @@ function AdminBookingsPageContent() {
       render: (value) => {
         const date = new Date(value);
         return (
-          <div >
-            <div >{date.toLocaleDateString()}</div>
-            <div >{date.toLocaleTimeString()}</div>
-          </div>
+          <Container>
+            <Stack>
+              <Span>{date.toLocaleDateString()}</Span>
+              <Span>{date.toLocaleTimeString()}</Span>
+            </Stack>
+          </Container>
         );
       }
     },
@@ -269,7 +279,7 @@ function AdminBookingsPageContent() {
       label: 'Fare',
       sortable: true,
       render: (value) => (
-        <Span >${(value || 0).toFixed(2)}</Span>
+        <Span>${(value || 0).toFixed(2)}</Span>
       )
     },
     {

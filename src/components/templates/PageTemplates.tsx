@@ -1,36 +1,18 @@
 import React from 'react';
-import { CMSConfiguration } from '@/types/cms';
+import { Container, Text, H2, H3, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { Card, CardBody } from '@/components/ui/card';
+import { CMSStatusPage } from '@/components/layout/CMSStatusPage';
 import { useCMS } from '@/hooks/useCMS';
 import { useEditMode } from '@/components/admin/EditModeProvider';
-import { 
-  CMSContentPage 
-} from '@/components/layout/CMSContentPage';
-import { 
-  CMSConversionPage 
-} from '@/components/layout/CMSConversionPage';
-import { 
-  CMSStatusPage 
-} from '@/components/layout/CMSStatusPage';
-import { 
-  H2, Text, Container
-} from '@/components/ui';
-import { 
-  Star,
-  Users,
-  Shield,
-  Phone,
-  Mail,
-  Calendar,
-  MessageCircle
-} from 'lucide-react';
-import Link from 'next/link';
+import { CMSConfiguration } from '@/types/cms';
 
 // ============================================================================
-// PAGE TEMPLATE SYSTEM
+// CONTENT PAGE TEMPLATES
 // ============================================================================
 
 /**
- * Template for creating new content pages (About, Help, Terms, etc.)
+ * Standard content page template with sections
  */
 export const createContentPageTemplate = (
   pageType: keyof CMSConfiguration['pages'],
@@ -45,35 +27,44 @@ export const createContentPageTemplate = (
     if (!cmsConfig) {
       return (
         <Container>
-          <Container>
+          <Stack>
             <H2>Loading...</H2>
-            <Text>Please wait while we load the content.</Text>
-          </Container>
+            <Text variant="muted">Please wait while we load your content.</Text>
+          </Stack>
         </Container>
       );
     }
 
     return (
-      <CMSContentPage 
-        cmsConfig={cmsConfig} 
-        pageType={pageType}
-        title={pageContent?.title || "Page Title"}
-        subtitle={pageContent?.subtitle || "Page Subtitle"}
-        description={pageContent?.content || "Page description"}
-        showTableOfContents={true}
-        showRelatedLinks={true}
-        containerMaxWidth="xl"
-        isEditable={editMode}
-        onFieldChange={(field, value) => handleFieldChange(pageType, field, value)}
-      >
-        {sections}
-      </CMSContentPage>
+      <Container>
+        <Stack spacing="xl">
+          <Stack>
+            <H2>{pageContent?.title || "Page Title"}</H2>
+            {pageContent?.subtitle && (
+              <Text variant="lead">{pageContent.subtitle}</Text>
+            )}
+            {pageContent?.description && (
+              <Text variant="muted">{pageContent.description}</Text>
+            )}
+          </Stack>
+          
+          {sections.map((section, index) => (
+            <Container key={index}>
+              {section}
+            </Container>
+          ))}
+        </Stack>
+      </Container>
     );
   };
 };
 
+// ============================================================================
+// CONVERSION PAGE TEMPLATES
+// ============================================================================
+
 /**
- * Template for creating new conversion pages (Booking, Contact, etc.)
+ * Conversion page template with form and trust signals
  */
 export const createConversionPageTemplate = (
   pageType: keyof CMSConfiguration['pages'],
@@ -89,42 +80,58 @@ export const createConversionPageTemplate = (
     if (!cmsConfig) {
       return (
         <Container>
-          <Container>
+          <Stack>
             <H2>Loading...</H2>
-            <Text>Please wait while we load the form.</Text>
-          </Container>
+            <Text variant="muted">Please wait while we load your form.</Text>
+          </Stack>
         </Container>
       );
     }
 
     return (
-      <CMSConversionPage 
-        cmsConfig={cmsConfig} 
-        pageType={pageType}
-        title={pageContent?.title || "Form Title"}
-        subtitle={pageContent?.subtitle || "Form Subtitle"}
-        description={pageContent?.description || "Form description"}
-        containerMaxWidth="xl"
-        isEditable={editMode}
-        onFieldChange={(field, value) => handleFieldChange(pageType, field, value)}
-      >
-        {formContent}
-        {trustSignals}
-      </CMSConversionPage>
+      <Container>
+        <Stack spacing="xl">
+          <Stack>
+            <H2>{pageContent?.title || "Form Title"}</H2>
+            {pageContent?.subtitle && (
+              <Text variant="lead">{pageContent.subtitle}</Text>
+            )}
+            {pageContent?.description && (
+              <Text variant="muted">{pageContent.description}</Text>
+            )}
+          </Stack>
+          
+          <Stack direction="horizontal" spacing="xl">
+            <Container>
+              {formContent}
+            </Container>
+            
+            {trustSignals && (
+              <Container>
+                {trustSignals}
+              </Container>
+            )}
+          </Stack>
+        </Stack>
+      </Container>
     );
   };
 };
 
+// ============================================================================
+// STATUS PAGE TEMPLATES
+// ============================================================================
+
 /**
- * Template for creating new status pages (Success, Error, Pending, etc.)
+ * Status page template with success/error states
  */
 export const createStatusPageTemplate = (
   pageType: keyof CMSConfiguration['pages'],
   status: 'success' | 'pending' | 'error' | 'info',
   content: React.ReactNode,
   actions?: {
-    primary?: { text: string; href: string; variant?: 'default' | 'outline' | 'secondary' };
-    secondary?: { text: string; href: string; variant?: 'default' | 'outline' | 'secondary' };
+    primary?: { text: string; href: string; variant?: 'primary' | 'outline' | 'secondary' };
+    secondary?: { text: string; href: string; variant?: 'primary' | 'outline' | 'secondary' };
   }
 ) => {
   return function StatusPageTemplate() {
@@ -135,12 +142,12 @@ export const createStatusPageTemplate = (
 
     if (!cmsConfig) {
       return (
-        <div >
-          <div >
+        <Container>
+          <Stack>
             <H2>Loading...</H2>
             <Text variant="muted">Please wait while we load your status.</Text>
-          </div>
-        </div>
+          </Stack>
+        </Container>
       );
     }
 
@@ -182,9 +189,9 @@ export const createSection = (
   const IconComponent = icon;
   
   return (
-    <section id={id} >
-      <H2 >
-        {IconComponent && <IconComponent  />}
+    <section id={id}>
+      <H2>
+        {IconComponent && <IconComponent />}
         {title}
       </H2>
       {content}
@@ -201,24 +208,24 @@ export const createStatsSection = (stats: Array<{
   label: string;
 }>) => {
   return (
-    <div >
+    <Container>
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
-          <Card key={index} variant="outlined" padding="lg">
-            <CardContent >
-              <div >
-                <IconComponent  />
-              </div>
-              <H3 >{stat.value}</H3>
-              <Text variant="small" >
+          <Card key={index} variant="outlined" size="lg">
+            <CardBody>
+              <Container>
+                <IconComponent />
+              </Container>
+              <H3>{stat.value}</H3>
+              <Text variant="small">
                 {stat.label}
               </Text>
-            </CardContent>
+            </CardBody>
           </Card>
         );
       })}
-    </div>
+    </Container>
   );
 };
 
@@ -227,37 +234,28 @@ export const createStatsSection = (stats: Array<{
  */
 export const createContactSection = (contacts: Array<{
   icon: React.ComponentType<any>;
-  title: string;
   value: string;
   action: { text: string; href: string; type: 'tel' | 'mailto' | 'link' };
 }>) => {
   return (
-    <div >
+    <Container>
       {contacts.map((contact, index) => {
         const IconComponent = contact.icon;
-        const ActionComponent = contact.action.type === 'link' ? Link : 'a';
-        const actionProps = contact.action.type === 'link' 
-          ? { href: contact.action.href }
-          : { href: contact.action.href };
-
         return (
-          <Card key={index} variant="elevated" padding="lg">
-            <CardContent >
-              <div >
-                <IconComponent  />
-              </div>
-              <H3 >{contact.title}</H3>
-              <Text >{contact.value}</Text>
-              <ActionComponent {...actionProps}>
-                <Button variant="outline" size="sm">
-                  {contact.action.text}
-                </Button>
-              </ActionComponent>
-            </CardContent>
+          <Card key={index} variant="outlined" size="lg">
+            <CardBody>
+              <Container>
+                <IconComponent />
+              </Container>
+              <H3>{contact.value}</H3>
+              <Text variant="small">
+                {contact.action.text}
+              </Text>
+            </CardBody>
           </Card>
         );
       })}
-    </div>
+    </Container>
   );
 };
 
@@ -270,23 +268,21 @@ export const createFAQSection = (faqs: Array<{
   category?: string;
 }>) => {
   return (
-    <div >
+    <Container>
       {faqs.map((faq, index) => (
-        <Card key={index} variant="outlined" padding="lg">
-          <CardContent>
-            <H3 >{faq.question}</H3>
-            <Text variant="small" >
-              {faq.answer}
-            </Text>
-          </CardContent>
+        <Card key={index} variant="outlined" size="lg">
+          <CardBody>
+            <H3>{faq.question}</H3>
+            <Text>{faq.answer}</Text>
+          </CardBody>
         </Card>
       ))}
-    </div>
+    </Container>
   );
 };
 
 /**
- * Feature cards section template
+ * Features section template
  */
 export const createFeaturesSection = (features: Array<{
   icon: React.ComponentType<any>;
@@ -294,130 +290,76 @@ export const createFeaturesSection = (features: Array<{
   description: string;
 }>) => {
   return (
-    <div >
+    <Container>
       {features.map((feature, index) => {
         const IconComponent = feature.icon;
         return (
-          <Card key={index} variant="elevated" padding="lg">
-            <CardContent>
-              <div >
-                <div >
-                  <IconComponent  />
-                </div>
-                <div>
-                  <H3>{feature.title}</H3>
-                </div>
-              </div>
-              <Text variant="small" >
-                {feature.description}
-              </Text>
-            </CardContent>
+          <Card key={index} variant="outlined" size="lg">
+            <CardBody>
+              <Container>
+                <IconComponent />
+              </Container>
+              <H3>{feature.title}</H3>
+              <Text>{feature.description}</Text>
+            </CardBody>
           </Card>
         );
       })}
-    </div>
+    </Container>
   );
 };
 
 // ============================================================================
-// USAGE EXAMPLES
+// SPECIFIC PAGE TEMPLATES
 // ============================================================================
 
 /**
- * Example: Creating a new About page using templates
+ * About page template
  */
 export const createAboutPage = () => {
-  const sections = [
-    createSection(
-      'overview',
-      'Our Story',
-      <Lead>
-        Fairfield Airport Car Service has been providing reliable, comfortable, and professional 
-        transportation services for over a decade.
-      </Lead>
+  return createContentPageTemplate('about', [
+    createSection('mission', 'Our Mission', 
+      <Text>We provide reliable airport transportation services to the Fairfield community.</Text>
     ),
-    createSection(
-      'stats',
-      'Why Choose Us',
-      createStatsSection([
-        { icon: Star, value: '10+ Years', label: 'Of reliable service excellence' },
-        { icon: Users, value: '10,000+', label: 'Satisfied customers served' },
-        { icon: Shield, value: '100%', label: 'Licensed & insured service' }
-      ])
+    createSection('team', 'Our Team',
+      <Text>Meet our dedicated team of professional drivers.</Text>
     ),
-    createSection(
-      'contact',
-      'Get in Touch',
-      createContactSection([
-        {
-          icon: Phone,
-          title: 'Phone',
-          value: '(203) 555-0123',
-          action: { text: 'Call Now', href: 'tel:(203) 555-0123', type: 'tel' }
-        },
-        {
-          icon: Mail,
-          title: 'Email',
-          value: 'info@fairfieldairportcar.com',
-          action: { text: 'Send Email', href: 'mailto:info@fairfieldairportcar.com', type: 'mailto' }
-        },
-        {
-          icon: Calendar,
-          title: 'Service Hours',
-          value: '24/7 Service Available',
-          action: { text: 'Book Now', href: '/book', type: 'link' }
-        }
-      ])
+    createSection('values', 'Our Values',
+      <Text>Safety, reliability, and customer satisfaction are our top priorities.</Text>
     )
-  ];
-
-  return createContentPageTemplate('about', sections);
+  ]);
 };
 
 /**
- * Example: Creating a new Help page using templates
+ * Help page template
  */
 export const createHelpPage = () => {
-  const sections = [
-    createSection(
-      'faq',
-      'Frequently Asked Questions',
-      createFAQSection([
-        {
-          question: 'How far in advance should I book?',
-          answer: 'We recommend booking at least 24 hours in advance, especially for early morning flights.'
-        },
-        {
-          question: 'What if my flight is delayed?',
-          answer: 'We monitor flight status and will adjust pickup times accordingly. No additional charges for reasonable delays.'
-        }
-      ])
-    ),
-    createSection(
-      'contact',
-      'Need Help?',
-      createContactSection([
-        {
-          icon: Phone,
-          title: 'Call Us',
-          value: '(203) 555-0123',
-          action: { text: 'Call Now', href: 'tel:(203) 555-0123', type: 'tel' }
-        },
-        {
-          icon: Mail,
-          title: 'Email Support',
-          value: 'support@fairfieldairportcar.com',
-          action: { text: 'Send Email', href: 'mailto:support@fairfieldairportcar.com', type: 'mailto' }
-        },
-        {
-          icon: MessageCircle,
-          title: 'Live Chat',
-          value: 'Available during business hours',
-          action: { text: 'Start Chat', href: '/contact', type: 'link' }
-        }
-      ])
-    )
-  ];
-
-  return createContentPageTemplate('help', sections);
+  return createContentPageTemplate('help', [
+    createFAQSection([
+      {
+        question: 'How do I book a ride?',
+        answer: 'You can book a ride through our online booking form or by calling us directly.'
+      },
+      {
+        question: 'What is your cancellation policy?',
+        answer: 'You can cancel your booking up to 2 hours before your scheduled pickup time.'
+      },
+      {
+        question: 'Do you provide child seats?',
+        answer: 'Yes, we provide child seats upon request. Please let us know when booking.'
+      }
+    ]),
+    createContactSection([
+      {
+        icon: () => <Span>📞</Span>,
+        value: '(555) 123-4567',
+        action: { text: 'Call us', href: 'tel:+15551234567', type: 'tel' }
+      },
+      {
+        icon: () => <Span>📧</Span>,
+        value: 'info@fairfieldairportcars.com',
+        action: { text: 'Email us', href: 'mailto:info@fairfieldairportcars.com', type: 'mailto' }
+      }
+    ])
+  ]);
 }; 

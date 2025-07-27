@@ -1,4 +1,6 @@
 import React from 'react';
+import { Container, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface SettingInputProps {
   id: string;
@@ -33,49 +35,28 @@ export const SettingInput: React.FC<SettingInputProps> = ({
   helpLink
 }) => {
   return (
-    <div style={{
-      padding: 'var(--spacing-md) 0',
-      borderBottom: '1px solid var(--border-color)'
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--spacing-sm)',
-        marginBottom: 'var(--spacing-sm)'
-      }}>
+    <Container className="setting-input">
+      <Stack direction="horizontal" spacing="sm" align="center" className="setting-input-header">
         {icon && (
-          <span style={{ fontSize: 'var(--font-size-sm)' }}>
+          <Span className="setting-input-icon">
             {icon}
-          </span>
+          </Span>
         )}
         <label 
           htmlFor={id}
-          style={{
-            fontWeight: '500',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--text-primary)'
-          }}
+          className="setting-input-label"
         >
           {label}
         </label>
-      </div>
+      </Stack>
       
       {description && (
-        <p style={{
-          fontSize: 'var(--font-size-xs)',
-          color: 'var(--text-secondary)',
-          margin: '0 0 var(--spacing-sm) 0',
-          lineHeight: '1.4'
-        }}>
+        <Text className="setting-input-description">
           {description}
-        </p>
+        </Text>
       )}
       
-      <div style={{
-        display: 'flex',
-        gap: 'var(--spacing-sm)',
-        alignItems: 'stretch'
-      }}>
+      <Stack direction="horizontal" spacing="sm" align="stretch" className="setting-input-controls">
         <input
           id={id}
           type={type}
@@ -83,27 +64,18 @@ export const SettingInput: React.FC<SettingInputProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
-
-          style={{
-            flex: 1,
-            opacity: disabled ? 0.6 : 1
-          }}
+          className={`setting-input-field ${disabled ? 'disabled' : ''}`}
         />
         
         {actions && (
-          <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
+          <Container className="setting-input-actions">
             {actions}
-          </div>
+          </Container>
         )}
-      </div>
+      </Stack>
       
       {helpText && (
-        <p style={{
-          fontSize: 'var(--font-size-xs)',
-          color: 'var(--text-secondary)',
-          margin: 'var(--spacing-xs) 0 0 0',
-          lineHeight: '1.4'
-        }}>
+        <Text className="setting-input-help">
           {helpText}
           {helpLink && (
             <>
@@ -112,19 +84,14 @@ export const SettingInput: React.FC<SettingInputProps> = ({
                 href={helpLink.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  color: 'var(--primary-color)',
-                  textDecoration: 'none'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+                className="setting-input-help-link"
               >
                 {helpLink.text}
               </a>
             </>
           )}
-        </p>
+        </Text>
       )}
-    </div>
+    </Container>
   );
 }; 

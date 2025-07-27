@@ -4,6 +4,7 @@ import { PageHeader, PageAction } from './PageHeader';
 import { LoadingSpinner } from './LoadingSpinner';
 import { Alert } from '@/components/feedback';
 import { Container, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface AdminPageWrapperProps {
   title: string;
@@ -49,10 +50,10 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
           subtitle={loadingMessage}
         />
         <Container>
-          <Container>
+          <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
             <Text>{loadingMessage}</Text>
-          </Container>
+          </Stack>
         </Container>
       </Container>
     );
@@ -61,24 +62,24 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
   // Error state
   if (error) {
     return (
-      <div >
+      <Container>
         {showNavigation && <AdminNavigation />}
         <PageHeader
           title={title}
           subtitle="Error occurred"
         />
-        <div className={`standard-content ${maxWidthClass} mx-auto`}>
+        <Container className={`standard-content ${maxWidthClass} mx-auto`}>
           <Alert variant="error" title={errorTitle}>
             {error}
           </Alert>
-        </div>
-      </div>
+        </Container>
+      </Container>
     );
   }
 
   // Normal state
   return (
-    <div >
+    <Container>
       {showNavigation && <AdminNavigation />}
       <PageHeader
         title={title}
@@ -86,9 +87,9 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
         actions={actions}
       />
       
-      <div className={`standard-content ${maxWidthClass} ${maxWidthClass ? 'mx-auto' : ''}`}>
+      <Container className={`standard-content ${maxWidthClass} ${maxWidthClass ? 'mx-auto' : ''}`}>
         {children}
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 }; 

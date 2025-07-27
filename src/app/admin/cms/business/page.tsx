@@ -123,7 +123,9 @@ function BusinessPageContent() {
         loading={true}
         loadingMessage="Loading business settings..."
       >
-        <div />
+        <Container>
+          <Span>Loading...</Span>
+        </Container>
       </AdminPageWrapper>
     );
   }
@@ -136,7 +138,9 @@ function BusinessPageContent() {
         error={error}
         errorTitle="Settings Load Error"
       >
-        <div />
+        <Container>
+          <Span>Error loading settings</Span>
+        </Container>
       </AdminPageWrapper>
     );
   }
@@ -149,7 +153,9 @@ function BusinessPageContent() {
         error="No business settings found"
         errorTitle="Settings Not Found"
       >
-        <div />
+        <Container>
+          <Span>No settings found</Span>
+        </Container>
       </AdminPageWrapper>
     );
   }

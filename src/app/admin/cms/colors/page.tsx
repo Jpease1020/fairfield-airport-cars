@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { 
-  AdminPageWrapper,
-  SettingSection,
-  ActionButtonGroup,
-  StatusMessage,
-  ToastProvider,
-  useToast,
-  GridSection,
-  Input,
-  Text
-} from '@/components/ui';
+import React, { useState, useEffect } from 'react';
+import { Container, Text, Span, H2 } from '@/components/ui';
+import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { GridSection } from '@/components/ui';
+import { SettingSection } from '@/components/ui/SettingSection';
+import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
+import { StatusMessage } from '@/components/ui/StatusMessage';
+import { Stack } from '@/components/ui/containers';
+import { useAdmin } from '@/components/admin/AdminProvider';
 import { getCMSConfig, updateCMSConfig } from '@/lib/services/cms-service';
 
 const COLOR_VARIABLES = [
@@ -119,7 +119,7 @@ function AdminColorsPageContent() {
   };
 
   // Header actions
-  const headerActions = useMemo(() => [
+  const headerActions = React.useMemo(() => [
     {
       label: 'Reload',
       onClick: handleReload,
@@ -161,45 +161,48 @@ function AdminColorsPageContent() {
       )}
 
       <GridSection variant="content" columns={1}>
-        <div>
+        <Container>
           {/* Color Configuration */}
           <SettingSection
             title="Theme Colors"
             description="Configure the main colors used throughout your application"
             icon="🎨"
           >
-            <div>
+            <Stack spacing="lg">
               {COLOR_VARIABLES.map(({ key, label, description }) => (
-                <div key={key}>
-                  <div>
-                    <div
-                      data-color={colors[key] || '#ffffff'}
-                    />
-                    <strong>
-                      {label}
-                    </strong>
-                  </div>
-                  
-                  <Text>
-                    {description}
-                  </Text>
-                  
-                  <div>
-                    <Input
-                      type="color"
-                      value={colors[key] || '#ffffff'}
-                      onChange={(e) => handleColorChange(key, e.target.value)}
-                    />
-                    <Input
-                      type="text"
-                      value={colors[key] || ''}
-                      onChange={(e) => handleColorChange(key, e.target.value)}
-                      placeholder="#ffffff"
-                    />
-                  </div>
-                </div>
+                <Container key={key}>
+                  <Stack spacing="md">
+                    <Stack direction="horizontal" spacing="sm" align="center">
+                      <div
+                        data-color={colors[key] || '#ffffff'}
+                        style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: colors[key] || '#ffffff' }}
+                      />
+                      <Span>
+                        {label}
+                      </Span>
+                    </Stack>
+                    
+                    <Text>
+                      {description}
+                    </Text>
+                    
+                    <Stack direction="horizontal" spacing="sm">
+                      <Input
+                        type="color"
+                        value={colors[key] || '#ffffff'}
+                        onChange={(e) => handleColorChange(key, e.target.value)}
+                      />
+                      <Input
+                        type="text"
+                        value={colors[key] || ''}
+                        onChange={(e) => handleColorChange(key, e.target.value)}
+                        placeholder="#ffffff"
+                      />
+                    </Stack>
+                  </Stack>
+                </Container>
               ))}
-            </div>
+            </Stack>
           </SettingSection>
 
           {/* Live Preview */}
@@ -208,15 +211,15 @@ function AdminColorsPageContent() {
             description="See how your color scheme looks in real-time"
             icon="👀"
           >
-            <div 
+            <Container 
               data-background={colors['--background'] || 'var(--background-primary)'}
               data-foreground={colors['--foreground'] || 'var(--text-primary)'}
             >
-              <h2 
+              <H2 
                 data-primary={colors['--primary'] || 'var(--primary-color)'}
               >
                 Primary Color Example
-              </h2>
+              </H2>
               
               <Text>
                 This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
@@ -246,9 +249,9 @@ function AdminColorsPageContent() {
                 orientation="horizontal"
                 spacing="sm"
               />
-            </div>
+            </Container>
           </SettingSection>
-        </div>
+        </Container>
       </GridSection>
     </AdminPageWrapper>
   );

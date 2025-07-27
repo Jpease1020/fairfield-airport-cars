@@ -1,5 +1,7 @@
 import React from 'react';
 import { ActivityItem } from './ActivityItem';
+import { Container, Text, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface ActivityData {
   id: string | number;
@@ -14,36 +16,28 @@ interface ActivityData {
 
 interface ActivityListProps {
   activities: ActivityData[];
-  className?: string;
   theme?: 'light' | 'dark';
   emptyMessage?: string;
 }
 
 export const ActivityList: React.FC<ActivityListProps> = ({
   activities,
-  className = '',
   theme = 'light',
   emptyMessage = 'No activities to display'
 }) => {
-  const listClass = [
-    'activity-list',
-    theme === 'dark' ? 'dark-theme' : '',
-    className
-  ].filter(Boolean).join(' ');
-
   if (activities.length === 0) {
     return (
-      <div className={listClass}>
-        <div >
-          <span >📭</span>
-          <p>{emptyMessage}</p>
-        </div>
-      </div>
+      <Container>
+        <Stack align="center" spacing="md">
+          <Span>📭</Span>
+          <Text variant="muted">{emptyMessage}</Text>
+        </Stack>
+      </Container>
     );
   }
 
   return (
-    <div className={listClass}>
+    <Stack spacing="md">
       {activities.map((activity) => (
         <ActivityItem
           key={activity.id}
@@ -57,6 +51,6 @@ export const ActivityList: React.FC<ActivityListProps> = ({
           theme={theme}
         />
       ))}
-    </div>
+    </Stack>
   );
 }; 

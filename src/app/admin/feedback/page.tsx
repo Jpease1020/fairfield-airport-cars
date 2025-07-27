@@ -1,15 +1,13 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { 
-  AdminPageWrapper,
-  GridSection, 
-  StatCard, 
-  InfoCard,
-  DataTable,
-  DataTableColumn,
-  DataTableAction
-} from '@/components/ui';
+import React, { useState, useEffect, useMemo } from 'react';
+import { NextPage } from 'next';
+import { Container, Text, Span } from '@/components/ui';
+import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { GridSection, StatCard, InfoCard } from '@/components/ui';
+import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
+import { Stack } from '@/components/ui/containers';
+import { useAdmin } from '@/components/admin/AdminProvider';
 
 interface Feedback {
   id: string;
@@ -137,14 +135,16 @@ function FeedbackPageContent() {
 
   const renderRating = (rating: number) => {
     return (
-      <div>
-        <span>
-          {getRatingStars(rating)}
-        </span>
-        <span>
-          {rating}/5
-        </span>
-      </div>
+      <Container>
+        <Stack>
+          <Span>
+            {getRatingStars(rating)}
+          </Span>
+          <Span>
+            {rating}/5
+          </Span>
+        </Stack>
+      </Container>
     );
   };
 
@@ -174,17 +174,19 @@ function FeedbackPageContent() {
       label: 'Customer',
       sortable: true,
       render: (_, feedback) => (
-        <div>
-          <div>
-            {feedback.customerName}
-          </div>
-          <div>
-            📧 {feedback.customerEmail}
-          </div>
-          <div>
-            🎫 {feedback.bookingId}
-          </div>
-        </div>
+        <Container>
+          <Stack>
+            <Span>
+              {feedback.customerName}
+            </Span>
+            <Span>
+              📧 {feedback.customerEmail}
+            </Span>
+            <Span>
+              🎫 {feedback.bookingId}
+            </Span>
+          </Stack>
+        </Container>
       )
     },
     {
@@ -198,9 +200,9 @@ function FeedbackPageContent() {
       label: 'Feedback',
       sortable: false,
       render: (value) => (
-        <div>
-          {value}
-        </div>
+        <Container>
+          <Text>{value}</Text>
+        </Container>
       )
     },
     {
@@ -210,14 +212,16 @@ function FeedbackPageContent() {
       render: (value) => {
         const date = new Date(value);
         return (
-          <div>
-            <div>
-              {date.toLocaleDateString()}
-            </div>
-            <div>
-              {date.toLocaleTimeString()}
-            </div>
-          </div>
+          <Container>
+            <Stack>
+              <Span>
+                {date.toLocaleDateString()}
+              </Span>
+              <Span>
+                {date.toLocaleTimeString()}
+              </Span>
+            </Stack>
+          </Container>
         );
       }
     }

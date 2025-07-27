@@ -1,5 +1,7 @@
 import React from 'react';
 import { Input, Label, Text } from './index';
+import { Container, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface SettingToggleProps {
   id: string;
@@ -21,39 +23,32 @@ export const SettingToggle: React.FC<SettingToggleProps> = ({
   icon
 }) => {
   return (
-    <div className={`setting-toggle ${disabled ? 'setting-toggle-disabled' : ''}`}>
-      <div >
-        <div >
+    <Container className={`setting-toggle ${disabled ? 'setting-toggle-disabled' : ''}`}>
+      <Stack>
+        <Stack direction="horizontal" align="center" spacing="sm">
           {icon && (
-            <span >
+            <Span>
               {icon}
-            </span>
+            </Span>
           )}
-          <Label 
-            htmlFor={id}
-            
-          >
+          <Label htmlFor={id}>
             {label}
           </Label>
-        </div>
-        <Text >
-          {description}
-        </Text>
-      </div>
-      
-      <div >
-        <label >
+        </Stack>
+        <Text>{description}</Text>
+      </Stack>
+      <Container>
+        <label>
           <Input
             type="checkbox"
             id={id}
             checked={checked}
             onChange={(e) => onChange(e.target.checked)}
             disabled={disabled}
-            
           />
-          <span className={`setting-toggle-slider ${checked ? 'setting-toggle-slider-checked' : ''}`} />
+          <Span className={`setting-toggle-slider ${checked ? 'setting-toggle-slider-checked' : ''}`}></Span>
         </label>
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 }; 

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Container, Text, Span, H3 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 interface ProgressIndicatorProps {
   currentStep: number;
@@ -19,67 +21,69 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   if (variant === 'minimal') {
     return (
-      <div className={className}>
-        <div>
-          <span>Step {currentStep} of {totalSteps}</span>
-          <span>{Math.round(progress)}%</span>
-        </div>
-        <div>
+      <Container className={className}>
+        <Stack direction="horizontal" justify="between" align="center">
+          <Span>Step {currentStep} of {totalSteps}</Span>
+          <Span>{Math.round(progress)}%</Span>
+        </Stack>
+        <Container>
           <div style={{ width: `${progress}%` }} />
-        </div>
-      </div>
+        </Container>
+      </Container>
     );
   }
 
   if (variant === 'detailed') {
     return (
-      <div className={className}>
-        <div>
-          <h3>
-            {steps[currentStep - 1]}
-          </h3>
-          <span>
-            {currentStep} of {totalSteps}
-          </span>
-        </div>
-        <div>
-          <div>
-            <div style={{ width: `${progress}%` }} />
-          </div>
-          <div>
+      <Container className={className}>
+        <Stack spacing="md">
+          <Stack direction="horizontal" justify="between" align="center">
+            <H3>
+              {steps[currentStep - 1]}
+            </H3>
+            <Span>
+              {currentStep} of {totalSteps}
+            </Span>
+          </Stack>
+          <Stack spacing="sm">
+            <Container>
+              <div style={{ width: `${progress}%` }} />
+            </Container>
+            <Stack direction="horizontal" spacing="sm">
+              {steps.map((step, index) => (
+                <Container key={index}>
+                  <Span>{index + 1}</Span>
+                </Container>
+              ))}
+            </Stack>
+          </Stack>
+          <Stack>
             {steps.map((step, index) => (
-              <div key={index}>
-                {index + 1}
-              </div>
+              <Container key={index}>
+                <Text>{step}</Text>
+              </Container>
             ))}
-          </div>
-        </div>
-        <div>
-          {steps.map((step, index) => (
-            <div key={index}>
-              {step}
-            </div>
-          ))}
-        </div>
-      </div>
+          </Stack>
+        </Stack>
+      </Container>
     );
   }
 
   // Default variant
   return (
-    <div className={className}>
-      <div>
-        <span>
+    <Container className={className}>
+      <Stack direction="horizontal" justify="between" align="center">
+        <Span>
           {steps[currentStep - 1]}
-        </span>
-        <span>
+        </Span>
+        <Span>
           {currentStep} of {totalSteps}
-        </span>
-      </div>
-      <div>
+        </Span>
+      </Stack>
+      <Container>
         <div style={{ width: `${progress}%` }} />
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 };
 

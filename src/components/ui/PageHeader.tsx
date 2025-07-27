@@ -1,4 +1,6 @@
 import React from 'react';
+import { Container, H1, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface PageAction {
   label: string;
@@ -51,14 +53,16 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   };
 
   return (
-    <div className={`section-header ${theme === 'dark' ? 'dark-theme' : ''} ${className}`.trim()}>
-      <h1 >{title}</h1>
-      {subtitle && <p >{subtitle}</p>}
-      {actions.length > 0 && (
-        <div >
-          {actions.map(renderAction)}
-        </div>
-      )}
-    </div>
+    <Container className={`section-header ${theme === 'dark' ? 'dark-theme' : ''} ${className}`.trim()}>
+      <Stack spacing="md">
+        <H1>{title}</H1>
+        {subtitle && <Text>{subtitle}</Text>}
+        {actions.length > 0 && (
+          <Container className="page-header-actions">
+            {actions.map(renderAction)}
+          </Container>
+        )}
+      </Stack>
+    </Container>
   );
 }; 

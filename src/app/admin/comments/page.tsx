@@ -1,16 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { 
-  AdminPageWrapper,
-  GridSection, 
-  InfoCard,
-  StatCard,
-  DataTable,
-  DataTableColumn,
-  DataTableAction
-} from '@/components/ui';
+import { Container, Text, Span } from '@/components/ui';
+import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { GridSection, StatCard, InfoCard } from '@/components/ui';
+import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
+import { Stack } from '@/components/ui/containers';
+import { useAdmin } from '@/components/admin/AdminProvider';
 
 function CommentsPageContent() {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
@@ -58,9 +55,9 @@ function CommentsPageContent() {
     const status = getCommentStatus(comment);
 
     return (
-      <span >
+      <Span >
         {status}
-      </span>
+      </Span>
     );
   };
 
@@ -90,14 +87,16 @@ function CommentsPageContent() {
       label: 'Author',
       sortable: true,
       render: (_, comment) => (
-        <div>
-          <div>
-            {comment.createdBy}
-          </div>
-          <div>
-            📄 {comment.pageTitle}
-          </div>
-        </div>
+        <Container>
+          <Stack>
+            <Span>
+              {comment.createdBy}
+            </Span>
+            <Span>
+              📄 {comment.pageTitle}
+            </Span>
+          </Stack>
+        </Container>
       )
     },
     {
@@ -105,9 +104,9 @@ function CommentsPageContent() {
       label: 'Comment',
       sortable: false,
       render: (value) => (
-        <div>
-          {value}
-        </div>
+        <Container>
+          <Text>{value}</Text>
+        </Container>
       )
     },
     {
@@ -117,14 +116,16 @@ function CommentsPageContent() {
       render: (value) => {
         const { date, time } = formatDate(value);
         return (
-          <div>
-            <div >
-              {date}
-            </div>
-            <div >
-              {time}
-            </div>
-          </div>
+          <Container>
+            <Stack>
+              <Span>
+                {date}
+              </Span>
+              <Span>
+                {time}
+              </Span>
+            </Stack>
+          </Container>
         );
       }
     },
@@ -250,7 +251,7 @@ function CommentsPageContent() {
         >
           <div>
             <div >
-              <span >Most Active Pages:</span>
+              <Span >Most Active Pages:</Span>
               <div >
                 {Array.from(new Set(comments.map(c => c.pageTitle)))
                   .map(page => ({
@@ -261,15 +262,15 @@ function CommentsPageContent() {
                   .slice(0, 5)
                   .map(({ page, count }) => (
                     <div key={page} >
-                      <span >{page}</span>
-                      <span >{count} comments</span>
+                      <Span >{page}</Span>
+                      <Span >{count} comments</Span>
                     </div>
                   ))}
               </div>
             </div>
             
             <div >
-              <span >Top Commenters:</span>
+              <Span >Top Commenters:</Span>
               <div >
                 {Array.from(new Set(comments.map(c => c.createdBy)))
                   .map(author => ({
@@ -280,8 +281,8 @@ function CommentsPageContent() {
                   .slice(0, 5)
                   .map(({ author, count }) => (
                     <div key={author}>
-                      <span >{author}</span>
-                      <span>{count} comments</span>
+                      <Span >{author}</Span>
+                      <Span>{count} comments</Span>
                     </div>
                   ))}
               </div>

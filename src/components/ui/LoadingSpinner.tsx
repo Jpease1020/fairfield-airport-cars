@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Span } from '@/components/ui';
 
 /**
  * A flexible loading spinner component with multiple variants and sizes
@@ -38,7 +39,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     switch (variant) {
       case 'dots':
         return (
-          <div className="loading-spinner-dots">
+          <Container className="loading-spinner-dots">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
@@ -48,7 +49,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
                 }}
               />
             ))}
-          </div>
+          </Container>
         );
 
       case 'pulse':
@@ -64,19 +65,19 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   const content = (
-    <div >
+    <Container>
       <SpinnerComponent />
       {text && (
-        <span className="loading-spinner-text">{text}</span>
+        <Span className="loading-spinner-text">{text}</Span>
       )}
-    </div>
+    </Container>
   );
 
   if (centered) {
     return (
-      <div className="loading-spinner-centered">
+      <Container className="loading-spinner-centered">
         {content}
-      </div>
+      </Container>
     );
   }
 

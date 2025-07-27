@@ -1,15 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-  Container,
-  H1,
-  H2,
-  H3,
-  Text,
-  Span,
-  Button
-} from '@/components/ui';
+import React, { useState, useEffect } from 'react';
+import { Container, Text, Span, H2, H1, H3 } from '@/components/ui';
+import { AdminPageWrapper } from '@/components/ui/AdminPageWrapper';
+import { GridSection, StatCard } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { Button } from '@/components/ui/button';
+import { useAdmin } from '@/components/admin/AdminProvider';
 
 interface AnalyticsData {
   totalInteractions: number;
@@ -187,16 +184,20 @@ export default function AnalyticsPage() {
                 <Container >
                   <Container >
                     {getTopInteractions().map(([type, count]) => (
-                      <Container key={type} >
-                        <Container >
-                          <div ></div>
-                          <Span >
-                            {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                      <Container key={type}>
+                        <Stack direction="horizontal" justify="between" align="center">
+                          <Stack direction="horizontal" spacing="sm" align="center">
+                            <Container>
+                              <Span>●</Span>
+                            </Container>
+                            <Span>
+                              {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                            </Span>
+                          </Stack>
+                          <Span>
+                            {count.toLocaleString()}
                           </Span>
-                        </Container>
-                        <Span >
-                          {count.toLocaleString()}
-                        </Span>
+                        </Stack>
                       </Container>
                     ))}
                   </Container>
@@ -214,16 +215,20 @@ export default function AnalyticsPage() {
                 <Container >
                   <Container >
                     {getTopErrors().map(([type, count]) => (
-                      <Container key={type} >
-                        <Container >
-                          <div></div>
-                          <Span >
-                            {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                      <Container key={type}>
+                        <Stack direction="horizontal" justify="between" align="center">
+                          <Stack direction="horizontal" spacing="sm" align="center">
+                            <Container>
+                              <Span>●</Span>
+                            </Container>
+                            <Span>
+                              {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                            </Span>
+                          </Stack>
+                          <Span>
+                            {count.toLocaleString()}
                           </Span>
-                        </Container>
-                        <Span >
-                          {count.toLocaleString()}
-                        </Span>
+                        </Stack>
                       </Container>
                     ))}
                   </Container>
@@ -241,16 +246,20 @@ export default function AnalyticsPage() {
                 <Container >
                   <Container >
                     {getTopElements().map(([element, count]) => (
-                      <Container key={element} >
-                        <Container >
-                          <div></div>
-                          <Span >
-                            {element}
+                      <Container key={element}>
+                        <Stack direction="horizontal" justify="between" align="center">
+                          <Stack direction="horizontal" spacing="sm" align="center">
+                            <Container>
+                              <Span>●</Span>
+                            </Container>
+                            <Span>
+                              {element}
+                            </Span>
+                          </Stack>
+                          <Span>
+                            {count.toLocaleString()}
                           </Span>
-                        </Container>
-                        <Span >
-                          {count.toLocaleString()}
-                        </Span>
+                        </Stack>
                       </Container>
                     ))}
                   </Container>
@@ -268,16 +277,20 @@ export default function AnalyticsPage() {
                 <Container >
                   <Container >
                     {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
-                      <Container key={index} >
-                        <Container >
-                          <div ></div>
-                          <Span >
-                            {interaction.type} on {interaction.element}
+                      <Container key={index}>
+                        <Stack direction="horizontal" justify="between" align="center">
+                          <Stack direction="horizontal" spacing="sm" align="center">
+                            <Container>
+                              <Span>●</Span>
+                            </Container>
+                            <Span>
+                              {interaction.type} on {interaction.element}
+                            </Span>
+                          </Stack>
+                          <Span>
+                            {new Date(interaction.timestamp).toLocaleTimeString()}
                           </Span>
-                        </Container>
-                        <Span>
-                          {new Date(interaction.timestamp).toLocaleTimeString()}
-                        </Span>
+                        </Stack>
                       </Container>
                     ))}
                   </Container>

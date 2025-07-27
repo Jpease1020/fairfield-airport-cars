@@ -1,88 +1,73 @@
 'use client';
 
-import { useState } from 'react';
-import { useAdmin } from './AdminProvider';
-import { Button, Text, H3 } from '@/components/ui';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Container, Text, H3, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { useAdmin } from '@/components/admin/AdminProvider';
 
 const AdminHamburgerMenu = () => {
+  const { editMode, commentMode, setEditMode, setCommentMode } = useAdmin();
   const [isOpen, setIsOpen] = useState(false);
-  const { isAdmin, editMode, commentMode, toggleEditMode, toggleCommentMode } = useAdmin();
-
-  console.log('🔍 AdminHamburgerMenu - isAdmin:', isAdmin, 'editMode:', editMode, 'commentMode:', commentMode);
-
-  // Always show in development mode
-  const isDev = process.env.NODE_ENV === 'development';
-  const isLocalhost = typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' || 
-    window.location.hostname === '127.0.0.1' ||
-    window.location.hostname.includes('localhost')
-  );
-
-  if (!isAdmin && !isDev && !isLocalhost) {
-    console.log('❌ AdminHamburgerMenu - Not rendering because isAdmin is false and not in dev mode');
-    return null;
-  }
-
-  console.log('✅ AdminHamburgerMenu - Rendering hamburger menu');
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
   const handleEditModeToggle = () => {
-    // Edit mode and comment mode are mutually exclusive
-    // When enabling edit mode, comment mode will be automatically disabled
-    toggleEditMode();
-    setIsOpen(false);
+    if (commentMode && !editMode) return;
+    setEditMode(!editMode);
+    if (editMode) {
+      setCommentMode(false);
+    }
   };
 
   const handleCommentModeToggle = () => {
-    // Edit mode and comment mode are mutually exclusive
-    // When enabling comment mode, edit mode will be automatically disabled
-    toggleCommentMode();
-    setIsOpen(false);
+    if (editMode && !commentMode) return;
+    setCommentMode(!commentMode);
+    if (commentMode) {
+      setEditMode(false);
+    }
   };
 
   const handleSiteModeToggle = () => {
-    // Turn off both edit and comment modes
-    if (editMode) toggleEditMode();
-    if (commentMode) toggleCommentMode();
+    setEditMode(false);
+    setCommentMode(false);
     setIsOpen(false);
   };
 
   return (
-    <div>
+    <Container>
       {/* Hamburger Button */}
       <button
         onClick={toggleMenu}
         aria-label="Admin menu"
       >
-        <span>{isOpen ? '✕' : '☰'}</span>
+        <Span>{isOpen ? '✕' : '☰'}</Span>
       </button>
 
       {/* Menu Dropdown */}
       {isOpen && (
-        <div>
-          <div>
+        <Container>
+          <Stack>
             <H3>Admin Tools</H3>
             <Text>Website management</Text>
-          </div>
+          </Stack>
 
           {/* Site Mode Toggle */}
           <Button
             onClick={handleSiteModeToggle}
             variant="ghost"
-
           >
-            <span >🌐</span>
-            <div >
-              <div >Site Mode</div>
-              <div >
+            <Span>🌐</Span>
+            <Stack>
+              <Span>Site Mode</Span>
+              <Span>
                 {!editMode && !commentMode ? 'Currently viewing' : 'View normal site'}
-              </div>
-            </div>
+              </Span>
+            </Stack>
             {!editMode && !commentMode && (
-              <div ></div>
+              <Span>✓</Span>
             )}
           </Button>
 
@@ -91,20 +76,19 @@ const AdminHamburgerMenu = () => {
             onClick={handleEditModeToggle}
             variant="ghost"
             disabled={commentMode && !editMode}
-
           >
-            <span >✏️</span>
-            <div >
-              <div >Edit Content</div>
-              <div >
+            <Span>✏️</Span>
+            <Stack>
+              <Span>Edit Content</Span>
+              <Span>
                 {editMode ? 'Currently editing' : commentMode ? 'Disabled - Comment mode active' : 'Modify page content'}
-              </div>
-            </div>
+              </Span>
+            </Stack>
             {editMode && (
-              <div ></div>
+              <Span>✓</Span>
             )}
             {commentMode && !editMode && (
-              <div ></div>
+              <Span>✗</Span>
             )}
           </Button>
 
@@ -113,61 +97,51 @@ const AdminHamburgerMenu = () => {
             onClick={handleCommentModeToggle}
             variant="ghost"
             disabled={editMode && !commentMode}
-
           >
-            <span >💬</span>
-            <div >
-              <div >UI Change Requests</div>
-              <div >
+            <Span>💬</Span>
+            <Stack>
+              <Span>UI Change Requests</Span>
+              <Span>
                 {commentMode ? 'Comment mode active' : editMode ? 'Disabled - Edit mode active' : 'Request UI changes'}
-              </div>
-            </div>
+              </Span>
+            </Stack>
             {commentMode && (
-              <div ></div>
+              <Span>✓</Span>
             )}
             {editMode && !commentMode && (
-              <div ></div>
+              <Span>✗</Span>
             )}
           </Button>
 
           {/* Divider */}
-          <div></div>
+          <Container>
+            <Span>-</Span>
+          </Container>
 
           {/* Status Indicators */}
-          <div >
-            <div >
-              <div></div>
-              <span>Site Mode: {!editMode && !commentMode ? 'ON' : 'OFF'}</span>
-            </div>
-            <div >
-              <div></div>
-              <span>Edit Mode: {editMode ? 'ON' : 'OFF'}</span>
-            </div>
-            <div >
-              <div></div>
-              <span>Comment Mode: {commentMode ? 'ON' : 'OFF'}</span>
-            </div>
-            <div >
-              <div ></div>
-              <span>Edit & Comment modes are mutually exclusive</span>
-            </div>
-          </div>
-        </div>
+          <Stack>
+            <Container>
+              <Container>
+                <Span>●</Span>
+              </Container>
+              <Span>Site Mode: {!editMode && !commentMode ? 'ON' : 'OFF'}</Span>
+            </Container>
+            <Container>
+              <Container>
+                <Span>●</Span>
+              </Container>
+              <Span>Edit Mode: {editMode ? 'ON' : 'OFF'}</Span>
+            </Container>
+            <Container>
+              <Container>
+                <Span>●</Span>
+              </Container>
+              <Span>Comment Mode: {commentMode ? 'ON' : 'OFF'}</Span>
+            </Container>
+          </Stack>
+        </Container>
       )}
-
-      {/* Status Indicators on Button */}
-      <div>
-        {!editMode && !commentMode && (
-          <div></div>
-        )}
-        {editMode && (
-          <div></div>
-        )}
-        {commentMode && (
-          <div></div>
-        )}
-      </div>
-    </div>
+    </Container>
   );
 };
 

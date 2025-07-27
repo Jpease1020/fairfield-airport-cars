@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Form,
   Input,
@@ -19,6 +19,7 @@ import {
   GridItem,
   H3
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
 
 interface BookingFormProps {
@@ -329,22 +330,24 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="📍"
               />
               {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                <div >
+                <Container>
                   {pickupSuggestions.map((prediction) => (
-                    <div
+                    <button
                       key={prediction.place_id}
-                      
                       onClick={() => handlePickupSuggestionSelect(prediction)}
+                      style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', padding: '8px' }}
                     >
-                      <div >
-                        {prediction.structured_formatting?.main_text || prediction.description}
-                      </div>
-                      <div >
-                        {prediction.structured_formatting?.secondary_text || ''}
-                      </div>
-                    </div>
+                      <Stack>
+                        <Span>
+                          {prediction.structured_formatting?.main_text || prediction.description}
+                        </Span>
+                        <Span>
+                          {prediction.structured_formatting?.secondary_text || ''}
+                        </Span>
+                      </Stack>
+                    </button>
                   ))}
-                </div>
+                </Container>
               )}
             </GridItem>
             
@@ -359,39 +362,40 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 icon="🎯"
               />
               {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-                <div >
+                <Container>
                   {dropoffSuggestions.map((prediction) => (
-                    <div
+                    <button
                       key={prediction.place_id}
-                      
                       onClick={() => handleDropoffSuggestionSelect(prediction)}
+                      style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', padding: '8px' }}
                     >
-                      <div >
-                        {prediction.structured_formatting?.main_text || prediction.description}
-                      </div>
-                      <div >
-                        {prediction.structured_formatting?.secondary_text || ''}
-                      </div>
-                    </div>
+                      <Stack>
+                        <Span>
+                          {prediction.structured_formatting?.main_text || prediction.description}
+                        </Span>
+                        <Span>
+                          {prediction.structured_formatting?.secondary_text || ''}
+                        </Span>
+                      </Stack>
+                    </button>
                   ))}
-                </div>
+                </Container>
               )}
             </GridItem>
           </Grid>
           
           {/* Pickup Date and Time - Styled like SettingInput */}
-          <div >
-            <div >
-              <Span >📅</Span>
+          <Container>
+            <Stack>
+              <Span>📅</Span>
               <label 
                 htmlFor="pickupDateTime"
-                
               >
                 Pickup Date and Time
               </label>
-            </div>
+            </Stack>
             
-            <Text >
+            <Text>
               When do you need to be picked up?
             </Text>
             
@@ -402,9 +406,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
               value={pickupDateTime}
               onChange={(e) => setPickupDateTime(e.target.value)}
               required
-              
             />
-          </div>
+          </Container>
         </SettingSection>
 
         {/* Additional Details */}
@@ -416,18 +419,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Grid columns={2} spacing="md">
             <GridItem>
               {/* Passengers - Styled like SettingInput */}
-              <div >
-                <div >
-                  <Span >👥</Span>
+              <Container>
+                <Stack>
+                  <Span>👥</Span>
                   <label 
                     htmlFor="passengers"
-                    
                   >
                     Passengers
                   </label>
-                </div>
+                </Stack>
                 
-                <Text >
+                <Text>
                   Number of people traveling
                 </Text>
                 
@@ -442,7 +444,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     <Option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</Option>
                   ))}
                 </Select>
-              </div>
+              </Container>
             </GridItem>
             
             <GridItem>
@@ -459,15 +461,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </Grid>
             
             {/* Special Instructions - Styled like SettingInput */}
-            <div>
-              <div>
+            <Container>
+              <Stack>
                 <Span>📝</Span>
-                                  <label 
-                    htmlFor="notes"
-                  >
+                <label 
+                  htmlFor="notes"
+                >
                   Special Instructions (Optional)
                 </label>
-              </div>
+              </Stack>
               
               <Text>
                 Let us know about any special requirements
@@ -482,7 +484,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 placeholder="Any special instructions or requests?"
 
               />
-            </div>
+            </Container>
         </SettingSection>
 
         {/* Action Buttons */}
@@ -491,7 +493,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Calculate your fare and complete your booking"
           icon="💳"
         >
-          <div>
+          <Container>
             <Button
               type="button"
               onClick={handleCalculateFare}
@@ -515,13 +517,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
               )}
             </Button>
             {fare && (
-              <div>
+              <Container>
                 <Text>
                   Estimated Fare: <Span>${fare}</Span>
                 </Text>
-              </div>
+              </Container>
             )}
-          </div>
+          </Container>
           
           {fare && (
             <Button

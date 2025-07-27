@@ -1,5 +1,7 @@
-import { cn } from "@/lib/utils/utils";
+import React from 'react';
 import { Container } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { cn } from '@/lib/utils/utils';
 
 interface SkeletonProps {
   className?: string;
@@ -45,72 +47,74 @@ export const BookingFormSkeleton = () => (
 );
 
 export const BookingCardSkeleton = () => (
-  <div >
-    <div >
-      <div >
-        <Skeleton  />
-        <Skeleton  />
-      </div>
-      <Skeleton  />
-    </div>
-    <div >
-      <Skeleton  />
-      <Skeleton  />
-    </div>
-    <div >
-      <Skeleton  />
-      <Skeleton  />
-    </div>
-  </div>
+  <Container>
+    <Stack spacing="md">
+      <Stack>
+        <Skeleton />
+        <Skeleton />
+      </Stack>
+      <Skeleton />
+    </Stack>
+    <Stack spacing="sm">
+      <Skeleton />
+      <Skeleton />
+    </Stack>
+    <Stack spacing="sm">
+      <Skeleton />
+      <Skeleton />
+    </Stack>
+  </Container>
 );
 
 export const AdminDashboardSkeleton = () => (
-  <div >
-    <div >
+  <Container>
+    <Stack spacing="lg">
       {[...Array(5)].map((_, i) => (
-        <div key={i} >
-          <div >
-            <Skeleton  />
-            <div >
-              <Skeleton  />
-              <Skeleton  />
-            </div>
-          </div>
-        </div>
+        <Container key={i}>
+          <Stack>
+            <Skeleton />
+            <Stack>
+              <Skeleton />
+              <Skeleton />
+            </Stack>
+          </Stack>
+        </Container>
       ))}
-    </div>
-    <div >
+    </Stack>
+    <Stack spacing="lg">
       {[...Array(2)].map((_, i) => (
-        <div key={i} >
-          <Skeleton  />
-          <div >
+        <Container key={i}>
+          <Skeleton />
+          <Stack>
             {[...Array(4)].map((_, j) => (
-              <div key={j} >
-                <Skeleton  />
-                <Skeleton  />
-              </div>
+              <Container key={j}>
+                <Skeleton />
+                <Skeleton />
+              </Container>
             ))}
-          </div>
-        </div>
+          </Stack>
+        </Container>
       ))}
-    </div>
-  </div>
+    </Stack>
+  </Container>
 );
 
 export const PageSkeleton = () => (
-  <div >
-    <div >
-      <Skeleton  />
-      <Skeleton  />
-    </div>
-    <div >
-      {[...Array(3)].map((_, i) => (
-        <Skeleton key={i}  />
-      ))}
-    </div>
-    <div >
-      <Skeleton  />
-      <Skeleton  />
-    </div>
-  </div>
+  <Container>
+    <Stack spacing="lg">
+      <Stack>
+        <Skeleton />
+        <Skeleton />
+      </Stack>
+      <Stack>
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} />
+        ))}
+      </Stack>
+      <Stack>
+        <Skeleton />
+        <Skeleton />
+      </Stack>
+    </Stack>
+  </Container>
 ); 

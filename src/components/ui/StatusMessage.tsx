@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from './button';
 import { GridSection } from './GridSection';
+import { Container, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export interface StatusMessageProps {
   type: 'success' | 'error' | 'warning' | 'info';
@@ -27,23 +29,23 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
 
   return (
     <GridSection variant="content" columns={1}>
-      <div className={`status-message status-message-${type}`}>
-        <div >
-          <span >{icon || getDefaultIcon()}</span>
-          <span >{message}</span>
-        </div>
+      <Container className={`status-message status-message-${type}`}>
+        <Stack direction="horizontal" spacing="sm" align="center">
+          <Span>{icon || getDefaultIcon()}</Span>
+          <Span>{message}</Span>
+        </Stack>
         
         {onDismiss && (
           <Button
             onClick={onDismiss}
             variant="ghost"
             size="sm"
-            
+            className="status-message-dismiss"
           >
             ×
           </Button>
         )}
-      </div>
+      </Container>
     </GridSection>
   );
 }; 
