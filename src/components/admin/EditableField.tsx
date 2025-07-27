@@ -59,9 +59,10 @@ export const EditableField: React.FC<EditableFieldProps> = ({
     if (containsHTML) {
       return (
         <Container>
-          <span 
+          <Span 
             dangerouslySetInnerHTML={{ __html: value || placeholder || '' }}
-            style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-base)' }}
+            color="default"
+            size="md"
           />
         </Container>
       );
