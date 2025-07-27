@@ -22,13 +22,11 @@ const FormSection: React.FC<FormSectionProps> = ({
 }) => {
   return (
     <Container spacing={spacing} variant={variant}>
-      <Stack spacing="md">
-        <Stack spacing="sm">
-          <H3>{title}</H3>
-          {description && (
-            <Text>{description}</Text>
-          )}
-        </Stack>
+      <Stack spacing="lg">
+        <H3>{title}</H3>
+        {description && (
+          <Text>{description}</Text>
+        )}
         <Grid 
           columns={(columns as 1 | 2 | 3 | 4 | 6) || 1} 
           spacing="md"

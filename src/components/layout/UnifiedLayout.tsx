@@ -151,9 +151,9 @@ export function UnifiedLayout({
       <Container>
         {/* Navigation */}
         {shouldShowNav && (
-          <header>
+          <Container as="header">
             <Navigation />
-          </header>
+          </Container>
         )}
 
         {/* Page Header */}
@@ -188,9 +188,9 @@ export function UnifiedLayout({
 
         {/* Footer */}
         {shouldShowFooter && (
-          <footer>
+          <Container as="footer">
             <StandardFooter />
-          </footer>
+          </Container>
         )}
       </Container>
     </AccessibilityEnhancer>
