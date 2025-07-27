@@ -185,24 +185,18 @@ function BookingDetailsContent() {
           <Stack direction="vertical" spacing="lg">
             <Stack direction="horizontal" align="center" spacing="md">
               <Span>👤</Span>
-              <Stack direction="vertical" spacing="sm">
-                <H3>Passenger</H3>
-                <Text>{booking.name}</Text>
-              </Stack>
+              <H3>Passenger</H3>
+              <Text>{booking.name}</Text>
             </Stack>
             <Stack direction="horizontal" align="center" spacing="md">
               <Span>📞</Span>
-              <Stack direction="vertical" spacing="sm">
-                <H3>Phone</H3>
-                <Text>{booking.phone}</Text>
-              </Stack>
+              <H3>Phone</H3>
+              <Text>{booking.phone}</Text>
             </Stack>
             <Stack direction="horizontal" align="center" spacing="md">
               <Span>✉️</Span>
-              <Stack direction="vertical" spacing="sm">
-                <H3>Email</H3>
-                <Text>{booking.email}</Text>
-              </Stack>
+              <H3>Email</H3>
+              <Text>{booking.email}</Text>
             </Stack>
           </Stack>
         </InfoCard>
@@ -216,10 +210,8 @@ function BookingDetailsContent() {
         >
           <Stack direction="horizontal" align="center" spacing="md">
             <Span>💳</Span>
-            <Stack direction="vertical" spacing="sm">
-              <H3>Total Fare</H3>
-              <Text>Includes all fees and taxes</Text>
-            </Stack>
+            <H3>Total Fare</H3>
+            <Text>Includes all fees and taxes</Text>
             <Text size="lg">
               ${booking.fare?.toFixed(2)}
             </Text>

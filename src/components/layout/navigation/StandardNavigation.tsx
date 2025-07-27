@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Container, Button, Span } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export const StandardNavigation: React.FC = () => {
   const pathname = usePathname();
@@ -18,33 +19,30 @@ export const StandardNavigation: React.FC = () => {
 
   return (
     <Container variant="navigation" padding="md">
-      <div className="flex justify-between items-center">
+      <Stack direction="horizontal" justify="between" align="center">
         <Link href="/">
           Fairfield Airport Cars
         </Link>
 
-        <nav className="flex space-x-6">
+        <Stack direction="horizontal" spacing="md">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              variant={item.current ? 'active' : 'default'}
             >
               {item.name}
             </Link>
           ))}
-        </nav>
+        </Stack>
 
         <Button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle mobile menu"
           variant="ghost"
         >
-          <Span></Span>
-          <Span></Span>
-          <Span></Span>
+          <Span>☰</Span>
         </Button>
-      </div>
+      </Stack>
 
       {mobileMenuOpen && (
         <Container>
@@ -52,7 +50,6 @@ export const StandardNavigation: React.FC = () => {
             <Link
               key={item.name}
               href={item.href}
-              variant={item.current ? 'mobile-active' : 'mobile'}
               onClick={() => setMobileMenuOpen(false)}
             >
               {item.name}

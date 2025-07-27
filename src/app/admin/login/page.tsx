@@ -61,39 +61,35 @@ export default function LoginPage() {
         >
           <Form onSubmit={handleFormSubmit}>
             <Stack spacing="lg">
-              <Stack spacing="sm">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="admin@fairfieldairportcars.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
-                />
-              </Stack>
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@fairfieldairportcars.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+              />
               
-              <Stack spacing="sm">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                />
-              </Stack>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
               
               {error && (
                 <Stack direction="horizontal" spacing="sm" align="center">
                   <Text>⚠️</Text>
                   <Text color="error">{error}</Text>
                 </Stack>
-                              )}
-              </Stack>
+              )}
+            </Stack>
             
             <Container>
               <Button 

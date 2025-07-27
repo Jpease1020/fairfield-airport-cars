@@ -166,7 +166,9 @@ function PagesCMSContent() {
         loading={true}
         loadingMessage="Loading CMS page content..."
       >
-        <div />
+        <Container>
+          <Text>Loading...</Text>
+        </Container>
       </AdminPageWrapper>
     );
   }

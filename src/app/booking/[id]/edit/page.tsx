@@ -6,7 +6,7 @@ import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
 import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard, LoadingSpinner, Text } from '@/components/ui';
+import { GridSection, InfoCard, LoadingSpinner, Text, Container } from '@/components/ui';
 
 export default function EditBookingPage() {
   const params = useParams();
@@ -44,9 +44,9 @@ export default function EditBookingPage() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="Loading..." description="Fetching booking details">
-            <div>
+            <Container>
               <LoadingSpinner text="Loading booking details..." />
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -100,9 +100,9 @@ export default function EditBookingPage() {
           title="✏️ Edit Booking Details"
           description="Update your ride information"
         >
-          <div>
+          <Container>
             <BookingForm booking={booking} />
-          </div>
+          </Container>
         </InfoCard>
       </GridSection>
     </UnifiedLayout>

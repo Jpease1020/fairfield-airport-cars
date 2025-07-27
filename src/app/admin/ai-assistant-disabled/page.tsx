@@ -69,7 +69,9 @@ const AIAssistantDisabledPage = () => {
         actions={[]}
         loading={true}
       >
-        <div>Loading...</div>
+        <Container>
+          <Text>Loading...</Text>
+        </Container>
       </AdminPageWrapper>
     );
   }

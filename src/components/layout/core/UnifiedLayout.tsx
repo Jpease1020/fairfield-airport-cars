@@ -180,11 +180,9 @@ export function UnifiedLayout({
         )}
 
         {/* Main Content */}
-        <main id="main-content">
-          <Container>
-            {children}
-          </Container>
-        </main>
+        <Container as="main">
+          {children}
+        </Container>
 
         {/* Footer */}
         {shouldShowFooter && (

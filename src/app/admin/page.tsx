@@ -71,9 +71,9 @@ function AdminDashboardContent() {
               description={stat.value}
             >
               <Container>
-                <Container>
+                <Text>
                   {stat.value}
-                </Container>
+                </Text>
                 <Text>
                   {stat.title}
                 </Text>

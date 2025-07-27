@@ -196,14 +196,12 @@ function CMSPageContent() {
           >
             <Container>
               <Stack direction="horizontal" align="center" justify="between">
-                <Container>
-                  <Text>
-                    Status:
-                  </Text>
-                  <Text>
-                    {section.status}
-                  </Text>
-                </Container>
+                <Text>
+                  Status:
+                </Text>
+                <Text>
+                  {section.status}
+                </Text>
                 
                 <ActionButtonGroup
                   buttons={[{
@@ -238,14 +236,12 @@ function CMSPageContent() {
           >
             <Stack spacing="md">
               <Stack direction="horizontal" align="center" justify="between">
-                <Container>
-                  <Text>
-                    Last Updated
-                  </Text>
-                  <Text>
-                    {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
-                  </Text>
-                </Container>
+                <Text>
+                  Last Updated
+                </Text>
+                <Text>
+                  {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
+                </Text>
               </Stack>
               
               <Stack direction="horizontal" align="center" justify="between">

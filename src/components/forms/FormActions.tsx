@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack } from '@/components/ui/containers';
+import { Stack, Container } from '@/components/ui/containers';
 
 // FormActions Component - BULLETPROOF TYPE SAFETY!
 interface FormActionsProps {
@@ -15,23 +15,21 @@ const FormActions: React.FC<FormActionsProps> = ({
   spacing = 'md',
   variant = 'bordered'
 }) => {
-  const containerClasses = [
-    'flex items-center pt-4',
-    align === 'left' ? 'justify-start' : align === 'center' ? 'justify-center' : 'justify-end',
-    variant === 'bordered' ? 'border-t border-border-primary' : '',
-    variant === 'elevated' ? 'shadow-sm' : ''
-  ].filter(Boolean).join(' ');
-
-  const gapClasses = {
-    sm: 'gap-2',
-    md: 'gap-4', 
-    lg: 'gap-6',
-  };
-
   return (
-    <div className={`${containerClasses} ${gapClasses[spacing]}`}>
-      {children}
-    </div>
+    <Container 
+      variant={variant === 'elevated' ? 'elevated' : 'default'}
+      padding="md"
+      margin="none"
+    >
+      <Stack 
+        direction="horizontal" 
+        spacing={spacing}
+        align="center"
+        justify={align === 'left' ? 'start' : align === 'center' ? 'center' : 'end'}
+      >
+        {children}
+      </Stack>
+    </Container>
   );
 };
 

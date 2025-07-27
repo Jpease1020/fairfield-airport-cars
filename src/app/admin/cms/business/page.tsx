@@ -345,16 +345,12 @@ function BusinessPageContent() {
               icon="👀"
             >
               <Stack spacing="lg">
-                <Stack spacing="sm">
-                  <H3>{settings.company.name}</H3>
-                  <Text>{settings.company.tagline}</Text>
-                </Stack>
-                <Stack spacing="sm">
-                  <Text>📞 {settings.company.phone}</Text>
-                  <Text>✉️ {settings.company.email}</Text>
-                  <Text>📍 {settings.company.address}</Text>
-                  <Text>🕒 {settings.company.hours}</Text>
-                </Stack>
+                <H3>{settings.company.name}</H3>
+                <Text>{settings.company.tagline}</Text>
+                <Text>📞 {settings.company.phone}</Text>
+                <Text>✉️ {settings.company.email}</Text>
+                <Text>📍 {settings.company.address}</Text>
+                <Text>🕒 {settings.company.hours}</Text>
               </Stack>
             </SettingSection>
           </Container>

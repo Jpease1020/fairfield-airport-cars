@@ -1,8 +1,8 @@
 import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
-import { CMSLayout } from '@/components/ui/layout/CMSLayout';
+import { CMSLayout } from './CMSLayout';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
-import { Section, Container, H1, H2, Lead } from '@/components/ui';
+import { Section, Container, H1, H2 } from '@/components/ui';
 import { Card } from '@/components/ui/containers';
 import { CardBody } from '@/components/ui/card';
 import { Stack } from '@/components/ui/containers';
@@ -58,7 +58,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
     <CMSLayout 
       cmsConfig={cmsConfig} 
       pageType={pageType} 
-      variant={variant === 'focused' ? 'focused' : 'conversion'}
+      variant={variant === 'focused' ? 'conversion' : 'conversion'}
     >
       {/* Progress Indicator */}
       {showProgressIndicator && (
@@ -96,9 +96,9 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
               </H2>
             )}
             {pageDescription && (
-              <Lead>
+              <Text>
                 {pageDescription}
-              </Lead>
+              </Text>
             )}
           </PageHeader>
 
@@ -116,44 +116,40 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
                 <Stack spacing="md">
                   <Stack direction="horizontal" align="center" spacing="sm">
                     <Span>✓</Span>
-                    <Stack>
-                      <Text>Professional Drivers</Text>
-                      <Text size="sm">Background checked & licensed</Text>
-                    </Stack>
+                    <Text>Professional Drivers</Text>
+                    <Text size="sm">Background checked & licensed</Text>
                   </Stack>
-                    <Stack direction="horizontal" align="center" spacing="sm">
-                      <Span>✓</Span>
-                      <Stack>
-                        <Text>Reliable Service</Text>
-                        <Text size="sm">On-time pickups guaranteed</Text>
-                      </Stack>
-                    </Stack>
-                    <Stack direction="horizontal" align="center" spacing="sm">
-                      <Span>✓</Span>
-                      <Stack>
-                        <Text>Clean Vehicles</Text>
-                        <Text size="sm">Well-maintained luxury SUVs</Text>
-                      </Stack>
-                    </Stack>
+                  <Stack direction="horizontal" align="center" spacing="sm">
+                    <Span>✓</Span>
+                    <Text>Reliable Service</Text>
+                    <Text size="sm">On-time pickups guaranteed</Text>
+                  </Stack>
+                  <Stack direction="horizontal" align="center" spacing="sm">
+                    <Span>✓</Span>
+                    <Text>Clean Vehicles</Text>
+                    <Text size="sm">Well-maintained luxury SUVs</Text>
+                  </Stack>
                 </Stack>
               </Container>
+            )}
 
-                <Container>
-                  <H2>Need Help?</H2>
+            {/* Help Section */}
+            {showTrustSignals && (
+              <Container>
+                <H2>Need Help?</H2>
+                <Text>
+                  Our team is here to assist you with your booking.
+                </Text>
+                <Container spacing="sm">
                   <Text>
-                    Our team is here to assist you with your booking.
+                    <Span>Phone:</Span> (203) 555-0123
                   </Text>
-                  <Container spacing="sm">
-                    <Text>
-                      <Span>Phone:</Span> (203) 555-0123
-                    </Text>
-                    <Text>
-                      <Span>Email:</Span> info@fairfieldairportcar.com
-                    </Text>
-                    <Text>
-                      <Span>Hours:</Span> 24/7 Service
-                    </Text>
-                  </Container>
+                  <Text>
+                    <Span>Email:</Span> info@fairfieldairportcar.com
+                  </Text>
+                  <Text>
+                    <Span>Hours:</Span> 24/7 Service
+                  </Text>
                 </Container>
               </Container>
             )}

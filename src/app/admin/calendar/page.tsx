@@ -11,7 +11,8 @@ import {
   Container,
   H3,
   Text,
-  Span
+  Span,
+  Stack
 } from '@/components/ui';
 
 const CalendarPage = () => {
@@ -123,7 +124,7 @@ const CalendarPage = () => {
 
           {!loading && !error && events.length === 0 && (
             <Container>
-              <Container>📅</Container>
+              <Span>📅</Span>
               <H3>No bookings found</H3>
               <Text>No bookings scheduled for this month.</Text>
             </Container>
@@ -138,22 +139,22 @@ const CalendarPage = () => {
           description="Color coding for booking statuses"
         >
           <Container>
-            <Container >
+            <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🟡</Span>
-              <Span >Pending</Span>
-            </Container>
-            <Container >
+              <Span>Pending</Span>
+            </Stack>
+            <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🟢</Span>
-              <Span >Confirmed</Span>
-            </Container>
-            <Container >
+              <Span>Confirmed</Span>
+            </Stack>
+            <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🔵</Span>
-              <Span >Completed</Span>
-            </Container>
-            <Container >
+              <Span>Completed</Span>
+            </Stack>
+            <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🔴</Span>
-              <Span >Cancelled</Span>
-            </Container>
+              <Span>Cancelled</Span>
+            </Stack>
           </Container>
         </InfoCard>
       </GridSection>

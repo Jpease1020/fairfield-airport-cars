@@ -171,34 +171,32 @@ function AdminColorsPageContent() {
             <Stack spacing="lg">
               {COLOR_VARIABLES.map(({ key, label, description }) => (
                 <Container key={key}>
-                  <Stack spacing="md">
-                    <Stack direction="horizontal" spacing="sm" align="center">
-                      <div
-                        data-color={colors[key] || '#ffffff'}
-                        style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: colors[key] || '#ffffff' }}
-                      />
-                      <Span>
-                        {label}
-                      </Span>
-                    </Stack>
-                    
-                    <Text>
-                      {description}
-                    </Text>
-                    
-                    <Stack direction="horizontal" spacing="sm">
-                      <Input
-                        type="color"
-                        value={colors[key] || '#ffffff'}
-                        onChange={(e) => handleColorChange(key, e.target.value)}
-                      />
-                      <Input
-                        type="text"
-                        value={colors[key] || ''}
-                        onChange={(e) => handleColorChange(key, e.target.value)}
-                        placeholder="#ffffff"
-                      />
-                    </Stack>
+                  <Stack direction="horizontal" spacing="sm" align="center">
+                    <span
+                      data-color={colors[key] || '#ffffff'}
+                      style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: colors[key] || '#ffffff' }}
+                    />
+                    <Span>
+                      {label}
+                    </Span>
+                  </Stack>
+                  
+                  <Text>
+                    {description}
+                  </Text>
+                  
+                  <Stack direction="horizontal" spacing="sm">
+                    <Input
+                      type="color"
+                      value={colors[key] || '#ffffff'}
+                      onChange={(e) => handleColorChange(key, e.target.value)}
+                    />
+                    <Input
+                      type="text"
+                      value={colors[key] || ''}
+                      onChange={(e) => handleColorChange(key, e.target.value)}
+                      placeholder="#ffffff"
+                    />
                   </Stack>
                 </Container>
               ))}
