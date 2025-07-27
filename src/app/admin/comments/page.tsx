@@ -249,10 +249,10 @@ function CommentsPageContent() {
           title="📊 Comment Analytics"
           description="Insights into comment activity and engagement"
         >
-          <div>
-            <div >
-              <Span >Most Active Pages:</Span>
-              <div >
+          <Stack direction="vertical" spacing="lg">
+            <Container>
+              <Span>Most Active Pages:</Span>
+              <Stack direction="vertical" spacing="sm">
                 {Array.from(new Set(comments.map(c => c.pageTitle)))
                   .map(page => ({
                     page,
@@ -261,17 +261,17 @@ function CommentsPageContent() {
                   .sort((a, b) => b.count - a.count)
                   .slice(0, 5)
                   .map(({ page, count }) => (
-                    <div key={page} >
-                      <Span >{page}</Span>
-                      <Span >{count} comments</Span>
-                    </div>
+                    <Stack key={page} direction="horizontal" justify="between">
+                      <Span>{page}</Span>
+                      <Span>{count} comments</Span>
+                    </Stack>
                   ))}
-              </div>
-            </div>
+              </Stack>
+            </Container>
             
-            <div >
-              <Span >Top Commenters:</Span>
-              <div >
+            <Container>
+              <Span>Top Commenters:</Span>
+              <Stack direction="vertical" spacing="sm">
                 {Array.from(new Set(comments.map(c => c.createdBy)))
                   .map(author => ({
                     author,
@@ -280,14 +280,14 @@ function CommentsPageContent() {
                   .sort((a, b) => b.count - a.count)
                   .slice(0, 5)
                   .map(({ author, count }) => (
-                    <div key={author}>
-                      <Span >{author}</Span>
+                    <Stack key={author} direction="horizontal" justify="between">
+                      <Span>{author}</Span>
                       <Span>{count} comments</Span>
-                    </div>
+                    </Stack>
                   ))}
-              </div>
-            </div>
-          </div>
+              </Stack>
+            </Container>
+          </Stack>
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>
