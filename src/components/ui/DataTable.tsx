@@ -3,13 +3,15 @@ import { Button } from './button';
 import { Container, Span, Text, Input } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
+// DataTableColumn - BULLETPROOF TYPE SAFETY!
 export interface DataTableColumn<T> {
   key: keyof T | 'actions';
   label: string;
   sortable?: boolean;
   render?: (value: any, row: T, index: number) => React.ReactNode;
   width?: string;
-  className?: string;
+  align?: 'left' | 'center' | 'right';
+  variant?: 'default' | 'numeric' | 'action';
 }
 
 export interface DataTableAction<T> {
@@ -21,6 +23,7 @@ export interface DataTableAction<T> {
   condition?: (row: T) => boolean;
 }
 
+// DataTable - BULLETPROOF TYPE SAFETY!
 interface DataTableProps<T> {
   data: T[];
   columns: DataTableColumn<T>[];
@@ -32,8 +35,10 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   emptyMessage?: string;
   emptyIcon?: string;
-  rowClassName?: (row: T, index: number) => string;
+  rowVariant?: (row: T, index: number) => 'default' | 'highlighted' | 'muted';
   onRowClick?: (row: T, index: number) => void;
+  size?: 'sm' | 'md' | 'lg';
+  spacing?: 'compact' | 'normal' | 'relaxed';
 }
 
 export function DataTable<T extends Record<string, any>>({
@@ -47,8 +52,10 @@ export function DataTable<T extends Record<string, any>>({
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data available',
   emptyIcon = '📊',
-  rowClassName,
-  onRowClick
+  rowVariant,
+  onRowClick,
+  size = 'md',
+  spacing = 'normal'
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');

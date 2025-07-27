@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, H3, Text, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
+// StatCard Component - BULLETPROOF TYPE SAFETY!
 interface StatCardProps {
   title: string;
   icon: string;
@@ -10,7 +11,8 @@ interface StatCardProps {
   changeType?: 'positive' | 'negative' | 'neutral';
   description?: string;
   href?: string;
-  className?: string;
+  variant?: 'default' | 'highlighted' | 'minimal';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -21,7 +23,8 @@ export const StatCard: React.FC<StatCardProps> = ({
   changeType = 'neutral',
   description,
   href,
-  className = ''
+  variant = 'default',
+  size = 'md'
 }) => {
   const cardContent = (
     <>

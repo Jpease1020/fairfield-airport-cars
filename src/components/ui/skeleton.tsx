@@ -3,21 +3,54 @@ import { Container } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { cn } from '@/lib/utils/utils';
 
+// Skeleton Component - BULLETPROOF TYPE SAFETY!
 interface SkeletonProps {
-  className?: string;
-  width?: string | number;
-  height?: string | number;
+  width?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  height?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'text' | 'circular' | 'rectangular' | 'rounded';
+  animated?: boolean;
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({ 
-  className, 
-  width, 
-  height 
+  width = 'md', 
+  height = 'md',
+  variant = 'rectangular',
+  animated = true
 }) => {
+  const widthClasses = {
+    xs: 'w-16',
+    sm: 'w-24', 
+    md: 'w-32',
+    lg: 'w-48',
+    xl: 'w-64',
+    full: 'w-full'
+  };
+
+  const heightClasses = {
+    xs: 'h-4',
+    sm: 'h-6',
+    md: 'h-8', 
+    lg: 'h-12',
+    xl: 'h-16'
+  };
+
+  const variantClasses = {
+    text: 'rounded-sm',
+    circular: 'rounded-full',
+    rectangular: 'rounded-none',
+    rounded: 'rounded-md'
+  };
+
   return (
-    <Container>
-      <Span />
-    </Container>
+    <div 
+      className={cn(
+        'bg-gray-200',
+        widthClasses[width],
+        heightClasses[height],
+        variantClasses[variant],
+        animated && 'animate-pulse'
+      )}
+    />
   );
 };
 
