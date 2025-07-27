@@ -3,6 +3,7 @@ import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { PageHeader, PageAction } from './PageHeader';
 import { LoadingSpinner } from './LoadingSpinner';
 import { Alert } from '@/components/feedback';
+import { Container, Text } from '@/components/ui';
 
 interface AdminPageWrapperProps {
   title: string;
@@ -41,19 +42,19 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
   // Loading state
   if (loading) {
     return (
-      <div className="admin-dashboard">
+      <Container>
         {showNavigation && <AdminNavigation />}
         <PageHeader
           title={title}
           subtitle={loadingMessage}
         />
-        <div className="">
-          <div className="">
+        <Container>
+          <Container>
             <LoadingSpinner />
-            <p className="">{loadingMessage}</p>
-          </div>
-        </div>
-      </div>
+            <Text>{loadingMessage}</Text>
+          </Container>
+        </Container>
+      </Container>
     );
   }
 
