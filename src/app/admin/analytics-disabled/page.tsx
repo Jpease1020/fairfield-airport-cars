@@ -143,12 +143,12 @@ export default function AnalyticsPage() {
                 <Stack direction="vertical" spacing="sm">
                   {getTopInteractions().map(([type, count]) => (
                     <Stack key={type} direction="horizontal" justify="between" align="center">
-                      <Stack direction="horizontal" spacing="sm" align="center">
+                      <div className="flex items-center gap-2">
                         <Span>●</Span>
                         <Span>
                           {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
                         </Span>
-                      </Stack>
+                      </div>
                       <Span>
                         {count.toLocaleString()}
                       </Span>

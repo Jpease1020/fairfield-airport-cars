@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { UnifiedLayout } from '@/components/layout';
 import { GridSection, InfoCard, Form, Input, Label, Button, Container, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -59,8 +60,8 @@ export default function LoginPage() {
           description="Sign in to access the admin dashboard"
         >
           <Form onSubmit={handleFormSubmit}>
-            <Container>
-              <Container>
+            <Stack spacing="lg">
+              <Stack spacing="sm">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
@@ -71,9 +72,9 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                 />
-              </Container>
+              </Stack>
               
-              <Container>
+              <Stack spacing="sm">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -84,17 +85,15 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
                 />
-              </Container>
+              </Stack>
               
               {error && (
-                <Container>
-                  <Container>⚠️</Container>
-                  <Container>
-                    <Text>{error}</Text>
-                  </Container>
-                </Container>
-              )}
-            </Container>
+                <Stack direction="horizontal" spacing="sm" align="center">
+                  <Text>⚠️</Text>
+                  <Text color="error">{error}</Text>
+                </Stack>
+                              )}
+              </Stack>
             
             <Container>
               <Button 

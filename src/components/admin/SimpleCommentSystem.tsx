@@ -308,9 +308,9 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
               left: commentBoxPosition.left,
               zIndex: 1000,
             }}
+            className="bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-80 max-w-96"
           >
-            <Container>
-                      <Stack direction="horizontal" align="center" justify="between">
+            <Stack direction="horizontal" align="center" justify="between">
             <H4>
               {existingComments.length > 0 ? `Comments (${existingComments.length})` : 'Add Comment'}
             </H4>
@@ -394,7 +394,6 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
               Close
             </Button>
           </Stack>
-        </Container>
       </Container>
     </div>
   )}
