@@ -57,11 +57,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
       return (
         <Container className="text-center p-6">
-          <AlertTriangle className="w-8 h-8 text-error-color mx-auto mb-4" />
-          <H2 className="text-xl font-semibold text-text-primary mb-2">
+          <AlertTriangle className="w-8 h-8 mx-auto mb-4" />
+          <H2 className="text-xl font-semibold mb-2">
             Something went wrong
           </H2>
-          <Text className="text-text-secondary mb-4">
+          <Text className="mb-4">
             An unexpected error occurred. Please try refreshing the page.
           </Text>
           <Button

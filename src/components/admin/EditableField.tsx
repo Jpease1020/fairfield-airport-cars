@@ -46,7 +46,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
     return (
       <div className="mb-4">
         {label && (
-          <label className="block text-sm font-medium text-text-primary mb-2">
+          <label className="block text-sm font-medium mb-2">
             {label}
           </label>
         )}
@@ -108,9 +108,9 @@ export const EditableSubtitle: React.FC<Omit<EditableFieldProps, 'type' | 'size'
 );
 
 export const EditableContent: React.FC<Omit<EditableFieldProps, 'type' | 'size'> & { rows?: number }> = (props) => (
-  <EditableField {...props} type="textarea" size="md" className="text-text-primary leading-relaxed" />
+  <EditableField {...props} type="textarea" size="md" className="leading-relaxed" />
 );
 
 export const EditableLabel: React.FC<Omit<EditableFieldProps, 'type' | 'size'>> = (props) => (
-  <EditableField {...props} type="input" size="md" className="text-text-primary" />
+  <EditableField {...props} type="input" size="md" />
 ); 

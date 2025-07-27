@@ -43,17 +43,17 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
         {...props}
       >
         {icon && (
-          <div className={cn('text-text-muted mb-4', sizeClasses[size].icon)}>
+          <div className={cn('mb-4', sizeClasses[size].icon)}>
             {icon}
           </div>
         )}
         {title && (
-          <H3 className={cn('font-medium text-text-primary mb-2', sizeClasses[size].title)}>
+          <H3 className={cn('font-medium mb-2', sizeClasses[size].title)}>
             {title}
           </H3>
         )}
         {description && (
-          <Text className={cn('text-text-secondary mb-6 max-w-sm', sizeClasses[size].description)}>
+          <Text className={cn('mb-6 max-w-sm', sizeClasses[size].description)}>
             {description}
           </Text>
         )}

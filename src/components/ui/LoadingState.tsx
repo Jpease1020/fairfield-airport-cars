@@ -33,12 +33,12 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
             <LoadingSpinner />
           </div>
         )}
-        <H3 className="text-lg font-medium text-text-primary mb-2">{title}</H3>
+        <H3 className="text-lg font-medium mb-2">{title}</H3>
         {subtitle && (
-          <Text className="text-text-secondary mb-2">{subtitle}</Text>
+          <Text className="mb-2">{subtitle}</Text>
         )}
         {message && (
-          <Text className="text-text-light">{message}</Text>
+          <Text>{message}</Text>
         )}
       </div>
     </div>
