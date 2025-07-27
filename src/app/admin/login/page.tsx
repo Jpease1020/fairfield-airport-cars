@@ -58,14 +58,13 @@ export default function LoginPage() {
           title="🔐 Admin Authentication"
           description="Sign in to access the admin dashboard"
         >
-          <Form onSubmit={handleFormSubmit} className="login-form">
-            <Container className="login-form-fields">
-              <Container className="login-form-group">
-                <Label htmlFor="email" className="login-form-label">Email Address</Label>
+          <Form onSubmit={handleFormSubmit}>
+            <Container>
+              <Container>
+                <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
-                  className="login-form-input"
                   placeholder="admin@fairfieldairportcars.com"
                   required
                   value={email}
@@ -74,12 +73,11 @@ export default function LoginPage() {
                 />
               </Container>
               
-              <Container className="login-form-group">
-                <Label htmlFor="password" className="login-form-label">Password</Label>
+              <Container>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
-                  className="login-form-input"
                   placeholder="Enter your password"
                   required
                   value={password}
@@ -89,19 +87,18 @@ export default function LoginPage() {
               </Container>
               
               {error && (
-                <Container className="login-form-error">
-                  <Container className="login-form-error-icon">⚠️</Container>
-                  <Container className="login-form-error-content">
-                    <Text className="login-form-error-message">{error}</Text>
+                <Container>
+                  <Container>⚠️</Container>
+                  <Container>
+                    <Text>{error}</Text>
                   </Container>
                 </Container>
               )}
             </Container>
             
-            <Container className="login-form-actions">
+            <Container>
               <Button 
                 type="submit" 
-                className="login-form-submit-btn"
                 disabled={loading}
                 variant="primary"
                 size="lg"
@@ -109,13 +106,12 @@ export default function LoginPage() {
                 {loading ? '🔄 Signing In...' : '🔐 Sign In'}
               </Button>
               
-              <Container className="login-form-divider">
+              <Container>
                 <span>or</span>
               </Container>
               
               <Button 
                 type="button"
-                className="login-form-google-btn"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
                 variant="outline"
