@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from './button';
+import { Container } from '@/components/ui';
 
 export interface ChatMessage {
   id: string;
@@ -29,30 +30,29 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   };
 
   return (
-    <div className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}>
-      <div className="message-bubble">
-        <div className="message-header">
-          <span className="message-icon">
+    <Container>
+      <Container>
+        <Container>
+          <span>
             {message.role === 'assistant' ? '🤖' : '👤'}
           </span>
-          <div className="message-content">
+          <Container>
             {message.content}
-          </div>
+          </Container>
           {isVoiceSupported && (
             <Button 
               onClick={handleVoicePlay}
               variant="ghost"
               size="sm"
-              className="message-voice-button"
             >
               🔊
             </Button>
           )}
-        </div>
-        <div className="message-timestamp">
+        </Container>
+        <Container>
           {message.timestamp.toLocaleTimeString()}
-        </div>
-      </div>
-    </div>
+        </Container>
+      </Container>
+    </Container>
   );
 }; 
