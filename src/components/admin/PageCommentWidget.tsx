@@ -146,7 +146,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
           <Container className="flex min-h-full items-center justify-center p-4">
             <Card>
               <CardHeader className="flex items-center justify-between">
-                <CardTitle className="text-lg font-semibold">Add Page Comment</CardTitle>
+                <CardTitle>Add Page Comment</CardTitle>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -158,14 +158,14 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
               </CardHeader>
               <CardBody className="space-y-4">
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium">
+                  <Text size="sm">
                     Page: {pageTitle}
                   </Text>
                 </Container>
 
                 {/* Element Selection */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium mb-2">
+                  <Text size="sm">
                     Element (Optional)
                   </Text>
                   <Container className="flex items-center space-x-2">
@@ -190,12 +190,12 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                     )}
                   </Container>
                   {selectedElement && (
-                    <Text className="text-sm text-text-secondary mt-2">
+                    <Text size="sm">
                       Selected: {selectedElement}
                     </Text>
                   )}
                   {isElementSelectMode && (
-                    <Text className="text-sm text-info-color mt-2">
+                    <Text size="sm">
                       Click on any element to select it
                     </Text>
                   )}
@@ -203,7 +203,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Category */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium mb-2">
+                  <Text size="sm">
                     Category
                   </Text>
                   <Select value={category} onValueChange={(value: PageComment['category']) => setCategory(value)}>
@@ -247,7 +247,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Priority */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium mb-2">
+                  <Text size="sm">
                     Priority
                   </Text>
                   <Select value={priority} onValueChange={(value: PageComment['priority']) => setPriority(value)}>
@@ -265,7 +265,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
                 {/* Comment */}
                 <Container className="mb-4">
-                  <Text className="text-sm font-medium mb-2">
+                  <Text size="sm">
                     Comment
                   </Text>
                   <Textarea

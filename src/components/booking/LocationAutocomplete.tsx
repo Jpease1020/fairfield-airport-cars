@@ -103,9 +103,9 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   return (
     <Container className={cn('relative', className)}>
       {label && (
-        <Label htmlFor={fieldId} className="block text-sm font-medium mb-2">
+        <Label htmlFor={fieldId}>
           {label}
-          {required && <Span className="text-red-500 ml-1">*</Span>}
+          {required && <Span>*</Span>}
         </Label>
       )}
       
@@ -134,11 +134,11 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         </div>
         
         {error && (
-          <Text className="text-error-color text-sm mt-1">{error}</Text>
+          <Text size="sm">{error}</Text>
         )}
         
         {helperText && !error && (
-          <Text className="text-text-secondary text-sm mt-1">{helperText}</Text>
+          <Text size="sm">{helperText}</Text>
         )}
       </Container>
 

@@ -164,7 +164,7 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                 />
                 {mapLocation.address && (
                   <Container className="p-4 bg-background-primary border-t border-border-color">
-                    <Text className="text-sm">{mapLocation.address}</Text>
+                    <Text size="sm">{mapLocation.address}</Text>
                   </Container>
                 )}
               </GridItem>
