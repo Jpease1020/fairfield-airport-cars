@@ -300,7 +300,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
 
               {/* Comment Box */}
         {activeCommentBox && selectedElement && (
-          <div
+          <Container
             data-comment-box
             style={{
               position: 'absolute',
