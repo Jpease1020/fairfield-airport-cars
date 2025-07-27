@@ -9,7 +9,7 @@ export interface HeadingProps {
 
 export const H1: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h1 id={id} className={`page-title ${className}`}>
+    <h1 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-4xl)', fontWeight: 'bold' }} className={className}>
       {children}
     </h1>
   );
@@ -17,7 +17,7 @@ export const H1: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H2: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h2 id={id} className={`page-title ${className}`}>
+    <h2 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-3xl)', fontWeight: 'bold' }} className={className}>
       {children}
     </h2>
   );
@@ -25,7 +25,7 @@ export const H2: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H3: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h3 id={id} className={`text-xl font-semibold ${className}`}>
+    <h3 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-2xl)', fontWeight: '600' }} className={className}>
       {children}
     </h3>
   );
@@ -33,7 +33,7 @@ export const H3: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H4: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h4 id={id} className={`text-lg font-semibold ${className}`}>
+    <h4 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-xl)', fontWeight: '600' }} className={className}>
       {children}
     </h4>
   );
@@ -41,7 +41,7 @@ export const H4: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H5: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h5 id={id} className={`text-base font-semibold ${className}`}>
+    <h5 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-lg)', fontWeight: '600' }} className={className}>
       {children}
     </h5>
   );
@@ -49,7 +49,7 @@ export const H5: React.FC<HeadingProps> = ({ children, className = '', id }) => 
 
 export const H6: React.FC<HeadingProps> = ({ children, className = '', id }) => {
   return (
-    <h6 id={id} className={`text-sm font-semibold ${className}`}>
+    <h6 id={id} style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-base)', fontWeight: '600' }} className={className}>
       {children}
     </h6>
   );
@@ -71,29 +71,29 @@ export const Text: React.FC<TextProps> = ({
   size = 'base',
   align = 'left',
 }) => {
-  const sizeClasses = {
-    xs: 'text-xs',
-    sm: 'text-sm',
-    base: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl'
+  const sizeStyles = {
+    xs: { fontSize: 'var(--font-size-xs)' },
+    sm: { fontSize: 'var(--font-size-sm)' },
+    base: { fontSize: 'var(--font-size-base)' },
+    lg: { fontSize: 'var(--font-size-lg)' },
+    xl: { fontSize: 'var(--font-size-xl)' }
   };
 
-  const alignClasses = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right',
-    justify: 'text-justify'
+  const alignStyles = {
+    left: { textAlign: 'left' as const },
+    center: { textAlign: 'center' as const },
+    right: { textAlign: 'right' as const },
+    justify: { textAlign: 'justify' as const }
   };
 
-  const classes = [
-    sizeClasses[size],
-    alignClasses[align],
-    className,
-  ].filter(Boolean).join(' ');
+  const style: React.CSSProperties = {
+    color: 'var(--text-primary)',
+    ...sizeStyles[size],
+    ...alignStyles[align]
+  };
 
   return (
-    <span className={classes}>
+    <span style={style} className={className}>
       {children}
     </span>
   );
@@ -249,32 +249,31 @@ export const Container: React.FC<ContainerProps> = ({
   center = true,
   fluid = false,
 }) => {
-  const maxWidthClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    '2xl': 'max-w-2xl',
-    full: 'max-w-full'
+  const maxWidthStyles = {
+    sm: { maxWidth: '24rem' },
+    md: { maxWidth: '28rem' },
+    lg: { maxWidth: '32rem' },
+    xl: { maxWidth: '36rem' },
+    '2xl': { maxWidth: '42rem' },
+    full: { maxWidth: '100%' }
   };
 
-  const paddingClasses = {
-    none: '',
-    sm: 'p-2',
-    md: 'p-4',
-    lg: 'p-6',
-    xl: 'p-8'
+  const paddingStyles = {
+    none: { padding: 0 },
+    sm: { padding: 'var(--spacing-sm)' },
+    md: { padding: 'var(--spacing-md)' },
+    lg: { padding: 'var(--spacing-lg)' },
+    xl: { padding: 'var(--spacing-xl)' }
   };
 
-  const classes = [
-    center ? 'mx-auto' : '',
-    !fluid ? maxWidthClasses[maxWidth] : '',
-    paddingClasses[padding],
-    className,
-  ].filter(Boolean).join(' ');
+  const style: React.CSSProperties = {
+    ...(center ? { margin: '0 auto' } : {}),
+    ...(!fluid ? maxWidthStyles[maxWidth] : {}),
+    ...paddingStyles[padding]
+  };
 
   return (
-    <div className={classes}>
+    <div style={style} className={className}>
       {children}
     </div>
   );
@@ -296,30 +295,29 @@ export const Section: React.FC<SectionProps> = ({
   padding = 'lg',
   margin = 'none',
 }) => {
-  const paddingClasses = {
-    none: '',
-    sm: 'py-4',
-    md: 'py-6',
-    lg: 'py-8',
-    xl: 'py-12'
+  const paddingStyles = {
+    none: { padding: '0' },
+    sm: { padding: 'var(--spacing-lg) 0' },
+    md: { padding: 'var(--spacing-xl) 0' },
+    lg: { padding: 'var(--spacing-2xl) 0' },
+    xl: { padding: 'var(--spacing-3xl) 0' }
   };
 
-  const marginClasses = {
-    none: '',
-    sm: 'my-4',
-    md: 'my-6',
-    lg: 'my-8',
-    xl: 'my-12'
+  const marginStyles = {
+    none: { margin: '0' },
+    sm: { margin: 'var(--spacing-lg) 0' },
+    md: { margin: 'var(--spacing-xl) 0' },
+    lg: { margin: 'var(--spacing-2xl) 0' },
+    xl: { margin: 'var(--spacing-3xl) 0' }
   };
 
-  const classes = [
-    paddingClasses[padding],
-    marginClasses[margin],
-    className,
-  ].filter(Boolean).join(' ');
+  const style: React.CSSProperties = {
+    ...paddingStyles[padding],
+    ...marginStyles[margin]
+  };
 
   return (
-    <section className={classes}>
+    <section style={style} className={className}>
       {children}
     </section>
   );
