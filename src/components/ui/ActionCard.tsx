@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Text } from '@/components/ui';
 
 interface ActionCardProps {
   icon: string;
@@ -36,12 +37,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const content = (
     <>
-      <div className="action-icon">
+      <Container>
         {icon}
-      </div>
-      <span className="action-label">{label}</span>
+      </Container>
+      <span>{label}</span>
       {description && (
-        <p className="action-description">{description}</p>
+        <Text>{description}</Text>
       )}
     </>
   );
