@@ -13,7 +13,11 @@ import {
   StatusMessage,
   ToastProvider,
   Text,
-  Span
+  Span,
+  Container,
+  Grid,
+  GridItem,
+  H3
 } from '@/components/ui';
 import { Booking } from '@/types/booking';
 
@@ -244,7 +248,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     <div className="booking-form-container">
       {/* Google Maps Error */}
       {mapsError && (
-        <div className="booking-form-error-container">
+        <Container className="booking-form-error-container">
           <div className="booking-form-error-content">
             <div className="booking-form-error-icon">
               <svg className="booking-form-error-svg" fill="currentColor" viewBox="0 0 20 20">
@@ -252,15 +256,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </svg>
             </div>
             <div className="booking-form-error-text">
-              <h3 className="booking-form-error-title">
+              <H3 className="booking-form-error-title">
                 Location autocomplete temporarily unavailable
-              </h3>
+              </H3>
               <div className="booking-form-error-description">
                 <Text>You can still fill out the form manually. Location suggestions will be restored shortly.</Text>
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       )}
 
       <Form onSubmit={handleSubmit} className="booking-form">
@@ -270,28 +274,32 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Please provide your contact details for the booking"
           icon="👤"
         >
-          <div className="booking-form-row">
-            <SettingInput
-              id="name"
-              label="Full Name"
-              description="Your complete name as it appears on ID"
-              value={name}
-              onChange={setName}
-              placeholder="Enter your full name"
-              icon="👤"
-            />
+          <Grid columns={2} spacing="md" className="booking-form-row">
+            <GridItem>
+              <SettingInput
+                id="name"
+                label="Full Name"
+                description="Your complete name as it appears on ID"
+                value={name}
+                onChange={setName}
+                placeholder="Enter your full name"
+                icon="👤"
+              />
+            </GridItem>
             
-            <SettingInput
-              id="email"
-              label="Email Address"
-              description="We'll send your booking confirmation here"
-              type="email"
-              value={email}
-              onChange={setEmail}
-              placeholder="Enter your email"
-              icon="✉️"
-            />
-          </div>
+            <GridItem>
+              <SettingInput
+                id="email"
+                label="Email Address"
+                description="We'll send your booking confirmation here"
+                type="email"
+                value={email}
+                onChange={setEmail}
+                placeholder="Enter your email"
+                icon="✉️"
+              />
+            </GridItem>
+          </Grid>
           
           <SettingInput
             id="phone"
@@ -311,8 +319,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           icon="🚗"
         >
           {/* Location Fields - Improved Layout */}
-          <div className="booking-form-location-row">
-            <div className="booking-form-location-field">
+          <Grid columns={2} spacing="md" className="booking-form-location-row">
+            <GridItem className="booking-form-location-field">
               <SettingInput
                 id="pickupLocation"
                 label="Pickup Location"
@@ -340,9 +348,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   ))}
                 </div>
               )}
-            </div>
+            </GridItem>
             
-            <div className="booking-form-location-field">
+            <GridItem className="booking-form-location-field">
               <SettingInput
                 id="dropoffLocation"
                 label="Destination"
@@ -370,8 +378,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   ))}
                 </div>
               )}
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
           
           {/* Pickup Date and Time - Styled like SettingInput */}
           <div className="booking-form-datetime-section">
@@ -407,8 +415,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           description="Help us provide the best service for your trip"
           icon="⚙️"
         >
-          <div className="booking-form-additional-details">
-            <div className="booking-form-passengers-section">
+          <Grid columns={2} spacing="md" className="booking-form-additional-details">
+            <GridItem className="booking-form-passengers-section">
               {/* Passengers - Styled like SettingInput */}
               <div className="booking-form-datetime-section">
                 <div className="booking-form-datetime-header">
@@ -437,7 +445,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   ))}
                 </Select>
               </div>
-              
+            </GridItem>
+            
+            <GridItem>
               <SettingInput
                 id="flightNumber"
                 label="Flight Number (Optional)"
@@ -447,7 +457,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 placeholder="AA1234"
                 icon="✈️"
               />
-            </div>
+            </GridItem>
+          </Grid>
             
             {/* Special Instructions - Styled like SettingInput */}
             <div className="booking-form-notes-section">
@@ -475,7 +486,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 className="booking-form-notes-textarea"
               />
             </div>
-          </div>
         </SettingSection>
 
         {/* Action Buttons */}

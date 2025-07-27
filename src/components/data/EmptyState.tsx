@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
+import { Container, H3, Text } from '@/components/ui';
 
 interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
@@ -33,8 +34,7 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
     };
 
     return (
-      <div
-        ref={ref}
+      <Container
         className={cn(
           'flex flex-col items-center justify-center text-center',
           sizeClasses[size].container,
@@ -48,21 +48,21 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
           </div>
         )}
         {title && (
-          <h3 className={cn('font-medium text-text-primary mb-2', sizeClasses[size].title)}>
+          <H3 className={cn('font-medium text-text-primary mb-2', sizeClasses[size].title)}>
             {title}
-          </h3>
+          </H3>
         )}
         {description && (
-          <p className={cn('text-text-secondary mb-6 max-w-sm', sizeClasses[size].description)}>
+          <Text className={cn('text-text-secondary mb-6 max-w-sm', sizeClasses[size].description)}>
             {description}
-          </p>
+          </Text>
         )}
         {action && (
           <div className="">
             {action}
           </div>
         )}
-      </div>
+      </Container>
     );
   }
 );

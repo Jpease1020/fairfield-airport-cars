@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { Container, Span } from '@/components/ui';
 
 /**
  * A form field component that combines label, input, validation, and error handling
@@ -58,30 +59,35 @@ const FormFieldComponent = React.forwardRef<HTMLInputElement, FormFieldProps>(
     required = false, 
     id, 
     errorFallback,
+    type,
     ...props 
   }, ref) => {
     const fieldId = id || `field-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
     return (
       <ErrorBoundary fallback={errorFallback}>
-        <div className="">
+        <Container className="">
           <Label htmlFor={fieldId} className="">
             {label}
-            {required && <span className="">*</span>}
+            {required && <Span className="">*</Span>}
           </Label>
           <Input
-            ref={ref}
             id={fieldId}
             className={cn(
               error && 'border-error focus-visible:ring-error',
               className
             )}
-            error={error}
-            helperText={helperText}
             required={required}
-            {...props}
+            type={type as any}
+            placeholder={props.placeholder}
+            value={props.value as string}
+            onChange={props.onChange}
+            onBlur={props.onBlur}
+            onFocus={props.onFocus}
+            disabled={props.disabled}
+            name={props.name}
           />
-        </div>
+        </Container>
       </ErrorBoundary>
     );
   }

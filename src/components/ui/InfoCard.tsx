@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, H3, Text } from '@/components/ui';
 
 interface InfoCardProps {
   title: string;
@@ -32,25 +33,25 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   const cardDescription = description || subtitle;
 
   return (
-    <div className={cardClass}>
-      <div className="info-card-header">
-        <h3 className="info-card-title">
+    <Container className={cardClass}>
+      <Container className="info-card-header">
+        <H3 className="info-card-title">
           {icon && (
             <span className="info-card-icon">
               {icon}
             </span>
           )}
           {title}
-        </h3>
+        </H3>
         {cardDescription && (
-          <p className="info-card-description">
+          <Text className="info-card-description">
             {cardDescription}
-          </p>
+          </Text>
         )}
-      </div>
-      <div className="info-card-body">
+      </Container>
+      <Container className="info-card-body">
         {children}
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 }; 

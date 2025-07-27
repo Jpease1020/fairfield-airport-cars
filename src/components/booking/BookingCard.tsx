@@ -1,9 +1,10 @@
 import React from 'react';
 import { Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
 import { Booking } from '@/types/booking';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils/utils';
+import { Container, H3, Text, Span } from '@/components/ui';
 
 interface BookingCardProps {
   booking: Booking;
@@ -50,19 +51,19 @@ const BookingCard: React.FC<BookingCardProps> = ({
   };
 
   return (
-    <div className={cn(
+    <Container className={cn(
       'bg-bg-primary border border-border-primary rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow',
       className
     )}>
       {/* Header */}
       <div className="">
         <div>
-          <h3 className="">
+          <H3 className="">
             {booking.name}
-          </h3>
-          <p className="">
+          </H3>
+          <Text className="">
             Booking #{booking.id}
-          </p>
+          </Text>
         </div>
         <Badge className={getStatusColor(booking.status)}>
           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
@@ -155,7 +156,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           )}
         </div>
       )}
-    </div>
+    </Container>
   );
 };
 

@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Container, Text, H3 } from '@/components/ui';
 
 /**
  * Column configuration for the data table
@@ -92,14 +93,14 @@ interface DataTableProps<T> {
  * Default loading skeleton component
  */
 const LoadingSkeleton: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={cn('w-full', className)}>
+  <Container className={cn('w-full', className)}>
     <div className="">
       <div className=""></div>
       {[...Array(5)].map((_, i) => (
         <div key={i} className=""></div>
       ))}
     </div>
-  </div>
+  </Container>
 );
 
 /**
@@ -109,9 +110,9 @@ const EmptyState: React.FC<{ message: React.ReactNode; className?: string }> = (
   message, 
   className 
 }) => (
-  <div className={cn('w-full text-center py-8 text-text-secondary', className)}>
-    {message}
-  </div>
+  <Container className={cn('w-full text-center py-8 text-text-secondary', className)}>
+    <Text>{message}</Text>
+  </Container>
 );
 
 function DataTableComponent<T extends { id?: string }>({
@@ -138,7 +139,7 @@ function DataTableComponent<T extends { id?: string }>({
   }
 
   return (
-    <div className={cn('w-full', className)}>
+    <Container className={cn('w-full', className)}>
       <Table>
         <TableHeader>
           <TableRow>
@@ -190,7 +191,7 @@ function DataTableComponent<T extends { id?: string }>({
           ))}
         </TableBody>
       </Table>
-    </div>
+    </Container>
   );
 }
 

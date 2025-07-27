@@ -3,6 +3,7 @@ import { MapPin, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils/utils';
+import { Container, Text, Span } from '@/components/ui';
 
 interface LocationAutocompleteProps {
   value: string;
@@ -100,15 +101,15 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   };
 
   return (
-    <div className={cn('relative', className)}>
+    <Container className={cn('relative', className)}>
       {label && (
         <Label htmlFor={fieldId} className="">
           {label}
-          {required && <span className="">*</span>}
+          {required && <Span className="">*</Span>}
         </Label>
       )}
       
-      <div className="">
+      <Container className="">
         <div className="relative">
           {isLoading && (
             <Loader2 className="" />
@@ -133,13 +134,13 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         </div>
         
         {error && (
-          <p className="">{error}</p>
+          <Text className="">{error}</Text>
         )}
         
         {helperText && !error && (
-          <p className="">{helperText}</p>
+          <Text className="">{helperText}</Text>
         )}
-      </div>
+      </Container>
 
       {showSuggestions && suggestions.length > 0 && (
         <div
@@ -170,7 +171,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           ))}
         </div>
       )}
-    </div>
+    </Container>
   );
 };
 

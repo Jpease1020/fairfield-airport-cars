@@ -2,6 +2,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
+import { Container, H2 } from '@/components/ui';
 
 interface ModalProps {
   isOpen: boolean;
@@ -28,37 +29,37 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="">
-      <div className="">
+    <Container className="">
+      <Container className="">
         <div 
           className=""
           onClick={onClose}
         />
         
-        <div className={cn(
+        <Container className={cn(
           'relative transform overflow-hidden rounded-lg bg-bg-primary text-left shadow-xl transition-all sm:my-8 sm:w-full',
           sizeClasses[size]
         )}>
-          <div className="">
-            <h2 className="">
+          <Container className="">
+            <H2 className="">
               {title}
-            </h2>
+            </H2>
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={onClose}
               className=""
             >
               <X className="" />
             </Button>
-          </div>
+          </Container>
           
-          <div className="">
+          <Container className="">
             {children}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Container>
+        </Container>
+      </Container>
+    </Container>
   );
 };
 

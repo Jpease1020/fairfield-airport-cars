@@ -2,6 +2,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
+import { Container, H4 } from '@/components/ui';
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'success' | 'error' | 'warning' | 'info';
@@ -35,8 +36,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     };
 
     return (
-      <div
-        ref={ref}
+      <Container
         className={cn(
           'rounded-lg border p-4',
           variantClasses[variant],
@@ -44,19 +44,19 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         )}
         {...props}
       >
-        <div className="">
-          <div className="">
+        <Container className="">
+          <Container className="">
             {title && (
-              <h4 className="">{title}</h4>
+              <H4 className="">{title}</H4>
             )}
-            <div className="">
+            <Container className="">
               {children}
-            </div>
-          </div>
+            </Container>
+          </Container>
           {dismissible && onClose && (
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={onClose}
               className={cn(
                 'ml-3 flex-shrink-0 rounded-md p-1.5 hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-offset-2',
@@ -66,8 +66,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
               <X className="" />
             </Button>
           )}
-        </div>
-      </div>
+        </Container>
+      </Container>
     );
   }
 );

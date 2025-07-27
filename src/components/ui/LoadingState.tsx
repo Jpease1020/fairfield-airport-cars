@@ -1,5 +1,6 @@
 import React from 'react';
 import { LoadingSpinner } from '@/components/data';
+import { Container, H3, Text } from '@/components/ui';
 
 interface LoadingStateProps {
   title?: string;
@@ -25,21 +26,21 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   }[size];
 
   return (
-    <div className={`flex items-center justify-center ${sizeClasses} ${className}`}>
-      <div className="">
+    <Container className={`flex items-center justify-center ${sizeClasses} ${className}`}>
+      <Container className="">
         {showSpinner && (
-          <div className="">
+          <Container className="">
             <LoadingSpinner />
-          </div>
+          </Container>
         )}
-        <h3 className="">{title}</h3>
+        <H3 className="">{title}</H3>
         {subtitle && (
-          <p className="">{subtitle}</p>
+          <Text className="">{subtitle}</Text>
         )}
         {message && (
-          <p className="">{message}</p>
+          <Text className="">{message}</Text>
         )}
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 }; 

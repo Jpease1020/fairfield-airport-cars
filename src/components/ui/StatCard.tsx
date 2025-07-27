@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, H3, Text } from '@/components/ui';
 
 interface StatCardProps {
   title: string;
@@ -23,19 +24,19 @@ export const StatCard: React.FC<StatCardProps> = ({
 }) => {
   const cardContent = (
     <>
-      <div className="card-header">
-        <h3 className="card-title">{title}</h3>
+      <Container className="card-header">
+        <H3 className="card-title">{title}</H3>
         <span className="card-icon">{icon}</span>
-      </div>
-      <div className="card-body">
+      </Container>
+      <Container className="card-body">
         <div className="stat-number">{statNumber}</div>
         {statChange && (
-          <p className={`stat-change ${changeType}`}>{statChange}</p>
+          <Text className={`stat-change ${changeType}`}>{statChange}</Text>
         )}
         {description && (
-          <p className="card-description">{description}</p>
+          <Text className="card-description">{description}</Text>
         )}
-      </div>
+      </Container>
     </>
   );
 
@@ -48,8 +49,8 @@ export const StatCard: React.FC<StatCardProps> = ({
   }
 
   return (
-    <div className={`card ${className}`.trim()}>
+    <Container className={`card ${className}`.trim()}>
       {cardContent}
-    </div>
+    </Container>
   );
 }; 

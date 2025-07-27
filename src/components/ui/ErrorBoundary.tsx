@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from './button';
+import { Container, H2, Text } from '@/components/ui';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -55,20 +56,20 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       }
 
       return (
-        <div className="">
+        <Container className="">
           <AlertTriangle className="" />
-          <h2 className="">
+          <H2 className="">
             Something went wrong
-          </h2>
-          <p className="">
+          </H2>
+          <Text className="">
             An unexpected error occurred. Please try refreshing the page.
-          </p>
+          </Text>
           <Button
             onClick={this.resetError}
           >
             Try again
           </Button>
-        </div>
+        </Container>
       );
     }
 

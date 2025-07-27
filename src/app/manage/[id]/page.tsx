@@ -10,7 +10,8 @@ import {
   ToastProvider,
   useToast,
   Text,
-  Span
+  Span,
+  Container
 } from '@/components/ui';
 import { EditableInput } from '@/components/forms';
 
@@ -162,9 +163,9 @@ function ManageBookingPageContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="⏳ Loading" description="Loading your booking information">
-            <div className="manage-booking-loading">
+            <Container className="manage-booking-loading">
               Loading...
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -180,7 +181,7 @@ function ManageBookingPageContent() {
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Error" description="Booking could not be found">
-            <div className="manage-booking-error">
+            <Container className="manage-booking-error">
               <Text className="manage-booking-error-message">
                 {error || localContent?.notFoundMessage || 'Booking not found'}
               </Text>
@@ -192,7 +193,7 @@ function ManageBookingPageContent() {
                   icon: '🚗'
                 }
               ]} />
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -258,7 +259,7 @@ function ManageBookingPageContent() {
       {isAdmin && (
         <GridSection variant="content" columns={1}>
           <InfoCard title="🔧 Admin Controls" description="Edit page content">
-            <div className="manage-booking-admin-controls">
+            <Container className="manage-booking-admin-controls">
               {!editMode ? (
                 <ActionButtonGroup buttons={[
                   {
@@ -269,7 +270,7 @@ function ManageBookingPageContent() {
                   }
                 ]} />
               ) : (
-                <div className="manage-booking-edit-controls">
+                <Container className="manage-booking-edit-controls">
                   <ActionButtonGroup buttons={[
                     {
                       label: 'Save Changes',
@@ -284,7 +285,7 @@ function ManageBookingPageContent() {
                       icon: '❌'
                     }
                   ]} />
-                  <div className="manage-booking-edit-fields">
+                  <Container className="manage-booking-edit-fields">
                     <EditableInput
                       label="Page Title"
                       value={localContent?.title || ''}
@@ -335,10 +336,10 @@ function ManageBookingPageContent() {
                       value={localContent?.loadingMessage || ''}
                       onChange={(e) => handleFieldChange('loadingMessage', e.target.value)}
                     />
-                  </div>
-                </div>
+                  </Container>
+                </Container>
               )}
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       )}
@@ -349,40 +350,40 @@ function ManageBookingPageContent() {
           title="📋 Booking Information"
           description="Your booking details and current status"
         >
-          <div className="manage-booking-details">
-            <div className="manage-booking-item">
+          <Container className="manage-booking-details">
+            <Container className="manage-booking-item">
               <Span className="manage-booking-label">Booking ID:</Span>
               <Span className="manage-booking-value">{booking.id}</Span>
-            </div>
-            <div className="manage-booking-item">
+            </Container>
+            <Container className="manage-booking-item">
               <Span className="manage-booking-label">Status:</Span>
               <Span className={`manage-booking-status manage-booking-status-${booking.status}`}>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </Span>
-            </div>
-            <div className="manage-booking-item">
+            </Container>
+            <Container className="manage-booking-item">
               <Span className="manage-booking-label">Passenger:</Span>
               <Span className="manage-booking-value">{booking.name}</Span>
-            </div>
-            <div className="manage-booking-item">
+            </Container>
+            <Container className="manage-booking-item">
               <Span className="manage-booking-label">Route:</Span>
               <Span className="manage-booking-value">{booking.pickupLocation} → {booking.dropoffLocation}</Span>
-            </div>
-            <div className="manage-booking-item">
+            </Container>
+            <Container className="manage-booking-item">
               <Span className="manage-booking-label">Pickup Time:</Span>
               <Span className="manage-booking-value">{new Date(booking.pickupDateTime).toLocaleString()}</Span>
-            </div>
-            <div className="manage-booking-item">
+            </Container>
+            <Container className="manage-booking-item">
               <Span className="manage-booking-label">Total Fare:</Span>
               <Span className="manage-booking-value">${booking.fare?.toFixed(2)}</Span>
-            </div>
+            </Container>
             {booking.balanceDue > 0 && (
-              <div className="manage-booking-item">
+              <Container className="manage-booking-item">
                 <Span className="manage-booking-label">Balance Due:</Span>
                 <Span className="manage-booking-value manage-booking-balance">${booking.balanceDue.toFixed(2)}</Span>
-              </div>
+              </Container>
             )}
-          </div>
+          </Container>
         </InfoCard>
       </GridSection>
 
@@ -400,9 +401,9 @@ function ManageBookingPageContent() {
       {actionMsg && (
         <GridSection variant="content" columns={1}>
           <InfoCard title="📢 Action Result" description="Result of your recent action">
-            <div className="manage-booking-action-message">
+            <Container className="manage-booking-action-message">
               {actionMsg}
-            </div>
+            </Container>
           </InfoCard>
         </GridSection>
       )}

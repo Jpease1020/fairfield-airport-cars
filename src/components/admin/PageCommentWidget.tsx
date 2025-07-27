@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
+import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui';
+import { Container, Text, H3, H4 } from '@/components/ui';
 import { feedbackService, type PageComment } from '@/lib/services/feedback-service';
 import { MessageSquare, X, CheckCircle, AlertCircle, Star } from 'lucide-react';
 
@@ -129,7 +130,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
   return (
     <>
       {/* Floating Comment Button */}
-      <div className="">
+      <Container className="">
         <Button
           onClick={() => setIsOpen(!isOpen)}
           className=""
@@ -137,12 +138,12 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
         >
           <MessageSquare className="" />
         </Button>
-      </div>
+      </Container>
 
       {/* Comment Widget */}
       {isOpen && (
-        <div className="">
-          <div ref={widgetRef} className="">
+        <Container className="">
+          <Container className="">
             <Card>
               <CardHeader className="">
                 <CardTitle className="">Add Page Comment</CardTitle>
@@ -155,7 +156,7 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   <X className="" />
                 </Button>
               </CardHeader>
-              <CardContent className="">
+              <CardBody className="">
                 <div>
                   <label className="">
                     Page: {pageTitle}
@@ -306,22 +307,22 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                     Cancel
                   </Button>
                 </div>
-              </CardContent>
+                              </CardBody>
             </Card>
-          </div>
-        </div>
+          </Container>
+        </Container>
       )}
 
       {/* Success Message */}
       {showSuccess && (
-        <div className="">
-          <div className="">
-            <div className="">
+        <Container className="">
+          <Container className="">
+            <Container className="">
               <CheckCircle className="" />
               Comment submitted successfully!
-            </div>
-          </div>
-        </div>
+            </Container>
+          </Container>
+        </Container>
       )}
 
       {/* Element Selection Styles */}

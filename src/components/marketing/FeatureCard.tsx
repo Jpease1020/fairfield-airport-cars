@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
+import { Container, H3, Text } from '@/components/ui';
 
 interface FeatureCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -31,36 +32,36 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
     const content = (
       <>
         {icon && (
-          <div className={cn(
+          <Container className={cn(
             'flex items-center justify-center w-12 h-12 rounded-lg mb-4',
             variant === 'highlighted' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600',
             'group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors'
           )}>
             {icon}
-          </div>
+          </Container>
         )}
         
-        <h3 className={cn(
+        <H3 className={cn(
           'text-lg font-semibold mb-2',
           variant === 'highlighted' ? 'text-indigo-900' : 'text-gray-900'
         )}>
           {title}
-        </h3>
+        </H3>
         
-        <p className={cn(
+        <Text className={cn(
           'text-sm leading-relaxed',
           variant === 'highlighted' ? 'text-indigo-700' : 'text-gray-600'
         )}>
           {description}
-        </p>
+        </Text>
         
         {href && (
-          <div className="">
+          <Container className="">
             Learn more
             <svg className="" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </div>
+          </Container>
         )}
       </>
     );
@@ -74,9 +75,9 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
     }
 
     return (
-      <div ref={ref} className={cardClasses} {...props}>
+      <Container className={cardClasses} {...props}>
         {content}
-      </div>
+      </Container>
     );
   }
 );

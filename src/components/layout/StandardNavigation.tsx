@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Container, Button } from '@/components/ui';
 
 export const StandardNavigation: React.FC = () => {
   const pathname = usePathname();
@@ -17,14 +18,14 @@ export const StandardNavigation: React.FC = () => {
 
   return (
     <nav className="standard-navigation">
-      <div className="">
-        <div className="nav-brand">
+      <Container className="">
+        <Container className="nav-brand">
           <Link href="/" className="nav-logo">
             Fairfield Airport Cars
           </Link>
-        </div>
+        </Container>
 
-        <div className="nav-menu">
+        <Container className="nav-menu">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
@@ -34,10 +35,10 @@ export const StandardNavigation: React.FC = () => {
               {item.name}
             </Link>
           ))}
-        </div>
+        </Container>
 
-        <div className="nav-mobile-toggle">
-          <button
+        <Container className="nav-mobile-toggle">
+          <Button
             className="mobile-menu-button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
@@ -45,12 +46,12 @@ export const StandardNavigation: React.FC = () => {
             <span className="hamburger-line"></span>
             <span className="hamburger-line"></span>
             <span className="hamburger-line"></span>
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Container>
+      </Container>
 
       {mobileMenuOpen && (
-        <div className="nav-mobile-menu">
+        <Container className="nav-mobile-menu">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
@@ -61,7 +62,7 @@ export const StandardNavigation: React.FC = () => {
               {item.name}
             </Link>
           ))}
-        </div>
+        </Container>
       )}
     </nav>
   );
