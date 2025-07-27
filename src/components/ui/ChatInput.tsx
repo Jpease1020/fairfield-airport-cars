@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Button } from './button';
+import { Container } from '@/components/ui';
 
 export interface ChatInputProps {
   value: string;
@@ -104,8 +105,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   }, [value]);
 
   return (
-    <div className="chat-input-section">
-      <div className="chat-input-container">
+    <Container>
+      <Container>
         <textarea
           ref={textareaRef}
           value={value}
@@ -116,7 +117,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
           disabled={disabled}
-          className="chat-input-textarea"
           rows={1}
         />
         
@@ -126,7 +126,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             disabled={disabled}
             variant={isListening ? 'primary' : 'outline'}
             size="sm"
-            className="chat-input-voice-button"
           >
             {isListening ? '🛑' : '🎤'}
           </Button>
@@ -137,11 +136,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           disabled={!value.trim() || disabled}
           variant="primary"
           size="sm"
-          className="chat-input-send-button"
         >
           📤
         </Button>
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 }; 
