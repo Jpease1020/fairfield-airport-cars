@@ -355,34 +355,72 @@ export const Span: React.FC<SpanProps> = ({
   );
 };
 
+// Paragraph Component - CASCADE EFFECT COMPLETE!
 export interface ParagraphProps {
   children: React.ReactNode;
-  className?: string;
   variant?: 'body' | 'lead' | 'small' | 'muted';
-  size?: 'sm' | 'base' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   align?: 'left' | 'center' | 'right' | 'justify';
-  color?: 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
+  color?: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
+  weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
 }
 
 export const Paragraph: React.FC<ParagraphProps> = ({
   children,
-  className = '',
   variant = 'body',
-  size = 'base',
+  size = 'md',
   align = 'left',
-  color = 'primary',
+  color = 'default',
+  weight = 'normal'
 }) => {
-  const classes = [
-    'paragraph',
-    `paragraph-${variant}`,
-    `paragraph-size-${size}`,
-    `paragraph-align-${align}`,
-    `paragraph-color-${color}`,
-    className,
-  ].filter(Boolean).join(' ');
+  const variantClasses = {
+    body: 'leading-relaxed',
+    lead: 'text-lg leading-relaxed font-medium',
+    small: 'text-sm',
+    muted: 'text-gray-500 text-sm'
+  };
+
+  const sizeClasses = {
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl'
+  };
+
+  const alignClasses = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right',
+    justify: 'text-justify'
+  };
+
+  const colorClasses = {
+    default: 'text-gray-900',
+    primary: 'text-blue-600',
+    secondary: 'text-gray-600',
+    muted: 'text-gray-500',
+    success: 'text-green-600',
+    warning: 'text-yellow-600',
+    error: 'text-red-600',
+    info: 'text-blue-500'
+  };
+
+  const weightClasses = {
+    light: 'font-light',
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold'
+  };
 
   return (
-    <p className={classes}>
+    <p className={cn(
+      variantClasses[variant],
+      sizeClasses[size],
+      alignClasses[align],
+      colorClasses[color],
+      weightClasses[weight]
+    )}>
       {children}
     </p>
   );
