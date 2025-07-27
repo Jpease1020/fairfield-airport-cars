@@ -67,9 +67,9 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
             <Stack direction="horizontal" align="center" spacing="sm">
               {Array.from({ length: totalSteps }, (_, index) => (
                 <React.Fragment key={index}>
-                  <Container>
+                  <Span>
                     {index + 1}
-                  </Container>
+                  </Span>
                   {index < totalSteps - 1 && (
                     <Span>→</Span>
                   )}
@@ -105,66 +105,58 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
           {/* Conversion Content */}
           <Stack direction="horizontal" spacing="lg">
             {/* Main Form/Content */}
-            <Card variant="elevated" padding="xl">
-              <CardBody>
-                {children}
-              </CardBody>
-            </Card>
+            <Container padding="xl" variant="elevated">
+              {children}
+            </Container>
 
             {/* Trust Signals Sidebar */}
-                          {showTrustSignals && (
-                <Stack spacing="lg">
-                  <Card variant="outlined" padding="lg">
-                    <CardBody>
-                      <H2>Why Choose Us?</H2>
-                      <Stack spacing="md">
-                        <Stack direction="horizontal" align="center" spacing="sm">
-                          <Span>✓</Span>
-                          <Stack direction="vertical" spacing="xs">
-                            <Text>Professional Drivers</Text>
-                            <Text size="sm">Background checked & licensed</Text>
-                          </Stack>
-                      </Stack>
-                      <Stack direction="horizontal" align="center" spacing="sm">
-                        <Container>
-                          <Span>✓</Span>
-                        </Container>
-                        <Container>
-                          <Text>Reliable Service</Text>
-                          <Text size="sm">On-time pickups guaranteed</Text>
-                        </Container>
-                      </Stack>
-                      <Stack direction="horizontal" align="center" spacing="sm">
-                        <Span>✓</Span>
-                        <Stack direction="vertical" spacing="xs">
-                          <Text>Clean Vehicles</Text>
-                          <Text size="sm">Well-maintained luxury SUVs</Text>
-                        </Stack>
-                      </Stack>
+            {showTrustSignals && (
+              <Container spacing="lg">
+                <Container>
+                  <H2>Why Choose Us?</H2>
+                  <Container spacing="md">
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <Span>✓</Span>
+                      <Container>
+                        <Text>Professional Drivers</Text>
+                        <Text size="sm">Background checked & licensed</Text>
+                      </Container>
                     </Stack>
-                  </CardBody>
-                </Card>
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <Span>✓</Span>
+                      <Container>
+                        <Text>Reliable Service</Text>
+                        <Text size="sm">On-time pickups guaranteed</Text>
+                      </Container>
+                    </Stack>
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <Span>✓</Span>
+                      <Container>
+                        <Text>Clean Vehicles</Text>
+                        <Text size="sm">Well-maintained luxury SUVs</Text>
+                      </Container>
+                    </Stack>
+                  </Container>
+                </Container>
 
-                <Card variant="outlined" padding="lg">
-                  <CardBody>
-                    <H2>Need Help?</H2>
+                <Container>
+                  <H2>Need Help?</H2>
+                  <Text>
+                    Our team is here to assist you with your booking.
+                  </Text>
+                  <Container spacing="sm">
                     <Text>
-                      Our team is here to assist you with your booking.
+                      <Span>Phone:</Span> (203) 555-0123
                     </Text>
-                    <Stack spacing="sm">
-                      <Text>
-                        <Span>Phone:</Span> (203) 555-0123
-                      </Text>
-                      <Text>
-                        <Span>Email:</Span> info@fairfieldairportcar.com
-                      </Text>
-                      <Text>
-                        <Span>Hours:</Span> 24/7 Service
-                      </Text>
-                    </Stack>
-                  </CardBody>
-                </Card>
-              </Stack>
+                    <Text>
+                      <Span>Email:</Span> info@fairfieldairportcar.com
+                    </Text>
+                    <Text>
+                      <Span>Hours:</Span> 24/7 Service
+                    </Text>
+                  </Container>
+                </Container>
+              </Container>
             )}
           </Stack>
         </Container>
