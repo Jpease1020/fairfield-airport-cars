@@ -17,7 +17,8 @@ import {
   Container,
   Grid,
   GridItem,
-  H3
+  H3,
+  Label
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
@@ -248,21 +249,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
       {/* Google Maps Error */}
       {mapsError && (
         <Container>
-          <Container>
-            <Container>
-              <svg fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </Container>
-            <Container>
-              <H3>
-                Location autocomplete temporarily unavailable
-              </H3>
-              <Container>
-                <Text>You can still fill out the form manually. Location suggestions will be restored shortly.</Text>
-              </Container>
-            </Container>
-          </Container>
+          <Stack direction="horizontal" spacing="md" align="center">
+            <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: '20px', height: '20px' }}>
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <Stack direction="vertical" spacing="sm">
+              <H3>Location autocomplete temporarily unavailable</H3>
+              <Text>You can still fill out the form manually. Location suggestions will be restored shortly.</Text>
+            </Stack>
+          </Stack>
         </Container>
       )}
 
@@ -332,10 +327,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
               {showPickupSuggestions && pickupSuggestions.length > 0 && (
                 <Container>
                   {pickupSuggestions.map((prediction) => (
-                    <button
+                    <Button
                       key={prediction.place_id}
                       onClick={() => handlePickupSuggestionSelect(prediction)}
-                      style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', padding: '8px' }}
+                      variant="ghost"
+                      className="w-full text-left p-2"
                     >
                       <Stack>
                         <Span>
@@ -345,7 +341,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           {prediction.structured_formatting?.secondary_text || ''}
                         </Span>
                       </Stack>
-                    </button>
+                    </Button>
                   ))}
                 </Container>
               )}
@@ -388,11 +384,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Container>
             <Stack>
               <Span>📅</Span>
-              <label 
+              <Label 
                 htmlFor="pickupDateTime"
               >
                 Pickup Date and Time
-              </label>
+              </Label>
             </Stack>
             
             <Text>
@@ -422,11 +418,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
               <Container>
                 <Stack>
                   <Span>👥</Span>
-                  <label 
+                  <Label 
                     htmlFor="passengers"
                   >
                     Passengers
-                  </label>
+                  </Label>
                 </Stack>
                 
                 <Text>
@@ -464,11 +460,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
             <Container>
               <Stack>
                 <Span>📝</Span>
-                <label 
+                <Label 
                   htmlFor="notes"
                 >
                   Special Instructions (Optional)
-                </label>
+                </Label>
               </Stack>
               
               <Text>

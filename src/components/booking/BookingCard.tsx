@@ -63,28 +63,40 @@ const BookingCard: React.FC<BookingCardProps> = ({
 
       {/* Date and Time */}
       <Stack direction="horizontal" spacing="md">
-        <Stack>
-          <Calendar />
-          <Text size="sm">{formatDate(booking.pickupDateTime.toString())}</Text>
-        </Stack>
-        <Stack>
-          <Clock />
-          <Text size="sm">{formatTime(booking.pickupDateTime.toString())}</Text>
-        </Stack>
+        <Container>
+          <Stack direction="horizontal" align="center" spacing="sm">
+            <Calendar />
+            <Text size="sm">{formatDate(booking.pickupDateTime.toString())}</Text>
+          </Stack>
+        </Container>
+        <Container>
+          <Stack direction="horizontal" align="center" spacing="sm">
+            <Clock />
+            <Text size="sm">{formatTime(booking.pickupDateTime.toString())}</Text>
+          </Stack>
+        </Container>
       </Stack>
 
       {/* Locations */}
       <Stack spacing="md">
-        <Stack>
-          <MapPin />
-          <Text size="xs">Pickup:</Text>
-          <Text size="sm">{booking.pickupLocation}</Text>
-        </Stack>
-        <Stack>
-          <MapPin />
-          <Text size="xs">Drop-off:</Text>
-          <Text size="sm">{booking.dropoffLocation}</Text>
-        </Stack>
+        <Container>
+          <Stack direction="horizontal" align="center" spacing="sm">
+            <MapPin />
+            <Stack direction="vertical" spacing="xs">
+              <Text size="xs">Pickup:</Text>
+              <Text size="sm">{booking.pickupLocation}</Text>
+            </Stack>
+          </Stack>
+        </Container>
+        <Container>
+          <Stack direction="horizontal" align="center" spacing="sm">
+            <MapPin />
+            <Stack direction="vertical" spacing="xs">
+              <Text size="xs">Drop-off:</Text>
+              <Text size="sm">{booking.dropoffLocation}</Text>
+            </Stack>
+          </Stack>
+        </Container>
       </Stack>
 
       {/* Passenger Info */}

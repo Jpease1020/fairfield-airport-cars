@@ -3,10 +3,12 @@
 ## **Project Overview**
 You are helping refactor a React/Next.js codebase for Fairfield Airport Cars to follow a strict design system. The goal is to replace generic HTML tags with custom React components and remove className props from reusable components.
 
-## **Current Status**
-- **Total Violations**: 617
+## **Current Status (BASELINE ESTABLISHED)**
+- **Total Violations**: 617 (CONFIRMED BASELINE)
 - **Files with Violations**: 73
+- **Completed Components**: 2 (EditableField, SimpleCommentSystem)
 - **Target**: Reduce violations by 100-150 in this session
+- **Session Goal**: Fix 10-15 priority components
 
 ## **🎯 START HERE - Copy This AI Prompt**
 
@@ -157,6 +159,50 @@ If you encounter errors:
 - **Violations reduced per session**: 100-150
 - **Error rate**: < 5%
 - **Functionality preservation**: 100%
+
+---
+
+## **📊 MISSION SUMMARY FOR CURSOR AGENTS**
+
+### **🎯 Your Mission**
+You are JSX cleanup specialists! Your task is to systematically refactor React components to follow our strict design system rules. You have a clear roadmap and all the tools you need.
+
+### **📈 Current Situation**
+- **Baseline**: 617 violations across 73 files (CONFIRMED)
+- **Progress**: 2 components already completed
+- **Remaining**: 71 files need attention
+- **Your Goal**: Fix 10-15 priority components this session
+
+### **🛠 Your Tools**
+1. **AI Prompt Template** - Copy/paste ready for each component
+2. **Priority List** - High-impact components identified
+3. **Quick Reference** - Tag replacements and import fixes
+4. **Progress Tracker** - Real-time tracking system
+
+### **🎯 Your Action Plan**
+1. **Start with high priority components** (StarRating, layout, login)
+2. **Use the AI prompt template** for each component
+3. **Follow the workflow** (copy prompt → paste code → refactor → test → report)
+4. **Report progress** in the standard format
+5. **Work systematically** through the priority list
+
+### **🏆 Success Criteria**
+- **Quality**: 100% functionality preservation (non-negotiable)
+- **Quantity**: 10-15 components fixed this session
+- **Impact**: 100-150 violations reduced
+- **Efficiency**: Systematic approach using provided tools
+
+### **📞 Communication**
+- **Report progress**: "Fixed [Component], reduced [X] violations. Ready for review."
+- **Ask questions**: When you need clarification
+- **Flag issues**: When you encounter complex problems
+- **Sync regularly**: Keep the main developer informed
+
+### **🚀 Ready to Launch!**
+
+Your mission is clear, your tools are ready, and your targets are identified. The codebase cleanup depends on your systematic work. Focus on quality over speed, and follow the proven patterns we've established.
+
+**Copy the AI prompt template above and start with `src/components/feedback/StarRating.tsx`!**
 
 ---
 

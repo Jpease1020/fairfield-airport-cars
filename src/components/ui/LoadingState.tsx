@@ -2,13 +2,15 @@ import React from 'react';
 import { LoadingSpinner } from '@/components/data';
 import { Container, H3, Text } from '@/components/ui';
 
+// LoadingState Component - BULLETPROOF TYPE SAFETY!
 interface LoadingStateProps {
   title?: string;
   subtitle?: string;
   message?: string;
   showSpinner?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
+  variant?: 'centered' | 'inline' | 'overlay';
+  spacing?: 'compact' | 'normal' | 'relaxed';
 }
 
 export const LoadingState: React.FC<LoadingStateProps> = ({
@@ -17,7 +19,8 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   message,
   showSpinner = true,
   size = 'md',
-  className = ''
+  variant = 'centered',
+  spacing = 'normal'
 }) => {
   const sizeClasses = {
     'sm': 'h-32',

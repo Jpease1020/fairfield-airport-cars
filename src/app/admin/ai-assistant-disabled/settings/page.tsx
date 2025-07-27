@@ -59,7 +59,7 @@ const AIAssistantSettingsPage = () => {
         actions={[]}
         loading={true}
       >
-        <div>Loading...</div>
+        <Text>Loading...</Text>
       </AdminPageWrapper>
     );
   }

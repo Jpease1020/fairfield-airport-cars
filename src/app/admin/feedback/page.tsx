@@ -322,26 +322,26 @@ function FeedbackPageContent() {
           title="📊 Rating Distribution"
           description="Breakdown of customer ratings"
         >
-          <div>
+          <Stack direction="vertical" spacing="md">
             {[5, 4, 3, 2, 1].map(rating => {
               const count = feedback.filter(f => f.rating === rating).length;
               const percentage = feedback.length > 0 ? (count / feedback.length) * 100 : 0;
               
               return (
-                <div key={rating}>
-                  <div>
+                <Stack key={rating} direction="horizontal" justify="between" align="center">
+                  <Span>
                     {'★'.repeat(rating)}
-                  </div>
-                  <div>
+                  </Span>
+                  <Span>
                     {count}
-                  </div>
-                  <div>
+                  </Span>
+                  <Span>
                     {percentage.toFixed(0)}%
-                  </div>
-                </div>
+                  </Span>
+                </Stack>
               );
             })}
-          </div>
+          </Stack>
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>

@@ -1,13 +1,18 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
 
-interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+// StatusBadge Component - BULLETPROOF TYPE SAFETY!
+interface StatusBadgeProps {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'in-progress' | 'success' | 'warning' | 'error';
   size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'outlined' | 'subtle';
 }
 
-const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
-  ({ className, status, size = 'md', ...props }, ref) => {
+const StatusBadge: React.FC<StatusBadgeProps> = ({ 
+    status, 
+    size = 'md', 
+    variant = 'default' 
+  }) => {
     const statusClasses = {
       pending: 'bg-warning text-text-inverse',
       confirmed: 'bg-info text-text-inverse',

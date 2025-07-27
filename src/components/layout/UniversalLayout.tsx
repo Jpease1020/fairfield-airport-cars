@@ -3,6 +3,7 @@ import { StandardHeader } from './StandardHeader';
 import { StandardFooter } from './StandardFooter';
 import { StandardNavigation } from './StandardNavigation';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
+import { Container } from '@/components/ui';
 
 interface UniversalLayoutProps {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ interface UniversalLayoutProps {
   showFooter?: boolean;
   showNavigation?: boolean;
   layoutType?: 'standard' | 'admin' | 'minimal';
-  className?: string;
+  variant?: 'standard' | 'admin' | 'minimal' | 'compact';
 }
 
 /**
@@ -42,36 +43,28 @@ export const UniversalLayout: React.FC<UniversalLayoutProps> = ({
   showFooter = true,
   showNavigation = true,
   layoutType = 'standard',
-  className = ''
+  variant = 'standard'
 }) => {
   // Determine navigation component based on layout type
   const NavigationComponent = layoutType === 'admin' ? AdminNavigation : StandardNavigation;
-  
-  // Determine CSS classes based on layout type
-  const layoutClasses = [
-    'standard-layout', // All layouts use the base standard-layout class
-    layoutType === 'admin' ? 'admin-layout' : '',
-    layoutType === 'minimal' ? 'minimal-layout' : '',
-    className
-  ].filter(Boolean).join(' ');
 
   return (
-    <div className={layoutClasses}>
+    <Container variant={variant}>
       {showNavigation && <NavigationComponent />}
       
-      <main >
+      <Container variant="main">
         {showHeader && (title || subtitle) && layoutType !== 'minimal' && (
           <StandardHeader title={title} subtitle={subtitle} />
         )}
         
-        <div >
+        <Container variant="content">
           {children}
-        </div>
-      </main>
+        </Container>
+      </Container>
       
       {showFooter && layoutType !== 'admin' && layoutType !== 'minimal' && (
         <StandardFooter />
       )}
-    </div>
+    </Container>
   );
 }; 

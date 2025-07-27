@@ -1,18 +1,21 @@
 import React from 'react';
 import { Card, CardBody } from './card';
 
+// HelpCard Component - BULLETPROOF TYPE SAFETY!
 export interface HelpCardProps {
   icon: string;
   title: string;
   description: string;
-  className?: string;
+  variant?: 'default' | 'highlighted' | 'compact';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const HelpCard: React.FC<HelpCardProps> = ({
   icon,
   title,
   description,
-  className = ''
+  variant = 'default',
+  size = 'md'
 }) => {
   return (
     <Card>

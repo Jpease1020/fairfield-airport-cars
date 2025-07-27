@@ -63,8 +63,8 @@ export type {
   HelpPageEditorProps
 } from '../cms/PageEditors';
 
-// Base UI Components
-export { Card, CardBody, CardHeader, CardTitle, CardDescription } from './card';
+// Base UI Components (Card exported from containers - bulletproof!)  
+export { CardBody, CardHeader, CardTitle, CardDescription } from './card';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Badge } from './badge';
 export { Button } from './button';
@@ -84,23 +84,36 @@ export {
   OptGroup 
 } from './form';
 
-// Text and Layout Components
+// Text Components ONLY (Layout components from containers!)
 export { 
   H1, H2, H3, H4, H5, H6,
   Text, 
   Paragraph, 
-  Lead, 
-  Link, 
-  Container, 
-  Section,
   Span
 } from './text';
+
+// BULLETPROOF Layout Components (NEVER from text.tsx!)
+export { Container, Section, Stack, Card, Box, Grid, Layout, Spacer } from './containers';
 
 // Database-ready editable text component
 export { EditableText } from './EditableText';
 
 // Accessibility
 export { AccessibilityEnhancer } from './AccessibilityEnhancer';
+
+// Moved Components (Now Properly Located in UI!)
+export { EditableInput } from './EditableInput';
+export { EditableTextarea } from './EditableTextarea';
+export { FormField } from './FormField';
+export { SelectField } from './SelectField';
+export { StatusBadge } from './StatusBadge';
+export { EmptyState } from './EmptyState';
+export { StarRating } from './StarRating';
+export { Alert } from './Alert';
+export { Modal } from './Modal';
+export { Logo } from './Logo';
+export { CommentIcon } from './CommentIcon';
+export { LocationAutocomplete } from './LocationAutocomplete';
 
 // Reusable Patterns
 export { FeatureGrid } from './FeatureGrid'; 

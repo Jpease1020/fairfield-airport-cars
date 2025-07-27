@@ -1,17 +1,18 @@
 import React from 'react';
 
+// Badge Component - BULLETPROOF TYPE SAFETY!
 export interface BadgeProps {
   children: React.ReactNode;
   variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
+  rounded?: 'sm' | 'md' | 'lg' | 'full';
 }
 
 export const Badge: React.FC<BadgeProps> = ({
   children,
   variant = 'default',
   size = 'md',
-  className = '',
+  rounded = 'md'
 }) => {
   const baseClasses = 'status-badge';
   const variantClasses = {
@@ -31,11 +32,18 @@ export const Badge: React.FC<BadgeProps> = ({
     lg: 'status-badge-lg',
   };
 
+  const roundedClasses = {
+    sm: 'rounded-sm',
+    md: 'rounded-md', 
+    lg: 'rounded-lg',
+    full: 'rounded-full'
+  };
+
   const classes = [
     baseClasses,
     variantClasses[variant],
     sizeClasses[size],
-    className,
+    roundedClasses[rounded]
   ].filter(Boolean).join(' ');
 
   return (

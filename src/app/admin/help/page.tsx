@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup, H4, Text, Container } from '@/components/ui';
+import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup, H4, Text, Container, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 function AdminHelpPage() {
@@ -174,31 +174,31 @@ function AdminHelpPage() {
         >
           <Stack spacing="md">
             <Container>
-              <span>💬</span>
-              <span>
+              <Span>💬</Span>
+              <Span>
                 Contact your developer for technical support
-              </span>
+              </Span>
             </Container>
             
             <Container>
-              <span>📄</span>
-              <span>
+              <Span>📄</Span>
+              <Span>
                 Check the business documentation in your project files
-              </span>
+              </Span>
             </Container>
             
             <Container>
-              <span>⚙️</span>
-              <span>
+              <Span>⚙️</Span>
+              <Span>
                 Review your CMS settings for configuration options
-              </span>
+              </Span>
             </Container>
             
             <Container>
-              <span>📊</span>
-              <span>
+              <Span>📊</Span>
+              <Span>
                 Use the Admin Dashboard to monitor your business metrics
-              </span>
+              </Span>
             </Container>
           </Stack>
         </InfoCard>

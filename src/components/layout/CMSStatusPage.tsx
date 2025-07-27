@@ -2,7 +2,7 @@ import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
 import { PageHeader } from '@/components/ui/layout/PageHeader';
-import { Section, Container, H1, H2, Lead, Button } from '@/components/ui';
+import { Section, Container, H1, H2, Lead, Button, Link } from '@/components/ui';
 import { Card } from '@/components/ui/containers';
 import { CardBody } from '@/components/ui/card';
 import { Stack } from '@/components/ui/containers';
@@ -136,24 +136,24 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
             {showActionButtons && (primaryAction || secondaryAction) && (
               <Stack direction="horizontal" spacing="md">
                 {primaryAction && (
-                  <a href={primaryAction.href}>
+                  <Link href={primaryAction.href}>
                     <Button 
                       size="lg"
                       variant={primaryAction.variant || 'primary'}
                     >
                       {primaryAction.text}
                     </Button>
-                  </a>
+                  </Link>
                 )}
                 {secondaryAction && (
-                  <a href={secondaryAction.href}>
+                  <Link href={secondaryAction.href}>
                     <Button 
                       size="lg"
                       variant={secondaryAction.variant || 'outline'}
                     >
                       {secondaryAction.text}
                     </Button>
-                  </a>
+                  </Link>
                 )}
               </Stack>
             )}

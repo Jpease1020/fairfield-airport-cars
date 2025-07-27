@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Span, H2, H3, Lead } from '@/components/ui';
+import { Container, Span, H2, H3, Lead, Link } from '@/components/ui';
 import { Section, Stack } from '@/components/ui/containers';
 import { Card, CardBody } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
@@ -17,7 +17,7 @@ interface CMSContentPageProps {
   showTableOfContents?: boolean;
   showRelatedLinks?: boolean;
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  className?: string;
+  variant?: 'default' | 'compact' | 'wide';
   isEditable?: boolean;
   onFieldChange?: (field: string, value: string) => void;
 }
@@ -32,7 +32,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
   showTableOfContents = false,
   showRelatedLinks = false,
   containerMaxWidth = 'xl',
-  className,
+  variant = 'default',
   isEditable = false,
   onFieldChange
 }) => {
@@ -53,8 +53,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
     <CMSLayout 
       cmsConfig={cmsConfig} 
       pageType={pageType} 
-      variant="content"
-      className={className}
+      variant={variant === 'wide' ? 'wide' : 'content'}
     >
       {/* Header Section */}
       <Section variant="default" padding="xl">
@@ -81,32 +80,18 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
             {/* Table of Contents */}
             {showTableOfContents && (
               <Container>
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>On This Page</H3>
-                    <nav>
-                      <Stack>
-                        <a href="#overview">
-                          Overview
-                        </a>
-                        <a href="#details">
-                          Details
-                        </a>
-                        <a href="#contact">
-                          Contact
-                        </a>
-                      </Stack>
-                    </nav>
-                  </CardBody>
-                </Card>
+                <H3>On This Page</H3>
+                <Stack spacing="sm" direction="vertical">
+                  <Link href="#overview">Overview</Link>
+                  <Link href="#details">Details</Link>
+                  <Link href="#contact">Contact</Link>
+                </Stack>
               </Container>
             )}
 
             {/* Main Content */}
             <Container>
-              <Container>
-                {children}
-              </Container>
+              {children}
             </Container>
           </Stack>
         </Container>
@@ -115,52 +100,42 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
       {/* Related Links Section */}
       {showRelatedLinks && (
         <Section variant="muted" padding="xl">
-          <Container maxWidth={containerMaxWidth}>
-            <Stack spacing="lg">
-              <Stack>
-                <H2>Related Information</H2>
-                <Lead>Find more helpful resources and information</Lead>
-              </Stack>
+          <Container maxWidth={containerMaxWidth} spacing="lg">
+              <H2>Related Information</H2>
+              <Lead>Find more helpful resources and information</Lead>
               
               <Stack direction="horizontal" spacing="lg">
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>Booking Information</H3>
-                    <Text>
-                      Learn about our booking process, policies, and what to expect.
-                    </Text>
-                    <a href="/book">
-                      Book Your Ride →
-                    </a>
-                  </CardBody>
-                </Card>
+                <Container>
+                  <H3>Booking Information</H3>
+                  <Text>
+                    Learn about our booking process, policies, and what to expect.
+                  </Text>
+                  <Link href="/book">
+                    Book Your Ride →
+                  </Link>
+                </Container>
                 
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>Service Areas</H3>
-                    <Text>
-                      See all the airports and areas we serve in the region.
-                    </Text>
-                    <a href="/about">
-                      View Service Areas →
-                    </a>
-                  </CardBody>
-                </Card>
+                <Container>
+                  <H3>Service Areas</H3>
+                  <Text>
+                    See all the airports and areas we serve in the region.
+                  </Text>
+                  <Link href="/about">
+                    View Service Areas →
+                  </Link>
+                </Container>
                 
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>Contact Support</H3>
-                    <Text>
-                      Need help? Our support team is available 24/7.
-                    </Text>
-                    <a href="/help">
-                      Get Help →
-                    </a>
-                  </CardBody>
-                </Card>
+                <Container>
+                  <H3>Contact Support</H3>
+                  <Text>
+                    Need help? Our support team is available 24/7.
+                  </Text>
+                  <Link href="/help">
+                    Get Help →
+                  </Link>
+                </Container>
               </Stack>
-            </Stack>
-          </Container>
+            </Container>
         </Section>
       )}
     </CMSLayout>

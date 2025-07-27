@@ -3,22 +3,27 @@ import { Star } from 'lucide-react';
 import { Stack, Container } from '@/components/ui/containers';
 import { Span } from '@/components/ui';
 
-interface StarRatingProps extends React.HTMLAttributes<HTMLDivElement> {
+// Clean StarRating Component - No className Props Allowed!
+interface StarRatingProps {
   rating: number;
   maxRating?: number;
   size?: 'sm' | 'md' | 'lg';
   interactive?: boolean;
   onRatingChange?: (rating: number) => void;
   showValue?: boolean;
+  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'compact' | 'large';
 }
 
-export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(({
+export const StarRating: React.FC<StarRatingProps> = ({
   rating,
   onRatingChange,
   maxRating = 5,
-  className,
-  ...props
-}, ref) => {
+  size = 'md',
+  spacing = 'sm',
+  variant = 'default',
+  showValue = false
+}) => {
   const [hoverRating, setHoverRating] = React.useState(0);
 
   const handleStarClick = (starValue: number) => {
@@ -39,28 +44,40 @@ export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(({
     }
   };
 
+  const sizeClasses = {
+    sm: 'w-4 h-4',
+    md: 'w-5 h-5', 
+    lg: 'w-6 h-6'
+  };
+
   return (
-    <Stack direction="horizontal" align="center" spacing="sm" className={className} onMouseLeave={handleMouseLeave} {...props}>
+    <Stack 
+      direction="horizontal" 
+      align="center" 
+      spacing={spacing}
+      onMouseLeave={handleMouseLeave}
+    >
       {[...Array(maxRating)].map((_, index) => {
         const starValue = index + 1;
         const isFilled = starValue <= (hoverRating || rating);
         
         return (
-          <Container
+          <button
             key={starValue}
             onClick={() => handleStarClick(starValue)}
             onMouseEnter={() => handleStarHover(starValue)}
-            style={{ cursor: onRatingChange ? 'pointer' : 'default' }}
+            className={`${onRatingChange ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform ${isFilled ? 'text-yellow-400' : 'text-gray-300'}`}
+            disabled={!onRatingChange}
           >
             <Star
+              className={sizeClasses[size]}
               fill="currentColor"
-              viewBox="0 0 20 20"
             />
-          </Container>
+          </button>
         );
       })}
-      {onRatingChange && (
-        <Span>
+      {showValue && (
+        <Span color="muted" size="sm">
           {rating}/{maxRating}
         </Span>
       )}

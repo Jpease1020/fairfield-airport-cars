@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 import { Container, Text, Span, Label } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { Button } from '@/components/ui/button';
 
 interface LocationAutocompleteProps {
@@ -117,11 +118,9 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         </Label>
       )}
       
-      <Container>
-        <Container>
-          {isLoading && (
-            <Loader2 />
-          )}
+      <Container spacing="xs">
+        <div className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+          {isLoading && <Loader2 className="w-4 h-4 text-gray-400" />}
           <input
             data-autocomplete-input
             id={fieldId}
@@ -131,19 +130,13 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder={placeholder}
+            className="flex-1 border-0 outline-none bg-transparent"
           />
-          {!isLoading && (
-            <MapPin />
-          )}
-        </Container>
+          {!isLoading && <MapPin className="w-4 h-4 text-gray-400" />}
+        </div>
         
-        {error && (
-          <Text size="sm">{error}</Text>
-        )}
-        
-        {helperText && !error && (
-          <Text size="sm">{helperText}</Text>
-        )}
+        {error && <Text size="sm" color="error">{error}</Text>}
+        {helperText && !error && <Text size="sm" color="muted">{helperText}</Text>}
       </Container>
 
       {showSuggestions && suggestions.length > 0 && (
@@ -154,19 +147,19 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
               variant="ghost"
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              <Container>
+              <Stack direction="horizontal" spacing="sm" align="center">
                 <MapPin />
-                <Container>
-                  <Container>
+                <Stack direction="vertical" spacing="xs">
+                  <Text weight="medium">
                     {suggestion.structured_formatting?.main_text || suggestion.description}
-                  </Container>
+                  </Text>
                   {suggestion.structured_formatting?.secondary_text && (
-                    <Text size="sm">
+                    <Text size="sm" color="muted">
                       {suggestion.structured_formatting.secondary_text}
                     </Text>
                   )}
-                </Container>
-              </Container>
+                </Stack>
+              </Stack>
             </Button>
           ))}
         </Container>

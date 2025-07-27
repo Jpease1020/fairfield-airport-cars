@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
-import { Section, Container, H2, Text, Grid, GridItem } from '@/components/ui';
+import { Section, Container, H2, Text, Grid, GridItem, Link } from '@/components/ui';
 
 interface ContactMethod {
   type: 'phone' | 'email' | 'text' | 'whatsapp';
@@ -103,17 +103,17 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
           <Grid columns={variant === 'split' ? 2 : 3} spacing="md">
             {contactMethods.map((method, index) => (
               <GridItem key={index}>
-                <a href={method.href}>
-                  <div>
-                    {getContactIcon(method.type)}
-                  </div>
+                <Link href={method.href}>
                   <Container>
-                    <Text >{method.label}</Text>
+                    {getContactIcon(method.type)}
+                  </Container>
+                  <Container>
+                    <Text>{method.label}</Text>
                     <Text>
                       {method.value}
                     </Text>
                   </Container>
-                </a>
+                </Link>
               </GridItem>
             ))}
             

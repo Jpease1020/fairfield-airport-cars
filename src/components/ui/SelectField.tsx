@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
 import { Label } from '@/components/ui/label';
-import { Select, Option, Text, Container } from '@/components/ui';
+import { Select, Option, Text, Container, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface SelectOption {
@@ -10,30 +10,48 @@ interface SelectOption {
   disabled?: boolean;
 }
 
-interface SelectFieldProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+// SelectField Component - BULLETPROOF TYPE SAFETY!
+interface SelectFieldProps {
   label: string;
   options: SelectOption[];
   error?: string;
   helperText?: string;
   required?: boolean;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  disabled?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'error';
 }
 
-const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
-  ({ className, label, options, error, helperText, required, id, ...props }, ref) => {
-    const fieldId = id || (typeof label === 'string' ? `select-${label.toLowerCase().replace(/\s+/g, '-')}` : 'select-unknown');
+const SelectField: React.FC<SelectFieldProps> = ({ 
+    label, 
+    options, 
+    error, 
+    helperText, 
+    required = false, 
+    value, 
+    onChange, 
+    disabled = false, 
+    size = 'md', 
+    variant = 'default' 
+  }) => {
+    const fieldId = `select-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
     return (
       <Container>
         <Stack spacing="sm">
           <Label htmlFor={fieldId}>
             {label}
-            {required && <span>*</span>}
+            {required && <Span color="error">*</Span>}
           </Label>
           <Select
-            ref={ref}
             id={fieldId}
-            className={className}
-            {...props}
+            variant={error ? 'error' : variant}
+            size={size}
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
           >
             {options.map((option) => (
               <Option
@@ -46,16 +64,15 @@ const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
             ))}
           </Select>
           {error && (
-            <Text>{error}</Text>
+            <Text color="error" size="sm">{error}</Text>
           )}
           {helperText && !error && (
-            <Text>{helperText}</Text>
+            <Text color="muted" size="sm">{helperText}</Text>
           )}
         </Stack>
       </Container>
     );
-  }
-);
+  };
 SelectField.displayName = 'SelectField';
 
 export { SelectField }; 

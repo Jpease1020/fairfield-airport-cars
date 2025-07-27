@@ -66,27 +66,22 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <Container >
-        <Container >
-          <Container>🔄</Container>
-          <Text>Loading analytics...</Text>
-        </Container>
+      <Container>
+        <Text>🔄 Loading analytics...</Text>
       </Container>
     );
   }
 
   return (
-    <Container >
-      <Container >
+    <Container>
+      <Stack direction="vertical" spacing="md">
         <H1>Analytics Dashboard</H1>
         <Text>User interactions, errors, and performance metrics</Text>
-        <Container >
-          <Button onClick={fetchAnalytics} variant="outline" size="sm">
-            <Span>🔄</Span>
-            Refresh
-          </Button>
-        </Container>
-      </Container>
+        <Button onClick={fetchAnalytics} variant="outline" size="sm">
+          <Span>🔄</Span>
+          Refresh
+        </Button>
+      </Stack>
       
       {lastUpdated && (
         <Container>
@@ -94,238 +89,141 @@ export default function AnalyticsPage() {
         </Container>
       )}
 
-      <Container >
+      <Container>
         {!analytics ? (
-          <Container >
-            <Container >
-              <Container >
-                <Container >⚠️</Container>
-                <H3>No Analytics Data</H3>
-                <Text>Analytics data will appear here once users start interacting with the app.</Text>
-              </Container>
-            </Container>
-          </Container>
+          <Stack direction="vertical" spacing="md" align="center">
+            <Span>⚠️</Span>
+            <H3>No Analytics Data</H3>
+            <Text>Analytics data will appear here once users start interacting with the app.</Text>
+          </Stack>
         ) : (
           <Container>
             {/* Overview Cards */}
-            <Container>
-              <Container >
-                <Container >
-                  <H3 >Total Interactions</H3>
-                  <Span >📊</Span>
-                </Container>
-                <Container >
-                  <Container >{analytics.totalInteractions.toLocaleString()}</Container>
-                  <Text >
-                    All user interactions tracked
-                  </Text>
-                </Container>
-              </Container>
+            <Stack direction="horizontal" spacing="md">
+              <StatCard
+                title="Total Interactions"
+                value={analytics.totalInteractions.toLocaleString()}
+                description="All user interactions tracked"
+                icon="📊"
+              />
 
-              <Container >
-                <Container >
-                  <H3 >Total Errors</H3>
-                  <Span>⚠️</Span>
-                </Container>
-                <Container >
-                  <Container>
-                    {analytics.totalErrors.toLocaleString()}
-                  </Container>
-                  <Text >
-                    Errors detected and tracked
-                  </Text>
-                </Container>
-              </Container>
+              <StatCard
+                title="Total Errors"
+                value={analytics.totalErrors.toLocaleString()}
+                description="Errors detected and tracked"
+                icon="⚠️"
+              />
 
-              <Container >
-                <Container >
-                  <H3 >Error Rate</H3>
-                  <Span >📉</Span>
-                </Container>
-                <Container >
-                  <Container >
-                    {analytics.totalInteractions > 0 
-                      ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
-                      : '0'
-                    }%
-                  </Container>
-                  <Text >
-                    Percentage of interactions with errors
-                  </Text>
-                </Container>
-              </Container>
+              <StatCard
+                title="Error Rate"
+                value={`${analytics.totalInteractions > 0 
+                  ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
+                  : '0'
+                }%`}
+                description="Percentage of interactions with errors"
+                icon="📉"
+              />
 
-              <Container >
-                <Container >
-                  <H3 >Active Elements</H3>
-                  <Span >🖱️</Span>
-                </Container>
-                <Container >
-                  <Container >
-                    {Object.keys(analytics.elementTypes).length}
-                  </Container>
-                  <Text >
-                    Different element types tracked
-                  </Text>
-                </Container>
-              </Container>
-            </Container>
+              <StatCard
+                title="Active Elements"
+                value={Object.keys(analytics.elementTypes).length.toString()}
+                description="Different element types tracked"
+                icon="🖱️"
+              />
+            </Stack>
 
             {/* Detailed Metrics */}
             <Container>
               {/* Top Interaction Types */}
-              <Container >
-                <Container >
-                  <H2 >
-                    <Span >🖱️</Span>
-                    Top Interaction Types
-                  </H2>
-                </Container>
-                <Container >
-                  <Container >
-                    {getTopInteractions().map(([type, count]) => (
-                      <Container key={type}>
-                        <Stack direction="horizontal" justify="between" align="center">
-                          <Stack direction="horizontal" spacing="sm" align="center">
-                            <Container>
-                              <Span>●</Span>
-                            </Container>
-                            <Span>
-                              {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                            </Span>
-                          </Stack>
-                          <Span>
-                            {count.toLocaleString()}
-                          </Span>
-                        </Stack>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
-              </Container>
+              <Stack spacing="md">
+                <H2>
+                  <Span>🖱️</Span>
+                  Top Interaction Types
+                </H2>
+                <Stack direction="vertical" spacing="sm">
+                  {getTopInteractions().map(([type, count]) => (
+                    <Stack key={type} direction="horizontal" justify="between" align="center">
+                      <div className="flex items-center gap-2">
+                        <Span>●</Span>
+                        <Span>
+                          {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                        </Span>
+                      </div>
+                      <Span>
+                        {count.toLocaleString()}
+                      </Span>
+                    </Stack>
+                  ))}
+                </Stack>
+              </Stack>
 
               {/* Top Error Types */}
-              <Container >
-                <Container >
-                  <H2 >
-                    <Span >⚠️</Span>
-                    Top Error Types
-                  </H2>
-                </Container>
-                <Container >
-                  <Container >
-                    {getTopErrors().map(([type, count]) => (
-                      <Container key={type}>
-                        <Stack direction="horizontal" justify="between" align="center">
-                          <Stack direction="horizontal" spacing="sm" align="center">
-                            <Container>
-                              <Span>●</Span>
-                            </Container>
-                            <Span>
-                              {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                            </Span>
-                          </Stack>
-                          <Span>
-                            {count.toLocaleString()}
-                          </Span>
-                        </Stack>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
+              <Container>
+                <H2>
+                  <Span>⚠️</Span>
+                  Top Error Types
+                </H2>
+                <Stack direction="vertical" spacing="sm">
+                  {getTopErrors().map(([type, count]) => (
+                    <Stack key={type} direction="horizontal" justify="between" align="center">
+                      <Span>● {type.replace(/([A-Z])/g, ' $1').toLowerCase()}</Span>
+                      <Span>{count.toLocaleString()}</Span>
+                    </Stack>
+                  ))}
+                </Stack>
               </Container>
 
               {/* Top Element Types */}
-              <Container >
-                <Container >
-                  <H2 >
-                    <Span >📝</Span>
-                    Most Interacted Elements
-                  </H2>
-                </Container>
-                <Container >
-                  <Container >
-                    {getTopElements().map(([element, count]) => (
-                      <Container key={element}>
-                        <Stack direction="horizontal" justify="between" align="center">
-                          <Stack direction="horizontal" spacing="sm" align="center">
-                            <Container>
-                              <Span>●</Span>
-                            </Container>
-                            <Span>
-                              {element}
-                            </Span>
-                          </Stack>
-                          <Span>
-                            {count.toLocaleString()}
-                          </Span>
-                        </Stack>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
+              <Container>
+                <H2>
+                  <Span>📝</Span>
+                  Most Interacted Elements
+                </H2>
+                <Stack direction="vertical" spacing="sm">
+                  {getTopElements().map(([element, count]) => (
+                    <Stack key={element} direction="horizontal" justify="between" align="center">
+                      <Span>● {element}</Span>
+                      <Span>{count.toLocaleString()}</Span>
+                    </Stack>
+                  ))}
+                </Stack>
               </Container>
 
               {/* Recent Activity */}
-              <Container >
-                <Container >
-                  <H2 >
-                    <Span >⏰</Span>
-                    Recent Activity
-                  </H2>
-                </Container>
-                <Container >
-                  <Container >
-                    {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
-                      <Container key={index}>
-                        <Stack direction="horizontal" justify="between" align="center">
-                          <Stack direction="horizontal" spacing="sm" align="center">
-                            <Container>
-                              <Span>●</Span>
-                            </Container>
-                            <Span>
-                              {interaction.type} on {interaction.element}
-                            </Span>
-                          </Stack>
-                          <Span>
-                            {new Date(interaction.timestamp).toLocaleTimeString()}
-                          </Span>
-                        </Stack>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
+              <Container>
+                <H2>
+                  <Span>⏰</Span>
+                  Recent Activity
+                </H2>
+                <Stack direction="vertical" spacing="sm">
+                  {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
+                    <Stack key={index} direction="horizontal" justify="between" align="center">
+                      <Span>● {interaction.type} on {interaction.element}</Span>
+                      <Span>{new Date(interaction.timestamp).toLocaleTimeString()}</Span>
+                    </Stack>
+                  ))}
+                </Stack>
               </Container>
             </Container>
 
             {/* Recent Errors */}
             {analytics.recentErrors.length > 0 && (
-              <Container >
-                <Container >
-                  <H2 >
-                    <Span >⚠️</Span>
-                    Recent Errors
-                  </H2>
-                </Container>
-                <Container >
-                  <Container>
-                    {analytics.recentErrors.slice(0, 10).map((error, index) => (
-                      <Container key={index}>
-                        <Container>
-                          <Span>
-                            {error.message}
-                          </Span>
-                          <Span>
-                            {new Date(error.timestamp).toLocaleString()}
-                          </Span>
-                        </Container>
-                        <Text>
-                          Type: {error.type} • Page: {error.page}
-                        </Text>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
+              <Container>
+                <H2>
+                  <Span>⚠️</Span>
+                  Recent Errors
+                </H2>
+                <Stack direction="vertical" spacing="md">
+                  {analytics.recentErrors.slice(0, 10).map((error, index) => (
+                    <Container key={index}>
+                      <Stack direction="horizontal" justify="between" align="center">
+                        <Span>{error.message}</Span>
+                        <Span>{new Date(error.timestamp).toLocaleString()}</Span>
+                      </Stack>
+                      <Text>Type: {error.type} • Page: {error.page}</Text>
+                    </Container>
+                  ))}
+                </Stack>
               </Container>
             )}
           </Container>

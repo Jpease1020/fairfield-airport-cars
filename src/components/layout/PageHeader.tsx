@@ -1,37 +1,39 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
+import { Container, H1, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
-interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PageHeaderProps {
   title: string;
   subtitle?: string;
   children?: React.ReactNode;
+  spacing?: 'sm' | 'md' | 'lg' | 'xl';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
 }
 
-const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
-  ({ className, title, subtitle, children, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn('mb-8', className)}
-        {...props}
-      >
-        <div >
+const PageHeader: React.FC<PageHeaderProps> = ({ 
+  title, 
+  subtitle, 
+  children,
+  spacing = 'lg',
+  maxWidth = 'xl'
+}) => {
+  return (
+    <Container maxWidth={maxWidth} spacing={spacing}>
+      <Stack spacing="md">
+        <H1>{title}</H1>
+        {subtitle && (
+          <Text>{subtitle}</Text>
+        )}
+        {children && (
           <div>
-            <h1 >{title}</h1>
-            {subtitle && (
-              <p >{subtitle}</p>
-            )}
+            {children}
           </div>
-          {children && (
-            <div >
-              {children}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-);
+        )}
+      </Stack>
+    </Container>
+  );
+};
+
 PageHeader.displayName = 'PageHeader';
 
 export { PageHeader }; 

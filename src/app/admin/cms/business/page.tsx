@@ -304,12 +304,10 @@ function BusinessPageContent() {
                     placeholder="#1f2937"
                     icon="🎨"
                   />
-                  <Container>
+                  <Stack direction="horizontal" spacing="sm" align="center">
                     <Span>Preview:</Span>
-                    <Container>
-                      <span>Color preview</span>
-                    </Container>
-                  </Container>
+                    <Span>Color preview</Span>
+                  </Stack>
                 </Container>
                 
                 <Container>
@@ -322,12 +320,10 @@ function BusinessPageContent() {
                     placeholder="#3b82f6"
                     icon="🎨"
                   />
-                  <Container>
+                  <Stack direction="horizontal" spacing="sm" align="center">
                     <Span>Preview:</Span>
-                    <Container>
-                      <span>Color preview</span>
-                    </Container>
-                  </Container>
+                    <Span>Color preview</Span>
+                  </Stack>
                 </Container>
                 
                 <SettingInput
@@ -348,20 +344,18 @@ function BusinessPageContent() {
               description="How your business information will appear to customers"
               icon="👀"
             >
-              <Container>
-                <Container>
-                  <Container>
-                    <H3>{settings.company.name}</H3>
-                    <Text>{settings.company.tagline}</Text>
-                  </Container>
-                  <Container>
-                    <Text>📞 {settings.company.phone}</Text>
-                    <Text>✉️ {settings.company.email}</Text>
-                    <Text>📍 {settings.company.address}</Text>
-                    <Text>🕒 {settings.company.hours}</Text>
-                  </Container>
-                </Container>
-              </Container>
+              <Stack spacing="lg">
+                <Stack spacing="sm">
+                  <H3>{settings.company.name}</H3>
+                  <Text>{settings.company.tagline}</Text>
+                </Stack>
+                <Stack spacing="sm">
+                  <Text>📞 {settings.company.phone}</Text>
+                  <Text>✉️ {settings.company.email}</Text>
+                  <Text>📍 {settings.company.address}</Text>
+                  <Text>🕒 {settings.company.hours}</Text>
+                </Stack>
+              </Stack>
             </SettingSection>
           </Container>
         </GridSection>

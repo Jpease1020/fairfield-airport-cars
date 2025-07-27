@@ -21,13 +21,16 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
   if (!isOpen) return null;
 
   return (
-    <Container>
-      <Container>
-        <div 
-          onClick={onClose}
-        />
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
+      />
         
-        <Container>
+      {/* Modal Content */}
+      <div className="relative max-w-lg w-full mx-4">
+        <Container variant="elevated" padding="lg">
           <Stack direction="horizontal" align="center" justify="between">
             <H2>
               {title}
@@ -42,8 +45,8 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
           </Stack>
           
           {children}
-        </Container>
-      </Container>
-    </Container>
+          </Container>
+        </div>
+      </div>
   );
 }); 

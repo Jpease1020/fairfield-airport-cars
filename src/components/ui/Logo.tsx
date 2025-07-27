@@ -1,11 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 
+// Logo Component - BULLETPROOF TYPE SAFETY!
 interface LogoProps {
-  className?: string;
   alt?: string;
   width?: number;
   height?: number;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'white' | 'dark';
 }
 
 const Logo: React.FC<LogoProps> = ({ 

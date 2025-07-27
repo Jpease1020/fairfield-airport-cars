@@ -10,6 +10,7 @@ import {
   LoadingSpinner,
   Text
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {
@@ -144,12 +145,12 @@ function SuccessPageContent() {
           title="📋 What Happens Next?"
           description="Here's what you can expect from us"
         >
-          <ul>
-            <li>📧 You&apos;ll receive a confirmation email with all booking details</li>
-            <li>📱 We&apos;ll send you SMS updates about your driver and pickup time</li>
-            <li>👨‍💼 Your driver will contact you 30 minutes before pickup</li>
-            <li>✈️ We monitor your flight for any delays or changes</li>
-          </ul>
+          <Stack spacing="sm">
+            <Text>📧 You&apos;ll receive a confirmation email with all booking details</Text>
+            <Text>📱 We&apos;ll send you SMS updates about your driver and pickup time</Text>
+            <Text>👨‍💼 Your driver will contact you 30 minutes before pickup</Text>
+            <Text>✈️ We monitor your flight for any delays or changes</Text>
+          </Stack>
 
           <ActionButtonGroup buttons={successActions} />
         </InfoCard>

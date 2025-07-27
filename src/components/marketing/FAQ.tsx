@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Section, Container, H2, H3, Text, Button } from '@/components/ui';
+import { Section, Container, H2, H3, Text, Button, Span } from '@/components/ui';
 import { cn } from '@/lib/utils/utils';
 
 interface FAQItem {
@@ -7,11 +7,13 @@ interface FAQItem {
   answer: string;
 }
 
-interface FAQProps extends React.HTMLAttributes<HTMLDivElement> {
+interface FAQProps {
   title?: string;
   subtitle?: string;
   items: FAQItem[];
   variant?: 'default' | 'accordion' | 'simple';
+  spacing?: 'sm' | 'md' | 'lg';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export const FAQ: React.FC<FAQProps> = ({
@@ -19,8 +21,8 @@ export const FAQ: React.FC<FAQProps> = ({
   subtitle,
   items,
   variant = 'default',
-  className,
-  ...props
+  spacing = 'md',
+  maxWidth = 'lg'
 }) => {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
 
@@ -36,8 +38,8 @@ export const FAQ: React.FC<FAQProps> = ({
     };
 
     return (
-      <Section className={className} {...props}>
-        <Container maxWidth="lg">
+      <Section padding={spacing}>
+        <Container maxWidth={maxWidth}>
           {title && (
             <Container>
               <H2>{title}</H2>
@@ -54,7 +56,7 @@ export const FAQ: React.FC<FAQProps> = ({
                   variant="ghost"
                   onClick={() => toggleItem(index)}
                 >
-                  <span>{item.question}</span>
+                  <Span>{item.question}</Span>
                   <svg
                     fill="none"
                     stroke="currentColor"
@@ -79,8 +81,8 @@ export const FAQ: React.FC<FAQProps> = ({
 
   if (variant === 'simple') {
     return (
-      <Section className={className} {...props}>
-        <Container maxWidth="lg">
+      <Section padding={spacing}>
+        <Container maxWidth={maxWidth}>
           {title && (
             <Container>
               <H2>{title}</H2>
@@ -109,8 +111,8 @@ export const FAQ: React.FC<FAQProps> = ({
 
   // Default variant
   return (
-    <Section className={className} {...props}>
-      <Container maxWidth="lg">
+    <Section padding={spacing}>
+      <Container maxWidth={maxWidth}>
         {title && (
           <Container>
             <H2>{title}</H2>

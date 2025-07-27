@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Container, Button } from '@/components/ui';
+import { Container, Button, Span } from '@/components/ui';
 
 export const StandardNavigation: React.FC = () => {
   const pathname = usePathname();
@@ -17,46 +17,42 @@ export const StandardNavigation: React.FC = () => {
   ];
 
   return (
-    <nav >
-      <Container >
-        <Container >
-          <Link href="/" >
-            Fairfield Airport Cars
-          </Link>
-        </Container>
+    <Container variant="navigation" padding="md">
+      <div className="flex justify-between items-center">
+        <Link href="/">
+          Fairfield Airport Cars
+        </Link>
 
-        <Container >
+        <nav className="flex space-x-6">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`nav-link ${item.current ? 'nav-link-active' : ''}`}
+              variant={item.current ? 'active' : 'default'}
             >
               {item.name}
             </Link>
           ))}
-        </Container>
+        </nav>
 
-        <Container >
-          <Button
-            
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-          >
-            <span ></span>
-            <span ></span>
-            <span ></span>
-          </Button>
-        </Container>
-      </Container>
+        <Button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+          variant="ghost"
+        >
+          <Span></Span>
+          <Span></Span>
+          <Span></Span>
+        </Button>
+      </div>
 
       {mobileMenuOpen && (
-        <Container >
+        <Container>
           {navigationItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`nav-mobile-link ${item.current ? 'nav-mobile-link-active' : ''}`}
+              variant={item.current ? 'mobile-active' : 'mobile'}
               onClick={() => setMobileMenuOpen(false)}
             >
               {item.name}
@@ -64,6 +60,6 @@ export const StandardNavigation: React.FC = () => {
           ))}
         </Container>
       )}
-    </nav>
+    </Container>
   );
 }; 

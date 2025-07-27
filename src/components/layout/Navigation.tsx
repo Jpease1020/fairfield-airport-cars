@@ -8,6 +8,7 @@ import { Menu, X, Phone } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 import { Container, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -38,59 +39,50 @@ const Navigation = () => {
   ];
 
   return (
-    <nav >
-      <Container >
-        <Container >
-          {/* Logo */}
-          <Container >
-            <Link href="/" >
-              <Logo  />
-              <Text >
-                {getCompanyName()}
-              </Text>
-            </Link>
-          </Container>
+    <Container as="nav" variant="header" padding="md">
+      <Stack direction="horizontal" justify="between" align="center">
+        {/* Logo */}
+        <Link href="/" className="flex items-center space-x-2">
+          <Logo size="sm" />
+          <Text size="lg" weight="bold">
+            {getCompanyName()}
+          </Text>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <Container >
-            {navigationItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`navigation-link ${item.current ? 'navigation-link-active' : 'navigation-link-inactive'}`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </Container>
-
-          {/* Contact Button */}
-          <Container >
-            <a 
-              href={`tel:${getPhoneNumber()}`}
-              
+        {/* Desktop Navigation */}
+        <Stack direction="horizontal" spacing="md">
+          {navigationItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`navigation-link ${item.current ? 'navigation-link-active' : 'navigation-link-inactive'}`}
             >
-              <Phone  />
-              <Text >Call Now</Text>
-            </a>
-          </Container>
+              {item.name}
+            </Link>
+                    ))}
+        </Stack>
 
-          {/* Mobile menu button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Open menu"
-          >
-            {mobileMenuOpen ? (
-              <X  />
-            ) : (
-              <Menu  />
-            )}
-          </Button>
-        </Container>
-      </Container>
+        {/* Contact Button */}
+        <Link href={`tel:${getPhoneNumber()}`} className="flex items-center space-x-1">
+          <Phone size={16} />
+          <Text size="sm">Call Now</Text>
+        </Link>
+
+                  {/* Mobile menu button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Open menu"
+        >
+          {mobileMenuOpen ? (
+            <X size={20} />
+          ) : (
+            <Menu size={20} />
+          )}
+        </Button>
+      </Stack>
+    </Container>
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (

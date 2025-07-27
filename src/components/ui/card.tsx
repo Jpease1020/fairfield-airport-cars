@@ -1,33 +1,38 @@
 import React from 'react';
 import { Container, H3, Text } from '@/components/ui';
 
+// OLD Card Component - DEPRECATED! Use bulletproof Card from containers instead!
 export interface CardProps {
   children: React.ReactNode;
   variant?: 'default' | 'outlined' | 'elevated' | 'light' | 'dark';
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
   onClick?: () => void;
   hoverable?: boolean;
 }
 
+// Card Sub-components - BULLETPROOF TYPE SAFETY!
 export interface CardHeaderProps {
   children: React.ReactNode;
-  className?: string;
+  variant?: 'default' | 'centered' | 'minimal';
+  spacing?: 'sm' | 'md' | 'lg';
 }
 
 export interface CardBodyProps {
   children: React.ReactNode;
-  className?: string;
+  spacing?: 'sm' | 'md' | 'lg' | 'xl';
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export interface CardTitleProps {
   children: React.ReactNode;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'prominent' | 'subtle';
 }
 
 export interface CardDescriptionProps {
   children: React.ReactNode;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  color?: 'default' | 'muted' | 'secondary';
 }
 
 export const Card: React.FC<CardProps> = ({

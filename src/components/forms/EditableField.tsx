@@ -2,6 +2,7 @@ import React from 'react';
 import { EditableInput } from './EditableInput';
 import { EditableTextarea } from './EditableTextarea';
 
+// Clean EditableField - CASCADE EFFECT COMPLIANCE!
 interface EditableFieldProps {
   label: string;
   value: string;
@@ -11,7 +12,7 @@ interface EditableFieldProps {
   variant?: 'title' | 'subtitle' | 'normal';
   rows?: number;
   placeholder?: string;
-  className?: string;
+  spacing?: 'sm' | 'md' | 'lg';
 }
 
 const EditableField: React.FC<EditableFieldProps> = ({
@@ -23,7 +24,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
   variant = 'normal',
   rows = 3,
   placeholder,
-  className
+  spacing = 'md'
 }) => {
   if (type === 'textarea') {
     return (
@@ -34,7 +35,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
         size={size}
         rows={rows}
         placeholder={placeholder}
-        className={className}
+        spacing={spacing}
       />
     );
   }
@@ -47,7 +48,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
       size={size}
       variant={variant}
       placeholder={placeholder}
-      className={className}
+      spacing={spacing}
     />
   );
 };

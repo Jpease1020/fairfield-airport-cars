@@ -3,14 +3,28 @@ import { Textarea } from '@/components/ui/textarea';
 import { Container, Label } from '@/components/ui';
 import { cn } from '@/lib/utils/utils';
 
-interface EditableTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+// EditableTextarea Component - BULLETPROOF TYPE SAFETY!
+interface EditableTextareaProps {
   label?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   rows?: number;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  spacing?: 'sm' | 'md' | 'lg';
 }
 
-const EditableTextarea = React.forwardRef<HTMLTextAreaElement, EditableTextareaProps>(
-  ({ className, label, size = 'md', rows = 3, ...props }, ref) => {
+const EditableTextarea: React.FC<EditableTextareaProps> = ({ 
+    label, 
+    size = 'md', 
+    rows = 3, 
+    value, 
+    onChange, 
+    placeholder, 
+    disabled = false, 
+    spacing = 'md' 
+  }) => {
     const sizeClasses = {
       sm: 'text-sm min-h-[80px]',
       md: 'text-base min-h-[100px]',

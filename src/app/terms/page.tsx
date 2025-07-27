@@ -6,7 +6,8 @@ import {
   InfoCard,
   ToastProvider,
   H3,
-  Text
+  Text,
+  Container
 } from '@/components/ui';
 
 function TermsPageContent() {
@@ -22,45 +23,45 @@ function TermsPageContent() {
           title="📋 Terms of Service"
           description="Effective Date: January 1, 2024"
         >
-          <section>
+          <Container>
             <H3>1. Service Agreement</H3>
             <Text>
               By using Fairfield Airport Cars transportation services, you agree to be bound by these terms of service. 
               Our services are provided subject to your acceptance of and compliance with these terms.
             </Text>
-          </section>
+          </Container>
 
-          <section>
+          <Container>
             <H3>2. Booking and Payment</H3>
             <Text>
               All bookings must be made through our official booking system. Payment is required at the time of booking. 
               We accept major credit cards and process payments securely through our payment partners.
             </Text>
-          </section>
+          </Container>
 
-          <section>
+          <Container>
             <H3>3. Cancellation Policy</H3>
             <Text>
               Bookings may be cancelled up to 4 hours before the scheduled pickup time for a full refund. 
               Cancellations made within 4 hours of pickup time may be subject to a cancellation fee.
             </Text>
-          </section>
+          </Container>
 
-          <section>
+          <Container>
             <H3>4. Liability and Insurance</H3>
             <Text>
               Fairfield Airport Cars maintains comprehensive commercial insurance coverage. 
               Our liability is limited to the extent permitted by law. Passengers are responsible for their personal belongings.
             </Text>
-          </section>
+          </Container>
 
-          <section>
+          <Container>
             <H3>5. Contact Information</H3>
             <Text>
               For questions about these terms, please contact us at (203) 555-0123 or 
               email support@fairfieldairportcars.com.
             </Text>
-          </section>
+          </Container>
         </InfoCard>
       </GridSection>
     </UnifiedLayout>

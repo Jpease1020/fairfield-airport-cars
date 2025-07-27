@@ -153,21 +153,21 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
       {/* Comment Widget */}
       {isOpen && (
-        <Container>
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <EditableText field="pageCommentWidget.title">Add Page Comment</EditableText>
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsOpen(false)}
-              >
-                <X />
-              </Button>
-            </CardHeader>
-            <CardBody>
+        <Container variant="card" padding="lg">
+          {/* Header */}
+          <Container spacing="sm">
+            <EditableText field="pageCommentWidget.title">Add Page Comment</EditableText>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(false)}
+            >
+              <X />
+            </Button>
+          </Container>
+          
+          {/* Content */}
+          <Container spacing="md">
               <Text size="sm">
                 <EditableText field="pageCommentWidget.pageLabel">Page:</EditableText> {pageTitle}
               </Text>
@@ -312,18 +312,15 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   <EditableText field="pageCommentWidget.cancelButton">Cancel</EditableText>
                 </Button>
               </Container>
-            </CardBody>
-          </Card>
+          </Container>
         </Container>
       )}
 
       {/* Success Message */}
       {showSuccess && (
-        <Container>
-          <Container>
-            <CheckCircle />
-            <Span>Comment submitted successfully!</Span>
-          </Container>
+        <Container variant="card" padding="md">
+          <CheckCircle />
+          <Span color="success">Comment submitted successfully!</Span>
         </Container>
       )}
       
