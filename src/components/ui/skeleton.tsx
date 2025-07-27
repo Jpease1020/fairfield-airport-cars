@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils/utils";
+import { Container } from '@/components/ui';
 
 interface SkeletonProps {
   className?: string;
@@ -27,20 +28,20 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 
 // Pre-built skeleton components for common use cases
 export const BookingFormSkeleton = () => (
-  <div className="">
-    <div className="">
-      <Skeleton className="" />
-      <div className="">
+  <Container>
+    <Container>
+      <Skeleton />
+      <Container>
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="">
-            <Skeleton className="" />
-            <Skeleton className="" />
-          </div>
+          <Container key={i}>
+            <Skeleton />
+            <Skeleton />
+          </Container>
         ))}
-      </div>
-    </div>
-    <Skeleton className="h-12 w-full" />
-  </div>
+      </Container>
+    </Container>
+    <Skeleton />
+  </Container>
 );
 
 export const BookingCardSkeleton = () => (
