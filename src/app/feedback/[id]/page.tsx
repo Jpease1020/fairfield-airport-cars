@@ -12,10 +12,8 @@ import {
   Textarea,
   Button,
   ToastProvider,
-  Text,
-  Container
+  Text
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
 import { Star } from 'lucide-react';
 
 function FeedbackPageContent() {

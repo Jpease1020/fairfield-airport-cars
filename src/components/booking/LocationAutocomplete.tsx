@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils/utils';
 import { Container, Text, Span } from '@/components/ui';
 
 interface LocationAutocompleteProps {

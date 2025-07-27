@@ -3,8 +3,7 @@ import { Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
 import { Booking } from '@/types/booking';
 import { Badge } from '@/components/ui';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils/utils';
-import { Container, H3, Text, Span } from '@/components/ui';
+import { Container, H3, Text } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface BookingCardProps {
@@ -20,18 +19,16 @@ const BookingCard: React.FC<BookingCardProps> = ({
   showActions = false,
   onAction
 }) => {
-  const getStatusColor = (status: Booking['status']) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-success text-text-inverse';
+        return '✅';
       case 'pending':
-        return 'bg-warning text-text-inverse';
-      case 'completed':
-        return 'bg-info text-text-inverse';
+        return '⏳';
       case 'cancelled':
-        return 'bg-error text-text-inverse';
+        return '❌';
       default:
-        return 'bg-gray-100';
+        return '❓';
     }
   };
 

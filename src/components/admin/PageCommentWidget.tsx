@@ -6,7 +6,7 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui';
-import { Container, Text, H3, H4 } from '@/components/ui';
+import { Container, Text } from '@/components/ui';
 import { feedbackService, type PageComment } from '@/lib/services/feedback-service';
 import { MessageSquare, X, CheckCircle, AlertCircle, Star } from 'lucide-react';
 
@@ -115,13 +115,25 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-warning text-warning-dark';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'open':
+        return 'text-green-600';
+      case 'closed':
+        return 'text-gray-600';
+      case 'pending':
+        return 'text-yellow-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'open': return <CheckCircle />;
+      case 'closed': return <X />;
+      case 'pending': return <MessageSquare />;
+      default: return <MessageSquare />;
     }
   };
 

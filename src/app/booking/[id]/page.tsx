@@ -46,25 +46,12 @@ function BookingDetailsContent() {
     switch (status) {
       case 'confirmed':
         return '✅';
+      case 'pending':
+        return '⏳';
       case 'cancelled':
         return '❌';
-      case 'completed':
-        return '✅';
       default:
-        return '⏰';
-    }
-  };
-
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'booking-status-confirmed';
-      case 'cancelled':
-        return 'booking-status-cancelled';
-      case 'completed':
-        return 'booking-status-completed';
-      default:
-        return 'booking-status-pending';
+        return '❓';
     }
   };
 

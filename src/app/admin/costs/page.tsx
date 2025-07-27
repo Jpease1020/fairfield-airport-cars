@@ -16,7 +16,6 @@ import {
   Container,
   Text
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
 
 function CostsPageContent() {
   const { addToast } = useToast();
@@ -68,20 +67,6 @@ function CostsPageContent() {
     return ((actual - projected) / projected) * 100;
   };
 
-  const getStatusClass = (cost: RealCostItem) => {
-    const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
-    
-    if (cost.actualMonthlyCost === 0) {
-      return 'cost-status-pending';
-    } else if (variance > 10) {
-      return 'cost-status-over-budget';
-    } else if (variance > 0) {
-      return 'cost-status-slightly-over';
-    } else {
-      return 'cost-status-on-track';
-    }
-  };
-
   const getStatusText = (cost: RealCostItem) => {
     const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
     
@@ -99,7 +84,6 @@ function CostsPageContent() {
   const renderStatus = (cost: RealCostItem) => {
     const icon = getStatusIcon(cost);
     const statusText = getStatusText(cost);
-    const statusClass = getStatusClass(cost);
     
     return (
       <span>
@@ -168,16 +152,16 @@ function CostsPageContent() {
         const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
         const isPositive = variance >= 0;
         
-        let varianceClass = 'cost-variance-neutral';
-        if (cost.actualMonthlyCost === 0) {
-          varianceClass = 'cost-variance-pending';
-        } else if (variance > 10) {
-          varianceClass = 'cost-variance-over';
-        } else if (variance > 0) {
-          varianceClass = 'cost-variance-slightly-over';
-        } else {
-          varianceClass = 'cost-variance-under';
-        }
+        // let varianceClass = 'cost-variance-neutral';
+        // if (cost.actualMonthlyCost === 0) {
+        //   varianceClass = 'cost-variance-pending';
+        // } else if (variance > 10) {
+        //   varianceClass = 'cost-variance-over';
+        // } else if (variance > 0) {
+        //   varianceClass = 'cost-variance-slightly-over';
+        // } else {
+        //   varianceClass = 'cost-variance-under';
+        // }
         
         return (
           <Container>

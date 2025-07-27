@@ -61,8 +61,8 @@ function BookingStatusPageContent() {
           setError('Failed to load booking status');
         }
       } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        setError('Network error');
+        console.error('Error fetching booking:', error);
+        setError('Failed to load booking');
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import {
   Table,
@@ -9,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Container, Text, H3 } from '@/components/ui';
+import { Container, Text } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 /**
@@ -93,7 +92,7 @@ interface DataTableProps<T> {
 /**
  * Default loading skeleton component
  */
-const LoadingSkeleton: React.FC<{ className?: string }> = ({ className }) => (
+const LoadingSkeleton: React.FC<{ className?: string }> = ({ }) => (
       <Container>
       <Stack spacing="md">
         <Container>
@@ -112,8 +111,7 @@ const LoadingSkeleton: React.FC<{ className?: string }> = ({ className }) => (
  * Default empty state component
  */
 const EmptyState: React.FC<{ message: React.ReactNode; className?: string }> = ({ 
-  message, 
-  className 
+  message
 }) => (
   <Container>
     <Text>{message}</Text>
@@ -127,7 +125,6 @@ function DataTableComponent<T extends { id?: string }>({
   loading = false,
   emptyMessage = 'No data available',
   className,
-  hoverable = true,
   loadingComponent,
 }: DataTableProps<T>) {
   // Memoize the filtered columns to prevent unnecessary re-renders

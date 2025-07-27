@@ -23,24 +23,9 @@ export const EditableField: React.FC<EditableFieldProps> = ({
   placeholder,
   className = '',
   type = 'input',
-  rows = 3,
-  size = 'md'
+  rows = 3
 }) => {
   const { editMode } = useEditMode();
-
-  const sizeClasses = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl'
-  };
-
-  const inputSizeClasses = {
-    sm: 'h-8 px-3',
-    md: 'h-10 px-4',
-    lg: 'h-12 px-4',
-    xl: 'h-14 px-4'
-  };
 
   if (editMode) {
     return (

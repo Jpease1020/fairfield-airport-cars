@@ -52,7 +52,7 @@ function ManageBookingPageContent() {
           setError('Booking not found');
         }
       } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        console.error('Error fetching booking:', error);
         setError('Failed to load booking');
       } finally {
         setLoading(false);
@@ -90,7 +90,7 @@ function ManageBookingPageContent() {
         addToast('error', 'Failed to save content');
       }
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      console.error('Error updating booking:', error);
       addToast('error', 'Failed to save content');
     }
   };
@@ -125,7 +125,7 @@ function ManageBookingPageContent() {
         addToast('error', errorData.message || 'Failed to cancel booking');
       }
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      console.error('Error cancelling booking:', error);
       setActionMsg('Failed to cancel booking');
       addToast('error', 'Failed to cancel booking');
     }
@@ -149,7 +149,7 @@ function ManageBookingPageContent() {
         addToast('error', 'Failed to send confirmation email');
       }
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      console.error('Error sending confirmation email:', error);
       setActionMsg('Failed to send confirmation email');
       addToast('error', 'Failed to send confirmation email');
     }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { cn } from '@/lib/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Container, H2 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
@@ -13,21 +12,13 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const Modal: React.FC<ModalProps> = ({
+export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
   isOpen,
   onClose,
   title,
-  children,
-  size = 'md'
-}) => {
+  children
+}, ref) => {
   if (!isOpen) return null;
-
-  const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl'
-  };
 
   return (
     <Container>
@@ -57,6 +48,4 @@ const Modal: React.FC<ModalProps> = ({
       </Container>
     </Container>
   );
-};
-
-export { Modal }; 
+}); 

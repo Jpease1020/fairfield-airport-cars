@@ -19,7 +19,6 @@ import {
   Select,
   Option,
   Container,
-  Text,
   Span
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';

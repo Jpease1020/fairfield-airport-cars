@@ -193,9 +193,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
         setError(errorData.message || 'Failed to calculate fare');
       }
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setError('Network error. Please try again.');
-    } finally {
+      console.error('Error estimating fare:', error);
       setIsCalculating(false);
     }
   };
@@ -239,8 +237,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
         setError(errorData.message || 'Failed to create booking');
       }
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setError('Network error. Please try again.');
+      console.error('Error submitting booking:', error);
+      setIsCalculating(false);
     }
   };
 

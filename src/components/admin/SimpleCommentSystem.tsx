@@ -192,19 +192,6 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
     }
   };
 
-  const getStatusColor = (status: ConfluenceComment['status']) => {
-    switch (status) {
-      case 'open':
-        return 'bg-orange-100 text-orange-800';
-      case 'in-progress':
-        return 'bg-blue-100 text-blue-800';
-      case 'resolved':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   // Add comment icons to elements with comments
   useEffect(() => {
     if (!isAdmin) return;

@@ -11,7 +11,7 @@ interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
-  ({ className, icon, title, description, action, size = 'md', ...props }, ref) => {
+  ({ className, icon, title, description, action, size = 'md', ...props }) => {
     const sizeClasses = {
       sm: {
         container: 'py-8',
