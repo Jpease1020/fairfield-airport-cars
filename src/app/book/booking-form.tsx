@@ -17,7 +17,8 @@ import {
   Container,
   Grid,
   GridItem,
-  H3
+  H3,
+  Label
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
@@ -382,11 +383,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Container>
             <Stack>
               <Span>📅</Span>
-              <label 
+              <Label 
                 htmlFor="pickupDateTime"
               >
                 Pickup Date and Time
-              </label>
+              </Label>
             </Stack>
             
             <Text>
@@ -416,11 +417,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
               <Container>
                 <Stack>
                   <Span>👥</Span>
-                  <label 
+                  <Label 
                     htmlFor="passengers"
                   >
                     Passengers
-                  </label>
+                  </Label>
                 </Stack>
                 
                 <Text>
@@ -458,11 +459,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
             <Container>
               <Stack>
                 <Span>📝</Span>
-                <label 
+                <Label 
                   htmlFor="notes"
                 >
                   Special Instructions (Optional)
-                </label>
+                </Label>
               </Stack>
               
               <Text>
