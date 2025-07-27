@@ -72,43 +72,43 @@ const BookingCard: React.FC<BookingCardProps> = ({
 
       {/* Date and Time */}
       <Container className="space-y-2 mb-4">
-        <Container className="flex items-center space-x-2">
+        <Container>
           <Calendar className="w-4 h-4" />
-          <Text className="text-sm">{formatDate(booking.pickupDateTime.toString())}</Text>
+          <Text size="sm">{formatDate(booking.pickupDateTime.toString())}</Text>
         </Container>
-        <Container className="flex items-center space-x-2">
+        <Container>
           <Clock className="w-4 h-4" />
-          <Text className="text-sm">{formatTime(booking.pickupDateTime.toString())}</Text>
+          <Text size="sm">{formatTime(booking.pickupDateTime.toString())}</Text>
         </Container>
       </Container>
 
       {/* Locations */}
       <Container className="space-y-3 mb-4">
-        <Container className="flex items-start space-x-2">
-          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-          <Container className="flex-1">
-            <Text className="text-xs mb-1">Pickup:</Text>
-            <Text className="text-sm">{booking.pickupLocation}</Text>
+        <Container>
+          <MapPin className="w-4 h-4" />
+          <Container>
+            <Text size="xs">Pickup:</Text>
+            <Text size="sm">{booking.pickupLocation}</Text>
           </Container>
         </Container>
-        <Container className="flex items-start space-x-2">
-          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-          <Container className="flex-1">
-            <Text className="text-xs mb-1">Drop-off:</Text>
-            <Text className="text-sm">{booking.dropoffLocation}</Text>
+        <Container>
+          <MapPin className="w-4 h-4" />
+          <Container>
+            <Text size="xs">Drop-off:</Text>
+            <Text size="sm">{booking.dropoffLocation}</Text>
           </Container>
         </Container>
       </Container>
 
       {/* Passenger Info */}
       <Container className="space-y-2 mb-4">
-        <Text className="text-sm">
+        <Text size="sm">
           Passengers: {booking.passengers}
         </Text>
         {booking.notes && (
           <Container>
-            <Text className="text-xs mb-1">Notes:</Text>
-            <Text className="text-sm">{booking.notes}</Text>
+            <Text size="xs">Notes:</Text>
+            <Text size="sm">{booking.notes}</Text>
           </Container>
         )}
       </Container>
@@ -116,8 +116,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {/* Price */}
       <Container className="flex items-center space-x-2 mb-4">
         <DollarSign className="w-4 h-4" />
-        <Text className="text-sm">Total Fare:</Text>
-        <Text className="text-lg font-semibold">
+        <Text size="sm">Total Fare:</Text>
+        <Text size="lg">
           ${booking.fare}
         </Text>
       </Container>
