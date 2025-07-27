@@ -100,12 +100,12 @@ function CancelPageContent() {
           title="📝 Cancel Your Booking"
           description="Please provide your booking details to process the cancellation"
         >
-          <p>
+          <Text>
             <strong>Booking ID:</strong> Enter your booking reference number
-          </p>
-          <p>
+          </Text>
+          <Text>
             <strong>Reason:</strong> Select a reason for cancellation (optional)
-          </p>
+          </Text>
           
           <ActionButtonGroup buttons={quickActions} />
         </InfoCard>

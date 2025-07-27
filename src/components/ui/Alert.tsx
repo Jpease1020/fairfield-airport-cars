@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Text, H3, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
+import { Button } from '@/components/ui/button';
 
 // Clean Alert Component - CASCADE EFFECT FORCES COMPLIANCE!
 export interface AlertProps {
@@ -83,13 +84,14 @@ export const Alert: React.FC<AlertProps> = ({
           )}
         </Stack>
         {dismissible && onClose && (
-          <button 
+          <Button 
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+            variant="ghost"
+            size="sm"
             aria-label="Close alert"
           >
             ×
-          </button>
+          </Button>
         )}
       </Stack>
     </Container>
