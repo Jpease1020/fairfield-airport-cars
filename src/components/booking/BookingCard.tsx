@@ -30,7 +30,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
       case 'cancelled':
         return 'bg-error text-text-inverse';
       default:
-        return 'bg-bg-secondary text-text-primary';
+        return 'bg-gray-100';
     }
   };
 
