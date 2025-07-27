@@ -70,11 +70,11 @@ function AdminDashboardContent() {
               title={`${stat.icon} ${stat.title}`}
               description={stat.value}
             >
-              <Container className="admin-stat-card">
-                <Container className={`admin-stat-value admin-stat-value-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}>
+              <Container>
+                <Container>
                   {stat.value}
                 </Container>
-                <Text className="admin-stat-title">
+                <Text>
                   {stat.title}
                 </Text>
               </Container>
@@ -88,8 +88,8 @@ function AdminDashboardContent() {
             title="📈 Recent Activity"
             description="Latest bookings and system updates"
           >
-            <Container className="admin-activity-placeholder">
-              <Text className="admin-activity-text">
+            <Container>
+              <Text>
                 Recent activity data will be displayed here once the booking system is fully integrated.
               </Text>
             </Container>
