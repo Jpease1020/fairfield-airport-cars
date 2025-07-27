@@ -348,11 +348,13 @@ function PricingSettingsContent() {
                   <Container key={index}>
                     <Stack direction="horizontal" justify="between" align="center">
                       <H4>Zone {index + 1}</H4>
-                      <button
+                      <Button
                         onClick={() => removeZone(index)}
+                        variant="ghost"
+                        size="sm"
                       >
                         <Trash2 />
-                      </button>
+                      </Button>
                     </Stack>
                     
                     <Stack spacing="md">

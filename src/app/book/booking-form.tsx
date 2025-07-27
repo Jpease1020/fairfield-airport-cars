@@ -327,10 +327,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
               {showPickupSuggestions && pickupSuggestions.length > 0 && (
                 <Container>
                   {pickupSuggestions.map((prediction) => (
-                    <button
+                    <Button
                       key={prediction.place_id}
                       onClick={() => handlePickupSuggestionSelect(prediction)}
-                      style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', padding: '8px' }}
+                      variant="ghost"
+                      className="w-full text-left p-2"
                     >
                       <Stack>
                         <Span>
@@ -340,7 +341,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           {prediction.structured_formatting?.secondary_text || ''}
                         </Span>
                       </Stack>
-                    </button>
+                    </Button>
                   ))}
                 </Container>
               )}

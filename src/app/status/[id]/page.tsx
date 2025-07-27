@@ -11,7 +11,8 @@ import {
   ToastProvider,
   useToast,
   Text,
-  Span
+  Span,
+  Button
 } from '@/components/ui';
 
 function BookingStatusPageContent() {
@@ -190,14 +191,13 @@ function BookingStatusPageContent() {
           title="📋 Booking Information"
           description="View complete booking details and timeline"
         >
-          <Text>
-            <button
-              onClick={() => setShowDetails(!showDetails)}
-              
-            >
-              {showDetails ? 'Hide' : 'Show'} Booking Details
-            </button>
-          </Text>
+          <Button
+            onClick={() => setShowDetails(!showDetails)}
+            variant="ghost"
+            size="sm"
+          >
+            {showDetails ? 'Hide' : 'Show'} Booking Details
+          </Button>
 
           {showDetails && (
             <Text>
