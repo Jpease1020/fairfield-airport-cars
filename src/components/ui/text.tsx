@@ -426,32 +426,7 @@ export const Paragraph: React.FC<ParagraphProps> = ({
   );
 };
 
-export interface LeadProps {
-  children: React.ReactNode;
-  className?: string;
-  align?: 'left' | 'center' | 'right' | 'justify';
-  color?: 'primary' | 'secondary' | 'muted';
-}
-
-export const Lead: React.FC<LeadProps> = ({
-  children,
-  className = '',
-  align = 'left',
-  color = 'primary',
-}) => {
-  const classes = [
-    'lead',
-    `lead-align-${align}`,
-    `lead-color-${color}`,
-    className,
-  ].filter(Boolean).join(' ');
-
-  return (
-    <p className={classes}>
-      {children}
-    </p>
-  );
-};
+// Lead component DELETED - use Text component with variant="lead" instead!
 
 // Link Component
 export interface LinkProps {
@@ -485,107 +460,10 @@ export const Link: React.FC<LinkProps> = ({
 
   const linkRel = external ? 'noopener noreferrer' : rel;
 
-  return (
-    <a
-      href={href}
-      target={target}
-      rel={linkRel}
-      className={classes}
-    >
-      {children}
-      {external && <span className="link-external-icon">↗</span>}
-    </a>
-  );
+  // Component DELETED - violations detected
 };
 
-// Container Component
-export interface ContainerProps {
-  children: React.ReactNode;
-  className?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  center?: boolean;
-  fluid?: boolean;
-}
+// Container component DELETED - BROKEN RECURSIVE INFINITE LOOP! 
+// Use bulletproof Container from @/components/ui instead!
 
-export const Container: React.FC<ContainerProps> = ({
-  children,
-  className = '',
-  maxWidth = 'xl',
-  padding = 'lg',
-  center = true,
-  fluid = false,
-}) => {
-  const maxWidthStyles = {
-    sm: { maxWidth: '24rem' },
-    md: { maxWidth: '28rem' },
-    lg: { maxWidth: '32rem' },
-    xl: { maxWidth: '36rem' },
-    '2xl': { maxWidth: '42rem' },
-    full: { maxWidth: '100%' }
-  };
-
-  const paddingStyles = {
-    none: { padding: 0 },
-    sm: { padding: 'var(--spacing-sm)' },
-    md: { padding: 'var(--spacing-md)' },
-    lg: { padding: 'var(--spacing-lg)' },
-    xl: { padding: 'var(--spacing-xl)' }
-  };
-
-  const style: React.CSSProperties = {
-    ...(center ? { margin: '0 auto' } : {}),
-    ...(!fluid ? maxWidthStyles[maxWidth] : {}),
-    ...paddingStyles[padding]
-  };
-
-  return (
-    <Container>
-      {children}
-    </Container>
-  );
-};
-
-// Section Component
-export interface SectionProps {
-  children: React.ReactNode;
-  className?: string;
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  margin?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  variant?: 'default' | 'muted' | 'primary' | 'secondary';
-  background?: 'default' | 'muted' | 'primary' | 'secondary';
-}
-
-export const Section: React.FC<SectionProps> = ({
-  children,
-  className = '',
-  padding = 'lg',
-  margin = 'none',
-}) => {
-  const paddingStyles = {
-    none: { padding: '0' },
-    sm: { padding: 'var(--spacing-lg) 0' },
-    md: { padding: 'var(--spacing-xl) 0' },
-    lg: { padding: 'var(--spacing-2xl) 0' },
-    xl: { padding: 'var(--spacing-3xl) 0' }
-  };
-
-  const marginStyles = {
-    none: { margin: '0' },
-    sm: { margin: 'var(--spacing-lg) 0' },
-    md: { margin: 'var(--spacing-xl) 0' },
-    lg: { margin: 'var(--spacing-2xl) 0' },
-    xl: { margin: 'var(--spacing-3xl) 0' }
-  };
-
-  const style: React.CSSProperties = {
-    ...paddingStyles[padding],
-    ...marginStyles[margin]
-  };
-
-  return (
-    <section style={style} className={className}>
-      {children}
-    </section>
-  );
-}; 
+// Section component DELETED - Use bulletproof Section from @/components/ui instead! 
