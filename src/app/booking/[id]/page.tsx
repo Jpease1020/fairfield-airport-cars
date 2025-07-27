@@ -13,6 +13,7 @@ import {
   Span,
   LoadingSpinner
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
 
 function BookingDetailsContent() {
@@ -158,27 +159,19 @@ function BookingDetailsContent() {
           description="Your pickup and dropoff information"
         >
           <Container>
-            <Container >
-              <Span >📍</Span>
-              <Container >
-                <H3 >Pickup Location</H3>
-                <Text >{booking.pickupLocation}</Text>
-              </Container>
-            </Container>
-            <Container >
-              <Span >🎯</Span>
-              <Container >
-                <H3 >Dropoff Location</H3>
-                <Text >{booking.dropoffLocation}</Text>
-              </Container>
-            </Container>
-            <Container >
-              <Span >📅</Span>
-              <Container >
-                <H3 >Pickup Date & Time</H3>
-                <Text >{formatDateTime(booking.pickupDateTime)}</Text>
-              </Container>
-            </Container>
+            <Span>📍</Span>
+            <H3>Pickup Location</H3>
+            <Text>{booking.pickupLocation}</Text>
+          </Container>
+          <Container>
+            <Span>🎯</Span>
+            <H3>Dropoff Location</H3>
+            <Text>{booking.dropoffLocation}</Text>
+          </Container>
+          <Container>
+            <Span>📅</Span>
+            <H3>Pickup Date & Time</H3>
+            <Text>{formatDateTime(booking.pickupDateTime)}</Text>
           </Container>
         </InfoCard>
       </GridSection>
@@ -189,29 +182,29 @@ function BookingDetailsContent() {
           title="👤 Passenger Information"
           description="Your contact details for this booking"
         >
-          <Container>
-            <Container >
-              <Span >👤</Span>
-              <Container >
-                <H3 >Passenger</H3>
-                <Text >{booking.name}</Text>
-              </Container>
-            </Container>
-            <Container >
-              <Span >📞</Span>
-              <Container >
-                <H3 >Phone</H3>
-                <Text >{booking.phone}</Text>
-              </Container>
-            </Container>
-            <Container >
-              <Span >✉️</Span>
-              <Container >
-                <H3 >Email</H3>
-                <Text >{booking.email}</Text>
-              </Container>
-            </Container>
-          </Container>
+          <Stack direction="vertical" spacing="lg">
+            <Stack direction="horizontal" align="center" spacing="md">
+              <Span>👤</Span>
+              <Stack direction="vertical" spacing="sm">
+                <H3>Passenger</H3>
+                <Text>{booking.name}</Text>
+              </Stack>
+            </Stack>
+            <Stack direction="horizontal" align="center" spacing="md">
+              <Span>📞</Span>
+              <Stack direction="vertical" spacing="sm">
+                <H3>Phone</H3>
+                <Text>{booking.phone}</Text>
+              </Stack>
+            </Stack>
+            <Stack direction="horizontal" align="center" spacing="md">
+              <Span>✉️</Span>
+              <Stack direction="vertical" spacing="sm">
+                <H3>Email</H3>
+                <Text>{booking.email}</Text>
+              </Stack>
+            </Stack>
+          </Stack>
         </InfoCard>
       </GridSection>
 
@@ -221,18 +214,16 @@ function BookingDetailsContent() {
           title="💰 Fare Information"
           description="Payment details for your trip"
         >
-          <Container>
-            <Container>
-              <Span>💳</Span>
-              <Container>
-                <H3>Total Fare</H3>
-                <Text>Includes all fees and taxes</Text>
-              </Container>
-              <Container>
-                ${booking.fare?.toFixed(2)}
-              </Container>
-            </Container>
-          </Container>
+          <Stack direction="horizontal" align="center" spacing="md">
+            <Span>💳</Span>
+            <Stack direction="vertical" spacing="sm">
+              <H3>Total Fare</H3>
+              <Text>Includes all fees and taxes</Text>
+            </Stack>
+            <Text size="lg">
+              ${booking.fare?.toFixed(2)}
+            </Text>
+          </Stack>
         </InfoCard>
       </GridSection>
 
