@@ -2,6 +2,7 @@ import React from 'react';
 import { StandardHeader } from './StandardHeader';
 import { StandardFooter } from './StandardFooter';
 import { StandardNavigation } from './StandardNavigation';
+import { Container } from '@/components/ui';
 
 interface StandardLayoutProps {
   children: React.ReactNode;
@@ -10,7 +11,8 @@ interface StandardLayoutProps {
   showHeader?: boolean;
   showFooter?: boolean;
   showNavigation?: boolean;
-  className?: string;
+  variant?: 'default' | 'compact' | 'wide';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 }
 
 export const StandardLayout: React.FC<StandardLayoutProps> = ({
@@ -20,23 +22,24 @@ export const StandardLayout: React.FC<StandardLayoutProps> = ({
   showHeader = true,
   showFooter = true,
   showNavigation = true,
-  className = ''
+  variant = 'default',
+  maxWidth = 'xl'
 }) => {
   return (
-    <div className={`standard-layout ${className}`}>
+    <Container variant={variant} maxWidth={maxWidth}>
       {showNavigation && <StandardNavigation />}
       
-      <main >
+      <Container variant="main">
         {showHeader && (title || subtitle) && (
           <StandardHeader title={title} subtitle={subtitle} />
         )}
         
-        <div >
+        <Container variant="content">
           {children}
-        </div>
-      </main>
+        </Container>
+      </Container>
       
       {showFooter && <StandardFooter />}
-    </div>
+    </Container>
   );
 }; 
