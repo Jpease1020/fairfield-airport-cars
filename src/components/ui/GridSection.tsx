@@ -1,4 +1,5 @@
 import React from 'react';
+import { Section, Container } from '@/components/ui';
 
 interface GridSectionProps {
   children: React.ReactNode;
@@ -32,10 +33,10 @@ export const GridSection: React.FC<GridSectionProps> = ({
   ].filter(Boolean).join(' ');
 
   return (
-    <section className={sectionClass}>
-      <div className={gridClass}>
+    <Section>
+      <Container>
         {children}
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }; 
