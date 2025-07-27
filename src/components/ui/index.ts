@@ -84,17 +84,16 @@ export {
   OptGroup 
 } from './form';
 
-// Text and Layout Components
+// Text Components ONLY (Layout components from containers!)
 export { 
   H1, H2, H3, H4, H5, H6,
   Text, 
   Paragraph, 
-  Lead, 
-  Link, 
-  Container, 
-  Section,
   Span
 } from './text';
+
+// BULLETPROOF Layout Components (NEVER from text.tsx!)
+export { Container, Section, Stack, Card, Box, Grid, Layout, Spacer } from './containers';
 
 // Database-ready editable text component
 export { EditableText } from './EditableText';
