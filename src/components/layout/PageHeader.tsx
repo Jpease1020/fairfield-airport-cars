@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
+import { Container, H1, Text } from '@/components/ui';
 
 interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -10,25 +11,25 @@ interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
   ({ className, title, subtitle, children, ...props }, ref) => {
     return (
-      <div
+      <Container
         ref={ref}
         className={cn('mb-8', className)}
         {...props}
       >
-        <div >
-          <div>
-            <h1 >{title}</h1>
+        <Container>
+          <Container>
+            <H1>{title}</H1>
             {subtitle && (
-              <p >{subtitle}</p>
+              <Text>{subtitle}</Text>
             )}
-          </div>
+          </Container>
           {children && (
-            <div >
+            <Container>
               {children}
-            </div>
+            </Container>
           )}
-        </div>
-      </div>
+        </Container>
+      </Container>
     );
   }
 );
