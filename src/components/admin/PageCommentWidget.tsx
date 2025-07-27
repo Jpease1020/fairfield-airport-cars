@@ -151,7 +151,6 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="text-text-light hover:text-text-secondary"
                 >
                   <X className="w-5 h-5" />
                 </Button>
@@ -180,10 +179,9 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                     </Button>
                     {selectedElement && (
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={() => setSelectedElement('')}
-                        className="text-error-color hover:text-error-color"
                       >
                         Clear
                       </Button>
