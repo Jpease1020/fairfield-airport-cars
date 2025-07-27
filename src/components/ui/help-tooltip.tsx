@@ -26,12 +26,10 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
 
   return (
     <div className="">
-      <Button
+      <button
         type="button"
-        variant="ghost"
-        size="icon"
         className={cn(
-          'inline-flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors',
+          'inline-flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors p-2',
           className
         )}
         onMouseEnter={() => setIsVisible(true)}
@@ -40,7 +38,7 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
         onBlur={() => setIsVisible(false)}
       >
         <HelpCircle className={sizeClasses[size]} />
-      </Button>
+      </button>
       
       {isVisible && (
         <div className="">
