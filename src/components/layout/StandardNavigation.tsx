@@ -17,15 +17,13 @@ export const StandardNavigation: React.FC = () => {
   ];
 
   return (
-    <Container variant="navigation">
-      <Container>
-        <Container>
-          <Link href="/">
-            Fairfield Airport Cars
-          </Link>
-        </Container>
+    <Container variant="navigation" padding="md">
+      <div className="flex justify-between items-center">
+        <Link href="/">
+          Fairfield Airport Cars
+        </Link>
 
-        <Container>
+        <nav className="flex space-x-6">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
@@ -35,19 +33,18 @@ export const StandardNavigation: React.FC = () => {
               {item.name}
             </Link>
           ))}
-        </Container>
+        </nav>
 
-        <Container>
-          <Button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-          >
-            <Span></Span>
-            <Span></Span>
-            <Span></Span>
-          </Button>
-        </Container>
-      </Container>
+        <Button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+          variant="ghost"
+        >
+          <Span></Span>
+          <Span></Span>
+          <Span></Span>
+        </Button>
+      </div>
 
       {mobileMenuOpen && (
         <Container>
