@@ -17,7 +17,7 @@ interface CMSContentPageProps {
   showTableOfContents?: boolean;
   showRelatedLinks?: boolean;
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-  className?: string;
+  variant?: 'default' | 'compact' | 'wide';
   isEditable?: boolean;
   onFieldChange?: (field: string, value: string) => void;
 }
@@ -32,7 +32,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
   showTableOfContents = false,
   showRelatedLinks = false,
   containerMaxWidth = 'xl',
-  className,
+  variant = 'default',
   isEditable = false,
   onFieldChange
 }) => {
@@ -53,8 +53,7 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
     <CMSLayout 
       cmsConfig={cmsConfig} 
       pageType={pageType} 
-      variant="content"
-      className={className}
+      variant={variant === 'wide' ? 'wide' : 'content'}
     >
       {/* Header Section */}
       <Section variant="default" padding="xl">
@@ -80,33 +79,23 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
           <Stack direction="horizontal" spacing="xl">
             {/* Table of Contents */}
             {showTableOfContents && (
-              <Container>
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>On This Page</H3>
-                    <nav>
-                      <Stack>
-                        <a href="#overview">
-                          Overview
-                        </a>
-                        <a href="#details">
-                          Details
-                        </a>
-                        <a href="#contact">
-                          Contact
-                        </a>
-                      </Stack>
-                    </nav>
-                  </CardBody>
-                </Card>
-              </Container>
+              <Card variant="outlined" size="lg">
+                <CardBody>
+                  <H3>On This Page</H3>
+                  <nav>
+                    <Stack spacing="sm" direction="vertical">
+                      <a href="#overview">Overview</a>
+                      <a href="#details">Details</a>
+                      <a href="#contact">Contact</a>
+                    </Stack>
+                  </nav>
+                </CardBody>
+              </Card>
             )}
 
             {/* Main Content */}
             <Container>
-              <Container>
-                {children}
-              </Container>
+              {children}
             </Container>
           </Stack>
         </Container>
