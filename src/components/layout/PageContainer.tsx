@@ -29,7 +29,7 @@ const PageContainer = React.forwardRef<HTMLDivElement, PageContainerProps>(
       <div
         ref={ref}
         className={cn(
-          'min-h-screen bg-bg-primary text-text-primary',
+          'min-h-screen',
           maxWidthClasses[maxWidth],
           paddingClasses[padding],
           'mx-auto',

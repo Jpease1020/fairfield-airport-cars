@@ -21,7 +21,7 @@ const PageContent = React.forwardRef<HTMLDivElement, PageContentProps>(
       <div
         ref={ref}
         className={cn(
-          'w-full text-text-primary',
+          'w-full',
           maxWidthClasses[maxWidth],
           className
         )}
