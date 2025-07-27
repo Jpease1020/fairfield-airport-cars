@@ -161,9 +161,9 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                     {suggestion.structured_formatting?.main_text || suggestion.description}
                   </div>
                   {suggestion.structured_formatting?.secondary_text && (
-                    <div className="text-sm">
-                      {suggestion.structured_formatting.secondary_text}
-                    </div>
+                                          <Text size="sm">
+                        {suggestion.structured_formatting.secondary_text}
+                      </Text>
                   )}
                 </div>
               </div>
