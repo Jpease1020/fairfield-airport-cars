@@ -4,12 +4,12 @@ import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
   InfoCard,
-  ToastProvider
+  ToastProvider,
+  H3,
+  Text
 } from '@/components/ui';
 
 function PrivacyPageContent() {
-
-
   return (
     <UnifiedLayout 
       layoutType="content"
@@ -23,10 +23,10 @@ function PrivacyPageContent() {
             description="Effective Date: January 1, 2024 | Last Updated: January 1, 2024"
           >
             <section>
-              <h3>1. Information We Collect</h3>
-              <p>
+              <H3>1. Information We Collect</H3>
+              <Text>
                 We collect information you provide directly to us when you book our services, including:
-              </p>
+              </Text>
               <ul>
                 <li>Name and contact information (phone, email, address)</li>
                 <li>Pickup and destination locations</li>
@@ -38,8 +38,8 @@ function PrivacyPageContent() {
             </section>
 
             <section>
-              <h3>2. How We Use Your Information</h3>
-              <p>We use the information we collect to:</p>
+              <H3>2. How We Use Your Information</H3>
+              <Text>We use the information we collect to:</Text>
               <ul>
                 <li>Provide and coordinate transportation services</li>
                 <li>Process payments and send confirmations</li>
@@ -51,11 +51,11 @@ function PrivacyPageContent() {
             </section>
 
             <section>
-              <h3>3. Information Sharing</h3>
-              <p>
+              <H3>3. Information Sharing</H3>
+              <Text>
                 We do not sell, trade, or rent your personal information to third parties. We may share your 
                 information only in the following circumstances:
-              </p>
+              </Text>
               <ul>
                 <li>With our drivers to coordinate your transportation</li>
                 <li>With payment processors to handle transactions</li>
@@ -66,11 +66,11 @@ function PrivacyPageContent() {
             </section>
 
             <section>
-              <h3>4. Data Security</h3>
-              <p>
+              <H3>4. Data Security</H3>
+              <Text>
                 We implement appropriate security measures to protect your personal information against unauthorized 
                 access, alteration, disclosure, or destruction. This includes:
-              </p>
+              </Text>
               <ul>
                 <li>Encrypted data transmission</li>
                 <li>Secure payment processing</li>
@@ -80,17 +80,17 @@ function PrivacyPageContent() {
             </section>
 
             <section>
-              <h3>5. Data Retention</h3>
-              <p>
+              <H3>5. Data Retention</H3>
+              <Text>
                 We retain your personal information for as long as necessary to provide our services and comply 
                 with legal obligations. Booking information is typically retained for accounting and customer 
                 service purposes.
-              </p>
+              </Text>
             </section>
 
             <section>
-              <h3>6. Your Rights</h3>
-              <p>You have the right to:</p>
+              <H3>6. Your Rights</H3>
+              <Text>You have the right to:</Text>
               <ul>
                 <li>Access and review your personal information</li>
                 <li>Request corrections to inaccurate information</li>
@@ -101,25 +101,25 @@ function PrivacyPageContent() {
             </section>
 
             <section>
-              <h3>7. Cookies and Tracking</h3>
-              <p>
+              <H3>7. Cookies and Tracking</H3>
+              <Text>
                 Our website may use cookies and similar technologies to improve your browsing experience, 
                 remember your preferences, and analyze website traffic. You can control cookie settings 
                 through your browser.
-              </p>
+              </Text>
             </section>
 
             <section>
-              <h3>8. Third-Party Links</h3>
-              <p>
+              <H3>8. Third-Party Links</H3>
+              <Text>
                 Our website may contain links to third-party websites. We are not responsible for the privacy 
                 practices of these external sites. We encourage you to review their privacy policies.
-              </p>
+              </Text>
             </section>
 
             <section>
-              <h3>9. Contact Us</h3>
-              <p>
+              <H3>9. Contact Us</H3>
+              <Text>
                 If you have questions about this Privacy Policy or how we handle your information, please contact us:
                 <br />
                 <strong>Fairfield Airport Cars</strong>
@@ -129,7 +129,7 @@ function PrivacyPageContent() {
                 Email: privacy@fairfieldairportcars.com
                 <br />
                 Address: [Business Address]
-              </p>
+              </Text>
             </section>
           </InfoCard>
         </GridSection>

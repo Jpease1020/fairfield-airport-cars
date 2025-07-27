@@ -3,7 +3,15 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { listBookings } from '../../../lib/services/booking-service';
-import { AdminPageWrapper, InfoCard, GridSection } from '@/components/ui';
+import { 
+  AdminPageWrapper, 
+  InfoCard, 
+  GridSection,
+  Container,
+  H3,
+  Text,
+  Span
+} from '@/components/ui';
 
 const FullCalendar = dynamic(() => import('@fullcalendar/react') as any, { ssr: false });
 const dayGridPlugin = dynamic(() => import('@fullcalendar/daygrid') as any, { ssr: false });
@@ -89,7 +97,7 @@ const CalendarPage = () => {
           description={`Showing ${events.length} bookings with color-coded status`}
         >
           {!loading && !error && (
-            <div className="calendar-container">
+            <Container className="calendar-container">
               {typeof window !== 'undefined' && (
                 <FullCalendar
                   plugins={[dayGridPlugin]}
@@ -112,15 +120,15 @@ const CalendarPage = () => {
                   moreLinkClick="popover"
                 />
               )}
-            </div>
+            </Container>
           )}
 
           {!loading && !error && events.length === 0 && (
-            <div className="calendar-empty-state">
-              <div className="calendar-empty-icon">📅</div>
-              <h3 className="calendar-empty-title">No bookings found</h3>
-              <p>No bookings scheduled for this month.</p>
-            </div>
+            <Container className="calendar-empty-state">
+              <Container className="calendar-empty-icon">📅</Container>
+              <H3 className="calendar-empty-title">No bookings found</H3>
+              <Text>No bookings scheduled for this month.</Text>
+            </Container>
           )}
         </InfoCard>
       </GridSection>
@@ -131,24 +139,24 @@ const CalendarPage = () => {
           title="📊 Status Legend"
           description="Color coding for booking statuses"
         >
-          <div className="calendar-legend">
-            <div className="calendar-legend-item">
-              <div className="calendar-legend-color calendar-legend-color-pending"></div>
-              <span className="calendar-legend-text">Pending</span>
-            </div>
-            <div className="calendar-legend-item">
-              <div className="calendar-legend-color calendar-legend-color-confirmed"></div>
-              <span className="calendar-legend-text">Confirmed</span>
-            </div>
-            <div className="calendar-legend-item">
-              <div className="calendar-legend-color calendar-legend-color-completed"></div>
-              <span className="calendar-legend-text">Completed</span>
-            </div>
-            <div className="calendar-legend-item">
-              <div className="calendar-legend-color calendar-legend-color-cancelled"></div>
-              <span className="calendar-legend-text">Cancelled</span>
-            </div>
-          </div>
+          <Container className="calendar-legend">
+            <Container className="calendar-legend-item">
+              <Container className="calendar-legend-color calendar-legend-color-pending"></Container>
+              <Span className="calendar-legend-text">Pending</Span>
+            </Container>
+            <Container className="calendar-legend-item">
+              <Container className="calendar-legend-color calendar-legend-color-confirmed"></Container>
+              <Span className="calendar-legend-text">Confirmed</Span>
+            </Container>
+            <Container className="calendar-legend-item">
+              <Container className="calendar-legend-color calendar-legend-color-completed"></Container>
+              <Span className="calendar-legend-text">Completed</Span>
+            </Container>
+            <Container className="calendar-legend-item">
+              <Container className="calendar-legend-color calendar-legend-color-cancelled"></Container>
+              <Span className="calendar-legend-text">Cancelled</Span>
+            </Container>
+          </Container>
         </InfoCard>
       </GridSection>
     </AdminPageWrapper>

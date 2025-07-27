@@ -1,191 +1,111 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { Booking } from '@/types/booking';
-import { createBooking, updateBooking, isTimeSlotAvailable } from '@/lib/services/booking-service';
-import { getSettings } from '@/lib/business/settings-service';
+import { useState, useEffect } from 'react';
 import { 
-  useToast,
+  Form,
+  Input,
+  Select,
+  Option,
+  Textarea,
+  Button,
   SettingSection,
   SettingInput,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Input,
-  Textarea,
-  Badge,
   StatusMessage,
   ToastProvider,
-  Form,
-  Select,
-  Option
+  Text,
+  Span
 } from '@/components/ui';
-import { useCMS } from '@/hooks/useCMS';
-import { LocationAutocomplete } from '@/components/booking';
-
+import { Booking } from '@/types/booking';
 
 interface BookingFormProps {
   booking?: Booking;
 }
 
-// Custom hook to load Google Maps script
 const useGoogleMapsScript = (apiKey: string) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    // Check if Google Maps is already loaded with Places
-    if (window.google && window.google.maps && window.google.maps.places) {
-      setIsLoaded(true);
-      return;
-    }
-
-    // Check if script is already being loaded
-    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
-    if (existingScript) {
-      const checkPlaces = () => {
-        if (window.google?.maps?.places) {
-          setIsLoaded(true);
-        } else {
-          setTimeout(checkPlaces, 100);
-        }
-      };
-      
-      existingScript.addEventListener('load', checkPlaces);
-      existingScript.addEventListener('error', () => setLoadError('Failed to load Google Maps'));
+    if (!apiKey) {
+      setIsError(true);
       return;
     }
 
     const script = document.createElement('script');
-    // Load Google Maps with Places library
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleMaps`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
-    
-    // Create global callback function
-    const initCallback = () => {
-      
-      // Double-check that Places is available
-      if (window.google?.maps?.places) {
+
+    const checkPlaces = () => {
+      if (window.google && window.google.maps && window.google.maps.places) {
         setIsLoaded(true);
       } else {
-        setLoadError('Places library not available after load');
+        setTimeout(checkPlaces, 100);
       }
-      
-      // Clean up the global callback
-      delete (window as typeof window & { initGoogleMaps?: () => void }).initGoogleMaps;
     };
-    
-    (window as typeof window & { initGoogleMaps?: () => void }).initGoogleMaps = initCallback;
-    
+
+    script.onload = () => {
+      checkPlaces();
+    };
+
     script.onerror = () => {
-      setLoadError('Failed to load Google Maps script');
-      delete (window as typeof window & { initGoogleMaps?: () => void }).initGoogleMaps;
+      setIsError(true);
     };
-    
+
     document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
   }, [apiKey]);
 
-  return { isLoaded, loadError };
+  return { isLoaded, isError };
 };
 
 function BookingFormContent({ booking }: BookingFormProps) {
-  const router = useRouter();
-  const { addToast } = useToast();
-  const { config: cmsConfig, loading: cmsLoading } = useCMS();
-  const bookingFormText = cmsConfig?.bookingForm;
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [pickupLocation, setPickupLocation] = useState('');
-  const [dropoffLocation, setDropoffLocation] = useState('');
-  const [pickupDateTime, setPickupDateTime] = useState('');
-  const [passengers, setPassengers] = useState(1);
-  const [flightNumber, setFlightNumber] = useState('');
-  const [notes, setNotes] = useState('');
+  const [name, setName] = useState(booking?.name || '');
+  const [email, setEmail] = useState(booking?.email || '');
+  const [phone, setPhone] = useState(booking?.phone || '');
+  const [pickupLocation, setPickupLocation] = useState(booking?.pickupLocation || '');
+  const [dropoffLocation, setDropoffLocation] = useState(booking?.dropoffLocation || '');
+  const [pickupDateTime, setPickupDateTime] = useState(booking?.pickupDateTime ? new Date(booking.pickupDateTime).toISOString().slice(0, 16) : '');
+  const [passengers, setPassengers] = useState(booking?.passengers || 1);
+  const [flightNumber, setFlightNumber] = useState(booking?.flightNumber || '');
+  const [notes, setNotes] = useState(booking?.notes || '');
   const [fare, setFare] = useState<number | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  // State for custom autocomplete
   const [pickupSuggestions, setPickupSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [dropoffSuggestions, setDropoffSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [showPickupSuggestions, setShowPickupSuggestions] = useState(false);
   const [showDropoffSuggestions, setShowDropoffSuggestions] = useState(false);
 
-  const pickupInputRef = useRef<HTMLInputElement>(null);
-  const dropoffInputRef = useRef<HTMLInputElement>(null);
+  const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMapsScript(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '');
 
-  const { isLoaded, loadError } = useGoogleMapsScript(process.env.NEXT_PUBLIC_GOOGLE_API_KEY || '');
-
-  const isEditMode = booking !== undefined;
-
-  useEffect(() => {
-    if (isEditMode && booking) {
-      setName(booking.name);
-      setEmail(booking.email);
-      setPhone(booking.phone);
-      setPickupLocation(booking.pickupLocation);
-      setDropoffLocation(booking.dropoffLocation);
-      const date = new Date(booking.pickupDateTime);
-      const formattedDate = date.toISOString().slice(0, 16);
-      setPickupDateTime(formattedDate);
-      setPassengers(booking.passengers);
-      setFlightNumber(booking.flightNumber || '');
-      setNotes(booking.notes || '');
-      setFare(booking.fare);
-    }
-  }, [isEditMode, booking]);
-
-  // Initialize AutocompleteSuggestion when Google Maps is loaded
-  useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
-
-    if (!window.google?.maps?.places) {
-      return;
-    }
-
-  }, [isLoaded]);
-
-  // Function to get address predictions using the new AutocompleteSuggestion API
   const getPlacePredictions = async (input: string, callback: (predictions: google.maps.places.AutocompletePrediction[]) => void) => {
-    if (!window.google?.maps?.places || !input.trim()) {
+    if (!mapsLoaded || !window.google) {
       callback([]);
       return;
     }
-    try {
-      const response = await fetch(`/api/places-autocomplete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input: input.trim() }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        callback(data.predictions || []);
-      } else {
-        callback([]);
+
+    const service = new window.google.maps.places.AutocompleteService();
+    service.getPlacePredictions(
+      {
+        input,
+        componentRestrictions: { country: 'us' },
+        types: ['establishment', 'geocode']
+      },
+      (predictions, status) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+          callback(predictions);
+        } else {
+          callback([]);
+        }
       }
-    } catch {
-      callback([]);
-    }
+    );
   };
 
-  // Debounced version to reduce API calls
-  const debouncedGetPlacePredictions = useRef(
-    debounce((input: string, callback: (predictions: google.maps.places.AutocompletePrediction[]) => void) => {
-      getPlacePredictions(input, callback);
-    }, 300)
-  ).current;
-
-  // Debounce utility function
   function debounce<T extends (...args: Parameters<T>) => void>(func: T, delay: number) {
     let timeoutId: NodeJS.Timeout;
     return (...args: Parameters<T>) => {
@@ -194,228 +114,140 @@ function BookingFormContent({ booking }: BookingFormProps) {
     };
   }
 
-  // Handle pickup input change
   const handlePickupInputChange = (value: string) => {
     setPickupLocation(value);
+    setShowPickupSuggestions(true);
+    
     if (value.length > 2) {
-      debouncedGetPlacePredictions(value, (predictions) => {
-        setPickupSuggestions(predictions);
-        setShowPickupSuggestions(true);
-      });
+      debounce(() => {
+        getPlacePredictions(value, (predictions) => {
+          setPickupSuggestions(predictions);
+        });
+      }, 300)();
     } else {
-      setShowPickupSuggestions(false);
+      setPickupSuggestions([]);
     }
   };
 
-  // Handle dropoff input change
   const handleDropoffInputChange = (value: string) => {
     setDropoffLocation(value);
+    setShowDropoffSuggestions(true);
+    
     if (value.length > 2) {
-      debouncedGetPlacePredictions(value, (predictions) => {
-        setDropoffSuggestions(predictions);
-        setShowDropoffSuggestions(true);
-      });
+      debounce(() => {
+        getPlacePredictions(value, (predictions) => {
+          setDropoffSuggestions(predictions);
+        });
+      }, 300)();
     } else {
-      setShowDropoffSuggestions(false);
+      setDropoffSuggestions([]);
     }
   };
 
-  // Handle suggestion selection
   const handlePickupSuggestionSelect = (prediction: google.maps.places.AutocompletePrediction) => {
     setPickupLocation(prediction.description);
+    setPickupSuggestions([]);
     setShowPickupSuggestions(false);
   };
 
   const handleDropoffSuggestionSelect = (prediction: google.maps.places.AutocompletePrediction) => {
     setDropoffLocation(prediction.description);
+    setDropoffSuggestions([]);
     setShowDropoffSuggestions(false);
   };
 
   const handleCalculateFare = async () => {
-    const pickupValue = pickupInputRef.current?.value || '';
-    const dropoffValue = dropoffInputRef.current?.value || '';
-    
-    if (pickupValue && !pickupLocation) {
-      setPickupLocation(pickupValue);
-    }
-    
-    if (dropoffValue && !dropoffLocation) {
-      setDropoffLocation(dropoffValue);
-    }
-
-    const finalPickupLocation = pickupLocation || pickupValue;
-    const finalDropoffLocation = dropoffLocation || dropoffValue;
-
-    if (!finalPickupLocation || !finalDropoffLocation) {
-      alert(bookingFormText?.errorEnterLocations || "Please enter both pickup and drop-off locations.");
+    if (!pickupLocation || !dropoffLocation || !pickupDateTime) {
+      setError('Please fill in all required fields');
       return;
     }
-    
-    setIsCalculating(true);
-    const response = await fetch('/api/estimate-fare', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ origin: finalPickupLocation, destination: finalDropoffLocation }),
-    });
 
-    if (response.ok) {
-      const data = await response.json();
-      setFare(data.fare);
-      // Update state with the final values used
-      setPickupLocation(finalPickupLocation);
-      setDropoffLocation(finalDropoffLocation);
-    } else {
-      alert(bookingFormText?.errorCalculateFare || "Could not calculate fare. Please check the addresses.");
-      setFare(null);
+    setIsCalculating(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/estimate-fare', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pickupLocation,
+          dropoffLocation,
+          pickupDateTime,
+          passengers,
+          flightNumber
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFare(data.fare);
+        setSuccess('Fare calculated successfully');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to calculate fare');
+      }
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setError('Network error. Please try again.');
+    } finally {
+      setIsCalculating(false);
     }
-    setIsCalculating(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🔧 BookingForm - Submit attempted', { fare, name, email, phone, pickupLocation, dropoffLocation });
     
     if (!fare) {
-      console.log('🔧 BookingForm - No fare calculated');
-      addToast('error', bookingFormText?.errorCalculateBeforeBooking || "Please calculate the fare before booking.");
+      setError('Please calculate fare before booking');
       return;
     }
 
-    // Validate required fields
-    if (!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime) {
-      console.log('🔧 BookingForm - Missing required fields', { name, email, phone, pickupLocation, dropoffLocation, pickupDateTime });
-      setError('Please fill in all required fields.');
-      addToast('error', 'Please fill in all required fields.');
-      return;
-    }
+    setError(null);
+    setSuccess(null);
 
-    const pickupDate = new Date(pickupDateTime);
-    console.log('🔧 BookingForm - Checking time slot availability');
-    
     try {
-      const settings = await getSettings();
-      const slotFree = await isTimeSlotAvailable(pickupDate, settings.bufferMinutes);
-      if (!slotFree) {
-        setError(bookingFormText?.errorTimeConflict || 'Selected time conflicts with another booking. Please choose a different time.');
-        return;
-      }
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          pickupLocation,
+          dropoffLocation,
+          pickupDateTime,
+          passengers,
+          flightNumber,
+          notes,
+          fare
+        }),
+      });
 
-      const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
-        name,
-        email,
-        phone,
-        pickupLocation,
-        dropoffLocation,
-        pickupDateTime: pickupDate,
-        passengers,
-        flightNumber,
-        notes,
-        fare: fare!,
-        status: 'pending',
-        depositPaid: false,
-        balanceDue: fare! * (1 - settings.depositPercent / 100),
-        depositAmount: fare! * (settings.depositPercent / 100),
-      };
-
-      console.log('🔧 BookingForm - Creating booking', bookingData);
-
-      if (isEditMode && booking.id) {
-        await updateBooking(booking.id, bookingData);
-        const successMsg = bookingFormText?.successBookingUpdated || 'Booking updated successfully!';
-        setSuccess(successMsg);
-        addToast('success', successMsg);
-        
-        // Brief delay to show toast before redirect
-        setTimeout(() => router.push(`/booking/${booking.id}`), 1500);
+      if (response.ok) {
+        const data = await response.json();
+        window.location.href = `/success?bookingId=${data.bookingId}`;
       } else {
-        const finalBookingData = { ...bookingData, status: 'pending' as const };
-        
-        const bookingId = await createBooking(finalBookingData);
-        console.log('🔧 BookingForm - Booking created successfully', bookingId);
-        
-        // 🔥 NEW: INTEGRATE SQUARE PAYMENT PROCESSING
-        const depositAmount = Math.ceil((bookingData.depositAmount || 0) * 100); // Convert to cents
-        const paymentDescription = `Deposit for airport ride from ${pickupLocation} to ${dropoffLocation}`;
-        
-        try {
-          console.log('🔧 BookingForm - Creating Square payment session');
-          const paymentResponse = await fetch('/api/payment/create-checkout-session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              bookingId,
-              amount: depositAmount,
-              currency: 'USD',
-              description: paymentDescription,
-              buyerEmail: email
-            }),
-          });
-
-          const paymentData = await paymentResponse.json();
-
-          if (paymentResponse.ok && paymentData.paymentLinkUrl) {
-            // Show success message and redirect to payment
-            const successMsg = bookingFormText?.successBookingCreated || 'Booking created successfully! Redirecting to secure payment...';
-            setSuccess(successMsg);
-            addToast('success', successMsg);
-            
-            // Send confirmation SMS in background
-            try {
-              await fetch('/api/send-confirmation', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ bookingId }),
-              });
-            } catch (smsError) {
-              console.error('Failed to send SMS confirmation:', smsError);
-              // Don't block payment flow for SMS failure
-            }
-            
-            // Redirect to Square payment page
-            console.log('🔧 BookingForm - Redirecting to payment:', paymentData.paymentLinkUrl);
-            setTimeout(() => {
-              window.location.href = paymentData.paymentLinkUrl;
-            }, 2000);
-          } else {
-            throw new Error(paymentData.error || 'Failed to create payment session');
-          }
-        } catch (paymentError) {
-          console.error('🔧 BookingForm - Payment creation failed:', paymentError);
-          
-          // Booking was created but payment failed - give user options
-          setError('Booking created but payment setup failed. You can complete payment later.');
-          addToast('warning', 'Booking saved! Please contact us to complete payment or try again later.');
-          
-          // Still redirect to booking page so they have their booking ID
-          setTimeout(() => router.push(`/booking/${bookingId}`), 3000);
-        }
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to create booking');
       }
     } catch (error) {
-      console.error('🔧 BookingForm - Error creating booking:', error);
-      const errorMsg = isEditMode ? (bookingFormText?.errorUpdateBooking || 'Failed to update booking.') : (bookingFormText?.errorCreateBooking || 'Failed to create booking.');
-      setError(errorMsg);
-      addToast('error', errorMsg);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setError('Network error. Please try again.');
     }
   };
 
-  // Debug loading states
-  console.log('🔧 BookingForm - Loading states:', { cmsLoading, isLoaded, loadError });
-  
-  // Don't wait for CMS loading - just show the form with default text
-  // if (cmsLoading) return <div>{bookingFormText?.loading || 'Loading...'}</div>;
-  
-  // Show error but still allow form submission
-  if (loadError) {
-    console.warn('🔧 BookingForm - Google Maps load error:', loadError);
-  }
-
   return (
     <div className="booking-form-container">
-      {loadError && (
-        <div className="booking-form-error">
+      {/* Google Maps Error */}
+      {mapsError && (
+        <div className="booking-form-error-container">
           <div className="booking-form-error-content">
             <div className="booking-form-error-icon">
-              <svg className="booking-form-error-svg" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="booking-form-error-svg" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
@@ -424,7 +256,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 Location autocomplete temporarily unavailable
               </h3>
               <div className="booking-form-error-description">
-                <p>You can still fill out the form manually. Location suggestions will be restored shortly.</p>
+                <Text>You can still fill out the form manually. Location suggestions will be restored shortly.</Text>
               </div>
             </div>
           </div>
@@ -544,7 +376,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Pickup Date and Time - Styled like SettingInput */}
           <div className="booking-form-datetime-section">
             <div className="booking-form-datetime-header">
-              <span className="booking-form-datetime-icon">📅</span>
+              <Span className="booking-form-datetime-icon">📅</Span>
               <label 
                 htmlFor="pickupDateTime"
                 className="booking-form-datetime-label"
@@ -553,9 +385,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </label>
             </div>
             
-            <p className="booking-form-datetime-description">
+            <Text className="booking-form-datetime-description">
               When do you need to be picked up?
-            </p>
+            </Text>
             
             <Input
               id="pickupDateTime"
@@ -580,7 +412,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               {/* Passengers - Styled like SettingInput */}
               <div className="booking-form-datetime-section">
                 <div className="booking-form-datetime-header">
-                  <span className="booking-form-datetime-icon">👥</span>
+                  <Span className="booking-form-datetime-icon">👥</Span>
                   <label 
                     htmlFor="passengers"
                     className="booking-form-datetime-label"
@@ -589,9 +421,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   </label>
                 </div>
                 
-                <p className="booking-form-datetime-description">
+                <Text className="booking-form-datetime-description">
                   Number of people traveling
-                </p>
+                </Text>
                 
                 <Select
                   id="passengers"
@@ -620,7 +452,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
             {/* Special Instructions - Styled like SettingInput */}
             <div className="booking-form-notes-section">
               <div className="booking-form-notes-header">
-                <span className="booking-form-notes-icon">📝</span>
+                <Span className="booking-form-notes-icon">📝</Span>
                 <label 
                   htmlFor="notes"
                   className="booking-form-notes-label"
@@ -629,9 +461,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </label>
               </div>
               
-              <p className="booking-form-notes-description">
+              <Text className="booking-form-notes-description">
                 Let us know about any special requirements
-              </p>
+              </Text>
               
               <Textarea
                 id="notes"
@@ -663,12 +495,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
             >
               {isCalculating ? (
                 <>
-                  <span className="booking-form-loading">
+                  <Span className="booking-form-loading">
                     <svg className="booking-form-loading-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="booking-form-loading-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="booking-form-loading-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                  </span>
+                  </Span>
                   Calculating...
                 </>
               ) : (
@@ -677,9 +509,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </Button>
             {fare && (
               <div className="booking-form-fare-display">
-                <p className="booking-form-fare-text">
-                  Estimated Fare: <span className="booking-form-fare-amount">${fare}</span>
-                </p>
+                <Text className="booking-form-fare-text">
+                  Estimated Fare: <Span className="booking-form-fare-amount">${fare}</Span>
+                </Text>
               </div>
             )}
           </div>
@@ -713,7 +545,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
             onDismiss={() => setSuccess(null)}
           />
         )}
-              </Form>
+      </Form>
     </div>
   );
 }

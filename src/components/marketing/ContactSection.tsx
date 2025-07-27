@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils/utils';
+import { Section, Container, H2, Text, Grid, GridItem } from '@/components/ui';
 
 interface ContactMethod {
   type: 'phone' | 'email' | 'text' | 'whatsapp';
@@ -79,72 +80,79 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
     };
 
     return (
-      <div ref={ref} className={cn('py-12', className)} {...props}>
-        <div className={cn(
-          'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
-          variant === 'centered' ? 'text-center' : ''
-        )}>
+      <Section className={cn('py-12', className)} {...props}>
+        <Container 
+          maxWidth="xl" 
+          className={cn(
+            variant === 'centered' ? 'text-center' : ''
+          )}
+        >
           {title && (
-            <h2 className="">
+            <H2 className="">
               {title}
-            </h2>
+            </H2>
           )}
           
           {subtitle && (
-            <p className="">
+            <Text className="">
               {subtitle}
-            </p>
+            </Text>
           )}
           
           {description && (
-            <p className={cn(
-              'text-lg text-text-secondary mb-8',
-              variant === 'centered' ? 'max-w-3xl mx-auto' : 'max-w-2xl'
-            )}>
+            <Text 
+              className={cn(
+                'text-lg text-text-secondary mb-8',
+                variant === 'centered' ? 'max-w-3xl mx-auto' : 'max-w-2xl'
+              )}
+            >
               {description}
-            </p>
+            </Text>
           )}
           
-          <div className={cn(
-            'grid gap-4',
-            variant === 'split' ? 'md:grid-cols-2' : 'md:grid-cols-3',
-            showMap && variant === 'split' ? 'md:grid-cols-3' : ''
-          )}>
+          <Grid 
+            columns={variant === 'split' ? 2 : 3}
+            spacing="md"
+            className={cn(
+              showMap && variant === 'split' ? 'md:grid-cols-3' : ''
+            )}
+          >
             {contactMethods.map((method, index) => (
-              <a
-                key={index}
-                href={method.href}
-                className={cn(
-                  'flex items-center p-4 rounded-lg border transition-colors',
-                  getContactButtonVariant(method.type) === 'default' 
-                    ? 'bg-brand-primary text-text-inverse border-brand-primary hover:bg-brand-primary-hover' 
-                    : 'bg-bg-primary text-text-primary border-border-primary hover:bg-bg-secondary'
-                )}
-              >
-                <div className={cn(
-                  'flex-shrink-0 mr-4',
-                  getContactButtonVariant(method.type) === 'default' 
-                    ? 'text-text-inverse' 
-                    : 'text-brand-primary'
-                )}>
-                  {getContactIcon(method.type)}
-                </div>
-                <div>
-                  <div className="">{method.label}</div>
-                  <div className={cn(
-                    'text-sm',
+              <GridItem key={index}>
+                <a
+                  href={method.href}
+                  className={cn(
+                    'flex items-center p-4 rounded-lg border transition-colors',
                     getContactButtonVariant(method.type) === 'default' 
-                      ? 'text-text-inverse/80' 
-                      : 'text-text-secondary'
+                      ? 'bg-brand-primary text-text-inverse border-brand-primary hover:bg-brand-primary-hover' 
+                      : 'bg-bg-primary text-text-primary border-border-primary hover:bg-bg-secondary'
+                  )}
+                >
+                  <div className={cn(
+                    'flex-shrink-0 mr-4',
+                    getContactButtonVariant(method.type) === 'default' 
+                      ? 'text-text-inverse' 
+                      : 'text-brand-primary'
                   )}>
-                    {method.value}
+                    {getContactIcon(method.type)}
                   </div>
-                </div>
-              </a>
+                  <div>
+                    <div className="">{method.label}</div>
+                    <div className={cn(
+                      'text-sm',
+                      getContactButtonVariant(method.type) === 'default' 
+                        ? 'text-text-inverse/80' 
+                        : 'text-text-secondary'
+                    )}>
+                      {method.value}
+                    </div>
+                  </div>
+                </a>
+              </GridItem>
             ))}
             
             {showMap && mapLocation && (
-              <div className={cn(
+              <GridItem className={cn(
                 'h-64 md:h-auto rounded-lg overflow-hidden',
                 variant === 'split' ? 'md:col-span-2' : 'md:col-span-2'
               )}>
@@ -159,11 +167,11 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                     {mapLocation.address}
                   </div>
                 )}
-              </div>
+              </GridItem>
             )}
-          </div>
-        </div>
-      </div>
+          </Grid>
+        </Container>
+      </Section>
     );
   }
 );

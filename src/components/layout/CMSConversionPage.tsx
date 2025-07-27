@@ -2,8 +2,9 @@ import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
 import { PageHeader } from '@/components/ui/layout/PageHeader';
-import { PageContent } from '@/components/ui/layout/PageContent';
-import { Card, CardContent } from '@/components/ui';
+import { Section, Container, H1, H2, Lead } from '@/components/ui';
+import { Card } from '@/components/ui/containers';
+import { CardBody } from '@/components/ui/card';
 
 interface CMSConversionPageProps {
   cmsConfig: CMSConfiguration;
@@ -114,9 +115,9 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
             {/* Main Form/Content */}
             <div className="">
               <Card variant="elevated" padding="xl">
-                <CardContent>
+                <CardBody>
                   {children}
-                </CardContent>
+                </CardBody>
               </Card>
             </div>
 
@@ -124,7 +125,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
             {showTrustSignals && (
               <div className="">
                 <Card variant="outlined" padding="lg">
-                  <CardContent>
+                  <CardBody>
                     <H2 className="">Why Choose Us?</H2>
                     <div className="">
                       <div className="">
@@ -155,11 +156,11 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
                         </div>
                       </div>
                     </div>
-                  </CardContent>
+                  </CardBody>
                 </Card>
 
                 <Card variant="outlined" padding="lg">
-                  <CardContent>
+                  <CardBody>
                     <H2 className="">Need Help?</H2>
                     <p className="">
                       Our team is here to assist you with your booking.
@@ -175,7 +176,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
                         <span className="">Hours:</span> 24/7 Service
                       </p>
                     </div>
-                  </CardContent>
+                  </CardBody>
                 </Card>
               </div>
             )}

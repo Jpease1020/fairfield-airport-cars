@@ -3,29 +3,24 @@ import { CMSConfiguration } from '@/types/cms';
 import { useCMS } from '@/hooks/useCMS';
 import { useEditMode } from '@/components/admin/EditModeProvider';
 import { 
-  CMSContentPage, 
-  CMSConversionPage, 
-  CMSStatusPage, 
-  CMSMarketingPage, 
-  CMSStandardPage 
-} from '@/components/layout';
+  CMSContentPage 
+} from '@/components/layout/CMSContentPage';
 import { 
-  H1, H2, H3, Text, Lead, Card, CardContent, Button,
-  Container, Section, Grid, Stack
+  CMSConversionPage 
+} from '@/components/layout/CMSConversionPage';
+import { 
+  CMSStatusPage 
+} from '@/components/layout/CMSStatusPage';
+import { 
+  H2, Text
 } from '@/components/ui/design-system';
 import { 
-  CheckCircle, 
-  Clock, 
-  AlertCircle, 
-  Info,
   Star,
   Users,
   Shield,
-  MapPin,
   Phone,
   Mail,
   Calendar,
-  Search,
   MessageCircle
 } from 'lucide-react';
 import Link from 'next/link';

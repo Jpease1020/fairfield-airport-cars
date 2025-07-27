@@ -1,65 +1,67 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
   InfoCard,
   ActionButtonGroup,
-  LoadingSpinner
+  LoadingSpinner,
+  Text
 } from '@/components/ui';
+import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
-  const [booking, setBooking] = useState<any>(null);
+  const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (bookingId) {
-      fetchBookingDetails();
-    } else {
-      setLoading(false);
-    }
-  }, [bookingId]);
-
   const fetchBookingDetails = async () => {
+    if (!bookingId) {
+      setError('No booking ID provided');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/get-booking/${bookingId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setBooking(data.booking);
-      } else {
-        setError('Could not load booking details');
+      const response = await fetch(`/api/booking/${bookingId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch booking details');
       }
+      const data = await response.json();
+      setBooking(data);
     } catch (err) {
-      console.error('Error fetching booking:', err);
-      setError('Could not load booking details');
+      setError(err instanceof Error ? err.message : 'Failed to load booking');
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchBookingDetails();
+  }, [bookingId]);
+
   const successActions = [
-    {
-      label: 'View Booking Details',
-      onClick: () => window.location.href = `/booking/${bookingId}`,
-      variant: 'primary' as const,
-      icon: '📋'
-    },
     {
       label: 'Book Another Ride',
       onClick: () => window.location.href = '/book',
-      variant: 'outline' as const,
+      variant: 'primary' as const,
       icon: '🚗'
+    },
+    {
+      label: 'View My Booking',
+      onClick: () => window.location.href = `/booking/${bookingId}`,
+      variant: 'secondary' as const,
+      icon: '📋'
     },
     {
       label: 'Contact Support',
       onClick: () => window.location.href = '/help',
       variant: 'outline' as const,
-      icon: '📞'
+      icon: '💬'
     }
   ];
 
@@ -67,8 +69,8 @@ function SuccessPageContent() {
     return (
       <UnifiedLayout 
         layoutType="status"
-        title="Processing..."
-        subtitle="Loading your booking confirmation"
+        title="Loading..."
+        subtitle="Please wait while we load your booking details"
       >
         <GridSection variant="content" columns={1}>
           <InfoCard
@@ -94,7 +96,7 @@ function SuccessPageContent() {
             title="⚠️ Error Loading Booking"
             description={error}
           >
-            <p>Please try refreshing the page or contact support if the problem persists.</p>
+            <Text>Please try refreshing the page or contact support if the problem persists.</Text>
           </InfoCard>
         </GridSection>
       )}
@@ -119,19 +121,19 @@ function SuccessPageContent() {
             title="🚗 Trip Details"
             description="Your journey information"
           >
-            <p><strong>From:</strong> {booking.pickupLocation}</p>
-            <p><strong>To:</strong> {booking.dropoffLocation}</p>
-            <p><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</p>
-            <p><strong>Passengers:</strong> {booking.passengers}</p>
+            <Text><strong>From:</strong> {booking.pickupLocation}</Text>
+            <Text><strong>To:</strong> {booking.dropoffLocation}</Text>
+            <Text><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</Text>
+            <Text><strong>Passengers:</strong> {booking.passengers}</Text>
           </InfoCard>
           
           <InfoCard
             title="💰 Payment Status"
             description="Your payment information"
           >
-            <p><strong>Total Fare:</strong> ${booking.fare}</p>
-            <p><strong>Deposit:</strong> ${booking.depositAmount} {booking.depositPaid ? '✅ Paid' : '⏳ Pending'}</p>
-            <p><strong>Balance Due:</strong> ${booking.balanceDue || 0}</p>
+            <Text><strong>Total Fare:</strong> ${booking.fare}</Text>
+            <Text><strong>Deposit:</strong> ${booking.depositAmount} {booking.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
+            <Text><strong>Balance Due:</strong> ${booking.balanceDue || 0}</Text>
           </InfoCard>
         </GridSection>
       )}
@@ -159,8 +161,8 @@ function SuccessPageContent() {
           title="🆘 Need Help?"
           description="Contact us anytime if you have questions or need to make changes"
         >
-          <p>📞 (203) 555-0123</p>
-          <p>Save this number! Our drivers are available to assist you.</p>
+          <Text>📞 (203) 555-0123</Text>
+          <Text>Save this number! Our drivers are available to assist you.</Text>
         </InfoCard>
       </GridSection>
     </UnifiedLayout>

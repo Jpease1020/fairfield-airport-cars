@@ -2,8 +2,9 @@ import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
 import { PageHeader } from '@/components/ui/layout/PageHeader';
-import { PageContent } from '@/components/ui/layout/PageContent';
-import { Card, CardBody } from '@/components/ui';
+import { Section, Container, H1, H2, H3, Lead } from '@/components/ui';
+import { Card } from '@/components/ui/containers';
+import { CardBody } from '@/components/ui/card';
 
 interface CMSContentPageProps {
   cmsConfig: CMSConfiguration;

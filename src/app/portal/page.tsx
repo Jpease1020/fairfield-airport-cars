@@ -1,42 +1,39 @@
 'use client';
 
-
+import React from 'react';
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
   InfoCard,
   FeatureGrid,
   ToastProvider,
-  useToast
+  useToast,
+  Text
 } from '@/components/ui';
 
 function PortalPageContent() {
   const { addToast } = useToast();
 
-
   const portalActions = [
     {
       id: 1,
-      icon: "📅",
-      label: "Current Bookings",
-      description: "View and manage your upcoming rides",
-      onClick: () => addToast('info', 'Booking management coming soon'),
-      href: "#"
+      icon: "📋",
+      label: "My Bookings",
+      description: "View and manage your current and past bookings",
+      href: "/manage"
     },
     {
       id: 2,
-      icon: "📋",
-      label: "Past Trips",
-      description: "Review your previous rides and receipts",
-      onClick: () => addToast('info', 'Trip history coming soon'),
-      href: "#"
+      icon: "📅",
+      label: "Booking Status",
+      description: "Check the status of your upcoming rides",
+      href: "/status"
     },
     {
       id: 3,
       icon: "⚙️",
       label: "Account Settings",
-      description: "Update your contact information and preferences",
-      onClick: () => addToast('info', 'Account settings coming soon'),
+      description: "Update your profile and preferences",
       href: "#"
     },
     {
@@ -76,7 +73,7 @@ function PortalPageContent() {
           title="👋 Welcome to Your Portal"
           description="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away."
         >
-          <p>🎯 Quick Access Portal</p>
+          <Text>🎯 Quick Access Portal</Text>
         </InfoCard>
       </GridSection>
 

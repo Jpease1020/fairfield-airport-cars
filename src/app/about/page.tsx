@@ -1,54 +1,50 @@
 'use client';
 
+import React from 'react';
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
   InfoCard,
-  ActionButtonGroup,
   FeatureGrid,
-  ToastProvider
+  ActionButtonGroup,
+  ToastProvider,
+  Text
 } from '@/components/ui';
 
 function AboutPageContent() {
-
-
-  const heroActions = [
+  const ctaActions = [
     {
       label: 'Book Your Ride',
       onClick: () => window.location.href = '/book',
       variant: 'primary' as const,
       icon: '🚗'
+    },
+    {
+      label: 'Contact Us',
+      onClick: () => window.location.href = '/help',
+      variant: 'secondary' as const,
+      icon: '📞'
     }
   ];
 
   return (
     <UnifiedLayout 
       layoutType="content"
-      title="📖 About Fairfield Airport Cars"
-      subtitle="Professional airport transportation service serving Fairfield County and beyond"
-      description="Your trusted partner for reliable, comfortable, and punctual travel."
+      title="About Fairfield Airport Cars"
+      subtitle="Professional airport transportation services"
+      description="Learn about our commitment to providing reliable, comfortable, and professional transportation services to Fairfield County and surrounding areas."
     >
-      {/* Hero Section */}
-      <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🎯 Ready to Experience Premium Transportation?"
-          description="Join thousands of satisfied customers who trust us for reliable airport transportation. Professional drivers, clean vehicles, and on-time service for all your airport travel needs."
-        >
-          <ActionButtonGroup buttons={heroActions} />
-        </InfoCard>
-      </GridSection>
-
       {/* Our Story Section */}
       <GridSection variant="content" columns={1}>
         <InfoCard
           title="📖 Our Story"
           description="Providing premium transportation services to the Fairfield County area"
         >
-          <p>
+          <Text>
             Fairfield Airport Cars has been providing premium transportation services to the Fairfield County area for years.
             We understand that getting to and from the airport can be stressful, which is why we&apos;re committed to making your
             journey as smooth and comfortable as possible.
-          </p>
+          </Text>
           
           <blockquote>
             &quot;To provide reliable, professional, and comfortable transportation services that exceed our customers&apos; expectations.
@@ -97,7 +93,7 @@ function AboutPageContent() {
           title="🌍 Coverage Area"
           description="We provide professional transportation services throughout Fairfield County, CT and surrounding areas, connecting you to all major airports in the region."
         >
-          <p>Professional transportation services throughout Fairfield County, CT and surrounding areas.</p>
+          <Text>Professional transportation services throughout Fairfield County, CT and surrounding areas.</Text>
         </InfoCard>
         
         <InfoCard
@@ -141,20 +137,7 @@ function AboutPageContent() {
             columns={3} 
           />
           
-          <ActionButtonGroup buttons={[
-            {
-              label: 'Book Now',
-              onClick: () => window.location.href = '/book',
-              variant: 'primary' as const,
-              icon: '🚗'
-            },
-            {
-              label: 'Call Us',
-              onClick: () => window.location.href = 'tel:(203) 555-0123',
-              variant: 'secondary' as const,
-              icon: '📞'
-            }
-          ]} />
+          <ActionButtonGroup buttons={ctaActions} />
         </InfoCard>
       </GridSection>
     </UnifiedLayout>

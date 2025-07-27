@@ -1,4 +1,6 @@
 import React from 'react';
+import { Container, H1, Text, Button } from '@/components/ui';
+import { Section } from '@/components/ui/containers';
 
 interface HeroSectionProps {
   title: string;
@@ -28,7 +30,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const contentClasses = `hero-content ${variant === 'centered' ? 'hero-content-centered' : ''}`;
 
   return (
-    <div className="hero-section">
+    <Section variant="brand" padding="xl" className="hero-section">
       {backgroundImage && (
         <div 
           className="hero-background"
@@ -38,10 +40,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       )}
       
-      <div className={contentClasses}>
-        <h1 className="hero-title">{title}</h1>
-        {subtitle && <p className="hero-subtitle">{subtitle}</p>}
-        {description && <p className="hero-description">{description}</p>}
+      <Container maxWidth="xl" className={contentClasses}>
+        <H1 className="hero-title">{title}</H1>
+        {subtitle && <Text className="hero-subtitle">{subtitle}</Text>}
+        {description && <Text className="hero-description">{description}</Text>}
         
         {(primaryAction || secondaryAction) && (
           <div className="hero-actions">
@@ -50,7 +52,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 href={primaryAction.href}
                 className="hero-primary-action"
               >
-                {primaryAction.label}
+                <Button 
+                  variant="primary"
+                  size="lg"
+                  className="hero-primary-action"
+                >
+                  {primaryAction.label}
+                </Button>
               </a>
             )}
             
@@ -59,12 +67,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 href={secondaryAction.href}
                 className="hero-secondary-action"
               >
-                {secondaryAction.label} <span aria-hidden="true">→</span>
+                <Button 
+                  variant="outline"
+                  size="lg"
+                  className="hero-secondary-action"
+                >
+                  {secondaryAction.label} <span aria-hidden="true">→</span>
+                </Button>
               </a>
             )}
           </div>
         )}
-      </div>
-    </div>
+      </Container>
+    </Section>
   );
 };

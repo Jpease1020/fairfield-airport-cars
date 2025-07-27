@@ -2,8 +2,9 @@ import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from '@/components/ui/layout/CMSLayout';
 import { PageHeader } from '@/components/ui/layout/PageHeader';
-import { PageContent } from '@/components/ui/layout/PageContent';
-import { Card, CardBody, Button } from '@/components/ui';
+import { Section, Container, H1, H2, Lead, Button } from '@/components/ui';
+import { Card } from '@/components/ui/containers';
+import { CardBody } from '@/components/ui/card';
 import { CheckCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
 interface CMSStatusPageProps {
@@ -19,12 +20,12 @@ interface CMSStatusPageProps {
   primaryAction?: {
     text: string;
     href: string;
-    variant?: 'default' | 'outline' | 'secondary';
+    variant?: 'primary' | 'outline' | 'secondary';
   };
   secondaryAction?: {
     text: string;
     href: string;
-    variant?: 'default' | 'outline' | 'secondary';
+    variant?: 'primary' | 'outline' | 'secondary';
   };
   containerMaxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   className?: string;
@@ -137,7 +138,7 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
                   <a href={primaryAction.href}>
                     <Button 
                       size="lg"
-                      variant={primaryAction.variant || 'default'}
+                      variant={primaryAction.variant || 'primary'}
                     >
                       {primaryAction.text}
                     </Button>

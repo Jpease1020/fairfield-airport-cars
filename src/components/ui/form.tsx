@@ -132,18 +132,8 @@ export interface SelectProps {
   [key: string]: any; // Allow additional props
 }
 
-export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({
-  children,
-  value,
-  onChange,
-  className = '',
-  id,
-  name,
-  disabled = false,
-  required = false,
-  multiple = false,
-  size,
-}, ref) => {
+export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
+  ({ children, value, onChange, className = '', id, name, disabled = false, required = false, multiple = false, size }, ref) => {
   return (
     <select
       ref={ref}

@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
 import { ChatMessage, ChatMessageProps } from './ChatMessage';
-import { LoadingState } from './LoadingState';
 
 export interface ChatContainerProps {
   messages: ChatMessageProps['message'][];

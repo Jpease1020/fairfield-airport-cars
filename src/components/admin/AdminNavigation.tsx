@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Container, Button } from '@/components/ui';
 
 export const AdminNavigation: React.FC = () => {
   const pathname = usePathname();
@@ -19,43 +20,47 @@ export const AdminNavigation: React.FC = () => {
 
   return (
     <nav className="standard-navigation admin-nav">
-      <div className="">
-        <div className="nav-brand">
-          <Link href="/admin" className="nav-logo">
-            Admin Panel
-          </Link>
-        </div>
-
-        <div className="nav-menu">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`nav-link ${item.current ? 'nav-link-active' : ''}`}
-            >
-              {item.name}
+      <Container maxWidth="xl">
+        <div className="">
+          <div className="nav-brand">
+            <Link href="/admin" className="nav-logo">
+              Admin Panel
             </Link>
-          ))}
-        </div>
+          </div>
 
-        <div className="nav-actions">
-          <Link href="/" className="btn btn-outline btn-sm">
-            View Site
-          </Link>
-        </div>
+          <div className="nav-menu">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`nav-link ${item.current ? 'nav-link-active' : ''}`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
 
-        <div className="nav-mobile-toggle">
-          <button
-            className="mobile-menu-button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-          >
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
-          </button>
+          <div className="nav-actions">
+            <Link href="/">
+              <Button variant="outline" size="sm">
+                View Site
+              </Button>
+            </Link>
+          </div>
+
+          <div className="nav-mobile-toggle">
+            <button
+              className="mobile-menu-button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+            </button>
+          </div>
         </div>
-      </div>
+      </Container>
 
       {mobileMenuOpen && (
         <div className="mobile-menu">
@@ -72,10 +77,11 @@ export const AdminNavigation: React.FC = () => {
           <div className="mobile-menu-actions">
             <Link 
               href="/" 
-              className="btn btn-outline btn-sm"
               onClick={() => setMobileMenuOpen(false)}
             >
-              View Site
+              <Button variant="outline" size="sm">
+                View Site
+              </Button>
             </Link>
           </div>
         </div>

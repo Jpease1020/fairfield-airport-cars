@@ -1,6 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { 
+  Container,
+  H1,
+  H2,
+  H3,
+  Text,
+  Span,
+  Button
+} from '@/components/ui';
 
 interface AnalyticsData {
   totalInteractions: number;
@@ -60,255 +69,255 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="admin-dashboard">
-        <div className="loading-spinner">
-          <div className="loading-spinner-icon">🔄</div>
-          <p>Loading analytics...</p>
-        </div>
-      </div>
+      <Container className="admin-dashboard">
+        <Container className="loading-spinner">
+          <Container className="loading-spinner-icon">🔄</Container>
+          <Text>Loading analytics...</Text>
+        </Container>
+      </Container>
     );
   }
 
   return (
-    <div className="admin-dashboard">
-      <div className="section-header">
-        <h1 className="page-title">Analytics Dashboard</h1>
-        <p className="page-subtitle">User interactions, errors, and performance metrics</p>
-        <div className="header-actions">
-          <button onClick={fetchAnalytics} className="btn btn-outline btn-sm">
-            <span className="btn-icon">🔄</span>
+    <Container className="admin-dashboard">
+      <Container className="section-header">
+        <H1 className="page-title">Analytics Dashboard</H1>
+        <Text className="page-subtitle">User interactions, errors, and performance metrics</Text>
+        <Container className="header-actions">
+          <Button onClick={fetchAnalytics} variant="outline" size="sm">
+            <Span className="btn-icon">🔄</Span>
             Refresh
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Container>
+      </Container>
       
       {lastUpdated && (
-        <div className="analytics-updated">
-          <p>Last updated: {lastUpdated.toLocaleString()}</p>
-        </div>
+        <Container className="analytics-updated">
+          <Text>Last updated: {lastUpdated.toLocaleString()}</Text>
+        </Container>
       )}
 
-      <div className="standard-content">
+      <Container className="standard-content">
         {!analytics ? (
-          <div className="card">
-            <div className="card-body">
-              <div className="empty-state">
-                <div className="empty-state-icon">⚠️</div>
-                <h3>No Analytics Data</h3>
-                <p>Analytics data will appear here once users start interacting with the app.</p>
-              </div>
-            </div>
-          </div>
+          <Container className="card">
+            <Container className="card-body">
+              <Container className="empty-state">
+                <Container className="empty-state-icon">⚠️</Container>
+                <H3>No Analytics Data</H3>
+                <Text>Analytics data will appear here once users start interacting with the app.</Text>
+              </Container>
+            </Container>
+          </Container>
         ) : (
-          <div className="analytics-dashboard">
+          <Container className="analytics-dashboard">
             {/* Overview Cards */}
-            <div className="analytics-overview-grid">
-              <div className="card analytics-card">
-                <div className="card-header analytics-card-header">
-                  <h3 className="analytics-card-title">Total Interactions</h3>
-                  <span className="analytics-card-icon">📊</span>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-stat-number">{analytics.totalInteractions.toLocaleString()}</div>
-                  <p className="analytics-stat-description">
+            <Container className="analytics-overview-grid">
+              <Container className="card analytics-card">
+                <Container className="card-header analytics-card-header">
+                  <H3 className="analytics-card-title">Total Interactions</H3>
+                  <Span className="analytics-card-icon">📊</Span>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-stat-number">{analytics.totalInteractions.toLocaleString()}</Container>
+                  <Text className="analytics-stat-description">
                     All user interactions tracked
-                  </p>
-                </div>
-              </div>
+                  </Text>
+                </Container>
+              </Container>
 
-              <div className="card analytics-card">
-                <div className="card-header analytics-card-header">
-                  <h3 className="analytics-card-title">Total Errors</h3>
-                  <span className="analytics-card-icon error">⚠️</span>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-stat-number error">
+              <Container className="card analytics-card">
+                <Container className="card-header analytics-card-header">
+                  <H3 className="analytics-card-title">Total Errors</H3>
+                  <Span className="analytics-card-icon error">⚠️</Span>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-stat-number error">
                     {analytics.totalErrors.toLocaleString()}
-                  </div>
-                  <p className="analytics-stat-description">
+                  </Container>
+                  <Text className="analytics-stat-description">
                     Errors detected and tracked
-                  </p>
-                </div>
-              </div>
+                  </Text>
+                </Container>
+              </Container>
 
-              <div className="card analytics-card">
-                <div className="card-header analytics-card-header">
-                  <h3 className="analytics-card-title">Error Rate</h3>
-                  <span className="analytics-card-icon">📉</span>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-stat-number">
+              <Container className="card analytics-card">
+                <Container className="card-header analytics-card-header">
+                  <H3 className="analytics-card-title">Error Rate</H3>
+                  <Span className="analytics-card-icon">📉</Span>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-stat-number">
                     {analytics.totalInteractions > 0 
                       ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
                       : '0'
                     }%
-                  </div>
-                  <p className="analytics-stat-description">
+                  </Container>
+                  <Text className="analytics-stat-description">
                     Percentage of interactions with errors
-                  </p>
-                </div>
-              </div>
+                  </Text>
+                </Container>
+              </Container>
 
-              <div className="card analytics-card">
-                <div className="card-header analytics-card-header">
-                  <h3 className="analytics-card-title">Active Elements</h3>
-                  <span className="analytics-card-icon">🖱️</span>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-stat-number">
+              <Container className="card analytics-card">
+                <Container className="card-header analytics-card-header">
+                  <H3 className="analytics-card-title">Active Elements</H3>
+                  <Span className="analytics-card-icon">🖱️</Span>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-stat-number">
                     {Object.keys(analytics.elementTypes).length}
-                  </div>
-                  <p className="analytics-stat-description">
+                  </Container>
+                  <Text className="analytics-stat-description">
                     Different element types tracked
-                  </p>
-                </div>
-              </div>
-            </div>
+                  </Text>
+                </Container>
+              </Container>
+            </Container>
 
             {/* Detailed Metrics */}
-            <div className="analytics-detailed-metrics">
+            <Container className="analytics-detailed-metrics">
               {/* Top Interaction Types */}
-              <div className="card">
-                <div className="card-header">
-                  <h2 className="card-title">
-                    <span className="card-icon">🖱️</span>
+              <Container className="card">
+                <Container className="card-header">
+                  <H2 className="card-title">
+                    <Span className="card-icon">🖱️</Span>
                     Top Interaction Types
-                  </h2>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-list">
+                  </H2>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-list">
                     {getTopInteractions().map(([type, count]) => (
-                      <div key={type} className="analytics-list-item">
-                        <div className="analytics-item-info">
+                      <Container key={type} className="analytics-list-item">
+                        <Container className="analytics-item-info">
                           <div className="analytics-item-indicator primary"></div>
-                          <span className="analytics-item-label">
+                          <Span className="analytics-item-label">
                             {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                          </span>
-                        </div>
-                        <span className="analytics-item-value">
+                          </Span>
+                        </Container>
+                        <Span className="analytics-item-value">
                           {count.toLocaleString()}
-                        </span>
-                      </div>
+                        </Span>
+                      </Container>
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </Container>
+                </Container>
+              </Container>
 
               {/* Top Error Types */}
-              <div className="card">
-                <div className="card-header">
-                  <h2 className="card-title">
-                    <span className="card-icon">⚠️</span>
+              <Container className="card">
+                <Container className="card-header">
+                  <H2 className="card-title">
+                    <Span className="card-icon">⚠️</Span>
                     Top Error Types
-                  </h2>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-list">
+                  </H2>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-list">
                     {getTopErrors().map(([type, count]) => (
-                      <div key={type} className="analytics-list-item">
-                        <div className="analytics-item-info">
+                      <Container key={type} className="analytics-list-item">
+                        <Container className="analytics-item-info">
                           <div className="analytics-item-indicator error"></div>
-                          <span className="analytics-item-label">
+                          <Span className="analytics-item-label">
                             {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                          </span>
-                        </div>
-                        <span className="analytics-item-value">
+                          </Span>
+                        </Container>
+                        <Span className="analytics-item-value">
                           {count.toLocaleString()}
-                        </span>
-                      </div>
+                        </Span>
+                      </Container>
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </Container>
+                </Container>
+              </Container>
 
               {/* Top Element Types */}
-              <div className="card">
-                <div className="card-header">
-                  <h2 className="card-title">
-                    <span className="card-icon">📝</span>
+              <Container className="card">
+                <Container className="card-header">
+                  <H2 className="card-title">
+                    <Span className="card-icon">📝</Span>
                     Most Interacted Elements
-                  </h2>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-list">
+                  </H2>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-list">
                     {getTopElements().map(([element, count]) => (
-                      <div key={element} className="analytics-list-item">
-                        <div className="analytics-item-info">
+                      <Container key={element} className="analytics-list-item">
+                        <Container className="analytics-item-info">
                           <div className="analytics-item-indicator secondary"></div>
-                          <span className="analytics-item-label">
+                          <Span className="analytics-item-label">
                             {element}
-                          </span>
-                        </div>
-                        <span className="analytics-item-value">
+                          </Span>
+                        </Container>
+                        <Span className="analytics-item-value">
                           {count.toLocaleString()}
-                        </span>
-                      </div>
+                        </Span>
+                      </Container>
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </Container>
+                </Container>
+              </Container>
 
               {/* Recent Activity */}
-              <div className="card">
-                <div className="card-header">
-                  <h2 className="card-title">
-                    <span className="card-icon">⏰</span>
+              <Container className="card">
+                <Container className="card-header">
+                  <H2 className="card-title">
+                    <Span className="card-icon">⏰</Span>
                     Recent Activity
-                  </h2>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-list">
+                  </H2>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-list">
                     {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
-                      <div key={index} className="analytics-list-item">
-                        <div className="analytics-item-info">
+                      <Container key={index} className="analytics-list-item">
+                        <Container className="analytics-item-info">
                           <div className="analytics-item-indicator primary"></div>
-                          <span className="analytics-item-label">
+                          <Span className="analytics-item-label">
                             {interaction.type} on {interaction.element}
-                          </span>
-                        </div>
-                        <span className="analytics-item-time">
+                          </Span>
+                        </Container>
+                        <Span className="analytics-item-time">
                           {new Date(interaction.timestamp).toLocaleTimeString()}
-                        </span>
-                      </div>
+                        </Span>
+                      </Container>
                     ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </Container>
+                </Container>
+              </Container>
+            </Container>
 
             {/* Recent Errors */}
             {analytics.recentErrors.length > 0 && (
-              <div className="card">
-                <div className="card-header">
-                  <h2 className="card-title">
-                    <span className="card-icon">⚠️</span>
+              <Container className="card">
+                <Container className="card-header">
+                  <H2 className="card-title">
+                    <Span className="card-icon">⚠️</Span>
                     Recent Errors
-                  </h2>
-                </div>
-                <div className="card-body">
-                  <div className="analytics-errors">
+                  </H2>
+                </Container>
+                <Container className="card-body">
+                  <Container className="analytics-errors">
                     {analytics.recentErrors.slice(0, 10).map((error, index) => (
-                      <div key={index} className="analytics-error-item">
-                        <div className="analytics-error-header">
-                          <span className="analytics-error-message">
+                      <Container key={index} className="analytics-error-item">
+                        <Container className="analytics-error-header">
+                          <Span className="analytics-error-message">
                             {error.message}
-                          </span>
-                          <span className="analytics-error-time">
+                          </Span>
+                          <Span className="analytics-error-time">
                             {new Date(error.timestamp).toLocaleString()}
-                          </span>
-                        </div>
-                        <p className="analytics-error-details">
+                          </Span>
+                        </Container>
+                        <Text className="analytics-error-details">
                           Type: {error.type} • Page: {error.page}
-                        </p>
-                      </div>
+                        </Text>
+                      </Container>
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </Container>
+                </Container>
+              </Container>
             )}
-          </div>
+          </Container>
         )}
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 } 

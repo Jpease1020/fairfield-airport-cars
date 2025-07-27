@@ -10,7 +10,6 @@ import {
   useToast,
   GridSection,
   Input,
-  Label,
   Text
 } from '@/components/ui';
 import { getCMSConfig, updateCMSConfig } from '@/lib/services/cms-service';

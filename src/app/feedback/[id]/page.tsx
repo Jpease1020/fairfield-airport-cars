@@ -7,29 +7,26 @@ import {
   GridSection,
   InfoCard,
   ActionButtonGroup,
-  ToastProvider,
-  useToast,
   Form,
   Label,
+  Textarea,
   Button,
-  Textarea
+  ToastProvider,
+  Text
 } from '@/components/ui';
 import { Star } from 'lucide-react';
 
 function FeedbackPageContent() {
   const params = useParams();
-  const { addToast } = useToast();
+  const bookingId = params.id as string;
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (rating === 0) {
-      addToast('error', 'Please select a rating');
-      return;
-    }
+    if (rating === 0) return;
 
     setLoading(true);
     try {
@@ -39,7 +36,7 @@ function FeedbackPageContent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          bookingId: params.id,
+          bookingId,
           rating,
           comment,
         }),
@@ -47,12 +44,11 @@ function FeedbackPageContent() {
 
       if (response.ok) {
         setSubmitted(true);
-        addToast('success', 'Thank you for your feedback!');
       } else {
-        addToast('error', 'Failed to submit feedback. Please try again.');
+        throw new Error('Failed to submit feedback');
       }
-    } catch {
-      addToast('error', 'Failed to submit feedback. Please try again.');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
     } finally {
       setLoading(false);
     }
@@ -60,9 +56,15 @@ function FeedbackPageContent() {
 
   const homeActions = [
     {
-      label: 'Back to Home',
-      onClick: () => window.location.href = '/',
+      label: 'Book Another Ride',
+      onClick: () => window.location.href = '/book',
       variant: 'primary' as const,
+      icon: '🚗'
+    },
+    {
+      label: 'Go Home',
+      onClick: () => window.location.href = '/',
+      variant: 'secondary' as const,
       icon: '🏠'
     }
   ];
@@ -79,7 +81,7 @@ function FeedbackPageContent() {
             title="✅ Feedback Submitted"
             description="We appreciate you taking the time to share your experience"
           >
-            <p>Your rating and comments help us improve our service and provide the best possible experience for all our customers.</p>
+            <Text>Your rating and comments help us improve our service and provide the best possible experience for all our customers.</Text>
             <ActionButtonGroup buttons={homeActions} />
           </InfoCard>
         </GridSection>
@@ -99,12 +101,12 @@ function FeedbackPageContent() {
           description="How was your ride with Fairfield Airport Cars?"
         >
           <Form onSubmit={handleSubmit}>
-            <p>
+            <Text>
               <Label htmlFor="rating">
                 How was your ride?
               </Label>
-            </p>
-            <p>
+            </Text>
+            <Text>
               {[1, 2, 3, 4, 5].map((star) => (
                 <Button
                   key={star}
@@ -117,22 +119,22 @@ function FeedbackPageContent() {
                   <Star />
                 </Button>
               ))}
-            </p>
-            <p>
+            </Text>
+            <Text>
               {rating === 0 && 'Click a star to rate'}
               {rating === 1 && 'Poor'}
               {rating === 2 && 'Fair'}
               {rating === 3 && 'Good'}
               {rating === 4 && 'Very Good'}
               {rating === 5 && 'Excellent'}
-            </p>
+            </Text>
 
-            <p>
+            <Text>
               <Label htmlFor="comment">
                 Additional Comments (Optional)
               </Label>
-            </p>
-            <p>
+            </Text>
+            <Text>
               <Textarea
                 id="comment"
                 value={comment}
@@ -141,9 +143,9 @@ function FeedbackPageContent() {
                 rows={4}
                 className="feedback-form-textarea"
               />
-            </p>
+            </Text>
 
-            <p>
+            <Text>
               <Button
                 type="submit"
                 disabled={loading || rating === 0}
@@ -153,7 +155,7 @@ function FeedbackPageContent() {
               >
                 {loading ? 'Submitting...' : '⭐ Submit Feedback'}
               </Button>
-            </p>
+            </Text>
           </Form>
         </InfoCard>
       </GridSection>

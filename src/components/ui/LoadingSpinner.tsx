@@ -1,6 +1,4 @@
 import React from 'react';
-import { cn } from '@/lib/utils/utils';
-import { Loader2 } from 'lucide-react';
 
 /**
  * A flexible loading spinner component with multiple variants and sizes

@@ -2,47 +2,47 @@
 
 import React from 'react';
 import { UnifiedLayout } from '@/components/layout';
-import {
+import { 
   GridSection,
   InfoCard,
+  FeatureGrid,
   ActionButtonGroup,
   ToastProvider,
-  FeatureGrid
+  H4,
+  Text
 } from '@/components/ui';
 
 function HelpPageContent() {
-
-
   const helpSections = [
     {
-      icon: "📞",
-      title: "Contact Support",
-      description: "Call us at (203) 555-0123 for immediate assistance with your booking"
-    },
-    {
       icon: "📅",
-      title: "Booking Process",
-      description: "Learn how to book your ride and what information you'll need"
+      title: "Booking Help",
+      description: "Learn how to book, modify, or cancel your ride"
     },
     {
       icon: "💳",
-      title: "Payment & Billing",
-      description: "Understand our payment methods and billing process"
+      title: "Payment Support",
+      description: "Get help with payments, refunds, and billing"
     },
     {
       icon: "🚗",
-      title: "Service Areas",
-      description: "See which airports and areas we serve in Connecticut and New York"
+      title: "Service Information",
+      description: "Learn about our vehicles, drivers, and service areas"
     },
     {
-      icon: "⏰",
-      title: "Scheduling",
-      description: "Best practices for scheduling your airport transportation"
+      icon: "✈️",
+      title: "Airport Transportation",
+      description: "Specialized airport pickup and drop-off services"
     },
     {
-      icon: "❓",
-      title: "General Questions",
-      description: "Frequently asked questions about our services"
+      icon: "📱",
+      title: "App Support",
+      description: "Help with our mobile app and online booking"
+    },
+    {
+      icon: "🆘",
+      title: "Emergency Support",
+      description: "24/7 emergency assistance and urgent changes"
     }
   ];
 
@@ -90,8 +90,8 @@ function HelpPageContent() {
         >
           {faqItems.map((item, index) => (
             <React.Fragment key={index}>
-              <h4>{item.question}</h4>
-              <p>{item.answer}</p>
+              <H4>{item.question}</H4>
+              <Text>{item.answer}</Text>
             </React.Fragment>
           ))}
         </InfoCard>

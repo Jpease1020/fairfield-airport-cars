@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAdmin } from './AdminProvider';
+import { Button, Text, H3 } from '@/components/ui';
 
 const AdminHamburgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,13 +65,14 @@ const AdminHamburgerMenu = () => {
       {isOpen && (
         <div className="hamburger-dropdown">
           <div className="dropdown-header">
-            <h3 className="dropdown-title">Admin Tools</h3>
-            <p className="dropdown-subtitle">Website management</p>
+            <H3 className="dropdown-title">Admin Tools</H3>
+            <Text className="dropdown-subtitle">Website management</Text>
           </div>
 
           {/* Site Mode Toggle */}
-          <button
+          <Button
             onClick={handleSiteModeToggle}
+            variant="ghost"
             className={`dropdown-item ${!editMode && !commentMode ? 'active' : ''}`}
           >
             <span className="item-icon">🌐</span>
@@ -83,13 +85,14 @@ const AdminHamburgerMenu = () => {
             {!editMode && !commentMode && (
               <div className="status-indicator active"></div>
             )}
-          </button>
+          </Button>
 
           {/* Edit Mode Toggle */}
-          <button
+          <Button
             onClick={handleEditModeToggle}
-            className={`dropdown-item ${editMode ? 'active edit-mode' : ''} ${commentMode && !editMode ? 'disabled' : ''}`}
+            variant="ghost"
             disabled={commentMode && !editMode}
+            className={`dropdown-item ${editMode ? 'active edit-mode' : ''} ${commentMode && !editMode ? 'disabled' : ''}`}
           >
             <span className="item-icon">✏️</span>
             <div className="item-content">
@@ -104,13 +107,14 @@ const AdminHamburgerMenu = () => {
             {commentMode && !editMode && (
               <div className="status-indicator disabled"></div>
             )}
-          </button>
+          </Button>
 
           {/* Comment Mode Toggle */}
-          <button
+          <Button
             onClick={handleCommentModeToggle}
-            className={`dropdown-item ${commentMode ? 'active comment-mode' : ''} ${editMode && !commentMode ? 'disabled' : ''}`}
+            variant="ghost"
             disabled={editMode && !commentMode}
+            className={`dropdown-item ${commentMode ? 'active comment-mode' : ''} ${editMode && !commentMode ? 'disabled' : ''}`}
           >
             <span className="item-icon">💬</span>
             <div className="item-content">
@@ -125,7 +129,7 @@ const AdminHamburgerMenu = () => {
             {editMode && !commentMode && (
               <div className="status-indicator disabled"></div>
             )}
-          </button>
+          </Button>
 
           {/* Divider */}
           <div className="dropdown-divider"></div>

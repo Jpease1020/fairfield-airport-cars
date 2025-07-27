@@ -13,9 +13,9 @@ import {
   DataTableColumn,
   DataTableAction,
   ToastProvider,
-  useToast
+  useToast,
+  Span
 } from '@/components/ui';
-
 
 function AdminBookingsPageContent() {
   const { addToast } = useToast();
@@ -98,69 +98,52 @@ function AdminBookingsPageContent() {
             id: 'mock-4',
             name: 'Emily Chen',
             email: 'emily@example.com',
-            phone: '203-555-0126', 
-            pickupLocation: 'Westport Center',
-            dropoffLocation: 'JFK Airport',
-            pickupDateTime: new Date('2024-12-27T16:45:00Z'),
-            passengers: 2,
-            fare: 165,
+            phone: '203-555-0126',
+            pickupLocation: 'Westport Downtown',
+            dropoffLocation: 'Bradley Airport',
+            pickupDateTime: new Date('2024-12-27T12:00:00Z'),
+            passengers: 1,
+            fare: 95,
             status: 'cancelled',
-            depositPaid: true,
+            depositPaid: false,
             balanceDue: 0,
             tipAmount: 0,
-            cancellationFee: 50,
+            cancellationFee: 25,
             createdAt: new Date(),
             updatedAt: new Date()
           }
         ];
+        
         setBookings(mockBookings);
       } else {
         setBookings(fetchedBookings);
       }
     } catch (err) {
       console.error('❌ Error fetching bookings:', err);
-      setError(`Failed to load bookings: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      
-      // Still show mock data even on error so we can test the interface
-      console.log('📝 Using mock data due to error');
-      const mockBookings: Booking[] = [
-        {
-          id: 'demo-1',
-          name: 'Demo User',
-          email: 'demo@example.com',
-          phone: '203-555-DEMO',
-          pickupLocation: 'Demo Location',
-          dropoffLocation: 'Demo Destination', 
-          pickupDateTime: new Date(),
-          passengers: 1,
-          fare: 100,
-          status: 'pending',
-          depositPaid: false,
-          balanceDue: 100,
-          tipAmount: 0,
-          cancellationFee: 0,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-      ];
-      setBookings(mockBookings);
+      setError('Failed to load bookings. Please try again.');
+      addToast('error', 'Failed to load bookings');
     } finally {
       setLoading(false);
     }
   };
 
   const handleStatusUpdate = async (booking: Booking, newStatus: Booking['status']) => {
-    if (!booking.id) {
-      addToast('error', 'Cannot update booking: missing ID');
-      return;
-    }
-    
     try {
+      if (!booking.id) {
+        addToast('error', 'Cannot update booking: missing ID');
+        return;
+      }
+      
       await updateBooking(booking.id, { status: newStatus });
-      addToast('success', `Booking status updated to ${newStatus}`);
-      await fetchBookings(); // Refresh data
+      
+      // Update local state
+      setBookings(prev => prev.map(b => 
+        b.id === booking.id ? { ...b, status: newStatus } : b
+      ));
+      
+      addToast('success', `Booking ${newStatus}`);
     } catch (err) {
-      console.error('Error updating booking:', err);
+      console.error('Error updating booking status:', err);
       addToast('error', 'Failed to update booking status');
     }
   };
@@ -171,54 +154,62 @@ function AdminBookingsPageContent() {
       return;
     }
     
-    // Use window.confirm for now - can be enhanced with a proper modal later
-    if (!window.confirm(`Are you sure you want to delete booking for ${booking.name}? This action cannot be undone.`)) {
+    if (!confirm(`Are you sure you want to delete the booking for ${booking.name}?`)) {
       return;
     }
-    
+
     try {
       await deleteBooking(booking.id);
-      addToast('success', `Booking for ${booking.name} has been deleted`);
-      await fetchBookings(); // Refresh data
+      
+      // Update local state
+      setBookings(prev => prev.filter(b => b.id !== booking.id));
+      
+      addToast('success', 'Booking deleted');
     } catch (err) {
       console.error('Error deleting booking:', err);
       addToast('error', 'Failed to delete booking');
     }
   };
 
+  // Calculate stats
+  const totalBookings = bookings.length;
+  const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+  const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
+  const completedBookings = bookings.filter(b => b.status === 'completed').length;
+  const totalRevenue = bookings
+    .filter(b => b.status === 'completed')
+    .reduce((sum, b) => sum + b.fare, 0);
+  const totalTips = bookings
+    .filter(b => b.status === 'completed')
+    .reduce((sum, b) => sum + (b.tipAmount || 0), 0);
+  const totalCancFees = bookings
+    .filter(b => b.status === 'cancelled')
+    .reduce((sum, b) => sum + (b.cancellationFee || 0), 0);
+
   // Header actions
   const headerActions = [
     {
       label: 'Refresh',
+      icon: '🔄',
       onClick: fetchBookings,
-      variant: 'outline' as const,
-      disabled: loading
+      variant: 'outline' as const
     },
     {
-      label: 'Export CSV',
-      onClick: () => addToast('info', 'Export functionality coming soon'),
-      variant: 'primary' as const
+      label: 'Export',
+      icon: '📊',
+      onClick: () => addToast('info', 'Export feature coming soon'),
+      variant: 'outline' as const
     }
   ];
 
-  // Calculate stats
-  const totalBookings = bookings.length;
-  const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.fare || 0), 0);
-  const totalTips = bookings.reduce((sum, booking) => sum + (booking.tipAmount || 0), 0);
-  const totalCancFees = bookings.reduce((sum, booking) => sum + (booking.cancellationFee || 0), 0);
-
-  const pendingBookings = bookings.filter(b => b.status === 'pending').length;
-  const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
-  const completedBookings = bookings.filter(b => b.status === 'completed').length;
-
-  // Status badge renderer
+  // Status renderer
   const renderStatus = (status: string) => {
     const getStatusClass = (status: string) => {
-      switch (status) {
-        case 'pending':
-          return 'status-badge-pending';
+      switch (status.toLowerCase()) {
         case 'confirmed':
           return 'status-badge-confirmed';
+        case 'pending':
+          return 'status-badge-pending';
         case 'completed':
           return 'status-badge-completed';
         case 'cancelled':
@@ -229,9 +220,9 @@ function AdminBookingsPageContent() {
     };
 
     return (
-      <span className={`status-badge ${getStatusClass(status)}`}>
+      <Span className={`status-badge ${getStatusClass(status)}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
+      </Span>
     );
   };
 
@@ -278,7 +269,7 @@ function AdminBookingsPageContent() {
       label: 'Fare',
       sortable: true,
       render: (value) => (
-        <span className="table-cell-amount">${(value || 0).toFixed(2)}</span>
+        <Span className="table-cell-amount">${(value || 0).toFixed(2)}</Span>
       )
     },
     {
@@ -315,14 +306,14 @@ function AdminBookingsPageContent() {
       label: 'Cancel',
       icon: '❌',
       onClick: (booking) => handleStatusUpdate(booking, 'cancelled'),
-      variant: 'destructive',
+      variant: 'outline',
       condition: (booking) => booking.status !== 'completed' && booking.status !== 'cancelled'
     },
     {
       label: 'Delete',
       icon: '🗑️',
       onClick: handleDeleteBooking,
-      variant: 'destructive'
+      variant: 'outline'
     }
   ];
 
