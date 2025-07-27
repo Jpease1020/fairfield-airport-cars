@@ -267,14 +267,14 @@ function BookingFormContent({ booking }: BookingFormProps) {
         </Container>
       )}
 
-      <Form onSubmit={handleSubmit} className="booking-form">
+      <Form onSubmit={handleSubmit}>
         {/* Personal Information */}
         <SettingSection
           title="Personal Information"
           description="Please provide your contact details for the booking"
           icon="👤"
         >
-          <Grid columns={2} spacing="md" className="booking-form-row">
+          <Grid columns={2} spacing="md">
             <GridItem>
               <SettingInput
                 id="name"
@@ -319,8 +319,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           icon="🚗"
         >
           {/* Location Fields - Improved Layout */}
-          <Grid columns={2} spacing="md" className="booking-form-location-row">
-            <GridItem className="booking-form-location-field">
+          <Grid columns={2} spacing="md">
+            <GridItem>
               <SettingInput
                 id="pickupLocation"
                 label="Pickup Location"
