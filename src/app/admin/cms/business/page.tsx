@@ -304,12 +304,10 @@ function BusinessPageContent() {
                     placeholder="#1f2937"
                     icon="🎨"
                   />
-                  <Container>
+                  <Stack direction="horizontal" spacing="sm" align="center">
                     <Span>Preview:</Span>
-                    <Container>
-                      <span>Color preview</span>
-                    </Container>
-                  </Container>
+                    <Span>Color preview</Span>
+                  </Stack>
                 </Container>
                 
                 <Container>
@@ -322,12 +320,10 @@ function BusinessPageContent() {
                     placeholder="#3b82f6"
                     icon="🎨"
                   />
-                  <Container>
+                  <Stack direction="horizontal" spacing="sm" align="center">
                     <Span>Preview:</Span>
-                    <Container>
-                      <span>Color preview</span>
-                    </Container>
-                  </Container>
+                    <Span>Color preview</Span>
+                  </Stack>
                 </Container>
                 
                 <SettingInput
