@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
+import { Text } from '@/components/ui';
 
 interface FormSectionProps {
   title: string;
@@ -17,17 +18,17 @@ export const FormSection: React.FC<FormSectionProps> = ({
   className = ''
 }) => {
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle>
           {icon && <span>{icon}</span>}
           <span>{title}</span>
         </CardTitle>
         {description && (
-          <p className="mt-1">{description}</p>
+          <Text>{description}</Text>
         )}
       </CardHeader>
-      <CardBody className="space-y-4">
+      <CardBody>
         {children}
       </CardBody>
     </Card>
