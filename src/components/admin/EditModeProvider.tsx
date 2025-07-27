@@ -155,13 +155,13 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
           <Button
             onClick={() => handleCancel(originalContent)}
             variant="outline"
-            className="bg-background-primary text-text-primary border-border-color hover:bg-background-secondary"
+            className="bg-white border-gray-300 hover:bg-gray-50"
           >
             Cancel
           </Button>
         </div>
         {saveMsg && (
-          <div className="mt-2 p-2 bg-background-secondary text-text-primary rounded text-sm">
+          <div className="mt-2 p-2 bg-gray-100 rounded text-sm">
             {saveMsg}
           </div>
         )}
