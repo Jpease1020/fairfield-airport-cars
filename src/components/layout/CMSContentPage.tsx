@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Span, H2, H3, Lead } from '@/components/ui';
+import { Container, Span, H2, H3, Lead, Link } from '@/components/ui';
 import { Section, Stack } from '@/components/ui/containers';
 import { Card, CardBody } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
@@ -79,18 +79,14 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
           <Stack direction="horizontal" spacing="xl">
             {/* Table of Contents */}
             {showTableOfContents && (
-              <Card variant="outlined" size="lg">
-                <CardBody>
-                  <H3>On This Page</H3>
-                  <nav>
-                    <Stack spacing="sm" direction="vertical">
-                      <a href="#overview">Overview</a>
-                      <a href="#details">Details</a>
-                      <a href="#contact">Contact</a>
-                    </Stack>
-                  </nav>
-                </CardBody>
-              </Card>
+              <Container>
+                <H3>On This Page</H3>
+                <Stack spacing="sm" direction="vertical">
+                  <Link href="#overview">Overview</Link>
+                  <Link href="#details">Details</Link>
+                  <Link href="#contact">Contact</Link>
+                </Stack>
+              </Container>
             )}
 
             {/* Main Content */}
@@ -105,50 +101,42 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
       {showRelatedLinks && (
         <Section variant="muted" padding="xl">
           <Container maxWidth={containerMaxWidth}>
-            <Stack spacing="lg">
-              <Stack>
-                <H2>Related Information</H2>
-                <Lead>Find more helpful resources and information</Lead>
-              </Stack>
+            <Container spacing="lg">
+              <H2>Related Information</H2>
+              <Lead>Find more helpful resources and information</Lead>
               
               <Stack direction="horizontal" spacing="lg">
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>Booking Information</H3>
-                    <Text>
-                      Learn about our booking process, policies, and what to expect.
-                    </Text>
-                    <a href="/book">
-                      Book Your Ride →
-                    </a>
-                  </CardBody>
-                </Card>
+                <Container>
+                  <H3>Booking Information</H3>
+                  <Text>
+                    Learn about our booking process, policies, and what to expect.
+                  </Text>
+                  <Link href="/book">
+                    Book Your Ride →
+                  </Link>
+                </Container>
                 
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>Service Areas</H3>
-                    <Text>
-                      See all the airports and areas we serve in the region.
-                    </Text>
-                    <a href="/about">
-                      View Service Areas →
-                    </a>
-                  </CardBody>
-                </Card>
+                <Container>
+                  <H3>Service Areas</H3>
+                  <Text>
+                    See all the airports and areas we serve in the region.
+                  </Text>
+                  <Link href="/about">
+                    View Service Areas →
+                  </Link>
+                </Container>
                 
-                <Card variant="outlined" size="lg">
-                  <CardBody>
-                    <H3>Contact Support</H3>
-                    <Text>
-                      Need help? Our support team is available 24/7.
-                    </Text>
-                    <a href="/help">
-                      Get Help →
-                    </a>
-                  </CardBody>
-                </Card>
+                <Container>
+                  <H3>Contact Support</H3>
+                  <Text>
+                    Need help? Our support team is available 24/7.
+                  </Text>
+                  <Link href="/help">
+                    Get Help →
+                  </Link>
+                </Container>
               </Stack>
-            </Stack>
+            </Container>
           </Container>
         </Section>
       )}
