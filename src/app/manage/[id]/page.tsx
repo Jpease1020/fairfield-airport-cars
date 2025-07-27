@@ -350,37 +350,37 @@ function ManageBookingPageContent() {
           title="📋 Booking Information"
           description="Your booking details and current status"
         >
-          <Container className="manage-booking-details">
-            <Container className="manage-booking-item">
-              <Span className="manage-booking-label">Booking ID:</Span>
-              <Span className="manage-booking-value">{booking.id}</Span>
+          <Container>
+            <Container>
+              <Span>Booking ID:</Span>
+              <Span>{booking.id}</Span>
             </Container>
-            <Container className="manage-booking-item">
-              <Span className="manage-booking-label">Status:</Span>
-              <Span className={`manage-booking-status manage-booking-status-${booking.status}`}>
+            <Container>
+              <Span>Status:</Span>
+              <Span>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </Span>
             </Container>
-            <Container className="manage-booking-item">
-              <Span className="manage-booking-label">Passenger:</Span>
-              <Span className="manage-booking-value">{booking.name}</Span>
+            <Container>
+              <Span>Passenger:</Span>
+              <Span>{booking.name}</Span>
             </Container>
-            <Container className="manage-booking-item">
-              <Span className="manage-booking-label">Route:</Span>
-              <Span className="manage-booking-value">{booking.pickupLocation} → {booking.dropoffLocation}</Span>
+            <Container>
+              <Span>Route:</Span>
+              <Span>{booking.pickupLocation} → {booking.dropoffLocation}</Span>
             </Container>
-            <Container className="manage-booking-item">
-              <Span className="manage-booking-label">Pickup Time:</Span>
-              <Span className="manage-booking-value">{new Date(booking.pickupDateTime).toLocaleString()}</Span>
+            <Container>
+              <Span>Pickup Time:</Span>
+              <Span>{new Date(booking.pickupDateTime).toLocaleString()}</Span>
             </Container>
-            <Container className="manage-booking-item">
-              <Span className="manage-booking-label">Total Fare:</Span>
-              <Span className="manage-booking-value">${booking.fare?.toFixed(2)}</Span>
+            <Container>
+              <Span>Total Fare:</Span>
+              <Span>${booking.fare?.toFixed(2)}</Span>
             </Container>
             {booking.balanceDue > 0 && (
-              <Container className="manage-booking-item">
-                <Span className="manage-booking-label">Balance Due:</Span>
-                <Span className="manage-booking-value manage-booking-balance">${booking.balanceDue.toFixed(2)}</Span>
+              <Container>
+                <Span>Balance Due:</Span>
+                <Span>${booking.balanceDue.toFixed(2)}</Span>
               </Container>
             )}
           </Container>
@@ -401,7 +401,7 @@ function ManageBookingPageContent() {
       {actionMsg && (
         <GridSection variant="content" columns={1}>
           <InfoCard title="📢 Action Result" description="Result of your recent action">
-            <Container className="manage-booking-action-message">
+            <Container>
               {actionMsg}
             </Container>
           </InfoCard>
