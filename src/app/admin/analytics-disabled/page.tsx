@@ -142,27 +142,21 @@ export default function AnalyticsPage() {
                     Top Interaction Types
                   </H2>
                 </Container>
-                <Container >
-                  <Container >
-                    {getTopInteractions().map(([type, count]) => (
-                      <Container key={type}>
-                        <Stack direction="horizontal" justify="between" align="center">
-                          <Stack direction="horizontal" spacing="sm" align="center">
-                            <Container>
-                              <Span>●</Span>
-                            </Container>
-                            <Span>
-                              {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                            </Span>
-                          </Stack>
-                          <Span>
-                            {count.toLocaleString()}
-                          </Span>
-                        </Stack>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
+                <Stack direction="vertical" spacing="sm">
+                  {getTopInteractions().map(([type, count]) => (
+                    <Stack key={type} direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" spacing="sm" align="center">
+                        <Span>●</Span>
+                        <Span>
+                          {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                        </Span>
+                      </Stack>
+                      <Span>
+                        {count.toLocaleString()}
+                      </Span>
+                    </Stack>
+                  ))}
+                </Stack>
               </Container>
 
               {/* Top Error Types */}
@@ -173,27 +167,21 @@ export default function AnalyticsPage() {
                     Top Error Types
                   </H2>
                 </Container>
-                <Container >
-                  <Container >
-                    {getTopErrors().map(([type, count]) => (
-                      <Container key={type}>
-                        <Stack direction="horizontal" justify="between" align="center">
-                          <Stack direction="horizontal" spacing="sm" align="center">
-                            <Container>
-                              <Span>●</Span>
-                            </Container>
-                            <Span>
-                              {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                            </Span>
-                          </Stack>
-                          <Span>
-                            {count.toLocaleString()}
-                          </Span>
-                        </Stack>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
+                <Stack direction="vertical" spacing="sm">
+                  {getTopErrors().map(([type, count]) => (
+                    <Stack key={type} direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" spacing="sm" align="center">
+                        <Span>●</Span>
+                        <Span>
+                          {type.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                        </Span>
+                      </Stack>
+                      <Span>
+                        {count.toLocaleString()}
+                      </Span>
+                    </Stack>
+                  ))}
+                </Stack>
               </Container>
 
               {/* Top Element Types */}
@@ -204,27 +192,21 @@ export default function AnalyticsPage() {
                     Most Interacted Elements
                   </H2>
                 </Container>
-                <Container >
-                  <Container >
-                    {getTopElements().map(([element, count]) => (
-                      <Container key={element}>
-                        <Stack direction="horizontal" justify="between" align="center">
-                          <Stack direction="horizontal" spacing="sm" align="center">
-                            <Container>
-                              <Span>●</Span>
-                            </Container>
-                            <Span>
-                              {element}
-                            </Span>
-                          </Stack>
-                          <Span>
-                            {count.toLocaleString()}
-                          </Span>
-                        </Stack>
-                      </Container>
-                    ))}
-                  </Container>
-                </Container>
+                <Stack direction="vertical" spacing="sm">
+                  {getTopElements().map(([element, count]) => (
+                    <Stack key={element} direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" spacing="sm" align="center">
+                        <Span>●</Span>
+                        <Span>
+                          {element}
+                        </Span>
+                      </Stack>
+                      <Span>
+                        {count.toLocaleString()}
+                      </Span>
+                    </Stack>
+                  ))}
+                </Stack>
               </Container>
 
               {/* Recent Activity */}
