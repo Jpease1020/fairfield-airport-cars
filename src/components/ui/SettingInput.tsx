@@ -83,7 +83,7 @@ export const SettingInput: React.FC<SettingInputProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
-          className="form-input"
+
           style={{
             flex: 1,
             opacity: disabled ? 0.6 : 1

@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/form';
+import { Container } from '@/components/ui';
 import { useEditMode } from './EditModeProvider';
 
 interface Comment {
@@ -95,20 +96,18 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
   return (
     <>
       {/* Add Comment Button */}
-      <div className="">
+      <Container>
         <Button
           onClick={() => setIsAddingComment(true)}
-          className=""
-          title="Add Comment (Drag to position)"
         >
-          <Plus className="" />
+          <Plus />
         </Button>
         {comments.length > 0 && (
-          <div className="">
+          <Container>
             {comments.length}
-          </div>
+          </Container>
         )}
-      </div>
+      </Container>
 
       {/* Add Comment Modal */}
       {isAddingComment && (
