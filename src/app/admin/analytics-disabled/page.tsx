@@ -66,27 +66,22 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <Container >
-        <Container >
-          <Container>🔄</Container>
-          <Text>Loading analytics...</Text>
-        </Container>
+      <Container>
+        <Text>🔄 Loading analytics...</Text>
       </Container>
     );
   }
 
   return (
-    <Container >
-      <Container >
+    <Container>
+      <Stack direction="vertical" spacing="md">
         <H1>Analytics Dashboard</H1>
         <Text>User interactions, errors, and performance metrics</Text>
-        <Container >
-          <Button onClick={fetchAnalytics} variant="outline" size="sm">
-            <Span>🔄</Span>
-            Refresh
-          </Button>
-        </Container>
-      </Container>
+        <Button onClick={fetchAnalytics} variant="outline" size="sm">
+          <Span>🔄</Span>
+          Refresh
+        </Button>
+      </Stack>
       
       {lastUpdated && (
         <Container>
@@ -94,82 +89,48 @@ export default function AnalyticsPage() {
         </Container>
       )}
 
-      <Container >
+      <Container>
         {!analytics ? (
-          <Container >
-            <Container >
-              <Container >
-                <Container >⚠️</Container>
-                <H3>No Analytics Data</H3>
-                <Text>Analytics data will appear here once users start interacting with the app.</Text>
-              </Container>
-            </Container>
-          </Container>
+          <Stack direction="vertical" spacing="md" align="center">
+            <Span>⚠️</Span>
+            <H3>No Analytics Data</H3>
+            <Text>Analytics data will appear here once users start interacting with the app.</Text>
+          </Stack>
         ) : (
           <Container>
             {/* Overview Cards */}
-            <Container>
-              <Container >
-                <Container >
-                  <H3 >Total Interactions</H3>
-                  <Span >📊</Span>
-                </Container>
-                <Container >
-                  <Container >{analytics.totalInteractions.toLocaleString()}</Container>
-                  <Text >
-                    All user interactions tracked
-                  </Text>
-                </Container>
-              </Container>
+            <Stack direction="horizontal" spacing="md">
+              <StatCard
+                title="Total Interactions"
+                value={analytics.totalInteractions.toLocaleString()}
+                description="All user interactions tracked"
+                icon="📊"
+              />
 
-              <Container >
-                <Container >
-                  <H3 >Total Errors</H3>
-                  <Span>⚠️</Span>
-                </Container>
-                <Container >
-                  <Container>
-                    {analytics.totalErrors.toLocaleString()}
-                  </Container>
-                  <Text >
-                    Errors detected and tracked
-                  </Text>
-                </Container>
-              </Container>
+              <StatCard
+                title="Total Errors"
+                value={analytics.totalErrors.toLocaleString()}
+                description="Errors detected and tracked"
+                icon="⚠️"
+              />
 
-              <Container >
-                <Container >
-                  <H3 >Error Rate</H3>
-                  <Span >📉</Span>
-                </Container>
-                <Container >
-                  <Container >
-                    {analytics.totalInteractions > 0 
-                      ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
-                      : '0'
-                    }%
-                  </Container>
-                  <Text >
-                    Percentage of interactions with errors
-                  </Text>
-                </Container>
-              </Container>
+              <StatCard
+                title="Error Rate"
+                value={`${analytics.totalInteractions > 0 
+                  ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
+                  : '0'
+                }%`}
+                description="Percentage of interactions with errors"
+                icon="📉"
+              />
 
-              <Container >
-                <Container >
-                  <H3 >Active Elements</H3>
-                  <Span >🖱️</Span>
-                </Container>
-                <Container >
-                  <Container >
-                    {Object.keys(analytics.elementTypes).length}
-                  </Container>
-                  <Text >
-                    Different element types tracked
-                  </Text>
-                </Container>
-              </Container>
-            </Container>
+              <StatCard
+                title="Active Elements"
+                value={Object.keys(analytics.elementTypes).length.toString()}
+                description="Different element types tracked"
+                icon="🖱️"
+              />
+            </Stack>
 
             {/* Detailed Metrics */}
             <Container>
