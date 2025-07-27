@@ -123,8 +123,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             onFocus={handleInputFocus}
             placeholder={placeholder}
             className={cn(
-              'w-full border border-border-primary rounded-md px-3 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 bg-bg-primary text-text-primary placeholder:text-text-muted',
-              error && 'border-error focus:ring-error',
+              'w-full border rounded-md px-3 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 placeholder:text-gray-500',
+              error && 'border-red-500 focus:ring-red-500',
               isLoading && 'pl-10'
             )}
           />

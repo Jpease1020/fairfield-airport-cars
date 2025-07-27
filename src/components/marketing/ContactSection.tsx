@@ -125,7 +125,7 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                     'flex items-center p-4 rounded-lg border transition-colors',
                     getContactButtonVariant(method.type) === 'default' 
                       ? 'bg-brand-primary text-text-inverse border-brand-primary hover:bg-brand-primary-hover' 
-                      : 'bg-bg-primary text-text-primary border-border-primary hover:bg-bg-secondary'
+                      : 'bg-white border-gray-300 hover:bg-gray-50'
                   )}
                 >
                   <div className={cn(
