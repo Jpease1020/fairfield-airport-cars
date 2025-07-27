@@ -20,12 +20,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <Container maxWidth={maxWidth} spacing={spacing}>
       <Stack spacing="md">
-        <Stack spacing="sm">
-          <H1>{title}</H1>
-          {subtitle && (
-            <Text>{subtitle}</Text>
-          )}
-        </Stack>
+        <H1>{title}</H1>
+        {subtitle && (
+          <Text>{subtitle}</Text>
+        )}
         {children && (
           <div>
             {children}

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
 import { Container, H3, Text, Grid } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
@@ -14,36 +13,33 @@ interface FormSectionProps {
 }
 
 const FormSection: React.FC<FormSectionProps> = ({ 
-    title, 
-    description, 
-    columns = 1, 
-    children, 
-    spacing = 'lg', 
-    variant = 'default' 
-  }) => {
-    return (
-      <Container
-        className={className}
-        {...props}
-      >
-        <Stack spacing="md">
-          <Container>
-            <H3>{title}</H3>
-            {description && (
-              <Text>{description}</Text>
-            )}
-          </Container>
-          <Grid 
-            columns={(columns as 1 | 2 | 3 | 4 | 6) || 1} 
-            spacing="md"
-          >
-            {children}
-          </Grid>
+  title, 
+  description, 
+  columns = 1, 
+  children, 
+  spacing = 'lg', 
+  variant = 'default' 
+}) => {
+  return (
+    <Container spacing={spacing} variant={variant}>
+      <Stack spacing="md">
+        <Stack spacing="sm">
+          <H3>{title}</H3>
+          {description && (
+            <Text>{description}</Text>
+          )}
         </Stack>
-      </Container>
-    );
-  }
-);
+        <Grid 
+          columns={(columns as 1 | 2 | 3 | 4 | 6) || 1} 
+          spacing="md"
+        >
+          {children}
+        </Grid>
+      </Stack>
+    </Container>
+  );
+};
+
 FormSection.displayName = 'FormSection';
 
 export { FormSection }; 
