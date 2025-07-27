@@ -10,7 +10,7 @@ console.log('====================================\n');
 // Get current violation stats
 function getCurrentViolations() {
   try {
-    const result = execSync('npm run check:components', { encoding: 'utf8', stdio: 'pipe' });
+    const result = execSync('npm run check:components 2>&1', { encoding: 'utf8' });
     const lines = result.split('\n');
     
     let totalErrors = 0;
@@ -20,25 +20,71 @@ function getCurrentViolations() {
     let fileViolations = {};
     
     for (const line of lines) {
-      if (line.includes('📄 ') && line.includes('.tsx')) {
-        currentFile = line.split('📄 ')[1];
-        if (!fileViolations[currentFile]) {
-          fileViolations[currentFile] = { errors: 0, warnings: 0 };
-          filesWithIssues++;
+      if (line.includes('📄 ')) {
+        const fileMatch = line.match(/📄 (.+\.tsx?)/);
+        if (fileMatch) {
+          currentFile = fileMatch[1];
+          if (!fileViolations[currentFile]) {
+            fileViolations[currentFile] = { errors: 0, warnings: 0 };
+            filesWithIssues++;
+          }
         }
-      } else if (line.includes('❌')) {
+      } else if (line.includes('❌ FORBIDDEN') || line.includes('❌ WRONG')) {
         totalErrors++;
         if (currentFile) fileViolations[currentFile].errors++;
-      } else if (line.includes('⚠️')) {
+      } else if (line.includes('⚠️  WARNING')) {
         totalWarnings++;
         if (currentFile) fileViolations[currentFile].warnings++;
+      } else if (line.includes('🚨 Total violations:')) {
+        const countMatch = line.match(/🚨 Total violations: (\d+)/);
+        if (countMatch) {
+          totalErrors = parseInt(countMatch[1]);
+        }
       }
     }
     
     return { totalErrors, totalWarnings, filesWithIssues, fileViolations };
   } catch (error) {
-    console.log('⚠️  Could not get violation stats - component checker may have failed');
-    return { totalErrors: 'N/A', totalWarnings: 'N/A', filesWithIssues: 'N/A', fileViolations: {} };
+    // Component checker returns exit code 1 when violations found, this is expected
+    try {
+      const result = execSync('npm run check:components 2>&1 || true', { encoding: 'utf8' });
+      const lines = result.split('\n');
+      
+      let totalErrors = 0;
+      let totalWarnings = 0;
+      let filesWithIssues = 0;
+      let currentFile = '';
+      let fileViolations = {};
+      
+      for (const line of lines) {
+        if (line.includes('📄 ')) {
+          const fileMatch = line.match(/📄 (.+\.tsx?)/);
+          if (fileMatch) {
+            currentFile = fileMatch[1];
+            if (!fileViolations[currentFile]) {
+              fileViolations[currentFile] = { errors: 0, warnings: 0 };
+              filesWithIssues++;
+            }
+          }
+        } else if (line.includes('❌ FORBIDDEN') || line.includes('❌ WRONG')) {
+          totalErrors++;
+          if (currentFile) fileViolations[currentFile].errors++;
+        } else if (line.includes('⚠️  WARNING')) {
+          totalWarnings++;
+          if (currentFile) fileViolations[currentFile].warnings++;
+        } else if (line.includes('🚨 Total violations:')) {
+          const countMatch = line.match(/🚨 Total violations: (\d+)/);
+          if (countMatch) {
+            totalErrors = parseInt(countMatch[1]);
+          }
+        }
+      }
+      
+      return { totalErrors, totalWarnings, filesWithIssues, fileViolations };
+    } catch (finalError) {
+      console.log('⚠️  Could not get violation stats - component checker may have failed');
+      return { totalErrors: 'N/A', totalWarnings: 'N/A', filesWithIssues: 'N/A', fileViolations: {} };
+    }
   }
 }
 
