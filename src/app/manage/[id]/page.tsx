@@ -351,40 +351,40 @@ function ManageBookingPageContent() {
           title="📋 Booking Information"
           description="Your booking details and current status"
         >
-          <Container>
-            <Container>
+          <Stack direction="vertical" spacing="md">
+            <Stack direction="horizontal" justify="between">
               <Span>Booking ID:</Span>
               <Span>{booking.id}</Span>
-            </Container>
-            <Container>
+            </Stack>
+            <Stack direction="horizontal" justify="between">
               <Span>Status:</Span>
               <Span>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </Span>
-            </Container>
-            <Container>
+            </Stack>
+            <Stack direction="horizontal" justify="between">
               <Span>Passenger:</Span>
               <Span>{booking.name}</Span>
-            </Container>
-            <Container>
+            </Stack>
+            <Stack direction="horizontal" justify="between">
               <Span>Route:</Span>
               <Span>{booking.pickupLocation} → {booking.dropoffLocation}</Span>
-            </Container>
-            <Container>
+            </Stack>
+            <Stack direction="horizontal" justify="between">
               <Span>Pickup Time:</Span>
               <Span>{new Date(booking.pickupDateTime).toLocaleString()}</Span>
-            </Container>
-            <Container>
+            </Stack>
+            <Stack direction="horizontal" justify="between">
               <Span>Total Fare:</Span>
               <Span>${booking.fare?.toFixed(2)}</Span>
-            </Container>
+            </Stack>
             {booking.balanceDue > 0 && (
-              <Container>
+              <Stack direction="horizontal" justify="between">
                 <Span>Balance Due:</Span>
                 <Span>${booking.balanceDue.toFixed(2)}</Span>
-              </Container>
+              </Stack>
             )}
-          </Container>
+          </Stack>
         </InfoCard>
       </GridSection>
 
