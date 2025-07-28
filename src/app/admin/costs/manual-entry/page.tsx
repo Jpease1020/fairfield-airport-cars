@@ -12,7 +12,6 @@ import {
   GridSection,
   HelpCard,
   Container,
-  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { realCostTrackingService } from '@/lib/business/real-cost-tracking';
@@ -147,7 +146,6 @@ function ManualCostEntryPageContent() {
     <AdminPageWrapper
       title="Manual Cost Entry"
       subtitle="Add new operational costs to track your business expenses"
-      actions={headerActions}
       loading={false}
       error={error}
       errorTitle="Cost Entry Error"

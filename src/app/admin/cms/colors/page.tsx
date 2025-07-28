@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Text, Span, H2 } from '@/components/ui';
+import { Container, Span } from '@/components/ui';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection } from '@/components/ui';
 import { SettingSection } from '@/components/ui/SettingSection';

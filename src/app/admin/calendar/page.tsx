@@ -9,8 +9,7 @@ import {
   InfoCard, 
   GridSection,
   Container,
-  H3,
-  Text,
+  H2,
   Span,
   Stack,
   EditableText,
@@ -86,7 +85,6 @@ const CalendarPage = () => {
     <AdminPageWrapper
       title="Ride Calendar"
       subtitle="View all bookings in calendar format"
-      actions={headerActions}
       loading={loading}
       error={error}
       loadingMessage="Loading calendar data..."

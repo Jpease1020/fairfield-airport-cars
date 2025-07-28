@@ -4,8 +4,8 @@ import { CardBody, CardHeader, CardTitle } from '@/components/ui/card';
 import { Text, Span } from '@/components/ui';
 
 interface FormSectionProps {
-  title: string;
-  description?: string;
+  title: string | React.ReactNode;
+  description?: string | React.ReactNode;
   icon?: string;
   children: React.ReactNode;
 }

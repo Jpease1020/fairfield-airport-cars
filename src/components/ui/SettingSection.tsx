@@ -4,8 +4,8 @@ import { Container, Text, H3, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 export interface SettingSectionProps {
-  title: string;
-  description?: string;
+  title: string | React.ReactNode;
+  description?: string | React.ReactNode;
   icon?: React.ReactNode;
   children: React.ReactNode;
   actions?: React.ReactNode;

@@ -22,9 +22,9 @@ interface UnifiedLayoutProps {
   children: ReactNode;
   
   // Page Configuration
-  title?: string;
-  subtitle?: string;
-  description?: string;
+  title?: string | ReactNode;
+  subtitle?: string | ReactNode;
+  description?: string | ReactNode;
   
   // Layout Type (determines structure)
   layoutType?: 'standard' | 'admin' | 'minimal' | 'marketing' | 'content' | 'status';

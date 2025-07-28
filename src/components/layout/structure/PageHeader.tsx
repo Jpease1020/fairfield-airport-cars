@@ -1,11 +1,11 @@
 import React from 'react';
-import { Container, H1, Text } from '@/components/ui';
+import { Container } from '@/components/ui';
 import { EditableText, EditableHeading } from '@/components/ui';
 
 interface PageHeaderProps {
   children?: React.ReactNode;
-  title?: string;
-  subtitle?: string;
+  title?: string | React.ReactNode;
+  subtitle?: string | React.ReactNode;
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   align?: 'left' | 'center' | 'right';
@@ -21,14 +21,22 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <Container as="header" padding={padding} margin={margin}>
       {title && (
-        <EditableHeading field="page_header.title" defaultValue={title}>
-          {title}
-        </EditableHeading>
+        typeof title === 'string' ? (
+          <EditableHeading field="page_header.title" defaultValue={title}>
+            {title}
+          </EditableHeading>
+        ) : (
+          title
+        )
       )}
       {subtitle && (
-        <EditableText field="page_header.subtitle" defaultValue={subtitle}>
-          {subtitle}
-        </EditableText>
+        typeof subtitle === 'string' ? (
+          <EditableText field="page_header.subtitle" defaultValue={subtitle}>
+            {subtitle}
+          </EditableText>
+        ) : (
+          subtitle
+        )
       )}
       {children}
     </Container>

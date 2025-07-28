@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Container, H3, Text, Span, Link, EditableText } from '@/components/ui';
 
 interface FeatureCardProps {
-  title: string;
-  description: string;
+  title: string | React.ReactNode;
+  description: string | React.ReactNode;
   icon?: React.ReactNode;
   variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated';
   href?: string;
@@ -28,15 +28,23 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       )}
       
       <H3>
-        <EditableText field="featurecard.title" defaultValue={title}>
-          {title}
-        </EditableText>
+        {typeof title === 'string' ? (
+          <EditableText field="featurecard.title" defaultValue={title}>
+            {title}
+          </EditableText>
+        ) : (
+          title
+        )}
       </H3>
       
       <Text>
-        <EditableText field="featurecard.description" defaultValue={description}>
-          {description}
-        </EditableText>
+        {typeof description === 'string' ? (
+          <EditableText field="featurecard.description" defaultValue={description}>
+            {description}
+          </EditableText>
+        ) : (
+          description
+        )}
       </Text>
       
       {href && (

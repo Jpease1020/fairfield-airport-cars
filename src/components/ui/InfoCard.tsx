@@ -2,9 +2,9 @@ import React from 'react';
 import { Container, H3, Text, Span, EditableText } from '@/components/ui';
 
 interface InfoCardProps {
-  title: string;
-  description?: string;
-  subtitle?: string; // Alias for description
+  title: string | React.ReactNode;
+  description?: string | React.ReactNode;
+  subtitle?: string | React.ReactNode; // Alias for description
   icon?: string;     // Icon support
   children: React.ReactNode;
   theme?: 'light' | 'dark';
@@ -30,15 +30,23 @@ export const InfoCard: React.FC<InfoCardProps> = ({
               {icon}
             </Span>
           )}
-          <EditableText field="infocard.title" defaultValue={title}>
-            {title}
-          </EditableText>
+          {typeof title === 'string' ? (
+            <EditableText field="infocard.title" defaultValue={title}>
+              {title}
+            </EditableText>
+          ) : (
+            title
+          )}
         </H3>
         {cardDescription && (
           <Text>
-            <EditableText field="infocard.description" defaultValue={cardDescription}>
-              {cardDescription}
-            </EditableText>
+            {typeof cardDescription === 'string' ? (
+              <EditableText field="infocard.description" defaultValue={cardDescription}>
+                {cardDescription}
+              </EditableText>
+            ) : (
+              cardDescription
+            )}
           </Text>
         )}
       </Container>

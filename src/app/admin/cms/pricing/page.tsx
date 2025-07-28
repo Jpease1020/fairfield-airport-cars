@@ -14,7 +14,6 @@ import {
   Input,
   Label,
   H4,
-  Text,
   Container,
   Span,
   EditableText
@@ -183,7 +182,6 @@ function PricingSettingsContent() {
     <AdminPageWrapper
       title="Pricing Settings"
       subtitle="Manage fare structure, zones, and cancellation policies"
-      actions={headerActions}
     >
       {/* Success Message */}
       {saved && (

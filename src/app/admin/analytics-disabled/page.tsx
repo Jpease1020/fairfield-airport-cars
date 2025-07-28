@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AdminPageWrapper, GridSection, StatCard, InfoCard, Container, H1, H2, H3, Text, Span, EditableText, EditableHeading } from '@/components/ui';
+import { GridSection, StatCard, InfoCard, Container, H2, H3, Text, Span, EditableText, EditableHeading } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Button } from '@/components/ui/button';
 

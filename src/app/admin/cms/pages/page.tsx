@@ -11,7 +11,6 @@ import {
   GridSection,
   InfoCard,
   Container,
-  Text,
   EditableText
 } from "@/components/ui";
 import { 
@@ -180,7 +179,6 @@ function PagesCMSContent() {
     <AdminPageWrapper
       title="Manage Page Content"
       subtitle="Edit website content and page configurations"
-      actions={headerActions}
       loading={false}
       error={error}
       errorTitle="CMS Load Error"

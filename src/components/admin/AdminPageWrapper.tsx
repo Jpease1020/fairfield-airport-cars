@@ -6,8 +6,8 @@ import { Container, Text, H3, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface AdminPageWrapperProps {
-  title: string;
-  subtitle?: string;
+  title: string | React.ReactNode;
+  subtitle?: string | React.ReactNode;
   loading?: boolean;
   error?: string | null;
   loadingMessage?: string;

@@ -78,9 +78,9 @@ function HelpPageContent() {
     <EditModeProvider>
       <UnifiedLayout 
         layoutType="content"
-        title="Help & Support"
-        subtitle="Find answers to common questions and get assistance"
-        description="Get help with booking, payments, scheduling, and more. Contact our support team for immediate assistance."
+        title={<EditableText field="help.layout.title" defaultValue="Help & Support">Help & Support</EditableText>}
+        subtitle={<EditableText field="help.layout.subtitle" defaultValue="Find answers to common questions and get assistance">Find answers to common questions and get assistance</EditableText>}
+        description={<EditableText field="help.layout.description" defaultValue="Get help with booking, payments, scheduling, and more. Contact our support team for immediate assistance.">Get help with booking, payments, scheduling, and more. Contact our support team for immediate assistance.</EditableText>}
       >
       {/* Help Sections */}
       <GridSection variant="content" columns={1}>

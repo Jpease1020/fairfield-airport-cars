@@ -5,12 +5,12 @@ import { EditableText } from '@/components/ui';
 
 // StatCard Component - BULLETPROOF TYPE SAFETY!
 interface StatCardProps {
-  title: string;
+  title: string | React.ReactNode;
   icon: string;
   statNumber: string | number;
   statChange?: string;
   changeType?: 'positive' | 'negative' | 'neutral';
-  description?: string;
+  description?: string | React.ReactNode;
   href?: string;
   variant?: 'default' | 'highlighted' | 'minimal';
   size?: 'sm' | 'md' | 'lg';
@@ -28,9 +28,13 @@ export const StatCard: React.FC<StatCardProps> = ({
     <>
       <Stack direction="horizontal" justify="between" align="center">
         <H3>
-          <EditableText field="statcard.title" defaultValue={title}>
-            {title}
-          </EditableText>
+          {typeof title === 'string' ? (
+            <EditableText field="statcard.title" defaultValue={title}>
+              {title}
+            </EditableText>
+          ) : (
+            title
+          )}
         </H3>
         <Span>{icon}</Span>
       </Stack>
@@ -41,9 +45,13 @@ export const StatCard: React.FC<StatCardProps> = ({
         )}
         {description && (
           <Text>
-            <EditableText field="statcard.description" defaultValue={description}>
-              {description}
-            </EditableText>
+            {typeof description === 'string' ? (
+              <EditableText field="statcard.description" defaultValue={description}>
+                {description}
+              </EditableText>
+            ) : (
+              description
+            )}
           </Text>
         )}
       </Stack>

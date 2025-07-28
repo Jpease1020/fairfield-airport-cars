@@ -6,8 +6,8 @@ import { EditableText } from '@/components/ui';
 // HelpCard Component - BULLETPROOF TYPE SAFETY!
 export interface HelpCardProps {
   icon: string;
-  title: string;
-  description: string;
+  title: string | React.ReactNode;
+  description: string | React.ReactNode;
   variant?: 'default' | 'highlighted' | 'compact';
   size?: 'sm' | 'md' | 'lg';
 }
@@ -25,13 +25,21 @@ export const HelpCard: React.FC<HelpCardProps> = ({
             <Span>
               {icon}
             </Span>
-            <EditableText field="helpcard.title" defaultValue={title}>
-              {title}
-            </EditableText>
+            {typeof title === 'string' ? (
+              <EditableText field="helpcard.title" defaultValue={title}>
+                {title}
+              </EditableText>
+            ) : (
+              title
+            )}
           </Stack>
-          <EditableText field="helpcard.description" defaultValue={description}>
-            {description}
-          </EditableText>
+          {typeof description === 'string' ? (
+            <EditableText field="helpcard.description" defaultValue={description}>
+              {description}
+            </EditableText>
+          ) : (
+            description
+          )}
         </Stack>
       </CardBody>
     </Card>

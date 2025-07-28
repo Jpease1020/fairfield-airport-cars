@@ -6,10 +6,10 @@ import { EditableText } from '@/components/ui';
 
 interface ActionCardProps {
   icon: string;
-  label: string;
+  label: string | React.ReactNode;
   href?: string;
   onClick?: () => void;
-  description?: string;
+  description?: string | React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
 }
@@ -28,13 +28,21 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       <Container>
         <Span>{icon}</Span>
       </Container>
-      <EditableText field="actioncard.label" defaultValue={label}>
-        {label}
-      </EditableText>
-      {description && (
-        <EditableText field="actioncard.description" defaultValue={description}>
-          {description}
+      {typeof label === 'string' ? (
+        <EditableText field="actioncard.label" defaultValue={label}>
+          {label}
         </EditableText>
+      ) : (
+        label
+      )}
+      {description && (
+        typeof description === 'string' ? (
+          <EditableText field="actioncard.description" defaultValue={description}>
+            {description}
+          </EditableText>
+        ) : (
+          description
+        )
       )}
     </Stack>
   );

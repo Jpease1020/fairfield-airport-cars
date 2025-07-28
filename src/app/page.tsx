@@ -62,9 +62,9 @@ function HomePageContent() {
   return (
     <UnifiedLayout 
       layoutType="marketing"
-      title="🚗 Premium Airport Transportation"
-      subtitle="Reliable, comfortable rides to and from Fairfield Airport with professional drivers"
-      description="Experience luxury, reliability, and professional service for all your airport transportation needs."
+      title={<EditableText field="homepage.layout.title" defaultValue="🚗 Premium Airport Transportation">🚗 Premium Airport Transportation</EditableText>}
+      subtitle={<EditableText field="homepage.layout.subtitle" defaultValue="Reliable, comfortable rides to and from Fairfield Airport with professional drivers">Reliable, comfortable rides to and from Fairfield Airport with professional drivers</EditableText>}
+      description={<EditableText field="homepage.layout.description" defaultValue="Experience luxury, reliability, and professional service for all your airport transportation needs.">Experience luxury, reliability, and professional service for all your airport transportation needs.</EditableText>}
     >
       {/* Hero Section */}
       <GridSection variant="content" columns={1}>

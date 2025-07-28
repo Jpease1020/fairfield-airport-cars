@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
@@ -13,8 +13,6 @@ import {
   useToast,
   GridSection,
   Container,
-  Text,
-  H3,
   Span,
   EditableText
 } from '@/components/ui';
@@ -171,7 +169,6 @@ function BusinessPageContent() {
     <AdminPageWrapper
       title="Business Settings"
       subtitle="Configure your company information and branding"
-      actions={headerActions}
       loading={saving}
       loadingMessage="Saving business settings..."
     >

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, H1, Text, Button, Link } from '@/components/ui';
+import { Container, H1, Text, Button, Link, EditableText } from '@/components/ui';
 import { Section, Stack } from '@/components/ui/containers';
 
 interface HeroSectionProps {
@@ -29,21 +29,41 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       padding="xl"
     >
       <Container maxWidth="xl">
-        <H1>{title}</H1>
-        {subtitle && <Text>{subtitle}</Text>}
-        {description && <Text>{description}</Text>}
+        <H1>
+          <EditableText field="hero.title" defaultValue={title}>
+            {title}
+          </EditableText>
+        </H1>
+        {subtitle && (
+          <Text>
+            <EditableText field="hero.subtitle" defaultValue={subtitle}>
+              {subtitle}
+            </EditableText>
+          </Text>
+        )}
+        {description && (
+          <Text>
+            <EditableText field="hero.description" defaultValue={description}>
+              {description}
+            </EditableText>
+          </Text>
+        )}
         
         {(primaryAction || secondaryAction) && (
           <Stack direction="horizontal" spacing="md">
             {primaryAction && (
               <Button variant="primary" size="lg">
-                {primaryAction.label}
+                <EditableText field="hero.primaryAction.label" defaultValue={primaryAction.label}>
+                  {primaryAction.label}
+                </EditableText>
               </Button>
             )}
             {secondaryAction && (
               <Link href={secondaryAction.href}>
                 <Button variant="outline" size="lg">
-                  {secondaryAction.label}
+                  <EditableText field="hero.secondaryAction.label" defaultValue={secondaryAction.label}>
+                    {secondaryAction.label}
+                  </EditableText>
                 </Button>
               </Link>
             )}
