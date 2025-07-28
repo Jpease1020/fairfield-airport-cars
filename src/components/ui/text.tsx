@@ -187,7 +187,7 @@ const StyledText = styled.p.withConfig({
       case 'secondary':
         return `color: ${colors.text.secondary};`;
       case 'muted':
-        return `color: ${colors.text.muted};`;
+        return `color: ${colors.text.secondary};`;
       case 'success':
         return `color: ${colors.success[600]};`;
       case 'warning':
@@ -195,7 +195,7 @@ const StyledText = styled.p.withConfig({
       case 'error':
         return `color: ${colors.danger[600]};`;
       case 'info':
-        return `color: ${colors.info[600]};`;
+        return `color: ${colors.primary[600]};`;
       default:
         return `color: ${colors.text.primary};`;
     }
@@ -287,7 +287,7 @@ const StyledSpan = styled.span.withConfig({
       case 'secondary':
         return `color: ${colors.text.secondary};`;
       case 'muted':
-        return `color: ${colors.text.muted};`;
+        return `color: ${colors.text.secondary};`;
       case 'success':
         return `color: ${colors.success[600]};`;
       case 'warning':
@@ -295,7 +295,7 @@ const StyledSpan = styled.span.withConfig({
       case 'error':
         return `color: ${colors.danger[600]};`;
       case 'info':
-        return `color: ${colors.info[600]};`;
+        return `color: ${colors.primary[600]};`;
       default:
         return `color: ${colors.text.primary};`;
     }
@@ -355,10 +355,10 @@ const StyledLink = styled.a.withConfig({
         `;
       case 'muted':
         return `
-          color: ${colors.text.muted};
+          color: ${colors.text.secondary};
           
           &:hover {
-            color: ${colors.text.secondary};
+            color: ${colors.text.primary};
             text-decoration: underline;
           }
         `;

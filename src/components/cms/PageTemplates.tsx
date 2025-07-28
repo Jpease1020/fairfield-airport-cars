@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditableText, EditableHeading, Container, Text, H2, H3, Span } from '@/components/ui';
+import { Container, Text, H2, H3, Span } from '@/components/ui';
 import { Card, Stack } from '@/components/ui/layout/containers';
 import { CardBody } from '@/components/ui/card';
 import { CMSStatusPage } from '@/components/layout/cms/CMSStatusPage';
@@ -38,12 +38,12 @@ export const createContentPageTemplate = (
       <Container>
         <Stack spacing="xl">
           <Stack>
-            <H2>{pageContent?.title || "Page Title"}</H2>
-            {pageContent?.subtitle && (
-              <Text variant="lead">{pageContent.subtitle}</Text>
+            <H2>{(pageContent as any)?.title || (pageContent as any)?.hero?.title || "Page Title"}</H2>
+            {(pageContent as any)?.subtitle && (
+              <Text variant="lead">{(pageContent as any).subtitle}</Text>
             )}
-            {pageContent?.description && (
-              <Text variant="muted">{pageContent.description}</Text>
+            {(pageContent as any)?.description && (
+              <Text variant="muted">{(pageContent as any).description}</Text>
             )}
           </Stack>
           
@@ -90,12 +90,12 @@ export const createConversionPageTemplate = (
       <Container>
         <Stack spacing="xl">
           <Stack>
-            <H2>{pageContent?.title || "Form Title"}</H2>
-            {pageContent?.subtitle && (
-              <Text variant="lead">{pageContent.subtitle}</Text>
+            <H2>{(pageContent as any)?.title || (pageContent as any)?.hero?.title || "Form Title"}</H2>
+            {(pageContent as any)?.subtitle && (
+              <Text variant="lead">{(pageContent as any).subtitle}</Text>
             )}
-            {pageContent?.description && (
-              <Text variant="muted">{pageContent.description}</Text>
+            {(pageContent as any)?.description && (
+              <Text variant="muted">{(pageContent as any).description}</Text>
             )}
           </Stack>
           
@@ -134,7 +134,6 @@ export const createStatusPageTemplate = (
 ) => {
   return function StatusPageTemplate() {
     const { config: cmsConfig } = useCMS();
-    const { editMode, handleFieldChange } = useEditMode();
     
     const pageContent = cmsConfig?.pages?.[pageType];
 
@@ -154,16 +153,15 @@ export const createStatusPageTemplate = (
         cmsConfig={cmsConfig} 
         pageType={pageType}
         status={status}
-        title={pageContent?.title || "Status Title"}
-        subtitle={pageContent?.subtitle || "Status Subtitle"}
-        description={pageContent?.description || "Status description"}
+        title={(pageContent as any)?.title || (pageContent as any)?.hero?.title || "Status Title"}
+        subtitle={(pageContent as any)?.subtitle || "Status Subtitle"}
+        description={(pageContent as any)?.description || "Status description"}
         showStatusIcon={true}
         showActionButtons={!!actions}
         primaryAction={actions?.primary}
         secondaryAction={actions?.secondary}
         containerMaxWidth="lg"
-        isEditable={editMode}
-        onFieldChange={(field, value) => handleFieldChange(pageType, field, value)}
+
       >
         {content}
       </CMSStatusPage>
@@ -210,7 +208,7 @@ export const createStatsSection = (stats: Array<{
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
-          <Card key={index} variant="outlined" size="lg">
+          <Card key={index} variant="outlined">
             <CardBody>
               <Container>
                 <IconComponent />
@@ -240,7 +238,7 @@ export const createContactSection = (contacts: Array<{
       {contacts.map((contact, index) => {
         const IconComponent = contact.icon;
         return (
-          <Card key={index} variant="outlined" size="lg">
+          <Card key={index} variant="outlined">
             <CardBody>
               <Container>
                 <IconComponent />
@@ -268,7 +266,7 @@ export const createFAQSection = (faqs: Array<{
   return (
     <Container>
       {faqs.map((faq, index) => (
-        <Card key={index} variant="outlined" size="lg">
+        <Card key={index} variant="outlined">
           <CardBody>
             <H3>{faq.question}</H3>
             <Text>{faq.answer}</Text>
@@ -292,7 +290,7 @@ export const createFeaturesSection = (features: Array<{
       {features.map((feature, index) => {
         const IconComponent = feature.icon;
         return (
-          <Card key={index} variant="outlined" size="lg">
+          <Card key={index} variant="outlined">
             <CardBody>
               <Container>
                 <IconComponent />

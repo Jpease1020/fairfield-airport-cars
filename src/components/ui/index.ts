@@ -75,6 +75,8 @@ export { Input } from './input';
 export { Textarea } from './textarea';
 export { ActionItem } from './ActionItem';
 export type { ActionItemProps } from './ActionItem';
+export { GridItem } from './Grid';
+export type { GridItemProps } from './Grid';
 
 
 // Form Components

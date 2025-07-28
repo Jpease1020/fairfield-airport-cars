@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { UnifiedLayout } from '@/components/layout';
-import { EditModeProvider } from '@/components/admin/EditModeProvider';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -12,10 +11,7 @@ import {
   EditableText,
   EditableHeading,
   Container,
-  Card,
-  CardBody,
   Span,
-  H3,
   Button
 } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';

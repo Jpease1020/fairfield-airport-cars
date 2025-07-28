@@ -133,7 +133,7 @@ function AdminHelpPage() {
     },
     { 
       label: 'Documentation', 
-      href: '/docs', 
+      onClick: () => window.location.href = '/docs', 
       variant: 'outline' as const 
     },
     { 
@@ -219,40 +219,41 @@ function AdminHelpPage() {
       </GridSection>
 
       {/* Quick Navigation */}
-      <ActionGrid
-        title="Quick Navigation"
-        description="Access common admin functions directly"
-        icon="��"
-      >
-        <Button
-          onClick={() => window.location.href = '/admin/bookings'}
-          variant="outline"
-          icon="📖"
+      <GridSection variant="actions" columns={1}>
+        <InfoCard
+          title="Quick Navigation"
+          description="Access common admin functions directly"
         >
-          Manage Bookings
-        </Button>
-        <Button
-          onClick={() => window.location.href = '/admin/cms'}
-          variant="outline"
-          icon="⚙️"
-        >
-          CMS Settings
-        </Button>
-        <Button
-          onClick={() => window.location.href = '/admin/drivers'}
-          variant="outline"
-          icon="🚗"
-        >
-          Driver Management
-        </Button>
-        <Button
-          onClick={() => window.location.href = '/admin/feedback'}
-          variant="outline"
-          icon="⭐"
-        >
-          Customer Feedback
-        </Button>
-      </ActionGrid>
+          <ActionGrid
+            actions={[
+              {
+                id: 1,
+                icon: "📖",
+                label: "Manage Bookings",
+                onClick: () => window.location.href = '/admin/bookings'
+              },
+              {
+                id: 2,
+                icon: "⚙️",
+                label: "CMS Settings",
+                onClick: () => window.location.href = '/admin/cms'
+              },
+              {
+                id: 3,
+                icon: "🚗",
+                label: "Driver Management",
+                onClick: () => window.location.href = '/admin/drivers'
+              },
+              {
+                id: 4,
+                icon: "⭐",
+                label: "Customer Feedback",
+                onClick: () => window.location.href = '/admin/feedback'
+              }
+            ]}
+          />
+        </InfoCard>
+      </GridSection>
     </AdminPageWrapper>
   );
 }

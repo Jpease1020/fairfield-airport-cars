@@ -42,8 +42,6 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
   
   return (
     <CMSLayout 
-      cmsConfig={cmsConfig} 
-      pageType={pageType} 
       variant={variant === 'focused' ? 'conversion' : 'conversion'}
     >
       {/* Progress Indicator */}
@@ -70,7 +68,7 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
       <Section padding="xl">
         <Container maxWidth={containerMaxWidth}>
           {/* Header */}
-          <PageHeader align="center" padding="lg" margin="none">
+          <PageHeader padding="lg" margin="none">
             {pageTitle && (
               <H1>
                 {pageTitle}

@@ -32,15 +32,13 @@ export const CMSMarketingPage: React.FC<CMSMarketingPageProps> = ({
   
   return (
     <CMSLayout 
-      cmsConfig={cmsConfig} 
-      pageType={pageType} 
       variant="marketing"
     >
       {/* Hero Section */}
       {showHero && hasHero && homeContent && (
         <Section variant={heroVariant} padding="xl">
           <Container maxWidth={containerMaxWidth}>
-            <PageHeader align={headerAlign} padding="none" margin="none">
+            <PageHeader padding="none" margin="none">
               {homeContent.hero?.title && (
                 <H1>
                   {homeContent.hero.title}

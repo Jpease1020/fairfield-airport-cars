@@ -30,7 +30,7 @@ export const StandardLayout: React.FC<StandardLayoutProps> = ({
       
       <Container variant="main">
         {showHeader && (title || subtitle) && (
-          <StandardHeader title={title} subtitle={subtitle} />
+          <StandardHeader title={title || ''} subtitle={subtitle} />
         )}
         
         <Container variant="content">

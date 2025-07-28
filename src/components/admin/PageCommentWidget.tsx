@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select } from '@/components/ui/select';
 import { Badge } from '@/components/ui';
 import { Container, Text, Span, EditableText } from '@/components/ui';
 import { feedbackService, type PageComment } from '@/lib/services/feedback-service';
@@ -219,63 +219,18 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   </EditableText>
                 </Text>
               </Text>
-              <Select value={category} onValueChange={(value: PageComment['category']) => setCategory(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">
-                    <MessageSquare />
-                    <Text>
-                      <Text >
-                        <EditableText field="pageCommentWidget.categoryGeneral" defaultValue="General">
-                          General
-                        </EditableText>
-                      </Text>
-                    </Text>
-                  </SelectItem>
-                  <SelectItem value="bug">
-                    <AlertCircle />
-                    <Text>
-                      <Text >
-                        <EditableText field="pageCommentWidget.categoryBug" defaultValue="Bug">
-                          Bug
-                        </EditableText>
-                      </Text>
-                    </Text>
-                  </SelectItem>
-                  <SelectItem value="design">
-                    <Star />
-                    <Text>
-                      <Text >
-                        <EditableText field="pageCommentWidget.categoryDesign" defaultValue="Design">
-                          Design
-                        </EditableText>
-                      </Text>
-                    </Text>
-                  </SelectItem>
-                  <SelectItem value="copy">
-                    <MessageSquare />
-                    <Text>
-                      <Text >
-                        <EditableText field="pageCommentWidget.categoryCopy" defaultValue="Copy/Text">
-                          Copy/Text
-                        </EditableText>
-                      </Text>
-                    </Text>
-                  </SelectItem>
-                  <SelectItem value="feature">
-                    <CheckCircle />
-                    <Text>
-                      <Text >
-                        <EditableText field="pageCommentWidget.categoryFeature" defaultValue="Feature Request">
-                          Feature Request
-                        </EditableText>
-                      </Text>
-                    </Text>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <Select 
+                value={category} 
+                onValueChange={(value) => setCategory(value as PageComment['category'])}
+                options={[
+                  { value: 'general', label: 'General' },
+                  { value: 'bug', label: 'Bug' },
+                  { value: 'design', label: 'Design' },
+                  { value: 'copy', label: 'Copy/Text' },
+                  { value: 'feature', label: 'Feature Request' }
+                ]}
+                placeholder="Select category"
+              />
 
               {/* Priority */}
               <Text size="sm">
@@ -285,41 +240,17 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   </EditableText>
                 </Text>
               </Text>
-              <Select value={priority} onValueChange={(value: PageComment['priority']) => setPriority(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">
-                    <Text >
-                      <EditableText field="pageCommentWidget.priorityLow" defaultValue="Low">
-                        Low
-                      </EditableText>
-                    </Text>
-                  </SelectItem>
-                  <SelectItem value="medium">
-                    <Text >
-                      <EditableText field="pageCommentWidget.priorityMedium" defaultValue="Medium">
-                        Medium
-                      </EditableText>
-                    </Text>
-                  </SelectItem>
-                  <SelectItem value="high">
-                    <Text >
-                      <EditableText field="pageCommentWidget.priorityHigh" defaultValue="High">
-                        High
-                      </EditableText>
-                    </Text>
-                  </SelectItem>
-                  <SelectItem value="urgent">
-                    <Text >
-                      <EditableText field="pageCommentWidget.priorityUrgent" defaultValue="Urgent">
-                        Urgent
-                      </EditableText>
-                    </Text>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <Select 
+                value={priority} 
+                onValueChange={(value) => setPriority(value as PageComment['priority'])}
+                options={[
+                  { value: 'low', label: 'Low' },
+                  { value: 'medium', label: 'Medium' },
+                  { value: 'high', label: 'High' },
+                  { value: 'urgent', label: 'Urgent' }
+                ]}
+                placeholder="Select priority"
+              />
 
               {/* Comment */}
               <Text size="sm">

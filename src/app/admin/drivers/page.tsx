@@ -175,7 +175,7 @@ function DriversPageContent() {
     : '0.0';
 
   // Table columns
-  const columns = [
+  const columns: DataTableColumn<Driver>[] = [
     {
       key: 'name',
       label: 'Driver',
@@ -230,31 +230,31 @@ function DriversPageContent() {
   ];
 
   // Table actions
-  const actions = [
+  const actions: DataTableAction<Driver>[] = [
     {
       label: 'View',
       icon: '👁️',
-      onClick: (driver) => addToast('info', `Viewing driver profile for ${driver.name}`),
+      onClick: (driver: Driver) => addToast('info', `Viewing driver profile for ${driver.name}`),
       variant: 'outline'
     },
     {
       label: 'Assign Ride',
       icon: '🚗',
-      onClick: (driver) => addToast('success', `Ride assignment feature for ${driver.name} coming soon`),
+      onClick: (driver: Driver) => addToast('success', `Ride assignment feature for ${driver.name} coming soon`),
       variant: 'primary',
-      condition: (driver) => driver.status === 'available'
+      condition: (driver: Driver) => driver.status === 'available'
     },
     {
       label: 'Location',
       icon: '📍',
-      onClick: (driver) => addToast('info', `Live location tracking for ${driver.name} coming soon`),
+      onClick: (driver: Driver) => addToast('info', `Live location tracking for ${driver.name} coming soon`),
       variant: 'outline',
-      condition: (driver) => driver.status !== 'offline'
+      condition: (driver: Driver) => driver.status !== 'offline'
     },
     {
       label: 'Edit',
       icon: '✏️',
-      onClick: (driver) => addToast('info', `Driver editing for ${driver.name} coming soon`),
+      onClick: (driver: Driver) => addToast('info', `Driver editing for ${driver.name} coming soon`),
       variant: 'outline'
     }
   ];

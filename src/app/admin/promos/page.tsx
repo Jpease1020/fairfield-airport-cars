@@ -269,28 +269,28 @@ function PromosPageContent() {
           title={<EditableText field="admin.promos.totalPromosTitle" defaultValue="Total Promos">Total Promos</EditableText>}
           icon="🎟️"
           statNumber={promos.length.toString()}
-          statChange={<EditableText field="admin.promos.createdCodesChange" defaultValue="Created codes">Created codes</EditableText>}
+          statChange="Created codes"
           changeType="neutral"
         />
         <StatCard
           title={<EditableText field="admin.promos.activePromosTitle" defaultValue="Active Promos">Active Promos</EditableText>}
           icon="✅"
           statNumber={activePromos.toString()}
-          statChange={<EditableText field="admin.promos.currentlyUsableChange" defaultValue="Currently usable">Currently usable</EditableText>}
+          statChange="Currently usable"
           changeType="positive"
         />
         <StatCard
           title={<EditableText field="admin.promos.totalUsageTitle" defaultValue="Total Usage">Total Usage</EditableText>}
           icon="📊"
           statNumber={totalUsage.toString()}
-          statChange={<EditableText field="admin.promos.timesUsedChange" defaultValue="Times used">Times used</EditableText>}
+          statChange="Times used"
           changeType="positive"
         />
         <StatCard
           title={<EditableText field="admin.promos.expiringSoonTitle" defaultValue="Expiring Soon">Expiring Soon</EditableText>}
           icon="⏰"
           statNumber={expiringPromos.toString()}
-          statChange={<EditableText field="admin.promos.within7DaysChange" defaultValue="Within 7 days">Within 7 days</EditableText>}
+          statChange="Within 7 days"
           changeType={expiringPromos > 0 ? 'negative' : 'neutral'}
         />
       </GridSection>

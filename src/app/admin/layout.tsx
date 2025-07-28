@@ -5,6 +5,7 @@ import '@/styles/standard-layout.css';
 import '../globals.css';
 import { UnifiedLayout } from '@/components/layout';
 import { AdminProvider } from '@/components/admin/AdminProvider';
+import { EditModeProvider } from '@/components/admin/EditModeProvider';
 import AdminHamburgerMenu from '@/components/admin/AdminHamburgerMenu';
 import { usePathname } from 'next/navigation';
 
@@ -35,9 +36,11 @@ export default function AdminLayout({
 }) {
   return (
     <AdminProvider>
-      <AdminLayoutContent>
-        {children}
-      </AdminLayoutContent>
+      <EditModeProvider>
+        <AdminLayoutContent>
+          {children}
+        </AdminLayoutContent>
+      </EditModeProvider>
     </AdminProvider>
   );
 } 

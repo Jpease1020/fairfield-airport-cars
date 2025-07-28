@@ -42,13 +42,11 @@ export const AlertList: React.FC<AlertListProps> = ({
         <AlertItem
           key={alert.id}
           icon={alert.icon}
-          type={alert.type}
           title={alert.title}
           message={alert.message}
           href={alert.href}
           onClick={alert.onClick}
           onDismiss={alert.onDismiss}
-          theme={theme}
         />
       ))}
     </Stack>

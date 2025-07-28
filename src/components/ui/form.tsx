@@ -345,7 +345,7 @@ export interface SelectProps {
   disabled?: boolean;
   required?: boolean;
   multiple?: boolean;
-  size?: number;
+  selectSize?: number;
   
   // Appearance
   error?: boolean;
@@ -387,7 +387,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         disabled={disabled}
         required={required}
         multiple={multiple}
-        size={selectSize}
         error={error}
         size={size}
         {...rest}

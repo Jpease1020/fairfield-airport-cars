@@ -1,6 +1,5 @@
 import React from 'react';
 import type { 
-  PageTemplate, 
   ComponentRegistry, 
   TemplateCategories 
 } from '@/types/page-templates';

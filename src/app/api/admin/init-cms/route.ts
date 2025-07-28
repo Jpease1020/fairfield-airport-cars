@@ -74,6 +74,26 @@ export async function POST() {
           }
         },
         help: {
+          title: "Help & Support",
+          subtitle: "Find answers to common questions and get assistance",
+          sections: [
+            {
+              title: "Booking Help",
+              content: "Learn how to book, modify, or cancel your ride"
+            },
+            {
+              title: "Payment Support",
+              content: "Get help with payments, refunds, and billing"
+            },
+            {
+              title: "Service Information",
+              content: "Learn about our vehicles, drivers, and service areas"
+            },
+            {
+              title: "Airport Transportation",
+              content: "Specialized airport pickup and drop-off services"
+            }
+          ],
           faq: [
             {
               question: "Which airports do you serve?",

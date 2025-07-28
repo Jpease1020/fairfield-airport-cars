@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { colors, spacing, borderRadius, shadows } from '@/lib/design-system/tokens';
+import { colors, spacing, borderRadius } from '@/lib/design-system/tokens';
 
 // Skeleton animation with enhanced performance
 const pulse = keyframes`
@@ -12,16 +12,6 @@ const pulse = keyframes`
   }
   100% {
     opacity: 1;
-  }
-`;
-
-// Wave animation for more sophisticated loading
-const wave = keyframes`
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
   }
 `;
 

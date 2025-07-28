@@ -420,6 +420,16 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       title: "Help & FAQs",
       subtitle: "Find answers to common questions about our service",
       faqTitle: "Frequently Asked Questions",
+      sections: [
+        {
+          title: "Booking Information",
+          content: "Learn about our booking process and policies."
+        },
+        {
+          title: "Service Areas",
+          content: "Find out which airports and areas we serve."
+        }
+      ],
       faq: [
         {
           question: "How far in advance should I book?",

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, shadows, transitions, zIndex } from '@/lib/design-system/tokens';
@@ -268,13 +270,6 @@ const SelectItem = styled.div.withConfig({
       font-weight: bold;
     }
   `}
-`;
-
-// Styled select separator
-const SelectSeparator = styled.div`
-  height: 1px;
-  background-color: ${colors.border.light};
-  margin: ${spacing.xs} 0;
 `;
 
 // Styled select container with improved positioning

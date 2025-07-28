@@ -85,8 +85,6 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
   
   return (
     <CMSLayout 
-      cmsConfig={cmsConfig} 
-      pageType={pageType} 
       variant="status"
     >
       {/* Status Section */}
@@ -101,7 +99,7 @@ export const CMSStatusPage: React.FC<CMSStatusPageProps> = ({
             )}
 
             {/* Header */}
-            <PageHeader align="center" padding="lg" margin="none">
+            <PageHeader padding="lg" margin="none">
               {pageTitle && (
                 <H1>
                   {pageTitle}

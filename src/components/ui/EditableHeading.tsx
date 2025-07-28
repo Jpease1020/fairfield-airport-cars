@@ -105,7 +105,25 @@ export const EditableHeading: React.FC<EditableHeadingProps> = ({
   // Rest props
   ...rest
 }) => {
-  const { editMode, localContent, handleFieldChange } = useEditMode();
+  // Check if we're in an admin context with edit mode
+  const isAdminContext = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+  
+  // Only try to use edit mode in admin context
+  let editMode = false;
+  let localContent: any = null;
+  let handleFieldChange: any = null;
+
+  if (isAdminContext) {
+    try {
+      const editModeHook = useEditMode();
+      editMode = editModeHook.editMode;
+      localContent = editModeHook.localContent;
+      handleFieldChange = editModeHook.handleFieldChange;
+    } catch (error) {
+      // Edit mode not available - fallback to display mode
+      editMode = false;
+    }
+  }
 
   // Get value from database or use fallback
   const getValue = (): string => {
@@ -123,7 +141,7 @@ export const EditableHeading: React.FC<EditableHeadingProps> = ({
 
   const currentValue = getValue();
 
-  if (editMode) {
+  if (editMode && handleFieldChange) {
     return (
       <EditContainer>
         <EditableDiv

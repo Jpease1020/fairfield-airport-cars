@@ -35,13 +35,11 @@ export const CMSStandardPage: React.FC<CMSStandardPageProps> = ({
   
   return (
     <CMSLayout 
-      cmsConfig={cmsConfig} 
-      pageType={pageType} 
       variant={variant}
     >
       <Container maxWidth={containerMaxWidth} padding="lg">
         {showHeader && hasStandardProps && (
-          <PageHeader align={headerAlign} padding="lg" margin="none">
+          <PageHeader padding="lg" margin="none">
             {'title' in pageContent && pageContent.title && (
               <H1>
                 {pageContent.title}

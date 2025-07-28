@@ -8,6 +8,7 @@ import {
   Card, 
   CardBody, 
   Grid, 
+  GridItem,
   Text, 
   H3, 
   Span, 
@@ -332,7 +333,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
             <EditableText field="booking.tripDetails.description" defaultValue="Tell us where you need to go and when">
               Tell us where you need to go and when
             </EditableText>
-            {/* Location Fields - Improved Layout */}
+            
+            {/* Location Fields */}
             <Grid cols={2} gap="md">
               <GridItem>
                 <SettingInput
@@ -349,19 +351,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {pickupSuggestions.map((prediction) => (
                       <Button
                         key={prediction.place_id}
-                        onClick={() => handlePickupSuggestionSelect(prediction)}
                         variant="ghost"
-                        size="sm"
+                        onClick={() => handlePickupSuggestionSelect(prediction)}
                         fullWidth
                       >
-                        <Container>
-                          <Span>
-                            {prediction.structured_formatting?.main_text || prediction.description}
-                          </Span>
-                          <Span>
-                            {prediction.structured_formatting?.secondary_text || ''}
-                          </Span>
-                        </Container>
+                        {prediction.description}
                       </Button>
                     ))}
                   </Container>
@@ -372,10 +366,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 <SettingInput
                   id="dropoffLocation"
                   label="Dropoff Location"
-                  description="Where should we take you?"
+                  description="Where should we drop you off?"
                   value={dropoffLocation}
                   onChange={handleDropoffInputChange}
-                  placeholder="Enter destination address"
+                  placeholder="Enter dropoff address"
                   icon="🎯"
                 />
                 {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
@@ -383,19 +377,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {dropoffSuggestions.map((prediction) => (
                       <Button
                         key={prediction.place_id}
-                        onClick={() => handleDropoffSuggestionSelect(prediction)}
                         variant="ghost"
-                        size="sm"
+                        onClick={() => handleDropoffSuggestionSelect(prediction)}
                         fullWidth
                       >
-                        <Container>
-                          <Span>
-                            {prediction.structured_formatting?.main_text || prediction.description}
-                          </Span>
-                          <Span>
-                            {prediction.structured_formatting?.secondary_text || ''}
-                          </Span>
-                        </Container>
+                        {prediction.description}
                       </Button>
                     ))}
                   </Container>
@@ -403,43 +389,37 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </GridItem>
             </Grid>
             
+            {/* Date and Time */}
             <Grid cols={2} gap="md">
               <GridItem>
                 <Container>
                   <Stack>
                     <Span>📅</Span>
-                    <Label htmlFor="pickupDate">Pickup Date</Label>
+                    <Label htmlFor="pickupDateTime">Pickup Date & Time</Label>
                   </Stack>
-                  <EditableText field="booking.pickupDate.description" defaultValue="When do you need to be picked up?">
+                  <EditableText field="booking.pickupDateTime.description" defaultValue="When do you need to be picked up?">
                     When do you need to be picked up?
                   </EditableText>
                   <Input
-                    id="pickupDate"
-                    type="date"
-                    value={pickupDateTime.slice(0, 10)}
-                    onChange={(e) => setPickupDateTime(e.target.value + 'T' + pickupDateTime.slice(11))}
+                    id="pickupDateTime"
+                    type="datetime-local"
+                    value={pickupDateTime}
+                    onChange={(e) => setPickupDateTime(e.target.value)}
                     required
                   />
                 </Container>
               </GridItem>
               
               <GridItem>
-                <Container>
-                  <Stack>
-                    <Span>⏰</Span>
-                    <Label htmlFor="pickupTime">Pickup Time</Label>
-                  </Stack>
-                  <EditableText field="booking.pickupTime.description" defaultValue="What time should we pick you up?">
-                    What time should we pick you up?
-                  </EditableText>
-                  <Input
-                    id="pickupTime"
-                    type="time"
-                    value={pickupDateTime.slice(11)}
-                    onChange={(e) => setPickupDateTime(pickupDateTime.slice(0, 11) + e.target.value)}
-                    required
-                  />
-                </Container>
+                <SettingInput
+                  id="flightNumber"
+                  label="Flight Number (Optional)"
+                  description="Help us track your flight for timely pickup"
+                  value={flightNumber}
+                  onChange={setFlightNumber}
+                  placeholder="e.g., AA123"
+                  icon="✈️"
+                />
               </GridItem>
             </Grid>
           </Stack>
@@ -481,84 +461,89 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </GridItem>
               
               <GridItem>
-                <Container>
-                  <Stack>
-                    <Span>💡</Span>
-                    <Label htmlFor="specialRequests">Special Requests</Label>
-                  </Stack>
-                  <EditableText field="booking.specialRequests.description" defaultValue="Any special requirements or requests?">
-                    Any special requirements or requests?
-                  </EditableText>
-                  <Input
-                    id="specialRequests"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Wheelchair, extra luggage, etc."
-                  />
-                </Container>
+                <SettingInput
+                  id="notes"
+                  label="Special Requests"
+                  description="Any special requirements or requests?"
+                  value={notes}
+                  onChange={setNotes}
+                  placeholder="Wheelchair, extra luggage, etc."
+                  icon="💡"
+                />
               </GridItem>
             </Grid>
           </Stack>
         </Container>
 
-        {/* Action Section */}
-        <Container>
-          <Stack spacing="lg">
-            <Container>
-              <Span>💳</Span>
-              <EditableHeading field="booking.actionSection.title" defaultValue="Book Your Ride">
-                Book Your Ride
-              </EditableHeading>
-            </Container>
-            <EditableText field="booking.actionSection.description" defaultValue="Calculate your fare and complete your booking">
-              Calculate your fare and complete your booking
-            </EditableText>
-            
-            {fare && (
+        {/* Fare Calculation */}
+        {fare !== null && (
+          <Container>
+            <Stack spacing="lg">
               <Container>
-                <Text>
-                  Estimated Fare: <Span>${fare}</Span>
+                <Span>💰</Span>
+                <EditableHeading field="booking.fare.title" defaultValue="Estimated Fare">
+                  Estimated Fare
+                </EditableHeading>
+              </Container>
+              <EditableText field="booking.fare.description" defaultValue="Based on your trip details">
+                Based on your trip details
+              </EditableText>
+              <Container>
+                <Text variant="lead" size="lg">
+                  ${fare.toFixed(2)}
                 </Text>
               </Container>
-            )}
-            
-            <Button
-              type="submit"
-              disabled={isCalculating || !fare}
-              loading={isCalculating}
-              fullWidth
-              size="lg"
-              variant="primary"
-            >
-              {isCalculating ? (
-                <>
-                  <Span>
-                    <LoadingSpinnerIcon />
-                  </Span>
-                  Calculating...
-                </>
-              ) : (
-                <>🚗 Book Now - ${fare}</>
-              )}
-            </Button>
-          </Stack>
-        </Container>
-        
+            </Stack>
+          </Container>
+        )}
+
+        {/* Error and Success Messages */}
         {error && (
-          <StatusMessage 
-            type="error" 
-            message={error} 
-            onDismiss={() => setError(null)}
-          />
+          <StatusMessage type="error" title="Booking Error" message={error}>
+            {error}
+          </StatusMessage>
         )}
         
         {success && (
-          <StatusMessage 
-            type="success" 
-            message={success} 
-            onDismiss={() => setSuccess(null)}
-          />
+          <StatusMessage type="success" title="Booking Successful" message={success}>
+            {success}
+          </StatusMessage>
         )}
+
+        {/* Action Buttons */}
+        <Container>
+          <Stack direction="horizontal" spacing="md">
+            <Button
+              type="button"
+              onClick={handleCalculateFare}
+              disabled={isCalculating || !pickupLocation || !dropoffLocation || !pickupDateTime}
+              variant="outline"
+            >
+              {isCalculating ? (
+                <>
+                  <LoadingSpinnerIcon />
+                  <EditableText field="booking.calculatingButton" defaultValue="Calculating...">
+                    Calculating...
+                  </EditableText>
+                </>
+              ) : (
+                <EditableText field="booking.calculateButton" defaultValue="Calculate Fare">
+                  Calculate Fare
+                </EditableText>
+              )}
+            </Button>
+            
+            <Button
+              type="submit"
+              disabled={!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime || isCalculating}
+              variant="primary"
+            >
+              <EditableText field="booking.submitButton" defaultValue="Book Now">
+                Book Now
+              </EditableText>
+            </Button>
+          </Stack>
+        </Container>
       </Form>
     </Container>
   );

@@ -80,7 +80,7 @@ export function UnifiedLayout({
         {/* Page Header */}
         {(title || subtitle || description) && (
           <Section variant="default" padding="lg">
-            <Container maxWidth="xl" align={centerContent ? 'center' : 'start'}>
+            <Container maxWidth="xl">
               {title && (
                 <H1>
                   {title}

@@ -23,7 +23,8 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
             },
             help: {
               faq: [],
-              contactInfo: { phone: '', email: '', hours: '' }
+              contactInfo: { phone: '', email: '', hours: '' },
+              sections: []
             }
           },
           business: {
@@ -117,7 +118,8 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
               },
               help: {
                 faq: [],
-                contactInfo: { phone: '', email: '', hours: '' }
+                contactInfo: { phone: '', email: '', hours: '' },
+                sections: []
               }
             },
             business: {

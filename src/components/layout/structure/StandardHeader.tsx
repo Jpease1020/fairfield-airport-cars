@@ -16,7 +16,7 @@ export const StandardHeader: React.FC<StandardHeaderProps> = ({
   spacing = 'md'
 }) => {
   return (
-    <Container variant="navigation" as="header" align={align} spacing={spacing}>
+    <Container variant="navigation" as="header" spacing={spacing}>
       <EditableHeading field="header.title" defaultValue={title}>
         {title}
       </EditableHeading>

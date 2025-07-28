@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';
+import { spacing } from '@/lib/design-system/tokens';
 import { Text, H2 } from '@/components/ui';
 import { Container } from './containers';
 
@@ -99,7 +99,6 @@ const GridSection: React.FC<GridSectionProps> = ({
   children,
   title,
   subtitle,
-  variant = 'default',
   cols = 3,
   columns,
   gap = 'md',

@@ -42,13 +42,11 @@ export const ActivityList: React.FC<ActivityListProps> = ({
         <ActivityItem
           key={activity.id}
           icon={activity.icon}
-          iconType={activity.iconType}
           title={activity.title}
           subtitle={activity.subtitle}
           amount={activity.amount}
           href={activity.href}
           onClick={activity.onClick}
-          theme={theme}
         />
       ))}
     </Stack>

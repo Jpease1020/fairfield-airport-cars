@@ -5,8 +5,6 @@ import {
   GridSection,
   InfoCard,
   ToastProvider,
-  H3,
-  Text,
   Container,
   EditableText
 } from '@/components/ui';

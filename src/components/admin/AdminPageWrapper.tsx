@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { PageHeader } from '@/components/layout/structure/PageHeader';

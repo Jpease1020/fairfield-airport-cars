@@ -53,7 +53,7 @@ export const UniversalLayout: React.FC<UniversalLayoutProps> = ({
       
       <Container variant="main">
         {showHeader && (title || subtitle) && layoutType !== 'minimal' && (
-          <StandardHeader title={title} subtitle={subtitle} />
+          <StandardHeader title={title || ''} subtitle={subtitle} />
         )}
         
         <Container variant="content">

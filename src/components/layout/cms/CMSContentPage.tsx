@@ -39,8 +39,6 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
   
   return (
           <CMSLayout 
-        cmsConfig={cmsConfig} 
-        pageType={pageType} 
         variant="content"
       >
       {/* Header Section */}

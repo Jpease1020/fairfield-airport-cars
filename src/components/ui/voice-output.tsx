@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions, borderRadius, shadows } from '@/lib/design-system/tokens';
+import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
 import { Button } from '@/components/ui/button';
 import { Volume2, VolumeX, AlertCircle } from 'lucide-react';
 
@@ -308,13 +308,6 @@ export const VoiceOutput: React.FC<VoiceOutputProps> = ({
       speak(text);
     }
   }, [isSpeaking, stop, speak, text]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleToggle();
-    }
-  }, [handleToggle]);
 
   // Auto-play if enabled
   useEffect(() => {
