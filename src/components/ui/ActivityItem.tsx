@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Text, Span, Link } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Button } from './button';
 
 interface ActivityItemProps {
@@ -10,6 +10,8 @@ interface ActivityItemProps {
   amount?: string | number;
   href?: string;
   onClick?: () => void;
+  variant?: 'default' | 'elevated';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({
@@ -19,22 +21,36 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   amount,
   href,
   onClick,
+  variant = 'default',
+  size = 'md'
 }) => {
   const content = (
-    <>
-      <Container>
-        <Span>{icon}</Span>
-      </Container>
-      <Stack>
-        <Text>{title}</Text>
-        {subtitle && <Text>{subtitle}</Text>}
-      </Stack>
-      {amount && (
-        <Container>
-          <Span>{amount}</Span>
+    <Container variant={variant} padding={size}>
+      <Stack direction="horizontal" spacing="md" align="center">
+        <Container variant="default">
+          <Span>{icon}</Span>
         </Container>
-      )}
-    </>
+        
+        <Stack direction="vertical" spacing="xs">
+          <Text variant="body" size={size}>
+            {title}
+          </Text>
+          {subtitle && (
+            <Text variant="muted" size="sm">
+              {subtitle}
+            </Text>
+          )}
+        </Stack>
+        
+        {amount && (
+          <Container variant="default">
+            <Text variant="body" size={size}>
+              {amount}
+            </Text>
+          </Container>
+        )}
+      </Stack>
+    </Container>
   );
 
   if (href) {
@@ -47,15 +63,15 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
 
   if (onClick) {
     return (
-      <Button onClick={onClick}>
+      <Button 
+        variant="ghost" 
+        onClick={onClick}
+        fullWidth
+      >
         {content}
       </Button>
     );
   }
 
-  return (
-    <Container>
-      {content}
-    </Container>
-  );
+  return content;
 }; 

@@ -4,8 +4,6 @@ export { PageSection } from '../layout/structure/PageSection';
 export { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 // Layout Components
 
-export { GridSection } from './GridSection';
-
 
 // Data Display Components  
 export { StatCard } from './StatCard';
@@ -106,8 +104,9 @@ export { EditableInput } from './EditableInput';
 export { EditableTextarea } from './EditableTextarea';
 
 // BULLETPROOF Layout Components (NEVER from text.tsx!)
-export { Container, Section, Stack, Card, Box, Grid, Layout, Spacer } from './containers';
-export { GridItem } from './Grid';
+export { Container, Box, Section, Card, Stack, Layout, Spacer } from './layout/containers';
+export { Grid, GridSection } from './layout/grid';
+export { IconContainer, ContentContainer, HeaderContainer, ActionsContainer, EditContainer } from './layout/components';
 
 // Accessibility
 export { AccessibilityEnhancer } from './AccessibilityEnhancer';

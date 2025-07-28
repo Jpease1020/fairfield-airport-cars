@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Label } from '@/components/ui/label';
 import { Select, Option, Text, Container, Span } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface SelectOption {
   value: string;
@@ -9,7 +9,6 @@ interface SelectOption {
   disabled?: boolean;
 }
 
-// SelectField Component - BULLETPROOF TYPE SAFETY!
 interface SelectFieldProps {
   label: string;
   options: SelectOption[];
@@ -21,6 +20,8 @@ interface SelectFieldProps {
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'default' | 'error';
+  placeholder?: string;
+  name?: string;
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({ 
@@ -33,25 +34,36 @@ const SelectField: React.FC<SelectFieldProps> = ({
     onChange, 
     disabled = false, 
     size = 'md', 
-    variant = 'default' 
+    variant = 'default',
+    placeholder,
+    name
   }) => {
     const fieldId = `select-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
     return (
-      <Container>
-        <Stack spacing="sm">
-          <Label htmlFor={fieldId}>
+      <Container variant="default" padding="none">
+        <Stack direction="vertical" spacing="sm">
+          <Label htmlFor={fieldId} required={required}>
             {label}
-            {required && <Span color="error">*</Span>}
+            {required && <Span> *</Span>}
           </Label>
+          
           <Select
             id={fieldId}
+            name={name}
             variant={error ? 'error' : variant}
             size={size}
             value={value}
             onChange={onChange}
             disabled={disabled}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? `${fieldId}-error` : helperText ? `${fieldId}-help` : undefined}
           >
+            {placeholder && (
+              <Option value="" disabled>
+                {placeholder}
+              </Option>
+            )}
             {options.map((option) => (
               <Option
                 key={option.value}
@@ -62,16 +74,31 @@ const SelectField: React.FC<SelectFieldProps> = ({
               </Option>
             ))}
           </Select>
+          
           {error && (
-            <Text color="error" size="sm">{error}</Text>
+            <Text 
+              id={`${fieldId}-error`}
+              variant="body" 
+              size="sm"
+            >
+              {error}
+            </Text>
           )}
+          
           {helperText && !error && (
-            <Text color="muted" size="sm">{helperText}</Text>
+            <Text 
+              id={`${fieldId}-help`}
+              variant="muted" 
+              size="sm"
+            >
+              {helperText}
+            </Text>
           )}
         </Stack>
       </Container>
     );
   };
+
 SelectField.displayName = 'SelectField';
 
 export { SelectField }; 

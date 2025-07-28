@@ -1,8 +1,7 @@
 import React from 'react';
-import { Container, Label } from '@/components/ui';
-import { cn } from '@/lib/utils/utils';
+import { Container, Label, Text, Textarea } from '@/components/ui';
+import { Stack } from '@/components/ui/layout/containers';
 
-// EditableTextarea Component - BULLETPROOF TYPE SAFETY!
 interface EditableTextareaProps {
   label?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -12,6 +11,9 @@ interface EditableTextareaProps {
   placeholder?: string;
   disabled?: boolean;
   spacing?: 'sm' | 'md' | 'lg';
+  error?: string;
+  required?: boolean;
+  name?: string;
 }
 
 const EditableTextarea: React.FC<EditableTextareaProps> = ({ 
@@ -21,33 +23,46 @@ const EditableTextarea: React.FC<EditableTextareaProps> = ({
     value, 
     onChange, 
     placeholder, 
-    disabled = false
+    disabled = false,
+    spacing = 'md',
+    error,
+    required = false,
+    name
   }) => {
-    const sizeClasses = {
-      sm: 'text-sm min-h-[80px]',
-      md: 'text-base min-h-[100px]',
-      lg: 'text-lg min-h-[120px]',
-      xl: 'text-xl min-h-[140px]'
-    };
+    const fieldId = `editable-textarea-${label?.toLowerCase().replace(/\s+/g, '-') || 'field'}`;
 
     return (
-      <Container>
-        {label && (
-          <Label>
-            {label}
-          </Label>
-        )}
-        <textarea
-          className={cn(
-            'editable-textarea w-full mb-2 border-2 border-border-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary rounded-lg p-4',
-            sizeClasses[size]
+      <Container variant="default" padding="none">
+        <Stack direction="vertical" spacing={spacing}>
+          {label && (
+            <Label htmlFor={fieldId} required={required}>
+              {label}
+            </Label>
           )}
-          rows={rows}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
+          
+          <Textarea
+            id={fieldId}
+            name={name}
+            size={size === 'xl' ? 'lg' : size}
+            rows={rows}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            disabled={disabled}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? `${fieldId}-error` : undefined}
+          />
+          
+          {error && (
+            <Text 
+              id={`${fieldId}-error`}
+              variant="body" 
+              size="sm"
+            >
+              {error}
+            </Text>
+          )}
+        </Stack>
       </Container>
     );
   };

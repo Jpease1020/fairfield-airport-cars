@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from './button';
 import { Container, Span, Text, Input } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 // DataTableColumn - BULLETPROOF TYPE SAFETY!
 export interface DataTableColumn<T> {

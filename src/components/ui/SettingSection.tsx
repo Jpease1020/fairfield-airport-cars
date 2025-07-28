@@ -1,77 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
 import { Card, CardHeader, CardBody } from './card';
 import { Text, H3 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
-
-// Styled icon container
-const IconContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['size'].includes(prop)
-})<{
-  size: 'sm' | 'md' | 'lg';
-}>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${colors.text.secondary};
-  flex-shrink: 0;
-
-  /* Size styles */
-  ${({ size }) => {
-    switch (size) {
-      case 'sm':
-        return `
-          font-size: ${fontSize.sm};
-          width: 1rem;
-          height: 1rem;
-        `;
-      case 'md':
-        return `
-          font-size: ${fontSize.md};
-          width: 1.25rem;
-          height: 1.25rem;
-        `;
-      case 'lg':
-        return `
-          font-size: ${fontSize.lg};
-          width: 1.5rem;
-          height: 1.5rem;
-        `;
-      default:
-        return `
-          font-size: ${fontSize.md};
-          width: 1.25rem;
-          height: 1.25rem;
-        `;
-    }
-  }}
-`;
-
-// Styled actions container
-const ActionsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  margin-left: ${spacing.lg};
-`;
-
-// Styled header content
-const HeaderContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.sm};
-  flex: 1;
-  min-width: 0;
-`;
-
-// Styled title row
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.sm};
-`;
+import { IconContainer, ContentContainer, HeaderContainer, ActionsContainer } from './layout';
 
 export interface SettingSectionProps {
   // Core props
@@ -115,34 +45,27 @@ export const SettingSection: React.FC<SettingSectionProps> = ({
   return (
     <Card id={id} {...rest}>
       <CardHeader>
-        <Stack direction="horizontal" justify="between" align="start">
-          <HeaderContent>
-            <TitleRow>
-              {icon && (
-                <IconContainer size={size}>
-                  {icon}
-                </IconContainer>
-              )}
-              <H3>
-                {title}
-              </H3>
-            </TitleRow>
-            
-            {description && (
-              <Text>
-                {description}
-              </Text>
+        <HeaderContainer align="between" gap="md">
+          <ContentContainer direction="horizontal" align="center" justify="start" gap="sm" flex>
+            {icon && (
+              <IconContainer size={size} color="secondary" variant="default">
+                {icon}
+              </IconContainer>
             )}
-          </HeaderContent>
-          
+            <ContentContainer direction="vertical" align="start" justify="start" gap="sm" flex>
+              <H3>{title}</H3>
+              {description && (
+                <Text>{description}</Text>
+              )}
+            </ContentContainer>
+          </ContentContainer>
           {actions && (
-            <ActionsContainer>
+            <ActionsContainer align="end" gap="sm">
               {actions}
             </ActionsContainer>
           )}
-        </Stack>
+        </HeaderContainer>
       </CardHeader>
-      
       <CardBody>
         {children}
       </CardBody>

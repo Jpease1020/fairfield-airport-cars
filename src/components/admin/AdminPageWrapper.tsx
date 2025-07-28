@@ -3,7 +3,7 @@ import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Container, Text, H3, EditableText } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface AdminPageWrapperProps {
   title: string | React.ReactNode;

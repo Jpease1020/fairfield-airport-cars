@@ -1,8 +1,7 @@
 import React from 'react';
 import { Container, Text, Span, H3 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
-// ProgressIndicator Component - BULLETPROOF TYPE SAFETY!
 interface ProgressIndicatorProps {
   currentStep: number;
   totalSteps: number;
@@ -17,51 +16,74 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   totalSteps,
   steps,
   variant = 'default',
+  size = 'md',
+  color = 'primary'
 }) => {
   const progress = (currentStep / totalSteps) * 100;
 
   if (variant === 'minimal') {
     return (
-      <Container>
-        <Stack direction="horizontal" justify="between" align="center">
-          <Span>Step {currentStep} of {totalSteps}</Span>
-          <Span>{Math.round(progress)}%</Span>
+      <Container variant="default" padding={size}>
+        <Stack direction="vertical" spacing="sm">
+          <Stack direction="horizontal" justify="between" align="center">
+            <Text size="sm">
+              Step {currentStep} of {totalSteps}
+            </Text>
+            <Text size="sm">
+              {Math.round(progress)}%
+            </Text>
+          </Stack>
+          <Container variant="default" padding="none">
+            <Container variant="elevated" padding="none">
+              <Text size="xs">
+                {Math.round(progress)}%
+              </Text>
+            </Container>
+          </Container>
         </Stack>
-        <Container>
-          <div style={{ width: `${progress}%` }} />
-        </Container>
       </Container>
     );
   }
 
   if (variant === 'detailed') {
     return (
-      <Container>
-        <Stack spacing="md">
+      <Container variant="default" padding={size}>
+        <Stack direction="vertical" spacing="md">
           <Stack direction="horizontal" justify="between" align="center">
-            <H3>
+            <H3 size={size}>
               {steps[currentStep - 1]}
             </H3>
-            <Span>
+            <Text size="sm">
               {currentStep} of {totalSteps}
-            </Span>
+            </Text>
           </Stack>
-          <Stack spacing="sm">
-            <Container>
-              <div style={{ width: `${progress}%` }} />
+          
+          <Stack direction="vertical" spacing="sm">
+            <Container variant="default" padding="none">
+              <Container variant="elevated" padding="none">
+                <Text size="xs">
+                  {Math.round(progress)}%
+                </Text>
+              </Container>
             </Container>
+            
             <Stack direction="horizontal" spacing="sm">
               {steps.map((step, index) => (
-                <Container key={index}>
-                  <Span>{index + 1}</Span>
+                <Container key={index} variant="default" padding="xs">
+                  <Text size="xs">
+                    {index + 1}
+                  </Text>
                 </Container>
               ))}
             </Stack>
           </Stack>
-          <Stack>
+          
+          <Stack direction="vertical" spacing="xs">
             {steps.map((step, index) => (
-              <Container key={index}>
-                <Text>{step}</Text>
+              <Container key={index} variant="default" padding="xs">
+                <Text size="sm">
+                  {step}
+                </Text>
               </Container>
             ))}
           </Stack>
@@ -72,18 +94,25 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   // Default variant
   return (
-    <Container>
-      <Stack direction="horizontal" justify="between" align="center">
-        <Span>
-          {steps[currentStep - 1]}
-        </Span>
-        <Span>
-          {currentStep} of {totalSteps}
-        </Span>
+    <Container variant="default" padding={size}>
+      <Stack direction="vertical" spacing="sm">
+        <Stack direction="horizontal" justify="between" align="center">
+          <Text size="sm">
+            {steps[currentStep - 1]}
+          </Text>
+          <Text size="sm">
+            {currentStep} of {totalSteps}
+          </Text>
+        </Stack>
+        
+        <Container variant="default" padding="none">
+          <Container variant="elevated" padding="none">
+            <Text size="xs">
+              {Math.round(progress)}%
+            </Text>
+          </Container>
+        </Container>
       </Stack>
-      <Container>
-        <div style={{ width: `${progress}%` }} />
-      </Container>
     </Container>
   );
 };

@@ -5,7 +5,7 @@ import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
 import { Textarea, Select, Option, Container, H4, Span, EditableText } from '@/components/ui';
-import { Stack, Card } from '@/components/ui/containers';
+import { Stack, Card } from '@/components/ui/layout/containers';
 import { Button } from '@/components/ui/button';
 
 interface SimpleCommentSystemProps {

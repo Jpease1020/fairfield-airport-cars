@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { ChatMessage, ChatMessageProps } from './ChatMessage';
-import { Container, Span } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Container, Span, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/layout/containers';
 
 export interface ChatContainerProps {
   messages: ChatMessageProps['message'][];
@@ -9,6 +9,8 @@ export interface ChatContainerProps {
   onVoicePlay?: (content: string) => void;
   isVoiceSupported?: boolean;
   loadingMessage?: string;
+  maxHeight?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'compact' | 'detailed';
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -16,7 +18,9 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   isLoading = false,
   onVoicePlay,
   isVoiceSupported = true,
-  loadingMessage = 'Thinking...'
+  loadingMessage = 'Thinking...',
+  maxHeight = 'lg',
+  variant = 'default'
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -29,9 +33,9 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   }, [messages, isLoading]);
 
   return (
-    <Container>
+    <Container variant="default" padding="md">
       <Stack direction="vertical" spacing="md">
-        <Container>
+        <Container variant="content">
           {messages.map((message) => (
             <ChatMessage
               key={message.id}
@@ -42,7 +46,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
           ))}
           
           {isLoading && (
-            <Container>
+            <Container variant="default" padding="sm">
               <Stack direction="horizontal" spacing="sm" align="center">
                 <Span>🤖</Span>
                 <Stack direction="horizontal" spacing="xs" align="center">
@@ -51,9 +55,9 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                     <Span>•</Span>
                     <Span>•</Span>
                   </Stack>
-                  <Span>
+                  <Text size="sm">
                     {loadingMessage}
-                  </Span>
+                  </Text>
                 </Stack>
               </Stack>
             </Container>

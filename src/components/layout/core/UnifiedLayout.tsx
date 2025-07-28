@@ -14,7 +14,7 @@
 import React, { ReactNode } from 'react';
 import { AccessibilityEnhancer } from '@/components/ui/AccessibilityEnhancer';
 import { Container, H1, Text } from '@/components/ui';
-import { Section } from '@/components/ui/containers';
+import { Section } from '@/components/ui/layout/containers';
 import Navigation from '../navigation/Navigation';
 import { StandardFooter } from '../structure/StandardFooter';
 
@@ -39,9 +39,6 @@ interface UnifiedLayoutProps {
   
   // Visual Style
   centerContent?: boolean;
-  
-  // Meta
-  className?: string;
 }
 
 export function UnifiedLayout({
@@ -51,7 +48,10 @@ export function UnifiedLayout({
   description,
   layoutType = 'standard',
   showNavigation = true,
-  showFooter = true
+  showFooter = true,
+  maxWidth = 'xl',
+  padding = 'lg',
+  centerContent = false
 }: UnifiedLayoutProps) {
   // Layout-specific configurations
   const layoutConfig = {
@@ -67,23 +67,12 @@ export function UnifiedLayout({
   const shouldShowNav = showNavigation && config.showNav;
   const shouldShowFooter = showFooter && config.showFooter;
 
-
-
-  // Temporarily disable loading state to fix the stuck loading issue
-  // if (!cmsReady) {
-  //   return (
-  //     <Container>
-  //       <Container></Container>
-  //     </Container>
-  //   );
-  // }
-
   return (
     <AccessibilityEnhancer>
-      <Container>
+      <Container maxWidth={maxWidth} padding={padding}>
         {/* Navigation */}
         {shouldShowNav && (
-          <Container as="header">
+          <Container as="header" variant="navigation">
             <Navigation />
           </Container>
         )}
@@ -91,7 +80,7 @@ export function UnifiedLayout({
         {/* Page Header */}
         {(title || subtitle || description) && (
           <Section variant="default" padding="lg">
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" align={centerContent ? 'center' : 'start'}>
               {title && (
                 <H1>
                   {title}
@@ -112,13 +101,13 @@ export function UnifiedLayout({
         )}
 
         {/* Main Content */}
-        <Container as="main">
+        <Container as="main" variant="content">
           {children}
         </Container>
 
         {/* Footer */}
         {shouldShowFooter && (
-          <Container as="footer">
+          <Container as="footer" variant="section">
             <StandardFooter />
           </Container>
         )}

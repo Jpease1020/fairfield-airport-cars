@@ -1,27 +1,29 @@
 import React from 'react';
-import { CMSConfiguration } from '@/types/cms';
 import { Container } from '@/components/ui';
 
 interface CMSLayoutProps {
-  cmsConfig: CMSConfiguration;
-  pageType: keyof CMSConfiguration['pages'];
   children: React.ReactNode;
   variant?: 'standard' | 'marketing' | 'portal' | 'admin' | 'conversion' | 'content' | 'status';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export const CMSLayout: React.FC<CMSLayoutProps> = ({
-  children
+  children,
+  variant = 'standard',
+  maxWidth = 'xl',
+  padding = 'lg'
 }) => {
   return (
     <Container 
       variant="main"
+      maxWidth={maxWidth}
+      padding={padding}
       as="div"
     >
-      {/* Header will be added here */}
-      <Container as="main">
+      <Container as="main" variant="content">
         {children}
       </Container>
-      {/* Footer will be added here */}
     </Container>
   );
 };

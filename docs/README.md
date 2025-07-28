@@ -12,30 +12,22 @@ Welcome to the comprehensive documentation for the Fairfield Airport Cars applic
 
 ### 🚀 Development
 - **[Development Setup](development/DEVELOPMENT_SETUP.md)** - Complete setup instructions for developers
-- **[Environment Setup](development/environment-setup.md)** - Environment configuration and deployment
-- **[Component Guide](development/COMPONENT_GUIDE.md)** - Component development and usage patterns
-- **[Style Guide](development/STYLE_GUIDE.md)** - Code style and best practices
+- **[Comprehensive Style Guide](development/COMPREHENSIVE_STYLE_GUIDE.md)** - Complete UI component standards, page templates, and development patterns
 - **[Import Patterns](development/IMPORT_PATTERNS.md)** - Code organization and import conventions
 
 ### 💼 Business & Operations
+- **[Comprehensive Business Guide](business/COMPREHENSIVE_BUSINESS_GUIDE.md)** - Complete business operations manual
 - **[Business Settings Guide](business/BUSINESS_SETTINGS_GUIDE.md)** - How to configure business settings and pricing
-- **[Business Processes](business/BUSINESS_PROCESSES.md)** - Operational workflows and business logic
-- **[Business Plan](business/business-plan.md)** - Strategic business overview and goals
-- **[Cost Tracking Guide](business/COST_TRACKING_GUIDE.md)** - Financial management and cost tracking
 - **[Feedback System Guide](business/FEEDBACK_SYSTEM_GUIDE.md)** - Customer feedback and rating system
 
 ### 🧪 Testing & Quality Assurance
-- **[Test Documentation](testing/README.md)** - Comprehensive testing strategy and procedures
-- **[Test Plan](testing/test-plan.md)** - Testing roadmap and execution plan
-- **[Visual Testing](testing/visual-testing.md)** - UI/UX testing and visual regression testing
+- **[Comprehensive Testing Guide](testing/COMPREHENSIVE_TESTING_GUIDE.md)** - Complete testing strategy and procedures
 - **[Manual Testing Checklist](testing/MANUAL_TESTING_CHECKLIST.md)** - Manual testing procedures
 
 ### 🎯 Project Management
 - **[Current TODO](CURRENT_TODO.md)** - Active tasks and current priorities
 - **[Consolidated Status](multi-agent/CONSOLIDATED_STATUS.md)** - Current project status and achievements
 - **[User Flows](USER_FLOWS.md)** - Detailed user journey maps and interactions
-- **[Fairfield Airport App](fairfield-airport-app.md)** - Complete app overview and specifications
-- **[Rider App Context](fairfield-airport-car-rider.md)** - Detailed rider experience and features
 
 ### 🎯 Features
 - **[AI Assistant](features/ai-assistant.md)** - AI-powered customer support and admin assistance
@@ -44,15 +36,13 @@ Welcome to the comprehensive documentation for the Fairfield Airport Cars applic
 
 ### 📋 Infrastructure & Deployment
 - **[Production Deployment Guide](PRODUCTION_DEPLOYMENT_GUIDE.md)** - Complete deployment instructions
-- **[Launch Checklist](LAUNCH_CHECKLIST.md)** - Pre-launch verification checklist
 - **[Infrastructure Fixes](INFRASTRUCTURE_FIXES.md)** - Infrastructure improvements and fixes
-- **[Layout Guide](LAYOUT_GUIDE.md)** - Layout system and responsive design patterns
 
 ## 🚀 Quick Start
 
 1. **For Developers**: Start with [Development Setup](development/DEVELOPMENT_SETUP.md)
-2. **For Business Users**: Check [Business Settings Guide](business/BUSINESS_SETTINGS_GUIDE.md)
-3. **For Testing**: Review [Test Documentation](testing/README.md)
+2. **For Business Users**: Check [Comprehensive Business Guide](business/COMPREHENSIVE_BUSINESS_GUIDE.md)
+3. **For Testing**: Review [Comprehensive Testing Guide](testing/COMPREHENSIVE_TESTING_GUIDE.md)
 4. **For Architecture**: Read [Technical Guide](architecture/TECHNICAL_GUIDE.md)
 5. **For Current Status**: Check [Consolidated Status](multi-agent/CONSOLIDATED_STATUS.md)
 

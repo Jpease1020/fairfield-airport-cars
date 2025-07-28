@@ -9,6 +9,7 @@ interface PageHeaderProps {
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   align?: 'left' | 'center' | 'right';
+  spacing?: 'sm' | 'md' | 'lg';
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -16,10 +17,18 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   subtitle,
   padding = 'lg',
-  margin = 'none'
+  margin = 'none',
+  align = 'left',
+  spacing = 'md'
 }) => {
   return (
-    <Container as="header" padding={padding} margin={margin}>
+    <Container 
+      as="header" 
+      padding={padding} 
+      margin={margin}
+      align={align}
+      spacing={spacing}
+    >
       {title && (
         typeof title === 'string' ? (
           <EditableHeading field="page_header.title" defaultValue={title}>

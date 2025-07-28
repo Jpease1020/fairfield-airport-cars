@@ -1,8 +1,8 @@
 import React from 'react';
-import { LoadingSpinner } from '@/components/data';
+import { LoadingSpinner } from './LoadingSpinner';
 import { Container, H3, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/layout/containers';
 
-// LoadingState Component - BULLETPROOF TYPE SAFETY!
 interface LoadingStateProps {
   title?: string;
   subtitle?: string;
@@ -18,24 +18,46 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   subtitle,
   message,
   showSpinner = true,
+  size = 'md',
+  variant = 'centered',
+  spacing = 'normal'
 }) => {
+  const spacingMap: Record<string, 'sm' | 'md' | 'lg'> = {
+    compact: 'sm',
+    normal: 'md',
+    relaxed: 'lg'
+  };
 
   return (
-        <Container>
-      <Container>
+    <Container 
+      variant={variant === 'overlay' ? 'elevated' : 'default'} 
+      padding={spacingMap[spacing]}
+    >
+      <Stack direction="vertical" spacing={spacingMap[spacing]} align="center">
         {showSpinner && (
-          <Container>
-            <LoadingSpinner />
+          <Container variant="default">
+            <LoadingSpinner size={size} />
           </Container>
         )}
-        <H3>{title}</H3>
-        {subtitle && (
-          <Text>{subtitle}</Text>
-        )}
-        {message && (
-          <Text>{message}</Text>
-        )}
-      </Container>
+        
+        <Stack direction="vertical" spacing="xs" align="center">
+          <H3 size={size}>
+            {title}
+          </H3>
+          
+          {subtitle && (
+            <Text variant="muted" size="sm">
+              {subtitle}
+            </Text>
+          )}
+          
+          {message && (
+            <Text size="sm">
+              {message}
+            </Text>
+          )}
+        </Stack>
+      </Stack>
     </Container>
   );
 }; 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Section } from '@/components/ui/containers';
+import { Section } from '@/components/ui/layout/containers';
 
 // PageSection Component - BULLETPROOF TYPE SAFETY!
 interface PageSectionProps {

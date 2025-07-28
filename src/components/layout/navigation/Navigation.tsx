@@ -8,7 +8,7 @@ import { Menu, X, Phone } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 import { Container, Text } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { EditableText } from '@/components/ui';
 
 const Navigation = () => {

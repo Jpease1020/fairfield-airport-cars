@@ -1,8 +1,8 @@
 import React from 'react';
-import { Alert } from '@/components/feedback';
+import { Alert } from './Alert';
 import { Button } from './button';
-import { Container, Span } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Container, Span, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface ErrorStateProps {
   title?: string;
@@ -11,6 +11,7 @@ interface ErrorStateProps {
   retryLabel?: string;
   showRetryButton?: boolean;
   variant?: 'error' | 'warning';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
@@ -19,25 +20,35 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   retry,
   retryLabel = 'Try Again',
   showRetryButton = false,
-  variant = 'error'
+  variant = 'error',
+  size = 'md'
 }) => {
   return (
-    <Stack spacing="lg">
-      <Alert variant={variant} title={title}>
-        {message}
-      </Alert>
-      
-      {showRetryButton && retry && (
-        <Container>
-          <Button 
-            onClick={retry}
-            variant="outline"
-          >
-            <Span>🔄</Span>
-            <Span>{retryLabel}</Span>
-          </Button>
-        </Container>
-      )}
-    </Stack>
+    <Container variant="default" padding={size}>
+      <Stack direction="vertical" spacing="lg">
+        <Alert variant={variant} title={title}>
+          <Text size="sm">
+            {message}
+          </Text>
+        </Alert>
+        
+        {showRetryButton && retry && (
+          <Container variant="default">
+            <Button 
+              onClick={retry}
+              variant="outline"
+              size={size}
+            >
+              <Stack direction="horizontal" spacing="xs" align="center">
+                <Span>🔄</Span>
+                <Text size="sm">
+                  {retryLabel}
+                </Text>
+              </Stack>
+            </Button>
+          </Container>
+        )}
+      </Stack>
+    </Container>
   );
 }; 

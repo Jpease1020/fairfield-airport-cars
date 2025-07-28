@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, H3, H4, Text } from '@/components/ui';
-import { Grid, Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
+import { Grid } from '@/components/ui/layout/grid';
 import { EditableText, EditableHeading } from '@/components/ui';
 
 export const StandardFooter: React.FC = () => {

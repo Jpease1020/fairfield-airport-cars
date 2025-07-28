@@ -300,14 +300,14 @@ const RULES = {
   wrongImports: [
     {
       name: 'Stack from wrong path',
-      pattern: /import.*Stack.*from.*@\/components\/ui[^/]/g,
-      message: '❌ WRONG: Stack should be imported from @/components/ui/containers',
+      pattern: /import.*Stack.*from.*@\/components\/ui\/containers/g,
+      message: '❌ WRONG: Stack should be imported from @/components/ui/layout/containers',
       severity: 'error'
     },
     {
       name: 'Card from wrong path',
-      pattern: /import.*Card.*from.*@\/components\/ui[^/]/g,
-      message: '❌ WRONG: Card should be imported from @/components/ui/containers',
+      pattern: /import.*Card.*from.*@\/components\/ui\/containers/g,
+      message: '❌ WRONG: Card should be imported from @/components/ui/layout/containers',
       severity: 'error'
     }
   ]

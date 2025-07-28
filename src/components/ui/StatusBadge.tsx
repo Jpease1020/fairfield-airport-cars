@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils/utils';
+import { Badge } from './badge';
+import { Text } from '@/components/ui';
 
-// StatusBadge Component - BULLETPROOF TYPE SAFETY!
 interface StatusBadgeProps {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'in-progress' | 'success' | 'warning' | 'error';
   size?: 'sm' | 'md' | 'lg';
@@ -10,23 +10,26 @@ interface StatusBadgeProps {
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ 
     status, 
-    size = 'md'
+    size = 'md',
+    variant = 'default'
   }) => {
-    const statusClasses = {
-      pending: 'bg-warning text-text-inverse',
-      confirmed: 'bg-info text-text-inverse',
-      completed: 'bg-success text-text-inverse',
-      cancelled: 'bg-error text-text-inverse',
-      'in-progress': 'bg-brand-secondary text-text-inverse',
-      success: 'bg-success text-text-inverse',
-      warning: 'bg-warning text-text-inverse',
-      error: 'bg-error text-text-inverse',
-    };
-
-    const sizeClasses = {
-      sm: 'px-2 py-1 text-xs',
-      md: 'px-3 py-1 text-sm',
-      lg: 'px-4 py-2 text-base',
+    const getStatusVariant = (status: string) => {
+      switch (status) {
+        case 'pending':
+        case 'warning':
+          return 'warning';
+        case 'confirmed':
+        case 'in-progress':
+          return 'info';
+        case 'completed':
+        case 'success':
+          return 'success';
+        case 'cancelled':
+        case 'error':
+          return 'error';
+        default:
+          return 'default';
+      }
     };
 
     const getStatusText = (status: string) => {
@@ -34,17 +37,17 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
     };
 
     return (
-      <span
-        className={cn(
-          'inline-flex items-center rounded-full font-semibold',
-          statusClasses[status],
-          sizeClasses[size]
-        )}
+      <Badge 
+        variant={getStatusVariant(status)}
+        size={size}
       >
-        {getStatusText(status)}
-      </span>
+        <Text size={size === 'sm' ? 'xs' : size === 'lg' ? 'md' : 'sm'}>
+          {getStatusText(status)}
+        </Text>
+      </Badge>
     );
   };
+
 StatusBadge.displayName = 'StatusBadge';
 
 export { StatusBadge }; 

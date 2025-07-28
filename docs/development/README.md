@@ -5,20 +5,19 @@ Welcome to the development documentation for Fairfield Airport Cars. This sectio
 ## 🚀 Quick Start
 
 1. **[Development Setup](DEVELOPMENT_SETUP.md)** - Complete setup instructions and development workflow
-2. **[Component Guide](COMPONENT_GUIDE.md)** - Component system architecture and usage patterns
-3. **[Style Guide](STYLE_GUIDE.md)** - Code style and best practices
-4. **[Import Patterns](IMPORT_PATTERNS.md)** - Code organization and import conventions
+2. **[Comprehensive Style Guide](COMPREHENSIVE_STYLE_GUIDE.md)** - Complete UI component standards, page templates, and development patterns
+3. **[Import Patterns](IMPORT_PATTERNS.md)** - Code organization and import conventions
 
 ## 📚 Core Development Guides
 
 ### **🏗️ Architecture & Setup**
 - **[Development Setup](DEVELOPMENT_SETUP.md)** - Complete development environment setup
 - **[Environment Setup](environment-setup.md)** - Environment configuration and deployment
-- **[Component Guide](COMPONENT_GUIDE.md)** - Component system and architecture
+- **[Comprehensive Style Guide](COMPREHENSIVE_STYLE_GUIDE.md)** - Complete UI component standards, page templates, and development patterns
 - **[Component Refactoring Rules](COMPONENT_REFACTORING_RULES.md)** - Critical rules for component development
 
 ### **🎨 Design & Styling**
-- **[Style Guide](STYLE_GUIDE.md)** - Code style and best practices
+- **[Comprehensive Style Guide](COMPREHENSIVE_STYLE_GUIDE.md)** - Complete UI component standards, page templates, and development patterns
 - **[Import Patterns](IMPORT_PATTERNS.md)** - Code organization and import conventions
 
 ### **🚀 Deployment & Operations**
@@ -107,8 +106,7 @@ npm run build
 ## 📞 Support & Resources
 
 ### **Development Resources**
-- **Component Guide**: `COMPONENT_GUIDE.md`
-- **Style Guide**: `STYLE_GUIDE.md`
+- **Comprehensive Style Guide**: `COMPREHENSIVE_STYLE_GUIDE.md`
 - **Testing Guide**: `../testing/README.md`
 - **Architecture Guide**: `../architecture/TECHNICAL_GUIDE.md`
 

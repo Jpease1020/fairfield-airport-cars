@@ -1,58 +1,157 @@
 import React from 'react';
-import { Container, Text, Span, Link } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import styled from 'styled-components';
+import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
+import { Text, Link } from '@/components/ui';
+
+// Styled container
+const SettingInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.sm};
+`;
+
+// Styled label row
+const LabelRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+`;
+
+// Styled icon container
+const IconContainer = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${colors.text.secondary};
+  font-size: ${fontSize.md};
+`;
+
+// Styled label
+const StyledLabel = styled.label.withConfig({
+  shouldForwardProp: (prop) => !['disabled'].includes(prop)
+})<{
+  disabled: boolean;
+}>`
+  font-weight: 500;
+  font-size: ${fontSize.sm};
+  color: ${({ disabled }) => disabled ? colors.text.disabled : colors.text.primary};
+  transition: ${transitions.default};
+`;
+
+// Styled input row
+const InputRow = styled.div`
+  display: flex;
+  align-items: stretch;
+  gap: ${spacing.sm};
+`;
+
+// Styled input
+const StyledInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['disabled'].includes(prop)
+})<{
+  disabled: boolean;
+}>`
+  flex: 1;
+  padding: ${spacing.sm} ${spacing.md};
+  border: 1px solid ${colors.border.default};
+  border-radius: 6px;
+  font-size: ${fontSize.sm};
+  background-color: ${({ disabled }) => disabled ? colors.background.secondary : colors.background.primary};
+  color: ${({ disabled }) => disabled ? colors.text.disabled : colors.text.primary};
+  outline: none;
+  transition: ${transitions.default};
+
+  &:focus {
+    border-color: ${colors.primary[600]};
+    box-shadow: 0 0 0 2px ${colors.primary[200]};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+// Styled actions container
+const ActionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+// Styled help container
+const HelpContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.xs};
+`;
 
 export interface SettingInputProps {
+  // Core props
   id: string;
   label: string;
-  description?: string;
-  type?: 'text' | 'password' | 'email' | 'number';
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
-  icon?: React.ReactNode;
-  actions?: React.ReactNode;
+  
+  // Content
+  description?: string;
   helpText?: string;
   helpLink?: {
     text: string;
     href: string;
   };
+  icon?: React.ReactNode;
+  actions?: React.ReactNode;
+  
+  // Appearance
+  type?: 'text' | 'password' | 'email' | 'number';
+  placeholder?: string;
+  
+  // States
+  disabled?: boolean;
+  
+  // HTML attributes
+  [key: string]: any;
 }
 
 export const SettingInput: React.FC<SettingInputProps> = ({
+  // Core props
   id,
   label,
-  description,
-  type = 'text',
   value,
   onChange,
-  placeholder,
-  disabled = false,
+  
+  // Content
+  description,
+  helpText,
+  helpLink,
   icon,
   actions,
-  helpText,
-  helpLink
+  
+  // Appearance
+  type = 'text',
+  placeholder,
+  
+  // States
+  disabled = false,
+  
+  // HTML attributes
+  ...rest
 }) => {
   return (
-    <Container>
-      <Stack direction="horizontal" spacing="sm" align="center">
+    <SettingInputContainer>
+      <LabelRow>
         {icon && (
-          <Span>
+          <IconContainer>
             {icon}
-          </Span>
+          </IconContainer>
         )}
-        <label 
+        <StyledLabel
           htmlFor={id}
-          style={{
-            fontWeight: '500',
-            fontSize: '0.875rem',
-            color: '#374151'
-          }}
+          disabled={disabled}
         >
           {label}
-        </label>
-      </Stack>
+        </StyledLabel>
+      </LabelRow>
       
       {description && (
         <Text>
@@ -60,51 +159,43 @@ export const SettingInput: React.FC<SettingInputProps> = ({
         </Text>
       )}
       
-      <Stack direction="horizontal" spacing="sm" align="stretch">
-        <input
+      <InputRow>
+        <StyledInput
           id={id}
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
-          style={{
-            flex: '1',
-            padding: '0.5rem 0.75rem',
-            border: '1px solid #d1d5db',
-            borderRadius: '0.375rem',
-            fontSize: '0.875rem',
-            backgroundColor: disabled ? '#f9fafb' : 'white',
-            color: disabled ? '#6b7280' : '#374151',
-            outline: 'none',
-            transition: 'border-color 0.2s'
-          }}
+          {...rest}
         />
         
         {actions && (
-          <Container>
+          <ActionsContainer>
             {actions}
-          </Container>
+          </ActionsContainer>
         )}
-      </Stack>
+      </InputRow>
       
       {helpText && (
-        <Text>
-          {helpText}
-          {helpLink && (
-            <>
-              {' '}
-              <Link 
-                href={helpLink.href}
-                target="_blank"
-                external
-              >
-                {helpLink.text}
-              </Link>
-            </>
-          )}
-        </Text>
+        <HelpContainer>
+          <Text>
+            {helpText}
+            {helpLink && (
+              <>
+                {' '}
+                <Link 
+                  href={helpLink.href}
+                  target="_blank"
+                  external
+                >
+                  {helpLink.text}
+                </Link>
+              </>
+            )}
+          </Text>
+        </HelpContainer>
       )}
-    </Container>
+    </SettingInputContainer>
   );
 }; 

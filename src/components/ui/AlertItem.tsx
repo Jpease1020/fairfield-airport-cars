@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Text, Span, Link } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Button } from './button';
 
 interface AlertItemProps {
@@ -10,6 +10,8 @@ interface AlertItemProps {
   href?: string;
   onClick?: () => void;
   onDismiss?: () => void;
+  variant?: 'default' | 'info' | 'success' | 'warning' | 'error';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const AlertItem: React.FC<AlertItemProps> = ({
@@ -19,25 +21,37 @@ export const AlertItem: React.FC<AlertItemProps> = ({
   href,
   onClick,
   onDismiss,
+  variant = 'default',
+  size = 'md'
 }) => {
   const content = (
-    <>
-      <Container>
-        <Span>{icon}</Span>
-      </Container>
-      <Stack>
-        <Text>{title}</Text>
-        <Text>{message}</Text>
+    <Container variant="default" padding={size}>
+      <Stack direction="horizontal" spacing="md" align="center">
+        <Container variant="default">
+          <Span>{icon}</Span>
+        </Container>
+        
+        <Stack direction="vertical" spacing="xs">
+          <Text variant="body" size={size}>
+            {title}
+          </Text>
+          <Text size="sm">
+            {message}
+          </Text>
+        </Stack>
+        
+        {onDismiss && (
+          <Button 
+            variant="ghost"
+            size="sm"
+            onClick={onDismiss}
+            aria-label="Dismiss alert"
+          >
+            ✕
+          </Button>
+        )}
       </Stack>
-      {onDismiss && (
-        <Button 
-          onClick={() => onDismiss()}
-          aria-label="Dismiss alert"
-        >
-          ✕
-        </Button>
-      )}
-    </>
+    </Container>
   );
 
   if (href) {
@@ -50,15 +64,15 @@ export const AlertItem: React.FC<AlertItemProps> = ({
 
   if (onClick) {
     return (
-      <Button onClick={onClick}>
+      <Button 
+        variant="ghost" 
+        onClick={onClick}
+        fullWidth
+      >
         {content}
       </Button>
     );
   }
 
-  return (
-    <Container>
-      {content}
-    </Container>
-  );
+  return content;
 }; 

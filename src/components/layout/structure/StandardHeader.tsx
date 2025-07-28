@@ -5,17 +5,26 @@ import { EditableText, EditableHeading } from '@/components/ui';
 interface StandardHeaderProps {
   title: string;
   subtitle?: string;
+  align?: 'start' | 'center' | 'end';
+  spacing?: 'sm' | 'md' | 'lg';
 }
 
-export const StandardHeader: React.FC<StandardHeaderProps> = ({ title, subtitle }) => {
+export const StandardHeader: React.FC<StandardHeaderProps> = ({ 
+  title, 
+  subtitle, 
+  align = 'start',
+  spacing = 'md'
+}) => {
   return (
-    <Container variant="navigation" as="header">
+    <Container variant="navigation" as="header" align={align} spacing={spacing}>
       <EditableHeading field="header.title" defaultValue={title}>
         {title}
       </EditableHeading>
-      <EditableHeading field="header.subtitle" defaultValue={subtitle} level={2}>
-        {subtitle}
-      </EditableHeading>
+      {subtitle && (
+        <EditableHeading field="header.subtitle" defaultValue={subtitle} level={2}>
+          {subtitle}
+        </EditableHeading>
+      )}
     </Container>
   );
 }; 

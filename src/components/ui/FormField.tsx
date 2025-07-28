@@ -2,41 +2,9 @@ import * as React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import { Container, Span } from '@/components/ui';
+import { Container, Span, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/layout/containers';
 
-/**
- * A form field component that combines label, input, validation, and error handling
- * with enhanced accessibility and performance optimizations
- * 
- * @example
- * ```tsx
- * // Basic usage
- * <FormField
- *   label="Email"
- *   type="email"
- *   placeholder="Enter your email"
- * />
- * 
- * // With validation
- * <FormField
- *   label="Password"
- *   type="password"
- *   required
- *   error="Password must be at least 8 characters"
- *   helperText="Use a strong password"
- * />
- * 
- * // With custom validation
- * <FormField
- *   label="Age"
- *   type="number"
- *   min={18}
- *   max={100}
- *   error={ageError}
- * />
- * ```
- */
-// Clean FormField Component - CASCADE EFFECT FORCES COMPLIANCE!
 interface FormFieldProps {
   /** The label text for the field */
   label: string;
@@ -69,6 +37,7 @@ interface FormFieldProps {
 const FormFieldComponent: React.FC<FormFieldProps> = ({ 
     label, 
     error, 
+    helperText,
     required = false,
     type = 'text',
     value,
@@ -84,28 +53,56 @@ const FormFieldComponent: React.FC<FormFieldProps> = ({
 
     return (
       <ErrorBoundary fallback={errorFallback}>
-        <Container spacing={spacing}>
-          <Label htmlFor={fieldId}>
-            {label}
-            {required && <Span color="error">*</Span>}
-          </Label>
-          <Input
-            id={fieldId}
-            error={!!error}
-            errorMessage={error}
-            size={size}
-            required={required}
-            type={type}
-            placeholder={placeholder}
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            name={name}
-          />
+        <Container variant="default" padding="none">
+          <Stack direction="vertical" spacing={spacing}>
+            <Label htmlFor={fieldId} required={required}>
+              {label}
+              {required && <Span> *</Span>}
+            </Label>
+            
+            <Input
+              id={fieldId}
+              size={size}
+              required={required}
+              type={type}
+              placeholder={placeholder}
+              value={value}
+              onChange={onChange}
+              disabled={disabled}
+              name={name}
+              aria-invalid={error ? 'true' : 'false'}
+              aria-describedby={
+                error ? `${fieldId}-error` : 
+                helperText ? `${fieldId}-help` : 
+                undefined
+              }
+            />
+            
+            {error && (
+              <Text 
+                id={`${fieldId}-error`}
+                variant="body" 
+                size="sm"
+              >
+                {error}
+              </Text>
+            )}
+            
+            {helperText && !error && (
+              <Text 
+                id={`${fieldId}-help`}
+                variant="muted" 
+                size="sm"
+              >
+                {helperText}
+              </Text>
+            )}
+          </Stack>
         </Container>
       </ErrorBoundary>
     );
   };
+
 FormFieldComponent.displayName = 'FormField';
 
 // Memoize the component for better performance

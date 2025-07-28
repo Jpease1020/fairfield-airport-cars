@@ -1,29 +1,128 @@
 'use client';
 
 import React from 'react';
-import { Button, Container, Span } from '@/components/ui';
+import styled from 'styled-components';
+import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
+import { Button } from '@/components/ui';
 import { useEditMode } from '@/components/admin/EditModeProvider';
 
-interface EditableButtonProps {
+// Styled edit container
+const EditContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+// Styled editable div
+const EditableDiv = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'size'].includes(prop)
+})<{
+  variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  size: 'sm' | 'md' | 'lg';
+}>`
+  font-size: ${({ size }) => {
+    switch (size) {
+      case 'sm':
+        return fontSize.sm;
+      case 'lg':
+        return fontSize.lg;
+      default:
+        return fontSize.md;
+    }
+  }};
+  text-align: center;
+  padding: ${({ size }) => {
+    switch (size) {
+      case 'sm':
+        return `${spacing.xs} ${spacing.sm}`;
+      case 'lg':
+        return `${spacing.md} ${spacing.lg}`;
+      default:
+        return `${spacing.sm} ${spacing.md}`;
+    }
+  }};
+  border: 1px dashed ${colors.border.default};
+  border-radius: 6px;
+  min-height: 1em;
+  background-color: ${({ variant }) => {
+    switch (variant) {
+      case 'primary':
+        return colors.primary[600];
+      default:
+        return 'transparent';
+    }
+  }};
+  color: ${({ variant }) => {
+    switch (variant) {
+      case 'primary':
+        return colors.text.white;
+      default:
+        return colors.text.primary;
+    }
+  }};
+  cursor: text;
+  transition: ${transitions.default};
+
+  &:focus {
+    outline: none;
+    border-color: ${colors.primary[600]};
+    box-shadow: 0 0 0 2px ${colors.primary[200]};
+  }
+`;
+
+// Styled icon container
+const IconContainer = styled.span`
+  display: inline-flex;
+  align-items: center;
+  margin-right: ${spacing.xs};
+`;
+
+export interface EditableButtonProps {
+  // Core props
   field: string; // Database field path (e.g., "hero.ctaText")
   children?: React.ReactNode; // Fallback content (existing text)
   defaultValue?: string; // Default text if no database value
+  
+  // Appearance
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
+  
+  // States
   disabled?: boolean;
+  
+  // Behavior
   onClick?: () => void;
   icon?: string;
+  
+  // HTML attributes
+  id?: string;
+  
+  // Rest props
+  [key: string]: any;
 }
 
 export const EditableButton: React.FC<EditableButtonProps> = ({
+  // Core props
   field,
   children,
   defaultValue = '',
+  
+  // Appearance
   variant = 'primary',
   size = 'md',
+  
+  // States
   disabled = false,
+  
+  // Behavior
   onClick,
-  icon
+  icon,
+  
+  // HTML attributes
+  id,
+  
+  // Rest props
+  ...rest
 }) => {
   const { editMode, localContent, handleFieldChange } = useEditMode();
 
@@ -45,22 +144,12 @@ export const EditableButton: React.FC<EditableButtonProps> = ({
 
   if (editMode) {
     return (
-      <Container>
-        <div
+      <EditContainer>
+        <EditableDiv
+          variant={variant}
+          size={size}
           contentEditable
           suppressContentEditableWarning
-          style={{
-            fontSize: size === 'sm' ? 'var(--font-size-sm)' : 
-                     size === 'lg' ? 'var(--font-size-lg)' : 'var(--font-size-base)',
-            textAlign: 'center',
-            padding: '8px 16px',
-            border: '1px dashed #ccc',
-            borderRadius: '6px',
-            minHeight: '1em',
-            backgroundColor: variant === 'primary' ? 'var(--color-primary)' : 'transparent',
-            color: variant === 'primary' ? 'white' : 'var(--text-primary)',
-            cursor: 'text'
-          }}
           onBlur={(e: React.FocusEvent<HTMLDivElement>) => {
             const newValue = e.currentTarget.textContent || '';
             const fieldParts = field.split('.');
@@ -72,11 +161,13 @@ export const EditableButton: React.FC<EditableButtonProps> = ({
               e.currentTarget.blur();
             }
           }}
+          id={id}
+          {...rest}
         >
-          {icon && <Span>{icon}</Span>}
+          {icon && <IconContainer>{icon}</IconContainer>}
           {currentValue}
-        </div>
-      </Container>
+        </EditableDiv>
+      </EditContainer>
     );
   }
 
@@ -87,8 +178,9 @@ export const EditableButton: React.FC<EditableButtonProps> = ({
       size={size}
       disabled={disabled}
       onClick={onClick}
+      {...rest}
     >
-      {icon && <Span>{icon}</Span>}
+      {icon && <IconContainer>{icon}</IconContainer>}
       {currentValue}
     </Button>
   );

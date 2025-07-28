@@ -1,8 +1,352 @@
-# UI Component Standards
+# 🎨 Fairfield Airport Cars - Comprehensive Style Guide
 
-> **Production-Ready Component Checklist** - Follow these rules to build components as good as our Button component.
+> **Complete Development Standards** - Everything you need to build consistent, maintainable, and professional components and pages.
 
-## 🎯 Overview
+## 📋 **Overview**
+
+This comprehensive style guide consolidates all our development standards into one unified document. It covers:
+- **UI Component Standards** - Building production-ready components
+- **Page Template & Layout System** - Unified page structure architecture
+- **Component Usage Rules** - How to use components correctly
+- **Development Patterns** - Best practices for the entire codebase
+
+---
+
+## 🚨 **AUTOMATED BLOCKERS IN PLACE**
+
+**The following violations are automatically blocked by `npm run check:components`:**
+
+### **🚫 FORBIDDEN PATTERNS (Will Block Commits):**
+- ❌ `className` props in reusable components
+- ❌ `<div>`, `<span>`, `<p>` tags for structure/text
+- ❌ Wrong imports (Stack/Card from `@/components/ui` instead of `@/components/ui/layout`)
+- ❌ Inline styles on reusable components
+
+### **✅ REQUIRED PATTERNS:**
+- ✅ Use component props (`variant`, `size`, `spacing`, `padding`)
+- ✅ Use design system components (`Container`, `Stack`, `Card`, `Text`, `Span`)
+- ✅ Import from correct paths (`@/components/ui/layout` for layout components)
+
+**Current Status: 82 violations detected and blocked from committing**
+
+---
+
+## 🏗️ Page Template & Layout System Architecture
+
+### Vision: Unified Page Structure System
+
+**Goal:** Create a system where every page follows the same structural patterns, making the entire app consistent, maintainable, and customizable.
+
+### Rule: Page Template Metadata System
+
+**Why It Matters:** Enables admin customization and consistent page structure
+
+```typescript
+// ✅ GOOD - Page template metadata
+interface PageTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: 'marketing' | 'admin' | 'booking' | 'content';
+  sections: PageSection[];
+  layout: 'standard' | 'hero' | 'dashboard' | 'form' | 'grid';
+  responsive: boolean;
+  seo: {
+    title: string;
+    description: string;
+    keywords: string[];
+  };
+}
+
+interface PageSection {
+  id: string;
+  type: 'hero' | 'content' | 'grid' | 'form' | 'cta' | 'footer';
+  components: ComponentConfig[];
+  layout: {
+    cols: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+    gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    responsive: boolean;
+  };
+  spacing: {
+    padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  };
+}
+
+interface ComponentConfig {
+  id: string;
+  type: string; // 'Button', 'Card', 'Text', etc.
+  props: Record<string, any>;
+  content?: EditableContent[];
+  position: {
+    row: number;
+    col: number;
+    span?: number;
+  };
+}
+```
+
+### Rule: Universal Grid Structure
+
+**Why It Matters:** Every page uses the same layout foundation
+
+```typescript
+// ✅ GOOD - Standard page structure
+const StandardPageLayout: React.FC<PageProps> = ({ template, content }) => {
+  return (
+    <PageContainer>
+      <HeaderContainer>
+        <IconContainer variant="default" size="md">
+          {template.icon}
+        </IconContainer>
+        <ContentContainer direction="vertical" gap="sm">
+          <EditableHeading level={1}>{template.title}</EditableHeading>
+          <EditableText variant="body" color="secondary">
+            {template.description}
+          </EditableText>
+        </ContentContainer>
+        <ActionsContainer align="end" gap="sm">
+          {template.actions}
+        </ActionsContainer>
+      </HeaderContainer>
+      
+      <Grid cols={template.layout.cols} gap={template.layout.gap} responsive={template.layout.responsive}>
+        {template.sections.map(section => (
+          <GridSection key={section.id} {...section.layout}>
+            {section.components.map(component => (
+              <ComponentRenderer key={component.id} config={component} />
+            ))}
+          </GridSection>
+        ))}
+      </Grid>
+    </PageContainer>
+  );
+};
+
+// ❌ BAD - Custom layouts per page
+const CustomPage = () => (
+  <div className="custom-page">
+    <div className="custom-header">
+      {/* Inconsistent structure */}
+    </div>
+  </div>
+);
+```
+
+### Rule: Reusable Layout Components
+
+**Why It Matters:** Eliminates code duplication and ensures consistency
+
+```typescript
+// ✅ GOOD - Use layout components from /layout directory
+import { 
+  IconContainer, 
+  ContentContainer, 
+  HeaderContainer, 
+  ActionsContainer,
+  Grid,
+  GridSection,
+  Container,
+  Stack
+} from '@/components/ui/layout';
+
+// Every page uses these components
+const PageSection: React.FC<SectionProps> = ({ children, layout }) => (
+  <Container variant="section" padding={layout.padding}>
+    <Grid cols={layout.cols} gap={layout.gap} responsive={layout.responsive}>
+      {children}
+    </Grid>
+  </Container>
+);
+
+// ❌ BAD - Custom styled components per page
+const PageSection = styled.div`
+  /* Custom styles that duplicate layout components */
+`;
+```
+
+### Rule: Component Library Architecture
+
+**Why It Matters:** Enables drag-and-drop admin system
+
+```typescript
+// ✅ GOOD - Component registry system
+const ComponentRegistry = {
+  Button: { component: Button, defaultProps: { variant: 'primary' } },
+  Card: { component: Card, defaultProps: { variant: 'default' } },
+  Text: { component: Text, defaultProps: { variant: 'body' } },
+  Heading: { component: EditableHeading, defaultProps: { level: 2 } },
+  Grid: { component: Grid, defaultProps: { cols: 3, gap: 'md' } },
+  // ... all components
+};
+
+const ComponentRenderer: React.FC<{ config: ComponentConfig }> = ({ config }) => {
+  const Component = ComponentRegistry[config.type]?.component;
+  if (!Component) return <div>Unknown component: {config.type}</div>;
+  
+  return (
+    <Component 
+      {...ComponentRegistry[config.type].defaultProps}
+      {...config.props}
+    >
+      {config.content?.map(content => (
+        <EditableContent key={content.id} {...content} />
+      ))}
+    </Component>
+  );
+};
+```
+
+### Rule: Admin Customization System
+
+**Why It Matters:** Allows non-technical users to customize pages
+
+```typescript
+// ✅ GOOD - Drag-and-drop ready structure
+interface AdminPageBuilder {
+  templates: PageTemplate[];
+  currentPage: PageTemplate;
+  selectedComponent: ComponentConfig | null;
+  dragState: {
+    isDragging: boolean;
+    draggedComponent: ComponentConfig | null;
+    dropTarget: string | null;
+  };
+}
+
+// Admin interface structure
+const AdminPageBuilder: React.FC = () => (
+  <div className="page-builder">
+    <TemplateLibrary templates={templates} />
+    <PageCanvas page={currentPage} onUpdate={updatePage} />
+    <ComponentPalette onDragStart={handleDragStart} />
+    <ComponentInspector component={selectedComponent} />
+  </div>
+);
+```
+
+---
+
+## 🏗️ Page Structure Hierarchy
+
+### **1. Page Layout Foundation**
+Every page MUST use this exact structure:
+
+```tsx
+// 🔥 REQUIRED: Every page must follow this pattern
+export default function PageName() {
+  return (
+    <ToastProvider>
+      <PageContent />
+    </ToastProvider>
+  );
+}
+
+function PageContent() {
+  const { addToast } = useToast();
+  
+  return (
+    <LayoutEnforcer>
+      <UniversalLayout 
+        layoutType="standard"
+        title="Page Title"
+        subtitle="Page description"
+      >
+        {/* Page content using GridSection and InfoCard */}
+      </UniversalLayout>
+    </LayoutEnforcer>
+  );
+}
+```
+
+### **2. Admin Pages Structure**
+Admin pages use `AdminPageWrapper` instead:
+
+```tsx
+<AdminPageWrapper
+  title="Admin Page Title"
+  subtitle="Description of what this admin page does"
+  actions={headerActions}
+  loading={loading}
+  error={error}
+  errorTitle="Error Context"
+>
+  {/* Content using SettingSection */}
+</AdminPageWrapper>
+```
+
+---
+
+## 📦 **Component Usage Rules**
+
+### **Content Organization**
+
+#### **✅ DO: Use SettingSection for Admin Forms**
+```tsx
+<SettingSection
+  title="Section Title"
+  description="What this section is for"
+  icon="🎯"
+>
+  <SettingInput
+    id="field-id"
+    label="Field Label"
+    description="Help text for the user"
+    value={value}
+    onChange={setValue}
+    placeholder="Helpful placeholder"
+    icon="📝"
+  />
+</SettingSection>
+```
+
+#### **✅ DO: Use GridSection + InfoCard for Public Pages**
+```tsx
+<GridSection variant="content" columns={1}>
+  <InfoCard
+    title="Card Title"
+    description="What this card contains"
+  >
+    {/* Card content */}
+  </InfoCard>
+</GridSection>
+```
+
+### **Form Input Standards**
+
+#### **✅ DO: Use SettingInput for Admin Forms**
+```tsx
+<SettingInput
+  id="unique-id"
+  label="Human Readable Label"
+  description="Help text explaining the field"
+  value={value}
+  onChange={setValue}
+  placeholder="Helpful placeholder text"
+  icon="📝"
+  required={true}
+  error={error}
+/>
+```
+
+#### **✅ DO: Use Input for Public Forms**
+```tsx
+<Input
+  id="email"
+  label="Email Address"
+  type="email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  placeholder="Enter your email"
+  required
+/>
+```
+
+---
+
+## ✅ UI Component Standards
+
+### **Production-Ready Component Checklist**
 
 This document defines the standards for building UI components that are:
 - **Accessible** - WCAG 2.1 AA compliant
@@ -56,30 +400,6 @@ width: '10px'
 height: '20px'
 ```
 
-### Rule: Use Consistent Spacing and Typography Scales
-
-**Why It Matters:** Creates predictable layouts
-
-```typescript
-// ✅ GOOD - Consistent scales
-const spacing = {
-  xs: '0.25rem',    // 4px
-  sm: '0.5rem',     // 8px
-  md: '0.75rem',    // 12px
-  lg: '1rem',       // 16px
-  xl: '1.5rem',     // 24px
-  '2xl': '2rem',    // 32px
-};
-
-const fontSize = {
-  xs: '0.75rem',    // 12px
-  sm: '0.875rem',   // 14px
-  md: '1rem',       // 16px
-  lg: '1.125rem',   // 18px
-  xl: '1.25rem',    // 20px
-};
-```
-
 ---
 
 ## ✅ 2. Styled-Component Hygiene
@@ -115,26 +435,6 @@ shouldForwardProp: (prop) => ![
 
 // ❌ BAD - Missing props
 shouldForwardProp: (prop) => !['variant', 'size'].includes(prop)
-```
-
-### Rule: Prefer Semantic Elements
-
-**Why It Matters:** Helps with accessibility and SEO
-
-```typescript
-// ✅ GOOD - Semantic elements
-const StyledButton = styled.button`
-  /* styles */
-`;
-
-const StyledLink = styled.a`
-  /* styles */
-`;
-
-// ❌ BAD - Generic divs for interactive elements
-const StyledButton = styled.div`
-  /* styles */
-`;
 ```
 
 ---
@@ -173,38 +473,6 @@ const StyledButton = styled.button`
     outline: none;
   }
 `;
-```
-
-### Rule: Semantic HTML
-
-**Why It Matters:** Improves accessibility tree
-
-```typescript
-// ✅ GOOD - Semantic elements
-export const Button: React.FC<ButtonProps> = ({ as = 'button', ...props }) => (
-  <StyledButton as={as} {...props} />
-);
-
-// Usage:
-<Button as="a" href="/link">Link Button</Button>
-<Button as="button" type="submit">Submit</Button>
-```
-
-### Rule: Label Icons
-
-**Why It Matters:** Icons should not confuse assistive tech
-
-```typescript
-// ✅ GOOD - Icon labeling
-{icon && (
-  <IconWrapper 
-    position={iconPosition}
-    aria-label={iconLabel}
-    aria-hidden={!iconLabel}
-  >
-    {icon}
-  </IconWrapper>
-)}
 ```
 
 ---
@@ -254,25 +522,6 @@ const StyledButton = styled.button`
 )}
 ```
 
-### Rule: Never Disable Without Context
-
-**Why It Matters:** Prevents user confusion
-
-```typescript
-// ✅ GOOD - Provide context
-<Button 
-  disabled={!isValid} 
-  aria-describedby={!isValid ? 'error-message' : undefined}
->
-  Submit
-</Button>
-{!isValid && (
-  <div id="error-message" role="alert">
-    Please fill in all required fields
-  </div>
-)}
-```
-
 ---
 
 ## ✅ 5. Responsiveness & Flexibility
@@ -315,27 +564,6 @@ const StyledComponent = styled.div<ComponentProps>`
     if (block) return 'block';
     return 'inline-flex';
   }};
-`;
-```
-
-### Rule: Use Flexible Layouts
-
-**Why It Matters:** Fluid design
-
-```typescript
-// ✅ GOOD - Flexible layouts
-const StyledComponent = styled.div`
-  min-width: 0;
-  max-width: 100%;
-  display: flex;
-  align-items: center;
-  gap: ${spacing.sm};
-`;
-
-// ❌ BAD - Fixed widths
-const StyledComponent = styled.div`
-  width: 200px;
-  height: 50px;
 `;
 ```
 
@@ -390,21 +618,6 @@ export interface ComponentProps {
 }
 ```
 
-### Rule: Allow Rest Props
-
-**Why It Matters:** Keeps components adaptable
-
-```typescript
-// ✅ GOOD - Rest props support
-export const Component: React.FC<ComponentProps> = ({ 
-  variant = 'primary',
-  size = 'md',
-  ...rest 
-}) => (
-  <StyledComponent variant={variant} size={size} {...rest} />
-);
-```
-
 ---
 
 ## ✅ 7. Testability & Dev Experience
@@ -444,19 +657,6 @@ export interface ComponentProps {
 }
 ```
 
-### Rule: Named Exports
-
-**Why It Matters:** Helps tooling and auto-import
-
-```typescript
-// ✅ GOOD - Named exports
-export const Button: React.FC<ButtonProps> = ({ ... }) => { ... };
-export type { ButtonProps };
-
-// ❌ BAD - Default exports
-export default Button;
-```
-
 ---
 
 ## ✅ 8. Animation & Performance
@@ -482,25 +682,6 @@ const StyledComponent = styled.div`
 `;
 ```
 
-### Rule: Scoped Animations
-
-**Why It Matters:** Keeps UI smooth
-
-```typescript
-// ✅ GOOD - Scoped keyframes
-const StyledSpinner = styled.svg`
-  animation: spin 1s linear infinite;
-  
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-`;
-
-// ❌ BAD - Global animations
-// @keyframes spin { ... } // In global CSS
-```
-
 ### Rule: Optimize Re-renders
 
 **Why It Matters:** Boosts performance
@@ -515,136 +696,6 @@ export const Button = React.memo<ButtonProps>(({ ... }) => {
 const ButtonContent = React.memo<ButtonContentProps>(({ ... }) => {
   // Content logic
 });
-```
-
----
-
-## ✅ 9. Code Style Consistency
-
-### Rule: Consistent Prop Order
-
-**Why It Matters:** Easier to read and scan
-
-```typescript
-// ✅ GOOD - Consistent order
-export const Component: React.FC<ComponentProps> = ({
-  // 1. Core props
-  children,
-  
-  // 2. Appearance
-  variant = 'primary',
-  size = 'md',
-  shape = 'default',
-  
-  // 3. States
-  disabled = false,
-  loading = false,
-  
-  // 4. Layout
-  fullWidth = false,
-  
-  // 5. Icons
-  icon,
-  iconPosition = 'left',
-  
-  // 6. Events
-  onClick,
-  
-  // 7. HTML attributes
-  type = 'button',
-  as: Component = 'button',
-  
-  // 8. Rest props
-  ...rest
-}) => {
-  // Component logic
-};
-```
-
-### Rule: Destructure Props
-
-**Why It Matters:** Cleaner, shorter logic
-
-```typescript
-// ✅ GOOD - Destructured props
-export const Component: React.FC<ComponentProps> = ({
-  variant = 'primary',
-  size = 'md',
-  children,
-  ...rest
-}) => (
-  <StyledComponent variant={variant} size={size} {...rest}>
-    {children}
-  </StyledComponent>
-);
-
-// ❌ BAD - Props object
-export const Component: React.FC<ComponentProps> = (props) => (
-  <StyledComponent {...props} />
-);
-```
-
----
-
-## ✅ 10. Design-to-Code Readiness
-
-### Rule: Match Figma Token Names
-
-**Why It Matters:** Enables easier automation or handoff
-
-```typescript
-// ✅ GOOD - Figma-compatible naming
-export interface ComponentProps {
-  variant: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  shape: 'default' | 'rounded' | 'pill' | 'square';
-}
-
-// Design tokens match Figma
-const colors = {
-  primary: { 50: '#eff6ff', 100: '#dbeafe', /* ... */ },
-  secondary: { 50: '#f8fafc', 100: '#f1f5f9', /* ... */ },
-};
-```
-
-### Rule: Document Prop Combinations
-
-**Why It Matters:** Prevents visual regressions
-
-```typescript
-// ✅ GOOD - Documented combinations
-/**
- * Button Component
- * 
- * Common combinations:
- * - Primary + Medium + Default: Standard action buttons
- * - Secondary + Small + Rounded: Secondary actions
- * - Outline + Large + Pill: Call-to-action buttons
- * - Ghost + Small + Square: Icon-only buttons
- * 
- * Accessibility:
- * - All buttons are keyboard accessible
- * - Loading state includes aria-busy
- * - Icons are properly labeled
- */
-export const Button: React.FC<ButtonProps> = ({ ... }) => { ... };
-```
-
-### Rule: Centralized Token Definitions
-
-**Why It Matters:** Cross-platform consistency
-
-```typescript
-// ✅ GOOD - Centralized tokens
-// src/lib/design-system/tokens.ts
-export const colors = { /* ... */ };
-export const spacing = { /* ... */ };
-export const fontSize = { /* ... */ };
-export const borderRadius = { /* ... */ };
-export const shadows = { /* ... */ };
-
-// All components import from same source
-import { colors, spacing, fontSize, borderRadius, shadows } from '@/lib/design-system/tokens';
 ```
 
 ---
@@ -816,4 +867,4 @@ export const Button: React.FC<ButtonProps> = ({
 
 ---
 
-*This document should be reviewed and updated regularly as our design system evolves.* 
+*This document consolidates all development standards into one comprehensive guide. Update regularly as our design system evolves.* 

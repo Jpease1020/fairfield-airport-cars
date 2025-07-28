@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import { Button } from './button';
-import { Container } from './containers';
+import { Container, Text } from '@/components/ui';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface HelpTooltipProps {
   content: string;
@@ -14,22 +15,38 @@ export const HelpTooltip: React.FC<HelpTooltipProps> = ({
   content,
   size = 'md'
 }) => {
-  const [isVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleToggle = () => {
+    setIsVisible(!isVisible);
+  };
 
   return (
-    <Container>
-      <Button
-        variant="ghost"
-        size={size}
-      >
-        <HelpCircle />
-      </Button>
-      
-      {isVisible && (
-        <Container>
-          {content}
-        </Container>
-      )}
+    <Container variant="default">
+      <Stack direction="horizontal" spacing="xs" align="center">
+        <Button
+          variant="ghost"
+          size={size}
+          onClick={handleToggle}
+          aria-label={`Help: ${content}`}
+          aria-expanded={isVisible}
+          aria-haspopup="dialog"
+        >
+          <HelpCircle size={size === 'sm' ? 16 : size === 'lg' ? 24 : 20} />
+        </Button>
+        
+        {isVisible && (
+          <Container 
+            variant="elevated" 
+            padding="sm"
+            maxWidth="sm"
+          >
+            <Text size="sm">
+              {content}
+            </Text>
+          </Container>
+        )}
+      </Stack>
     </Container>
   );
 }; 
