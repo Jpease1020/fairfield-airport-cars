@@ -124,3 +124,6 @@ export { LocationAutocomplete } from './LocationAutocomplete';
 
 // Reusable Patterns
 export { FeatureGrid } from './FeatureGrid'; 
+
+// Icons
+export * from './icons'; 

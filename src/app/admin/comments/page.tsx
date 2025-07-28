@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
 import { AdminPageWrapper, GridSection, InfoCard, Container, EditableText, StatCard } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 
 function CommentsPageContent() {

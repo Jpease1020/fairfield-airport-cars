@@ -1,8 +1,6 @@
 import React from 'react';
-import { SettingSection } from '../ui/SettingSection';
-import { SettingInput } from '../ui/SettingInput';
-import { ActionButtonGroup } from '../ui/ActionButtonGroup';
-import { Card, CardBody, CardHeader, CardTitle } from '../ui/card';
+import { Container } from '@/components/ui';
+import { SettingSection, SettingInput, ActionButtonGroup } from '@/components/ui';
 
 export interface GenericPageEditorProps {
   pageData: {
@@ -31,7 +29,7 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
   }];
 
   return (
-    <div >
+    <Container>
       <SettingSection
         title={pageTitle}
         description="Edit the content and settings for this page"
@@ -65,7 +63,7 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
           icon="🔍"
         />
       </SettingSection>
-    </div>
+    </Container>
   );
 };
 
@@ -106,7 +104,7 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
   }];
 
   return (
-    <div >
+    <Container>
       {/* Hero Section */}
       <SettingSection
         title="Hero Section"
@@ -159,51 +157,51 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
         
         {/* Feature Items */}
         {pageData.features.items.map((item: any, idx: number) => (
-          <Card key={idx}>
-            <CardHeader>
-              <CardTitle>Feature {idx + 1}</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <SettingInput
-                id={`feature-${idx}-title`}
-                label="Feature Title"
-                value={item.title}
-                onChange={(value) => {
-                  const items = [...pageData.features.items];
-                  items[idx] = { ...items[idx], title: value };
-                  onFieldChange('features', 'items', items);
-                }}
-                icon="📋"
-              />
-              
-              <SettingInput
-                id={`feature-${idx}-description`}
-                label="Feature Description"
-                value={item.description}
-                onChange={(value) => {
-                  const items = [...pageData.features.items];
-                  items[idx] = { ...items[idx], description: value };
-                  onFieldChange('features', 'items', items);
-                }}
-                icon="📝"
-              />
-              
-              <SettingInput
-                id={`feature-${idx}-icon`}
-                label="Feature Icon"
-                value={item.icon}
-                onChange={(value) => {
-                  const items = [...pageData.features.items];
-                  items[idx] = { ...items[idx], icon: value };
-                  onFieldChange('features', 'items', items);
-                }}
-                icon="🎨"
-              />
-            </CardBody>
-          </Card>
+          <SettingSection
+            key={idx}
+            title={`Feature ${idx + 1}`}
+            description="Highlight your key service features"
+            icon="📋"
+          >
+            <SettingInput
+              id={`feature-${idx}-title`}
+              label="Feature Title"
+              value={item.title}
+              onChange={(value) => {
+                const items = [...pageData.features.items];
+                items[idx] = { ...items[idx], title: value };
+                onFieldChange('features', 'items', items);
+              }}
+              icon="📋"
+            />
+            
+            <SettingInput
+              id={`feature-${idx}-description`}
+              label="Feature Description"
+              value={item.description}
+              onChange={(value) => {
+                const items = [...pageData.features.items];
+                items[idx] = { ...items[idx], description: value };
+                onFieldChange('features', 'items', items);
+              }}
+              icon="📝"
+            />
+            
+            <SettingInput
+              id={`feature-${idx}-icon`}
+              label="Feature Icon"
+              value={item.icon}
+              onChange={(value) => {
+                const items = [...pageData.features.items];
+                items[idx] = { ...items[idx], icon: value };
+                onFieldChange('features', 'items', items);
+              }}
+              icon="🎨"
+            />
+          </SettingSection>
         ))}
       </SettingSection>
-    </div>
+    </Container>
   );
 };
 
@@ -232,7 +230,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
   }];
 
   return (
-    <div >
+    <Container>
       <SettingSection
         title="Booking Page"
         description="Edit the content and settings for the booking page"
@@ -266,7 +264,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
           icon="📋"
         />
       </SettingSection>
-    </div>
+    </Container>
   );
 };
 
@@ -299,7 +297,7 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
   }];
 
   return (
-    <div >
+    <Container>
       <SettingSection
         title="Help Page"
         description="Edit the help page content and sections"
@@ -317,38 +315,38 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
         
         {/* Help Sections */}
         {pageData.sections.map((section: any, idx: number) => (
-          <Card key={idx}>
-            <CardHeader>
-              <CardTitle>Section {idx + 1}</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <SettingInput
-                id={`help-section-${idx}-title`}
-                label="Section Title"
-                value={section.title}
-                onChange={(value) => {
-                  const sections = [...pageData.sections];
-                  sections[idx] = { ...sections[idx], title: value };
-                  onFieldChange('sections', sections);
-                }}
-                icon="📋"
-              />
-              
-              <SettingInput
-                id={`help-section-${idx}-content`}
-                label="Section Content"
-                value={section.content}
-                onChange={(value) => {
-                  const sections = [...pageData.sections];
-                  sections[idx] = { ...sections[idx], content: value };
-                  onFieldChange('sections', sections);
-                }}
-                icon="📄"
-              />
-            </CardBody>
-          </Card>
+          <SettingSection
+            key={idx}
+            title={`Section ${idx + 1}`}
+            description="Edit the help page content and sections"
+            icon="📋"
+          >
+            <SettingInput
+              id={`help-section-${idx}-title`}
+              label="Section Title"
+              value={section.title}
+              onChange={(value) => {
+                const sections = [...pageData.sections];
+                sections[idx] = { ...sections[idx], title: value };
+                onFieldChange('sections', sections);
+              }}
+              icon="📋"
+            />
+            
+            <SettingInput
+              id={`help-section-${idx}-content`}
+              label="Section Content"
+              value={section.content}
+              onChange={(value) => {
+                const sections = [...pageData.sections];
+                sections[idx] = { ...sections[idx], content: value };
+                onFieldChange('sections', sections);
+              }}
+              icon="📄"
+            />
+          </SettingSection>
         ))}
       </SettingSection>
-    </div>
+    </Container>
   );
 }; 

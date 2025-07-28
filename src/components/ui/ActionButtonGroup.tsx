@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Span } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 export interface ActionButton {
   label: string;

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { UnifiedLayout } from '@/components/layout';
 import { GridSection, InfoCard, Form, Input, Label, Button, Container, Text, Span, EditableText } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

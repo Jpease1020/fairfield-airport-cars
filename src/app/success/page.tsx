@@ -18,7 +18,7 @@ import {
   H3,
   Button
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {

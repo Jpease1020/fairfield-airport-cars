@@ -47,10 +47,10 @@ module.exports = {
       }
     ],
     
-    // Custom rules for our design system
-    'fairfield/require-universal-layout': 'error',
-    'fairfield/no-custom-layouts': 'error',
-    'fairfield/use-design-tokens': 'error'
+    // Custom rules for our design system - temporarily disabled until rules are defined
+    // 'fairfield/require-universal-layout': 'error',
+    // 'fairfield/no-custom-layouts': 'error',
+    // 'fairfield/use-design-tokens': 'error'
   },
   
   // Custom rule definitions
@@ -58,12 +58,12 @@ module.exports = {
     {
       files: ['src/app/**/page.tsx', 'src/app/**/layout.tsx'],
       rules: {
-        'fairfield/require-universal-layout': [
-          'error',
-          {
-            message: '❌ All pages must use UniversalLayout component. Import from @/components/layout/UniversalLayout'
-          }
-        ]
+        // 'fairfield/require-universal-layout': [
+        //   'error',
+        //   {
+        //     message: '❌ All pages must use UniversalLayout component. Import from @/components/layout/UniversalLayout'
+        //   }
+        // ]
       }
     }
   ]

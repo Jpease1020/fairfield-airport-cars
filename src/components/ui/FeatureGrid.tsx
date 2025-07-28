@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Text, H4 } from '@/components/ui';
-import { Grid, Stack } from '@/components/ui/containers';
+import { Grid } from '@/components/ui/layout/grid';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface Feature {
   id?: string | number;

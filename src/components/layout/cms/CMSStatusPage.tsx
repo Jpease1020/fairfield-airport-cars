@@ -4,7 +4,7 @@ import { CMSLayout } from './CMSLayout';
 import { PageHeader } from '../structure/PageHeader';
 import { Section, Container, H1, H2, Button } from '@/components/ui';
 
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Text, Link } from '@/components/ui/text';
 import { CheckCircle, Clock, AlertCircle, Info } from 'lucide-react';
 

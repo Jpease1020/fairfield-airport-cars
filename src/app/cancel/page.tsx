@@ -12,7 +12,7 @@ import {
   useToast,
   Text
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 function CancelPageContent() {
   const { addToast } = useToast();

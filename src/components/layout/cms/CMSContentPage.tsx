@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, H2, H3, EditableText } from '@/components/ui';
 import { Link } from '@/components/ui/text';
-import { Section, Stack } from '@/components/ui/containers';
+import { Section, Stack } from '@/components/ui/layout/containers';
 import { Text } from '@/components/ui/text';
 import { CMSLayout } from './CMSLayout';
 import { PageHeader } from '../structure/PageHeader';

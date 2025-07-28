@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertItem } from './AlertItem';
 import { Container, Text, Span } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface AlertData {
   id: string | number;

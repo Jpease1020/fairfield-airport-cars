@@ -5,7 +5,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/utils/firebase';
 import { Button } from '@/components/ui/button';
 import { Container, EditableText } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { cmsService } from '@/lib/services/cms-service';
 import { authService } from '@/lib/services/auth-service';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, ReactNode } from 'react';
-import { generateCSSVariables } from '@/lib/design';
+import { generateCSSVariables } from '@/lib/design-system/cms';
 
 interface CMSDesignProviderProps {
   children: ReactNode;

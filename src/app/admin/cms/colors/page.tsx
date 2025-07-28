@@ -9,7 +9,7 @@ import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';
 import { Input } from '@/components/ui/input';
 import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
 import { StatusMessage } from '@/components/ui/StatusMessage';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { getCMSConfig } from '@/lib/services/cms-service';
 import { EditableText, EditableHeading } from '@/components/ui';
 

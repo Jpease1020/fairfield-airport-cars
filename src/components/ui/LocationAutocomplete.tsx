@@ -117,15 +117,11 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       )}
       
       <Container spacing="xs">
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem 0.75rem',
-          border: '1px solid #d1d5db',
-          borderRadius: '0.375rem',
-          transition: 'border-color 0.2s, box-shadow 0.2s'
-        }}>
+        <Container
+          variant="default"
+          padding="sm"
+          as="div"
+        >
           {isLoading && <Loader2 style={{ width: '1rem', height: '1rem', color: '#9ca3af' }} />}
           <input
             data-autocomplete-input
@@ -144,7 +140,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             }}
           />
           {!isLoading && <MapPin style={{ width: '1rem', height: '1rem', color: '#9ca3af' }} />}
-        </div>
+        </Container>
         
         {error && <Text size="sm" color="error">{error}</Text>}
         {helperText && !error && <Text size="sm" color="muted">{helperText}</Text>}

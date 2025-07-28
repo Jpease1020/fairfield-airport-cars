@@ -19,11 +19,9 @@ export const CMSLayout: React.FC<CMSLayoutProps> = ({
       variant="main"
       maxWidth={maxWidth}
       padding={padding}
-      as="div"
+      as="main"
     >
-      <Container as="main" variant="content">
-        {children}
-      </Container>
+      {children}
     </Container>
   );
 };

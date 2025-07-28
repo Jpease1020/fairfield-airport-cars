@@ -3,7 +3,7 @@ import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from './CMSLayout';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { Section, Container, H1, H2, EditableText } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Text, Span } from '@/components/ui';
 
 interface CMSConversionPageProps {

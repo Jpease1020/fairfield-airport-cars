@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { AdminPageWrapper, GridSection, InfoCard, ActionGrid, Container, H3, EditableText, StatCard } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastProvider';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';

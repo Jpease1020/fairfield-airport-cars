@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef, useEffect } from 'react';
 import { ChatMessage, ChatMessageProps } from './ChatMessage';
 import { Container, Span, Text } from '@/components/ui';

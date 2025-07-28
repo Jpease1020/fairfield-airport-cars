@@ -108,7 +108,7 @@ function CostsPageContent() {
     },
     { 
       label: 'Add Cost', 
-      href: '/admin/costs/manual-entry', 
+      onClick: () => window.location.href = '/admin/costs/manual-entry', 
       variant: 'primary' as const 
     }
   ];

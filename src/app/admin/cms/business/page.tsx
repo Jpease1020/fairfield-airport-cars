@@ -15,7 +15,7 @@ import {
   Span,
   EditableText
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 function BusinessPageContent() {
   const { addToast } = useToast();

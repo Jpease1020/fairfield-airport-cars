@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
-import { Card } from '@/components/ui/containers';
+import { Card } from '@/components/ui/layout/containers';
 import { CardBody, CardHeader, CardTitle } from '@/components/ui/card';
 import { Text } from '@/components/ui';
 

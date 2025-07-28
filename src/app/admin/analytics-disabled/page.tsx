@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { StatCard, Container, H2, Text, Span, EditableText, EditableHeading } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Button } from '@/components/ui/button';
 
 interface AnalyticsData {

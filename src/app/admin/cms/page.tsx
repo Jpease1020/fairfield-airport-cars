@@ -16,7 +16,7 @@ import {
   Text,
   EditableText
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 function CMSPageContent() {
   const { addToast } = useToast();

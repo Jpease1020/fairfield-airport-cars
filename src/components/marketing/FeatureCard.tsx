@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Container, H3, Text, Span, Link, EditableText } from '@/components/ui';
+import { Container, H3, Text, Link, EditableText } from '@/components/ui';
+import { ChevronRightIcon } from '@/components/ui/icons';
 
 interface FeatureCardProps {
   title: string | React.ReactNode;
@@ -49,11 +50,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       
       {href && (
         <Container>
-          <Span>
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Span>
+          <Link href={href}>
+            <ChevronRightIcon />
+          </Link>
         </Container>
       )}
     </Container>

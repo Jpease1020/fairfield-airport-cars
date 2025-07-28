@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, H1, Text, Button, Link, EditableText } from '@/components/ui';
-import { Section, Stack } from '@/components/ui/containers';
+import { Section, Stack } from '@/components/ui/layout/containers';
 
 interface HeroSectionProps {
   title: string;

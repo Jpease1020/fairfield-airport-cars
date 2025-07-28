@@ -4,7 +4,7 @@ import { Booking } from '@/types/booking';
 import { Badge } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { Container, H3, Text, EditableText } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface BookingCardProps {
   booking: Booking;

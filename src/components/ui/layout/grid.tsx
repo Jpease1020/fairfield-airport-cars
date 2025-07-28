@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';
-import { cn } from '@/lib/utils';
+import { Text, H2 } from '@/components/ui';
+import { Container } from './containers';
 
 // Grid system components
 interface GridProps {
@@ -114,10 +115,10 @@ const GridSection: React.FC<GridSectionProps> = ({
       as={Component}
     >
       {(title || subtitle) && (
-        <div className={cn('mb-6')}>
-          {title && <h2 className={cn('text-2xl font-bold text-gray-900 mb-2')}>{title}</h2>}
-          {subtitle && <p className={cn('text-gray-600')}>{subtitle}</p>}
-        </div>
+        <Container variant="default" padding="none" margin="none" marginBottom="lg">
+          {title && <H2 size="lg">{title}</H2>}
+          {subtitle && <Text variant="muted" size="sm">{subtitle}</Text>}
+        </Container>
       )}
       <GridComponent
         cols={cols}

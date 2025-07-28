@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { UnifiedLayout } from '@/components/layout';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { EditModeProvider } from '@/components/admin/EditModeProvider';
 import { 
   GridSection,

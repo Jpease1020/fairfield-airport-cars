@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
 import { Text, Link } from '@/components/ui';
-import { Stack, Card } from '@/components/ui/containers';
+import { Stack, Card } from '@/components/ui/layout/containers';
 import { Button } from './button';
 import { EditableText } from '@/components/ui';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, fontWeight, transitions } from '@/lib/design-system/tokens';
 import { H3, Text, Link } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { EditableText } from '@/components/ui';
 
 // Styled stat card container

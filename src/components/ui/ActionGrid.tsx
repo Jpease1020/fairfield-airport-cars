@@ -1,7 +1,8 @@
 import React from 'react';
 import { ActionCard } from './ActionCard';
 import { Container, Text, Span } from '@/components/ui';
-import { Grid, Stack } from '@/components/ui/layout/containers';
+import { Grid } from '@/components/ui/layout/grid';
+import { Stack } from '@/components/ui/layout/containers';
 
 interface ActionData {
   id: string | number;

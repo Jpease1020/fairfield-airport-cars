@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
 import { Card, CardBody } from './card';
 import { Text } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { EditableText } from '@/components/ui';
 
 // Styled icon container

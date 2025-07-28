@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Section, Container, H2, H3, Text, Button, Span, EditableText } from '@/components/ui';
+import { Section, Container, H2, H3, Text, Button, EditableText } from '@/components/ui';
+import { ChevronDownIcon } from '@/components/ui/icons';
 
 interface FAQItem {
   question: string;
@@ -63,16 +64,10 @@ export const FAQ: React.FC<FAQProps> = ({
                   variant="ghost"
                   onClick={() => toggleItem(index)}
                 >
-                  <Span>
-                    <EditableText field={`faq.item${index}.question`} defaultValue={item.question}>
-                      {item.question}
-                    </EditableText>
-                  </Span>
-                  <Span>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </Span>
+                  <EditableText field={`faq.item${index}.question`} defaultValue={item.question}>
+                    {item.question}
+                  </EditableText>
+                  <ChevronDownIcon className="h-5 w-5" />
                 </Button>
                 
                 {openItems.has(index) && (

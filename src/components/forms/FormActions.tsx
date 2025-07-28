@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, Container } from '@/components/ui/containers';
+import { Stack, Container } from '@/components/ui/layout/containers';
 
 // FormActions Component - BULLETPROOF TYPE SAFETY!
 interface FormActionsProps {

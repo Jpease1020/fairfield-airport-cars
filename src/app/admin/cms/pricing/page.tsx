@@ -18,7 +18,7 @@ import {
   Span,
   EditableText
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 import { Button } from '@/components/ui/button';
 import { 
   MapPin, 

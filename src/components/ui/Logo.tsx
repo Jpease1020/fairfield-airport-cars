@@ -9,7 +9,6 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'default' | 'white' | 'dark';
   priority?: boolean;
-  className?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ 
@@ -18,8 +17,7 @@ const Logo: React.FC<LogoProps> = ({
   height,
   size = 'md',
   variant = 'default',
-  priority = false,
-  className
+  priority = false
 }) => {
   // Size mapping
   const sizeMap = {

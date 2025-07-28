@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';
 import { Input, Label, Text } from './index';
 import { Container, Span } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
+import { Stack } from '@/components/ui/layout/containers';
 
 // Styled setting toggle container
 const SettingToggleContainer = styled.div.withConfig({

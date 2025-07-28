@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';
-import { cn } from '@/lib/utils';
 
 // Container system components
 interface ContainerProps {
