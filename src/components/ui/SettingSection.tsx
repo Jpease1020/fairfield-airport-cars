@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardHeader, CardBody } from './card';
 import { Text, H3 } from '@/components/ui';
-import { IconContainer, ContentContainer, HeaderContainer, ActionsContainer } from './layout';
+import { IconContainer, ContentContainer, HeaderContainer, ActionsContainer } from './layout/components';
 
 export interface SettingSectionProps {
   // Core props

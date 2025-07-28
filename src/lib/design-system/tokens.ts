@@ -85,13 +85,15 @@ export const colors = {
     900: '#111827',
   },
   
-  // Text Colors
+  // Text Colors - Enhanced for better contrast
   text: {
-    primary: '#374151',
-    secondary: '#6b7280',
+    primary: '#1f2937', // Darker for better contrast
+    secondary: '#4b5563', // Darker for better contrast
     disabled: '#9ca3af',
     white: '#ffffff',
     inverse: '#ffffff',
+    muted: '#6b7280',
+    emphasis: '#1f2937', // For important text
   },
   
   // Border Colors
@@ -123,6 +125,43 @@ export const spacing = {
   '2xl': '2rem',    // 32px
   '3xl': '3rem',    // 48px
   '4xl': '4rem',    // 64px
+} as const;
+
+// Site-Wide Margin System
+export const margins = {
+  // Section margins
+  section: {
+    top: '2rem',     // 32px
+    bottom: '2rem',  // 32px
+    between: '3rem', // 48px
+  },
+  
+  // Component margins
+  component: {
+    top: '1rem',     // 16px
+    bottom: '1rem',  // 16px
+    between: '1.5rem', // 24px
+  },
+  
+  // Card margins
+  card: {
+    top: '0.5rem',   // 8px
+    bottom: '0.5rem', // 8px
+    between: '1rem', // 16px
+  },
+  
+  // Form margins
+  form: {
+    field: '0.75rem', // 12px
+    section: '1.5rem', // 24px
+    group: '1rem',    // 16px
+  },
+  
+  // Navigation margins
+  navigation: {
+    item: '0.5rem',  // 8px
+    group: '1rem',   // 16px
+  },
 } as const;
 
 // Typography Scale
@@ -205,6 +244,7 @@ export const breakpoints = {
 export const designTokens = {
   colors,
   spacing,
+  margins,
   fontSize,
   fontWeight,
   borderRadius,
@@ -217,6 +257,7 @@ export const designTokens = {
 // Type exports for TypeScript
 export type ColorToken = typeof colors;
 export type SpacingToken = typeof spacing;
+export type MarginToken = typeof margins;
 export type FontSizeToken = typeof fontSize;
 export type FontWeightToken = typeof fontWeight;
 export type BorderRadiusToken = typeof borderRadius;

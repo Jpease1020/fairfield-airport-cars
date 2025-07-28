@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * 🎯 UNIFIED LAYOUT SYSTEM
  * 
@@ -9,14 +11,10 @@
  * ✅ Usage: Simple props, no complexity, lightning fast
  */
 
-'use client';
-
 import React, { ReactNode } from 'react';
 import { AccessibilityEnhancer } from '@/components/ui/AccessibilityEnhancer';
 import { Container, H1, Text } from '@/components/ui';
 import { Section } from '@/components/ui/layout/containers';
-import Navigation from '../navigation/Navigation';
-import { StandardFooter } from '../structure/StandardFooter';
 
 interface UnifiedLayoutProps {
   children: ReactNode;
@@ -47,36 +45,15 @@ export function UnifiedLayout({
   subtitle,
   description,
   layoutType = 'standard',
-  showNavigation = true,
-  showFooter = true,
+  showNavigation = false, // Temporarily disabled
+  showFooter = false, // Temporarily disabled
   maxWidth = 'xl',
   padding = 'lg',
   centerContent = false
 }: UnifiedLayoutProps) {
-  // Layout-specific configurations
-  const layoutConfig = {
-    standard: { showNav: true, showFooter: true, container: true },
-    admin: { showNav: false, showFooter: false, container: true },
-    minimal: { showNav: false, showFooter: false, container: false },
-    marketing: { showNav: true, showFooter: true, container: true },
-    content: { showNav: true, showFooter: true, container: true },
-    status: { showNav: true, showFooter: false, container: true }
-  };
-
-  const config = layoutConfig[layoutType];
-  const shouldShowNav = showNavigation && config.showNav;
-  const shouldShowFooter = showFooter && config.showFooter;
-
   return (
     <AccessibilityEnhancer>
       <Container maxWidth={maxWidth} padding={padding}>
-        {/* Navigation */}
-        {shouldShowNav && (
-          <Container as="header" variant="navigation">
-            <Navigation />
-          </Container>
-        )}
-
         {/* Page Header */}
         {(title || subtitle || description) && (
           <Section variant="default" padding="lg">
@@ -101,16 +78,11 @@ export function UnifiedLayout({
         )}
 
         {/* Main Content */}
-        <Container as="main" variant="content">
-          {children}
-        </Container>
-
-        {/* Footer */}
-        {shouldShowFooter && (
-          <Container as="footer" variant="section">
-            <StandardFooter />
+        <Section variant="default" padding="lg">
+          <Container maxWidth={maxWidth}>
+            {children}
           </Container>
-        )}
+        </Section>
       </Container>
     </AccessibilityEnhancer>
   );

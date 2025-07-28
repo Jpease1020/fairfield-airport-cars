@@ -273,7 +273,9 @@ const SelectItem = styled.div.withConfig({
 `;
 
 // Styled select container with improved positioning
-const SelectContainer = styled.div<{ fullWidth: boolean }>`
+const SelectContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['fullWidth'].includes(prop)
+})<{ fullWidth: boolean }>`
   position: relative;
   display: inline-block;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};

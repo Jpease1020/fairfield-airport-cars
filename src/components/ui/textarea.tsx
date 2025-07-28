@@ -93,7 +93,9 @@ const StyledTextarea = styled.textarea.withConfig({
 `;
 
 // Styled container for textarea
-const TextareaContainer = styled.div<{ fullWidth: boolean }>`
+const TextareaContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['fullWidth'].includes(prop)
+})<{ fullWidth: boolean }>`
   display: block;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;

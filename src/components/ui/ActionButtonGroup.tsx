@@ -20,14 +20,13 @@ export interface ActionButtonGroupProps {
 export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
   buttons,
   orientation = 'horizontal',
-  spacing = 'xs'
+  spacing = 'md' // Changed from 'xs' to 'md' for better spacing
 }) => {
-
-
   return (
     <Stack 
       direction={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
       spacing={spacing}
+      align="center"
     >
       {buttons.map((button, index) => (
         <Button

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { UnifiedLayout } from '@/components/layout';
 import { 
@@ -184,4 +184,26 @@ function SuccessPageContent() {
   );
 }
 
-export default SuccessPageContent;
+function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <UnifiedLayout 
+        layoutType="status"
+        title="Loading..."
+        subtitle="Please wait"
+      >
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <Stack spacing="md">
+              <LoadingSpinner size="lg" />
+            </Stack>
+          </Container>
+        </GridSection>
+      </UnifiedLayout>
+    }>
+      <SuccessPageContent />
+    </Suspense>
+  );
+}
+
+export default SuccessPage;

@@ -200,6 +200,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
       }
     } catch (error) {
       console.error('Error estimating fare:', error);
+      setError('Error estimating fare. Please try again.');
       setIsCalculating(false);
     }
   };
@@ -499,15 +500,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
         {/* Error and Success Messages */}
         {error && (
-          <StatusMessage type="error" title="Booking Error" message={error}>
-            {error}
-          </StatusMessage>
+          <StatusMessage type="error" message={error} />
         )}
         
         {success && (
-          <StatusMessage type="success" title="Booking Successful" message={success}>
-            {success}
-          </StatusMessage>
+          <StatusMessage type="success" message={success} />
         )}
 
         {/* Action Buttons */}

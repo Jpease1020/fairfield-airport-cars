@@ -70,7 +70,9 @@ const StyledInput = styled.input.withConfig({
 `;
 
 // Styled container for icon positioning
-const InputContainer = styled.div<{ fullWidth: boolean }>`
+const InputContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['fullWidth'].includes(prop)
+})<{ fullWidth: boolean }>`
   display: flex;
   align-items: center;
   position: relative;

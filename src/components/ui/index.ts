@@ -108,7 +108,8 @@ export { EditableInput } from './EditableInput';
 export { EditableTextarea } from './EditableTextarea';
 
 // BULLETPROOF Layout Components (NEVER from text.tsx!)
-export { Container, Box, Section, Card, Stack, Layout, Spacer } from './layout/containers';
+export { Container, Box, Section, Stack, MarginEnforcer } from './layout/containers';
+export { Card, Layout, Spacer } from './layout/containers';
 export { Grid, GridSection } from './layout/grid';
 export { IconContainer, ContentContainer, HeaderContainer, ActionsContainer, EditContainer } from './layout/components';
 

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';
+import { colors, spacing, borderRadius, shadows, transitions, margins } from '@/lib/design-system/tokens';
+import { Text, H2 } from '@/components/ui';
 
 // Container system components
 interface ContainerProps {
@@ -756,7 +757,7 @@ const StyledCard = styled.div.withConfig({
   }}
 `;
 
-const Card: React.FC<CardProps> = ({ 
+export const Card: React.FC<CardProps> = ({ 
     variant = 'default', 
     padding = 'md', 
     hover = false,
@@ -905,7 +906,7 @@ interface LayoutProps {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 }
 
-const Layout: React.FC<LayoutProps> = ({ 
+export const Layout: React.FC<LayoutProps> = ({ 
   children, 
   spacing = 'lg', 
   container = true, 
@@ -934,7 +935,7 @@ interface SpacerProps {
   axis?: 'horizontal' | 'vertical';
 }
 
-const Spacer: React.FC<SpacerProps> = ({ 
+export const Spacer: React.FC<SpacerProps> = ({ 
   size = 'md', 
   axis = 'vertical' 
 }) => {
@@ -946,4 +947,60 @@ const Spacer: React.FC<SpacerProps> = ({
   return <div style={style} />;
 };
 
-export { Section, Card, Stack, Layout, Spacer }; 
+// Margin Enforcer Component - Ensures consistent spacing
+interface MarginEnforcerProps {
+  children: React.ReactNode;
+  type?: 'section' | 'component' | 'card' | 'form' | 'navigation';
+  margin?: 'top' | 'bottom' | 'both';
+  className?: string;
+}
+
+const MarginEnforcer: React.FC<MarginEnforcerProps> = ({ 
+  children, 
+  type = 'component',
+  margin = 'both',
+  className 
+}) => {
+  const getMarginStyle = () => {
+    const marginTokens = {
+      section: {
+        top: margins.section.top,
+        bottom: margins.section.bottom,
+        both: `${margins.section.top} 0 ${margins.section.bottom} 0`,
+      },
+      component: {
+        top: margins.component.top,
+        bottom: margins.component.bottom,
+        both: `${margins.component.top} 0 ${margins.component.bottom} 0`,
+      },
+      card: {
+        top: margins.card.top,
+        bottom: margins.card.bottom,
+        both: `${margins.card.top} 0 ${margins.card.bottom} 0`,
+      },
+      form: {
+        top: margins.form.section,
+        bottom: margins.form.section,
+        both: `${margins.form.section} 0`,
+      },
+      navigation: {
+        top: margins.navigation.group,
+        bottom: margins.navigation.group,
+        both: `${margins.navigation.group} 0`,
+      },
+    };
+
+    return marginTokens[type][margin];
+  };
+
+  return (
+    <div 
+      style={{ margin: getMarginStyle() }}
+      className={className}
+    >
+      {children}
+    </div>
+  );
+};
+
+export { MarginEnforcer, Section, Stack }; 
