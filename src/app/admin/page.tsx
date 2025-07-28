@@ -9,7 +9,8 @@ import {
   ActionButtonGroup,
   ToastProvider,
   Container,
-  Text
+  Text,
+  EditableText
 } from '@/components/ui';
 
 function AdminDashboardContent() {
@@ -44,19 +45,19 @@ function AdminDashboardContent() {
   return (
     <UnifiedLayout 
       layoutType="admin"
-      title="🏠 Admin Dashboard"
-      subtitle="Manage your airport transportation business"
-      description="Overview of bookings, revenue, and business operations"
+      title={<EditableText field="admin.dashboard.title" defaultValue="🏠 Admin Dashboard">🏠 Admin Dashboard</EditableText>}
+      subtitle={<EditableText field="admin.dashboard.subtitle" defaultValue="Manage your airport transportation business">Manage your airport transportation business</EditableText>}
+      description={<EditableText field="admin.dashboard.description" defaultValue="Overview of bookings, revenue, and business operations">Overview of bookings, revenue, and business operations</EditableText>}
       showNavigation={false}
       showFooter={false}
       maxWidth="full"
     >
-      <AdminPageWrapper title="Dashboard" subtitle="Business overview and quick actions">
+      <AdminPageWrapper title={<EditableText field="admin.dashboard.wrapperTitle" defaultValue="Dashboard">Dashboard</EditableText>} subtitle={<EditableText field="admin.dashboard.wrapperSubtitle" defaultValue="Business overview and quick actions">Business overview and quick actions</EditableText>}>
         {/* Quick Actions */}
         <GridSection variant="content" columns={1}>
           <InfoCard
-            title="⚡ Quick Actions"
-            description="Common administrative tasks"
+            title={<EditableText field="admin.dashboard.quickActionsTitle" defaultValue="⚡ Quick Actions">⚡ Quick Actions</EditableText>}
+            description={<EditableText field="admin.dashboard.quickActionsDesc" defaultValue="Common administrative tasks">Common administrative tasks</EditableText>}
           >
             <ActionButtonGroup buttons={quickActions} />
           </InfoCard>
@@ -67,8 +68,8 @@ function AdminDashboardContent() {
           {statsCards.map((stat, index) => (
             <InfoCard
               key={index}
-              title={`${stat.icon} ${stat.title}`}
-              description={stat.value}
+              title={<EditableText field={`admin.dashboard.statTitle${index}`} defaultValue={`${stat.icon} ${stat.title}`}>{`${stat.icon} ${stat.title}`}</EditableText>}
+              description={<EditableText field={`admin.dashboard.statDesc${index}`} defaultValue={stat.value}>{stat.value}</EditableText>}
             >
               <Container>
                 <Text>
@@ -85,12 +86,12 @@ function AdminDashboardContent() {
         {/* Recent Activity */}
         <GridSection variant="content" columns={1}>
           <InfoCard
-            title="📈 Recent Activity"
-            description="Latest bookings and system updates"
+            title={<EditableText field="admin.dashboard.recentActivityTitle" defaultValue="📈 Recent Activity">📈 Recent Activity</EditableText>}
+            description={<EditableText field="admin.dashboard.recentActivityDesc" defaultValue="Latest bookings and system updates">Latest bookings and system updates</EditableText>}
           >
             <Container>
               <Text>
-                Recent activity data will be displayed here once the booking system is fully integrated.
+                <EditableText field="admin.dashboard.recentActivityPlaceholder" defaultValue="Recent activity data will be displayed here once the booking system is fully integrated.">Recent activity data will be displayed here once the booking system is fully integrated.</EditableText>
               </Text>
             </Container>
           </InfoCard>

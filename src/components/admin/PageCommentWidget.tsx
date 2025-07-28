@@ -343,7 +343,11 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   <Badge>
                     {priority}
                   </Badge>
-                  <Text>{comment}</Text>
+                  <Text>
+                    <EditableText field="pageCommentWidget.previewComment" defaultValue={comment}>
+                      {comment}
+                    </EditableText>
+                  </Text>
                 </Container>
               )}
 

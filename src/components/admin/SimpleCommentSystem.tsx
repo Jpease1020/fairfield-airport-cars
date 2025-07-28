@@ -4,7 +4,7 @@ import { useState, useEffect, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from './AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
-import { Textarea, Select, Option, Container, H4, Span } from '@/components/ui';
+import { Textarea, Select, Option, Container, H4, Span, EditableText } from '@/components/ui';
 import { Stack, Card } from '@/components/ui/containers';
 import { Button } from '@/components/ui/button';
 
@@ -302,7 +302,15 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
           >
             <Stack direction="horizontal" align="center" justify="between">
             <H4>
-              {existingComments.length > 0 ? `Comments (${existingComments.length})` : 'Add Comment'}
+              {existingComments.length > 0 ? (
+                <EditableText field="simpleCommentSystem.commentsHeading" defaultValue={`Comments (${existingComments.length})`}>
+                  {`Comments (${existingComments.length})`}
+                </EditableText>
+              ) : (
+                <EditableText field="simpleCommentSystem.addCommentHeading" defaultValue="Add Comment">
+                  Add Comment
+                </EditableText>
+              )}
             </H4>
             <Button
               onClick={() => {
@@ -327,7 +335,9 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                   <Container>
                     {getStatusIcon(comment.status)}
                     <Span>
-                      {comment.status}
+                      <EditableText field="simpleCommentSystem.statusLabel" defaultValue={comment.status}>
+                        {comment.status}
+                      </EditableText>
                     </Span>
                   </Container>
                   <Button
@@ -373,7 +383,9 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
               onClick={handleAddComment}
               disabled={!commentText.trim()}
             >
-              Add Comment
+              <EditableText field="simpleCommentSystem.addCommentButton" defaultValue="Add Comment">
+                Add Comment
+              </EditableText>
             </Button>
             <Button
               onClick={() => {
@@ -381,7 +393,9 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                 setSelectedElement(null);
               }}
             >
-              Close
+              <EditableText field="simpleCommentSystem.closeButton" defaultValue="Close">
+                Close
+              </EditableText>
             </Button>
           </Stack>
         </Container>

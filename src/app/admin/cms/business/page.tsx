@@ -320,8 +320,16 @@ function BusinessPageContent() {
                     icon="🎨"
                   />
                   <Stack direction="horizontal" spacing="sm" align="center">
-                    <Span>Preview:</Span>
-                    <Span>Color preview</Span>
+                    <Span>
+                      <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
+                        Preview:
+                      </EditableText>
+                    </Span>
+                    <Span>
+                      <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
+                        Color preview
+                      </EditableText>
+                    </Span>
                   </Stack>
                 </Container>
                 
@@ -336,8 +344,16 @@ function BusinessPageContent() {
                     icon="🎨"
                   />
                   <Stack direction="horizontal" spacing="sm" align="center">
-                    <Span>Preview:</Span>
-                    <Span>Color preview</Span>
+                    <Span>
+                      <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
+                        Preview:
+                      </EditableText>
+                    </Span>
+                    <Span>
+                      <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
+                        Color preview
+                      </EditableText>
+                    </Span>
                   </Stack>
                 </Container>
                 

@@ -9,7 +9,8 @@ import {
   InfoCard,
   LoadingSpinner,
   Container,
-  Text
+  Text,
+  EditableText
 } from '@/components/ui';
 import { UnifiedLayout } from '@/components/layout';
 
@@ -66,7 +67,9 @@ function DriverLocationContent() {
           <InfoCard title="❌ Unauthorized" description="You are not authorized to access this page">
             <Container>
               <Text>
-                You are not authorized to access this page.
+                <EditableText field="driver.location.unauthorized" defaultValue="You are not authorized to access this page.">
+                  You are not authorized to access this page.
+                </EditableText>
               </Text>
             </Container>
           </InfoCard>
@@ -87,12 +90,22 @@ function DriverLocationContent() {
           description="Your current location sharing status"
         >
           <Container>
-            <Text>{status}</Text>
+            <Text>
+              <EditableText field="driver.location.status" defaultValue={status}>
+                {status}
+              </EditableText>
+            </Text>
             {coords && (
               <Container>
-                <Text>Current Coordinates:</Text>
                 <Text>
-                  Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
+                  <EditableText field="driver.location.coordinates" defaultValue="Current Coordinates:">
+                    Current Coordinates:
+                  </EditableText>
+                </Text>
+                <Text>
+                  <EditableText field="driver.location.coords" defaultValue={`Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`}>
+                    Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
+                  </EditableText>
                 </Text>
               </Container>
             )}

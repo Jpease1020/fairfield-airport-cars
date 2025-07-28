@@ -2,7 +2,7 @@ import React from 'react';
 import { CMSConfiguration } from '@/types/cms';
 import { CMSLayout } from './CMSLayout';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
-import { Section, Container, H1, H2 } from '@/components/ui';
+import { Section, Container, H1, H2, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Text, Span } from '@/components/ui';
 
@@ -98,22 +98,50 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
             {/* Trust Signals Sidebar */}
             {showTrustSignals && (
               <Container spacing="lg">
-                <H2>Why Choose Us?</H2>
+                <H2>
+                  <EditableText field="cmsConversionPage.whyChooseUs" defaultValue="Why Choose Us?">
+                    Why Choose Us?
+                  </EditableText>
+                </H2>
                 <Container spacing="md">
                   <Stack direction="horizontal" align="center" spacing="sm">
                     <Span>✓</Span>
-                    <Text>Professional Drivers</Text>
-                    <Text size="sm">Background checked & licensed</Text>
+                    <Text>
+                      <EditableText field="cmsConversionPage.professionalDrivers" defaultValue="Professional Drivers">
+                        Professional Drivers
+                      </EditableText>
+                    </Text>
+                    <Text size="sm">
+                      <EditableText field="cmsConversionPage.professionalDriversDescription" defaultValue="Background checked & licensed">
+                        Background checked & licensed
+                      </EditableText>
+                    </Text>
                   </Stack>
                   <Stack direction="horizontal" align="center" spacing="sm">
                     <Span>✓</Span>
-                    <Text>Reliable Service</Text>
-                    <Text size="sm">On-time pickups guaranteed</Text>
+                    <Text>
+                      <EditableText field="cmsConversionPage.reliableService" defaultValue="Reliable Service">
+                        Reliable Service
+                      </EditableText>
+                    </Text>
+                    <Text size="sm">
+                      <EditableText field="cmsConversionPage.reliableServiceDescription" defaultValue="On-time pickups guaranteed">
+                        On-time pickups guaranteed
+                      </EditableText>
+                    </Text>
                   </Stack>
                   <Stack direction="horizontal" align="center" spacing="sm">
                     <Span>✓</Span>
-                    <Text>Clean Vehicles</Text>
-                    <Text size="sm">Well-maintained luxury SUVs</Text>
+                    <Text>
+                      <EditableText field="cmsConversionPage.cleanVehicles" defaultValue="Clean Vehicles">
+                        Clean Vehicles
+                      </EditableText>
+                    </Text>
+                    <Text size="sm">
+                      <EditableText field="cmsConversionPage.cleanVehiclesDescription" defaultValue="Well-maintained luxury SUVs">
+                        Well-maintained luxury SUVs
+                      </EditableText>
+                    </Text>
                   </Stack>
                 </Container>
               </Container>
@@ -122,19 +150,40 @@ export const CMSConversionPage: React.FC<CMSConversionPageProps> = ({
             {/* Help Section */}
             {showTrustSignals && (
               <Container>
-                <H2>Need Help?</H2>
+                <H2>
+                  <EditableText field="cmsConversionPage.needHelp" defaultValue="Need Help?">
+                    Need Help?
+                  </EditableText>
+                </H2>
                 <Text>
-                  Our team is here to assist you with your booking.
+                  <EditableText field="cmsConversionPage.needHelpDescription" defaultValue="Our team is here to assist you with your booking.">
+                    Our team is here to assist you with your booking.
+                  </EditableText>
                 </Text>
                 <Container spacing="sm">
                   <Text>
-                    <Span>Phone:</Span> (203) 555-0123
+                    <Span>
+                      <EditableText field="cmsConversionPage.phoneLabel" defaultValue="Phone:">
+                        Phone:
+                      </EditableText>
+                    </Span> (203) 555-0123
                   </Text>
                   <Text>
-                    <Span>Email:</Span> info@fairfieldairportcar.com
+                    <Span>
+                      <EditableText field="cmsConversionPage.emailLabel" defaultValue="Email:">
+                        Email:
+                      </EditableText>
+                    </Span> info@fairfieldairportcar.com
                   </Text>
                   <Text>
-                    <Span>Hours:</Span> 24/7 Service
+                    <Span>
+                      <EditableText field="cmsConversionPage.hoursLabel" defaultValue="Hours:">
+                        Hours:
+                      </EditableText>
+                    </Span> 
+                    <EditableText field="cmsConversionPage.hoursValue" defaultValue="24/7 Service">
+                      24/7 Service
+                    </EditableText>
                   </Text>
                 </Container>
               </Container>

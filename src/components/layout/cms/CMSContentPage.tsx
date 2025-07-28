@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, H2, H3 } from '@/components/ui';
+import { Container, H2, H3, EditableText } from '@/components/ui';
 import { Link } from '@/components/ui/text';
 import { Section, Stack } from '@/components/ui/containers';
 import { Text } from '@/components/ui/text';
@@ -49,12 +49,16 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
           <PageHeader title={pageTitle || "Page Header"}>
             {pageSubtitle && (
               <Text>
-                {pageSubtitle}
+                <EditableText field="cmsContentPage.pageSubtitle" defaultValue={pageSubtitle}>
+                  {pageSubtitle}
+                </EditableText>
               </Text>
             )}
             {pageDescription && (
               <Text>
-                {pageDescription}
+                <EditableText field="cmsContentPage.pageDescription" defaultValue={pageDescription}>
+                  {pageDescription}
+                </EditableText>
               </Text>
             )}
           </PageHeader>
@@ -68,11 +72,27 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
             {/* Table of Contents */}
             {showTableOfContents && (
               <Container>
-                <H3>On This Page</H3>
+                <H3>
+                  <EditableText field="cmsContentPage.onThisPage" defaultValue="On This Page">
+                    On This Page
+                  </EditableText>
+                </H3>
                 <Stack spacing="sm" direction="vertical">
-                  <Link href="#overview">Overview</Link>
-                  <Link href="#details">Details</Link>
-                  <Link href="#contact">Contact</Link>
+                  <Link href="#overview">
+                    <EditableText field="cmsContentPage.overview" defaultValue="Overview">
+                      Overview
+                    </EditableText>
+                  </Link>
+                  <Link href="#details">
+                    <EditableText field="cmsContentPage.details" defaultValue="Details">
+                      Details
+                    </EditableText>
+                  </Link>
+                  <Link href="#contact">
+                    <EditableText field="cmsContentPage.contact" defaultValue="Contact">
+                      Contact
+                    </EditableText>
+                  </Link>
                 </Stack>
               </Container>
             )}
@@ -89,37 +109,69 @@ export const CMSContentPage: React.FC<CMSContentPageProps> = ({
       {showRelatedLinks && (
         <Section variant="muted" padding="xl">
           <Container maxWidth={containerMaxWidth} spacing="lg">
-              <H2>Related Information</H2>
-                              <Text>Find more helpful resources and information</Text>
+              <H2>
+                <EditableText field="cmsContentPage.relatedInformation" defaultValue="Related Information">
+                  Related Information
+                </EditableText>
+              </H2>
+              <Text>
+                <EditableText field="cmsContentPage.relatedInformationDescription" defaultValue="Find more helpful resources and information">
+                  Find more helpful resources and information
+                </EditableText>
+              </Text>
               
               <Stack direction="horizontal" spacing="lg">
                 <Container>
-                  <H3>Booking Information</H3>
+                  <H3>
+                    <EditableText field="cmsContentPage.bookingInformation" defaultValue="Booking Information">
+                      Booking Information
+                    </EditableText>
+                  </H3>
                   <Text>
-                    Learn about our booking process, policies, and what to expect.
+                    <EditableText field="cmsContentPage.bookingInformationDescription" defaultValue="Learn about our booking process, policies, and what to expect.">
+                      Learn about our booking process, policies, and what to expect.
+                    </EditableText>
                   </Text>
                   <Link href="/book">
-                    Book Your Ride →
+                    <EditableText field="cmsContentPage.bookYourRide" defaultValue="Book Your Ride →">
+                      Book Your Ride →
+                    </EditableText>
                   </Link>
                 </Container>
                 
                 <Container>
-                  <H3>Service Areas</H3>
+                  <H3>
+                    <EditableText field="cmsContentPage.serviceAreas" defaultValue="Service Areas">
+                      Service Areas
+                    </EditableText>
+                  </H3>
                   <Text>
-                    See all the airports and areas we serve in the region.
+                    <EditableText field="cmsContentPage.serviceAreasDescription" defaultValue="See all the airports and areas we serve in the region.">
+                      See all the airports and areas we serve in the region.
+                    </EditableText>
                   </Text>
                   <Link href="/about">
-                    View Service Areas →
+                    <EditableText field="cmsContentPage.viewServiceAreas" defaultValue="View Service Areas →">
+                      View Service Areas →
+                    </EditableText>
                   </Link>
                 </Container>
                 
                 <Container>
-                  <H3>Contact Support</H3>
+                  <H3>
+                    <EditableText field="cmsContentPage.contactSupport" defaultValue="Contact Support">
+                      Contact Support
+                    </EditableText>
+                  </H3>
                   <Text>
-                    Need help? Our support team is available 24/7.
+                    <EditableText field="cmsContentPage.contactSupportDescription" defaultValue="Need help? Our support team is available 24/7.">
+                      Need help? Our support team is available 24/7.
+                    </EditableText>
                   </Text>
                   <Link href="/help">
-                    Get Help →
+                    <EditableText field="cmsContentPage.getHelp" defaultValue="Get Help →">
+                      Get Help →
+                    </EditableText>
                   </Link>
                 </Container>
               </Stack>

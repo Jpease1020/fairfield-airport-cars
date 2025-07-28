@@ -126,7 +126,9 @@ function AdminColorsPageContent() {
                       ●
                     </Span>
                     <Span>
-                      {label}
+                      <EditableText field={`admin.cms.colors.${key.replace('--', '')}`} defaultValue={label}>
+                        {label}
+                      </EditableText>
                     </Span>
                   </Stack>
                   

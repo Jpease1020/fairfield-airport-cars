@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text } from '@/components/ui';
+import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 const AIAssistantSettingsPage = () => {
@@ -59,7 +59,11 @@ const AIAssistantSettingsPage = () => {
         actions={[]}
         loading={true}
       >
-        <Text>Loading...</Text>
+        <Text>
+          <EditableText field="aiAssistantSettings.loading" defaultValue="Loading...">
+            Loading...
+          </EditableText>
+        </Text>
       </AdminPageWrapper>
     );
   }
@@ -77,19 +81,41 @@ const AIAssistantSettingsPage = () => {
         >
           <Container>
             <H3>
-              🚫 Feature Not Available
+              <EditableText field="aiAssistantSettings.featureNotAvailable" defaultValue="🚫 Feature Not Available">
+                🚫 Feature Not Available
+              </EditableText>
             </H3>
             <Text>
-              The AI assistant feature is currently disabled for your account. This may be due to:
+              <EditableText field="aiAssistantSettings.disabledDescription" defaultValue="The AI assistant feature is currently disabled for your account. This may be due to:">
+                The AI assistant feature is currently disabled for your account. This may be due to:
+              </EditableText>
             </Text>
             <Stack spacing="sm">
-              <Text>• Subscription plan limitations</Text>
-              <Text>• Regional availability restrictions</Text>
-              <Text>• System maintenance or updates</Text>
-              <Text>• Account configuration settings</Text>
+              <Text>
+                <EditableText field="aiAssistantSettings.subscriptionLimitations" defaultValue="• Subscription plan limitations">
+                  • Subscription plan limitations
+                </EditableText>
+              </Text>
+              <Text>
+                <EditableText field="aiAssistantSettings.regionalRestrictions" defaultValue="• Regional availability restrictions">
+                  • Regional availability restrictions
+                </EditableText>
+              </Text>
+              <Text>
+                <EditableText field="aiAssistantSettings.systemMaintenance" defaultValue="• System maintenance or updates">
+                  • System maintenance or updates
+                </EditableText>
+              </Text>
+              <Text>
+                <EditableText field="aiAssistantSettings.accountConfiguration" defaultValue="• Account configuration settings">
+                  • Account configuration settings
+                </EditableText>
+              </Text>
             </Stack>
             <Text>
-              Contact support for information about enabling this feature.
+              <EditableText field="aiAssistantSettings.contactSupport" defaultValue="Contact support for information about enabling this feature.">
+                Contact support for information about enabling this feature.
+              </EditableText>
             </Text>
           </Container>
         </InfoCard>

@@ -51,17 +51,17 @@ export default function LoginPage() {
   return (
     <UnifiedLayout
       layoutType="standard"
-      title="Admin Login"
-      subtitle="Enter your credentials to access the admin dashboard"
+      title={<EditableText field="admin.login.title" defaultValue="Admin Login">Admin Login</EditableText>}
+      subtitle={<EditableText field="admin.login.subtitle" defaultValue="Enter your credentials to access the admin dashboard">Enter your credentials to access the admin dashboard</EditableText>}
     >
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="🔐 Admin Authentication"
-          description="Sign in to access the admin dashboard"
+          title={<EditableText field="admin.login.authTitle" defaultValue="🔐 Admin Authentication">🔐 Admin Authentication</EditableText>}
+          description={<EditableText field="admin.login.authDesc" defaultValue="Sign in to access the admin dashboard">Sign in to access the admin dashboard</EditableText>}
         >
           <Form onSubmit={handleFormSubmit}>
             <Stack spacing="lg">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email"><EditableText field="admin.login.emailLabel" defaultValue="Email Address">Email Address</EditableText></Label>
               <Input
                 id="email"
                 type="email"
@@ -72,7 +72,7 @@ export default function LoginPage() {
                 disabled={loading}
               />
               
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password"><EditableText field="admin.login.passwordLabel" defaultValue="Password">Password</EditableText></Label>
               <Input
                 id="password"
                 type="password"

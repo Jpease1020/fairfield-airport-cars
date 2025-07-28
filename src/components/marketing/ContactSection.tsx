@@ -1,5 +1,5 @@
 import React from 'react';
-import { Section, Container, H2, Text, Grid, GridItem, Link, Span } from '@/components/ui';
+import { Section, Container, H2, Text, Grid, GridItem, Link, Span, EditableText } from '@/components/ui';
 
 interface ContactMethod {
   type: 'phone' | 'email' | 'text' | 'whatsapp';
@@ -75,19 +75,25 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
         <Container maxWidth="xl">
           {title && (
             <H2>
-              {title}
+              <EditableText field="contact.title" defaultValue={title}>
+                {title}
+              </EditableText>
             </H2>
           )}
           
           {subtitle && (
             <Text>
-              {subtitle}
+              <EditableText field="contact.subtitle" defaultValue={subtitle}>
+                {subtitle}
+              </EditableText>
             </Text>
           )}
           
           {description && (
             <Text>
-              {description}
+              <EditableText field="contact.description" defaultValue={description}>
+                {description}
+              </EditableText>
             </Text>
           )}
           
@@ -99,9 +105,15 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                     {getContactIcon(method.type)}
                   </Container>
                   <Container>
-                    <Text>{method.label}</Text>
                     <Text>
-                      {method.value}
+                      <EditableText field={`contact.method${index}.label`} defaultValue={method.label}>
+                        {method.label}
+                      </EditableText>
+                    </Text>
+                    <Text>
+                      <EditableText field={`contact.method${index}.value`} defaultValue={method.value}>
+                        {method.value}
+                      </EditableText>
                     </Text>
                   </Container>
                 </Link>
@@ -117,7 +129,11 @@ const ContactSection = React.forwardRef<HTMLDivElement, ContactSectionProps>(
                 />
                 {mapLocation.address && (
                   <Container>
-                    <Text size="sm">{mapLocation.address}</Text>
+                    <Text size="sm">
+                      <EditableText field="contact.map.address" defaultValue={mapLocation.address}>
+                        {mapLocation.address}
+                      </EditableText>
+                    </Text>
                   </Container>
                 )}
               </GridItem>

@@ -26,46 +26,124 @@ function PrivacyPageContent() {
             description="Effective Date: January 1, 2024 | Last Updated: January 1, 2024"
           >
             <Container>
-              <H3>1. Information We Collect</H3>
+              <H3>
+                <EditableText field="privacy.informationWeCollect.title" defaultValue="1. Information We Collect">
+                  1. Information We Collect
+                </EditableText>
+              </H3>
               <Text>
-                We collect information you provide directly to us when you book our services, including:
+                <EditableText field="privacy.informationWeCollect.description" defaultValue="We collect information you provide directly to us when you book our services, including:">
+                  We collect information you provide directly to us when you book our services, including:
+                </EditableText>
               </Text>
               <Stack spacing="sm" direction="vertical">
-                <Container>Name and contact information (phone, email, address)</Container>
-                <Container>Pickup and destination locations</Container>
-                <Container>Travel dates and times</Container>
-                <Container>Flight information (when applicable)</Container>
-                <Container>Payment information</Container>
-                <Container>Special requests or preferences</Container>
+                <Container>
+                  <EditableText field="privacy.informationWeCollect.name" defaultValue="Name and contact information (phone, email, address)">
+                    Name and contact information (phone, email, address)
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationWeCollect.locations" defaultValue="Pickup and destination locations">
+                    Pickup and destination locations
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationWeCollect.travel" defaultValue="Travel dates and times">
+                    Travel dates and times
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationWeCollect.flight" defaultValue="Flight information (when applicable)">
+                    Flight information (when applicable)
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationWeCollect.payment" defaultValue="Payment information">
+                    Payment information
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationWeCollect.preferences" defaultValue="Special requests or preferences">
+                    Special requests or preferences
+                  </EditableText>
+                </Container>
               </Stack>
             </Container>
 
             <Container>
               <EditableText field="privacy.howWeUse.title" defaultValue="We use the information we collect to:">
-                We use the information we collect to:
+                <Stack spacing="sm" direction="vertical">
+                  <Container>
+                    <EditableText field="privacy.howWeUse.provide" defaultValue="Provide and coordinate transportation services">
+                      Provide and coordinate transportation services
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.howWeUse.process" defaultValue="Process payments and send confirmations">
+                      Process payments and send confirmations
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.howWeUse.communicate" defaultValue="Communicate with you about your bookings">
+                      Communicate with you about your bookings
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.howWeUse.send" defaultValue="Send service updates and notifications">
+                      Send service updates and notifications
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.howWeUse.improve" defaultValue="Improve our services and customer experience">
+                      Improve our services and customer experience
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.howWeUse.comply" defaultValue="Comply with legal obligations">
+                      Comply with legal obligations
+                    </EditableText>
+                  </Container>
+                </Stack>
               </EditableText>
-              <Stack spacing="sm" direction="vertical">
-                <Container>Provide and coordinate transportation services</Container>
-                <Container>Process payments and send confirmations</Container>
-                <Container>Communicate with you about your bookings</Container>
-                <Container>Send service updates and notifications</Container>
-                <Container>Improve our services and customer experience</Container>
-                <Container>Comply with legal obligations</Container>
-              </Stack>
             </Container>
 
             <Container>
-              <H3>3. Information Sharing</H3>
+              <H3>
+                <EditableText field="privacy.informationSharing.title" defaultValue="3. Information Sharing">
+                  3. Information Sharing
+                </EditableText>
+              </H3>
               <Text>
-                We do not sell, trade, or rent your personal information to third parties. We may share your 
-                information only in the following circumstances:
+                <EditableText field="privacy.informationSharing.description" defaultValue="We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:">
+                  We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:
+                </EditableText>
               </Text>
               <Stack spacing="sm" direction="vertical">
-                <Container>With our drivers to coordinate your transportation</Container>
-                <Container>With payment processors to handle transactions</Container>
-                <Container>When required by law or legal process</Container>
-                <Container>To protect our rights, property, or safety</Container>
-                <Container>With your explicit consent</Container>
+                <Container>
+                  <EditableText field="privacy.informationSharing.drivers" defaultValue="With our drivers to coordinate your transportation">
+                    With our drivers to coordinate your transportation
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationSharing.payment" defaultValue="With payment processors to handle transactions">
+                    With payment processors to handle transactions
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationSharing.law" defaultValue="When required by law or legal process">
+                    When required by law or legal process
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationSharing.protect" defaultValue="To protect our rights, property, or safety">
+                    To protect our rights, property, or safety
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.informationSharing.consent" defaultValue="With your explicit consent">
+                    With your explicit consent
+                  </EditableText>
+                </Container>
               </Stack>
             </Container>
 
@@ -76,10 +154,26 @@ function PrivacyPageContent() {
                 access, alteration, disclosure, or destruction. This includes:
               </Text>
               <Stack spacing="sm" direction="vertical">
-                <Container>Encrypted data transmission</Container>
-                <Container>Secure payment processing</Container>
-                <Container>Limited access to personal information</Container>
-                <Container>Regular security assessments</Container>
+                <Container>
+                  <EditableText field="privacy.dataSecurity.encrypted" defaultValue="Encrypted data transmission">
+                    Encrypted data transmission
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.dataSecurity.secure" defaultValue="Secure payment processing">
+                    Secure payment processing
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.dataSecurity.limited" defaultValue="Limited access to personal information">
+                    Limited access to personal information
+                  </EditableText>
+                </Container>
+                <Container>
+                  <EditableText field="privacy.dataSecurity.regular" defaultValue="Regular security assessments">
+                    Regular security assessments
+                  </EditableText>
+                </Container>
               </Stack>
             </Container>
 
@@ -94,15 +188,34 @@ function PrivacyPageContent() {
 
             <Container>
               <EditableText field="privacy.yourRights.title" defaultValue="You have the right to:">
-                You have the right to:
+                <Stack spacing="sm" direction="vertical">
+                  <Container>
+                    <EditableText field="privacy.yourRights.access" defaultValue="Access and review your personal information">
+                      Access and review your personal information
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.yourRights.correct" defaultValue="Request corrections to inaccurate information">
+                      Request corrections to inaccurate information
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.yourRights.delete" defaultValue="Request deletion of your information (subject to legal requirements)">
+                      Request deletion of your information (subject to legal requirements)
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.yourRights.optOut" defaultValue="Opt out of marketing communications">
+                      Opt out of marketing communications
+                    </EditableText>
+                  </Container>
+                  <Container>
+                    <EditableText field="privacy.yourRights.fileComplaint" defaultValue="File a complaint with relevant authorities">
+                      File a complaint with relevant authorities
+                    </EditableText>
+                  </Container>
+                </Stack>
               </EditableText>
-              <Stack spacing="sm" direction="vertical">
-                <Container>Access and review your personal information</Container>
-                <Container>Request corrections to inaccurate information</Container>
-                <Container>Request deletion of your information (subject to legal requirements)</Container>
-                <Container>Opt out of marketing communications</Container>
-                <Container>File a complaint with relevant authorities</Container>
-              </Stack>
             </Container>
 
             <Container>

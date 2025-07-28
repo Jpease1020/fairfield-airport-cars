@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Section, Container, H2, H3, Text, Button, Span } from '@/components/ui';
+import { Section, Container, H2, H3, Text, Button, Span, EditableText } from '@/components/ui';
 
 interface FAQItem {
   question: string;
@@ -41,9 +41,17 @@ export const FAQ: React.FC<FAQProps> = ({
         <Container maxWidth={maxWidth}>
           {title && (
             <Container>
-              <H2>{title}</H2>
+              <H2>
+                <EditableText field="faq.title" defaultValue={title}>
+                  {title}
+                </EditableText>
+              </H2>
               {subtitle && (
-                <Text>{subtitle}</Text>
+                <Text>
+                  <EditableText field="faq.subtitle" defaultValue={subtitle}>
+                    {subtitle}
+                  </EditableText>
+                </Text>
               )}
             </Container>
           )}
@@ -55,7 +63,11 @@ export const FAQ: React.FC<FAQProps> = ({
                   variant="ghost"
                   onClick={() => toggleItem(index)}
                 >
-                  <Span>{item.question}</Span>
+                  <Span>
+                    <EditableText field={`faq.item${index}.question`} defaultValue={item.question}>
+                      {item.question}
+                    </EditableText>
+                  </Span>
                   <Span>
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -65,7 +77,11 @@ export const FAQ: React.FC<FAQProps> = ({
                 
                 {openItems.has(index) && (
                   <Container>
-                    <Text>{item.answer}</Text>
+                    <Text>
+                      <EditableText field={`faq.item${index}.answer`} defaultValue={item.answer}>
+                        {item.answer}
+                      </EditableText>
+                    </Text>
                   </Container>
                 )}
               </Container>
@@ -82,9 +98,17 @@ export const FAQ: React.FC<FAQProps> = ({
         <Container maxWidth={maxWidth}>
           {title && (
             <Container>
-              <H2>{title}</H2>
+              <H2>
+                <EditableText field="faq.title" defaultValue={title}>
+                  {title}
+                </EditableText>
+              </H2>
               {subtitle && (
-                <Text>{subtitle}</Text>
+                <Text>
+                  <EditableText field="faq.subtitle" defaultValue={subtitle}>
+                    {subtitle}
+                  </EditableText>
+                </Text>
               )}
             </Container>
           )}
@@ -93,10 +117,14 @@ export const FAQ: React.FC<FAQProps> = ({
             {items.map((item, index) => (
               <Container key={index}>
                 <H3>
-                  {item.question}
+                  <EditableText field={`faq.item${index}.question`} defaultValue={item.question}>
+                    {item.question}
+                  </EditableText>
                 </H3>
                 <Text>
-                  {item.answer}
+                  <EditableText field={`faq.item${index}.answer`} defaultValue={item.answer}>
+                    {item.answer}
+                  </EditableText>
                 </Text>
               </Container>
             ))}
@@ -112,9 +140,17 @@ export const FAQ: React.FC<FAQProps> = ({
       <Container maxWidth={maxWidth}>
         {title && (
           <Container>
-            <H2>{title}</H2>
+            <H2>
+              <EditableText field="faq.title" defaultValue={title}>
+                {title}
+              </EditableText>
+            </H2>
             {subtitle && (
-              <Text>{subtitle}</Text>
+              <Text>
+                <EditableText field="faq.subtitle" defaultValue={subtitle}>
+                  {subtitle}
+                </EditableText>
+              </Text>
             )}
           </Container>
         )}
@@ -123,10 +159,14 @@ export const FAQ: React.FC<FAQProps> = ({
           {items.map((item, index) => (
             <Container key={index}>
               <H3>
-                {item.question}
+                <EditableText field={`faq.item${index}.question`} defaultValue={item.question}>
+                  {item.question}
+                </EditableText>
               </H3>
               <Text>
-                {item.answer}
+                <EditableText field={`faq.item${index}.answer`} defaultValue={item.answer}>
+                  {item.answer}
+                </EditableText>
               </Text>
             </Container>
           ))}

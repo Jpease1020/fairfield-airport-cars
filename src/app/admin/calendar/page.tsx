@@ -147,19 +147,35 @@ const CalendarPage = () => {
           <Container>
             <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🟡</Span>
-              <Span>Pending</Span>
+              <Span>
+                <EditableText field="admin.calendar.legend.pending" defaultValue="Pending">
+                  Pending
+                </EditableText>
+              </Span>
             </Stack>
             <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🟢</Span>
-              <Span>Confirmed</Span>
+              <Span>
+                <EditableText field="admin.calendar.legend.confirmed" defaultValue="Confirmed">
+                  Confirmed
+                </EditableText>
+              </Span>
             </Stack>
             <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🔵</Span>
-              <Span>Completed</Span>
+              <Span>
+                <EditableText field="admin.calendar.legend.completed" defaultValue="Completed">
+                  Completed
+                </EditableText>
+              </Span>
             </Stack>
             <Stack direction="horizontal" spacing="sm" align="center">
               <Span>🔴</Span>
-              <Span>Cancelled</Span>
+              <Span>
+                <EditableText field="admin.calendar.legend.cancelled" defaultValue="Cancelled">
+                  Cancelled
+                </EditableText>
+              </Span>
             </Stack>
           </Container>
         </InfoCard>

@@ -358,34 +358,62 @@ function ManageBookingPageContent() {
         >
           <Stack direction="vertical" spacing="md">
             <Container>
-              <Span>Booking ID:</Span>
+              <Span>
+                <EditableText field="manage.bookingId" defaultValue="Booking ID:">
+                  Booking ID:
+                </EditableText>
+              </Span>
               <Span>{booking.id}</Span>
             </Container>
             <Container>
-              <Span>Status:</Span>
+              <Span>
+                <EditableText field="manage.status" defaultValue="Status:">
+                  Status:
+                </EditableText>
+              </Span>
               <Span>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </Span>
             </Container>
             <Container>
-              <Span>Passenger:</Span>
+              <Span>
+                <EditableText field="manage.passenger" defaultValue="Passenger:">
+                  Passenger:
+                </EditableText>
+              </Span>
               <Span>{booking.name}</Span>
             </Container>
             <Container>
-              <Span>Route:</Span>
+              <Span>
+                <EditableText field="manage.route" defaultValue="Route:">
+                  Route:
+                </EditableText>
+              </Span>
               <Span>{booking.pickupLocation} → {booking.dropoffLocation}</Span>
             </Container>
             <Container>
-              <Span>Pickup Time:</Span>
+              <Span>
+                <EditableText field="manage.pickupTime" defaultValue="Pickup Time:">
+                  Pickup Time:
+                </EditableText>
+              </Span>
               <Span>{new Date(booking.pickupDateTime).toLocaleString()}</Span>
             </Container>
             <Container>
-              <Span>Total Fare:</Span>
+              <Span>
+                <EditableText field="manage.totalFare" defaultValue="Total Fare:">
+                  Total Fare:
+                </EditableText>
+              </Span>
               <Span>${booking.fare?.toFixed(2)}</Span>
             </Container>
             {booking.balanceDue > 0 && (
               <Container>
-                <Span>Balance Due:</Span>
+                <Span>
+                  <EditableText field="manage.balanceDue" defaultValue="Balance Due:">
+                    Balance Due:
+                  </EditableText>
+                </Span>
                 <Span>${booking.balanceDue.toFixed(2)}</Span>
               </Container>
             )}

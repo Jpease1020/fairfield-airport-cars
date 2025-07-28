@@ -6,7 +6,7 @@ import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
 import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard, LoadingSpinner, Text, Container } from '@/components/ui';
+import { GridSection, InfoCard, LoadingSpinner, Text, Container, EditableText } from '@/components/ui';
 
 export default function EditBookingPage() {
   const params = useParams();

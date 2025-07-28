@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Container, H3, Text, Span, Link } from '@/components/ui';
+import { Container, H3, Text, Span, Link, EditableText } from '@/components/ui';
 
 interface FeatureCardProps {
   title: string;
@@ -28,11 +28,15 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       )}
       
       <H3>
-        {title}
+        <EditableText field="featurecard.title" defaultValue={title}>
+          {title}
+        </EditableText>
       </H3>
       
       <Text>
-        {description}
+        <EditableText field="featurecard.description" defaultValue={description}>
+          {description}
+        </EditableText>
       </Text>
       
       {href && (

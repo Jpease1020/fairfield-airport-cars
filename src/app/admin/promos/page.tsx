@@ -266,31 +266,31 @@ function PromosPageContent() {
       {/* Promo Statistics */}
       <GridSection variant="stats" columns={4}>
         <StatCard
-          title="Total Promos"
+          title={<EditableText field="admin.promos.totalPromosTitle" defaultValue="Total Promos">Total Promos</EditableText>}
           icon="🎟️"
           statNumber={promos.length.toString()}
-          statChange="Created codes"
+          statChange={<EditableText field="admin.promos.createdCodesChange" defaultValue="Created codes">Created codes</EditableText>}
           changeType="neutral"
         />
         <StatCard
-          title="Active Promos"
+          title={<EditableText field="admin.promos.activePromosTitle" defaultValue="Active Promos">Active Promos</EditableText>}
           icon="✅"
           statNumber={activePromos.toString()}
-          statChange="Currently usable"
+          statChange={<EditableText field="admin.promos.currentlyUsableChange" defaultValue="Currently usable">Currently usable</EditableText>}
           changeType="positive"
         />
         <StatCard
-          title="Total Usage"
+          title={<EditableText field="admin.promos.totalUsageTitle" defaultValue="Total Usage">Total Usage</EditableText>}
           icon="📊"
           statNumber={totalUsage.toString()}
-          statChange="Times used"
+          statChange={<EditableText field="admin.promos.timesUsedChange" defaultValue="Times used">Times used</EditableText>}
           changeType="positive"
         />
         <StatCard
-          title="Expiring Soon"
+          title={<EditableText field="admin.promos.expiringSoonTitle" defaultValue="Expiring Soon">Expiring Soon</EditableText>}
           icon="⏰"
           statNumber={expiringPromos.toString()}
-          statChange="Within 7 days"
+          statChange={<EditableText field="admin.promos.within7DaysChange" defaultValue="Within 7 days">Within 7 days</EditableText>}
           changeType={expiringPromos > 0 ? 'negative' : 'neutral'}
         />
       </GridSection>
@@ -298,16 +298,14 @@ function PromosPageContent() {
       {/* Add New Promo Form */}
       <GridSection variant="content" columns={1}>
         <FormSection
-          title="🎟️ Create New Promo Code"
-          description="Add a new promotional discount code for your customers"
+          title={<EditableText field="admin.promos.createPromoTitle" defaultValue="🎟️ Create New Promo Code">🎟️ Create New Promo Code</EditableText>}
+          description={<EditableText field="admin.promos.createPromoDesc" defaultValue="Add a new promotional discount code for your customers">Add a new promotional discount code for your customers</EditableText>}
           icon="🎟️"
         >
           <Stack spacing="md">
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.code" defaultValue="Code (uppercase) *">
-                  Code (uppercase) *
-                </EditableText>
+                <EditableText field="admin.promos.form.code" defaultValue="Code (uppercase) *">Code (uppercase) *</EditableText>
               </Label>
               <Input
                 type="text"
@@ -320,9 +318,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.type" defaultValue="Type *">
-                  Type *
-                </EditableText>
+                <EditableText field="admin.promos.form.type" defaultValue="Type *">Type *</EditableText>
               </Label>
               <Select 
                 value={form.type} 
@@ -335,9 +331,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.value" defaultValue="Value *">
-                  Value *
-                </EditableText>
+                <EditableText field="admin.promos.form.value" defaultValue="Value *">Value *</EditableText>
               </Label>
               <Input
                 type="number"
@@ -350,9 +344,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.expiresAt" defaultValue="Expires At">
-                  Expires At
-                </EditableText>
+                <EditableText field="admin.promos.form.expiresAt" defaultValue="Expires At">Expires At</EditableText>
               </Label>
               <Input
                 type="date"
@@ -363,9 +355,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.usageLimit" defaultValue="Usage Limit">
-                  Usage Limit
-                </EditableText>
+                <EditableText field="admin.promos.form.usageLimit" defaultValue="Usage Limit">Usage Limit</EditableText>
               </Label>
               <Input
                 type="number"
@@ -393,8 +383,8 @@ function PromosPageContent() {
       {/* Promo Codes Table */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="🎟️ All Promo Codes"
-          description="Search, sort, and manage your promotional discount codes"
+          title={<EditableText field="admin.promos.allPromosTitle" defaultValue="🎟️ All Promo Codes">🎟️ All Promo Codes</EditableText>}
+          description={<EditableText field="admin.promos.allPromosDesc" defaultValue="Search, sort, and manage your promotional discount codes">Search, sort, and manage your promotional discount codes</EditableText>}
         >
           <DataTable
             data={promos}

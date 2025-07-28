@@ -164,17 +164,33 @@ function BookingStatusPageContent() {
           description="Live tracking of your airport transportation"
         >
           <Text>
-            {getStatusText(status) === 'confirmed' && 'Your ride is confirmed and driver assigned'}
-            {getStatusText(status) === 'en-route' && 'Your driver is on the way to pick you up'}
-            {getStatusText(status) === 'arrived' && 'Your driver has arrived at the pickup location'}
-            {getStatusText(status) === 'completed' && 'Your ride has been completed successfully'}
-            {getStatusText(status) === 'cancelled' && 'This booking has been cancelled'}
-            {getStatusText(status) === 'Unknown' && 'We are processing your booking request'}
+            <EditableText field="status.confirmed.description" defaultValue="Your ride is confirmed and driver assigned">
+              {getStatusText(status) === 'confirmed' && 'Your ride is confirmed and driver assigned'}
+            </EditableText>
+            <EditableText field="status.enRoute.description" defaultValue="Your driver is on the way to pick you up">
+              {getStatusText(status) === 'en-route' && 'Your driver is on the way to pick you up'}
+            </EditableText>
+            <EditableText field="status.arrived.description" defaultValue="Your driver has arrived at the pickup location">
+              {getStatusText(status) === 'arrived' && 'Your driver has arrived at the pickup location'}
+            </EditableText>
+            <EditableText field="status.completed.description" defaultValue="Your ride has been completed successfully">
+              {getStatusText(status) === 'completed' && 'Your ride has been completed successfully'}
+            </EditableText>
+            <EditableText field="status.cancelled.description" defaultValue="This booking has been cancelled">
+              {getStatusText(status) === 'cancelled' && 'This booking has been cancelled'}
+            </EditableText>
+            <EditableText field="status.unknown.description" defaultValue="We are processing your booking request">
+              {getStatusText(status) === 'Unknown' && 'We are processing your booking request'}
+            </EditableText>
           </Text>
 
           {estimatedArrival && (
             <Text>
-              <strong>⏰ Estimated Arrival:</strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}
+              <strong>
+                <EditableText field="status.estimatedArrival.label" defaultValue="⏰ Estimated Arrival:">
+                  ⏰ Estimated Arrival:
+                </EditableText>
+              </strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}
             </Text>
           )}
         </InfoCard>
@@ -201,19 +217,40 @@ function BookingStatusPageContent() {
             variant="ghost"
             size="sm"
           >
-            {showDetails ? 'Hide' : 'Show'} Booking Details
+            <EditableText field="status.showDetails.button" defaultValue={showDetails ? 'Hide' : 'Show'}>
+              {showDetails ? 'Hide' : 'Show'}
+            </EditableText> 
+            <EditableText field="status.showDetails.text" defaultValue=" Booking Details">
+              Booking Details
+            </EditableText>
           </Button>
 
           {showDetails && (
             <Text>
-              <strong>Booking ID:</strong> {bookingId}<br />
-              <strong>Status:</strong> {getStatusText(status)}<br />
+              <strong>
+                <EditableText field="status.details.bookingId" defaultValue="Booking ID:">
+                  Booking ID:
+                </EditableText>
+              </strong> {bookingId}<br />
+              <strong>
+                <EditableText field="status.details.status" defaultValue="Status:">
+                  Status:
+                </EditableText>
+              </strong> {getStatusText(status)}<br />
               {estimatedArrival && (
                 <>
-                  <strong>Estimated Arrival:</strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}<br />
+                  <strong>
+                    <EditableText field="status.details.estimatedArrival" defaultValue="Estimated Arrival:">
+                      Estimated Arrival:
+                    </EditableText>
+                  </strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}<br />
                 </>
               )}
-              <strong>Support:</strong> (203) 555-0123
+              <strong>
+                <EditableText field="status.details.support" defaultValue="Support:">
+                  Support:
+                </EditableText>
+              </strong> (203) 555-0123
             </Text>
           )}
         </InfoCard>
@@ -233,8 +270,15 @@ function BookingStatusPageContent() {
               { status: 'completed', label: 'Trip Completed', icon: '🏁' }
             ].map((step) => (
               <Span key={step.status}>
-                {step.icon} {step.label}
-                {getStatusText(status) === step.status && ' (Current)'}
+                {step.icon} 
+                <EditableText field={`status.timeline.${step.status}`} defaultValue={step.label}>
+                  {step.label}
+                </EditableText>
+                {getStatusText(status) === step.status && (
+                  <EditableText field="status.timeline.current" defaultValue=" (Current)">
+                    (Current)
+                  </EditableText>
+                )}
                 <br />
               </Span>
             ))}

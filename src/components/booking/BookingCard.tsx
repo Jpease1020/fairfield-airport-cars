@@ -40,7 +40,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {/* Header */}
       <Stack direction="horizontal" align="center" justify="between" spacing="md">
         <H3>
-          {booking.name}
+          <EditableText field="bookingCard.customerName" defaultValue={booking.name}>
+            {booking.name}
+          </EditableText>
         </H3>
         <Text>
           <EditableText field="bookingCard.bookingNumber" defaultValue={`Booking #${booking.id}`}>
@@ -48,7 +50,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
           </EditableText>
         </Text>
         <Badge>
-          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+          <EditableText field="bookingCard.status" defaultValue={booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}>
+            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+          </EditableText>
         </Badge>
       </Stack>
 
@@ -57,13 +61,21 @@ const BookingCard: React.FC<BookingCardProps> = ({
         <Container>
           <Stack direction="horizontal" align="center" spacing="sm">
             <Calendar />
-            <Text size="sm">{formatDate(booking.pickupDateTime.toString())}</Text>
+            <Text size="sm">
+              <EditableText field="bookingCard.date" defaultValue={formatDate(booking.pickupDateTime.toString())}>
+                {formatDate(booking.pickupDateTime.toString())}
+              </EditableText>
+            </Text>
           </Stack>
         </Container>
         <Container>
           <Stack direction="horizontal" align="center" spacing="sm">
             <Clock />
-            <Text size="sm">{formatTime(booking.pickupDateTime.toString())}</Text>
+            <Text size="sm">
+              <EditableText field="bookingCard.time" defaultValue={formatTime(booking.pickupDateTime.toString())}>
+                {formatTime(booking.pickupDateTime.toString())}
+              </EditableText>
+            </Text>
           </Stack>
         </Container>
       </Stack>
@@ -79,7 +91,11 @@ const BookingCard: React.FC<BookingCardProps> = ({
                   Pickup:
                 </EditableText>
               </Text>
-              <Text size="sm">{booking.pickupLocation}</Text>
+              <Text size="sm">
+                <EditableText field="bookingCard.pickupLocation" defaultValue={booking.pickupLocation}>
+                  {booking.pickupLocation}
+                </EditableText>
+              </Text>
             </Stack>
           </Stack>
         </Container>
@@ -92,7 +108,11 @@ const BookingCard: React.FC<BookingCardProps> = ({
                   Drop-off:
                 </EditableText>
               </Text>
-              <Text size="sm">{booking.dropoffLocation}</Text>
+              <Text size="sm">
+                <EditableText field="bookingCard.dropoffLocation" defaultValue={booking.dropoffLocation}>
+                  {booking.dropoffLocation}
+                </EditableText>
+              </Text>
             </Stack>
           </Stack>
         </Container>
@@ -106,14 +126,18 @@ const BookingCard: React.FC<BookingCardProps> = ({
           </EditableText>
         </Text>
         {booking.notes && (
-                      <Container>
-              <Text size="xs">
-                <EditableText field="bookingCard.notesLabel" defaultValue="Notes:">
-                  Notes:
-                </EditableText>
-              </Text>
-              <Text size="sm">{booking.notes}</Text>
-            </Container>
+          <Container>
+            <Text size="xs">
+              <EditableText field="bookingCard.notesLabel" defaultValue="Notes:">
+                Notes:
+              </EditableText>
+            </Text>
+            <Text size="sm">
+              <EditableText field="bookingCard.notes" defaultValue={booking.notes}>
+                {booking.notes}
+              </EditableText>
+            </Text>
+          </Container>
         )}
       </Container>
 
@@ -126,7 +150,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
           </EditableText>
         </Text>
         <Text size="lg">
-          ${booking.fare}
+          <EditableText field="bookingCard.fare" defaultValue={`$${booking.fare}`}>
+            ${booking.fare}
+          </EditableText>
         </Text>
       </Stack>
 

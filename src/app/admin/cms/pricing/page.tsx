@@ -202,13 +202,13 @@ function PricingSettingsContent() {
       {/* Base Pricing */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="💰 Base Pricing"
-          description="Configure your base fare structure and rates"
+          title={<EditableText field="admin.cms.pricing.basePricingTitle" defaultValue="💰 Base Pricing">💰 Base Pricing</EditableText>}
+          description={<EditableText field="admin.cms.pricing.basePricingDesc" defaultValue="Configure your base fare structure and rates">Configure your base fare structure and rates</EditableText>}
         >
           <Stack spacing="md">
             <Container>
               <Stack>
-                <Label htmlFor="baseFare">Base Fare ($)</Label>
+                <Label htmlFor="baseFare"><EditableText field="admin.cms.pricing.baseFareLabel" defaultValue="Base Fare ($)">Base Fare ($)</EditableText></Label>
                 <Input
                   id="baseFare"
                   type="number"
@@ -221,7 +221,7 @@ function PricingSettingsContent() {
 
             <Container>
               <Stack>
-                <Label htmlFor="perMile">Per Mile Rate ($)</Label>
+                <Label htmlFor="perMile"><EditableText field="admin.cms.pricing.perMileLabel" defaultValue="Per Mile Rate ($)">Per Mile Rate ($)</EditableText></Label>
                 <Input
                   id="perMile"
                   type="number"
@@ -234,7 +234,7 @@ function PricingSettingsContent() {
 
             <Container>
               <Stack>
-                <Label htmlFor="perMinute">Per Minute Rate ($)</Label>
+                <Label htmlFor="perMinute"><EditableText field="admin.cms.pricing.perMinuteLabel" defaultValue="Per Minute Rate ($)">Per Minute Rate ($)</EditableText></Label>
                 <Input
                   id="perMinute"
                   type="number"
@@ -247,7 +247,7 @@ function PricingSettingsContent() {
 
             <Container>
               <Stack>
-                <Label htmlFor="depositPercent">Deposit Percentage (%)</Label>
+                <Label htmlFor="depositPercent"><EditableText field="admin.cms.pricing.depositPercentLabel" defaultValue="Deposit Percentage (%)">Deposit Percentage (%)</EditableText></Label>
                 <Input
                   id="depositPercent"
                   type="number"
@@ -260,7 +260,7 @@ function PricingSettingsContent() {
 
             <Container>
               <Stack>
-                <Label htmlFor="bufferMinutes">Buffer Minutes</Label>
+                <Label htmlFor="bufferMinutes"><EditableText field="admin.cms.pricing.bufferMinutesLabel" defaultValue="Buffer Minutes">Buffer Minutes</EditableText></Label>
                 <Input
                   id="bufferMinutes"
                   type="number"
@@ -277,13 +277,13 @@ function PricingSettingsContent() {
       {/* Cancellation Policy */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="⏰ Cancellation Policy"
-          description="Set refund percentages for different cancellation timeframes"
+          title={<EditableText field="admin.cms.pricing.cancellationTitle" defaultValue="⏰ Cancellation Policy">⏰ Cancellation Policy</EditableText>}
+          description={<EditableText field="admin.cms.pricing.cancellationDesc" defaultValue="Set refund percentages for different cancellation timeframes">Set refund percentages for different cancellation timeframes</EditableText>}
         >
           <Stack spacing="md">
             <Container>
               <Stack>
-                <Label htmlFor="over24hRefund">Over 24h Refund (%)</Label>
+                <Label htmlFor="over24hRefund"><EditableText field="admin.cms.pricing.over24hRefundLabel" defaultValue="Over 24h Refund (%)">Over 24h Refund (%)</EditableText></Label>
                 <Input
                   id="over24hRefund"
                   type="number"
@@ -296,7 +296,7 @@ function PricingSettingsContent() {
 
             <Container>
               <Stack>
-                <Label htmlFor="between3And24hRefund">3-24h Refund (%)</Label>
+                <Label htmlFor="between3And24hRefund"><EditableText field="admin.cms.pricing.between3And24hRefundLabel" defaultValue="3-24h Refund (%)">3-24h Refund (%)</EditableText></Label>
                 <Input
                   id="between3And24hRefund"
                   type="number"
@@ -309,7 +309,7 @@ function PricingSettingsContent() {
 
             <Container>
               <Stack>
-                <Label htmlFor="under3hRefund">Under 3h Refund (%)</Label>
+                <Label htmlFor="under3hRefund"><EditableText field="admin.cms.pricing.under3hRefundLabel" defaultValue="Under 3h Refund (%)">Under 3h Refund (%)</EditableText></Label>
                 <Input
                   id="under3hRefund"
                   type="number"
@@ -326,8 +326,8 @@ function PricingSettingsContent() {
       {/* Pricing Zones */}
       <GridSection variant="content" columns={1}>
         <InfoCard
-          title="📍 Pricing Zones"
-          description="Configure custom pricing for different geographic areas"
+          title={<EditableText field="admin.cms.pricing.zonesTitle" defaultValue="📍 Pricing Zones">📍 Pricing Zones</EditableText>}
+          description={<EditableText field="admin.cms.pricing.zonesDesc" defaultValue="Configure custom pricing for different geographic areas">Configure custom pricing for different geographic areas</EditableText>}
         >
           <Stack spacing="md">
             <Container>
@@ -356,7 +356,7 @@ function PricingSettingsContent() {
                 {settings.zones.map((zone, index) => (
                   <Container key={index}>
                     <Stack direction="horizontal" justify="between" align="center">
-                      <H4>Zone {index + 1}</H4>
+                      <H4><EditableText field="admin.cms.pricing.zoneHeading" defaultValue={`Zone ${index + 1}`}>{`Zone ${index + 1}`}</EditableText></H4>
                       <Button
                         onClick={() => removeZone(index)}
                         variant="ghost"
@@ -369,7 +369,7 @@ function PricingSettingsContent() {
                     <Stack spacing="md">
                       <Container>
                         <Stack>
-                          <Label htmlFor={`zone-name-${index}`}>Zone Name</Label>
+                          <Label htmlFor={`zone-name-${index}`}><EditableText field="admin.cms.pricing.zoneNameLabel" defaultValue="Zone Name">Zone Name</EditableText></Label>
                           <Input
                             id={`zone-name-${index}`}
                             value={zone.name}
@@ -381,7 +381,7 @@ function PricingSettingsContent() {
                       
                       <Container>
                         <Stack>
-                          <Label htmlFor={`zone-baseFare-${index}`}>Base Fare ($)</Label>
+                          <Label htmlFor={`zone-baseFare-${index}`}><EditableText field="admin.cms.pricing.zoneBaseFareLabel" defaultValue="Base Fare ($)">Base Fare ($)</EditableText></Label>
                           <Input
                             id={`zone-baseFare-${index}`}
                             type="number"
@@ -394,7 +394,7 @@ function PricingSettingsContent() {
                       
                       <Container>
                         <Stack>
-                          <Label htmlFor={`zone-perMile-${index}`}>Per Mile ($)</Label>
+                          <Label htmlFor={`zone-perMile-${index}`}><EditableText field="admin.cms.pricing.zonePerMileLabel" defaultValue="Per Mile ($)">Per Mile ($)</EditableText></Label>
                           <Input
                             id={`zone-perMile-${index}`}
                             type="number"
@@ -407,7 +407,7 @@ function PricingSettingsContent() {
                       
                       <Container>
                         <Stack>
-                          <Label htmlFor={`zone-perMinute-${index}`}>Per Minute ($)</Label>
+                          <Label htmlFor={`zone-perMinute-${index}`}><EditableText field="admin.cms.pricing.zonePerMinuteLabel" defaultValue="Per Minute ($)">Per Minute ($)</EditableText></Label>
                           <Input
                             id={`zone-perMinute-${index}`}
                             type="number"

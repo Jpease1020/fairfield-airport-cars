@@ -11,7 +11,8 @@ import {
   H3,
   Text,
   Span,
-  LoadingSpinner
+  LoadingSpinner,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
@@ -90,7 +91,7 @@ function BookingDetailsContent() {
       <UnifiedLayout 
         layoutType="standard"
         title="Booking Not Found"
-        subtitle="We couldn't find the booking you're looking for"
+        subtitle={"We couldn't find the booking you're looking for"}
       >
         <GridSection variant="content" columns={1}>
           <InfoCard title="❌ Booking Not Found" description="The booking could not be found">
