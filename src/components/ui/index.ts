@@ -72,6 +72,7 @@ export { CardBody, CardHeader, CardTitle, CardDescription } from './card';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Badge } from './badge';
 export { Button } from './button';
+export { Spinner } from './spinner';
 export { Input } from './input';
 export { Textarea } from './textarea';
 

@@ -1,10 +1,139 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { colors, spacing, fontSize, borderRadius, shadows, transitions, zIndex } from '@/lib/design-system/tokens';
 import { Button } from './button';
 import { Card, CardBody, CardHeader, CardTitle } from './card';
 import { Input, Label, Select, Option } from './index';
 import { Container, Span, Link } from '@/components/ui';
+
+// Styled accessibility toggle button
+const AccessibilityToggleButton = styled(Button)`
+  position: fixed;
+  bottom: ${spacing.lg};
+  right: ${spacing.lg};
+  z-index: ${zIndex.modal};
+  border-radius: ${borderRadius.pill};
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${fontSize.lg};
+  box-shadow: ${shadows.lg};
+  transition: ${transitions.default};
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: ${shadows.xl};
+  }
+`;
+
+// Styled accessibility panel
+const AccessibilityPanel = styled(Card)`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: ${zIndex.modal + 1};
+  max-width: 400px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: ${shadows.xl};
+  animation: slideIn 0.3s ease-out;
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+`;
+
+// Styled accessibility settings container
+const AccessibilitySettingsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.md};
+`;
+
+// Styled accessibility setting group
+const AccessibilitySettingGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  padding: ${spacing.sm};
+  border-radius: ${borderRadius.default};
+  background-color: ${colors.background.secondary};
+  transition: ${transitions.default};
+  
+  &:hover {
+    background-color: ${colors.background.tertiary};
+  }
+`;
+
+// Styled accessibility setting label
+const AccessibilitySettingLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  cursor: pointer;
+  font-weight: 500;
+  color: ${colors.text.primary};
+  flex: 1;
+`;
+
+// Styled accessibility setting select
+const AccessibilitySettingSelect = styled(Select)`
+  width: 100%;
+  margin-top: ${spacing.xs};
+`;
+
+// Styled skip link
+const SkipLink = styled(Link)`
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background-color: ${colors.primary[600]};
+  color: ${colors.background.primary};
+  padding: ${spacing.sm} ${spacing.md};
+  border-radius: ${borderRadius.default};
+  text-decoration: none;
+  font-weight: 500;
+  z-index: ${zIndex.modal + 2};
+  transition: ${transitions.default};
+  
+  &:focus {
+    top: 6px;
+    outline: 2px solid ${colors.primary[400]};
+    outline-offset: 2px;
+  }
+`;
+
+// Styled overlay
+const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: ${zIndex.modal};
+  animation: fadeIn 0.2s ease-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
 
 interface AccessibilityEnhancerProps {
   children: React.ReactNode;
@@ -145,84 +274,98 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
     announceToScreenReader(`${settingNames[key]} ${action}`);
   };
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setShowPanel(false);
+    }
+  };
+
   return (
     <>
       {children}
       
       {/* Accessibility Panel Toggle */}
-      <Button
+      <AccessibilityToggleButton
         onClick={() => setShowPanel(!showPanel)}
         variant="outline"
         size="sm"
-        className="accessibility-toggle-button"
         aria-label="Toggle accessibility options (Alt + A)"
       >
         ♿
-      </Button>
+      </AccessibilityToggleButton>
 
       {/* Accessibility Settings Panel */}
       {showPanel && (
-        <Card className="accessibility-panel">
-          <CardHeader>
-            <CardTitle>Accessibility Options</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <Container className="accessibility-settings">
-              {/* High Contrast */}
-              <Container>
-                <Input
-                  type="checkbox"
-                  checked={settings.highContrast}
-                  onChange={(e) => updateSetting('highContrast', e.target.checked)}
-                />
-                <Span>High Contrast Mode</Span>
-              </Container>
+        <>
+          <Overlay onClick={handleOverlayClick} />
+          <AccessibilityPanel>
+            <CardHeader>
+              <CardTitle>Accessibility Options</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <AccessibilitySettingsContainer>
+                {/* High Contrast */}
+                <AccessibilitySettingGroup>
+                  <AccessibilitySettingLabel>
+                    <Input
+                      type="checkbox"
+                      checked={settings.highContrast}
+                      onChange={(e) => updateSetting('highContrast', e.target.checked)}
+                    />
+                    <Span>High Contrast Mode</Span>
+                  </AccessibilitySettingLabel>
+                </AccessibilitySettingGroup>
 
-              {/* Reduce Motion */}
-              <Container>
-                <Input
-                  type="checkbox"
-                  checked={settings.reduceMotion}
-                  onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
-                />
-                <Span>Reduce Motion</Span>
-              </Container>
+                {/* Reduce Motion */}
+                <AccessibilitySettingGroup>
+                  <AccessibilitySettingLabel>
+                    <Input
+                      type="checkbox"
+                      checked={settings.reduceMotion}
+                      onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
+                    />
+                    <Span>Reduce Motion</Span>
+                  </AccessibilitySettingLabel>
+                </AccessibilitySettingGroup>
 
-              {/* Enhanced Focus */}
-              <Container>
-                <Input
-                  type="checkbox"
-                  checked={settings.focusIndicators}
-                  onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
-                />
-                <Span>Enhanced Focus Indicators</Span>
-              </Container>
+                {/* Enhanced Focus */}
+                <AccessibilitySettingGroup>
+                  <AccessibilitySettingLabel>
+                    <Input
+                      type="checkbox"
+                      checked={settings.focusIndicators}
+                      onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
+                    />
+                    <Span>Enhanced Focus Indicators</Span>
+                  </AccessibilitySettingLabel>
+                </AccessibilitySettingGroup>
 
-              {/* Font Size */}
-              <Container className="accessibility-setting-group">
-                <Label htmlFor="font-size-select" >
-                  Font Size
-                </Label>
-                <Select
-                  id="font-size-select"
-                  value={settings.fontSize}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateSetting('fontSize', e.target.value as AccessibilitySettings['fontSize'])}
-                  className="accessibility-setting-select"
-                >
-                  <Option value="normal">Normal</Option>
-                  <Option value="large">Large</Option>
-                  <Option value="extra-large">Extra Large</Option>
-                </Select>
-              </Container>
-            </Container>
-          </CardBody>
-        </Card>
+                {/* Font Size */}
+                <AccessibilitySettingGroup>
+                  <Label htmlFor="font-size-select" size="md">
+                    Font Size
+                  </Label>
+                  <AccessibilitySettingSelect
+                    id="font-size-select"
+                    value={settings.fontSize}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateSetting('fontSize', e.target.value as AccessibilitySettings['fontSize'])}
+                    options={[
+                      { value: 'normal', label: 'Normal' },
+                      { value: 'large', label: 'Large' },
+                      { value: 'extra-large', label: 'Extra Large' }
+                    ]}
+                  />
+                </AccessibilitySettingGroup>
+              </AccessibilitySettingsContainer>
+            </CardBody>
+          </AccessibilityPanel>
+        </>
       )}
 
       {/* Skip to main content link */}
-      <Link href="#main-content">
+      <SkipLink href="#main-content">
         Skip to main content
-      </Link>
+      </SkipLink>
     </>
   );
 };

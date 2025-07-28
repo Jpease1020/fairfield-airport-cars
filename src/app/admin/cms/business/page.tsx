@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
@@ -8,7 +8,6 @@ import {
   AdminPageWrapper,
   SettingSection,
   SettingInput,
-  StatusMessage,
   ToastProvider,
   useToast,
   GridSection,
@@ -22,7 +21,6 @@ function BusinessPageContent() {
   const { addToast } = useToast();
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadBusinessSettings = useCallback(async () => {
@@ -46,25 +44,6 @@ function BusinessPageContent() {
   useEffect(() => {
     loadBusinessSettings();
   }, [loadBusinessSettings]);
-
-  const handleSave = useCallback(async () => {
-    if (!settings) return;
-    
-    setSaving(true);
-    setError(null);
-    
-    try {
-      await cmsService.updateBusinessSettings(settings);
-      addToast('success', 'Business settings saved successfully!');
-    } catch (error) {
-      console.error('Error saving business settings:', error);
-      const errorMsg = 'Failed to save business settings';
-      setError(errorMsg);
-      addToast('error', errorMsg);
-    } finally {
-      setSaving(false);
-    }
-  }, [settings, addToast]);
 
   const handleInputChange = (section: keyof BusinessSettings, field: string, value: string) => {
     if (!settings) return;
@@ -90,29 +69,29 @@ function BusinessPageContent() {
     });
   };
 
-  // Header actions
-  const headerActions = useMemo(() => [
-    { 
-      label: 'Back to CMS',
-      onClick: (): void => { window.location.href = '/admin/cms'; },
-      variant: 'outline' as const,
-      icon: '🔙'
-    },
-    { 
-      label: 'Reload Settings',
-      onClick: loadBusinessSettings,
-      variant: 'outline' as const,
-      disabled: loading,
-      icon: '🔄'
-    },
-    { 
-      label: 'Save Changes',
-      onClick: handleSave,
-      variant: 'primary' as const,
-      disabled: !settings || saving,
-      icon: '💾'
-    }
-  ], [settings, loading, saving, loadBusinessSettings, handleSave]);
+  // Remove the unused headerActions variable
+  // const headerActions = useMemo(() => [
+  //   { 
+  //     label: 'Back to CMS',
+  //     onClick: (): void => { window.location.href = '/admin/cms'; },
+  //     variant: 'outline' as const,
+  //     icon: '🔙'
+  //   },
+  //   { 
+  //     label: 'Reload Settings',
+  //     onClick: loadBusinessSettings,
+  //     variant: 'outline' as const,
+  //     disabled: loading,
+  //     icon: '🔄'
+  //   },
+  //   { 
+  //     label: 'Save Changes',
+  //     onClick: handleSave,
+  //     variant: 'primary' as const,
+  //     disabled: !settings || saving,
+  //     icon: '💾'
+  //   }
+  // ], [settings, loading, saving, loadBusinessSettings, handleSave]);
 
   if (loading) {
     return (
@@ -169,15 +148,7 @@ function BusinessPageContent() {
     <AdminPageWrapper
       title="Business Settings"
       subtitle="Configure your company information and branding"
-      loading={saving}
-      loadingMessage="Saving business settings..."
     >
-      {saving && (
-        <StatusMessage
-          type="info"
-          message="Please wait while we save your business settings..."
-        />
-      )}
 
       {settings && (
         <GridSection variant="content" columns={1}>

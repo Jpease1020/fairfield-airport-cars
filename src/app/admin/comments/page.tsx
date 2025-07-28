@@ -2,10 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { AdminPageWrapper, GridSection, InfoCard, ActionGrid, Container, H3, EditableText, StatCard } from '@/components/ui';
+import { AdminPageWrapper, GridSection, InfoCard, Container, EditableText, StatCard } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/ToastProvider';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 
 function CommentsPageContent() {

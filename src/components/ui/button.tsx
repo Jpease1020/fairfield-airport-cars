@@ -1,5 +1,150 @@
 import React from 'react';
-import { Span } from './text';
+import styled from 'styled-components';
+import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';
+import { Spinner } from './spinner';
+
+// Styled button component with all CSS rules defined
+const StyledButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'size', 'shape', 'fullWidth', 'loading', 'icon', 'iconPosition'].includes(prop)
+})<{
+  variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning';
+  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  shape: 'default' | 'rounded' | 'pill' | 'square';
+  fullWidth: boolean;
+  loading: boolean;
+}>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  box-shadow: ${shadows.default};
+  opacity: ${({ loading }) => (loading ? 0.5 : 1)};
+  cursor: ${({ loading }) => (loading ? 'not-allowed' : 'pointer')};
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  border: none;
+
+  /* Size styles */
+  ${({ size }) => {
+    switch (size) {
+      case 'xs':
+        return `
+          padding: ${spacing.xs} ${spacing.sm};
+          font-size: ${fontSize.xs};
+        `;
+      case 'sm':
+        return `
+          padding: ${spacing.sm} ${spacing.md};
+          font-size: ${fontSize.sm};
+        `;
+      case 'md':
+        return `
+          padding: ${spacing.sm} ${spacing.lg};
+          font-size: ${fontSize.md};
+        `;
+      case 'lg':
+        return `
+          padding: ${spacing.md} ${spacing.xl};
+          font-size: ${fontSize.lg};
+        `;
+      case 'xl':
+        return `
+          padding: ${spacing.lg} ${spacing.xl};
+          font-size: ${fontSize.xl};
+        `;
+      default:
+        return `
+          padding: ${spacing.sm} ${spacing.lg};
+          font-size: ${fontSize.md};
+        `;
+    }
+  }}
+
+  /* Variant styles */
+  ${({ variant }) => {
+    switch (variant) {
+      case 'primary':
+        return `
+          background-color: ${colors.primary[600]};
+          color: ${colors.text.white};
+        `;
+      case 'secondary':
+        return `
+          background-color: ${colors.secondary[600]};
+          color: ${colors.text.white};
+        `;
+      case 'outline':
+        return `
+          background-color: transparent;
+          color: ${colors.text.primary};
+          border: 1px solid ${colors.border.default};
+        `;
+      case 'ghost':
+        return `
+          background-color: transparent;
+          color: ${colors.text.primary};
+        `;
+      case 'danger':
+        return `
+          background-color: ${colors.danger[600]};
+          color: ${colors.text.white};
+        `;
+      case 'success':
+        return `
+          background-color: ${colors.success[600]};
+          color: ${colors.text.white};
+        `;
+      case 'warning':
+        return `
+          background-color: ${colors.warning[600]};
+          color: ${colors.text.white};
+        `;
+      default:
+        return `
+          background-color: ${colors.primary[600]};
+          color: ${colors.text.white};
+        `;
+    }
+  }}
+
+  /* Shape styles */
+  ${({ shape }) => {
+    switch (shape) {
+      case 'default':
+        return `border-radius: ${borderRadius.default};`;
+      case 'rounded':
+        return `border-radius: ${borderRadius.md};`;
+      case 'pill':
+        return `border-radius: ${borderRadius.pill};`;
+      case 'square':
+        return `border-radius: ${borderRadius.none};`;
+      default:
+        return `border-radius: ${borderRadius.default};`;
+    }
+  }}
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:focus {
+    outline: 2px solid ${colors.primary[600]};
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+
+
+// Styled icon wrapper
+const IconWrapper = styled.span<{ position: 'left' | 'right' }>`
+  margin-${({ position }) => position === 'left' ? 'right' : 'left'}: ${spacing.sm};
+`;
 
 // Button Component - Clean Reusable Component (No className!)
 export interface ButtonProps {
@@ -32,52 +177,28 @@ export const Button: React.FC<ButtonProps> = ({
   as: Component = 'button'
 }) => {
   return (
-    <Component
+    <StyledButton
+      as={Component}
+      variant={variant}
+      size={size}
+      shape={shape}
+      fullWidth={fullWidth}
+      loading={loading}
       type={Component === 'button' ? type : undefined}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: '500',
-        outline: 'none',
-        transition: 'colors 0.2s',
-        opacity: disabled || loading ? '0.5' : '1',
-        cursor: disabled || loading ? 'not-allowed' : 'pointer',
-        padding: size === 'xs' ? '0.25rem 0.5rem' : 
-                size === 'sm' ? '0.5rem 0.75rem' :
-                size === 'md' ? '0.5rem 1rem' :
-                size === 'lg' ? '0.75rem 1.5rem' : '1rem 2rem',
-        fontSize: size === 'xs' ? '0.75rem' :
-                 size === 'sm' ? '0.875rem' :
-                 size === 'md' ? '1rem' :
-                 size === 'lg' ? '1.125rem' : '1.25rem',
-        borderRadius: shape === 'default' ? '0.375rem' :
-                    shape === 'rounded' ? '0.5rem' :
-                    shape === 'pill' ? '9999px' : '0',
-        width: fullWidth ? '100%' : 'auto',
-        backgroundColor: variant === 'primary' ? '#2563eb' :
-                       variant === 'secondary' ? '#4b5563' :
-                       variant === 'outline' ? 'transparent' :
-                       variant === 'ghost' ? 'transparent' :
-                       variant === 'danger' ? '#dc2626' :
-                       variant === 'success' ? '#16a34a' :
-                       variant === 'warning' ? '#ca8a04' : '#2563eb',
-        color: variant === 'outline' || variant === 'ghost' ? '#374151' : 'white',
-        border: variant === 'outline' ? '1px solid #d1d5db' : 'none',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-      }}
       disabled={disabled || loading}
       onClick={onClick}
+      aria-busy={loading}
     >
       {loading && (
-        <svg style={{ animation: 'spin 1s linear infinite', marginRight: '0.5rem', height: '1rem', width: '1rem' }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" style={{ opacity: '0.25' }}></circle>
-          <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" style={{ opacity: '0.75' }}></path>
-        </svg>
+        <Spinner size="sm" />
       )}
-      {icon && !loading && iconPosition === 'left' && <Span>{icon}</Span>}
-      <Span>{children}</Span>
-      {icon && !loading && iconPosition === 'right' && <Span>{icon}</Span>}
-    </Component>
+      {icon && !loading && iconPosition === 'left' && (
+        <IconWrapper position="left">{icon}</IconWrapper>
+      )}
+      <span aria-hidden={loading}>{children}</span>
+      {icon && !loading && iconPosition === 'right' && (
+        <IconWrapper position="right">{icon}</IconWrapper>
+      )}
+    </StyledButton>
   );
 }; 

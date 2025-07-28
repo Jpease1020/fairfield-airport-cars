@@ -142,22 +142,6 @@ function PagesCMSContent() {
     }
   };
 
-  // Header actions
-  const headerActions = useMemo(() => [
-    {
-      label: 'Reload Pages',
-      onClick: loadPages,
-      variant: 'outline' as const,
-      icon: '🔄'
-    },
-    {
-      label: 'Export All',
-      onClick: () => addToast('info', 'Export functionality coming soon'),
-      variant: 'secondary' as const,
-      icon: '📤'
-    }
-  ], [addToast, loadPages]);
-
   if (loading) {
     return (
       <AdminPageWrapper

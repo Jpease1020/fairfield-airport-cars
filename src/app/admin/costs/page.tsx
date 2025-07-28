@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';
 import { 
   AdminPageWrapper,
@@ -14,7 +14,6 @@ import {
   ToastProvider,
   useToast,
   Container,
-  Text,
   Span,
   EditableText
 } from '@/components/ui';
@@ -93,6 +92,7 @@ function CostsPageContent() {
       </Span>
     );
   };
+
 
   const headerActions = [
     { 
@@ -238,7 +238,6 @@ function CostsPageContent() {
     <AdminPageWrapper
       title="Cost Tracking"
       subtitle="Monitor and manage your business costs and expenses"
-      actions={headerActions}
       loading={loading}
       error={error}
       loadingMessage="Loading cost data..."

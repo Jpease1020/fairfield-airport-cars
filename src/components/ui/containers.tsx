@@ -1,209 +1,454 @@
 import React from 'react';
-import { cn } from '@/lib/utils/utils';
+import styled from 'styled-components';
+import { colors, spacing, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';
 
-// Base Container Component - Clean Reusable Component (No className!)
-interface ContainerProps {
+// Styled container component
+const StyledContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'maxWidth', 'padding', 'margin', 'marginTop', 'marginBottom', 'spacing'].includes(prop)
+})<{
+  variant: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated';
+  maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+}>`
+  transition: ${transitions.default};
+
+  /* Max width styles */
+  ${({ maxWidth }) => {
+    switch (maxWidth) {
+      case 'sm':
+        return `max-width: 24rem;`;
+      case 'md':
+        return `max-width: 28rem;`;
+      case 'lg':
+        return `max-width: 32rem;`;
+      case 'xl':
+        return `max-width: 36rem;`;
+      case '2xl':
+        return `max-width: 42rem;`;
+      case 'full':
+        return `max-width: 100%;`;
+      default:
+        return `max-width: 36rem;`;
+    }
+  }}
+
+  /* Padding styles */
+  ${({ padding }) => {
+    switch (padding) {
+      case 'none':
+        return `padding: 0;`;
+      case 'xs':
+        return `padding: ${spacing.xs};`;
+      case 'sm':
+        return `padding: ${spacing.sm};`;
+      case 'md':
+        return `padding: ${spacing.md};`;
+      case 'lg':
+        return `padding: ${spacing.lg};`;
+      case 'xl':
+        return `padding: ${spacing.xl};`;
+      case '2xl':
+        return `padding: ${spacing['2xl']};`;
+      default:
+        return `padding: ${spacing.md};`;
+    }
+  }}
+
+  /* Margin styles */
+  ${({ margin }) => {
+    switch (margin) {
+      case 'none':
+        return `margin: 0;`;
+      case 'xs':
+        return `margin: ${spacing.xs};`;
+      case 'sm':
+        return `margin: ${spacing.sm};`;
+      case 'md':
+        return `margin: ${spacing.md};`;
+      case 'lg':
+        return `margin: ${spacing.lg};`;
+      case 'xl':
+        return `margin: ${spacing.xl};`;
+      case '2xl':
+        return `margin: ${spacing['2xl']};`;
+      default:
+        return `margin: 0;`;
+    }
+  }}
+
+  /* Margin top styles */
+  ${({ marginTop }) => {
+    switch (marginTop) {
+      case 'none':
+        return `margin-top: 0;`;
+      case 'xs':
+        return `margin-top: ${spacing.xs};`;
+      case 'sm':
+        return `margin-top: ${spacing.sm};`;
+      case 'md':
+        return `margin-top: ${spacing.md};`;
+      case 'lg':
+        return `margin-top: ${spacing.lg};`;
+      case 'xl':
+        return `margin-top: ${spacing.xl};`;
+      case '2xl':
+        return `margin-top: ${spacing['2xl']};`;
+      default:
+        return `margin-top: 0;`;
+    }
+  }}
+
+  /* Margin bottom styles */
+  ${({ marginBottom }) => {
+    switch (marginBottom) {
+      case 'none':
+        return `margin-bottom: 0;`;
+      case 'xs':
+        return `margin-bottom: ${spacing.xs};`;
+      case 'sm':
+        return `margin-bottom: ${spacing.sm};`;
+      case 'md':
+        return `margin-bottom: ${spacing.md};`;
+      case 'lg':
+        return `margin-bottom: ${spacing.lg};`;
+      case 'xl':
+        return `margin-bottom: ${spacing.xl};`;
+      case '2xl':
+        return `margin-bottom: ${spacing['2xl']};`;
+      default:
+        return `margin-bottom: 0;`;
+    }
+  }}
+
+  /* Spacing styles */
+  ${({ spacing }) => {
+    switch (spacing) {
+      case 'none':
+        return `& > * + * { margin-top: 0; }`;
+      case 'xs':
+        return `& > * + * { margin-top: ${spacing.xs}; }`;
+      case 'sm':
+        return `& > * + * { margin-top: ${spacing.sm}; }`;
+      case 'md':
+        return `& > * + * { margin-top: ${spacing.md}; }`;
+      case 'lg':
+        return `& > * + * { margin-top: ${spacing.lg}; }`;
+      case 'xl':
+        return `& > * + * { margin-top: ${spacing.xl}; }`;
+      case '2xl':
+        return `& > * + * { margin-top: ${spacing['2xl']}; }`;
+      default:
+        return `& > * + * { margin-top: 0; }`;
+    }
+  }}
+
+  /* Variant styles */
+  ${({ variant }) => {
+    switch (variant) {
+      case 'default':
+        return `display: block;`;
+      case 'card':
+        return `
+          background-color: ${colors.background.primary};
+          border-radius: ${borderRadius.lg};
+          border: 1px solid ${colors.border.light};
+          box-shadow: ${shadows.sm};
+        `;
+      case 'section':
+        return `width: 100%;`;
+      case 'main':
+        return `flex: 1; min-height: 0;`;
+      case 'content':
+        return `flex: 1;`;
+      case 'navigation':
+        return `
+          background-color: ${colors.background.primary};
+          border-bottom: 1px solid ${colors.border.light};
+        `;
+      case 'tooltip':
+        return `
+          background-color: ${colors.gray[900]};
+          color: ${colors.text.white};
+          font-size: 0.875rem;
+          border-radius: ${borderRadius.default};
+          padding: ${spacing.xs} ${spacing.sm};
+        `;
+      case 'elevated':
+        return `
+          background-color: ${colors.background.primary};
+          border-radius: ${borderRadius.lg};
+          box-shadow: ${shadows.md};
+          border: 1px solid ${colors.border.light};
+        `;
+      default:
+        return `display: block;`;
+    }
+  }}
+`;
+
+export interface ContainerProps {
+  // Core props
   children: React.ReactNode;
+  
+  // Appearance
   variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated';
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  
+  // Spacing
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  
+  // HTML attributes
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
+  
+  // Rest props
+  [key: string]: any;
 }
 
-const Container: React.FC<ContainerProps> = ({ 
+export const Container: React.FC<ContainerProps> = ({ 
+  // Core props
+  children,
+  
+  // Appearance
   variant = 'default',
   maxWidth = 'xl', 
   padding = 'md', 
+  
+  // Spacing
   margin = 'none',
   marginTop = 'none',
   marginBottom = 'none',
   spacing = 'none',
+  
+  // HTML attributes
   as: Component = 'div',
-  children
+  
+  // Rest props
+  ...rest
 }) => {
-  const maxWidthClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md', 
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    '2xl': 'max-w-2xl',
-    full: 'max-w-full'
-  };
-
-  const paddingClasses = {
-    none: '',
-    xs: 'p-2',
-    sm: 'p-4',
-    md: 'p-6',
-    lg: 'p-8',
-    xl: 'p-12',
-    '2xl': 'p-16'
-  };
-
-  const marginClasses = {
-    none: '',
-    xs: 'm-1',
-    sm: 'm-2', 
-    md: 'm-4',
-    lg: 'm-6',
-    xl: 'm-8',
-    '2xl': 'm-12'
-  };
-
-  const marginTopClasses = {
-    none: '',
-    xs: 'mt-1',
-    sm: 'mt-2',
-    md: 'mt-4', 
-    lg: 'mt-6',
-    xl: 'mt-8',
-    '2xl': 'mt-12'
-  };
-
-  const marginBottomClasses = {
-    none: '',
-    xs: 'mb-1',
-    sm: 'mb-2',
-    md: 'mb-4',
-    lg: 'mb-6', 
-    xl: 'mb-8',
-    '2xl': 'mb-12'
-  };
-
-  const spacingClasses = {
-    none: '',
-    xs: 'space-y-1',
-    sm: 'space-y-2',
-    md: 'space-y-4',
-    lg: 'space-y-6',
-    xl: 'space-y-8',
-    '2xl': 'space-y-12'
-  };
-
-  const variantClasses = {
-    default: 'block',
-    card: 'bg-white rounded-lg border border-gray-200 shadow-sm',
-    section: 'w-full',
-    main: 'flex-1 min-h-0',
-    content: 'flex-1',
-    navigation: 'bg-white border-b border-gray-200',
-    tooltip: 'bg-gray-900 text-white text-sm rounded px-2 py-1',
-    elevated: 'bg-white rounded-lg shadow-md border border-gray-100'
-  };
-
   return (
-    <Component
-      className={cn(
-        variantClasses[variant],
-        maxWidthClasses[maxWidth],
-        paddingClasses[padding],
-        marginClasses[margin],
-        marginTopClasses[marginTop],
-        marginBottomClasses[marginBottom],
-        spacingClasses[spacing]
-      )}
+    <StyledContainer
+      as={Component}
+      variant={variant}
+      maxWidth={maxWidth}
+      padding={padding}
+      margin={margin}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      spacing={spacing}
+      {...rest}
     >
       {children}
-    </Component>
+    </StyledContainer>
   );
 };
+
 Container.displayName = 'Container';
 
-// Box Component - BULLETPROOF TYPE SAFETY!
-interface BoxProps {
+// Styled box component
+const StyledBox = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'padding', 'rounded', 'margin', 'marginTop', 'marginBottom'].includes(prop)
+})<{
+  variant: 'default' | 'elevated' | 'outlined' | 'filled';
+  padding: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  rounded: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+}>`
+  transition: ${transitions.default};
+
+  /* Variant styles */
+  ${({ variant }) => {
+    switch (variant) {
+      case 'default':
+        return `background-color: ${colors.background.primary};`;
+      case 'elevated':
+        return `
+          background-color: ${colors.background.primary};
+          box-shadow: ${shadows.lg};
+        `;
+      case 'outlined':
+        return `
+          background-color: ${colors.background.primary};
+          border: 1px solid ${colors.border.default};
+        `;
+      case 'filled':
+        return `background-color: ${colors.background.secondary};`;
+      default:
+        return `background-color: ${colors.background.primary};`;
+    }
+  }}
+
+  /* Padding styles */
+  ${({ padding }) => {
+    switch (padding) {
+      case 'none':
+        return `padding: 0;`;
+      case 'sm':
+        return `padding: ${spacing.sm};`;
+      case 'md':
+        return `padding: ${spacing.md};`;
+      case 'lg':
+        return `padding: ${spacing.lg};`;
+      case 'xl':
+        return `padding: ${spacing.xl};`;
+      default:
+        return `padding: ${spacing.md};`;
+    }
+  }}
+
+  /* Rounded styles */
+  ${({ rounded }) => {
+    switch (rounded) {
+      case 'none':
+        return `border-radius: 0;`;
+      case 'sm':
+        return `border-radius: ${borderRadius.sm};`;
+      case 'md':
+        return `border-radius: ${borderRadius.md};`;
+      case 'lg':
+        return `border-radius: ${borderRadius.lg};`;
+      case 'xl':
+        return `border-radius: ${borderRadius.xl};`;
+      case 'full':
+        return `border-radius: ${borderRadius.pill};`;
+      default:
+        return `border-radius: ${borderRadius.md};`;
+    }
+  }}
+
+  /* Margin styles */
+  ${({ margin }) => {
+    switch (margin) {
+      case 'none':
+        return `margin: 0;`;
+      case 'xs':
+        return `margin: ${spacing.xs};`;
+      case 'sm':
+        return `margin: ${spacing.sm};`;
+      case 'md':
+        return `margin: ${spacing.md};`;
+      case 'lg':
+        return `margin: ${spacing.lg};`;
+      case 'xl':
+        return `margin: ${spacing.xl};`;
+      case '2xl':
+        return `margin: ${spacing['2xl']};`;
+      default:
+        return `margin: 0;`;
+    }
+  }}
+
+  /* Margin top styles */
+  ${({ marginTop }) => {
+    switch (marginTop) {
+      case 'none':
+        return `margin-top: 0;`;
+      case 'xs':
+        return `margin-top: ${spacing.xs};`;
+      case 'sm':
+        return `margin-top: ${spacing.sm};`;
+      case 'md':
+        return `margin-top: ${spacing.md};`;
+      case 'lg':
+        return `margin-top: ${spacing.lg};`;
+      case 'xl':
+        return `margin-top: ${spacing.xl};`;
+      case '2xl':
+        return `margin-top: ${spacing['2xl']};`;
+      default:
+        return `margin-top: 0;`;
+    }
+  }}
+
+  /* Margin bottom styles */
+  ${({ marginBottom }) => {
+    switch (marginBottom) {
+      case 'none':
+        return `margin-bottom: 0;`;
+      case 'xs':
+        return `margin-bottom: ${spacing.xs};`;
+      case 'sm':
+        return `margin-bottom: ${spacing.sm};`;
+      case 'md':
+        return `margin-bottom: ${spacing.md};`;
+      case 'lg':
+        return `margin-bottom: ${spacing.lg};`;
+      case 'xl':
+        return `margin-bottom: ${spacing.xl};`;
+      case '2xl':
+        return `margin-bottom: ${spacing['2xl']};`;
+      default:
+        return `margin-bottom: 0;`;
+    }
+  }}
+`;
+
+export interface BoxProps {
+  // Core props
   children: React.ReactNode;
+  
+  // Appearance
   variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  
+  // Spacing
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  
+  // HTML attributes
   as?: 'div' | 'section' | 'article' | 'aside';
+  
+  // Rest props
+  [key: string]: any;
 }
 
-const Box: React.FC<BoxProps> = ({ 
-    variant = 'default', 
-    padding = 'md', 
-    rounded = 'md',
-    margin = 'none',
-    marginTop = 'none',
-    marginBottom = 'none',
-    as: Component = 'div',
-    children
-  }) => {
-    const variantClasses = {
-      default: 'bg-bg-primary',
-      elevated: 'bg-bg-primary shadow-lg',
-      outlined: 'bg-bg-primary border border-border-primary',
-      filled: 'bg-bg-secondary'
-    };
+export const Box: React.FC<BoxProps> = ({ 
+  // Core props
+  children,
+  
+  // Appearance
+  variant = 'default', 
+  padding = 'md', 
+  rounded = 'md',
+  
+  // Spacing
+  margin = 'none',
+  marginTop = 'none',
+  marginBottom = 'none',
+  
+  // HTML attributes
+  as: Component = 'div',
+  
+  // Rest props
+  ...rest
+}) => {
+  return (
+    <StyledBox
+      as={Component}
+      variant={variant}
+      padding={padding}
+      rounded={rounded}
+      margin={margin}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      {...rest}
+    >
+      {children}
+    </StyledBox>
+  );
+};
 
-    const paddingClasses = {
-      none: '',
-      sm: 'p-4',
-      md: 'p-6',
-      lg: 'p-8',
-      xl: 'p-12'
-    };
-
-    const roundedClasses = {
-      none: '',
-      sm: 'rounded-sm',
-      md: 'rounded-md',
-      lg: 'rounded-lg',
-      xl: 'rounded-xl',
-      full: 'rounded-full'
-    };
-
-    const marginClasses = {
-      none: '',
-      xs: 'm-1',
-      sm: 'm-2',
-      md: 'm-4',
-      lg: 'm-6',
-      xl: 'm-8',
-      '2xl': 'm-12'
-    };
-
-    const marginTopClasses = {
-      none: '',
-      xs: 'mt-1',
-      sm: 'mt-2',
-      md: 'mt-4',
-      lg: 'mt-6',
-      xl: 'mt-8',
-      '2xl': 'mt-12'
-    };
-
-    const marginBottomClasses = {
-      none: '',
-      xs: 'mb-1',
-      sm: 'mb-2',
-      md: 'mb-4',
-      lg: 'mb-6',
-      xl: 'mb-8',
-      '2xl': 'mb-12'
-    };
-
-    return (
-      <Component
-        className={cn(
-          variantClasses[variant],
-          paddingClasses[padding],
-          roundedClasses[rounded],
-          marginClasses[margin],
-          marginTopClasses[marginTop],
-          marginBottomClasses[marginBottom]
-        )}
-      >
-        {children}
-      </Component>
-    );
-  };
 Box.displayName = 'Box';
 
 // Section Component - Clean Reusable Component (No className!)

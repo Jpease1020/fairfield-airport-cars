@@ -28,7 +28,7 @@
     "test:page-integrity": "playwright test tests/e2e/page-integrity.test.ts",
     "test:layout": "playwright test tests/e2e/simple-page-layout-tests.spec.ts",
     "test:layout:run": "./scripts/run-layout-tests.sh",
-    "pre-commit": "./scripts/pre-commit-check.sh",
+    "pre-commit": "./scripts/pre-commit-check.sh && npm run check:components",
     "test:user-behavior": "jest --testPathPattern=tests/integration/user-behavior",
     "test:component-integration": "jest --testPathPattern=tests/integration/component-integration",
     "test:user-journeys": "jest --testPathPattern=tests/integration/user-journeys",
@@ -63,8 +63,7 @@
     "reorganize:layout": "node scripts/reorganize-layout-design.js",
     "cleanup:structural": "node scripts/structural-cleanup.js",
     "cleanup:obsolete": "node scripts/cleanup-obsolete-files.js",
-    "fix:ui-components": "node scripts/fix-ui-components.js",
-    "pre-commit": "./scripts/pre-commit-check.sh && npm run check:components"
+    "fix:ui-components": "node scripts/fix-ui-components.js"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",
@@ -76,8 +75,8 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-switch": "^1.2.5",
     "@stripe/stripe-js": "^7.4.0",
-
     "@types/dompurify": "^3.0.5",
+    "@types/styled-components": "^5.1.34",
     "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
@@ -97,7 +96,7 @@
     "react-hook-form": "^7.59.0",
     "square": "^43.0.0",
     "stripe": "^18.3.0",
-
+    "styled-components": "^6.1.19",
     "twilio": "^5.7.2",
     "uuid": "^11.1.0",
     "zod": "^3.25.71"
@@ -105,7 +104,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.54.1",
-
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.6.1",
@@ -125,7 +123,6 @@
     "msw": "^2.10.4",
     "node-mocks-http": "^1.17.2",
     "supertest": "^7.1.3",
-
     "typescript": "^5",
     "whatwg-fetch": "^3.6.20"
   }

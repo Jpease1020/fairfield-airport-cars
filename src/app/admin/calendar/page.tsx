@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { listBookings } from '../../../lib/services/booking-service';
@@ -9,7 +9,6 @@ import {
   InfoCard, 
   GridSection,
   Container,
-  H2,
   Span,
   Stack,
   EditableText,
@@ -61,25 +60,6 @@ const CalendarPage = () => {
       default: return '#6b7280';
     }
   };
-
-  const headerActions = [
-    { 
-      label: 'Refresh',
-      onClick: fetchCalendarData,
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: 'View Bookings', 
-      href: '/admin/bookings', 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Add Booking', 
-      href: '/admin/bookings/new', 
-      variant: 'primary' as const 
-    }
-  ];
 
   return (
     <AdminPageWrapper

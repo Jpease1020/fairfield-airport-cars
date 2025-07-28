@@ -14,7 +14,7 @@ import {
   Container,
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
-import { realCostTrackingService } from '@/lib/business/real-cost-tracking';
+
 
 interface CostEntry {
   date: string;
@@ -33,66 +33,11 @@ function ManualCostEntryPageContent() {
     amount: 0,
     notes: ''
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async () => {
-    if (!formData.category || !formData.description || formData.amount <= 0) {
-      setError('Please fill in all required fields with valid values');
-      return;
-    }
 
-    setLoading(true);
-    setError(null);
 
-    try {
-      await realCostTrackingService.addCost({
-        service: formData.category,
-        category: formData.category,
-        description: formData.description,
-        actualMonthlyCost: formData.amount,
-        projectedMonthlyCost: formData.amount,
-        lastBillingDate: formData.date,
-        nextBillingDate: formData.date,
-        billingCycle: 'monthly',
-        provider: 'Manual Entry',
-        accountId: 'manual',
-        plan: 'Manual',
-        dataSource: 'manual',
-        notes: formData.notes || undefined
-      });
 
-      addToast('success', 'Cost entry added successfully!');
-      
-      // Reset form
-      setFormData({
-        date: new Date().toISOString().split('T')[0],
-        category: '',
-        description: '',
-        amount: 0,
-        notes: ''
-      });
-    } catch (error) {
-      console.error('Error adding cost entry:', error);
-      const errorMsg = 'Failed to add cost entry. Please try again.';
-      setError(errorMsg);
-      addToast('error', errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleClearForm = () => {
-    setFormData({
-      date: new Date().toISOString().split('T')[0],
-      category: '',
-      description: '',
-      amount: 0,
-      notes: ''
-    });
-    setError(null);
-    addToast('info', 'Form cleared');
-  };
 
   const handleInputChange = (field: keyof CostEntry, value: string | number) => {
     setFormData(prev => ({
@@ -100,23 +45,6 @@ function ManualCostEntryPageContent() {
       [field]: value
     }));
   };
-
-  // Header actions
-  const headerActions = useMemo(() => [
-    {
-      label: 'Clear Form',
-      onClick: handleClearForm,
-      variant: 'outline' as const,
-      icon: '🗑️'
-    },
-    {
-      label: loading ? 'Adding...' : 'Add Cost Entry',
-      onClick: handleSubmit,
-      variant: 'primary' as const,
-      disabled: loading,
-      icon: '💰'
-    }
-  ], [loading, handleSubmit, handleClearForm]);
 
   // Cost category help cards
   const costCategories = useMemo(() => [
@@ -146,7 +74,6 @@ function ManualCostEntryPageContent() {
     <AdminPageWrapper
       title="Manual Cost Entry"
       subtitle="Add new operational costs to track your business expenses"
-      loading={false}
       error={error}
       errorTitle="Cost Entry Error"
     >

@@ -1,7 +1,10 @@
 'use client';
 
-import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup, H4, Text, Container, Span, EditableText } from '@/components/ui';
+import React, { useState, useEffect } from 'react';
+import { AdminPageWrapper, GridSection, InfoCard, ActionGrid, Container, H3, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/ToastProvider';
 
 function AdminHelpPage() {
   const helpSections = [
@@ -155,11 +158,11 @@ function AdminHelpPage() {
             description={section.description}
           >
             <Container>
-              <H4>
+              <H3>
                 <EditableText field="admin.help.section.title" defaultValue={section.title}>
                   {section.title}
                 </EditableText>
-              </H4>
+              </H3>
               <EditableText field="admin.help.section.description" defaultValue={section.description}>
                 {section.description}
               </EditableText>
@@ -216,42 +219,40 @@ function AdminHelpPage() {
       </GridSection>
 
       {/* Quick Navigation */}
-      <SettingSection
+      <ActionGrid
         title="Quick Navigation"
         description="Access common admin functions directly"
-        icon="🔗"
+        icon="��"
       >
-        <ActionButtonGroup
-          buttons={[
-            {
-              label: '📖 Manage Bookings',
-              onClick: () => window.location.href = '/admin/bookings',
-              variant: 'outline' as const,
-              icon: '📖'
-            },
-            {
-              label: '⚙️ CMS Settings',
-              onClick: () => window.location.href = '/admin/cms',
-              variant: 'outline' as const,
-              icon: '⚙️'
-            },
-            {
-              label: '🚗 Driver Management',
-              onClick: () => window.location.href = '/admin/drivers',
-              variant: 'outline' as const,
-              icon: '🚗'
-            },
-            {
-              label: '⭐ Customer Feedback',
-              onClick: () => window.location.href = '/admin/feedback',
-              variant: 'outline' as const,
-              icon: '⭐'
-            }
-          ]}
-          orientation="horizontal"
-          spacing="md"
-        />
-      </SettingSection>
+        <Button
+          onClick={() => window.location.href = '/admin/bookings'}
+          variant="outline"
+          icon="📖"
+        >
+          Manage Bookings
+        </Button>
+        <Button
+          onClick={() => window.location.href = '/admin/cms'}
+          variant="outline"
+          icon="⚙️"
+        >
+          CMS Settings
+        </Button>
+        <Button
+          onClick={() => window.location.href = '/admin/drivers'}
+          variant="outline"
+          icon="🚗"
+        >
+          Driver Management
+        </Button>
+        <Button
+          onClick={() => window.location.href = '/admin/feedback'}
+          variant="outline"
+          icon="⭐"
+        >
+          Customer Feedback
+        </Button>
+      </ActionGrid>
     </AdminPageWrapper>
   );
 }

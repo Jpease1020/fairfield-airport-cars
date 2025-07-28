@@ -30,7 +30,6 @@ function PricingSettingsContent() {
   const { addToast } = useToast();
   const [settings, setSettings] = useState<PricingSettings | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const loadPricingSettings = useCallback(async () => {
@@ -51,22 +50,7 @@ function PricingSettingsContent() {
     loadPricingSettings();
   }, [loadPricingSettings]);
 
-  const handleSave = async () => {
-    if (!settings) return;
-    
-    try {
-      setSaving(true);
-      await cmsService.updatePricingSettings(settings);
-      setSaved(true);
-      addToast('success', 'Pricing settings saved successfully!');
-      setTimeout(() => setSaved(false), 3000);
-    } catch (error) {
-      console.error('Error saving pricing settings:', error);
-      addToast('error', 'Failed to save pricing settings');
-    } finally {
-      setSaving(false);
-    }
-  };
+
 
   const handleBasePricingChange = (field: keyof Omit<PricingSettings, 'cancellation' | 'zones'>, value: number) => {
     if (!settings) return;
@@ -129,20 +113,6 @@ function PricingSettingsContent() {
       zones: updatedZones
     });
   };
-
-  const headerActions = [
-    { 
-      label: 'Back to CMS', 
-      onClick: () => window.location.href = '/admin/cms', 
-      variant: 'outline' as const 
-    },
-    { 
-      label: saving ? 'Saving...' : 'Save Changes', 
-      onClick: handleSave, 
-      variant: 'primary' as const,
-      disabled: saving || !settings
-    }
-  ];
 
   if (loading) {
     return (

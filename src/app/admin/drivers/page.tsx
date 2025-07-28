@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   AdminPageWrapper,
   GridSection, 
@@ -13,10 +13,12 @@ import {
   ToastProvider,
   useToast,
   Container,
-  Text,
   Span,
   EditableText
 } from '@/components/ui';
+import { Stack } from '@/components/ui/containers';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/ToastProvider';
 
 interface Driver {
   id: string;
@@ -174,7 +176,7 @@ function DriversPageContent() {
     : '0.0';
 
   // Table columns
-  const columns: DataTableColumn<Driver>[] = [
+  const columns = [
     {
       key: 'name',
       label: 'Driver',
@@ -229,7 +231,7 @@ function DriversPageContent() {
   ];
 
   // Table actions
-  const actions: DataTableAction<Driver>[] = [
+  const actions = [
     {
       label: 'View',
       icon: '👁️',
