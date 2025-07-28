@@ -180,7 +180,7 @@ function DriversPageContent() {
       key: 'name',
       label: 'Driver',
       sortable: true,
-      render: (_, driver) => (
+      render: (_: any, driver: Driver) => (
         <Container>
           <EditableText field="admin.drivers.name" defaultValue={driver.name}>
             {driver.name}
@@ -192,7 +192,7 @@ function DriversPageContent() {
       key: 'vehicle',
       label: 'Vehicle',
       sortable: false,
-      render: (_, driver) => (
+      render: (_: any, driver: Driver) => (
         <Container>
           <EditableText field="admin.drivers.vehicle" defaultValue={`🚗 ${driver.vehicle.year} ${driver.vehicle.make} ${driver.vehicle.model}`}>
             🚗 {driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model}
@@ -210,13 +210,13 @@ function DriversPageContent() {
       key: 'status',
       label: 'Status',
       sortable: true,
-      render: (value) => renderStatus(value)
+      render: (value: any) => renderStatus(value)
     },
     {
       key: 'rating',
       label: 'Rating',
       sortable: true,
-      render: (_, driver) => (
+      render: (_: any, driver: Driver) => (
         <Container>
           <EditableText field="admin.drivers.rating" defaultValue={`⭐ ${driver.rating.toFixed(1)}`}>
             ⭐ {driver.rating.toFixed(1)}

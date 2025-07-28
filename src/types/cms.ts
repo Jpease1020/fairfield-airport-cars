@@ -61,6 +61,10 @@ export interface HelpPageContent {
   title?: string;
   subtitle?: string;
   faqTitle?: string;
+  sections: Array<{
+    title: string;
+    content: string;
+  }>;
   faq: Array<{
     question: string;
     answer: string;

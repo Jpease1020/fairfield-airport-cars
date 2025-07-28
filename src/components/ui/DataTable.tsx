@@ -38,6 +38,7 @@ interface DataTableProps<T> {
   emptyMessage?: string;
   emptyIcon?: string;
   rowVariant?: (row: T, index: number) => 'default' | 'highlighted' | 'muted';
+  rowClassName?: (row: T, index: number) => string;
   onRowClick?: (row: T, index: number) => void;
   size?: 'sm' | 'md' | 'lg';
   spacing?: 'compact' | 'normal' | 'relaxed';
@@ -54,6 +55,7 @@ export function DataTable<T extends Record<string, any>>({
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data available',
   emptyIcon = '📊',
+  rowClassName,
 
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -137,7 +139,10 @@ export function DataTable<T extends Record<string, any>>({
       <Container>
         <Stack direction="vertical" spacing="md">
           {paginatedData.map((row, index) => (
-            <Container key={index}>
+            <Container 
+              key={index}
+              className={rowClassName ? rowClassName(row, index) : undefined}
+            >
               <Stack direction="horizontal" spacing="md">
                 {columns.map((column) => (
                   <Container key={String(column.key)}>

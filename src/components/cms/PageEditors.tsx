@@ -269,11 +269,29 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
 };
 
 export interface HelpPageContent {
-  title: string;
+  title?: string;
+  subtitle?: string;
+  faqTitle?: string;
   sections: Array<{
     title: string;
     content: string;
   }>;
+  faq: Array<{
+    question: string;
+    answer: string;
+    category: 'booking' | 'payment' | 'cancellation' | 'general';
+  }>;
+  contactInfo: {
+    phone: string;
+    email: string;
+    hours: string;
+  };
+  contactSection?: {
+    title: string;
+    description: string;
+    callButtonText: string;
+    textButtonText: string;
+  };
 }
 
 export interface HelpPageEditorProps {
@@ -308,7 +326,7 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
           id="help-title"
           label="Page Title"
           description="Main title for the help page"
-          value={pageData.title}
+          value={pageData.title || ''}
           onChange={(value) => onFieldChange('title', value)}
           icon="📝"
         />

@@ -69,7 +69,9 @@ interface GridSectionProps {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
+  variant?: 'content' | 'default' | 'actions' | 'stats';
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  columns?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
   gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   responsive?: boolean;
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -97,7 +99,9 @@ const GridSection: React.FC<GridSectionProps> = ({
   children,
   title,
   subtitle,
+  variant = 'default',
   cols = 3,
+  columns,
   gap = 'md',
   responsive = false,
   padding = 'lg',
@@ -121,7 +125,7 @@ const GridSection: React.FC<GridSectionProps> = ({
         </Container>
       )}
       <GridComponent
-        cols={cols}
+        cols={columns || cols}
         gap={gap}
         responsive={responsive}
       >

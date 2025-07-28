@@ -6,9 +6,9 @@ interface PageHeaderProps {
   children?: React.ReactNode;
   title?: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
+  actions?: React.ReactNode[];
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  align?: 'left' | 'center' | 'right';
   spacing?: 'sm' | 'md' | 'lg';
 }
 
@@ -16,9 +16,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   children,
   title,
   subtitle,
+  actions = [],
   padding = 'lg',
   margin = 'none',
-  align = 'left',
   spacing = 'md'
 }) => {
   return (
@@ -26,7 +26,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       as="header" 
       padding={padding} 
       margin={margin}
-      align={align}
       spacing={spacing}
     >
       {title && (
@@ -46,6 +45,11 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         ) : (
           subtitle
         )
+      )}
+      {actions && actions.length > 0 && (
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+          {actions}
+        </div>
       )}
       {children}
     </Container>

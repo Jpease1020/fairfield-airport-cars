@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText } from '@/components/ui';
+import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText, Button } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
 
 const AIAssistantDisabledPage = () => {
@@ -12,26 +12,28 @@ const AIAssistantDisabledPage = () => {
   }, []);
 
   const headerActions = useMemo(() => [
-    { 
-      label: 'Back to Dashboard',
-      onClick: () => {
+    <Button
+      key="back"
+      variant="outline"
+      onClick={() => {
         if (typeof window !== 'undefined') {
           window.location.href = '/admin';
         }
-      },
-      variant: 'outline' as const,
-      icon: '🔙'
-    },
-    { 
-      label: 'Contact Support', 
-      onClick: () => {
+      }}
+    >
+      🔙 Back to Dashboard
+    </Button>,
+    <Button
+      key="support"
+      variant="primary"
+      onClick={() => {
         if (typeof window !== 'undefined') {
           window.location.href = '/admin/help';
         }
-      },
-      variant: 'primary' as const,
-      icon: '📞'
-    }
+      }}
+    >
+      📞 Contact Support
+    </Button>
   ], []);
 
   const quickActions = [

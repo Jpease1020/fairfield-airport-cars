@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Container, Span, Text, Button } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';

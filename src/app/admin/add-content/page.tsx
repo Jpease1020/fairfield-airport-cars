@@ -64,6 +64,32 @@ function AddContentPage() {
          title: "Help & Support",
          subtitle: "We're here to help",
          description: "Find answers to common questions and get support when you need it.",
+         sections: [
+           {
+             title: "Booking Help",
+             content: "Learn how to book, modify, or cancel your ride"
+           },
+           {
+             title: "Payment Support",
+             content: "Get help with payments, refunds, and billing"
+           },
+           {
+             title: "Service Information",
+             content: "Learn about our vehicles, drivers, and service areas"
+           },
+           {
+             title: "Airport Transportation",
+             content: "Specialized airport pickup and drop-off services"
+           },
+           {
+             title: "App Support",
+             content: "Help with our mobile app and online booking"
+           },
+           {
+             title: "Emergency Support",
+             content: "24/7 emergency assistance and urgent changes"
+           }
+         ],
          faq: [
            {
              question: "How far in advance should I book?",

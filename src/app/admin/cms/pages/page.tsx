@@ -114,6 +114,11 @@ function PagesCMSContent() {
       const updated = { ...prev };
       if (!updated.help) updated.help = {} as HelpPageContent;
       
+      // Ensure sections property exists
+      if (!updated.help.sections) {
+        updated.help.sections = [];
+      }
+      
       (updated.help as any)[section] = value;
       
       return updated;

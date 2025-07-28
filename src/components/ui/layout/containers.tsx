@@ -12,6 +12,7 @@ interface ContainerProps {
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  className?: string;
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
 }
 
@@ -25,6 +26,7 @@ const StyledContainer = styled.div.withConfig({
   marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  className?: string;
 }>`
   transition: ${transitions.default};
 
@@ -197,6 +199,7 @@ export const Container: React.FC<ContainerProps> = ({
   marginTop = 'none',
   marginBottom = 'none',
   spacing = 'none',
+  className,
   as: Component = 'div',
   ...rest
 }) => {
@@ -209,6 +212,7 @@ export const Container: React.FC<ContainerProps> = ({
       marginTop={marginTop}
       marginBottom={marginBottom}
       spacing={spacing}
+      className={className}
       as={Component}
       {...rest}
     >

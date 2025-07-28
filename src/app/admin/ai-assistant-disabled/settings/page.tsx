@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText } from '@/components/ui';
+import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText, Button } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
 
 const AIAssistantSettingsPage = () => {
@@ -12,16 +12,17 @@ const AIAssistantSettingsPage = () => {
   }, []);
 
   const headerActions = useMemo(() => [
-    { 
-      label: 'Back to AI Assistant',
-      onClick: () => {
+    <Button
+      key="back"
+      variant="outline"
+      onClick={() => {
         if (typeof window !== 'undefined') {
           window.location.href = '/admin/ai-assistant-disabled';
         }
-      },
-      variant: 'outline' as const,
-      icon: '🔙'
-    }
+      }}
+    >
+      🔙 Back to AI Assistant
+    </Button>
   ], []);
 
   const settingsInfo = [

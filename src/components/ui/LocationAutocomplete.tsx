@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 import { Container, Text, Span, Label } from '@/components/ui';
