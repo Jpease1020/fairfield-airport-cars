@@ -1,14 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { UnifiedLayout } from '@/components/layout';
+import { EditModeProvider } from '@/components/admin/EditModeProvider';
 import { 
   GridSection,
-  InfoCard,
   ActionButtonGroup,
   LoadingSpinner,
-  Text
+  Text,
+  EditableText,
+  EditableHeading,
+  Container,
+  Card,
+  CardBody,
+  Span,
+  H3,
+  Button
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
@@ -20,7 +28,7 @@ function SuccessPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBookingDetails = async () => {
+  const fetchBookingDetails = useCallback(async () => {
     if (!bookingId) {
       setError('No booking ID provided');
       setLoading(false);
@@ -39,11 +47,11 @@ function SuccessPageContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [bookingId]);
 
   useEffect(() => {
     fetchBookingDetails();
-  }, [bookingId]);
+  }, [bookingId, fetchBookingDetails]);
 
   const successActions = [
     {
@@ -74,12 +82,13 @@ function SuccessPageContent() {
         subtitle="Please wait while we load your booking details"
       >
         <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="Loading..."
-            description="Loading your booking details..."
-          >
-            <LoadingSpinner size="lg" />
-          </InfoCard>
+          <Container>
+            <Stack spacing="md">
+              <EditableHeading level={2} field="success.loading.title" defaultValue="Loading...">Loading...</EditableHeading>
+              <EditableText field="success.loading.cardDescription" defaultValue="Loading your booking details...">Loading your booking details...</EditableText>
+              <LoadingSpinner size="lg" />
+            </Stack>
+          </Container>
         </GridSection>
       </UnifiedLayout>
     );
@@ -89,82 +98,93 @@ function SuccessPageContent() {
     <UnifiedLayout 
       layoutType="status"
       title="🎉 Booking Confirmed!"
-      subtitle={booking?.depositPaid ? "Payment successful - You're all set!" : "Your booking is confirmed"}
+      subtitle="Your booking is confirmed"
     >
       {error && (
         <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="⚠️ Error Loading Booking"
-            description={error}
-          >
-            <Text>Please try refreshing the page or contact support if the problem persists.</Text>
-          </InfoCard>
+          <Container>
+            <Stack spacing="md">
+              <EditableHeading level={3} field="success.error.title" defaultValue="⚠️ Error Loading Booking">⚠️ Error Loading Booking</EditableHeading>
+              <EditableText field="success.error.description" defaultValue="Please try refreshing the page or contact support if the problem persists.">Please try refreshing the page or contact support if the problem persists.</EditableText>
+            </Stack>
+          </Container>
         </GridSection>
       )}
 
       {/* Success Message */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title={booking?.depositPaid ? "✅ Payment Successful!" : "📝 Booking Created!"}
-          description={booking?.depositPaid 
-            ? "Your deposit has been processed and your ride is confirmed"
-            : "Your booking has been created. Payment can be completed before your ride"
-          }
-        >
-          <ActionButtonGroup buttons={successActions} />
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg" align="center">
+            <Span size="xl">🎉</Span>
+            <H3>Booking Confirmed!</H3>
+            <Text>Your ride has been successfully booked. Check your email for confirmation and details.</Text>
+            <Button variant="primary" size="lg" onClick={() => window.location.href = '/'}>Back to Home</Button>
+          </Stack>
+        </Container>
       </GridSection>
 
       {/* Booking Details */}
       {booking && (
         <GridSection variant="content" columns={2}>
-          <InfoCard
-            title="🚗 Trip Details"
-            description="Your journey information"
-          >
-            <Text><strong>From:</strong> {booking.pickupLocation}</Text>
-            <Text><strong>To:</strong> {booking.dropoffLocation}</Text>
-            <Text><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</Text>
-            <Text><strong>Passengers:</strong> {booking.passengers}</Text>
-          </InfoCard>
+          <Container>
+            <Card>
+              <CardBody>
+                <Stack spacing="md">
+                  <EditableHeading level={3} field="success.tripDetails.title" defaultValue="🚗 Trip Details">🚗 Trip Details</EditableHeading>
+                  <EditableText field="success.tripDetails.description" defaultValue="Your journey information">Your journey information</EditableText>
+                  <Text><strong>From:</strong> {booking.pickupLocation}</Text>
+                  <Text><strong>To:</strong> {booking.dropoffLocation}</Text>
+                  <Text><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</Text>
+                  <Text><strong>Passengers:</strong> {booking.passengers}</Text>
+                </Stack>
+              </CardBody>
+            </Card>
+          </Container>
           
-          <InfoCard
-            title="💰 Payment Status"
-            description="Your payment information"
-          >
-            <Text><strong>Total Fare:</strong> ${booking.fare}</Text>
-            <Text><strong>Deposit:</strong> ${booking.depositAmount} {booking.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
-            <Text><strong>Balance Due:</strong> ${booking.balanceDue || 0}</Text>
-          </InfoCard>
+          <Container>
+            <Card>
+              <CardBody>
+                <Stack spacing="md">
+                  <EditableHeading level={3} field="success.paymentStatus.title" defaultValue="💰 Payment Status">💰 Payment Status</EditableHeading>
+                  <EditableText field="success.paymentStatus.description" defaultValue="Your payment information">Your payment information</EditableText>
+                  <Text><strong>Total Fare:</strong> ${booking.fare}</Text>
+                  <Text><strong>Deposit:</strong> ${booking.depositAmount} {booking.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
+                  <Text><strong>Balance Due:</strong> ${booking.balanceDue || 0}</Text>
+                </Stack>
+              </CardBody>
+            </Card>
+          </Container>
         </GridSection>
       )}
 
       {/* Next Steps */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="📋 What Happens Next?"
-          description="Here's what you can expect from us"
-        >
-          <Stack spacing="sm">
-            <Text>📧 You&apos;ll receive a confirmation email with all booking details</Text>
-            <Text>📱 We&apos;ll send you SMS updates about your driver and pickup time</Text>
-            <Text>👨‍💼 Your driver will contact you 30 minutes before pickup</Text>
-            <Text>✈️ We monitor your flight for any delays or changes</Text>
-          </Stack>
+        <Container>
+          <Stack spacing="md">
+            <EditableHeading level={3} field="success.nextSteps.title" defaultValue="📋 What Happens Next?">📋 What Happens Next?</EditableHeading>
+            <EditableText field="success.nextSteps.description" defaultValue="Here's what you can expect from us">Here's what you can expect from us</EditableText>
+            <Stack spacing="sm">
+              <EditableText field="success.nextSteps.items.0" defaultValue="📧 You&apos;ll receive a confirmation email with all booking details">📧 You&apos;ll receive a confirmation email with all booking details</EditableText>
+              <EditableText field="success.nextSteps.items.1" defaultValue="📱 We'll send you SMS updates about your driver and pickup time">📱 We&apos;ll send you SMS updates about your driver and pickup time</EditableText>
+              <EditableText field="success.nextSteps.items.2" defaultValue="👨‍💼 Your driver will contact you 30 minutes before pickup">👨‍💼 Your driver will contact you 30 minutes before pickup</EditableText>
+              <EditableText field="success.nextSteps.items.3" defaultValue="✈️ We monitor your flight for any delays or changes">✈️ We monitor your flight for any delays or changes</EditableText>
+            </Stack>
 
-          <ActionButtonGroup buttons={successActions} />
-        </InfoCard>
+            <ActionButtonGroup buttons={successActions} />
+          </Stack>
+        </Container>
       </GridSection>
 
       {/* Emergency Contact */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🆘 Need Help?"
-          description="Contact us anytime if you have questions or need to make changes"
-        >
-          <Text>📞 (203) 555-0123</Text>
-          <Text>Save this number! Our drivers are available to assist you.</Text>
-        </InfoCard>
+        <Container>
+          <Stack spacing="md">
+            <EditableHeading level={3} field="success.emergencyContact.title" defaultValue="🆘 Need Help?">🆘 Need Help?</EditableHeading>
+            <EditableText field="success.emergencyContact.description" defaultValue="Contact us anytime if you have questions or need to make changes">Contact us anytime if you have questions or need to make changes</EditableText>
+            <EditableText field="success.emergencyContact.phone" defaultValue="📞 (203) 555-0123">📞 (203) 555-0123</EditableText>
+            <EditableText field="success.emergencyContact.message" defaultValue="Save this number! Our drivers are available to assist you.">Save this number! Our drivers are available to assist you.</EditableText>
+          </Stack>
+        </Container>
       </GridSection>
     </UnifiedLayout>
   );

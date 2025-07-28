@@ -250,258 +250,256 @@ function BookingFormContent({ booking }: BookingFormProps) {
       {mapsError && (
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
-            <div className="inline-block w-5 h-5">
+            <Container>
               <svg fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-            </div>
-            <Stack direction="vertical" spacing="sm">
+            </Container>
+            <Container>
               <H3>Location autocomplete temporarily unavailable</H3>
               <Text>You can still fill out the form manually. Location suggestions will be restored shortly.</Text>
-            </Stack>
+            </Container>
           </Stack>
         </Container>
       )}
 
       <Form onSubmit={handleSubmit}>
         {/* Personal Information */}
-        <SettingSection
-          title="Personal Information"
-          description="Please provide your contact details for the booking"
-          icon="👤"
-        >
-          <Grid columns={2} spacing="md">
-            <GridItem>
-              <SettingInput
-                id="name"
-                label="Full Name"
-                description="Your complete name as it appears on ID"
-                value={name}
-                onChange={setName}
-                placeholder="Enter your full name"
-                icon="👤"
-              />
-            </GridItem>
+        <Container>
+          <Stack spacing="lg">
+            <Container>
+              <Span>👤</Span>
+              <H3>Personal Information</H3>
+            </Container>
+            <Text>Please provide your contact details for the booking</Text>
+            <Grid cols={2} gap="md">
+              <GridItem>
+                <SettingInput
+                  id="name"
+                  label="Full Name"
+                  description="Your complete name as it appears on ID"
+                  value={name}
+                  onChange={setName}
+                  placeholder="Enter your full name"
+                  icon="👤"
+                />
+              </GridItem>
+              
+              <GridItem>
+                <SettingInput
+                  id="email"
+                  label="Email Address"
+                  description="We'll send your booking confirmation here"
+                  type="email"
+                  value={email}
+                  onChange={setEmail}
+                  placeholder="Enter your email"
+                  icon="✉️"
+                />
+              </GridItem>
+            </Grid>
             
-            <GridItem>
-              <SettingInput
-                id="email"
-                label="Email Address"
-                description="We'll send your booking confirmation here"
-                type="email"
-                value={email}
-                onChange={setEmail}
-                placeholder="Enter your email"
-                icon="✉️"
-              />
-            </GridItem>
-          </Grid>
-          
-          <SettingInput
-            id="phone"
-            label="Phone Number"
-            description="Your driver will contact you on this number"
-            value={phone}
-            onChange={setPhone}
-            placeholder="(123) 456-7890"
-            icon="📞"
-          />
-        </SettingSection>
+            <SettingInput
+              id="phone"
+              label="Phone Number"
+              description="Your driver will contact you on this number"
+              value={phone}
+              onChange={setPhone}
+              placeholder="(123) 456-7890"
+              icon="📞"
+            />
+          </Stack>
+        </Container>
 
         {/* Trip Details */}
-        <SettingSection
-          title="Trip Details"
-          description="Tell us where you need to go and when"
-          icon="🚗"
-        >
-          {/* Location Fields - Improved Layout */}
-          <Grid columns={2} spacing="md">
-            <GridItem>
-              <SettingInput
-                id="pickupLocation"
-                label="Pickup Location"
-                description="Where should we pick you up?"
-                value={pickupLocation}
-                onChange={handlePickupInputChange}
-                placeholder="Enter pickup address"
-                icon="📍"
-              />
-              {showPickupSuggestions && pickupSuggestions.length > 0 && (
+        <Container>
+          <Stack spacing="lg">
+            <Container>
+              <Span>🚗</Span>
+              <H3>Trip Details</H3>
+            </Container>
+            <Text>Tell us where you need to go and when</Text>
+            {/* Location Fields - Improved Layout */}
+            <Grid cols={2} gap="md">
+              <GridItem>
+                <SettingInput
+                  id="pickupLocation"
+                  label="Pickup Location"
+                  description="Where should we pick you up?"
+                  value={pickupLocation}
+                  onChange={handlePickupInputChange}
+                  placeholder="Enter pickup address"
+                  icon="📍"
+                />
+                {showPickupSuggestions && pickupSuggestions.length > 0 && (
+                  <Container>
+                    {pickupSuggestions.map((prediction) => (
+                      <Button
+                        key={prediction.place_id}
+                        onClick={() => handlePickupSuggestionSelect(prediction)}
+                        variant="ghost"
+                        size="sm"
+                        fullWidth
+                      >
+                        <Container>
+                          <Span>
+                            {prediction.structured_formatting?.main_text || prediction.description}
+                          </Span>
+                          <Span>
+                            {prediction.structured_formatting?.secondary_text || ''}
+                          </Span>
+                        </Container>
+                      </Button>
+                    ))}
+                  </Container>
+                )}
+              </GridItem>
+              
+              <GridItem>
+                <SettingInput
+                  id="dropoffLocation"
+                  label="Dropoff Location"
+                  description="Where should we take you?"
+                  value={dropoffLocation}
+                  onChange={handleDropoffInputChange}
+                  placeholder="Enter destination address"
+                  icon="🎯"
+                />
+                {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
+                  <Container>
+                    {dropoffSuggestions.map((prediction) => (
+                      <Button
+                        key={prediction.place_id}
+                        onClick={() => handleDropoffSuggestionSelect(prediction)}
+                        variant="ghost"
+                        size="sm"
+                        fullWidth
+                      >
+                        <Container>
+                          <Span>
+                            {prediction.structured_formatting?.main_text || prediction.description}
+                          </Span>
+                          <Span>
+                            {prediction.structured_formatting?.secondary_text || ''}
+                          </Span>
+                        </Container>
+                      </Button>
+                    ))}
+                  </Container>
+                )}
+              </GridItem>
+            </Grid>
+            
+            <Grid cols={2} gap="md">
+              <GridItem>
                 <Container>
-                  {pickupSuggestions.map((prediction) => (
-                    <Button
-                      key={prediction.place_id}
-                      onClick={() => handlePickupSuggestionSelect(prediction)}
-                      variant="ghost"
-                      size="sm"
-                      fullWidth
-                    >
-                      <Stack>
-                        <Span>
-                          {prediction.structured_formatting?.main_text || prediction.description}
-                        </Span>
-                        <Span>
-                          {prediction.structured_formatting?.secondary_text || ''}
-                        </Span>
-                      </Stack>
-                    </Button>
-                  ))}
+                  <Stack>
+                    <Span>📅</Span>
+                    <Label htmlFor="pickupDate">Pickup Date</Label>
+                  </Stack>
+                  <Text>When do you need to be picked up?</Text>
+                  <Input
+                    id="pickupDate"
+                    type="date"
+                    value={pickupDateTime.slice(0, 10)}
+                    onChange={(e) => setPickupDateTime(e.target.value + 'T' + pickupDateTime.slice(11))}
+                    required
+                  />
                 </Container>
-              )}
-            </GridItem>
-            
-            <GridItem>
-              <SettingInput
-                id="dropoffLocation"
-                label="Destination"
-                description="Where are you going?"
-                value={dropoffLocation}
-                onChange={handleDropoffInputChange}
-                placeholder="Enter destination address"
-                icon="🎯"
-              />
-              {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
+              </GridItem>
+              
+              <GridItem>
                 <Container>
-                  {dropoffSuggestions.map((prediction) => (
-                    <Button
-                      key={prediction.place_id}
-                      onClick={() => handleDropoffSuggestionSelect(prediction)}
-                      variant="ghost"
-                      size="sm"
-                      fullWidth
-                    >
-                      <Stack>
-                        <Span>
-                          {prediction.structured_formatting?.main_text || prediction.description}
-                        </Span>
-                        <Span>
-                          {prediction.structured_formatting?.secondary_text || ''}
-                        </Span>
-                      </Stack>
-                    </Button>
-                  ))}
+                  <Stack>
+                    <Span>⏰</Span>
+                    <Label htmlFor="pickupTime">Pickup Time</Label>
+                  </Stack>
+                  <Text>What time should we pick you up?</Text>
+                  <Input
+                    id="pickupTime"
+                    type="time"
+                    value={pickupDateTime.slice(11)}
+                    onChange={(e) => setPickupDateTime(pickupDateTime.slice(0, 11) + e.target.value)}
+                    required
+                  />
                 </Container>
-              )}
-            </GridItem>
-          </Grid>
-          
-          {/* Pickup Date and Time - Styled like SettingInput */}
-          <Container>
-            <Stack>
-              <Span>📅</Span>
-              <Label 
-                htmlFor="pickupDateTime"
-              >
-                Pickup Date and Time
-              </Label>
-            </Stack>
-            
-            <Text>
-              When do you need to be picked up?
-            </Text>
-            
-            <Input
-              id="pickupDateTime"
-              name="pickupDateTime"
-              type="datetime-local"
-              value={pickupDateTime}
-              onChange={(e) => setPickupDateTime(e.target.value)}
-              required
-            />
-          </Container>
-        </SettingSection>
+              </GridItem>
+            </Grid>
+          </Stack>
+        </Container>
 
         {/* Additional Details */}
-        <SettingSection
-          title="Additional Details"
-          description="Help us provide the best service for your trip"
-          icon="⚙️"
-        >
-          <Grid columns={2} spacing="md">
-            <GridItem>
-              {/* Passengers - Styled like SettingInput */}
-              <Container>
-                <Stack>
-                  <Span>👥</Span>
-                  <Label 
-                    htmlFor="passengers"
-                  >
-                    Passengers
-                  </Label>
-                </Stack>
-                
-                <Text>
-                  Number of people traveling
-                </Text>
-                
-                <Select
-                  id="passengers"
-                  name="passengers"
-                  value={passengers}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(Number(e.target.value))}
-                  
-                >
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                    <Option key={num} value={num}>{num} passenger{num > 1 ? 's' : ''}</Option>
-                  ))}
-                </Select>
-              </Container>
-            </GridItem>
-            
-            <GridItem>
-              <SettingInput
-                id="flightNumber"
-                label="Flight Number (Optional)"
-                description="We'll track your flight for delays"
-                value={flightNumber}
-                onChange={setFlightNumber}
-                placeholder="AA1234"
-                icon="✈️"
-              />
-            </GridItem>
-          </Grid>
-            
-            {/* Special Instructions - Styled like SettingInput */}
+        <Container>
+          <Stack spacing="lg">
             <Container>
-              <Stack>
-                <Span>📝</Span>
-                <Label 
-                  htmlFor="notes"
-                >
-                  Special Instructions (Optional)
-                </Label>
-              </Stack>
-              
-              <Text>
-                Let us know about any special requirements
-              </Text>
-              
-              <Textarea
-                id="notes"
-                name="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={4}
-                placeholder="Any special instructions or requests?"
-
-              />
+              <Span>📝</Span>
+              <H3>Additional Details</H3>
             </Container>
-        </SettingSection>
+            <Text>Help us provide the best service for your trip</Text>
+            
+            <Grid cols={2} gap="md">
+              <GridItem>
+                <Container>
+                  <Stack>
+                    <Span>👥</Span>
+                    <Label htmlFor="passengers">Number of Passengers</Label>
+                  </Stack>
+                  <Text>How many people are traveling?</Text>
+                  <Select
+                    id="passengers"
+                    value={passengers.toString()}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(Number(e.target.value))}
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                      <Option key={num} value={num.toString()}>{num} passenger{num > 1 ? 's' : ''}</Option>
+                    ))}
+                  </Select>
+                </Container>
+              </GridItem>
+              
+              <GridItem>
+                <Container>
+                  <Stack>
+                    <Span>💡</Span>
+                    <Label htmlFor="specialRequests">Special Requests</Label>
+                  </Stack>
+                  <Text>Any special requirements or requests?</Text>
+                  <Input
+                    id="specialRequests"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Wheelchair, extra luggage, etc."
+                  />
+                </Container>
+              </GridItem>
+            </Grid>
+          </Stack>
+        </Container>
 
-        {/* Action Buttons */}
-        <SettingSection
-          title="Book Your Ride"
-          description="Calculate your fare and complete your booking"
-          icon="💳"
-        >
-          <Container>
+        {/* Action Section */}
+        <Container>
+          <Stack spacing="lg">
+            <Container>
+              <Span>💳</Span>
+              <H3>Book Your Ride</H3>
+            </Container>
+            <Text>Calculate your fare and complete your booking</Text>
+            
+            {fare && (
+              <Container>
+                <Text>
+                  Estimated Fare: <Span>${fare}</Span>
+                </Text>
+              </Container>
+            )}
+            
             <Button
-              type="button"
-              onClick={handleCalculateFare}
-              disabled={isCalculating}
+              type="submit"
+              disabled={isCalculating || !fare}
               loading={isCalculating}
               fullWidth
               size="lg"
+              variant="primary"
             >
               {isCalculating ? (
                 <>
@@ -514,31 +512,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   Calculating...
                 </>
               ) : (
-                'Calculate Fare'
+                <>🚗 Book Now - ${fare}</>
               )}
             </Button>
-            {fare && (
-              <Container>
-                <Text>
-                  Estimated Fare: <Span>${fare}</Span>
-                </Text>
-              </Container>
-            )}
-          </Container>
-          
-          {fare && (
-            <Button
-              type="submit"
-              disabled={!fare}
-              loading={false} // isSubmitting is not defined in this component, so it's always false for now
-              fullWidth
-              size="lg"
-              variant="primary"
-            >
-              🚗 Book Now - ${fare}
-            </Button>
-          )}
-        </SettingSection>
+          </Stack>
+        </Container>
         
         {error && (
           <StatusMessage 

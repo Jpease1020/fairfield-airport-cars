@@ -352,37 +352,37 @@ function ManageBookingPageContent() {
           description="Your booking details and current status"
         >
           <Stack direction="vertical" spacing="md">
-            <Stack direction="horizontal" justify="between">
+            <Container>
               <Span>Booking ID:</Span>
               <Span>{booking.id}</Span>
-            </Stack>
-            <Stack direction="horizontal" justify="between">
+            </Container>
+            <Container>
               <Span>Status:</Span>
               <Span>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </Span>
-            </Stack>
-            <Stack direction="horizontal" justify="between">
+            </Container>
+            <Container>
               <Span>Passenger:</Span>
               <Span>{booking.name}</Span>
-            </Stack>
-            <Stack direction="horizontal" justify="between">
+            </Container>
+            <Container>
               <Span>Route:</Span>
               <Span>{booking.pickupLocation} → {booking.dropoffLocation}</Span>
-            </Stack>
-            <Stack direction="horizontal" justify="between">
+            </Container>
+            <Container>
               <Span>Pickup Time:</Span>
               <Span>{new Date(booking.pickupDateTime).toLocaleString()}</Span>
-            </Stack>
-            <Stack direction="horizontal" justify="between">
+            </Container>
+            <Container>
               <Span>Total Fare:</Span>
               <Span>${booking.fare?.toFixed(2)}</Span>
-            </Stack>
+            </Container>
             {booking.balanceDue > 0 && (
-              <Stack direction="horizontal" justify="between">
+              <Container>
                 <Span>Balance Due:</Span>
                 <Span>${booking.balanceDue.toFixed(2)}</Span>
-              </Stack>
+              </Container>
             )}
           </Stack>
         </InfoCard>

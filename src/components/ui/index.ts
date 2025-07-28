@@ -97,19 +97,21 @@ export {
   Link
 } from './text';
 
+// Editable Components
+export { EditableText } from './EditableText';
+export { EditableHeading } from './EditableHeading';
+export { EditableButton } from './EditableButton';
+export { EditableInput } from './EditableInput';
+export { EditableTextarea } from './EditableTextarea';
+
 // BULLETPROOF Layout Components (NEVER from text.tsx!)
 export { Container, Section, Stack, Card, Box, Grid, Layout, Spacer } from './containers';
 export { GridItem } from './Grid';
-
-// Database-ready editable text component
-export { EditableText } from './EditableText';
 
 // Accessibility
 export { AccessibilityEnhancer } from './AccessibilityEnhancer';
 
 // Moved Components (Now Properly Located in UI!)
-export { EditableInput } from './EditableInput';
-export { EditableTextarea } from './EditableTextarea';
 export { FormField } from './FormField';
 export { SelectField } from './SelectField';
 export { StatusBadge } from './StatusBadge';

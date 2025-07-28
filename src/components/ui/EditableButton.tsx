@@ -1,28 +1,29 @@
 'use client';
 
 import React from 'react';
-import { Text, Container } from '@/components/ui';
+import { Button, Container } from '@/components/ui';
 import { useEditMode } from '@/components/admin/EditModeProvider';
-import { getContent } from '@/lib/content/content-mapping';
 
-interface EditableTextProps {
-  field: string; // Database field path (e.g., "commentWidget.title")
+interface EditableButtonProps {
+  field: string; // Database field path (e.g., "hero.ctaText")
   children?: React.ReactNode; // Fallback content (existing text)
   defaultValue?: string; // Default text if no database value
-  variant?: 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  align?: 'left' | 'center' | 'right' | 'justify';
-  color?: 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  onClick?: () => void;
+  icon?: string;
 }
 
-export const EditableText: React.FC<EditableTextProps> = ({
+export const EditableButton: React.FC<EditableButtonProps> = ({
   field,
   children,
   defaultValue = '',
-  variant = 'body',
+  variant = 'primary',
   size = 'md',
-  align = 'left',
-  color = 'primary'
+  disabled = false,
+  onClick,
+  icon
 }) => {
   const { editMode, localContent, handleFieldChange } = useEditMode();
 
@@ -32,16 +33,11 @@ export const EditableText: React.FC<EditableTextProps> = ({
     if (localContent && localContent[field]) {
       return localContent[field];
     }
-    // Second priority: Content mapping (preserves existing content)
-    const mappedContent = getContent(field);
-    if (mappedContent) {
-      return mappedContent;
-    }
-    // Third priority: Children as string
+    // Second priority: Children as string
     if (children && typeof children === 'string') {
       return children;
     }
-    // Fourth priority: Default value
+    // Third priority: Default value
     return defaultValue;
   };
 
@@ -54,13 +50,16 @@ export const EditableText: React.FC<EditableTextProps> = ({
           contentEditable
           suppressContentEditableWarning
           style={{
-            color: 'var(--text-primary)',
-            fontSize: size === 'sm' ? 'var(--font-size-sm)' : 'var(--font-size-base)',
-            textAlign: align,
-            padding: '4px',
+            fontSize: size === 'sm' ? 'var(--font-size-sm)' : 
+                     size === 'lg' ? 'var(--font-size-lg)' : 'var(--font-size-base)',
+            textAlign: 'center',
+            padding: '8px 16px',
             border: '1px dashed #ccc',
-            borderRadius: '4px',
-            minHeight: '1em'
+            borderRadius: '6px',
+            minHeight: '1em',
+            backgroundColor: variant === 'primary' ? 'var(--color-primary)' : 'transparent',
+            color: variant === 'primary' ? 'white' : 'var(--text-primary)',
+            cursor: 'text'
           }}
           onBlur={(e: React.FocusEvent<HTMLDivElement>) => {
             const newValue = e.currentTarget.textContent || '';
@@ -74,6 +73,7 @@ export const EditableText: React.FC<EditableTextProps> = ({
             }
           }}
         >
+          {icon && <span style={{ marginRight: '4px' }}>{icon}</span>}
           {currentValue}
         </div>
       </Container>
@@ -82,13 +82,14 @@ export const EditableText: React.FC<EditableTextProps> = ({
 
   // Display mode - show database value or fallback to children
   return (
-    <Text
+    <Button
       variant={variant}
       size={size}
-      align={align}
-      color={color}
+      disabled={disabled}
+      onClick={onClick}
     >
+      {icon && <span style={{ marginRight: '4px' }}>{icon}</span>}
       {currentValue}
-    </Text>
+    </Button>
   );
 }; 

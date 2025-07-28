@@ -99,6 +99,17 @@ const DEFAULT_CMS_CONFIG = {
         email: "support@fairfieldairportcars.com",
         hours: "24/7"
       }
+    },
+    success: {
+      title: "🎉 Booking Confirmed!",
+      subtitle: "Your booking is confirmed",
+      paymentSuccessTitle: "✅ Payment Successful!",
+      paymentSuccessMessage: "Your deposit has been processed and your ride is confirmed",
+      noBookingTitle: "⚠️ Error Loading Booking",
+      noBookingMessage: "Please try refreshing the page or contact support if the problem persists.",
+      currentStatusLabel: "Current Status",
+      viewDetailsButton: "View My Booking",
+      loadingMessage: "Loading your booking details..."
     }
   },
   business: {
@@ -194,6 +205,32 @@ const DEFAULT_CMS_CONFIG = {
       monthlyReports: true,
       emailRecipients: ["admin@fairfieldairportcars.com"]
     }
+  },
+  bookingForm: {
+    fullNameLabel: "Full Name",
+    emailLabel: "Email Address",
+    phoneLabel: "Phone Number",
+    pickupLocationLabel: "Pickup Location",
+    dropoffLocationLabel: "Destination",
+    pickupDateTimeLabel: "Pickup Date and Time",
+    passengersLabel: "Passengers",
+    flightNumberLabel: "Flight Number (Optional)",
+    notesLabel: "Special Instructions (Optional)",
+    calculateFareButton: "Calculate Fare",
+    calculatingFareButton: "Calculating...",
+    bookNowButton: "Book Now",
+    updateBookingButton: "Update Booking",
+    estimatedFareLabel: "Estimated Fare",
+    errorLoadLocations: "Location autocomplete temporarily unavailable",
+    loading: "Loading your booking details...",
+    errorEnterLocations: "Please enter both pickup and destination locations",
+    errorCalculateFare: "Failed to calculate fare. Please try again.",
+    errorCalculateBeforeBooking: "Please calculate the fare before booking",
+    errorTimeConflict: "This time slot is not available. Please select a different time.",
+    successBookingUpdated: "Booking updated successfully!",
+    successBookingCreated: "Booking created successfully!",
+    errorUpdateBooking: "Failed to update booking. Please try again.",
+    errorCreateBooking: "Failed to create booking. Please try again."
   },
   lastUpdated: new Date(),
   version: "1.0.0"

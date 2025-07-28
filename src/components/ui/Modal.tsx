@@ -17,18 +17,21 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(({
   onClose,
   title,
   children
-}) => {
+}, ref) => {
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: '0',
-      zIndex: '50',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
+    <div 
+      ref={ref}
+      style={{
+        position: 'fixed',
+        inset: '0',
+        zIndex: '50',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
       {/* Backdrop */}
       <div 
         style={{

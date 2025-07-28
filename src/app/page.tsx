@@ -6,12 +6,15 @@ import {
   InfoCard,
   ActionButtonGroup,
   ToastProvider,
-  FeatureGrid
+  FeatureGrid,
+  Container,
+  Grid,
+  Stack,
+  Text,
+  H4
 } from '@/components/ui';
 
 function HomePageContent() {
-
-
   const heroActions = [
     {
       label: 'Book Your Ride',
@@ -63,32 +66,59 @@ function HomePageContent() {
     >
       {/* Hero Section */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🎯 Ready to Experience Premium Transportation?"
-          description="Join thousands of satisfied customers who trust us for reliable airport transportation. Professional drivers, clean vehicles, and on-time service for all your airport travel needs."
-        >
-          <ActionButtonGroup buttons={heroActions} />
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg">
+            <H4>🎯 Ready to Experience Premium Transportation?</H4>
+            <Text>Join thousands of satisfied customers who trust us for reliable airport transportation. Professional drivers, clean vehicles, and on-time service for all your airport travel needs.</Text>
+          </Stack>
+        </Container>
       </GridSection>
 
       {/* Features Section */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="✨ Why Choose Us?"
-          description="Professional service, reliable transportation, and peace of mind for your airport journey"
-        >
-          <FeatureGrid features={features} columns={3} />
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg">
+            <H4>✨ Why Choose Us?</H4>
+            <Text>Professional service, reliable transportation, and peace of mind for your airport journey</Text>
+          </Stack>
+        </Container>
       </GridSection>
 
       {/* Final CTA Section */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🎯 Ready to Book Your Ride?"
-          description="Experience the difference that professional service makes. Get started with your reliable airport transportation today."
-        >
-          <ActionButtonGroup buttons={finalCTAActions} />
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg">
+            <H4>Professional Service</H4>
+            <Text variant="muted">Experienced drivers with clean, well-maintained vehicles for your comfort and safety</Text>
+          </Stack>
+        </Container>
+      </GridSection>
+
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Stack spacing="lg">
+            <H4>Reliable & On Time</H4>
+            <Text variant="muted">We understand the importance of punctuality for airport travel and never let you down</Text>
+          </Stack>
+        </Container>
+      </GridSection>
+
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Stack spacing="lg">
+            <H4>Easy Booking</H4>
+            <Text variant="muted">Simple online booking with secure payment processing and instant confirmation</Text>
+          </Stack>
+        </Container>
+      </GridSection>
+
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Stack spacing="lg">
+            <H4>�� Ready to Book Your Ride?</H4>
+            <Text>Experience the difference that professional service makes. Get started with your reliable airport transportation today.</Text>
+          </Stack>
+        </Container>
       </GridSection>
     </UnifiedLayout>
   );

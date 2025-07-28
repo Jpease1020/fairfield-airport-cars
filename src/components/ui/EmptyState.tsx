@@ -11,7 +11,7 @@ interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
-  ({ className, icon, title, description, action, size = 'md', ...props }) => {
+  ({ className, icon, title, description, action, size = 'md', ...props }, ref) => {
     const sizeClasses = {
       sm: {
         container: 'py-8',
@@ -34,7 +34,8 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
     };
 
     return (
-      <Container
+      <div
+        ref={ref}
         className={cn(
           'flex flex-col items-center justify-center text-center',
           sizeClasses[size].container,
@@ -42,7 +43,7 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
         )}
         {...props}
       >
-                {icon && (
+        {icon && (
           <Container>
             {icon}
           </Container>
@@ -62,7 +63,7 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
             {action}
           </Container>
         )}
-      </Container>
+      </div>
     );
   }
 );

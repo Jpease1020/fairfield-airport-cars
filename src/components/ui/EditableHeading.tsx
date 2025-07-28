@@ -1,26 +1,23 @@
 'use client';
 
 import React from 'react';
-import { Text, Container } from '@/components/ui';
+import { H1, H2, H3, H4, H5, H6, Container } from '@/components/ui';
 import { useEditMode } from '@/components/admin/EditModeProvider';
-import { getContent } from '@/lib/content/content-mapping';
 
-interface EditableTextProps {
-  field: string; // Database field path (e.g., "commentWidget.title")
+interface EditableHeadingProps {
+  field: string; // Database field path (e.g., "hero.title")
   children?: React.ReactNode; // Fallback content (existing text)
   defaultValue?: string; // Default text if no database value
-  variant?: 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  align?: 'left' | 'center' | 'right' | 'justify';
+  level?: 1 | 2 | 3 | 4 | 5 | 6; // Heading level
+  align?: 'left' | 'center' | 'right';
   color?: 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
 }
 
-export const EditableText: React.FC<EditableTextProps> = ({
+export const EditableHeading: React.FC<EditableHeadingProps> = ({
   field,
   children,
   defaultValue = '',
-  variant = 'body',
-  size = 'md',
+  level = 2,
   align = 'left',
   color = 'primary'
 }) => {
@@ -32,16 +29,11 @@ export const EditableText: React.FC<EditableTextProps> = ({
     if (localContent && localContent[field]) {
       return localContent[field];
     }
-    // Second priority: Content mapping (preserves existing content)
-    const mappedContent = getContent(field);
-    if (mappedContent) {
-      return mappedContent;
-    }
-    // Third priority: Children as string
+    // Second priority: Children as string
     if (children && typeof children === 'string') {
       return children;
     }
-    // Fourth priority: Default value
+    // Third priority: Default value
     return defaultValue;
   };
 
@@ -55,7 +47,12 @@ export const EditableText: React.FC<EditableTextProps> = ({
           suppressContentEditableWarning
           style={{
             color: 'var(--text-primary)',
-            fontSize: size === 'sm' ? 'var(--font-size-sm)' : 'var(--font-size-base)',
+            fontSize: level === 1 ? 'var(--font-size-2xl)' : 
+                     level === 2 ? 'var(--font-size-xl)' :
+                     level === 3 ? 'var(--font-size-lg)' :
+                     level === 4 ? 'var(--font-size-base)' :
+                     level === 5 ? 'var(--font-size-sm)' : 'var(--font-size-xs)',
+            fontWeight: 'bold',
             textAlign: align,
             padding: '4px',
             border: '1px dashed #ccc',
@@ -81,14 +78,17 @@ export const EditableText: React.FC<EditableTextProps> = ({
   }
 
   // Display mode - show database value or fallback to children
+  const HeadingComponent = level === 1 ? H1 : 
+                          level === 2 ? H2 : 
+                          level === 3 ? H3 : 
+                          level === 4 ? H4 : 
+                          level === 5 ? H5 : H6;
+
   return (
-    <Text
-      variant={variant}
-      size={size}
+    <HeadingComponent
       align={align}
-      color={color}
     >
       {currentValue}
-    </Text>
+    </HeadingComponent>
   );
 }; 

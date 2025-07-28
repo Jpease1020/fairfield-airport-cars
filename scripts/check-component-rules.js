@@ -75,6 +75,12 @@ const RULES = {
       severity: 'error'
     },
     {
+      name: 'className prop on design system components',
+      pattern: /<(Container|Stack|Card|Grid|Text|Span|H[1-6])\s+[^>]*className\s*=/g,
+      message: '❌ FORBIDDEN: className prop on design system components. Use component props (variant, size, spacing, etc.) instead.',
+      severity: 'error'
+    },
+    {
       name: 'unnecessary nested containers',
       pattern: /<Container[^>]*>\s*<Container[^>]*>/g,
       message: '❌ FORBIDDEN: Unnecessary nested Container components. Simplify structure.',
