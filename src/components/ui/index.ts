@@ -75,8 +75,8 @@ export { Input } from './input';
 export { Textarea } from './textarea';
 export { ActionItem } from './ActionItem';
 export type { ActionItemProps } from './ActionItem';
-export { GridItem } from './Grid';
-export type { GridItemProps } from './Grid';
+export { GridItem } from './layout/grid';
+export type { GridItemProps } from './layout/grid';
 
 
 // Form Components
@@ -116,6 +116,9 @@ export { IconContainer, ContentContainer, HeaderContainer, ActionsContainer, Edi
 // Accessibility
 export { AccessibilityEnhancer } from './AccessibilityEnhancer';
 
+// Error Handling
+export { ErrorBoundary } from './ErrorBoundary';
+
 // Moved Components (Now Properly Located in UI!)
 export { FormField } from './FormField';
 export { SelectField } from './SelectField';
@@ -131,4 +134,6 @@ export { LocationAutocomplete } from './LocationAutocomplete';
 export { FeatureGrid } from './FeatureGrid'; 
 
 // Icons
-export * from './icons'; 
+export * from '../icons';
+export { default as Logo } from './Logo';
+export type { LogoProps } from './Logo'; 

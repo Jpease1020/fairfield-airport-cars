@@ -155,21 +155,55 @@ function AdminBookingsPageContent() {
       addToast('error', 'Cannot delete booking: missing ID');
       return;
     }
-    
-    if (!confirm(`Are you sure you want to delete the booking for ${booking.name}?`)) {
+
+    if (!confirm('Are you sure you want to delete this booking?')) {
       return;
     }
 
     try {
       await deleteBooking(booking.id);
-      
-      // Update local state
-      setBookings(prev => prev.filter(b => b.id !== booking.id));
-      
-      addToast('success', 'Booking deleted');
-    } catch (err) {
-      console.error('Error deleting booking:', err);
+      setBookings(bookings.filter(b => b.id !== booking.id));
+      addToast('success', 'Booking deleted successfully');
+    } catch (error) {
+      console.error('Error deleting booking:', error);
       addToast('error', 'Failed to delete booking');
+    }
+  };
+
+  const handleDriverAssignment = async (booking: Booking) => {
+    if (!booking.id) {
+      addToast('error', 'Cannot assign driver: missing booking ID');
+      return;
+    }
+
+    // Mock driver assignment - in production this would open a driver selection modal
+    const availableDrivers = [
+      { id: 'driver-1', name: 'John Driver', phone: '203-555-0101' },
+      { id: 'driver-2', name: 'Sarah Driver', phone: '203-555-0102' },
+      { id: 'driver-3', name: 'Mike Driver', phone: '203-555-0103' }
+    ];
+
+    const selectedDriver = availableDrivers[Math.floor(Math.random() * availableDrivers.length)];
+    
+    try {
+      await updateBooking(booking.id, {
+        ...booking,
+        driverId: selectedDriver.id,
+        driverName: selectedDriver.name
+      });
+
+      // Update local state with the new driver info
+      const updatedBooking = {
+        ...booking,
+        driverId: selectedDriver.id,
+        driverName: selectedDriver.name
+      };
+      
+      setBookings(bookings.map(b => b.id === booking.id ? updatedBooking : b));
+      addToast('success', `Driver ${selectedDriver.name} assigned to booking`);
+    } catch (error) {
+      console.error('Error assigning driver:', error);
+      addToast('error', 'Failed to assign driver');
     }
   };
 
@@ -278,6 +312,13 @@ function AdminBookingsPageContent() {
       icon: '👁️',
       onClick: (booking) => window.open(`/booking/${booking.id}`, '_blank'),
       variant: 'outline'
+    },
+    {
+      label: 'Assign Driver',
+      icon: '🚗',
+      onClick: (booking) => handleDriverAssignment(booking),
+      variant: 'primary',
+      condition: (booking) => booking.status === 'confirmed' && !booking.driverId
     },
     {
       label: 'Confirm',

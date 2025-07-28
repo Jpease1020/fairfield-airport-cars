@@ -2,37 +2,43 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, fontWeight, transitions } from '@/lib/design-system/tokens';
+import { colors, spacing, fontSize, fontWeight, transitions, shadows, borderRadius } from '@/lib/design-system/tokens';
 import { H3, Text, Link } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
 import { EditableText } from '@/components/ui';
 
 // Styled stat card container
 const StatCardContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'hover'].includes(prop)
 })<{
-  variant: 'default' | 'highlighted' | 'minimal';
+  variant: 'default' | 'elevated' | 'outlined' | 'filled';
   size: 'sm' | 'md' | 'lg';
+  hover: boolean;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${spacing.md};
-  padding: ${spacing.lg};
-  border-radius: 8px;
   transition: ${transitions.default};
+  border-radius: ${borderRadius.default};
+  box-shadow: ${shadows.default};
 
   /* Variant styles */
   ${({ variant }) => {
     switch (variant) {
-      case 'highlighted':
+      case 'elevated':
         return `
-          background-color: ${colors.primary[50]};
-          border: 1px solid ${colors.primary[200]};
+          background-color: ${colors.background.primary};
+          border: 1px solid ${colors.border.default};
+          box-shadow: ${shadows.lg};
         `;
-      case 'minimal':
+      case 'outlined':
         return `
           background-color: transparent;
           border: 1px solid ${colors.border.default};
+        `;
+      case 'filled':
+        return `
+          background-color: ${colors.background.secondary};
         `;
       default:
         return `
@@ -46,32 +52,23 @@ const StatCardContainer = styled.div.withConfig({
   ${({ size }) => {
     switch (size) {
       case 'sm':
-        return `
-          padding: ${spacing.md};
-          gap: ${spacing.sm};
-        `;
+        return `padding: ${spacing.sm};`;
       case 'md':
-        return `
-          padding: ${spacing.lg};
-          gap: ${spacing.md};
-        `;
+        return `padding: ${spacing.md};`;
       case 'lg':
-        return `
-          padding: ${spacing.xl};
-          gap: ${spacing.lg};
-        `;
+        return `padding: ${spacing.lg};`;
       default:
-        return `
-          padding: ${spacing.lg};
-          gap: ${spacing.md};
-        `;
+        return `padding: ${spacing.md};`;
     }
   }}
 
-  /* Hover effects */
-  &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
+  /* Hover styles */
+  ${({ hover, variant }) => hover && `
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: ${shadows.lg};
+    }
+  `}
 `;
 
 // Styled header container
@@ -85,7 +82,7 @@ const HeaderContainer = styled.div`
 const IconContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size'].includes(prop)
 })<{
-  variant: 'default' | 'highlighted' | 'minimal';
+  variant: 'default' | 'elevated' | 'outlined' | 'filled';
   size: 'sm' | 'md' | 'lg';
 }>`
   display: flex;
@@ -97,9 +94,11 @@ const IconContainer = styled.div.withConfig({
   /* Variant styles */
   ${({ variant }) => {
     switch (variant) {
-      case 'highlighted':
+      case 'elevated':
         return `color: ${colors.primary[600]};`;
-      case 'minimal':
+      case 'outlined':
+        return `color: ${colors.text.secondary};`;
+      case 'filled':
         return `color: ${colors.text.secondary};`;
       default:
         return `color: ${colors.text.secondary};`;
@@ -141,15 +140,17 @@ const IconContainer = styled.div.withConfig({
 const StatNumberContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size'].includes(prop)
 })<{
-  variant: 'default' | 'highlighted' | 'minimal';
+  variant: 'default' | 'elevated' | 'outlined' | 'filled';
   size: 'sm' | 'md' | 'lg';
 }>`
   font-weight: ${fontWeight.bold};
   color: ${({ variant }) => {
     switch (variant) {
-      case 'highlighted':
+      case 'elevated':
         return colors.primary[700];
-      case 'minimal':
+      case 'outlined':
+        return colors.text.primary;
+      case 'filled':
         return colors.text.primary;
       default:
         return colors.text.primary;
@@ -231,8 +232,9 @@ export interface StatCardProps {
   href?: string;
   
   // Appearance
-  variant?: 'default' | 'highlighted' | 'minimal';
+  variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   size?: 'sm' | 'md' | 'lg';
+  hover?: boolean;
   
   // HTML attributes
   id?: string;
@@ -259,6 +261,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   // Appearance
   variant = 'default',
   size = 'md',
+  hover = false,
   
   // HTML attributes
   id,
@@ -267,7 +270,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   ...rest
 }) => {
   const cardContent = (
-    <StatCardContainer variant={variant} size={size} {...rest}>
+    <StatCardContainer variant={variant} size={size} hover={hover} {...rest}>
       <HeaderContainer>
         <H3>
           {typeof title === 'string' ? (
@@ -305,25 +308,19 @@ export const StatCard: React.FC<StatCardProps> = ({
             )}
           </Text>
         )}
+        
+        {children}
       </Stack>
-      
-      {children}
     </StatCardContainer>
   );
 
   if (href) {
     return (
       <Link href={href}>
-        <div id={id}>
-          {cardContent}
-        </div>
+        {cardContent}
       </Link>
     );
   }
 
-  return (
-    <div id={id}>
-      {cardContent}
-    </div>
-  );
+  return cardContent;
 }; 

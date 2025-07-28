@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '@/lib/design-system/tokens';

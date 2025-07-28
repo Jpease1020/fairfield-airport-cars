@@ -3,9 +3,9 @@ import { Button, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
 
 export interface ActionButton {
-  label: string;
+  label: string | React.ReactNode;
   onClick: () => void;
-  variant?: 'primary' | 'outline' | 'secondary';
+  variant: 'primary' | 'outline' | 'secondary'; // Made required to ensure explicit variant choice
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   icon?: string;
@@ -31,7 +31,7 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
       {buttons.map((button, index) => (
         <Button
           key={index}
-          variant={button.variant || 'outline'}
+          variant={button.variant}
           size={button.size || 'sm'}
           onClick={button.onClick}
           disabled={button.disabled}

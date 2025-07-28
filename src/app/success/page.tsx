@@ -130,7 +130,7 @@ function SuccessPageContent() {
         <GridSection variant="content" columns={2}>
           <Container>
             <Stack spacing="md">
-              <EditableHeading level={3} field="success.tripDetails.title" defaultValue="🚗 Trip Details">🚗 Trip Details</EditableHeading>
+              <EditableHeading level={3} field="success.tripDetails.title" defaultValue="Trip Details">Trip Details</EditableHeading>
               <EditableText field="success.tripDetails.description" defaultValue="Your journey information">Your journey information</EditableText>
               <Text><strong>From:</strong> {booking.pickupLocation}</Text>
               <Text><strong>To:</strong> {booking.dropoffLocation}</Text>

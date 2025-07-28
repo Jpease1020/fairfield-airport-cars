@@ -3,7 +3,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, borderRadius, shadows, transitions, margins } from '@/lib/design-system/tokens';
-import { Text, H2 } from '@/components/ui';
 
 // Container system components
 interface ContainerProps {
@@ -15,7 +14,6 @@ interface ContainerProps {
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  className?: string;
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
 }
 
@@ -29,7 +27,6 @@ const StyledContainer = styled.div.withConfig({
   marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  className?: string;
 }>`
   transition: ${transitions.default};
 
@@ -79,21 +76,21 @@ const StyledContainer = styled.div.withConfig({
   ${({ margin }) => {
     switch (margin) {
       case 'none':
-        return `margin: 0;`;
+        return `margin: 0 auto;`; // Center the container
       case 'xs':
-        return `margin: ${spacing.xs};`;
+        return `margin: ${spacing.xs} auto;`;
       case 'sm':
-        return `margin: ${spacing.sm};`;
+        return `margin: ${spacing.sm} auto;`;
       case 'md':
-        return `margin: ${spacing.md};`;
+        return `margin: ${spacing.md} auto;`;
       case 'lg':
-        return `margin: ${spacing.lg};`;
+        return `margin: ${spacing.lg} auto;`;
       case 'xl':
-        return `margin: ${spacing.xl};`;
+        return `margin: ${spacing.xl} auto;`;
       case '2xl':
-        return `margin: ${spacing['2xl']};`;
+        return `margin: ${spacing['2xl']} auto;`;
       default:
-        return `margin: 0;`;
+        return `margin: 0 auto;`; // Center the container
     }
   }}
 
@@ -196,13 +193,12 @@ const StyledContainer = styled.div.withConfig({
 export const Container: React.FC<ContainerProps> = ({ 
   children,
   variant = 'default',
-  maxWidth = 'xl', 
+  maxWidth = '2xl', 
   padding = 'md', 
   margin = 'none',
   marginTop = 'none',
   marginBottom = 'none',
   spacing = 'none',
-  className,
   as: Component = 'div',
   ...rest
 }) => {
@@ -215,7 +211,6 @@ export const Container: React.FC<ContainerProps> = ({
       marginTop={marginTop}
       marginBottom={marginBottom}
       spacing={spacing}
-      className={className}
       as={Component}
       {...rest}
     >
@@ -417,6 +412,7 @@ interface SectionProps {
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   fullWidth?: boolean;
   as?: 'section' | 'div' | 'article' | 'main' | 'aside' | 'header' | 'footer';
+  id?: string;
 }
 
 const StyledSection = styled.section.withConfig({
@@ -557,13 +553,15 @@ const Section: React.FC<SectionProps> = ({
   variant = 'default', 
   padding = 'lg', 
   container = true, 
-  maxWidth = 'xl',
+  maxWidth = '2xl',
   margin = 'none',
   marginTop = 'none',
   marginBottom = 'none',
   fullWidth = false,
   as: Component = 'section',
-  children
+  children,
+  id,
+  ...rest
 }) => {
   if (container && !fullWidth) {
     return (
@@ -574,6 +572,8 @@ const Section: React.FC<SectionProps> = ({
         marginTop={marginTop}
         marginBottom={marginBottom}
         as={Component}
+        id={id}
+        {...rest}
       >
         <Container maxWidth={maxWidth}>
           {children}
@@ -590,6 +590,8 @@ const Section: React.FC<SectionProps> = ({
       marginTop={marginTop}
       marginBottom={marginBottom}
       as={Component}
+      id={id}
+      {...rest}
     >
       {children}
     </StyledSection>
@@ -606,6 +608,7 @@ interface CardProps {
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   as?: 'div' | 'article' | 'section';
+  id?: string;
 }
 
 const StyledCard = styled.div.withConfig({
@@ -765,21 +768,25 @@ export const Card: React.FC<CardProps> = ({
     marginTop = 'none',
     marginBottom = 'none',
     as: Component = 'div',
-    children
+    children,
+    id,
+    ...rest
   }) => {
-  return (
-    <StyledCard
-      variant={variant}
-      padding={padding}
-      hover={hover}
-      margin={margin}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
-      as={Component}
-    >
-      {children}
-    </StyledCard>
-  );
+      return (
+      <StyledCard
+        variant={variant}
+        padding={padding}
+        hover={hover}
+        margin={margin}
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        as={Component}
+        id={id}
+        {...rest}
+      >
+        {children}
+      </StyledCard>
+    );
 };
 
 // Stack component
@@ -910,7 +917,7 @@ export const Layout: React.FC<LayoutProps> = ({
   children, 
   spacing = 'lg', 
   container = true, 
-  maxWidth = 'xl' 
+  maxWidth = '2xl' 
 }) => {
   if (container) {
     return (
@@ -935,16 +942,23 @@ interface SpacerProps {
   axis?: 'horizontal' | 'vertical';
 }
 
+const StyledSpacer = styled.div<{
+  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  axis: 'horizontal' | 'vertical';
+}>`
+  ${({ size, axis }) => {
+    const space = spacing[size];
+    return axis === 'horizontal' 
+      ? `width: ${space}; height: 1px;`
+      : `height: ${space}; width: 100%;`;
+  }}
+`;
+
 export const Spacer: React.FC<SpacerProps> = ({ 
   size = 'md', 
   axis = 'vertical' 
 }) => {
-  const space = spacing[size as keyof typeof spacing];
-  const style = axis === 'horizontal' 
-    ? { width: space, height: '1px' }
-    : { height: space, width: '100%' };
-
-  return <div style={style} />;
+  return <StyledSpacer size={size} axis={axis} />;
 };
 
 // Margin Enforcer Component - Ensures consistent spacing
@@ -952,16 +966,13 @@ interface MarginEnforcerProps {
   children: React.ReactNode;
   type?: 'section' | 'component' | 'card' | 'form' | 'navigation';
   margin?: 'top' | 'bottom' | 'both';
-  className?: string;
 }
 
-const MarginEnforcer: React.FC<MarginEnforcerProps> = ({ 
-  children, 
-  type = 'component',
-  margin = 'both',
-  className 
-}) => {
-  const getMarginStyle = () => {
+const StyledMarginEnforcer = styled.div<{
+  type: 'section' | 'component' | 'card' | 'form' | 'navigation';
+  margin: 'top' | 'bottom' | 'both';
+}>`
+  ${({ type, margin }) => {
     const marginTokens = {
       section: {
         top: margins.section.top,
@@ -990,16 +1001,19 @@ const MarginEnforcer: React.FC<MarginEnforcerProps> = ({
       },
     };
 
-    return marginTokens[type][margin];
-  };
+    return `margin: ${marginTokens[type][margin]};`;
+  }}
+`;
 
+const MarginEnforcer: React.FC<MarginEnforcerProps> = ({ 
+  children, 
+  type = 'component',
+  margin = 'both',
+}) => {
   return (
-    <div 
-      style={{ margin: getMarginStyle() }}
-      className={className}
-    >
+    <StyledMarginEnforcer type={type} margin={margin}>
       {children}
-    </div>
+    </StyledMarginEnforcer>
   );
 };
 

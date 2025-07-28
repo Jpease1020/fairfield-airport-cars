@@ -38,7 +38,7 @@ export default function EditBookingPage() {
   if (loading) {
     return (
       <UnifiedLayout
-        layoutType="standard"
+        layoutType="status"
         title="Edit Booking"
         subtitle="Loading booking details..."
       >
@@ -56,7 +56,7 @@ export default function EditBookingPage() {
   if (error) {
     return (
       <UnifiedLayout
-        layoutType="standard"
+        layoutType="status"
         title="Edit Booking"
         subtitle="Error occurred"
       >
@@ -74,7 +74,7 @@ export default function EditBookingPage() {
   if (!booking) {
     return (
       <UnifiedLayout
-        layoutType="standard"
+        layoutType="status"
         title="Edit Booking"
         subtitle="Booking not found"
       >
@@ -91,7 +91,7 @@ export default function EditBookingPage() {
 
   return (
     <UnifiedLayout
-      layoutType="standard"
+      layoutType="status"
       title="Edit Your Booking"
       subtitle="Update your ride details"
     >

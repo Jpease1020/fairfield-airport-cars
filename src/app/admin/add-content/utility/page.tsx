@@ -38,7 +38,7 @@ function AddContentUtilityPage() {
         loadingSubtitle: "Please wait while we load your booking details",
         errorTitle: "⚠️ Error Loading Booking",
         errorMessage: "Please try refreshing the page or contact support if the problem persists.",
-        tripDetailsTitle: "🚗 Trip Details",
+        tripDetailsTitle: "Trip Details",
         tripDetailsDescription: "Your journey information",
         paymentStatusTitle: "💰 Payment Status",
         paymentStatusDescription: "Your payment information",

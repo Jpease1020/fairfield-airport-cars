@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReactNode } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -31,7 +32,7 @@ interface FormFieldProps {
   /** Field name */
   name?: string;
   /** Custom error boundary fallback */
-  errorFallback?: React.ComponentType<{ error?: Error; resetError: () => void }>;
+  errorFallback?: ReactNode;
 }
 
 const FormFieldComponent: React.FC<FormFieldProps> = ({ 

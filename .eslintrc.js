@@ -4,12 +4,22 @@ module.exports = {
     'next/typescript'
   ],
   rules: {
-    // Design System Enforcement Rules
+    // Custom Architecture Guardrails Rules
+    
+    // No hardcoded colors
     'no-restricted-syntax': [
       'error',
       {
+        selector: 'Literal[value=/^#[0-9a-fA-F]{3,6}$/]',
+        message: '❌ Hardcoded color detected. Use design tokens instead: colors.primary[600]'
+      },
+      {
+        selector: 'TemplateLiteral:has(TemplateElement[value.raw*="#"]:not([value.raw*="var(--"]))',
+        message: '❌ Hardcoded color in template literal. Use CSS variables instead: var(--primary-color)'
+      },
+      {
         selector: 'JSXAttribute[name.name="style"]',
-        message: '❌ Inline styles are forbidden. Use CSS classes from standard-layout.css instead.'
+        message: '❌ Inline styles are forbidden. Use styled-components instead.'
       },
       {
         selector: 'TemplateLiteral:has(TemplateElement[value.raw*="flex-"])',
@@ -47,10 +57,55 @@ module.exports = {
       }
     ],
     
-    // Custom rules for our design system - temporarily disabled until rules are defined
-    // 'fairfield/require-universal-layout': 'error',
-    // 'fairfield/no-custom-layouts': 'error',
-    // 'fairfield/use-design-tokens': 'error'
+    // Enforce styled-components import
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['styled-components'],
+            importNames: ['styled'],
+            message: '❌ styled-components must be imported as default: import styled from "styled-components"'
+          }
+        ]
+      }
+    ],
+    
+    // Additional custom rules using built-in ESLint capabilities
+    'no-restricted-properties': [
+      'error',
+      {
+        object: 'JSXAttribute',
+        property: 'className',
+        message: '❌ className props are forbidden. Use styled-components instead.'
+      }
+    ],
+    
+    // CRITICAL: No className usage anywhere
+    'no-restricted-globals': [
+      'error',
+      {
+        name: 'className',
+        message: '❌ className is FORBIDDEN. Use styled-components and design tokens instead.'
+      }
+    ],
+    
+    // Prevent className in object properties
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'Property[key.name="className"]',
+        message: '❌ className property is FORBIDDEN. Use styled-components instead.'
+      },
+      {
+        selector: 'JSXAttribute[name.name="className"]',
+        message: '❌ className attribute is FORBIDDEN. Use styled-components instead.'
+      },
+      {
+        selector: 'TSPropertySignature[key.name="className"]',
+        message: '❌ className in TypeScript interface is FORBIDDEN. Use styled-components instead.'
+      }
+    ]
   },
   
   // Custom rule definitions
@@ -58,12 +113,13 @@ module.exports = {
     {
       files: ['src/app/**/page.tsx', 'src/app/**/layout.tsx'],
       rules: {
-        // 'fairfield/require-universal-layout': [
-        //   'error',
-        //   {
-        //     message: '❌ All pages must use UniversalLayout component. Import from @/components/layout/UniversalLayout'
-        //   }
-        // ]
+        // Additional rules for page files
+      }
+    },
+    {
+      files: ['*.css'],
+      rules: {
+        // CSS file size limit (this would need a custom rule)
       }
     }
   ]

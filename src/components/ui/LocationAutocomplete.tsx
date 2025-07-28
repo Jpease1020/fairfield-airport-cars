@@ -1,10 +1,36 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { MapPin, Loader2 } from 'lucide-react';
-import { Container, Text, Span, Label } from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, useRef } from 'react';
+import styled from 'styled-components';
+import { Container, Button, Stack, Text, Span } from '@/components/ui';
+import { Loader2, MapPin } from 'lucide-react';
+import { colors } from '@/lib/design-system/tokens';
+
+const StyledLoader = styled(Loader2)`
+  width: 1rem;
+  height: 1rem;
+  color: ${colors.text.disabled};
+`;
+
+const StyledMapPin = styled(MapPin)`
+  width: 1rem;
+  height: 1rem;
+  color: ${colors.text.disabled};
+`;
+
+const StyledInput = styled.input`
+  flex: 1;
+  border: 0;
+  outline: none;
+  background-color: transparent;
+`;
+
+const Label = styled.label`
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary, #111827);
+`;
 
 interface LocationAutocompleteProps {
   value: string;
@@ -30,28 +56,24 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   fieldId
 }) => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // State-based click outside detection
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      const isInputClick = target.closest('[data-autocomplete-input]');
-      const isSuggestionClick = target.closest('[data-suggestions]');
-      
-      if (!isInputClick && !isSuggestionClick) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
         setIsFocused(false);
       }
     };
 
-    if (isFocused || showSuggestions) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [isFocused, showSuggestions]);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const searchPlaces = async (query: string) => {
     if (!query.trim()) {
@@ -68,6 +90,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       }
     } catch (error) {
       console.error('Error fetching places:', error);
+      setSuggestions([]);
     } finally {
       setIsLoading(false);
     }
@@ -124,8 +147,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           padding="sm"
           as="div"
         >
-          {isLoading && <Loader2 style={{ width: '1rem', height: '1rem', color: '#9ca3af' }} />}
-          <input
+          {isLoading && <StyledLoader />}
+          <StyledInput
             data-autocomplete-input
             id={fieldId}
             type="text"
@@ -134,14 +157,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder={placeholder}
-            style={{
-              flex: '1',
-              border: '0',
-              outline: 'none',
-              backgroundColor: 'transparent'
-            }}
           />
-          {!isLoading && <MapPin style={{ width: '1rem', height: '1rem', color: '#9ca3af' }} />}
+          {!isLoading && <StyledMapPin />}
         </Container>
         
         {error && <Text size="sm" color="error">{error}</Text>}

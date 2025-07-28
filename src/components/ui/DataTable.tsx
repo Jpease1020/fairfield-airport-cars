@@ -141,7 +141,6 @@ export function DataTable<T extends Record<string, any>>({
           {paginatedData.map((row, index) => (
             <Container 
               key={index}
-              className={rowClassName ? rowClassName(row, index) : undefined}
             >
               <Stack direction="horizontal" spacing="md">
                 {columns.map((column) => (

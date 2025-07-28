@@ -67,7 +67,7 @@ export const FAQ: React.FC<FAQProps> = ({
                   <EditableText field={`faq.item${index}.question`} defaultValue={item.question}>
                     {item.question}
                   </EditableText>
-                  <ChevronDownIcon className="h-5 w-5" />
+                  <ChevronDownIcon size="sm" />
                 </Button>
                 
                 {openItems.has(index) && (

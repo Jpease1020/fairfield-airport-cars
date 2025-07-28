@@ -59,7 +59,7 @@ function DriverLocationContent() {
   if(!allowed) {
     return (
       <UnifiedLayout
-        layoutType="standard"
+        layoutType="admin"
         title="Driver Live Location"
         subtitle="Unauthorized access"
       >
@@ -80,7 +80,7 @@ function DriverLocationContent() {
 
   return (
     <UnifiedLayout
-      layoutType="standard"
+      layoutType="admin"
       title="Driver Live Location"
       subtitle="Sharing your location with passengers"
     >
@@ -120,7 +120,7 @@ export default function DriverLocationPage() {
   return (
     <Suspense fallback={
       <UnifiedLayout
-        layoutType="standard"
+        layoutType="admin"
         title="Driver Live Location"
         subtitle="Loading..."
       >

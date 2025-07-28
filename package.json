@@ -63,7 +63,11 @@
     "reorganize:layout": "node scripts/reorganize-layout-design.js",
     "cleanup:structural": "node scripts/structural-cleanup.js",
     "cleanup:obsolete": "node scripts/cleanup-obsolete-files.js",
-    "fix:ui-components": "node scripts/fix-ui-components.js"
+    "fix:ui-components": "node scripts/fix-ui-components.js",
+    "check:css-size": "node scripts/check-css-size.js",
+    "enforce:styled-components": "node scripts/enforce-styled-components.js",
+    "lint:architecture": "npm run check:css-size && npm run enforce:styled-components",
+    "lint:all": "npm run lint && npm run lint:architecture"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",

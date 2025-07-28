@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
+import { colors, spacing, fontSize, transitions, shadows } from '@/lib/design-system/tokens';
 import { Text, Link } from '@/components/ui';
 import { Stack, Card } from '@/components/ui/layout/containers';
 import { Button } from './button';
@@ -116,7 +118,7 @@ const CardWrapper = styled.div.withConfig({
   ${({ disabled, interactive }) => !disabled && interactive && `
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: ${shadows.lg};
     }
   `}
 `;

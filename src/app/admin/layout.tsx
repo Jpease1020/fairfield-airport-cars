@@ -15,7 +15,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   // Skip admin layout for login page - use minimal layout instead
   if (pathname === '/admin/login') {
     return (
-      <UnifiedLayout layoutType="minimal">
+      <UnifiedLayout layoutType="content">
         {children}
       </UnifiedLayout>
     );

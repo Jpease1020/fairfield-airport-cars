@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import styled from 'styled-components';
 import { spacing } from '@/lib/design-system/tokens';
@@ -134,4 +136,27 @@ const GridSection: React.FC<GridSectionProps> = ({
   );
 };
 
-export { GridComponent as Grid, GridSection }; 
+// GridItem component
+interface GridItemProps {
+  children: React.ReactNode;
+  span?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+}
+
+const GridItemContainer = styled.div<{ $span: number }>`
+  grid-column: span ${({ $span }) => $span};
+  min-width: 0; // Prevent overflow
+`;
+
+const GridItem: React.FC<GridItemProps> = ({ 
+  children, 
+  span = 1
+}) => {
+  return (
+    <GridItemContainer $span={span}>
+      {children}
+    </GridItemContainer>
+  );
+};
+
+export { GridComponent as Grid, GridSection, GridItem };
+export type { GridItemProps }; 

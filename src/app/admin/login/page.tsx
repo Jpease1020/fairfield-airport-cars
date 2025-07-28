@@ -50,9 +50,9 @@ export default function LoginPage() {
 
   return (
     <UnifiedLayout
-      layoutType="standard"
-      title={<EditableText field="admin.login.title" defaultValue="Admin Login">Admin Login</EditableText>}
-      subtitle={<EditableText field="admin.login.subtitle" defaultValue="Enter your credentials to access the admin dashboard">Enter your credentials to access the admin dashboard</EditableText>}
+      layoutType="content"
+      title="Admin Login"
+      subtitle="Enter your credentials to access the admin dashboard"
     >
       <GridSection variant="content" columns={1}>
         <InfoCard

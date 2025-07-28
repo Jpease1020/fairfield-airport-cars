@@ -4,14 +4,12 @@ import React from 'react';
 interface IconProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   color?: string;
-  className?: string;
 }
 
 // Base icon component
 const BaseIcon: React.FC<IconProps & { children: React.ReactNode }> = ({ 
   size = 'md', 
   color = 'currentColor',
-  className,
   children 
 }) => {
   const sizeMap = {
@@ -29,7 +27,6 @@ const BaseIcon: React.FC<IconProps & { children: React.ReactNode }> = ({
       fill="none"
       stroke={color}
       viewBox="0 0 24 24"
-      className={className}
     >
       {children}
     </svg>

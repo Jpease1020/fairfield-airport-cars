@@ -73,7 +73,7 @@ function FeedbackPageContent() {
   if (submitted) {
     return (
       <UnifiedLayout 
-        layoutType="standard"
+        layoutType="content"
         title="🎉 Thank You!"
         subtitle="Your feedback has been submitted successfully"
       >
@@ -94,7 +94,7 @@ function FeedbackPageContent() {
 
   return (
     <UnifiedLayout 
-      layoutType="standard"
+      layoutType="content"
       title="Leave Feedback"
       subtitle="Help us improve by sharing your experience"
     >

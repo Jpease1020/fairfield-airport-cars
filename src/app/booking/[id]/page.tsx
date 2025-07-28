@@ -71,7 +71,7 @@ function BookingDetailsContent() {
   if (loading) {
     return (
       <UnifiedLayout 
-        layoutType="standard"
+        layoutType="status"
         title="Loading Booking Details"
         subtitle="Please wait while we fetch your booking information"
       >
@@ -89,7 +89,7 @@ function BookingDetailsContent() {
   if (error || !booking) {
     return (
       <UnifiedLayout 
-        layoutType="standard"
+        layoutType="status"
         title="Booking Not Found"
         subtitle={"We couldn't find the booking you're looking for"}
       >
@@ -137,7 +137,7 @@ function BookingDetailsContent() {
 
   return (
     <UnifiedLayout 
-      layoutType="standard"
+      layoutType="status"
       title="Booking Details"
       subtitle={`Booking #${booking.id}`}
     >

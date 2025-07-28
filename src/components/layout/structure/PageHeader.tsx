@@ -1,6 +1,13 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Container } from '@/components/ui';
 import { EditableText, EditableHeading } from '@/components/ui';
+
+const ActionsContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`;
 
 interface PageHeaderProps {
   children?: React.ReactNode;
@@ -47,9 +54,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         )
       )}
       {actions && actions.length > 0 && (
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+        <ActionsContainer>
           {actions}
-        </div>
+        </ActionsContainer>
       )}
       {children}
     </Container>

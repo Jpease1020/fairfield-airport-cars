@@ -176,7 +176,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/estimate-fare', {
+      const response = await fetch('/api/booking/estimate-fare', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -201,6 +201,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     } catch (error) {
       console.error('Error estimating fare:', error);
       setError('Error estimating fare. Please try again.');
+    } finally {
       setIsCalculating(false);
     }
   };
@@ -325,9 +326,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
         {/* Trip Details */}
         <Container>
           <Stack spacing="lg">
-            <Container>
-              <Span>🚗</Span>
-              <EditableHeading field="booking.tripDetails.title" defaultValue="Trip Details">
+                          <Container>
+                <EditableHeading field="booking.tripDetails.title" defaultValue="Trip Details">
                 Trip Details
               </EditableHeading>
             </Container>
@@ -491,7 +491,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </EditableText>
               <Container>
                 <Text variant="lead" size="lg">
-                  ${fare.toFixed(2)}
+                  ${fare?.toFixed(2) || '0.00'}
                 </Text>
               </Container>
             </Stack>

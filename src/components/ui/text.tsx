@@ -1,18 +1,21 @@
+'use client';
+
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, fontWeight, transitions } from '@/lib/design-system/tokens';
+import { colors, spacing, fontSize, fontWeight, fontFamily, transitions } from '@/lib/design-system/tokens';
 
 // Styled heading component
 const StyledHeading = styled.h1.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align'].includes(prop)
 })<{
   variant: 'default' | 'primary' | 'secondary' | 'muted' | 'accent';
-  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl';
   weight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' | 'extrabold';
   align: 'left' | 'center' | 'right';
 }>`
   margin: 0;
   line-height: 1.2;
+  font-family: ${fontFamily.sans};
   transition: ${transitions.default};
 
   /* Size styles */
@@ -29,11 +32,15 @@ const StyledHeading = styled.h1.withConfig({
       case 'xl':
         return `font-size: ${fontSize.xl};`;
       case '2xl':
-        return `font-size: 1.5rem;`;
+        return `font-size: ${fontSize['2xl']};`;
       case '3xl':
-        return `font-size: 1.875rem;`;
+        return `font-size: ${fontSize['3xl']};`;
       case '4xl':
-        return `font-size: 2.25rem;`;
+        return `font-size: ${fontSize['4xl']};`;
+      case '5xl':
+        return `font-size: ${fontSize['5xl']};`;
+      case '6xl':
+        return `font-size: ${fontSize['6xl']};`;
       default:
         return `font-size: ${fontSize.md};`;
     }
@@ -53,7 +60,7 @@ const StyledHeading = styled.h1.withConfig({
       case 'bold':
         return `font-weight: ${fontWeight.bold};`;
       case 'extrabold':
-        return `font-weight: 800;`;
+        return `font-weight: 800;`; // Note: fontWeight doesn't have extrabold, using hardcoded value
       default:
         return `font-weight: ${fontWeight.normal};`;
     }
@@ -100,9 +107,10 @@ const StyledText = styled.p.withConfig({
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   weight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
   align: 'left' | 'center' | 'right' | 'justify';
-  color: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
+  color: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info' | 'inherit';
 }>`
   margin: 0;
+  font-family: ${fontFamily.sans};
   transition: ${transitions.default};
 
   /* Variant styles */
@@ -196,8 +204,10 @@ const StyledText = styled.p.withConfig({
         return `color: ${colors.danger[600]};`;
       case 'info':
         return `color: ${colors.primary[600]};`;
+      case 'inherit':
+        return `color: inherit;`;
       default:
-        return `color: ${colors.text.primary};`;
+        return `color: inherit;`;
     }
   }}
 `;
@@ -211,6 +221,7 @@ const StyledSpan = styled.span.withConfig({
   color: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
   weight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
 }>`
+  font-family: ${fontFamily.sans};
   transition: ${transitions.default};
 
   /* Variant styles */
@@ -328,6 +339,7 @@ const StyledLink = styled.a.withConfig({
   size: 'sm' | 'base' | 'lg';
   external: boolean;
 }>`
+  font-family: ${fontFamily.sans};
   text-decoration: none;
   transition: ${transitions.default};
   cursor: pointer;
@@ -421,7 +433,7 @@ export interface HeadingProps {
   
   // Appearance
   variant?: 'default' | 'primary' | 'secondary' | 'muted' | 'accent';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl';
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' | 'extrabold';
   align?: 'left' | 'center' | 'right';
   
@@ -436,7 +448,7 @@ export interface HeadingProps {
 export const H1: React.FC<HeadingProps> = ({ 
   children, 
   variant = 'default',
-  size = '4xl',
+  size = '5xl',
   weight = 'bold',
   align = 'left',
   id, 
@@ -461,7 +473,7 @@ export const H1: React.FC<HeadingProps> = ({
 export const H2: React.FC<HeadingProps> = ({ 
   children, 
   variant = 'default',
-  size = '3xl',
+  size = '4xl',
   weight = 'bold',
   align = 'left',
   id, 
@@ -593,7 +605,7 @@ export interface TextProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
   align?: 'left' | 'center' | 'right' | 'justify';
-  color?: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
+  color?: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info' | 'inherit';
   
   // HTML attributes
   as?: 'p' | 'span' | 'div' | 'article' | 'blockquote';

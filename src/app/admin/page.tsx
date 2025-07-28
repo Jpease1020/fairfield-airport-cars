@@ -45,9 +45,9 @@ function AdminDashboardContent() {
   return (
     <UnifiedLayout 
       layoutType="admin"
-      title={<EditableText field="admin.dashboard.title" defaultValue="🏠 Admin Dashboard">🏠 Admin Dashboard</EditableText>}
-      subtitle={<EditableText field="admin.dashboard.subtitle" defaultValue="Manage your airport transportation business">Manage your airport transportation business</EditableText>}
-      description={<EditableText field="admin.dashboard.description" defaultValue="Overview of bookings, revenue, and business operations">Overview of bookings, revenue, and business operations</EditableText>}
+      title="🏠 Admin Dashboard"
+      subtitle="Manage your airport transportation business"
+      description="Overview of bookings, revenue, and business operations"
       showNavigation={false}
       showFooter={false}
       maxWidth="full"

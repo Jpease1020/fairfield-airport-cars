@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Phone } from 'lucide-react';
-import Logo from '@/components/ui/Logo';
+import { Logo } from '@/components/icons';
 import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 import { Container, Text } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';

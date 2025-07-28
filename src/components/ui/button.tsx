@@ -79,8 +79,8 @@ const StyledButton = styled.button.withConfig({
       case 'outline':
         return `
           background-color: transparent;
-          color: ${colors.text.primary};
-          border: 1px solid ${colors.border.default};
+          color: ${colors.primary[600]};
+          border: 1px solid ${colors.primary[600]};
         `;
       case 'ghost':
         return `
@@ -146,6 +146,7 @@ const StyledButton = styled.button.withConfig({
 // Styled icon wrapper
 const IconWrapper = styled.span<{ position: 'left' | 'right' }>`
   margin-${({ position }) => position === 'left' ? 'right' : 'left'}: ${spacing.sm};
+  color: inherit; /* Inherit text color from parent button */
 `;
 
 // Button Component - Clean Reusable Component (No className!)
@@ -197,7 +198,7 @@ export const Button: React.FC<ButtonProps> = ({
       {icon && !loading && iconPosition === 'left' && (
         <IconWrapper position="left">{icon}</IconWrapper>
       )}
-      <span aria-hidden={loading}>{children}</span>
+      {children}
       {icon && !loading && iconPosition === 'right' && (
         <IconWrapper position="right">{icon}</IconWrapper>
       )}

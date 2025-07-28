@@ -7,7 +7,7 @@ export { StandardLayout } from './core/StandardLayout';
 
 // Navigation components
 export { default as Navigation } from './navigation/Navigation';
-export { StandardNavigation } from './navigation/StandardNavigation';
+export { StandardNavigation } from './structure/StandardNavigation';
 
 // Structure components
 export { PageContainer } from './structure/PageContainer';
@@ -31,10 +31,8 @@ export { CMSLayout } from './cms/CMSLayout';
  * import { UnifiedLayout } from '@/components/layout';
  * 
  * Layout Types for Different Pages:
- * - "standard" - Public customer pages
+ * - "marketing" - Homepage, about page (blue hero sections)
  * - "admin" - Admin dashboard pages
- * - "minimal" - Login, error pages
- * - "marketing" - Homepage, about page
- * - "content" - Help, terms, privacy
+ * - "content" - Help, terms, privacy pages
  * - "status" - Booking status, success pages
  */

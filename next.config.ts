@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   // Webpack optimizations
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
             name: 'vendors',
             chunks: 'all',
           },
+          styled: {
+            test: /[\\/]node_modules[\\/]styled-components[\\/]/,
+            name: 'styled-components',
+            chunks: 'all',
+            priority: 20,
+          },
         },
       },
     };
@@ -47,6 +53,10 @@ const nextConfig: NextConfig = {
   },
   // Compression for better performance
   compress: true,
+  // Styled-components configuration
+  compiler: {
+    styledComponents: true,
+  },
 };
 
 export default nextConfig;

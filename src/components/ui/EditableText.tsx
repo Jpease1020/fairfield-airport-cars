@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
+import { colors, spacing, fontSize, fontFamily, transitions } from '@/lib/design-system/tokens';
 import { Text } from '@/components/ui';
 import { useEditMode } from '@/components/admin/EditModeProvider';
 import { getContent } from '@/lib/content/content-mapping';
@@ -14,48 +14,17 @@ const EditContainer = styled.div`
   justify-content: center;
 `;
 
-// Styled editable div
-const EditableDiv = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'align', 'color'].includes(prop)
-})<{
-  variant: 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline';
-  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  align: 'left' | 'center' | 'right' | 'justify';
-  color: 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
-}>`
-  color: ${({ color }) => {
-    switch (color) {
-      case 'secondary':
-        return colors.text.secondary;
-      case 'muted':
-        return colors.text.disabled;
-      case 'success':
-        return colors.success[600];
-      case 'warning':
-        return colors.warning[600];
-      case 'error':
-        return colors.danger[600];
-      case 'info':
-        return colors.primary[600];
-      default:
-        return colors.text.primary;
-    }
-  }};
-  font-size: ${({ size }) => {
-    switch (size) {
-      case 'xs':
-        return fontSize.xs;
-      case 'sm':
-        return fontSize.sm;
-      case 'lg':
-        return fontSize.lg;
-      case 'xl':
-        return fontSize.xl;
-      default:
-        return fontSize.md;
-    }
-  }};
-  text-align: ${({ align }) => align};
+// Styled editable div - inherits styling from parent
+const EditableDiv = styled.div`
+  /* Inherit all typography from parent */
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  
+  /* Only add edit-specific styling */
   padding: ${spacing.xs};
   border: 1px dashed ${colors.border.default};
   border-radius: 4px;
@@ -75,12 +44,6 @@ export interface EditableTextProps {
   children?: React.ReactNode; // Fallback content (existing text)
   defaultValue?: string; // Default text if no database value
   
-  // Appearance
-  variant?: 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  align?: 'left' | 'center' | 'right' | 'justify';
-  color?: 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
-  
   // HTML attributes
   id?: string;
   
@@ -93,12 +56,6 @@ export const EditableText: React.FC<EditableTextProps> = ({
   field,
   children,
   defaultValue = '',
-  
-  // Appearance
-  variant = 'body',
-  size = 'md',
-  align = 'left',
-  color = 'primary',
   
   // HTML attributes
   id,
@@ -151,10 +108,6 @@ export const EditableText: React.FC<EditableTextProps> = ({
     return (
       <EditContainer>
         <EditableDiv
-          variant={variant}
-          size={size}
-          align={align}
-          color={color}
           contentEditable
           suppressContentEditableWarning
           onBlur={(e: React.FocusEvent<HTMLDivElement>) => {
@@ -178,16 +131,10 @@ export const EditableText: React.FC<EditableTextProps> = ({
   }
 
   // Display mode - show database value or fallback to children
+  // Render directly to inherit parent styling
   return (
-    <Text
-      variant={variant}
-      size={size}
-      align={align}
-      color={color}
-      id={id}
-      {...rest}
-    >
+    <span id={id} {...rest}>
       {currentValue}
-    </Text>
+    </span>
   );
 }; 

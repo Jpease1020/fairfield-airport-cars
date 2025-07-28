@@ -2,37 +2,39 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
+import { colors, spacing, fontSize, transitions, shadows, borderRadius } from '@/lib/design-system/tokens';
 import { H3, Text } from '@/components/ui';
 import { EditableText } from '@/components/ui';
 
 // Styled card container
 const InfoCardContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'theme'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'hover'].includes(prop)
 })<{
-  variant: 'default' | 'outlined' | 'elevated';
-  theme: 'light' | 'dark';
+  variant: 'default' | 'elevated' | 'outlined' | 'filled';
+  size: 'sm' | 'md' | 'lg';
+  hover: boolean;
 }>`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.md};
-  padding: ${spacing.lg};
-  border-radius: 8px;
   transition: ${transitions.default};
+  border-radius: ${borderRadius.default};
+  box-shadow: ${shadows.default};
 
   /* Variant styles */
   ${({ variant }) => {
     switch (variant) {
+      case 'elevated':
+        return `
+          background-color: ${colors.background.primary};
+          border: 1px solid ${colors.border.default};
+          box-shadow: ${shadows.lg};
+        `;
       case 'outlined':
         return `
           background-color: transparent;
           border: 1px solid ${colors.border.default};
         `;
-      case 'elevated':
+      case 'filled':
         return `
-          background-color: ${colors.background.primary};
-          border: 1px solid ${colors.border.default};
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          background-color: ${colors.background.secondary};
         `;
       default:
         return `
@@ -42,21 +44,27 @@ const InfoCardContainer = styled.div.withConfig({
     }
   }}
 
-  /* Theme styles */
-  ${({ theme }) => {
-    switch (theme) {
-      case 'dark':
-        return `
-          background-color: ${colors.background.secondary};
-          color: ${colors.text.primary};
-        `;
+  /* Size styles */
+  ${({ size }) => {
+    switch (size) {
+      case 'sm':
+        return `padding: ${spacing.sm};`;
+      case 'md':
+        return `padding: ${spacing.md};`;
+      case 'lg':
+        return `padding: ${spacing.lg};`;
       default:
-        return `
-          background-color: ${colors.background.primary};
-          color: ${colors.text.primary};
-        `;
+        return `padding: ${spacing.md};`;
     }
   }}
+
+  /* Hover styles */
+  ${({ hover, variant }) => hover && `
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: ${shadows.lg};
+    }
+  `}
 `;
 
 // Styled header container
@@ -100,8 +108,9 @@ export interface InfoCardProps {
   icon?: string;
   
   // Appearance
-  theme?: 'light' | 'dark';
-  variant?: 'default' | 'outlined' | 'elevated';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'elevated' | 'outlined' | 'filled';
+  hover?: boolean;
   
   // HTML attributes
   id?: string;
@@ -121,8 +130,9 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   icon,
   
   // Appearance
-  theme = 'light',
+  size = 'md',
   variant = 'default',
+  hover = false,
   
   // HTML attributes
   id,
@@ -136,7 +146,8 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   return (
     <InfoCardContainer
       variant={variant}
-      theme={theme}
+      size={size}
+      hover={hover}
       id={id}
       {...rest}
     >

@@ -12,78 +12,127 @@
  */
 
 import React, { ReactNode } from 'react';
-import { AccessibilityEnhancer } from '@/components/ui/AccessibilityEnhancer';
-import { Container, H1, Text } from '@/components/ui';
-import { Section } from '@/components/ui/layout/containers';
+import styled from 'styled-components';
+import { Container, H1, Text, Stack } from '@/components/ui';
+import { Section, Layout } from '@/components/ui/layout/containers';
+import { StandardHeader } from '../structure/StandardHeader';
+import { StandardFooter } from '../structure/StandardFooter';
+import { StandardNavigation } from '../structure/StandardNavigation';
+import { Logo as LogoImage } from '@/components/icons';
+import { spacing, breakpoints } from '@/lib/design-system/tokens';
 
 interface UnifiedLayoutProps {
   children: ReactNode;
-  
-  // Page Configuration
+  layoutType?: 'marketing' | 'admin' | 'status' | 'content';
   title?: string | ReactNode;
   subtitle?: string | ReactNode;
   description?: string | ReactNode;
-  
-  // Layout Type (determines structure)
-  layoutType?: 'standard' | 'admin' | 'minimal' | 'marketing' | 'content' | 'status';
-  
-  // Navigation Control
-  showNavigation?: boolean;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  showHeader?: boolean;
   showFooter?: boolean;
-  
-  // Content Structure
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  
-  // Visual Style
-  centerContent?: boolean;
+  showNavigation?: boolean;
 }
 
-export function UnifiedLayout({
+// Responsive Layout Container
+const LayoutContainer = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainContent = styled.main`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ContentWrapper = styled.div`
+  max-width: var(--container-max-width, 1200px);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 ${spacing.lg};
+  
+  @media (max-width: ${breakpoints.md}) {
+    padding: 0 ${spacing.md};
+  }
+  
+  @media (max-width: ${breakpoints.sm}) {
+    padding: 0 ${spacing.sm};
+  }
+`;
+
+export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
   children,
+  layoutType = 'content',
   title,
   subtitle,
   description,
-  layoutType = 'standard',
-  showNavigation = false, // Temporarily disabled
-  showFooter = false, // Temporarily disabled
   maxWidth = 'xl',
   padding = 'lg',
-  centerContent = false
-}: UnifiedLayoutProps) {
-  return (
-    <AccessibilityEnhancer>
-      <Container maxWidth={maxWidth} padding={padding}>
-        {/* Page Header */}
-        {(title || subtitle || description) && (
-          <Section variant="default" padding="lg">
-            <Container maxWidth="xl">
-              {title && (
-                <H1>
-                  {title}
-                </H1>
-              )}
-              {subtitle && (
-                <Text>
-                  {subtitle}
-                </Text>
-              )}
-              {description && (
-                <Text>
-                  {description}
-                </Text>
-              )}
-            </Container>
-          </Section>
-        )}
+  showHeader = true,
+  showFooter = true,
+  showNavigation = true
+}) => {
+  // Determine header variant based on layout type
+  const getHeaderVariant = () => {
+    switch (layoutType) {
+      case 'marketing':
+        return 'brand'; // Blue background for marketing pages
+      case 'admin':
+        return 'default'; // Clean header for admin
+      case 'status':
+        return 'default'; // Standard header for status pages
+      case 'content':
+        return 'default'; // Standard header for content pages
+      default:
+        return 'default';
+    }
+  };
 
-        {/* Main Content */}
-        <Section variant="default" padding="lg">
-          <Container maxWidth={maxWidth}>
-            {children}
-          </Container>
+  return (
+    <LayoutContainer>
+      {/* Navigation */}
+      {showNavigation && (
+        <StandardNavigation 
+          items={[
+            { label: 'Home', href: '/' },
+            { label: 'Book', href: '/book' },
+            { label: 'Help', href: '/help' },
+            { label: 'About', href: '/about' }
+          ]}
+          logo={<LogoImage size="sm" width={40} height={40} />}
+          brandName="Fairfield Airport Cars"
+          ctaButton={{
+            label: 'Book Now',
+            href: '/book',
+            variant: 'primary'
+          }}
+        />
+      )}
+
+      {/* Header Section */}
+      {showHeader && (title || subtitle || description) && (
+        <Section variant={getHeaderVariant()} padding={padding}>
+          <ContentWrapper>
+            <Stack spacing="lg">
+              {title && <H1>{title}</H1>}
+              {subtitle && <Text variant="lead">{subtitle}</Text>}
+              {description && <Text>{description}</Text>}
+            </Stack>
+          </ContentWrapper>
         </Section>
-      </Container>
-    </AccessibilityEnhancer>
+      )}
+
+      {/* Main Content */}
+      <MainContent id="main-content">
+        {children}
+      </MainContent>
+
+      {/* Footer */}
+      {showFooter && (
+        <StandardFooter />
+      )}
+    </LayoutContainer>
   );
-} 
+}; 

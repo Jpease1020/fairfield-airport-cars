@@ -159,7 +159,7 @@ function ManageBookingPageContent() {
   if (loading) {
     return (
       <UnifiedLayout 
-        layoutType="standard"
+        layoutType="status"
         title="Loading..."
         subtitle="Please wait while we load your booking details"
       >
@@ -179,7 +179,7 @@ function ManageBookingPageContent() {
   if (error || !booking) {
     return (
       <UnifiedLayout 
-        layoutType="standard"
+        layoutType="status"
         title="Manage Booking"
         subtitle="Booking not found"
       >
@@ -257,7 +257,7 @@ function ManageBookingPageContent() {
 
   return (
     <UnifiedLayout 
-      layoutType="standard"
+      layoutType="status"
       title={localContent?.title || "Manage Your Booking"}
       subtitle={typeof localContent?.subtitle === 'string' && typeof booking?.id === 'string' ? localContent.subtitle.replace('{bookingId}', booking.id) : `Reference: ${booking?.id ?? ''}`}
     >

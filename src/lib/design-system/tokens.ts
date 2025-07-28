@@ -1,117 +1,117 @@
 // Design System Tokens - Centralized Design Variables
 // This file contains all design tokens used throughout the application
 
-// Color Palette
+// Color Palette - Updated to use CSS variables
 export const colors = {
   // Primary Colors
   primary: {
-    50: '#eff6ff',
-    100: '#dbeafe',
-    200: '#bfdbfe',
-    300: '#93c5fd',
-    400: '#60a5fa',
-    500: '#3b82f6',
-    600: '#2563eb', // Main primary color
-    700: '#1d4ed8',
-    800: '#1e40af',
-    900: '#1e3a8a',
+    50: 'var(--primary-color-50, #eff6ff)',
+    100: 'var(--primary-color-100, #dbeafe)',
+    200: 'var(--primary-color-200, #bfdbfe)',
+    300: 'var(--primary-color-300, #93c5fd)',
+    400: 'var(--primary-color-400, #60a5fa)',
+    500: 'var(--primary-color-500, #3b82f6)',
+    600: 'var(--primary-color)', // Main primary color
+    700: 'var(--primary-color-700, #1d4ed8)',
+    800: 'var(--primary-color-800, #1e40af)',
+    900: 'var(--primary-color-900, #1e3a8a)',
   },
   
   // Secondary Colors
   secondary: {
-    50: '#f8fafc',
-    100: '#f1f5f9',
-    200: '#e2e8f0',
-    300: '#cbd5e1',
-    400: '#94a3b8',
-    500: '#64748b',
-    600: '#4b5563', // Main secondary color
-    700: '#334155',
-    800: '#1e293b',
-    900: '#0f172a',
+    50: 'var(--secondary-color-50, #f8fafc)',
+    100: 'var(--secondary-color-100, #f1f5f9)',
+    200: 'var(--secondary-color-200, #e2e8f0)',
+    300: 'var(--secondary-color-300, #cbd5e1)',
+    400: 'var(--secondary-color-400, #94a3b8)',
+    500: 'var(--secondary-color-500, #64748b)',
+    600: 'var(--secondary-color, #4b5563)', // Main secondary color
+    700: 'var(--secondary-color-700, #334155)',
+    800: 'var(--secondary-color-800, #1e293b)',
+    900: 'var(--secondary-color-900, #0f172a)',
   },
   
   // Semantic Colors
   success: {
-    50: '#f0fdf4',
-    100: '#dcfce7',
-    200: '#bbf7d0',
-    300: '#86efac',
-    400: '#4ade80',
-    500: '#22c55e',
-    600: '#16a34a', // Main success color
-    700: '#15803d',
-    800: '#166534',
-    900: '#14532d',
+    50: 'var(--success-color-50, #f0fdf4)',
+    100: 'var(--success-color-100, #dcfce7)',
+    200: 'var(--success-color-200, #bbf7d0)',
+    300: 'var(--success-color-300, #86efac)',
+    400: 'var(--success-color-400, #4ade80)',
+    500: 'var(--success-color-500, #22c55e)',
+    600: 'var(--success-color, #16a34a)', // Main success color
+    700: 'var(--success-color-700, #15803d)',
+    800: 'var(--success-color-800, #166534)',
+    900: 'var(--success-color-900, #14532d)',
   },
   
   warning: {
-    50: '#fffbeb',
-    100: '#fef3c7',
-    200: '#fde68a',
-    300: '#fcd34d',
-    400: '#fbbf24',
-    500: '#f59e0b',
-    600: '#ca8a04', // Main warning color
-    700: '#a16207',
-    800: '#854d0e',
-    900: '#713f12',
+    50: 'var(--warning-color-50, #fffbeb)',
+    100: 'var(--warning-color-100, #fef3c7)',
+    200: 'var(--warning-color-200, #fde68a)',
+    300: 'var(--warning-color-300, #fcd34d)',
+    400: 'var(--warning-color-400, #fbbf24)',
+    500: 'var(--warning-color-500, #f59e0b)',
+    600: 'var(--warning-color, #ca8a04)', // Main warning color
+    700: 'var(--warning-color-700, #a16207)',
+    800: 'var(--warning-color-800, #854d0e)',
+    900: 'var(--warning-color-900, #713f12)',
   },
   
   danger: {
-    50: '#fef2f2',
-    100: '#fee2e2',
-    200: '#fecaca',
-    300: '#fca5a5',
-    400: '#f87171',
-    500: '#ef4444',
-    600: '#dc2626', // Main danger color
-    700: '#b91c1c',
-    800: '#991b1b',
-    900: '#7f1d1d',
+    50: 'var(--danger-color-50, #fef2f2)',
+    100: 'var(--danger-color-100, #fee2e2)',
+    200: 'var(--danger-color-200, #fecaca)',
+    300: 'var(--danger-color-300, #fca5a5)',
+    400: 'var(--danger-color-400, #f87171)',
+    500: 'var(--danger-color-500, #ef4444)',
+    600: 'var(--danger-color, #dc2626)', // Main danger color
+    700: 'var(--danger-color-700, #b91c1c)',
+    800: 'var(--danger-color-800, #991b1b)',
+    900: 'var(--danger-color-900, #7f1d1d)',
   },
   
   // Neutral Colors
   gray: {
-    50: '#f9fafb',
-    100: '#f3f4f6',
-    200: '#e5e7eb',
-    300: '#d1d5db',
-    400: '#9ca3af',
-    500: '#6b7280',
-    600: '#4b5563',
-    700: '#374151',
-    800: '#1f2937',
-    900: '#111827',
+    50: 'var(--gray-50, #f9fafb)',
+    100: 'var(--gray-100, #f3f4f6)',
+    200: 'var(--gray-200, #e5e7eb)',
+    300: 'var(--gray-300, #d1d5db)',
+    400: 'var(--gray-400, #9ca3af)',
+    500: 'var(--gray-500, #6b7280)',
+    600: 'var(--gray-600, #4b5563)',
+    700: 'var(--gray-700, #374151)',
+    800: 'var(--gray-800, #1f2937)',
+    900: 'var(--gray-900, #111827)',
   },
   
   // Text Colors - Enhanced for better contrast
   text: {
-    primary: '#1f2937', // Darker for better contrast
-    secondary: '#4b5563', // Darker for better contrast
-    disabled: '#9ca3af',
-    white: '#ffffff',
-    inverse: '#ffffff',
-    muted: '#6b7280',
-    emphasis: '#1f2937', // For important text
+    primary: 'var(--text-primary, #1f2937)', // Darker for better contrast
+    secondary: 'var(--text-secondary, #4b5563)', // Darker for better contrast
+    disabled: 'var(--text-light, #9ca3af)',
+    white: 'var(--text-white, #ffffff)',
+    inverse: 'var(--text-inverse, #ffffff)',
+    muted: 'var(--text-muted, #6b7280)',
+    emphasis: 'var(--text-emphasis, #1f2937)', // For important text
   },
   
   // Border Colors
   border: {
-    light: '#e5e7eb',
-    default: '#d1d5db',
-    dark: '#9ca3af',
-    focus: '#2563eb',
-    error: '#dc2626',
+    light: 'var(--border-light, #e5e7eb)',
+    default: 'var(--border-default, #d1d5db)',
+    dark: 'var(--border-dark, #9ca3af)',
+    focus: 'var(--border-focus, #2563eb)',
+    error: 'var(--border-error, #dc2626)',
   },
   
   // Background Colors
   background: {
-    primary: '#ffffff',
-    secondary: '#f9fafb',
-    tertiary: '#f3f4f6',
-    disabled: '#f9fafb',
-    overlay: 'rgba(0, 0, 0, 0.5)',
+    primary: 'var(--background-primary, #ffffff)',
+    secondary: 'var(--background-secondary, #f9fafb)',
+    tertiary: 'var(--background-tertiary, #f3f4f6)',
+    disabled: 'var(--background-disabled, #f9fafb)',
+    overlay: 'var(--background-overlay, rgba(0, 0, 0, 0.5))',
   },
 } as const;
 
@@ -165,6 +165,12 @@ export const margins = {
 } as const;
 
 // Typography Scale
+export const fontFamily = {
+  sans: 'var(--font-family, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)',
+  serif: 'Georgia, Cambria, "Times New Roman", Times, serif',
+  mono: 'Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+} as const;
+
 export const fontSize = {
   xs: '0.75rem',    // 12px
   sm: '0.875rem',   // 14px
@@ -174,6 +180,8 @@ export const fontSize = {
   '2xl': '1.5rem',  // 24px
   '3xl': '1.875rem', // 30px
   '4xl': '2.25rem',  // 36px
+  '5xl': '3rem',    // 48px
+  '6xl': '3.75rem', // 60px
 } as const;
 
 // Font Weights
@@ -245,6 +253,7 @@ export const designTokens = {
   colors,
   spacing,
   margins,
+  fontFamily,
   fontSize,
   fontWeight,
   borderRadius,
@@ -258,6 +267,7 @@ export const designTokens = {
 export type ColorToken = typeof colors;
 export type SpacingToken = typeof spacing;
 export type MarginToken = typeof margins;
+export type FontFamilyToken = typeof fontFamily;
 export type FontSizeToken = typeof fontSize;
 export type FontWeightToken = typeof fontWeight;
 export type BorderRadiusToken = typeof borderRadius;

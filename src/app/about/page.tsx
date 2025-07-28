@@ -32,9 +32,9 @@ function AboutPageContent() {
   return (
     <UnifiedLayout 
       layoutType="content"
-      title={<EditableText field="about.layout.title" defaultValue="About Fairfield Airport Cars">About Fairfield Airport Cars</EditableText>}
-      subtitle={<EditableText field="about.layout.subtitle" defaultValue="Professional airport transportation services">Professional airport transportation services</EditableText>}
-      description={<EditableText field="about.layout.description" defaultValue="Learn about our commitment to providing reliable, comfortable, and professional transportation services to Fairfield County and surrounding areas.">Learn about our commitment to providing reliable, comfortable, and professional transportation services to Fairfield County and surrounding areas.</EditableText>}
+      title="About Fairfield Airport Cars"
+      subtitle="Professional airport transportation services"
+      description="Learn about our commitment to providing reliable, comfortable, and professional transportation services to Fairfield County and surrounding areas."
     >
       {/* Our Story Section */}
       <GridSection variant="content" columns={1}>

@@ -160,6 +160,7 @@ describe('Booking Flow - User Journey', () => {
     await user.type(screen.getByLabelText(/full name/i), 'John Smith');
     await user.type(screen.getByLabelText(/pickup location/i), 'Fairfield Station');
     await user.type(screen.getByLabelText(/dropoff location/i), 'JFK Airport');
+    await user.type(screen.getByLabelText(/pickup date & time/i), '2024-12-25T10:00');
 
     await user.click(screen.getByRole('button', { name: /calculate fare/i }));
 
@@ -184,5 +185,51 @@ describe('Booking Flow - User Journey', () => {
     // Buttons should have accessible names
     expect(screen.getByRole('button', { name: /calculate fare/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /book now/i })).toBeInTheDocument();
+  });
+
+  it('debug: shows what is actually rendered', async () => {
+    const user = userEvent.setup();
+    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+    render(<BookingForm />);
+
+    // Fill form and try to calculate fare
+    await user.type(screen.getByLabelText(/full name/i), 'John Smith');
+    await user.type(screen.getByLabelText(/pickup location/i), 'Fairfield Station');
+    await user.type(screen.getByLabelText(/dropoff location/i), 'JFK Airport');
+
+    await user.click(screen.getByRole('button', { name: /calculate fare/i }));
+
+    // Debug: log what's actually rendered
+    console.log('Rendered HTML:', document.body.innerHTML);
+    
+    // Wait a bit and check again
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('After wait HTML:', document.body.innerHTML);
+  });
+
+  it('debug: check form validation', async () => {
+    const user = userEvent.setup();
+    render(<BookingForm />);
+
+    // Check initial button state
+    const calculateButton = screen.getByRole('button', { name: /calculate fare/i });
+    expect(calculateButton).toBeDisabled();
+
+    // Fill required fields
+    await user.type(screen.getByLabelText(/pickup location/i), 'Fairfield Station');
+    await user.type(screen.getByLabelText(/dropoff location/i), 'JFK Airport');
+    await user.type(screen.getByLabelText(/pickup date & time/i), '2024-12-25T10:00');
+
+    // Check if button is now enabled
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /calculate fare/i })).not.toBeDisabled();
+    });
+
+    console.log('Form state after filling:', {
+      pickupLocation: screen.getByLabelText(/pickup location/i).getAttribute('value'),
+      dropoffLocation: screen.getByLabelText(/dropoff location/i).getAttribute('value'),
+      pickupDateTime: screen.getByLabelText(/pickup date & time/i).getAttribute('value'),
+    });
   });
 }); 
