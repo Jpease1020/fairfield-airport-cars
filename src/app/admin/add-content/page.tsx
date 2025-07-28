@@ -10,7 +10,8 @@ import {
   Button,
   Text,
   Stack,
-  StatusMessage
+  StatusMessage,
+  EditableText
 } from '@/components/ui';
 import { ToastProvider, useToast } from '@/components/ui';
 
@@ -192,9 +193,9 @@ function AddContentPage() {
     >
       <Container>
         <Stack spacing="md">
-          <Text>
+          <EditableText field="admin.addContent.description" defaultValue="This tool will add missing content to the database, including:">
             This tool will add missing content to the database, including:
-          </Text>
+          </EditableText>
           <Stack spacing="sm">
             <Container>Success page messages and titles</Container>
             <Container>Help page sections and FAQ</Container>
@@ -223,7 +224,9 @@ function AddContentPage() {
             disabled={loading}
             variant="primary"
           >
-            {loading ? 'Adding Content...' : 'Add Missing Content'}
+            <EditableText field="admin.addContent.button" defaultValue={loading ? 'Adding Content...' : 'Add Missing Content'}>
+              {loading ? 'Adding Content...' : 'Add Missing Content'}
+            </EditableText>
           </Button>
         </Stack>
       </Container>

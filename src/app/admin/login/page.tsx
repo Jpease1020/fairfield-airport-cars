@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard, Form, Input, Label, Button, Container, Text, Span } from '@/components/ui';
+import { GridSection, InfoCard, Form, Input, Label, Button, Container, Text, Span, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 export default function LoginPage() {
@@ -85,7 +85,9 @@ export default function LoginPage() {
               
               {error && (
                 <Stack direction="horizontal" spacing="sm" align="center">
-                  <Text>⚠️</Text>
+                  <EditableText field="admin.login.errorIcon" defaultValue="⚠️">
+                    ⚠️
+                  </EditableText>
                   <Text color="error">{error}</Text>
                 </Stack>
               )}
@@ -98,13 +100,21 @@ export default function LoginPage() {
                 variant="primary"
                 size="lg"
               >
-                {loading ? '🔄 Signing In...' : '🔐 Sign In'}
+                <EditableText field="admin.login.sign_in_button" defaultValue={loading ? '🔄 Signing In...' : '🔐 Sign In'}>
+                  {loading ? '🔄 Signing In...' : '🔐 Sign In'}
+                </EditableText>
               </Button>
-              
-              <Container>
-                <Span>or</Span>
-              </Container>
-              
+            </Container>
+            
+            <Container>
+              <Span>
+                <EditableText field="admin.login.or_separator" defaultValue="or">
+                  or
+                </EditableText>
+              </Span>
+            </Container>
+            
+            <Container>
               <Button 
                 type="button"
                 onClick={handleGoogleSignIn}
@@ -112,7 +122,9 @@ export default function LoginPage() {
                 variant="outline"
                 size="lg"
               >
-                {loading ? '🔄 Connecting...' : '🔍 Sign In with Google'}
+                <EditableText field="admin.login.google_sign_in_button" defaultValue={loading ? '🔄 Connecting...' : '🔍 Sign In with Google'}>
+                  {loading ? '🔄 Connecting...' : '🔍 Sign In with Google'}
+                </EditableText>
               </Button>
             </Container>
           </Form>

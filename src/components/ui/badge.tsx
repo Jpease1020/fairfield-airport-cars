@@ -1,4 +1,5 @@
 import React from 'react';
+import { Span } from './text';
 
 // Badge Component - BULLETPROOF TYPE SAFETY!
 export interface BadgeProps {
@@ -47,8 +48,8 @@ export const Badge: React.FC<BadgeProps> = ({
   ].filter(Boolean).join(' ');
 
   return (
-    <span className={classes}>
+    <Span>
       {children}
-    </span>
+    </Span>
   );
 }; 

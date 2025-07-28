@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, H1, Text } from '@/components/ui';
+import { EditableText, EditableHeading } from '@/components/ui';
 
 interface PageHeaderProps {
   children?: React.ReactNode;
@@ -20,14 +21,14 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <Container as="header" padding={padding} margin={margin}>
       {title && (
-        <H1>
+        <EditableHeading field="page_header.title" defaultValue={title}>
           {title}
-        </H1>
+        </EditableHeading>
       )}
       {subtitle && (
-        <Text>
+        <EditableText field="page_header.subtitle" defaultValue={subtitle}>
           {subtitle}
-        </Text>
+        </EditableText>
       )}
       {children}
     </Container>

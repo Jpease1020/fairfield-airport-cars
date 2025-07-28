@@ -11,6 +11,7 @@ import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
 import { StatusMessage } from '@/components/ui/StatusMessage';
 import { Stack } from '@/components/ui/containers';
 import { getCMSConfig } from '@/lib/services/cms-service';
+import { EditableText, EditableHeading } from '@/components/ui';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
@@ -129,9 +130,9 @@ function AdminColorsPageContent() {
                     </Span>
                   </Stack>
                   
-                  <Text>
+                  <EditableText field="admin.cms.colors.description" defaultValue={description}>
                     {description}
-                  </Text>
+                  </EditableText>
                   
                   <Stack direction="horizontal" spacing="sm">
                     <Input
@@ -161,15 +162,13 @@ function AdminColorsPageContent() {
               data-background={colors['--background'] || 'var(--background-primary)'}
               data-foreground={colors['--foreground'] || 'var(--text-primary)'}
             >
-              <H2 
-                data-primary={colors['--primary'] || 'var(--primary-color)'}
-              >
+              <EditableHeading field="admin.cms.colors.primaryExample" defaultValue="Primary Color Example">
                 Primary Color Example
-              </H2>
+              </EditableHeading>
               
-              <Text>
+              <EditableText field="admin.cms.colors.previewDescription" defaultValue="This is a preview of your current color scheme. The colors you choose will be applied throughout your application.">
                 This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
-              </Text>
+              </EditableText>
               
               <ActionButtonGroup
                 buttons={[

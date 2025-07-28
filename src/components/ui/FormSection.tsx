@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/containers';
+import { CardBody, CardHeader, CardTitle } from '@/components/ui/card';
 import { Text, Span } from '@/components/ui';
 
 interface FormSectionProps {

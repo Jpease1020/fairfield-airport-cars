@@ -12,7 +12,9 @@ import {
   H3,
   Text,
   Span,
-  Stack
+  Stack,
+  EditableText,
+  EditableHeading
 } from '@/components/ui';
 
 const CalendarPage = () => {
@@ -125,8 +127,12 @@ const CalendarPage = () => {
           {!loading && !error && events.length === 0 && (
             <Container>
               <Span>📅</Span>
-              <H3>No bookings found</H3>
-              <Text>No bookings scheduled for this month.</Text>
+              <EditableHeading field="admin.calendar.noBookings.title" defaultValue="No bookings found">
+                No bookings found
+              </EditableHeading>
+              <EditableText field="admin.calendar.noBookings" defaultValue="No bookings scheduled for this month.">
+                No bookings scheduled for this month.
+              </EditableText>
             </Container>
           )}
         </InfoCard>

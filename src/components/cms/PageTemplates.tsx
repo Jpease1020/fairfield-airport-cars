@@ -1,8 +1,9 @@
 import React from 'react';
-import { Container, Text, H2, H3, Span } from '@/components/ui';
+import { EditableText, EditableHeading, Container, Text, H2, H3, Span } from '@/components/ui';
+import { Card } from '@/components/ui/containers';
+import { CardBody } from '@/components/ui/card';
 import { Stack } from '@/components/ui/containers';
-import { Card, CardBody } from '@/components/ui/card';
-import { CMSStatusPage } from '@/components/layout/CMSStatusPage';
+import { CMSStatusPage } from '@/components/layout/cms/CMSStatusPage';
 import { useCMS } from '@/hooks/useCMS';
 import { useEditMode } from '@/components/admin/EditModeProvider';
 import { CMSConfiguration } from '@/types/cms';

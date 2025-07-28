@@ -9,7 +9,8 @@ import {
   ActionButtonGroup,
   ToastProvider,
   Text,
-  Container
+  Container,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
@@ -42,11 +43,11 @@ function AboutPageContent() {
           title="📖 Our Story"
           description="Providing premium transportation services to the Fairfield County area"
         >
-          <Text>
+          <EditableText field="about.description" defaultValue="Fairfield Airport Cars has been providing premium transportation services to the Fairfield County area for years. We understand that getting to and from the airport can be stressful, which is why we're committed to making your journey as smooth and comfortable as possible.">
             Fairfield Airport Cars has been providing premium transportation services to the Fairfield County area for years.
             We understand that getting to and from the airport can be stressful, which is why we&apos;re committed to making your
             journey as smooth and comfortable as possible.
-          </Text>
+          </EditableText>
           
           <blockquote>
             &quot;To provide reliable, professional, and comfortable transportation services that exceed our customers&apos; expectations.
@@ -95,7 +96,9 @@ function AboutPageContent() {
           title="🌍 Coverage Area"
           description="We provide professional transportation services throughout Fairfield County, CT and surrounding areas, connecting you to all major airports in the region."
         >
-          <Text>Professional transportation services throughout Fairfield County, CT and surrounding areas.</Text>
+          <EditableText field="about.coverageArea" defaultValue="Professional transportation services throughout Fairfield County, CT and surrounding areas.">
+            Professional transportation services throughout Fairfield County, CT and surrounding areas.
+          </EditableText>
         </InfoCard>
         
         <InfoCard

@@ -116,9 +116,15 @@ function SuccessPageContent() {
         <Container>
           <Stack spacing="lg" align="center">
             <Span size="xl">🎉</Span>
-            <H3>Booking Confirmed!</H3>
-            <Text>Your ride has been successfully booked. Check your email for confirmation and details.</Text>
-            <Button variant="primary" size="lg" onClick={() => window.location.href = '/'}>Back to Home</Button>
+            <EditableHeading level={3} field="success.bookingConfirmed.title" defaultValue="Booking Confirmed!">Booking Confirmed!</EditableHeading>
+            <EditableText field="success.bookingConfirmed.message" defaultValue="Your ride has been successfully booked. Check your email for confirmation and details.">
+              Your ride has been successfully booked. Check your email for confirmation and details.
+            </EditableText>
+            <Button variant="primary" size="lg" onClick={() => window.location.href = '/'}>
+              <EditableText field="success.actions.back_to_home" defaultValue="Back to Home">
+                Back to Home
+              </EditableText>
+            </Button>
           </Stack>
         </Container>
       </GridSection>
@@ -127,32 +133,24 @@ function SuccessPageContent() {
       {booking && (
         <GridSection variant="content" columns={2}>
           <Container>
-            <Card>
-              <CardBody>
-                <Stack spacing="md">
-                  <EditableHeading level={3} field="success.tripDetails.title" defaultValue="🚗 Trip Details">🚗 Trip Details</EditableHeading>
-                  <EditableText field="success.tripDetails.description" defaultValue="Your journey information">Your journey information</EditableText>
-                  <Text><strong>From:</strong> {booking.pickupLocation}</Text>
-                  <Text><strong>To:</strong> {booking.dropoffLocation}</Text>
-                  <Text><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</Text>
-                  <Text><strong>Passengers:</strong> {booking.passengers}</Text>
-                </Stack>
-              </CardBody>
-            </Card>
+            <Stack spacing="md">
+              <EditableHeading level={3} field="success.tripDetails.title" defaultValue="🚗 Trip Details">🚗 Trip Details</EditableHeading>
+              <EditableText field="success.tripDetails.description" defaultValue="Your journey information">Your journey information</EditableText>
+              <Text><strong>From:</strong> {booking.pickupLocation}</Text>
+              <Text><strong>To:</strong> {booking.dropoffLocation}</Text>
+              <Text><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</Text>
+              <Text><strong>Passengers:</strong> {booking.passengers}</Text>
+            </Stack>
           </Container>
           
           <Container>
-            <Card>
-              <CardBody>
-                <Stack spacing="md">
-                  <EditableHeading level={3} field="success.paymentStatus.title" defaultValue="💰 Payment Status">💰 Payment Status</EditableHeading>
-                  <EditableText field="success.paymentStatus.description" defaultValue="Your payment information">Your payment information</EditableText>
-                  <Text><strong>Total Fare:</strong> ${booking.fare}</Text>
-                  <Text><strong>Deposit:</strong> ${booking.depositAmount} {booking.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
-                  <Text><strong>Balance Due:</strong> ${booking.balanceDue || 0}</Text>
-                </Stack>
-              </CardBody>
-            </Card>
+            <Stack spacing="md">
+              <EditableHeading level={3} field="success.paymentStatus.title" defaultValue="💰 Payment Status">💰 Payment Status</EditableHeading>
+              <EditableText field="success.paymentStatus.description" defaultValue="Your payment information">Your payment information</EditableText>
+              <Text><strong>Total Fare:</strong> ${booking.fare}</Text>
+              <Text><strong>Deposit:</strong> ${booking.depositAmount} {booking.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
+              <Text><strong>Balance Due:</strong> ${booking.balanceDue || 0}</Text>
+            </Stack>
           </Container>
         </GridSection>
       )}

@@ -8,7 +8,8 @@ import {
   H3,
   Text,
   Container,
-  Stack
+  Stack,
+  EditableText
 } from '@/components/ui';
 
 function PrivacyPageContent() {
@@ -40,8 +41,9 @@ function PrivacyPageContent() {
             </Container>
 
             <Container>
-              <H3>2. How We Use Your Information</H3>
-              <Text>We use the information we collect to:</Text>
+              <EditableText field="privacy.howWeUse.title" defaultValue="We use the information we collect to:">
+                We use the information we collect to:
+              </EditableText>
               <Stack spacing="sm" direction="vertical">
                 <Container>Provide and coordinate transportation services</Container>
                 <Container>Process payments and send confirmations</Container>
@@ -91,8 +93,9 @@ function PrivacyPageContent() {
             </Container>
 
             <Container>
-              <H3>6. Your Rights</H3>
-              <Text>You have the right to:</Text>
+              <EditableText field="privacy.yourRights.title" defaultValue="You have the right to:">
+                You have the right to:
+              </EditableText>
               <Stack spacing="sm" direction="vertical">
                 <Container>Access and review your personal information</Container>
                 <Container>Request corrections to inaccurate information</Container>

@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup, H4, Text, Container, Span } from '@/components/ui';
+import { AdminPageWrapper, GridSection, InfoCard, SettingSection, ActionButtonGroup, H4, Text, Container, Span, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 function AdminHelpPage() {
@@ -174,31 +174,27 @@ function AdminHelpPage() {
         >
           <Stack spacing="md">
             <Container>
-              <Span>💬</Span>
-              <Span>
+              <EditableText field="admin.help.technical_support" defaultValue="Contact your developer for technical support">
                 Contact your developer for technical support
-              </Span>
+              </EditableText>
             </Container>
             
             <Container>
-              <Span>📄</Span>
-              <Span>
+              <EditableText field="admin.help.business_docs" defaultValue="Check the business documentation in your project files">
                 Check the business documentation in your project files
-              </Span>
+              </EditableText>
             </Container>
             
             <Container>
-              <Span>⚙️</Span>
-              <Span>
+              <EditableText field="admin.help.cms_settings" defaultValue="Review your CMS settings for configuration options">
                 Review your CMS settings for configuration options
-              </Span>
+              </EditableText>
             </Container>
             
             <Container>
-              <Span>📊</Span>
-              <Span>
+              <EditableText field="admin.help.admin_dashboard" defaultValue="Use the Admin Dashboard to monitor your business metrics">
                 Use the Admin Dashboard to monitor your business metrics
-              </Span>
+              </EditableText>
             </Container>
           </Stack>
         </InfoCard>

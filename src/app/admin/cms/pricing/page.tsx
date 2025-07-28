@@ -16,7 +16,8 @@ import {
   H4,
   Text,
   Container,
-  Span
+  Span,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Button } from '@/components/ui/button';
@@ -153,7 +154,9 @@ function PricingSettingsContent() {
         loadingMessage="Loading pricing settings..."
       >
         <Container>
-          <Span>Loading...</Span>
+          <EditableText field="admin.cms.pricing.loading" defaultValue="Loading...">
+            Loading...
+          </EditableText>
         </Container>
       </AdminPageWrapper>
     );
@@ -168,7 +171,9 @@ function PricingSettingsContent() {
         errorTitle="Load Error"
       >
         <Container>
-          <Span>Error loading settings</Span>
+          <EditableText field="admin.cms.pricing.error" defaultValue="Error loading settings">
+            Error loading settings
+          </EditableText>
         </Container>
       </AdminPageWrapper>
     );
@@ -339,8 +344,12 @@ function PricingSettingsContent() {
             {settings.zones.length === 0 ? (
               <Container>
                 <MapPin />
-                <Text>No pricing zones configured</Text>
-                <Text>Add zones for different areas with custom pricing</Text>
+                <EditableText field="admin.cms.pricing.noZones.message" defaultValue="No pricing zones configured">
+                  No pricing zones configured
+                </EditableText>
+                <EditableText field="admin.cms.pricing.noZones.description" defaultValue="Add zones for different areas with custom pricing">
+                  Add zones for different areas with custom pricing
+                </EditableText>
               </Container>
             ) : (
               <Stack spacing="md">

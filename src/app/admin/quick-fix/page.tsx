@@ -10,7 +10,8 @@ import {
   Button,
   Text,
   Stack,
-  StatusMessage
+  StatusMessage,
+  EditableText
 } from '@/components/ui';
 import { ToastProvider, useToast } from '@/components/ui';
 
@@ -144,15 +145,15 @@ function QuickFixPage() {
     >
       <Container>
         <Stack spacing="md">
-          <Text>
+          <EditableText field="admin.quickFix.description" defaultValue="This will add all missing content to the database, making the app ready for real customers:">
             This will add all missing content to the database, making the app ready for real customers:
-          </Text>
+          </EditableText>
           <Stack spacing="sm">
-            <Container>✅ Success page messages and titles</Container>
-            <Container>✅ Help page sections and FAQ</Container>
-            <Container>✅ Booking form descriptions and placeholders</Container>
-            <Container>✅ Error messages and success messages</Container>
-            <Container>✅ All customer-facing content</Container>
+            <Container>Success page messages and titles</Container>
+            <Container>Error page content and messages</Container>
+            <Container>Booking form labels and descriptions</Container>
+            <Container>Navigation and footer content</Container>
+            <Container>Admin dashboard text and labels</Container>
           </Stack>
           
           {error && (
@@ -176,7 +177,9 @@ function QuickFixPage() {
             disabled={loading}
             variant="primary"
           >
-            {loading ? 'Adding Content...' : '🚀 Make App Production-Ready'}
+            <EditableText field="admin.quickFix.button" defaultValue={loading ? 'Adding Content...' : '🚀 Make App Production-Ready'}>
+              {loading ? 'Adding Content...' : '🚀 Make App Production-Ready'}
+            </EditableText>
           </Button>
         </Stack>
       </Container>

@@ -11,7 +11,8 @@ import {
   GridSection,
   InfoCard,
   Container,
-  Text
+  Text,
+  EditableText
 } from "@/components/ui";
 import { 
   GenericPageEditor,
@@ -167,7 +168,9 @@ function PagesCMSContent() {
         loadingMessage="Loading CMS page content..."
       >
         <Container>
-          <Text>Loading...</Text>
+          <EditableText field="admin.cms.pages.loading" defaultValue="Loading...">
+            Loading...
+          </EditableText>
         </Container>
       </AdminPageWrapper>
     );
@@ -256,9 +259,9 @@ function PagesCMSContent() {
                 description="Custom editor for this page type coming soon..."
               >
                 <Container>
-                  <Text>
+                  <EditableText field="admin.cms.pages.customEditor" defaultValue="Custom editor for this page type coming soon...">
                     Custom editor for this page type coming soon...
-                  </Text>
+                  </EditableText>
                 </Container>
               </InfoCard>
             );

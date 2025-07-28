@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button, Container } from '@/components/ui';
+import { Button, Container, Span } from '@/components/ui';
 import { useEditMode } from '@/components/admin/EditModeProvider';
 
 interface EditableButtonProps {
@@ -73,7 +73,7 @@ export const EditableButton: React.FC<EditableButtonProps> = ({
             }
           }}
         >
-          {icon && <span style={{ marginRight: '4px' }}>{icon}</span>}
+          {icon && <Span>{icon}</Span>}
           {currentValue}
         </div>
       </Container>
@@ -88,7 +88,7 @@ export const EditableButton: React.FC<EditableButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
     >
-      {icon && <span style={{ marginRight: '4px' }}>{icon}</span>}
+      {icon && <Span>{icon}</Span>}
       {currentValue}
     </Button>
   );

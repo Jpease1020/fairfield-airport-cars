@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { onAuthChange } from '@/lib/services/auth-service';
 import { User } from 'firebase/auth';
-import { Container, Text } from '@/components/ui';
+import { Container, Text, EditableText } from '@/components/ui';
 
 const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
   const WithAuthComponent = (props: P) => {
@@ -27,7 +27,9 @@ const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
     if (loading) {
       return (
         <Container>
-          <Text>Loading...</Text>
+          <EditableText field="admin.loading" defaultValue="Loading...">
+            Loading...
+          </EditableText>
         </Container>
       );
     }

@@ -12,7 +12,8 @@ import {
   useToast,
   Text,
   Span,
-  Button
+  Button,
+  EditableText
 } from '@/components/ui';
 
 function BookingStatusPageContent() {
@@ -106,7 +107,9 @@ function BookingStatusPageContent() {
             description="Retrieving your booking information..."
           >
             <LoadingSpinner />
-            <Text>Please wait while we fetch your booking details...</Text>
+            <EditableText field="status.loading.message" defaultValue="Please wait while we fetch your booking details...">
+              Please wait while we fetch your booking details...
+            </EditableText>
           </InfoCard>
         </GridSection>
       </UnifiedLayout>
@@ -125,7 +128,9 @@ function BookingStatusPageContent() {
             title="❌ Unable to Load Booking"
             description="We couldn't retrieve your booking information"
           >
-            <Text>This could be due to an invalid booking ID or a temporary system issue.</Text>
+            <EditableText field="status.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
+              This could be due to an invalid booking ID or a temporary system issue.
+            </EditableText>
             <ActionButtonGroup buttons={[
               {
                 label: 'Try Again',

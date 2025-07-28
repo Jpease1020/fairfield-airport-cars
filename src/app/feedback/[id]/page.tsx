@@ -12,7 +12,8 @@ import {
   Textarea,
   Button,
   ToastProvider,
-  Text
+  Text,
+  EditableText
 } from '@/components/ui';
 import { Star } from 'lucide-react';
 
@@ -81,7 +82,9 @@ function FeedbackPageContent() {
             title="✅ Feedback Submitted"
             description="We appreciate you taking the time to share your experience"
           >
-            <Text>Your rating and comments help us improve our service and provide the best possible experience for all our customers.</Text>
+            <EditableText field="feedback.description" defaultValue="Your rating and comments help us improve our service and provide the best possible experience for all our customers.">
+              Your rating and comments help us improve our service and provide the best possible experience for all our customers.
+            </EditableText>
             <ActionButtonGroup buttons={homeActions} />
           </InfoCard>
         </GridSection>

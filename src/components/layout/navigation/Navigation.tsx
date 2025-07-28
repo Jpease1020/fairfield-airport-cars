@@ -9,6 +9,7 @@ import Logo from '@/components/ui/Logo';
 import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 import { Container, Text } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
+import { EditableText } from '@/components/ui';
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -45,9 +46,9 @@ const Navigation = () => {
         <Link href="/">
           <Stack direction="horizontal" spacing="sm" align="center">
             <Logo size="sm" />
-            <Text size="lg" weight="bold">
+            <EditableText field="navigation.company_name" defaultValue={getCompanyName()}>
               {getCompanyName()}
-            </Text>
+            </EditableText>
           </Stack>
         </Link>
 
@@ -67,7 +68,9 @@ const Navigation = () => {
         <Link href={`tel:${getPhoneNumber()}`}>
           <Stack direction="horizontal" spacing="sm" align="center">
             <Phone size={16} />
-            <Text size="sm">Call Now</Text>
+            <EditableText field="navigation.call_now" defaultValue="Call Now">
+              Call Now
+            </EditableText>
           </Stack>
         </Link>
 
@@ -106,7 +109,9 @@ const Navigation = () => {
             >
               <Stack direction="horizontal" spacing="sm" align="center">
                 <Phone size={16} />
-                <Text size="sm">Call Now</Text>
+                <EditableText field="navigation.call_now" defaultValue="Call Now">
+                  Call Now
+                </EditableText>
               </Stack>
             </Link>
           </Stack>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text } from '@/components/ui';
+import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 const AIAssistantDisabledPage = () => {
@@ -70,7 +70,9 @@ const AIAssistantDisabledPage = () => {
         loading={true}
       >
         <Container>
-          <Text>Loading...</Text>
+          <EditableText field="admin.aiAssistant.loading" defaultValue="Loading...">
+            Loading...
+          </EditableText>
         </Container>
       </AdminPageWrapper>
     );

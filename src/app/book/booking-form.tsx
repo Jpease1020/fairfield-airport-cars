@@ -1,26 +1,29 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
-  Form,
-  Input,
-  Select,
-  Option,
-  Textarea,
-  Button,
-  SettingSection,
-  SettingInput,
+  Container, 
+  Stack, 
+  Card, 
+  CardBody, 
+  Grid, 
+  GridItem, 
+  Text, 
+  H3, 
+  Span, 
+  Button, 
+  Input, 
+  Select, 
+  Option, 
+  Label,
   StatusMessage,
+  Form,
+  SettingInput,
+  EditableText,
   ToastProvider,
-  Text,
-  Span,
-  Container,
-  Grid,
-  GridItem,
-  H3,
-  Label
+  EditableHeading
 } from '@/components/ui';
-import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
 
 interface BookingFormProps {
@@ -256,8 +259,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </svg>
             </Container>
             <Container>
-              <H3>Location autocomplete temporarily unavailable</H3>
-              <Text>You can still fill out the form manually. Location suggestions will be restored shortly.</Text>
+              <EditableHeading field="booking.mapsError.title" defaultValue="Location autocomplete temporarily unavailable">
+                Location autocomplete temporarily unavailable
+              </EditableHeading>
+              <EditableText field="booking.mapsError.description" defaultValue="You can still fill out the form manually. Location suggestions will be restored shortly.">
+                You can still fill out the form manually. Location suggestions will be restored shortly.
+              </EditableText>
             </Container>
           </Stack>
         </Container>
@@ -269,9 +276,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Stack spacing="lg">
             <Container>
               <Span>👤</Span>
-              <H3>Personal Information</H3>
+              <EditableHeading field="booking.personalInfo.title" defaultValue="Personal Information">
+                Personal Information
+              </EditableHeading>
             </Container>
-            <Text>Please provide your contact details for the booking</Text>
+            <EditableText field="booking.personalInfo.description" defaultValue="Please provide your contact details for the booking">
+              Please provide your contact details for the booking
+            </EditableText>
             <Grid cols={2} gap="md">
               <GridItem>
                 <SettingInput
@@ -316,9 +327,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Stack spacing="lg">
             <Container>
               <Span>🚗</Span>
-              <H3>Trip Details</H3>
+              <EditableHeading field="booking.tripDetails.title" defaultValue="Trip Details">
+                Trip Details
+              </EditableHeading>
             </Container>
-            <Text>Tell us where you need to go and when</Text>
+            <EditableText field="booking.tripDetails.description" defaultValue="Tell us where you need to go and when">
+              Tell us where you need to go and when
+            </EditableText>
             {/* Location Fields - Improved Layout */}
             <Grid cols={2} gap="md">
               <GridItem>
@@ -397,7 +412,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     <Span>📅</Span>
                     <Label htmlFor="pickupDate">Pickup Date</Label>
                   </Stack>
-                  <Text>When do you need to be picked up?</Text>
+                  <EditableText field="booking.pickupDate.description" defaultValue="When do you need to be picked up?">
+                    When do you need to be picked up?
+                  </EditableText>
                   <Input
                     id="pickupDate"
                     type="date"
@@ -414,7 +431,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     <Span>⏰</Span>
                     <Label htmlFor="pickupTime">Pickup Time</Label>
                   </Stack>
-                  <Text>What time should we pick you up?</Text>
+                  <EditableText field="booking.pickupTime.description" defaultValue="What time should we pick you up?">
+                    What time should we pick you up?
+                  </EditableText>
                   <Input
                     id="pickupTime"
                     type="time"
@@ -433,9 +452,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Stack spacing="lg">
             <Container>
               <Span>📝</Span>
-              <H3>Additional Details</H3>
+              <EditableHeading field="booking.additionalDetails.title" defaultValue="Additional Details">
+                Additional Details
+              </EditableHeading>
             </Container>
-            <Text>Help us provide the best service for your trip</Text>
+            <EditableText field="booking.additionalDetails.description" defaultValue="Help us provide the best service for your trip">
+              Help us provide the best service for your trip
+            </EditableText>
             
             <Grid cols={2} gap="md">
               <GridItem>
@@ -444,7 +467,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     <Span>👥</Span>
                     <Label htmlFor="passengers">Number of Passengers</Label>
                   </Stack>
-                  <Text>How many people are traveling?</Text>
+                  <EditableText field="booking.passengers.description" defaultValue="How many people are traveling?">
+                    How many people are traveling?
+                  </EditableText>
                   <Select
                     id="passengers"
                     value={passengers.toString()}
@@ -463,7 +488,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     <Span>💡</Span>
                     <Label htmlFor="specialRequests">Special Requests</Label>
                   </Stack>
-                  <Text>Any special requirements or requests?</Text>
+                  <EditableText field="booking.specialRequests.description" defaultValue="Any special requirements or requests?">
+                    Any special requirements or requests?
+                  </EditableText>
                   <Input
                     id="specialRequests"
                     value={notes}
@@ -481,9 +508,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Stack spacing="lg">
             <Container>
               <Span>💳</Span>
-              <H3>Book Your Ride</H3>
+              <EditableHeading field="booking.actionSection.title" defaultValue="Book Your Ride">
+                Book Your Ride
+              </EditableHeading>
             </Container>
-            <Text>Calculate your fare and complete your booking</Text>
+            <EditableText field="booking.actionSection.description" defaultValue="Calculate your fare and complete your booking">
+              Calculate your fare and complete your booking
+            </EditableText>
             
             {fare && (
               <Container>

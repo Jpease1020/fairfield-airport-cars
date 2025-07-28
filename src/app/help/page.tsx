@@ -91,37 +91,51 @@ function HelpPageContent() {
             
             <Grid cols={3} gap="lg">
               <Container>
-                <Card>
-                  <CardBody>
-                    <Stack spacing="sm">
-                      <Span size="xl">📅</Span>
-                      <EditableHeading level={4} field="help.sections.booking.title" defaultValue="Booking Help">Booking Help</EditableHeading>
-                      <EditableText field="help.sections.booking.description" defaultValue="Learn how to book, modify, or cancel your ride">Learn how to book, modify, or cancel your ride</EditableText>
-                    </Stack>
-                  </CardBody>
-                </Card>
+                <Stack spacing="sm">
+                  <Span size="xl">📅</Span>
+                  <EditableHeading level={4} field="help.sections.booking.title" defaultValue="Booking Help">Booking Help</EditableHeading>
+                  <EditableText field="help.sections.booking.description" defaultValue="Learn how to book, modify, or cancel your ride">Learn how to book, modify, or cancel your ride</EditableText>
+                </Stack>
               </Container>
+              
               <Container>
-                <Card>
-                  <CardBody>
-                    <Stack spacing="sm">
-                      <Span size="xl">💳</Span>
-                      <EditableHeading level={4} field="help.sections.payment.title" defaultValue="Payment Help">Payment Help</EditableHeading>
-                      <EditableText field="help.sections.payment.description" defaultValue="How to pay for your ride and get receipts">How to pay for your ride and get receipts</EditableText>
-                    </Stack>
-                  </CardBody>
-                </Card>
+                <Stack spacing="sm">
+                  <Span size="xl">💳</Span>
+                  <EditableHeading level={4} field="help.sections.payment.title" defaultValue="Payment Support">Payment Support</EditableHeading>
+                  <EditableText field="help.sections.payment.description" defaultValue="Get help with payments, refunds, and billing">Get help with payments, refunds, and billing</EditableText>
+                </Stack>
               </Container>
+              
               <Container>
-                <Card>
-                  <CardBody>
-                    <Stack spacing="sm">
-                      <Span size="xl">🛡️</Span>
-                      <EditableHeading level={4} field="help.sections.safety.title" defaultValue="Safety & Support">Safety & Support</EditableHeading>
-                      <EditableText field="help.sections.safety.description" defaultValue="Your safety and support options">Your safety and support options</EditableText>
-                    </Stack>
-                  </CardBody>
-                </Card>
+                <Stack spacing="sm">
+                  <Span size="xl">🚗</Span>
+                  <EditableHeading level={4} field="help.sections.service.title" defaultValue="Service Information">Service Information</EditableHeading>
+                  <EditableText field="help.sections.service.description" defaultValue="Learn about our vehicles, drivers, and service areas">Learn about our vehicles, drivers, and service areas</EditableText>
+                </Stack>
+              </Container>
+              
+              <Container>
+                <Stack spacing="sm">
+                  <Span size="xl">✈️</Span>
+                  <EditableHeading level={4} field="help.sections.airport.title" defaultValue="Airport Transportation">Airport Transportation</EditableHeading>
+                  <EditableText field="help.sections.airport.description" defaultValue="Specialized airport pickup and drop-off services">Specialized airport pickup and drop-off services</EditableText>
+                </Stack>
+              </Container>
+              
+              <Container>
+                <Stack spacing="sm">
+                  <Span size="xl">📱</Span>
+                  <EditableHeading level={4} field="help.sections.app.title" defaultValue="App Support">App Support</EditableHeading>
+                  <EditableText field="help.sections.app.description" defaultValue="Help with our mobile app and online booking">Help with our mobile app and online booking</EditableText>
+                </Stack>
+              </Container>
+              
+              <Container>
+                <Stack spacing="sm">
+                  <Span size="xl">🆘</Span>
+                  <EditableHeading level={4} field="help.sections.emergency.title" defaultValue="Emergency Support">Emergency Support</EditableHeading>
+                  <EditableText field="help.sections.emergency.description" defaultValue="24/7 emergency assistance and urgent changes">24/7 emergency assistance and urgent changes</EditableText>
+                </Stack>
               </Container>
             </Grid>
           </Stack>
@@ -169,27 +183,19 @@ function HelpPageContent() {
             
             <Grid cols={2} gap="lg">
               <Container>
-                <Card>
-                  <CardBody>
-                    <Stack spacing="sm">
-                      <Span size="xl">📞</Span>
-                      <EditableHeading level={4} field="help.contact.phone.title" defaultValue="Phone Support">Phone Support</EditableHeading>
-                      <EditableText field="help.contact.phone.description" defaultValue="(203) 555-0123 - Available 24/7">(203) 555-0123 - Available 24/7</EditableText>
-                    </Stack>
-                  </CardBody>
-                </Card>
+                <Stack spacing="sm">
+                  <Span size="xl">📞</Span>
+                  <EditableHeading level={4} field="help.contact.phone.title" defaultValue="Phone Support">Phone Support</EditableHeading>
+                  <EditableText field="help.contact.phone.description" defaultValue="(203) 555-0123 - Available 24/7">(203) 555-0123 - Available 24/7</EditableText>
+                </Stack>
               </Container>
               
               <Container>
-                <Card>
-                  <CardBody>
-                    <Stack spacing="sm">
-                      <Span size="xl">✉️</Span>
-                      <EditableHeading level={4} field="help.contact.email.title" defaultValue="Email Support">Email Support</EditableHeading>
-                      <EditableText field="help.contact.email.description" defaultValue="support@fairfieldairportcars.com - Response within 2 hours">support@fairfieldairportcars.com - Response within 2 hours</EditableText>
-                    </Stack>
-                  </CardBody>
-                </Card>
+                <Stack spacing="sm">
+                  <Span size="xl">✉️</Span>
+                  <EditableHeading level={4} field="help.contact.email.title" defaultValue="Email Support">Email Support</EditableHeading>
+                  <EditableText field="help.contact.email.description" defaultValue="support@fairfieldairportcars.com - Response within 2 hours">support@fairfieldairportcars.com - Response within 2 hours</EditableText>
+                </Stack>
               </Container>
             </Grid>
           </Stack>

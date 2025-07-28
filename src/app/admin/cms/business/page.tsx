@@ -15,7 +15,8 @@ import {
   Container,
   Text,
   H3,
-  Span
+  Span,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
@@ -124,7 +125,9 @@ function BusinessPageContent() {
         loadingMessage="Loading business settings..."
       >
         <Container>
-          <Span>Loading...</Span>
+          <EditableText field="admin.cms.business.loading" defaultValue="Loading...">
+            Loading...
+          </EditableText>
         </Container>
       </AdminPageWrapper>
     );
@@ -139,7 +142,9 @@ function BusinessPageContent() {
         errorTitle="Settings Load Error"
       >
         <Container>
-          <Span>Error loading settings</Span>
+          <EditableText field="admin.cms.business.error" defaultValue="Error loading settings">
+            Error loading settings
+          </EditableText>
         </Container>
       </AdminPageWrapper>
     );
@@ -154,7 +159,9 @@ function BusinessPageContent() {
         errorTitle="Settings Not Found"
       >
         <Container>
-          <Span>No settings found</Span>
+          <EditableText field="admin.cms.business.noSettings" defaultValue="No settings found">
+            No settings found
+          </EditableText>
         </Container>
       </AdminPageWrapper>
     );

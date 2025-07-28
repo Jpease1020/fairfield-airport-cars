@@ -1,4 +1,5 @@
 import React from 'react';
+import { Span } from './text';
 
 // Button Component - Clean Reusable Component (No className!)
 export interface ButtonProps {
@@ -74,9 +75,9 @@ export const Button: React.FC<ButtonProps> = ({
           <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" style={{ opacity: '0.75' }}></path>
         </svg>
       )}
-      {icon && !loading && iconPosition === 'left' && <span style={{ marginRight: '0.5rem' }}>{icon}</span>}
-      <span>{children}</span>
-      {icon && !loading && iconPosition === 'right' && <span style={{ marginLeft: '0.5rem' }}>{icon}</span>}
+      {icon && !loading && iconPosition === 'left' && <Span>{icon}</Span>}
+      <Span>{children}</Span>
+      {icon && !loading && iconPosition === 'right' && <Span>{icon}</Span>}
     </Component>
   );
 }; 

@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Text, Span, H2, H1, H3 } from '@/components/ui';
-import { StatCard } from '@/components/ui';
+import { AdminPageWrapper, GridSection, StatCard, InfoCard, Container, H1, H2, H3, Text, Span, EditableText, EditableHeading } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Button } from '@/components/ui/button';
 
@@ -65,7 +64,9 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <Container>
-        <Text>🔄 Loading analytics...</Text>
+        <EditableText field="admin.analytics.loading" defaultValue="🔄 Loading analytics...">
+          🔄 Loading analytics...
+        </EditableText>
       </Container>
     );
   }
@@ -73,8 +74,12 @@ export default function AnalyticsPage() {
   return (
     <Container>
       <Stack direction="vertical" spacing="md">
-        <H1>Analytics Dashboard</H1>
-        <Text>User interactions, errors, and performance metrics</Text>
+        <EditableHeading field="admin.analytics.title" defaultValue="Analytics Dashboard">
+          Analytics Dashboard
+        </EditableHeading>
+        <EditableText field="admin.analytics.userInteractions.description" defaultValue="User interactions, errors, and performance metrics">
+          User interactions, errors, and performance metrics
+        </EditableText>
         <Button onClick={fetchAnalytics} variant="outline" size="sm">
           <Span>🔄</Span>
           Refresh
@@ -83,7 +88,9 @@ export default function AnalyticsPage() {
       
       {lastUpdated && (
         <Container>
-          <Text>Last updated: {lastUpdated.toLocaleString()}</Text>
+          <EditableText field="admin.analytics.lastUpdated" defaultValue={`Last updated: ${lastUpdated.toLocaleString()}`}>
+            Last updated: {lastUpdated.toLocaleString()}
+          </EditableText>
         </Container>
       )}
 
@@ -91,8 +98,12 @@ export default function AnalyticsPage() {
         {!analytics ? (
           <Stack direction="vertical" spacing="md" align="center">
             <Span>⚠️</Span>
-            <H3>No Analytics Data</H3>
-            <Text>Analytics data will appear here once users start interacting with the app.</Text>
+            <EditableHeading field="admin.analytics.noData.title" defaultValue="No Analytics Data">
+              No Analytics Data
+            </EditableHeading>
+            <EditableText field="admin.analytics.noData.message" defaultValue="Analytics data will appear here once users start interacting with the app.">
+              Analytics data will appear here once users start interacting with the app.
+            </EditableText>
           </Stack>
         ) : (
           <Container>
