@@ -6,6 +6,7 @@ import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection, StatCard, InfoCard } from '@/components/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 import { Stack } from '@/components/ui/containers';
+import { EditableText } from '@/components/ui';
 
 interface Feedback {
   id: string;
@@ -135,12 +136,12 @@ function FeedbackPageContent() {
     return (
       <Container>
         <Stack>
-          <Span>
+          <EditableText field="admin.feedback.ratingStars" defaultValue={getRatingStars(rating)}>
             {getRatingStars(rating)}
-          </Span>
-          <Span>
+          </EditableText>
+          <EditableText field="admin.feedback.ratingScore" defaultValue={`${rating}/5`}>
             {rating}/5
-          </Span>
+          </EditableText>
         </Stack>
       </Container>
     );
@@ -157,15 +158,15 @@ function FeedbackPageContent() {
       render: (_, feedback) => (
         <Container>
           <Stack>
-            <Span>
+            <EditableText field="admin.feedback.customerName" defaultValue={feedback.customerName}>
               {feedback.customerName}
-            </Span>
-            <Span>
+            </EditableText>
+            <EditableText field="admin.feedback.customerEmail" defaultValue={`📧 ${feedback.customerEmail}`}>
               📧 {feedback.customerEmail}
-            </Span>
-            <Span>
+            </EditableText>
+            <EditableText field="admin.feedback.bookingId" defaultValue={`🎫 ${feedback.bookingId}`}>
               🎫 {feedback.bookingId}
-            </Span>
+            </EditableText>
           </Stack>
         </Container>
       )
@@ -182,7 +183,9 @@ function FeedbackPageContent() {
       sortable: false,
       render: (value) => (
         <Container>
-          <Text>{value}</Text>
+          <EditableText field="admin.feedback.comment" defaultValue={value}>
+            {value}
+          </EditableText>
         </Container>
       )
     },
@@ -195,12 +198,12 @@ function FeedbackPageContent() {
         return (
           <Container>
             <Stack>
-              <Span>
+              <EditableText field="admin.feedback.date" defaultValue={date.toLocaleDateString()}>
                 {date.toLocaleDateString()}
-              </Span>
-              <Span>
+              </EditableText>
+              <EditableText field="admin.feedback.time" defaultValue={date.toLocaleTimeString()}>
                 {date.toLocaleTimeString()}
-              </Span>
+              </EditableText>
             </Stack>
           </Container>
         );
@@ -305,15 +308,15 @@ function FeedbackPageContent() {
               
               return (
                 <Stack key={rating} direction="horizontal" justify="between" align="center">
-                  <Span>
+                  <EditableText field="admin.feedback.stars" defaultValue={'★'.repeat(rating)}>
                     {'★'.repeat(rating)}
-                  </Span>
-                  <Span>
+                  </EditableText>
+                  <EditableText field="admin.feedback.count" defaultValue={count.toString()}>
                     {count}
-                  </Span>
-                  <Span>
+                  </EditableText>
+                  <EditableText field="admin.feedback.percentage" defaultValue={`${percentage.toFixed(0)}%`}>
                     {percentage.toFixed(0)}%
-                  </Span>
+                  </EditableText>
                 </Stack>
               );
             })}

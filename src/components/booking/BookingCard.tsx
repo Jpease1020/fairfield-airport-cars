@@ -3,7 +3,7 @@ import { Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
 import { Booking } from '@/types/booking';
 import { Badge } from '@/components/ui';
 import { Button } from '@/components/ui/button';
-import { Container, H3, Text } from '@/components/ui';
+import { Container, H3, Text, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface BookingCardProps {
@@ -43,7 +43,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
           {booking.name}
         </H3>
         <Text>
-          Booking #{booking.id}
+          <EditableText field="bookingCard.bookingNumber" defaultValue={`Booking #${booking.id}`}>
+            Booking #{booking.id}
+          </EditableText>
         </Text>
         <Badge>
           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
@@ -72,7 +74,11 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <Stack direction="horizontal" align="center" spacing="sm">
             <MapPin />
             <Stack direction="vertical" spacing="xs">
-              <Text size="xs">Pickup:</Text>
+              <Text size="xs">
+                <EditableText field="bookingCard.pickupLabel" defaultValue="Pickup:">
+                  Pickup:
+                </EditableText>
+              </Text>
               <Text size="sm">{booking.pickupLocation}</Text>
             </Stack>
           </Stack>
@@ -81,7 +87,11 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <Stack direction="horizontal" align="center" spacing="sm">
             <MapPin />
             <Stack direction="vertical" spacing="xs">
-              <Text size="xs">Drop-off:</Text>
+              <Text size="xs">
+                <EditableText field="bookingCard.dropoffLabel" defaultValue="Drop-off:">
+                  Drop-off:
+                </EditableText>
+              </Text>
               <Text size="sm">{booking.dropoffLocation}</Text>
             </Stack>
           </Stack>
@@ -91,20 +101,30 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {/* Passenger Info */}
       <Container>
         <Text size="sm">
-          Passengers: {booking.passengers}
+          <EditableText field="bookingCard.passengersLabel" defaultValue={`Passengers: ${booking.passengers}`}>
+            Passengers: {booking.passengers}
+          </EditableText>
         </Text>
         {booking.notes && (
-          <Container>
-            <Text size="xs">Notes:</Text>
-            <Text size="sm">{booking.notes}</Text>
-          </Container>
+                      <Container>
+              <Text size="xs">
+                <EditableText field="bookingCard.notesLabel" defaultValue="Notes:">
+                  Notes:
+                </EditableText>
+              </Text>
+              <Text size="sm">{booking.notes}</Text>
+            </Container>
         )}
       </Container>
 
       {/* Price */}
       <Stack direction="horizontal" align="center" spacing="sm">
         <DollarSign />
-        <Text size="sm">Total Fare:</Text>
+        <Text size="sm">
+          <EditableText field="bookingCard.totalFareLabel" defaultValue="Total Fare:">
+            Total Fare:
+          </EditableText>
+        </Text>
         <Text size="lg">
           ${booking.fare}
         </Text>
@@ -118,7 +138,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
             size="sm"
             onClick={() => onAction('view')}
           >
-            View Details
+            <EditableText field="bookingCard.viewDetailsButton" defaultValue="View Details">
+              View Details
+            </EditableText>
           </Button>
           {booking.status === 'pending' && (
             <>
@@ -127,14 +149,18 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 size="sm"
                 onClick={() => onAction('edit')}
               >
-                Edit
+                <EditableText field="bookingCard.editButton" defaultValue="Edit">
+                  Edit
+                </EditableText>
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('cancel')}
               >
-                Cancel
+                <EditableText field="bookingCard.cancelButton" defaultValue="Cancel">
+                  Cancel
+                </EditableText>
               </Button>
             </>
           )}

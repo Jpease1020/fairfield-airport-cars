@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/utils/firebase';
 import { Button } from '@/components/ui/button';
-import { Container } from '@/components/ui';
+import { Container, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { cmsService } from '@/lib/services/cms-service';
 import { authService } from '@/lib/services/auth-service';
@@ -120,7 +120,9 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
             onClick={() => setEditMode(true)}
             variant="primary"
           >
-            Edit Mode
+            <EditableText field="editMode.editModeButton" defaultValue="Edit Mode">
+              Edit Mode
+            </EditableText>
           </Button>
         ) : (
           <Container>
@@ -128,7 +130,9 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
               onClick={() => setEditMode(false)}
               variant="outline"
             >
-              Exit Edit Mode
+              <EditableText field="editMode.exitEditModeButton" defaultValue="Exit Edit Mode">
+                Exit Edit Mode
+              </EditableText>
             </Button>
           </Container>
         )}
@@ -152,13 +156,23 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
             disabled={saving}
             variant="primary"
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? (
+              <EditableText field="editMode.savingButton" defaultValue="Saving...">
+                Saving...
+              </EditableText>
+            ) : (
+              <EditableText field="editMode.saveButton" defaultValue="Save">
+                Save
+              </EditableText>
+            )}
           </Button>
           <Button
             onClick={() => handleCancel(originalContent)}
             variant="outline"
           >
-            Cancel
+            <EditableText field="editMode.cancelButton" defaultValue="Cancel">
+              Cancel
+            </EditableText>
           </Button>
         </Stack>
         {saveMsg && (

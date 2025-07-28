@@ -13,7 +13,8 @@ import {
   useToast,
   ActionButtonGroup,
   Container,
-  Text
+  Text,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
@@ -197,7 +198,9 @@ function CMSPageContent() {
             <Container>
               <Stack direction="horizontal" align="center" justify="between">
                 <Text>
-                  Status:
+                  <EditableText field="admin.cms.statusLabel" defaultValue="Status:">
+                    Status:
+                  </EditableText>
                 </Text>
                 <Text>
                   {section.status}
@@ -237,7 +240,9 @@ function CMSPageContent() {
             <Container spacing="md">
               <Stack direction="horizontal" align="center" justify="between">
                 <Text>
-                  Last Updated
+                  <EditableText field="admin.cms.lastUpdatedLabel" defaultValue="Last Updated">
+                    Last Updated
+                  </EditableText>
                 </Text>
                 <Text>
                   {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
@@ -247,7 +252,9 @@ function CMSPageContent() {
               <Stack direction="horizontal" align="center" justify="between">
                 <Container>
                   <Text>
-                    Configuration Status
+                    <EditableText field="admin.cms.configurationStatusLabel" defaultValue="Configuration Status">
+                      Configuration Status
+                    </EditableText>
                   </Text>
                   <Text>
                     {config ? 'Fully Configured' : 'Needs Setup'}
@@ -258,7 +265,9 @@ function CMSPageContent() {
               <Stack direction="horizontal" align="center" justify="between">
                 <Container>
                   <Text>
-                    Auto-Save
+                    <EditableText field="admin.cms.autoSaveLabel" defaultValue="Auto-Save">
+                      Auto-Save
+                    </EditableText>
                   </Text>
                   <Text>
                     Enabled

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui';
-import { Container, Text, Span } from '@/components/ui';
+import { Container, Text, Span, EditableText } from '@/components/ui';
 import { feedbackService, type PageComment } from '@/lib/services/feedback-service';
 import { MessageSquare, X, CheckCircle, AlertCircle, Star } from 'lucide-react';
 
@@ -133,7 +133,11 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
         <Container variant="card" padding="lg">
           {/* Header */}
                       <Container spacing="sm">
-              <Text>Add Page Comment</Text>
+              <Text>
+                <EditableText field="pageCommentWidget.addPageComment" defaultValue="Add Page Comment">
+                  Add Page Comment
+                </EditableText>
+              </Text>
               <Button
               variant="ghost"
               size="sm"
@@ -146,12 +150,21 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
           {/* Content */}
           <Container spacing="md">
                               <Text size="sm">
-                  <Text>Page:</Text> {pageTitle}
+                  <Text>
+                    <EditableText field="pageCommentWidget.pageLabel" defaultValue="Page:">
+                      Page:
+                    </EditableText>
+                    {pageTitle}
+                  </Text>
                 </Text>
 
                 {/* Element Selection */}
                 <Text size="sm">
-                  <Text>Element (Optional)</Text>
+                  <Text>
+                    <EditableText field="pageCommentWidget.elementLabel" defaultValue="Element (Optional)">
+                      Element (Optional)
+                    </EditableText>
+                  </Text>
                 </Text>
               <Button
                 variant="outline"
@@ -160,7 +173,9 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                 disabled={isElementSelectMode}
               >
                 <Text >
-                  {selectedElement ? 'Change Element' : 'Select Element'}
+                  <EditableText field="pageCommentWidget.elementButton" defaultValue={selectedElement ? 'Change Element' : 'Select Element'}>
+                    {selectedElement ? 'Change Element' : 'Select Element'}
+                  </EditableText>
                 </Text>
               </Button>
               {selectedElement && (
@@ -169,23 +184,40 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   size="sm"
                   onClick={() => setSelectedElement('')}
                 >
-                  <Text >Clear</Text>
+                  <Text >
+                    <EditableText field="pageCommentWidget.clearButton" defaultValue="Clear">
+                      Clear
+                    </EditableText>
+                  </Text>
                 </Button>
               )}
               {selectedElement && (
                 <Text size="sm">
-                  <Text >Selected:</Text> {selectedElement}
+                  <Text >
+                    <EditableText field="pageCommentWidget.selectedLabel" defaultValue="Selected:">
+                      Selected:
+                    </EditableText>
+                    {selectedElement}
+                  </Text>
                 </Text>
               )}
               {isElementSelectMode && (
                 <Text size="sm">
-                  <Text >Click on any element to select it</Text>
+                  <Text >
+                    <EditableText field="pageCommentWidget.clickToSelect" defaultValue="Click on any element to select it">
+                      Click on any element to select it
+                    </EditableText>
+                  </Text>
                 </Text>
               )}
 
               {/* Category */}
               <Text size="sm">
-                <Text >Category</Text>
+                <Text >
+                  <EditableText field="pageCommentWidget.categoryLabel" defaultValue="Category">
+                    Category
+                  </EditableText>
+                </Text>
               </Text>
               <Select value={category} onValueChange={(value: PageComment['category']) => setCategory(value)}>
                 <SelectTrigger>
@@ -195,31 +227,51 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   <SelectItem value="general">
                     <MessageSquare />
                     <Text>
-                      <Text >General</Text>
+                      <Text >
+                        <EditableText field="pageCommentWidget.categoryGeneral" defaultValue="General">
+                          General
+                        </EditableText>
+                      </Text>
                     </Text>
                   </SelectItem>
                   <SelectItem value="bug">
                     <AlertCircle />
                     <Text>
-                      <Text >Bug</Text>
+                      <Text >
+                        <EditableText field="pageCommentWidget.categoryBug" defaultValue="Bug">
+                          Bug
+                        </EditableText>
+                      </Text>
                     </Text>
                   </SelectItem>
                   <SelectItem value="design">
                     <Star />
                     <Text>
-                      <Text >Design</Text>
+                      <Text >
+                        <EditableText field="pageCommentWidget.categoryDesign" defaultValue="Design">
+                          Design
+                        </EditableText>
+                      </Text>
                     </Text>
                   </SelectItem>
                   <SelectItem value="copy">
                     <MessageSquare />
                     <Text>
-                      <Text >Copy/Text</Text>
+                      <Text >
+                        <EditableText field="pageCommentWidget.categoryCopy" defaultValue="Copy/Text">
+                          Copy/Text
+                        </EditableText>
+                      </Text>
                     </Text>
                   </SelectItem>
                   <SelectItem value="feature">
                     <CheckCircle />
                     <Text>
-                      <Text >Feature Request</Text>
+                      <Text >
+                        <EditableText field="pageCommentWidget.categoryFeature" defaultValue="Feature Request">
+                          Feature Request
+                        </EditableText>
+                      </Text>
                     </Text>
                   </SelectItem>
                 </SelectContent>
@@ -227,7 +279,11 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
 
               {/* Priority */}
               <Text size="sm">
-                <Text >Priority</Text>
+                <Text >
+                  <EditableText field="pageCommentWidget.priorityLabel" defaultValue="Priority">
+                    Priority
+                  </EditableText>
+                </Text>
               </Text>
               <Select value={priority} onValueChange={(value: PageComment['priority']) => setPriority(value)}>
                 <SelectTrigger>
@@ -235,23 +291,43 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="low">
-                    <Text >Low</Text>
+                    <Text >
+                      <EditableText field="pageCommentWidget.priorityLow" defaultValue="Low">
+                        Low
+                      </EditableText>
+                    </Text>
                   </SelectItem>
                   <SelectItem value="medium">
-                    <Text >Medium</Text>
+                    <Text >
+                      <EditableText field="pageCommentWidget.priorityMedium" defaultValue="Medium">
+                        Medium
+                      </EditableText>
+                    </Text>
                   </SelectItem>
                   <SelectItem value="high">
-                    <Text >High</Text>
+                    <Text >
+                      <EditableText field="pageCommentWidget.priorityHigh" defaultValue="High">
+                        High
+                      </EditableText>
+                    </Text>
                   </SelectItem>
                   <SelectItem value="urgent">
-                    <Text >Urgent</Text>
+                    <Text >
+                      <EditableText field="pageCommentWidget.priorityUrgent" defaultValue="Urgent">
+                        Urgent
+                      </EditableText>
+                    </Text>
                   </SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Comment */}
               <Text size="sm">
-                <Text >Comment</Text>
+                <Text >
+                  <EditableText field="pageCommentWidget.commentLabel" defaultValue="Comment">
+                    Comment
+                  </EditableText>
+                </Text>
               </Text>
               <Textarea
                 value={comment}
@@ -278,7 +354,9 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   disabled={!comment.trim() || isSubmitting}
                 >
                   <Text >
-                    {isSubmitting ? 'Submitting...' : 'Submit Comment'}
+                    <EditableText field="pageCommentWidget.submitButton" defaultValue={isSubmitting ? 'Submitting...' : 'Submit Comment'}>
+                      {isSubmitting ? 'Submitting...' : 'Submit Comment'}
+                    </EditableText>
                   </Text>
                 </Button>
                 <Button
@@ -286,7 +364,11 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
                   onClick={() => setIsOpen(false)}
                   disabled={isSubmitting}
                 >
-                  <Text >Cancel</Text>
+                  <Text >
+                    <EditableText field="pageCommentWidget.cancelButton" defaultValue="Cancel">
+                      Cancel
+                    </EditableText>
+                  </Text>
                 </Button>
               </Container>
           </Container>
@@ -297,7 +379,11 @@ const PageCommentWidget = ({ pageUrl, pageTitle, isAdmin = false }: PageCommentW
       {showSuccess && (
         <Container variant="card" padding="md">
           <CheckCircle />
-          <Span color="success">Comment submitted successfully!</Span>
+          <Span color="success">
+            <EditableText field="pageCommentWidget.successMessage" defaultValue="Comment submitted successfully!">
+              Comment submitted successfully!
+            </EditableText>
+          </Span>
         </Container>
       )}
       

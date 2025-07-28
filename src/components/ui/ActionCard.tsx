@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Text, Span, Link } from '@/components/ui';
 import { Stack, Card } from '@/components/ui/containers';
 import { Button } from './button';
+import { EditableText } from '@/components/ui';
 
 interface ActionCardProps {
   icon: string;
@@ -27,9 +28,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       <Container>
         <Span>{icon}</Span>
       </Container>
-      <Span>{label}</Span>
+      <EditableText field="actioncard.label" defaultValue={label}>
+        {label}
+      </EditableText>
       {description && (
-        <Text variant="muted">{description}</Text>
+        <EditableText field="actioncard.description" defaultValue={description}>
+          {description}
+        </EditableText>
       )}
     </Stack>
   );

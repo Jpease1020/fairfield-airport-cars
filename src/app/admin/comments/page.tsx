@@ -7,6 +7,7 @@ import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection, StatCard, InfoCard } from '@/components/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 import { Stack } from '@/components/ui/containers';
+import { EditableText } from '@/components/ui';
 
 function CommentsPageContent() {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
@@ -54,9 +55,11 @@ function CommentsPageContent() {
     const status = getCommentStatus(comment);
 
     return (
-      <Span >
-        {status}
-      </Span>
+      <Container>
+        <EditableText field="admin.comments.status" defaultValue={status}>
+          {status}
+        </EditableText>
+      </Container>
     );
   };
 
@@ -71,12 +74,12 @@ function CommentsPageContent() {
       render: (_, comment) => (
         <Container>
           <Stack>
-            <Span>
+            <EditableText field="admin.comments.author" defaultValue={comment.createdBy}>
               {comment.createdBy}
-            </Span>
-            <Span>
+            </EditableText>
+            <EditableText field="admin.comments.pageTitle" defaultValue={`📄 ${comment.pageTitle}`}>
               📄 {comment.pageTitle}
-            </Span>
+            </EditableText>
           </Stack>
         </Container>
       )
@@ -87,7 +90,9 @@ function CommentsPageContent() {
       sortable: false,
       render: (value) => (
         <Container>
-          <Text>{value}</Text>
+          <EditableText field="admin.comments.comment" defaultValue={value}>
+            {value}
+          </EditableText>
         </Container>
       )
     },
@@ -100,12 +105,12 @@ function CommentsPageContent() {
         return (
           <Container>
             <Stack>
-              <Span>
+              <EditableText field="admin.comments.date" defaultValue={date}>
                 {date}
-              </Span>
-              <Span>
+              </EditableText>
+              <EditableText field="admin.comments.time" defaultValue={time}>
                 {time}
-              </Span>
+              </EditableText>
             </Stack>
           </Container>
         );
@@ -228,7 +233,9 @@ function CommentsPageContent() {
         >
           <Stack direction="vertical" spacing="lg">
             <Container>
-              <Span>Most Active Pages:</Span>
+              <EditableText field="admin.comments.mostActivePages" defaultValue="Most Active Pages:">
+                Most Active Pages:
+              </EditableText>
               <Stack direction="vertical" spacing="sm">
                 {Array.from(new Set(comments.map(c => c.pageTitle)))
                   .map(page => ({
@@ -239,15 +246,21 @@ function CommentsPageContent() {
                   .slice(0, 5)
                   .map(({ page, count }) => (
                     <Stack key={page} direction="horizontal" justify="between">
-                      <Span>{page}</Span>
-                      <Span>{count} comments</Span>
+                      <EditableText field="admin.comments.pageName" defaultValue={page}>
+                        {page}
+                      </EditableText>
+                      <EditableText field="admin.comments.commentCount" defaultValue={`${count} comments`}>
+                        {count} comments
+                      </EditableText>
                     </Stack>
                   ))}
               </Stack>
             </Container>
             
             <Container>
-              <Span>Top Commenters:</Span>
+              <EditableText field="admin.comments.topCommenters" defaultValue="Top Commenters:">
+                Top Commenters:
+              </EditableText>
               <Stack direction="vertical" spacing="sm">
                 {Array.from(new Set(comments.map(c => c.createdBy)))
                   .map(author => ({
@@ -258,8 +271,12 @@ function CommentsPageContent() {
                   .slice(0, 5)
                   .map(({ author, count }) => (
                     <Stack key={author} direction="horizontal" justify="between">
-                      <Span>{author}</Span>
-                      <Span>{count} comments</Span>
+                      <EditableText field="admin.comments.authorName" defaultValue={author}>
+                        {author}
+                      </EditableText>
+                      <EditableText field="admin.comments.authorCommentCount" defaultValue={`${count} comments`}>
+                        {count} comments
+                      </EditableText>
                     </Stack>
                   ))}
               </Stack>

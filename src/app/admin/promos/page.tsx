@@ -19,7 +19,8 @@ import {
   Select,
   Option,
   Container,
-  Span
+  Span,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
@@ -304,7 +305,9 @@ function PromosPageContent() {
           <Stack spacing="md">
             <Container>
               <Label>
-                Code (uppercase) *
+                <EditableText field="admin.promos.form.code" defaultValue="Code (uppercase) *">
+                  Code (uppercase) *
+                </EditableText>
               </Label>
               <Input
                 type="text"
@@ -317,7 +320,9 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                Type *
+                <EditableText field="admin.promos.form.type" defaultValue="Type *">
+                  Type *
+                </EditableText>
               </Label>
               <Select 
                 value={form.type} 
@@ -330,7 +335,9 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                Value *
+                <EditableText field="admin.promos.form.value" defaultValue="Value *">
+                  Value *
+                </EditableText>
               </Label>
               <Input
                 type="number"
@@ -343,7 +350,9 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                Expires At
+                <EditableText field="admin.promos.form.expiresAt" defaultValue="Expires At">
+                  Expires At
+                </EditableText>
               </Label>
               <Input
                 type="date"
@@ -354,7 +363,9 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                Usage Limit
+                <EditableText field="admin.promos.form.usageLimit" defaultValue="Usage Limit">
+                  Usage Limit
+                </EditableText>
               </Label>
               <Input
                 type="number"

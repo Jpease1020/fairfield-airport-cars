@@ -15,7 +15,8 @@ import {
   useToast,
   Container,
   Text,
-  Span
+  Span,
+  EditableText
 } from '@/components/ui';
 
 function CostsPageContent() {
@@ -120,8 +121,9 @@ function CostsPageContent() {
       sortable: true,
       render: (_, cost) => (
         <Container>
-          <Text>{cost.category}</Text>
-          <Text size="sm">{cost.description}</Text>
+          <EditableText field="admin.costs.category" defaultValue={cost.category}>
+            {cost.category}
+          </EditableText>
         </Container>
       )
     },
@@ -130,9 +132,9 @@ function CostsPageContent() {
       label: 'Projected',
       sortable: true,
       render: (value) => (
-        <Container>
-          {formatCurrency(value)}
-        </Container>
+        <EditableText field="admin.costs.projectedCost" defaultValue={`$${(value || 0).toFixed(2)}`}>
+          ${(value || 0).toFixed(2)}
+        </EditableText>
       )
     },
     {
@@ -140,9 +142,9 @@ function CostsPageContent() {
       label: 'Actual',
       sortable: true,
       render: (value) => (
-        <Container>
-          {formatCurrency(value)}
-        </Container>
+        <EditableText field="admin.costs.actualCost" defaultValue={`$${(value || 0).toFixed(2)}`}>
+          ${(value || 0).toFixed(2)}
+        </EditableText>
       )
     },
     {

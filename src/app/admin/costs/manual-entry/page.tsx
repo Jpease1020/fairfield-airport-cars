@@ -11,7 +11,8 @@ import {
   useToast,
   GridSection,
   HelpCard,
-  Container
+  Container,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { realCostTrackingService } from '@/lib/business/real-cost-tracking';
@@ -170,57 +171,57 @@ function ManualCostEntryPageContent() {
           >
             <Stack spacing="md">
               <SettingInput
-                id="cost-date"
-                label="Date"
-                description="When this cost was incurred"
-                type="text"
-                value={formData.date}
-                onChange={(value) => handleInputChange('date', value)}
-                icon="📅"
-              />
-              
-              <SettingInput
-                id="cost-category"
-                label="Category *"
-                description="Type of expense (e.g., Fuel, Maintenance)"
-                value={formData.category}
-                onChange={(value) => handleInputChange('category', value)}
-                placeholder="e.g., Fuel, Maintenance, Insurance"
-                icon="🏷️"
-              />
-            </Stack>
-
-            <SettingInput
-              id="cost-description"
-              label="Description *"
-              description="Brief description of the expense"
-              value={formData.description}
-              onChange={(value) => handleInputChange('description', value)}
-              placeholder="Brief description of the cost"
-              icon="📝"
-            />
-
-            <SettingInput
-              id="cost-amount"
-              label="Amount ($) *"
-              description="Cost amount in dollars"
-              type="number"
-              value={formData.amount.toString()}
-              onChange={(value) => handleInputChange('amount', parseFloat(value) || 0)}
-              placeholder="0.00"
-              icon="💲"
-            />
-
-            <SettingInput
-              id="cost-notes"
-              label="Notes (Optional)"
-              description="Additional details or context"
+              id="cost-date"
+              label="Date"
+              description="When this cost was incurred"
               type="text"
-              value={formData.notes || ''}
-              onChange={(value) => handleInputChange('notes', value)}
-              placeholder="Additional notes or details"
-              icon="📋"
+              value={formData.date}
+              onChange={(value) => handleInputChange('date', value)}
+              icon="📅"
             />
+            
+            <SettingInput
+              id="cost-category"
+              label="Category *"
+              description="Type of expense (e.g., Fuel, Maintenance)"
+              value={formData.category}
+              onChange={(value) => handleInputChange('category', value)}
+              placeholder="e.g., Fuel, Maintenance, Insurance"
+              icon="🏷️"
+            />
+          </Stack>
+
+          <SettingInput
+            id="cost-description"
+            label="Description *"
+            description="Brief description of the expense"
+            value={formData.description}
+            onChange={(value) => handleInputChange('description', value)}
+            placeholder="Brief description of the cost"
+            icon="📝"
+          />
+
+          <SettingInput
+            id="cost-amount"
+            label="Amount ($) *"
+            description="Cost amount in dollars"
+            type="number"
+            value={formData.amount.toString()}
+            onChange={(value) => handleInputChange('amount', parseFloat(value) || 0)}
+            placeholder="0.00"
+            icon="💲"
+          />
+
+          <SettingInput
+            id="cost-notes"
+            label="Notes (Optional)"
+            description="Additional details or context"
+            type="text"
+            value={formData.notes || ''}
+            onChange={(value) => handleInputChange('notes', value)}
+            placeholder="Additional notes or details"
+            icon="📋"
+          />
           </SettingSection>
 
           {/* Cost Categories Guide */}

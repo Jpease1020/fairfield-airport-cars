@@ -14,7 +14,8 @@ import {
   useToast,
   Container,
   Text,
-  Span
+  Span,
+  EditableText
 } from '@/components/ui';
 
 interface Driver {
@@ -180,15 +181,9 @@ function DriversPageContent() {
       sortable: true,
       render: (_, driver) => (
         <Container>
-          <Text>
+          <EditableText field="admin.drivers.name" defaultValue={driver.name}>
             {driver.name}
-          </Text>
-          <Text size="sm">
-            📞 {driver.phone}
-          </Text>
-          <Text size="sm">
-            📧 {driver.email}
-          </Text>
+          </EditableText>
         </Container>
       )
     },
@@ -198,15 +193,15 @@ function DriversPageContent() {
       sortable: false,
       render: (_, driver) => (
         <Container>
-          <Text>
+          <EditableText field="admin.drivers.vehicle" defaultValue={`🚗 ${driver.vehicle.year} ${driver.vehicle.make} ${driver.vehicle.model}`}>
             🚗 {driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model}
-          </Text>
-          <Text size="sm">
+          </EditableText>
+          <EditableText field="admin.drivers.color" defaultValue={`Color: ${driver.vehicle.color}`}>
             Color: {driver.vehicle.color}
-          </Text>
-          <Text size="sm">
+          </EditableText>
+          <EditableText field="admin.drivers.licensePlate" defaultValue={`Plate: ${driver.vehicle.licensePlate}`}>
             Plate: {driver.vehicle.licensePlate}
-          </Text>
+          </EditableText>
         </Container>
       )
     },
@@ -222,12 +217,12 @@ function DriversPageContent() {
       sortable: true,
       render: (_, driver) => (
         <Container>
-          <Text>
+          <EditableText field="admin.drivers.rating" defaultValue={`⭐ ${driver.rating.toFixed(1)}`}>
             ⭐ {driver.rating.toFixed(1)}
-          </Text>
-          <Text size="sm">
+          </EditableText>
+          <EditableText field="admin.drivers.totalRides" defaultValue={`${driver.totalRides} rides`}>
             {driver.totalRides} rides
-          </Text>
+          </EditableText>
         </Container>
       )
     }

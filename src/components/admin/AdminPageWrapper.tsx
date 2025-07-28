@@ -2,7 +2,7 @@ import React from 'react';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Container, Text, H3 } from '@/components/ui';
+import { Container, Text, H3, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 
 interface AdminPageWrapperProps {
@@ -40,7 +40,11 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
-            <Text>{loadingMessage}</Text>
+            <Text>
+              <EditableText field="adminPageWrapper.loadingMessage" defaultValue={loadingMessage}>
+                {loadingMessage}
+              </EditableText>
+            </Text>
           </Stack>
         </Container>
       </Container>
@@ -57,8 +61,16 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
           subtitle="Error occurred"
         />
         <Container maxWidth={maxWidth}>
-          <H3>{errorTitle}</H3>
-          <Text>{error}</Text>
+          <H3>
+            <EditableText field="adminPageWrapper.errorTitle" defaultValue={errorTitle}>
+              {errorTitle}
+            </EditableText>
+          </H3>
+          <Text>
+            <EditableText field="adminPageWrapper.errorMessage" defaultValue={error}>
+              {error}
+            </EditableText>
+          </Text>
         </Container>
       </Container>
     );

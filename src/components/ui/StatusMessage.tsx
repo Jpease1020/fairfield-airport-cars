@@ -3,6 +3,7 @@ import { Button } from './button';
 import { GridSection } from './GridSection';
 import { Container, Span } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
+import { EditableText } from '@/components/ui';
 
 export interface StatusMessageProps {
   type: 'success' | 'error' | 'warning' | 'info';
@@ -32,7 +33,9 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
       <Container>
         <Stack direction="horizontal" spacing="sm" align="center">
           <Span>{icon || getDefaultIcon()}</Span>
-          <Span>{message}</Span>
+          <EditableText field="statusmessage.message" defaultValue={message}>
+            {message}
+          </EditableText>
         </Stack>
         
         {onDismiss && (

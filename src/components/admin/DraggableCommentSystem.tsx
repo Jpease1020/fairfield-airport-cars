@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Container, Text, H3 } from '@/components/ui';
+import { Container, Text, H3, EditableText } from '@/components/ui';
 import { useEditMode } from './EditModeProvider';
 
 interface Comment {
@@ -102,9 +102,15 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
       {isAddingComment && (
         <Container>
           <MessageCircle />
-          <H3>Add Comment</H3>
+          <H3>
+            <EditableText field="draggableComment.addCommentTitle" defaultValue="Add Comment">
+              Add Comment
+            </EditableText>
+          </H3>
           <Text>
-            Type your feedback below. After adding, you can drag the comment icon to any element on the page.
+            <EditableText field="draggableComment.instructions" defaultValue="Type your feedback below. After adding, you can drag the comment icon to any element on the page.">
+              Type your feedback below. After adding, you can drag the comment icon to any element on the page.
+            </EditableText>
           </Text>
           <Textarea
             value={newCommentText}
@@ -117,7 +123,9 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
             onClick={handleAddComment}
             disabled={!newCommentText.trim()}
           >
-            Add Comment
+            <EditableText field="draggableComment.addCommentButton" defaultValue="Add Comment">
+              Add Comment
+            </EditableText>
           </Button>
           <Button
             onClick={() => {
@@ -126,7 +134,9 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
             }}
             variant="outline"
           >
-            Cancel
+            <EditableText field="draggableComment.cancelButton" defaultValue="Cancel">
+              Cancel
+            </EditableText>
           </Button>
         </Container>
       )}
@@ -135,9 +145,15 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
       {comments.map((comment) => (
         <Container key={comment.id}>
           <MessageCircle />
-          <Text>{comment.text}</Text>
           <Text>
-            {comment.createdAt.toLocaleDateString()} at {comment.createdAt.toLocaleTimeString()}
+            <EditableText field="draggableComment.commentText" defaultValue={comment.text}>
+              {comment.text}
+            </EditableText>
+          </Text>
+          <Text>
+            <EditableText field="draggableComment.commentTimestamp" defaultValue={`${comment.createdAt.toLocaleDateString()} at ${comment.createdAt.toLocaleTimeString()}`}>
+              {comment.createdAt.toLocaleDateString()} at {comment.createdAt.toLocaleTimeString()}
+            </EditableText>
           </Text>
           <Text>▼</Text>
           <Button

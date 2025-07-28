@@ -14,7 +14,8 @@ import {
   ToastProvider,
   useToast,
   Span,
-  Container
+  Container,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { Booking } from '@/types/booking';
@@ -205,8 +206,12 @@ function AdminBookingsPageContent() {
       render: (_, booking) => (
         <Container>
           <Stack>
-            <Span>{booking.name}</Span>
-            <Span>{booking.email}</Span>
+            <EditableText field="admin.bookings.customerName" defaultValue={booking.name}>
+              {booking.name}
+            </EditableText>
+            <EditableText field="admin.bookings.customerEmail" defaultValue={`📧 ${booking.email}`}>
+              📧 {booking.email}
+            </EditableText>
           </Stack>
         </Container>
       )
@@ -218,8 +223,12 @@ function AdminBookingsPageContent() {
       render: (_, booking) => (
         <Container>
           <Stack>
-            <Span>{booking.pickupLocation}</Span>
-            <Span>→ {booking.dropoffLocation}</Span>
+            <EditableText field="admin.bookings.pickupLocation" defaultValue={`📍 ${booking.pickupLocation}`}>
+              📍 {booking.pickupLocation}
+            </EditableText>
+            <EditableText field="admin.bookings.dropoffLocation" defaultValue={`🎯 ${booking.dropoffLocation}`}>
+              🎯 {booking.dropoffLocation}
+            </EditableText>
           </Stack>
         </Container>
       )
@@ -233,8 +242,12 @@ function AdminBookingsPageContent() {
         return (
           <Container>
             <Stack>
-              <Span>{date.toLocaleDateString()}</Span>
-              <Span>{date.toLocaleTimeString()}</Span>
+              <EditableText field="admin.bookings.date" defaultValue={date.toLocaleDateString()}>
+                {date.toLocaleDateString()}
+              </EditableText>
+              <EditableText field="admin.bookings.time" defaultValue={date.toLocaleTimeString()}>
+                {date.toLocaleTimeString()}
+              </EditableText>
             </Stack>
           </Container>
         );
@@ -245,7 +258,9 @@ function AdminBookingsPageContent() {
       label: 'Fare',
       sortable: true,
       render: (value) => (
-        <Span>${(value || 0).toFixed(2)}</Span>
+        <EditableText field="admin.bookings.fare" defaultValue={`💰 $${(value || 0).toFixed(2)}`}>
+          💰 ${(value || 0).toFixed(2)}
+        </EditableText>
       )
     },
     {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, H3, Text, Span, Link } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
+import { EditableText } from '@/components/ui';
 
 // StatCard Component - BULLETPROOF TYPE SAFETY!
 interface StatCardProps {
@@ -26,7 +27,11 @@ export const StatCard: React.FC<StatCardProps> = ({
   const cardContent = (
     <>
       <Stack direction="horizontal" justify="between" align="center">
-        <H3>{title}</H3>
+        <H3>
+          <EditableText field="statcard.title" defaultValue={title}>
+            {title}
+          </EditableText>
+        </H3>
         <Span>{icon}</Span>
       </Stack>
       <Stack>
@@ -35,7 +40,11 @@ export const StatCard: React.FC<StatCardProps> = ({
           <Text>{statChange}</Text>
         )}
         {description && (
-          <Text>{description}</Text>
+          <Text>
+            <EditableText field="statcard.description" defaultValue={description}>
+              {description}
+            </EditableText>
+          </Text>
         )}
       </Stack>
     </>

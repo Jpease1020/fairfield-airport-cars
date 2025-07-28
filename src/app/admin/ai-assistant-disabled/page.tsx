@@ -92,11 +92,15 @@ const AIAssistantDisabledPage = () => {
           <Stack spacing="md" align="center">
             <Text size="xl">🚫</Text>
             <H3>
-              AI Assistant Not Available
+              <EditableText field="admin.aiAssistant.notAvailable.title" defaultValue="AI Assistant Not Available">
+                AI Assistant Not Available
+              </EditableText>
             </H3>
             <Text>
-              The AI assistant feature is currently disabled for your account. 
-              This feature may be enabled in future updates or through your subscription plan.
+              <EditableText field="admin.aiAssistant.notAvailable.description" defaultValue="The AI assistant feature is currently disabled for your account. This feature may be enabled in future updates or through your subscription plan.">
+                The AI assistant feature is currently disabled for your account. 
+                This feature may be enabled in future updates or through your subscription plan.
+              </EditableText>
             </Text>
           </Stack>
         </InfoCard>

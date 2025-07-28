@@ -8,7 +8,8 @@ import {
   FeatureGrid,
   ToastProvider,
   useToast,
-  Text
+  Text,
+  EditableText
 } from '@/components/ui';
 
 function PortalPageContent() {
@@ -73,7 +74,9 @@ function PortalPageContent() {
           title="👋 Welcome to Your Portal"
           description="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away."
         >
-          <Text>🎯 Quick Access Portal</Text>
+          <EditableText field="portal.title" defaultValue="Customer Portal">
+            Customer Portal
+          </EditableText>
         </InfoCard>
       </GridSection>
 

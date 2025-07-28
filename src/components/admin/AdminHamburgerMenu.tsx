@@ -44,7 +44,11 @@ const AdminHamburgerMenu = () => {
         variant="ghost"
         size="sm"
       >
-        <Span>{isOpen ? '✕' : '☰'}</Span>
+        <Span>
+          <EditableText field="adminHamburgerMenu.menuIcon" defaultValue={isOpen ? '✕' : '☰'}>
+            {isOpen ? '✕' : '☰'}
+          </EditableText>
+        </Span>
       </Button>
 
       {/* Menu Dropdown */}

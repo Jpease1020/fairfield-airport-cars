@@ -154,11 +154,26 @@ function AdminHelpPage() {
             title={`${section.icon} ${section.title}`}
             description={section.description}
           >
+            <Container>
+              <H4>
+                <EditableText field="admin.help.section.title" defaultValue={section.title}>
+                  {section.title}
+                </EditableText>
+              </H4>
+              <EditableText field="admin.help.section.description" defaultValue={section.description}>
+                {section.description}
+              </EditableText>
+            </Container>
+            
             <Stack spacing="md">
-              {section.items.map((item, itemIndex) => (
-                <Container key={itemIndex}>
-                  <H4>{item.question}</H4>
-                  <Text>{item.answer}</Text>
+              {section.items.map((item, index) => (
+                <Container key={index}>
+                  <EditableText field={`admin.help.question.${index}`} defaultValue={item.question}>
+                    {item.question}
+                  </EditableText>
+                  <EditableText field={`admin.help.answer.${index}`} defaultValue={item.answer}>
+                    {item.answer}
+                  </EditableText>
                 </Container>
               ))}
             </Stack>

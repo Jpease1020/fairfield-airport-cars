@@ -106,7 +106,9 @@ function FeedbackPageContent() {
           <Form onSubmit={handleSubmit}>
             <Text>
               <Label htmlFor="rating">
-                How was your ride?
+                <EditableText field="feedback.ratingLabel" defaultValue="How was your ride?">
+                  How was your ride?
+                </EditableText>
               </Label>
             </Text>
             <Text>
@@ -123,17 +125,43 @@ function FeedbackPageContent() {
               ))}
             </Text>
             <Text>
-              {rating === 0 && 'Click a star to rate'}
-              {rating === 1 && 'Poor'}
-              {rating === 2 && 'Fair'}
-              {rating === 3 && 'Good'}
-              {rating === 4 && 'Very Good'}
-              {rating === 5 && 'Excellent'}
+              {rating === 0 && (
+                <EditableText field="feedback.clickStarToRate" defaultValue="Click a star to rate">
+                  Click a star to rate
+                </EditableText>
+              )}
+              {rating === 1 && (
+                <EditableText field="feedback.ratingPoor" defaultValue="Poor">
+                  Poor
+                </EditableText>
+              )}
+              {rating === 2 && (
+                <EditableText field="feedback.ratingFair" defaultValue="Fair">
+                  Fair
+                </EditableText>
+              )}
+              {rating === 3 && (
+                <EditableText field="feedback.ratingGood" defaultValue="Good">
+                  Good
+                </EditableText>
+              )}
+              {rating === 4 && (
+                <EditableText field="feedback.ratingVeryGood" defaultValue="Very Good">
+                  Very Good
+                </EditableText>
+              )}
+              {rating === 5 && (
+                <EditableText field="feedback.ratingExcellent" defaultValue="Excellent">
+                  Excellent
+                </EditableText>
+              )}
             </Text>
 
             <Text>
               <Label htmlFor="comment">
-                Additional Comments (Optional)
+                <EditableText field="feedback.commentsLabel" defaultValue="Additional Comments (Optional)">
+                  Additional Comments (Optional)
+                </EditableText>
               </Label>
             </Text>
             <Text>
@@ -153,7 +181,15 @@ function FeedbackPageContent() {
                 variant="primary"
                 size="lg"
               >
-                {loading ? 'Submitting...' : '⭐ Submit Feedback'}
+                {loading ? (
+                  <EditableText field="feedback.submitting" defaultValue="Submitting...">
+                    Submitting...
+                  </EditableText>
+                ) : (
+                  <EditableText field="feedback.submitFeedback" defaultValue="⭐ Submit Feedback">
+                    ⭐ Submit Feedback
+                  </EditableText>
+                )}
               </Button>
             </Text>
           </Form>

@@ -82,7 +82,9 @@ export default function AnalyticsPage() {
         </EditableText>
         <Button onClick={fetchAnalytics} variant="outline" size="sm">
           <Span>🔄</Span>
-          Refresh
+          <EditableText field="admin.analytics.refreshButton" defaultValue="Refresh">
+            Refresh
+          </EditableText>
         </Button>
       </Stack>
       
@@ -147,7 +149,9 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>🖱️</Span>
-                  Top Interaction Types
+                  <EditableText field="admin.analytics.topInteractionTypes" defaultValue="Top Interaction Types">
+                    Top Interaction Types
+                  </EditableText>
                 </H2>
                 <Container>
                   {getTopInteractions().map(([type, count]) => (
@@ -167,7 +171,9 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>⚠️</Span>
-                  Top Error Types
+                  <EditableText field="admin.analytics.topErrorTypes" defaultValue="Top Error Types">
+                    Top Error Types
+                  </EditableText>
                 </H2>
                 <Container>
                   {getTopErrors().map(([type, count]) => (
@@ -185,7 +191,9 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>📝</Span>
-                  Most Interacted Elements
+                  <EditableText field="admin.analytics.mostInteractedElements" defaultValue="Most Interacted Elements">
+                    Most Interacted Elements
+                  </EditableText>
                 </H2>
                 <Container>
                   {getTopElements().map(([element, count]) => (
@@ -203,7 +211,9 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>⏰</Span>
-                  Recent Activity
+                  <EditableText field="admin.analytics.recentActivity" defaultValue="Recent Activity">
+                    Recent Activity
+                  </EditableText>
                 </H2>
                 <Container>
                   {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
@@ -223,7 +233,9 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>⚠️</Span>
-                  Recent Errors
+                  <EditableText field="admin.analytics.recentErrors" defaultValue="Recent Errors">
+                    Recent Errors
+                  </EditableText>
                 </H2>
                 <Container>
                   {analytics.recentErrors.slice(0, 10).map((error, index) => (
@@ -232,7 +244,11 @@ export default function AnalyticsPage() {
                         <Span>{error.message}</Span>
                         <Span>{new Date(error.timestamp).toLocaleString()}</Span>
                       </Stack>
-                      <Text>Type: {error.type} • Page: {error.page}</Text>
+                      <Text>
+                        <EditableText field="admin.analytics.errorDetails" defaultValue={`Type: ${error.type} • Page: ${error.page}`}>
+                          Type: {error.type} • Page: {error.page}
+                        </EditableText>
+                      </Text>
                     </Container>
                   ))}
                 </Container>

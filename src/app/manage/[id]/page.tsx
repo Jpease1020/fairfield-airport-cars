@@ -11,7 +11,8 @@ import {
   useToast,
   Text,
   Span,
-  Container
+  Container,
+  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/containers';
 import { EditableInput } from '@/components/forms';
@@ -165,7 +166,9 @@ function ManageBookingPageContent() {
         <GridSection variant="content" columns={1}>
           <InfoCard title="⏳ Loading" description="Loading your booking information">
             <Container>
-              Loading...
+              <EditableText field="manage.loading" defaultValue="Loading...">
+                Loading...
+              </EditableText>
             </Container>
           </InfoCard>
         </GridSection>
@@ -184,7 +187,9 @@ function ManageBookingPageContent() {
           <InfoCard title="❌ Error" description="Booking could not be found">
             <Container>
               <Text>
-                {error || localContent?.notFoundMessage || 'Booking not found'}
+                <EditableText field="manage.notFound" defaultValue={error || localContent?.notFoundMessage || 'Booking not found'}>
+                  {error || localContent?.notFoundMessage || 'Booking not found'}
+                </EditableText>
               </Text>
               <ActionButtonGroup buttons={[
                 {
@@ -403,7 +408,9 @@ function ManageBookingPageContent() {
         <GridSection variant="content" columns={1}>
           <InfoCard title="📢 Action Result" description="Result of your recent action">
             <Container>
-              {actionMsg}
+              <EditableText field="manage.actionMessage" defaultValue={actionMsg}>
+                {actionMsg}
+              </EditableText>
             </Container>
           </InfoCard>
         </GridSection>

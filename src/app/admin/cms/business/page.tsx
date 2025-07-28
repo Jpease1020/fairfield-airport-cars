@@ -193,65 +193,65 @@ function BusinessPageContent() {
             >
               <Stack spacing="md">
                 <SettingInput
-                  id="company-name"
-                  label="Company Name"
-                  description="Your official business name"
-                  value={settings.company.name}
-                  onChange={(value) => handleInputChange('company', 'name', value)}
-                  placeholder="Your Company Name"
-                  icon="🏢"
-                />
-                
-                <SettingInput
-                  id="company-tagline"
-                  label="Tagline"
-                  description="A brief description of your business"
-                  value={settings.company.tagline || ''}
-                  onChange={(value) => handleInputChange('company', 'tagline', value)}
-                  placeholder="Your company tagline"
-                  icon="💬"
-                />
-                
-                <SettingInput
-                  id="company-phone"
-                  label="Phone Number"
-                  description="Primary contact phone number"
-                  value={settings.company.phone}
-                  onChange={(value) => handleInputChange('company', 'phone', value)}
-                  placeholder="(555) 123-4567"
-                  icon="📞"
-                />
-                
-                <SettingInput
-                  id="company-email"
-                  label="Email Address"
-                  description="Primary contact email address"
-                  type="email"
-                  value={settings.company.email}
-                  onChange={(value) => handleInputChange('company', 'email', value)}
-                  placeholder="contact@company.com"
-                  icon="✉️"
-                />
-                
-                <SettingInput
-                  id="company-address"
-                  label="Address"
-                  description="Business physical address"
-                  value={settings.company.address || ''}
-                  onChange={(value) => handleInputChange('company', 'address', value)}
-                  placeholder="123 Main St, City, State 12345"
-                  icon="📍"
-                />
-                
-                <SettingInput
-                  id="company-hours"
-                  label="Business Hours"
-                  description="Operating hours for customers"
-                  value={settings.company.hours || ''}
-                  onChange={(value) => handleInputChange('company', 'hours', value)}
-                  placeholder="Mon-Fri 9am-5pm"
-                  icon="🕒"
-                />
+                    id="company-name"
+                    label="Company Name"
+                    description="Your official business name"
+                    value={settings.company.name}
+                    onChange={(value) => handleInputChange('company', 'name', value)}
+                    placeholder="Your Company Name"
+                    icon="🏢"
+                  />
+                  
+                  <SettingInput
+                    id="company-tagline"
+                    label="Tagline"
+                    description="A brief description of your business"
+                    value={settings.company.tagline || ''}
+                    onChange={(value) => handleInputChange('company', 'tagline', value)}
+                    placeholder="Your company tagline"
+                    icon="💬"
+                  />
+                  
+                  <SettingInput
+                    id="company-phone"
+                    label="Phone Number"
+                    description="Primary contact phone number"
+                    value={settings.company.phone}
+                    onChange={(value) => handleInputChange('company', 'phone', value)}
+                    placeholder="(555) 123-4567"
+                    icon="📞"
+                  />
+                  
+                  <SettingInput
+                    id="company-email"
+                    label="Email Address"
+                    description="Primary contact email address"
+                    type="email"
+                    value={settings.company.email}
+                    onChange={(value) => handleInputChange('company', 'email', value)}
+                    placeholder="contact@company.com"
+                    icon="✉️"
+                  />
+                  
+                  <SettingInput
+                    id="company-address"
+                    label="Address"
+                    description="Business physical address"
+                    value={settings.company.address || ''}
+                    onChange={(value) => handleInputChange('company', 'address', value)}
+                    placeholder="123 Main St, City, State 12345"
+                    icon="📍"
+                  />
+                  
+                  <SettingInput
+                    id="company-hours"
+                    label="Business Hours"
+                    description="Operating hours for customers"
+                    value={settings.company.hours || ''}
+                    onChange={(value) => handleInputChange('company', 'hours', value)}
+                    placeholder="Mon-Fri 9am-5pm"
+                    icon="🕒"
+                  />
               </Stack>
             </SettingSection>
 
@@ -262,6 +262,14 @@ function BusinessPageContent() {
               icon="📱"
             >
               <Stack spacing="md">
+                <EditableText field="admin.cms.business.social" defaultValue="Social Media">
+                  Social Media
+                </EditableText>
+                
+                <EditableText field="admin.cms.business.socialDesc" defaultValue="Your social media profiles">
+                  Your social media profiles
+                </EditableText>
+                
                 <SettingInput
                   id="social-facebook"
                   label="Facebook URL"
@@ -352,12 +360,24 @@ function BusinessPageContent() {
               icon="👀"
             >
               <Stack spacing="lg">
-                <H3>{settings.company.name}</H3>
-                <Text>{settings.company.tagline}</Text>
-                <Text>📞 {settings.company.phone}</Text>
-                <Text>✉️ {settings.company.email}</Text>
-                <Text>📍 {settings.company.address}</Text>
-                <Text>🕒 {settings.company.hours}</Text>
+                <EditableText field="admin.cms.business.companyName" defaultValue="Company Name">
+                  Company Name
+                </EditableText>
+                <EditableText field="admin.cms.business.companyNameDesc" defaultValue="Your business name as it appears to customers">
+                  Your business name as it appears to customers
+                </EditableText>
+                <EditableText field="admin.cms.business.phone" defaultValue="Phone Number">
+                  Phone Number
+                </EditableText>
+                <EditableText field="admin.cms.business.email" defaultValue="Email Address">
+                  Email Address
+                </EditableText>
+                <EditableText field="admin.cms.business.address" defaultValue="Address">
+                  Address
+                </EditableText>
+                <EditableText field="admin.cms.business.hours" defaultValue="Business Hours">
+                  Business Hours
+                </EditableText>
               </Stack>
             </SettingSection>
           </Container>

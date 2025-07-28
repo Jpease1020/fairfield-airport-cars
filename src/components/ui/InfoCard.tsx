@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, H3, Text, Span } from '@/components/ui';
+import { Container, H3, Text, Span, EditableText } from '@/components/ui';
 
 interface InfoCardProps {
   title: string;
@@ -30,11 +30,15 @@ export const InfoCard: React.FC<InfoCardProps> = ({
               {icon}
             </Span>
           )}
-          {title}
+          <EditableText field="infocard.title" defaultValue={title}>
+            {title}
+          </EditableText>
         </H3>
         {cardDescription && (
           <Text>
-            {cardDescription}
+            <EditableText field="infocard.description" defaultValue={cardDescription}>
+              {cardDescription}
+            </EditableText>
           </Text>
         )}
       </Container>

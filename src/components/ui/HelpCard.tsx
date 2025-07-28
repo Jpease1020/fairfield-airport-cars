@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardBody } from './card';
 import { Stack, Span, Text } from '@/components/ui';
+import { EditableText } from '@/components/ui';
 
 // HelpCard Component - BULLETPROOF TYPE SAFETY!
 export interface HelpCardProps {
@@ -24,9 +25,13 @@ export const HelpCard: React.FC<HelpCardProps> = ({
             <Span>
               {icon}
             </Span>
-            <Text>{title}</Text>
+            <EditableText field="helpcard.title" defaultValue={title}>
+              {title}
+            </EditableText>
           </Stack>
-          <Text>{description}</Text>
+          <EditableText field="helpcard.description" defaultValue={description}>
+            {description}
+          </EditableText>
         </Stack>
       </CardBody>
     </Card>
