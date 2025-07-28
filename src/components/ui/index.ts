@@ -73,6 +73,8 @@ export { Button } from './button';
 export { Spinner } from './spinner';
 export { Input } from './input';
 export { Textarea } from './textarea';
+export { ActionItem } from './ActionItem';
+export type { ActionItemProps } from './ActionItem';
 
 
 // Form Components

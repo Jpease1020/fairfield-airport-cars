@@ -2,21 +2,14 @@ import React from 'react';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { PageHeader } from '@/components/layout/structure/PageHeader';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Container, Text, H3, EditableText, Button } from '@/components/ui';
+import { Container, Text, H3, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
-
-interface ActionItem {
-  label: string;
-  onClick: () => void;
-  variant?: 'primary' | 'outline' | 'secondary';
-  icon?: string;
-  disabled?: boolean;
-}
+import { ActionItem, ActionItemProps } from '@/components/ui/ActionItem';
 
 interface AdminPageWrapperProps {
   title: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
-  actions?: React.ReactNode[] | ActionItem[];
+  actions?: React.ReactNode[] | ActionItemProps[];
   loading?: boolean;
   error?: string | null;
   loadingMessage?: string;
@@ -47,17 +40,16 @@ export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({
         return action;
       }
       
-      const actionItem = action as ActionItem;
+      const actionItem = action as ActionItemProps;
       return (
-        <Button
+        <ActionItem
           key={index}
-          variant={actionItem.variant || 'outline'}
+          label={actionItem.label}
           onClick={actionItem.onClick}
+          variant={actionItem.variant}
+          icon={actionItem.icon}
           disabled={actionItem.disabled}
-        >
-          {actionItem.icon && <span>{actionItem.icon}</span>}
-          {actionItem.label}
-        </Button>
+        />
       );
     });
   }, [actions]);
