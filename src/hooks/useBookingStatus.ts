@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getBooking, updateBookingStatus } from '@/lib/services/booking-service';
+import { getBooking, updateBookingStatus, assignDriverToBooking } from '@/lib/services/booking-service';
 
 export interface BookingStatus {
   id: string;
@@ -93,7 +93,12 @@ export const useBookingStatus = (bookingId: string) => {
   // Update booking status
   const updateStatus = useCallback(async (newStatus: BookingStatus['status'], driverId?: string) => {
     try {
-      await updateBookingStatus(bookingId, newStatus, driverId);
+      await updateBookingStatus(bookingId, newStatus);
+      
+      // If driverId is provided, assign driver separately
+      if (driverId) {
+        await assignDriverToBooking(bookingId, driverId); 
+      }
       
       // Update local state
       setStatus(prev => prev ? {

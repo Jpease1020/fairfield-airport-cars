@@ -291,19 +291,69 @@ export const getEstimatedArrival = async (bookingId: string): Promise<Date | nul
 // Time slot availability check
 export const isTimeSlotAvailable = async (pickupDate: Date, bufferMinutes = 60): Promise<boolean> => {
   try {
-    const response = await fetch('/api/check-time-slot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pickupDateTime: pickupDate.toISOString(),
-        bufferMinutes,
-      }),
+    // Get all bookings for the same day
+    const startOfDay = new Date(pickupDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(pickupDate);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    const bookings = await getBookings();
+    const dayBookings = bookings.filter(booking => {
+      const bookingDate = safeToDate(booking.pickupDateTime);
+      return bookingDate >= startOfDay && bookingDate <= endOfDay;
     });
-
-    const result = await response.json();
-    return result.isAvailable || true; // Default to available if API fails
+    
+    // Check if the requested time slot conflicts with existing bookings
+    const requestedStart = new Date(pickupDate.getTime() - bufferMinutes * 60 * 1000);
+    const requestedEnd = new Date(pickupDate.getTime() + bufferMinutes * 60 * 1000);
+    
+    for (const booking of dayBookings) {
+      const bookingStart = new Date(safeToDate(booking.pickupDateTime).getTime() - bufferMinutes * 60 * 1000);
+      const bookingEnd = new Date(safeToDate(booking.pickupDateTime).getTime() + bufferMinutes * 60 * 1000);
+      
+      if (requestedStart < bookingEnd && requestedEnd > bookingStart) {
+        return false; // Time slot conflicts
+      }
+    }
+    
+    return true; // Time slot is available
   } catch (error) {
-    console.error('Error checking time slot:', error);
-    return true; // Default to available to avoid blocking bookings
+    console.error('Error checking time slot availability:', error);
+    return false;
+  }
+};
+
+// Get available drivers for a specific time
+export const getAvailableDrivers = async (pickupTime?: Date): Promise<Driver[]> => {
+  try {
+    // In a real app, this would query the database for available drivers
+    // For now, return Gregg as the main available driver
+    const greggDriver: Driver = {
+      id: 'gregg-main-driver',
+      name: 'Gregg',
+      phone: '(203) 555-0123',
+      vehicle: 'Toyota Highlander',
+      licensePlate: 'CT-ABC123',
+      status: 'available',
+      currentLocation: {
+        lat: 41.1792, // Fairfield, CT coordinates
+        lng: -73.1894
+      },
+      lastUpdated: new Date()
+    };
+    
+    // If a specific pickup time is provided, check availability
+    if (pickupTime) {
+      const isAvailable = await isTimeSlotAvailable(pickupTime);
+      if (!isAvailable) {
+        return []; // No drivers available for this time
+      }
+    }
+    
+    return [greggDriver];
+  } catch (error) {
+    console.error('Error getting available drivers:', error);
+    return [];
   }
 };

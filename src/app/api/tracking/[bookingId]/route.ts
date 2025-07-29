@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getBooking } from '@/lib/services/booking-service';
 import { getDriver } from '@/lib/services/driver-service';
 
 export async function GET(
-  request: Request,
-  { params }: { params: { bookingId: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ bookingId: string }> }
 ) {
   try {
-    const { bookingId } = params;
+    const { bookingId } = await params;
 
     // Get booking details
     const booking = await getBooking(bookingId);
