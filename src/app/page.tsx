@@ -262,7 +262,7 @@ function HomePageContent() {
             </H2>
             <Text id="testimonials-subtitle" variant="lead" align="center">
               <EditableText field="testimonials.subtitle" defaultValue="Don&apos;t just take our word for it - hear from our satisfied customers">
-                Don't just take our word for it - hear from our satisfied customers
+                Don&apos;t just take our word for it - hear from our satisfied customers
               </EditableText>
             </Text>
           </Stack>
@@ -274,7 +274,7 @@ function HomePageContent() {
                   <Stack spacing="md">
                     <Span id={`testimonials-quote-${index + 1}`} variant="italic">
                       <EditableText field={`testimonials.items.${index}.text`} defaultValue={testimonial.text}>
-                        "{testimonial.text}"
+                        &quot;{testimonial.text}&quot;
                       </EditableText>
                     </Span>
                     <Stack direction="horizontal" spacing="sm" align="center">

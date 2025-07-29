@@ -5,18 +5,14 @@ import styled from 'styled-components';
 const StyledImage = styled(Image)`
   max-width: 100%;
   height: auto;
-  object-fit: contain;
-  object-position: center;
 `;
 
 export interface LogoProps {
   alt?: string;
   width?: number;
   height?: number;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  variant?: 'default' | 'white' | 'dark' | 'no-background';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   priority?: boolean;
-  className?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ 
@@ -24,46 +20,28 @@ const Logo: React.FC<LogoProps> = ({
   width,
   height,
   size = 'md',
-  variant = 'default',
-  priority = false,
-  className
+  priority = false
 }) => {
   // Size mapping
   const sizeMap = {
-    xs: { width: 60, height: 60 },
-    sm: { width: 120, height: 120 },
-    md: { width: 180, height: 180 },
-    lg: { width: 240, height: 240 },
-    xl: { width: 360, height: 360 },
-    '2xl': { width: 480, height: 480 }
+    xs: { width: 16, height: 16 },
+    sm: { width: 24, height: 24 },
+    md: { width: 32, height: 32 },
+    lg: { width: 48, height: 48 },
+    xl: { width: 64, height: 64 }
   };
 
   // Use provided dimensions or size-based dimensions
   const finalWidth = width || sizeMap[size].width;
   const finalHeight = height || sizeMap[size].height;
 
-  // Variant-based image source
-  const getImageSrc = () => {
-    switch (variant) {
-      case 'white':
-        return '/NewLogoWhite.svg';
-      case 'dark':
-        return '/NewLogoDark.svg';
-      case 'no-background':
-        return '/NewLogoNoBackground.svg';
-      default:
-        return '/NewLogoNoBackground.svg'; // Use no-background version by default
-    }
-  };
-
   return (
     <StyledImage
-      src={getImageSrc()}
+      src="/fairfield_logo.png"
       alt={alt}
       width={finalWidth}
       height={finalHeight}
       priority={priority}
-      className={className}
     />
   );
 };

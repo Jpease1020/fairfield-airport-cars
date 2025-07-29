@@ -3,13 +3,11 @@
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
-  InfoCard,
   ToastProvider,
   Container,
+  Stack,
   EditableText,
   EditableHeading,
-  Text,
-  Stack,
   Card,
   CardBody
 } from '@/components/ui';

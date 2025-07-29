@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { 
   Container, 
@@ -53,22 +53,22 @@ export default function TrackingPage() {
     return () => clearInterval(interval);
   }, [bookingId]);
 
-  const loadTrackingData = async () => {
+  const loadTrackingData = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await fetch(`/api/tracking/${bookingId}`);
       if (response.ok) {
         const data = await response.json();
         setTrackingData(data);
       } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'Failed to load tracking data');
+        setError('Failed to load tracking data');
       }
-    } catch (err) {
-      setError('Network error. Please try again.');
+    } catch (error) {
+      setError('Failed to load tracking data');
     } finally {
       setLoading(false);
     }
-  };
+  }, [bookingId]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -4,11 +4,9 @@ import React from 'react';
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
-  InfoCard,
   FeatureGrid,
   ToastProvider,
   useToast,
-  Text,
   EditableText,
   EditableHeading,
   Container,

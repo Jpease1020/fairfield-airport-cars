@@ -16,7 +16,6 @@ export interface LogoProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   variant?: 'default' | 'white' | 'dark' | 'no-background';
   priority?: boolean;
-  className?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ 
@@ -25,8 +24,7 @@ const Logo: React.FC<LogoProps> = ({
   height,
   size = 'md',
   variant = 'default',
-  priority = false,
-  className
+  priority = false
 }) => {
   // Size mapping
   const sizeMap = {
@@ -63,7 +61,6 @@ const Logo: React.FC<LogoProps> = ({
       width={finalWidth}
       height={finalHeight}
       priority={priority}
-      className={className}
     />
   );
 };

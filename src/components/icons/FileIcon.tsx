@@ -13,7 +13,6 @@ export interface FileIconProps {
   height?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   priority?: boolean;
-  className?: string;
 }
 
 const FileIcon: React.FC<FileIconProps> = ({ 
@@ -21,8 +20,7 @@ const FileIcon: React.FC<FileIconProps> = ({
   width,
   height,
   size = 'md',
-  priority = false,
-  className
+  priority = false
 }) => {
   // Size mapping
   const sizeMap = {
@@ -44,7 +42,6 @@ const FileIcon: React.FC<FileIconProps> = ({
       width={finalWidth}
       height={finalHeight}
       priority={priority}
-      className={className}
     />
   );
 };

@@ -171,7 +171,7 @@ function SuccessPageContent() {
           <Stack spacing="lg" gap="xl">
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="success-next-steps-title" level={3} field="success.nextSteps.title" defaultValue="📋 What Happens Next?">📋 What Happens Next?</EditableHeading>
-              <EditableText data-testid="success-next-steps-description" field="success.nextSteps.description" defaultValue="Here's what you can expect from us">Here's what you can expect from us</EditableText>
+              <EditableText data-testid="success-next-steps-description" field="success.nextSteps.description" defaultValue="Here&apos;s what you can expect from us">Here&apos;s what you can expect from us</EditableText>
             </Stack>
             
             <Stack data-testid="success-next-steps-list" spacing="md">

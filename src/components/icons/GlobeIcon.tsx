@@ -13,7 +13,6 @@ export interface GlobeIconProps {
   height?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   priority?: boolean;
-  className?: string;
 }
 
 const GlobeIcon: React.FC<GlobeIconProps> = ({ 
@@ -21,8 +20,7 @@ const GlobeIcon: React.FC<GlobeIconProps> = ({
   width,
   height,
   size = 'md',
-  priority = false,
-  className
+  priority = false
 }) => {
   // Size mapping
   const sizeMap = {
@@ -44,7 +42,6 @@ const GlobeIcon: React.FC<GlobeIconProps> = ({
       width={finalWidth}
       height={finalHeight}
       priority={priority}
-      className={className}
     />
   );
 };

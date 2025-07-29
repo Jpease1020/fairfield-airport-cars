@@ -3,9 +3,7 @@
 import { UnifiedLayout } from '@/components/layout';
 import { 
   GridSection,
-  InfoCard,
   ToastProvider,
-  H3,
   Text,
   Container,
   Stack,

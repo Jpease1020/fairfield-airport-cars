@@ -13,7 +13,6 @@ export interface WindowIconProps {
   height?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   priority?: boolean;
-  className?: string;
 }
 
 const WindowIcon: React.FC<WindowIconProps> = ({ 
@@ -21,8 +20,7 @@ const WindowIcon: React.FC<WindowIconProps> = ({
   width,
   height,
   size = 'md',
-  priority = false,
-  className
+  priority = false
 }) => {
   // Size mapping
   const sizeMap = {
@@ -44,7 +42,6 @@ const WindowIcon: React.FC<WindowIconProps> = ({
       width={finalWidth}
       height={finalHeight}
       priority={priority}
-      className={className}
     />
   );
 };

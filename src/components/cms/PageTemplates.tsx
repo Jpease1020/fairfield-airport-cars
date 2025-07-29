@@ -4,7 +4,8 @@ import { Card, Stack } from '@/components/ui/layout/containers';
 import { CardBody } from '@/components/ui/card';
 import { CMSStatusPage } from '@/components/layout/cms/CMSStatusPage';
 import { useCMS } from '@/hooks/useCMS';
-import { useEditMode } from '@/components/admin/EditModeProvider';
+import { useBusinessSettings } from '@/hooks/useBusinessSettings';
+import { EditableText, EditableHeading } from '@/components/ui';
 import { CMSConfiguration } from '@/types/cms';
 
 // ============================================================================
