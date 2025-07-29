@@ -1,375 +1,323 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
-  AdminPageWrapper,
-  GridSection, 
-  StatCard, 
-  InfoCard, 
-  ActionGrid,
-  DataTable,
-  DataTableColumn,
-  DataTableAction,
-  ToastProvider,
-  useToast,
-  Container,
-  Span,
-  EditableText
-} from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
-import { Button } from '@/components/ui/button';
-
-interface Driver {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  status: 'available' | 'on-trip' | 'offline';
-  vehicle: {
-    make: string;
-    model: string;
-    year: number;
-    color: string;
-    licensePlate: string;
-  };
-  rating: number;
-  totalRides: number;
-  location?: {
-    lat: number;
-    lng: number;
-    timestamp: Date;
-  };
-  createdAt: Date;
-}
+import React, { useState, useEffect, useCallback } from 'react';
+import { NextPage } from 'next';
+import withAuth from '../withAuth';
+import { getAllDrivers, getAvailableDrivers, updateDocument, type Driver } from '@/lib/services/database-service';
 
 function DriversPageContent() {
-  const { addToast } = useToast();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
-  useEffect(() => {
-    fetchDrivers();
-  }, []);
-
-  const fetchDrivers = async () => {
+  const fetchDrivers = useCallback(async () => {
     try {
       setError(null);
       setLoading(true);
-      console.log('👨‍💼 Loading drivers...');
+      console.log('👨‍💼 Loading drivers from database...');
 
-      // Mock data for now - will be replaced with real API call
-      const mockDrivers: Driver[] = [
-        {
-          id: '1',
-          name: 'John Smith',
-          phone: '(203) 555-0123',
-          email: 'john@fairfieldairportcars.com',
-          status: 'available',
-          vehicle: {
-            make: 'Toyota',
-            model: 'Camry',
-            year: 2022,
-            color: 'Silver',
-            licensePlate: 'CT-ABC123'
-          },
-          rating: 4.8,
-          totalRides: 156,
-          location: {
-            lat: 41.1408,
-            lng: -73.2613,
-            timestamp: new Date()
-          },
-          createdAt: new Date('2024-01-01')
-        },
-        {
-          id: '2',
-          name: 'Sarah Johnson',
-          phone: '(203) 555-0456',
-          email: 'sarah@fairfieldairportcars.com',
-          status: 'on-trip',
-          vehicle: {
-            make: 'Honda',
-            model: 'Accord',
-            year: 2021,
-            color: 'Black',
-            licensePlate: 'CT-DEF456'
-          },
-          rating: 4.9,
-          totalRides: 203,
-          createdAt: new Date('2024-01-15')
-        },
-        {
-          id: '3',
-          name: 'Mike Davis',
-          phone: '(203) 555-0789',
-          email: 'mike@fairfieldairportcars.com',
-          status: 'offline',
-          vehicle: {
-            make: 'BMW',
-            model: '3 Series',
-            year: 2023,
-            color: 'White',
-            licensePlate: 'CT-GHI789'
-          },
-          rating: 4.7,
-          totalRides: 98,
-          createdAt: new Date('2024-02-01')
-        },
-        {
-          id: '4',
-          name: 'Emily Chen',
-          phone: '(203) 555-0321',
-          email: 'emily@fairfieldairportcars.com',
-          status: 'available',
-          vehicle: {
-            make: 'Mercedes',
-            model: 'E-Class',
-            year: 2023,
-            color: 'Blue',
-            licensePlate: 'CT-JKL012'
-          },
-          rating: 4.6,
-          totalRides: 87,
-          createdAt: new Date('2024-02-15')
-        }
-      ];
+      let fetchedDrivers: Driver[];
       
-      console.log('✅ Drivers loaded:', mockDrivers.length, 'drivers');
-      setDrivers(mockDrivers);
+      if (selectedStatus === 'available') {
+        fetchedDrivers = await getAvailableDrivers();
+      } else {
+        fetchedDrivers = await getAllDrivers();
+      }
+      
+      console.log('✅ Drivers loaded from database:', fetchedDrivers.length, 'drivers');
+      setDrivers(fetchedDrivers);
+      
+      if (fetchedDrivers.length === 0) {
+        console.log('📝 No drivers found in database');
+      }
     } catch (err) {
-      console.error('❌ Error loading drivers:', err);
-      setError('Failed to load drivers. Please try again.');
+      console.error('❌ Error loading drivers from database:', err);
+      setError('Failed to load drivers from database. Please try again.');
     } finally {
       setLoading(false);
+    }
+  }, [selectedStatus]);
+
+  useEffect(() => {
+    fetchDrivers();
+  }, [fetchDrivers]);
+
+  const handleStatusUpdate = async (driver: Driver, newStatus: Driver['status']) => {
+    try {
+      console.log(`🔄 Updating driver ${driver.id} status to ${newStatus}`);
+      
+      await updateDocument('drivers', driver.id, { status: newStatus });
+      
+      // Update local state
+      setDrivers(prev => prev.map(d => 
+        d.id === driver.id ? { ...d, status: newStatus } : d
+      ));
+      
+      console.log('✅ Driver status updated successfully');
+    } catch (err) {
+      console.error('❌ Error updating driver status:', err);
+      setError('Failed to update driver status');
     }
   };
 
   const renderStatus = (status: string) => {
     const getStatusIcon = (status: string) => {
       switch (status) {
-        case 'available':
-          return '✅';
-        case 'on-trip':
-          return '👨‍💼';
-        case 'offline':
-          return '⏸️';
-        default:
-          return '❓';
+        case 'available': return '✅';
+        case 'busy': return '🚗';
+        case 'offline': return '⏸️';
+        default: return '❓';
+      }
+    };
+
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case 'available': return 'text-green-600 bg-green-100';
+        case 'busy': return 'text-blue-600 bg-blue-100';
+        case 'offline': return 'text-gray-600 bg-gray-100';
+        default: return 'text-gray-600 bg-gray-100';
       }
     };
 
     return (
-      <Span>
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
         {getStatusIcon(status)} {status}
-      </Span>
+      </span>
     );
   };
 
-  // Calculate driver stats
-  const totalDrivers = drivers.length;
-  const availableDrivers = drivers.filter(d => d.status === 'available').length;
-  const onTripDrivers = drivers.filter(d => d.status === 'on-trip').length;
-  const averageRating = drivers.length > 0 
-    ? (drivers.reduce((sum, d) => sum + d.rating, 0) / drivers.length).toFixed(1)
-    : '0.0';
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
+  };
 
-  // Table columns
-  const columns: DataTableColumn<Driver>[] = [
-    {
-      key: 'name',
-      label: 'Driver',
-      sortable: true,
-      render: (_: any, driver: Driver) => (
-        <Container>
-          <EditableText field="admin.drivers.name" defaultValue={driver.name}>
-            {driver.name}
-          </EditableText>
-        </Container>
-      )
-    },
-    {
-      key: 'vehicle',
-      label: 'Vehicle',
-      sortable: false,
-      render: (_: any, driver: Driver) => (
-        <Container>
-          <EditableText field="admin.drivers.vehicle" defaultValue={`🚙 ${driver.vehicle.year} ${driver.vehicle.make} ${driver.vehicle.model}`}>
-            🚙 {driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model}
-          </EditableText>
-          <EditableText field="admin.drivers.color" defaultValue={`Color: ${driver.vehicle.color}`}>
-            Color: {driver.vehicle.color}
-          </EditableText>
-          <EditableText field="admin.drivers.licensePlate" defaultValue={`Plate: ${driver.vehicle.licensePlate}`}>
-            Plate: {driver.vehicle.licensePlate}
-          </EditableText>
-        </Container>
-      )
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      sortable: true,
-      render: (value: any) => renderStatus(value)
-    },
-    {
-      key: 'rating',
-      label: 'Rating',
-      sortable: true,
-      render: (_: any, driver: Driver) => (
-        <Container>
-          <EditableText field="admin.drivers.rating" defaultValue={`⭐ ${driver.rating.toFixed(1)}`}>
-            ⭐ {driver.rating.toFixed(1)}
-          </EditableText>
-          <EditableText field="admin.drivers.totalRides" defaultValue={`${driver.totalRides} rides`}>
-            {driver.totalRides} rides
-          </EditableText>
-        </Container>
-      )
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading drivers from database...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // Table actions
-  const actions: DataTableAction<Driver>[] = [
-    {
-      label: 'View',
-      icon: '👁️',
-      onClick: (driver: Driver) => addToast('info', `Viewing driver profile for ${driver.name}`),
-      variant: 'outline'
-    },
-    {
-      label: 'Assign Ride',
-      icon: '📅',
-      onClick: (driver: Driver) => addToast('success', `Ride assignment feature for ${driver.name} coming soon`),
-      variant: 'primary',
-      condition: (driver: Driver) => driver.status === 'available'
-    },
-    {
-      label: 'Location',
-      icon: '📍',
-      onClick: (driver: Driver) => addToast('info', `Live location tracking for ${driver.name} coming soon`),
-      variant: 'outline',
-      condition: (driver: Driver) => driver.status !== 'offline'
-    },
-    {
-      label: 'Edit',
-      icon: '✏️',
-      onClick: (driver: Driver) => addToast('info', `Driver editing for ${driver.name} coming soon`),
-      variant: 'outline'
-    }
-  ];
-
-  // Quick actions
-  const quickActions = [
-    {
-      id: 1,
-      icon: "👤",
-      label: "Add New Driver",
-      href: "/admin/drivers/new"
-    },
-    {
-      id: 2,
-      icon: "📍",
-      label: "Live Driver Map",
-      href: "/admin/drivers/map"
-    },
-    {
-      id: 3,
-      icon: "📊",
-      label: "Driver Analytics",
-      href: "/admin/drivers/analytics"
-    },
-    {
-      id: 4,
-      icon: "⚙️",
-      label: "Driver Settings",
-      href: "/admin/drivers/settings"
-    }
-  ];
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-red-600 text-6xl mb-4">❌</div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Drivers</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={fetchDrivers}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <AdminPageWrapper
-      title="Driver Management"
-      subtitle="Manage your fleet of professional drivers"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading driver data..."
-      errorTitle="Driver Load Error"
-    >
-      {/* Driver Statistics */}
-      <GridSection variant="stats" columns={4}>
-        <StatCard
-          title="Total Drivers"
-          icon="👥"
-          statNumber={totalDrivers.toString()}
-          statChange="Active fleet"
-          changeType="neutral"
-        />
-        <StatCard
-          title="Available"
-          icon="✅"
-          statNumber={availableDrivers.toString()}
-          statChange="Ready for rides"
-          changeType="positive"
-        />
-        <StatCard
-          title="On Trip"
-          icon="👨‍💼"
-          statNumber={onTripDrivers.toString()}
-          statChange="Currently driving"
-          changeType="neutral"
-        />
-        <StatCard
-          title="Average Rating"
-          icon="⭐"
-          statNumber={averageRating}
-          statChange="Customer satisfaction"
-          changeType="positive"
-        />
-      </GridSection>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Driver Management</h1>
+          <p className="text-gray-600">Manage driver profiles, availability, and assignments</p>
+        </div>
 
-      {/* Quick Actions */}
-      <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🚀 Quick Actions"
-          description="Common driver management tasks"
-        >
-          <ActionGrid actions={quickActions} />
-        </InfoCard>
-      </GridSection>
+        {/* Status Filter */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Filter by Status
+          </label>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="block w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="all">All Drivers</option>
+            <option value="available">Available</option>
+            <option value="busy">Busy</option>
+            <option value="offline">Offline</option>
+          </select>
+        </div>
 
-      {/* Drivers Table */}
-      <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="👥 All Drivers"
-          description="View and manage your complete driver roster"
-        >
-          <DataTable
-            data={drivers}
-            columns={columns}
-            actions={actions}
-            loading={loading}
-            searchPlaceholder="Search by driver name, phone, or vehicle..."
-            emptyMessage="No drivers found. Add your first driver to get started."
-            emptyIcon="👤"
-            pageSize={10}
-            rowClassName={(driver) => 
-              driver.status === 'offline' ? 'opacity-60' : ''
-            }
-            onRowClick={(driver) => console.log('Clicked driver:', driver.name)}
-          />
-        </InfoCard>
-      </GridSection>
-    </AdminPageWrapper>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <span className="text-2xl">👨‍💼</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Drivers</p>
+                <p className="text-2xl font-semibold text-gray-900">{drivers.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <span className="text-2xl">✅</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Available</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {drivers.filter(d => d.status === 'available').length}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <span className="text-2xl">🚗</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">On Trip</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {drivers.filter(d => d.status === 'busy').length}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <span className="text-2xl">⏸️</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Offline</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {drivers.filter(d => d.status === 'offline').length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Drivers List */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-medium text-gray-900">All Drivers</h2>
+          </div>
+          
+          {drivers.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="text-6xl mb-4">👨‍💼</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Drivers Found</h3>
+              <p className="text-gray-600">No drivers match your current filter criteria.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Driver
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Vehicle
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Rating
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Joined
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {drivers.map((driver) => (
+                    <tr key={driver.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{driver.name}</div>
+                          <div className="text-sm text-gray-500">{driver.email}</div>
+                          <div className="text-sm text-gray-500">{driver.phone}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm text-gray-900">
+                            {driver.vehicleInfo.make} {driver.vehicleInfo.model} ({driver.vehicleInfo.year})
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {driver.vehicleInfo.color} • {driver.vehicleInfo.licensePlate}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {renderStatus(driver.status)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {driver.rating ? `${driver.rating}/5.0` : 'N/A'}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {driver.totalRides ? `${driver.totalRides} rides` : 'No rides yet'}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {formatDate(driver.createdAt)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleStatusUpdate(driver, 'available')}
+                            disabled={driver.status === 'available'}
+                            className="text-green-600 hover:text-green-900 disabled:text-gray-400"
+                          >
+                            Set Available
+                          </button>
+                          <button
+                            onClick={() => handleStatusUpdate(driver, 'busy')}
+                            disabled={driver.status === 'busy'}
+                            className="text-blue-600 hover:text-blue-900 disabled:text-gray-400"
+                          >
+                            Set Busy
+                          </button>
+                          <button
+                            onClick={() => handleStatusUpdate(driver, 'offline')}
+                            disabled={driver.status === 'offline'}
+                            className="text-gray-600 hover:text-gray-900 disabled:text-gray-400"
+                          >
+                            Set Offline
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
-const DriversPage = () => {
-  return (
-    <ToastProvider>
-      <DriversPageContent />
-    </ToastProvider>
-  );
+const DriversPage: NextPage = () => {
+  return <DriversPageContent />;
 };
 
-export default DriversPage;
+export default withAuth(DriversPage);

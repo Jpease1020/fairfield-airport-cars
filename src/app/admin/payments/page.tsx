@@ -2,184 +2,43 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
-import { 
-  Section,
-  Container,
-  Stack,
-  H1,
-  H2,
-  Text,
-  Card,
-  Button,
-  Grid,
-  GridItem,
-  EditableText,
-  ToastProvider
-} from '@/components/ui';
-import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/lib/design-system/tokens';
-
-// Styled components for payment page
-const PaymentCard = styled(Card)`
-  text-align: center;
-  transition: transform 0.2s ease-in-out;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const PaymentValue = styled.div`
-  font-size: ${fontSize['4xl']};
-  font-weight: ${fontWeight.bold};
-  color: var(--primary-color, #0B1F3A);
-  margin-bottom: ${spacing.sm};
-`;
-
-const PaymentIcon = styled.div`
-  font-size: ${fontSize['3xl']};
-  margin-bottom: ${spacing.md};
-`;
-
-const PaymentItem = styled.div`
-  padding: ${spacing.md};
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
-  
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const StatusBadge = styled.span<{ status: string }>`
-  padding: ${spacing.xs} ${spacing.sm};
-  border-radius: ${spacing.sm};
-  font-size: ${fontSize.sm};
-  font-weight: ${fontWeight.medium};
-  background-color: ${({ status }) => {
-    switch (status) {
-      case 'completed': return 'var(--success-light, #dcfce7)';
-      case 'pending': return 'var(--warning-light, #fef3c7)';
-      case 'failed': return 'var(--error-light, #fee2e2)';
-      case 'refunded': return 'var(--info-light, #dbeafe)';
-      default: return 'var(--muted-light, #f3f4f6)';
-    }
-  }};
-  color: ${({ status }) => {
-    switch (status) {
-      case 'completed': return 'var(--success-dark, #166534)';
-      case 'pending': return 'var(--warning-dark, #92400e)';
-      case 'failed': return 'var(--error-dark, #991b1b)';
-      case 'refunded': return 'var(--info-dark, #1e40af)';
-      default: return 'var(--muted-dark, #374151)';
-    }
-  }};
-`;
-
-interface Payment {
-  id: string;
-  customerName: string;
-  customerEmail: string;
-  bookingId: string;
-  amount: number;
-  currency: string;
-  status: 'completed' | 'pending' | 'failed' | 'refunded';
-  paymentMethod: string;
-  paymentType: 'deposit' | 'balance' | 'full';
-  stripePaymentId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  refundAmount?: number;
-  refundReason?: string;
-}
+import withAuth from '../withAuth';
+import { getAllPayments, getPaymentsByStatus, updateDocument, type Payment } from '@/lib/services/database-service';
 
 function PaymentsPageContent() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
-
-  // Mock data for demonstration
-  const mockPayments: Payment[] = [
-    {
-      id: 'pay_1',
-      customerName: 'John Smith',
-      customerEmail: 'john@example.com',
-      bookingId: 'book_123',
-      amount: 75.00,
-      currency: 'USD',
-      status: 'completed',
-      paymentMethod: 'card',
-      paymentType: 'deposit',
-      stripePaymentId: 'pi_1234567890',
-      createdAt: new Date('2024-12-20T10:00:00Z'),
-      updatedAt: new Date('2024-12-20T10:00:00Z')
-    },
-    {
-      id: 'pay_2',
-      customerName: 'Sarah Johnson',
-      customerEmail: 'sarah@example.com',
-      bookingId: 'book_124',
-      amount: 120.00,
-      currency: 'USD',
-      status: 'pending',
-      paymentMethod: 'card',
-      paymentType: 'full',
-      stripePaymentId: 'pi_1234567891',
-      createdAt: new Date('2024-12-21T14:30:00Z'),
-      updatedAt: new Date('2024-12-21T14:30:00Z')
-    },
-    {
-      id: 'pay_3',
-      customerName: 'Mike Davis',
-      customerEmail: 'mike@example.com',
-      bookingId: 'book_125',
-      amount: 50.00,
-      currency: 'USD',
-      status: 'refunded',
-      paymentMethod: 'card',
-      paymentType: 'deposit',
-      stripePaymentId: 'pi_1234567892',
-      createdAt: new Date('2024-12-19T08:15:00Z'),
-      updatedAt: new Date('2024-12-22T16:45:00Z'),
-      refundAmount: 50.00,
-      refundReason: 'Customer cancelled booking'
-    },
-    {
-      id: 'pay_4',
-      customerName: 'Emily Chen',
-      customerEmail: 'emily@example.com',
-      bookingId: 'book_126',
-      amount: 90.00,
-      currency: 'USD',
-      status: 'failed',
-      paymentMethod: 'card',
-      paymentType: 'balance',
-      stripePaymentId: 'pi_1234567893',
-      createdAt: new Date('2024-12-22T11:20:00Z'),
-      updatedAt: new Date('2024-12-22T11:20:00Z')
-    }
-  ];
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
   const fetchPayments = useCallback(async () => {
     try {
       setError(null);
       setLoading(true);
-      console.log('💰 Fetching payments...');
+      console.log('💰 Fetching payments from database...');
       
-      // TODO: Replace with actual Stripe API call
-      // const response = await fetch('/api/admin/payments');
-      // const data = await response.json();
+      let fetchedPayments: Payment[];
       
-      // For now, use mock data
-      setPayments(mockPayments);
-      console.log('✅ Payments loaded:', mockPayments.length);
+      if (selectedStatus === 'all') {
+        fetchedPayments = await getAllPayments();
+      } else {
+        fetchedPayments = await getPaymentsByStatus(selectedStatus as Payment['status']);
+      }
+      
+      console.log('✅ Payments loaded from database:', fetchedPayments.length, 'payments');
+      setPayments(fetchedPayments);
+      
+      if (fetchedPayments.length === 0) {
+        console.log('📝 No payments found in database');
+      }
     } catch (err) {
-      console.error('❌ Error loading payments:', err);
-      setError('Failed to load payments. Please try again.');
+      console.error('❌ Error loading payments from database:', err);
+      setError('Failed to load payments from database. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedStatus]);
 
   useEffect(() => {
     fetchPayments();
@@ -188,458 +47,356 @@ function PaymentsPageContent() {
   const formatCurrency = (amount: number, currency: string = 'USD') => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency
+      currency: currency,
     }).format(amount);
   };
 
-  const getPaymentStats = () => {
-    const total = payments.reduce((sum, payment) => sum + payment.amount, 0);
-    const completed = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0);
-    const pending = payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + p.amount, 0);
-    const refunded = payments.filter(p => p.status === 'refunded').reduce((sum, p) => sum + (p.refundAmount || 0), 0);
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  };
 
-    return { total, completed, pending, refunded };
+  const getPaymentStats = () => {
+    const totalPayments = payments.length;
+    const completedPayments = payments.filter(p => p.status === 'completed').length;
+    const pendingPayments = payments.filter(p => p.status === 'pending').length;
+    const failedPayments = payments.filter(p => p.status === 'failed').length;
+    const refundedPayments = payments.filter(p => p.status === 'refunded').length;
+    const totalAmount = payments
+      .filter(p => p.status === 'completed')
+      .reduce((sum, p) => sum + p.amount, 0);
+    const totalRefunds = payments
+      .filter(p => p.status === 'refunded')
+      .reduce((sum, p) => sum + (p.refundAmount || 0), 0);
+
+    return {
+      totalPayments,
+      completedPayments,
+      pendingPayments,
+      failedPayments,
+      refundedPayments,
+      totalAmount,
+      totalRefunds,
+      netRevenue: totalAmount - totalRefunds
+    };
   };
 
   const handleRefund = async (payment: Payment) => {
     try {
-      console.log('🔄 Processing refund for payment:', payment.id);
-      // TODO: Implement Stripe refund API call
-      // const response = await fetch(`/api/admin/payments/${payment.id}/refund`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ amount: payment.amount })
-      // });
+      console.log(`🔄 Processing refund for payment ${payment.id}`);
       
-      addToast('success', `Refund processed for ${payment.customerName}`);
-      fetchPayments(); // Refresh payments
+      const refundAmount = payment.amount;
+      const refundReason = 'Customer requested refund';
+      
+      await updateDocument('payments', payment.id, {
+        status: 'refunded',
+        refundAmount,
+        refundReason,
+      });
+      
+      // Update local state
+      setPayments(prev => prev.map(p => 
+        p.id === payment.id ? { 
+          ...p, 
+          status: 'refunded', 
+          refundAmount, 
+          refundReason 
+        } : p
+      ));
+      
+      console.log('✅ Refund processed successfully');
     } catch (err) {
       console.error('❌ Error processing refund:', err);
-      addToast('error', 'Failed to process refund. Please try again.');
+      setError('Failed to process refund');
     }
   };
 
   const addToast = (type: 'success' | 'error' | 'info', message: string) => {
-    // TODO: Implement toast notification
+    // Simple toast implementation - in production, use a proper toast library
     console.log(`${type.toUpperCase()}: ${message}`);
   };
 
-  const stats = getPaymentStats();
-
-  const quickActions = [
-    {
-      icon: '💰',
-      title: 'Process Refund',
-      description: 'Issue refunds for cancelled bookings',
-      onClick: () => console.log('Process refund'),
-      color: 'var(--warning-base, #f59e0b)'
-    },
-    {
-      icon: '📊',
-      title: 'Payment Reports',
-      description: 'Generate payment reports and analytics',
-      onClick: () => console.log('Payment reports'),
-      color: 'var(--info-base, #3b82f6)'
-    },
-    {
-      icon: '🔍',
-      title: 'Search Payments',
-      description: 'Find specific payments by customer or booking',
-      onClick: () => console.log('Search payments'),
-      color: 'var(--success-base, #10b981)'
-    },
-    {
-      icon: '⚙️',
-      title: 'Payment Settings',
-      description: 'Configure Stripe integration and webhooks',
-      onClick: () => console.log('Payment settings'),
-      color: 'var(--primary-base, #0B1F3A)'
-    }
-  ];
-
-  const recentActivity = [
-    {
-      icon: '✅',
-      message: 'Payment received from John Smith - $75.00 deposit',
-      time: '2 hours ago'
-    },
-    {
-      icon: '🔄',
-      message: 'Refund processed for Mike Davis - $50.00',
-      time: '1 day ago'
-    },
-    {
-      icon: '❌',
-      message: 'Payment failed for Emily Chen - $90.00 balance',
-      time: '2 days ago'
-    },
-    {
-      icon: '💰',
-      message: 'Payment received from Sarah Johnson - $120.00 full payment',
-      time: '3 days ago'
-    }
-  ];
-
   if (loading) {
     return (
-      <Section variant="default" padding="lg">
-        <Container maxWidth="2xl">
-          <Stack spacing="lg" align="center">
-            <Text>Loading payments...</Text>
-          </Stack>
-        </Container>
-      </Section>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading payments from database...</p>
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Section variant="default" padding="lg">
-        <Container maxWidth="2xl">
-          <Stack spacing="lg" align="center">
-            <Text color="error">{error}</Text>
-            <Button onClick={fetchPayments} variant="primary">
-              Try Again
-            </Button>
-          </Stack>
-        </Container>
-      </Section>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-red-600 text-6xl mb-4">❌</div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Payments</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={fetchPayments}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
     );
   }
 
+  const stats = getPaymentStats();
+
   return (
-    <Section variant="default" padding="lg">
-      <Container maxWidth="2xl">
-        <Stack spacing="2xl">
-          {/* Header */}
-          <Stack spacing="lg" align="center">
-            <H1 align="center">
-              <EditableText field="admin.payments.title" defaultValue="💰 Payment Management">
-                💰 Payment Management
-              </EditableText>
-            </H1>
-            <Text variant="lead" align="center">
-              <EditableText field="admin.payments.subtitle" defaultValue="Track customer payments, deposits, and refunds">
-                Track customer payments, deposits, and refunds
-              </EditableText>
-            </Text>
-          </Stack>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Management</h1>
+          <p className="text-gray-600">Track all payment transactions and manage refunds</p>
+        </div>
 
-          {/* Payment Statistics */}
-          <Section variant="alternate" padding="lg">
-            <Container maxWidth="2xl">
-              <Stack spacing="lg" align="center" marginBottom="xl">
-                <H2>
-                  <EditableText field="admin.payments.statsTitle" defaultValue="📊 Payment Overview">
-                    📊 Payment Overview
-                  </EditableText>
-                </H2>
-                <Text variant="lead" align="center">
-                  <EditableText field="admin.payments.statsSubtitle" defaultValue="Financial summary and key metrics">
-                    Financial summary and key metrics
-                  </EditableText>
-                </Text>
-              </Stack>
-              
-              <Grid cols={4} gap="lg" responsive>
-                <GridItem>
-                  <PaymentCard variant="elevated" padding="lg" hover>
-                    <Stack spacing="md" align="center">
-                      <PaymentIcon>
-                        <EditableText field="admin.payments.totalIcon" defaultValue="💰">
-                          💰
-                        </EditableText>
-                      </PaymentIcon>
-                      <PaymentValue>
-                        <EditableText field="admin.payments.totalValue" defaultValue={formatCurrency(stats.total)}>
-                          {formatCurrency(stats.total)}
-                        </EditableText>
-                      </PaymentValue>
-                      <H2 size="md">
-                        <EditableText field="admin.payments.totalTitle" defaultValue="Total Revenue">
-                          Total Revenue
-                        </EditableText>
-                      </H2>
-                    </Stack>
-                  </PaymentCard>
-                </GridItem>
+        {/* Status Filter */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Filter by Status
+          </label>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="block w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="all">All Payments</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
+            <option value="refunded">Refunded</option>
+          </select>
+        </div>
 
-                <GridItem>
-                  <PaymentCard variant="elevated" padding="lg" hover>
-                    <Stack spacing="md" align="center">
-                      <PaymentIcon>
-                        <EditableText field="admin.payments.completedIcon" defaultValue="✅">
-                          ✅
-                        </EditableText>
-                      </PaymentIcon>
-                      <PaymentValue>
-                        <EditableText field="admin.payments.completedValue" defaultValue={formatCurrency(stats.completed)}>
-                          {formatCurrency(stats.completed)}
-                        </EditableText>
-                      </PaymentValue>
-                      <H2 size="md">
-                        <EditableText field="admin.payments.completedTitle" defaultValue="Completed">
-                          Completed
-                        </EditableText>
-                      </H2>
-                    </Stack>
-                  </PaymentCard>
-                </GridItem>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <span className="text-2xl">💰</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Payments</p>
+                <p className="text-2xl font-semibold text-gray-900">{stats.totalPayments}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <span className="text-2xl">✅</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Completed</p>
+                <p className="text-2xl font-semibold text-gray-900">{stats.completedPayments}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <span className="text-2xl">📊</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {formatCurrency(stats.totalAmount)}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <span className="text-2xl">🔄</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Net Revenue</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {formatCurrency(stats.netRevenue)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <GridItem>
-                  <PaymentCard variant="elevated" padding="lg" hover>
-                    <Stack spacing="md" align="center">
-                      <PaymentIcon>
-                        <EditableText field="admin.payments.pendingIcon" defaultValue="⏳">
-                          ⏳
-                        </EditableText>
-                      </PaymentIcon>
-                      <PaymentValue>
-                        <EditableText field="admin.payments.pendingValue" defaultValue={formatCurrency(stats.pending)}>
-                          {formatCurrency(stats.pending)}
-                        </EditableText>
-                      </PaymentValue>
-                      <H2 size="md">
-                        <EditableText field="admin.payments.pendingTitle" defaultValue="Pending">
-                          Pending
-                        </EditableText>
-                      </H2>
-                    </Stack>
-                  </PaymentCard>
-                </GridItem>
-
-                <GridItem>
-                  <PaymentCard variant="elevated" padding="lg" hover>
-                    <Stack spacing="md" align="center">
-                      <PaymentIcon>
-                        <EditableText field="admin.payments.refundedIcon" defaultValue="🔄">
-                          🔄
-                        </EditableText>
-                      </PaymentIcon>
-                      <PaymentValue>
-                        <EditableText field="admin.payments.refundedValue" defaultValue={formatCurrency(stats.refunded)}>
-                          {formatCurrency(stats.refunded)}
-                        </EditableText>
-                      </PaymentValue>
-                      <H2 size="md">
-                        <EditableText field="admin.payments.refundedTitle" defaultValue="Refunded">
-                          Refunded
-                        </EditableText>
-                      </H2>
-                    </Stack>
-                  </PaymentCard>
-                </GridItem>
-              </Grid>
-            </Container>
-          </Section>
-
-          {/* Quick Actions */}
-          <Section variant="default" padding="lg">
-            <Container maxWidth="2xl">
-              <Stack spacing="lg" align="center" marginBottom="xl">
-                <H2>
-                  <EditableText field="admin.payments.quickActionsTitle" defaultValue="⚡ Quick Actions">
-                    ⚡ Quick Actions
-                  </EditableText>
-                </H2>
-                <Text variant="lead" align="center">
-                  <EditableText field="admin.payments.quickActionsSubtitle" defaultValue="Common payment management tasks">
-                    Common payment management tasks
-                  </EditableText>
-                </Text>
-              </Stack>
-              
-              <Grid cols={2} gap="lg" responsive>
-                {quickActions.map((action, index) => (
-                  <GridItem key={index}>
-                    <div onClick={action.onClick} style={{ cursor: 'pointer' }}>
-                      <Card
-                        variant="elevated"
-                        padding="lg"
-                        hover
-                      >
-                        <Stack spacing="md">
-                          <Stack direction="horizontal" gap="md" align="center">
-                            <div style={{ fontSize: fontSize['3xl'], color: action.color }}>
-                              <EditableText field={`admin.payments.actionIcon${index}`} defaultValue={action.icon}>
-                                {action.icon}
-                              </EditableText>
-                            </div>
-                            <H2 size="lg">
-                              <EditableText field={`admin.payments.actionTitle${index}`} defaultValue={action.title}>
-                                {action.title}
-                              </EditableText>
-                            </H2>
-                          </Stack>
-                          <Text align="left">
-                            <EditableText field={`admin.payments.actionDesc${index}`} defaultValue={action.description}>
-                              {action.description}
-                            </EditableText>
-                          </Text>
-                        </Stack>
-                      </Card>
-                    </div>
-                  </GridItem>
-                ))}
-              </Grid>
-            </Container>
-          </Section>
-
-          {/* Recent Payments */}
-          <Section variant="alternate" padding="lg">
-            <Container maxWidth="2xl">
-              <Stack spacing="lg" align="center" marginBottom="xl">
-                <H2>
-                  <EditableText field="admin.payments.recentPaymentsTitle" defaultValue="📋 Recent Payments">
-                    📋 Recent Payments
-                  </EditableText>
-                </H2>
-                <Text variant="lead" align="center">
-                  <EditableText field="admin.payments.recentPaymentsSubtitle" defaultValue="Latest payment transactions">
-                    Latest payment transactions
-                  </EditableText>
-                </Text>
-              </Stack>
-              
-              <Card variant="elevated" padding="lg">
-                <Stack spacing="md">
+        {/* Payments List */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-medium text-gray-900">All Payments</h2>
+          </div>
+          
+          {payments.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="text-6xl mb-4">💳</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Payments Found</h3>
+              <p className="text-gray-600">No payments match your current filter criteria.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Customer
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Amount
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
                   {payments.map((payment) => (
-                    <PaymentItem key={payment.id}>
-                      <Stack direction="horizontal" spacing="md" align="center">
-                        <div style={{ fontSize: fontSize.xl }}>
-                          <EditableText field={`admin.payments.paymentIcon${payment.id}`} defaultValue="💳">
-                            💳
-                          </EditableText>
+                    <tr key={payment.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{payment.customerName}</div>
+                          <div className="text-sm text-gray-500">{payment.customerEmail}</div>
+                          <div className="text-sm text-gray-500">Booking: {payment.bookingId}</div>
                         </div>
-                        <div style={{ flex: 1 }}>
-                          <Stack spacing="xs">
-                            <Stack direction="horizontal" spacing="md" align="center">
-                              <Text>
-                                <EditableText field={`admin.payments.customerName${payment.id}`} defaultValue={payment.customerName}>
-                                  {payment.customerName}
-                                </EditableText>
-                              </Text>
-                              <StatusBadge status={payment.status}>
-                                <EditableText field={`admin.payments.status${payment.id}`} defaultValue={payment.status.toUpperCase()}>
-                                  {payment.status.toUpperCase()}
-                                </EditableText>
-                              </StatusBadge>
-                            </Stack>
-                            <Stack direction="horizontal" spacing="md" align="center">
-                              <Text size="sm" color="secondary">
-                                <EditableText field={`admin.payments.amount${payment.id}`} defaultValue={formatCurrency(payment.amount)}>
-                                  {formatCurrency(payment.amount)}
-                                </EditableText>
-                              </Text>
-                              <Text size="sm" color="secondary">
-                                <EditableText field={`admin.payments.paymentType${payment.id}`} defaultValue={payment.paymentType}>
-                                  {payment.paymentType}
-                                </EditableText>
-                              </Text>
-                              <Text size="sm" color="secondary">
-                                <EditableText field={`admin.payments.bookingId${payment.id}`} defaultValue={`Booking: ${payment.bookingId}`}>
-                                  Booking: {payment.bookingId}
-                                </EditableText>
-                              </Text>
-                            </Stack>
-                            {payment.refundAmount && (
-                              <Text size="sm" color="error">
-                                <EditableText field={`admin.payments.refundInfo${payment.id}`} defaultValue={`Refunded: ${formatCurrency(payment.refundAmount)}`}>
-                                  Refunded: {formatCurrency(payment.refundAmount)}
-                                </EditableText>
-                              </Text>
-                            )}
-                          </Stack>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {formatCurrency(payment.amount, payment.currency)}
                         </div>
-                        <Stack spacing="sm">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => setSelectedPayment(payment)}
-                          >
-                            <EditableText field="admin.payments.viewDetails" defaultValue="View">
-                              View
-                            </EditableText>
-                          </Button>
+                        {payment.refundAmount && (
+                          <div className="text-xs text-red-600">
+                            Refunded: {formatCurrency(payment.refundAmount, payment.currency)}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          payment.status === 'completed' ? 'text-green-600 bg-green-100' :
+                          payment.status === 'pending' ? 'text-yellow-600 bg-yellow-100' :
+                          payment.status === 'failed' ? 'text-red-600 bg-red-100' :
+                          'text-purple-600 bg-purple-100'
+                        }`}>
+                          {payment.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          <span className="capitalize">{payment.paymentType}</span>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {payment.paymentMethod}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {formatDate(payment.createdAt)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
                           {payment.status === 'completed' && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
+                            <button
                               onClick={() => handleRefund(payment)}
+                              className="text-red-600 hover:text-red-900"
                             >
-                              <EditableText field="admin.payments.refund" defaultValue="Refund">
-                                Refund
-                              </EditableText>
-                            </Button>
+                              Refund
+                            </button>
                           )}
-                        </Stack>
-                      </Stack>
-                    </PaymentItem>
+                          <button
+                            onClick={() => setSelectedPayment(payment)}
+                            className="text-blue-600 hover:text-blue-900"
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
                   ))}
-                </Stack>
-              </Card>
-            </Container>
-          </Section>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-          {/* Recent Activity */}
-          <Section variant="default" padding="lg">
-            <Container maxWidth="2xl">
-              <Stack spacing="lg" align="center" marginBottom="xl">
-                <H2>
-                  <EditableText field="admin.payments.recentActivityTitle" defaultValue="📈 Recent Activity">
-                    📈 Recent Activity
-                  </EditableText>
-                </H2>
-                <Text variant="lead" align="center">
-                  <EditableText field="admin.payments.recentActivitySubtitle" defaultValue="Latest payment events and updates">
-                    Latest payment events and updates
-                  </EditableText>
-                </Text>
-              </Stack>
-              
-              <Card variant="elevated" padding="lg">
-                <Stack spacing="md">
-                  {recentActivity.map((activity, index) => (
-                    <PaymentItem key={index}>
-                      <Stack direction="horizontal" spacing="md" align="center">
-                        <div style={{ fontSize: fontSize.xl }}>
-                          <EditableText field={`admin.payments.activityIcon${index}`} defaultValue={activity.icon}>
-                            {activity.icon}
-                          </EditableText>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <Stack spacing="xs">
-                            <Text>
-                              <EditableText field={`admin.payments.activityMessage${index}`} defaultValue={activity.message}>
-                                {activity.message}
-                              </EditableText>
-                            </Text>
-                            <Text size="sm" color="secondary">
-                              <EditableText field={`admin.payments.activityTime${index}`} defaultValue={activity.time}>
-                                {activity.time}
-                              </EditableText>
-                            </Text>
-                          </Stack>
-                        </div>
-                      </Stack>
-                    </PaymentItem>
-                  ))}
-                </Stack>
-              </Card>
-            </Container>
-          </Section>
-        </Stack>
-      </Container>
-    </Section>
+        {/* Payment Details Modal */}
+        {selectedPayment && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+              <div className="mt-3">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Details</h3>
+                <div className="space-y-3">
+                  <div>
+                    <span className="font-medium">Customer:</span> {selectedPayment.customerName}
+                  </div>
+                  <div>
+                    <span className="font-medium">Email:</span> {selectedPayment.customerEmail}
+                  </div>
+                  <div>
+                    <span className="font-medium">Amount:</span> {formatCurrency(selectedPayment.amount, selectedPayment.currency)}
+                  </div>
+                  <div>
+                    <span className="font-medium">Status:</span> {selectedPayment.status}
+                  </div>
+                  <div>
+                    <span className="font-medium">Type:</span> {selectedPayment.paymentType}
+                  </div>
+                  <div>
+                    <span className="font-medium">Method:</span> {selectedPayment.paymentMethod}
+                  </div>
+                  <div>
+                    <span className="font-medium">Date:</span> {formatDate(selectedPayment.createdAt)}
+                  </div>
+                  {selectedPayment.refundAmount && (
+                    <div>
+                      <span className="font-medium">Refund Amount:</span> {formatCurrency(selectedPayment.refundAmount, selectedPayment.currency)}
+                    </div>
+                  )}
+                  {selectedPayment.refundReason && (
+                    <div>
+                      <span className="font-medium">Refund Reason:</span> {selectedPayment.refundReason}
+                    </div>
+                  )}
+                </div>
+                <div className="mt-6 flex justify-end">
+                  <button
+                    onClick={() => setSelectedPayment(null)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 const PaymentsPage: NextPage = () => {
-  return (
-    <ToastProvider>
-      <PaymentsPageContent />
-    </ToastProvider>
-  );
+  return <PaymentsPageContent />;
 };
 
-export default PaymentsPage; 
+export default withAuth(PaymentsPage); 
