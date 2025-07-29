@@ -28,6 +28,7 @@ export const AdminNavigation: React.FC = () => {
         <Link
           key={item.name}
           href={item.href}
+          data-testid={`admin-nav-${item.name.toLowerCase()}`}
         >
           <EditableText field={`adminNavigation.${item.name.toLowerCase()}`}>
             {item.name}
@@ -56,6 +57,7 @@ export const AdminNavigation: React.FC = () => {
               key={item.name}
               href={item.href}
               onClick={() => setMobileMenuOpen(false)}
+              data-testid={`admin-nav-mobile-${item.name.toLowerCase()}`}
             >
               <EditableText field={`adminNavigation.mobile.${item.name.toLowerCase()}`}>
                 {item.name}

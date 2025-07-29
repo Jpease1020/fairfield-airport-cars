@@ -120,6 +120,7 @@ function FeedbackPageContent() {
                   onClick={() => setRating(star)}
                   variant="ghost"
                   size="sm"
+                  data-testid={`rating-star-${star}`}
                 >
                   <Star />
                 </Button>
@@ -172,6 +173,7 @@ function FeedbackPageContent() {
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
                 placeholder="Tell us about your experience..."
                 rows={4}
+                data-testid="comment-input"
               />
             </Text>
 
@@ -181,6 +183,7 @@ function FeedbackPageContent() {
                 disabled={loading || rating === 0}
                 variant="primary"
                 size="lg"
+                data-testid="submit-feedback-button"
               >
                 {loading ? (
                   <EditableText field="feedback.submitting" defaultValue="Submitting...">

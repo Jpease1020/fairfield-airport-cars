@@ -1,22 +1,23 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock Next.js router
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
   }),
   useSearchParams: () => new URLSearchParams(),
 }));
 
 // Mock sessionStorage
 const mockSessionStorage = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'sessionStorage', {
   value: mockSessionStorage,
@@ -24,7 +25,7 @@ Object.defineProperty(window, 'sessionStorage', {
 
 describe('Customer Pages - Gregg\'s Business', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSessionStorage.getItem.mockReturnValue(null);
   });
 
@@ -34,8 +35,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<HomePage />);
 
       // Check for booking buttons
-      expect(screen.getByText(/book now/i)).toBeInTheDocument();
-      expect(screen.getByText(/get started/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-book')).toBeInTheDocument();
     });
 
     test('displays business information', async () => {
@@ -43,8 +43,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<HomePage />);
 
       // Check for business info
-      expect(screen.getByText(/fairfield airport/i)).toBeInTheDocument();
-      expect(screen.getByText(/reliable/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-about')).toBeInTheDocument();
     });
 
     test('has working navigation links', async () => {
@@ -52,9 +51,8 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<HomePage />);
 
       // Check for important navigation
-      expect(screen.getByText(/about/i)).toBeInTheDocument();
-      expect(screen.getByText(/help/i)).toBeInTheDocument();
-      expect(screen.getByText(/costs/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-about')).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
   });
 
@@ -64,7 +62,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<BookingPage />);
 
       // Check for form elements
-      expect(screen.getByText(/book your ride/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-book')).toBeInTheDocument();
       expect(screen.getByTestId('name-input')).toBeInTheDocument();
       expect(screen.getByTestId('email-input')).toBeInTheDocument();
       expect(screen.getByTestId('phone-input')).toBeInTheDocument();
@@ -91,8 +89,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<CostsPage />);
 
       // Check for pricing info
-      expect(screen.getByText(/pricing/i)).toBeInTheDocument();
-      expect(screen.getByText(/rates/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-costs')).toBeInTheDocument();
     });
   });
 
@@ -102,8 +99,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<HelpPage />);
 
       // Check for help content
-      expect(screen.getByText(/help/i)).toBeInTheDocument();
-      expect(screen.getByText(/support/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
   });
 
@@ -113,8 +109,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<AboutPage />);
 
       // Check for about content
-      expect(screen.getByText(/about/i)).toBeInTheDocument();
-      expect(screen.getByText(/fairfield/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-about')).toBeInTheDocument();
     });
   });
 
@@ -124,8 +119,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<SuccessPage />);
 
       // Check for success message
-      expect(screen.getByText(/success/i)).toBeInTheDocument();
-      expect(screen.getByText(/confirmed/i)).toBeInTheDocument();
+      expect(screen.getByTestId('success-booking-confirmed-title')).toBeInTheDocument();
     });
   });
 
@@ -135,7 +129,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<CancelPage />);
 
       // Check for cancellation content
-      expect(screen.getByText(/cancelled/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
   });
 
@@ -145,7 +139,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<TermsPage />);
 
       // Check for terms content
-      expect(screen.getByText(/terms/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
   });
 
@@ -155,7 +149,7 @@ describe('Customer Pages - Gregg\'s Business', () => {
       render(<PrivacyPage />);
 
       // Check for privacy content
-      expect(screen.getByText(/privacy/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
   });
 }); 

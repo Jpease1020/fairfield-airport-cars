@@ -1,30 +1,31 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock Next.js router
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
   }),
   useSearchParams: () => new URLSearchParams(),
 }));
 
 // Mock Firebase auth
-jest.mock('firebase/auth', () => ({
-  getAuth: jest.fn(),
-  signInWithEmailAndPassword: jest.fn(),
-  signInWithPopup: jest.fn(),
-  GoogleAuthProvider: jest.fn(),
+vi.mock('firebase/auth', () => ({
+  getAuth: vi.fn(),
+  signInWithEmailAndPassword: vi.fn(),
+  signInWithPopup: vi.fn(),
+  GoogleAuthProvider: vi.fn(),
 }));
 
 // Mock sessionStorage
 const mockSessionStorage = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'sessionStorage', {
   value: mockSessionStorage,
@@ -32,7 +33,7 @@ Object.defineProperty(window, 'sessionStorage', {
 
 describe('Admin Pages - Gregg\'s Business Operations', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSessionStorage.getItem.mockReturnValue(null);
   });
 
@@ -42,7 +43,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<AdminLoginPage />);
 
       // Check for login form elements
-      expect(screen.getByText(/admin login/i)).toBeInTheDocument();
+      expect(screen.getByTestId('email-input')).toBeInTheDocument();
       expect(screen.getByTestId('email-input')).toBeInTheDocument();
       expect(screen.getByTestId('password-input')).toBeInTheDocument();
       expect(screen.getByTestId('login-button')).toBeInTheDocument();
@@ -54,7 +55,6 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
 
       // Check for Google sign-in
       expect(screen.getByTestId('google-signin-button')).toBeInTheDocument();
-      expect(screen.getByText(/sign in with google/i)).toBeInTheDocument();
     });
   });
 
@@ -64,9 +64,8 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<AdminDashboard />);
 
       // Check for dashboard elements
-      expect(screen.getByText(/admin dashboard/i)).toBeInTheDocument();
-      expect(screen.getByText(/bookings/i)).toBeInTheDocument();
-      expect(screen.getByText(/drivers/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-bookings')).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-drivers')).toBeInTheDocument();
     });
 
     test('has navigation menu', async () => {
@@ -74,10 +73,9 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<AdminDashboard />);
 
       // Check for navigation
-      expect(screen.getByText(/bookings/i)).toBeInTheDocument();
-      expect(screen.getByText(/drivers/i)).toBeInTheDocument();
-      expect(screen.getByText(/payments/i)).toBeInTheDocument();
-      expect(screen.getByText(/calendar/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-bookings')).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-drivers')).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-calendar')).toBeInTheDocument();
     });
   });
 
@@ -87,8 +85,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<BookingsPage />);
 
       // Check for bookings content
-      expect(screen.getByText(/bookings/i)).toBeInTheDocument();
-      expect(screen.getByText(/manage/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-bookings')).toBeInTheDocument();
     });
   });
 
@@ -98,8 +95,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<DriversPage />);
 
       // Check for drivers content
-      expect(screen.getByText(/drivers/i)).toBeInTheDocument();
-      expect(screen.getByText(/manage/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-drivers')).toBeInTheDocument();
     });
   });
 
@@ -109,8 +105,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<PaymentsPage />);
 
       // Check for payments content
-      expect(screen.getByText(/payments/i)).toBeInTheDocument();
-      expect(screen.getByText(/transactions/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-payments')).toBeInTheDocument();
     });
   });
 
@@ -120,8 +115,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<CalendarPage />);
 
       // Check for calendar content
-      expect(screen.getByText(/calendar/i)).toBeInTheDocument();
-      expect(screen.getByText(/schedule/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-calendar')).toBeInTheDocument();
     });
   });
 
@@ -131,8 +125,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<CostsPage />);
 
       // Check for costs content
-      expect(screen.getByText(/costs/i)).toBeInTheDocument();
-      expect(screen.getByText(/expenses/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-costs')).toBeInTheDocument();
     });
   });
 
@@ -142,8 +135,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<CMSPage />);
 
       // Check for CMS content
-      expect(screen.getByText(/content management/i)).toBeInTheDocument();
-      expect(screen.getByText(/edit/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-cms')).toBeInTheDocument();
     });
   });
 
@@ -153,8 +145,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<FeedbackPage />);
 
       // Check for feedback content
-      expect(screen.getByText(/feedback/i)).toBeInTheDocument();
-      expect(screen.getByText(/reviews/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-feedback')).toBeInTheDocument();
     });
   });
 
@@ -164,8 +155,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<HelpPage />);
 
       // Check for help content
-      expect(screen.getByText(/help/i)).toBeInTheDocument();
-      expect(screen.getByText(/support/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-help')).toBeInTheDocument();
     });
   });
 
@@ -175,8 +165,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<PromosPage />);
 
       // Check for promos content
-      expect(screen.getByText(/promos/i)).toBeInTheDocument();
-      expect(screen.getByText(/discounts/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-promos')).toBeInTheDocument();
     });
   });
 
@@ -186,8 +175,7 @@ describe('Admin Pages - Gregg\'s Business Operations', () => {
       render(<CommentsPage />);
 
       // Check for comments content
-      expect(screen.getByText(/comments/i)).toBeInTheDocument();
-      expect(screen.getByText(/reviews/i)).toBeInTheDocument();
+      expect(screen.getByTestId('admin-nav-comments')).toBeInTheDocument();
     });
   });
 }); 

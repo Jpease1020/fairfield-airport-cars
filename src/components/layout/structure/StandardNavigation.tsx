@@ -212,7 +212,11 @@ export const StandardNavigation: React.FC<StandardNavigationProps> = ({
         <DesktopNav>
           <NavLinks>
             {items.map((item, index) => (
-              <NavLink key={index} href={item.href}>
+              <NavLink 
+                key={index} 
+                href={item.href}
+                data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+              >
                 {item.icon && <IconSpacer>{item.icon}</IconSpacer>}
                 <EditableText field={`navigation.items.${index}.label`} defaultValue={item.label}>
                   {item.label}
@@ -267,6 +271,7 @@ export const StandardNavigation: React.FC<StandardNavigationProps> = ({
             key={index} 
             href={item.href}
             onClick={() => setIsMobileMenuOpen(false)}
+            data-testid={`nav-mobile-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
           >
             {item.icon && <IconSpacer>{item.icon}</IconSpacer>}
             <EditableText field={`navigation.items.${index}.label`} defaultValue={item.label}>

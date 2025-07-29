@@ -12,7 +12,6 @@ import {
   H2,
   Text,
   Span,
-  ActionButtonGroup,
   Card,
   Button,
   Grid,
@@ -74,23 +73,6 @@ const FeatureIconContainer = styled.div`
 `;
 
 function HomePageContent() {
-  const heroActions = [
-    {
-      label: 'Book Your Ride',
-      onClick: () => window.location.href = '/book',
-      variant: 'primary' as const,
-      icon: '📋',
-      url: '/book'
-    },
-    {
-      label: 'Learn More',
-      onClick: () => window.location.href = '/about',
-      variant: 'outline' as const,
-      icon: 'ℹ️',
-      url: '/about'
-    }
-  ];
-
   const features = [
     {
       icon: "👨‍💼",
@@ -279,7 +261,7 @@ function HomePageContent() {
               </EditableText>
             </H2>
             <Text id="testimonials-subtitle" variant="lead" align="center">
-              <EditableText field="testimonials.subtitle" defaultValue="Don't just take our word for it - hear from our satisfied customers">
+              <EditableText field="testimonials.subtitle" defaultValue="Don&apos;t just take our word for it - hear from our satisfied customers">
                 Don't just take our word for it - hear from our satisfied customers
               </EditableText>
             </Text>

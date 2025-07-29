@@ -159,9 +159,13 @@ export default function TrackingPage() {
               <GridItem>
                 <Stack spacing="sm">
                   <Text variant="lead">Vehicle</Text>
-                  <Text>{trackingData.vehicleInfo.year} {trackingData.vehicleInfo.make} {trackingData.vehicleInfo.model}</Text>
-                  <Text>Color: {trackingData.vehicleInfo.color}</Text>
-                  <Text>Plate: {trackingData.vehicleInfo.licensePlate}</Text>
+                  {trackingData.vehicleInfo && (
+                    <>
+                      <Text>{trackingData.vehicleInfo.year} {trackingData.vehicleInfo.make} {trackingData.vehicleInfo.model}</Text>
+                      <Text>Color: {trackingData.vehicleInfo.color}</Text>
+                      <Text>Plate: {trackingData.vehicleInfo.licensePlate}</Text>
+                    </>
+                  )}
                 </Stack>
               </GridItem>
             </Grid>

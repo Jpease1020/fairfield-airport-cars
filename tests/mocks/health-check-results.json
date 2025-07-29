@@ -1,17 +1,14 @@
 {
   "/api/booking": {
-    "status": 200,
-    "ok": true,
-    "timestamp": "2025-07-29T16:46:48.593Z"
+    "error": "fetch is not defined",
+    "timestamp": "2025-07-29T22:12:23.510Z"
   },
   "/api/booking/estimate-fare": {
-    "status": 200,
-    "ok": true,
-    "timestamp": "2025-07-29T16:46:48.594Z"
+    "error": "fetch is not defined",
+    "timestamp": "2025-07-29T22:12:23.510Z"
   },
   "/api/booking/check-time-slot": {
-    "status": 200,
-    "ok": true,
-    "timestamp": "2025-07-29T16:46:48.594Z"
+    "error": "fetch is not defined",
+    "timestamp": "2025-07-29T22:12:23.510Z"
   }
 }

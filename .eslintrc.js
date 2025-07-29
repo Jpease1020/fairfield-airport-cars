@@ -105,7 +105,8 @@ module.exports = {
         selector: 'TSPropertySignature[key.name="className"]',
         message: '❌ className in TypeScript interface is FORBIDDEN. Use styled-components instead.'
       }
-    ]
+    ],
+    "@typescript-eslint/no-explicit-any": "warn"
   },
   
   // Custom rule definitions

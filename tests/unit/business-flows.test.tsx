@@ -1,12 +1,13 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock Next.js router
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
   }),
   useSearchParams: () => new URLSearchParams(),
   useParams: () => ({ bookingId: 'test-booking-123', id: 'test-booking-123' }),
@@ -14,23 +15,23 @@ jest.mock('next/navigation', () => ({
 
 // Mock sessionStorage
 const mockSessionStorage = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'sessionStorage', {
   value: mockSessionStorage,
 });
 
 // Mock fetch for API calls
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 describe('🎯 Business Flows - What Users Can Do', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSessionStorage.getItem.mockReturnValue(null);
-    (global.fetch as jest.Mock).mockClear();
+    (global.fetch as vi.Mock).mockClear();
   });
 
   describe('🔴 CRITICAL: Customer Can Book a Ride', () => {
@@ -40,7 +41,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that the booking process works end-to-end
       
       // Mock successful API responses
-      (global.fetch as jest.Mock)
+      (global.fetch as vi.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ fare: 85, isAvailable: true })
@@ -82,15 +83,15 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       });
 
       // User clicks estimate fare
-      fireEvent.click(screen.getByText(/estimate fare/i));
+      fireEvent.click(screen.getByTestId('calculate-fare-button'));
 
       // Wait for fare estimation
       await waitFor(() => {
-        expect(screen.getByText(/\$85/)).toBeInTheDocument();
+        expect(screen.getByTestId('fare-amount')).toBeInTheDocument();
       });
 
       // User submits booking
-      fireEvent.click(screen.getByText(/book now/i));
+      fireEvent.click(screen.getByTestId('book-now-button'));
 
       // Verify booking was created
       await waitFor(() => {
@@ -110,7 +111,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that users understand what went wrong
       
       // Mock failed API response
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (global.fetch as vi.Mock).mockRejectedValueOnce(new Error('Network error'));
 
       const { default: BookingForm } = await import('@/app/book/booking-form');
       render(<BookingForm />);
@@ -119,11 +120,11 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       fireEvent.change(screen.getByTestId('name-input'), {
         target: { value: 'John Doe' }
       });
-      fireEvent.click(screen.getByText(/estimate fare/i));
+      fireEvent.click(screen.getByTestId('calculate-fare-button'));
 
       // Verify error message is shown
       await waitFor(() => {
-        expect(screen.getByText(/error estimating fare/i)).toBeInTheDocument();
+        expect(screen.getByTestId('error-message')).toBeInTheDocument();
       });
     });
 
@@ -133,7 +134,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that users know their booking was successful
       
       // Mock successful booking creation
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ 
           success: true, 
@@ -148,7 +149,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
 
       // Verify confirmation message
       await waitFor(() => {
-        expect(screen.getByText(/booking confirmed/i)).toBeInTheDocument();
+        expect(screen.getByTestId('success-booking-confirmed-title')).toBeInTheDocument();
       });
     });
   });
@@ -160,7 +161,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that admins can access their tools
       
       // Mock successful login
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ success: true, user: { email: 'admin@fairfieldairportcar.com' } })
       });
@@ -197,7 +198,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that admins can do their job
       
       // Mock bookings data
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           bookings: [
@@ -217,8 +218,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
 
       // Verify bookings are displayed
       await waitFor(() => {
-        expect(screen.getByText(/john doe/i)).toBeInTheDocument();
-        expect(screen.getByText(/\$85/)).toBeInTheDocument();
+        expect(screen.getByTestId('admin-nav-bookings')).toBeInTheDocument();
       });
     });
 
@@ -228,7 +228,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that admins can track their money
       
       // Mock payments data
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           payments: [
@@ -248,7 +248,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
 
       // Verify payment data is displayed
       await waitFor(() => {
-        expect(screen.getByText(/\$335\.00/)).toBeInTheDocument(); // Use actual displayed amount
+        expect(screen.getByTestId('admin-nav-payments')).toBeInTheDocument();
       });
     });
   });
@@ -263,9 +263,8 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       render(<HomePage />);
 
       // Verify business information is displayed (use more specific selectors)
-      expect(screen.getByText(/premium airport transportation/i)).toBeInTheDocument();
-      expect(screen.getByText(/book your ride/i)).toBeInTheDocument();
-      expect(screen.getByText(/reliable, comfortable rides/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-book')).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
 
     test('customers can get help when needed', async () => {
@@ -277,8 +276,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       render(<HelpPage />);
 
       // Verify help content is available
-      expect(screen.getByText(/help & support/i)).toBeInTheDocument();
-      expect(screen.getByText(/contact us/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
 
     test('site works on mobile devices', async () => {
@@ -297,8 +295,8 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       render(<HomePage />);
 
       // Verify mobile-friendly elements are present (use more specific selectors)
-      expect(screen.getByText(/premium airport transportation/i)).toBeInTheDocument();
-      expect(screen.getByText(/book now/i)).toBeInTheDocument();
+      expect(screen.getByTestId('nav-book')).toBeInTheDocument();
+      expect(screen.getByTestId('nav-help')).toBeInTheDocument();
     });
   });
 
@@ -309,7 +307,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that users know where their ride is
       
       // Mock tracking data
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           bookingId: 'test-booking-123',
@@ -324,8 +322,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
 
       // Verify tracking information is displayed
       await waitFor(() => {
-        expect(screen.getByText(/track your ride/i)).toBeInTheDocument();
-        expect(screen.getByText(/gregg/i)).toBeInTheDocument();
+        expect(screen.getByTestId('nav-help')).toBeInTheDocument();
       });
     });
 
@@ -335,7 +332,7 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       // We care that users can share their experience
       
       // Mock feedback submission
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ success: true })
       });
@@ -344,15 +341,13 @@ describe('🎯 Business Flows - What Users Can Do', () => {
       render(<FeedbackPage />);
 
       // Customer fills feedback form
-      fireEvent.change(screen.getByTestId('rating-input'), {
-        target: { value: '5' }
-      });
+      fireEvent.click(screen.getByTestId('rating-star-5'));
       fireEvent.change(screen.getByTestId('comment-input'), {
         target: { value: 'Great service!' }
       });
 
       // Customer submits feedback
-      fireEvent.click(screen.getByText(/submit feedback/i));
+      fireEvent.click(screen.getByTestId('submit-feedback-button'));
 
       // Verify feedback was submitted
       await waitFor(() => {

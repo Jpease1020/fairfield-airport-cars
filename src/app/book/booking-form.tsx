@@ -275,6 +275,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           type="warning" 
           message="Location autocomplete is temporarily unavailable. You can still fill out the form manually."
           id="maps-error-message"
+          data-testid="maps-error-message"
         />
       )}
 
@@ -477,7 +478,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     Estimated Fare
                   </EditableText>
                 </H2>
-                <Text variant="lead" size="xl" style={{ color: 'var(--primary-color, #0B1F3A)', fontWeight: 'bold', fontSize: '2.5rem' }} id="fare-amount">
+                <Text 
+                  variant="lead" 
+                  size="xl" 
+                  style={{ color: 'var(--primary-color, #0B1F3A)', fontWeight: 'bold', fontSize: '2.5rem' }} 
+                  id="fare-amount"
+                  data-testid="fare-amount"
+                >
                   ${fare?.toFixed(2) || '0.00'}
                 </Text>
               </Stack>
@@ -486,11 +493,21 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
           {/* Error and Success Messages */}
           {error && (
-            <StatusMessage type="error" message={error} id="error-message" data-testid="error-message" />
+            <StatusMessage 
+              type="error" 
+              message={error} 
+              id="error-message" 
+              data-testid="error-message" 
+            />
           )}
           
           {success && (
-            <StatusMessage type="success" message={success} id="success-message" />
+            <StatusMessage 
+              type="success" 
+              message={success} 
+              id="success-message" 
+              data-testid="success-message" 
+            />
           )}
 
           {/* Action Buttons - Enhanced styling */}

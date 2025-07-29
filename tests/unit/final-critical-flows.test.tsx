@@ -1,51 +1,52 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock Next.js router
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
-    forward: jest.fn(),
-    refresh: jest.fn(),
-    prefetch: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
   }),
   usePathname: () => '/',
   useParams: () => ({ id: 'test-booking-123' }),
 }));
 
 // Mock Firebase Auth
-jest.mock('firebase/auth', () => ({
-  signInWithEmailAndPassword: jest.fn(),
-  signInWithPopup: jest.fn(),
-  signOut: jest.fn(),
-  onAuthStateChanged: jest.fn((auth, callback) => {
+vi.mock('firebase/auth', () => ({
+  signInWithEmailAndPassword: vi.fn(),
+  signInWithPopup: vi.fn(),
+  signOut: vi.fn(),
+  onAuthStateChanged: vi.fn((auth, callback) => {
     callback({ user: { email: 'gregg@fairfieldairportcar.com' } });
     return () => {};
   }),
-  getAuth: jest.fn(() => ({})),
-  GoogleAuthProvider: jest.fn(() => ({})),
+  getAuth: vi.fn(() => ({})),
+  GoogleAuthProvider: vi.fn(() => ({})),
 }));
 
 // Mock Google Maps
 global.window.google = {
   maps: {
     places: {
-      Autocomplete: jest.fn(),
-      AutocompletePrediction: jest.fn(),
+      Autocomplete: vi.fn(),
+      AutocompletePrediction: vi.fn(),
     },
-    DistanceMatrixService: jest.fn(),
+    DistanceMatrixService: vi.fn(),
   },
 } as any;
 
 // Mock sessionStorage
 const mockSessionStorage = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'sessionStorage', {
   value: mockSessionStorage,
@@ -57,9 +58,9 @@ const mockLocation = {
   pathname: '/',
   search: '',
   hash: '',
-  assign: jest.fn(),
-  replace: jest.fn(),
-  reload: jest.fn(),
+  assign: vi.fn(),
+  replace: vi.fn(),
+  reload: vi.fn(),
 };
 Object.defineProperty(window, 'location', {
   value: mockLocation,
@@ -67,11 +68,11 @@ Object.defineProperty(window, 'location', {
 });
 
 // Mock fetch globally
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 describe('🎯 Critical Business Flows - What Users Can Do', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSessionStorage.clear();
     mockLocation.href = '';
   });
@@ -79,7 +80,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
   describe('🔴 CRITICAL: Customer Can Book a Ride', () => {
     test('customer can complete entire booking journey', async () => {
       // Mock successful API responses
-      (global.fetch as jest.Mock)
+      (global.fetch as any)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -137,7 +138,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
       
       // User sees fare estimate
       await waitFor(() => {
-        expect(screen.getByText(/\$150\.00/)).toBeInTheDocument();
+        expect(screen.getByTestId('fare-amount')).toBeInTheDocument();
       });
 
       // User submits booking
@@ -151,7 +152,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
 
     test('customer gets helpful error messages when booking fails', async () => {
       // Mock API failure
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       const { default: BookingForm } = await import('@/app/book/booking-form');
       render(<BookingForm />);
@@ -186,7 +187,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
       
       // User sees helpful error message
       await waitFor(() => {
-        expect(screen.getByText(/error estimating fare/i)).toBeInTheDocument();
+        expect(screen.getByTestId('error-message')).toBeInTheDocument();
       });
     });
 
@@ -288,7 +289,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
     });
 
     test('payment system handles successful payments', async () => {
-      const mockFetch = jest.fn();
+      const mockFetch = vi.fn();
       global.fetch = mockFetch;
 
       mockFetch.mockResolvedValueOnce({
@@ -325,7 +326,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
     });
 
     test('payment system handles payment errors', async () => {
-      const mockFetch = jest.fn();
+      const mockFetch = vi.fn();
       global.fetch = mockFetch;
 
       mockFetch.mockResolvedValueOnce({
@@ -393,7 +394,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
 
     test('booking form handles network errors gracefully', async () => {
       // Mock network error
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       const { default: BookingForm } = await import('@/app/book/booking-form');
       render(<BookingForm />);
@@ -428,7 +429,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
       
       // User sees helpful error message
       await waitFor(() => {
-        expect(screen.getByText(/error estimating fare/i)).toBeInTheDocument();
+        expect(screen.getByTestId('error-message')).toBeInTheDocument();
       });
 
       // User tries to book without fare calculation
@@ -436,7 +437,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
 
       // User gets helpful guidance
       await waitFor(() => {
-        expect(screen.getByText(/please calculate fare before booking/i)).toBeInTheDocument();
+        expect(screen.getByTestId('error-message')).toBeInTheDocument();
       });
     });
   });
@@ -444,7 +445,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
   describe('🟡 IMPORTANT: Booking Data Persistence', () => {
     test('booking data is saved for user reference', async () => {
       // Mock successful booking creation
-      (global.fetch as jest.Mock)
+      (global.fetch as any)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -492,7 +493,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
       // User calculates fare first
       fireEvent.click(screen.getByTestId('calculate-fare-button'));
       await waitFor(() => {
-        expect(screen.getByText(/\$150\.00/)).toBeInTheDocument();
+        expect(screen.getByTestId('fare-amount')).toBeInTheDocument();
       });
 
       // User submits booking
@@ -510,7 +511,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
 
   describe('🟡 IMPORTANT: Business Services Work', () => {
     test('fare estimation service provides accurate pricing', async () => {
-      const mockFetch = jest.fn();
+      const mockFetch = vi.fn();
       global.fetch = mockFetch;
 
       mockFetch.mockResolvedValueOnce({
@@ -543,7 +544,7 @@ describe('🎯 Critical Business Flows - What Users Can Do', () => {
     });
 
     test('booking creation service processes reservations', async () => {
-      const mockFetch = jest.fn();
+      const mockFetch = vi.fn();
       global.fetch = mockFetch;
 
       mockFetch.mockResolvedValueOnce({

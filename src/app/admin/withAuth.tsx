@@ -21,7 +21,11 @@ const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
         setLoading(false);
       });
 
-      return () => unsubscribe();
+      return () => {
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      };
     }, [router]);
 
     if (loading) {
