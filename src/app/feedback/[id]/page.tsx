@@ -31,7 +31,7 @@ function FeedbackPageContent() {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/feedback', {
+      const response = await fetch('/api/reviews/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +46,8 @@ function FeedbackPageContent() {
       if (response.ok) {
         setSubmitted(true);
       } else {
-        throw new Error('Failed to submit feedback');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit feedback');
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);

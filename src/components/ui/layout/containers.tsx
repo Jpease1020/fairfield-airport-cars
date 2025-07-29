@@ -15,6 +15,7 @@ interface ContainerProps {
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
+  id?: string;
 }
 
 const StyledContainer = styled.div.withConfig({
@@ -200,6 +201,7 @@ export const Container: React.FC<ContainerProps> = ({
   marginBottom = 'none',
   spacing = 'none',
   as: Component = 'div',
+  id,
   ...rest
 }) => {
   return (
@@ -212,6 +214,7 @@ export const Container: React.FC<ContainerProps> = ({
       marginBottom={marginBottom}
       spacing={spacing}
       as={Component}
+      id={id}
       {...rest}
     >
       {children}
@@ -808,6 +811,7 @@ interface StackProps {
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   fullWidth?: boolean;
   as?: 'div' | 'section' | 'article' | 'nav' | 'header' | 'footer';
+  id?: string;
 }
 
 const StyledStack = styled.div.withConfig({
@@ -889,7 +893,9 @@ const Stack: React.FC<StackProps> = ({
   marginBottom = 'none',
   fullWidth = false,
   as: Component = 'div',
-  children
+  children,
+  id,
+  ...rest
 }) => {
   return (
     <StyledStack
@@ -904,6 +910,8 @@ const Stack: React.FC<StackProps> = ({
       marginBottom={marginBottom}
       fullWidth={fullWidth}
       as={Component}
+      id={id}
+      {...rest}
     >
       {children}
     </StyledStack>

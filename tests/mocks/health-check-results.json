@@ -2,16 +2,16 @@
   "/api/booking": {
     "status": 200,
     "ok": true,
-    "timestamp": "2025-07-28T22:28:22.990Z"
+    "timestamp": "2025-07-29T13:46:18.534Z"
   },
   "/api/booking/estimate-fare": {
     "status": 200,
     "ok": true,
-    "timestamp": "2025-07-28T22:28:22.991Z"
+    "timestamp": "2025-07-29T13:46:18.534Z"
   },
   "/api/booking/check-time-slot": {
     "status": 200,
     "ok": true,
-    "timestamp": "2025-07-28T22:28:22.991Z"
+    "timestamp": "2025-07-29T13:46:18.534Z"
   }
 }

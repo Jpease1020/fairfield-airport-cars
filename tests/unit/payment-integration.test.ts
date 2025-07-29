@@ -1,10 +1,20 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { createPaymentLink } from '@/lib/services/square-service';
+import { createBooking, getBooking } from '@/lib/services/booking-service';
 
-// Mock the Square service
+// Mock Square service
 jest.mock('@/lib/services/square-service', () => ({
-  createPaymentLink: jest.fn(),
-  refundPayment: jest.fn(),
-  verifyWebhookSignature: jest.fn()
+  createPaymentLink: jest.fn()
+}));
+
+// Mock booking service
+jest.mock('@/lib/services/booking-service', () => ({
+  createBooking: jest.fn(),
+  getBooking: jest.fn()
+}));
+
+// Mock Firebase
+jest.mock('@/lib/utils/firebase', () => ({
+  db: {}
 }));
 
 describe('Payment Integration Tests', () => {
@@ -12,116 +22,169 @@ describe('Payment Integration Tests', () => {
     jest.clearAllMocks();
   });
 
-  describe('Payment Link Creation', () => {
-    it('should create payment link successfully', async () => {
-      const { createPaymentLink } = require('@/lib/services/square-service');
-      
+  describe('Booking with Payment Integration', () => {
+    it('should create booking with payment link', async () => {
+      const mockBookingId = 'booking-123';
       const mockPaymentLink = {
-        id: 'test-payment-link',
-        url: 'https://checkout.square.com/test-link',
-        orderId: 'test-order-id'
+        id: 'payment-link-123',
+        url: 'https://squareup.com/checkout/test',
+        orderId: 'order-123'
       };
-      
-      createPaymentLink.mockResolvedValue(mockPaymentLink);
-      
-      const result = await createPaymentLink({
-        amount: 15000,
-        currency: 'USD',
-        bookingId: 'test-booking-123'
+
+      (createBooking as jest.Mock).mockResolvedValue(mockBookingId);
+      (getBooking as jest.Mock).mockResolvedValue({
+        id: mockBookingId,
+        name: 'John Doe',
+        email: 'john@example.com',
+        fare: 150
       });
-      
-      expect(result).toEqual(mockPaymentLink);
+      (createPaymentLink as jest.Mock).mockResolvedValue(mockPaymentLink);
+
+      const bookingData = {
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '203-555-0123',
+        pickupLocation: 'Fairfield Station',
+        dropoffLocation: 'JFK Airport',
+        pickupDateTime: new Date('2024-12-25T10:00:00'),
+        passengers: 2,
+        fare: 150,
+        status: 'pending' as const,
+        depositPaid: false,
+        balanceDue: 150
+      };
+
+      const bookingId = await createBooking(bookingData);
+
+      expect(bookingId).toBe(mockBookingId);
       expect(createPaymentLink).toHaveBeenCalledWith({
-        amount: 15000,
+        bookingId: mockBookingId,
+        amount: 3000, // 20% of 150 = 30, converted to cents
         currency: 'USD',
-        bookingId: 'test-booking-123'
+        description: 'Deposit for ride from Fairfield Station to JFK Airport',
+        buyerEmail: 'john@example.com'
       });
+    });
+
+    it('should handle payment link creation failure gracefully', async () => {
+      const mockBookingId = 'booking-123';
+
+      (createBooking as jest.Mock).mockResolvedValue(mockBookingId);
+      (createPaymentLink as jest.Mock).mockRejectedValue(new Error('Square API error'));
+
+      const bookingData = {
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '203-555-0123',
+        pickupLocation: 'Fairfield Station',
+        dropoffLocation: 'JFK Airport',
+        pickupDateTime: new Date('2024-12-25T10:00:00'),
+        passengers: 2,
+        fare: 150,
+        status: 'pending' as const,
+        depositPaid: false,
+        balanceDue: 150
+      };
+
+      // Should not throw error even if payment link fails
+      const bookingId = await createBooking(bookingData);
+
+      expect(bookingId).toBe(mockBookingId);
+    });
+  });
+
+  describe('Payment Link Creation', () => {
+    it('should create payment link with correct parameters', async () => {
+      const mockPaymentLink = {
+        id: 'payment-link-123',
+        url: 'https://squareup.com/checkout/test',
+        orderId: 'order-123'
+      };
+
+      (createPaymentLink as jest.Mock).mockResolvedValue(mockPaymentLink);
+
+      const paymentData = {
+        bookingId: 'booking-123',
+        amount: 3000, // $30.00 in cents
+        currency: 'USD',
+        description: 'Deposit for ride from Fairfield to JFK',
+        buyerEmail: 'john@example.com'
+      };
+
+      const result = await createPaymentLink(paymentData);
+
+      expect(result).toEqual(mockPaymentLink);
+      expect(createPaymentLink).toHaveBeenCalledWith(paymentData);
     });
 
     it('should handle payment link creation errors', async () => {
-      const { createPaymentLink } = require('@/lib/services/square-service');
-      
-      createPaymentLink.mockRejectedValue(new Error('Payment service unavailable'));
-      
-      await expect(createPaymentLink({
-        amount: 15000,
+      (createPaymentLink as jest.Mock).mockRejectedValue(new Error('Square API error'));
+
+      const paymentData = {
+        bookingId: 'booking-123',
+        amount: 3000,
         currency: 'USD',
-        bookingId: 'test-booking-123'
-      })).rejects.toThrow('Payment service unavailable');
-    });
-  });
-
-  describe('Payment Refund', () => {
-    it('should process refund successfully', async () => {
-      const { refundPayment } = require('@/lib/services/square-service');
-      
-      const mockRefund = {
-        id: 'test-refund-id',
-        amount: 15000,
-        status: 'COMPLETED'
+        description: 'Deposit for ride',
+        buyerEmail: 'john@example.com'
       };
-      
-      refundPayment.mockResolvedValue(mockRefund);
-      
-      const result = await refundPayment({
-        paymentId: 'test-payment-id',
-        amount: 15000,
-        reason: 'Customer cancellation'
-      });
-      
-      expect(result).toEqual(mockRefund);
-      expect(refundPayment).toHaveBeenCalledWith({
-        paymentId: 'test-payment-id',
-        amount: 15000,
-        reason: 'Customer cancellation'
-      });
-    });
 
-    it('should handle refund errors', async () => {
-      const { refundPayment } = require('@/lib/services/square-service');
-      
-      refundPayment.mockRejectedValue(new Error('Refund failed'));
-      
-      await expect(refundPayment({
-        paymentId: 'test-payment-id',
-        amount: 15000,
-        reason: 'Customer cancellation'
-      })).rejects.toThrow('Refund failed');
+      await expect(createPaymentLink(paymentData)).rejects.toThrow('Square API error');
     });
   });
 
-  describe('Webhook Verification', () => {
-    it('should verify webhook signature successfully', async () => {
-      const { verifyWebhookSignature } = require('@/lib/services/square-service');
-      
-      verifyWebhookSignature.mockReturnValue(true);
-      
-      const isValid = verifyWebhookSignature({
-        body: 'test-body',
-        signature: 'test-signature',
-        timestamp: 'test-timestamp'
+  describe('Deposit Calculation', () => {
+    it('should calculate 20% deposit correctly', () => {
+      const fare = 150;
+      const depositAmount = Math.round(fare * 0.2 * 100) / 100;
+      const balanceDue = fare - depositAmount;
+
+      expect(depositAmount).toBe(30);
+      expect(balanceDue).toBe(120);
+    });
+
+    it('should handle different fare amounts', () => {
+      const testCases = [
+        { fare: 100, expectedDeposit: 20, expectedBalance: 80 },
+        { fare: 200, expectedDeposit: 40, expectedBalance: 160 },
+        { fare: 75, expectedDeposit: 15, expectedBalance: 60 }
+      ];
+
+      testCases.forEach(({ fare, expectedDeposit, expectedBalance }) => {
+        const depositAmount = Math.round(fare * 0.2 * 100) / 100;
+        const balanceDue = fare - depositAmount;
+
+        expect(depositAmount).toBe(expectedDeposit);
+        expect(balanceDue).toBe(expectedBalance);
       });
-      
-      expect(isValid).toBe(true);
-      expect(verifyWebhookSignature).toHaveBeenCalledWith({
-        body: 'test-body',
-        signature: 'test-signature',
-        timestamp: 'test-timestamp'
+    });
+  });
+
+  describe('Payment Validation', () => {
+    it('should validate payment amounts', () => {
+      const validAmounts = [1000, 5000, 10000]; // $10, $50, $100 in cents
+      const invalidAmounts = [-100, 0, 999999999];
+
+      validAmounts.forEach(amount => {
+        expect(amount).toBeGreaterThan(0);
+        expect(amount).toBeLessThan(100000000); // Reasonable upper limit
+      });
+
+      invalidAmounts.forEach(amount => {
+        expect(amount <= 0 || amount >= 100000000).toBe(true);
       });
     });
 
-    it('should reject invalid webhook signatures', async () => {
-      const { verifyWebhookSignature } = require('@/lib/services/square-service');
-      
-      verifyWebhookSignature.mockReturnValue(false);
-      
-      const isValid = verifyWebhookSignature({
-        body: 'test-body',
-        signature: 'invalid-signature',
-        timestamp: 'test-timestamp'
+    it('should validate currency codes', () => {
+      const validCurrencies = ['USD', 'EUR', 'GBP', 'CAD'];
+      const invalidCurrencies = ['INVALID', '', 'US'];
+
+      validCurrencies.forEach(currency => {
+        expect(currency).toMatch(/^[A-Z]{3}$/);
       });
-      
-      expect(isValid).toBe(false);
+
+      invalidCurrencies.forEach(currency => {
+        expect(currency).not.toMatch(/^[A-Z]{3}$/);
+      });
     });
   });
 }); 

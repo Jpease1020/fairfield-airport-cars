@@ -2,6 +2,42 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 
+// Mock TextEncoder/TextDecoder for Node.js environment
+global.TextEncoder = require('util').TextEncoder;
+global.TextDecoder = require('util').TextDecoder;
+
+// Mock Response for Node.js environment
+(global as any).Response = class Response {
+  constructor(body?: any, init?: any) {
+    this.body = body;
+    this.init = init;
+  }
+  body: any;
+  init: any;
+  ok = true;
+  status = 200;
+  statusText = 'OK';
+  headers = new Map();
+  async json() { return JSON.parse(this.body || '{}'); }
+  async text() { return this.body || ''; }
+  
+  static error() { return new Response('Error', { status: 500 }); }
+  static json(data: any, init?: any) { return new Response(JSON.stringify(data), init); }
+  static redirect(url: string, status?: number) { return new Response('', { status: status || 302, headers: { Location: url } }); }
+};
+
+// Mock BroadcastChannel for Node.js environment
+(global as any).BroadcastChannel = class BroadcastChannel {
+  constructor(name: string) {
+    this.name = name;
+  }
+  name: string;
+  postMessage = jest.fn();
+  addEventListener = jest.fn();
+  removeEventListener = jest.fn();
+  close = jest.fn();
+};
+
 // Mock all external services globally
 jest.mock('@/lib/services/square-service', () => ({
   createCheckoutSession: jest.fn().mockResolvedValue({

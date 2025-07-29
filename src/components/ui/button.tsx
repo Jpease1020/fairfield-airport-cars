@@ -159,10 +159,11 @@ export interface ButtonProps {
   fullWidth?: boolean;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
   shape?: 'default' | 'rounded' | 'pill' | 'square';
   as?: 'button' | 'a' | 'div';
+  id?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -177,7 +178,9 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   type = 'button',
   shape = 'default',
-  as: Component = 'button'
+  as: Component = 'button',
+  id,
+  ...rest
 }) => {
   return (
     <StyledButton
@@ -187,10 +190,12 @@ export const Button: React.FC<ButtonProps> = ({
       shape={shape}
       fullWidth={fullWidth}
       loading={loading}
-      type={Component === 'button' ? type : undefined}
+      type={type}
       disabled={disabled || loading}
       onClick={onClick}
       aria-busy={loading}
+      id={id}
+      {...rest}
     >
       {loading && (
         <Spinner size="sm" />

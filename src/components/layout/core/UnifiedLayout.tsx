@@ -95,19 +95,38 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
       {/* Navigation */}
       {showNavigation && (
         <StandardNavigation 
-          items={[
-            { label: 'Home', href: '/' },
-            { label: 'Book', href: '/book' },
-            { label: 'Help', href: '/help' },
-            { label: 'About', href: '/about' }
-          ]}
+          items={
+            layoutType === 'admin' 
+              ? [
+                  { label: 'Dashboard', href: '/admin', icon: '🏠' },
+                  { label: 'Bookings', href: '/admin/bookings', icon: '📅' },
+                  { label: 'Calendar', href: '/admin/calendar', icon: '📆' },
+                  { label: 'Payments', href: '/admin/payments', icon: '💰' },
+                  { label: 'Drivers', href: '/admin/drivers', icon: '👨‍💼' },
+                  { label: 'Costs', href: '/admin/costs', icon: '📊' }
+                ]
+              : [
+                  { label: 'Home', href: '/' },
+                  { label: 'Book', href: '/book' },
+                  { label: 'Help', href: '/help' },
+                  { label: 'About', href: '/about' }
+                ]
+          }
           logo={<LogoImage size="sm" width={40} height={40} />}
-          brandName="Fairfield Airport Cars"
-          ctaButton={{
-            label: 'Book Now',
-            href: '/book',
-            variant: 'primary'
-          }}
+          brandName={layoutType === 'admin' ? 'Admin Dashboard' : 'Fairfield Airport Cars'}
+          ctaButton={
+            layoutType === 'admin'
+              ? {
+                  label: 'View Site',
+                  href: '/',
+                  variant: 'outline'
+                }
+              : {
+                  label: 'Book Now',
+                  href: '/book',
+                  variant: 'primary'
+                }
+          }
         />
       )}
 

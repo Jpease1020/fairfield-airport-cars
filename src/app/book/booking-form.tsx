@@ -239,14 +239,31 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
       if (response.ok) {
         const data = await response.json();
-        window.location.href = `/success?bookingId=${data.bookingId}`;
+        
+        // If payment link is available, redirect to payment
+        if (data.paymentLinkUrl) {
+          // Store booking info in session storage for payment page
+          sessionStorage.setItem('pendingBooking', JSON.stringify({
+            bookingId: data.bookingId,
+            driverName: data.driverName,
+            driverPhone: data.driverPhone,
+            fare,
+            depositAmount: Math.round(fare * 0.2 * 100) / 100
+          }));
+          
+          // Redirect to payment page
+          window.location.href = data.paymentLinkUrl;
+        } else {
+          // Fallback to success page
+          window.location.href = `/success?bookingId=${data.bookingId}`;
+        }
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Failed to create booking');
       }
     } catch (error) {
       console.error('Error submitting booking:', error);
-      setIsCalculating(false);
+      setError('Network error. Please try again.');
     }
   };
 
@@ -469,7 +486,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
           {/* Error and Success Messages */}
           {error && (
-            <StatusMessage type="error" message={error} id="error-message" />
+            <StatusMessage type="error" message={error} id="error-message" data-testid="error-message" />
           )}
           
           {success && (

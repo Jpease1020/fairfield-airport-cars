@@ -1,5 +1,7 @@
 import { db } from '@/lib/utils/firebase';
 import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
+import { assignDriverToBooking as assignDriver, getDriver } from './driver-service';
+import { createPaymentLink } from './square-service';
 
 // Helper function to safely convert Firestore dates to JavaScript Date objects
 const safeToDate = (dateField: any): Date => {
@@ -98,77 +100,88 @@ export const calculateDynamicFare = (baseFare: number, pickupTime: Date, distanc
 };
 
 // Real-time booking status management
-export const updateBookingStatus = async (bookingId: string, status: Booking['status'], driverId?: string): Promise<void> => {
-  const bookingRef = doc(db, 'bookings', bookingId);
-  
-  const updateData: any = {
-    status,
-    updatedAt: serverTimestamp(),
-  };
-  
-  if (driverId) {
-    updateData.driverId = driverId;
-    // Get driver info
-    const driverDoc = await getDoc(doc(db, 'drivers', driverId));
-    if (driverDoc.exists()) {
-      const driverData = driverDoc.data() as Driver;
-      updateData.driverName = driverData.name;
-    }
+export const updateBookingStatus = async (bookingId: string, status: Booking['status']): Promise<void> => {
+  try {
+    const bookingRef = doc(db, 'bookings', bookingId);
+    await updateDoc(bookingRef, {
+      status,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error updating booking status:', error);
+    throw new Error('Failed to update booking status');
   }
-  
-  await updateDoc(bookingRef, updateData);
 };
 
-// Driver availability management
-export const getAvailableDrivers = async (): Promise<Driver[]> => {
-  const driversRef = collection(db, 'drivers');
-  const q = query(driversRef, where('status', '==', 'available'));
-  const snapshot = await getDocs(q);
-  
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  })) as Driver[];
-};
-
-// Assign driver to booking
+// Driver assignment with real driver system
 export const assignDriverToBooking = async (bookingId: string, driverId: string): Promise<void> => {
-  const bookingRef = doc(db, 'bookings', bookingId);
-  const driverRef = doc(db, 'drivers', driverId);
-  
-  // Update booking with driver assignment
-  await updateDoc(bookingRef, {
-    driverId,
-    status: 'confirmed',
-    updatedAt: serverTimestamp(),
-  });
-  
-  // Update driver status to busy
-  await updateDoc(driverRef, {
-    status: 'busy',
-    lastUpdated: serverTimestamp(),
-  });
+  try {
+    const driver = await getDriver(driverId);
+    if (!driver) {
+      throw new Error('Driver not found');
+    }
+
+    const bookingRef = doc(db, 'bookings', bookingId);
+    await updateDoc(bookingRef, {
+      driverId: driver.id,
+      driverName: driver.name,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error assigning driver to booking:', error);
+    throw new Error('Failed to assign driver to booking');
+  }
 };
 
-// Enhanced booking creation with dynamic pricing
+// Create booking with payment integration
 export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
-  // Calculate dynamic fare
-  const dynamicFare = calculateDynamicFare(
-    bookingData.fare,
-    bookingData.pickupDateTime,
-    0 // TODO: Calculate actual distance using Google Maps API
-  );
-  
-  const booking = {
-    ...bookingData,
-    dynamicFare,
-    balanceDue: dynamicFare - (bookingData.depositPaid ? bookingData.fare : 0),
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  };
-  
-  const docRef = await addDoc(collection(db, 'bookings'), booking);
-  return docRef.id;
+  try {
+    // Calculate deposit (20% of total fare)
+    const depositAmount = Math.round(bookingData.fare * 0.2 * 100) / 100; // Round to 2 decimal places
+    const balanceDue = bookingData.fare - depositAmount;
+
+    // Create booking document
+    const bookingDoc = {
+      ...bookingData,
+      depositAmount,
+      balanceDue,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
+    const bookingId = docRef.id;
+
+    // Assign driver (Gregg)
+    await assignDriverToBooking(bookingId, 'gregg-main-driver');
+
+    // Create payment link for deposit
+    try {
+      const paymentLink = await createPaymentLink({
+        bookingId,
+        amount: Math.round(depositAmount * 100), // Convert to cents
+        currency: 'USD',
+        description: `Deposit for ride from ${bookingData.pickupLocation} to ${bookingData.dropoffLocation}`,
+        buyerEmail: bookingData.email,
+      });
+
+      // Update booking with payment link
+      await updateDoc(docRef, {
+        squareOrderId: paymentLink.orderId,
+        updatedAt: serverTimestamp(),
+      });
+
+      console.log(`Payment link created for booking ${bookingId}:`, paymentLink.url);
+    } catch (paymentError) {
+      console.error('Failed to create payment link:', paymentError);
+      // Don't fail the booking creation if payment link fails
+    }
+
+    return bookingId;
+  } catch (error) {
+    console.error('Error creating booking:', error);
+    throw new Error('Failed to create booking');
+  }
 };
 
 // Get booking with real-time status
