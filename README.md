@@ -20,6 +20,11 @@ A modern, mobile-friendly booking platform for airport car service in Fairfield,
 - **Payment tracking** and Square integration
 - **Calendar view** of all bookings
 
+### For Designers & Developers
+- **Design feedback system** with section-based commenting (planned)
+- **JIRA integration** for automatic ticket creation
+- **Real-time collaboration** tools for design reviews
+
 ## CMS & Edit Mode Patterns
 
 ### Floating Admin Edit Mode

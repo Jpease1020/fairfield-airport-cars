@@ -1,5 +1,4 @@
-// User Experience Service
-// Handles real-time tracking, offline capabilities, accessibility, and mobile optimization
+import { listBookings } from './booking-service';
 
 interface UserPreferences {
   accessibility: {
@@ -57,25 +56,18 @@ class UserExperienceService {
     this.initializeAccessibility();
   }
 
-  // Load user preferences from localStorage
   private loadUserPreferences(): UserPreferences {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined') return this.getDefaultPreferences();
+
+    try {
+      const saved = localStorage.getItem('user-preferences');
+      return saved ? { ...this.getDefaultPreferences(), ...JSON.parse(saved) } : this.getDefaultPreferences();
+    } catch (error) {
+      console.error('Failed to load user preferences:', error);
       return this.getDefaultPreferences();
     }
-
-    const stored = localStorage.getItem('user-preferences');
-    if (stored) {
-      try {
-        return { ...this.getDefaultPreferences(), ...JSON.parse(stored) };
-      } catch (error) {
-        console.error('Failed to load user preferences:', error);
-      }
-    }
-
-    return this.getDefaultPreferences();
   }
 
-  // Get default user preferences
   private getDefaultPreferences(): UserPreferences {
     return {
       accessibility: {
@@ -87,33 +79,26 @@ class UserExperienceService {
       notifications: {
         email: true,
         sms: true,
-        push: false,
-        reminderTime: 24,
+        push: true,
+        reminderTime: 2,
       },
       language: 'en',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
   }
 
-  // Load offline data from localStorage
   private loadOfflineData(): OfflineData {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined') return this.getDefaultOfflineData();
+
+    try {
+      const saved = localStorage.getItem('offline-data');
+      return saved ? JSON.parse(saved) : this.getDefaultOfflineData();
+    } catch (error) {
+      console.error('Failed to load offline data:', error);
       return this.getDefaultOfflineData();
     }
-
-    const stored = localStorage.getItem('offline-data');
-    if (stored) {
-      try {
-        return { ...this.getDefaultOfflineData(), ...JSON.parse(stored) };
-      } catch (error) {
-        console.error('Failed to load offline data:', error);
-      }
-    }
-
-    return this.getDefaultOfflineData();
   }
 
-  // Get default offline data
   private getDefaultOfflineData(): OfflineData {
     return {
       bookings: [],
@@ -123,168 +108,138 @@ class UserExperienceService {
     };
   }
 
-  // Setup event listeners for online/offline status
   private setupEventListeners(): void {
     if (typeof window === 'undefined') return;
 
-    // Online/offline status
+    // Online/offline detection
     window.addEventListener('online', () => {
       this.isOnline = true;
       this.syncOfflineData();
-      this.showNotification('Connection restored', 'You are back online');
     });
 
     window.addEventListener('offline', () => {
       this.isOnline = false;
-      this.showNotification('Connection lost', 'You are offline. Some features may be limited.');
+      this.showNotification('Connection Lost', 'You are offline. Some features may be limited.', 'warning');
     });
 
-    // Before unload - save current state
+    // Save data before page unload
     window.addEventListener('beforeunload', () => {
       this.saveOfflineData();
     });
-
-    // Service worker for offline functionality
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(console.error);
-    }
   }
 
-  // Initialize accessibility features
   private initializeAccessibility(): void {
-    if (typeof window === 'undefined') return;
-
-    // Apply accessibility settings
     this.applyAccessibilitySettings();
-
-    // Setup keyboard navigation
     this.setupKeyboardNavigation();
-
-    // Setup screen reader announcements
     this.setupScreenReaderAnnouncements();
-  }
-
-  // Apply accessibility settings to the page
-  private applyAccessibilitySettings(): void {
-    const root = document.documentElement;
-    const settings = this.userPreferences.accessibility;
-
-    // High contrast
-    root.classList.toggle('high-contrast', settings.highContrast);
-
-    // Reduced motion
-    root.classList.toggle('reduce-motion', settings.reduceMotion);
-
-    // Font size
-    root.classList.remove('font-large', 'font-extra-large');
-    if (settings.fontSize === 'large') {
-      root.classList.add('font-large');
-    } else if (settings.fontSize === 'extra-large') {
-      root.classList.add('font-extra-large');
-    }
-
-    // Screen reader support
-    if (settings.screenReader) {
-      this.enhanceScreenReaderSupport();
-    }
-  }
-
-  // Setup keyboard navigation
-  private setupKeyboardNavigation(): void {
-    document.addEventListener('keydown', (event) => {
-      // Skip to main content
-      if (event.key === 'Tab' && event.altKey) {
-        event.preventDefault();
-        const mainContent = document.querySelector('main');
-        if (mainContent) {
-          (mainContent as HTMLElement).focus();
-        }
-      }
-
-      // Escape key to close modals
-      if (event.key === 'Escape') {
-        const modals = document.querySelectorAll('[role="dialog"]');
-        modals.forEach(modal => {
-          if (modal.classList.contains('open')) {
-            this.closeModal(modal as HTMLElement);
-          }
-        });
-      }
-    });
-  }
-
-  // Setup screen reader announcements
-  private setupScreenReaderAnnouncements(): void {
-    // Create live region for announcements
-    const announcementRegion = document.createElement('div');
-    announcementRegion.setAttribute('aria-live', 'polite');
-    announcementRegion.setAttribute('aria-atomic', 'true');
-    announcementRegion.style.position = 'absolute';
-    announcementRegion.style.left = '-10000px';
-    announcementRegion.style.width = '1px';
-    announcementRegion.style.height = '1px';
-    announcementRegion.style.overflow = 'hidden';
-    announcementRegion.id = 'screen-reader-announcements';
-    
-    document.body.appendChild(announcementRegion);
-  }
-
-  // Enhance screen reader support
-  private enhanceScreenReaderSupport(): void {
-    // Add ARIA labels to interactive elements
-    const buttons = document.querySelectorAll('button:not([aria-label])');
-    buttons.forEach(button => {
-      const text = button.textContent?.trim();
-      if (text) {
-        button.setAttribute('aria-label', text);
-      }
-    });
-
-    // Add skip links
+    this.enhanceScreenReaderSupport();
     this.addSkipLinks();
   }
 
-  // Add skip links for keyboard navigation
-  private addSkipLinks(): void {
-    const skipLinks = [
-      { href: '#main-content', text: 'Skip to main content' },
-      { href: '#navigation', text: 'Skip to navigation' },
-      { href: '#booking-form', text: 'Skip to booking form' },
-    ];
+  private applyAccessibilitySettings(): void {
+    if (typeof document === 'undefined') return;
 
-    const skipLinksContainer = document.createElement('div');
-    skipLinksContainer.className = 'skip-links';
+    const { accessibility } = this.userPreferences;
 
-    skipLinks.forEach(link => {
-      const skipLink = document.createElement('a');
-      skipLink.href = link.href;
-      skipLink.textContent = link.text;
-      skipLink.className = 'skip-link';
-      skipLinksContainer.appendChild(skipLink);
+    // High contrast
+    document.body.classList.toggle('high-contrast', accessibility.highContrast);
+
+    // Reduce motion
+    if (accessibility.reduceMotion) {
+      document.documentElement.style.setProperty('--transition-duration', '0s');
+    }
+
+    // Font size
+    document.body.classList.remove('font-normal', 'font-large', 'font-extra-large');
+    document.body.classList.add(`font-${accessibility.fontSize}`);
+
+    // Screen reader support
+    if (accessibility.screenReader) {
+      document.body.classList.add('screen-reader-friendly');
+    }
+  }
+
+  private setupKeyboardNavigation(): void {
+    if (typeof document === 'undefined') return;
+
+    // Skip to main content
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab' && e.target === document.body) {
+        const skipLink = document.getElementById('skip-to-main');
+        if (skipLink) {
+          skipLink.focus();
+        }
+      }
     });
 
-    document.body.insertBefore(skipLinksContainer, document.body.firstChild);
+    // Modal keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const openModal = document.querySelector('.modal[aria-hidden="false"]') as HTMLElement;
+        if (openModal) {
+          this.closeModal(openModal);
+        }
+      }
+    });
   }
 
-  // Close modal
   private closeModal(modal: HTMLElement): void {
-    modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
-    
-    // Return focus to trigger element
-    const trigger = document.querySelector(`[data-modal="${modal.id}"]`);
-    if (trigger) {
-      (trigger as HTMLElement).focus();
+    const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusableElements.length > 0) {
+      (focusableElements[0] as HTMLElement).focus();
     }
   }
 
-  // Start real-time tracking for a booking
-  startTracking(bookingId: string): void {
-    if (!this.isOnline) {
-      console.warn('Cannot start tracking while offline');
-      return;
-    }
+  private setupScreenReaderAnnouncements(): void {
+    if (typeof document === 'undefined') return;
 
+    // Create announcement region
+    const announcementRegion = document.createElement('div');
+    announcementRegion.id = 'screen-reader-announcements';
+    announcementRegion.setAttribute('aria-live', 'polite');
+    announcementRegion.setAttribute('aria-atomic', 'true');
+    announcementRegion.className = 'sr-only';
+    document.body.appendChild(announcementRegion);
+  }
+
+  private enhanceScreenReaderSupport(): void {
+    if (typeof document === 'undefined') return;
+
+    // Add ARIA labels to interactive elements
+    const buttons = document.querySelectorAll('button:not([aria-label])');
+    buttons.forEach((button) => {
+      if (!button.textContent?.trim()) {
+        button.setAttribute('aria-label', 'Button');
+      }
+    });
+
+    // Add role attributes
+    const mainContent = document.querySelector('main');
+    if (mainContent && !mainContent.getAttribute('role')) {
+      mainContent.setAttribute('role', 'main');
+    }
+  }
+
+  private addSkipLinks(): void {
+    if (typeof document === 'undefined') return;
+
+    // Skip to main content
+    const skipLink = document.createElement('a');
+    skipLink.id = 'skip-to-main';
+    skipLink.href = '#main-content';
+    skipLink.textContent = 'Skip to main content';
+    skipLink.className = 'skip-link';
+    document.body.insertBefore(skipLink, document.body.firstChild);
+
+    // Add main content ID
+    const mainContent = document.querySelector('main');
+    if (mainContent && !mainContent.id) {
+      mainContent.id = 'main-content';
+    }
+  }
+
+  startTracking(bookingId: string): void {
     // Initialize tracking data
     this.trackingData.set(bookingId, {
       bookingId,
@@ -292,71 +247,52 @@ class UserExperienceService {
       lastUpdated: new Date(),
     });
 
-    // Connect to WebSocket for real-time updates
+    // Try WebSocket connection first
     this.connectWebSocket(bookingId);
 
-    // Start periodic location updates
+    // Fallback to polling
+    this.startPolling(bookingId);
+
+    // Start location updates
     this.startLocationUpdates(bookingId);
   }
 
-  // Connect to WebSocket for real-time updates
   private connectWebSocket(bookingId: string): void {
-    const wsUrl = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/ws/tracking/${bookingId}`;
-    
-    this.websocketConnection = new WebSocket(wsUrl);
+    try {
+      this.websocketConnection = new WebSocket(`ws://localhost:3000/api/ws/bookings/${bookingId}`);
 
-    this.websocketConnection.onopen = () => {
-      console.log('WebSocket connected for tracking');
-    };
+      this.websocketConnection.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        this.updateTrackingData(bookingId, data);
+      };
 
-    this.websocketConnection.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      this.updateTrackingData(bookingId, data);
-    };
-
-    this.websocketConnection.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      // Fallback to polling
-      this.startPolling(bookingId);
-    };
-
-    this.websocketConnection.onclose = () => {
-      console.log('WebSocket disconnected');
-      // Fallback to polling
-      this.startPolling(bookingId);
-    };
+      this.websocketConnection.onerror = () => {
+        console.log('WebSocket connection failed, falling back to polling');
+      };
+    } catch (error) {
+      console.error('WebSocket connection error:', error);
+    }
   }
 
-  // Start polling as fallback for WebSocket
   private startPolling(bookingId: string): void {
-    const pollInterval = setInterval(async () => {
+    // Polling fallback for when WebSocket is not available
+    setInterval(async () => {
       try {
-        const response = await fetch(`/api/booking/${bookingId}/status`);
-        const data = await response.json();
-        this.updateTrackingData(bookingId, data);
+        const response = await fetch(`/api/booking/get-booking/${bookingId}`);
+        if (response.ok) {
+          const data = await response.json();
+          this.updateTrackingData(bookingId, data);
+        }
       } catch (error) {
         console.error('Polling error:', error);
-        clearInterval(pollInterval);
       }
-    }, 10000); // Poll every 10 seconds
+    }, 30000); // Poll every 30 seconds as fallback
   }
 
   // Start location updates for driver tracking
   private startLocationUpdates(bookingId: string): void {
-    // This would integrate with driver's GPS
-    // For now, simulate location updates
-    setInterval(() => {
-      // Simulate driver location updates
-      const mockLocation = {
-        lat: 40.7128 + (Math.random() - 0.5) * 0.01,
-        lng: -74.0060 + (Math.random() - 0.5) * 0.01,
-        timestamp: new Date(),
-        heading: Math.random() * 360,
-        speed: 30 + Math.random() * 20,
-      };
-
-      this.updateTrackingData(bookingId, { driverLocation: mockLocation });
-    }, 30000); // Update every 30 seconds
+    // TODO: Implement real driver location tracking with GPS
+    console.log('Driver location tracking not yet implemented');
   }
 
   // Update tracking data
@@ -396,8 +332,7 @@ class UserExperienceService {
 
   // Update map with driver location
   private updateMap(bookingId: string, location: TrackingData['driverLocation']): void {
-    // This would integrate with Google Maps API
-    // For now, just log the location
+    // TODO: Integrate with Google Maps API
     console.log(`Driver location for booking ${bookingId}:`, location);
   }
 
@@ -589,4 +524,4 @@ class UserExperienceService {
 export const userExperienceService = new UserExperienceService();
 
 // Export types
-export type { UserPreferences, TrackingData, OfflineData }; 
+export type { UserPreferences, TrackingData, OfflineData };

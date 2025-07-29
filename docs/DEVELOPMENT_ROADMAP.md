@@ -72,6 +72,7 @@
 - AI-powered features
 - Advanced analytics
 - API integrations
+- Design feedback system for collaboration
 
 **Success Metrics:**
 - 1000+ bookings/month
@@ -98,6 +99,7 @@
 - Customer confirmation system
 - Driver management
 - Analytics dashboard
+- Design feedback system (see `docs/features/DESIGN_FEEDBACK_SYSTEM.md`)
 - Performance optimization
 
 ### **📋 Backlog**

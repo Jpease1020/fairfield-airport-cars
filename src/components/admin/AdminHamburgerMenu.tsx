@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Container, Text, H3, Span, EditableText } from '@/components/ui';
+import { Text, H3, Span, EditableText } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
 import { useAdmin } from '@/components/admin/AdminProvider';
 import styled from 'styled-components';
