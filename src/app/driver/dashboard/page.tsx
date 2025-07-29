@@ -170,7 +170,7 @@ export default function DriverDashboard({}: DriverDashboardProps) {
         {/* Today's Bookings */}
         <Card variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2>Today's Bookings</H2>
+            <H2>Today&apos;s Bookings</H2>
             
             {bookings.length === 0 ? (
               <Text>No bookings for today</Text>

@@ -68,6 +68,10 @@ export class AuthService {
   async getUserRole(uid: string): Promise<UserRole | null> {
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
+      if (!userDoc.exists()) {
+        console.log('User document does not exist for uid:', uid);
+        return null;
+      }
       return userDoc.data() as UserRole;
     } catch (error) {
       console.error('Error getting user role:', error);
@@ -90,6 +94,9 @@ export class AuthService {
       return userRole.role === 'admin';
     }
 
+    // If no user role document exists, we could create one or return false
+    // For now, let's return false and log this for debugging
+    console.log('No user role document found for uid:', uid);
     return false;
   }
 

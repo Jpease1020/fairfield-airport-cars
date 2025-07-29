@@ -85,7 +85,7 @@ export const getAllBookings = async (): Promise<Booking[]> => {
     });
   } catch (error) {
     console.error('Error fetching bookings:', error);
-    throw new Error('Failed to fetch bookings');
+    return [];
   }
 };
 
@@ -157,17 +157,13 @@ export const getAllDrivers = async (): Promise<Driver[]> => {
       return {
         id: doc.id,
         ...data,
-        currentLocation: data.currentLocation ? {
-          ...data.currentLocation,
-          timestamp: safeToDate(data.currentLocation.timestamp)
-        } : undefined,
         createdAt: safeToDate(data.createdAt),
         updatedAt: safeToDate(data.updatedAt),
       } as Driver;
     });
   } catch (error) {
     console.error('Error fetching drivers:', error);
-    throw new Error('Failed to fetch drivers');
+    return [];
   }
 };
 
@@ -230,7 +226,7 @@ export const getAllPayments = async (): Promise<Payment[]> => {
     });
   } catch (error) {
     console.error('Error fetching payments:', error);
-    throw new Error('Failed to fetch payments');
+    return [];
   }
 };
 
