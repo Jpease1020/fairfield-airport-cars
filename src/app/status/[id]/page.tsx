@@ -42,7 +42,7 @@ function BookingStatusPageContent() {
   const getStatusIcon = (status: any) => {
     const iconMap: { [key: string]: string } = {
       'confirmed': '✅',
-      'en-route': '🚗',
+      'en-route': '👨‍💼',
       'arrived': '📍',
       'completed': '🏁',
       'cancelled': '❌',
@@ -265,7 +265,7 @@ function BookingStatusPageContent() {
           <Text>
             {[
               { status: 'confirmed', label: 'Booking Confirmed', icon: '✅' },
-              { status: 'en-route', label: 'Driver En Route', icon: '🚗' },
+              { status: 'en-route', label: 'Driver En Route', icon: '👨‍💼' },
               { status: 'arrived', label: 'Driver Arrived', icon: '📍' },
               { status: 'completed', label: 'Trip Completed', icon: '🏁' }
             ].map((step) => (

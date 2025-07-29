@@ -239,7 +239,7 @@ function HomePageContent() {
             </Text>
           </Stack>
           
-          <Grid cols={3} gap="lg">
+          <Grid cols={3} gap="lg" responsive>
             {features.map((feature, index) => (
               <GridItem key={index}>
                 <Card id={`features-card-${index + 1}`} variant="elevated" padding="lg" hover>
@@ -285,7 +285,7 @@ function HomePageContent() {
             </Text>
           </Stack>
           
-          <Grid cols={3} gap="lg">
+          <Grid cols={3} gap="lg" responsive>
             {testimonials.map((testimonial, index) => (
               <GridItem key={index}>
                 <Card id={`testimonials-card-${index + 1}`} variant="elevated" padding="lg">
@@ -338,7 +338,7 @@ function HomePageContent() {
             </Text>
           </Stack>
           
-          <Grid cols={3} gap="lg">
+          <Grid cols={3} gap="lg" responsive>
             {pricingPlans.map((plan, index) => (
               <GridItem key={index}>
                 <Card id={`pricing-card-${index + 1}`} variant="elevated" padding="lg" hover>

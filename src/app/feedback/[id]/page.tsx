@@ -60,7 +60,7 @@ function FeedbackPageContent() {
       label: 'Book Another Ride',
       onClick: () => window.location.href = '/book',
       variant: 'primary' as const,
-      icon: '🚗'
+      icon: '📅'
     },
     {
       label: 'Go Home',

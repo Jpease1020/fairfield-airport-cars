@@ -49,7 +49,7 @@ function ManualCostEntryPageContent() {
   // Cost category help cards
   const costCategories = useMemo(() => [
     {
-      icon: '🚗',
+      icon: '🚙',
       title: 'Vehicle Costs',
       description: 'Fuel, Maintenance & Repairs, Insurance, Registration & Licensing, Vehicle Purchase/Lease'
     },

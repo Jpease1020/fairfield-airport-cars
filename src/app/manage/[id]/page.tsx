@@ -196,7 +196,7 @@ function ManageBookingPageContent() {
                   label: 'Book a New Ride',
                   onClick: () => window.location.href = '/book',
                   variant: 'primary' as const,
-                  icon: '🚗'
+                  icon: '📅'
                 }
               ]} />
             </Container>

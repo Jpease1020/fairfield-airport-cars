@@ -1,20 +1,43 @@
 'use client';
 
 import { UnifiedLayout } from '@/components/layout';
-import { Container, EditableText } from '@/components/ui';
+import { 
+  Section,
+  Container, 
+  Stack, 
+  H1, 
+  Text, 
+  EditableText 
+} from '@/components/ui';
 import BookingForm from './booking-form';
 
 export default function BookPage() {
   return (
-    <UnifiedLayout 
-      layoutType="content"
-      title="Book Your Ride"
-      subtitle="Professional airport transportation service"
-      description="Fill out the form below to book your reliable and comfortable ride to or from the airport."
-    >
-      <Container>
-        <BookingForm />
-      </Container>
+    <UnifiedLayout layoutType="content">
+      {/* Hero Section - Matching home page styling */}
+      <Section id="booking-hero-section" variant="brand" padding="xl">
+        <Container maxWidth="2xl">
+          <Stack spacing="2xl" align="center" gap="md">
+            <H1 id="booking-hero-title" align="center">
+              <EditableText field="booking.hero.title" defaultValue="Book Your Airport Ride">
+                Book Your Airport Ride
+              </EditableText>
+            </H1>
+            <Text id="booking-hero-subtitle" variant="lead" align="center">
+              <EditableText field="booking.hero.description" defaultValue="Professional airport transportation service. Book your reliable ride to or from the airport in just a few minutes.">
+                Professional airport transportation service. Book your reliable ride to or from the airport in just a few minutes.
+              </EditableText>
+            </Text>
+          </Stack>
+        </Container>
+      </Section>
+
+      {/* Booking Form Section - Using alternate variant for contrast */}
+      <Section id="booking-form-section" variant="alternate" padding="xl">
+        <Container maxWidth="xl">
+          <BookingForm />
+        </Container>
+      </Section>
     </UnifiedLayout>
   );
 }

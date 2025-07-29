@@ -9,7 +9,10 @@ import {
   ToastProvider,
   useToast,
   Text,
-  EditableText
+  EditableText,
+  EditableHeading,
+  Container,
+  Stack
 } from '@/components/ui';
 
 function PortalPageContent() {
@@ -46,7 +49,7 @@ function PortalPageContent() {
     },
     {
       id: 5,
-      icon: "🚗",
+      icon: "📅",
       label: "Book New Ride",
       description: "Schedule your next airport transportation",
       href: "/book"
@@ -61,6 +64,24 @@ function PortalPageContent() {
     }
   ];
 
+  const accountStats = [
+    {
+      icon: "🎯",
+      title: "Total Bookings",
+      description: "Feature coming soon"
+    },
+    {
+      icon: "⭐",
+      title: "Loyalty Status",
+      description: "Valued Customer"
+    },
+    {
+      icon: "📱",
+      title: "Preferred Contact",
+      description: "SMS & Email"
+    }
+  ];
+
   return (
     <UnifiedLayout 
       layoutType="content"
@@ -70,60 +91,60 @@ function PortalPageContent() {
     >
       {/* Welcome Section */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="👋 Welcome to Your Portal"
-          description="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away."
-        >
-          <EditableText field="portal.title" defaultValue="Customer Portal">
-            Customer Portal
-          </EditableText>
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg" gap="xl">
+            <Stack spacing="md" align="center">
+              <EditableHeading data-testid="portal-welcome-title" level={3} field="portal.welcome.title" defaultValue="👋 Welcome to Your Portal">👋 Welcome to Your Portal</EditableHeading>
+              <EditableText data-testid="portal-welcome-description" field="portal.welcome.description" defaultValue="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.">
+                Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.
+              </EditableText>
+            </Stack>
+          </Stack>
+        </Container>
       </GridSection>
 
       {/* Portal Actions */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🎯 Portal Features"
-          description="Access all available services and account management tools"
-        >
-          <FeatureGrid 
-            features={portalActions.map(action => ({
-              icon: action.icon,
-              title: action.label,
-              description: action.description
-            }))} 
-            columns={3} 
-          />
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg" gap="xl">
+            <Stack spacing="md" align="center">
+              <EditableHeading data-testid="portal-features-title" level={3} field="portal.features.title" defaultValue="🎯 Portal Features">🎯 Portal Features</EditableHeading>
+              <EditableText data-testid="portal-features-description" field="portal.features.description" defaultValue="Access all available services and account management tools">
+                Access all available services and account management tools
+              </EditableText>
+            </Stack>
+            
+            <FeatureGrid 
+              data-testid="portal-features-grid"
+              features={portalActions.map(action => ({
+                icon: action.icon,
+                title: action.label,
+                description: action.description
+              }))} 
+              columns={3} 
+            />
+          </Stack>
+        </Container>
       </GridSection>
 
       {/* Quick Stats */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="📊 Account Overview"
-          description="Your account activity and statistics"
-        >
-          <FeatureGrid 
-            features={[
-              {
-                icon: "🎯",
-                title: "Total Bookings",
-                description: "Feature coming soon"
-              },
-              {
-                icon: "⭐",
-                title: "Loyalty Status",
-                description: "Valued Customer"
-              },
-              {
-                icon: "📱",
-                title: "Preferred Contact",
-                description: "SMS & Email"
-              }
-            ]} 
-            columns={3} 
-          />
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg" gap="xl">
+            <Stack spacing="md" align="center">
+              <EditableHeading data-testid="portal-stats-title" level={3} field="portal.stats.title" defaultValue="📊 Account Overview">📊 Account Overview</EditableHeading>
+              <EditableText data-testid="portal-stats-description" field="portal.stats.description" defaultValue="Your account activity and statistics">
+                Your account activity and statistics
+              </EditableText>
+            </Stack>
+            
+            <FeatureGrid 
+              data-testid="portal-stats-grid"
+              features={accountStats} 
+              columns={3} 
+            />
+          </Stack>
+        </Container>
       </GridSection>
     </UnifiedLayout>
   );

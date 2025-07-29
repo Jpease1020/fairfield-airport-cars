@@ -109,7 +109,7 @@ const StyledSelect = styled.select.withConfig({
         return `
           padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
-          height: 2.5rem;
+          height: 3rem;
         `;
       case 'lg':
         return `
@@ -121,7 +121,7 @@ const StyledSelect = styled.select.withConfig({
         return `
           padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
-          height: 2.5rem;
+          height: 3rem;
         `;
     }
   }}

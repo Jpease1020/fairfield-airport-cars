@@ -240,7 +240,7 @@ function AdminHelpPage() {
               },
               {
                 id: 3,
-                icon: "🚗",
+                icon: "👨‍💼",
                 label: "Driver Management",
                 onClick: () => window.location.href = '/admin/drivers'
               },

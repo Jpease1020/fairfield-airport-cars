@@ -6,18 +6,20 @@ import { colors, spacing, fontSize, fontWeight, borderRadius, shadows, transitio
 
 // Styled card component with proper prop filtering
 const StyledCard = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'hoverable', 'clickable'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'hoverable', 'clickable', 'fullWidth'].includes(prop)
 })<{
   variant: 'default' | 'outlined' | 'elevated' | 'light' | 'dark';
   size: 'sm' | 'md' | 'lg';
   hoverable: boolean;
   clickable: boolean;
+  fullWidth: boolean;
 }>`
   display: block;
   border-radius: ${borderRadius.lg};
   transition: ${transitions.default};
   background-color: ${colors.background.primary};
   border: 1px solid ${colors.border.light};
+  width: ${({ fullWidth }) => fullWidth ? '100%' : 'auto'};
 
   /* Size styles */
   ${({ size }) => {
@@ -245,6 +247,9 @@ export interface CardProps {
   // Polymorphic support
   as?: 'div' | 'article' | 'section';
   
+  // Full width
+  fullWidth?: boolean;
+  
   // Rest props
   [key: string]: any;
 }
@@ -267,6 +272,9 @@ export const Card: React.FC<CardProps> = ({
   // Polymorphic support
   as: Component = 'div',
   
+  // Full width
+  fullWidth = false,
+  
   // Rest props
   ...rest
 }) => {
@@ -279,6 +287,7 @@ export const Card: React.FC<CardProps> = ({
       size={size}
       hoverable={hoverable}
       clickable={isClickable}
+      fullWidth={fullWidth}
       onClick={onClick}
       aria-label={ariaLabel}
       role={isClickable ? 'button' : undefined}

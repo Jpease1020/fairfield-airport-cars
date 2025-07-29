@@ -56,7 +56,7 @@ function DriversPageContent() {
     try {
       setError(null);
       setLoading(true);
-      console.log('🚗 Loading drivers...');
+      console.log('👨‍💼 Loading drivers...');
 
       // Mock data for now - will be replaced with real API call
       const mockDrivers: Driver[] = [
@@ -151,7 +151,7 @@ function DriversPageContent() {
         case 'available':
           return '✅';
         case 'on-trip':
-          return '🚗';
+          return '👨‍💼';
         case 'offline':
           return '⏸️';
         default:
@@ -194,8 +194,8 @@ function DriversPageContent() {
       sortable: false,
       render: (_: any, driver: Driver) => (
         <Container>
-          <EditableText field="admin.drivers.vehicle" defaultValue={`🚗 ${driver.vehicle.year} ${driver.vehicle.make} ${driver.vehicle.model}`}>
-            🚗 {driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model}
+          <EditableText field="admin.drivers.vehicle" defaultValue={`🚙 ${driver.vehicle.year} ${driver.vehicle.make} ${driver.vehicle.model}`}>
+            🚙 {driver.vehicle.year} {driver.vehicle.make} {driver.vehicle.model}
           </EditableText>
           <EditableText field="admin.drivers.color" defaultValue={`Color: ${driver.vehicle.color}`}>
             Color: {driver.vehicle.color}
@@ -239,7 +239,7 @@ function DriversPageContent() {
     },
     {
       label: 'Assign Ride',
-      icon: '🚗',
+      icon: '📅',
       onClick: (driver: Driver) => addToast('success', `Ride assignment feature for ${driver.name} coming soon`),
       variant: 'primary',
       condition: (driver: Driver) => driver.status === 'available'
@@ -314,7 +314,7 @@ function DriversPageContent() {
         />
         <StatCard
           title="On Trip"
-          icon="🚗"
+          icon="👨‍💼"
           statNumber={onTripDrivers.toString()}
           statChange="Currently driving"
           changeType="neutral"

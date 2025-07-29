@@ -16,7 +16,7 @@ export const CONTENT_MAPPING = {
         {
           title: "Professional Service",
           description: "Experienced drivers with clean, well-maintained vehicles for your comfort and safety",
-          icon: "🚗"
+          icon: "👨‍💼"
         },
         {
           title: "Reliable & On Time",
@@ -155,7 +155,7 @@ export const CONTENT_MAPPING = {
 
     // Booking details
     tripDetails: {
-      title: "🚗 Trip Details",
+      title: "📍 Trip Details",
       description: "Your journey information"
     },
 
@@ -189,7 +189,7 @@ export const CONTENT_MAPPING = {
       {
         label: "Book Another Ride",
         variant: "primary",
-        icon: "🚗"
+        icon: "📅"
       },
       {
         label: "View My Booking", 

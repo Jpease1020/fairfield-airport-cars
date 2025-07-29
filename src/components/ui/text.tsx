@@ -218,7 +218,7 @@ const StyledSpan = styled.span.withConfig({
 })<{
   variant: 'default' | 'bold' | 'italic' | 'code' | 'mark' | 'link' | 'badge';
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  color: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
+  color: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info' | 'inherit';
   weight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
 }>`
   font-family: ${fontFamily.sans};
@@ -307,6 +307,8 @@ const StyledSpan = styled.span.withConfig({
         return `color: ${colors.danger[600]};`;
       case 'info':
         return `color: ${colors.primary[600]};`;
+      case 'inherit':
+        return `color: inherit;`;
       default:
         return `color: ${colors.text.primary};`;
     }
@@ -684,7 +686,7 @@ export interface ParagraphProps {
   variant?: 'body' | 'lead' | 'small' | 'muted';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   align?: 'left' | 'center' | 'right' | 'justify';
-  color?: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
+  color?: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info' | 'inherit';
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
   
   // Rest props

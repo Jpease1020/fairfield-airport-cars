@@ -37,7 +37,7 @@ function AdminDashboardContent() {
 
   const statsCards = [
     { title: 'Total Bookings', value: '245', icon: '📊', color: 'var(--success-base)' },
-    { title: 'Active Drivers', value: '12', icon: '🚗', color: 'var(--brand-primary)' },
+    { title: 'Active Drivers', value: '12', icon: '👨‍💼', color: 'var(--brand-primary)' },
     { title: 'Revenue This Month', value: '$8,450', icon: '💰', color: 'var(--warning-base)' },
     { title: 'Customer Rating', value: '4.9/5', icon: '⭐', color: 'var(--success-base)' }
   ];

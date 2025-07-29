@@ -1,0 +1,118 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - link "Fairfield Airport Cars Logo Fairfield Airport Cars":
+    - /url: /
+    - img "Fairfield Airport Cars Logo"
+    - text: Fairfield Airport Cars
+  - link "Home":
+    - /url: /
+  - link "Book":
+    - /url: /book
+  - link "Help":
+    - /url: /help
+  - link "About":
+    - /url: /about
+  - button "Book Now"
+- main:
+  - heading "Premium Airport Transportation" [level=1]
+  - paragraph: Reliable, comfortable rides to and from Fairfield Airport with professional drivers
+  - paragraph: Experience luxury, reliability, and professional service for all your airport transportation needs.
+  - button "Book Your Ride"
+  - heading "Why Choose Fairfield Airport Cars?" [level=2]
+  - paragraph: We provide exceptional service that sets us apart from the competition
+  - text: 👨‍💼
+  - heading "Professional Service" [level=2]
+  - paragraph: Experienced drivers with clean, well-maintained vehicles for your comfort and safety
+  - text: ⏰
+  - heading "Reliable & On Time" [level=2]
+  - paragraph: We understand the importance of punctuality for airport travel and never let you down
+  - text: 💳
+  - heading "Easy Booking" [level=2]
+  - paragraph: Simple online booking with secure payment processing and instant confirmation
+  - text: 🛡️
+  - heading "Fully Insured" [level=2]
+  - paragraph: Comprehensive insurance coverage for your peace of mind during travel
+  - text: 📱
+  - heading "Real-Time Updates" [level=2]
+  - paragraph: Track your ride in real-time with SMS notifications and driver updates
+  - text: 🌟
+  - heading "Premium Experience" [level=2]
+  - paragraph: Luxury vehicles with professional drivers for a first-class transportation experience
+  - heading "What Our Customers Say" [level=2]
+  - paragraph: Don't just take our word for it - hear from our satisfied customers
+  - text: Excellent service! The driver was professional and on time. Highly recommend for airport transportation. SM
+  - paragraph: Sarah M.
+  - paragraph: Fairfield, CT
+  - text: Reliable and comfortable ride to JFK. The booking process was seamless and the driver was courteous. MR
+  - paragraph: Michael R.
+  - paragraph: Stamford, CT
+  - text: Best airport car service in the area. Clean vehicles, professional drivers, and fair pricing. JL
+  - paragraph: Jennifer L.
+  - paragraph: Norwalk, CT
+  - heading "Transparent Pricing" [level=2]
+  - paragraph: Fair, competitive rates with no hidden fees
+  - heading "Airport Transfer" [level=2]
+  - text: $85
+  - paragraph: Reliable transportation to and from Fairfield Airport
+  - list:
+    - listitem: ✓Professional driver
+    - listitem: ✓Clean vehicle
+    - listitem: ✓Flight monitoring
+    - listitem: ✓Meet & greet service
+    - listitem: ✓Luggage assistance
+  - button "Book Now"
+  - heading "Premium Service" [level=2]
+  - text: $120
+  - paragraph: Luxury vehicle with premium amenities
+  - list:
+    - listitem: ✓Luxury vehicle
+    - listitem: ✓Professional driver
+    - listitem: ✓Flight monitoring
+    - listitem: ✓Meet & greet service
+    - listitem: ✓Luggage assistance
+    - listitem: ✓Bottled water
+    - listitem: ✓WiFi on board
+  - button "Book Now"
+  - heading "Group Transfer" [level=2]
+  - text: $150
+  - paragraph: Spacious vehicle for groups up to 6 passengers
+  - list:
+    - listitem: ✓Spacious vehicle
+    - listitem: ✓Professional driver
+    - listitem: ✓Flight monitoring
+    - listitem: ✓Meet & greet service
+    - listitem: ✓Luggage assistance
+    - listitem: ✓Group discounts available
+  - button "Book Now"
+  - heading "🚀 Ready to Book Your Ride?" [level=2]
+  - paragraph: Experience the difference that professional service makes. Get started with your reliable airport transportation today.
+  - button "🚀 Book Your Ride Today"
+- contentinfo:
+  - heading "Fairfield Airport Cars" [level=2]
+  - paragraph: Premium airport transportation service providing reliable, comfortable rides to and from Fairfield Airport with professional drivers.
+  - heading "📞 Contact Us" [level=2]
+  - text: 📱
+  - link "(203) 555-0123":
+    - /url: tel:+12035550123
+  - text: ✉️
+  - link "info@fairfieldairportcar.com":
+    - /url: mailto:info@fairfieldairportcar.com
+  - text: 🕒
+  - paragraph: 24/7 Service Available
+  - heading "🗺️ Service Areas" [level=2]
+  - text: 📍
+  - paragraph: Fairfield County, CT
+  - text: ✈️
+  - paragraph: New York Airports (JFK, LGA, EWR)
+  - paragraph: Connecticut Airports (BDL, HVN)
+  - text: ♿
+  - paragraph: © 2024 Fairfield Airport Cars. All rights reserved. | Professional airport transportation service.
+- button "♿"
+- link "Skip to main content":
+  - /url: "#main-content"
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+```

@@ -22,7 +22,7 @@ interface FeatureGridProps {
  * ```tsx
  * const features = [
  *   { icon: "⏰", title: "On Time", description: "Reliable pickup times" },
- *   { icon: "🚗", title: "Clean Cars", description: "Well-maintained vehicles" },
+ *   { icon: "🚙", title: "Clean Cars", description: "Well-maintained vehicles" },
  *   { icon: "💳", title: "Easy Payment", description: "Secure online booking" }
  * ];
  * 

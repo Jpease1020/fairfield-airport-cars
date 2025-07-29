@@ -14,7 +14,7 @@ export const exampleTemplates: PageTemplate[] = [
       description: 'Reliable airport transportation in Fairfield',
       keywords: ['airport', 'transportation', 'Fairfield', 'car service']
     },
-    icon: '🚗',
+    icon: '🚙',
     sections: [
       {
         id: 'hero-section',

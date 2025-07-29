@@ -44,7 +44,7 @@ export async function POST() {
               {
                 title: "Professional Service",
                 description: "Experienced drivers with clean, well-maintained vehicles for your comfort and safety",
-                icon: "🚗"
+                icon: "👨‍💼"
               },
               {
                 title: "Reliable & On Time",

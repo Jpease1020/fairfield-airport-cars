@@ -46,7 +46,7 @@ const StyledSelectTrigger = styled.button.withConfig({
         return `
           padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
-          height: 2.5rem;
+          height: 3rem;
         `;
       case 'lg':
         return `
@@ -58,7 +58,7 @@ const StyledSelectTrigger = styled.button.withConfig({
         return `
           padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
-          height: 2.5rem;
+          height: 3rem;
         `;
     }
   }}
@@ -244,11 +244,11 @@ const SelectItem = styled.div.withConfig({
       case 'sm':
         return `min-height: 1.75rem;`;
       case 'md':
-        return `min-height: 2rem;`;
+        return `min-height: 3rem;`;
       case 'lg':
-        return `min-height: 2.5rem;`;
+        return `min-height: 3rem;`;
       default:
-        return `min-height: 2rem;`;
+        return `min-height: 3rem;`;
     }
   }}
 

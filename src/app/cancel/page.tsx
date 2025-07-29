@@ -10,9 +10,14 @@ import {
   FeatureGrid,
   ToastProvider,
   useToast,
-  Text
+  Text,
+  Container,
+  EditableText,
+  EditableHeading,
+  Stack,
+  Card,
+  CardBody
 } from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
 
 function CancelPageContent() {
   const { addToast } = useToast();
@@ -68,9 +73,6 @@ function CancelPageContent() {
     }
   ];
 
-
-
-  // REFACTORED: Using structured feature data for FeatureGrid
   const alternativeOptions = [
     {
       icon: "⏰",
@@ -89,6 +91,29 @@ function CancelPageContent() {
     }
   ];
 
+  const cancellationPolicy = [
+    {
+      title: "Free Cancellation",
+      description: "Cancel up to 2 hours before pickup time with no charge"
+    },
+    {
+      title: "Late Cancellation",
+      description: "Cancellations within 2 hours may incur a fee"
+    },
+    {
+      title: "Emergency Cancellations",
+      description: "Contact us directly for special circumstances"
+    },
+    {
+      title: "Refund Processing",
+      description: "Refunds typically process within 3-5 business days"
+    },
+    {
+      title: "Weather/Flight Delays",
+      description: "No charge for cancellations due to circumstances beyond your control"
+    }
+  ];
+
   return (
     <UnifiedLayout 
       layoutType="content"
@@ -98,57 +123,71 @@ function CancelPageContent() {
     >
       {/* Cancellation Form */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="📝 Cancel Your Booking"
-          description="Please provide your booking details to process the cancellation"
-        >
-          <Text>
-            <strong>Booking ID:</strong> Enter your booking reference number
-          </Text>
-          <Text>
-            <strong>Reason:</strong> Select a reason for cancellation (optional)
-          </Text>
-          
-          <ActionButtonGroup buttons={quickActions} />
-        </InfoCard>
+        <Container>
+          <Stack spacing="lg" gap="xl">
+            <Stack spacing="md" align="center">
+              <EditableHeading data-testid="cancel-form-title" level={3} field="cancel.form.title" defaultValue="📝 Cancel Your Booking">📝 Cancel Your Booking</EditableHeading>
+              <EditableText data-testid="cancel-form-description" field="cancel.form.description" defaultValue="Please provide your booking details to process the cancellation">
+                Please provide your booking details to process the cancellation
+              </EditableText>
+            </Stack>
+            
+            <Stack data-testid="cancel-form-fields" spacing="md">
+              <Text data-testid="cancel-booking-id-field">
+                <strong>Booking ID:</strong> Enter your booking reference number
+              </Text>
+              <Text data-testid="cancel-reason-field">
+                <strong>Reason:</strong> Select a reason for cancellation (optional)
+              </Text>
+            </Stack>
+            
+            <ActionButtonGroup data-testid="cancel-form-actions" buttons={quickActions} />
+          </Stack>
+        </Container>
       </GridSection>
 
       {/* Cancellation Policy */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="📋 Cancellation Policy"
-          description="Important information about our cancellation terms"
-        >
-          <Stack spacing="sm">
-            <Text>
-              <strong>Free Cancellation:</strong> Cancel up to 2 hours before pickup time with no charge
-            </Text>
-            <Text>
-              <strong>Late Cancellation:</strong> Cancellations within 2 hours may incur a fee
-            </Text>
-            <Text>
-              <strong>Emergency Cancellations:</strong> Contact us directly for special circumstances
-            </Text>
-            <Text>
-              <strong>Refund Processing:</strong> Refunds typically process within 3-5 business days
-            </Text>
-            <Text>
-              <strong>Weather/Flight Delays:</strong> No charge for cancellations due to circumstances beyond your control
-            </Text>
+        <Container>
+          <Stack spacing="lg" gap="xl">
+            <Stack spacing="md" align="center">
+              <EditableHeading data-testid="cancel-policy-title" level={3} field="cancel.policy.title" defaultValue="📋 Cancellation Policy">📋 Cancellation Policy</EditableHeading>
+              <EditableText data-testid="cancel-policy-description" field="cancel.policy.description" defaultValue="Important information about our cancellation terms">
+                Important information about our cancellation terms
+              </EditableText>
+            </Stack>
+            
+            <Stack data-testid="cancel-policy-list" spacing="md">
+              {cancellationPolicy.map((policy, index) => (
+                <Card key={index} data-testid={`cancel-policy-item-${index}`}>
+                  <CardBody>
+                    <Stack spacing="sm">
+                      <Text data-testid={`cancel-policy-title-${index}`}><strong>{policy.title}:</strong></Text>
+                      <Text data-testid={`cancel-policy-description-${index}`}>{policy.description}</Text>
+                    </Stack>
+                  </CardBody>
+                </Card>
+              ))}
+            </Stack>
           </Stack>
-        </InfoCard>
+        </Container>
       </GridSection>
 
       {/* Alternative Options */}
-        <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="🔄 Alternative Options"
-            description="Consider these alternatives before cancelling"
-          >
-            {/* REFACTORED: Using FeatureGrid instead of manual grid */}
-            <FeatureGrid features={alternativeOptions} columns={3} />
-          </InfoCard>
-        </GridSection>
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Stack spacing="lg" gap="xl">
+            <Stack spacing="md" align="center">
+              <EditableHeading data-testid="cancel-alternatives-title" level={3} field="cancel.alternatives.title" defaultValue="🔄 Alternative Options">🔄 Alternative Options</EditableHeading>
+              <EditableText data-testid="cancel-alternatives-description" field="cancel.alternatives.description" defaultValue="Consider these alternatives before cancelling">
+                Consider these alternatives before cancelling
+              </EditableText>
+            </Stack>
+            
+            <FeatureGrid data-testid="cancel-alternatives-grid" features={alternativeOptions} columns={3} />
+          </Stack>
+        </Container>
+      </GridSection>
     </UnifiedLayout>
   );
 }

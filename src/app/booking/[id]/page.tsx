@@ -104,7 +104,7 @@ function BookingDetailsContent() {
                   label: 'Book a New Ride',
                   onClick: () => window.location.href = '/book',
                   variant: 'primary' as const,
-                  icon: '🚗'
+                  icon: '📅'
                 }
               ]} />
             </Container>
@@ -131,7 +131,7 @@ function BookingDetailsContent() {
       label: 'Book Another Ride',
       onClick: () => window.location.href = '/book',
       variant: 'primary' as const,
-      icon: '🚗'
+      icon: '📅'
     }
   ];
 

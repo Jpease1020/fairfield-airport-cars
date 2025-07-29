@@ -315,7 +315,7 @@ function AdminBookingsPageContent() {
     },
     {
       label: 'Assign Driver',
-      icon: '🚗',
+      icon: '👨‍💼',
       onClick: (booking) => handleDriverAssignment(booking),
       variant: 'primary',
       condition: (booking) => booking.status === 'confirmed' && !booking.driverId

@@ -12,7 +12,7 @@ const FooterContainer = styled.footer`
   padding: ${spacing.xl} 0 ${spacing.md};
   
   @media (max-width: ${breakpoints.md}) {
-    padding: ${spacing.lg} 0 ${spacing.md};
+    padding: ${spacing.xl} 0 ${spacing.lg};
   }
 `;
 
@@ -22,7 +22,7 @@ const FooterContent = styled.div`
   padding: 0 4rem;
   
   @media (max-width: ${breakpoints.md}) {
-    padding: 0 ${spacing.sm};
+    padding: 0 ${spacing['2xl']};
   }
 `;
 
@@ -35,8 +35,8 @@ const FooterGrid = styled.div`
   
   @media (max-width: ${breakpoints.md}) {
     grid-template-columns: 1fr;
-    gap: ${spacing.md};
-    margin-bottom: ${spacing.md};
+    gap: ${spacing.xl};
+    margin-bottom: ${spacing.xl};
   }
 `;
 
@@ -160,7 +160,7 @@ const CopyrightSection = styled.div`
   text-align: center;
   
   @media (max-width: 768px) {
-    padding-top: 1rem;
+    padding-top: ${spacing.lg};
   }
 `;
 

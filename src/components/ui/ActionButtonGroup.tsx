@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Span } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
 
 export interface ActionButton {
@@ -8,7 +8,7 @@ export interface ActionButton {
   variant: 'primary' | 'outline' | 'secondary'; // Made required to ensure explicit variant choice
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
-  icon?: string;
+  icon?: string; // Keep for backward compatibility but won't render
 }
 
 export interface ActionButtonGroupProps {
@@ -26,6 +26,7 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
     <Stack 
       direction={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
       spacing={spacing}
+      gap={spacing}
       align="center"
     >
       {buttons.map((button, index) => (
@@ -36,14 +37,7 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
           onClick={button.onClick}
           disabled={button.disabled}
         >
-          {button.icon && (
-            <Span>
-              {button.icon}
-            </Span>
-          )}
-          <Span>
-            {button.label}
-          </Span>
+          {button.label}
         </Button>
       ))}
     </Stack>

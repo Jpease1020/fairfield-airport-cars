@@ -607,12 +607,13 @@ interface CardProps {
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  fullWidth?: boolean;
   as?: 'div' | 'article' | 'section';
   id?: string;
 }
 
 const StyledCard = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'padding', 'hover', 'margin', 'marginTop', 'marginBottom'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'padding', 'hover', 'margin', 'marginTop', 'marginBottom', 'fullWidth'].includes(prop)
 })<{
   variant: 'default' | 'elevated' | 'outlined' | 'filled';
   padding: 'none' | 'sm' | 'md' | 'lg' | 'xl';
@@ -620,8 +621,10 @@ const StyledCard = styled.div.withConfig({
   margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  fullWidth: boolean;
 }>`
   transition: ${transitions.default};
+  width: ${({ fullWidth }) => fullWidth ? '100%' : 'auto'};
 
   /* Padding styles */
   ${({ padding }) => {
@@ -767,6 +770,7 @@ export const Card: React.FC<CardProps> = ({
     margin = 'none',
     marginTop = 'none',
     marginBottom = 'none',
+    fullWidth = false,
     as: Component = 'div',
     children,
     id,
@@ -780,6 +784,7 @@ export const Card: React.FC<CardProps> = ({
         margin={margin}
         marginTop={marginTop}
         marginBottom={marginBottom}
+        fullWidth={fullWidth}
         as={Component}
         id={id}
         {...rest}
