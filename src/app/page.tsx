@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Head from 'next/head';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import {
   Section,
@@ -16,10 +16,10 @@ import {
   Button,
   Grid,
   GridItem,
-  EditableText
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/lib/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '../../design/design-system/tokens';
 
 
 
@@ -471,11 +471,11 @@ export default function HomePage() {
           }}
         />
       </Head>
-      <UnifiedLayout layoutType="marketing">
+      <Layout>
         <ErrorBoundary>
           <HomePageContent />
         </ErrorBoundary>
-      </UnifiedLayout>
+      </Layout>
     </>
   );
 }

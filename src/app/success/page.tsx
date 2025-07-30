@@ -2,19 +2,19 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { 
   GridSection,
   ActionButtonGroup,
   LoadingSpinner,
   Text,
-  EditableText,
-  EditableHeading,
   Container,
   Span,
   Button,
   Stack
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
 import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {
@@ -72,11 +72,7 @@ function SuccessPageContent() {
 
   if (loading) {
     return (
-      <UnifiedLayout 
-        layoutType="status"
-        title="Loading..."
-        subtitle="Please wait while we load your booking details"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" gap="xl" align="center">
@@ -86,16 +82,12 @@ function SuccessPageContent() {
             </Stack>
           </Container>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   return (
-    <UnifiedLayout 
-      layoutType="status"
-      title="🎉 Booking Confirmed!"
-      subtitle="Your booking is confirmed"
-    >
+    <Layout>
       {error && (
         <GridSection variant="content" columns={1}>
           <Container>
@@ -206,18 +198,14 @@ function SuccessPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 
 function SuccessPage() {
   return (
     <Suspense fallback={
-      <UnifiedLayout 
-        layoutType="status"
-        title="Loading..."
-        subtitle="Please wait"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" gap="xl" align="center">
@@ -225,7 +213,7 @@ function SuccessPage() {
             </Stack>
           </Container>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     }>
       <SuccessPageContent />
     </Suspense>

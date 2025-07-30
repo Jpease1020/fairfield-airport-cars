@@ -2,19 +2,20 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/layout';
 import { 
   GridSection,
-  InfoCard,
   ActionButtonGroup,
   Form,
-  Label,
-  Textarea,
   Button,
   ToastProvider,
-  Text,
-  EditableText
+  Text
 } from '@/components/ui';
+import { Card } from '@/design/components/core/layout/card';
+import { Stack } from '@/design/components/core/layout/layout/containers';
+import { Label } from '@/design/components/core/layout/label';
+import { Textarea } from '@/design/components/core/layout/FormSystem';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { Star } from 'lucide-react';
 
 function FeedbackPageContent() {
@@ -73,37 +74,30 @@ function FeedbackPageContent() {
 
   if (submitted) {
     return (
-      <UnifiedLayout 
-        layoutType="content"
-        title="🎉 Thank You!"
-        subtitle="Your feedback has been submitted successfully"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="✅ Feedback Submitted"
-            description="We appreciate you taking the time to share your experience"
-          >
+                  <Card variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text size="lg" weight="bold">✅ Feedback Submitted</Text>
+            <Text>We appreciate you taking the time to share your experience</Text>
             <EditableText field="feedback.description" defaultValue="Your rating and comments help us improve our service and provide the best possible experience for all our customers.">
               Your rating and comments help us improve our service and provide the best possible experience for all our customers.
             </EditableText>
             <ActionButtonGroup buttons={homeActions} />
-          </InfoCard>
+          </Stack>
+        </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   return (
-    <UnifiedLayout 
-      layoutType="content"
-      title="Leave Feedback"
-      subtitle="Help us improve by sharing your experience"
-    >
+    <Layout>
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="⭐ Rate Your Experience"
-          description="How was your ride with Fairfield Airport Cars?"
-        >
+        <Card variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text size="lg" weight="bold">⭐ Rate Your Experience</Text>
+            <Text>How was your ride with Fairfield Airport Cars?</Text>
           <Form onSubmit={handleSubmit}>
             <Text>
               <Label htmlFor="rating">
@@ -197,9 +191,10 @@ function FeedbackPageContent() {
               </Button>
             </Text>
           </Form>
-        </InfoCard>
+          </Stack>
+        </Card>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 

@@ -5,15 +5,12 @@ import { cmsService } from '@/lib/services/cms-service';
 import { 
   AdminPageWrapper,
   Container,
-  Card,
-  CardBody,
   Button,
-  Text,
   Stack,
   StatusMessage,
-  EditableText
 } from '@/components/ui';
 import { ToastProvider, useToast } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function QuickFixPage() {
   const { addToast } = useToast();

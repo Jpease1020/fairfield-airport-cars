@@ -5,23 +5,20 @@ import { PromoCode } from '@/types/promo';
 import { 
   AdminPageWrapper,
   GridSection, 
-  InfoCard,
-  StatCard,
   DataTable,
   DataTableColumn,
   DataTableAction,
-  FormSection,
   ToastProvider,
   useToast,
   ActionButtonGroup,
-  Input,
-  Label,
-  Select,
-  Option,
   Container,
-  Span,
-  EditableText
+  Span
 } from '@/components/ui';
+import { Card } from '@/design/components/core/layout/card';
+import { Input } from '@/design/components/core/layout/FormSystem';
+import { Label } from '@/design/components/core/layout/label';
+import { Select } from '@/design/components/core/layout/FormSystem';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { Stack } from '@/components/ui/layout/containers';
 
 function PromosPageContent() {
@@ -265,42 +262,49 @@ function PromosPageContent() {
     >
       {/* Promo Statistics */}
       <GridSection variant="stats" columns={4}>
-        <StatCard
+        <Card
           title={<EditableText field="admin.promos.totalPromosTitle" defaultValue="Total Promos">Total Promos</EditableText>}
           icon="🎟️"
           statNumber={promos.length.toString()}
           statChange="Created codes"
           changeType="neutral"
-        />
-        <StatCard
+        >
+          {null}
+        </Card>
+        <Card
           title={<EditableText field="admin.promos.activePromosTitle" defaultValue="Active Promos">Active Promos</EditableText>}
           icon="✅"
           statNumber={activePromos.toString()}
           statChange="Currently usable"
           changeType="positive"
-        />
-        <StatCard
+        >
+          {null}
+        </Card>
+        <Card
           title={<EditableText field="admin.promos.totalUsageTitle" defaultValue="Total Usage">Total Usage</EditableText>}
           icon="📊"
           statNumber={totalUsage.toString()}
           statChange="Times used"
           changeType="positive"
-        />
-        <StatCard
+        >
+          {null}
+        </Card>
+        <Card
           title={<EditableText field="admin.promos.expiringSoonTitle" defaultValue="Expiring Soon">Expiring Soon</EditableText>}
           icon="⏰"
           statNumber={expiringPromos.toString()}
           statChange="Within 7 days"
           changeType={expiringPromos > 0 ? 'negative' : 'neutral'}
-        />
+        >
+          {null}
+        </Card>
       </GridSection>
 
       {/* Add New Promo Form */}
       <GridSection variant="content" columns={1}>
-        <FormSection
+        <Card
           title={<EditableText field="admin.promos.createPromoTitle" defaultValue="🎟️ Create New Promo Code">🎟️ Create New Promo Code</EditableText>}
           description={<EditableText field="admin.promos.createPromoDesc" defaultValue="Add a new promotional discount code for your customers">Add a new promotional discount code for your customers</EditableText>}
-          icon="🎟️"
         >
           <Stack spacing="md">
             <Container>
@@ -323,10 +327,11 @@ function PromosPageContent() {
               <Select 
                 value={form.type} 
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, type: e.target.value})}
-              >
-                <Option value="percent">Percentage %</Option>
-                <Option value="flat">Fixed Amount $</Option>
-              </Select>
+                options={[
+                  { value: 'percent', label: 'Percentage %' },
+                  { value: 'flat', label: 'Fixed Amount $' }
+                ]}
+              />
             </Container>
             
             <Container>
@@ -377,12 +382,12 @@ function PromosPageContent() {
               }]}
             />
           </Container>
-        </FormSection>
+        </Card>
       </GridSection>
 
       {/* Promo Codes Table */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title={<EditableText field="admin.promos.allPromosTitle" defaultValue="🎟️ All Promo Codes">🎟️ All Promo Codes</EditableText>}
           description={<EditableText field="admin.promos.allPromosDesc" defaultValue="Search, sort, and manage your promotional discount codes">Search, sort, and manage your promotional discount codes</EditableText>}
         >
@@ -395,15 +400,9 @@ function PromosPageContent() {
             emptyMessage="No promo codes created yet. Create your first promotional discount code above."
             emptyIcon="🎟️"
             pageSize={10}
-            rowClassName={(promo) => 
-              getPromoStatus(promo) === 'Expired' || getPromoStatus(promo) === 'Limit Reached' 
-                ? 'opacity-60' : 
-              getPromoStatus(promo) === 'Expiring Soon' 
-                ? 'border-l-4 border-yellow-500' : ''
-            }
-            onRowClick={(promo) => console.log('Clicked promo:', promo.code)}
+
           />
-        </InfoCard>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );

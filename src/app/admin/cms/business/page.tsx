@@ -6,16 +6,18 @@ import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
 import { 
   AdminPageWrapper,
-  SettingSection,
-  SettingInput,
   ToastProvider,
   useToast,
   GridSection,
   Container,
   Span,
-  EditableText
+  Text,
 } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { Card } from '@/design/components/core/layout/card';
+import { Input } from '@/design/components/core/layout/FormSystem';
+import { Label } from '@/design/components/core/layout/label';
 
 function BusinessPageContent() {
   const { addToast } = useToast();
@@ -154,216 +156,228 @@ function BusinessPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             {/* Company Information */}
-            <SettingSection
-              title="Company Information"
-              description="Basic company details and contact information"
-              icon="🏢"
-            >
+            <Card variant="elevated" padding="lg">
               <Stack spacing="md">
-                <SettingInput
-                    id="company-name"
-                    label="Company Name"
-                    description="Your official business name"
-                    value={settings.company.name}
-                    onChange={(value) => handleInputChange('company', 'name', value)}
-                    placeholder="Your Company Name"
-                    icon="🏢"
-                  />
+                <Text size="lg" weight="bold">🏢 Company Information</Text>
+                <Text>Basic company details and contact information</Text>
+                
+                <Stack spacing="md">
+                  <Container>
+                    <Label htmlFor="company-name">Company Name</Label>
+                    <Input
+                      id="company-name"
+                      value={settings.company.name}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('company', 'name', e.target.value)}
+                      placeholder="Your Company Name"
+                    />
+                    <Text size="sm" color="secondary">Your official business name</Text>
+                  </Container>
                   
-                  <SettingInput
-                    id="company-tagline"
-                    label="Tagline"
-                    description="A brief description of your business"
-                    value={settings.company.tagline || ''}
-                    onChange={(value) => handleInputChange('company', 'tagline', value)}
-                    placeholder="Your company tagline"
-                    icon="💬"
-                  />
+                  <Container>
+                    <Label htmlFor="company-tagline">Tagline</Label>
+                    <Input
+                      id="company-tagline"
+                      value={settings.company.tagline || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('company', 'tagline', e.target.value)}
+                      placeholder="Your company tagline"
+                    />
+                    <Text size="sm" color="secondary">A brief description of your business</Text>
+                  </Container>
                   
-                  <SettingInput
-                    id="company-phone"
-                    label="Phone Number"
-                    description="Primary contact phone number"
-                    value={settings.company.phone}
-                    onChange={(value) => handleInputChange('company', 'phone', value)}
-                    placeholder="(555) 123-4567"
-                    icon="📞"
-                  />
+                  <Container>
+                    <Label htmlFor="company-phone">Phone Number</Label>
+                    <Input
+                      id="company-phone"
+                      value={settings.company.phone}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('company', 'phone', e.target.value)}
+                      placeholder="(555) 123-4567"
+                    />
+                    <Text size="sm" color="secondary">Primary contact phone number</Text>
+                  </Container>
                   
-                  <SettingInput
-                    id="company-email"
-                    label="Email Address"
-                    description="Primary contact email address"
-                    type="email"
-                    value={settings.company.email}
-                    onChange={(value) => handleInputChange('company', 'email', value)}
-                    placeholder="contact@company.com"
-                    icon="✉️"
-                  />
+                  <Container>
+                    <Label htmlFor="company-email">Email Address</Label>
+                    <Input
+                      id="company-email"
+                      type="email"
+                      value={settings.company.email}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('company', 'email', e.target.value)}
+                      placeholder="contact@company.com"
+                    />
+                    <Text size="sm" color="secondary">Primary contact email address</Text>
+                  </Container>
                   
-                  <SettingInput
-                    id="company-address"
-                    label="Address"
-                    description="Business physical address"
-                    value={settings.company.address || ''}
-                    onChange={(value) => handleInputChange('company', 'address', value)}
-                    placeholder="123 Main St, City, State 12345"
-                    icon="📍"
-                  />
+                  <Container>
+                    <Label htmlFor="company-address">Address</Label>
+                    <Input
+                      id="company-address"
+                      value={settings.company.address || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('company', 'address', e.target.value)}
+                      placeholder="123 Main St, City, State 12345"
+                    />
+                    <Text size="sm" color="secondary">Business physical address</Text>
+                  </Container>
                   
-                  <SettingInput
-                    id="company-hours"
-                    label="Business Hours"
-                    description="Operating hours for customers"
-                    value={settings.company.hours || ''}
-                    onChange={(value) => handleInputChange('company', 'hours', value)}
-                    placeholder="Mon-Fri 9am-5pm"
-                    icon="🕒"
-                  />
+                  <Container>
+                    <Label htmlFor="company-hours">Business Hours</Label>
+                    <Input
+                      id="company-hours"
+                      value={settings.company.hours || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('company', 'hours', e.target.value)}
+                      placeholder="Mon-Fri 9am-5pm"
+                    />
+                    <Text size="sm" color="secondary">Operating hours for customers</Text>
+                  </Container>
+                </Stack>
               </Stack>
-            </SettingSection>
+            </Card>
 
             {/* Social Media */}
-            <SettingSection
-              title="Social Media"
-              description="Links to your social media profiles"
-              icon="📱"
-            >
+            <Card variant="elevated" padding="lg">
               <Stack spacing="md">
-                <EditableText field="admin.cms.business.social" defaultValue="Social Media">
-                  Social Media
-                </EditableText>
+                <Text size="lg" weight="bold">📱 Social Media</Text>
+                <Text>Links to your social media profiles</Text>
                 
-                <EditableText field="admin.cms.business.socialDesc" defaultValue="Your social media profiles">
-                  Your social media profiles
-                </EditableText>
-                
-                <SettingInput
-                  id="social-facebook"
-                  label="Facebook URL"
-                  description="Link to your Facebook business page"
-                  value={settings.social.facebook || ''}
-                  onChange={(value) => handleSocialChange('facebook', value)}
-                  placeholder="https://facebook.com/yourpage"
-                  icon="📘"
-                />
-                
-                <SettingInput
-                  id="social-instagram"
-                  label="Instagram URL"
-                  description="Link to your Instagram business account"
-                  value={settings.social.instagram || ''}
-                  onChange={(value) => handleSocialChange('instagram', value)}
-                  placeholder="https://instagram.com/yourpage"
-                  icon="📷"
-                />
-                
-                <SettingInput
-                  id="social-twitter"
-                  label="Twitter URL"
-                  description="Link to your Twitter business account"
-                  value={settings.social.twitter || ''}
-                  onChange={(value) => handleSocialChange('twitter', value)}
-                  placeholder="https://twitter.com/yourpage"
-                  icon="🐦"
-                />
+                <Stack spacing="md">
+                  <EditableText field="admin.cms.business.social" defaultValue="Social Media">
+                    Social Media
+                  </EditableText>
+                  
+                  <EditableText field="admin.cms.business.socialDesc" defaultValue="Your social media profiles">
+                    Your social media profiles
+                  </EditableText>
+                  
+                  <Container>
+                    <Label htmlFor="social-facebook">Facebook URL</Label>
+                    <Input
+                      id="social-facebook"
+                      value={settings.social.facebook || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSocialChange('facebook', e.target.value)}
+                      placeholder="https://facebook.com/yourpage"
+                    />
+                    <Text size="sm" color="secondary">Link to your Facebook business page</Text>
+                  </Container>
+                  
+                  <Container>
+                    <Label htmlFor="social-instagram">Instagram URL</Label>
+                    <Input
+                      id="social-instagram"
+                      value={settings.social.instagram || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSocialChange('instagram', e.target.value)}
+                      placeholder="https://instagram.com/yourpage"
+                    />
+                    <Text size="sm" color="secondary">Link to your Instagram business account</Text>
+                  </Container>
+                  
+                  <Container>
+                    <Label htmlFor="social-twitter">Twitter URL</Label>
+                    <Input
+                      id="social-twitter"
+                      value={settings.social.twitter || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSocialChange('twitter', e.target.value)}
+                      placeholder="https://twitter.com/yourpage"
+                    />
+                    <Text size="sm" color="secondary">Link to your Twitter business account</Text>
+                  </Container>
+                </Stack>
               </Stack>
-            </SettingSection>
+            </Card>
 
             {/* Branding */}
-            <SettingSection
-              title="Branding"
-              description="Visual identity and brand colors"
-              icon="🎨"
-            >
+            <Card variant="elevated" padding="lg">
               <Stack spacing="md">
-                <Container>
-                  <SettingInput
-                    id="brand-primary-color"
-                    label="Primary Color"
-                    description="Main brand color for buttons and accents"
-                    value={settings.branding.primaryColor}
-                    onChange={(value) => handleInputChange('branding', 'primaryColor', value)}
-                    placeholder="#1f2937"
-                    icon="🎨"
-                  />
-                  <Stack direction="horizontal" spacing="sm" align="center">
-                    <Span>
-                      <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
-                        Preview:
-                      </EditableText>
-                    </Span>
-                    <Span>
-                      <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
-                        Color preview
-                      </EditableText>
-                    </Span>
-                  </Stack>
-                </Container>
+                <Text size="lg" weight="bold">🎨 Branding</Text>
+                <Text>Visual identity and brand colors</Text>
                 
-                <Container>
-                  <SettingInput
-                    id="brand-secondary-color"
-                    label="Secondary Color"
-                    description="Secondary brand color for highlights"
-                    value={settings.branding.secondaryColor}
-                    onChange={(value) => handleInputChange('branding', 'secondaryColor', value)}
-                    placeholder="#3b82f6"
-                    icon="🎨"
-                  />
-                  <Stack direction="horizontal" spacing="sm" align="center">
-                    <Span>
-                      <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
-                        Preview:
-                      </EditableText>
-                    </Span>
-                    <Span>
-                      <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
-                        Color preview
-                      </EditableText>
-                    </Span>
-                  </Stack>
-                </Container>
-                
-                <SettingInput
-                  id="brand-logo-url"
-                  label="Logo URL"
-                  description="Direct link to your company logo image"
-                  value={settings.branding.logoUrl || ''}
-                  onChange={(value) => handleInputChange('branding', 'logoUrl', value)}
-                  placeholder="https://example.com/logo.png"
-                  icon="🖼️"
-                />
+                <Stack spacing="md">
+                  <Container>
+                    <Label htmlFor="brand-primary-color">Primary Color</Label>
+                    <Input
+                      id="brand-primary-color"
+                      value={settings.branding.primaryColor}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('branding', 'primaryColor', e.target.value)}
+                      placeholder="#1f2937"
+                    />
+                    <Text size="sm" color="secondary">Main brand color for buttons and accents</Text>
+                    <Stack direction="horizontal" spacing="sm" align="center">
+                      <Span>
+                        <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
+                          Preview:
+                        </EditableText>
+                      </Span>
+                      <Span>
+                        <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
+                          Color preview
+                        </EditableText>
+                      </Span>
+                    </Stack>
+                  </Container>
+                  
+                  <Container>
+                    <Label htmlFor="brand-secondary-color">Secondary Color</Label>
+                    <Input
+                      id="brand-secondary-color"
+                      value={settings.branding.secondaryColor}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('branding', 'secondaryColor', e.target.value)}
+                      placeholder="#3b82f6"
+                    />
+                    <Text size="sm" color="secondary">Secondary brand color for highlights</Text>
+                    <Stack direction="horizontal" spacing="sm" align="center">
+                      <Span>
+                        <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
+                          Preview:
+                        </EditableText>
+                      </Span>
+                      <Span>
+                        <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
+                          Color preview
+                        </EditableText>
+                      </Span>
+                    </Stack>
+                  </Container>
+                  
+                  <Container>
+                    <Label htmlFor="brand-logo-url">Logo URL</Label>
+                    <Input
+                      id="brand-logo-url"
+                      value={settings.branding.logoUrl || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('branding', 'logoUrl', e.target.value)}
+                      placeholder="https://example.com/logo.png"
+                    />
+                    <Text size="sm" color="secondary">Direct link to your company logo image</Text>
+                  </Container>
+                </Stack>
               </Stack>
-            </SettingSection>
+            </Card>
 
             {/* Business Preview */}
-            <SettingSection
-              title="Business Card Preview"
-              description="How your business information will appear to customers"
-              icon="👀"
-            >
-              <Stack spacing="lg">
-                <EditableText field="admin.cms.business.companyName" defaultValue="Company Name">
-                  Company Name
-                </EditableText>
-                <EditableText field="admin.cms.business.companyNameDesc" defaultValue="Your business name as it appears to customers">
-                  Your business name as it appears to customers
-                </EditableText>
-                <EditableText field="admin.cms.business.phone" defaultValue="Phone Number">
-                  Phone Number
-                </EditableText>
-                <EditableText field="admin.cms.business.email" defaultValue="Email Address">
-                  Email Address
-                </EditableText>
-                <EditableText field="admin.cms.business.address" defaultValue="Address">
-                  Address
-                </EditableText>
-                <EditableText field="admin.cms.business.hours" defaultValue="Business Hours">
-                  Business Hours
-                </EditableText>
+            <Card variant="elevated" padding="lg">
+              <Stack spacing="md">
+                <Text size="lg" weight="bold">👀 Business Card Preview</Text>
+                <Text>How your business information will appear to customers</Text>
+                
+                <Stack spacing="lg">
+                  <EditableText field="admin.cms.business.companyName" defaultValue="Company Name">
+                    Company Name
+                  </EditableText>
+                  <EditableText field="admin.cms.business.companyNameDesc" defaultValue="Your business name as it appears to customers">
+                    Your business name as it appears to customers
+                  </EditableText>
+                  <EditableText field="admin.cms.business.phone" defaultValue="Phone Number">
+                    Phone Number
+                  </EditableText>
+                  <EditableText field="admin.cms.business.email" defaultValue="Email Address">
+                    Email Address
+                  </EditableText>
+                  <EditableText field="admin.cms.business.address" defaultValue="Address">
+                    Address
+                  </EditableText>
+                  <EditableText field="admin.cms.business.hours" defaultValue="Business Hours">
+                    Business Hours
+                  </EditableText>
+                </Stack>
               </Stack>
-            </SettingSection>
+            </Card>
           </Container>
         </GridSection>
       )}

@@ -1,19 +1,19 @@
 'use client';
 
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/layout';
 import { 
   Section,
   Container, 
   Stack, 
   H1, 
-  Text, 
-  EditableText 
+  Text
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import BookingForm from './booking-form';
 
 export default function BookPage() {
   return (
-    <UnifiedLayout layoutType="content">
+    <Layout>
       {/* Hero Section - Matching home page styling */}
       <Section id="booking-hero-section" variant="brand" padding="xl">
         <Container maxWidth="2xl">
@@ -38,6 +38,6 @@ export default function BookPage() {
           <BookingForm />
         </Container>
       </Section>
-    </UnifiedLayout>
+    </Layout>
   );
 }

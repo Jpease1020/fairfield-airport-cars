@@ -2,20 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { 
   GridSection,
-  InfoCard,
   ActionButtonGroup,
   ToastProvider,
   useToast,
   Text,
   Span,
   Container,
-  EditableText
 } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
-import { EditableInput } from '@/components/forms';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { Input } from '@/design/components/core/layout/FormSystem';
 
 function ManageBookingPageContent() {
   const params = useParams();
@@ -158,51 +157,39 @@ function ManageBookingPageContent() {
 
   if (loading) {
     return (
-      <UnifiedLayout 
-        layoutType="status"
-        title="Loading..."
-        subtitle="Please wait while we load your booking details"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="⏳ Loading" description="Loading your booking information">
-            <Container>
-              <EditableText field="manage.loading" defaultValue="Loading...">
-                Loading...
-              </EditableText>
-            </Container>
-          </InfoCard>
+          <Container>
+            <EditableText field="manage.loading" defaultValue="Loading...">
+              Loading...
+            </EditableText>
+          </Container>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   if (error || !booking) {
     return (
-      <UnifiedLayout 
-        layoutType="status"
-        title="Manage Booking"
-        subtitle="Booking not found"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="❌ Error" description="Booking could not be found">
-            <Container>
-              <Text>
-                <EditableText field="manage.notFound" defaultValue={error || localContent?.notFoundMessage || 'Booking not found'}>
-                  {error || localContent?.notFoundMessage || 'Booking not found'}
-                </EditableText>
-              </Text>
-              <ActionButtonGroup buttons={[
-                {
-                  label: 'Book a New Ride',
-                  onClick: () => window.location.href = '/book',
-                  variant: 'primary' as const,
-                  icon: '📅'
-                }
-              ]} />
-            </Container>
-          </InfoCard>
+          <Container>
+            <Text>
+              <EditableText field="manage.notFound" defaultValue={error || localContent?.notFoundMessage || 'Booking not found'}>
+                {error || localContent?.notFoundMessage || 'Booking not found'}
+              </EditableText>
+            </Text>
+            <ActionButtonGroup buttons={[
+              {
+                label: 'Book a New Ride',
+                onClick: () => window.location.href = '/book',
+                variant: 'primary' as const,
+                icon: '📅'
+              }
+            ]} />
+          </Container>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
@@ -256,106 +243,97 @@ function ManageBookingPageContent() {
   }
 
   return (
-    <UnifiedLayout 
-      layoutType="status"
-      title={localContent?.title || "Manage Your Booking"}
-      subtitle={typeof localContent?.subtitle === 'string' && typeof booking?.id === 'string' ? localContent.subtitle.replace('{bookingId}', booking.id) : `Reference: ${booking?.id ?? ''}`}
-    >
+    <Layout>
       {/* Admin Edit Mode Toggle */}
       {isAdmin && (
         <GridSection variant="content" columns={1}>
-          <InfoCard title="🔧 Admin Controls" description="Edit page content">
-            <Container>
-              {!editMode ? (
+          <Container>
+            {!editMode ? (
+              <ActionButtonGroup buttons={[
+                {
+                  label: 'Edit Mode',
+                  onClick: () => setEditMode(true),
+                  variant: 'primary' as const,
+                  icon: '✏️'
+                }
+              ]} />
+            ) : (
+              <Container>
                 <ActionButtonGroup buttons={[
                   {
-                    label: 'Edit Mode',
-                    onClick: () => setEditMode(true),
+                    label: 'Save Changes',
+                    onClick: handleSave,
                     variant: 'primary' as const,
-                    icon: '✏️'
+                    icon: '💾'
+                  },
+                  {
+                    label: 'Cancel',
+                    onClick: handleCancel,
+                    variant: 'outline' as const,
+                    icon: '❌'
                   }
                 ]} />
-              ) : (
-                <Container>
-                  <ActionButtonGroup buttons={[
-                    {
-                      label: 'Save Changes',
-                      onClick: handleSave,
-                      variant: 'primary' as const,
-                      icon: '💾'
-                    },
-                    {
-                      label: 'Cancel',
-                      onClick: handleCancel,
-                      variant: 'outline' as const,
-                      icon: '❌'
-                    }
-                  ]} />
-                  <Container spacing="md">
-                    <EditableInput
-                      label="Page Title"
-                      value={localContent?.title || ''}
-                      onChange={(e) => handleFieldChange('title', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Page Subtitle"
-                      value={localContent?.subtitle || ''}
-                      onChange={(e) => handleFieldChange('subtitle', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Resend Button Text"
-                      value={localContent?.resendButton || ''}
-                      onChange={(e) => handleFieldChange('resendButton', e.target.value)}
-                    />
-                    <EditableInput
-                      label="View Status Button Text"
-                      value={localContent?.viewStatusButton || ''}
-                      onChange={(e) => handleFieldChange('viewStatusButton', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Cancel Button Text"
-                      value={localContent?.cancelButton || ''}
-                      onChange={(e) => handleFieldChange('cancelButton', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Pay Balance Button Text"
-                      value={localContent?.payBalanceButton || ''}
-                      onChange={(e) => handleFieldChange('payBalanceButton', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Resend Error Message"
-                      value={localContent?.resendErrorMessage || ''}
-                      onChange={(e) => handleFieldChange('resendErrorMessage', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Pay Balance Error Message"
-                      value={localContent?.payBalanceErrorMessage || ''}
-                      onChange={(e) => handleFieldChange('payBalanceErrorMessage', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Not Found Message"
-                      value={localContent?.notFoundMessage || ''}
-                      onChange={(e) => handleFieldChange('notFoundMessage', e.target.value)}
-                    />
-                    <EditableInput
-                      label="Loading Message"
-                      value={localContent?.loadingMessage || ''}
-                      onChange={(e) => handleFieldChange('loadingMessage', e.target.value)}
-                    />
-                  </Container>
-                </Container>
-              )}
-            </Container>
-          </InfoCard>
+                <Stack direction="vertical" spacing="md">
+                  <Input
+                    placeholder="Page Title"
+                    value={localContent?.title || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('title', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Page Subtitle"
+                    value={localContent?.subtitle || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('subtitle', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Resend Button Text"
+                    value={localContent?.resendButton || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('resendButton', e.target.value)}
+                  />
+                  <Input
+                    placeholder="View Status Button Text"
+                    value={localContent?.viewStatusButton || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('viewStatusButton', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Cancel Button Text"
+                    value={localContent?.cancelButton || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('cancelButton', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Pay Balance Button Text"
+                    value={localContent?.payBalanceButton || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('payBalanceButton', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Resend Error Message"
+                    value={localContent?.resendErrorMessage || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('resendErrorMessage', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Pay Balance Error Message"
+                    value={localContent?.payBalanceErrorMessage || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('payBalanceErrorMessage', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Not Found Message"
+                    value={localContent?.notFoundMessage || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('notFoundMessage', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Loading Message"
+                    value={localContent?.loadingMessage || ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange('loadingMessage', e.target.value)}
+                  />
+                </Stack>
+              </Container>
+            )}
+          </Container>
         </GridSection>
       )}
 
       {/* Booking Information */}
       <GridSection variant="content" columns={1}>
-        <InfoCard 
-          title="📋 Booking Information"
-          description="Your booking details and current status"
-        >
+        <Container>
           <Stack direction="vertical" spacing="md">
             <Container>
               <Span>
@@ -418,32 +396,27 @@ function ManageBookingPageContent() {
               </Container>
             )}
           </Stack>
-        </InfoCard>
+        </Container>
       </GridSection>
 
       {/* Action Buttons */}
       <GridSection variant="content" columns={1}>
-        <InfoCard 
-          title="🎯 Quick Actions"
-          description="Manage your booking or view status"
-        >
+        <Container>
           <ActionButtonGroup buttons={actionButtons} />
-        </InfoCard>
+        </Container>
       </GridSection>
 
       {/* Action Messages */}
       {actionMsg && (
         <GridSection variant="content" columns={1}>
-          <InfoCard title="📢 Action Result" description="Result of your recent action">
-            <Container>
-              <EditableText field="manage.actionMessage" defaultValue={actionMsg}>
-                {actionMsg}
-              </EditableText>
-            </Container>
-          </InfoCard>
+          <Container>
+            <EditableText field="manage.actionMessage" defaultValue={actionMsg}>
+              {actionMsg}
+            </EditableText>
+          </Container>
         </GridSection>
       )}
-    </UnifiedLayout>
+    </Layout>
   );
 }
 

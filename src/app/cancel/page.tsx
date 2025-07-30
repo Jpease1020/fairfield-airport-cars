@@ -2,22 +2,19 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/layout';
 import { 
   GridSection,
-  InfoCard,
   ActionButtonGroup,
   FeatureGrid,
   ToastProvider,
   useToast,
   Text,
   Container,
-  EditableText,
-  EditableHeading,
   Stack,
-  Card,
-  CardBody
+  Card
 } from '@/components/ui';
+import { EditableText, EditableHeading } from '@/design/components/core/layout/EditableSystem';
 
 function CancelPageContent() {
   const { addToast } = useToast();
@@ -115,12 +112,7 @@ function CancelPageContent() {
   ];
 
   return (
-    <UnifiedLayout 
-      layoutType="content"
-      title="Cancel Booking"
-      subtitle="We're sorry to see you need to cancel your ride"
-      description="Please provide your booking details to process the cancellation"
-    >
+    <Layout>
       {/* Cancellation Form */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -159,13 +151,11 @@ function CancelPageContent() {
             
             <Stack data-testid="cancel-policy-list" spacing="md">
               {cancellationPolicy.map((policy, index) => (
-                <Card key={index} data-testid={`cancel-policy-item-${index}`}>
-                  <CardBody>
-                    <Stack spacing="sm">
-                      <Text data-testid={`cancel-policy-title-${index}`}><strong>{policy.title}:</strong></Text>
-                      <Text data-testid={`cancel-policy-description-${index}`}>{policy.description}</Text>
-                    </Stack>
-                  </CardBody>
+                <Card key={index} data-testid={`cancel-policy-item-${index}`} padding="md">
+                  <Stack spacing="sm">
+                    <Text data-testid={`cancel-policy-title-${index}`}><strong>{policy.title}:</strong></Text>
+                    <Text data-testid={`cancel-policy-description-${index}`}>{policy.description}</Text>
+                  </Stack>
                 </Card>
               ))}
             </Stack>
@@ -188,7 +178,7 @@ function CancelPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 

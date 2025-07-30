@@ -7,15 +7,15 @@ import { CMSConfiguration } from '@/types/cms';
 import { 
   AdminPageWrapper,
   GridSection, 
-  InfoCard, 
+  Card, 
   ActionGrid,
   ToastProvider,
   useToast,
   ActionButtonGroup,
   Container,
   Text,
-  EditableText
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { Stack } from '@/components/ui/layout/containers';
 
 function CMSPageContent() {
@@ -190,7 +190,7 @@ function CMSPageContent() {
       {/* CMS Sections Grid */}
       <GridSection variant="content" columns={3}>
         {cmsSections.map((section) => (
-          <InfoCard
+          <Card
             key={section.id}
             title={`${section.icon} ${section.title}`}
             description={section.description}
@@ -216,24 +216,24 @@ function CMSPageContent() {
                 />
               </Stack>
             </Container>
-          </InfoCard>
+          </Card>
         ))}
       </GridSection>
 
       {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
-        <InfoCard
+        <Card
           title="⚡ Quick Actions"
           description="Common CMS management and maintenance tasks"
         >
           <ActionGrid actions={quickActions} columns={4} />
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Last Updated Info */}
       {lastUpdated && (
         <GridSection variant="content" columns={1}>
-          <InfoCard
+          <Card
             title="🕒 Configuration Status"
             description="CMS configuration and update information"
           >
@@ -275,7 +275,7 @@ function CMSPageContent() {
                 </Container>
               </Stack>
             </Container>
-          </InfoCard>
+          </Card>
         </GridSection>
       )}
     </AdminPageWrapper>

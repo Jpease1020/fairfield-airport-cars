@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { onAuthChange, logout, getCustomerProfile, updateCustomerProfile } from '@/lib/services/auth-service';
+import { onAuthChange, logout, getCustomerProfile } from '@/lib/services/auth-service';
 import { User } from 'firebase/auth';
 import { CustomerProfile } from '@/lib/services/auth-service';
 import { 
@@ -14,36 +14,11 @@ import {
   Text,
   Card,
   Button,
-  EditableText,
   ToastProvider,
-  ActionCard,
-  StatCard,
   LoadingSpinner
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { Grid } from '@/components/ui/layout/grid';
-import styled from 'styled-components';
-import { spacing } from '@/lib/design-system/tokens';
-
-const DashboardHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${spacing.xl};
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: ${spacing.md};
-    align-items: stretch;
-  }
-`;
-
-const ProfileSection = styled(Card)`
-  margin-bottom: ${spacing.xl};
-`;
-
-const BookingHistorySection = styled(Card)`
-  margin-bottom: ${spacing.xl};
-`;
 
 export default function CustomerDashboard() {
   const [user, setUser] = useState<User | null>(null);
@@ -133,7 +108,7 @@ export default function CustomerDashboard() {
     <ToastProvider>
       <Section variant="brand" padding="xl">
         <Container>
-          <DashboardHeader>
+          <Stack direction="horizontal" justify="between" align="center" marginBottom="xl">
             <Stack gap="sm">
               <H1>
                 <EditableText field="customer.dashboard.welcome" defaultValue={`Welcome back, ${profile.name}!`}>
@@ -151,11 +126,11 @@ export default function CustomerDashboard() {
                 Logout
               </EditableText>
             </Button>
-          </DashboardHeader>
+          </Stack>
 
           {error && (
             <Card variant="elevated" padding="md" margin="md">
-              <Text variant="muted" style={{ color: 'var(--error-color, #ef4444)' }}>
+              <Text color="error">
                 {error}
               </Text>
             </Card>
@@ -170,24 +145,36 @@ export default function CustomerDashboard() {
                 </EditableText>
               </H2>
               <Grid cols={3} gap="md">
-                <StatCard
+                <Card
                   title="Total Bookings"
                   statNumber={profile.totalBookings}
                   icon="📊"
                   data-testid="total-bookings"
-                />
-                <StatCard
+                >
+                  <EditableText field="customer.dashboard.totalBookings" defaultValue={`${profile.totalBookings} total bookings`}>
+                    {profile.totalBookings} total bookings
+                  </EditableText>
+                </Card>
+                <Card
                   title="Total Spent"
                   statNumber={`$${profile.totalSpent.toFixed(2)}`}
                   icon="💰"
                   data-testid="total-spent"
-                />
-                <StatCard
+                >
+                  <EditableText field="customer.dashboard.totalSpent" defaultValue={`$${profile.totalSpent.toFixed(2)} total spent`}>
+                    ${profile.totalSpent.toFixed(2)} total spent
+                  </EditableText>
+                </Card>
+                <Card
                   title="Member Since"
                   statNumber={new Date(profile.createdAt).toLocaleDateString()}
                   icon="🎉"
                   data-testid="member-since"
-                />
+                >
+                  <EditableText field="customer.dashboard.memberSince" defaultValue={`Member since ${new Date(profile.createdAt).toLocaleDateString()}`}>
+                    Member since {new Date(profile.createdAt).toLocaleDateString()}
+                  </EditableText>
+                </Card>
               </Grid>
             </Stack>
 
@@ -199,32 +186,44 @@ export default function CustomerDashboard() {
                 </EditableText>
               </H2>
               <Grid cols={3} gap="md">
-                <ActionCard
-                  label="Book a Ride"
+                <Card
+                  title="Book a Ride"
                   description="Schedule your next airport ride"
                   icon="🚗"
                   onClick={handleBookRide}
                   data-testid="book-ride-action"
-                />
-                <ActionCard
-                  label="View Bookings"
+                >
+                  <EditableText field="customer.dashboard.bookRide" defaultValue="Schedule your next airport ride">
+                    Schedule your next airport ride
+                  </EditableText>
+                </Card>
+                <Card
+                  title="View Bookings"
                   description="Check your booking history"
                   icon="📋"
                   onClick={handleViewBookings}
                   data-testid="view-bookings-action"
-                />
-                <ActionCard
-                  label="Edit Profile"
+                >
+                  <EditableText field="customer.dashboard.viewBookings" defaultValue="Check your booking history">
+                    Check your booking history
+                  </EditableText>
+                </Card>
+                <Card
+                  title="Edit Profile"
                   description="Update your information"
                   icon="👤"
                   onClick={handleEditProfile}
                   data-testid="edit-profile-action"
-                />
+                >
+                  <EditableText field="customer.dashboard.editProfile" defaultValue="Update your information">
+                    Update your information
+                  </EditableText>
+                </Card>
               </Grid>
             </Stack>
 
             {/* Profile Information */}
-            <ProfileSection variant="elevated" padding="lg">
+            <Card variant="elevated" padding="lg" marginBottom="xl">
               <Stack gap="md">
                 <H2>
                   <EditableText field="customer.dashboard.profile_title" defaultValue="Profile Information">
@@ -249,10 +248,10 @@ export default function CustomerDashboard() {
                   </Text>
                 </Stack>
               </Stack>
-            </ProfileSection>
+            </Card>
 
             {/* Recent Bookings */}
-            <BookingHistorySection variant="elevated" padding="lg">
+            <Card variant="elevated" padding="lg">
               <Stack gap="md">
                 <H2>
                   <EditableText field="customer.dashboard.bookings_title" defaultValue="Recent Bookings">
@@ -278,7 +277,7 @@ export default function CustomerDashboard() {
                   </EditableText>
                 </Button>
               </Stack>
-            </BookingHistorySection>
+            </Card>
           </Stack>
         </Container>
       </Section>

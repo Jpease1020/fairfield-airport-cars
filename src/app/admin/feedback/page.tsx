@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { AdminPageWrapper, GridSection, InfoCard, ActionGrid, Container, H3, EditableText, StatCard } from '@/components/ui';
+import { AdminPageWrapper, GridSection, Card, Container } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastProvider';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 import { getAllBookings } from '@/lib/services/database-service';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 interface Feedback {
   id: string;
@@ -200,39 +201,49 @@ function FeedbackPageContent() {
     >
       {/* Feedback Statistics */}
       <GridSection variant="stats" columns={4}>
-        <StatCard
+        <Card
           title="Total Reviews"
           icon="📝"
           statNumber={feedbackStats.totalFeedback.toString()}
           statChange="Customer reviews collected"
           changeType="neutral"
-        />
-        <StatCard
+        >
+          <EditableText field="admin.feedback.totalReviews" defaultValue={`${feedbackStats.totalFeedback} total reviews`}>
+            {feedbackStats.totalFeedback} total reviews
+          </EditableText>
+        </Card>
+        <Card
           title="Average Rating"
           icon="⭐"
           statNumber={feedbackStats.averageRating.toFixed(1)}
           statChange="Out of 5 stars"
           changeType="positive"
-        />
-        <StatCard
+        >
+          {null}
+        </Card>
+        <Card
           title="5-Star Reviews"
           icon="🌟"
           statNumber={feedbackStats.fiveStarCount.toString()}
           statChange={`${((feedbackStats.fiveStarCount / feedbackStats.totalFeedback) * 100).toFixed(0)}% of total`}
           changeType="positive"
-        />
-        <StatCard
+        >
+          {null}
+        </Card>
+        <Card
           title="Positive Reviews"
           icon="👍"
           statNumber={`${feedbackStats.positivePercentage.toFixed(0)}%`}
           statChange="4+ star ratings"
           changeType="positive"
-        />
+        >
+          {null}
+        </Card>
       </GridSection>
 
       {/* Feedback Table */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="💬 Customer Reviews"
           description="Search, sort, and manage customer feedback and ratings"
         >
@@ -245,14 +256,13 @@ function FeedbackPageContent() {
             emptyMessage="No customer feedback available yet. Reviews will appear here once customers submit them."
             emptyIcon="⭐"
             pageSize={10}
-            onRowClick={(feedback: Feedback) => console.log('Clicked feedback from:', feedback.customerName)}
           />
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Rating Distribution */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="📊 Rating Distribution"
           description="Breakdown of customer ratings"
         >
@@ -276,7 +286,7 @@ function FeedbackPageContent() {
               );
             })}
           </Stack>
-        </InfoCard>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );

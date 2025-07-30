@@ -4,14 +4,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Span } from '@/components/ui';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { GridSection } from '@/components/ui';
-import { SettingSection } from '@/components/ui/SettingSection';
 import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/FormSystem';
 import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
 import { StatusMessage } from '@/components/ui/StatusMessage';
 import { Stack } from '@/components/ui/layout/containers';
 import { getCMSConfig } from '@/lib/services/cms-service';
-import { EditableText, EditableHeading } from '@/components/ui';
+import { EditableText, EditableHeading } from '../../../../../design/components/core/layout/EditableSystem';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
@@ -86,10 +85,6 @@ function AdminColorsPageContent() {
     }
   };
 
-
-
-
-
   return (
     <AdminPageWrapper
       title="Color Scheme"
@@ -111,11 +106,10 @@ function AdminColorsPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           {/* Color Configuration */}
-          <SettingSection
-            title="Theme Colors"
-            description="Configure the main colors used throughout your application"
-            icon="🎨"
-          >
+          <Container>
+            <Span>Theme Colors</Span>
+            <Span>Configure the main colors used throughout your application</Span>
+            <Span>🎨</Span>
             <Stack spacing="lg">
               {COLOR_VARIABLES.map(({ key, label, description }) => (
                 <Container key={key}>
@@ -151,15 +145,14 @@ function AdminColorsPageContent() {
                   </Stack>
                 </Container>
               ))}
-            </Stack>
-          </SettingSection>
+                          </Stack>
+          </Container>
 
           {/* Live Preview */}
-          <SettingSection
-            title="Live Preview"
-            description="See how your color scheme looks in real-time"
-            icon="👀"
-          >
+          <Container>
+            <Span>Live Preview</Span>
+            <Span>See how your color scheme looks in real-time</Span>
+            <Span>👀</Span>
             <Container 
               data-background={colors['--background'] || 'var(--background-primary)'}
               data-foreground={colors['--foreground'] || 'var(--text-primary)'}
@@ -197,7 +190,7 @@ function AdminColorsPageContent() {
                 spacing="sm"
               />
             </Container>
-          </SettingSection>
+          </Container>
         </Container>
       </GridSection>
     </AdminPageWrapper>

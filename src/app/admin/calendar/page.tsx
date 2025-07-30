@@ -6,14 +6,14 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { listBookings } from '../../../lib/services/booking-service';
 import { 
   AdminPageWrapper, 
-  InfoCard, 
   GridSection,
   Container,
   Span,
   Stack,
-  EditableText,
-  EditableHeading
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
+import { Card } from '@/design/components/core/layout/card';
 
 const CalendarPage = () => {
   const [events, setEvents] = useState<any[]>([]);
@@ -71,7 +71,7 @@ const CalendarPage = () => {
       errorTitle="Calendar Load Error"
     >
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="📅 Monthly Booking Calendar"
           description={`Showing ${events.length} bookings with color-coded status`}
         >
@@ -113,12 +113,12 @@ const CalendarPage = () => {
               </EditableText>
             </Container>
           )}
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Calendar Legend */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="📊 Status Legend"
           description="Color coding for booking statuses"
         >
@@ -156,7 +156,7 @@ const CalendarPage = () => {
               </Span>
             </Stack>
           </Container>
-        </InfoCard>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );

@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { AdminPageWrapper, GridSection, InfoCard, Container, EditableText, StatCard } from '@/components/ui';
+import { AdminPageWrapper, GridSection, Card, Container } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { Stack } from '@/components/ui/layout/containers';
 import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
 
@@ -172,39 +173,55 @@ function CommentsPageContent() {
     >
       {/* Comment Statistics */}
       <GridSection variant="stats" columns={4}>
-        <StatCard
+        <Card
           title="Total Comments"
           icon="💬"
           statNumber={totalComments.toString()}
           statChange="All comments"
           changeType="neutral"
-        />
-        <StatCard
+        >
+          <EditableText field="admin.comments.totalComments" defaultValue={`${totalComments} total comments`}>
+            {totalComments} total comments
+          </EditableText>
+        </Card>
+        <Card
           title="Recent Comments"
           icon="🆕"
           statNumber={recentComments.toString()}
           statChange="Last 7 days"
           changeType="positive"
-        />
-        <StatCard
+        >
+          <EditableText field="admin.comments.recentComments" defaultValue={`${recentComments} recent comments`}>
+            {recentComments} recent comments
+          </EditableText>
+        </Card>
+        <Card
           title="Pages with Comments"
           icon="📄"
           statNumber={uniquePages.toString()}
           statChange="Active pages"
           changeType="neutral"
-        />
-        <StatCard
+        >
+          <EditableText field="admin.comments.pagesWithComments" defaultValue={`${uniquePages} pages with comments`}>
+            {uniquePages} pages with comments
+          </EditableText>
+        </Card>
+        <Card
           title="Unique Authors"
           icon="👥"
           statNumber={uniqueAuthors.toString()}
           statChange="Comment contributors"
           changeType="positive"
-        />
+        >
+          <EditableText field="admin.comments.uniqueAuthors" defaultValue={`${uniqueAuthors} unique authors`}>
+            {uniqueAuthors} unique authors
+          </EditableText>
+        </Card>
       </GridSection>
 
       {/* Comments Table */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="💬 All Comments"
           description="Search, sort, and manage comments across all pages"
         >
@@ -217,14 +234,13 @@ function CommentsPageContent() {
             emptyMessage="No comments found. Comments will appear here once users start commenting on pages."
             emptyIcon="💬"
             pageSize={10}
-            onRowClick={(comment: ConfluenceComment) => console.log('Clicked comment from:', comment.createdBy)}
           />
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Comment Analytics */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="📊 Comment Analytics"
           description="Insights into comment activity and engagement"
         >
@@ -279,7 +295,7 @@ function CommentsPageContent() {
               </Stack>
             </Container>
           </Stack>
-        </InfoCard>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );

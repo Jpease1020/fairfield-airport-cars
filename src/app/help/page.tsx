@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { 
   Section,
   Container,
@@ -11,8 +11,8 @@ import {
   Text,
   ActionButtonGroup,
   Card,
-  EditableText
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function HelpPageContent() {
   const quickAnswers = [
@@ -129,8 +129,8 @@ function HelpPageContent() {
 
 export default function HelpPage() {
   return (
-    <UnifiedLayout layoutType="content">
+    <Layout>
       <HelpPageContent />
-    </UnifiedLayout>
+    </Layout>
   );
 }
