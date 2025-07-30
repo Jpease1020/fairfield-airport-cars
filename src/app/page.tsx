@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Head from 'next/head';
-import { Layout } from '@/components/ui/layout/containers';
+import { Layout } from '@/design/components/core/layout/layout/containers';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import {
   Section,

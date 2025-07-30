@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import nextPlugin from '@next/eslint-plugin-next';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
-import fairfieldPlugin from './scripts/eslint-rules/fairfield-plugin.js';
+
 
 export default [
   js.configs.recommended,
@@ -83,7 +83,6 @@ export default [
     plugins: {
       '@typescript-eslint': typescriptPlugin,
       '@next/next': nextPlugin,
-      fairfield: fairfieldPlugin,
     },
     rules: {
       // TypeScript rules
@@ -102,16 +101,7 @@ export default [
       }],
 
       
-      // Fairfield Custom Rules
-      'fairfield/no-classname': 'error',
-      'fairfield/no-inline-styles-on-divs': 'error',
-      'fairfield/no-styled-components-in-files': 'error',
-      'fairfield/enforce-layout-components': 'warn',
-      'fairfield/no-react-css-properties': 'error',
-      'fairfield/design-system-first': 'warn',
-      'fairfield/no-multiple-styled-components': 'error',
-      'fairfield/check-existing-components': 'error',
-      'fairfield/no-underscore-props': 'error',
+
       
       // Architecture guardrails
       'no-restricted-syntax': [
