@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText, Button } from '@/components/ui';
+import { AdminPageWrapper, Card, GridSection, ActionGrid, Container, H3, Text, Button } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 const AIAssistantDisabledPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -87,7 +88,7 @@ const AIAssistantDisabledPage = () => {
       actions={headerActions}
     >
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="🤖 AI Assistant Status"
           description="Information about AI assistant availability and activation"
         >
@@ -105,16 +106,16 @@ const AIAssistantDisabledPage = () => {
               </EditableText>
             </Text>
           </Stack>
-        </InfoCard>
+        </Card>
       </GridSection>
 
       <GridSection variant="actions" columns={1}>
-        <InfoCard
+        <Card
           title="⚡ Available Actions"
           description="Alternative tools and features you can access"
         >
           <ActionGrid actions={quickActions} columns={4} />
-        </InfoCard>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );

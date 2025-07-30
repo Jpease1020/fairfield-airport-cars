@@ -2,19 +2,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout/core/UnifiedLayout';
 import { 
   GridSection, 
-  InfoCard, 
   ActionButtonGroup,
   Container,
   H3,
   Text,
   Span,
   LoadingSpinner,
-  EditableText
+  Card,
 } from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
+import { Layout, Stack } from '@/components/ui/layout/containers';
 import { Booking } from '@/types/booking';
 
 function BookingDetailsContent() {
@@ -70,31 +68,23 @@ function BookingDetailsContent() {
 
   if (loading) {
     return (
-      <UnifiedLayout 
-        layoutType="status"
-        title="Loading Booking Details"
-        subtitle="Please wait while we fetch your booking information"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="Loading..." description="Fetching booking details">
+          <Card title="Loading..." description="Fetching booking details">
             <Container>
               <LoadingSpinner text="Loading booking details..." />
             </Container>
-          </InfoCard>
+          </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   if (error || !booking) {
     return (
-      <UnifiedLayout 
-        layoutType="status"
-        title="Booking Not Found"
-        subtitle={"We couldn't find the booking you're looking for"}
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="❌ Booking Not Found" description="The booking could not be found">
+          <Card title="❌ Booking Not Found" description="The booking could not be found">
             <Container>
               <Text>
                 {error || 'The booking you are looking for could not be found.'}
@@ -108,9 +98,9 @@ function BookingDetailsContent() {
                 }
               ]} />
             </Container>
-          </InfoCard>
+          </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
@@ -136,26 +126,22 @@ function BookingDetailsContent() {
   ];
 
   return (
-    <UnifiedLayout 
-      layoutType="status"
-      title="Booking Details"
-      subtitle={`Booking #${booking.id}`}
-    >
+    <Layout>
       {/* Booking Status */}
       <GridSection variant="content" columns={1}>
-        <InfoCard 
+        <Card 
           title={`${getStatusIcon(booking.status)} Booking Status`}
           description={`Your booking is currently ${booking.status}`}
         >
           <Container>
             {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
           </Container>
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Trip Details */}
       <GridSection variant="content" columns={1}>
-        <InfoCard 
+        <Card 
           title="📍 Trip Details"
           description="Your pickup and dropoff information"
         >
@@ -174,12 +160,11 @@ function BookingDetailsContent() {
             <H3>Pickup Date & Time</H3>
             <Text>{formatDateTime(booking.pickupDateTime)}</Text>
           </Container>
-        </InfoCard>
-      </GridSection>
+        </Card>    </GridSection>
 
       {/* Passenger Information */}
       <GridSection variant="content" columns={1}>
-        <InfoCard 
+        <Card 
           title="👤 Passenger Information"
           description="Your contact details for this booking"
         >
@@ -200,12 +185,12 @@ function BookingDetailsContent() {
               <Text>{booking.email}</Text>
             </Stack>
           </Container>
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Fare Information */}
       <GridSection variant="content" columns={1}>
-        <InfoCard 
+        <Card 
           title="💰 Fare Information"
           description="Payment details for your trip"
         >
@@ -217,20 +202,20 @@ function BookingDetailsContent() {
               ${booking.fare?.toFixed(2)}
             </Text>
           </Stack>
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Actions */}
       <GridSection variant="content" columns={1}>
-        <InfoCard 
+        <Card 
           title="🎯 Quick Actions"
           description="Manage your booking or book another ride"
         >
           <ActionButtonGroup buttons={actionButtons} />
-        </InfoCard>
-      </GridSection>
-    </UnifiedLayout>
-  );
+        </Card>
+              </GridSection>
+      </Layout>
+    );
 }
 
 export default function BookingDetailsPage() {

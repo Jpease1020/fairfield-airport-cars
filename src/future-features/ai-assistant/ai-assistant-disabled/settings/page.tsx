@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, InfoCard, GridSection, ActionGrid, Container, H3, Text, EditableText, Button } from '@/components/ui';
+import { AdminPageWrapper, GridSection, ActionGrid, Container, H3, Text, Button } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
+import { Card } from '@/design/components/core/layout/card';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 const AIAssistantSettingsPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -76,10 +78,10 @@ const AIAssistantSettingsPage = () => {
       actions={headerActions}
     >
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="⚙️ AI Assistant Configuration"
-          description="Current status and available options"
-        >
+        <Card variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text size="lg" weight="bold">⚙️ AI Assistant Configuration</Text>
+            <Text>Current status and available options</Text>
           <Container>
             <H3>
               <EditableText field="aiAssistantSettings.featureNotAvailable" defaultValue="🚫 Feature Not Available">
@@ -119,16 +121,18 @@ const AIAssistantSettingsPage = () => {
               </EditableText>
             </Text>
           </Container>
-        </InfoCard>
+          </Stack>
+        </Card>
       </GridSection>
 
       <GridSection variant="actions" columns={1}>
-        <InfoCard
-          title="📋 Available Options"
-          description="Alternative features and support resources"
-        >
-          <ActionGrid actions={settingsInfo} columns={4} />
-        </InfoCard>
+        <Card variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text size="lg" weight="bold">📋 Available Options</Text>
+            <Text>Alternative features and support resources</Text>
+            <ActionGrid actions={settingsInfo} columns={4} />
+          </Stack>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );

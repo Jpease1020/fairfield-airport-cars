@@ -8,10 +8,10 @@ import {
   Button,
   Stack,
   StatusMessage,
-  EditableText,
-  InfoCard
+  Card,
 } from '@/components/ui';
 import { ToastProvider, useToast } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function AddContentUtilityPage() {
   const { addToast } = useToast();
@@ -217,7 +217,7 @@ function AddContentUtilityPage() {
     >
       <Container>
         <Stack spacing="lg">
-          <InfoCard
+          <Card
             title="⚠️ Utility Tool"
             description="This is a utility tool to add missing content. For regular content editing, use the main CMS interface."
           >
@@ -232,7 +232,7 @@ function AddContentUtilityPage() {
                 <Container>• Error messages and success messages</Container>
               </Stack>
             </Container>
-          </InfoCard>
+          </Card>
           
           {error && (
             <StatusMessage 

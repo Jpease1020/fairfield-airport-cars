@@ -6,13 +6,14 @@ import { db } from '@/lib/utils/firebase';
 import { useSearchParams } from 'next/navigation';
 import { 
   GridSection,
-  InfoCard,
   LoadingSpinner,
   Container,
-  Text,
-  EditableText
+  Text
 } from '@/components/ui';
-import { UnifiedLayout } from '@/components/layout';
+import { Card } from '@/design/components/core/layout/card';
+import { Stack } from '@/design/components/core/layout/layout/containers';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { Layout } from '@/components/layout';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';
@@ -58,80 +59,77 @@ function DriverLocationContent() {
 
   if(!allowed) {
     return (
-      <UnifiedLayout
-        layoutType="admin"
-        title="Driver Live Location"
-        subtitle="Unauthorized access"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="❌ Unauthorized" description="You are not authorized to access this page">
-            <Container>
-              <Text>
-                <EditableText field="driver.location.unauthorized" defaultValue="You are not authorized to access this page.">
-                  You are not authorized to access this page.
-                </EditableText>
-              </Text>
-            </Container>
-          </InfoCard>
+          <Card variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text size="lg" weight="bold">❌ Unauthorized</Text>
+              <Text>You are not authorized to access this page</Text>
+              <Container>
+                <Text>
+                  <EditableText field="driver.location.unauthorized" defaultValue="You are not authorized to access this page.">
+                    You are not authorized to access this page.
+                  </EditableText>
+                </Text>
+              </Container>
+            </Stack>
+          </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   return (
-    <UnifiedLayout
-      layoutType="admin"
-      title="Driver Live Location"
-      subtitle="Sharing your location with passengers"
-    >
+    <Layout>
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="📍 Location Status"
-          description="Your current location sharing status"
-        >
-          <Container>
-            <Text>
-              <EditableText field="driver.location.status" defaultValue={status}>
-                {status}
-              </EditableText>
-            </Text>
-            {coords && (
-              <Container>
-                <Text>
-                  <EditableText field="driver.location.coordinates" defaultValue="Current Coordinates:">
-                    Current Coordinates:
-                  </EditableText>
-                </Text>
-                <Text>
-                  <EditableText field="driver.location.coords" defaultValue={`Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`}>
-                    Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
-                  </EditableText>
-                </Text>
-              </Container>
-            )}
-          </Container>
-        </InfoCard>
+        <Card variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text size="lg" weight="bold">📍 Location Status</Text>
+            <Text>Your current location sharing status</Text>
+            <Container>
+              <Text>
+                <EditableText field="driver.location.status" defaultValue={status}>
+                  {status}
+                </EditableText>
+              </Text>
+              {coords && (
+                <Container>
+                  <Text>
+                    <EditableText field="driver.location.coordinates" defaultValue="Current Coordinates:">
+                      Current Coordinates:
+                    </EditableText>
+                  </Text>
+                  <Text>
+                    <EditableText field="driver.location.coords" defaultValue={`Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`}>
+                      Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
+                    </EditableText>
+                  </Text>
+                </Container>
+              )}
+            </Container>
+          </Stack>
+        </Card>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 
 export default function DriverLocationPage() {
   return (
     <Suspense fallback={
-      <UnifiedLayout
-        layoutType="admin"
-        title="Driver Live Location"
-        subtitle="Loading..."
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="Loading..." description="Initializing location services">
-            <Container>
-              <LoadingSpinner text="Loading..." />
-            </Container>
-          </InfoCard>
+          <Card variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text size="lg" weight="bold">Loading...</Text>
+              <Text>Initializing location services</Text>
+              <Container>
+                <LoadingSpinner text="Loading..." />
+              </Container>
+            </Stack>
+          </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     }>
       <DriverLocationContent />
     </Suspense>

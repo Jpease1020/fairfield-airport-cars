@@ -13,14 +13,14 @@ import {
   Text,
   Card,
   Form,
-  Input,
-  Label,
   Button,
-  EditableText,
   ToastProvider
 } from '@/components/ui';
+import { Input } from '@/design/components/core/layout/FormSystem';
+import { Label } from '@/design/components/core/layout/label';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/lib/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '../../../design/design-system/tokens';
 
 // Styled components for registration page
 const RegisterCard = styled(Card)`
@@ -208,7 +208,7 @@ export default function CustomerRegisterPage() {
                         id="name"
                         type="text"
                         value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('name', e.target.value)}
                         placeholder="Enter your full name"
                         required
                         data-testid="name-input"
@@ -225,7 +225,7 @@ export default function CustomerRegisterPage() {
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('email', e.target.value)}
                         placeholder="Enter your email"
                         required
                         data-testid="email-input"
@@ -242,7 +242,7 @@ export default function CustomerRegisterPage() {
                         id="phone"
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('phone', e.target.value)}
                         placeholder="Enter your phone number"
                         required
                         data-testid="phone-input"
@@ -259,7 +259,7 @@ export default function CustomerRegisterPage() {
                         id="password"
                         type="password"
                         value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('password', e.target.value)}
                         placeholder="Create a password"
                         required
                         data-testid="password-input"
@@ -276,7 +276,7 @@ export default function CustomerRegisterPage() {
                         id="confirmPassword"
                         type="password"
                         value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('confirmPassword', e.target.value)}
                         placeholder="Confirm your password"
                         required
                         data-testid="confirm-password-input"

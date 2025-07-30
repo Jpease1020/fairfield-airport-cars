@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { onAuthChange } from '@/lib/services/auth-service';
 import { User } from 'firebase/auth';
-import { Container, EditableText } from '@/components/ui';
+import { Container } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
   const WithAuthComponent = (props: P) => {

@@ -1,32 +1,24 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
   Card, 
-  CardBody, 
   Grid, 
   GridItem,
   Text, 
   H2, 
-  H3, 
-  Span, 
   Button, 
-  Input, 
-  Select, 
-  Option, 
-  Label,
   StatusMessage,
   Form,
-  SettingInput,
-  EditableText,
-  ToastProvider,
-  EditableHeading
-} from '@/components/ui';
+  ToastProvider
+} from '../../../design/components/core/layout';
+import { Input, Select } from '@/design/components/core/layout/FormSystem';
+import { Label } from '@/design/components/core/layout/label';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { Booking } from '@/types/booking';
-import { WarningIcon, LoadingSpinnerIcon } from '@/components/ui/icons';
+import { LoadingSpinner } from '../../../design/components/core/layout';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -42,13 +34,15 @@ const useGoogleMapsScript = (apiKey: string) => {
       return;
     }
 
+    if (typeof document === 'undefined') return;
+
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
 
     const checkPlaces = () => {
-      if (window.google && window.google.maps && window.google.maps.places) {
+      if (typeof window !== 'undefined' && window.google && window.google.maps && window.google.maps.places) {
         setIsLoaded(true);
       } else {
         setTimeout(checkPlaces, 100);
@@ -66,7 +60,9 @@ const useGoogleMapsScript = (apiKey: string) => {
     document.head.appendChild(script);
 
     return () => {
-      document.head.removeChild(script);
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
     };
   }, [apiKey]);
 
@@ -95,26 +91,23 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMapsScript(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '');
 
   const getPlacePredictions = async (input: string, callback: (predictions: google.maps.places.AutocompletePrediction[]) => void) => {
-    if (!mapsLoaded || !window.google) {
+    if (!mapsLoaded || typeof window === 'undefined' || !window.google) {
       callback([]);
       return;
     }
 
-    const service = new window.google.maps.places.AutocompleteService();
-    service.getPlacePredictions(
-      {
-        input,
-        componentRestrictions: { country: 'us' },
-        types: ['establishment', 'geocode']
-      },
-      (predictions, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-          callback(predictions);
-        } else {
-          callback([]);
+    try {
+      const service = new window.google.maps.places.AutocompleteService();
+      service.getPlacePredictions(
+        { input, componentRestrictions: { country: 'us' } },
+        (predictions) => {
+          callback(predictions || []);
         }
-      }
-    );
+      );
+    } catch (error) {
+      console.error('Error getting place predictions:', error);
+      callback([]);
+    }
   };
 
   function debounce<T extends (...args: Parameters<T>) => void>(func: T, delay: number) {
@@ -131,10 +124,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
     
     if (value.length > 2) {
       const debouncedSearch = debounce(async (input: string) => {
-        const predictions = await getPlacePredictions(input, (preds) => {
-          setPickupSuggestions(preds);
-          setShowPickupSuggestions(true);
+        const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve) => {
+          getPlacePredictions(input, resolve);
         });
+        setPickupSuggestions(predictions);
+        setShowPickupSuggestions(true);
       }, 300);
       
       debouncedSearch(value);
@@ -147,10 +141,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
     
     if (value.length > 2) {
       const debouncedSearch = debounce(async (input: string) => {
-        const predictions = await getPlacePredictions(input, (preds) => {
-          setDropoffSuggestions(preds);
-          setShowDropoffSuggestions(true);
+        const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve) => {
+          getPlacePredictions(input, resolve);
         });
+        setDropoffSuggestions(predictions);
+        setShowDropoffSuggestions(true);
       }, 300);
       
       debouncedSearch(value);
@@ -160,16 +155,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const handlePickupSuggestionSelect = (prediction: google.maps.places.AutocompletePrediction) => {
     setPickupLocation(prediction.description);
     setShowPickupSuggestions(false);
+    setPickupSuggestions([]);
   };
 
   const handleDropoffSuggestionSelect = (prediction: google.maps.places.AutocompletePrediction) => {
     setDropoffLocation(prediction.description);
     setShowDropoffSuggestions(false);
+    setDropoffSuggestions([]);
   };
 
   const handleCalculateFare = async () => {
     if (!pickupLocation || !dropoffLocation || !pickupDateTime) {
-      setError('Please fill in pickup location, dropoff location, and pickup time');
+      setError('Please fill in pickup and dropoff locations and pickup date/time');
       return;
     }
 
@@ -177,7 +174,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/booking/estimate-fare', {
+      const response = await fetch('/api/estimate-fare', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -186,21 +183,20 @@ function BookingFormContent({ booking }: BookingFormProps) {
           pickupLocation,
           dropoffLocation,
           pickupDateTime,
-          passengers
+          passengers,
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setFare(data.fare);
-        setSuccess('Fare calculated successfully!');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Failed to calculate fare');
+      if (!response.ok) {
+        throw new Error('Failed to calculate fare');
       }
+
+      const data = await response.json();
+      setFare(data.fare);
+      setSuccess('Fare calculated successfully!');
     } catch (error) {
-      console.error('Error estimating fare:', error);
-      setError('Error estimating fare. Please try again.');
+      console.error('Error calculating fare:', error);
+      setError('Failed to calculate fare. Please try again.');
     } finally {
       setIsCalculating(false);
     }
@@ -209,8 +205,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!fare) {
-      setError('Please calculate fare before booking');
+    if (!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime) {
+      setError('Please fill in all required fields');
       return;
     }
 
@@ -233,52 +229,47 @@ function BookingFormContent({ booking }: BookingFormProps) {
           passengers,
           flightNumber,
           notes,
-          fare
+          fare,
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        
-        // If payment link is available, redirect to payment
-        if (data.paymentLinkUrl) {
-          // Store booking info in session storage for payment page
-          sessionStorage.setItem('pendingBooking', JSON.stringify({
-            bookingId: data.bookingId,
-            driverName: data.driverName,
-            driverPhone: data.driverPhone,
-            fare,
-            depositAmount: Math.round(fare * 0.2 * 100) / 100
-          }));
-          
-          // Redirect to payment page
-          window.location.href = data.paymentLinkUrl;
-        } else {
-          // Fallback to success page
-          window.location.href = `/success?bookingId=${data.bookingId}`;
-        }
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Failed to create booking');
+      if (!response.ok) {
+        throw new Error('Failed to create booking');
+      }
+
+      const data = await response.json();
+      setSuccess('Booking created successfully!');
+      
+      // Store booking ID in session storage for tracking
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('lastBookingId', data.bookingId);
+      }
+      
+      // Redirect to booking status page
+      if (typeof window !== 'undefined') {
+        window.location.href = `/booking/${data.bookingId}`;
       }
     } catch (error) {
-      console.error('Error submitting booking:', error);
-      setError('Network error. Please try again.');
+      console.error('Error creating booking:', error);
+      setError('Failed to create booking. Please try again.');
     }
   };
 
-  return (
-    <Container padding="lg" maxWidth="xl" data-testid="booking-form-container">
-      {/* Google Maps Error - Simplified */}
-      {mapsError && (
+  if (mapsError) {
+    return (
+      <Container maxWidth="lg" padding="xl">
         <StatusMessage 
-          type="warning" 
-          message="Location autocomplete is temporarily unavailable. You can still fill out the form manually."
-          id="maps-error-message"
-          data-testid="maps-error-message"
+          type="error" 
+          message="Failed to load Google Maps. Please refresh the page and try again." 
+          id="maps-error-message" 
+          data-testid="maps-error-message" 
         />
-      )}
+      </Container>
+    );
+  }
 
+  return (
+    <Container maxWidth="lg" padding="xl" data-testid="booking-form-container">
       <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
         {/* Single clean form container */}
         <Stack spacing="xl" gap="xl" data-testid="booking-form-stack" fullWidth>
@@ -286,7 +277,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Personal Information - Enhanced with card styling */}
           <Card variant="elevated" padding="lg" id="contact-information-card" fullWidth>
             <Stack spacing="lg" data-testid="contact-information-stack" fullWidth align="center" justify="center">
-              <H2 style={{ color: 'var(--primary-color, #0B1F3A)' }} id="contact-information-title">
+              <H2 variant="primary" id="contact-information-title">
                 <EditableText field="booking.personalInfo.title" defaultValue="Contact Information">
                   Contact Information
                 </EditableText>
@@ -294,47 +285,50 @@ function BookingFormContent({ booking }: BookingFormProps) {
               
               <Grid cols={2} gap="lg" responsive data-testid="contact-information-grid">
                 <GridItem data-testid="name-grid-item">
-                  <SettingInput
-                    id="name"
-                    label="Full Name"
-                    value={name}
-                    data-testid="name-input"
-                    onChange={setName}
-                    placeholder="Enter your full name"
-                    icon="👤"
-                  />
+                  <Stack spacing="sm">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      value={name}
+                      data-testid="name-input"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                      placeholder="Enter your full name"
+                    />
+                  </Stack>
                 </GridItem>
                 
                 <GridItem data-testid="email-grid-item">
-                  <SettingInput
-                    id="email"
-                    label="Email Address"
-                    type="email"
-                    value={email}
-                    onChange={setEmail}
-                    placeholder="Enter your email"
-                    icon="✉️"
-                    data-testid="email-input"
-                  />
+                  <Stack spacing="sm">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      data-testid="email-input"
+                    />
+                  </Stack>
                 </GridItem>
               </Grid>
               
-              <SettingInput
-                id="phone"
-                label="Phone Number"
-                value={phone}
-                onChange={setPhone}
-                placeholder="(123) 456-7890"
-                icon="📞"
-                data-testid="phone-input"
-              />
+              <Stack spacing="sm">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  value={phone}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+                  placeholder="(123) 456-7890"
+                  data-testid="phone-input"
+                />
+              </Stack>
             </Stack>
           </Card>
 
           {/* Trip Details - Enhanced with card styling */}
           <Card variant="elevated" padding="lg" id="trip-details-card" fullWidth>
             <Stack spacing="lg" data-testid="trip-details-stack" fullWidth align="center" justify="center">
-              <H2 style={{ color: 'var(--primary-color, #0B1F3A)' }} id="trip-details-title">
+              <H2 variant="primary" id="trip-details-title">
                 <EditableText field="booking.tripDetails.title" defaultValue="Trip Details">
                   Trip Details
                 </EditableText>
@@ -342,15 +336,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
               
               <Grid cols={2} gap="lg" responsive data-testid="location-grid">
                 <GridItem data-testid="pickup-location-grid-item">
-                  <SettingInput
-                    id="pickupLocation"
-                    label="Pickup Location"
-                    value={pickupLocation}
-                    onChange={handlePickupInputChange}
-                    placeholder="Enter pickup address"
-                    icon="📍"
-                    data-testid="pickup-location-input"
-                  />
+                  <Stack spacing="sm">
+                    <Label htmlFor="pickupLocation">Pickup Location</Label>
+                    <Input
+                      id="pickupLocation"
+                      value={pickupLocation}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePickupInputChange(e.target.value)}
+                      placeholder="Enter pickup address"
+                      data-testid="pickup-location-input"
+                    />
+                  </Stack>
                   {showPickupSuggestions && pickupSuggestions.length > 0 && (
                     <Card variant="outlined" padding="sm" marginTop="sm" id="pickup-suggestions-card">
                       <Stack spacing="xs" data-testid="pickup-suggestions-stack">
@@ -370,15 +365,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </GridItem>
                 
                 <GridItem data-testid="dropoff-location-grid-item">
-                  <SettingInput
-                    id="dropoffLocation"
-                    label="Dropoff Location"
-                    value={dropoffLocation}
-                    onChange={handleDropoffInputChange}
-                    placeholder="Enter dropoff address"
-                    icon="🎯"
-                    data-testid="dropoff-location-input"
-                  />
+                  <Stack spacing="sm">
+                    <Label htmlFor="dropoffLocation">Dropoff Location</Label>
+                    <Input
+                      id="dropoffLocation"
+                      value={dropoffLocation}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDropoffInputChange(e.target.value)}
+                      placeholder="Enter dropoff address"
+                      data-testid="dropoff-location-input"
+                    />
+                  </Stack>
                   {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
                     <Card variant="outlined" padding="sm" marginTop="sm" id="dropoff-suggestions-card">
                       <Stack spacing="xs" data-testid="dropoff-suggestions-stack">
@@ -406,7 +402,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       id="pickupDateTime"
                       type="datetime-local"
                       value={pickupDateTime}
-                      onChange={(e) => setPickupDateTime(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPickupDateTime(e.target.value)}
                       required
                       data-testid="pickup-datetime-input"
                     />
@@ -414,15 +410,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </GridItem>
                 
                 <GridItem data-testid="flight-number-grid-item">
-                  <SettingInput
-                    id="flightNumber"
-                    label="Flight Number (Optional)"
-                    value={flightNumber}
-                    onChange={setFlightNumber}
-                    placeholder="e.g., AA123"
-                    icon="✈️"
-                    data-testid="flight-number-input"
-                  />
+                  <Stack spacing="sm">
+                    <Label htmlFor="flightNumber">Flight Number (Optional)</Label>
+                    <Input
+                      id="flightNumber"
+                      value={flightNumber}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFlightNumber(e.target.value)}
+                      placeholder="e.g., AA123"
+                      data-testid="flight-number-input"
+                    />
+                  </Stack>
                 </GridItem>
               </Grid>
             </Stack>
@@ -431,7 +428,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Additional Details - Enhanced with card styling */}
           <Card variant="elevated" padding="lg" id="additional-information-card" fullWidth>
             <Stack spacing="lg" data-testid="additional-information-stack" fullWidth align="center" justify="center">
-              <H2 style={{ color: 'var(--primary-color, #0B1F3A)' }} id="additional-information-title">
+              <H2 variant="primary" id="additional-information-title">
                 <EditableText field="booking.additionalDetails.title" defaultValue="Additional Information">
                   Additional Information
                 </EditableText>
@@ -446,24 +443,25 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       value={passengers.toString()}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(Number(e.target.value))}
                       data-testid="passengers-select"
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                        <Option key={num} value={num.toString()} id={`passenger-option-${num}`}>{num} passenger{num > 1 ? 's' : ''}</Option>
-                      ))}
-                    </Select>
+                      options={[1, 2, 3, 4, 5, 6, 7, 8].map(num => ({
+                        value: num.toString(),
+                        label: `${num} passenger${num > 1 ? 's' : ''}`
+                      }))}
+                    />
                   </Stack>
                 </GridItem>
                 
                 <GridItem data-testid="notes-grid-item">
-                  <SettingInput
-                    id="notes"
-                    label="Special Requests"
-                    value={notes}
-                    onChange={setNotes}
-                    placeholder="Wheelchair, extra luggage, etc."
-                    icon="💡"
-                    data-testid="notes-input"
-                  />
+                  <Stack spacing="sm">
+                    <Label htmlFor="notes">Special Requests</Label>
+                    <Input
+                      id="notes"
+                      value={notes}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNotes(e.target.value)}
+                      placeholder="Wheelchair, extra luggage, etc."
+                      data-testid="notes-input"
+                    />
+                  </Stack>
                 </GridItem>
               </Grid>
             </Stack>
@@ -473,7 +471,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {fare !== null && (
             <Card variant="elevated" padding="lg" data-testid="fare-section" id="fare-calculation-card" fullWidth>
               <Stack spacing="md" align="center" justify="center" data-testid="fare-calculation-stack" fullWidth>
-                <H2 style={{ color: 'var(--primary-color, #0B1F3A)' }} id="fare-calculation-title">
+                <H2 variant="primary" id="fare-calculation-title">
                   <EditableText field="booking.fare.title" defaultValue="Estimated Fare">
                     Estimated Fare
                   </EditableText>
@@ -481,7 +479,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 <Text 
                   variant="lead" 
                   size="xl" 
-                  style={{ color: 'var(--primary-color, #0B1F3A)', fontWeight: 'bold', fontSize: '2.5rem' }} 
+                  color="primary"
+                  weight="bold"
                   id="fare-amount"
                   data-testid="fare-amount"
                 >
@@ -524,7 +523,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               >
                 {isCalculating ? (
                   <>
-                    <LoadingSpinnerIcon />
+                    <LoadingSpinner />
                     <EditableText field="booking.calculatingButton" defaultValue="Calculating...">
                       Calculating...
                     </EditableText>

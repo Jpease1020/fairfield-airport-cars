@@ -13,14 +13,14 @@ import {
   Text,
   Card,
   Form,
-  Input,
-  Label,
   Button,
-  EditableText,
   ToastProvider
 } from '@/components/ui';
+import { Input } from '@/design/components/core/layout/FormSystem';
+import { Label } from '@/design/components/core/layout/label';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/lib/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '../../../design/design-system/tokens';
 
 // Styled components for login page
 const LoginCard = styled(Card)`
@@ -165,7 +165,7 @@ export default function CustomerLoginPage() {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                         placeholder="Enter your email"
                         required
                         data-testid="email-input"
@@ -182,7 +182,7 @@ export default function CustomerLoginPage() {
                         id="password"
                         type="password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
                         data-testid="password-input"

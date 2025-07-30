@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Container } from '@/components/ui';
-import { EditableText, EditableHeading } from '@/components/ui';
+import { EditableText, EditableHeading } from '@/design/components/core/layout/EditableSystem';
 
 const ActionsContainer = styled.div`
   display: flex;

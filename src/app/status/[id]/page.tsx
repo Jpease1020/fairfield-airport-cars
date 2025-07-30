@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { 
   GridSection,
-  InfoCard,
   ActionButtonGroup,
   LoadingSpinner,
   ToastProvider,
@@ -13,8 +12,9 @@ import {
   Text,
   Span,
   Button,
-  EditableText
+  Container,
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function BookingStatusPageContent() {
   const params = useParams();
@@ -96,38 +96,24 @@ function BookingStatusPageContent() {
 
   if (loading) {
     return (
-      <UnifiedLayout 
-        layoutType="status"
-        title="Booking Status"
-        subtitle="Track your ride"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="📋 Loading Booking Status"
-            description="Retrieving your booking information..."
-          >
+          <Container>
             <LoadingSpinner />
             <EditableText field="status.loading.message" defaultValue="Please wait while we fetch your booking details...">
               Please wait while we fetch your booking details...
             </EditableText>
-          </InfoCard>
+          </Container>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <UnifiedLayout 
-        layoutType="status"
-        title="Booking Status"
-        subtitle="Track your ride"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard
-            title="❌ Unable to Load Booking"
-            description="We couldn't retrieve your booking information"
-          >
+          <Container>
             <EditableText field="status.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
               This could be due to an invalid booking ID or a temporary system issue.
             </EditableText>
@@ -145,24 +131,17 @@ function BookingStatusPageContent() {
                 icon: '📞'
               }
             ]} />
-          </InfoCard>
+          </Container>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   return (
-    <UnifiedLayout 
-      layoutType="status"
-      title="Booking Status"
-      subtitle={`Tracking booking #${bookingId}`}
-    >
+    <Layout>
       {/* Current Status */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title={`${getStatusIcon(status)} Current Status: ${getStatusText(status)}`}
-          description="Live tracking of your airport transportation"
-        >
+        <Container>
           <Text>
             <EditableText field="status.confirmed.description" defaultValue="Your ride is confirmed and driver assigned">
               {getStatusText(status) === 'confirmed' && 'Your ride is confirmed and driver assigned'}
@@ -193,25 +172,19 @@ function BookingStatusPageContent() {
               </strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}
             </Text>
           )}
-        </InfoCard>
+        </Container>
       </GridSection>
 
       {/* Quick Actions */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="🎯 Quick Actions"
-          description="Manage your booking and get assistance"
-        >
+        <Container>
           <ActionButtonGroup buttons={quickActions} />
-        </InfoCard>
+        </Container>
       </GridSection>
 
       {/* Booking Details Toggle */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="📋 Booking Information"
-          description="View complete booking details and timeline"
-        >
+        <Container>
           <Button
             onClick={() => setShowDetails(!showDetails)}
             variant="ghost"
@@ -253,15 +226,12 @@ function BookingStatusPageContent() {
               </strong> (203) 555-0123
             </Text>
           )}
-        </InfoCard>
+        </Container>
       </GridSection>
 
       {/* Status Timeline */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="📈 Booking Timeline"
-          description="Track the progress of your ride"
-        >
+        <Container>
           <Text>
             {[
               { status: 'confirmed', label: 'Booking Confirmed', icon: '✅' },
@@ -283,9 +253,9 @@ function BookingStatusPageContent() {
               </Span>
             ))}
           </Text>
-        </InfoCard>
+        </Container>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 

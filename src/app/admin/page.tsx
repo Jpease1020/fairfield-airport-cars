@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { UnifiedLayout } from '@/components/layout/core/UnifiedLayout';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { 
   Section,
@@ -14,11 +13,11 @@ import {
   Button,
   Grid,
   GridItem,
-  EditableText,
   ToastProvider
 } from '@/components/ui';
+
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/lib/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '../../../design/design-system/tokens';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
 
 // Styled components for admin dashboard
@@ -298,18 +297,9 @@ function AdminDashboardContent() {
   ];
 
   return (
-    <UnifiedLayout 
-      layoutType="admin"
-      title="🏠 Admin Dashboard"
-      subtitle="Manage your airport transportation business"
-      description="Overview of bookings, revenue, and business operations"
-      showNavigation={false}
-      showFooter={false}
-      maxWidth="full"
-    >
-      <AdminPageWrapper 
-        title={<EditableText field="admin.dashboard.wrapperTitle" defaultValue="Dashboard">Dashboard</EditableText>} 
-        subtitle={<EditableText field="admin.dashboard.wrapperSubtitle" defaultValue="Business overview and quick actions">Business overview and quick actions</EditableText>}
+          <AdminPageWrapper 
+        title="Dashboard"
+        subtitle="Business overview and quick actions"
         data-testid="admin-dashboard"
       >
         {/* Statistics Overview */}
@@ -468,11 +458,11 @@ function AdminDashboardContent() {
           </Container>
         </Section>
       </AdminPageWrapper>
-    </UnifiedLayout>
   );
 }
 
 import withAuth from './withAuth';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function AdminDashboard() {
   return (

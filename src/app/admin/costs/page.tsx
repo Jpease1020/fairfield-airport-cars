@@ -5,8 +5,7 @@ import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-
 import { 
   AdminPageWrapper,
   GridSection, 
-  StatCard, 
-  InfoCard, 
+  Card, 
   ActionGrid,
   DataTable,
   DataTableColumn,
@@ -15,8 +14,8 @@ import {
   useToast,
   Container,
   Span,
-  EditableText
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function CostsPageContent() {
   const { addToast } = useToast();
@@ -245,7 +244,7 @@ function CostsPageContent() {
     >
       {/* Stats Overview */}
       <GridSection variant="stats" columns={4}>
-        <StatCard
+        <Card
           title="Total Monthly Cost"
           icon="💰"
           statNumber={summary ? formatCurrency(summary.totalActualCost) : '$0'}
@@ -254,36 +253,52 @@ function CostsPageContent() {
             : 'No projection'
           }
           changeType={summary && summary.totalActualCost > summary.totalProjectedCost ? 'negative' : 'positive'}
-        />
+        >
+          <EditableText field="admin.costs.totalMonthlyCost" defaultValue="Total monthly cost tracking">
+            Total monthly cost tracking
+          </EditableText>
+        </Card>
         
-        <StatCard
+        <Card
           title="Projected Monthly"
           icon="📊"
           statNumber={summary ? formatCurrency(summary.totalProjectedCost) : '$0'}
           statChange={`${costs.length} cost categories`}
           changeType="neutral"
-        />
+        >
+          <EditableText field="admin.costs.projectedMonthly" defaultValue="Projected monthly costs">
+            Projected monthly costs
+          </EditableText>
+        </Card>
         
-        <StatCard
+        <Card
           title="Over Budget Items"
           icon="⚠️"
           statNumber={overBudgetItems.toString()}
           statChange={`${pendingItems} pending updates`}
           changeType={overBudgetItems > 0 ? 'negative' : 'positive'}
-        />
+        >
+          <EditableText field="admin.costs.overBudgetItems" defaultValue="Items over budget">
+            Items over budget
+          </EditableText>
+        </Card>
         
-        <StatCard
+        <Card
           title="Cost Categories"
           icon="📋"
           statNumber={costs.length.toString()}
           statChange="Active tracking"
           changeType="neutral"
-        />
+        >
+          <EditableText field="admin.costs.costCategories" defaultValue="Active cost categories">
+            Active cost categories
+          </EditableText>
+        </Card>
       </GridSection>
 
       {/* Cost Breakdown Table */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="💰 Cost Breakdown"
           description="Search, sort, and manage your business cost categories"
         >
@@ -296,23 +311,18 @@ function CostsPageContent() {
             emptyMessage="No cost data available. Add some manual cost entries to get started."
             emptyIcon="💰"
             pageSize={15}
-            rowClassName={(cost) => 
-              cost.actualMonthlyCost > cost.projectedMonthlyCost ? 'cost-row-over-budget' : 
-              cost.actualMonthlyCost === 0 ? 'cost-row-pending' : 'cost-row-normal'
-            }
-            onRowClick={(cost) => console.log('Clicked cost category:', cost.category)}
           />
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
-        <InfoCard
+        <Card
           title="⚡ Quick Actions"
           description="Manage your cost tracking and generate reports"
         >
           <ActionGrid actions={quickActions} columns={4} />
-        </InfoCard>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );

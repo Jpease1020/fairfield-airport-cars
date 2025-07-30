@@ -12,48 +12,12 @@ import {
   Text,
   Card,
   Form,
-  Input,
-  Label,
   Button,
-  EditableText,
   ToastProvider
 } from '@/components/ui';
-import styled from 'styled-components';
-import { spacing } from '@/lib/design-system/tokens';
-
-// Styled components for forgot password page
-const ForgotPasswordCard = styled(Card)`
-  max-width: 500px;
-  margin: 0 auto;
-  transition: transform 0.2s ease-in-out;
-  width: 100%;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const ForgotPasswordForm = styled.form`
-  width: 100%;
-  
-  & > * {
-    width: 100%;
-  }
-`;
-
-const LinkText = styled(Text)`
-  text-align: center;
-  margin-top: ${spacing.md};
-  
-  a {
-    color: var(--primary-color, #3b82f6);
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
+import { Input } from '@/design/components/core/layout/FormSystem';
+import { Label } from '@/design/components/core/layout/label';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -95,7 +59,7 @@ export default function ForgotPasswordPage() {
                 </Text>
               </Stack>
 
-              <ForgotPasswordCard variant="elevated" padding="xl">
+              <Card variant="elevated" padding="xl" fullWidth>
                 <Stack gap="lg" align="center">
                   <Text align="center" variant="muted">
                     <EditableText field="customer.forgot_password.check_email" defaultValue="Please check your email and click the link to reset your password.">
@@ -103,15 +67,15 @@ export default function ForgotPasswordPage() {
                     </EditableText>
                   </Text>
                   
-                  <LinkText variant="muted">
+                  <Text variant="muted" align="center" marginTop="md">
                     <Link href="/login">
                       <EditableText field="customer.forgot_password.back_to_login" defaultValue="Back to Login">
                         Back to Login
                       </EditableText>
                     </Link>
-                  </LinkText>
+                  </Text>
                 </Stack>
-              </ForgotPasswordCard>
+              </Card>
             </Stack>
           </Container>
         </Section>
@@ -137,7 +101,7 @@ export default function ForgotPasswordPage() {
               </Text>
             </Stack>
 
-            <ForgotPasswordCard variant="elevated" padding="xl" id="forgot-password-card">
+            <Card variant="elevated" padding="xl" id="forgot-password-card" fullWidth>
               <Stack gap="lg">
                 <Stack gap="sm" align="center">
                   <H2 align="center" id="forgot-password-title">
@@ -152,7 +116,7 @@ export default function ForgotPasswordPage() {
                   </Text>
                 </Stack>
 
-                <ForgotPasswordForm onSubmit={handleSubmit} id="forgot-password-form">
+                <Form onSubmit={handleSubmit} id="forgot-password-form" fullWidth>
                   <Stack gap="md">
                     <Stack gap="sm">
                       <Label htmlFor="email">
@@ -164,7 +128,7 @@ export default function ForgotPasswordPage() {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                         placeholder="Enter your email"
                         required
                         data-testid="email-input"
@@ -173,7 +137,7 @@ export default function ForgotPasswordPage() {
 
                     {error && (
                       <Stack gap="sm" align="center">
-                        <Text variant="muted" align="center" style={{ color: 'var(--error-color, #ef4444)' }}>
+                        <Text color="error" align="center">
                           <EditableText field="customer.forgot_password.errorIcon" defaultValue="⚠️">
                             ⚠️
                           </EditableText>
@@ -195,17 +159,17 @@ export default function ForgotPasswordPage() {
                       </EditableText>
                     </Button>
                   </Stack>
-                </ForgotPasswordForm>
+                </Form>
               </Stack>
-            </ForgotPasswordCard>
+            </Card>
 
-            <LinkText variant="muted">
+            <Text variant="muted" align="center" marginTop="md">
               <Link href="/login">
                 <EditableText field="customer.forgot_password.back_to_login" defaultValue="Back to Login">
                   Back to Login
                 </EditableText>
               </Link>
-            </LinkText>
+            </Text>
           </Stack>
         </Container>
       </Section>

@@ -1,17 +1,16 @@
 'use client';
 
 import React from 'react';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { 
   GridSection,
   FeatureGrid,
   ToastProvider,
   useToast,
-  EditableText,
-  EditableHeading,
   Container,
   Stack
 } from '@/components/ui';
+import { EditableHeading, EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function PortalPageContent() {
   const { addToast } = useToast();
@@ -81,12 +80,7 @@ function PortalPageContent() {
   ];
 
   return (
-    <UnifiedLayout 
-      layoutType="content"
-      title="Customer Portal"
-      subtitle="Manage your bookings and account information"
-      description="Access all your booking information and account features in one place"
-    >
+    <Layout>
       {/* Welcome Section */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -144,7 +138,7 @@ function PortalPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 

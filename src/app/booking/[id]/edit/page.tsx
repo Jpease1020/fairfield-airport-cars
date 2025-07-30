@@ -5,8 +5,10 @@ import { useParams } from 'next/navigation';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
-import { UnifiedLayout } from '@/components/layout';
-import { GridSection, InfoCard, LoadingSpinner, Text, Container } from '@/components/ui';
+import { Layout } from '@/components/layout';
+import { GridSection, LoadingSpinner, Text, Container } from '@/components/ui';
+import { Card } from '@/design/components/core/layout/card';
+import { Stack } from '@/design/components/core/layout/layout/containers';
 
 export default function EditBookingPage() {
   const params = useParams();
@@ -37,74 +39,71 @@ export default function EditBookingPage() {
 
   if (loading) {
     return (
-      <UnifiedLayout
-        layoutType="status"
-        title="Edit Booking"
-        subtitle="Loading booking details..."
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="Loading..." description="Fetching booking details">
-            <Container>
-              <LoadingSpinner text="Loading booking details..." />
-            </Container>
-          </InfoCard>
+          <Card variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text size="lg" weight="bold">Loading...</Text>
+              <Text>Fetching booking details</Text>
+              <Container>
+                <LoadingSpinner text="Loading booking details..." />
+              </Container>
+            </Stack>
+          </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <UnifiedLayout
-        layoutType="status"
-        title="Edit Booking"
-        subtitle="Error occurred"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="❌ Error" description="Failed to load booking">
-            <Text>
-              {error}
-            </Text>
-          </InfoCard>
+          <Card variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text size="lg" weight="bold">❌ Error</Text>
+              <Text>Failed to load booking</Text>
+              <Text>
+                {error}
+              </Text>
+            </Stack>
+          </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   if (!booking) {
     return (
-      <UnifiedLayout
-        layoutType="status"
-        title="Edit Booking"
-        subtitle="Booking not found"
-      >
+      <Layout>
         <GridSection variant="content" columns={1}>
-          <InfoCard title="❌ Booking Not Found" description="No booking found with the provided ID">
-            <Text>
-              No booking found with the provided ID.
-            </Text>
-          </InfoCard>
+          <Card variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text size="lg" weight="bold">❌ Booking Not Found</Text>
+              <Text>No booking found with the provided ID</Text>
+              <Text>
+                No booking found with the provided ID.
+              </Text>
+            </Stack>
+          </Card>
         </GridSection>
-      </UnifiedLayout>
+      </Layout>
     );
   }
 
   return (
-    <UnifiedLayout
-      layoutType="status"
-      title="Edit Your Booking"
-      subtitle="Update your ride details"
-    >
+    <Layout>
       <GridSection variant="content" columns={1}>
-        <InfoCard
-          title="✏️ Edit Booking Details"
-          description="Update your ride information"
-        >
-          <Container>
-            <BookingForm booking={booking} />
-          </Container>
-        </InfoCard>
+        <Card variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text size="lg" weight="bold">✏️ Edit Booking Details</Text>
+            <Text>Update your ride information</Text>
+            <Container>
+              <BookingForm booking={booking} />
+            </Container>
+          </Stack>
+        </Card>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }

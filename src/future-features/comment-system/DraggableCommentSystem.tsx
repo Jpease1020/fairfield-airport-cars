@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Container, Text, H3, EditableText } from '@/components/ui';
+import { Textarea } from '@/design/components/core/layout/FormSystem';
+import { Container, Text, H3 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { useEditMode } from '@/components/admin/EditModeProvider';
 
 interface Comment {
@@ -114,7 +115,7 @@ export const DraggableCommentSystem: React.FC<DraggableCommentSystemProps> = ({
           </Text>
           <Textarea
             value={newCommentText}
-            onChange={(e) => setNewCommentText(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewCommentText(e.target.value)}
             placeholder="Type your comment here... (e.g., 'This text is too small', 'Change this color', 'Add more spacing here')"
             rows={4}
             autoFocus

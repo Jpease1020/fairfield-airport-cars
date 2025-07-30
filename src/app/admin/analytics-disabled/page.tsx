@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { StatCard, Container, H2, Text, Span, EditableText, EditableHeading } from '@/components/ui';
+import { Container, H2, Text, Span } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
 import { Stack } from '@/components/ui/layout/containers';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/design/components/core/layout/card';
 
 interface AnalyticsData {
   totalInteractions: number;
@@ -111,36 +114,40 @@ export default function AnalyticsPage() {
           <Container>
             {/* Overview Cards */}
             <Stack direction="horizontal" spacing="md">
-              <StatCard
-                title="Total Interactions"
-                statNumber={analytics.totalInteractions.toLocaleString()}
-                description="All user interactions tracked"
-                icon="📊"
-              />
+              <Card variant="elevated" padding="lg">
+                <Stack spacing="md">
+                  <Text size="lg" weight="bold">📊 Total Interactions</Text>
+                  <Text size="xl" weight="bold">{analytics.totalInteractions.toLocaleString()}</Text>
+                  <Text>All user interactions tracked</Text>
+                </Stack>
+              </Card>
 
-              <StatCard
-                title="Total Errors"
-                statNumber={analytics.totalErrors.toLocaleString()}
-                description="Errors detected and tracked"
-                icon="⚠️"
-              />
+              <Card variant="elevated" padding="lg">
+                <Stack spacing="md">
+                  <Text size="lg" weight="bold">⚠️ Total Errors</Text>
+                  <Text size="xl" weight="bold">{analytics.totalErrors.toLocaleString()}</Text>
+                  <Text>Errors detected and tracked</Text>
+                </Stack>
+              </Card>
 
-              <StatCard
-                title="Error Rate"
-                statNumber={`${analytics.totalInteractions > 0 
-                  ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
-                  : '0'
-                }%`}
-                description="Percentage of interactions with errors"
-                icon="📉"
-              />
+              <Card variant="elevated" padding="lg">
+                <Stack spacing="md">
+                  <Text size="lg" weight="bold">📉 Error Rate</Text>
+                  <Text size="xl" weight="bold">{`${analytics.totalInteractions > 0 
+                    ? ((analytics.totalErrors / analytics.totalInteractions) * 100).toFixed(2)
+                    : '0'
+                  }%`}</Text>
+                  <Text>Percentage of interactions with errors</Text>
+                </Stack>
+              </Card>
 
-              <StatCard
-                title="Active Elements"
-                statNumber={Object.keys(analytics.elementTypes).length.toString()}
-                description="Different element types tracked"
-                icon="🖱️"
-              />
+              <Card variant="elevated" padding="lg">
+                <Stack spacing="md">
+                  <Text size="lg" weight="bold">🖱️ Active Elements</Text>
+                  <Text size="xl" weight="bold">{Object.keys(analytics.elementTypes).length.toString()}</Text>
+                  <Text>Different element types tracked</Text>
+                </Stack>
+              </Card>
             </Stack>
 
             {/* Detailed Metrics */}

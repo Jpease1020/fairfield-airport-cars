@@ -3,17 +3,20 @@
 import { useState, useMemo } from 'react';
 import { 
   AdminPageWrapper,
-  SettingSection,
-  SettingInput,
   ActionButtonGroup,
   StatusMessage,
   ToastProvider,
   useToast,
   GridSection,
-  HelpCard,
   Container,
+  Card,
+  Text,
+  H3,
+  H4,
 } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
+import { Input } from '@/design/components/core/layout/FormSystem';
+import { Label } from '@/design/components/core/layout/label';
 
 
 interface CostEntry {
@@ -89,126 +92,132 @@ function ManualCostEntryPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           {/* Cost Entry Form */}
-          <SettingSection
+          <Card
             title="Add New Cost Entry"
             description="Enter details for your business expense"
-            icon="💰"
           >
             <Stack spacing="md">
-              <SettingInput
-              id="cost-date"
-              label="Date"
-              description="When this cost was incurred"
-              type="text"
-              value={formData.date}
-              onChange={(value) => handleInputChange('date', value)}
-              icon="📅"
-            />
-            
-            <SettingInput
-              id="cost-category"
-              label="Category *"
-              description="Type of expense (e.g., Fuel, Maintenance)"
-              value={formData.category}
-              onChange={(value) => handleInputChange('category', value)}
-              placeholder="e.g., Fuel, Maintenance, Insurance"
-              icon="🏷️"
-            />
-          </Stack>
+              <Container>
+                <Label htmlFor="cost-date">Date</Label>
+                <Input
+                  id="cost-date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('date', e.target.value)}
+                />
+                <Text size="sm" color="secondary">When this cost was incurred</Text>
+              </Container>
+              
+              <Container>
+                <Label htmlFor="cost-category">Category *</Label>
+                <Input
+                  id="cost-category"
+                  value={formData.category}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('category', e.target.value)}
+                  placeholder="e.g., Fuel, Maintenance, Insurance"
+                />
+                <Text size="sm" color="secondary">Type of expense (e.g., Fuel, Maintenance)</Text>
+              </Container>
 
-          <SettingInput
-            id="cost-description"
-            label="Description *"
-            description="Brief description of the expense"
-            value={formData.description}
-            onChange={(value) => handleInputChange('description', value)}
-            placeholder="Brief description of the cost"
-            icon="📝"
-          />
+              <Container>
+                <Label htmlFor="cost-description">Description *</Label>
+                <Input
+                  id="cost-description"
+                  value={formData.description}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('description', e.target.value)}
+                  placeholder="Brief description of the cost"
+                />
+                <Text size="sm" color="secondary">Brief description of the expense</Text>
+              </Container>
 
-          <SettingInput
-            id="cost-amount"
-            label="Amount ($) *"
-            description="Cost amount in dollars"
-            type="number"
-            value={formData.amount.toString()}
-            onChange={(value) => handleInputChange('amount', parseFloat(value) || 0)}
-            placeholder="0.00"
-            icon="💲"
-          />
+              <Container>
+                <Label htmlFor="cost-amount">Amount ($) *</Label>
+                <Input
+                  id="cost-amount"
+                  type="number"
+                  value={formData.amount.toString()}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
+                  placeholder="0.00"
+                />
+                <Text size="sm" color="secondary">Cost amount in dollars</Text>
+              </Container>
 
-          <SettingInput
-            id="cost-notes"
-            label="Notes (Optional)"
-            description="Additional details or context"
-            type="text"
-            value={formData.notes || ''}
-            onChange={(value) => handleInputChange('notes', value)}
-            placeholder="Additional notes or details"
-            icon="📋"
-          />
-          </SettingSection>
+              <Container>
+                <Label htmlFor="cost-notes">Notes (Optional)</Label>
+                <Input
+                  id="cost-notes"
+                  value={formData.notes || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('notes', e.target.value)}
+                  placeholder="Additional notes or details"
+                />
+                <Text size="sm" color="secondary">Additional details or context</Text>
+              </Container>
+            </Stack>
+          </Card>
 
           {/* Cost Categories Guide */}
-          <SettingSection
+          <Card
             title="Cost Categories"
             description="Common expense categories to help organize your costs"
-            icon="📊"
           >
             <Stack spacing="md">
               {costCategories.map((category, index) => (
-                <HelpCard
+                <Card
                   key={index}
-                  icon={category.icon}
                   title={category.title}
                   description={category.description}
-                />
+                >
+                  <Container>
+                    <Text size="lg">{category.icon}</Text>
+                    <H4>{category.title}</H4>
+                    <Text size="sm" color="secondary">{category.description}</Text>
+                  </Container>
+                </Card>
               ))}
             </Stack>
-          </SettingSection>
+          </Card>
 
           {/* Quick Add Actions */}
-          <SettingSection
+          <Card
             title="Quick Actions"
             description="Common cost entry shortcuts"
-            icon="⚡"
           >
-            <Container>
-              <ActionButtonGroup
-                buttons={[
-                  {
-                    label: 'Add Fuel Cost',
-                    onClick: () => {
-                      setFormData(prev => ({ ...prev, category: 'Fuel', description: 'Vehicle fuel expense' }));
-                      addToast('info', 'Fuel cost template applied');
+                          <Container>
+                <ActionButtonGroup
+                  buttons={[
+                    {
+                      label: 'Add Fuel Cost',
+                      onClick: () => {
+                        setFormData(prev => ({ ...prev, category: 'Fuel', description: 'Vehicle fuel expense' }));
+                        addToast('info', 'Fuel cost template applied');
+                      },
+                      variant: 'outline',
+                      size: 'sm'
                     },
-                    variant: 'outline',
-                    size: 'sm'
-                  },
-                  {
-                    label: 'Add Maintenance',
-                    onClick: () => {
-                      setFormData(prev => ({ ...prev, category: 'Maintenance', description: 'Vehicle maintenance and repairs' }));
-                      addToast('info', 'Maintenance template applied');
+                    {
+                      label: 'Add Maintenance',
+                      onClick: () => {
+                        setFormData(prev => ({ ...prev, category: 'Maintenance', description: 'Vehicle maintenance and repairs' }));
+                        addToast('info', 'Maintenance template applied');
+                      },
+                      variant: 'outline',
+                      size: 'sm'
                     },
-                    variant: 'outline',
-                    size: 'sm'
-                  },
-                  {
-                    label: 'Add Insurance',
-                    onClick: () => {
-                      setFormData(prev => ({ ...prev, category: 'Insurance', description: 'Vehicle insurance payment' }));
-                      addToast('info', 'Insurance template applied');
-                    },
-                    variant: 'outline',
-                    size: 'sm'
-                  }
-                ]}
-                orientation="horizontal"
-                spacing="sm"
-              />
-            </Container>
-          </SettingSection>
+                    {
+                      label: 'Add Insurance',
+                      onClick: () => {
+                        setFormData(prev => ({ ...prev, category: 'Insurance', description: 'Vehicle insurance payment' }));
+                        addToast('info', 'Insurance template applied');
+                      },
+                      variant: 'outline',
+                      size: 'sm'
+                    }
+                  ]}
+                  orientation="horizontal"
+                  spacing="sm"
+                />
+              </Container>
+          </Card>
         </Container>
       </GridSection>
     </AdminPageWrapper>

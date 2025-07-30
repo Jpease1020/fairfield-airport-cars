@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/layout';
 import { 
   Section,
   Container,
   Stack,
   H1,
   Text,
-  ActionButtonGroup,
-  EditableText
+  ActionButtonGroup
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 function AboutPageContent() {
   const ctaActions = [
@@ -73,8 +73,8 @@ function AboutPageContent() {
 
 export default function AboutPage() {
   return (
-    <UnifiedLayout layoutType="content">
+    <Layout>
       <AboutPageContent />
-    </UnifiedLayout>
+    </Layout>
   );
 } 

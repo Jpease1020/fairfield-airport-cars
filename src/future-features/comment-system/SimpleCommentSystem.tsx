@@ -4,9 +4,11 @@ import { useState, useEffect, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from '@/components/admin/AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
-import { Textarea, Select, Option, Container, H4, Span, EditableText } from '@/components/ui';
+import { Container, H4, Span } from '@/components/ui';
 import { Stack, Card } from '@/components/ui/layout/containers';
 import { Button } from '@/components/ui/button';
+import { Textarea, Select, type SelectOption } from '@/design/components/core/layout/FormSystem';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 interface SimpleCommentSystemProps {
   children: ReactNode;
@@ -357,11 +359,12 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                   <Select
                     value={comment.status}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
-                  >
-                    <Option value="open">Open</Option>
-                    <Option value="in-progress">In Progress</Option>
-                    <Option value="resolved">Resolved</Option>
-                  </Select>
+                    options={[
+                      { value: 'open', label: 'Open' },
+                      { value: 'in-progress', label: 'In Progress' },
+                      { value: 'resolved', label: 'Resolved' }
+                    ]}
+                  />
                 </Container>
               </Card>
             ))}

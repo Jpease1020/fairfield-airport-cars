@@ -1,12 +1,9 @@
 'use client';
 
 import React from 'react';
-import '@/styles/standard-layout.css';
-import '../globals.css';
-import { UnifiedLayout } from '@/components/layout';
 import { AdminProvider } from '@/components/admin/AdminProvider';
 import { EditModeProvider } from '@/components/admin/EditModeProvider';
-import AdminHamburgerMenu from '@/components/admin/AdminHamburgerMenu';
+
 import { usePathname } from 'next/navigation';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
@@ -14,19 +11,10 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   
   // Skip admin layout for login page - use minimal layout instead
   if (pathname === '/admin/login') {
-    return (
-      <UnifiedLayout layoutType="content">
-        {children}
-      </UnifiedLayout>
-    );
+    return <>{children}</>;
   }
 
-  return (
-    <UnifiedLayout layoutType="admin">
-      {children}
-      <AdminHamburgerMenu />
-    </UnifiedLayout>
-  );
+  return <>{children}</>;
 }
 
 export default function AdminLayout({

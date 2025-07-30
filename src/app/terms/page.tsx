@@ -1,16 +1,15 @@
 'use client';
 
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { 
   GridSection,
   ToastProvider,
   Container,
   Stack,
-  EditableText,
-  EditableHeading,
   Card,
-  CardBody
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
 
 function TermsPageContent() {
   const termsSections = [
@@ -37,12 +36,7 @@ function TermsPageContent() {
   ];
 
   return (
-    <UnifiedLayout 
-      layoutType="content"
-      title="Terms of Service"
-      subtitle="Our terms and conditions"
-      description="Please review our terms of service for using Fairfield Airport Cars transportation services."
-    >
+    <Layout>
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" gap="xl">
@@ -64,23 +58,21 @@ function TermsPageContent() {
             <Stack data-testid="terms-sections-list" spacing="lg">
               {termsSections.map((section, index) => (
                 <Card key={index} data-testid={`terms-section-${index}`}>
-                  <CardBody>
-                    <Stack spacing="md">
-                      <EditableHeading data-testid={`terms-section-title-${index}`} level={4} field={`terms.sections.${index}.title`} defaultValue={section.title}>
-                        {section.title}
-                      </EditableHeading>
-                      <EditableText data-testid={`terms-section-content-${index}`} field={`terms.sections.${index}.content`} defaultValue={section.content}>
-                        {section.content}
-                      </EditableText>
-                    </Stack>
-                  </CardBody>
+                  <Stack spacing="md">
+                    <EditableHeading data-testid={`terms-section-title-${index}`} level={4} field={`terms.sections.${index}.title`} defaultValue={section.title}>
+                      {section.title}
+                    </EditableHeading>
+                    <EditableText data-testid={`terms-section-content-${index}`} field={`terms.sections.${index}.content`} defaultValue={section.content}>
+                      {section.content}
+                    </EditableText>
+                  </Stack>
                 </Card>
               ))}
             </Stack>
           </Stack>
         </Container>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 

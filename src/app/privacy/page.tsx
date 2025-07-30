@@ -1,17 +1,16 @@
 'use client';
 
-import { UnifiedLayout } from '@/components/layout';
+import { Layout } from '@/components/ui/layout/containers';
 import { 
   GridSection,
   ToastProvider,
   Text,
   Container,
   Stack,
-  EditableText,
-  EditableHeading,
   Card,
-  CardBody
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
 
 function PrivacyPageContent() {
   const privacySections = [
@@ -90,12 +89,7 @@ function PrivacyPageContent() {
   ];
 
   return (
-    <UnifiedLayout 
-      layoutType="content"
-      title="Privacy Policy"
-      subtitle="How we collect, use, and protect your personal information"
-      description="Your privacy is important to us. Learn how we protect your information."
-    >
+    <Layout>
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" gap="xl">
@@ -109,34 +103,32 @@ function PrivacyPageContent() {
             <Stack data-testid="privacy-sections-list" spacing="lg">
               {privacySections.map((section, index) => (
                 <Card key={index} data-testid={`privacy-section-${index}`}>
-                  <CardBody>
-                    <Stack spacing="md">
-                      <EditableHeading data-testid={`privacy-section-title-${index}`} level={4} field={`privacy.sections.${index}.title`} defaultValue={section.title}>
-                        {section.title}
-                      </EditableHeading>
-                      <EditableText data-testid={`privacy-section-content-${index}`} field={`privacy.sections.${index}.content`} defaultValue={section.content}>
-                        {section.content}
-                      </EditableText>
-                      {section.items && (
-                        <Stack data-testid={`privacy-section-items-${index}`} spacing="sm">
-                          {section.items.map((item, itemIndex) => (
-                            <Text key={itemIndex} data-testid={`privacy-section-item-${index}-${itemIndex}`}>
-                              <EditableText field={`privacy.sections.${index}.items.${itemIndex}`} defaultValue={item}>
-                                • {item}
-                              </EditableText>
-                            </Text>
-                          ))}
-                        </Stack>
-                      )}
-                    </Stack>
-                  </CardBody>
+                  <Stack spacing="md">
+                    <EditableHeading data-testid={`privacy-section-title-${index}`} level={4} field={`privacy.sections.${index}.title`} defaultValue={section.title}>
+                      {section.title}
+                    </EditableHeading>
+                    <EditableText data-testid={`privacy-section-content-${index}`} field={`privacy.sections.${index}.content`} defaultValue={section.content}>
+                      {section.content}
+                    </EditableText>
+                    {section.items && (
+                      <Stack data-testid={`privacy-section-items-${index}`} spacing="sm">
+                        {section.items.map((item, itemIndex) => (
+                          <Text key={itemIndex} data-testid={`privacy-section-item-${index}-${itemIndex}`}>
+                            <EditableText field={`privacy.sections.${index}.items.${itemIndex}`} defaultValue={item}>
+                              • {item}
+                            </EditableText>
+                          </Text>
+                        ))}
+                      </Stack>
+                    )}
+                  </Stack>
                 </Card>
               ))}
             </Stack>
           </Stack>
         </Container>
       </GridSection>
-    </UnifiedLayout>
+    </Layout>
   );
 }
 

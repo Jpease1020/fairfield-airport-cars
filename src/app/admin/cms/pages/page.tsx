@@ -9,16 +9,15 @@ import {
   ToastProvider,
   useToast,
   GridSection,
-  InfoCard,
   Container,
-  EditableText
 } from "@/components/ui";
+import { EditableText } from "../../../../../design/components/core/layout/EditableSystem";
 import { 
   GenericPageEditor,
   HomePageEditor,
   BookingPageEditor,
   HelpPageEditor
-} from "@/components/cms/PageEditors";
+} from "../../../../../design/components/business/cms/PageEditors";
 
 
 const PAGE_KEYS = [
@@ -240,17 +239,13 @@ function PagesCMSContent() {
 
             // For complex pages that need custom editors, show a placeholder for now
             return (
-              <InfoCard
-                key={key}
-                title={`${icon} ${label}`}
-                description="Custom editor for this page type coming soon..."
-              >
+              <Container key={key}>
                 <Container>
                   <EditableText field="admin.cms.pages.customEditor" defaultValue="Custom editor for this page type coming soon...">
                     Custom editor for this page type coming soon...
                   </EditableText>
                 </Container>
-              </InfoCard>
+              </Container>
             );
           })}
         </Container>

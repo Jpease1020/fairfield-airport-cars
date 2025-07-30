@@ -5,11 +5,11 @@ import {
   AdminPageWrapper,
   Container,
   Stack,
-  EditableText,
-  InfoCard,
+  Card,
   GridSection,
   ActionButtonGroup
 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { ToastProvider, useToast } from '@/components/ui';
 
 function AddContentPage() {
@@ -66,7 +66,7 @@ function AddContentPage() {
     >
       <Container>
         <Stack spacing="lg">
-          <InfoCard
+          <Card
             title="📝 Content Editing Guide"
             description="This is where you can edit all the text and content on your website. Choose a section below to get started."
           >
@@ -82,11 +82,11 @@ function AddContentPage() {
                 <Container>5. Your changes will appear immediately on the live site</Container>
               </Stack>
             </Container>
-          </InfoCard>
+          </Card>
 
           <GridSection variant="content" columns={2}>
             {cmsPages.map((page, index) => (
-              <InfoCard
+              <Card
                 key={index}
                 title={`${page.icon} ${page.title}`}
                 description={page.description}
@@ -101,11 +101,11 @@ function AddContentPage() {
                     }]}
                   />
                 </Container>
-              </InfoCard>
+              </Card>
             ))}
           </GridSection>
 
-          <InfoCard
+          <Card
             title="💡 Pro Tips"
             description="Best practices for content editing"
           >
@@ -117,7 +117,7 @@ function AddContentPage() {
                 <Container>• Use the "Edit Mode" button on customer pages for quick edits</Container>
               </Stack>
             </Container>
-          </InfoCard>
+          </Card>
         </Stack>
       </Container>
     </AdminPageWrapper>

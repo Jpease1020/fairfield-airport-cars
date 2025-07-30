@@ -1,4 +1,4 @@
-import './globals.css';
+import '../../design/globals.css';
 import { Analytics } from '@vercel/analytics/react';
 import { AccessibilityEnhancer } from '@/components/ui/AccessibilityEnhancer';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -30,8 +30,8 @@ export default function RootLayout({
             <CMSDesignProvider>
               <AccessibilityEnhancer>
                 {children}
+                <Analytics />
               </AccessibilityEnhancer>
-              <Analytics />
             </CMSDesignProvider>
           </ErrorBoundary>
         </StyledComponentsRegistry>

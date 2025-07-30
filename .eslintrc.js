@@ -1,7 +1,14 @@
 module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
   extends: [
     'next/core-web-vitals',
     'next/typescript'
+  ],
+  plugins: [
+    './scripts/eslint-rules/fairfield-plugin.js'
   ],
   ignorePatterns: [
     'src/future-features/**/*'
@@ -109,7 +116,15 @@ module.exports = {
         message: '❌ className in TypeScript interface is FORBIDDEN. Use styled-components instead.'
       }
     ],
-    "@typescript-eslint/no-explicit-any": "warn"
+    "@typescript-eslint/no-explicit-any": "warn",
+    
+    // Fairfield Custom Rules
+    'fairfield/no-classname': 'error',
+    'fairfield/no-inline-styles-on-divs': 'error',
+    'fairfield/no-styled-components-in-files': 'error',
+    'fairfield/enforce-layout-components': 'warn',
+    'fairfield/no-react-css-properties': 'error',
+    'fairfield/design-system-first': 'warn'
   },
   
   // Custom rule definitions

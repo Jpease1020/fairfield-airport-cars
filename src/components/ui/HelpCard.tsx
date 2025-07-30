@@ -2,11 +2,11 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '@/lib/design-system/tokens';
-import { Card, CardBody } from './card';
+import { colors, spacing, fontSize, transitions } from '../../../design/design-system/tokens';
+import { Card } from '@/design/components/core/layout/card';
 import { Text } from '@/components/ui';
 import { Stack } from '@/components/ui/layout/containers';
-import { EditableText } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 
 // Styled icon container
 const IconContainer = styled.div.withConfig({
@@ -144,8 +144,7 @@ export const HelpCard: React.FC<HelpCardProps> = ({
 }) => {
   return (
     <Card id={id} {...rest}>
-      <CardBody>
-        <Stack spacing="sm">
+      <Stack spacing="sm">
           <TitleContainer>
             <IconContainer variant={variant} size={size}>
               {icon}
@@ -172,7 +171,6 @@ export const HelpCard: React.FC<HelpCardProps> = ({
           
           {children}
         </Stack>
-      </CardBody>
     </Card>
   );
 }; 

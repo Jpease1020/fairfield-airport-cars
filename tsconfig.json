@@ -19,7 +19,22 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/design/*": ["./design/*"],
+      "@/components/*": ["./design/components/*"],
+      "@/components/ui": ["./design/components/core/layout"],
+      "@/components/ui/*": ["./design/components/core/layout/*"],
+      "@/components/layout": ["./design/components/core/layout"],
+      "@/components/layout/*": ["./design/components/core/layout/*"],
+      "@/components/admin/*": ["./design/components/business/admin/*"],
+      "@/components/business/*": ["./design/components/business/*"],
+      "@/components/marketing/*": ["./design/components/business/marketing/*"],
+      "@/components/icons/*": ["./design/components/icons/*"],
+      "@/components/providers/*": ["./design/components/providers/*"],
+      "@/ui/*": ["./design/components/core/layout/*"],
+      "@/icons/*": ["./design/components/icons/*"],
+      "@/business/*": ["./design/components/business/*"],
+      "@/providers/*": ["./design/components/providers/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

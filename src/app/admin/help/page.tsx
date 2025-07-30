@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AdminPageWrapper, GridSection, InfoCard, ActionGrid, Container, H3, EditableText } from '@/components/ui';
+import { AdminPageWrapper, GridSection, Card, ActionGrid, Container, H3 } from '@/components/ui';
+import { EditableText } from '@/design/components/core/layout/EditableSystem';
 import { Stack } from '@/components/ui/layout/containers';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/ToastProvider';
 
 function AdminHelpPage() {
   const helpSections = [
@@ -152,7 +151,7 @@ function AdminHelpPage() {
       {/* Help Sections */}
       <GridSection variant="content" columns={2}>
         {helpSections.map((section, sectionIndex) => (
-          <InfoCard
+          <Card
             key={sectionIndex}
             title={`${section.icon} ${section.title}`}
             description={section.description}
@@ -180,13 +179,13 @@ function AdminHelpPage() {
                 </Container>
               ))}
             </Stack>
-          </InfoCard>
+          </Card>
         ))}
       </GridSection>
 
       {/* Additional Resources */}
       <GridSection variant="content" columns={1}>
-        <InfoCard
+        <Card
           title="📞 Need More Help?"
           description="If you can't find the answer you're looking for, here are additional resources"
         >
@@ -215,12 +214,12 @@ function AdminHelpPage() {
               </EditableText>
             </Container>
           </Stack>
-        </InfoCard>
+        </Card>
       </GridSection>
 
       {/* Quick Navigation */}
       <GridSection variant="actions" columns={1}>
-        <InfoCard
+        <Card
           title="Quick Navigation"
           description="Access common admin functions directly"
         >
@@ -252,7 +251,7 @@ function AdminHelpPage() {
               }
             ]}
           />
-        </InfoCard>
+        </Card>
       </GridSection>
     </AdminPageWrapper>
   );
