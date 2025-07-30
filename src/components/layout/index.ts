@@ -1,9 +1,7 @@
 // 🎯 UNIFIED LAYOUT SYSTEM - THE SINGLE SYSTEM FOR ALL PAGES
 export { UnifiedLayout } from './core/UnifiedLayout';
 
-// Legacy components - use UnifiedLayout instead
-export { UniversalLayout } from './core/UniversalLayout';
-export { StandardLayout } from './core/StandardLayout';
+// Legacy components removed - use UnifiedLayout instead
 
 // Navigation components
 export { default as Navigation } from './navigation/Navigation';
