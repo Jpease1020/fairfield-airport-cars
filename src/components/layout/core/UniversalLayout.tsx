@@ -1,7 +1,7 @@
 import React from 'react';
 import { StandardHeader } from '../structure/StandardHeader';
 import { StandardFooter } from '../structure/StandardFooter';
-import { StandardNavigation } from '../navigation/StandardNavigation';
+import { StandardNavigation } from '../structure/StandardNavigation';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { Container } from '@/components/ui';
 

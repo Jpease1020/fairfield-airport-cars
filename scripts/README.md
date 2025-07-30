@@ -1,180 +1,159 @@
-# Daily Analysis System
+# 🛠️ Scripts Directory
 
-This system provides comprehensive daily analysis of the Fairfield Airport Cars application, generating actionable insights and a running todo list for continuous improvement.
+This directory contains utility scripts organized by category for the Fairfield Airport Cars application.
 
-## 🎯 What It Analyzes
+## 📁 Directory Structure
 
-### Architecture
-- **Components**: Counts and categorizes React components
-- **Dependencies**: Checks for outdated packages and security vulnerabilities
-- **Code Quality**: Runs ESLint and TypeScript checks
-- **File Structure**: Analyzes complexity and organization
+### `/setup/` - Initialization & Setup Scripts
+Scripts for setting up the application and admin users.
 
-### Performance
-- **Build Time**: Measures build performance
-- **Bundle Size**: Estimates bundle size impact
-- **Images**: Identifies unoptimized images
-- **Lighthouse**: Performance audits (when configured)
+- **`setup-test-user.js`** - Creates test user accounts
+- **`setup-admin-user.js`** - Creates admin user accounts  
+- **`setup-admin.js`** - General admin setup utilities
+- **`init-cms.js`** - Initializes CMS with default content
 
-### Security
-- **Dependencies**: Security vulnerability scanning
-- **Environment**: Checks for proper environment configuration
-- **Secrets**: Scans for hardcoded secrets
-- **Permissions**: Analyzes file permissions
+### `/cleanup/` - Maintenance & Cleanup Scripts
+Scripts for cleaning up code, files, and maintaining code quality.
 
-### Business Metrics
-- **Pages**: Counts public, admin, and API pages
-- **Features**: Identifies implemented business features
-- **CMS**: Analyzes content management capabilities
-- **Booking System**: Evaluates booking functionality
+- **`add-missing-content.js`** - Adds missing content to CMS
+- **`add-use-client.js`** - Adds 'use client' directives where needed
+- **`cleanup-obsolete-files.js`** - Removes obsolete files
+- **`structural-cleanup.js`** - Cleans up file structure
+- **`reorganize-layout-design.js`** - Reorganizes layout and design files
 
-### Testing
-- **Coverage**: Counts test files by type
-- **Performance**: Measures test execution time
-- **Types**: Identifies unit, integration, and e2e tests
-- **Status**: Runs tests and reports results
+### `/testing/` - Testing & Quality Assurance Scripts
+Scripts for running tests, checking code quality, and validation.
+
+- **`run-tests.js`** - Runs the complete test suite
+- **`test-suite.js`** - Test suite utilities
+- **`cleanup-tests.js`** - Cleans up test files
+- **`test-analytics.js`** - Tests analytics functionality
+- **`test-square-payment-flow.js`** - Tests Square payment integration
+- **`check-component-rules.js`** - Validates component rules
+- **`check-css-size.js`** - Checks CSS bundle size
+- **`enforce-styled-components.js`** - Enforces styled-components usage
+
+### `/deployment/` - Deployment Scripts
+Scripts for deploying the application to production.
+
+- **`deploy-production.sh`** - Production deployment script
+
+### `/monitoring/` - Monitoring & Health Check Scripts
+Scripts for monitoring application health and performance.
+
+- **`monitor-agents.js`** - Monitors AI agents
+- **`monitor-cursor-agents-progress.js`** - Tracks agent progress
+- **`monitor-processes.js`** - Monitors running processes
+- **`monitor-app.js`** - Monitors application health
+- **`health-check.js`** - Performs health checks
+- **`smoke-test.js`** - Runs smoke tests
+- **`dev-server-manager.sh`** - Manages development server
+- **`dev-server.sh`** - Starts development server
+- **`check-dev-status.sh`** - Checks development environment status
+
+### `/archive/` - Completed or Obsolete Scripts
+Scripts that have been completed or are no longer needed.
+
+- **`remove-tailwind.js`** - ✅ Completed - Removed Tailwind CSS
+- **`migrate-to-unified-layout.js`** - ✅ Completed - Migrated to unified layout
+- **`standardize-all-pages.js`** - ✅ Completed - Standardized all pages
+- **`fix-cms-permissions.js`** - ✅ Completed - Fixed CMS permissions
+- **`migrate-content-to-cms.js`** - ✅ Completed - Migrated content to CMS
+- **`fix-ui-components.js`** - ✅ Completed - Fixed UI components
 
 ## 🚀 Quick Start
 
-### Setup Cron Job
+### Setup Environment
 ```bash
-npm run analyze:setup
+# Initialize CMS with default content
+node scripts/setup/init-cms.js
+
+# Setup admin user
+node scripts/setup/setup-admin.js
 ```
 
-This will:
-- Set up a daily cron job at 8:00 AM
-- Make the analysis script executable
-- Test the script to ensure it works
-- Create necessary directories
-
-### Manual Run
+### Run Tests
 ```bash
-npm run analyze:run
+# Run complete test suite
+node scripts/testing/run-tests.js
+
+# Check component rules
+node scripts/testing/check-component-rules.js
 ```
 
-### View Reports
+### Cleanup & Maintenance
 ```bash
-npm run analyze:reports
+# Add missing content
+node scripts/cleanup/add-missing-content.js
+
+# Clean up obsolete files
+node scripts/cleanup/cleanup-obsolete-files.js
 ```
 
-### View Logs
+### Monitor Application
 ```bash
-npm run analyze:logs
+# Check development status
+bash scripts/monitoring/check-dev-status.sh
+
+# Run health check
+node scripts/monitoring/health-check.js
 ```
 
-## 📊 Output
+## 📊 Daily Analysis System
 
-### JSON Report
-Detailed analysis saved to `reports/daily-analysis-YYYY-MM-DD.json`
+The daily analysis system provides comprehensive analysis of the application:
 
-### Markdown Summary
-Quick summary saved to `reports/summary-YYYY-MM-DD.md`
+```bash
+# Run daily analysis
+node scripts/daily-analysis.js
 
-### Logs
-Execution logs saved to `logs/daily-analysis.log`
-
-## 🎯 Generated Todos
-
-The system automatically generates prioritized todos based on:
-
-- **Critical**: Security issues, broken builds
-- **High**: Outdated dependencies, code quality issues
-- **Medium**: Performance optimizations, missing features
-- **Low**: Nice-to-have improvements
-
-## 📈 Example Output
-
-```
-# Daily Analysis Summary - 2024-01-15
-
-## 📊 Quick Stats
-- **Components**: 45 total
-- **Dependencies**: 25 total, 3 outdated
-- **Security Issues**: 0 secrets found
-- **Test Coverage**: 12 test files
-- **Performance**: 2 large images
-
-## 🎯 Priority Todos
-- **[HIGH]** Update 3 outdated dependencies (Security & Performance)
-- **[MEDIUM]** Optimize 2 large images (Page Load Speed)
-- **[MEDIUM]** Implement analytics tracking for better business insights (Business Intelligence)
-
-## 📈 Recommendations
-- Consider implementing Lighthouse CI for automated performance monitoring
-- Add more unit tests to improve code coverage
-- Implement error tracking for better debugging
+# Setup cron job for daily analysis
+bash scripts/setup-cron.sh
 ```
 
 ## 🔧 Configuration
 
-### Customizing Analysis
-Edit `scripts/daily-analysis.js` to:
-- Add new analysis categories
-- Modify thresholds for todos
-- Include additional metrics
-- Customize report format
-
-### Cron Schedule
-The default schedule is daily at 8:00 AM. To change:
-1. Edit `scripts/setup-cron.sh`
-2. Modify the `CRON_JOB` variable
-3. Re-run `npm run analyze:setup`
-
-### Environment Variables
-The script respects these environment variables:
-- `NODE_ENV`: Affects build analysis
-- `CI`: Skips interactive prompts in CI environments
-
-## 🛠️ Troubleshooting
-
-### Common Issues
-
-**Script fails to run**
-```bash
-# Check permissions
-chmod +x scripts/daily-analysis.js
-
-# Check Node.js version
-node --version
+### ESLint Ignore
+Scripts are excluded from ESLint checking via `.eslintignore`:
+```
+scripts/
+scripts/**/*
 ```
 
-**Cron job not running**
-```bash
-# Check cron service
-sudo service cron status
+### Script Categories
+- **Setup**: One-time initialization scripts
+- **Cleanup**: Maintenance and code quality scripts  
+- **Testing**: Quality assurance and validation scripts
+- **Deployment**: Production deployment scripts
+- **Monitoring**: Health check and monitoring scripts
+- **Archive**: Completed or obsolete scripts
 
-# View cron logs
-sudo tail -f /var/log/cron
-```
+## 📈 Usage Guidelines
 
-**Build analysis fails**
-```bash
-# Ensure dependencies are installed
-npm install
+### When to Use Each Category
 
-# Check for build errors
-npm run build
-```
+**Setup Scripts**: Use for initial project setup or when adding new environments
+**Cleanup Scripts**: Use regularly for code maintenance and quality assurance
+**Testing Scripts**: Use before deployments or when making significant changes
+**Deployment Scripts**: Use for production deployments
+**Monitoring Scripts**: Use for ongoing application health monitoring
 
-### Debug Mode
-Run with verbose logging:
-```bash
-DEBUG=* node scripts/daily-analysis.js
-```
+### Best Practices
 
-## 🔄 Continuous Improvement
+1. **Always backup** before running cleanup scripts
+2. **Test in development** before running in production
+3. **Review script output** for any errors or warnings
+4. **Document changes** made by scripts
+5. **Archive completed scripts** to keep the directory clean
 
-The analysis system itself can be improved by:
+## 🚨 Important Notes
 
-1. **Adding new metrics** based on business needs
-2. **Refining thresholds** based on team feedback
-3. **Integrating with CI/CD** for automated reporting
-4. **Adding Slack/email notifications** for critical issues
-5. **Creating dashboards** for trend analysis
+- Scripts in `/archive/` are completed and should not be run again
+- Always review script contents before running
+- Some scripts may require specific environment variables
+- Monitor script output for any errors or warnings
 
-## 📚 Related Documentation
+---
 
-- [Architecture Guide](../docs/architecture.md)
-- [Testing Strategy](../docs/test-plan.md)
-- [Business Plan](../docs/business-plan.md)
-- [Component Guide](../COMPONENT_GUIDE.md) 
+*Last Updated: January 27, 2025*
+*Status: ✅ Organized and Documented* 

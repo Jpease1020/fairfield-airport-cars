@@ -75,7 +75,23 @@ const Navigation = () => {
           </Stack>
         </Link>
 
-                  {/* Mobile menu button */}
+        {/* Customer Login/Register */}
+        <Stack direction="horizontal" spacing="sm">
+          <Link href="/login" data-testid="nav-login">
+            <EditableText field="navigation.sign_in" defaultValue="Sign In">
+              Sign In
+            </EditableText>
+          </Link>
+          <Link href="/register" data-testid="nav-register">
+            <Button variant="primary" size="sm">
+              <EditableText field="navigation.sign_up" defaultValue="Sign Up">
+                Sign Up
+              </EditableText>
+            </Button>
+          </Link>
+        </Stack>
+
+        {/* Mobile menu button */}
         <Button
           variant="ghost"
           size="sm"
@@ -117,6 +133,30 @@ const Navigation = () => {
                 </EditableText>
               </Stack>
             </Link>
+            
+            {/* Mobile Customer Login/Register */}
+            <Stack direction="vertical" spacing="sm">
+              <Link 
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                data-testid="nav-mobile-login"
+              >
+                <EditableText field="navigation.sign_in" defaultValue="Sign In">
+                  Sign In
+                </EditableText>
+              </Link>
+              <Link 
+                href="/register"
+                onClick={() => setMobileMenuOpen(false)}
+                data-testid="nav-mobile-register"
+              >
+                <Button variant="primary" size="sm">
+                  <EditableText field="navigation.sign_up" defaultValue="Sign Up">
+                    Sign Up
+                  </EditableText>
+                </Button>
+              </Link>
+            </Stack>
           </Stack>
         </Container>
       )}

@@ -1,0 +1,56 @@
+# Scripts directory - contains utility scripts that don't need linting
+scripts/
+scripts/**/*
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Environment files
+.env*
+!.env.example
+
+# Test outputs
+coverage/
+*.lcov
+
+# Logs
+*.log
+logs/
+
+# Reports
+reports/
+playwright-report/
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation
+docs/
+*.md
+
+# Public assets
+public/
+
+# Generated files
+*.generated.* 

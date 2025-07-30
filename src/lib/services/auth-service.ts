@@ -1,7 +1,7 @@
 'use client';
 
 import { auth, db } from '@/lib/utils/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { 
   signInWithEmailAndPassword, 
   signOut, 
@@ -9,16 +9,45 @@ import {
   User,
   GoogleAuthProvider,
   signInWithPopup,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  sendEmailVerification
 } from 'firebase/auth';
 
 export interface UserRole {
   uid: string;
   email: string;
-  role: 'admin' | 'editor' | 'viewer';
+  role: 'admin' | 'editor' | 'viewer' | 'customer';
   permissions: string[];
   createdAt: Date;
   lastLogin: Date;
+  name?: string;
+  phone?: string;
+  preferences?: {
+    defaultPickupLocation?: string;
+    defaultDropoffLocation?: string;
+    preferredPaymentMethod?: string;
+  };
+}
+
+export interface CustomerProfile {
+  uid: string;
+  email: string;
+  name: string;
+  phone: string;
+  createdAt: Date;
+  lastLogin: Date;
+  totalBookings: number;
+  totalSpent: number;
+  preferences: {
+    defaultPickupLocation?: string;
+    defaultDropoffLocation?: string;
+    preferredPaymentMethod?: string;
+    notifications: {
+      email: boolean;
+      sms: boolean;
+    };
+  };
 }
 
 // Legacy auth functions for backward compatibility
@@ -41,6 +70,83 @@ export const logout = () => {
 
 export const onAuthChange = (callback: (user: User | null) => void) => {
   return onAuthStateChanged(auth, callback);
+};
+
+// Customer-specific auth functions
+export const createCustomerAccount = async (email: string, password: string, name: string, phone: string) => {
+  try {
+    // Create Firebase auth user
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Send email verification
+    await sendEmailVerification(user);
+
+    // Create customer profile in Firestore
+    const customerProfile: CustomerProfile = {
+      uid: user.uid,
+      email: email,
+      name: name,
+      phone: phone,
+      createdAt: new Date(),
+      lastLogin: new Date(),
+      totalBookings: 0,
+      totalSpent: 0,
+      preferences: {
+        notifications: {
+          email: true,
+          sms: true
+        }
+      }
+    };
+
+    await setDoc(doc(db, 'customers', user.uid), customerProfile);
+
+    // Also create user role document for consistency
+    const userRole: UserRole = {
+      uid: user.uid,
+      email: email,
+      role: 'customer',
+      permissions: ['read', 'book'],
+      createdAt: new Date(),
+      lastLogin: new Date(),
+      name: name,
+      phone: phone
+    };
+
+    await setDoc(doc(db, 'users', user.uid), userRole);
+
+    return user;
+  } catch (error) {
+    console.error('Error creating customer account:', error);
+    throw error;
+  }
+};
+
+export const resetPassword = (email: string) => {
+  return sendPasswordResetEmail(auth, email);
+};
+
+export const getCustomerProfile = async (uid: string): Promise<CustomerProfile | null> => {
+  try {
+    const customerDoc = await getDoc(doc(db, 'customers', uid));
+    if (!customerDoc.exists()) {
+      return null;
+    }
+    return customerDoc.data() as CustomerProfile;
+  } catch (error) {
+    console.error('Error getting customer profile:', error);
+    return null;
+  }
+};
+
+export const updateCustomerProfile = async (uid: string, updates: Partial<CustomerProfile>) => {
+  try {
+    await setDoc(doc(db, 'customers', uid), updates, { merge: true });
+  } catch (error) {
+    console.error('Error updating customer profile:', error);
+    throw error;
+  }
 };
 
 export class AuthService {
@@ -100,35 +206,29 @@ export class AuthService {
     return false;
   }
 
-  async canEdit(uid: string): Promise<boolean> {
+  async isCustomer(uid: string): Promise<boolean> {
+    if (!uid) return false;
+    
     const userRole = await this.getUserRole(uid);
-    if (!userRole) return false;
+    return userRole?.role === 'customer';
+  }
 
-    // Admins can edit everything
-    if (userRole.role === 'admin') return true;
-
-    // Editors can edit content but not settings
-    if (userRole.role === 'editor') {
-      const restrictedFields = ['pricing', 'business', 'settings'];
-      return !restrictedFields.some(field => field.includes(field));
-    }
-
-    return false;
+  async canEdit(uid: string): Promise<boolean> {
+    if (!uid) return false;
+    
+    const userRole = await this.getUserRole(uid);
+    return userRole?.permissions.includes('write') || userRole?.role === 'admin';
   }
 
   async logUserActivity(uid: string, action: string, details?: any): Promise<void> {
     try {
-      // Log user activity for audit trail
-      const activity = {
+      const activityRef = doc(db, 'user_activity', `${uid}_${Date.now()}`);
+      await setDoc(activityRef, {
         uid,
         action,
         details,
-        timestamp: new Date(),
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server'
-      };
-      
-      // In a real app, you'd save this to Firestore
-      console.log('User activity:', activity);
+        timestamp: new Date()
+      });
     } catch (error) {
       console.error('Error logging user activity:', error);
     }

@@ -1,189 +1,48 @@
-/* ===== ESSENTIAL CSS VARIABLES ONLY ===== */
-/* This file contains ONLY CSS variables and essential base styles */
-/* All component styles should be in styled-components */
+/* ===== BASE STYLES AND UTILITIES ===== */
+/* This file contains base element styles and utilities */
+/* CSS variables are defined in variables.css */
 
-:root {
-  /* Colors - Design System Tokens */
-  --primary-color: #0B1F3A;
-  --primary-color-50: #f0f4f8;
-  --primary-color-100: #e1e8f0;
-  --primary-color-200: #c3d1e0;
-  --primary-color-300: #a5b9d0;
-  --primary-color-400: #87a1c0;
-  --primary-color-500: #6989b0;
-  --primary-color-600: #0B1F3A;
-  --primary-color-700: #08142A;
-  --primary-color-800: #060f20;
-  --primary-color-900: #040a16;
-  --primary-hover: #08142A;
-  
-  --secondary-color: #4b5563;
-  --secondary-color-50: #f8fafc;
-  --secondary-color-100: #f1f5f9;
-  --secondary-color-200: #e2e8f0;
-  --secondary-color-300: #cbd5e1;
-  --secondary-color-400: #94a3b8;
-  --secondary-color-500: #64748b;
-  --secondary-color-600: #4b5563;
-  --secondary-color-700: #334155;
-  --secondary-color-800: #1e293b;
-  --secondary-color-900: #0f172a;
-  --secondary-hover: #374151;
-  
-  --text-primary: #1f2937;
-  --text-secondary: #4b5563;
-  --text-light: #9ca3af;
-  --text-white: #ffffff;
-  --text-inverse: #ffffff;
-  --text-muted: #6b7280;
-  --text-emphasis: #1f2937;
-  
-  --background-primary: #ffffff;
-  --background-secondary: #f9fafb;
-  --background-muted: #f3f4f6;
-  --background-tertiary: #f3f4f6;
-  --background-disabled: #f9fafb;
-  --background-overlay: rgba(0, 0, 0, 0.5);
-  
-  --border-color: #e5e7eb;
-  --border-light: #e5e7eb;
-  --border-default: #d1d5db;
-  --border-dark: #9ca3af;
-  --border-focus: #0B1F3A;
-  --border-error: #dc2626;
-  
-  --success-color: #16a34a;
-  --success-color-50: #f0fdf4;
-  --success-color-100: #dcfce7;
-  --success-color-200: #bbf7d0;
-  --success-color-300: #86efac;
-  --success-color-400: #4ade80;
-  --success-color-500: #22c55e;
-  --success-color-600: #16a34a;
-  --success-color-700: #15803d;
-  --success-color-800: #166534;
-  --success-color-900: #14532d;
-  
-  --warning-color: #ca8a04;
-  --warning-color-50: #fffbeb;
-  --warning-color-100: #fef3c7;
-  --warning-color-200: #fde68a;
-  --warning-color-300: #fcd34d;
-  --warning-color-400: #fbbf24;
-  --warning-color-500: #f59e0b;
-  --warning-color-600: #ca8a04;
-  --warning-color-700: #a16207;
-  --warning-color-800: #854d0e;
-  --warning-color-900: #713f12;
-  
-  --error-color: #dc2626;
-  --danger-color: #dc2626;
-  --danger-color-50: #fef2f2;
-  --danger-color-100: #fee2e2;
-  --danger-color-200: #fecaca;
-  --danger-color-300: #fca5a5;
-  --danger-color-400: #f87171;
-  --danger-color-500: #ef4444;
-  --danger-color-600: #dc2626;
-  --danger-color-700: #b91c1c;
-  --danger-color-800: #991b1b;
-  --danger-color-900: #7f1d1d;
-  
-  --info-color: #3b82f6;
-  
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
-  
-  /* Spacing - Design System */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 3rem;
-  --spacing-3xl: 4rem;
-  
-  /* Typography - Design System */
-  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --font-size-4xl: 2.25rem;
-  
-  /* Border Radius - Design System */
-  --border-radius-sm: 0.125rem;
-  --border-radius-md: 0.25rem;
-  --border-radius-lg: 0.5rem;
-  --border-radius-xl: 0.75rem;
-  --border-radius-2xl: 1rem;
-  
-  /* Shadows - Design System */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  
-  /* Transitions - Design System */
-  --transition-fast: 0.15s ease-in-out;
-  --transition-normal: 0.2s ease-in-out;
-  --transition-slow: 0.3s ease-in-out;
-}
-
-/* Essential Base Styles Only */
+/* Base element styles */
 * {
   box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  line-height: 1.5;
+  font-family: var(--font-family-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
   color: var(--text-primary);
   background-color: var(--background-primary);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Accessibility - Skip Link */
+/* Skip link for accessibility */
 .skip-link {
   position: absolute;
   top: -40px;
   left: 6px;
-  background-color: var(--primary-color);
-  color: var(--background-primary);
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--border-radius-lg);
+  background: var(--primary-color);
+  color: var(--text-white);
+  padding: 8px;
   text-decoration: none;
-  font-weight: 500;
-  z-index: 1402;
-  transition: var(--transition-normal);
+  border-radius: var(--radius-base);
+  z-index: 10000;
 }
 
 .skip-link:focus {
   top: 6px;
-  outline: 2px solid var(--primary-color-400);
-  outline-offset: 2px;
 }
 
-/* Focus Styles for Accessibility */
+/* Focus styles for accessibility */
 *:focus {
   outline: 2px solid var(--border-focus);
   outline-offset: 2px;
 }
 
-/* Print Styles */
+/* Print styles */
 @media print {
   .no-print {
     display: none !important;
