@@ -1,5 +1,8 @@
 /* Global styles for Fairfield Airport Cars */
 
+/* Import the consolidated design system variables */
+@import '../styles/variables.css';
+
 /* Import the standard layout system */
 @import '../styles/standard-layout.css';
 

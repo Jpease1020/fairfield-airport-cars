@@ -1,0 +1,287 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { onAuthChange, logout, getCustomerProfile, updateCustomerProfile } from '@/lib/services/auth-service';
+import { User } from 'firebase/auth';
+import { CustomerProfile } from '@/lib/services/auth-service';
+import { 
+  Section,
+  Container,
+  Stack,
+  H1,
+  H2,
+  Text,
+  Card,
+  Button,
+  EditableText,
+  ToastProvider,
+  ActionCard,
+  StatCard,
+  LoadingSpinner
+} from '@/components/ui';
+import { Grid } from '@/components/ui/layout/grid';
+import styled from 'styled-components';
+import { spacing } from '@/lib/design-system/tokens';
+
+const DashboardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${spacing.xl};
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: ${spacing.md};
+    align-items: stretch;
+  }
+`;
+
+const ProfileSection = styled(Card)`
+  margin-bottom: ${spacing.xl};
+`;
+
+const BookingHistorySection = styled(Card)`
+  margin-bottom: ${spacing.xl};
+`;
+
+export default function CustomerDashboard() {
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<CustomerProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthChange((firebaseUser: User | null) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        loadCustomerProfile(firebaseUser.uid);
+      } else {
+        router.push('/login');
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [router]);
+
+  const loadCustomerProfile = async (uid: string) => {
+    try {
+      const customerProfile = await getCustomerProfile(uid);
+      setProfile(customerProfile);
+    } catch (error) {
+      console.error('Error loading customer profile:', error);
+      setError('Failed to load profile');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  const handleBookRide = () => {
+    router.push('/book');
+  };
+
+  const handleViewBookings = () => {
+    router.push('/bookings');
+  };
+
+  const handleEditProfile = () => {
+    router.push('/profile');
+  };
+
+  if (loading) {
+    return (
+      <Section variant="brand" padding="xl">
+        <Container>
+          <Stack gap="xl" align="center">
+            <LoadingSpinner size="lg" />
+            <Text>Loading your dashboard...</Text>
+          </Stack>
+        </Container>
+      </Section>
+    );
+  }
+
+  if (!user || !profile) {
+    return (
+      <Section variant="brand" padding="xl">
+        <Container>
+          <Stack gap="xl" align="center">
+            <Text variant="muted">Please log in to access your dashboard.</Text>
+            <Button onClick={() => router.push('/login')}>
+              Go to Login
+            </Button>
+          </Stack>
+        </Container>
+      </Section>
+    );
+  }
+
+  return (
+    <ToastProvider>
+      <Section variant="brand" padding="xl">
+        <Container>
+          <DashboardHeader>
+            <Stack gap="sm">
+              <H1>
+                <EditableText field="customer.dashboard.welcome" defaultValue={`Welcome back, ${profile.name}!`}>
+                  Welcome back, {profile.name}!
+                </EditableText>
+              </H1>
+              <Text variant="muted">
+                <EditableText field="customer.dashboard.subtitle" defaultValue="Manage your bookings and account">
+                  Manage your bookings and account
+                </EditableText>
+              </Text>
+            </Stack>
+            <Button variant="outline" onClick={handleLogout} data-testid="logout-button">
+              <EditableText field="customer.dashboard.logout" defaultValue="Logout">
+                Logout
+              </EditableText>
+            </Button>
+          </DashboardHeader>
+
+          {error && (
+            <Card variant="elevated" padding="md" margin="md">
+              <Text variant="muted" style={{ color: 'var(--error-color, #ef4444)' }}>
+                {error}
+              </Text>
+            </Card>
+          )}
+
+          <Stack gap="xl">
+            {/* Quick Stats */}
+            <Stack gap="md">
+              <H2>
+                <EditableText field="customer.dashboard.stats_title" defaultValue="Your Stats">
+                  Your Stats
+                </EditableText>
+              </H2>
+              <Grid cols={3} gap="md">
+                <StatCard
+                  title="Total Bookings"
+                  statNumber={profile.totalBookings}
+                  icon="📊"
+                  data-testid="total-bookings"
+                />
+                <StatCard
+                  title="Total Spent"
+                  statNumber={`$${profile.totalSpent.toFixed(2)}`}
+                  icon="💰"
+                  data-testid="total-spent"
+                />
+                <StatCard
+                  title="Member Since"
+                  statNumber={new Date(profile.createdAt).toLocaleDateString()}
+                  icon="🎉"
+                  data-testid="member-since"
+                />
+              </Grid>
+            </Stack>
+
+            {/* Quick Actions */}
+            <Stack gap="md">
+              <H2>
+                <EditableText field="customer.dashboard.actions_title" defaultValue="Quick Actions">
+                  Quick Actions
+                </EditableText>
+              </H2>
+              <Grid cols={3} gap="md">
+                <ActionCard
+                  label="Book a Ride"
+                  description="Schedule your next airport ride"
+                  icon="🚗"
+                  onClick={handleBookRide}
+                  data-testid="book-ride-action"
+                />
+                <ActionCard
+                  label="View Bookings"
+                  description="Check your booking history"
+                  icon="📋"
+                  onClick={handleViewBookings}
+                  data-testid="view-bookings-action"
+                />
+                <ActionCard
+                  label="Edit Profile"
+                  description="Update your information"
+                  icon="👤"
+                  onClick={handleEditProfile}
+                  data-testid="edit-profile-action"
+                />
+              </Grid>
+            </Stack>
+
+            {/* Profile Information */}
+            <ProfileSection variant="elevated" padding="lg">
+              <Stack gap="md">
+                <H2>
+                  <EditableText field="customer.dashboard.profile_title" defaultValue="Profile Information">
+                    Profile Information
+                  </EditableText>
+                </H2>
+                <Stack gap="sm">
+                  <Text>
+                    <strong>Name:</strong> {profile.name}
+                  </Text>
+                  <Text>
+                    <strong>Email:</strong> {profile.email}
+                  </Text>
+                  <Text>
+                    <strong>Phone:</strong> {profile.phone}
+                  </Text>
+                  <Text>
+                    <strong>Member Since:</strong> {new Date(profile.createdAt).toLocaleDateString()}
+                  </Text>
+                  <Text>
+                    <strong>Last Login:</strong> {new Date(profile.lastLogin).toLocaleDateString()}
+                  </Text>
+                </Stack>
+              </Stack>
+            </ProfileSection>
+
+            {/* Recent Bookings */}
+            <BookingHistorySection variant="elevated" padding="lg">
+              <Stack gap="md">
+                <H2>
+                  <EditableText field="customer.dashboard.bookings_title" defaultValue="Recent Bookings">
+                    Recent Bookings
+                  </EditableText>
+                </H2>
+                {profile.totalBookings === 0 ? (
+                  <Text variant="muted">
+                    <EditableText field="customer.dashboard.no_bookings" defaultValue="No bookings yet. Book your first ride!">
+                      No bookings yet. Book your first ride!
+                    </EditableText>
+                  </Text>
+                ) : (
+                  <Text variant="muted">
+                    <EditableText field="customer.dashboard.bookings_count" defaultValue={`You have ${profile.totalBookings} total bookings.`}>
+                      You have {profile.totalBookings} total bookings.
+                    </EditableText>
+                  </Text>
+                )}
+                <Button variant="outline" onClick={handleViewBookings}>
+                  <EditableText field="customer.dashboard.view_all_bookings" defaultValue="View All Bookings">
+                    View All Bookings
+                  </EditableText>
+                </Button>
+              </Stack>
+            </BookingHistorySection>
+          </Stack>
+        </Container>
+      </Section>
+    </ToastProvider>
+  );
+} 

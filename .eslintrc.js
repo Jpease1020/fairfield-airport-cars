@@ -3,6 +3,9 @@ module.exports = {
     'next/core-web-vitals',
     'next/typescript'
   ],
+  ignorePatterns: [
+    'src/future-features/**/*'
+  ],
   rules: {
     // Custom Architecture Guardrails Rules
     
