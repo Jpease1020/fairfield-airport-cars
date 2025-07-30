@@ -43,7 +43,7 @@ const Navigation = () => {
     <Container as="nav" variant="navigation" padding="md">
       <Stack direction="horizontal" justify="between" align="center">
         {/* Logo */}
-        <Link href="/">
+        <Link href="/" data-testid="nav-home">
           <Stack direction="horizontal" spacing="sm" align="center">
             <Logo size="sm" />
             <EditableText field="navigation.company_name" defaultValue={getCompanyName()}>
@@ -58,6 +58,7 @@ const Navigation = () => {
             <Link
               key={item.name}
               href={item.href}
+              data-testid={`nav-${item.name.toLowerCase()}`}
             >
               {item.name}
             </Link>
@@ -65,7 +66,7 @@ const Navigation = () => {
         </Stack>
 
         {/* Contact Button */}
-        <Link href={`tel:${getPhoneNumber()}`}>
+        <Link href={`tel:${getPhoneNumber()}`} data-testid="nav-call-now">
           <Stack direction="horizontal" spacing="sm" align="center">
             <Phone size={16} />
             <EditableText field="navigation.call_now" defaultValue="Call Now">
@@ -80,6 +81,7 @@ const Navigation = () => {
           size="sm"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Open menu"
+          data-testid="mobile-menu-toggle"
         >
           {mobileMenuOpen ? (
             <X size={20} />
@@ -91,13 +93,14 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <Container padding="md">
+        <Container padding="md" data-testid="mobile-menu">
           <Stack direction="vertical" spacing="md">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
+                data-testid={`nav-mobile-${item.name.toLowerCase()}`}
               >
                 {item.name}
               </Link>

@@ -1,14 +1,14 @@
 {
   "/api/booking": {
-    "error": "fetch is not defined",
-    "timestamp": "2025-07-29T22:12:23.510Z"
+    "error": "Cannot read properties of undefined (reading 'status')",
+    "timestamp": "2025-07-30T01:11:19.719Z"
   },
   "/api/booking/estimate-fare": {
-    "error": "fetch is not defined",
-    "timestamp": "2025-07-29T22:12:23.510Z"
+    "error": "Cannot read properties of undefined (reading 'status')",
+    "timestamp": "2025-07-30T01:11:19.719Z"
   },
   "/api/booking/check-time-slot": {
-    "error": "fetch is not defined",
-    "timestamp": "2025-07-29T22:12:23.510Z"
+    "error": "Cannot read properties of undefined (reading 'status')",
+    "timestamp": "2025-07-30T01:11:19.719Z"
   }
 }

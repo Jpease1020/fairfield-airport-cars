@@ -55,10 +55,10 @@ function HelpPageContent() {
   return (
     <>
       {/* Hero Section */}
-      <Section variant="brand" padding="xl">
+      <Section variant="brand" padding="xl" data-testid="help-hero-section">
         <Container maxWidth="2xl">
           <Stack spacing="2xl" align="center" gap="md">
-            <H1 align="center">
+            <H1 align="center" data-testid="help-title">
               <EditableText field="help.hero.title" defaultValue="Help & Support">
                 Help & Support
               </EditableText>
@@ -73,7 +73,7 @@ function HelpPageContent() {
       </Section>
 
       {/* Quick Answers Section */}
-      <Section variant="default" padding="xl">
+      <Section variant="default" padding="xl" data-testid="help-content">
         <Container maxWidth="2xl">
           <Stack spacing="lg" align="center" marginBottom="xl">
             <H2>
@@ -83,9 +83,9 @@ function HelpPageContent() {
             </H2>
           </Stack>
           
-          <Stack spacing="lg" gap="md">
+          <Stack spacing="lg" gap="md" data-testid="faq-section">
             {quickAnswers.map((item, index) => (
-              <Card key={index} variant="elevated" padding="lg">
+              <Card key={index} variant="elevated" padding="lg" data-testid={`faq-item-${index}`}>
                 <Stack spacing="md">
                   <H2 size="md">
                     <EditableText field={`help.quickAnswers.${index}.question`} defaultValue={item.question}>

@@ -81,6 +81,27 @@ export const handlers = [
   }),
 
   // Booking APIs - Updated to match actual endpoints
+  http.get('/api/booking', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Booking API is working'
+    });
+  }),
+
+  http.get('/api/booking/estimate-fare', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Estimate fare endpoint is working'
+    });
+  }),
+
+  http.get('/api/booking/check-time-slot', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Check time slot endpoint is working'
+    });
+  }),
+
   http.post('/api/booking/estimate-fare', async ({ request }) => {
     const body = await request.json() as any;
     return HttpResponse.json({
@@ -116,6 +137,27 @@ export const handlers = [
   }),
 
   // Payment APIs
+  http.get('/api/payment/create-checkout-session', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Create checkout session endpoint is working'
+    });
+  }),
+
+  http.get('/api/payment/complete-payment', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Complete payment endpoint is working'
+    });
+  }),
+
+  http.get('/api/payment/square-webhook', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Square webhook endpoint is working'
+    });
+  }),
+
   http.post('/api/payment/create-checkout-session', async ({ request }) => {
     const body = await request.json() as any;
     return HttpResponse.json({
@@ -133,6 +175,20 @@ export const handlers = [
   }),
 
   // Notifications API
+  http.get('/api/notifications/send-confirmation', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Send confirmation endpoint is working'
+    });
+  }),
+
+  http.get('/api/notifications/send-feedback-request', () => {
+    return HttpResponse.json({
+      success: true,
+      message: 'Send feedback request endpoint is working'
+    });
+  }),
+
   http.post('/api/notifications/send-confirmation', async ({ request }) => {
     const body = await request.json() as any;
     return HttpResponse.json({
