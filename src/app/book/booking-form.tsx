@@ -279,7 +279,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
         />
       )}
 
-      <Form onSubmit={handleSubmit} id="booking-form">
+      <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
         {/* Single clean form container */}
         <Stack spacing="xl" gap="xl" data-testid="booking-form-stack" fullWidth>
           
@@ -298,10 +298,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     id="name"
                     label="Full Name"
                     value={name}
+                    data-testid="name-input"
                     onChange={setName}
                     placeholder="Enter your full name"
                     icon="👤"
-                    data-testid="name-input"
                   />
                 </GridItem>
                 

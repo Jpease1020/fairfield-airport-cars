@@ -114,14 +114,6 @@ This guide consolidates all testing approaches, strategies, and documentation in
 ### **User-Centric Test Environment Configuration**
 ```typescript
 // All external APIs mocked to focus on user behavior
-jest.mock('@/lib/square-service');
-jest.mock('@/lib/twilio-service');
-jest.mock('@/lib/email-service');
-jest.mock('@/lib/firebase');
-jest.mock('@/lib/ai-assistant');
-jest.mock('@googlemaps/google-maps-services-js');
-jest.mock('openai');
-```
 
 ---
 
@@ -131,11 +123,11 @@ jest.mock('openai');
 ```json
 {
   "test": "npm run test:integration && npm run test:unit && npm run test:e2e",
-  "test:integration": "jest --testPathPattern=tests/integration --coverage",
-  "test:user-behavior": "jest --testPathPattern=tests/integration/user-behavior",
-  "test:component-integration": "jest --testPathPattern=tests/integration/component-integration",
-  "test:user-journeys": "jest --testPathPattern=tests/integration/user-journeys",
-  "test:unit": "jest --testPathPattern=tests/unit --coverage",
+  "test:integration": "vi --testPathPattern=tests/integration --coverage",
+  "test:user-behavior": "vi --testPathPattern=tests/integration/user-behavior",
+  "test:component-integration": "vi --testPathPattern=tests/integration/component-integration",
+  "test:user-journeys": "vi --testPathPattern=tests/integration/user-journeys",
+  "test:unit": "vi --testPathPattern=tests/unit --coverage",
   "test:e2e": "playwright test tests/e2e/critical-flows/streamlined-user-flows.spec.ts"
 }
 ```

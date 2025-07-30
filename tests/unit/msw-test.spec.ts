@@ -2,8 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+import { vi, describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
@@ -85,13 +84,13 @@ describe('MSW with RTL - Booking Page', () => {
     render(React.createElement(BookingDetailsPage));
     
     // Initially shows loading
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
+    expect(screen.getByTestId('loading')).toBeDefined();
     
     // Wait for booking details to load
     await screen.findByTestId('booking-details');
     
     // Check that the mocked data is displayed
-    expect(screen.getByTestId('booking-name')).toHaveTextContent('John Smith');
-    expect(screen.getByTestId('booking-status')).toHaveTextContent('confirmed');
+    expect(screen.getByTestId('booking-name').textContent).toBe('John Smith');
+    expect(screen.getByTestId('booking-status').textContent).toBe('confirmed');
   });
 }); 

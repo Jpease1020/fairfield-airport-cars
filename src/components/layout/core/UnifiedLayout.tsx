@@ -144,7 +144,7 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
       )}
 
       {/* Main Content */}
-      <MainContent id="main-content">
+      <MainContent id="main-content" data-testid="main-content">
         {children}
       </MainContent>
 

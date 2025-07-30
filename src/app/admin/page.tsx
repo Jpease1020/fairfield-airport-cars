@@ -310,6 +310,7 @@ function AdminDashboardContent() {
       <AdminPageWrapper 
         title={<EditableText field="admin.dashboard.wrapperTitle" defaultValue="Dashboard">Dashboard</EditableText>} 
         subtitle={<EditableText field="admin.dashboard.wrapperSubtitle" defaultValue="Business overview and quick actions">Business overview and quick actions</EditableText>}
+        data-testid="admin-dashboard"
       >
         {/* Statistics Overview */}
         <Section variant="default" padding="lg">

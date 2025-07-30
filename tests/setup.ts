@@ -1,5 +1,4 @@
-// Test setup file for Jest and Vitest
-import '@testing-library/jest-dom';
+// Test setup file for Vitest
 import { vi } from 'vitest';
 import React from 'react';
 
