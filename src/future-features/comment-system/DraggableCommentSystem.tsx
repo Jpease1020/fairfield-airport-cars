@@ -5,7 +5,7 @@ import { MessageCircle, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Container, Text, H3, EditableText } from '@/components/ui';
-import { useEditMode } from './EditModeProvider';
+import { useEditMode } from '@/components/admin/EditModeProvider';
 
 interface Comment {
   id: string;

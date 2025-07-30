@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAIAssistantContext, generateAIResponse, generateLocalResponse } from '@/lib/services/ai-assistant';
+import { getAIAssistantContext, generateAIResponse, generateLocalResponse } from './ai-assistant';
 
 export async function POST(request: Request) {
   try {

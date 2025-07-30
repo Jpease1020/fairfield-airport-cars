@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import PageCommentWidget from './PageCommentWidget';
+import PageCommentWidget from '@/components/admin/PageCommentWidget';
 
 const CommentWidgetWrapper = () => {
   const [pageInfo, setPageInfo] = useState({
