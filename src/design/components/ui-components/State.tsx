@@ -1,9 +1,10 @@
 import React from 'react';
-import { LoadingSpinner } from '../notifications/LoadingSpinner';
+import { LoadingSpinner } from '../ui-components/notifications';
 import { Button } from '@/ui';
-import { Stack } from '../grid';
+import { Stack } from '../layout/grid/Stack';
 import { H3, Text } from './Text';
 import { EditableText } from '@/ui';
+import { PositionedContainer } from '../layout/containers/Container';
 
 export interface StateProps {
   type: 'loading' | 'empty' | 'error';
@@ -168,7 +169,6 @@ export const State: React.FC<StateProps> = ({
       align="center" 
       justify="center" 
       spacing={spacingMap[spacingValue]}
-      fullWidth={centered}
     >
       {renderIcon()}
       {renderTitle()}
@@ -179,23 +179,21 @@ export const State: React.FC<StateProps> = ({
 
   if (variant === 'overlay') {
     return (
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 1000,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
+      <PositionedContainer
+        position="absolute"
+        top="0"
+        left="0"
+        right="0"
+        bottom="0"
+        zIndex={1000}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
         {...rest}
       >
         {content}
-      </div>
+      </PositionedContainer>
     );
   }
 

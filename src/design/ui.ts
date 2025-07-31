@@ -1,33 +1,14 @@
-// Main UI Components Export
-// This file exports all UI components from the design system
-// Usage: import { Button, Card, Grid } from '@/ui'
-
 // Layout Components
 export * from './components/layout';
 
-// Grid System Components
-export { Row, Col, Container } from './components/grid';
-export { Stack, Layout, Spacer, Section, LayoutCard, MarginEnforcer, PositionedContainer, GridSection, Grid, GridItem, Box } from './components/grid';
-
 // UI Components
-export { 
-  Button, Card, Text, H1, H2, H3, H4, H5, H6, Paragraph, Span, Link,
-  Badge, Alert, Modal, Skeleton, Switch, StarRating, SettingToggle,
-  LocationAutocomplete, HelpCard, ActionGrid, BookingCard,
-  EditableTextarea, ActionButtonGroup, ActivityList, ChatContainer,
-  EditableText, EditableHeading, EditableButton, State, ActivityItem,
-  HelpTooltip, DataTable, ChatMessage, ChatInput, EditModeToggle,
-  VoiceOutput, VoiceInput
-} from './components/ui';
+export * from './components/ui-components';
 
-// Type exports
-export type { DataTableColumn, DataTableAction } from './components/ui';
+// Content Sections
+export * from './components/content-sections';
 
-// Form Components
-export * from './components/forms';
-
-// Feedback Components
-export * from './components/feedback';
+// Page Sections
+export * from './components/page-sections';
 
 // Template Components
 export * from './components/templates';
@@ -38,5 +19,39 @@ export * from './components/icons';
 // Providers
 export * from './providers';
 
-// System
-export * from './system'; 
+// System - explicit re-exports to avoid naming conflicts
+export type {
+  // Types (excluding conflicts with layout)
+  SpacingScale,
+  ColorVariant,
+  TextVariant,
+  TextSize,
+  TextAlign,
+  ButtonVariant,
+  ButtonSize,
+  ContainerVariant,
+  CardVariant,
+  SectionVariant,
+  GridCols,
+  GridSpan,
+  StackDirection,
+  StackAlign,
+  StackJustify,
+  StackWrap,
+  BorderRadius,
+  HTMLElement,
+  BaseComponentProps,
+  CardProps,
+  LayoutSectionProps,
+  TextProps,
+  ButtonProps,
+  ThemeToken
+} from './system';
+
+export {
+  // Functions
+  isValidSpacing,
+  isValidColorVariant,
+  isValidMaxWidth,
+  isValidGridCols
+} from './system'; 

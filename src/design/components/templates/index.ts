@@ -1,4 +1,8 @@
-// Page Templates
-// Pre-built page layouts and templates
+// Template Components
+// Layer 5 & 6: Page Templates and Patterns
+// Built on top of Grid + Containers + Page Sections
 
-export * from '../page-templates/StandardPage'; 
+export * from './PageTemplates';
+export * from './PagePatterns';
+export * from './ContentTemplates';
+export * from './MarketingTemplates'; 

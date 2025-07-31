@@ -6,6 +6,7 @@ import { Button } from '@/ui';
 import { Container, H3, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
+import { Card } from '../layout/containers/Card';
 
 interface BookingCardProps {
   booking: Booking;
@@ -37,7 +38,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
   };
 
   return (
-    <Container>
+    <Card variant="elevated" padding="lg" spacing="md">
       {/* Header */}
       <Stack direction="horizontal" align="center" justify="between" spacing="md">
         <H3>
@@ -193,7 +194,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           )}
         </Stack>
       )}
-    </Container>
+    </Card>
   );
 };
 

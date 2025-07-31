@@ -1,29 +1,26 @@
 // Master Design System Components Export
 // Single import point for all components: import { Button, Card, Grid } from '@/design/components'
 
-// Layout System Components
+// Layer 1: Grid System Components (Foundation)
 export * from './layout';
 
-// Grid System Components
-export * from './grid';
+// Layer 2: Layout System Components (Containers)
+export * from './layout';
 
-// UI Components
-export * from './ui';
+// Layer 3: UI Components (Interactive Elements)
+export * from './ui-components';
 
-// Form Components
-export * from './forms';
+// Layer 3: Content Sections (Reusable content patterns)
+export * from './content-sections';
 
-// Feedback Components
-export * from './feedback';
+// Layer 5: Page Sections (Page-level components)
+export * from './page-sections';
 
-// Template Components
+// Layer 5 & 6: Template Components (Page Templates & Patterns)
 export * from './templates';
 
 // Icons
 export * from './icons';
 
 // Providers
-export * from './providers';
-
-// Page Templates
-export * from './page-templates';
+export * from '../providers'; 

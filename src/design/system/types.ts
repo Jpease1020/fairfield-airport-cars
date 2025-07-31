@@ -114,7 +114,7 @@ export interface CardProps extends BaseComponentProps {
   as?: HTMLElement;
 }
 
-export interface SectionProps extends BaseComponentProps {
+export interface LayoutSectionProps extends BaseComponentProps {
   variant?: SectionVariant;
   padding?: SpacingScale;
   container?: boolean;

@@ -1,0 +1,138 @@
+'use client';
+
+import React from 'react';
+import styled from 'styled-components';
+import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../system/tokens/tokens';
+
+// Styled Select component
+const StyledSelect = styled.select.withConfig({
+  shouldForwardProp: (prop) => !['size', 'fullWidth', 'error', 'disabled'].includes(prop)
+})<{
+  size: 'sm' | 'md' | 'lg';
+  fullWidth: boolean;
+  error: boolean;
+  disabled: boolean;
+}>`
+  display: block;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  border: 1px solid ${({ error }) => (error ? colors.border.error : colors.border.default)};
+  border-radius: ${borderRadius.default};
+  background-color: ${({ disabled }) => (disabled ? colors.background.disabled : colors.background.primary)};
+  color: ${({ disabled }) => (disabled ? colors.text.disabled : colors.text.primary)};
+  outline: none;
+  transition: ${transitions.default};
+  box-sizing: border-box;
+  font-family: inherit;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+
+  /* Size styles */
+  ${({ size }) => {
+    switch (size) {
+      case 'sm':
+        return `
+          padding: ${spacing.sm} ${spacing.md};
+          font-size: ${fontSize.sm};
+          height: 2rem;
+        `;
+      case 'md':
+        return `
+          padding: ${spacing.md} ${spacing.lg};
+          font-size: ${fontSize.md};
+          height: 2.5rem;
+        `;
+      case 'lg':
+        return `
+          padding: ${spacing.lg} ${spacing.xl};
+          font-size: ${fontSize.lg};
+          height: 3rem;
+        `;
+      default:
+        return `
+          padding: ${spacing.md} ${spacing.lg};
+          font-size: ${fontSize.md};
+          height: 2.5rem;
+        `;
+    }
+  }}
+
+  /* Focus styles */
+  &:focus {
+    border-color: ${colors.primary[600]};
+    box-shadow: ${shadows.focus};
+  }
+
+  /* Error styles */
+  ${({ error }) => error && `
+    border-color: ${colors.border.error};
+    box-shadow: ${shadows.error};
+  `}
+`;
+
+// Select Component
+export interface SelectOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+export interface SelectProps {
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: SelectOption[];
+  placeholder?: string;
+  disabled?: boolean;
+  error?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
+  name?: string;
+  id?: string;
+  required?: boolean;
+  [key: string]: any;
+}
+
+export const Select: React.FC<SelectProps> = ({
+  value,
+  onChange,
+  options,
+  placeholder = 'Select an option...',
+  disabled = false,
+  error = false,
+  size = 'md',
+  fullWidth = false,
+  name,
+  id,
+  required = false,
+  ...rest
+}) => {
+  return (
+    <StyledSelect
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      name={name}
+      id={id}
+      required={required}
+      size={size}
+      fullWidth={fullWidth}
+      error={error}
+      aria-invalid={error}
+      {...rest}
+    >
+      {placeholder && (
+        <option value="" disabled>
+          {placeholder}
+        </option>
+      )}
+      {options.map((option) => (
+        <option
+          key={option.value}
+          value={option.value}
+          disabled={option.disabled}
+        >
+          {option.label}
+        </option>
+      ))}
+    </StyledSelect>
+  );
+}; 

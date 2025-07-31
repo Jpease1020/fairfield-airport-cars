@@ -1,107 +1,11 @@
 'use client';
 
 import React from 'react';
-import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
-import { Card } from '@/ui';
+import { Card } from '../layout/containers/Card';
 import { Text } from './Text';
-import { Stack } from '../grid';
-import { EditableText } from '@/ui';
-
-// Styled icon container
-const IconContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size'].includes(prop)
-})<{
-  variant: 'default' | 'highlighted' | 'compact';
-  size: 'sm' | 'md' | 'lg';
-}>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: ${transitions.default};
-
-  /* Variant styles */
-  ${({ variant }) => {
-    switch (variant) {
-      case 'highlighted':
-        return `color: ${colors.primary[600]};`;
-      case 'compact':
-        return `color: ${colors.text.secondary};`;
-      default:
-        return `color: ${colors.text.secondary};`;
-    }
-  }}
-
-  /* Size styles */
-  ${({ size }) => {
-    switch (size) {
-      case 'sm':
-        return `
-          font-size: ${fontSize.sm};
-          width: 1rem;
-          height: 1rem;
-        `;
-      case 'md':
-        return `
-          font-size: ${fontSize.md};
-          width: 1.25rem;
-          height: 1.25rem;
-        `;
-      case 'lg':
-        return `
-          font-size: ${fontSize.lg};
-          width: 1.5rem;
-          height: 1.5rem;
-        `;
-      default:
-        return `
-          font-size: ${fontSize.md};
-          width: 1.25rem;
-          height: 1.25rem;
-        `;
-    }
-  }}
-`;
-
-// Styled content container
-const ContentContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant'].includes(prop)
-})<{
-  variant: 'default' | 'highlighted' | 'compact';
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.sm};
-  flex: 1;
-  min-width: 0;
-
-  /* Variant styles */
-  ${({ variant }) => {
-    switch (variant) {
-      case 'highlighted':
-        return `
-          color: ${colors.text.primary};
-        `;
-      case 'compact':
-        return `
-          color: ${colors.text.secondary};
-        `;
-      default:
-        return `
-          color: ${colors.text.primary};
-        `;
-    }
-  }}
-`;
-
-// Styled title container
-const TitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.sm};
-  font-weight: 600;
-`;
+import { Stack } from '../layout/grid/Stack';
+import { Box } from '../layout/grid/Box';
+import { EditableText } from './EditableSystem';
 
 export interface HelpCardProps {
   // Core props
@@ -142,35 +46,82 @@ export const HelpCard: React.FC<HelpCardProps> = ({
   // Rest props
   ...rest
 }) => {
+  // Map variant to text color
+  const getTextColor = () => {
+    switch (variant) {
+      case 'highlighted':
+        return 'primary';
+      case 'compact':
+        return 'secondary';
+      default:
+        return 'primary';
+    }
+  };
+
+  // Map size to icon size
+  const getIconSize = () => {
+    switch (size) {
+      case 'sm':
+        return 'sm';
+      case 'lg':
+        return 'lg';
+      default:
+        return 'md';
+    }
+  };
+
   return (
     <Card id={id} {...rest}>
-      <Stack spacing="sm">
-          <TitleContainer>
-            <IconContainer variant={variant} size={size}>
-              {icon}
-            </IconContainer>
-            
+      <Stack direction="horizontal" spacing="md" align="flex-start">
+        {/* Icon Container */}
+        <div
+          style={{
+            flexShrink: 0,
+            fontSize: size === 'sm' ? '0.875rem' : size === 'lg' ? '1.125rem' : '1rem',
+            width: size === 'sm' ? '1rem' : size === 'lg' ? '1.5rem' : '1.25rem',
+            height: size === 'sm' ? '1rem' : size === 'lg' ? '1.5rem' : '1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: variant === 'highlighted' ? 'var(--color-primary-600)' : 'var(--color-text-secondary)',
+            border: '1px solid var(--color-border-light)',
+            borderRadius: 'var(--border-radius-md)',
+            padding: 'var(--spacing-sm)'
+          }}
+        >
+          {icon}
+        </div>
+        
+        {/* Content Container */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Title */}
+          <Stack direction="horizontal" spacing="sm" align="center">
             {typeof title === 'string' ? (
-              <EditableText field="helpcard.title" defaultValue={title}>
-                {title}
-              </EditableText>
+              <Text variant="body" size={getIconSize()} color={getTextColor()} weight="semibold">
+                <EditableText field="helpcard.title" defaultValue={title}>
+                  {title}
+                </EditableText>
+              </Text>
             ) : (
               title
             )}
-          </TitleContainer>
+          </Stack>
           
-          <ContentContainer variant={variant}>
-            {typeof description === 'string' ? (
+          {/* Description */}
+          {typeof description === 'string' ? (
+            <Text variant="body" size="sm" color={getTextColor()}>
               <EditableText field="helpcard.description" defaultValue={description}>
                 {description}
               </EditableText>
-            ) : (
-              description
-            )}
-          </ContentContainer>
+            </Text>
+          ) : (
+            description
+          )}
           
+          {/* Children */}
           {children}
-        </Stack>
+        </div>
+      </Stack>
     </Card>
   );
 }; 
