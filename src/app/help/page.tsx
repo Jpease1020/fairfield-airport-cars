@@ -10,7 +10,7 @@ import {
   H2,
   Text,
   ActionButtonGroup,
-  ContentBox,
+  Box,
 } from '@/ui';
 import { EditableText } from '@/ui';
 
@@ -85,7 +85,7 @@ function HelpPageContent() {
           
           <Stack spacing="lg" data-testid="faq-section">
             {quickAnswers.map((item, index) => (
-              <ContentBox key={index} variant="elevated" padding="lg" data-testid={`faq-item-${index}`}>
+              <Box key={index} variant="elevated" padding="lg" data-testid={`faq-item-${index}`}>
                 <Stack spacing="md">
                   <H2 size="md">
                     <EditableText field={`help.quickAnswers.${index}.question`} defaultValue={item.question}>
@@ -98,7 +98,7 @@ function HelpPageContent() {
                     </EditableText>
                   </Text>
                 </Stack>
-              </ContentBox>
+              </Box>
             ))}
           </Stack>
         </Container>

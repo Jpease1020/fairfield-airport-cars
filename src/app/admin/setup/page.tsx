@@ -9,7 +9,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  ContentBox,
+  Box,
   H1,
   Alert
 } from '@/design/components';
@@ -73,7 +73,7 @@ export default function SetupPage() {
   return (
     <Container maxWidth="md">
       <Stack spacing="xl" align="center">
-        <ContentBox variant="elevated" padding="xl">
+        <Box variant="elevated" padding="xl">
           <Stack spacing="lg" align="center">
             <H1>Admin Setup</H1>
             
@@ -112,7 +112,7 @@ export default function SetupPage() {
               </Stack>
             )}
           </Stack>
-        </ContentBox>
+        </Box>
       </Stack>
     </Container>
   );

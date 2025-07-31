@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { AdminPageWrapper, GridSection, ContentBox, Container, StatCard, Text } from '@/ui';
+import { AdminPageWrapper, GridSection, Box, Container, StatCard, Text } from '@/ui';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { useToast } from '@/ui';
@@ -233,7 +233,7 @@ function FeedbackPageContent() {
 
       {/* Feedback Table */}
       <GridSection variant="content" columns={1}>
-        <ContentBox>
+        <Box>
           <Stack spacing="md">
             <Stack spacing="sm">
               <Text variant="lead" size="md" weight="semibold">💬 Customer Reviews</Text>
@@ -250,12 +250,12 @@ function FeedbackPageContent() {
             pageSize={10}
           />
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       {/* Rating Distribution */}
       <GridSection variant="content" columns={1}>
-        <ContentBox>
+        <Box>
           <Stack spacing="md">
             <Stack spacing="sm">
               <Text variant="lead" size="md" weight="semibold">📊 Rating Distribution</Text>
@@ -282,7 +282,7 @@ function FeedbackPageContent() {
             })}
           </Stack>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </AdminPageWrapper>
   );

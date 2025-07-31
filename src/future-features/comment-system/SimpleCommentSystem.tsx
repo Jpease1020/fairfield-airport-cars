@@ -5,7 +5,7 @@ import { X, CheckCircle, Clock } from 'lucide-react';
 import { useAdmin } from '@/design/providers/AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
 import { Container, H4, Span } from '@/ui';
-import { Stack, ContentBox } from '@/ui';
+import { Stack, Box } from '@/ui';
 import { Button } from '@/ui';
 import { Textarea, Select } from '@/ui';
 import { EditableText } from '@/ui';
@@ -332,7 +332,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
         {existingComments.length > 0 && (
           <Stack spacing="md">
             {existingComments.map(comment => (
-              <ContentBox key={comment.id}>
+              <Box key={comment.id}>
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     {getStatusIcon(comment.status)}
@@ -366,7 +366,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                     ]}
                   />
                 </Container>
-              </ContentBox>
+              </Box>
             ))}
           </Stack>
         )}

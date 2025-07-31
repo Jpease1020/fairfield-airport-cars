@@ -9,7 +9,7 @@ import {
   useToast,
   GridSection,
   Container,
-  ContentBox,
+  Box,
   Text,
   H3,
   H4,
@@ -90,7 +90,7 @@ function ManualCostEntryPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           {/* Cost Entry Form */}
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack spacing="sm">
                 <Text variant="lead" size="md" weight="semibold">Add New Cost Entry</Text>
@@ -152,17 +152,17 @@ function ManualCostEntryPageContent() {
                 <Text size="sm" color="secondary">Additional details or context</Text>
               </Container>
             </Stack>
-          </ContentBox>
+          </Box>
 
           {/* Cost Categories Guide */}
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack spacing="sm">
                 <Text variant="lead" size="md" weight="semibold">Cost Categories</Text>
                 <Text variant="muted" size="sm">Common expense categories to help organize your costs</Text>
               </Stack>
               {costCategories.map((category, index) => (
-                <ContentBox key={index} variant="elevated" padding="lg">
+                <Box key={index} variant="elevated" padding="lg">
                   <Stack spacing="sm">
                     <Text variant="lead" size="md" weight="semibold">{category.title}</Text>
                     <Text variant="muted" size="sm">{category.description}</Text>
@@ -172,13 +172,13 @@ function ManualCostEntryPageContent() {
                       <Text size="sm" color="secondary">{category.description}</Text>
                     </Container>
                   </Stack>
-                </ContentBox>
+                </Box>
                 ))}
               </Stack>
-            </ContentBox>
+            </Box>
 
           {/* Quick Add Actions */}
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack spacing="sm">
                 <Text variant="lead" size="md" weight="semibold">Quick Actions</Text>
@@ -220,7 +220,7 @@ function ManualCostEntryPageContent() {
                 />
               </Container>
             </Stack>
-          </ContentBox>
+          </Box>
         </Container>
       </GridSection>
     </AdminPageWrapper>

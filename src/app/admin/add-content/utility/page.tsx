@@ -8,7 +8,7 @@ import {
   Button,
   Stack,
   StatusMessage,
-  ContentBox,
+  Box,
   Text,
 } from '@/ui';
 import { ToastProvider, useToast } from '@/ui';
@@ -218,7 +218,7 @@ function AddContentUtilityPage() {
     >
       <Container>
         <Stack spacing="lg">
-          <ContentBox>
+          <Box>
             <Container>
               <Stack spacing="md">
                 <Text size="lg" weight="bold">⚠️ Utility Tool</Text>
@@ -234,7 +234,7 @@ function AddContentUtilityPage() {
                 </Stack>
               </Stack>
             </Container>
-          </ContentBox>
+          </Box>
           
           {error && (
             <StatusMessage 

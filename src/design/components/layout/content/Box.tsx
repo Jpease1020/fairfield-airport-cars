@@ -2,15 +2,15 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, transitions } from '../../../system/tokens/tokens';
-import { Container } from '@/design/ui';
-import { LayoutSectionProps } from '../../../system/types';
+import { colors, spacing, borderRadius, transitions } from '../../../system/tokens/tokens';
+import { BoxProps } from './types';
 
-const StyledSection = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'padding', 'margin', 'marginTop', 'marginBottom'].includes(prop)
+const StyledBox = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'padding', 'rounded', 'margin', 'marginTop', 'marginBottom'].includes(prop)
 })<{
-  variant: 'default' | 'alternate' | 'brand' | 'muted' | 'hero' | 'cta';
-  padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  variant: 'default' | 'elevated' | 'outlined' | 'filled';
+  padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  rounded: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
   margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -32,10 +32,28 @@ const StyledSection = styled.section.withConfig({
         return `padding: ${spacing.lg};`;
       case 'xl':
         return `padding: ${spacing.xl};`;
-      case '2xl':
-        return `padding: ${spacing['2xl']};`;
       default:
-        return `padding: ${spacing.lg};`;
+        return `padding: ${spacing.md};`;
+    }
+  }}
+
+  /* Border radius styles */
+  ${({ rounded }) => {
+    switch (rounded) {
+      case 'none':
+        return `border-radius: 0;`;
+      case 'sm':
+        return `border-radius: ${borderRadius.sm};`;
+      case 'md':
+        return `border-radius: ${borderRadius.default};`;
+      case 'lg':
+        return `border-radius: ${borderRadius.lg};`;
+      case 'xl':
+        return `border-radius: ${borderRadius.xl};`;
+      case 'full':
+        return `border-radius: 50%;`;
+      default:
+        return `border-radius: ${borderRadius.default};`;
     }
   }}
 
@@ -108,29 +126,19 @@ const StyledSection = styled.section.withConfig({
   /* Variant styles */
   ${({ variant }) => {
     switch (variant) {
-      case 'alternate':
+      case 'elevated':
+        return `
+          background-color: ${colors.background.primary};
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        `;
+      case 'outlined':
+        return `
+          background-color: transparent;
+          border: 1px solid ${colors.border.default};
+        `;
+      case 'filled':
         return `
           background-color: ${colors.background.secondary};
-        `;
-      case 'brand':
-        return `
-          background-color: ${colors.primary[50]};
-          color: ${colors.primary[900]};
-        `;
-      case 'muted':
-        return `
-          background-color: ${colors.gray[50]};
-          color: ${colors.gray[700]};
-        `;
-      case 'hero':
-        return `
-          background-color: ${colors.primary[600]};
-          color: ${colors.text.white};
-        `;
-      case 'cta':
-        return `
-          background-color: ${colors.success[600]};
-          color: ${colors.text.white};
         `;
       default:
         return `
@@ -140,51 +148,31 @@ const StyledSection = styled.section.withConfig({
   }}
 `;
 
-export const LayoutSection: React.FC<LayoutSectionProps> = ({ 
-  variant = 'default', 
-  padding = 'lg', 
-  container = true, 
-  maxWidth = '2xl',
+export const Box: React.FC<BoxProps> = ({
+  children,
+  variant = 'default',
+  padding = 'md',
+  rounded = 'md',
   margin = 'none',
   marginTop = 'none',
   marginBottom = 'none',
-  fullWidth = false,
-  as: Component = 'section',
-  children,
-  id,
+  as: Component = 'div',
   ...rest
 }) => {
-  if (container && !fullWidth) {
-    return (
-      <StyledSection
-        variant={variant}
-        padding={padding}
-        margin={margin}
-        marginTop={marginTop}
-        marginBottom={marginBottom}
-        as={Component}
-        id={id}
-        {...rest}
-      >
-        <Container maxWidth={maxWidth}>
-          {children}
-        </Container>
-      </StyledSection>
-    );
-  }
-
   return (
-    <StyledSection
+    <StyledBox
       variant={variant}
       padding={padding}
+      rounded={rounded}
       margin={margin}
       marginTop={marginTop}
       marginBottom={marginBottom}
       as={Component}
-      id={id}
       {...rest}
     >
       {children}
-    </StyledSection>
+    </StyledBox>
   );
-}; 
+};
+
+export type { BoxProps }; 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Stack, ContentBox, Grid, Col, Text, H4, Button } from '@/design/ui';
+import { Container, Stack, Box, Grid, Col, Text, H4, Button } from '@/design/ui';
 import React from 'react';
 
 interface ActionData {
@@ -58,7 +58,7 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
     <Grid cols={columns as 1 | 2 | 3 | 4 | 5 | 6 | 12} gap="md">
       {actions.map((action) => (
         <Col key={action.id}>
-          <ContentBox variant="default" padding="md">
+          <Box variant="default" padding="md">
             <Stack direction="vertical" spacing="md" align="center">
               <Container>
                 <Text size={size === 'lg' ? 'xl' : size === 'sm' ? 'sm' : 'md'}>
@@ -99,7 +99,7 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
                 )}
               </Container>
             </Stack>
-          </ContentBox>
+          </Box>
         </Col>
       ))}
     </Grid>

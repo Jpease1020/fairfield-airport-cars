@@ -1,11 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/ui';
-import { ContentBox } from '@/ui';
-import { Input, Select } from '@/ui';
+import { Button, Input, Select, Span, Link, Box, Stack } from '@/ui';
 import { Overlay } from '@/design/components/ui-components/Overlay';
-import { Span, Link, Box, Stack } from '@/ui';
 
 interface AccessibilitySettings {
   highContrast: boolean;
@@ -127,21 +124,32 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
       {children}
 
       {/* Accessibility Toggle Button */}
-      <Box
-        variant="elevated"
-        padding="sm"
-        rounded="full"
-        margin="none"
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          zIndex: 1000,
+          width: 'auto',
+          display: 'inline-block'
+        }}
       >
-        <Button
-          onClick={() => setShowPanel(!showPanel)}
-          variant="outline"
-          size="sm"
-          aria-label="Toggle accessibility options (Alt + A)"
+        <Box
+          variant="elevated"
+          padding="sm"
+          rounded="full"
+          margin="none"
         >
-          ♿
-        </Button>
-      </Box>
+          <Button
+            onClick={() => setShowPanel(!showPanel)}
+            variant="outline"
+            size="sm"
+            aria-label="Toggle accessibility options (Alt + A)"
+          >
+            ♿
+          </Button>
+        </Box>
+      </div>
 
       {/* Accessibility Settings Panel */}
       <Overlay
@@ -152,7 +160,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
         closeOnBackdropClick={true}
         closeOnEscape={true}
       >
-        <ContentBox>
+        <Box>
             <Stack direction="vertical" spacing="md">
               {/* High Contrast */}
               <Stack direction="horizontal" align="center" spacing="sm">
@@ -198,7 +206,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
                 />
               </Stack>
             </Stack>
-        </ContentBox>
+        </Box>
       </Overlay>
 
       {/* Skip to main content link */}

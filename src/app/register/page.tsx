@@ -11,7 +11,7 @@ import {
   H1,
   H2,
   Text,
-  ContentBox,
+  Box,
   Form,
   Button,
   ToastProvider
@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import { spacing, fontSize, fontWeight } from '@/design/system/tokens/tokens';
 
 // Styled components for registration page
-const RegisterCard = styled(ContentBox)`
+const RegisterCard = styled(Box)`
   max-width: 500px;
   margin: 0 auto;
   transition: transform 0.2s ease-in-out;

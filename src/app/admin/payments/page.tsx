@@ -8,7 +8,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  ContentBox, 
+  Box, 
   DataTable,
   Alert,
   LoadingSpinner,
@@ -185,7 +185,7 @@ function PaymentsPageContent() {
 
         {/* Stats */}
         <Stack direction="horizontal" spacing="md" wrap="wrap">
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">💰</Text>
               <Stack spacing="xs">
@@ -193,9 +193,9 @@ function PaymentsPageContent() {
                 <Text size="xl" weight="bold">{stats.totalPayments}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
@@ -203,9 +203,9 @@ function PaymentsPageContent() {
                 <Text size="xl" weight="bold">{stats.completedPayments}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">📊</Text>
               <Stack spacing="xs">
@@ -213,9 +213,9 @@ function PaymentsPageContent() {
                 <Text size="xl" weight="bold">{formatCurrency(stats.totalAmount)}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🔄</Text>
               <Stack spacing="xs">
@@ -223,12 +223,12 @@ function PaymentsPageContent() {
                 <Text size="xl" weight="bold">{formatCurrency(stats.netRevenue)}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
         </Stack>
 
         {/* Payments Table */}
         {filteredPayments.length === 0 ? (
-          <ContentBox>
+          <Box>
             <Stack spacing="md" align="center">
               <Text size="xl">💳</Text>
               <Text size="lg" weight="medium">No Payments Found</Text>
@@ -236,7 +236,7 @@ function PaymentsPageContent() {
                 No payments match your current filter criteria.
               </Text>
             </Stack>
-          </ContentBox>
+          </Box>
         ) : (
           <DataTable
             data={tableData}

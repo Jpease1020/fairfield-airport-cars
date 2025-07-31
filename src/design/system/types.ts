@@ -28,7 +28,7 @@ export type ContainerVariant = 'default' | 'card' | 'section' | 'main' | 'conten
 // Container Max Widths
 export type MaxWidth = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 
-// ContentBox Variants
+// Box Variants
 export type CardVariant = 'default' | 'elevated' | 'outlined' | 'filled';
 
 // Section Variants
@@ -104,7 +104,7 @@ export interface StackProps extends BaseComponentProps {
   as?: HTMLElement;
 }
 
-export interface ContentBoxProps extends BaseComponentProps {
+export interface BoxProps extends BaseComponentProps {
   variant?: CardVariant;
   padding?: SpacingScale;
   hover?: boolean;

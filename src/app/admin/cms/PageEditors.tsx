@@ -4,7 +4,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  ContentBox,
+  Box,
   Input,
   Label,
   H1,
@@ -47,7 +47,7 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
 
   return (
     <Container>
-      <ContentBox variant="elevated" padding="lg">
+      <Box variant="elevated" padding="lg">
         <Stack spacing="md">
           <Stack direction="horizontal" align="center" justify="space-between">
             <Stack spacing="sm">
@@ -106,7 +106,7 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
             <Text size="sm" color="secondary">SEO description for search engines</Text>
           </Container>
         </Stack>
-      </ContentBox>
+      </Box>
     </Container>
   );
 };
@@ -150,7 +150,7 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
   return (
     <Container>
       {/* Hero Section */}
-      <ContentBox variant="elevated" padding="lg">
+      <Box variant="elevated" padding="lg">
         <Stack spacing="md">
           <Stack direction="horizontal" align="center" justify="space-between">
             <Stack spacing="sm">
@@ -207,10 +207,10 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
             <Text size="sm" color="secondary">Text for the main action button</Text>
           </Container>
         </Stack>
-      </ContentBox>ContentBox
+      </Box>Box
 
       {/* Features Section */}
-      <ContentBox variant="elevated" padding="lg">
+      <Box variant="elevated" padding="lg">
         <Stack spacing="md">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">
@@ -233,7 +233,7 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
           
           {/* Feature Items */}
           {pageData.features.items.map((item: any, idx: number) => (
-            <ContentBox key={idx} variant="elevated" padding="lg">
+            <Box key={idx} variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
@@ -285,10 +285,10 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
                   />
                 </Container>
               </Stack>
-            </ContentBox>
+            </Box>
           ))}
         </Stack>
-      </ContentBox>
+      </Box>
     </Container>
   );
 };
@@ -319,7 +319,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
 
   return (
     <Container>
-      <ContentBox variant="elevated" padding="lg">
+      <Box variant="elevated" padding="lg">
         <Stack spacing="md">
           <Stack direction="horizontal" align="center" justify="space-between">
             <Stack spacing="sm">
@@ -376,7 +376,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
             <Text size="sm" color="secondary">Detailed description of the booking process</Text>
           </Container>
         </Stack>
-      </ContentBox>
+      </Box>
     </Container>
   );
 };
@@ -429,7 +429,7 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
 
   return (
     <Container>
-      <ContentBox variant="elevated" padding="lg">
+      <Box variant="elevated" padding="lg">
         <Stack spacing="md">
           <Stack direction="horizontal" align="center" justify="space-between">
             <Stack spacing="sm">
@@ -466,7 +466,7 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
           
           {/* Help Sections */}
           {pageData.sections.map((section: any, idx: number) => (
-            <ContentBox key={idx} variant="elevated" padding="lg">
+            <Box key={idx} variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
@@ -504,10 +504,10 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
                   />
                 </Container>
               </Stack>
-            </ContentBox>
+            </Box>
           ))}
         </Stack>
-      </ContentBox>
+      </Box>
     </Container>
   );
 }; 

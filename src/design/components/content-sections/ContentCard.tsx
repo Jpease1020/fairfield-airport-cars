@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, ContentBox, Text, H4 } from '@/design/ui';
+import { Container, Stack, Box, Text, H4 } from '@/design/ui';
 
 interface ContentCardProps {
   title?: string;
@@ -23,9 +23,9 @@ interface ContentCardProps {
  * @example
  * ```tsx
  * <ContentCard 
- *   title="ContentBox Title"
- *   subtitle="ContentBox subtitle"
- *   content={<div>ContentBox content goes here</div>}
+ *   title="Box Title"
+ *   subtitle="Box subtitle"
+ *   content={<div>Box content goes here</div>}
  *   icon={<span>🚗</span>}
  *   variant="elevated"
  * />
@@ -76,9 +76,9 @@ export const ContentCard: React.FC<ContentCardProps> = ({
   );
 
   return showCard ? (
-    <ContentBox variant={variant} padding={padding}>
+    <Box variant={variant} padding={padding}>
       {cardContent}
-    </ContentBox>
+    </Box>
   ) : (
     <Container>
       {cardContent}

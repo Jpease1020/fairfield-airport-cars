@@ -1,5 +1,5 @@
 // Master Design System Components Export
-// Single import point for all components: import { Button, ContentBox, Grid } from '@/design/components'
+// Single import point for all components: import { Button, Box, Grid } from '@/design/components'
 
 // Layer 1: Grid System Components (Foundation)
 export * from './layout';
@@ -17,7 +17,7 @@ export * from './content-sections';
 export * from './page-sections';
 
 // Layer 5 & 6: Template Components (Page Templates & Patterns)
-export * from './templates';
+// Templates removed - using clean components directly
 
 // Icons
 export * from './icons';

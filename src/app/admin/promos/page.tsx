@@ -14,7 +14,7 @@ import {
   Container,
   Span
 } from '@/ui';
-import { ContentBox, StatCard, Card } from '@/ui';
+import { Box, StatCard, Card } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
 import { Select } from '@/ui';

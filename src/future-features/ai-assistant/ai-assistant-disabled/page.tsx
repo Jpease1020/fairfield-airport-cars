@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, ContentBox, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
+import { AdminPageWrapper, Box, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
 
@@ -85,7 +85,7 @@ const AIAssistantDisabledPage = () => {
       subtitle="The AI assistant feature is currently disabled for your account"
     >
       <GridSection variant="content" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack spacing="sm">
                 <Text variant="lead" size="md" weight="semibold">🤖 AI Assistant Status</Text>
@@ -106,11 +106,11 @@ const AIAssistantDisabledPage = () => {
             </Text>
           </Stack>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       <GridSection variant="actions" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack spacing="sm">
                 <Text variant="lead" size="md" weight="semibold">⚡ Available Actions</Text>
@@ -118,7 +118,7 @@ const AIAssistantDisabledPage = () => {
               </Stack>
           <ActionGrid actions={quickActions} columns={4} />
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </AdminPageWrapper>
   );

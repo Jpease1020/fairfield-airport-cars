@@ -5,7 +5,7 @@ import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-
 import { 
   AdminPageWrapper,
   GridSection, 
-  ContentBox, 
+  Box, 
   ActionGrid,
   DataTable,
   DataTableColumn,
@@ -242,7 +242,7 @@ function CostsPageContent() {
     >
       {/* Stats Overview */}
       <GridSection variant="stats" columns={4}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Total Monthly Cost</Text>
             <Text size="xl" weight="bold">{summary ? formatCurrency(summary.totalActualCost) : '$0'}</Text>
@@ -256,9 +256,9 @@ function CostsPageContent() {
               Total monthly cost tracking
             </EditableText>
           </Stack>
-        </ContentBox>
+        </Box>
         
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Projected Monthly</Text>
             <Text size="xl" weight="bold">{summary ? formatCurrency(summary.totalProjectedCost) : '$0'}</Text>
@@ -267,9 +267,9 @@ function CostsPageContent() {
               Projected monthly costs
             </EditableText>
           </Stack>
-        </ContentBox>
+        </Box>
         
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Over Budget Items</Text>
             <Text size="xl" weight="bold">{overBudgetItems.toString()}</Text>
@@ -278,9 +278,9 @@ function CostsPageContent() {
               Items over budget
             </EditableText>
           </Stack>
-        </ContentBox>
+        </Box>
         
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Cost Categories</Text>
             <Text size="xl" weight="bold">{costs.length.toString()}</Text>
@@ -289,12 +289,12 @@ function CostsPageContent() {
               Active cost categories
             </EditableText>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       {/* Cost Breakdown Table */}
       <GridSection variant="content" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Stack spacing="sm">
               <Text variant="lead" size="md" weight="semibold">💰 Cost Breakdown</Text>
@@ -311,12 +311,12 @@ function CostsPageContent() {
             pageSize={15}
           />
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Stack spacing="sm">
               <Text variant="lead" size="md" weight="semibold">⚡ Quick Actions</Text>
@@ -324,7 +324,7 @@ function CostsPageContent() {
             </Stack>
             <ActionGrid actions={quickActions} columns={4} />
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </AdminPageWrapper>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, ContentBox, Stack, Text, H4 } from '@/design/ui';
+import { Container, Box, Stack, Text, H4 } from '@/design/ui';
 
 interface ContentListItem {
   id: string | number;
@@ -84,9 +84,9 @@ export const ContentList: React.FC<ContentListProps> = ({
         return (
           <Container key={item.id}>
             {showCards ? (
-              <ContentBox variant={item.variant || 'default'} padding="md">
+              <Box variant={item.variant || 'default'} padding="md">
                 {content}
-              </ContentBox>
+              </Box>
             ) : (
               content
             )}

@@ -11,7 +11,7 @@ import {
   ToastProvider,
   Text
 } from '@/ui';
-import { ContentBox } from '@/ui';
+import { Box } from '@/ui';
 import { Stack } from '@/ui';
 import { Label } from '@/ui';
 import { Textarea } from '@/ui';
@@ -76,7 +76,7 @@ function FeedbackPageContent() {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
-                  <ContentBox variant="elevated" padding="lg">
+                  <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">✅ Feedback Submitted</Text>
             <Text>We appreciate you taking the time to share your experience</Text>
@@ -85,7 +85,7 @@ function FeedbackPageContent() {
             </EditableText>
             <ActionButtonGroup buttons={homeActions} />
           </Stack>
-        </ContentBox>
+        </Box>
         </GridSection>
       </Layout>
     );
@@ -94,7 +94,7 @@ function FeedbackPageContent() {
   return (
     <Layout>
       <GridSection variant="content" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">⭐ Rate Your Experience</Text>
             <Text>How was your ride with Fairfield Airport Cars?</Text>
@@ -192,7 +192,7 @@ function FeedbackPageContent() {
             </Text>
           </Form>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </Layout>
   );

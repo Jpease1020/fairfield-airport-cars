@@ -9,7 +9,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  ContentBox, 
+  Box, 
   Badge,
   DataTable,
   Alert,
@@ -227,7 +227,7 @@ function DriversPageContent() {
 
         {/* Stats */}
         <Stack direction="horizontal" spacing="md" wrap="wrap">
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">👨‍💼</Text>
               <Stack spacing="xs">
@@ -235,9 +235,9 @@ function DriversPageContent() {
                 <Text size="xl" weight="bold">{stats.totalDrivers}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
@@ -245,9 +245,9 @@ function DriversPageContent() {
                 <Text size="xl" weight="bold">{stats.availableDrivers}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🚗</Text>
               <Stack spacing="xs">
@@ -255,9 +255,9 @@ function DriversPageContent() {
                 <Text size="xl" weight="bold">{stats.busyDrivers}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">⏸️</Text>
               <Stack spacing="xs">
@@ -265,12 +265,12 @@ function DriversPageContent() {
                 <Text size="xl" weight="bold">{stats.offlineDrivers}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
         </Stack>
 
         {/* Drivers Table */}
         {filteredDrivers.length === 0 ? (
-          <ContentBox>
+          <Box>
             <Stack spacing="md" align="center">
               <Text size="xl">👨‍💼</Text>
               <Text size="lg" weight="medium">No Drivers Found</Text>
@@ -278,7 +278,7 @@ function DriversPageContent() {
                 No drivers match your current filter criteria.
               </Text>
             </Stack>
-          </ContentBox>
+          </Box>
         ) : (
           <DataTable
             data={tableData}

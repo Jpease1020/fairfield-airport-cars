@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { ContentBox } from '../layout/containers/ContentBox';
+import { Box } from '../layout/content/Box';
 import { Text } from './text';
-import { Stack } from '../layout/grid/Stack';
+import { Stack } from '../layout/content/Stack';
 import { Container } from '../layout/containers/Container';
 import { EditableText } from '@/design/ui';
 
@@ -71,7 +71,7 @@ export const HelpCard: React.FC<HelpCardProps> = ({
   };
 
   return (
-    <ContentBox id={id} {...rest}>
+    <Box id={id} {...rest}>
       <Stack direction="horizontal" spacing="md" align="flex-start">
         {/* Icon Container */}
         <Container
@@ -114,6 +114,6 @@ export const HelpCard: React.FC<HelpCardProps> = ({
           {children}
         </Container>
       </Stack>
-    </ContentBox>
+    </Box>
   );
 }; 

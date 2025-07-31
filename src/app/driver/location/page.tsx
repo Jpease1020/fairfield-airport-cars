@@ -11,7 +11,7 @@ import {
   Container,
   Text
 } from '@/ui';
-import { ContentBox } from '@/ui';
+import { Box } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
 import { Layout } from '@/ui';
@@ -64,7 +64,7 @@ function DriverLocationContent() {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">Loading...</Text>
               <Text>Initializing location services</Text>
@@ -72,7 +72,7 @@ function DriverLocationContent() {
                 <LoadingSpinner text="Loading..." />
               </Container>
             </Stack>
-          </ContentBox>
+          </Box>
         </GridSection>
       </Layout>
     );
@@ -82,7 +82,7 @@ function DriverLocationContent() {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">❌ Unauthorized</Text>
               <Text>You are not authorized to access this page</Text>
@@ -94,7 +94,7 @@ function DriverLocationContent() {
                 </Text>
               </Container>
             </Stack>
-          </ContentBox>
+          </Box>
         </GridSection>
       </Layout>
     );
@@ -103,7 +103,7 @@ function DriverLocationContent() {
   return (
     <Layout>
       <GridSection variant="content" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">📍 Location Status</Text>
             <Text>Your current location sharing status</Text>
@@ -129,7 +129,7 @@ function DriverLocationContent() {
               )}
             </Container>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </Layout>
   );
@@ -140,7 +140,7 @@ const DriverLocationPage = dynamic(() => Promise.resolve(() => {
     <Suspense fallback={
       <Layout>
         <GridSection variant="content" columns={1}>
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">Loading...</Text>
               <Text>Initializing location services</Text>
@@ -148,7 +148,7 @@ const DriverLocationPage = dynamic(() => Promise.resolve(() => {
                 <LoadingSpinner text="Loading..." />
               </Container>
             </Stack>
-          </ContentBox>
+          </Box>
         </GridSection>
       </Layout>
     }>

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Grid, Col, Container, ContentBox, Stack, Text, H3, H4 } from '@/design/ui';
+import { Grid, Col, Container, Box, Stack, Text, H3, H4 } from '@/design/ui';
 
 interface ContentItem {
   id: string | number;
@@ -79,9 +79,9 @@ export const ContentGrid: React.FC<ContentGridProps> = ({
         return (
           <Col key={item.id}>
             {showCards ? (
-              <ContentBox variant={item.variant || 'default'} padding="lg">
+              <Box variant={item.variant || 'default'} padding="lg">
                 {content}
-              </ContentBox>
+              </Box>
             ) : (
               <Container>
                 {content}

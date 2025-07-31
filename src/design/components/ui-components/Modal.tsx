@@ -4,7 +4,7 @@ import React, { forwardRef } from 'react';
 import { colors, spacing, fontSize } from '../../system/tokens/tokens';
 import { Button, H2 } from '@/ui';
 import { Overlay } from './Overlay';
-import { Container, Stack, ContentBox } from '@/ui';
+import { Container, Stack, Box } from '@/ui';
 
 export interface ModalProps {
   children: React.ReactNode;
@@ -65,7 +65,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(({
       aria-describedby={ariaDescribedBy}
       {...rest}
     >
-      <ContentBox
+      <Box
         variant="elevated"
         padding="none"
       >
@@ -116,7 +116,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(({
             </Container>
           )}
         </Stack>
-      </ContentBox>
+      </Box>
     </Overlay>
   );
 });
