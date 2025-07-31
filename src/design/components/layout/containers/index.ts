@@ -3,5 +3,5 @@
 
 export { Container, Spacer, PositionedContainer } from './Container';
 export { Section } from './Section';
-export { Card } from './Card';
+export { ContentBox } from './ContentBox';
 export { List, ListItem } from './List'; 

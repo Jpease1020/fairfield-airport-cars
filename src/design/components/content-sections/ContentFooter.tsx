@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Container } from '../layout/containers/Container';
-import { Stack } from '../layout/grid/Stack';
-import { Text, H4 } from '../ui-components/Text';
+import { Container, Stack, Text, H4 } from '@/design/ui';
+
 
 interface ContentFooterProps {
   title?: string;

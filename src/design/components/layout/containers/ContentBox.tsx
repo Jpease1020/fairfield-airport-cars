@@ -1,11 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Container } from './Container';
-import { Stack } from '../grid/Stack';
-import { AlignItems, JustifyContent } from '../grid/types';
+import { Container, Stack, AlignItems, JustifyContent } from '@/design/ui';
 
-interface CardProps {
+interface ContentBoxProps {
   children: React.ReactNode;
   variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -17,17 +15,20 @@ interface CardProps {
 }
 
 /**
- * Card - A foundational card layout component
+ * ContentBox - A structural component for organizing content with built-in Stack layout
+ * 
+ * This component combines a Container with a Stack to provide a consistent way
+ * to organize content with proper spacing and alignment.
  * 
  * @example
  * ```tsx
- * <Card variant="elevated" padding="lg" spacing="md">
- *   <Text variant="heading">Card Title</Text>
- *   <Text>Card content goes here</Text>
- * </Card>
+ * <ContentBox variant="elevated" padding="lg" spacing="md">
+ *   <Text variant="lead">Content Title</Text>
+ *   <Text>Content goes here</Text>
+ * </ContentBox>
  * ```
  */
-export const Card: React.FC<CardProps> = ({ 
+export const ContentBox: React.FC<ContentBoxProps> = ({ 
   children, 
   variant = 'default',
   padding = 'md',

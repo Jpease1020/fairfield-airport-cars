@@ -1,5 +1,5 @@
 // Master Design System Components Export
-// Single import point for all components: import { Button, Card, Grid } from '@/design/components'
+// Single import point for all components: import { Button, ContentBox, Grid } from '@/design/components'
 
 // Layer 1: Grid System Components (Foundation)
 export * from './layout';
