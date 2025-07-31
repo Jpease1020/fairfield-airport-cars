@@ -4,7 +4,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
 import withAuth from '../withAuth';
 import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
-import { Badge, Container, Stack, LoadingSpinner, Text, Button } from '@/ui';
+import { 
+  Container, 
+  Stack, 
+  Text, 
+  Button, 
+  Card, 
+  Badge,
+  DataTable,
+  Alert,
+  LoadingSpinner,
+  H1
+} from '@/design/components';
 
 function AdminBookingsPageContent() {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -103,34 +114,26 @@ function AdminBookingsPageContent() {
     }
   };
 
-  const renderStatus = (status: string) => {
-    const getStatusIcon = (status: string) => {
-      switch (status) {
-        case 'pending': return '⏳';
-        case 'confirmed': return '✅';
-        case 'in-progress': return '🚗';
-        case 'completed': return '🎉';
-        case 'cancelled': return '❌';
-        default: return '❓';
-      }
-    };
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case 'pending': return 'warning';
+      case 'confirmed': return 'success';
+      case 'in-progress': return 'info';
+      case 'completed': return 'success';
+      case 'cancelled': return 'error';
+      default: return 'default';
+    }
+  };
 
-    const getStatusColor = (status: string) => {
-      switch (status) {
-        case 'pending': return 'text-yellow-600 bg-yellow-100';
-        case 'confirmed': return 'text-green-600 bg-green-100';
-        case 'in-progress': return 'text-blue-600 bg-blue-100';
-        case 'completed': return 'text-purple-600 bg-purple-100';
-        case 'cancelled': return 'text-red-600 bg-red-100';
-        default: return 'text-gray-600 bg-gray-100';
-      }
-    };
-
-    return (
-      <Badge variant={getStatusColor(status) as any}>
-        {getStatusIcon(status)} {status}
-      </Badge>
-    );
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending': return '⏳';
+      case 'confirmed': return '✅';
+      case 'in-progress': return '🚗';
+      case 'completed': return '🎉';
+      case 'cancelled': return '❌';
+      default: return '❓';
+    }
   };
 
   const formatCurrency = (amount: number) => {
@@ -167,9 +170,9 @@ function AdminBookingsPageContent() {
   if (loading) {
     return (
       <Container>
-        <Stack align="center" spacing="lg">
+        <Stack spacing="lg" align="center">
           <LoadingSpinner />
-          <Text>Loading bookings from database...</Text>
+          <Text variant="body">Loading bookings from database...</Text>
         </Stack>
       </Container>
     );
@@ -178,10 +181,10 @@ function AdminBookingsPageContent() {
   if (error) {
     return (
       <Container>
-        <Stack align="center" spacing="lg">
-          <Text size="xl" color="error">❌</Text>
-          <Text size="xl" weight="semibold">Error Loading Bookings</Text>
-          <Text color="secondary">{error}</Text>
+        <Stack spacing="lg" align="center">
+          <Alert variant="error" title="Error Loading Bookings">
+            {error}
+          </Alert>
           <Button onClick={fetchBookings} variant="primary">
             Try Again
           </Button>
@@ -190,201 +193,180 @@ function AdminBookingsPageContent() {
     );
   }
 
+  const stats = {
+    totalBookings: bookings.length,
+    confirmedBookings: bookings.filter(b => b.status === 'confirmed').length,
+    inProgressBookings: bookings.filter(b => b.status === 'in-progress').length,
+    totalRevenue: bookings.reduce((sum, b) => sum + b.fare, 0)
+  };
+
+  const filteredBookings = selectedStatus === 'all' 
+    ? bookings 
+    : bookings.filter(b => b.status === selectedStatus);
+
+  const tableData = filteredBookings.map(booking => ({
+    id: booking.id,
+    customer: (
+      <Stack spacing="xs">
+        <Text variant="body" weight="medium">{booking.name}</Text>
+        <Text variant="small" color="secondary">{booking.email}</Text>
+        <Text variant="small" color="secondary">{booking.phone}</Text>
+      </Stack>
+    ),
+    route: (
+      <Stack spacing="xs">
+        <Text variant="small">
+          <Text variant="small" weight="medium">From:</Text> {booking.pickupLocation}
+        </Text>
+        <Text variant="small">
+          <Text variant="small" weight="medium">To:</Text> {booking.dropoffLocation}
+        </Text>
+        <Text variant="small" color="secondary">
+          {booking.passengers} passenger{booking.passengers !== 1 ? 's' : ''}
+        </Text>
+      </Stack>
+    ),
+    dateTime: formatDate(booking.pickupDateTime),
+    status: (
+      <Badge variant={getStatusVariant(booking.status)}>
+        {getStatusIcon(booking.status)} {booking.status}
+      </Badge>
+    ),
+    fare: (
+      <Stack spacing="xs">
+        <Text variant="body" weight="medium">
+          {formatCurrency(booking.fare)}
+        </Text>
+        {booking.balanceDue > 0 && (
+          <Text variant="small" color="error">
+            Balance: {formatCurrency(booking.balanceDue)}
+          </Text>
+        )}
+      </Stack>
+    ),
+    actions: (
+      <Stack direction="horizontal" spacing="sm">
+        <Button 
+          size="sm" 
+          variant="secondary" 
+          onClick={() => handleStatusUpdate(booking, 'confirmed')}
+          disabled={booking.status === 'confirmed'}
+        >
+          Confirm
+        </Button>
+        <Button 
+          size="sm" 
+          variant="secondary" 
+          onClick={() => handleDriverAssignment(booking)}
+          disabled={!!booking.driverId}
+        >
+          Assign Driver
+        </Button>
+        <Button 
+          size="sm" 
+          variant="danger" 
+          onClick={() => handleDeleteBooking(booking)}
+        >
+          Delete
+        </Button>
+      </Stack>
+    )
+  }));
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Booking Management</h1>
-          <p className="text-gray-600">Manage all customer bookings and track their status</p>
-        </div>
+    <Container>
+      <Stack spacing="xl">
+        <Stack spacing="md">
+          <H1>Booking Management</H1>
+          <Text variant="body" color="secondary">
+            Manage all customer bookings and track their status
+          </Text>
+        </Stack>
 
         {/* Status Filter */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Filter by Status
-          </label>
+        <Stack spacing="sm">
+          <Text variant="small" weight="medium">Filter by Status</Text>
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="block w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="all">All Bookings</option>
             <option value="pending">Pending</option>
             <option value="confirmed">Confirmed</option>
-            <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </select>
-        </div>
+        </Stack>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <span className="text-2xl">📋</span>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-                <p className="text-2xl font-semibold text-gray-900">{bookings.length}</p>
-              </div>
-            </div>
-          </div>
+        <Stack direction="horizontal" spacing="md" wrap="wrap">
+          <Card>
+            <Stack direction="horizontal" spacing="md" align="center">
+              <Text size="xl">📋</Text>
+              <Stack spacing="xs">
+                <Text variant="small" color="secondary">Total Bookings</Text>
+                <Text size="xl" weight="bold">{stats.totalBookings}</Text>
+              </Stack>
+            </Stack>
+          </Card>
           
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <span className="text-2xl">✅</span>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Confirmed</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {bookings.filter(b => b.status === 'confirmed').length}
-                </p>
-              </div>
-            </div>
-          </div>
+          <Card>
+            <Stack direction="horizontal" spacing="md" align="center">
+              <Text size="xl">✅</Text>
+              <Stack spacing="xs">
+                <Text variant="small" color="secondary">Confirmed</Text>
+                <Text size="xl" weight="bold">{stats.confirmedBookings}</Text>
+              </Stack>
+            </Stack>
+          </Card>
           
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <span className="text-2xl">🚗</span>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">In Progress</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {bookings.filter(b => b.status === 'in-progress').length}
-                </p>
-              </div>
-            </div>
-          </div>
+          <Card>
+            <Stack direction="horizontal" spacing="md" align="center">
+              <Text size="xl">🚗</Text>
+              <Stack spacing="xs">
+                <Text variant="small" color="secondary">In Progress</Text>
+                <Text size="xl" weight="bold">{stats.inProgressBookings}</Text>
+              </Stack>
+            </Stack>
+          </Card>
           
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <span className="text-2xl">💰</span>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {formatCurrency(bookings.reduce((sum, b) => sum + b.fare, 0))}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+          <Card>
+            <Stack direction="horizontal" spacing="md" align="center">
+              <Text size="xl">💰</Text>
+              <Stack spacing="xs">
+                <Text variant="small" color="secondary">Total Revenue</Text>
+                <Text size="xl" weight="bold">{formatCurrency(stats.totalRevenue)}</Text>
+              </Stack>
+            </Stack>
+          </Card>
+        </Stack>
 
-        {/* Bookings List */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900">All Bookings</h2>
-          </div>
-          
-          {bookings.length === 0 ? (
-            <div className="p-8 text-center">
-              <div className="text-6xl mb-4">📭</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Bookings Found</h3>
-              <p className="text-gray-600">No bookings match your current filter criteria.</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Customer
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Route
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date & Time
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Fare
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {bookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{booking.name}</div>
-                          <div className="text-sm text-gray-500">{booking.email}</div>
-                          <div className="text-sm text-gray-500">{booking.phone}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm text-gray-900">
-                            <span className="font-medium">From:</span> {booking.pickupLocation}
-                          </div>
-                          <div className="text-sm text-gray-900">
-                            <span className="font-medium">To:</span> {booking.dropoffLocation}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {booking.passengers} passenger{booking.passengers !== 1 ? 's' : ''}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {formatDate(booking.pickupDateTime)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {renderStatus(booking.status)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {formatCurrency(booking.fare)}
-                        </div>
-                        {booking.balanceDue > 0 && (
-                          <div className="text-xs text-red-600">
-                            Balance: {formatCurrency(booking.balanceDue)}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleStatusUpdate(booking, 'confirmed')}
-                            disabled={booking.status === 'confirmed'}
-                            className="text-blue-600 hover:text-blue-900 disabled:text-gray-400"
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            onClick={() => handleDriverAssignment(booking)}
-                            disabled={!!booking.driverId}
-                            className="text-green-600 hover:text-green-900 disabled:text-gray-400"
-                          >
-                            Assign Driver
-                          </button>
-                          <button
-                            onClick={() => handleDeleteBooking(booking)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+        {/* Bookings Table */}
+        {filteredBookings.length === 0 ? (
+          <Card>
+            <Stack spacing="md" align="center">
+                             <Text size="xl">📭</Text>
+              <Text size="lg" weight="medium">No Bookings Found</Text>
+              <Text variant="body" color="secondary">
+                No bookings match your current filter criteria.
+              </Text>
+            </Stack>
+          </Card>
+        ) : (
+          <DataTable
+            data={tableData}
+            columns={[
+              { key: 'customer', label: 'Customer' },
+              { key: 'route', label: 'Route' },
+              { key: 'dateTime', label: 'Date & Time' },
+              { key: 'status', label: 'Status' },
+              { key: 'fare', label: 'Fare' },
+              { key: 'actions', label: 'Actions' }
+            ]}
+          />
+        )}
+      </Stack>
+    </Container>
   );
 }
 

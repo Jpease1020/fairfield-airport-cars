@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '../../design-system/tokens';
+import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
 import { Card } from '@/ui';
 import { Text } from './Text';
 import { Stack } from '../grid';

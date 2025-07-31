@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '../../design-system/tokens';
+import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
 
 // Styled switch root with enhanced accessibility
 const StyledSwitch = styled.button.withConfig({
@@ -54,8 +54,7 @@ const StyledSwitch = styled.button.withConfig({
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: ${borderRadius.pill};
-    background-color: ${({ checked, disabled, variant }) => {
+    border-radius: ${({ checked, disabled, variant }) => {
       if (disabled) return colors.gray[300];
       if (!checked) return colors.gray[300];
       
@@ -81,10 +80,7 @@ const StyledSwitch = styled.button.withConfig({
     left: 2px;
     border-radius: 50%;
     background-color: ${colors.background.primary};
-    box-shadow: ${shadows.sm};
-    transition: ${transitions.default};
-    
-    ${({ size, checked }) => {
+    box-shadow: ${({ size, checked }) => {
       const thumbSize = size === 'sm' ? '0.75rem' : size === 'lg' ? '1.5rem' : '1rem';
       const translateX = size === 'sm' ? '0.75rem' : size === 'lg' ? '1.5rem' : '1rem';
       
@@ -93,7 +89,8 @@ const StyledSwitch = styled.button.withConfig({
         height: ${thumbSize};
         transform: translateX(${checked ? translateX : '0'});
       `;
-    }}
+    }};
+    transition: ${transitions.default};
   }
 
   /* Focus styles */

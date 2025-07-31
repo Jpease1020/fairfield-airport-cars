@@ -20,7 +20,7 @@ import { Input } from '@/ui';
 import { Label } from '@/ui';
 import { EditableText } from '@/ui';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/design/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '@/design/system/tokens/tokens';
 
 // Styled components for registration page
 const RegisterCard = styled(Card)`
@@ -285,7 +285,7 @@ export default function CustomerRegisterPage() {
 
                     {error && (
                       <Stack gap="sm" align="center">
-                        <Text variant="muted" align="center" style={{ color: 'var(--error-color, #ef4444)' }}>
+                        <Text variant="muted" align="center" color="error">
                           <EditableText field="customer.register.errorIcon" defaultValue="⚠️">
                             ⚠️
                           </EditableText>

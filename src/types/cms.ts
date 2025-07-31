@@ -1,3 +1,5 @@
+import { colors } from '@/design/system/tokens/tokens';
+
 // CMS Types for Fairfield Airport Cars Content Management System
 
 // Page Content Types
@@ -550,8 +552,8 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
     },
     social: {},
     branding: {
-      primaryColor: "#1f2937",
-      secondaryColor: "#3b82f6"
+      primaryColor: colors.primary[600],
+      secondaryColor: colors.secondary[600]
     }
   },
   pricing: {

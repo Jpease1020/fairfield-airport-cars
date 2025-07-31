@@ -1,12 +1,7 @@
-// Form Components - Form-related components
-// Importing from old locations to preserve functionality
+// Form Components
+// Form-related UI components
 
-// Core Form Components
-export { Form, FormField } from './Form';
-export { Input } from './Form';
-export { Select } from './Form';
-export { Label } from './Label';
-
-// Form-related Components
-export { ProgressIndicator } from './ProgressIndicator';
-export { Overlay } from './Overlay'; 
+export * from './Form';
+export * from './Label';
+export * from './Overlay';
+export * from './ProgressIndicator'; 

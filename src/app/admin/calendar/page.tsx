@@ -1,165 +1,82 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import { listBookings } from '../../../lib/services/booking-service';
+import React, { useState } from 'react';
+import { NextPage } from 'next';
+import withAuth from '../withAuth';
 import { 
-  AdminPageWrapper, 
-  GridSection,
-  Container,
-  Span,
-  Stack,
-} from '@/ui';
-import { EditableText } from '@/ui';
-import { EditableHeading } from '@/ui';
-import { Card } from '@/ui';
+  Container, 
+  Stack, 
+  Text, 
+  Card,
+  H1
+} from '@/design/components';
+import { colors } from '@/design/system/tokens/tokens';
+import styled from 'styled-components';
 
-const CalendarPage = () => {
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const CalendarHeader = styled.div`
+  background-color: ${colors.primary[600]};
+  color: white;
+  padding: 1rem;
+  border-radius: 8px 8px 0 0;
+`;
 
-  const fetchCalendarData = useCallback(async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      console.log('📅 Loading calendar data...');
-      
-      const bookings = await listBookings();
-      const calendarEvents = bookings.map((booking) => ({
-        id: booking.id,
-        title: `${booking.name} – $${booking.fare}`,
-        start: booking.pickupDateTime,
-        url: `/booking/${booking.id}`,
-        backgroundColor: getEventColor(booking.status),
-        borderColor: getEventColor(booking.status),
-        textColor: '#ffffff'
-      }));
-      
-      console.log('✅ Calendar events loaded:', calendarEvents.length);
-      setEvents(calendarEvents);
-    } catch (err) {
-      console.error('❌ Failed to load calendar data:', err);
-      setError('Failed to load calendar data. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+const DayHeader = styled.div`
+  background-color: ${colors.primary[600]};
+  color: white;
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+`;
 
-  useEffect(() => {
-    fetchCalendarData();
-  }, [fetchCalendarData]);
+const CalendarGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+`;
 
-  const getEventColor = (status: string) => {
-    switch (status) {
-      case 'cancelled': return '#dc2626';
-      case 'confirmed': return '#059669';
-      case 'completed': return '#0d9488';
-      case 'pending': return '#d97706';
-      default: return '#6b7280';
-    }
-  };
+const CalendarDay = styled.div`
+  padding: 0.5rem;
+  text-align: center;
+`;
+
+function CalendarPageContent() {
+  const [selectedDate] = useState<Date>(new Date());
+  const [events] = useState<any[]>([]);
 
   return (
-    <AdminPageWrapper
-      title="Ride Calendar"
-      subtitle="View all bookings in calendar format"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading calendar data..."
-      errorTitle="Calendar Load Error"
-    >
-      <GridSection variant="content" columns={1}>
-        <Card
-          title="📅 Monthly Booking Calendar"
-          description={`Showing ${events.length} bookings with color-coded status`}
-        >
-          {!loading && !error && (
-            <Container>
-              {typeof window !== 'undefined' && (
-                <FullCalendar
-                  plugins={[dayGridPlugin]}
-                  initialView="dayGridMonth"
-                  events={events}
-                  height="auto"
-                  headerToolbar={{
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,dayGridWeek'
-                  }}
-                  eventClick={(info: any) => {
-                    if (info.event.url) {
-                      window.open(info.event.url, '_blank');
-                      info.jsEvent.preventDefault();
-                    }
-                  }}
-                  eventDisplay="block"
-                  dayMaxEvents={3}
-                  moreLinkClick="popover"
-                />
-              )}
-            </Container>
-          )}
-
-          {!loading && !error && events.length === 0 && (
-            <Container>
-              <Span>📅</Span>
-              <EditableHeading field="admin.calendar.noBookings.title" defaultValue="No bookings found">
-                No bookings found
-              </EditableHeading>
-              <EditableText field="admin.calendar.noBookings" defaultValue="No bookings scheduled for this month.">
-                No bookings scheduled for this month.
-              </EditableText>
-            </Container>
-          )}
+    <Container>
+      <Stack spacing="xl">
+        <H1>Calendar</H1>
+        
+        <Card>
+          <Stack spacing="lg">
+            <CalendarHeader>
+              <Text size="lg" weight="bold">Booking Calendar</Text>
+            </CalendarHeader>
+            
+            <CalendarGrid>
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <DayHeader key={day}>
+                  {day}
+                </DayHeader>
+              ))}
+              
+              {/* Calendar days would go here */}
+              {Array.from({ length: 35 }, (_, i) => (
+                <CalendarDay key={i}>
+                  {i + 1}
+                </CalendarDay>
+              ))}
+            </CalendarGrid>
+          </Stack>
         </Card>
-      </GridSection>
-
-      {/* Calendar Legend */}
-      <GridSection variant="content" columns={1}>
-        <Card
-          title="📊 Status Legend"
-          description="Color coding for booking statuses"
-        >
-          <Container>
-            <Stack direction="horizontal" spacing="sm" align="center">
-              <Span>🟡</Span>
-              <Span>
-                <EditableText field="admin.calendar.legend.pending" defaultValue="Pending">
-                  Pending
-                </EditableText>
-              </Span>
-            </Stack>
-            <Stack direction="horizontal" spacing="sm" align="center">
-              <Span>🟢</Span>
-              <Span>
-                <EditableText field="admin.calendar.legend.confirmed" defaultValue="Confirmed">
-                  Confirmed
-                </EditableText>
-              </Span>
-            </Stack>
-            <Stack direction="horizontal" spacing="sm" align="center">
-              <Span>🔵</Span>
-              <Span>
-                <EditableText field="admin.calendar.legend.completed" defaultValue="Completed">
-                  Completed
-                </EditableText>
-              </Span>
-            </Stack>
-            <Stack direction="horizontal" spacing="sm" align="center">
-              <Span>🔴</Span>
-              <Span>
-                <EditableText field="admin.calendar.legend.cancelled" defaultValue="Cancelled">
-                  Cancelled
-                </EditableText>
-              </Span>
-            </Stack>
-          </Container>
-        </Card>
-      </GridSection>
-    </AdminPageWrapper>
+      </Stack>
+    </Container>
   );
+}
+
+const CalendarPage: NextPage = () => {
+  return <CalendarPageContent />;
 };
 
-export default CalendarPage;
+export default withAuth(CalendarPage);

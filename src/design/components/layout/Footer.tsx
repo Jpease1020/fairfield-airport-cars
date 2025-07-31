@@ -2,11 +2,10 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, transitions } from '../../design-system/tokens';
-import { Text } from '../ui-components/Text';
-import { Container } from '../grid/Container';
-
-import { Stack } from '../grid/Container';
+import { colors, spacing, borderRadius, transitions } from '../../system/tokens/tokens';
+import { Text, H1, H2, H3, H4, H5, H6, Paragraph, Span, Link } from '@/ui';
+import { Container } from './containers/Container';
+import { Stack } from './containers/Container';
 
 // Styled footer component
 const StyledFooter = styled.footer.withConfig({

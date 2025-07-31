@@ -1,15 +1,12 @@
-// Grid Components - Layout system components
-// Importing from old locations to preserve functionality
+// Grid System Components
+// Flexbox-based grid system for responsive layouts
 
 // Core Grid Components
-export { Grid, GridSection } from './Grid';
+export * from './Row';
+export * from './Col';
+export * from './Grid';
+export * from './Box';
+export * from './types';
 
-// Container Components
-export { Container, Box, Section, Stack, MarginEnforcer } from './Container';
-export { Layout, Spacer } from './Container';
-
-// Grid Item Components
-export { GridItem } from './Grid';
-
-// Layout Components
-export { IconContainer, ContentContainer, HeaderContainer, ActionsContainer, EditContainer } from './Components'; 
+// Container Components (from layout/containers)
+export * from '../layout/containers/Container'; // Stack, Layout, Spacer, Section, LayoutCard, MarginEnforcer, PositionedContainer, Container 

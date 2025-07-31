@@ -1,3 +1,5 @@
+import { colors, spacing, fontSize, fontWeight, fontFamily, transitions } from '@/design/system/tokens/tokens';
+
 // Comprehensive content mapping for all hardcoded text in the application
 // This ensures all existing content is preserved and can be made editable
 
@@ -287,8 +289,8 @@ export const CONTENT_MAPPING = {
     },
     social: {},
     branding: {
-      primaryColor: "#1f2937",
-      secondaryColor: "#3b82f6"
+      primaryColor: colors.primary[600],
+      secondaryColor: colors.secondary[600]
     }
   },
 

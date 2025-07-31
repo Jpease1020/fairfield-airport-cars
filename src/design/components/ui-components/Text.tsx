@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, fontWeight, fontFamily, transitions } from '../../design-system/tokens';
+import { colors, spacing, fontSize, fontWeight, fontFamily, transitions } from '../../system/tokens/tokens';
 
 // Styled heading component
 const StyledHeading = styled.h1.withConfig({

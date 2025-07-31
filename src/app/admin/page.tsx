@@ -1,65 +1,22 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { AdminPageWrapper } from '@/ui';
+import { NextPage } from 'next';
+import withAuth from './withAuth';
 import { 
-  Section,
-  Container,
-  Stack,
-  H1,
-  H2,
-  Text,
-  Card,
-  Button,
+  Container, 
+  Stack, 
+  Text, 
+  Button, 
+  Card, 
   Grid,
   GridItem,
-  ToastProvider
-} from '@/ui';
-
-import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/design/design-system/tokens';
+  LoadingSpinner,
+  Alert,
+  H1,
+  H2
+} from '@/design/components';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
-
-// Styled components for admin dashboard
-const StatCard = styled(Card)`
-  text-align: center;
-  transition: transform 0.2s ease-in-out;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const StatValue = styled.div`
-  font-size: ${fontSize['4xl']};
-  font-weight: ${fontWeight.bold};
-  color: var(--primary-color);
-  margin-bottom: ${spacing.sm};
-`;
-
-const StatIcon = styled.div`
-  font-size: ${fontSize['3xl']};
-  margin-bottom: ${spacing.md};
-`;
-
-const QuickActionCard = styled(Card)`
-  transition: all 0.2s ease-in-out;
-  cursor: pointer;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-`;
-
-const ActivityItem = styled.div`
-  padding: ${spacing.md};
-  border-bottom: 1px solid var(--border-color);
-  
-  &:last-child {
-    border-bottom: none;
-  }
-`;
 
 function AdminDashboardContent() {
   const [stats, setStats] = useState({
@@ -204,28 +161,28 @@ function AdminDashboardContent() {
       title: 'View Bookings',
       description: 'Manage all customer reservations and bookings',
       onClick: () => window.location.href = '/admin/bookings',
-      color: 'var(--primary-color, #0B1F3A)'
+      color: 'primary'
     },
     {
       icon: '💰',
       title: 'Payment Management',
       description: 'Track payments, deposits, and process refunds',
       onClick: () => window.location.href = '/admin/payments',
-      color: 'var(--success-base, #10b981)'
+      color: 'success'
     },
     {
       icon: '👨‍💼',
       title: 'Driver Management',
       description: 'Manage your fleet and driver assignments',
       onClick: () => window.location.href = '/admin/drivers',
-      color: 'var(--warning-base, #f59e0b)'
+      color: 'warning'
     },
     {
       icon: '📊',
       title: 'Cost Tracking',
       description: 'Monitor expenses and financial metrics',
       onClick: () => window.location.href = '/admin/costs',
-      color: 'var(--error-base, #ef4444)'
+      color: 'error'
     }
   ];
 
@@ -238,30 +195,27 @@ function AdminDashboardContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard data...</p>
-        </div>
-      </div>
+      <Container>
+        <Stack spacing="lg" align="center">
+          <LoadingSpinner />
+          <Text variant="body">Loading dashboard data...</Text>
+        </Stack>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="text-red-600 text-6xl mb-4">❌</div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Dashboard</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button 
-            onClick={fetchDashboardData}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
+      <Container>
+        <Stack spacing="lg" align="center">
+          <Alert variant="error" title="Error Loading Dashboard">
+            {error}
+          </Alert>
+          <Button onClick={fetchDashboardData} variant="primary">
             Try Again
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Stack>
+      </Container>
     );
   }
 
@@ -297,179 +251,114 @@ function AdminDashboardContent() {
   ];
 
   return (
-          <AdminPageWrapper 
-        title="Dashboard"
-        subtitle="Business overview and quick actions"
-        data-testid="admin-dashboard"
-      >
+    <Container>
+      <Stack spacing="xl">
+        {/* Header */}
+        <Stack spacing="md" align="center">
+          <H1>Dashboard</H1>
+          <Text variant="body" color="secondary" align="center">
+            Business overview and quick actions
+          </Text>
+        </Stack>
+
         {/* Statistics Overview */}
-        <Section variant="default" padding="lg">
-          <Container maxWidth="2xl">
-            <Stack spacing="lg" align="center" marginBottom="xl">
-              <H2>
-                <EditableText field="admin.dashboard.statsTitle" defaultValue="📊 Business Overview">
-                  📊 Business Overview
-                </EditableText>
-              </H2>
-              <Text variant="lead" align="center">
-                <EditableText field="admin.dashboard.statsSubtitle" defaultValue="Key metrics and performance indicators">
-                  Key metrics and performance indicators
-                </EditableText>
-              </Text>
-            </Stack>
-            
-            <Grid cols={4} gap="lg" responsive>
-              {statsCards.map((stat, index) => (
-                <GridItem key={index}>
-                  <StatCard variant="elevated" padding="lg" hover>
-                    <Stack spacing="md" align="center">
-                      <StatIcon>
-                        <EditableText field={`admin.dashboard.statIcon${index}`} defaultValue={stat.icon}>
-                          {stat.icon}
-                        </EditableText>
-                      </StatIcon>
-                      <StatValue>
-                        <EditableText field={`admin.dashboard.statValue${index}`} defaultValue={stat.value}>
-                          {stat.value}
-                        </EditableText>
-                      </StatValue>
-                      <H2 size="md">
-                        <EditableText field={`admin.dashboard.statTitle${index}`} defaultValue={stat.title}>
-                          {stat.title}
-                        </EditableText>
-                      </H2>
-                      <Text size="sm" color="secondary">
-                        <EditableText field={`admin.dashboard.statChange${index}`} defaultValue={stat.change}>
-                          {stat.change}
-                        </EditableText>
-                      </Text>
-                    </Stack>
-                  </StatCard>
-                </GridItem>
-              ))}
-            </Grid>
-          </Container>
-        </Section>
+        <Stack spacing="lg" align="center">
+          <H2>📊 Business Overview</H2>
+          <Text variant="body" color="secondary" align="center">
+            Key metrics and performance indicators
+          </Text>
+        </Stack>
+        
+        <Grid cols={4} gap="lg" responsive>
+          {statsCards.map((stat, index) => (
+            <GridItem key={index}>
+              <Card variant="elevated" padding="lg" hover>
+                <Stack spacing="md" align="center">
+                  <Text size="xl">{stat.icon}</Text>
+                  <Text size="xl" weight="bold" color="primary">
+                    {stat.value}
+                  </Text>
+                  <H2 size="md">{stat.title}</H2>
+                  <Text size="sm" color="secondary" align="center">
+                    {stat.change}
+                  </Text>
+                </Stack>
+              </Card>
+            </GridItem>
+          ))}
+        </Grid>
 
         {/* Quick Actions */}
-        <Section variant="alternate" padding="lg">
-          <Container maxWidth="2xl">
-            <Stack spacing="lg" align="center" marginBottom="xl">
-              <H2>
-                <EditableText field="admin.dashboard.quickActionsTitle" defaultValue="⚡ Quick Actions">
-                  ⚡ Quick Actions
-                </EditableText>
-              </H2>
-              <Text variant="lead" align="center">
-                <EditableText field="admin.dashboard.quickActionsSubtitle" defaultValue="Common administrative tasks">
-                  Common administrative tasks
-                </EditableText>
-              </Text>
-            </Stack>
-            
-            <Grid cols={2} gap="lg" responsive>
-              {quickActions.map((action, index) => (
-                <GridItem key={index}>
-                  <div onClick={action.onClick} style={{ cursor: 'pointer' }}>
-                    <QuickActionCard 
-                      variant="elevated" 
-                      padding="lg" 
-                      hover
-                    >
-                      <Stack spacing="md">
-                        <Stack direction="horizontal" gap="md" align="center">
-                          <div style={{ fontSize: fontSize['3xl'], color: action.color }}>
-                            <EditableText field={`admin.dashboard.actionIcon${index}`} defaultValue={action.icon}>
-                              {action.icon}
-                            </EditableText>
-                          </div>
-                          <H2 size="lg">
-                            <EditableText field={`admin.dashboard.actionTitle${index}`} defaultValue={action.title}>
-                              {action.title}
-                            </EditableText>
-                          </H2>
-                        </Stack>
-                        <Text align="left">
-                          <EditableText field={`admin.dashboard.actionDesc${index}`} defaultValue={action.description}>
-                            {action.description}
-                          </EditableText>
-                        </Text>
-                      </Stack>
-                    </QuickActionCard>
-                  </div>
-                </GridItem>
-              ))}
-            </Grid>
-          </Container>
-        </Section>
+        <Stack spacing="lg" align="center">
+          <H2>⚡ Quick Actions</H2>
+          <Text variant="body" color="secondary" align="center">
+            Common administrative tasks
+          </Text>
+        </Stack>
+        
+        <Grid cols={2} gap="lg" responsive>
+          {quickActions.map((action, index) => (
+            <GridItem key={index}>
+              <Card 
+                variant="elevated" 
+                padding="lg" 
+                hover
+                onClick={action.onClick}
+              >
+                <Stack spacing="md">
+                  <Stack direction="horizontal" spacing="md" align="center">
+                    <Text size="xl">{action.icon}</Text>
+                    <H2 size="lg">{action.title}</H2>
+                  </Stack>
+                  <Text align="left">
+                    {action.description}
+                  </Text>
+                </Stack>
+              </Card>
+            </GridItem>
+          ))}
+        </Grid>
 
         {/* Recent Activity */}
-        <Section variant="default" padding="lg">
-          <Container maxWidth="2xl">
-            <Stack spacing="lg" align="center" marginBottom="xl">
-              <H2>
-                <EditableText field="admin.dashboard.recentActivityTitle" defaultValue="📈 Recent Activity">
-                  📈 Recent Activity
-                </EditableText>
-              </H2>
-              <Text variant="lead" align="center">
-                <EditableText field="admin.dashboard.recentActivitySubtitle" defaultValue="Latest bookings and system updates">
-                  Latest bookings and system updates
-                </EditableText>
-              </Text>
-            </Stack>
-            
-            <Card variant="elevated" padding="lg">
-              <Stack spacing="md">
-                {recentActivity.length === 0 ? (
-                  <div className="text-center py-8">
-                    <div className="text-6xl mb-4">📭</div>
-                    <Text>No recent activity to display</Text>
-                  </div>
-                ) : (
-                  recentActivity.map((activity, index) => (
-                    <ActivityItem key={index}>
-                      <Stack direction="horizontal" spacing="md" align="center">
-                        <div style={{ fontSize: fontSize.xl }}>
-                          <EditableText field={`admin.dashboard.activityIcon${index}`} defaultValue={activity.icon}>
-                            {activity.icon}
-                          </EditableText>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <Stack spacing="xs">
-                            <Text>
-                              <EditableText field={`admin.dashboard.activityMessage${index}`} defaultValue={activity.message}>
-                                {activity.message}
-                              </EditableText>
-                            </Text>
-                            <Text size="sm" color="secondary">
-                              <EditableText field={`admin.dashboard.activityTime${index}`} defaultValue={activity.time}>
-                                {activity.time}
-                              </EditableText>
-                            </Text>
-                          </Stack>
-                        </div>
-                      </Stack>
-                    </ActivityItem>
-                  ))
-                )}
+        <Stack spacing="lg" align="center">
+          <H2>📈 Recent Activity</H2>
+          <Text variant="body" color="secondary" align="center">
+            Latest bookings and system updates
+          </Text>
+        </Stack>
+        
+        <Card variant="elevated" padding="lg">
+          <Stack spacing="md">
+            {recentActivity.length === 0 ? (
+              <Stack spacing="md" align="center">
+                <Text size="xl">📭</Text>
+                <Text>No recent activity to display</Text>
               </Stack>
-            </Card>
-          </Container>
-        </Section>
-      </AdminPageWrapper>
+            ) : (
+              recentActivity.map((activity, index) => (
+                <Stack 
+                  key={index} 
+                  direction="horizontal" 
+                  spacing="md" 
+                  align="center"
+                >
+                  <Text size="xl">{activity.icon}</Text>
+                  <Stack spacing="xs">
+                    <Text>{activity.message}</Text>
+                    <Text size="sm" color="secondary">{activity.time}</Text>
+                  </Stack>
+                </Stack>
+              ))
+            )}
+          </Stack>
+        </Card>
+      </Stack>
+    </Container>
   );
 }
 
-import withAuth from './withAuth';
-import { EditableText } from '@/ui';
-
 function AdminDashboard() {
-  return (
-    <ToastProvider>
-      <AdminDashboardContent />
-    </ToastProvider>
-  );
+  return <AdminDashboardContent />;
 }
 
 export default withAuth(AdminDashboard); 

@@ -1,5 +1,23 @@
 import React from 'react';
-import { Container, Card, Text, H3, H4, Input, Label, Stack, Button } from '@/ui';
+import { 
+  Container, 
+  Stack, 
+  Text, 
+  Button, 
+  Card,
+  Input,
+  Label,
+  H1,
+  H2,
+  H3,
+  H4
+} from '@/design/components';
+import styled from 'styled-components';
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
 
 export interface GenericPageEditorProps {
   pageData: {
@@ -285,7 +303,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
         description="Edit the content and settings for the booking page"
         icon="📅"
         actions={
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <ButtonGroup>
             {saveButtons.map((button, index) => (
               <Button
                 key={index}
@@ -296,7 +314,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
                 {button.label}
               </Button>
             ))}
-          </div>
+          </ButtonGroup>
         }
       >
         <Stack spacing="md">
@@ -391,7 +409,7 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
         description="Edit the help page content and sections"
         icon="❓"
         actions={
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <ButtonGroup>
             {saveButtons.map((button, index) => (
               <Button
                 key={index}
@@ -402,7 +420,7 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
                 {button.label}
               </Button>
             ))}
-          </div>
+          </ButtonGroup>
         }
       >
         <Stack spacing="md">

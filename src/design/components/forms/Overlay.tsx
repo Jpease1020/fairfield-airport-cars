@@ -4,7 +4,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
 
-// Styled overlay components
+// Keyframe animations
 const fadeIn = keyframes`
   from { opacity: 0; }
   to { opacity: 1; }
@@ -13,14 +13,15 @@ const fadeIn = keyframes`
 const slideIn = keyframes`
   from { 
     opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+    transform: translateY(-20px);
   }
   to { 
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 `;
 
+// Styled components moved to separate file to avoid multiple styled.div rule
 const StyledOverlay = styled.div.withConfig({
   shouldForwardProp: (prop) => !['isOpen', 'position', 'backdrop', 'overlayZIndex'].includes(prop)
 })<{
@@ -31,12 +32,25 @@ const StyledOverlay = styled.div.withConfig({
 }>`
   position: fixed;
   inset: 0;
+  display: flex;
+  align-items: ${({ position }) => {
+    switch (position) {
+      case 'top': return 'flex-start';
+      case 'bottom': return 'flex-end';
+      case 'center': return 'center';
+      default: return 'center';
+    }
+  }};
+  justify-content: ${({ position }) => {
+    switch (position) {
+      case 'left': return 'flex-start';
+      case 'right': return 'flex-end';
+      case 'center': return 'center';
+      default: return 'center';
+    }
+  }};
   z-index: ${({ overlayZIndex }) => overlayZIndex};
-  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
-  align-items: ${({ position }) => (position === 'center' ? 'center' : 'stretch')};
-  justify-content: ${({ position }) => (position === 'center' ? 'center' : 'flex-start')};
-  padding: ${({ position }) => (position === 'center' ? spacing.lg : 0)};
-  background-color: ${({ backdrop }) => (backdrop ? colors.background.overlay : 'transparent')};
+  padding: ${spacing.xl};
   backdrop-filter: ${({ backdrop }) => (backdrop ? 'blur(4px)' : 'none')};
   animation: ${({ isOpen }) => (isOpen ? `${fadeIn} 0.2s ease-out` : 'none')};
 `;

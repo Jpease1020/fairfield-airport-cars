@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Star } from 'lucide-react';
-import { colors, spacing, fontSize, transitions } from '../../design-system/tokens';
+import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
 
 // Styled star button with proper prop filtering
 const StyledStarButton = styled.button.withConfig({

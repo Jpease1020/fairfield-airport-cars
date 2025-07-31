@@ -285,7 +285,7 @@ class SecurityMonitoringService {
   validateInput(input: string, type: 'email' | 'phone' | 'name' | 'address'): boolean {
     const validators = {
       email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      phone: /^[\+]?[1-9][\d]{0,15}$/,
+      phone: /^[+]?[1-9]\d{0,15}$/,
       name: /^[a-zA-Z\s'-]{2,50}$/,
       address: /^[a-zA-Z0-9\s,.-]{5,200}$/,
     };
