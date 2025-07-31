@@ -1,12 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Grid } from '../layout/grid/Grid';
-import { Col } from '../layout/grid/Col';
-import { Container } from '../layout/containers/Container';
-import { Card } from '../layout/containers/Card';
-import { Stack } from '../layout/grid/Stack';
-import { Text, H4 } from '../ui-components/Text';
+import { Grid, Col, Container, ContentBox, Stack, Text, H4 } from '@/design/ui';
 
 interface Feature {
   id?: string | number;
@@ -78,9 +73,9 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({
         return (
           <Col key={feature.id || index}>
             {showCards ? (
-              <Card variant="default" padding="lg">
+              <ContentBox variant="default" padding="lg">
                 {content}
-              </Card>
+              </ContentBox>
             ) : (
               <Container>
                 {content}

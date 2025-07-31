@@ -1,10 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack } from '../layout/grid/Stack';
-import { Container } from '../layout/containers/Container';
-import { Card } from '../layout/containers/Card';
-import { Text, H3, H4 } from '../ui-components/Text';
+import { Stack, Container, ContentBox, Text, H3, H4 } from '@/design/ui';
 
 interface ContentItem {
   id: string | number;
@@ -83,9 +80,9 @@ export const ContentStack: React.FC<ContentStackProps> = ({
         return (
           <Container key={item.id}>
             {showCards ? (
-              <Card variant={item.variant || 'default'} padding="md">
+              <ContentBox variant={item.variant || 'default'} padding="md">
                 {content}
-              </Card>
+              </ContentBox>
             ) : (
               content
             )}
