@@ -9,3 +9,6 @@ export * from './content';
 
 // Layer 3: Layout System Components (Containers)
 export * from './containers';
+
+// Layer 4: Page Layout Components (Complete page layouts)
+export * from './CustomerLayout';

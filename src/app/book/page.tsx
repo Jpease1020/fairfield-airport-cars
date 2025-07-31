@@ -1,43 +1,38 @@
 'use client';
 
-import { Layout } from '@/ui';
+import React from 'react';
 import { 
+  Container,
+  Stack,
+  H1,
+  H2,
+  H3,
+  H4,
+  Text,
+  Button,
+  Grid,
+  GridItem,
+  Box,
+  Span,
   Section,
-  Container, 
-  Stack, 
-  H1, 
-  Text
-} from '@/ui';
-import { EditableText } from '@/ui';
+  HeroSection,
+  CustomerLayout
+} from '@/design/ui';
+import { EditableText } from '@/design/ui';
 import BookingForm from './booking-form';
 
-export default function BookPage() {
+function BookPageContent() {
   return (
-    <Layout>
-      {/* Hero Section - Matching home page styling */}
-      <Section id="booking-hero-section" variant="brand" padding="xl">
-        <Container maxWidth="2xl">
-          <Stack spacing="2xl" align="center">
-            <H1 id="booking-hero-title" align="center">
-              <EditableText field="booking.hero.title" defaultValue="Book Your Airport Ride">
-                Book Your Airport Ride
-              </EditableText>
-            </H1>
-            <Text id="booking-hero-subtitle" variant="lead" align="center">
-              <EditableText field="booking.hero.description" defaultValue="Professional airport transportation service. Book your reliable ride to or from the airport in just a few minutes.">
-                Professional airport transportation service. Book your reliable ride to or from the airport in just a few minutes.
-              </EditableText>
-            </Text>
-          </Stack>
-        </Container>
+    <CustomerLayout>
+      <Section
+        title="Complete Your Booking"
+        subtitle="Fill in your details below"
+        data-testid="book-form-section"
+      >
+        <BookingForm />
       </Section>
-
-      {/* Booking Form Section - Using alternate variant for contrast */}
-      <Section id="booking-form-section" variant="alternate" padding="xl">
-        <Container maxWidth="xl">
-          <BookingForm />
-        </Container>
-      </Section>
-    </Layout>
+    </CustomerLayout>
   );
 }
+
+export default BookPageContent;
