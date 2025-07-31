@@ -15,12 +15,12 @@ import {
   Form,
   Button,
   ToastProvider
-} from '@/components/ui';
-import { Input } from '@/design/components/core/layout/FormSystem';
-import { Label } from '@/design/components/core/layout/label';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { Input } from '@/ui';
+import { Label } from '@/ui';
+import { EditableText } from '@/ui';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '../../../design/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '@/design/design-system/tokens';
 
 // Styled components for registration page
 const RegisterCard = styled(Card)`
@@ -53,7 +53,7 @@ const OrDivider = styled.div`
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--border-color, #e5e7eb);
+    background: var(--border-color);
   }
   
   &::before {
@@ -70,7 +70,7 @@ const LinkText = styled(Text)`
   margin-top: ${spacing.md};
   
   a {
-    color: var(--primary-color, #3b82f6);
+    color: var(--primary-color);
     text-decoration: none;
     
     &:hover {

@@ -16,9 +16,9 @@ import {
   Button,
   ToastProvider,
   LoadingSpinner
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Grid } from '@/components/ui/layout/grid';
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { Grid } from '@/design/components/grid';
 
 export default function CustomerDashboard() {
   const [user, setUser] = useState<User | null>(null);

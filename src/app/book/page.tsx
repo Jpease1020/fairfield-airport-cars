@@ -1,14 +1,14 @@
 'use client';
 
-import { Layout } from '@/components/layout';
+import { Layout } from '@/ui';
 import { 
   Section,
   Container, 
   Stack, 
   H1, 
   Text
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText } from '@/ui';
 import BookingForm from './booking-form';
 
 export default function BookPage() {

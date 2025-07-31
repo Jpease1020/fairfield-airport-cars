@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, GridSection, ActionGrid, Container, H3, Text, Button } from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
-import { Card } from '@/design/components/core/layout/card';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { AdminPageWrapper, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
+import { Stack } from '@/ui';
+import { Card } from '@/ui';
+import { EditableText } from '@/ui';
 
 const AIAssistantSettingsPage = () => {
   const [isClient, setIsClient] = useState(false);

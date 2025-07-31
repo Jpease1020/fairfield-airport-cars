@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import nextPlugin from '@next/eslint-plugin-next';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
+import fairfieldCustomRules from './scripts/eslint-rules/fairfield-custom-rules.js';
 
 
 export default [
@@ -57,6 +58,8 @@ export default [
         HTMLImageElement: 'readonly',
         HTMLLinkElement: 'readonly',
         HTMLDivElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        Element: 'readonly',
         MouseEvent: 'readonly',
         KeyboardEvent: 'readonly',
         TouchEvent: 'readonly',
@@ -64,6 +67,7 @@ export default [
         WheelEvent: 'readonly',
         Event: 'readonly',
         StorageEvent: 'readonly',
+        getComputedStyle: 'readonly',
         NodeJS: 'readonly',
         global: 'readonly',
         alert: 'readonly',
@@ -83,6 +87,7 @@ export default [
     plugins: {
       '@typescript-eslint': typescriptPlugin,
       '@next/next': nextPlugin,
+      'fairfield': fairfieldCustomRules,
     },
     rules: {
       // TypeScript rules
@@ -103,18 +108,7 @@ export default [
       
 
       
-      // Architecture guardrails
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'Literal[value=/^#[0-9a-fA-F]{3,6}$/]',
-          message: '❌ Hardcoded color detected. Use design tokens instead: colors.primary[600]'
-        },
-        {
-          selector: 'JSXAttribute[name.name="style"]',
-          message: '❌ Inline styles are forbidden. Use styled-components instead.'
-        }
-      ],
+      // Architecture guardrails - using custom rules instead of no-restricted-syntax
       
       // Prevent className usage
       'no-restricted-globals': [
@@ -154,6 +148,37 @@ export default [
           message: '❌ style prop is FORBIDDEN on design system components. Use design system props instead.'
         }
       ],
+
+      // Import consistency rules
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../ui-components/*', './ui-components/*'],
+              message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.'
+            },
+            {
+              group: ['../components/ui-components/*', './components/ui-components/*'],
+              message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.'
+            },
+            {
+              group: ['../design/components/ui-components/*', './design/components/ui-components/*'],
+              message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.'
+            }
+          ]
+        }
+      ],
+
+      // Note: Import plugin rules removed - using custom rules instead
+      
+      // Custom Fairfield rules
+      'fairfield/no-hardcoded-colors': 'error',
+      'fairfield/no-inline-styles': 'error',
+      'fairfield/no-classname-props': 'error',
+      'fairfield/enforce-ui-imports': 'error',
+      'fairfield/no-multiple-styled-divs': 'error',
+      'fairfield/enforce-design-system': 'error',
     },
   },
   {
@@ -165,7 +190,8 @@ export default [
       'test-results/**/*',
       'playwright-report/**/*',
       'tests/**/*',
-      'vitest.config.ts'
+      'vitest.config.ts',
+      'scripts/**/*'
     ]
   }
 ];

@@ -13,7 +13,7 @@ import {
   GridItem,
   StatusMessage,
   LoadingSpinner
-} from '@/components/ui';
+} from '@/ui';
 
 interface TrackingData {
   bookingId: string;

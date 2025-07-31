@@ -12,13 +12,13 @@ import {
   Button, 
   StatusMessage,
   Form,
-  ToastProvider
-} from '../../../design/components/core/layout';
-import { Input, Select } from '@/design/components/core/layout/FormSystem';
-import { Label } from '@/design/components/core/layout/label';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+  ToastProvider,
+  LoadingSpinner
+} from '@/ui';
+import { Input, Select } from '@/ui';
+import { Label } from '@/ui';
+import { EditableText } from '@/ui';
 import { Booking } from '@/types/booking';
-import { LoadingSpinner } from '../../../design/components/core/layout';
 
 interface BookingFormProps {
   booking?: Booking;

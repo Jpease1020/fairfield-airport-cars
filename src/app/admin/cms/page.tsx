@@ -14,9 +14,9 @@ import {
   ActionButtonGroup,
   Container,
   Text,
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Stack } from '@/components/ui/layout/containers';
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { Stack } from '@/ui';
 
 function CMSPageContent() {
   const { addToast } = useToast();

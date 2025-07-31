@@ -13,10 +13,10 @@ import {
   Text,
   H3,
   H4,
-} from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
-import { Input } from '@/design/components/core/layout/FormSystem';
-import { Label } from '@/design/components/core/layout/label';
+} from '@/ui';
+import { Stack } from '@/ui';
+import { Input } from '@/ui';
+import { Label } from '@/ui';
 
 
 interface CostEntry {

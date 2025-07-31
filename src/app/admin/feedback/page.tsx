@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { AdminPageWrapper, GridSection, Card, Container } from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/ToastProvider';
-import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
+import { AdminPageWrapper, GridSection, Card, Container } from '@/ui';
+import { Stack } from '@/ui';
+import { Button } from '@/ui';
+import { useToast } from '@/ui';
+import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
 import { getAllBookings } from '@/lib/services/database-service';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { EditableText } from '@/ui';
 
 interface Feedback {
   id: string;

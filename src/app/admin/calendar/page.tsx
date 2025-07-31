@@ -10,10 +10,10 @@ import {
   Container,
   Span,
   Stack,
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
-import { Card } from '@/design/components/core/layout/card';
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { EditableHeading } from '@/ui';
+import { Card } from '@/ui';
 
 const CalendarPage = () => {
   const [events, setEvents] = useState<any[]>([]);

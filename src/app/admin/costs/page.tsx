@@ -14,8 +14,8 @@ import {
   useToast,
   Container,
   Span,
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText } from '@/ui';
 
 function CostsPageContent() {
   const { addToast } = useToast();

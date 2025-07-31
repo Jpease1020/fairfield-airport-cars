@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Layout } from '@/components/ui/layout/containers';
+import { Layout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -11,10 +11,10 @@ import {
   Text,
   Span,
   Container,
-} from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Input } from '@/design/components/core/layout/FormSystem';
+} from '@/ui';
+import { Stack } from '@/ui';
+import { EditableText } from '@/ui';
+import { Input } from '@/ui';
 
 function ManageBookingPageContent() {
   const params = useParams();

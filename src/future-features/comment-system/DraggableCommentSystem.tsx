@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/design/components/core/layout/FormSystem';
-import { Container, Text, H3 } from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { useEditMode } from '@/components/admin/EditModeProvider';
+import { Button } from '@/ui';
+import { Textarea } from '@/ui';
+import { Container, Text, H3 } from '@/ui';
+import { EditableText } from '@/ui';
+import { useEditMode } from '@/design/components/providers/EditModeProvider';
 
 interface Comment {
   id: string;

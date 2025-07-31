@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
 import withAuth from '../withAuth';
 import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
+import { Badge, Container, Stack, LoadingSpinner, Text, Button } from '@/ui';
 
 function AdminBookingsPageContent() {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -126,9 +127,9 @@ function AdminBookingsPageContent() {
     };
 
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
+      <Badge variant={getStatusColor(status) as any}>
         {getStatusIcon(status)} {status}
-      </span>
+      </Badge>
     );
   };
 
@@ -165,30 +166,27 @@ function AdminBookingsPageContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading bookings from database...</p>
-        </div>
-      </div>
+      <Container>
+        <Stack align="center" spacing="lg">
+          <LoadingSpinner />
+          <Text>Loading bookings from database...</Text>
+        </Stack>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="text-red-600 text-6xl mb-4">❌</div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Bookings</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button 
-            onClick={fetchBookings}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
+      <Container>
+        <Stack align="center" spacing="lg">
+          <Text size="xl" color="error">❌</Text>
+          <Text size="xl" weight="semibold">Error Loading Bookings</Text>
+          <Text color="secondary">{error}</Text>
+          <Button onClick={fetchBookings} variant="primary">
             Try Again
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Stack>
+      </Container>
     );
   }
 

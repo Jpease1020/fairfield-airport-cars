@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Span } from '@/components/ui';
-import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
-import { GridSection } from '@/components/ui';
-import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';
-import { Input } from '@/components/ui/FormSystem';
-import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
-import { StatusMessage } from '@/components/ui/StatusMessage';
-import { Stack } from '@/components/ui/layout/containers';
+import { Container, Span } from '@/ui';
+import { AdminPageWrapper } from '@/ui';
+import { GridSection } from '@/ui';
+import { ActionButtonGroup } from '@/ui';
+import { Input } from '@/ui';
+import { ToastProvider, useToast } from '@/ui';
+import { StatusMessage } from '@/ui';
+import { Stack } from '@/ui';
 import { getCMSConfig } from '@/lib/services/cms-service';
-import { EditableText, EditableHeading } from '../../../../../design/components/core/layout/EditableSystem';
+import { EditableText, EditableHeading } from '@/ui';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
@@ -50,7 +50,7 @@ function AdminColorsPageContent() {
       const initial: Record<string, string> = {};
       
       for (const { key } of COLOR_VARIABLES) {
-        initial[key] = saved[key] || getCSSVar(key) || '#ffffff';
+        initial[key] = saved[key] || getCSSVar(key) || 'var(--color-default)';
       }
       
       setColors(initial);
@@ -115,7 +115,7 @@ function AdminColorsPageContent() {
                 <Container key={key}>
                   <Stack direction="horizontal" spacing="sm" align="center">
                     <Span
-                      data-color={colors[key] || '#ffffff'}
+                      data-color={colors[key] || 'var(--color-default)'}
                     >
                       ●
                     </Span>
@@ -133,14 +133,14 @@ function AdminColorsPageContent() {
                   <Stack direction="horizontal" spacing="sm">
                     <Input
                       type="color"
-                      value={colors[key] || '#ffffff'}
+                      value={colors[key] || 'var(--color-default)'}
                       onChange={(e) => handleColorChange(key, e.target.value)}
                     />
                     <Input
                       type="text"
                       value={colors[key] || ''}
                       onChange={(e) => handleColorChange(key, e.target.value)}
-                      placeholder="#ffffff"
+                      placeholder="var(--color-default)"
                     />
                   </Stack>
                 </Container>

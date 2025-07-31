@@ -4,20 +4,22 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { cmsService } from "@/lib/services/cms-service";
 import { CMSConfiguration, HomePageContent, HelpPageContent, PageContent } from "@/types/cms";
 import { 
-  AdminPageWrapper,
-  StatusMessage,
-  ToastProvider,
-  useToast,
   GridSection,
   Container,
-} from "@/components/ui";
-import { EditableText } from "../../../../../design/components/core/layout/EditableSystem";
+} from "@/ui";
+import { 
+  AdminPageWrapper
+} from "@/design/components/layout";
 import { 
   GenericPageEditor,
   HomePageEditor,
   BookingPageEditor,
   HelpPageEditor
-} from "../../../../../design/components/business/cms/PageEditors";
+} from "../PageEditors";
+import { EditableText } from '@/ui';
+import { useToast, ToastProvider } from "@/design/components/notifications/Toast";
+import { StatusMessage } from "@/design/components/notifications/StatusMessage";
+import PageCommentWidget from "@/design/components/sections/PageCommentWidget";
 
 
 const PAGE_KEYS = [

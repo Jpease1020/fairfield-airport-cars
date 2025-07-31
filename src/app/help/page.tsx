@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Layout } from '@/components/ui/layout/containers';
+import { Layout } from '@/ui';
 import { 
   Section,
   Container,
@@ -11,8 +11,8 @@ import {
   Text,
   ActionButtonGroup,
   Card,
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText } from '@/ui';
 
 function HelpPageContent() {
   const quickAnswers = [

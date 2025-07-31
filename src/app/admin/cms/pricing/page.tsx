@@ -14,11 +14,11 @@ import {
   H4,
   Container,
   Span,
-} from '@/components/ui';
-import { Input } from '@/design/components/core/layout/FormSystem';
-import { Label } from '@/design/components/core/layout/label';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Stack } from '@/components/ui/layout/containers';
+} from '@/ui';
+import { Input } from '@/ui';
+import { Label } from '@/ui';
+import { EditableText } from '@/ui';
+import { Stack } from '@/ui';
 
 function PricingSettingsContent() {
   const { addToast } = useToast();

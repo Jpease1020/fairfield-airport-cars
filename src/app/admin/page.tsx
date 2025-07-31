@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
+import { AdminPageWrapper } from '@/ui';
 import { 
   Section,
   Container,
@@ -14,10 +14,10 @@ import {
   Grid,
   GridItem,
   ToastProvider
-} from '@/components/ui';
+} from '@/ui';
 
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '../../../design/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '@/design/design-system/tokens';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
 
 // Styled components for admin dashboard
@@ -33,7 +33,7 @@ const StatCard = styled(Card)`
 const StatValue = styled.div`
   font-size: ${fontSize['4xl']};
   font-weight: ${fontWeight.bold};
-  color: var(--primary-color, #0B1F3A);
+  color: var(--primary-color);
   margin-bottom: ${spacing.sm};
 `;
 
@@ -54,7 +54,7 @@ const QuickActionCard = styled(Card)`
 
 const ActivityItem = styled.div`
   padding: ${spacing.md};
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  border-bottom: 1px solid var(--border-color);
   
   &:last-child {
     border-bottom: none;
@@ -462,7 +462,7 @@ function AdminDashboardContent() {
 }
 
 import withAuth from './withAuth';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { EditableText } from '@/ui';
 
 function AdminDashboard() {
   return (

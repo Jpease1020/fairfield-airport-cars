@@ -8,9 +8,9 @@ import {
   Card,
   GridSection,
   ActionButtonGroup
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { ToastProvider, useToast } from '@/components/ui';
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { ToastProvider, useToast } from '@/ui';
 
 function AddContentPage() {
   const { addToast } = useToast();

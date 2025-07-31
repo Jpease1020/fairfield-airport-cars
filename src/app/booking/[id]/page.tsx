@@ -11,8 +11,8 @@ import {
   Span,
   LoadingSpinner,
   Card,
-} from '@/components/ui';
-import { Layout, Stack } from '@/components/ui/layout/containers';
+} from '@/ui';
+import { Layout, Stack } from '@/ui';
 import { Booking } from '@/types/booking';
 
 function BookingDetailsContent() {

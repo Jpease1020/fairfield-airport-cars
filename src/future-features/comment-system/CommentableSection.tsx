@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
-import { Container } from '@/components/ui';
+import { Container } from '@/ui';
 
 interface CommentableSectionProps {
   children: ReactNode;

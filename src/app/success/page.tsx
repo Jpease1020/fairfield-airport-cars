@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Layout } from '@/components/ui/layout/containers';
+import { Layout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -12,9 +12,9 @@ import {
   Span,
   Button,
   Stack
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { EditableHeading } from '@/ui';
 import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {

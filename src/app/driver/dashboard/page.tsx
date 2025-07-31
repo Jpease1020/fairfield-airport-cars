@@ -12,7 +12,7 @@ import {
   GridItem,
   StatusMessage,
   LoadingSpinner
-} from '@/components/ui';
+} from '@/ui';
 import { getDriver, updateDriverStatus, updateDriverLocation } from '@/lib/services/driver-service';
 import { getBookings, updateBookingStatus } from '@/lib/services/booking-service';
 

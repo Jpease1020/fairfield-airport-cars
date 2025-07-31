@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { AdminPageWrapper, GridSection, Card, Container } from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Stack } from '@/components/ui/layout/containers';
-import { DataTable, DataTableColumn, DataTableAction } from '@/components/ui/DataTable';
+import { AdminPageWrapper, GridSection, Card, Container } from '@/ui';
+import { EditableText } from '@/ui';
+import { Stack } from '@/ui';
+import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
 
 function CommentsPageContent() {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);

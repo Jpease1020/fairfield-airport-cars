@@ -12,12 +12,12 @@ import {
   Container,
   Span,
   Text,
-} from '@/components/ui';
-import { Stack } from '@/components/ui/layout/containers';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Card } from '@/design/components/core/layout/card';
-import { Input } from '@/design/components/core/layout/FormSystem';
-import { Label } from '@/design/components/core/layout/label';
+} from '@/ui';
+import { Stack } from '@/ui';
+import { EditableText } from '@/ui';
+import { Card } from '@/ui';
+import { Input } from '@/ui';
+import { Label } from '@/ui';
 
 function BusinessPageContent() {
   const { addToast } = useToast();
@@ -296,7 +296,7 @@ function BusinessPageContent() {
                       id="brand-primary-color"
                       value={settings.branding.primaryColor}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('branding', 'primaryColor', e.target.value)}
-                      placeholder="#1f2937"
+                      placeholder="var(--primary-color)"
                     />
                     <Text size="sm" color="secondary">Main brand color for buttons and accents</Text>
                     <Stack direction="horizontal" spacing="sm" align="center">
@@ -319,7 +319,7 @@ function BusinessPageContent() {
                       id="brand-secondary-color"
                       value={settings.branding.secondaryColor}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('branding', 'secondaryColor', e.target.value)}
-                      placeholder="#3b82f6"
+                      placeholder="var(--secondary-color)"
                     />
                     <Text size="sm" color="secondary">Secondary brand color for highlights</Text>
                     <Stack direction="horizontal" spacing="sm" align="center">

@@ -1,6 +1,6 @@
 'use client';
 
-import { Layout } from '@/components/ui/layout/containers';
+import { Layout } from '@/ui';
 import { 
   GridSection,
   ToastProvider,
@@ -8,9 +8,9 @@ import {
   Container,
   Stack,
   Card,
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { EditableHeading } from '@/ui';
 
 function PrivacyPageContent() {
   const privacySections = [
