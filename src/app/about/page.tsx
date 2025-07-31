@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Layout } from '@/components/layout';
+import { Layout } from '@/ui';
 import { 
   Section,
   Container,
@@ -9,8 +9,8 @@ import {
   H1,
   Text,
   ActionButtonGroup
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText } from '@/ui';
 
 function AboutPageContent() {
   const ctaActions = [

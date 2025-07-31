@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
 import withAuth from '../withAuth';
 import { getAllPayments, getPaymentsByStatus, updateDocument, type Payment } from '@/lib/services/database-service';
+import { Container, Stack, LoadingSpinner, Text, Button } from '@/ui';
 
 function PaymentsPageContent() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -123,12 +124,12 @@ function PaymentsPageContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading payments from database...</p>
-        </div>
-      </div>
+      <Container>
+        <Stack align="center" spacing="lg">
+          <LoadingSpinner />
+          <Text>Loading payments from database...</Text>
+        </Stack>
+      </Container>
     );
   }
 

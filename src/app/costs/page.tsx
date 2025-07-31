@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Text, H1 } from '@/components/ui';
+import { Container, Text, H1 } from '@/ui';
 
 export default function CostsPage() {
   return (

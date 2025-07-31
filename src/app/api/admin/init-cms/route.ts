@@ -135,8 +135,8 @@ export async function POST() {
         },
         social: {},
         branding: {
-          primaryColor: "#1f2937",
-          secondaryColor: "#3b82f6"
+          primaryColor: "var(--primary-color)",
+          secondaryColor: "var(--secondary-color)"
         }
       },
       pricing: {

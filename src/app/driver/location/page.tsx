@@ -9,11 +9,11 @@ import {
   LoadingSpinner,
   Container,
   Text
-} from '@/components/ui';
-import { Card } from '@/design/components/core/layout/card';
-import { Stack } from '@/design/components/core/layout/layout/containers';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Layout } from '@/components/layout';
+} from '@/ui';
+import { Card } from '@/ui';
+import { Stack } from '@/ui';
+import { EditableText } from '@/ui';
+import { Layout } from '@/ui';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';

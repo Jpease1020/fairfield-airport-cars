@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Layout } from '@/components/ui/layout/containers';
+import { Layout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -13,8 +13,8 @@ import {
   Span,
   Button,
   Container,
-} from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText } from '@/ui';
 
 function BookingStatusPageContent() {
   const params = useParams();

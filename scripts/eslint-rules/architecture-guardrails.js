@@ -206,6 +206,125 @@ export default {
           }
         }
       }
+    },
+
+    // Rule: Enforce centralized imports (@/ui)
+    'enforce-centralized-imports': {
+      create(context) {
+        const filename = context.getFilename();
+        
+        // Only apply to design system files
+        if (!filename.includes('src/design/components/ui-components/')) {
+          return {};
+        }
+
+        return {
+          ImportDeclaration(node) {
+            const importSource = node.source.value;
+            
+            // Check for relative imports within design system
+            if (importSource.startsWith('./') || importSource.startsWith('../')) {
+              // Check if importing from ui-components directory
+              if (importSource.includes('ui-components') || 
+                  importSource.includes('Button') || 
+                  importSource.includes('Card') || 
+                  importSource.includes('Text') ||
+                  importSource.includes('Modal') ||
+                  importSource.includes('Badge') ||
+                  importSource.includes('Alert')) {
+                
+                context.report({
+                  node,
+                  message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.',
+                  suggest: [
+                    {
+                      desc: 'Replace with @/ui import',
+                      fix: (fixer) => {
+                        // Extract the component name from the import
+                        const specifiers = node.specifiers.map(spec => spec.local.name);
+                        return fixer.replaceText(node, `import { ${specifiers.join(', ')} } from '@/ui';`);
+                      }
+                    }
+                  ]
+                });
+              }
+            }
+          }
+        };
+      }
+    },
+
+    // Rule: Prevent circular dependencies
+    'no-circular-imports': {
+      create(context) {
+        const filename = context.getFilename();
+        const visited = new Set();
+        
+        return {
+          ImportDeclaration(node) {
+            const importSource = node.source.value;
+            
+            // Check for potential circular imports within design system
+            if (filename.includes('src/design/components/ui-components/') && 
+                importSource.includes('src/design/components/ui-components/')) {
+              
+              context.report({
+                node,
+                message: '❌ Circular import detected within design system. Use @/ui instead.',
+                suggest: [
+                  {
+                    desc: 'Use centralized @/ui import',
+                    fix: (fixer) => {
+                      const specifiers = node.specifiers.map(spec => spec.local.name);
+                      return fixer.replaceText(node, `import { ${specifiers.join(', ')} } from '@/ui';`);
+                    }
+                  }
+                ]
+              });
+            }
+          }
+        };
+      }
+    },
+
+    // Rule: Enforce consistent casing in imports
+    'enforce-import-casing': {
+      create(context) {
+        return {
+          ImportDeclaration(node) {
+            const importSource = node.source.value;
+            
+            // Check for incorrect casing in component imports
+            if (importSource.includes('./button') || 
+                importSource.includes('./card') || 
+                importSource.includes('./text') ||
+                importSource.includes('./modal') ||
+                importSource.includes('./badge') ||
+                importSource.includes('./alert')) {
+              
+              context.report({
+                node,
+                message: '❌ Incorrect casing in import. Use proper PascalCase for component files.',
+                suggest: [
+                  {
+                    desc: 'Fix casing in import path',
+                    fix: (fixer) => {
+                      let fixedSource = importSource;
+                      fixedSource = fixedSource.replace('./button', './Button');
+                      fixedSource = fixedSource.replace('./card', './Card');
+                      fixedSource = fixedSource.replace('./text', './Text');
+                      fixedSource = fixedSource.replace('./modal', './Modal');
+                      fixedSource = fixedSource.replace('./badge', './Badge');
+                      fixedSource = fixedSource.replace('./alert', './Alert');
+                      return fixer.replaceText(node.source, `'${fixedSource}'`);
+                    }
+                  }
+                ]
+              });
+            }
+          }
+        };
+      }
     }
   }
 }; 

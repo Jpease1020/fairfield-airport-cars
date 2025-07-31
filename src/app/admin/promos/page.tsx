@@ -13,13 +13,13 @@ import {
   ActionButtonGroup,
   Container,
   Span
-} from '@/components/ui';
-import { Card } from '@/design/components/core/layout/card';
-import { Input } from '@/design/components/core/layout/FormSystem';
-import { Label } from '@/design/components/core/layout/label';
-import { Select } from '@/design/components/core/layout/FormSystem';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { Stack } from '@/components/ui/layout/containers';
+} from '@/ui';
+import { Card } from '@/ui';
+import { Input } from '@/ui';
+import { Label } from '@/ui';
+import { Select } from '@/ui';
+import { EditableText } from '@/ui';
+import { Stack } from '@/ui';
 
 function PromosPageContent() {
   const { addToast } = useToast();

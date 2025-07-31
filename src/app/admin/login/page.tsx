@@ -12,12 +12,12 @@ import {
   Text,
   Card,
   Button,
-} from '@/components/ui';
-import { Input } from '@/design/components/core/layout/FormSystem';
-import { Label } from '@/design/components/core/layout/label';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { Input } from '@/ui';
+import { Label } from '@/ui';
+import { EditableText } from '@/ui';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '../../../../design/design-system/tokens';
+import { spacing, fontSize, fontWeight } from '@/design/design-system/tokens';
 
 // Styled components for login page
 const LoginCard = styled(Card)`

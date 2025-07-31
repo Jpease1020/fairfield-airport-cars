@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Layout } from '@/components/layout';
+import { Layout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -13,8 +13,8 @@ import {
   Container,
   Stack,
   Card
-} from '@/components/ui';
-import { EditableText, EditableHeading } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableText, EditableHeading } from '@/ui';
 
 function CancelPageContent() {
   const { addToast } = useToast();

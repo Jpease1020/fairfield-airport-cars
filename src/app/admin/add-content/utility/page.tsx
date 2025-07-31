@@ -9,9 +9,9 @@ import {
   Stack,
   StatusMessage,
   Card,
-} from '@/components/ui';
-import { ToastProvider, useToast } from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { ToastProvider, useToast } from '@/ui';
+import { EditableText } from '@/ui';
 
 function AddContentUtilityPage() {
   const { addToast } = useToast();

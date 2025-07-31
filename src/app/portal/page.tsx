@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Layout } from '@/components/ui/layout/containers';
+import { Layout } from '@/ui';
 import { 
   GridSection,
   FeatureGrid,
@@ -9,8 +9,8 @@ import {
   useToast,
   Container,
   Stack
-} from '@/components/ui';
-import { EditableHeading, EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { EditableHeading, EditableText } from '@/ui';
 
 function PortalPageContent() {
   const { addToast } = useToast();

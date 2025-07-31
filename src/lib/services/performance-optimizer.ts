@@ -183,7 +183,7 @@ class PerformanceOptimizer {
 
     // Dynamic imports for heavy components
     const heavyComponents = {
-      DataTable: () => import('@/components/ui/DataTable'),
+      DataTable: () => import('@/ui'),
       // Only include components that actually exist
     };
 

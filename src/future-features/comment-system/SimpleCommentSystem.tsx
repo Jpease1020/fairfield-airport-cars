@@ -2,13 +2,13 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
-import { useAdmin } from '@/components/admin/AdminProvider';
+import { useAdmin } from '@/design/components/providers/AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
-import { Container, H4, Span } from '@/components/ui';
-import { Stack, Card } from '@/components/ui/layout/containers';
-import { Button } from '@/components/ui/button';
-import { Textarea, Select, type SelectOption } from '@/design/components/core/layout/FormSystem';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+import { Container, H4, Span } from '@/ui';
+import { Stack, Card } from '@/ui';
+import { Button } from '@/ui';
+import { Textarea, Select } from '@/ui';
+import { EditableText } from '@/ui';
 
 interface SimpleCommentSystemProps {
   children: ReactNode;

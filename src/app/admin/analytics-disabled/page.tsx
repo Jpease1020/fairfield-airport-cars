@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, H2, Text, Span } from '@/components/ui';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
-import { EditableHeading } from '@/design/components/core/layout/EditableSystem';
-import { Stack } from '@/components/ui/layout/containers';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/design/components/core/layout/card';
+import { Container, H2, Text, Span } from '@/ui';
+import { EditableText } from '@/ui';
+import { EditableHeading } from '@/ui';
+import { Stack } from '@/ui';
+import { Button } from '@/ui';
+import { Card } from '@/ui';
 
 interface AnalyticsData {
   totalInteractions: number;

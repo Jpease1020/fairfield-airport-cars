@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Layout } from '@/components/layout';
+import { Layout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -10,12 +10,12 @@ import {
   Button,
   ToastProvider,
   Text
-} from '@/components/ui';
-import { Card } from '@/design/components/core/layout/card';
-import { Stack } from '@/design/components/core/layout/layout/containers';
-import { Label } from '@/design/components/core/layout/label';
-import { Textarea } from '@/design/components/core/layout/FormSystem';
-import { EditableText } from '@/design/components/core/layout/EditableSystem';
+} from '@/ui';
+import { Card } from '@/ui';
+import { Stack } from '@/ui';
+import { Label } from '@/ui';
+import { Textarea } from '@/ui';
+import { EditableText } from '@/ui';
 import { Star } from 'lucide-react';
 
 function FeedbackPageContent() {

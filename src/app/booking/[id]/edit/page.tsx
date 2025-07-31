@@ -5,10 +5,10 @@ import { useParams } from 'next/navigation';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
-import { Layout } from '@/components/layout';
-import { GridSection, LoadingSpinner, Text, Container } from '@/components/ui';
-import { Card } from '@/design/components/core/layout/card';
-import { Stack } from '@/design/components/core/layout/layout/containers';
+import { Layout } from '@/ui';
+import { GridSection, LoadingSpinner, Text, Container } from '@/ui';
+import { Card } from '@/ui';
+import { Stack } from '@/ui';
 
 export default function EditBookingPage() {
   const params = useParams();
