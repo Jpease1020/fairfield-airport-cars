@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
-import { colors, spacing, fontSize, borderRadius, transitions } from '../../system/tokens/tokens';
+import React, { forwardRef } from 'react';
+import { colors, spacing, fontSize } from '../../system/tokens/tokens';
 import { Button } from '@/ui';
-import { Overlay } from '../forms/Overlay';
+import { Overlay } from './Overlay';
+import { Container, Stack, Card } from '@/ui';
 
 export interface ModalProps {
   children: React.ReactNode;
@@ -25,7 +26,7 @@ export interface ModalProps {
   [key: string]: any;
 }
 
-export const Modal: React.FC<ModalProps> = React.forwardRef<HTMLDivElement, ModalProps>(({
+export const Modal = forwardRef<HTMLDivElement, ModalProps>(({
   children,
   isOpen,
   title,
@@ -44,76 +45,11 @@ export const Modal: React.FC<ModalProps> = React.forwardRef<HTMLDivElement, Moda
   closeOnEscape = true,
   ...rest
 }, ref) => {
-  const titleStyles: Record<string, React.CSSProperties> = {
-    sm: { fontSize: fontSize.lg },
-    md: { fontSize: fontSize.xl },
-    lg: { fontSize: fontSize['2xl'] }
-  };
-
-  const paddingStyles: Record<string, React.CSSProperties> = {
-    none: { padding: 0 },
-    sm: { padding: spacing.sm },
-    md: { padding: spacing.md },
-    lg: { padding: spacing.lg },
-    xl: { padding: spacing.xl }
-  };
-
-  const sizeStyles: Record<string, React.CSSProperties> = {
-    sm: { maxWidth: '24rem' },
-    md: { maxWidth: '32rem' },
-    lg: { maxWidth: '48rem' },
-    xl: { maxWidth: '64rem' }
-  };
-
-  const headerStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: headerVariant === 'minimal' ? spacing.md : headerVariant === 'prominent' ? spacing.xl : spacing.lg,
-    borderBottom: headerVariant === 'minimal' ? 'none' : `1px solid ${colors.border.light}`,
-    backgroundColor: headerVariant === 'prominent' ? colors.background.secondary : 'transparent',
-    borderBottomWidth: headerVariant === 'prominent' ? '2px' : '1px',
-    borderBottomColor: headerVariant === 'prominent' ? colors.primary[600] : colors.border.light
-  };
-
-  const titleStyle: React.CSSProperties = {
-    margin: 0,
-    fontWeight: 600,
-    color: colors.text.primary,
-    lineHeight: 1.4,
-    ...titleStyles[titleSize]
-  };
-
-  const bodyStyle: React.CSSProperties = {
-    overflowY: 'auto',
-    maxHeight: 'calc(100vh - 200px)',
-    ...paddingStyles[bodyPadding]
-  };
-
-  const footerStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: spacing.sm,
-    padding: spacing.lg,
-    borderTop: `1px solid ${colors.border.light}`,
-    backgroundColor: colors.background.secondary,
-    justifyContent: footerVariant === 'centered' ? 'center' : footerVariant === 'split' ? 'space-between' : 'flex-end'
-  };
-
-  const contentStyle: React.CSSProperties = {
-    position: 'relative',
-    backgroundColor: colors.background.primary,
-    borderRadius: variant === 'fullscreen' ? 0 : borderRadius.lg,
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-    maxHeight: variant === 'fullscreen' ? '100vh' : `calc(100vh - ${spacing.xl} * 2)`,
-    overflow: 'hidden',
-    outline: 'none',
-    ...(variant === 'fullscreen' ? {
-      width: '100vw',
-      height: '100vh',
-      maxWidth: 'none',
-      maxHeight: 'none'
-    } : sizeStyles[size])
+  // Map title size to font size
+  const titleSizeMap: Record<'sm' | 'md' | 'lg', string> = {
+    sm: fontSize.md,
+    md: fontSize.lg,
+    lg: fontSize.xl
   };
 
   return (
@@ -129,31 +65,64 @@ export const Modal: React.FC<ModalProps> = React.forwardRef<HTMLDivElement, Moda
       aria-describedby={ariaDescribedBy}
       {...rest}
     >
-      <div style={contentStyle}>
-        <div style={headerStyle}>
-          <h2 style={titleStyle}>{title}</h2>
-          {showCloseButton && (
-            <Button
-              onClick={onClose}
-              variant="ghost"
-              size="sm"
-              aria-label="Close modal"
+      <Card
+        variant="elevated"
+        padding="none"
+      >
+        <Stack direction="vertical" spacing="none">
+          {/* Header */}
+          <Container
+            variant={headerVariant === 'prominent' ? 'elevated' : 'default'}
+            padding={headerVariant === 'minimal' ? 'md' : headerVariant === 'prominent' ? 'xl' : 'lg'}
+          >
+            <Stack direction="horizontal" justify="space-between" align="center">
+              <h2 style={{
+                margin: 0,
+                fontWeight: 600,
+                color: colors.text.primary,
+                lineHeight: 1.4,
+                fontSize: titleSizeMap[titleSize as 'sm' | 'md' | 'lg']
+              }}>
+                {title}
+              </h2>
+              {showCloseButton && (
+                <Button
+                  onClick={onClose}
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Close modal"
+                >
+                  ×
+                </Button>
+              )}
+            </Stack>
+          </Container>
+          
+          {/* Body */}
+          <Container
+            padding={bodyPadding}
+          >
+            {children}
+          </Container>
+          
+          {/* Footer */}
+          {footer && (
+            <Container
+              variant="elevated"
+              padding="lg"
             >
-              ×
-            </Button>
+              <Stack
+                direction="horizontal"
+                justify={footerVariant === 'centered' ? 'center' : footerVariant === 'split' ? 'space-between' : 'flex-end'}
+                align="center"
+                spacing="sm"
+              >
+                {footer}
+              </Stack>
+            </Container>
           )}
-        </div>
-        
-        <div style={bodyStyle}>
-          {children}
-        </div>
-        
-        {footer && (
-          <div style={footerStyle}>
-            {footer}
-          </div>
-        )}
-      </div>
+        </Stack>
+      </Card>
     </Overlay>
   );
 });

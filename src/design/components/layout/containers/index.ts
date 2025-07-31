@@ -1,4 +1,7 @@
-// Container Components
-// High-level container components for layout structure
+// Foundational Layout Components
+// Layer 2 building blocks that use the grid system
 
-export { Container, Section, LayoutCard } from './Container'; 
+export { Container, Spacer, PositionedContainer } from './Container';
+export { Section } from './Section';
+export { Card } from './Card';
+export { List, ListItem } from './List'; 

@@ -1,0 +1,95 @@
+'use client';
+
+import React from 'react';
+import styled from 'styled-components';
+import { RowProps } from './types';
+import { spacing, breakpoints } from '../../../system/tokens/tokens';
+
+// Styled Row component with flexbox properties
+const StyledRow = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['direction', 'wrap', 'align', 'justify', 'gap', 'padding', 'margin', 'fullWidth', 'responsive'].includes(prop)
+})<{
+  direction: RowProps['direction'];
+  wrap: RowProps['wrap'];
+  align: RowProps['align'];
+  justify: RowProps['justify'];
+  gap: RowProps['gap'];
+  padding: RowProps['padding'];
+  margin: RowProps['margin'];
+  fullWidth: boolean;
+  responsive: boolean;
+}>`
+  display: flex;
+  flex-direction: ${({ direction }) => direction};
+  flex-wrap: ${({ wrap }) => wrap};
+  align-items: ${({ align }) => align};
+  justify-content: ${({ justify }) => justify};
+  width: ${({ fullWidth }) => fullWidth ? '100%' : 'auto'};
+  
+  /* Gap spacing */
+  gap: ${({ gap }) => gap === 'none' ? '0' : spacing[gap as keyof typeof spacing]};
+  
+  /* Padding */
+  padding: ${({ padding }) => padding === 'none' ? '0' : spacing[padding as keyof typeof spacing]};
+  
+  /* Margin */
+  margin: ${({ margin }) => margin === 'none' ? '0' : spacing[margin as keyof typeof spacing]};
+  
+  /* Responsive behavior */
+  ${({ responsive }) => responsive && `
+    @media (max-width: ${breakpoints.sm}) {
+      flex-direction: column;
+    }
+  `}
+`;
+
+/**
+ * Row Component - Flexbox row container
+ * 
+ * Provides a flexible row layout with responsive behavior and comprehensive
+ * flexbox controls for alignment, spacing, and direction.
+ * 
+ * @example
+ * ```tsx
+ * <Row gap="md" align="center" justify="space-between">
+ *   <Col span={6}>Left content</Col>
+ *   <Col span={6}>Right content</Col>
+ * </Row>
+ * ```
+ */
+export const Row: React.FC<RowProps> = ({
+  children,
+  direction = 'row',
+  wrap = 'nowrap',
+  align = 'stretch',
+  justify = 'flex-start',
+  gap = 'none',
+  padding = 'none',
+  margin = 'none',
+  fullWidth = false,
+  responsive = false,
+  id,
+  as: Component = 'div',
+  'data-testid': testId,
+  ...rest
+}) => {
+  return (
+    <StyledRow
+      direction={direction}
+      wrap={wrap}
+      align={align}
+      justify={justify}
+      gap={gap}
+      padding={padding}
+      margin={margin}
+      fullWidth={fullWidth}
+      responsive={responsive}
+      id={id}
+      as={Component}
+      data-testid={testId}
+      {...rest}
+    >
+      {children}
+    </StyledRow>
+  );
+}; 

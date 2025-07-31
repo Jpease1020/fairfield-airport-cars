@@ -3,8 +3,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { spacing } from '../../../system/tokens/tokens';
-import { Container } from '../containers/Container';
 import { Text, H2 } from '../../ui-components/Text';
+import { Container } from '../../layout/containers/Container';
 
 // Grid system components
 interface GridProps {

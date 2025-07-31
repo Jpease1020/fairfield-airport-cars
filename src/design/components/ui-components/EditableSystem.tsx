@@ -3,8 +3,8 @@
 import React from 'react';
 import { Button } from '@/ui';
 import { H1, H2, H3, H4, H5, H6, Text } from '@/ui';
-import { Stack } from '../grid';
-import { useEditMode } from '../providers/EditModeProvider';
+import { Stack } from '../grid-structural-components';
+import { useEditMode } from '../../providers/EditModeProvider';
 import { getContent } from '@/lib/content/content-mapping';
 
 // Unified Editable Component

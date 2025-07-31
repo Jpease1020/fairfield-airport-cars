@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@/ui';
 import { Container, Text, Span } from '@/ui';
-import { Grid } from '@/design/components/grid';
+import { Grid } from '../layout/grid/Grid';
 import { Stack } from '@/ui';
 
 interface ActionData {
@@ -44,14 +44,8 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
       {actions.map((action) => (
         <Card
           key={action.id}
-          variant="action"
-          size={size}
-          href={action.href}
-          onClick={action.onClick}
-          disabled={action.disabled}
-          icon={action.icon}
-          title={action.label}
-          description={action.description}
+          variant="elevated"
+          padding={size === 'lg' ? 'lg' : size === 'sm' ? 'sm' : 'md'}
         >
           {action.label}
         </Card>

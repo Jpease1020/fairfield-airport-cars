@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, transitions } from '../../system/tokens/tokens';
-import { LoadingSpinner } from '@/design/components/notifications/LoadingSpinner';
+import { LoadingSpinner } from '@/design/components/ui-components/notifications';
 
 // Styled button component with all CSS rules defined
 const StyledButton = styled.button.withConfig({
