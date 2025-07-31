@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Layout } from '@/ui';
 import { 
   GridSection,
   FeatureGrid,
   ToastProvider,
   useToast,
   Container,
-  Stack
-} from '@/ui';
-import { EditableHeading, EditableText } from '@/ui';
+  Stack,
+  CustomerLayout
+} from '@/design/ui';
+import { EditableHeading, EditableText } from '@/design/ui';
 
 function PortalPageContent() {
   const { addToast } = useToast();
@@ -80,7 +80,7 @@ function PortalPageContent() {
   ];
 
   return (
-    <Layout>
+    <CustomerLayout>
       {/* Welcome Section */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -138,7 +138,7 @@ function PortalPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </Layout>
+    </CustomerLayout>
   );
 }
 

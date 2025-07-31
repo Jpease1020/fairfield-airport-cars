@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Layout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -12,10 +11,11 @@ import {
   Container,
   Span,
   Button,
-  Stack
-} from '@/ui';
-import { EditableText } from '@/ui';
-import { EditableHeading } from '@/ui';
+  Stack,
+  CustomerLayout
+} from '@/design/ui';
+import { EditableText } from '@/design/ui';
+import { EditableHeading } from '@/design/ui';
 import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {
@@ -75,7 +75,7 @@ function SuccessPageContent() {
 
   if (!isClient) {
     return (
-      <Layout>
+      <CustomerLayout>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
@@ -84,13 +84,13 @@ function SuccessPageContent() {
             </Stack>
           </Container>
         </GridSection>
-      </Layout>
+      </CustomerLayout>
     );
   }
 
   if (loading) {
     return (
-      <Layout>
+      <CustomerLayout>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg"   align="center">
@@ -100,12 +100,12 @@ function SuccessPageContent() {
             </Stack>
           </Container>
         </GridSection>
-      </Layout>
+      </CustomerLayout>
     );
   }
 
   return (
-    <Layout>
+    <CustomerLayout>
       {error && (
         <GridSection variant="content" columns={1}>
           <Container>
@@ -216,14 +216,14 @@ function SuccessPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </Layout>
+    </CustomerLayout>
   );
 }
 
 function SuccessPage() {
   return (
     <Suspense fallback={
-      <Layout>
+      <CustomerLayout>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg"   align="center">
@@ -231,7 +231,7 @@ function SuccessPage() {
             </Stack>
           </Container>
         </GridSection>
-      </Layout>
+      </CustomerLayout>
     }>
       <SuccessPageContent />
     </Suspense>

@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Layout } from '@/ui';
 import { 
   Section,
   Container,
   Stack,
   H1,
   Text,
-  ActionButtonGroup
-} from '@/ui';
-import { EditableText } from '@/ui';
+  ActionButtonGroup,
+  CustomerLayout
+} from '@/design/ui';
+import { EditableText } from '@/design/ui';
 
 function AboutPageContent() {
   const ctaActions = [
@@ -29,7 +29,7 @@ function AboutPageContent() {
   return (
     <>
       {/* Hero Section */}
-      <Section variant="brand" padding="xl">
+      <Section variant="default" padding="xl">
         <Container maxWidth="2xl">
           <Stack spacing="2xl" align="center">
             <H1 align="center">
@@ -73,8 +73,8 @@ function AboutPageContent() {
 
 export default function AboutPage() {
   return (
-    <Layout>
+    <CustomerLayout>
       <AboutPageContent />
-    </Layout>
+    </CustomerLayout>
   );
 } 

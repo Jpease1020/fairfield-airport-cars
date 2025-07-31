@@ -1,15 +1,15 @@
 'use client';
 
-import { Layout } from '@/ui';
 import { 
   GridSection,
   ToastProvider,
   Container,
   Stack,
   Box,
-} from '@/ui';
-import { EditableText } from '@/ui';
-import { EditableHeading } from '@/ui';
+  CustomerLayout
+} from '@/design/ui';
+import { EditableText } from '@/design/ui';
+import { EditableHeading } from '@/design/ui';
 
 function TermsPageContent() {
   const termsSections = [
@@ -36,7 +36,7 @@ function TermsPageContent() {
   ];
 
   return (
-    <Layout>
+    <CustomerLayout>
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg"  >
@@ -72,7 +72,7 @@ function TermsPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </Layout>
+    </CustomerLayout>
   );
 }
 

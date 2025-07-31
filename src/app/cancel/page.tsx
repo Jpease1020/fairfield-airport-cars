@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Layout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -12,9 +11,10 @@ import {
   Text,
   Container,
   Stack,
-  Box
-} from '@/ui';
-import { EditableText, EditableHeading } from '@/ui';
+  Box,
+  CustomerLayout
+} from '@/design/ui';
+import { EditableText, EditableHeading } from '@/design/ui';
 
 function CancelPageContent() {
   const { addToast } = useToast();
@@ -112,7 +112,7 @@ function CancelPageContent() {
   ];
 
   return (
-    <Layout>
+    <CustomerLayout>
       {/* Cancellation Form */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -178,7 +178,7 @@ function CancelPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </Layout>
+    </CustomerLayout>
   );
 }
 
