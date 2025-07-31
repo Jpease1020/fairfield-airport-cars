@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Container, Text, EditableText, Box } from '@/design/ui';
+import { Container, Text, EditableText, Box, Stack } from '@/design/ui';
 
 export const CustomerFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -102,30 +102,38 @@ export const CustomerFooter: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <Box variant="outlined" padding="md" rounded="sm">
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column',
-            gap: '1rem',
-            alignItems: 'center',
-            textAlign: 'center'
-          }}>
-            <Text size="sm" color="secondary">
+        {/* Bottom Bar - Improved Design */}
+        
+          <Stack spacing="md" align="center">
+            {/* Copyright */}
+            <Text 
+              size="sm" 
+              color="secondary" 
+              weight="medium"
+              align="center"
+            >
               © {currentYear} Fairfield Airport Cars. All rights reserved.
             </Text>
+            
+            {/* Additional Info - Responsive Layout */}
             <div style={{ 
               display: 'flex', 
               flexDirection: 'row',
-              gap: '1rem',
+              gap: '1.5rem',
               flexWrap: 'wrap',
-              justifyContent: 'center'
-            }}>
-              <Text size="sm" color="secondary">Serving Fairfield County</Text>
-              <Text size="sm" color="secondary">Licensed & Insured</Text>
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}> 
+              <Text 
+                size="sm" 
+                color="secondary"
+                weight="medium"
+              >
+                ✅ Licensed & Insured
+              </Text>
             </div>
-          </div>
-        </Box>
+          </Stack>
+        
       </Container>
     </Box>
   );
