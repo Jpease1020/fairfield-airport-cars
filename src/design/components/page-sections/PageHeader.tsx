@@ -2,8 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Container } from '../layout/containers/Container';
-import { EditableText, EditableHeading } from '../ui-components/EditableSystem';
+import { Container, EditableText, EditableHeading } from '@/design/ui';
 
 const ActionsContainer = styled.div`
   display: flex;

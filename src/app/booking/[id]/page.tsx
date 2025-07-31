@@ -10,6 +10,7 @@ import {
   Text,
   Span,
   LoadingSpinner,
+  ContentBox,
   Card,
 } from '@/ui';
 import { Layout, Stack } from '@/ui';
@@ -160,7 +161,8 @@ function BookingDetailsContent() {
             <H3>Pickup Date & Time</H3>
             <Text>{formatDateTime(booking.pickupDateTime)}</Text>
           </Container>
-        </Card>    </GridSection>
+        </Card>
+      </GridSection>
 
       {/* Passenger Information */}
       <GridSection variant="content" columns={1}>

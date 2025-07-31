@@ -14,7 +14,7 @@ import {
   Container,
   Span
 } from '@/ui';
-import { Card } from '@/ui';
+import { ContentBox, StatCard, Card } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
 import { Select } from '@/ui';
@@ -254,50 +254,37 @@ function PromosPageContent() {
     <AdminPageWrapper
       title="Promo Codes"
       subtitle="Create and manage promotional discount codes"
-      actions={headerActions}
-      loading={loading}
-      error={error}
-      loadingMessage="Loading promo codes..."
-      errorTitle="Promo Load Error"
     >
       {/* Promo Statistics */}
       <GridSection variant="stats" columns={4}>
-        <Card
-          title={<EditableText field="admin.promos.totalPromosTitle" defaultValue="Total Promos">Total Promos</EditableText>}
+        <StatCard
+          title="Total Promos"
           icon="🎟️"
           statNumber={promos.length.toString()}
           statChange="Created codes"
           changeType="neutral"
-        >
-          {null}
-        </Card>
-        <Card
-          title={<EditableText field="admin.promos.activePromosTitle" defaultValue="Active Promos">Active Promos</EditableText>}
+        />
+        <StatCard
+          title="Active Promos"
           icon="✅"
           statNumber={activePromos.toString()}
           statChange="Currently usable"
           changeType="positive"
-        >
-          {null}
-        </Card>
-        <Card
-          title={<EditableText field="admin.promos.totalUsageTitle" defaultValue="Total Usage">Total Usage</EditableText>}
+        />
+        <StatCard
+          title="Total Usage"
           icon="📊"
           statNumber={totalUsage.toString()}
           statChange="Times used"
           changeType="positive"
-        >
-          {null}
-        </Card>
-        <Card
-          title={<EditableText field="admin.promos.expiringSoonTitle" defaultValue="Expiring Soon">Expiring Soon</EditableText>}
+        />
+        <StatCard
+          title="Expiring Soon"
           icon="⏰"
           statNumber={expiringPromos.toString()}
           statChange="Within 7 days"
           changeType={expiringPromos > 0 ? 'negative' : 'neutral'}
-        >
-          {null}
-        </Card>
+        />
       </GridSection>
 
       {/* Add New Promo Form */}

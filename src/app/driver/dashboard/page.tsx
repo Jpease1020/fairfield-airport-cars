@@ -1,10 +1,11 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
-  Card, 
+  ContentBox, 
   H2, 
   Text, 
   Button, 
@@ -18,14 +19,16 @@ import { getBookings, updateBookingStatus } from '@/lib/services/booking-service
 
 interface DriverDashboardProps {}
 
-export default function DriverDashboard() {
+function DriverDashboardContent() {
   const [driver, setDriver] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentLocation, setCurrentLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     loadDriverData();
     loadBookings();
     getCurrentLocation();
@@ -52,7 +55,7 @@ export default function DriverDashboard() {
   };
 
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -84,6 +87,17 @@ export default function DriverDashboard() {
     }
   };
 
+  if (!isClient) {
+    return (
+      <Container padding="lg" maxWidth="xl">
+        <Stack spacing="lg" align="center">
+          <LoadingSpinner />
+          <Text>Initializing driver dashboard...</Text>
+        </Stack>
+      </Container>
+    );
+  }
+
   if (loading) {
     return (
       <Container padding="lg" maxWidth="xl">
@@ -99,7 +113,7 @@ export default function DriverDashboard() {
     <Container padding="lg" maxWidth="xl">
       <Stack spacing="xl">
         {/* Driver Status */}
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Driver Dashboard - Gregg</H2>
             
@@ -165,10 +179,10 @@ export default function DriverDashboard() {
               </GridItem>
             </Grid>
           </Stack>
-        </Card>
+        </ContentBox>
 
         {/* Today's Bookings */}
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Today&apos;s Bookings</H2>
             
@@ -177,7 +191,7 @@ export default function DriverDashboard() {
             ) : (
               <Stack spacing="md">
                 {bookings.map((booking) => (
-                  <Card key={booking.id} variant="outlined" padding="md">
+                  <ContentBox key={booking.id} variant="outlined" padding="md">
                     <Stack spacing="md">
                       <Grid cols={2} gap="md" responsive>
                         <GridItem>
@@ -232,13 +246,17 @@ export default function DriverDashboard() {
                         )}
                       </Stack>
                     </Stack>
-                  </Card>
+                  </ContentBox>
                 ))}
               </Stack>
             )}
           </Stack>
-        </Card>
+        </ContentBox>
       </Stack>
     </Container>
   );
-} 
+}
+
+const DriverDashboard = dynamic(() => Promise.resolve(DriverDashboardContent), { ssr: false });
+
+export default DriverDashboard; 

@@ -15,7 +15,7 @@ import {
 } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
-import { Card } from '@/ui';
+import { ContentBox } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
 
@@ -100,8 +100,6 @@ function BusinessPageContent() {
       <AdminPageWrapper
         title="Business Settings"
         subtitle="Configure your company information and branding"
-        loading={true}
-        loadingMessage="Loading business settings..."
       >
         <Container>
           <EditableText field="admin.cms.business.loading" defaultValue="Loading...">
@@ -117,8 +115,6 @@ function BusinessPageContent() {
       <AdminPageWrapper
         title="Business Settings"
         subtitle="Configure your company information and branding"
-        error={error}
-        errorTitle="Settings Load Error"
       >
         <Container>
           <EditableText field="admin.cms.business.error" defaultValue="Error loading settings">
@@ -134,8 +130,6 @@ function BusinessPageContent() {
       <AdminPageWrapper
         title="Business Settings"
         subtitle="Configure your company information and branding"
-        error="No business settings found"
-        errorTitle="Settings Not Found"
       >
         <Container>
           <EditableText field="admin.cms.business.noSettings" defaultValue="No settings found">
@@ -156,7 +150,7 @@ function BusinessPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             {/* Company Information */}
-            <Card variant="elevated" padding="lg">
+            <ContentBox variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Text size="lg" weight="bold">🏢 Company Information</Text>
                 <Text>Basic company details and contact information</Text>
@@ -230,10 +224,10 @@ function BusinessPageContent() {
                   </Container>
                 </Stack>
               </Stack>
-            </Card>
+            </ContentBox>
 
             {/* Social Media */}
-            <Card variant="elevated" padding="lg">
+            <ContentBox variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Text size="lg" weight="bold">📱 Social Media</Text>
                 <Text>Links to your social media profiles</Text>
@@ -281,10 +275,10 @@ function BusinessPageContent() {
                   </Container>
                 </Stack>
               </Stack>
-            </Card>
+            </ContentBox>
 
             {/* Branding */}
-            <Card variant="elevated" padding="lg">
+            <ContentBox variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Text size="lg" weight="bold">🎨 Branding</Text>
                 <Text>Visual identity and brand colors</Text>
@@ -348,12 +342,12 @@ function BusinessPageContent() {
                   </Container>
                 </Stack>
               </Stack>
-            </Card>
+            </ContentBox>
 
             {/* Business Preview */}
-            <Card variant="elevated" padding="lg">
+            <ContentBox variant="elevated" padding="lg">
               <Stack spacing="md">
-                <Text size="lg" weight="bold">👀 Business Card Preview</Text>
+                <Text size="lg" weight="bold">👀 Business ContentBox Preview</Text>
                 <Text>How your business information will appear to customers</Text>
                 
                 <Stack spacing="lg">
@@ -377,7 +371,7 @@ function BusinessPageContent() {
                   </EditableText>
                 </Stack>
               </Stack>
-            </Card>
+            </ContentBox>
           </Container>
         </GridSection>
       )}

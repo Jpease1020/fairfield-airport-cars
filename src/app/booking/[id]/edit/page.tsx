@@ -7,7 +7,7 @@ import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
 import { Layout } from '@/ui';
 import { GridSection, LoadingSpinner, Text, Container } from '@/ui';
-import { Card } from '@/ui';
+import { ContentBox } from '@/ui';
 import { Stack } from '@/ui';
 
 export default function EditBookingPage() {
@@ -41,7 +41,7 @@ export default function EditBookingPage() {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
-          <Card variant="elevated" padding="lg">
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">Loading...</Text>
               <Text>Fetching booking details</Text>
@@ -49,7 +49,7 @@ export default function EditBookingPage() {
                 <LoadingSpinner text="Loading booking details..." />
               </Container>
             </Stack>
-          </Card>
+          </ContentBox>
         </GridSection>
       </Layout>
     );
@@ -59,7 +59,7 @@ export default function EditBookingPage() {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
-          <Card variant="elevated" padding="lg">
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">❌ Error</Text>
               <Text>Failed to load booking</Text>
@@ -67,7 +67,7 @@ export default function EditBookingPage() {
                 {error}
               </Text>
             </Stack>
-          </Card>
+          </ContentBox>
         </GridSection>
       </Layout>
     );
@@ -77,7 +77,7 @@ export default function EditBookingPage() {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
-          <Card variant="elevated" padding="lg">
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">❌ Booking Not Found</Text>
               <Text>No booking found with the provided ID</Text>
@@ -85,7 +85,7 @@ export default function EditBookingPage() {
                 No booking found with the provided ID.
               </Text>
             </Stack>
-          </Card>
+          </ContentBox>
         </GridSection>
       </Layout>
     );
@@ -94,7 +94,7 @@ export default function EditBookingPage() {
   return (
     <Layout>
       <GridSection variant="content" columns={1}>
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">✏️ Edit Booking Details</Text>
             <Text>Update your ride information</Text>
@@ -102,7 +102,7 @@ export default function EditBookingPage() {
               <BookingForm booking={booking} />
             </Container>
           </Stack>
-        </Card>
+        </ContentBox>
       </GridSection>
     </Layout>
   );

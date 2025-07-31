@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import PageCommentWidget from '@/design/components/sections/PageCommentWidget';
+import PageCommentWidget from './PageCommentWidget';
 
 const GlobalCommentWidget = () => {
   const [isAdmin, setIsAdmin] = useState(false);

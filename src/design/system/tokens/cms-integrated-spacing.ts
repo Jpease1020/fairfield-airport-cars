@@ -27,7 +27,7 @@ export const getCMSSpacing = () => ({
       lg: '1rem 1.25rem',
       xl: '1.25rem 1.5rem',
     },
-    // Card padding
+    // ContentBox padding
     card: {
       sm: '1rem',
       md: '1.5rem',

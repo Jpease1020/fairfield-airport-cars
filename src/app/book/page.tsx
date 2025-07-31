@@ -17,7 +17,7 @@ export default function BookPage() {
       {/* Hero Section - Matching home page styling */}
       <Section id="booking-hero-section" variant="brand" padding="xl">
         <Container maxWidth="2xl">
-          <Stack spacing="2xl" align="center" gap="md">
+          <Stack spacing="2xl" align="center">
             <H1 id="booking-hero-title" align="center">
               <EditableText field="booking.hero.title" defaultValue="Book Your Airport Ride">
                 Book Your Airport Ride

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, Card, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
+import { AdminPageWrapper, ContentBox, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
 
@@ -69,8 +69,6 @@ const AIAssistantDisabledPage = () => {
       <AdminPageWrapper
         title="AI Assistant"
         subtitle="Loading AI assistant configuration..."
-        actions={[]}
-        loading={true}
       >
         <Container>
           <EditableText field="admin.aiAssistant.loading" defaultValue="Loading...">
@@ -85,13 +83,14 @@ const AIAssistantDisabledPage = () => {
     <AdminPageWrapper
       title="AI Assistant Disabled"
       subtitle="The AI assistant feature is currently disabled for your account"
-      actions={headerActions}
     >
       <GridSection variant="content" columns={1}>
-        <Card
-          title="🤖 AI Assistant Status"
-          description="Information about AI assistant availability and activation"
-        >
+        <ContentBox variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Stack spacing="sm">
+                <Text variant="lead" size="md" weight="semibold">🤖 AI Assistant Status</Text>
+                <Text variant="muted" size="sm">Information about AI assistant availability and activation</Text>
+              </Stack>
           <Stack spacing="md" align="center">
             <Text size="xl">🚫</Text>
             <H3>
@@ -106,16 +105,20 @@ const AIAssistantDisabledPage = () => {
               </EditableText>
             </Text>
           </Stack>
-        </Card>
+          </Stack>
+        </ContentBox>
       </GridSection>
 
       <GridSection variant="actions" columns={1}>
-        <Card
-          title="⚡ Available Actions"
-          description="Alternative tools and features you can access"
-        >
+        <ContentBox variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Stack spacing="sm">
+                <Text variant="lead" size="md" weight="semibold">⚡ Available Actions</Text>
+                <Text variant="muted" size="sm">Alternative tools and features you can access</Text>
+              </Stack>
           <ActionGrid actions={quickActions} columns={4} />
-        </Card>
+          </Stack>
+        </ContentBox>
       </GridSection>
     </AdminPageWrapper>
   );

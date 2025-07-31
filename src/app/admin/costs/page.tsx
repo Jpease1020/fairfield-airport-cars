@@ -5,7 +5,7 @@ import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-
 import { 
   AdminPageWrapper,
   GridSection, 
-  Card, 
+  ContentBox, 
   ActionGrid,
   DataTable,
   DataTableColumn,
@@ -14,6 +14,8 @@ import {
   useToast,
   Container,
   Span,
+  Text,
+  Stack,
 } from '@/ui';
 import { EditableText } from '@/ui';
 
@@ -237,71 +239,67 @@ function CostsPageContent() {
     <AdminPageWrapper
       title="Cost Tracking"
       subtitle="Monitor and manage your business costs and expenses"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading cost data..."
-      errorTitle="Cost Loading Error"
     >
       {/* Stats Overview */}
       <GridSection variant="stats" columns={4}>
-        <Card
-          title="Total Monthly Cost"
-          icon="💰"
-          statNumber={summary ? formatCurrency(summary.totalActualCost) : '$0'}
-          statChange={summary && summary.totalProjectedCost > 0 
-            ? `${((summary.totalActualCost / summary.totalProjectedCost - 1) * 100).toFixed(1)}% vs projected`
-            : 'No projection'
-          }
-          changeType={summary && summary.totalActualCost > summary.totalProjectedCost ? 'negative' : 'positive'}
-        >
-          <EditableText field="admin.costs.totalMonthlyCost" defaultValue="Total monthly cost tracking">
-            Total monthly cost tracking
-          </EditableText>
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Total Monthly Cost</Text>
+            <Text size="xl" weight="bold">{summary ? formatCurrency(summary.totalActualCost) : '$0'}</Text>
+            <Text variant="muted" size="sm">
+              {summary && summary.totalProjectedCost > 0 
+                ? `${((summary.totalActualCost / summary.totalProjectedCost - 1) * 100).toFixed(1)}% vs projected`
+                : 'No projection'
+              }
+            </Text>
+            <EditableText field="admin.costs.totalMonthlyCost" defaultValue="Total monthly cost tracking">
+              Total monthly cost tracking
+            </EditableText>
+          </Stack>
+        </ContentBox>
         
-        <Card
-          title="Projected Monthly"
-          icon="📊"
-          statNumber={summary ? formatCurrency(summary.totalProjectedCost) : '$0'}
-          statChange={`${costs.length} cost categories`}
-          changeType="neutral"
-        >
-          <EditableText field="admin.costs.projectedMonthly" defaultValue="Projected monthly costs">
-            Projected monthly costs
-          </EditableText>
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Projected Monthly</Text>
+            <Text size="xl" weight="bold">{summary ? formatCurrency(summary.totalProjectedCost) : '$0'}</Text>
+            <Text variant="muted" size="sm">{costs.length} cost categories</Text>
+            <EditableText field="admin.costs.projectedMonthly" defaultValue="Projected monthly costs">
+              Projected monthly costs
+            </EditableText>
+          </Stack>
+        </ContentBox>
         
-        <Card
-          title="Over Budget Items"
-          icon="⚠️"
-          statNumber={overBudgetItems.toString()}
-          statChange={`${pendingItems} pending updates`}
-          changeType={overBudgetItems > 0 ? 'negative' : 'positive'}
-        >
-          <EditableText field="admin.costs.overBudgetItems" defaultValue="Items over budget">
-            Items over budget
-          </EditableText>
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Over Budget Items</Text>
+            <Text size="xl" weight="bold">{overBudgetItems.toString()}</Text>
+            <Text variant="muted" size="sm">{pendingItems} pending updates</Text>
+            <EditableText field="admin.costs.overBudgetItems" defaultValue="Items over budget">
+              Items over budget
+            </EditableText>
+          </Stack>
+        </ContentBox>
         
-        <Card
-          title="Cost Categories"
-          icon="📋"
-          statNumber={costs.length.toString()}
-          statChange="Active tracking"
-          changeType="neutral"
-        >
-          <EditableText field="admin.costs.costCategories" defaultValue="Active cost categories">
-            Active cost categories
-          </EditableText>
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Cost Categories</Text>
+            <Text size="xl" weight="bold">{costs.length.toString()}</Text>
+            <Text variant="muted" size="sm">Active tracking</Text>
+            <EditableText field="admin.costs.costCategories" defaultValue="Active cost categories">
+              Active cost categories
+            </EditableText>
+          </Stack>
+        </ContentBox>
       </GridSection>
 
       {/* Cost Breakdown Table */}
       <GridSection variant="content" columns={1}>
-        <Card
-          title="💰 Cost Breakdown"
-          description="Search, sort, and manage your business cost categories"
-        >
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">💰 Cost Breakdown</Text>
+              <Text variant="muted" size="sm">Search, sort, and manage your business cost categories</Text>
+            </Stack>
           <DataTable
             data={costs}
             columns={columns}
@@ -312,17 +310,21 @@ function CostsPageContent() {
             emptyIcon="💰"
             pageSize={15}
           />
-        </Card>
+          </Stack>
+        </ContentBox>
       </GridSection>
 
       {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
-        <Card
-          title="⚡ Quick Actions"
-          description="Manage your cost tracking and generate reports"
-        >
-          <ActionGrid actions={quickActions} columns={4} />
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">⚡ Quick Actions</Text>
+              <Text variant="muted" size="sm">Manage your cost tracking and generate reports</Text>
+            </Stack>
+            <ActionGrid actions={quickActions} columns={4} />
+          </Stack>
+        </ContentBox>
       </GridSection>
     </AdminPageWrapper>
   );

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { AdminProvider } from '@/design/components/providers/AdminProvider';
-import { EditModeProvider } from '@/design/components/providers/EditModeProvider';
+import { AdminProvider } from '@/design/providers/AdminProvider';
+import { EditModeProvider } from '@/design/providers/EditModeProvider';
 
 import { usePathname } from 'next/navigation';
 

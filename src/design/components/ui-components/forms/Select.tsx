@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../system/tokens/tokens';
+import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../../system/tokens/tokens';
 
 // Styled Select component
 const StyledSelect = styled.select.withConfig({

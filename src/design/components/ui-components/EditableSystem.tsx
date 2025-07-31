@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@/ui';
 import { H1, H2, H3, H4, H5, H6, Text } from '@/ui';
-import { Stack } from '../grid-structural-components';
+import { Stack } from '../layout/grid/Stack';
 import { useEditMode } from '../../providers/EditModeProvider';
 import { getContent } from '@/lib/content/content-mapping';
 
@@ -167,15 +167,7 @@ export const Editable: React.FC<EditableProps> = ({
   );
 };
 
-// Convenience components for backward compatibility
-export const EditableText: React.FC<Omit<EditableProps, 'type'> & { field: string }> = (props) => (
-  <Editable {...props} type="text" />
-);
-
-export const EditableHeading: React.FC<Omit<EditableProps, 'type'> & { field: string; level?: 1 | 2 | 3 | 4 | 5 | 6 }> = (props) => (
-  <Editable {...props} type="heading" />
-);
-
+// Convenience component for backward compatibility
 export const EditableButton: React.FC<Omit<EditableProps, 'type'> & { field: string; variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' }> = (props) => (
   <Editable {...props} type="button" />
 ); 

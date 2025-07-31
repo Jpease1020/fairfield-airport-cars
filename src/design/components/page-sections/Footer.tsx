@@ -1,12 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container } from '../layout/containers/Container';
-import { Section } from '../layout/containers/Section';
-import { Stack } from '../layout/grid/Stack';
-import { Grid } from '../layout/grid/Grid';
-import { Col } from '../layout/grid/Col';
-import { Text, Link } from '../ui-components/Text';
+import { Container, Section, Stack, Grid, Col, Text, Link } from '@/design/ui';
 
 export interface FooterLinkData {
   label: string;
@@ -77,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({
       <Container maxWidth="xl">
         <Stack direction="vertical" spacing="xl">
           {/* Main Footer Content */}
-          <Grid cols={12} gap="xl">
+          <Grid cols={12}  >
             {/* Logo and Description Section */}
             <Col span={{ xs: 12, md: 4 }}>
               <Stack direction="vertical" spacing="md">

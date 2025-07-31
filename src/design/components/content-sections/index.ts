@@ -9,7 +9,7 @@ export * from './FeatureGrid';
 // Content Stack Patterns
 export * from './ContentStack';
 
-// Content Card Patterns
+// Content ContentBox Patterns
 export * from './ContentCard';
 
 // Content List Patterns

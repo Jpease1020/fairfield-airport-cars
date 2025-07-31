@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AdminPageWrapper, GridSection, Card, ActionGrid, Container, H3 } from '@/ui';
+import { AdminPageWrapper, GridSection, ContentBox, ActionGrid, Container, H3, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
 
@@ -146,16 +146,17 @@ function AdminHelpPage() {
     <AdminPageWrapper
       title="Admin Help & Guide"
       subtitle="Everything you need to know about managing your car service business"
-      actions={headerActions}
     >
       {/* Help Sections */}
       <GridSection variant="content" columns={2}>
         {helpSections.map((section, sectionIndex) => (
-          <Card
+          <ContentBox
             key={sectionIndex}
-            title={`${section.icon} ${section.title}`}
-            description={section.description}
           >
+            <Stack spacing="md">
+                <Text variant="lead" size="md" weight="semibold">{section.icon} {section.title}</Text>
+                <Text variant="muted" size="sm">{section.description}</Text>
+              </Stack>
             <Container>
               <H3>
                 <EditableText field="admin.help.section.title" defaultValue={section.title}>
@@ -179,16 +180,18 @@ function AdminHelpPage() {
                 </Container>
               ))}
             </Stack>
-          </Card>
+          </ContentBox>
         ))}
       </GridSection>
 
       {/* Additional Resources */}
       <GridSection variant="content" columns={1}>
-        <Card
-          title="📞 Need More Help?"
-          description="If you can't find the answer you're looking for, here are additional resources"
-        >
+        <ContentBox>
+          <Stack spacing="md">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">📞 Need More Help?</Text>
+              <Text variant="muted" size="sm">If you can't find the answer you're looking for, here are additional resources</Text>
+            </Stack>
           <Stack spacing="md">
             <Container>
               <EditableText field="admin.help.technical_support" defaultValue="Contact your developer for technical support">
@@ -214,15 +217,18 @@ function AdminHelpPage() {
               </EditableText>
             </Container>
           </Stack>
-        </Card>
+          </Stack>
+        </ContentBox>
       </GridSection>
 
       {/* Quick Navigation */}
       <GridSection variant="actions" columns={1}>
-        <Card
-          title="Quick Navigation"
-          description="Access common admin functions directly"
-        >
+        <ContentBox>
+          <Stack spacing="md">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">Quick Navigation</Text>
+              <Text variant="muted" size="sm">Access common admin functions directly</Text>
+            </Stack>
           <ActionGrid
             actions={[
               {
@@ -251,7 +257,8 @@ function AdminHelpPage() {
               }
             ]}
           />
-        </Card>
+          </Stack>
+        </ContentBox>
       </GridSection>
     </AdminPageWrapper>
   );

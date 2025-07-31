@@ -31,11 +31,11 @@
       "@/components/business/*": ["./src/design/components/business/*"],
       "@/components/marketing/*": ["./src/design/components/business/marketing/*"],
       "@/components/icons/*": ["./src/design/components/icons/*"],
-      "@/components/providers/*": ["./src/design/components/providers/*"],
+      "@/components/providers/*": ["./src/design/providers/*"],
       "@/ui/*": ["./src/design/components/core/layout/*"],
       "@/icons/*": ["./src/design/components/icons/*"],
       "@/business/*": ["./src/design/components/business/*"],
-      "@/providers/*": ["./src/design/components/providers/*"]
+      "@/providers/*": ["./src/design/providers/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

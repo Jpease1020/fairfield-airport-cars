@@ -1,10 +1,5 @@
 import React from 'react';
-import { LoadingSpinner } from '../ui-components/notifications';
-import { Button } from '@/ui';
-import { Stack } from '../layout/grid/Stack';
-import { H3, Text } from './Text';
-import { EditableText } from '@/ui';
-import { PositionedContainer } from '../layout/containers/Container';
+import { Button, Stack, H3, Text, EditableText, PositionedContainer, LoadingSpinner } from '@/design/ui';
 
 export interface StateProps {
   type: 'loading' | 'empty' | 'error';

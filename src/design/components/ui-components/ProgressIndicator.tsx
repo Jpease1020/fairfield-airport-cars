@@ -25,7 +25,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
     return (
       <Container variant="default" padding={size}>
         <Stack direction="vertical" spacing="sm">
-          <Stack direction="horizontal" justify="between" align="center">
+          <Stack direction="horizontal" justify="space-between" align="center">
             <Text size="sm">
               Step {currentStep} of {totalSteps}
             </Text>
@@ -49,7 +49,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
     return (
       <Container variant="default" padding={size}>
         <Stack direction="vertical" spacing="md">
-          <Stack direction="horizontal" justify="between" align="center">
+          <Stack direction="horizontal" justify="space-between" align="center">
             <H3 size={size}>
               {steps[currentStep - 1]}
             </H3>
@@ -96,7 +96,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   return (
     <Container variant="default" padding={size}>
       <Stack direction="vertical" spacing="sm">
-        <Stack direction="horizontal" justify="between" align="center">
+        <Stack direction="horizontal" justify="space-between" align="center">
           <Text size="sm">
             {steps[currentStep - 1]}
           </Text>

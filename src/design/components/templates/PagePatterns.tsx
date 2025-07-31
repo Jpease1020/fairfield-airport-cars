@@ -1,15 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container } from '../layout/containers/Container';
-import { Section } from '../layout/containers/Section';
-import { Card } from '../layout/containers/Card';
-import { Stack } from '../layout/grid/Stack';
-import { Grid } from '../layout/grid/Grid';
-import { Col } from '../layout/grid/Col';
-import { Text, H2, H3 } from '../ui-components/Text';
-import { Button } from '../ui-components/Button';
-import { AdminPageTemplate } from './PageTemplates';
+import { Container, Section, ContentBox, Stack, Grid, Col, Text, H2, H3, Button, AdminPageTemplate } from '@/design/ui';
 
 // ============================================================================
 // LAYER 6: PAGE PATTERNS
@@ -56,9 +48,9 @@ export const FormPagePattern: React.FC<FormPagePatternProps> = ({
             <Text variant="lead">{description}</Text>
           )}
           
-          <Card>
+          <ContentBox>
             {formContent}
-          </Card>
+          </ContentBox>
         </Stack>
       </Container>
     </AdminPageTemplate>
@@ -102,10 +94,10 @@ export const ListPagePattern: React.FC<ListPagePatternProps> = ({
       <Container maxWidth={maxWidth}>
         <Stack spacing="xl">
           {filters && (
-            <Card>
+            <ContentBox>
               <H3>Filters</H3>
               {filters}
-            </Card>
+            </ContentBox>
           )}
           
           {listContent}
@@ -152,10 +144,10 @@ export const DetailPagePattern: React.FC<DetailPagePatternProps> = ({
       <Container maxWidth={maxWidth}>
         <Stack spacing="xl">
           {metadata && (
-            <Card>
+            <ContentBox>
               <H3>Details</H3>
               {metadata}
-            </Card>
+            </ContentBox>
           )}
           
           {detailContent}
@@ -210,7 +202,7 @@ export const DashboardPagePattern: React.FC<DashboardPagePatternProps> = ({
           )}
           
           {/* Charts and Quick Actions */}
-          <Grid cols={12} gap="xl">
+          <Grid cols={12}  >
             {charts && (
               <Col span={{ xs: 12, lg: 8 }}>
                 {charts}
@@ -219,24 +211,24 @@ export const DashboardPagePattern: React.FC<DashboardPagePatternProps> = ({
             
             {quickActions.length > 0 && (
               <Col span={{ xs: 12, lg: 4 }}>
-                <Card>
+                <ContentBox>
                   <H3>Quick Actions</H3>
                   <Stack spacing="md">
                     {quickActions.map((action, index) => (
                       <div key={index}>{action}</div>
                     ))}
                   </Stack>
-                </Card>
+                </ContentBox>
               </Col>
             )}
           </Grid>
           
           {/* Recent Activity */}
           {recentActivity && (
-            <Card>
+            <ContentBox>
               <H3>Recent Activity</H3>
               {recentActivity}
-            </Card>
+            </ContentBox>
           )}
         </Stack>
       </Container>
@@ -298,7 +290,7 @@ export const SettingsPagePattern: React.FC<SettingsPagePatternProps> = ({
       <Container maxWidth={maxWidth}>
         <Stack spacing="xl">
           {sections.map((section, index) => (
-            <Card key={index}>
+            <ContentBox key={index}>
               <Stack spacing="md">
                 <H3>{section.title}</H3>
                 {section.description && (
@@ -306,7 +298,7 @@ export const SettingsPagePattern: React.FC<SettingsPagePatternProps> = ({
                 )}
                 {section.content}
               </Stack>
-            </Card>
+            </ContentBox>
           ))}
         </Stack>
       </Container>

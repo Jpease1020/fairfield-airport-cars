@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { AdminPageWrapper, GridSection, Card, Container } from '@/ui';
+import { AdminPageWrapper, GridSection, ContentBox, Container, StatCard, Text } from '@/ui';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { useToast } from '@/ui';
@@ -194,14 +194,10 @@ function FeedbackPageContent() {
     <AdminPageWrapper
       title="Customer Feedback"
       subtitle="Monitor and manage customer reviews and ratings"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading customer feedback..."
-      errorTitle="Feedback Load Error"
     >
       {/* Feedback Statistics */}
       <GridSection variant="stats" columns={4}>
-        <Card
+        <StatCard
           title="Total Reviews"
           icon="📝"
           statNumber={feedbackStats.totalFeedback.toString()}
@@ -211,42 +207,38 @@ function FeedbackPageContent() {
           <EditableText field="admin.feedback.totalReviews" defaultValue={`${feedbackStats.totalFeedback} total reviews`}>
             {feedbackStats.totalFeedback} total reviews
           </EditableText>
-        </Card>
-        <Card
+        </StatCard>
+        <StatCard
           title="Average Rating"
           icon="⭐"
           statNumber={feedbackStats.averageRating.toFixed(1)}
           statChange="Out of 5 stars"
           changeType="positive"
-        >
-          {null}
-        </Card>
-        <Card
+        />
+        <StatCard
           title="5-Star Reviews"
           icon="🌟"
           statNumber={feedbackStats.fiveStarCount.toString()}
           statChange={`${((feedbackStats.fiveStarCount / feedbackStats.totalFeedback) * 100).toFixed(0)}% of total`}
           changeType="positive"
-        >
-          {null}
-        </Card>
-        <Card
+        />
+        <StatCard
           title="Positive Reviews"
           icon="👍"
           statNumber={`${feedbackStats.positivePercentage.toFixed(0)}%`}
           statChange="4+ star ratings"
           changeType="positive"
-        >
-          {null}
-        </Card>
+        />
       </GridSection>
 
       {/* Feedback Table */}
       <GridSection variant="content" columns={1}>
-        <Card
-          title="💬 Customer Reviews"
-          description="Search, sort, and manage customer feedback and ratings"
-        >
+        <ContentBox>
+          <Stack spacing="md">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">💬 Customer Reviews</Text>
+              <Text variant="muted" size="sm">Search, sort, and manage customer feedback and ratings</Text>
+            </Stack>
           <DataTable
             data={feedback}
             columns={columns}
@@ -257,22 +249,25 @@ function FeedbackPageContent() {
             emptyIcon="⭐"
             pageSize={10}
           />
-        </Card>
+          </Stack>
+        </ContentBox>
       </GridSection>
 
       {/* Rating Distribution */}
       <GridSection variant="content" columns={1}>
-        <Card
-          title="📊 Rating Distribution"
-          description="Breakdown of customer ratings"
-        >
+        <ContentBox>
+          <Stack spacing="md">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">📊 Rating Distribution</Text>
+              <Text variant="muted" size="sm">Breakdown of customer ratings</Text>
+            </Stack>
           <Stack direction="vertical" spacing="md">
             {[5, 4, 3, 2, 1].map(rating => {
               const count = feedback.filter(f => f.rating === rating).length;
               const percentage = feedback.length > 0 ? (count / feedback.length) * 100 : 0;
               
               return (
-                <Stack key={rating} direction="horizontal" justify="between" align="center">
+                <Stack key={rating} direction="horizontal" justify="space-between" align="center">
                   <EditableText field="admin.feedback.stars" defaultValue={'★'.repeat(rating)}>
                     {'★'.repeat(rating)}
                   </EditableText>
@@ -286,7 +281,8 @@ function FeedbackPageContent() {
               );
             })}
           </Stack>
-        </Card>
+          </Stack>
+        </ContentBox>
       </GridSection>
     </AdminPageWrapper>
   );

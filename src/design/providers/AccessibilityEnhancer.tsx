@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/ui';
-import { Card } from '@/ui';
-import { Input, Select } from '@/design/components/forms';
+import { ContentBox } from '@/ui';
+import { Input, Select } from '@/ui';
 import { Overlay } from '@/design/components/ui-components/Overlay';
 import { Span, Link, Box, Stack } from '@/ui';
 
@@ -152,12 +152,10 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
         closeOnBackdropClick={true}
         closeOnEscape={true}
       >
-        <Card
-          title="Accessibility Options"
-        >
-            <Stack direction="vertical" gap="md">
+        <ContentBox>
+            <Stack direction="vertical" spacing="md">
               {/* High Contrast */}
-              <Stack direction="horizontal" align="center" gap="sm">
+              <Stack direction="horizontal" align="center" spacing="sm">
                 <Input
                   type="checkbox"
                   checked={settings.highContrast}
@@ -167,7 +165,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
               </Stack>
 
               {/* Reduce Motion */}
-              <Stack direction="horizontal" align="center" gap="sm">
+              <Stack direction="horizontal" align="center" spacing="sm">
                 <Input
                   type="checkbox"
                   checked={settings.reduceMotion}
@@ -177,7 +175,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
               </Stack>
 
               {/* Enhanced Focus */}
-              <Stack direction="horizontal" align="center" gap="sm">
+              <Stack direction="horizontal" align="center" spacing="sm">
                 <Input
                   type="checkbox"
                   checked={settings.focusIndicators}
@@ -187,7 +185,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
               </Stack>
 
               {/* Font Size */}
-              <Stack direction="vertical" gap="sm">
+              <Stack direction="vertical" spacing="sm">
                 <Span>Font Size</Span>
                 <Select
                   value={settings.fontSize}
@@ -200,11 +198,31 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
                 />
               </Stack>
             </Stack>
-        </Card>
+        </ContentBox>
       </Overlay>
 
       {/* Skip to main content link */}
-      <Link href="#main-content">
+      <Link 
+        href="#main-content"
+        style={{
+          position: 'absolute',
+          top: '-40px',
+          left: '6px',
+          background: '#000',
+          color: '#fff',
+          padding: '8px',
+          textDecoration: 'none',
+          borderRadius: '4px',
+          zIndex: 1000,
+          fontSize: '14px'
+        }}
+        onFocus={(e: React.FocusEvent<HTMLAnchorElement>) => {
+          e.target.style.top = '6px';
+        }}
+        onBlur={(e: React.FocusEvent<HTMLAnchorElement>) => {
+          e.target.style.top = '-40px';
+        }}
+      >
         Skip to main content
       </Link>
     </>

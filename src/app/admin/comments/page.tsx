@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { AdminPageWrapper, GridSection, Card, Container } from '@/ui';
+import { AdminPageWrapper, GridSection, ContentBox, Container, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
@@ -166,84 +166,78 @@ function CommentsPageContent() {
     <AdminPageWrapper
       title="Page Comments"
       subtitle="Monitor and manage comments across all pages"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading page comments..."
-      errorTitle="Comments Load Error"
     >
       {/* Comment Statistics */}
       <GridSection variant="stats" columns={4}>
-        <Card
-          title="Total Comments"
-          icon="💬"
-          statNumber={totalComments.toString()}
-          statChange="All comments"
-          changeType="neutral"
-        >
-          <EditableText field="admin.comments.totalComments" defaultValue={`${totalComments} total comments`}>
-            {totalComments} total comments
-          </EditableText>
-        </Card>
-        <Card
-          title="Recent Comments"
-          icon="🆕"
-          statNumber={recentComments.toString()}
-          statChange="Last 7 days"
-          changeType="positive"
-        >
-          <EditableText field="admin.comments.recentComments" defaultValue={`${recentComments} recent comments`}>
-            {recentComments} recent comments
-          </EditableText>
-        </Card>
-        <Card
-          title="Pages with Comments"
-          icon="📄"
-          statNumber={uniquePages.toString()}
-          statChange="Active pages"
-          changeType="neutral"
-        >
-          <EditableText field="admin.comments.pagesWithComments" defaultValue={`${uniquePages} pages with comments`}>
-            {uniquePages} pages with comments
-          </EditableText>
-        </Card>
-        <Card
-          title="Unique Authors"
-          icon="👥"
-          statNumber={uniqueAuthors.toString()}
-          statChange="Comment contributors"
-          changeType="positive"
-        >
-          <EditableText field="admin.comments.uniqueAuthors" defaultValue={`${uniqueAuthors} unique authors`}>
-            {uniqueAuthors} unique authors
-          </EditableText>
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Total Comments</Text>
+            <Text size="xl" weight="bold">{totalComments.toString()}</Text>
+            <Text variant="muted" size="sm">All comments</Text>
+            <EditableText field="admin.comments.totalComments" defaultValue={`${totalComments} total comments`}>
+              {totalComments} total comments
+            </EditableText>
+          </Stack>
+        </ContentBox>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Recent Comments</Text>
+            <Text size="xl" weight="bold">{recentComments.toString()}</Text>
+            <Text variant="muted" size="sm">Last 7 days</Text>
+            <EditableText field="admin.comments.recentComments" defaultValue={`${recentComments} recent comments`}>
+              {recentComments} recent comments
+            </EditableText>
+          </Stack>
+        </ContentBox>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Pages with Comments</Text>
+            <Text size="xl" weight="bold">{uniquePages.toString()}</Text>
+            <Text variant="muted" size="sm">Active pages</Text>
+            <EditableText field="admin.comments.pagesWithComments" defaultValue={`${uniquePages} pages with comments`}>
+              {uniquePages} pages with comments
+            </EditableText>
+          </Stack>
+        </ContentBox>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">Unique Authors</Text>
+            <Text size="xl" weight="bold">{uniqueAuthors.toString()}</Text>
+            <Text variant="muted" size="sm">Comment contributors</Text>
+            <EditableText field="admin.comments.uniqueAuthors" defaultValue={`${uniqueAuthors} unique authors`}>
+              {uniqueAuthors} unique authors
+            </EditableText>
+          </Stack>
+        </ContentBox>
       </GridSection>
 
       {/* Comments Table */}
       <GridSection variant="content" columns={1}>
-        <Card
-          title="💬 All Comments"
-          description="Search, sort, and manage comments across all pages"
-        >
-          <DataTable
-            data={comments}
-            columns={columns}
-            actions={actions}
-            loading={loading}
-            searchPlaceholder="Search by author, page, or comment text..."
-            emptyMessage="No comments found. Comments will appear here once users start commenting on pages."
-            emptyIcon="💬"
-            pageSize={10}
-          />
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text variant="lead" size="md" weight="semibold">💬 All Comments</Text>
+            <Text variant="muted" size="sm">Search, sort, and manage comments across all pages</Text>
+                      <DataTable
+              data={comments}
+              columns={columns}
+              actions={actions}
+              loading={loading}
+              searchPlaceholder="Search by author, page, or comment text..."
+              emptyMessage="No comments found. Comments will appear here once users start commenting on pages."
+              emptyIcon="💬"
+              pageSize={10}
+            />
+          </Stack>
+          </ContentBox>
       </GridSection>
 
       {/* Comment Analytics */}
       <GridSection variant="content" columns={1}>
-        <Card
-          title="📊 Comment Analytics"
-          description="Insights into comment activity and engagement"
-        >
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text variant="lead" size="md" weight="semibold">📊 Comment Analytics</Text>
+            <Text variant="muted" size="sm">Insights into comment activity and engagement</Text>
+          </Stack>
           <Stack direction="vertical" spacing="lg">
             <Container>
               <EditableText field="admin.comments.mostActivePages" defaultValue="Most Active Pages:">
@@ -258,7 +252,7 @@ function CommentsPageContent() {
                   .sort((a, b) => b.count - a.count)
                   .slice(0, 5)
                   .map(({ page, count }) => (
-                    <Stack key={page} direction="horizontal" justify="between">
+                    <Stack key={page} direction="horizontal" justify="space-between">
                       <EditableText field="admin.comments.pageName" defaultValue={page}>
                         {page}
                       </EditableText>
@@ -283,7 +277,7 @@ function CommentsPageContent() {
                   .sort((a, b) => b.count - a.count)
                   .slice(0, 5)
                   .map(({ author, count }) => (
-                    <Stack key={author} direction="horizontal" justify="between">
+                    <Stack key={author} direction="horizontal" justify="space-between">
                       <EditableText field="admin.comments.authorName" defaultValue={author}>
                         {author}
                       </EditableText>
@@ -295,7 +289,7 @@ function CommentsPageContent() {
               </Stack>
             </Container>
           </Stack>
-        </Card>
+        </ContentBox>
       </GridSection>
     </AdminPageWrapper>
   );

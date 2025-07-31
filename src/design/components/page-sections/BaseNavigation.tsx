@@ -2,12 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Container } from '../layout/containers/Container';
-import { Button } from '../ui-components/Button';
-import { Span } from '../ui-components/Text';
-import { Stack } from '../layout/grid/Stack';
-import { EditableText } from '../ui-components/EditableSystem';
+import { Container, Button, Span, EditableText, Stack } from '@/design/ui';
 
 export interface NavigationItem {
   name: string;

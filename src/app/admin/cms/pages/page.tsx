@@ -8,18 +8,15 @@ import {
   Container,
 } from "@/ui";
 import { 
-  AdminPageWrapper
-} from "@/design/components/layout";
-import { 
   GenericPageEditor,
   HomePageEditor,
   BookingPageEditor,
   HelpPageEditor
 } from "../PageEditors";
 import { EditableText } from '@/ui';
-import { useToast, ToastProvider } from "@/design/components/notifications/Toast";
-import { StatusMessage } from "@/design/components/notifications/StatusMessage";
-import PageCommentWidget from "@/design/components/sections/PageCommentWidget";
+import { useToast, ToastProvider } from "@/design/components/ui-components/notifications/Toast";
+import { StatusMessage } from "@/design/components/ui-components/notifications/StatusMessage";
+import PageCommentWidget from "@/future-features/comment-system/PageCommentWidget";
 
 
 const PAGE_KEYS = [
@@ -150,29 +147,18 @@ function PagesCMSContent() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Manage Page Content"
-        subtitle="Loading page configurations..."
-        loading={true}
-        loadingMessage="Loading CMS page content..."
-      >
+      <Container>
         <Container>
           <EditableText field="admin.cms.pages.loading" defaultValue="Loading...">
             Loading...
           </EditableText>
         </Container>
-      </AdminPageWrapper>
+      </Container>
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Manage Page Content"
-      subtitle="Edit website content and page configurations"
-      loading={false}
-      error={error}
-      errorTitle="CMS Load Error"
-    >
+    <Container>
       {/* Error Message */}
       {error && (
         <StatusMessage 
@@ -252,7 +238,7 @@ function PagesCMSContent() {
           })}
         </Container>
       </GridSection>
-    </AdminPageWrapper>
+    </Container>
   );
 }
 

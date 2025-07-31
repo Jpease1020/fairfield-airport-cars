@@ -8,7 +8,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  Card, 
+  ContentBox, 
   Grid,
   GridItem,
   LoadingSpinner,
@@ -272,7 +272,7 @@ function AdminDashboardContent() {
         <Grid cols={4} gap="lg" responsive>
           {statsCards.map((stat, index) => (
             <GridItem key={index}>
-              <Card variant="elevated" padding="lg" hover>
+              <ContentBox variant="elevated" padding="lg">
                 <Stack spacing="md" align="center">
                   <Text size="xl">{stat.icon}</Text>
                   <Text size="xl" weight="bold" color="primary">
@@ -283,7 +283,7 @@ function AdminDashboardContent() {
                     {stat.change}
                   </Text>
                 </Stack>
-              </Card>
+              </ContentBox>
             </GridItem>
           ))}
         </Grid>
@@ -299,12 +299,11 @@ function AdminDashboardContent() {
         <Grid cols={2} gap="lg" responsive>
           {quickActions.map((action, index) => (
             <GridItem key={index}>
-              <Card 
-                variant="elevated" 
-                padding="lg" 
-                hover
-                onClick={action.onClick}
-              >
+              <div onClick={action.onClick} style={{ cursor: 'pointer' }}>
+                <ContentBox 
+                  variant="elevated" 
+                  padding="lg"
+                >
                 <Stack spacing="md">
                   <Stack direction="horizontal" spacing="md" align="center">
                     <Text size="xl">{action.icon}</Text>
@@ -314,7 +313,8 @@ function AdminDashboardContent() {
                     {action.description}
                   </Text>
                 </Stack>
-              </Card>
+              </ContentBox>
+              </div>
             </GridItem>
           ))}
         </Grid>
@@ -327,7 +327,7 @@ function AdminDashboardContent() {
           </Text>
         </Stack>
         
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="md">
             {recentActivity.length === 0 ? (
               <Stack spacing="md" align="center">
@@ -351,7 +351,7 @@ function AdminDashboardContent() {
               ))
             )}
           </Stack>
-        </Card>
+        </ContentBox>
       </Stack>
     </Container>
   );

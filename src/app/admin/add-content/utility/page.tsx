@@ -8,7 +8,8 @@ import {
   Button,
   Stack,
   StatusMessage,
-  Card,
+  ContentBox,
+  Text,
 } from '@/ui';
 import { ToastProvider, useToast } from '@/ui';
 import { EditableText } from '@/ui';
@@ -217,22 +218,23 @@ function AddContentUtilityPage() {
     >
       <Container>
         <Stack spacing="lg">
-          <Card
-            title="⚠️ Utility Tool"
-            description="This is a utility tool to add missing content. For regular content editing, use the main CMS interface."
-          >
+          <ContentBox>
             <Container>
-              <EditableText field="admin.addContent.utility.description" defaultValue="This tool will add missing content to the database, including:">
-                This tool will add missing content to the database, including:
-              </EditableText>
-              <Stack spacing="sm">
-                <Container>• Success page messages and titles</Container>
-                <Container>• Help page sections and FAQ</Container>
-                <Container>• Booking form descriptions and placeholders</Container>
-                <Container>• Error messages and success messages</Container>
+              <Stack spacing="md">
+                <Text size="lg" weight="bold">⚠️ Utility Tool</Text>
+                <Text variant="muted">This is a utility tool to add missing content. For regular content editing, use the main CMS interface.</Text>
+                <EditableText field="admin.addContent.utility.description" defaultValue="This tool will add missing content to the database, including:">
+                  This tool will add missing content to the database, including:
+                </EditableText>
+                <Stack spacing="sm">
+                  <Container>• Success page messages and titles</Container>
+                  <Container>• Help page sections and FAQ</Container>
+                  <Container>• Booking form descriptions and placeholders</Container>
+                  <Container>• Error messages and success messages</Container>
+                </Stack>
               </Stack>
             </Container>
-          </Card>
+          </ContentBox>
           
           {error && (
             <StatusMessage 

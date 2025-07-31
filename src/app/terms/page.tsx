@@ -6,7 +6,7 @@ import {
   ToastProvider,
   Container,
   Stack,
-  Card,
+  ContentBox,
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
@@ -39,7 +39,7 @@ function TermsPageContent() {
     <Layout>
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="terms-title" level={3} field="terms.title" defaultValue="📋 Terms of Service">📋 Terms of Service</EditableHeading>
               <EditableText data-testid="terms-last-updated" field="terms.lastUpdated" defaultValue="Effective Date: January 1, 2024 | Last updated: January 2024">
@@ -57,7 +57,7 @@ function TermsPageContent() {
             
             <Stack data-testid="terms-sections-list" spacing="lg">
               {termsSections.map((section, index) => (
-                <Card key={index} data-testid={`terms-section-${index}`}>
+                <ContentBox key={index} data-testid={`terms-section-${index}`}>
                   <Stack spacing="md">
                     <EditableHeading data-testid={`terms-section-title-${index}`} level={4} field={`terms.sections.${index}.title`} defaultValue={section.title}>
                       {section.title}
@@ -66,7 +66,7 @@ function TermsPageContent() {
                       {section.content}
                     </EditableText>
                   </Stack>
-                </Card>
+                </ContentBox>
               ))}
             </Stack>
           </Stack>

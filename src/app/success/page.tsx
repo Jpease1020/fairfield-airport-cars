@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Layout } from '@/ui';
@@ -23,6 +24,7 @@ function SuccessPageContent() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   const fetchBookingDetails = useCallback(async () => {
     if (!bookingId) {
@@ -46,6 +48,7 @@ function SuccessPageContent() {
   }, [bookingId]);
 
   useEffect(() => {
+    setIsClient(true);
     fetchBookingDetails();
   }, [bookingId, fetchBookingDetails]);
 
@@ -70,12 +73,27 @@ function SuccessPageContent() {
     }
   ];
 
+  if (!isClient) {
+    return (
+      <Layout>
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <Stack spacing="lg" align="center">
+              <LoadingSpinner size="lg" />
+              <Text>Initializing...</Text>
+            </Stack>
+          </Container>
+        </GridSection>
+      </Layout>
+    );
+  }
+
   if (loading) {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
           <Container>
-            <Stack spacing="lg" gap="xl" align="center">
+            <Stack spacing="lg"   align="center">
               <EditableHeading data-testid="success-loading-title" level={2} field="success.loading.title" defaultValue="Loading...">Loading...</EditableHeading>
               <EditableText data-testid="success-loading-description" field="success.loading.description" defaultValue="Loading your booking details...">Loading your booking details...</EditableText>
               <LoadingSpinner size="lg" />
@@ -91,7 +109,7 @@ function SuccessPageContent() {
       {error && (
         <GridSection variant="content" columns={1}>
           <Container>
-            <Stack spacing="lg" gap="xl">
+            <Stack spacing="lg"  >
               <Stack spacing="md" align="center">
                 <EditableHeading data-testid="success-error-title" level={3} field="success.error.title" defaultValue="⚠️ Error Loading Booking">⚠️ Error Loading Booking</EditableHeading>
                 <EditableText data-testid="success-error-description" field="success.error.description" defaultValue="Please try refreshing the page or contact support if the problem persists.">
@@ -106,7 +124,7 @@ function SuccessPageContent() {
       {/* Success Message */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl" align="center">
+          <Stack spacing="lg"   align="center">
             <Span data-testid="success-icon" size="xl">🎉</Span>
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="success-booking-confirmed-title" level={3} field="success.bookingConfirmed.title" defaultValue="Booking Confirmed!">Booking Confirmed!</EditableHeading>
@@ -127,7 +145,7 @@ function SuccessPageContent() {
       {booking && (
         <GridSection variant="content" columns={2}>
           <Container>
-            <Stack spacing="lg" gap="xl">
+            <Stack spacing="lg"  >
               <Stack spacing="md" align="center">
                 <EditableHeading data-testid="success-trip-details-title" level={3} field="success.tripDetails.title" defaultValue="Trip Details">Trip Details</EditableHeading>
                 <EditableText data-testid="success-trip-details-description" field="success.tripDetails.description" defaultValue="Your journey information">Your journey information</EditableText>
@@ -142,7 +160,7 @@ function SuccessPageContent() {
           </Container>
           
           <Container>
-            <Stack spacing="lg" gap="xl">
+            <Stack spacing="lg"  >
               <Stack spacing="md" align="center">
                 <EditableHeading data-testid="success-payment-status-title" level={3} field="success.paymentStatus.title" defaultValue="💰 Payment Status">💰 Payment Status</EditableHeading>
                 <EditableText data-testid="success-payment-status-description" field="success.paymentStatus.description" defaultValue="Your payment information">Your payment information</EditableText>
@@ -160,7 +178,7 @@ function SuccessPageContent() {
       {/* Next Steps */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="success-next-steps-title" level={3} field="success.nextSteps.title" defaultValue="📋 What Happens Next?">📋 What Happens Next?</EditableHeading>
               <EditableText data-testid="success-next-steps-description" field="success.nextSteps.description" defaultValue="Here&apos;s what you can expect from us">Here&apos;s what you can expect from us</EditableText>
@@ -181,7 +199,7 @@ function SuccessPageContent() {
       {/* Emergency Contact */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="success-emergency-contact-title" level={3} field="success.emergencyContact.title" defaultValue="🆘 Need Help?">🆘 Need Help?</EditableHeading>
               <EditableText data-testid="success-emergency-contact-description" field="success.emergencyContact.description" defaultValue="Contact us anytime if you have questions or need to make changes">
@@ -208,7 +226,7 @@ function SuccessPage() {
       <Layout>
         <GridSection variant="content" columns={1}>
           <Container>
-            <Stack spacing="lg" gap="xl" align="center">
+            <Stack spacing="lg"   align="center">
               <LoadingSpinner size="lg" />
             </Stack>
           </Container>
@@ -220,4 +238,6 @@ function SuccessPage() {
   );
 }
 
-export default SuccessPage;
+const SuccessPageDynamic = dynamic(() => Promise.resolve(SuccessPage), { ssr: false });
+
+export default SuccessPageDynamic;

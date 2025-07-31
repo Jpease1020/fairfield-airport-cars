@@ -87,7 +87,7 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
       aria-label={getAriaLabel()}
       {...rest}
     >
-      <Stack direction="horizontal" align="center" justify="between" spacing="md">
+      <Stack direction="horizontal" align="center" justify="space-between" spacing="md">
         <Stack direction="horizontal" align="center" spacing="md">
           <Stack 
             direction="vertical" 

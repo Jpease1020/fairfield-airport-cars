@@ -12,7 +12,7 @@ import {
   Text,
   Container,
   Stack,
-  Card
+  ContentBox
 } from '@/ui';
 import { EditableText, EditableHeading } from '@/ui';
 
@@ -116,7 +116,7 @@ function CancelPageContent() {
       {/* Cancellation Form */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="cancel-form-title" level={3} field="cancel.form.title" defaultValue="📝 Cancel Your Booking">📝 Cancel Your Booking</EditableHeading>
               <EditableText data-testid="cancel-form-description" field="cancel.form.description" defaultValue="Please provide your booking details to process the cancellation">
@@ -141,7 +141,7 @@ function CancelPageContent() {
       {/* Cancellation Policy */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="cancel-policy-title" level={3} field="cancel.policy.title" defaultValue="📋 Cancellation Policy">📋 Cancellation Policy</EditableHeading>
               <EditableText data-testid="cancel-policy-description" field="cancel.policy.description" defaultValue="Important information about our cancellation terms">
@@ -151,12 +151,12 @@ function CancelPageContent() {
             
             <Stack data-testid="cancel-policy-list" spacing="md">
               {cancellationPolicy.map((policy, index) => (
-                <Card key={index} data-testid={`cancel-policy-item-${index}`} padding="md">
+                <ContentBox key={index} data-testid={`cancel-policy-item-${index}`} padding="md">
                   <Stack spacing="sm">
                     <Text data-testid={`cancel-policy-title-${index}`}><strong>{policy.title}:</strong></Text>
                     <Text data-testid={`cancel-policy-description-${index}`}>{policy.description}</Text>
                   </Stack>
-                </Card>
+                </ContentBox>
               ))}
             </Stack>
           </Stack>
@@ -166,7 +166,7 @@ function CancelPageContent() {
       {/* Alternative Options */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="cancel-alternatives-title" level={3} field="cancel.alternatives.title" defaultValue="🔄 Alternative Options">🔄 Alternative Options</EditableHeading>
               <EditableText data-testid="cancel-alternatives-description" field="cancel.alternatives.description" defaultValue="Consider these alternatives before cancelling">

@@ -7,13 +7,14 @@ import { PricingSettings } from '@/types/cms';
 import { 
   AdminPageWrapper,
   GridSection,
-  Card,
+  ContentBox,
   ActionButtonGroup,
   ToastProvider,
   useToast,
   H4,
   Container,
   Span,
+  Text,
 } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
@@ -143,8 +144,6 @@ function PricingSettingsContent() {
       <AdminPageWrapper
         title="Pricing Settings"
         subtitle="Loading pricing configuration..."
-        actions={headerActions}
-        loadingMessage="Loading pricing settings..."
       >
         <Container>
           <EditableText field="admin.cms.pricing.loading" defaultValue="Loading...">
@@ -160,8 +159,6 @@ function PricingSettingsContent() {
       <AdminPageWrapper
         title="Pricing Settings"
         subtitle="Error loading settings"
-        actions={headerActions}
-        error="Failed to load pricing settings"
       >
         <Container>
           <EditableText field="admin.cms.pricing.error" defaultValue="Error loading settings">
@@ -176,23 +173,35 @@ function PricingSettingsContent() {
     <AdminPageWrapper
       title="Pricing Settings"
       subtitle="Configure your service rates and pricing structure"
-      actions={headerActions}
     >
       <Container>
         {saved && (
-          <Card title="✅ Settings Saved" description="Pricing settings saved successfully">
-            <Span>Pricing settings saved successfully</Span>
-          </Card>
+          <ContentBox variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text variant="lead" size="md" weight="semibold">
+                ✅ Settings Saved
+              </Text>
+              <Text variant="muted" size="sm">
+                Pricing settings saved successfully
+              </Text>
+              <Span>Pricing settings saved successfully</Span>
+            </Stack>
+          </ContentBox>
         )}
 
-        <Stack gap="lg">
+        <Stack spacing="lg">
           {/* Base Pricing */}
           <GridSection>
-            <Card
-              title={<EditableText field="admin.cms.pricing.basePricingTitle" defaultValue="💰 Base Pricing">💰 Base Pricing</EditableText>}
-              description={<EditableText field="admin.cms.pricing.basePricingDesc" defaultValue="Configure your base fare structure and rates">Configure your base fare structure and rates</EditableText>}
-            >
-              <Stack gap="md">
+            <ContentBox variant="elevated" padding="lg">
+              <Stack spacing="md">
+                <Stack spacing="sm">
+                  <Text variant="lead" size="md" weight="semibold">
+                    <EditableText field="admin.cms.pricing.basePricingTitle" defaultValue="💰 Base Pricing">💰 Base Pricing</EditableText>
+                  </Text>
+                  <Text variant="muted" size="sm">
+                    <EditableText field="admin.cms.pricing.basePricingDesc" defaultValue="Configure your base fare structure and rates">Configure your base fare structure and rates</EditableText>
+                  </Text>
+                </Stack>
                 <div>
                   <Label htmlFor="baseFare"><EditableText field="admin.cms.pricing.baseFareLabel" defaultValue="Base Fare ($)">Base Fare ($)</EditableText></Label>
                   <Input
@@ -257,16 +266,21 @@ function PricingSettingsContent() {
                   />
                 </div>
               </Stack>
-            </Card>
+            </ContentBox>
           </GridSection>
 
           {/* Competitor Pricing Reference */}
           <GridSection>
-            <Card 
-              title="🏢 Competitor Pricing Reference"
-              description="Reference pricing for common routes (for comparison only - not scraped data)"
-            >
-              <Stack gap="sm">
+            <ContentBox variant="elevated" padding="lg">
+              <Stack spacing="md">
+                <Stack spacing="sm">
+                  <Text variant="lead" size="md" weight="semibold">
+                    🏢 Competitor Pricing Reference
+                  </Text>
+                  <Text variant="muted" size="sm">
+                    Reference pricing for common routes (for comparison only - not scraped data)
+                  </Text>
+                </Stack>
                 <div>
                   <strong>Fairfield, CT → JFK Airport:</strong>
                   <ul>
@@ -285,16 +299,21 @@ function PricingSettingsContent() {
                   <strong>Note:</strong> These are rough estimates for planning purposes. Actual competitor prices vary by time, demand, and other factors.
                 </div>
               </Stack>
-            </Card>
+            </ContentBox>
           </GridSection>
 
           {/* Cancellation Policy */}
           <GridSection>
-            <Card
-              title={<EditableText field="admin.cms.pricing.cancellationTitle" defaultValue="⏰ Cancellation Policy">⏰ Cancellation Policy</EditableText>}
-              description={<EditableText field="admin.cms.pricing.cancellationDesc" defaultValue="Set refund percentages for different cancellation timeframes">Set refund percentages for different cancellation timeframes</EditableText>}
-            >
-              <Stack gap="md">
+            <ContentBox variant="elevated" padding="lg">
+              <Stack spacing="md">
+                <Stack spacing="sm">
+                  <Text variant="lead" size="md" weight="semibold">
+                    <EditableText field="admin.cms.pricing.cancellationTitle" defaultValue="⏰ Cancellation Policy">⏰ Cancellation Policy</EditableText>
+                  </Text>
+                  <Text variant="muted" size="sm">
+                    <EditableText field="admin.cms.pricing.cancellationDesc" defaultValue="Set refund percentages for different cancellation timeframes">Set refund percentages for different cancellation timeframes</EditableText>
+                  </Text>
+                </Stack>
                 <div>
                   <Label htmlFor="over24hRefund"><EditableText field="admin.cms.pricing.over24hRefundLabel" defaultValue="Over 24h Refund (%)">Over 24h Refund (%)</EditableText></Label>
                   <Input
@@ -334,15 +353,21 @@ function PricingSettingsContent() {
                   />
                 </div>
               </Stack>
-            </Card>
+            </ContentBox>
           </GridSection>
 
           {/* Pricing Zones */}
           <GridSection>
-            <Card
-              title={<EditableText field="admin.cms.pricing.zonesTitle" defaultValue="📍 Pricing Zones">📍 Pricing Zones</EditableText>}
-              description={<EditableText field="admin.cms.pricing.zonesDesc" defaultValue="Configure custom pricing for different geographic areas">Configure custom pricing for different geographic areas</EditableText>}
-            >
+            <ContentBox variant="elevated" padding="lg">
+              <Stack spacing="md">
+                <Stack spacing="sm">
+                  <Text variant="lead" size="md" weight="semibold">
+                    <EditableText field="admin.cms.pricing.zonesTitle" defaultValue="📍 Pricing Zones">📍 Pricing Zones</EditableText>
+                  </Text>
+                  <Text variant="muted" size="sm">
+                    <EditableText field="admin.cms.pricing.zonesDesc" defaultValue="Configure custom pricing for different geographic areas">Configure custom pricing for different geographic areas</EditableText>
+                  </Text>
+                </Stack>
               <ActionButtonGroup
                 buttons={[
                   {
@@ -355,27 +380,40 @@ function PricingSettingsContent() {
               />
 
               {settings.zones.length === 0 ? (
-                <Card
-                  title="No zones configured"
-                  description="Add zones for different areas with custom pricing"
-                >
-                  <EditableText field="admin.cms.pricing.noZones.message" defaultValue="No pricing zones configured">
-                    No pricing zones configured
-                  </EditableText>
-                  <br />
-                  <EditableText field="admin.cms.pricing.noZones.description" defaultValue="Add zones for different areas with custom pricing">
-                    Add zones for different areas with custom pricing
-                  </EditableText>
-                </Card>
+                <ContentBox variant="elevated" padding="lg">
+                  <Stack spacing="md">
+                    <Stack spacing="sm">
+                      <Text variant="lead" size="md" weight="semibold">
+                        No zones configured
+                      </Text>
+                      <Text variant="muted" size="sm">
+                        Add zones for different areas with custom pricing
+                      </Text>
+                    </Stack>
+                    <EditableText field="admin.cms.pricing.noZones.message" defaultValue="No pricing zones configured">
+                      No pricing zones configured
+                    </EditableText>
+                    <br />
+                    <EditableText field="admin.cms.pricing.noZones.description" defaultValue="Add zones for different areas with custom pricing">
+                      Add zones for different areas with custom pricing
+                    </EditableText>
+                  </Stack>
+                </ContentBox>
               ) : (
-                <Stack gap="md">
+                <Stack spacing="md">
                   {settings.zones.map((zone, index) => (
-                    <Card
-                      key={index}
-                      title={`Zone ${index + 1}`}
-                      description={`Custom pricing for ${zone.name}`}
-                    >
-                      <Stack gap="sm">
+                    <ContentBox key={index} variant="elevated" padding="lg">
+                      <Stack spacing="md">
+                        <Stack spacing="sm">
+                          <Text variant="lead" size="md" weight="semibold">
+                            Zone {index + 1}
+                          </Text>
+                          <Text variant="muted" size="sm">
+                            Custom pricing for {zone.name}
+                          </Text>
+                        </Stack>
+                      </Stack>
+                      <Stack spacing="sm">
                         <div>
                           <Label htmlFor={`zone-name-${index}`}><EditableText field="admin.cms.pricing.zoneNameLabel" defaultValue="Zone Name">Zone Name</EditableText></Label>
                           <Input
@@ -436,11 +474,12 @@ function PricingSettingsContent() {
                           ]}
                         />
                       </Stack>
-                    </Card>
+                    </ContentBox>
                   ))}
                 </Stack>
               )}
-            </Card>
+            </Stack>
+          </ContentBox>
           </GridSection>
         </Stack>
       </Container>

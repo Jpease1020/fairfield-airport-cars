@@ -155,13 +155,13 @@ export const Alert: React.FC<AlertProps> = ({
       as={Component}
       {...rest}
     >
-      <Stack direction="horizontal" align="center" justify="center" gap="none">
+      <Stack direction="horizontal" align="center" justify="center" spacing="none">
         <Text variant="body" size={size}>
           {getIcon()}
         </Text>
       </Stack>
       
-      <Stack direction="vertical" gap="xs">
+      <Stack direction="vertical" spacing="xs">
         {title && (
           <Text variant="body" size={size} weight="bold">
             {title}
@@ -173,7 +173,7 @@ export const Alert: React.FC<AlertProps> = ({
       </Stack>
       
       {dismissible && onClose && (
-        <Stack direction="horizontal" align="center" justify="center" gap="none">
+        <Stack direction="horizontal" align="center" justify="center" spacing="none">
           <Button
             onClick={onClose}
             variant="ghost"

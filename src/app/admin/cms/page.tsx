@@ -7,7 +7,7 @@ import { CMSConfiguration } from '@/types/cms';
 import { 
   AdminPageWrapper,
   GridSection, 
-  Card, 
+  ContentBox, 
   ActionGrid,
   ToastProvider,
   useToast,
@@ -181,22 +181,30 @@ function CMSPageContent() {
     <AdminPageWrapper
       title="Content Management System"
       subtitle="Manage website content, branding, and configuration"
-      actions={headerActions}
-      loading={loading}
-      error={error}
-      loadingMessage="Loading CMS configuration..."
-      errorTitle="CMS Load Error"
     >
       {/* CMS Sections Grid */}
       <GridSection variant="content" columns={3}>
         {cmsSections.map((section) => (
-          <Card
+          <ContentBox
             key={section.id}
-            title={`${section.icon} ${section.title}`}
-            description={section.description}
+            variant="elevated"
+            padding="lg"
           >
-            <Container>
-              <Stack direction="horizontal" align="center" justify="between">
+            <Stack spacing="md">
+              <Stack direction="horizontal" align="center" justify="space-between">
+                              <Text variant="lead" size="md" weight="semibold">
+                {section.icon} {section.title}
+              </Text>
+                <Text variant="muted" size="sm">
+                  {section.status}
+                </Text>
+              </Stack>
+              
+              <Text variant="body" size="sm">
+                {section.description}
+              </Text>
+              
+              <Stack direction="horizontal" align="center" justify="space-between">
                 <Text>
                   <EditableText field="admin.cms.statusLabel" defaultValue="Status:">
                     Status:
@@ -215,67 +223,78 @@ function CMSPageContent() {
                   }]}
                 />
               </Stack>
-            </Container>
-          </Card>
+            </Stack>
+          </ContentBox>
         ))}
       </GridSection>
 
       {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
-        <Card
-          title="⚡ Quick Actions"
-          description="Common CMS management and maintenance tasks"
-        >
-          <ActionGrid actions={quickActions} columns={4} />
-        </Card>
+        <ContentBox variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Text variant="lead" size="md" weight="semibold">
+              ⚡ Quick Actions
+            </Text>
+            <Text variant="muted" size="sm">
+              Common CMS management and maintenance tasks
+            </Text>
+            <ActionGrid actions={quickActions} columns={4} />
+          </Stack>
+        </ContentBox>
       </GridSection>
 
       {/* Last Updated Info */}
       {lastUpdated && (
         <GridSection variant="content" columns={1}>
-          <Card
-            title="🕒 Configuration Status"
-            description="CMS configuration and update information"
-          >
-            <Container spacing="md">
-              <Stack direction="horizontal" align="center" justify="between">
-                <Text>
-                  <EditableText field="admin.cms.lastUpdatedLabel" defaultValue="Last Updated">
-                    Last Updated
-                  </EditableText>
-                </Text>
-                <Text>
-                  {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
-                </Text>
-              </Stack>
+          <ContentBox variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text variant="lead" size="md" weight="semibold">
+                🕒 Configuration Status
+              </Text>
+              <Text variant="muted" size="sm">
+                CMS configuration and update information
+              </Text>
               
-              <Stack direction="horizontal" align="center" justify="between">
-                <Container>
+              <Stack spacing="md">
+                <Stack direction="horizontal" align="center" justify="space-between">
                   <Text>
-                    <EditableText field="admin.cms.configurationStatusLabel" defaultValue="Configuration Status">
-                      Configuration Status
+                    <EditableText field="admin.cms.lastUpdatedLabel" defaultValue="Last Updated">
+                      Last Updated
                     </EditableText>
                   </Text>
                   <Text>
-                    {config ? 'Fully Configured' : 'Needs Setup'}
+                    {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
                   </Text>
-                </Container>
+                </Stack>
+                
+                <Stack direction="horizontal" align="center" justify="space-between">
+                  <Container>
+                    <Text>
+                      <EditableText field="admin.cms.configurationStatusLabel" defaultValue="Configuration Status">
+                        Configuration Status
+                      </EditableText>
+                    </Text>
+                    <Text>
+                      {config ? 'Fully Configured' : 'Needs Setup'}
+                    </Text>
+                  </Container>
+                </Stack>
+                
+                <Stack direction="horizontal" align="center" justify="space-between">
+                  <Container>
+                    <Text>
+                      <EditableText field="admin.cms.autoSaveLabel" defaultValue="Auto-Save">
+                        Auto-Save
+                      </EditableText>
+                    </Text>
+                    <Text>
+                      Enabled
+                    </Text>
+                  </Container>
+                </Stack>
               </Stack>
-              
-              <Stack direction="horizontal" align="center" justify="between">
-                <Container>
-                  <Text>
-                    <EditableText field="admin.cms.autoSaveLabel" defaultValue="Auto-Save">
-                      Auto-Save
-                    </EditableText>
-                  </Text>
-                  <Text>
-                    Enabled
-                  </Text>
-                </Container>
-              </Stack>
-            </Container>
-          </Card>
+            </Stack>
+          </ContentBox>
         </GridSection>
       )}
     </AdminPageWrapper>

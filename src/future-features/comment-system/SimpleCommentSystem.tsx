@@ -2,10 +2,10 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
-import { useAdmin } from '@/design/components/providers/AdminProvider';
+import { useAdmin } from '@/design/providers/AdminProvider';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
 import { Container, H4, Span } from '@/ui';
-import { Stack, Card } from '@/ui';
+import { Stack, ContentBox } from '@/ui';
 import { Button } from '@/ui';
 import { Textarea, Select } from '@/ui';
 import { EditableText } from '@/ui';
@@ -302,7 +302,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
             variant="elevated"
             padding="md"
           >
-            <Stack direction="horizontal" align="center" justify="between">
+            <Stack direction="horizontal" align="center" justify="space-between">
             <H4>
               {existingComments.length > 0 ? (
                 <EditableText field="simpleCommentSystem.commentsHeading" defaultValue={`Comments (${existingComments.length})`}>
@@ -332,8 +332,8 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
         {existingComments.length > 0 && (
           <Stack spacing="md">
             {existingComments.map(comment => (
-              <Card key={comment.id}>
-                <Stack direction="horizontal" align="center" justify="between">
+              <ContentBox key={comment.id}>
+                <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     {getStatusIcon(comment.status)}
                     <Span>
@@ -366,7 +366,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
                     ]}
                   />
                 </Container>
-              </Card>
+              </ContentBox>
             ))}
           </Stack>
         )}
