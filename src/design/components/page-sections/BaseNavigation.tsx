@@ -7,17 +7,22 @@ import { Button, Span, EditableText } from '@/design/ui';
 // Hook to detect window size
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+    width: 0,
+    height: 0,
   });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     };
+
+    // Set initial size immediately
+    handleResize();
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -51,7 +56,28 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { width } = useWindowSize();
-  const isMobile = width < 768;
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Use both width detection and CSS media query for reliability
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const checkMobile = () => {
+      const widthCheck = width < 768;
+      const mediaQueryCheck = window.matchMedia('(max-width: 767px)').matches;
+      setIsMobile(widthCheck || mediaQueryCheck);
+    };
+    
+    checkMobile();
+    
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    mediaQuery.addEventListener('change', checkMobile);
+    
+    return () => mediaQuery.removeEventListener('change', checkMobile);
+  }, [width]);
+  
+  // Debug logging
+  console.log('Navigation width:', width, 'isMobile:', isMobile);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);

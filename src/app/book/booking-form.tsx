@@ -14,10 +14,9 @@ import {
   Form,
   ToastProvider,
   LoadingSpinner
-} from '@/ui';
-import { Input, Select } from '@/ui';
-import { Label } from '@/ui';
-import { EditableText } from '@/ui';
+} from '@/design/ui';
+import { Input, Select, Label } from '@/design/ui';
+import { EditableText } from '@/design/ui';
 import { Booking } from '@/types/booking';
 
 interface BookingFormProps {
@@ -269,14 +268,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
   }
 
   return (
-    <Container maxWidth="lg" padding="xl" data-testid="booking-form-container">
+    <Container maxWidth="2xl" padding="xl" data-testid="booking-form-container">
       <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
         {/* Single clean form container */}
-        <Stack spacing="xl" data-testid="booking-form-stack">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem', width: '100%' }} data-testid="booking-form-stack">
           
           {/* Personal Information - Enhanced with card styling */}
-          <Box variant="elevated" padding="lg" id="contact-information-card">
-            <Stack spacing="lg" data-testid="contact-information-stack" align="center" justify="center">
+          <div style={{ width: '100%' }}>
+            <Box variant="elevated" padding="lg" id="contact-information-card">
+              <Stack spacing="lg" data-testid="contact-information-stack" align="center" justify="center">
               <H2 variant="primary" id="contact-information-title">
                 <EditableText field="booking.personalInfo.title" defaultValue="Contact Information">
                   Contact Information
@@ -324,9 +324,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </Stack>
             </Stack>
           </Box>
+          </div>
 
           {/* Trip Details - Enhanced with card styling */}
-          <Box variant="elevated" padding="lg" id="trip-details-card">
+          <div style={{ width: '100%' }}>
+            <Box variant="elevated" padding="lg" id="trip-details-card">
             <Stack spacing="lg" data-testid="trip-details-stack" align="center" justify="center">
               <H2 variant="primary" id="trip-details-title">
                 <EditableText field="booking.tripDetails.title" defaultValue="Trip Details">
@@ -424,9 +426,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </Grid>
             </Stack>
           </Box>
+          </div>
 
           {/* Additional Details - Enhanced with card styling */}
-          <Box variant="elevated" padding="lg" id="additional-information-card">
+          <div style={{ width: '100%' }}>
+            <Box variant="elevated" padding="lg" id="additional-information-card">
             <Stack spacing="lg" data-testid="additional-information-stack" align="center" justify="center">
               <H2 variant="primary" id="additional-information-title">
                 <EditableText field="booking.additionalDetails.title" defaultValue="Additional Information">
@@ -466,6 +470,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </Grid>
             </Stack>
           </Box>
+          </div>
 
           {/* Fare Calculation - Enhanced styling */}
           {fare !== null && (
@@ -510,7 +515,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           )}
 
           {/* Action Buttons - Enhanced styling */}
-          <Box variant="elevated" padding="lg" id="action-buttons-card">
+          <div style={{ width: '100%' }}>
+            <Box variant="elevated" padding="lg" id="action-buttons-card">
             <Stack direction="vertical" spacing="lg" align="center" justify="center" data-testid="action-buttons-stack">
               <Button
                 type="button"
@@ -549,7 +555,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </Button>
             </Stack>
           </Box>
-        </Stack>
+          </div>
+        </div>
       </Form>
     </Container>
   );

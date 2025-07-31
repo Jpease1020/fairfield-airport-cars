@@ -14,12 +14,11 @@ import {
   GridItem,
   Box,
   Span,
-  CustomerNavigation,
-  CustomerFooter,
   Section,
   HeroSection,
   FeatureGrid,
-  ContentCard
+  ContentCard,
+  CustomerLayout
 } from '@/design/ui';
 import { EditableText } from '@/design/ui';
 import Link from 'next/link';
@@ -68,14 +67,7 @@ function HomePageContent() {
   ];
 
   return (
-    <>
-      {/* Navigation */}
-      <Container maxWidth="full" padding="md" variant="navigation" as="header" data-testid="home-navigation">
-        <CustomerNavigation />
-      </Container>
-
-      {/* Main Content */}
-      <main data-testid="home-main-content">
+    <CustomerLayout>
         {/* Hero Section */}
         <section data-testid="home-hero-section">
           <HeroSection
@@ -194,13 +186,7 @@ function HomePageContent() {
             </Stack>
           </Section>
         </section>
-      </main>
-
-      {/* Footer */}
-      <footer data-testid="home-footer">
-        <CustomerFooter />
-      </footer>
-    </>
+      </CustomerLayout>
   );
 }
 
