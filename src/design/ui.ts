@@ -11,7 +11,7 @@ export * from './components/content-sections';
 export * from './components/page-sections';
 
 // Template Components
-export * from './components/templates';
+// Templates removed - using clean components directly
 
 // Icons
 export * from './components/icons';
@@ -41,7 +41,7 @@ export type {
   BorderRadius,
   HTMLElement,
   BaseComponentProps,
-  ContentBoxProps,
+  BoxProps,
   LayoutSectionProps,
   TextProps,
   ButtonProps,

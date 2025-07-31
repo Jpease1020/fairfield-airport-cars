@@ -35,7 +35,7 @@ export interface PageSection {
 
 export interface ComponentConfig {
   id: string;
-  type: string; // 'Button', 'ContentBox', 'Text', etc.
+  type: string; // 'Button', 'Box', 'Text', etc.
   props: Record<string, any>;
   content?: EditableContent[];
   position: {

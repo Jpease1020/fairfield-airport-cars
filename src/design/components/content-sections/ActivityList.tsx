@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack, Container, ContentBox, Text, H4, ActivityItem } from '@/design/ui';
+import { Stack, Container, Box, Text, H4, ActivityItem } from '@/design/ui';
 
 interface ActivityData {
   id: string | number;
@@ -71,9 +71,9 @@ export const ActivityList: React.FC<ActivityListProps> = ({
         return (
           <Container key={activity.id}>
             {showCards ? (
-              <ContentBox variant="default" padding="md">
+              <Box variant="default" padding="md">
                 {content}
-              </ContentBox>
+              </Box>
             ) : (
               content
             )}

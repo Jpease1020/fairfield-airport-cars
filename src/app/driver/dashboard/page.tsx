@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
-  ContentBox, 
+  Box, 
   H2, 
   Text, 
   Button, 
@@ -113,7 +113,7 @@ function DriverDashboardContent() {
     <Container padding="lg" maxWidth="xl">
       <Stack spacing="xl">
         {/* Driver Status */}
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Driver Dashboard - Gregg</H2>
             
@@ -179,10 +179,10 @@ function DriverDashboardContent() {
               </GridItem>
             </Grid>
           </Stack>
-        </ContentBox>
+        </Box>
 
         {/* Today's Bookings */}
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Today&apos;s Bookings</H2>
             
@@ -191,7 +191,7 @@ function DriverDashboardContent() {
             ) : (
               <Stack spacing="md">
                 {bookings.map((booking) => (
-                  <ContentBox key={booking.id} variant="outlined" padding="md">
+                  <Box key={booking.id} variant="outlined" padding="md">
                     <Stack spacing="md">
                       <Grid cols={2} gap="md" responsive>
                         <GridItem>
@@ -246,12 +246,12 @@ function DriverDashboardContent() {
                         )}
                       </Stack>
                     </Stack>
-                  </ContentBox>
+                  </Box>
                 ))}
               </Stack>
             )}
           </Stack>
-        </ContentBox>
+        </Box>
       </Stack>
     </Container>
   );

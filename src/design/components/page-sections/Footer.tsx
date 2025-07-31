@@ -1,163 +1,132 @@
 'use client';
 
 import React from 'react';
-import { Container, Section, Stack, Grid, Col, Text, Link } from '@/design/ui';
+import Link from 'next/link';
+import { Container, Text, EditableText, Box } from '@/design/ui';
 
-export interface FooterLinkData {
-  label: string;
-  href: string;
-}
+export const CustomerFooter: React.FC = () => {
+  const currentYear = new Date().getFullYear();
 
-export interface FooterSectionData {
-  title: string;
-  links: FooterLinkData[];
-}
-
-export interface SocialLinkData {
-  platform: string;
-  href: string;
-  icon: string;
-}
-
-export interface FooterProps {
-  variant?: 'default' | 'minimal' | 'elevated';
-  compact?: boolean;
-  logo?: React.ReactNode;
-  sections?: FooterSectionData[];
-  socialLinks?: SocialLinkData[];
-  copyright?: string;
-  id?: string;
-}
-
-export const Footer: React.FC<FooterProps> = ({
-  variant = 'default',
-  compact = false,
-  logo,
-  sections = [],
-  socialLinks = [],
-  copyright = '© 2024 Fairfield Airport Cars. All rights reserved.',
-  id,
-  ...rest
-}) => {
-  // Map variant to section variant
-  const getSectionVariant = () => {
-    switch (variant) {
-      case 'minimal':
-        return 'muted';
-      case 'elevated':
-        return 'alternate';
-      default:
-        return 'default';
-    }
-  };
-
-  // Map variant to link color
-  const getLinkColor = () => {
-    switch (variant) {
-      case 'minimal':
-        return 'muted';
-      default:
-        return 'secondary';
-    }
-  };
+  const footerLinks = [
+    { name: 'About', href: '/about' },
+    { name: 'Help', href: '/help' },
+    { name: 'Privacy', href: '/privacy' },
+    { name: 'Terms', href: '/terms' },
+    { name: 'Contact', href: '/help' },
+  ];
 
   return (
-    <Section 
-      variant={getSectionVariant()}
-      padding={compact ? 'md' : 'xl'}
-      margin="none"
-      id={id}
-      {...rest}
-    >
-      <Container maxWidth="xl">
-        <Stack direction="vertical" spacing="xl">
-          {/* Main Footer Content */}
-          <Grid cols={12}  >
-            {/* Logo and Description Section */}
-            <Col span={{ xs: 12, md: 4 }}>
-              <Stack direction="vertical" spacing="md">
-                {logo || (
-                  <Container>
-                    <Text variant="body" size="lg" color="primary" fontWeight="bold">
-                      Fairfield Airport Cars
-                    </Text>
-                  </Container>
-                )}
-                <Container>
-                  <Text variant="body" size="sm" color="secondary">
-                    Professional airport transportation service in Fairfield. 
-                    Reliable, comfortable, and on-time.
-                  </Text>
-                </Container>
-                {socialLinks.length > 0 && (
-                  <Container>
-                    <Stack direction="horizontal" spacing="md">
-                      {socialLinks.map((social, index) => (
-                        <Container key={index}>
-                          <Link href={social.href}>
-                            <Text size="lg">{social.icon}</Text>
-                          </Link>
-                        </Container>
-                      ))}
-                    </Stack>
-                  </Container>
-                )}
-              </Stack>
-            </Col>
+    <Box variant="filled" padding="lg" marginTop="lg" as="footer">
+      <Container maxWidth="full" padding="md">
+        {/* Main Footer Content */}
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          gap: '2rem',
+          marginBottom: '1.5rem'
+        }}>
+          {/* Desktop: Side by side, Mobile: Stacked */}
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'row',
+            justifyContent: 'space-between', 
+            alignItems: 'flex-start',
+            gap: '2rem',
+            flexWrap: 'wrap'
+          }}>
+            {/* Company Info */}
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '0.5rem',
+              minWidth: '250px',
+              flex: '1 1 300px'
+            }}>
+              <EditableText 
+                field="footer.companyName"
+                variant="lead" 
+                weight="semibold" 
+                color="primary"
+              >
+                Fairfield Airport Cars
+              </EditableText>
+              <EditableText 
+                field="footer.tagline"
+                size="sm" 
+                color="secondary"
+              >
+                Professional airport transportation services
+              </EditableText>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <EditableText 
+                  field="footer.phone"
+                  size="sm" 
+                  color="secondary"
+                >
+                  📞 (203) 555-0123
+                </EditableText>
+                <EditableText 
+                  field="footer.email"
+                  size="sm" 
+                  color="secondary"
+                >
+                  ✉️ info@fairfieldairportcars.com
+                </EditableText>
+              </div>
+            </div>
 
-            {/* Footer Sections */}
-            {sections.map((section, sectionIndex) => (
-              <Col key={sectionIndex} span={{ xs: 6, md: 2 }}>
-                <Stack direction="vertical" spacing="md">
-                  <Container>
-                    <Text variant="body" size="sm" fontWeight="semibold">
-                      {section.title}
-                    </Text>
-                  </Container>
-                  <Container>
-                    <Stack direction="vertical" spacing="sm">
-                      {section.links.map((link, linkIndex) => (
-                        <Container key={linkIndex}>
-                          <Link href={link.href}>
-                            <Text variant="body" size="sm" color={getLinkColor()}>
-                              {link.label}
-                            </Text>
-                          </Link>
-                        </Container>
-                      ))}
-                    </Stack>
-                  </Container>
-                </Stack>
-              </Col>
-            ))}
-          </Grid>
-
-          {/* Copyright Section */}
-          <Container>
-            <Stack direction="horizontal" spacing="md" justify="space-between" align="center">
-              <Container>
-                <Text variant="body" size="sm" color="secondary">
-                  {copyright}
-                </Text>
-              </Container>
-              <Container>
-                <Stack direction="horizontal" spacing="md">
-                  <Link href="/privacy">
-                    <Text variant="body" size="sm" color="secondary">
-                      Privacy Policy
+            {/* Quick Links */}
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '0.5rem',
+              minWidth: '200px',
+              flex: '1 1 250px'
+            }}>
+              <Text weight="semibold" size="sm" color="primary">Quick Links</Text>
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'row',
+                gap: '1rem',
+                flexWrap: 'wrap'
+              }}>
+                {footerLinks.map((link) => (
+                  <Link key={link.name} href={link.href}>
+                    <Text size="sm" color="secondary" style={{ textDecoration: 'none' }}>
+                      {link.name}
                     </Text>
                   </Link>
-                  <Link href="/terms">
-                    <Text variant="body" size="sm" color="secondary">
-                      Terms of Service
-                    </Text>
-                  </Link>
-                </Stack>
-              </Container>
-            </Stack>
-          </Container>
-        </Stack>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <Box variant="outlined" padding="md" rounded="sm">
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: '1rem',
+            alignItems: 'center',
+            textAlign: 'center'
+          }}>
+            <Text size="sm" color="secondary">
+              © {currentYear} Fairfield Airport Cars. All rights reserved.
+            </Text>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'row',
+              gap: '1rem',
+              flexWrap: 'wrap',
+              justifyContent: 'center'
+            }}>
+              <Text size="sm" color="secondary">Serving Fairfield County</Text>
+              <Text size="sm" color="secondary">Licensed & Insured</Text>
+            </div>
+          </div>
+        </Box>
       </Container>
-    </Section>
+    </Box>
   );
 }; 

@@ -1,5 +1,5 @@
 // Component Variants System
-// Extracted from existing Button and ContentBox components for reusability
+// Extracted from existing Button and Box components for reusability
 
 import { colors, spacing, fontSize, fontWeight, borderRadius, shadows, transitions } from './tokens';
 
@@ -81,7 +81,7 @@ export const buttonSizes = {
   },
 } as const;
 
-// ContentBox Variants
+// Box Variants
 export const cardVariants = {
   default: {
     backgroundColor: colors.background.primary,
@@ -136,7 +136,7 @@ export const cardVariants = {
   },
 } as const;
 
-// ContentBox Sizes
+// Box Sizes
 export const cardSizes = {
   sm: {
     padding: spacing.md,

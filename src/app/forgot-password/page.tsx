@@ -10,7 +10,7 @@ import {
   H1,
   H2,
   Text,
-  ContentBox,
+  Box,
   Form,
   Button,
   ToastProvider
@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
                 </Text>
               </Stack>
 
-              <ContentBox variant="elevated" padding="xl">
+              <Box variant="elevated" padding="xl">
                 <Stack align="center">
                   <Text align="center" variant="muted">
                     <EditableText field="customer.forgot_password.check_email" defaultValue="Please check your email and click the link to reset your password.">
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
                     </Link>
                   </Text>
                 </Stack>
-              </ContentBox>
+              </Box>
             </Stack>
           </Container>
         </Section>
@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
               </Text>
             </Stack>
 
-            <ContentBox variant="elevated" padding="xl" id="forgot-password-card">
+            <Box variant="elevated" padding="xl" id="forgot-password-card">
               <Stack>
                 <Stack    align="center">
                   <H2 align="center" id="forgot-password-title">
@@ -161,7 +161,7 @@ export default function ForgotPasswordPage() {
                   </Stack>
                 </Form>
               </Stack>
-            </ContentBox>
+            </Box>
 
             <Text variant="muted" align="center" marginTop="md">
               <Link href="/login">

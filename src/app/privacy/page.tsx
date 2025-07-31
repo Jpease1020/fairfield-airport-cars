@@ -7,7 +7,7 @@ import {
   Text,
   Container,
   Stack,
-  ContentBox,
+  Box,
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
@@ -102,7 +102,7 @@ function PrivacyPageContent() {
             
             <Stack data-testid="privacy-sections-list" spacing="lg">
               {privacySections.map((section, index) => (
-                <ContentBox key={index} data-testid={`privacy-section-${index}`}>
+                <Box key={index} data-testid={`privacy-section-${index}`}>
                   <Stack spacing="md">
                     <EditableHeading data-testid={`privacy-section-title-${index}`} level={4} field={`privacy.sections.${index}.title`} defaultValue={section.title}>
                       {section.title}
@@ -122,7 +122,7 @@ function PrivacyPageContent() {
                       </Stack>
                     )}
                   </Stack>
-                </ContentBox>
+                </Box>
               ))}
             </Stack>
           </Stack>

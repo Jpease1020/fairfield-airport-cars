@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContentBox } from '@/ui';
+import { Box } from '@/ui';
 import { Container, Text, Span } from '@/ui';
 import { Grid } from '../layout/grid/Grid';
 import { Stack } from '@/ui';
@@ -42,13 +42,13 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
   return (
     <Grid cols={columns as 1 | 2 | 3 | 4 | 5 | 6 | 12} gap="md">
       {actions.map((action) => (
-        <ContentBox
+        <Box
           key={action.id}
           variant="elevated"
           padding={size === 'lg' ? 'lg' : size === 'sm' ? 'sm' : 'md'}
         >
           {action.label}
-        </ContentBox>
+        </Box>
       ))}
     </Grid>
   );

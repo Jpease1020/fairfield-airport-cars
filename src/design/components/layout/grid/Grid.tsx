@@ -4,40 +4,103 @@ import React from 'react';
 import styled from 'styled-components';
 import { spacing } from '../../../system/tokens/tokens';
 import { Text, H2, Container } from '@/design/ui';
+import { ResponsiveValue, Breakpoint } from '../shared-types';
+
+// Helper function to resolve responsive values
+const resolveResponsiveValue = <T,>(value: ResponsiveValue<T>, breakpoint: Breakpoint = 'xs'): T => {
+  if (typeof value === 'object' && value !== null) {
+    return (value as Partial<Record<Breakpoint, T>>)[breakpoint] || 
+           (value as Partial<Record<Breakpoint, T>>).xs || 
+           Object.values(value as Partial<Record<Breakpoint, T>>)[0] as T;
+  }
+  return value as T;
+};
 
 // Grid system components
 interface GridProps {
   children: React.ReactNode;
-  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  cols?: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12>;
+  gap?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
   responsive?: boolean;
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  marginTop?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  marginBottom?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
   as?: 'div' | 'section' | 'article';
 }
 
 const Grid = styled.div.withConfig({
   shouldForwardProp: (prop) => !['cols', 'gap', 'responsive', 'margin', 'marginTop', 'marginBottom'].includes(prop)
 })<{
-  cols: 1 | 2 | 3 | 4 | 5 | 6 | 12;
-  gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  cols: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12>;
+  gap: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
   responsive: boolean;
-  margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  marginTop: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  marginBottom: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
 }>`
   display: grid;
   grid-template-columns: ${({ cols, responsive }) => {
     if (responsive) {
-      return `repeat(auto-fit, minmax(250px, 1fr))`;
+      return `repeat(auto-fit, minmax(300px, 1fr))`;
     }
-    return `repeat(${cols}, 1fr)`;
+    const resolvedCols = resolveResponsiveValue(cols);
+    return `repeat(${resolvedCols}, 1fr)`;
   }};
-  gap: ${({ gap }) => gap === 'none' ? '0' : spacing[gap as keyof typeof spacing]};
-  margin: ${({ margin }) => margin === 'none' ? '0' : spacing[margin as keyof typeof spacing]};
-  margin-top: ${({ marginTop }) => marginTop === 'none' ? '0' : spacing[marginTop as keyof typeof spacing]};
-  margin-bottom: ${({ marginBottom }) => marginBottom === 'none' ? '0' : spacing[marginBottom as keyof typeof spacing]};
+  gap: ${({ gap }) => {
+    const resolvedGap = resolveResponsiveValue(gap);
+    return resolvedGap === 'none' ? '0' : spacing[resolvedGap as keyof typeof spacing];
+  }};
+  margin: ${({ margin }) => {
+    const resolvedMargin = resolveResponsiveValue(margin);
+    return resolvedMargin === 'none' ? '0' : spacing[resolvedMargin as keyof typeof spacing];
+  }};
+  margin-top: ${({ marginTop }) => {
+    const resolvedMarginTop = resolveResponsiveValue(marginTop);
+    return resolvedMarginTop === 'none' ? '0' : spacing[resolvedMarginTop as keyof typeof spacing];
+  }};
+  margin-bottom: ${({ marginBottom }) => {
+    const resolvedMarginBottom = resolveResponsiveValue(marginBottom);
+    return resolvedMarginBottom === 'none' ? '0' : spacing[resolvedMarginBottom as keyof typeof spacing];
+  }};
+  
+  /* Responsive breakpoints for better mobile experience */
+  @media (max-width: 1024px) {
+    grid-template-columns: ${({ responsive, cols }) => {
+      if (responsive) {
+        return `repeat(auto-fit, minmax(280px, 1fr))`;
+      }
+      const resolvedCols = resolveResponsiveValue(cols, 'lg');
+      return `repeat(${resolvedCols}, 1fr)`;
+    }};
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: ${({ responsive, cols }) => {
+      if (responsive) {
+        return `repeat(auto-fit, minmax(250px, 1fr))`;
+      }
+      const resolvedCols = resolveResponsiveValue(cols, 'md');
+      return `repeat(${resolvedCols}, 1fr)`;
+    }};
+    gap: ${({ gap }) => {
+      const resolvedGap = resolveResponsiveValue(gap, 'md');
+      return resolvedGap === 'none' ? '0' : spacing.sm;
+    }};
+  }
+  
+  @media (max-width: 640px) {
+    grid-template-columns: ${({ responsive, cols }) => {
+      if (responsive) {
+        return `1fr`;
+      }
+      const resolvedCols = resolveResponsiveValue(cols, 'sm');
+      return `repeat(${resolvedCols}, 1fr)`;
+    }};
+    gap: ${({ gap }) => {
+      const resolvedGap = resolveResponsiveValue(gap, 'sm');
+      return resolvedGap === 'none' ? '0' : spacing.md;
+    }};
+  }
 `;
 
 const GridComponent: React.FC<GridProps> = ({ 

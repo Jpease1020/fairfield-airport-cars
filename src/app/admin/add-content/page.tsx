@@ -5,7 +5,7 @@ import {
   AdminPageWrapper,
   Container,
   Stack,
-  ContentBox,
+  Box,
   GridSection,
   ActionButtonGroup,
   Text
@@ -67,7 +67,7 @@ function AddContentPage() {
     >
       <Container>
         <Stack spacing="lg">
-          <ContentBox>
+          <Box>
             <Container>
               <Stack spacing="md">
                 <Text size="lg" weight="bold">📝 Content Editing Guide</Text>
@@ -84,11 +84,11 @@ function AddContentPage() {
                 </Stack>
               </Stack>
             </Container>
-          </ContentBox>
+          </Box>
 
           <GridSection variant="content" columns={2}>
             {cmsPages.map((page, index) => (
-              <ContentBox key={index}>
+              <Box key={index}>
                 <Container>
                   <Stack spacing="md">
                     <Text size="lg" weight="bold">{page.icon} {page.title}</Text>
@@ -103,11 +103,11 @@ function AddContentPage() {
                     />
                   </Stack>
                 </Container>
-              </ContentBox>
+              </Box>
             ))}
           </GridSection>
 
-          <ContentBox>
+          <Box>
             <Container>
               <Stack spacing="md">
                 <Text size="lg" weight="bold">💡 Pro Tips</Text>
@@ -120,7 +120,7 @@ function AddContentPage() {
                 </Stack>
               </Stack>
             </Container>
-          </ContentBox>
+          </Box>
         </Stack>
       </Container>
     </AdminPageWrapper>

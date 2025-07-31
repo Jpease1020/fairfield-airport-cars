@@ -8,7 +8,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  ContentBox, 
+  Box, 
   Grid,
   GridItem,
   LoadingSpinner,
@@ -272,7 +272,7 @@ function AdminDashboardContent() {
         <Grid cols={4} gap="lg" responsive>
           {statsCards.map((stat, index) => (
             <GridItem key={index}>
-              <ContentBox variant="elevated" padding="lg">
+              <Box variant="elevated" padding="lg">
                 <Stack spacing="md" align="center">
                   <Text size="xl">{stat.icon}</Text>
                   <Text size="xl" weight="bold" color="primary">
@@ -283,7 +283,7 @@ function AdminDashboardContent() {
                     {stat.change}
                   </Text>
                 </Stack>
-              </ContentBox>
+              </Box>
             </GridItem>
           ))}
         </Grid>
@@ -300,7 +300,7 @@ function AdminDashboardContent() {
           {quickActions.map((action, index) => (
             <GridItem key={index}>
               <div onClick={action.onClick} style={{ cursor: 'pointer' }}>
-                <ContentBox 
+                <Box 
                   variant="elevated" 
                   padding="lg"
                 >
@@ -313,7 +313,7 @@ function AdminDashboardContent() {
                     {action.description}
                   </Text>
                 </Stack>
-              </ContentBox>
+              </Box>
               </div>
             </GridItem>
           ))}
@@ -327,7 +327,7 @@ function AdminDashboardContent() {
           </Text>
         </Stack>
         
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             {recentActivity.length === 0 ? (
               <Stack spacing="md" align="center">
@@ -351,7 +351,7 @@ function AdminDashboardContent() {
               ))
             )}
           </Stack>
-        </ContentBox>
+        </Box>
       </Stack>
     </Container>
   );

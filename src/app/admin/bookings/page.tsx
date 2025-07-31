@@ -9,7 +9,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  ContentBox, 
+  Box, 
   Badge,
   DataTable,
   Alert,
@@ -300,7 +300,7 @@ function AdminBookingsPageContent() {
 
         {/* Stats */}
         <Stack direction="horizontal" spacing="md" wrap="wrap">
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">📋</Text>
               <Stack spacing="xs">
@@ -308,9 +308,9 @@ function AdminBookingsPageContent() {
                 <Text size="xl" weight="bold">{stats.totalBookings}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
@@ -318,9 +318,9 @@ function AdminBookingsPageContent() {
                 <Text size="xl" weight="bold">{stats.confirmedBookings}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🚗</Text>
               <Stack spacing="xs">
@@ -328,9 +328,9 @@ function AdminBookingsPageContent() {
                 <Text size="xl" weight="bold">{stats.inProgressBookings}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
           
-          <ContentBox>
+          <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">💰</Text>
               <Stack spacing="xs">
@@ -338,12 +338,12 @@ function AdminBookingsPageContent() {
                 <Text size="xl" weight="bold">{formatCurrency(stats.totalRevenue)}</Text>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
         </Stack>
 
         {/* Bookings Table */}
         {filteredBookings.length === 0 ? (
-          <ContentBox>
+          <Box>
             <Stack spacing="md" align="center">
                              <Text size="xl">📭</Text>
               <Text size="lg" weight="medium">No Bookings Found</Text>
@@ -351,7 +351,7 @@ function AdminBookingsPageContent() {
                 No bookings match your current filter criteria.
               </Text>
             </Stack>
-          </ContentBox>
+          </Box>
         ) : (
           <DataTable
             data={tableData}

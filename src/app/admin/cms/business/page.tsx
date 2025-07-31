@@ -15,7 +15,7 @@ import {
 } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
-import { ContentBox } from '@/ui';
+import { Box } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
 
@@ -150,7 +150,7 @@ function BusinessPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             {/* Company Information */}
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Text size="lg" weight="bold">🏢 Company Information</Text>
                 <Text>Basic company details and contact information</Text>
@@ -224,10 +224,10 @@ function BusinessPageContent() {
                   </Container>
                 </Stack>
               </Stack>
-            </ContentBox>
+            </Box>
 
             {/* Social Media */}
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Text size="lg" weight="bold">📱 Social Media</Text>
                 <Text>Links to your social media profiles</Text>
@@ -275,10 +275,10 @@ function BusinessPageContent() {
                   </Container>
                 </Stack>
               </Stack>
-            </ContentBox>
+            </Box>
 
             {/* Branding */}
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Text size="lg" weight="bold">🎨 Branding</Text>
                 <Text>Visual identity and brand colors</Text>
@@ -342,12 +342,12 @@ function BusinessPageContent() {
                   </Container>
                 </Stack>
               </Stack>
-            </ContentBox>
+            </Box>
 
             {/* Business Preview */}
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
-                <Text size="lg" weight="bold">👀 Business ContentBox Preview</Text>
+                <Text size="lg" weight="bold">👀 Business Box Preview</Text>
                 <Text>How your business information will appear to customers</Text>
                 
                 <Stack spacing="lg">
@@ -371,7 +371,7 @@ function BusinessPageContent() {
                   </EditableText>
                 </Stack>
               </Stack>
-            </ContentBox>
+            </Box>
           </Container>
         </GridSection>
       )}

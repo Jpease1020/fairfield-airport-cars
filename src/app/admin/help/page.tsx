@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AdminPageWrapper, GridSection, ContentBox, ActionGrid, Container, H3, Text } from '@/ui';
+import { AdminPageWrapper, GridSection, Box, ActionGrid, Container, H3, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
 
@@ -150,7 +150,7 @@ function AdminHelpPage() {
       {/* Help Sections */}
       <GridSection variant="content" columns={2}>
         {helpSections.map((section, sectionIndex) => (
-          <ContentBox
+          <Box
             key={sectionIndex}
           >
             <Stack spacing="md">
@@ -180,13 +180,13 @@ function AdminHelpPage() {
                 </Container>
               ))}
             </Stack>
-          </ContentBox>
+          </Box>
         ))}
       </GridSection>
 
       {/* Additional Resources */}
       <GridSection variant="content" columns={1}>
-        <ContentBox>
+        <Box>
           <Stack spacing="md">
             <Stack spacing="sm">
               <Text variant="lead" size="md" weight="semibold">📞 Need More Help?</Text>
@@ -218,12 +218,12 @@ function AdminHelpPage() {
             </Container>
           </Stack>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       {/* Quick Navigation */}
       <GridSection variant="actions" columns={1}>
-        <ContentBox>
+        <Box>
           <Stack spacing="md">
             <Stack spacing="sm">
               <Text variant="lead" size="md" weight="semibold">Quick Navigation</Text>
@@ -258,7 +258,7 @@ function AdminHelpPage() {
             ]}
           />
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </AdminPageWrapper>
   );

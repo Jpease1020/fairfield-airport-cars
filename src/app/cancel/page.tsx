@@ -12,7 +12,7 @@ import {
   Text,
   Container,
   Stack,
-  ContentBox
+  Box
 } from '@/ui';
 import { EditableText, EditableHeading } from '@/ui';
 
@@ -151,12 +151,12 @@ function CancelPageContent() {
             
             <Stack data-testid="cancel-policy-list" spacing="md">
               {cancellationPolicy.map((policy, index) => (
-                <ContentBox key={index} data-testid={`cancel-policy-item-${index}`} padding="md">
+                <Box key={index} data-testid={`cancel-policy-item-${index}`} padding="md">
                   <Stack spacing="sm">
                     <Text data-testid={`cancel-policy-title-${index}`}><strong>{policy.title}:</strong></Text>
                     <Text data-testid={`cancel-policy-description-${index}`}>{policy.description}</Text>
                   </Stack>
-                </ContentBox>
+                </Box>
               ))}
             </Stack>
           </Stack>

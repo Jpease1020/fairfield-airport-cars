@@ -2,8 +2,10 @@
 // Page-level components built on Layer 1 (Grid) + Layer 2 (Containers)
 
 export * from './BaseNavigation';
-export * from './Footer';
 export * from './CustomerNavigation';
-export * from './CustomerFooter';
+export * from './Footer'; // This file contains CustomerFooter component
 export * from './PageHeader';
-export * from './AdminNavigation'; 
+export * from './AdminNavigation';
+
+// Page Templates
+export * from './AdminPageTemplate'; 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Button, Container, ContentBox, Stack, Text, H4, Input } from '@/design/ui';
+import { Button, Container, Box, Stack, Text, H4, Input } from '@/design/ui';
 
 // DataTableColumn - BULLETPROOF TYPE SAFETY!
 export interface DataTableColumn<T> {
@@ -195,9 +195,9 @@ export function DataTable<T extends Record<string, any>>({
   );
 
   return showCards ? (
-    <ContentBox variant="default" padding="lg">
+    <Box variant="default" padding="lg">
       {tableContent}
-    </ContentBox>
+    </Box>
   ) : (
     <Container>
       {tableContent}

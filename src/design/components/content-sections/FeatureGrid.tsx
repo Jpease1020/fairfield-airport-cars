@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Grid, Col, Container, ContentBox, Stack, Text, H4 } from '@/design/ui';
+import { Grid, Col, Container, Box, Stack, Text, H4 } from '@/design/ui';
+import { ResponsiveValue } from '../layout/shared-types';
 
 interface Feature {
   id?: string | number;
@@ -12,11 +13,12 @@ interface Feature {
 
 interface FeatureGridProps {
   features: Feature[];
-  columns?: 2 | 3 | 4;
-  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  columns?: ResponsiveValue<2 | 3 | 4>;
+  gap?: ResponsiveValue<'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
   showCards?: boolean;
   emptyMessage?: string;
   emptyIcon?: string;
+  responsive?: boolean;
 }
 
 /**
@@ -40,7 +42,8 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({
   gap = 'lg',
   showCards = true,
   emptyMessage = 'No features available',
-  emptyIcon = '✨'
+  emptyIcon = '✨',
+  responsive = false
 }) => {
   if (features.length === 0) {
     return (
@@ -54,31 +57,37 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({
   }
 
   return (
-    <Grid cols={columns} gap={gap}>
+    <Grid cols={columns} gap={gap} responsive={responsive}>
       {features.map((feature, index) => {
-        const content = (
-          <Stack direction="vertical" spacing="md" align="center">
-            <Container>
-              <Text size="xl">{feature.icon}</Text>
-            </Container>
-            <Container>
-              <H4>{feature.title}</H4>
-            </Container>
-            <Container>
-              <Text variant="muted">{feature.description}</Text>
-            </Container>
-          </Stack>
-        );
-
         return (
           <Col key={feature.id || index}>
             {showCards ? (
-              <ContentBox variant="default" padding="lg">
-                {content}
-              </ContentBox>
+              <Box variant="default" padding="lg">
+                <Stack direction="vertical" spacing="md" align="center">
+                  <Container>
+                    <Text size="xl">{feature.icon}</Text>
+                  </Container>
+                  <Container>
+                    <H4>{feature.title}</H4>
+                  </Container>
+                  <Container>
+                    <Text variant="muted">{feature.description}</Text>
+                  </Container>
+                </Stack>
+              </Box>
             ) : (
               <Container>
-                {content}
+                <Stack direction="vertical" spacing="md" align="center">
+                  <Container>
+                    <Text size="xl">{feature.icon}</Text>
+                  </Container>
+                  <Container>
+                    <H4>{feature.title}</H4>
+                  </Container>
+                  <Container>
+                    <Text variant="muted">{feature.description}</Text>
+                  </Container>
+                </Stack>
               </Container>
             )}
           </Col>

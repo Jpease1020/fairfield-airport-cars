@@ -18,22 +18,22 @@ export const AdminNavigation: React.FC = () => {
   ];
 
   const logo = (
-    <Link href="/admin">
+    <Link href="/admin" data-testid="admin-nav-logo-link" id="admin-nav-logo-link">
       <EditableText field="adminNavigation.title">Admin Panel</EditableText>
     </Link>
   );
 
   const actions = (
-    <Link href="/">
-      <Button variant="outline" size="sm">
+    <Link href="/" data-testid="admin-nav-view-site-link" id="admin-nav-view-site-link">
+      <Button variant="outline" size="sm" data-testid="admin-nav-view-site-button" id="admin-nav-view-site-button">
         <EditableText field="adminNavigation.viewSiteButton">View Site</EditableText>
       </Button>
     </Link>
   );
 
   const mobileActions = (
-    <Link href="/">
-      <Button variant="outline" size="sm">
+    <Link href="/" data-testid="admin-nav-mobile-view-site-link" id="admin-nav-mobile-view-site-link">
+      <Button variant="outline" size="sm" data-testid="admin-nav-mobile-view-site-button" id="admin-nav-mobile-view-site-button">
         <EditableText field="adminNavigation.mobile.viewSiteButton">View Site</EditableText>
       </Button>
     </Link>

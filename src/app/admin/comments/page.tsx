@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { AdminPageWrapper, GridSection, ContentBox, Container, Text } from '@/ui';
+import { AdminPageWrapper, GridSection, Box, Container, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
@@ -169,7 +169,7 @@ function CommentsPageContent() {
     >
       {/* Comment Statistics */}
       <GridSection variant="stats" columns={4}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Total Comments</Text>
             <Text size="xl" weight="bold">{totalComments.toString()}</Text>
@@ -178,8 +178,8 @@ function CommentsPageContent() {
               {totalComments} total comments
             </EditableText>
           </Stack>
-        </ContentBox>
-        <ContentBox variant="elevated" padding="lg">
+        </Box>
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Recent Comments</Text>
             <Text size="xl" weight="bold">{recentComments.toString()}</Text>
@@ -188,8 +188,8 @@ function CommentsPageContent() {
               {recentComments} recent comments
             </EditableText>
           </Stack>
-        </ContentBox>
-        <ContentBox variant="elevated" padding="lg">
+        </Box>
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Pages with Comments</Text>
             <Text size="xl" weight="bold">{uniquePages.toString()}</Text>
@@ -198,8 +198,8 @@ function CommentsPageContent() {
               {uniquePages} pages with comments
             </EditableText>
           </Stack>
-        </ContentBox>
-        <ContentBox variant="elevated" padding="lg">
+        </Box>
+        <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
             <Text variant="lead" size="md" weight="semibold">Unique Authors</Text>
             <Text size="xl" weight="bold">{uniqueAuthors.toString()}</Text>
@@ -208,12 +208,12 @@ function CommentsPageContent() {
               {uniqueAuthors} unique authors
             </EditableText>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       {/* Comments Table */}
       <GridSection variant="content" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text variant="lead" size="md" weight="semibold">💬 All Comments</Text>
             <Text variant="muted" size="sm">Search, sort, and manage comments across all pages</Text>
@@ -228,12 +228,12 @@ function CommentsPageContent() {
               pageSize={10}
             />
           </Stack>
-          </ContentBox>
+          </Box>
       </GridSection>
 
       {/* Comment Analytics */}
       <GridSection variant="content" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text variant="lead" size="md" weight="semibold">📊 Comment Analytics</Text>
             <Text variant="muted" size="sm">Insights into comment activity and engagement</Text>
@@ -289,7 +289,7 @@ function CommentsPageContent() {
               </Stack>
             </Container>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </AdminPageWrapper>
   );

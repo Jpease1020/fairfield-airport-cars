@@ -10,7 +10,7 @@ import {
   Text,
   Span,
   LoadingSpinner,
-  ContentBox,
+  Box,
   Card,
 } from '@/ui';
 import { Layout, Stack } from '@/ui';

@@ -7,7 +7,7 @@ import {
   Container, 
   Stack, 
   Text, 
-  ContentBox,
+  Box,
   H1
 } from '@/design/components';
 import { colors } from '@/design/system/tokens/tokens';
@@ -48,7 +48,7 @@ function CalendarPageContent() {
       <Stack spacing="xl">
         <H1>Calendar</H1>
         
-        <ContentBox>
+        <Box>
           <Stack spacing="lg">
             <CalendarHeader>
               <Text size="lg" weight="bold">Booking Calendar</Text>
@@ -69,7 +69,7 @@ function CalendarPageContent() {
               ))}
             </CalendarGrid>
           </Stack>
-        </ContentBox>
+        </Box>
       </Stack>
     </Container>
   );

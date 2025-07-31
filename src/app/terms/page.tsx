@@ -6,7 +6,7 @@ import {
   ToastProvider,
   Container,
   Stack,
-  ContentBox,
+  Box,
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
@@ -57,7 +57,7 @@ function TermsPageContent() {
             
             <Stack data-testid="terms-sections-list" spacing="lg">
               {termsSections.map((section, index) => (
-                <ContentBox key={index} data-testid={`terms-section-${index}`}>
+                <Box key={index} data-testid={`terms-section-${index}`}>
                   <Stack spacing="md">
                     <EditableHeading data-testid={`terms-section-title-${index}`} level={4} field={`terms.sections.${index}.title`} defaultValue={section.title}>
                       {section.title}
@@ -66,7 +66,7 @@ function TermsPageContent() {
                       {section.content}
                     </EditableText>
                   </Stack>
-                </ContentBox>
+                </Box>
               ))}
             </Stack>
           </Stack>

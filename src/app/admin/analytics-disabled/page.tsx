@@ -6,7 +6,7 @@ import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
-import { ContentBox } from '@/ui';
+import { Box } from '@/ui';
 
 interface AnalyticsData {
   totalInteractions: number;
@@ -114,23 +114,23 @@ export default function AnalyticsPage() {
           <Container>
             {/* Overview Cards */}
             <Stack direction="horizontal" spacing="md">
-              <ContentBox variant="elevated" padding="lg">
+              <Box variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">📊 Total Interactions</Text>
                   <Text size="xl" weight="bold">{analytics.totalInteractions.toLocaleString()}</Text>
                   <Text>All user interactions tracked</Text>
                 </Stack>
-              </ContentBox>
+              </Box>
 
-              <ContentBox variant="elevated" padding="lg">
+              <Box variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">⚠️ Total Errors</Text>
                   <Text size="xl" weight="bold">{analytics.totalErrors.toLocaleString()}</Text>
                   <Text>Errors detected and tracked</Text>
                 </Stack>
-              </ContentBox>
+              </Box>
 
-              <ContentBox variant="elevated" padding="lg">
+              <Box variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">📉 Error Rate</Text>
                   <Text size="xl" weight="bold">{`${analytics.totalInteractions > 0 
@@ -139,15 +139,15 @@ export default function AnalyticsPage() {
                   }%`}</Text>
                   <Text>Percentage of interactions with errors</Text>
                 </Stack>
-              </ContentBox>
+              </Box>
 
-              <ContentBox variant="elevated" padding="lg">
+              <Box variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">🖱️ Active Elements</Text>
                   <Text size="xl" weight="bold">{Object.keys(analytics.elementTypes).length.toString()}</Text>
                   <Text>Different element types tracked</Text>
                 </Stack>
-              </ContentBox>
+              </Box>
             </Stack>
 
             {/* Detailed Metrics */}

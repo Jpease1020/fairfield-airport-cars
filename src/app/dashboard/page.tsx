@@ -14,7 +14,7 @@ import {
   LoadingSpinner,
   EditableText,
 } from '@/design/ui';
-import { DashboardPagePattern, ContentCard } from '@/design/ui';
+import { AdminPageTemplate, ContentCard, Grid } from '@/design/ui';
 
 function CustomerDashboardContent() {
   const [user, setUser] = useState<User | null>(null);
@@ -198,13 +198,15 @@ function CustomerDashboardContent() {
   );
 
   return (
-    <DashboardPagePattern
+    <AdminPageTemplate
       title={`Welcome back, ${profile.name}!`}
       subtitle="Manage your bookings and account"
       loading={loading}
       error={error}
-      stats={
-        <>
+    >
+      <Stack spacing="xl">
+        {/* Stats */}
+        <Grid cols={3} gap="lg">
           {stats.map((stat, index) => (
             <ContentCard
               key={index}
@@ -220,28 +222,32 @@ function CustomerDashboardContent() {
               data-testid={`stat-${index}`}
             />
           ))}
-        </>
-      }
-      quickActions={quickActions.map((action, index) => (
-        <ContentCard
-          key={index}
-          icon={action.icon}
-          title={action.title}
-          subtitle={action.description}
-          content={
-            <Button 
-              variant="ghost" 
-              onClick={action.onClick}
-              fullWidth
-            >
-              {action.title}
-            </Button>
-          }
-          variant="elevated"
-          data-testid={`${action.title.toLowerCase().replace(' ', '-')}-action`}
-        />
-      ))}
-      recentActivity={
+        </Grid>
+
+        {/* Quick Actions */}
+        <Grid cols={3} gap="lg">
+          {quickActions.map((action, index) => (
+            <ContentCard
+              key={index}
+              icon={action.icon}
+              title={action.title}
+              subtitle={action.description}
+              content={
+                <Button 
+                  variant="ghost" 
+                  onClick={action.onClick}
+                  fullWidth
+                >
+                  {action.title}
+                </Button>
+              }
+              variant="elevated"
+              data-testid={`${action.title.toLowerCase().replace(' ', '-')}-action`}
+            />
+          ))}
+        </Grid>
+
+        {/* Recent Activity */}
         <Stack spacing="lg">
           <ContentCard
             title="Profile Information"
@@ -254,8 +260,8 @@ function CustomerDashboardContent() {
             variant="elevated"
           />
         </Stack>
-      }
-    />
+      </Stack>
+    </AdminPageTemplate>
   );
 }
 

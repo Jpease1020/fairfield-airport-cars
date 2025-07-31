@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
-  ContentBox, 
+  Box, 
   Grid, 
   GridItem,
   Text, 
@@ -275,7 +275,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
         <Stack spacing="xl" data-testid="booking-form-stack">
           
           {/* Personal Information - Enhanced with card styling */}
-          <ContentBox variant="elevated" padding="lg" id="contact-information-card">
+          <Box variant="elevated" padding="lg" id="contact-information-card">
             <Stack spacing="lg" data-testid="contact-information-stack" align="center" justify="center">
               <H2 variant="primary" id="contact-information-title">
                 <EditableText field="booking.personalInfo.title" defaultValue="Contact Information">
@@ -323,10 +323,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 />
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
 
           {/* Trip Details - Enhanced with card styling */}
-          <ContentBox variant="elevated" padding="lg" id="trip-details-card">
+          <Box variant="elevated" padding="lg" id="trip-details-card">
             <Stack spacing="lg" data-testid="trip-details-stack" align="center" justify="center">
               <H2 variant="primary" id="trip-details-title">
                 <EditableText field="booking.tripDetails.title" defaultValue="Trip Details">
@@ -347,7 +347,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     />
                   </Stack>
                   {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                    <ContentBox variant="outlined" padding="sm" id="pickup-suggestions-card">
+                    <Box variant="outlined" padding="sm" id="pickup-suggestions-card">
                       <Stack spacing="xs" data-testid="pickup-suggestions-stack">
                         {pickupSuggestions.map((prediction) => (
                           <Button
@@ -360,7 +360,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           </Button>
                         ))}
                       </Stack>
-                    </ContentBox>
+                    </Box>
                   )}
                 </GridItem>
                 
@@ -376,7 +376,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     />
                   </Stack>
                   {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-                    <ContentBox variant="outlined" padding="sm" id="dropoff-suggestions-card">
+                    <Box variant="outlined" padding="sm" id="dropoff-suggestions-card">
                       <Stack spacing="xs" data-testid="dropoff-suggestions-stack">
                         {dropoffSuggestions.map((prediction) => (
                           <Button
@@ -389,7 +389,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           </Button>
                         ))}
                       </Stack>
-                    </ContentBox>
+                    </Box>
                   )}
                 </GridItem>
               </Grid>
@@ -423,10 +423,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </GridItem>
               </Grid>
             </Stack>
-          </ContentBox>
+          </Box>
 
           {/* Additional Details - Enhanced with card styling */}
-          <ContentBox variant="elevated" padding="lg" id="additional-information-card">
+          <Box variant="elevated" padding="lg" id="additional-information-card">
             <Stack spacing="lg" data-testid="additional-information-stack" align="center" justify="center">
               <H2 variant="primary" id="additional-information-title">
                 <EditableText field="booking.additionalDetails.title" defaultValue="Additional Information">
@@ -465,11 +465,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </GridItem>
               </Grid>
             </Stack>
-          </ContentBox>
+          </Box>
 
           {/* Fare Calculation - Enhanced styling */}
           {fare !== null && (
-            <ContentBox variant="elevated" padding="lg" data-testid="fare-section" id="fare-calculation-card">
+            <Box variant="elevated" padding="lg" data-testid="fare-section" id="fare-calculation-card">
               <Stack spacing="md" align="center" justify="center" data-testid="fare-calculation-stack">
                 <H2 variant="primary" id="fare-calculation-title">
                   <EditableText field="booking.fare.title" defaultValue="Estimated Fare">
@@ -487,7 +487,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   ${fare?.toFixed(2) || '0.00'}
                 </Text>
               </Stack>
-            </ContentBox>
+            </Box>
           )}
 
           {/* Error and Success Messages */}
@@ -510,7 +510,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           )}
 
           {/* Action Buttons - Enhanced styling */}
-          <ContentBox variant="elevated" padding="lg" id="action-buttons-card">
+          <Box variant="elevated" padding="lg" id="action-buttons-card">
             <Stack direction="vertical" spacing="lg" align="center" justify="center" data-testid="action-buttons-stack">
               <Button
                 type="button"
@@ -548,7 +548,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </EditableText>
               </Button>
             </Stack>
-          </ContentBox>
+          </Box>
         </Stack>
       </Form>
     </Container>

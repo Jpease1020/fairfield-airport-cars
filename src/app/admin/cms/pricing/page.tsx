@@ -7,7 +7,7 @@ import { PricingSettings } from '@/types/cms';
 import { 
   AdminPageWrapper,
   GridSection,
-  ContentBox,
+  Box,
   ActionButtonGroup,
   ToastProvider,
   useToast,
@@ -176,7 +176,7 @@ function PricingSettingsContent() {
     >
       <Container>
         {saved && (
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text variant="lead" size="md" weight="semibold">
                 ✅ Settings Saved
@@ -186,13 +186,13 @@ function PricingSettingsContent() {
               </Text>
               <Span>Pricing settings saved successfully</Span>
             </Stack>
-          </ContentBox>
+          </Box>
         )}
 
         <Stack spacing="lg">
           {/* Base Pricing */}
           <GridSection>
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
@@ -266,12 +266,12 @@ function PricingSettingsContent() {
                   />
                 </div>
               </Stack>
-            </ContentBox>
+            </Box>
           </GridSection>
 
           {/* Competitor Pricing Reference */}
           <GridSection>
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
@@ -299,12 +299,12 @@ function PricingSettingsContent() {
                   <strong>Note:</strong> These are rough estimates for planning purposes. Actual competitor prices vary by time, demand, and other factors.
                 </div>
               </Stack>
-            </ContentBox>
+            </Box>
           </GridSection>
 
           {/* Cancellation Policy */}
           <GridSection>
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
@@ -353,12 +353,12 @@ function PricingSettingsContent() {
                   />
                 </div>
               </Stack>
-            </ContentBox>
+            </Box>
           </GridSection>
 
           {/* Pricing Zones */}
           <GridSection>
-            <ContentBox variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
@@ -380,7 +380,7 @@ function PricingSettingsContent() {
               />
 
               {settings.zones.length === 0 ? (
-                <ContentBox variant="elevated" padding="lg">
+                <Box variant="elevated" padding="lg">
                   <Stack spacing="md">
                     <Stack spacing="sm">
                       <Text variant="lead" size="md" weight="semibold">
@@ -398,11 +398,11 @@ function PricingSettingsContent() {
                       Add zones for different areas with custom pricing
                     </EditableText>
                   </Stack>
-                </ContentBox>
+                </Box>
               ) : (
                 <Stack spacing="md">
                   {settings.zones.map((zone, index) => (
-                    <ContentBox key={index} variant="elevated" padding="lg">
+                    <Box key={index} variant="elevated" padding="lg">
                       <Stack spacing="md">
                         <Stack spacing="sm">
                           <Text variant="lead" size="md" weight="semibold">
@@ -474,12 +474,12 @@ function PricingSettingsContent() {
                           ]}
                         />
                       </Stack>
-                    </ContentBox>
+                    </Box>
                   ))}
                 </Stack>
               )}
             </Stack>
-          </ContentBox>
+          </Box>
           </GridSection>
         </Stack>
       </Container>

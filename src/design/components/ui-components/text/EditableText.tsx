@@ -4,13 +4,13 @@ import React from 'react';
 import { Text, TextProps } from './Text';
 import { useEditMode } from '../../../providers/EditModeProvider';
 import { getContent } from '@/lib/content/content-mapping';
-import { colors } from '@/design/system/tokens/tokens';
 
 export interface EditableTextProps extends Omit<TextProps, 'children'> {
   field: string;
   children?: React.ReactNode;
   defaultValue?: string;
   onFieldChange?: (field: string, value: string) => void;
+  forceEditMode?: boolean; // Only for admin when they explicitly want edit mode
 }
 
 export const EditableText: React.FC<EditableTextProps> = ({
@@ -18,17 +18,19 @@ export const EditableText: React.FC<EditableTextProps> = ({
   children,
   defaultValue = '',
   onFieldChange,
+  forceEditMode = false,
+  color = 'inherit', // Default to inherit so it picks up parent color (like button text)
   ...textProps
 }) => {
   // Check if we're in an admin context with edit mode
   const isAdminContext = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
   
-  // Only try to use edit mode in admin context
+  // Only try to use edit mode in admin context AND when explicitly enabled
   let editMode = false;
   let localContent: any = null;
   let handleFieldChange: any = null;
 
-  if (isAdminContext) {
+  if (isAdminContext && forceEditMode) {
     try {
       const editModeHook = useEditMode();
       editMode = editModeHook.editMode;
@@ -91,16 +93,17 @@ export const EditableText: React.FC<EditableTextProps> = ({
     return (
       <Text
         {...textProps}
+        color={color}
         contentEditable
         suppressContentEditableWarning
         onKeyDown={handleKeyDown}
         onFocus={(e: React.FocusEvent<HTMLDivElement>) => {
-          e.currentTarget.style.border = `1px dashed ${colors.primary[600]}`;
-          e.currentTarget.style.backgroundColor = colors.background.secondary;
+          e.currentTarget.style.border = '1px dashed var(--primary-color)';
+          e.currentTarget.style.backgroundColor = 'var(--background-secondary)';
         }}
         onBlur={(e: React.FocusEvent<HTMLDivElement>) => {
-          e.currentTarget.style.border = `1px dashed ${colors.primary[600]}`;
-          e.currentTarget.style.backgroundColor = colors.background.primary;
+          e.currentTarget.style.border = '1px dashed var(--primary-color)';
+          e.currentTarget.style.backgroundColor = 'var(--background-primary)';
           handleBlur(e);
         }}
       >
@@ -109,8 +112,9 @@ export const EditableText: React.FC<EditableTextProps> = ({
     );
   }
 
+  // Normal display mode - behaves exactly like regular Text component
   return (
-    <Text {...textProps}>
+    <Text {...textProps} color={color}>
       {currentValue}
     </Text>
   );

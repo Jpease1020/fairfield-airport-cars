@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AdminPageWrapper, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
 import { Stack } from '@/ui';
-import { ContentBox } from '@/ui';
+import { Box } from '@/ui';
 import { EditableText } from '@/ui';
 
 const AIAssistantSettingsPage = () => {
@@ -75,7 +75,7 @@ const AIAssistantSettingsPage = () => {
       subtitle="Configure AI assistant preferences and access"
     >
       <GridSection variant="content" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">⚙️ AI Assistant Configuration</Text>
             <Text>Current status and available options</Text>
@@ -119,17 +119,17 @@ const AIAssistantSettingsPage = () => {
             </Text>
           </Container>
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       <GridSection variant="actions" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">📋 Available Options</Text>
             <Text>Alternative features and support resources</Text>
             <ActionGrid actions={settingsInfo} columns={4} />
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
     </AdminPageWrapper>
   );

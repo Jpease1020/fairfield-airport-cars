@@ -7,7 +7,7 @@ import { CMSConfiguration } from '@/types/cms';
 import { 
   AdminPageWrapper,
   GridSection, 
-  ContentBox, 
+  Box, 
   ActionGrid,
   ToastProvider,
   useToast,
@@ -185,7 +185,7 @@ function CMSPageContent() {
       {/* CMS Sections Grid */}
       <GridSection variant="content" columns={3}>
         {cmsSections.map((section) => (
-          <ContentBox
+          <Box
             key={section.id}
             variant="elevated"
             padding="lg"
@@ -224,13 +224,13 @@ function CMSPageContent() {
                 />
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
         ))}
       </GridSection>
 
       {/* Quick Actions */}
       <GridSection variant="actions" columns={1}>
-        <ContentBox variant="elevated" padding="lg">
+        <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text variant="lead" size="md" weight="semibold">
               ⚡ Quick Actions
@@ -240,13 +240,13 @@ function CMSPageContent() {
             </Text>
             <ActionGrid actions={quickActions} columns={4} />
           </Stack>
-        </ContentBox>
+        </Box>
       </GridSection>
 
       {/* Last Updated Info */}
       {lastUpdated && (
         <GridSection variant="content" columns={1}>
-          <ContentBox variant="elevated" padding="lg">
+          <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text variant="lead" size="md" weight="semibold">
                 🕒 Configuration Status
@@ -294,7 +294,7 @@ function CMSPageContent() {
                 </Stack>
               </Stack>
             </Stack>
-          </ContentBox>
+          </Box>
         </GridSection>
       )}
     </AdminPageWrapper>
