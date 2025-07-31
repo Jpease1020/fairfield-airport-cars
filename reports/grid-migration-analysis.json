@@ -1,0 +1,3135 @@
+{
+  "summary": {
+    "totalComponents": 86,
+    "readyForMigration": 43,
+    "criticalPriority": 4,
+    "highPriority": 27,
+    "mediumPriority": 22,
+    "lowPriority": 33
+  },
+  "byPriority": {
+    "critical": [
+      {
+        "file": "src/design/components/grid/Grid.tsx",
+        "category": "unknown",
+        "priority": "critical",
+        "issues": [
+          "Uses CSS Grid - needs flexbox migration",
+          "Uses old Grid component"
+        ],
+        "migrationEffort": "medium",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/FeatureGrid.tsx",
+        "category": "layout",
+        "priority": "critical",
+        "issues": [
+          "Uses old Grid component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/grid/Grid.tsx",
+        "category": "layout",
+        "priority": "critical",
+        "issues": [
+          "Uses CSS Grid - needs flexbox migration",
+          "Uses styled-components for layout",
+          "Uses old Grid component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/ActionGrid.tsx",
+        "category": "ui-components",
+        "priority": "critical",
+        "issues": [
+          "Uses old Grid component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      }
+    ],
+    "high": [
+      {
+        "file": "src/design/components/forms/Form.tsx",
+        "category": "forms",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/forms/Overlay.tsx",
+        "category": "forms",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/grid/Components.tsx",
+        "category": "unknown",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/grid-system/Col.tsx",
+        "category": "unknown",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/grid-system/Container.tsx",
+        "category": "unknown",
+        "priority": "high",
+        "issues": [
+          "Uses old Container component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/grid-system/Row.tsx",
+        "category": "unknown",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/AdminNavigation.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses old Container component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/ContactSection.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses old Grid component",
+          "Uses old Container component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/FAQ.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses old Container component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/HeroSection.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/Navigation.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout",
+          "Uses old Container component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/PageHeader.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/PageLayout.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/StandardLayout.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/containers/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/grid/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/layout/Layout.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/layout/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/utilities/Utilities.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/utilities/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/notifications/LoadingSpinner.tsx",
+        "category": "notifications",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/HelpCard.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/SettingToggle.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Switch.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles"
+        ],
+        "migrationEffort": "medium",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/VoiceInput.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/VoiceOutput.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      }
+    ],
+    "medium": [
+      {
+        "file": "src/design/components/forms/ProgressIndicator.tsx",
+        "category": "forms",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/grid/Container.tsx",
+        "category": "unknown",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout",
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/CustomerFooter.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/CustomerNavigation.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/Footer.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses CSS Grid - needs flexbox migration",
+          "Uses styled-components for layout",
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/PageWrapper.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/containers/Container.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout",
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/notifications/StatusMessage.tsx",
+        "category": "notifications",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/notifications/Toast.tsx",
+        "category": "notifications",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/providers/AccessibilityEnhancer.tsx",
+        "category": "providers",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/providers/EditModeProvider.tsx",
+        "category": "providers",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/ActionButtonGroup.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/ActivityItem.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Alert.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/BookingCard.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Card.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses styled-components for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/DataTable.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/EditableSystem.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/HelpTooltip.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/LocationAutocomplete.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Skeleton.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses CSS Grid - needs flexbox migration",
+          "Uses styled-components for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/State.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses inline styles for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      }
+    ],
+    "low": [
+      {
+        "file": "src/design/components/forms/Label.tsx",
+        "category": "forms",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/forms/index.ts",
+        "category": "forms",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/grid/Box.tsx",
+        "category": "unknown",
+        "priority": "low",
+        "issues": [
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/grid/index.ts",
+        "category": "unknown",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/grid-system/index.ts",
+        "category": "unknown",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/grid-system/types.ts",
+        "category": "unknown",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/icons/Icon.tsx",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/icons/icons/index.tsx",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/icons/index.ts",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/icons/svg/index.ts",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/index.ts",
+        "category": "unknown",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/notifications/ErrorBoundary.tsx",
+        "category": "notifications",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/notifications/StatusBadge.tsx",
+        "category": "notifications",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/notifications/index.ts",
+        "category": "notifications",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/providers/AdminProvider.tsx",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/providers/CMSDesignProvider.tsx",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/providers/StyledComponentsRegistry.tsx",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/providers/index.ts",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/sections/PageCommentWidget.tsx",
+        "category": "sections",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/sections/index.ts",
+        "category": "sections",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/ActivityList.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Badge.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Button.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/ChatContainer.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/ChatInput.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/ChatMessage.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/EditModeToggle.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/EditableTextarea.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Logo.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Modal.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/StarRating.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Text.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/index.ts",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      }
+    ]
+  },
+  "byCategory": {
+    "layout": [
+      {
+        "file": "src/design/components/layout/AdminNavigation.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses old Container component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/ContactSection.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses old Grid component",
+          "Uses old Container component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/CustomerFooter.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/CustomerNavigation.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/FAQ.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses old Container component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/FeatureGrid.tsx",
+        "category": "layout",
+        "priority": "critical",
+        "issues": [
+          "Uses old Grid component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/Footer.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses CSS Grid - needs flexbox migration",
+          "Uses styled-components for layout",
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/HeroSection.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/Navigation.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout",
+          "Uses old Container component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/PageHeader.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/PageLayout.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/PageWrapper.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/StandardLayout.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/containers/Container.tsx",
+        "category": "layout",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout",
+          "Uses old Container component",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/containers/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/grid/Grid.tsx",
+        "category": "layout",
+        "priority": "critical",
+        "issues": [
+          "Uses CSS Grid - needs flexbox migration",
+          "Uses styled-components for layout",
+          "Uses old Grid component"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/grid/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/layout/Layout.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/layout/layout/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/utilities/Utilities.tsx",
+        "category": "layout",
+        "priority": "high",
+        "issues": [
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "high",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/layout/utilities/index.ts",
+        "category": "layout",
+        "priority": "high",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "high",
+        "readyForMigration": false
+      }
+    ],
+    "uiComponents": [
+      {
+        "file": "src/design/components/ui-components/ActionButtonGroup.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/ActionGrid.tsx",
+        "category": "ui-components",
+        "priority": "critical",
+        "issues": [
+          "Uses old Grid component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/ActivityItem.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/ActivityList.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Alert.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Badge.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/BookingCard.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Button.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Card.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses styled-components for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/ChatContainer.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/ChatInput.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/ChatMessage.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/DataTable.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/EditModeToggle.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/EditableSystem.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/EditableTextarea.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/HelpCard.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/HelpTooltip.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/LocationAutocomplete.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Logo.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/Modal.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/SettingToggle.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Skeleton.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses CSS Grid - needs flexbox migration",
+          "Uses styled-components for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/StarRating.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/State.tsx",
+        "category": "ui-components",
+        "priority": "medium",
+        "issues": [
+          "Uses inline styles for layout",
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Switch.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles"
+        ],
+        "migrationEffort": "medium",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/Text.tsx",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/ui-components/VoiceInput.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/VoiceOutput.tsx",
+        "category": "ui-components",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/ui-components/index.ts",
+        "category": "ui-components",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      }
+    ],
+    "forms": [
+      {
+        "file": "src/design/components/forms/Form.tsx",
+        "category": "forms",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/forms/Label.tsx",
+        "category": "forms",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/forms/Overlay.tsx",
+        "category": "forms",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/forms/ProgressIndicator.tsx",
+        "category": "forms",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/forms/index.ts",
+        "category": "forms",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      }
+    ],
+    "sections": [
+      {
+        "file": "src/design/components/sections/PageCommentWidget.tsx",
+        "category": "sections",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/sections/index.ts",
+        "category": "sections",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      }
+    ],
+    "notifications": [
+      {
+        "file": "src/design/components/notifications/ErrorBoundary.tsx",
+        "category": "notifications",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/notifications/LoadingSpinner.tsx",
+        "category": "notifications",
+        "priority": "high",
+        "issues": [
+          "Uses flexbox with hardcoded styles",
+          "Uses styled-components for layout"
+        ],
+        "migrationEffort": "high",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/notifications/StatusBadge.tsx",
+        "category": "notifications",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/notifications/StatusMessage.tsx",
+        "category": "notifications",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/notifications/Toast.tsx",
+        "category": "notifications",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/notifications/index.ts",
+        "category": "notifications",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      }
+    ],
+    "icons": [
+      {
+        "file": "src/design/components/icons/Icon.tsx",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/icons/icons/index.tsx",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/icons/index.ts",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/icons/svg/index.ts",
+        "category": "icons",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      }
+    ],
+    "providers": [
+      {
+        "file": "src/design/components/providers/AccessibilityEnhancer.tsx",
+        "category": "providers",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/providers/AdminProvider.tsx",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/providers/CMSDesignProvider.tsx",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/providers/EditModeProvider.tsx",
+        "category": "providers",
+        "priority": "medium",
+        "issues": [
+          "Uses old Stack component"
+        ],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": true
+      },
+      {
+        "file": "src/design/components/providers/StyledComponentsRegistry.tsx",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      },
+      {
+        "file": "src/design/components/providers/index.ts",
+        "category": "providers",
+        "priority": "low",
+        "issues": [],
+        "migrationEffort": "low",
+        "impact": "low",
+        "readyForMigration": false
+      }
+    ]
+  },
+  "readyForMigration": [
+    {
+      "file": "src/design/components/forms/Form.tsx",
+      "category": "forms",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/forms/Overlay.tsx",
+      "category": "forms",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/forms/ProgressIndicator.tsx",
+      "category": "forms",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid/Components.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid/Container.tsx",
+      "category": "unknown",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid/Grid.tsx",
+      "category": "unknown",
+      "priority": "critical",
+      "issues": [
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "medium",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid-system/Col.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid-system/Container.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid-system/Row.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/AdminNavigation.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/ContactSection.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses old Grid component",
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/CustomerFooter.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/CustomerNavigation.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/FAQ.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/FeatureGrid.tsx",
+      "category": "layout",
+      "priority": "critical",
+      "issues": [
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/Footer.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses styled-components for layout",
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/Navigation.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Container component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/PageWrapper.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/containers/Container.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/grid/Grid.tsx",
+      "category": "layout",
+      "priority": "critical",
+      "issues": [
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses styled-components for layout",
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/layout/Layout.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/notifications/LoadingSpinner.tsx",
+      "category": "notifications",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/notifications/StatusMessage.tsx",
+      "category": "notifications",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/notifications/Toast.tsx",
+      "category": "notifications",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/providers/AccessibilityEnhancer.tsx",
+      "category": "providers",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/providers/EditModeProvider.tsx",
+      "category": "providers",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/ActionButtonGroup.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/ActionGrid.tsx",
+      "category": "ui-components",
+      "priority": "critical",
+      "issues": [
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/ActivityItem.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Alert.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/BookingCard.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Card.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses styled-components for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/DataTable.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/EditableSystem.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/HelpCard.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/HelpTooltip.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/LocationAutocomplete.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/SettingToggle.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Skeleton.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses styled-components for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/State.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses inline styles for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Switch.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles"
+      ],
+      "migrationEffort": "medium",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/VoiceInput.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/VoiceOutput.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    }
+  ],
+  "allAnalyses": [
+    {
+      "file": "src/design/components/forms/Form.tsx",
+      "category": "forms",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/forms/Label.tsx",
+      "category": "forms",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/forms/Overlay.tsx",
+      "category": "forms",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/forms/ProgressIndicator.tsx",
+      "category": "forms",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/forms/index.ts",
+      "category": "forms",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/grid/Box.tsx",
+      "category": "unknown",
+      "priority": "low",
+      "issues": [
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/grid/Components.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid/Container.tsx",
+      "category": "unknown",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid/Grid.tsx",
+      "category": "unknown",
+      "priority": "critical",
+      "issues": [
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "medium",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid/index.ts",
+      "category": "unknown",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/grid-system/Col.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid-system/Container.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid-system/Row.tsx",
+      "category": "unknown",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/grid-system/index.ts",
+      "category": "unknown",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/grid-system/types.ts",
+      "category": "unknown",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/icons/Icon.tsx",
+      "category": "icons",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/icons/icons/index.tsx",
+      "category": "icons",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/icons/index.ts",
+      "category": "icons",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/icons/svg/index.ts",
+      "category": "icons",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/index.ts",
+      "category": "unknown",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/AdminNavigation.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/ContactSection.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses old Grid component",
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/CustomerFooter.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/CustomerNavigation.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/FAQ.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses old Container component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/FeatureGrid.tsx",
+      "category": "layout",
+      "priority": "critical",
+      "issues": [
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/Footer.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses styled-components for layout",
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/HeroSection.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/Navigation.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Container component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/PageHeader.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/PageLayout.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/PageWrapper.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/StandardLayout.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/containers/Container.tsx",
+      "category": "layout",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Container component",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/containers/index.ts",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/grid/Grid.tsx",
+      "category": "layout",
+      "priority": "critical",
+      "issues": [
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses styled-components for layout",
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/grid/index.ts",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/index.ts",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/layout/Layout.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/layout/layout/index.ts",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/utilities/Utilities.tsx",
+      "category": "layout",
+      "priority": "high",
+      "issues": [
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/layout/utilities/index.ts",
+      "category": "layout",
+      "priority": "high",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "high",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/notifications/ErrorBoundary.tsx",
+      "category": "notifications",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/notifications/LoadingSpinner.tsx",
+      "category": "notifications",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/notifications/StatusBadge.tsx",
+      "category": "notifications",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/notifications/StatusMessage.tsx",
+      "category": "notifications",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/notifications/Toast.tsx",
+      "category": "notifications",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/notifications/index.ts",
+      "category": "notifications",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/providers/AccessibilityEnhancer.tsx",
+      "category": "providers",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/providers/AdminProvider.tsx",
+      "category": "providers",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/providers/CMSDesignProvider.tsx",
+      "category": "providers",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/providers/EditModeProvider.tsx",
+      "category": "providers",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/providers/StyledComponentsRegistry.tsx",
+      "category": "providers",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/providers/index.ts",
+      "category": "providers",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/sections/PageCommentWidget.tsx",
+      "category": "sections",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/sections/index.ts",
+      "category": "sections",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/ActionButtonGroup.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/ActionGrid.tsx",
+      "category": "ui-components",
+      "priority": "critical",
+      "issues": [
+        "Uses old Grid component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/ActivityItem.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/ActivityList.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/Alert.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Badge.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/BookingCard.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Button.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/Card.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses styled-components for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/ChatContainer.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/ChatInput.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/ChatMessage.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/DataTable.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/EditModeToggle.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/EditableSystem.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/EditableTextarea.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/HelpCard.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/HelpTooltip.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/LocationAutocomplete.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Logo.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/Modal.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/SettingToggle.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Skeleton.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses CSS Grid - needs flexbox migration",
+        "Uses styled-components for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/StarRating.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/State.tsx",
+      "category": "ui-components",
+      "priority": "medium",
+      "issues": [
+        "Uses inline styles for layout",
+        "Uses old Stack component"
+      ],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Switch.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles"
+      ],
+      "migrationEffort": "medium",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/Text.tsx",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    },
+    {
+      "file": "src/design/components/ui-components/VoiceInput.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/VoiceOutput.tsx",
+      "category": "ui-components",
+      "priority": "high",
+      "issues": [
+        "Uses flexbox with hardcoded styles",
+        "Uses styled-components for layout"
+      ],
+      "migrationEffort": "high",
+      "impact": "low",
+      "readyForMigration": true
+    },
+    {
+      "file": "src/design/components/ui-components/index.ts",
+      "category": "ui-components",
+      "priority": "low",
+      "issues": [],
+      "migrationEffort": "low",
+      "impact": "low",
+      "readyForMigration": false
+    }
+  ]
+}

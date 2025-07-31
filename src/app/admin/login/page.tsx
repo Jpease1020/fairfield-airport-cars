@@ -17,7 +17,7 @@ import { Input } from '@/ui';
 import { Label } from '@/ui';
 import { EditableText } from '@/ui';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/design/design-system/tokens';
+import { spacing, fontSize, fontWeight, colors } from '@/design/system/tokens/tokens';
 
 // Styled components for login page
 const LoginCard = styled(Card)`
@@ -50,7 +50,7 @@ const OrDivider = styled.div`
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--border-color, #e5e7eb);
+    background: ${colors.gray[200]};
   }
   
   &::before {

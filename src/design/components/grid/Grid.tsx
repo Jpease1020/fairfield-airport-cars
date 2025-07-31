@@ -4,7 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { spacing } from '../../system/tokens/tokens';
 import { Text, H2 } from '@/ui';
-import { Container } from './Container';
+import { Container } from '../layout/containers/Container';
 
 // Grid system components
 interface GridProps {

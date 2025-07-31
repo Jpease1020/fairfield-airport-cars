@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, shadows, transitions, margins } from '../../system/tokens/tokens';
+import { colors, spacing, borderRadius, shadows, transitions, margins } from '../../../system/tokens/tokens';
 
 // Container system components
 interface ContainerProps {
@@ -588,7 +588,7 @@ const StyledCard = styled.div.withConfig({
   }}
 `;
 
-export const Card: React.FC<CardProps> = ({ 
+export const LayoutCard: React.FC<CardProps> = ({ 
     variant = 'default', 
     padding = 'md', 
     hover = false,
@@ -935,5 +935,4 @@ export const PositionedContainer: React.FC<PositionedContainerProps> = ({
   );
 };
 
-export { MarginEnforcer, Section, Stack };
-export { Box } from './Box'; 
+export { MarginEnforcer, Section, Stack }; 

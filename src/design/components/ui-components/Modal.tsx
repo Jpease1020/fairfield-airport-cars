@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { colors, spacing, fontSize, borderRadius } from '../../design-system/tokens';
+import { colors, spacing, fontSize, borderRadius, transitions } from '../../system/tokens/tokens';
 import { Button } from '@/ui';
 import { Overlay } from '../forms/Overlay';
 

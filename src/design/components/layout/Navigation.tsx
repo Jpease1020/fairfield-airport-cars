@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, borderRadius, transitions } from '../../system/tokens/tokens';
+import { colors, spacing, borderRadius, transitions } from '../../system/tokens/tokens';
+import { Text, H1, H2, H3, H4, H5, H6, Paragraph, Span, Link } from '@/ui';
 import { Button } from '@/ui';
-import { Text } from '@/ui';
-import { Container } from '@/ui';
+import { Row, Col, Stack, Container } from '../grid';
 
 // Styled navigation component
 const StyledNavigation = styled.nav.withConfig({
@@ -57,31 +57,6 @@ const StyledNavigation = styled.nav.withConfig({
   }}
 `;
 
-const NavigationContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: ${spacing.lg};
-`;
-
-const LogoSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.sm};
-`;
-
-const NavigationLinks = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.lg};
-  flex: 1;
-  justify-content: center;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
 const NavigationLink = styled.a.withConfig({
   shouldForwardProp: (prop) => !['active', 'variant'].includes(prop)
 })<{
@@ -126,12 +101,6 @@ const NavigationLink = styled.a.withConfig({
     color: ${colors.primary[600]};
     background-color: ${colors.primary[50]};
   `}
-`;
-
-const ActionSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.md};
 `;
 
 const MobileMenuButton = styled.button`
@@ -181,6 +150,12 @@ export interface NavigationProps {
   id?: string;
 }
 
+/**
+ * Navigation Component - Migrated to use new grid system
+ * 
+ * Uses Row, Col, and Stack components for consistent layout and responsive behavior.
+ * Provides better maintainability and visual consistency across all pages.
+ */
 export const Navigation: React.FC<NavigationProps> = ({
   variant = 'default',
   sticky = false,
@@ -208,39 +183,54 @@ export const Navigation: React.FC<NavigationProps> = ({
       id={id}
       {...rest}
     >
-      <Container maxWidth="xl">
-        <NavigationContainer>
-          <LogoSection onClick={onLogoClick} style={{ cursor: onLogoClick ? 'pointer' : 'default' }}>
-            {logo || (
-              <Text variant="body" size="lg" color="primary">
-                Fairfield Airport Cars
-              </Text>
-            )}
-          </LogoSection>
+      <Container maxWidth="xl" padding="none">
+        <Row align="center" justify="space-between" gap="lg">
+          {/* Logo Section */}
+          <Col span={{ xs: 6, md: 4 }}>
+            <div 
+              onClick={onLogoClick} 
+              style={{ cursor: onLogoClick ? 'pointer' : 'default' }}
+            >
+              {logo || (
+                <Text variant="body" size="lg" color="primary">
+                  Fairfield Airport Cars
+                </Text>
+              )}
+            </div>
+          </Col>
 
-          <NavigationLinks>
-            {links.map((link, index) => (
-              <NavigationLink
-                key={index}
-                href={link.href}
-                active={link.active || false}
-                variant={variant}
-              >
-                {link.label}
-              </NavigationLink>
-            ))}
-          </NavigationLinks>
+          {/* Navigation Links - Hidden on mobile */}
+          <Col span={{ xs: 12, md: 4 }}>
+            <div style={{ display: 'none' }}>
+              <Stack direction="horizontal" spacing="lg" justify="center">
+                {links.map((link, index) => (
+                  <NavigationLink
+                    key={index}
+                    href={link.href}
+                    active={link.active || false}
+                    variant={variant}
+                  >
+                    {link.label}
+                  </NavigationLink>
+                ))}
+              </Stack>
+            </div>
+          </Col>
 
-          <ActionSection>
-            {actions}
-            <MobileMenuButton onClick={toggleMobileMenu}>
-              <Text size="lg">☰</Text>
-            </MobileMenuButton>
-          </ActionSection>
-        </NavigationContainer>
+          {/* Actions Section */}
+          <Col span={{ xs: 6, md: 4 }}>
+            <Stack direction="horizontal" spacing="md" justify="end">
+              {actions}
+              <MobileMenuButton onClick={toggleMobileMenu}>
+                <Text size="lg">☰</Text>
+              </MobileMenuButton>
+            </Stack>
+          </Col>
+        </Row>
 
+        {/* Mobile Menu */}
         <MobileMenu isOpen={mobileMenuOpen}>
-          <Stack spacing="md">
+          <Stack direction="vertical" spacing="md">
             {links.map((link, index) => (
               <NavigationLink
                 key={index}
@@ -257,7 +247,4 @@ export const Navigation: React.FC<NavigationProps> = ({
       </Container>
     </StyledNavigation>
   );
-};
-
-// Import Stack for mobile menu
-import { Stack } from '@/ui'; 
+}; 

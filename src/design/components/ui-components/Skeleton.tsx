@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { colors, spacing, borderRadius } from '../../design-system/tokens';
+import { colors, spacing, borderRadius } from '../../system/tokens/tokens';
 
 // Skeleton animation with enhanced performance
 const pulse = keyframes`

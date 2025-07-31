@@ -58,6 +58,7 @@ class CostTrackingService {
   async getCosts(): Promise<CostItem[]> {
     try {
       // TODO: Implement real cost tracking from Firebase
+      // For now, return empty array as placeholder
       return [];
     } catch (error) {
       console.error('Error fetching costs:', error);

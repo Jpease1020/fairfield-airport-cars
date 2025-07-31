@@ -1,6 +1,7 @@
 // Notification service for alerting administrators about issues
 // Supports multiple notification channels (email, SMS, webhook)
 import { cmsService } from './cms-service';
+import { colors } from '@/design/system/tokens/tokens';
 
 interface NotificationConfig {
   email?: {
@@ -255,11 +256,11 @@ class NotificationService {
   // Get priority color for Slack
   private getPriorityColor(priority: string): string {
     switch (priority) {
-      case 'critical': return '#ff0000';
-      case 'high': return '#ff6600';
-      case 'medium': return '#ffcc00';
-      case 'low': return '#00cc00';
-      default: return '#cccccc';
+      case 'critical': return colors.danger[600];
+      case 'high': return colors.warning[600];
+      case 'medium': return colors.primary[600];
+      case 'low': return colors.success[600];
+      default: return colors.gray[400];
     }
   }
 

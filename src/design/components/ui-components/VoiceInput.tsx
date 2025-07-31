@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '../../design-system/tokens';
+import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
 import { Button } from '@/ui';
 import { Mic, MicOff, Loader2, AlertCircle } from 'lucide-react';
 

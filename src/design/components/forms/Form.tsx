@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '../../system/tokens/tokens';
+import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../system/tokens/tokens';
 
 // Styled form components
 const StyledInput = styled.input.withConfig({
@@ -194,15 +194,6 @@ const StyledTextarea = styled.textarea.withConfig({
   `}
 `;
 
-const StyledFormField = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['size'].includes(prop)
-})<{
-  size: 'sm' | 'md' | 'lg';
-}>`
-  display: block;
-  margin-bottom: ${spacing.md};
-`;
-
 const StyledLabel = styled.label.withConfig({
   shouldForwardProp: (prop) => !['size'].includes(prop)
 })<{
@@ -222,10 +213,39 @@ const StyledLabel = styled.label.withConfig({
   }};
 `;
 
+// Reusable styled components
+const StyledFormField = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['size'].includes(prop)
+})<{
+  size: 'sm' | 'md' | 'lg';
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.xs};
+  width: 100%;
+
+  /* Size styles */
+  ${({ size }) => {
+    switch (size) {
+      case 'sm':
+        return `gap: ${spacing.xs};`;
+      case 'md':
+        return `gap: ${spacing.sm};`;
+      case 'lg':
+        return `gap: ${spacing.md};`;
+      default:
+        return `gap: ${spacing.sm};`;
+    }
+  }}
+`;
+
 const StyledError = styled.div`
   color: ${colors.danger[600]};
   font-size: ${fontSize.sm};
   margin-top: ${spacing.xs};
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
 `;
 
 const StyledHelper = styled.div`

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '../../design-system/tokens';
+import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '../../system/tokens/tokens';
 import { Input } from '../forms/Form';
 import { Label } from '../forms/Label';
 import { Text } from './Text';

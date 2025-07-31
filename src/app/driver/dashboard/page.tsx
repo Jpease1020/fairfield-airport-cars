@@ -18,7 +18,7 @@ import { getBookings, updateBookingStatus } from '@/lib/services/booking-service
 
 interface DriverDashboardProps {}
 
-export default function DriverDashboard({}: DriverDashboardProps) {
+export default function DriverDashboard() {
   const [driver, setDriver] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

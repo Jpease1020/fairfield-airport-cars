@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Container, Button, Stack, Text, Span } from '@/ui';
 import { Loader2, MapPin } from 'lucide-react';
-import { colors } from '../../design-system/tokens';
+import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
 
 const StyledLoader = styled(Loader2)`
   width: 1rem;
