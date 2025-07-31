@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Layout } from '@/ui';
 import { 
   Section,
   Container,
@@ -11,8 +10,9 @@ import {
   Text,
   ActionButtonGroup,
   Box,
-} from '@/ui';
-import { EditableText } from '@/ui';
+  CustomerLayout
+} from '@/design/ui';
+import { EditableText } from '@/design/ui';
 
 function HelpPageContent() {
   const quickAnswers = [
@@ -55,7 +55,7 @@ function HelpPageContent() {
   return (
     <>
       {/* Hero Section */}
-      <Section variant="brand" padding="xl" data-testid="help-hero-section">
+      <Section variant="default" padding="xl" data-testid="help-hero-section">
         <Container maxWidth="2xl">
           <Stack spacing="2xl" align="center">
             <H1 align="center" data-testid="help-title">
@@ -105,7 +105,7 @@ function HelpPageContent() {
       </Section>
 
       {/* Contact Support Section */}
-      <Section variant="brand" padding="xl">
+      <Section variant="default" padding="xl">
         <Container maxWidth="2xl">
           <Stack spacing="lg" align="center">
             <H2>
@@ -129,8 +129,8 @@ function HelpPageContent() {
 
 export default function HelpPage() {
   return (
-    <Layout>
+    <CustomerLayout>
       <HelpPageContent />
-    </Layout>
+    </CustomerLayout>
   );
 }
