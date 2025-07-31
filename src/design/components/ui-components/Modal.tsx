@@ -2,9 +2,9 @@
 
 import React, { forwardRef } from 'react';
 import { colors, spacing, fontSize } from '../../system/tokens/tokens';
-import { Button } from '@/ui';
+import { Button, H2 } from '@/ui';
 import { Overlay } from './Overlay';
-import { Container, Stack, Card } from '@/ui';
+import { Container, Stack, ContentBox } from '@/ui';
 
 export interface ModalProps {
   children: React.ReactNode;
@@ -65,7 +65,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(({
       aria-describedby={ariaDescribedBy}
       {...rest}
     >
-      <Card
+      <ContentBox
         variant="elevated"
         padding="none"
       >
@@ -76,15 +76,9 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(({
             padding={headerVariant === 'minimal' ? 'md' : headerVariant === 'prominent' ? 'xl' : 'lg'}
           >
             <Stack direction="horizontal" justify="space-between" align="center">
-              <h2 style={{
-                margin: 0,
-                fontWeight: 600,
-                color: colors.text.primary,
-                lineHeight: 1.4,
-                fontSize: titleSizeMap[titleSize as 'sm' | 'md' | 'lg']
-              }}>
+              <H2 size={titleSize}>
                 {title}
-              </h2>
+              </H2>
               {showCloseButton && (
                 <Button
                   onClick={onClose}
@@ -122,7 +116,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(({
             </Container>
           )}
         </Stack>
-      </Card>
+      </ContentBox>
     </Overlay>
   );
 });

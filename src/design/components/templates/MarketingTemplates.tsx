@@ -1,14 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container } from '../layout/containers/Container';
-import { Card } from '../layout/containers/Card';
-import { Stack } from '../layout/grid/Stack';
-import { Grid } from '../layout/grid/Grid';
-import { Col } from '../layout/grid/Col';
-import { Text, H1, H2, H3 } from '../ui-components/Text';
-import { Button } from '../ui-components/Button';
-import { CustomerPageTemplate } from './PageTemplates';
+import { Container, ContentBox, Stack, Grid, Col, Text, H1, H2, H3, Button, CustomerPageTemplate } from '@/design/ui';
 import Link from 'next/link';
 
 // ============================================================================
@@ -116,13 +109,13 @@ export const FeatureShowcaseTemplate: React.FC<FeatureShowcaseProps> = ({
               const IconComponent = feature.icon;
               return (
                 <Col key={index} span={{ xs: 12, sm: 6, lg: 4 }}>
-                  <Card variant="outlined">
+                  <ContentBox variant="outlined">
                     <Stack spacing="md" align="center">
                       <IconComponent />
                       <H3 align="center">{feature.title}</H3>
                       <Text align="center">{feature.description}</Text>
                     </Stack>
-                  </Card>
+                  </ContentBox>
                 </Col>
               );
             })}
@@ -183,7 +176,7 @@ export const TestimonialsTemplate: React.FC<TestimonialsTemplateProps> = ({
           <Grid cols={12} gap="lg">
             {testimonials.map((testimonial, index) => (
               <Col key={index} span={{ xs: 12, sm: 6, lg: 4 }}>
-                <Card variant="outlined">
+                <ContentBox variant="outlined">
                   <Stack spacing="md">
                     {testimonial.rating && (
                       <Stack direction="horizontal" spacing="xs">
@@ -210,7 +203,7 @@ export const TestimonialsTemplate: React.FC<TestimonialsTemplateProps> = ({
                       )}
                     </Stack>
                   </Stack>
-                </Card>
+                </ContentBox>
               </Col>
             ))}
           </Grid>
@@ -337,7 +330,7 @@ export const PricingTemplate: React.FC<PricingTemplateProps> = ({
           <Grid cols={12} gap="lg">
             {plans.map((plan, index) => (
               <Col key={index} span={{ xs: 12, sm: 6, lg: 4 }}>
-                <Card variant={plan.popular ? 'elevated' : 'outlined'}>
+                <ContentBox variant={plan.popular ? 'elevated' : 'outlined'}>
                   <Stack spacing="md">
                     {plan.popular && (
                       <Text variant="small" color="primary" weight="bold" align="center">
@@ -378,7 +371,7 @@ export const PricingTemplate: React.FC<PricingTemplateProps> = ({
                       </Button>
                     </Link>
                   </Stack>
-                </Card>
+                </ContentBox>
               </Col>
             ))}
           </Grid>

@@ -6,7 +6,7 @@ import { Button } from '@/ui';
 import { Textarea } from '@/ui';
 import { Container, Text, H3 } from '@/ui';
 import { EditableText } from '@/ui';
-import { useEditMode } from '@/design/components/providers/EditModeProvider';
+import { useEditMode } from '@/design/providers/EditModeProvider';
 
 interface Comment {
   id: string;

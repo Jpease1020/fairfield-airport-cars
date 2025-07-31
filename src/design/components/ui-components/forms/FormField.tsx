@@ -2,53 +2,11 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize } from '../../system/tokens/tokens';
+import { Stack, Text } from '@/design/ui';
+import { colors, spacing, fontSize } from '../../../system/tokens/tokens';
+import { Label } from './Label';
 
-// Consolidated styled components
-const StyledFormField = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['size'].includes(prop)
-})<{
-  size: 'sm' | 'md' | 'lg';
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.xs};
-  width: 100%;
-
-  /* Size styles */
-  ${({ size }) => {
-    switch (size) {
-      case 'sm':
-        return `gap: ${spacing.xs};`;
-      case 'md':
-        return `gap: ${spacing.sm};`;
-      case 'lg':
-        return `gap: ${spacing.md};`;
-      default:
-        return `gap: ${spacing.sm};`;
-    }
-  }}
-`;
-
-const StyledLabel = styled.label.withConfig({
-  shouldForwardProp: (prop) => !['size'].includes(prop)
-})<{
-  size: 'sm' | 'md' | 'lg';
-}>`
-  display: block;
-  font-weight: 500;
-  color: ${colors.text.primary};
-  margin-bottom: ${spacing.xs};
-  font-size: ${({ size }) => {
-    switch (size) {
-      case 'sm': return fontSize.sm;
-      case 'md': return fontSize.md;
-      case 'lg': return fontSize.lg;
-      default: return fontSize.md;
-    }
-  }};
-`;
-
+// Styled message component for errors and helper text
 const StyledMessage = styled.div<{ $isError: boolean }>`
   color: ${({ $isError }) => $isError ? colors.danger[600] : colors.text.secondary};
   font-size: ${fontSize.sm};
@@ -58,18 +16,16 @@ const StyledMessage = styled.div<{ $isError: boolean }>`
   gap: ${spacing.xs};
 `;
 
-const StyledRequired = styled.span`
-  color: ${colors.danger[600]};
-`;
-
-// FormField Component
+// FormField Component - Focused on layout and error handling
 export interface FormFieldProps {
   children: React.ReactNode;
   label?: string;
   error?: string;
   helperText?: string;
   required?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  htmlFor?: string;
+  disabled?: boolean;
   [key: string]: any;
 }
 
@@ -80,27 +36,37 @@ export const FormField: React.FC<FormFieldProps> = ({
   helperText,
   required = false,
   size = 'md',
+  htmlFor,
+  disabled = false,
   ...rest
 }) => {
   return (
-    <StyledFormField size={size} {...rest}>
+    <Stack direction="vertical" spacing="xs" {...rest}>
       {label && (
-        <StyledLabel size={size}>
+        <Label
+          htmlFor={htmlFor}
+          size={size}
+          required={required}
+          disabled={disabled}
+          variant={error ? 'error' : 'default'}
+        >
           {label}
-          {required && <StyledRequired> *</StyledRequired>}
-        </StyledLabel>
+        </Label>
       )}
+      
       {children}
+      
       {error && (
         <StyledMessage $isError={true} role="alert">
           {error}
         </StyledMessage>
       )}
+      
       {helperText && !error && (
         <StyledMessage $isError={false}>
           {helperText}
         </StyledMessage>
       )}
-    </StyledFormField>
+    </Stack>
   );
 }; 

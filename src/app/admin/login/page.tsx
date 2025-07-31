@@ -10,7 +10,7 @@ import {
   H1,
   H2,
   Text,
-  Card,
+  ContentBox,
   Button,
 } from '@/ui';
 import { Input } from '@/ui';
@@ -20,7 +20,7 @@ import styled from 'styled-components';
 import { spacing, fontSize, fontWeight, colors } from '@/design/system/tokens/tokens';
 
 // Styled components for login page
-const LoginCard = styled(Card)`
+const LoginCard = styled(ContentBox)`
   max-width: 500px;
   margin: 0 auto;
   transition: transform 0.2s ease-in-out;
@@ -107,7 +107,7 @@ export default function LoginPage() {
   return (
     <Section variant="brand" padding="xl" id="login-section">
       <Container maxWidth="lg">
-        <Stack spacing="2xl" align="center" gap="md">
+        <Stack spacing="2xl" align="center">
           <Stack spacing="lg" align="center">
             <H1 align="center">
               <EditableText field="admin.login.title" defaultValue="🔐 Admin Login">
@@ -136,8 +136,8 @@ export default function LoginPage() {
               </Text>
               
               <LoginForm onSubmit={handleFormSubmit} id="login-form">
-                <Stack spacing="lg" gap="lg" fullWidth>
-                  <Stack spacing="sm" gap="sm" fullWidth align="center">
+                <Stack spacing="lg">
+                  <Stack spacing="sm" align="center">
                     <Label htmlFor="email" id="email-label">
                       <EditableText field="admin.login.emailLabel" defaultValue="Email Address">
                         Email Address
@@ -156,7 +156,7 @@ export default function LoginPage() {
                     />
                   </Stack>
                   
-                  <Stack spacing="sm" gap="sm" fullWidth>
+                  <Stack spacing="sm">
                     <Label htmlFor="password" id="password-label">
                       <EditableText field="admin.login.passwordLabel" defaultValue="Password">
                         Password
@@ -176,7 +176,7 @@ export default function LoginPage() {
                   </Stack>
                   
                   {error && (
-                    <Stack direction="horizontal" spacing="sm" gap="sm" align="center" fullWidth>
+                    <Stack direction="horizontal" spacing="sm" align="center">
                       <EditableText field="admin.login.errorIcon" defaultValue="⚠️">
                         ⚠️
                       </EditableText>

@@ -143,7 +143,7 @@ export const margins = {
     between: '1.5rem', // 24px
   },
   
-  // Card margins
+  // ContentBox margins
   card: {
     top: '0.5rem',   // 8px
     bottom: '0.5rem', // 8px

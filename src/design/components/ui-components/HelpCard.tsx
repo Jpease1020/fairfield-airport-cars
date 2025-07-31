@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Card } from '../layout/containers/Card';
-import { Text } from './Text';
+import { ContentBox } from '../layout/containers/ContentBox';
+import { Text } from './text';
 import { Stack } from '../layout/grid/Stack';
-import { Box } from '../layout/grid/Box';
-import { EditableText } from './EditableSystem';
+import { Container } from '../layout/containers/Container';
+import { EditableText } from '@/design/ui';
 
 export interface HelpCardProps {
   // Core props
@@ -71,29 +71,21 @@ export const HelpCard: React.FC<HelpCardProps> = ({
   };
 
   return (
-    <Card id={id} {...rest}>
+    <ContentBox id={id} {...rest}>
       <Stack direction="horizontal" spacing="md" align="flex-start">
         {/* Icon Container */}
-        <div
-          style={{
-            flexShrink: 0,
-            fontSize: size === 'sm' ? '0.875rem' : size === 'lg' ? '1.125rem' : '1rem',
-            width: size === 'sm' ? '1rem' : size === 'lg' ? '1.5rem' : '1.25rem',
-            height: size === 'sm' ? '1rem' : size === 'lg' ? '1.5rem' : '1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: variant === 'highlighted' ? 'var(--color-primary-600)' : 'var(--color-text-secondary)',
-            border: '1px solid var(--color-border-light)',
-            borderRadius: 'var(--border-radius-md)',
-            padding: 'var(--spacing-sm)'
-          }}
+        <Container
+          variant="default"
+          padding="sm"
         >
           {icon}
-        </div>
+        </Container>
         
         {/* Content Container */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <Container
+          variant="default"
+          padding="sm"
+        >
           {/* Title */}
           <Stack direction="horizontal" spacing="sm" align="center">
             {typeof title === 'string' ? (
@@ -120,8 +112,8 @@ export const HelpCard: React.FC<HelpCardProps> = ({
           
           {/* Children */}
           {children}
-        </div>
+        </Container>
       </Stack>
-    </Card>
+    </ContentBox>
   );
 }; 

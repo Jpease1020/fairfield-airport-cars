@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '../../system/tokens/tokens';
 import { Input } from './forms/Input';
 import { Label } from './forms/Label';
-import { Text } from './Text';
+import { Text } from './text';
 
 // Styled setting toggle container
 const SettingToggleContainer = styled.div.withConfig({

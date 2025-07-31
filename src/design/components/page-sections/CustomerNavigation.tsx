@@ -3,9 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Container } from '../layout/containers/Container';
-import { Button } from '../ui-components/Button';
-import { EditableText } from '../ui-components/EditableSystem';
+import { Container, Button, EditableText } from '@/design/ui';
 import { BaseNavigation, NavigationItem } from './BaseNavigation';
 
 export const CustomerNavigation: React.FC = () => {

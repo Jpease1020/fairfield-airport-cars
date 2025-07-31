@@ -10,7 +10,7 @@ import {
   H1,
   H2,
   Text,
-  Card,
+  ContentBox,
   Form,
   Button,
   ToastProvider
@@ -45,8 +45,8 @@ export default function ForgotPasswordPage() {
       <ToastProvider>
         <Section variant="brand" padding="xl" id="forgot-password-section">
           <Container>
-            <Stack gap="xl" align="center">
-              <Stack gap="sm" align="center">
+            <Stack   align="center">
+              <Stack    align="center">
                 <H1 align="center">
                   <EditableText field="customer.forgot_password.success_title" defaultValue="Check Your Email">
                     Check Your Email
@@ -59,8 +59,8 @@ export default function ForgotPasswordPage() {
                 </Text>
               </Stack>
 
-              <Card variant="elevated" padding="xl" fullWidth>
-                <Stack gap="lg" align="center">
+              <ContentBox variant="elevated" padding="xl">
+                <Stack align="center">
                   <Text align="center" variant="muted">
                     <EditableText field="customer.forgot_password.check_email" defaultValue="Please check your email and click the link to reset your password.">
                       Please check your email and click the link to reset your password.
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
                     </Link>
                   </Text>
                 </Stack>
-              </Card>
+              </ContentBox>
             </Stack>
           </Container>
         </Section>
@@ -87,8 +87,8 @@ export default function ForgotPasswordPage() {
     <ToastProvider>
       <Section variant="brand" padding="xl" id="forgot-password-section">
         <Container>
-          <Stack gap="xl" align="center">
-            <Stack gap="sm" align="center">
+          <Stack   align="center">
+            <Stack    align="center">
               <H1 align="center">
                 <EditableText field="customer.forgot_password.title" defaultValue="Forgot Your Password?">
                   Forgot Your Password?
@@ -101,9 +101,9 @@ export default function ForgotPasswordPage() {
               </Text>
             </Stack>
 
-            <Card variant="elevated" padding="xl" id="forgot-password-card" fullWidth>
-              <Stack gap="lg">
-                <Stack gap="sm" align="center">
+            <ContentBox variant="elevated" padding="xl" id="forgot-password-card">
+              <Stack>
+                <Stack    align="center">
                   <H2 align="center" id="forgot-password-title">
                     <EditableText field="customer.forgot_password.authTitle" defaultValue="Reset Password">
                       Reset Password
@@ -117,8 +117,8 @@ export default function ForgotPasswordPage() {
                 </Stack>
 
                 <Form onSubmit={handleSubmit} id="forgot-password-form" fullWidth>
-                  <Stack gap="md">
-                    <Stack gap="sm">
+                  <Stack>
+                    <Stack   >
                       <Label htmlFor="email">
                         <EditableText field="customer.forgot_password.emailLabel" defaultValue="Email Address">
                           Email Address
@@ -136,7 +136,7 @@ export default function ForgotPasswordPage() {
                     </Stack>
 
                     {error && (
-                      <Stack gap="sm" align="center">
+                      <Stack    align="center">
                         <Text color="error" align="center">
                           <EditableText field="customer.forgot_password.errorIcon" defaultValue="⚠️">
                             ⚠️
@@ -161,7 +161,7 @@ export default function ForgotPasswordPage() {
                   </Stack>
                 </Form>
               </Stack>
-            </Card>
+            </ContentBox>
 
             <Text variant="muted" align="center" marginTop="md">
               <Link href="/login">

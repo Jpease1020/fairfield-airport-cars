@@ -2,10 +2,10 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, borderRadius, transitions } from '../../system/tokens/tokens';
+import { colors, spacing, fontSize, borderRadius, transitions, shadows, fontWeight } from '../../system/tokens/tokens';
 import { LoadingSpinner } from '@/design/components/ui-components/notifications';
 
-// Styled button component with all CSS rules defined
+// Styled button component with enhanced modern styling
 const StyledButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size', 'shape', 'fullWidth', 'loading', 'icon', 'iconPosition'].includes(prop)
 })<{
@@ -18,105 +18,218 @@ const StyledButton = styled.button.withConfig({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 500;
+  gap: ${spacing.sm};
+  font-weight: ${fontWeight.medium};
   outline: none;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  opacity: ${({ loading }) => (loading ? 0.5 : 1)};
+  transition: all ${transitions.default};
+  border: none;
+  position: relative;
+  overflow: hidden;
+  opacity: ${({ loading }) => (loading ? 0.7 : 1)};
   cursor: ${({ loading }) => (loading ? 'not-allowed' : 'pointer')};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-  border: none;
+  text-decoration: none;
+  font-family: inherit;
+  letter-spacing: 0.025em;
 
-  /* Size styles */
+  /* Enhanced size styles with better proportions */
   ${({ size }) => {
     switch (size) {
       case 'xs':
         return `
           padding: ${spacing.xs} ${spacing.sm};
           font-size: ${fontSize.xs};
+          min-height: 28px;
+          gap: ${spacing.xs};
         `;
       case 'sm':
         return `
           padding: ${spacing.sm} ${spacing.md};
           font-size: ${fontSize.sm};
+          min-height: 36px;
+          gap: ${spacing.xs};
         `;
       case 'md':
         return `
-          padding: ${spacing.sm} ${spacing.lg};
+          padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
+          min-height: 44px;
+          gap: ${spacing.sm};
         `;
       case 'lg':
         return `
-          padding: ${spacing.md} ${spacing.xl};
+          padding: ${spacing.lg} ${spacing.xl};
           font-size: ${fontSize.lg};
+          min-height: 52px;
+          gap: ${spacing.md};
         `;
       case 'xl':
         return `
-          padding: ${spacing.lg} ${spacing.xl};
+          padding: ${spacing.xl} ${spacing['2xl']};
           font-size: ${fontSize.xl};
+          min-height: 60px;
+          gap: ${spacing.lg};
         `;
       default:
         return `
-          padding: ${spacing.sm} ${spacing.lg};
+          padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
+          min-height: 44px;
+          gap: ${spacing.sm};
         `;
     }
   }}
 
-  /* Variant styles */
+  /* Enhanced variant styles with modern gradients and effects */
   ${({ variant }) => {
     switch (variant) {
       case 'primary':
         return `
-          background-color: ${colors.primary[600]};
+          background: linear-gradient(135deg, ${colors.primary[600]} 0%, ${colors.primary[700]} 100%);
           color: ${colors.text.white};
+          box-shadow: ${shadows.md};
+          
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, ${colors.primary[700]} 0%, ${colors.primary[800]} 100%);
+            box-shadow: ${shadows.lg};
+            transform: translateY(-1px);
+          }
+          
+          &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: ${shadows.md};
+          }
         `;
       case 'secondary':
         return `
-          background-color: ${colors.secondary[600]};
+          background: linear-gradient(135deg, ${colors.secondary[600]} 0%, ${colors.secondary[700]} 100%);
           color: ${colors.text.white};
+          box-shadow: ${shadows.md};
+          
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, ${colors.secondary[700]} 0%, ${colors.secondary[800]} 100%);
+            box-shadow: ${shadows.lg};
+            transform: translateY(-1px);
+          }
+          
+          &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: ${shadows.md};
+          }
         `;
       case 'outline':
         return `
-          background-color: transparent;
+          background: transparent;
           color: ${colors.primary[600]};
-          border: 1px solid ${colors.primary[600]};
+          border: 2px solid ${colors.primary[600]};
+          box-shadow: ${shadows.sm};
+          
+          &:hover:not(:disabled) {
+            background: ${colors.primary[600]};
+            color: ${colors.text.white};
+            box-shadow: ${shadows.md};
+            transform: translateY(-1px);
+          }
+          
+          &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: ${shadows.sm};
+          }
         `;
       case 'ghost':
         return `
-          background-color: transparent;
+          background: transparent;
           color: ${colors.text.primary};
+          box-shadow: none;
+          
+          &:hover:not(:disabled) {
+            background: ${colors.background.tertiary};
+            color: ${colors.text.primary};
+            box-shadow: ${shadows.sm};
+          }
+          
+          &:active:not(:disabled) {
+            background: ${colors.background.secondary};
+          }
         `;
       case 'danger':
         return `
-          background-color: ${colors.danger[600]};
+          background: linear-gradient(135deg, ${colors.danger[600]} 0%, ${colors.danger[700]} 100%);
           color: ${colors.text.white};
+          box-shadow: ${shadows.md};
+          
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, ${colors.danger[700]} 0%, ${colors.danger[800]} 100%);
+            box-shadow: ${shadows.lg};
+            transform: translateY(-1px);
+          }
+          
+          &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: ${shadows.md};
+          }
         `;
       case 'success':
         return `
-          background-color: ${colors.success[600]};
+          background: linear-gradient(135deg, ${colors.success[600]} 0%, ${colors.success[700]} 100%);
           color: ${colors.text.white};
+          box-shadow: ${shadows.md};
+          
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, ${colors.success[700]} 0%, ${colors.success[800]} 100%);
+            box-shadow: ${shadows.lg};
+            transform: translateY(-1px);
+          }
+          
+          &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: ${shadows.md};
+          }
         `;
       case 'warning':
         return `
-          background-color: ${colors.warning[600]};
+          background: linear-gradient(135deg, ${colors.warning[600]} 0%, ${colors.warning[700]} 100%);
           color: ${colors.text.white};
+          box-shadow: ${shadows.md};
+          
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, ${colors.warning[700]} 0%, ${colors.warning[800]} 100%);
+            box-shadow: ${shadows.lg};
+            transform: translateY(-1px);
+          }
+          
+          &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: ${shadows.md};
+          }
         `;
       default:
         return `
-          background-color: ${colors.primary[600]};
+          background: linear-gradient(135deg, ${colors.primary[600]} 0%, ${colors.primary[700]} 100%);
           color: ${colors.text.white};
+          box-shadow: ${shadows.md};
+          
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, ${colors.primary[700]} 0%, ${colors.primary[800]} 100%);
+            box-shadow: ${shadows.lg};
+            transform: translateY(-1px);
+          }
+          
+          &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: ${shadows.md};
+          }
         `;
     }
   }}
 
-  /* Shape styles */
+  /* Enhanced shape styles */
   ${({ shape }) => {
     switch (shape) {
       case 'default':
         return `border-radius: ${borderRadius.default};`;
       case 'rounded':
-        return `border-radius: ${borderRadius.md};`;
+        return `border-radius: ${borderRadius.lg};`;
       case 'pill':
         return `border-radius: ${borderRadius.pill};`;
       case 'square':
@@ -126,23 +239,58 @@ const StyledButton = styled.button.withConfig({
     }
   }}
 
-  &:hover:not(:disabled) {
-    opacity: 0.9;
-  }
-
+  /* Enhanced focus styles */
   &:focus {
-    outline: 2px solid ${colors.primary[600]};
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: ${shadows.focus};
   }
 
+  /* Enhanced disabled styles */
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none !important;
+    box-shadow: ${shadows.sm} !important;
+  }
+
+  /* Loading state styles */
+  ${({ loading }) => loading && `
+    pointer-events: none;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: inherit;
+    }
+  `}
+
+  /* Ripple effect for modern feel */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+
+  &:active::before {
+    width: 300px;
+    height: 300px;
   }
 `;
 
-
-// Button Component - Clean Reusable Component (No className!)
+// Button Component - Enhanced with better props and functionality
 export interface ButtonProps {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning';
@@ -157,6 +305,9 @@ export interface ButtonProps {
   shape?: 'default' | 'rounded' | 'pill' | 'square';
   as?: 'button' | 'a' | 'div';
   id?: string;
+  href?: string;
+  target?: string;
+  rel?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -173,11 +324,17 @@ export const Button: React.FC<ButtonProps> = ({
   shape = 'default',
   as: Component = 'button',
   id,
+  href,
+  target,
+  rel,
   ...rest
 }) => {
+  // Determine the component to render
+  const renderComponent = href ? 'a' : Component;
+  
   return (
     <StyledButton
-      as={Component}
+      as={renderComponent}
       variant={variant}
       size={size}
       shape={shape}
@@ -188,11 +345,15 @@ export const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       aria-busy={loading}
       id={id}
+      href={href}
+      target={target}
+      rel={rel}
       {...rest}
     >
-      {loading && (
-        <LoadingSpinner size="sm" />
-      )}
+      {loading && <LoadingSpinner size="sm" />}
+      {!loading && icon && iconPosition === 'left' && icon}
+      {children}
+      {!loading && icon && iconPosition === 'right' && icon}
     </StyledButton>
   );
 }; 

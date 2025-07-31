@@ -118,7 +118,7 @@ export function DataTable<T extends Record<string, any>>({
     <Container>
       {/* Search and Controls */}
       {searchable && (
-        <Stack direction="horizontal" spacing="md" justify="between">
+        <Stack direction="horizontal" spacing="md" justify="space-between">
           <Container>
             <Input
               type="text"
@@ -175,7 +175,7 @@ export function DataTable<T extends Record<string, any>>({
 
       {/* Pagination */}
       {pagination && totalPages > 1 && (
-        <Stack direction="horizontal" spacing="md" align="center" justify="between">
+        <Stack direction="horizontal" spacing="md" align="center" justify="space-between">
           <Button
             variant="outline"
             size="sm"

@@ -41,7 +41,7 @@ export type {
   BorderRadius,
   HTMLElement,
   BaseComponentProps,
-  CardProps,
+  ContentBoxProps,
   LayoutSectionProps,
   TextProps,
   ButtonProps,

@@ -1,14 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container } from '../layout/containers/Container';
-import { Stack } from '../layout/grid/Stack';
-import { CustomerNavigation } from '../page-sections/CustomerNavigation';
-import { CustomerFooter } from '../page-sections/CustomerFooter';
-import { AdminNavigation } from '../page-sections/AdminNavigation';
-import { PageHeader } from '../page-sections/PageHeader';
-import { Text, H3 } from '../ui-components/Text';
-import { LoadingSpinner } from '../ui-components/notifications';
+import { Container, Stack, Text, H3, LoadingSpinner, CustomerNavigation, CustomerFooter, AdminNavigation, PageHeader } from '@/design/ui';
 
 // ============================================================================
 // LAYER 5: PAGE TEMPLATES

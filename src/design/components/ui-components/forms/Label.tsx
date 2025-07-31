@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, fontSize, fontWeight, spacing, transitions } from '../../system/tokens/tokens';
+import { colors, fontSize, fontWeight, spacing, transitions } from '../../../system/tokens/tokens';
 
 // Styled label component with proper prop filtering
 const StyledLabel = styled.label.withConfig({

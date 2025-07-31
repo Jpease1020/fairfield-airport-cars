@@ -1,7 +1,6 @@
 import React from 'react';
 import { ActivityItem } from './ActivityItem';
-import { Container, Text, Span } from '@/ui';
-import { Stack } from '@/ui';
+import { Container, Text, Span, Stack } from '@/ui';
 
 interface ActivityData {
   id: string | number;

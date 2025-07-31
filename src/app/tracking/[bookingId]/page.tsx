@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { 
   Container, 
   Stack, 
-  Card, 
+  ContentBox, 
   H2, 
   Text, 
   Button, 
@@ -130,7 +130,7 @@ export default function TrackingPage() {
     <Container padding="lg" maxWidth="xl">
       <Stack spacing="xl">
         {/* Header */}
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Track Your Ride</H2>
             <Text variant="lead">Booking #{trackingData.bookingId}</Text>
@@ -140,10 +140,10 @@ export default function TrackingPage() {
               message={getStatusText(trackingData.status)}
             />
           </Stack>
-        </Card>
+        </ContentBox>
 
         {/* Driver Information */}
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Your Driver</H2>
             
@@ -177,10 +177,10 @@ export default function TrackingPage() {
               📞 Call Driver
             </Button>
           </Stack>
-        </Card>
+        </ContentBox>
 
         {/* Trip Details */}
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Trip Details</H2>
             
@@ -204,11 +204,11 @@ export default function TrackingPage() {
               </GridItem>
             </Grid>
           </Stack>
-        </Card>
+        </ContentBox>
 
         {/* Location Tracking */}
         {trackingData.currentLocation && (
-          <Card variant="elevated" padding="lg">
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="lg">
               <H2>Driver Location</H2>
               
@@ -228,11 +228,11 @@ export default function TrackingPage() {
                 🗺️ View on Map
               </Button>
             </Stack>
-          </Card>
+          </ContentBox>
         )}
 
         {/* Actions */}
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>Actions</H2>
             
@@ -252,7 +252,7 @@ export default function TrackingPage() {
               </Button>
             </Stack>
           </Stack>
-        </Card>
+        </ContentBox>
       </Stack>
     </Container>
   );

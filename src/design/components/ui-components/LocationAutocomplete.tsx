@@ -29,7 +29,7 @@ const Label = styled.label`
   display: block;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: var(--text-primary, #111827);
+  color: ${colors.text.primary};
 `;
 
 interface LocationAutocompleteProps {

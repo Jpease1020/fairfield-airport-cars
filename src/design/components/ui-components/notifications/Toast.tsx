@@ -92,7 +92,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
 
   return (
     <Container variant="default" padding="sm">
-      <Stack direction="horizontal" spacing="sm" align="center" justify="between">
+      <Stack direction="horizontal" spacing="sm" align="center" justify="space-between">
         <Stack direction="horizontal" spacing="sm" align="center">
           <Span>{getIcon()}</Span>
           <Text size="sm">

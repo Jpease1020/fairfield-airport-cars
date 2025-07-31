@@ -1,14 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Container } from '../layout/containers/Container';
-import { Card } from '../layout/containers/Card';
-import { Stack } from '../layout/grid/Stack';
-import { Grid } from '../layout/grid/Grid';
-import { Col } from '../layout/grid/Col';
-import { Text, H2, H3, Span } from '../ui-components/Text';
-import { Button } from '../ui-components/Button';
-import { CustomerPageTemplate } from './PageTemplates';
+import { Container, ContentBox, Stack, Grid, Col, Text, H2, H3, Span, Button, CustomerPageTemplate } from '@/design/ui';
 import Link from 'next/link';
 
 // ============================================================================
@@ -111,11 +104,11 @@ export const ConversionPageTemplate: React.FC<ConversionPageTemplateProps> = ({
             )}
           </Stack>
           
-          <Grid cols={12} gap="xl">
+          <Grid cols={12}  >
             <Col span={{ xs: 12, lg: 8 }}>
-              <Card>
+              <ContentBox>
                 {formContent}
-              </Card>
+              </ContentBox>
             </Col>
             
             {trustSignals && (
@@ -260,7 +253,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({ stats }) => {
         const IconComponent = stat.icon;
         return (
           <Col key={index} span={{ xs: 12, sm: 6, lg: 3 }}>
-            <Card variant="outlined">
+            <ContentBox variant="outlined">
               <Stack spacing="sm" align="center">
                 <IconComponent />
                 <H3>{stat.value}</H3>
@@ -268,7 +261,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({ stats }) => {
                   {stat.label}
                 </Text>
               </Stack>
-            </Card>
+            </ContentBox>
           </Col>
         );
       })}
@@ -296,7 +289,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contacts }) => {
         const IconComponent = contact.icon;
         return (
           <Col key={index} span={{ xs: 12, sm: 6 }}>
-            <Card variant="outlined">
+            <ContentBox variant="outlined">
               <Stack spacing="sm" align="center">
                 <IconComponent />
                 <H3>{contact.value}</H3>
@@ -304,7 +297,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contacts }) => {
                   {contact.action.text}
                 </Text>
               </Stack>
-            </Card>
+            </ContentBox>
           </Col>
         );
       })}
@@ -386,9 +379,9 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
             return (
               <Container key={index}>
                 {showCards ? (
-                  <Card variant="outlined">
+                  <ContentBox variant="outlined">
                     {content}
-                  </Card>
+                  </ContentBox>
                 ) : (
                   content
                 )}
@@ -422,9 +415,9 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
             return (
               <Container key={index}>
                 {showCards ? (
-                  <Card variant="outlined">
+                  <ContentBox variant="outlined">
                     {content}
-                  </Card>
+                  </ContentBox>
                 ) : (
                   content
                 )}
@@ -458,9 +451,9 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
           return (
             <Container key={index}>
               {showCards ? (
-                <Card variant="outlined">
+                <ContentBox variant="outlined">
                   {content}
-                </Card>
+                </ContentBox>
               ) : (
                 content
               )}
@@ -492,13 +485,13 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ features }) =>
         const IconComponent = feature.icon;
         return (
           <Col key={index} span={{ xs: 12, sm: 6, lg: 4 }}>
-            <Card variant="outlined">
+            <ContentBox variant="outlined">
               <Stack spacing="md">
                 <IconComponent />
                 <H3>{feature.title}</H3>
                 <Text>{feature.description}</Text>
               </Stack>
-            </Card>
+            </ContentBox>
           </Col>
         );
       })}
@@ -558,7 +551,7 @@ export const ContactMethodsSection: React.FC<ContactMethodsSectionProps> = ({
       <Grid cols={variant === 'split' ? 2 : 3} gap="md">
         {contactMethods.map((method, index) => (
           <Col key={index} span={{ xs: 12, sm: 6, lg: variant === 'split' ? 6 : 4 }}>
-            <Card variant="outlined">
+            <ContentBox variant="outlined">
               <Stack spacing="sm" align="center">
                 <Text size="xl">{getContactIcon(method.type)}</Text>
                 <Stack spacing="xs" align="center">
@@ -568,7 +561,7 @@ export const ContactMethodsSection: React.FC<ContactMethodsSectionProps> = ({
                   </Link>
                 </Stack>
               </Stack>
-            </Card>
+            </ContentBox>
           </Col>
         ))}
       </Grid>

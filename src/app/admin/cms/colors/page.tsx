@@ -89,10 +89,6 @@ function AdminColorsPageContent() {
     <AdminPageWrapper
       title="Color Scheme"
       subtitle="Customize your admin and site colors"
-      loading={loading}
-      error={error}
-      errorTitle="Color Scheme Error"
-      loadingMessage="Loading color configuration..."
     >
       {/* Error Message */}
       {error && (

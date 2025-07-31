@@ -5,9 +5,10 @@ import {
   AdminPageWrapper,
   Container,
   Stack,
-  Card,
+  ContentBox,
   GridSection,
-  ActionButtonGroup
+  ActionButtonGroup,
+  Text
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { ToastProvider, useToast } from '@/ui';
@@ -66,58 +67,60 @@ function AddContentPage() {
     >
       <Container>
         <Stack spacing="lg">
-          <Card
-            title="📝 Content Editing Guide"
-            description="This is where you can edit all the text and content on your website. Choose a section below to get started."
-          >
+          <ContentBox>
             <Container>
-              <EditableText field="admin.cms.guide.description" defaultValue="To edit content on your website:">
-                To edit content on your website:
-              </EditableText>
-              <Stack spacing="sm">
-                <Container>1. Choose a section below that you want to edit</Container>
-                <Container>2. Click the "Edit Content" button to go to that section</Container>
-                <Container>3. Make your changes in the forms provided</Container>
-                <Container>4. Click "Save Changes" to update your website</Container>
-                <Container>5. Your changes will appear immediately on the live site</Container>
+              <Stack spacing="md">
+                <Text size="lg" weight="bold">📝 Content Editing Guide</Text>
+                <Text variant="muted">This is where you can edit all the text and content on your website. Choose a section below to get started.</Text>
+                <EditableText field="admin.cms.guide.description" defaultValue="To edit content on your website:">
+                  To edit content on your website:
+                </EditableText>
+                <Stack spacing="sm">
+                  <Container>1. Choose a section below that you want to edit</Container>
+                  <Container>2. Click the "Edit Content" button to go to that section</Container>
+                  <Container>3. Make your changes in the forms provided</Container>
+                  <Container>4. Click "Save Changes" to update your website</Container>
+                  <Container>5. Your changes will appear immediately on the live site</Container>
+                </Stack>
               </Stack>
             </Container>
-          </Card>
+          </ContentBox>
 
           <GridSection variant="content" columns={2}>
             {cmsPages.map((page, index) => (
-              <Card
-                key={index}
-                title={`${page.icon} ${page.title}`}
-                description={page.description}
-              >
+              <ContentBox key={index}>
                 <Container>
-                  <ActionButtonGroup
-                    buttons={[{
-                      label: "Edit Content",
-                      onClick: () => handleNavigateToCMS(page.href),
-                      variant: 'primary' as const,
-                      icon: page.icon
-                    }]}
-                  />
+                  <Stack spacing="md">
+                    <Text size="lg" weight="bold">{page.icon} {page.title}</Text>
+                    <Text variant="muted">{page.description}</Text>
+                    <ActionButtonGroup
+                      buttons={[{
+                        label: "Edit Content",
+                        onClick: () => handleNavigateToCMS(page.href),
+                        variant: 'primary' as const,
+                        icon: page.icon
+                      }]}
+                    />
+                  </Stack>
                 </Container>
-              </Card>
+              </ContentBox>
             ))}
           </GridSection>
 
-          <Card
-            title="💡 Pro Tips"
-            description="Best practices for content editing"
-          >
+          <ContentBox>
             <Container>
-              <Stack spacing="sm">
-                <Container>• Keep content clear and concise for your customers</Container>
-                <Container>• Test your changes by visiting the customer-facing pages</Container>
-                <Container>• Update content regularly to keep information current</Container>
-                <Container>• Use the "Edit Mode" button on customer pages for quick edits</Container>
+              <Stack spacing="md">
+                <Text size="lg" weight="bold">💡 Pro Tips</Text>
+                <Text variant="muted">Best practices for content editing</Text>
+                <Stack spacing="sm">
+                  <Container>• Keep content clear and concise for your customers</Container>
+                  <Container>• Test your changes by visiting the customer-facing pages</Container>
+                  <Container>• Update content regularly to keep information current</Container>
+                  <Container>• Use the "Edit Mode" button on customer pages for quick edits</Container>
+                </Stack>
               </Stack>
             </Container>
-          </Card>
+          </ContentBox>
         </Stack>
       </Container>
     </AdminPageWrapper>

@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, transitions } from '../../../system/tokens/tokens';
-import { Container } from './Container';
+import { Container } from '@/design/ui';
 import { LayoutSectionProps } from '../../../system/types';
 
 const StyledSection = styled.section.withConfig({

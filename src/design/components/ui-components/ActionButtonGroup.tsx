@@ -26,7 +26,6 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
     <Stack 
       direction={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
       spacing={spacing}
-      gap={spacing}
       align="center"
     >
       {buttons.map((button, index) => (

@@ -10,7 +10,7 @@ import {
   H2,
   Text,
   ActionButtonGroup,
-  Card,
+  ContentBox,
 } from '@/ui';
 import { EditableText } from '@/ui';
 
@@ -57,7 +57,7 @@ function HelpPageContent() {
       {/* Hero Section */}
       <Section variant="brand" padding="xl" data-testid="help-hero-section">
         <Container maxWidth="2xl">
-          <Stack spacing="2xl" align="center" gap="md">
+          <Stack spacing="2xl" align="center">
             <H1 align="center" data-testid="help-title">
               <EditableText field="help.hero.title" defaultValue="Help & Support">
                 Help & Support
@@ -75,7 +75,7 @@ function HelpPageContent() {
       {/* Quick Answers Section */}
       <Section variant="default" padding="xl" data-testid="help-content">
         <Container maxWidth="2xl">
-          <Stack spacing="lg" align="center" marginBottom="xl">
+          <Stack spacing="lg" align="center">
             <H2>
               <EditableText field="help.quickAnswers.title" defaultValue="Quick Answers">
                 Quick Answers
@@ -83,9 +83,9 @@ function HelpPageContent() {
             </H2>
           </Stack>
           
-          <Stack spacing="lg" gap="md" data-testid="faq-section">
+          <Stack spacing="lg" data-testid="faq-section">
             {quickAnswers.map((item, index) => (
-              <Card key={index} variant="elevated" padding="lg" data-testid={`faq-item-${index}`}>
+              <ContentBox key={index} variant="elevated" padding="lg" data-testid={`faq-item-${index}`}>
                 <Stack spacing="md">
                   <H2 size="md">
                     <EditableText field={`help.quickAnswers.${index}.question`} defaultValue={item.question}>
@@ -98,7 +98,7 @@ function HelpPageContent() {
                     </EditableText>
                   </Text>
                 </Stack>
-              </Card>
+              </ContentBox>
             ))}
           </Stack>
         </Container>

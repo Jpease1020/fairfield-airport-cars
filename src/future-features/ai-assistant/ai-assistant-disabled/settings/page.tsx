@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AdminPageWrapper, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
 import { Stack } from '@/ui';
-import { Card } from '@/ui';
+import { ContentBox } from '@/ui';
 import { EditableText } from '@/ui';
 
 const AIAssistantSettingsPage = () => {
@@ -59,8 +59,6 @@ const AIAssistantSettingsPage = () => {
       <AdminPageWrapper
         title="AI Assistant Settings"
         subtitle="Loading configuration..."
-        actions={[]}
-        loading={true}
       >
         <Text>
           <EditableText field="aiAssistantSettings.loading" defaultValue="Loading...">
@@ -75,10 +73,9 @@ const AIAssistantSettingsPage = () => {
     <AdminPageWrapper
       title="AI Assistant Settings"
       subtitle="Configure AI assistant preferences and access"
-      actions={headerActions}
     >
       <GridSection variant="content" columns={1}>
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">⚙️ AI Assistant Configuration</Text>
             <Text>Current status and available options</Text>
@@ -122,17 +119,17 @@ const AIAssistantSettingsPage = () => {
             </Text>
           </Container>
           </Stack>
-        </Card>
+        </ContentBox>
       </GridSection>
 
       <GridSection variant="actions" columns={1}>
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">📋 Available Options</Text>
             <Text>Alternative features and support resources</Text>
             <ActionGrid actions={settingsInfo} columns={4} />
           </Stack>
-        </Card>
+        </ContentBox>
       </GridSection>
     </AdminPageWrapper>
   );

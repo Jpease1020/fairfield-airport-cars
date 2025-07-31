@@ -6,7 +6,7 @@ import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
-import { Card } from '@/ui';
+import { ContentBox } from '@/ui';
 
 interface AnalyticsData {
   totalInteractions: number;
@@ -114,23 +114,23 @@ export default function AnalyticsPage() {
           <Container>
             {/* Overview Cards */}
             <Stack direction="horizontal" spacing="md">
-              <Card variant="elevated" padding="lg">
+              <ContentBox variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">📊 Total Interactions</Text>
                   <Text size="xl" weight="bold">{analytics.totalInteractions.toLocaleString()}</Text>
                   <Text>All user interactions tracked</Text>
                 </Stack>
-              </Card>
+              </ContentBox>
 
-              <Card variant="elevated" padding="lg">
+              <ContentBox variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">⚠️ Total Errors</Text>
                   <Text size="xl" weight="bold">{analytics.totalErrors.toLocaleString()}</Text>
                   <Text>Errors detected and tracked</Text>
                 </Stack>
-              </Card>
+              </ContentBox>
 
-              <Card variant="elevated" padding="lg">
+              <ContentBox variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">📉 Error Rate</Text>
                   <Text size="xl" weight="bold">{`${analytics.totalInteractions > 0 
@@ -139,15 +139,15 @@ export default function AnalyticsPage() {
                   }%`}</Text>
                   <Text>Percentage of interactions with errors</Text>
                 </Stack>
-              </Card>
+              </ContentBox>
 
-              <Card variant="elevated" padding="lg">
+              <ContentBox variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Text size="lg" weight="bold">🖱️ Active Elements</Text>
                   <Text size="xl" weight="bold">{Object.keys(analytics.elementTypes).length.toString()}</Text>
                   <Text>Different element types tracked</Text>
                 </Stack>
-              </Card>
+              </ContentBox>
             </Stack>
 
             {/* Detailed Metrics */}
@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
                 <Container>
                   {getTopInteractions().map(([type, count]) => (
                     <Container key={type}>
-                      <Stack direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" justify="space-between" align="center">
                         <Span>● {type.replace(/([A-Z])/g, ' $1').toLowerCase()}</Span>
                         <Span>
                           {count.toLocaleString()}
@@ -185,7 +185,7 @@ export default function AnalyticsPage() {
                 <Container>
                   {getTopErrors().map(([type, count]) => (
                     <Container key={type}>
-                      <Stack direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" justify="space-between" align="center">
                         <Span>● {type.replace(/([A-Z])/g, ' $1').toLowerCase()}</Span>
                         <Span>{count.toLocaleString()}</Span>
                       </Stack>
@@ -205,7 +205,7 @@ export default function AnalyticsPage() {
                 <Container>
                   {getTopElements().map(([element, count]) => (
                     <Container key={element}>
-                      <Stack direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" justify="space-between" align="center">
                         <Span>● {element}</Span>
                         <Span>{count.toLocaleString()}</Span>
                       </Stack>
@@ -225,7 +225,7 @@ export default function AnalyticsPage() {
                 <Container>
                   {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
                     <Container key={index}>
-                      <Stack direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" justify="space-between" align="center">
                         <Span>● {interaction.type} on {interaction.element}</Span>
                         <Span>{new Date(interaction.timestamp).toLocaleTimeString()}</Span>
                       </Stack>
@@ -247,7 +247,7 @@ export default function AnalyticsPage() {
                 <Container>
                   {analytics.recentErrors.slice(0, 10).map((error, index) => (
                     <Container key={index}>
-                      <Stack direction="horizontal" justify="between" align="center">
+                      <Stack direction="horizontal" justify="space-between" align="center">
                         <Span>{error.message}</Span>
                         <Span>{new Date(error.timestamp).toLocaleString()}</Span>
                       </Stack>

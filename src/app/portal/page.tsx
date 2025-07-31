@@ -84,7 +84,7 @@ function PortalPageContent() {
       {/* Welcome Section */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="portal-welcome-title" level={3} field="portal.welcome.title" defaultValue="👋 Welcome to Your Portal">👋 Welcome to Your Portal</EditableHeading>
               <EditableText data-testid="portal-welcome-description" field="portal.welcome.description" defaultValue="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.">
@@ -98,7 +98,7 @@ function PortalPageContent() {
       {/* Portal Actions */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="portal-features-title" level={3} field="portal.features.title" defaultValue="🎯 Portal Features">🎯 Portal Features</EditableHeading>
               <EditableText data-testid="portal-features-description" field="portal.features.description" defaultValue="Access all available services and account management tools">
@@ -122,7 +122,7 @@ function PortalPageContent() {
       {/* Quick Stats */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="portal-stats-title" level={3} field="portal.stats.title" defaultValue="📊 Account Overview">📊 Account Overview</EditableHeading>
               <EditableText data-testid="portal-stats-description" field="portal.stats.description" defaultValue="Your account activity and statistics">

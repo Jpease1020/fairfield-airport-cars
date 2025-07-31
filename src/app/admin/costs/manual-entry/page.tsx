@@ -9,7 +9,7 @@ import {
   useToast,
   GridSection,
   Container,
-  Card,
+  ContentBox,
   Text,
   H3,
   H4,
@@ -77,8 +77,6 @@ function ManualCostEntryPageContent() {
     <AdminPageWrapper
       title="Manual Cost Entry"
       subtitle="Add new operational costs to track your business expenses"
-      error={error}
-      errorTitle="Cost Entry Error"
     >
       {/* Error Message */}
       {error && (
@@ -92,11 +90,12 @@ function ManualCostEntryPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           {/* Cost Entry Form */}
-          <Card
-            title="Add New Cost Entry"
-            description="Enter details for your business expense"
-          >
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="md">
+              <Stack spacing="sm">
+                <Text variant="lead" size="md" weight="semibold">Add New Cost Entry</Text>
+                <Text variant="muted" size="sm">Enter details for your business expense</Text>
+              </Stack>
               <Container>
                 <Label htmlFor="cost-date">Date</Label>
                 <Input
@@ -153,36 +152,39 @@ function ManualCostEntryPageContent() {
                 <Text size="sm" color="secondary">Additional details or context</Text>
               </Container>
             </Stack>
-          </Card>
+          </ContentBox>
 
           {/* Cost Categories Guide */}
-          <Card
-            title="Cost Categories"
-            description="Common expense categories to help organize your costs"
-          >
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="md">
+              <Stack spacing="sm">
+                <Text variant="lead" size="md" weight="semibold">Cost Categories</Text>
+                <Text variant="muted" size="sm">Common expense categories to help organize your costs</Text>
+              </Stack>
               {costCategories.map((category, index) => (
-                <Card
-                  key={index}
-                  title={category.title}
-                  description={category.description}
-                >
-                  <Container>
-                    <Text size="lg">{category.icon}</Text>
-                    <H4>{category.title}</H4>
-                    <Text size="sm" color="secondary">{category.description}</Text>
-                  </Container>
-                </Card>
-              ))}
-            </Stack>
-          </Card>
+                <ContentBox key={index} variant="elevated" padding="lg">
+                  <Stack spacing="sm">
+                    <Text variant="lead" size="md" weight="semibold">{category.title}</Text>
+                    <Text variant="muted" size="sm">{category.description}</Text>
+                                      <Container>
+                      <Text size="lg">{category.icon}</Text>
+                      <H4>{category.title}</H4>
+                      <Text size="sm" color="secondary">{category.description}</Text>
+                    </Container>
+                  </Stack>
+                </ContentBox>
+                ))}
+              </Stack>
+            </ContentBox>
 
           {/* Quick Add Actions */}
-          <Card
-            title="Quick Actions"
-            description="Common cost entry shortcuts"
-          >
-                          <Container>
+          <ContentBox variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Stack spacing="sm">
+                <Text variant="lead" size="md" weight="semibold">Quick Actions</Text>
+                <Text variant="muted" size="sm">Common cost entry shortcuts</Text>
+              </Stack>
+              <Container>
                 <ActionButtonGroup
                   buttons={[
                     {
@@ -217,7 +219,8 @@ function ManualCostEntryPageContent() {
                   spacing="sm"
                 />
               </Container>
-          </Card>
+            </Stack>
+          </ContentBox>
         </Container>
       </GridSection>
     </AdminPageWrapper>

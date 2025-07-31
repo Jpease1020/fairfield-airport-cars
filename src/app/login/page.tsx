@@ -11,7 +11,7 @@ import {
   H1,
   H2,
   Text,
-  Card,
+  ContentBox,
   Form,
   Button,
   ToastProvider
@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import { spacing, fontSize, fontWeight } from '@/design/system/tokens/tokens';
 
 // Styled components for login page
-const LoginCard = styled(Card)`
+const LoginCard = styled(ContentBox)`
   max-width: 500px;
   margin: 0 auto;
   transition: transform 0.2s ease-in-out;
@@ -124,8 +124,8 @@ export default function CustomerLoginPage() {
     <ToastProvider>
       <Section variant="brand" padding="xl" id="login-section">
         <Container>
-          <Stack gap="xl" align="center">
-            <Stack gap="sm" align="center">
+          <Stack   align="center">
+            <Stack    align="center">
               <H1 align="center">
                 <EditableText field="customer.login.title" defaultValue="Welcome Back">
                   Welcome Back
@@ -139,8 +139,8 @@ export default function CustomerLoginPage() {
             </Stack>
 
             <LoginCard variant="elevated" padding="xl" id="login-card">
-              <Stack gap="lg">
-                <Stack gap="sm" align="center">
+              <Stack>
+                <Stack    align="center">
                   <H2 align="center" id="login-title">
                     <EditableText field="customer.login.authTitle" defaultValue="Customer Login">
                       Customer Login
@@ -154,8 +154,8 @@ export default function CustomerLoginPage() {
                 </Stack>
 
                 <LoginForm onSubmit={handleFormSubmit} id="login-form">
-                  <Stack gap="md">
-                    <Stack gap="sm">
+                  <Stack>
+                    <Stack   >
                       <Label htmlFor="email">
                         <EditableText field="customer.login.emailLabel" defaultValue="Email Address">
                           Email Address
@@ -172,7 +172,7 @@ export default function CustomerLoginPage() {
                       />
                     </Stack>
 
-                    <Stack gap="sm">
+                    <Stack   >
                       <Label htmlFor="password">
                         <EditableText field="customer.login.passwordLabel" defaultValue="Password">
                           Password
@@ -190,7 +190,7 @@ export default function CustomerLoginPage() {
                     </Stack>
 
                     {error && (
-                      <Stack gap="sm" align="center">
+                      <Stack    align="center">
                         <Text variant="muted" align="center" color="error">
                           <EditableText field="customer.login.errorIcon" defaultValue="⚠️">
                             ⚠️

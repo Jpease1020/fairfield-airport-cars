@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useEffect, useState, Suspense } from 'react';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
@@ -10,7 +11,7 @@ import {
   Container,
   Text
 } from '@/ui';
-import { Card } from '@/ui';
+import { ContentBox } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
 import { Layout } from '@/ui';
@@ -24,11 +25,13 @@ function DriverLocationContent() {
   
   const [status, setStatus] = useState('Requesting location permission…');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     if (!allowed) return;
     
-    if (!('geolocation' in navigator)) {
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) {
       setStatus('Geolocation is not supported by this browser.');
       return;
     }
@@ -57,11 +60,29 @@ function DriverLocationContent() {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [allowed]);
 
+  if(!isClient) {
+    return (
+      <Layout>
+        <GridSection variant="content" columns={1}>
+          <ContentBox variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Text size="lg" weight="bold">Loading...</Text>
+              <Text>Initializing location services</Text>
+              <Container>
+                <LoadingSpinner text="Loading..." />
+              </Container>
+            </Stack>
+          </ContentBox>
+        </GridSection>
+      </Layout>
+    );
+  }
+
   if(!allowed) {
     return (
       <Layout>
         <GridSection variant="content" columns={1}>
-          <Card variant="elevated" padding="lg">
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">❌ Unauthorized</Text>
               <Text>You are not authorized to access this page</Text>
@@ -73,7 +94,7 @@ function DriverLocationContent() {
                 </Text>
               </Container>
             </Stack>
-          </Card>
+          </ContentBox>
         </GridSection>
       </Layout>
     );
@@ -82,7 +103,7 @@ function DriverLocationContent() {
   return (
     <Layout>
       <GridSection variant="content" columns={1}>
-        <Card variant="elevated" padding="lg">
+        <ContentBox variant="elevated" padding="lg">
           <Stack spacing="md">
             <Text size="lg" weight="bold">📍 Location Status</Text>
             <Text>Your current location sharing status</Text>
@@ -108,18 +129,18 @@ function DriverLocationContent() {
               )}
             </Container>
           </Stack>
-        </Card>
+        </ContentBox>
       </GridSection>
     </Layout>
   );
 }
 
-export default function DriverLocationPage() {
+const DriverLocationPage = dynamic(() => Promise.resolve(() => {
   return (
     <Suspense fallback={
       <Layout>
         <GridSection variant="content" columns={1}>
-          <Card variant="elevated" padding="lg">
+          <ContentBox variant="elevated" padding="lg">
             <Stack spacing="md">
               <Text size="lg" weight="bold">Loading...</Text>
               <Text>Initializing location services</Text>
@@ -127,11 +148,13 @@ export default function DriverLocationPage() {
                 <LoadingSpinner text="Loading..." />
               </Container>
             </Stack>
-          </Card>
+          </ContentBox>
         </GridSection>
       </Layout>
     }>
       <DriverLocationContent />
     </Suspense>
   );
-} 
+}), { ssr: false });
+
+export default DriverLocationPage; 

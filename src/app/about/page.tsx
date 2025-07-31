@@ -31,7 +31,7 @@ function AboutPageContent() {
       {/* Hero Section */}
       <Section variant="brand" padding="xl">
         <Container maxWidth="2xl">
-          <Stack spacing="2xl" align="center" gap="md">
+          <Stack spacing="2xl" align="center">
             <H1 align="center">
               <EditableText field="about.hero.title" defaultValue="About Fairfield Airport Cars">
                 About Fairfield Airport Cars

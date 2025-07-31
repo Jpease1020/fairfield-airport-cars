@@ -4,7 +4,7 @@ import {
   Stack, 
   Text, 
   Button, 
-  Card,
+  ContentBox,
   Input,
   Label,
   H1,
@@ -47,24 +47,31 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
 
   return (
     <Container>
-      <Card
-        title={pageTitle}
-        description="Edit the content and settings for this page"
-        actions={
-          <Stack direction="horizontal" spacing="sm">
-            {saveButtons.map((button, index) => (
-              <Button
-                key={index}
-                onClick={button.onClick}
-                disabled={button.disabled}
-                variant={button.variant}
-              >
-                {button.label}
-              </Button>
-            ))}
+      <ContentBox variant="elevated" padding="lg">
+        <Stack spacing="md">
+          <Stack direction="horizontal" align="center" justify="space-between">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">
+                {pageTitle}
+              </Text>
+              <Text variant="muted" size="sm">
+                Edit the content and settings for this page
+              </Text>
+            </Stack>
+            <Stack direction="horizontal" spacing="sm">
+              {saveButtons.map((button, index) => (
+                <Button
+                  key={index}
+                  onClick={button.onClick}
+                  disabled={button.disabled}
+                  variant={button.variant}
+                >
+                  {button.label}
+                </Button>
+              ))}
+            </Stack>
           </Stack>
-        }
-      >
+        </Stack>
         <Stack spacing="md">
           <Container>
             <Label htmlFor="page-title">Page Title</Label>
@@ -99,7 +106,7 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
             <Text size="sm" color="secondary">SEO description for search engines</Text>
           </Container>
         </Stack>
-      </Card>
+      </ContentBox>
     </Container>
   );
 };
@@ -143,25 +150,30 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
   return (
     <Container>
       {/* Hero Section */}
-      <Card
-        title="Hero Section"
-        description="Main banner content at the top of the homepage"
-        actions={
-          <Stack direction="horizontal" spacing="sm">
-            {saveButtons.map((button, index) => (
-              <Button
-                key={index}
-                onClick={button.onClick}
-                disabled={button.disabled}
-                variant={button.variant}
-              >
-                {button.label}
-              </Button>
-            ))}
-          </Stack>
-        }
-      >
+      <ContentBox variant="elevated" padding="lg">
         <Stack spacing="md">
+          <Stack direction="horizontal" align="center" justify="space-between">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">
+                Hero Section
+              </Text>
+              <Text variant="muted" size="sm">
+                Main banner content at the top of the homepage
+              </Text>
+            </Stack>
+            <Stack direction="horizontal" spacing="sm">
+              {saveButtons.map((button, index) => (
+                <Button
+                  key={index}
+                  onClick={button.onClick}
+                  disabled={button.disabled}
+                  variant={button.variant}
+                >
+                  {button.label}
+                </Button>
+              ))}
+            </Stack>
+          </Stack>
           <Container>
             <Label htmlFor="hero-title">Hero Title</Label>
             <Input
@@ -195,14 +207,19 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
             <Text size="sm" color="secondary">Text for the main action button</Text>
           </Container>
         </Stack>
-      </Card>Card
+      </ContentBox>ContentBox
 
       {/* Features Section */}
-      <Card
-        title="Features Section"
-        description="Highlight your key service features"
-      >
+      <ContentBox variant="elevated" padding="lg">
         <Stack spacing="md">
+          <Stack spacing="sm">
+            <Text variant="lead" size="md" weight="semibold">
+              Features Section
+            </Text>
+            <Text variant="muted" size="sm">
+              Highlight your key service features
+            </Text>
+          </Stack>
           <Container>
             <Label htmlFor="features-title">Features Section Title</Label>
             <Input
@@ -216,12 +233,16 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
           
           {/* Feature Items */}
           {pageData.features.items.map((item: any, idx: number) => (
-            <Card
-              key={idx}
-              title={`Feature ${idx + 1}`}
-              description="Highlight your key service features"
-            >
+            <ContentBox key={idx} variant="elevated" padding="lg">
               <Stack spacing="md">
+                <Stack spacing="sm">
+                  <Text variant="lead" size="md" weight="semibold">
+                    Feature {idx + 1}
+                  </Text>
+                  <Text variant="muted" size="sm">
+                    Highlight your key service features
+                  </Text>
+                </Stack>
                 <Container>
                   <Label htmlFor={`feature-${idx}-title`}>Feature Title</Label>
                   <Input
@@ -264,10 +285,10 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
                   />
                 </Container>
               </Stack>
-            </Card>
+            </ContentBox>
           ))}
         </Stack>
-      </Card>
+      </ContentBox>
     </Container>
   );
 };
@@ -298,26 +319,30 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
 
   return (
     <Container>
-      <Card
-        title="Booking Page"
-        description="Edit the content and settings for the booking page"
-        icon="📅"
-        actions={
-          <ButtonGroup>
-            {saveButtons.map((button, index) => (
-              <Button
-                key={index}
-                onClick={button.onClick}
-                disabled={button.disabled}
-                variant={button.variant}
-              >
-                {button.label}
-              </Button>
-            ))}
-          </ButtonGroup>
-        }
-      >
+      <ContentBox variant="elevated" padding="lg">
         <Stack spacing="md">
+          <Stack direction="horizontal" align="center" justify="space-between">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">
+                📅 Booking Page
+              </Text>
+              <Text variant="muted" size="sm">
+                Edit the content and settings for the booking page
+              </Text>
+            </Stack>
+            <ButtonGroup>
+              {saveButtons.map((button, index) => (
+                <Button
+                  key={index}
+                  onClick={button.onClick}
+                  disabled={button.disabled}
+                  variant={button.variant}
+                >
+                  {button.label}
+                </Button>
+              ))}
+            </ButtonGroup>
+          </Stack>
           <Container>
             <Label htmlFor="booking-title">Page Title</Label>
             <Input
@@ -351,7 +376,7 @@ export const BookingPageEditor: React.FC<BookingPageEditorProps> = ({
             <Text size="sm" color="secondary">Detailed description of the booking process</Text>
           </Container>
         </Stack>
-      </Card>
+      </ContentBox>
     </Container>
   );
 };
@@ -404,26 +429,30 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
 
   return (
     <Container>
-      <Card
-        title="Help Page"
-        description="Edit the help page content and sections"
-        icon="❓"
-        actions={
-          <ButtonGroup>
-            {saveButtons.map((button, index) => (
-              <Button
-                key={index}
-                onClick={button.onClick}
-                disabled={button.disabled}
-                variant={button.variant}
-              >
-                {button.label}
-              </Button>
-            ))}
-          </ButtonGroup>
-        }
-      >
+      <ContentBox variant="elevated" padding="lg">
         <Stack spacing="md">
+          <Stack direction="horizontal" align="center" justify="space-between">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">
+                ❓ Help Page
+              </Text>
+              <Text variant="muted" size="sm">
+                Edit the help page content and sections
+              </Text>
+            </Stack>
+            <ButtonGroup>
+              {saveButtons.map((button, index) => (
+                <Button
+                  key={index}
+                  onClick={button.onClick}
+                  disabled={button.disabled}
+                  variant={button.variant}
+                >
+                  {button.label}
+                </Button>
+              ))}
+            </ButtonGroup>
+          </Stack>
           <Container>
             <Label htmlFor="help-title">Page Title</Label>
             <Input
@@ -437,12 +466,16 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
           
           {/* Help Sections */}
           {pageData.sections.map((section: any, idx: number) => (
-            <Card
-              key={idx}
-              title={`Section ${idx + 1}`}
-              description="Edit the help page content and sections"
-            >
+            <ContentBox key={idx} variant="elevated" padding="lg">
               <Stack spacing="md">
+                <Stack spacing="sm">
+                  <Text variant="lead" size="md" weight="semibold">
+                    Section {idx + 1}
+                  </Text>
+                  <Text variant="muted" size="sm">
+                    Edit the help page content and sections
+                  </Text>
+                </Stack>
                 <Container>
                   <Label htmlFor={`help-section-${idx}-title`}>Section Title</Label>
                   <Input
@@ -471,10 +504,10 @@ export const HelpPageEditor: React.FC<HelpPageEditorProps> = ({
                   />
                 </Container>
               </Stack>
-            </Card>
+            </ContentBox>
           ))}
         </Stack>
-      </Card>
+      </ContentBox>
     </Container>
   );
 }; 

@@ -7,7 +7,7 @@ import {
   Text,
   Container,
   Stack,
-  Card,
+  ContentBox,
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
@@ -92,7 +92,7 @@ function PrivacyPageContent() {
     <Layout>
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="lg" gap="xl">
+          <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
               <EditableHeading data-testid="privacy-title" level={3} field="privacy.title" defaultValue="🔒 Privacy Policy">🔒 Privacy Policy</EditableHeading>
               <EditableText data-testid="privacy-effective-date" field="privacy.effectiveDate" defaultValue="Effective Date: January 1, 2024 | Last Updated: January 1, 2024">
@@ -102,7 +102,7 @@ function PrivacyPageContent() {
             
             <Stack data-testid="privacy-sections-list" spacing="lg">
               {privacySections.map((section, index) => (
-                <Card key={index} data-testid={`privacy-section-${index}`}>
+                <ContentBox key={index} data-testid={`privacy-section-${index}`}>
                   <Stack spacing="md">
                     <EditableHeading data-testid={`privacy-section-title-${index}`} level={4} field={`privacy.sections.${index}.title`} defaultValue={section.title}>
                       {section.title}
@@ -122,7 +122,7 @@ function PrivacyPageContent() {
                       </Stack>
                     )}
                   </Stack>
-                </Card>
+                </ContentBox>
               ))}
             </Stack>
           </Stack>

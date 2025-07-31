@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container } from './Container';
-import { Stack } from '../grid/Stack';
+import { Container, Stack } from '@/design/ui';
 
 interface ListItemProps {
   children: React.ReactNode;

@@ -11,7 +11,7 @@ import {
   H1,
   H2,
   Text,
-  Card,
+  ContentBox,
   Form,
   Button,
   ToastProvider
@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import { spacing, fontSize, fontWeight } from '@/design/system/tokens/tokens';
 
 // Styled components for registration page
-const RegisterCard = styled(Card)`
+const RegisterCard = styled(ContentBox)`
   max-width: 500px;
   margin: 0 auto;
   transition: transform 0.2s ease-in-out;
@@ -167,8 +167,8 @@ export default function CustomerRegisterPage() {
     <ToastProvider>
       <Section variant="brand" padding="xl" id="register-section">
         <Container>
-          <Stack gap="xl" align="center">
-            <Stack gap="sm" align="center">
+          <Stack   align="center">
+            <Stack    align="center">
               <H1 align="center">
                 <EditableText field="customer.register.title" defaultValue="Create Your Account">
                   Create Your Account
@@ -182,8 +182,8 @@ export default function CustomerRegisterPage() {
             </Stack>
 
             <RegisterCard variant="elevated" padding="xl" id="register-card">
-              <Stack gap="lg">
-                <Stack gap="sm" align="center">
+              <Stack>
+                <Stack    align="center">
                   <H2 align="center" id="register-title">
                     <EditableText field="customer.register.authTitle" defaultValue="Customer Registration">
                       Customer Registration
@@ -197,8 +197,8 @@ export default function CustomerRegisterPage() {
                 </Stack>
 
                 <RegisterForm onSubmit={handleFormSubmit} id="register-form">
-                  <Stack gap="md">
-                    <Stack gap="sm">
+                  <Stack>
+                    <Stack   >
                       <Label htmlFor="name">
                         <EditableText field="customer.register.nameLabel" defaultValue="Full Name">
                           Full Name
@@ -215,7 +215,7 @@ export default function CustomerRegisterPage() {
                       />
                     </Stack>
 
-                    <Stack gap="sm">
+                    <Stack   >
                       <Label htmlFor="email">
                         <EditableText field="customer.register.emailLabel" defaultValue="Email Address">
                           Email Address
@@ -232,7 +232,7 @@ export default function CustomerRegisterPage() {
                       />
                     </Stack>
 
-                    <Stack gap="sm">
+                    <Stack   >
                       <Label htmlFor="phone">
                         <EditableText field="customer.register.phoneLabel" defaultValue="Phone Number">
                           Phone Number
@@ -249,7 +249,7 @@ export default function CustomerRegisterPage() {
                       />
                     </Stack>
 
-                    <Stack gap="sm">
+                    <Stack   >
                       <Label htmlFor="password">
                         <EditableText field="customer.register.passwordLabel" defaultValue="Password">
                           Password
@@ -266,7 +266,7 @@ export default function CustomerRegisterPage() {
                       />
                     </Stack>
 
-                    <Stack gap="sm">
+                    <Stack   >
                       <Label htmlFor="confirmPassword">
                         <EditableText field="customer.register.confirmPasswordLabel" defaultValue="Confirm Password">
                           Confirm Password
@@ -284,7 +284,7 @@ export default function CustomerRegisterPage() {
                     </Stack>
 
                     {error && (
-                      <Stack gap="sm" align="center">
+                      <Stack    align="center">
                         <Text variant="muted" align="center" color="error">
                           <EditableText field="customer.register.errorIcon" defaultValue="⚠️">
                             ⚠️

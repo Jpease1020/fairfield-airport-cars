@@ -3,7 +3,7 @@
 
 // Core UI Components
 export { Button } from './Button';
-export { Text, H1, H2, H3, H4, H5, H6, Paragraph, Span, Link } from './Text';
+export { Text, H1, H2, H3, H4, H5, H6, Paragraph, Span, Link } from './text';
 export { Badge } from './Badge';
 export { Modal } from './Modal';
 export { Alert } from './Alert';
@@ -12,7 +12,8 @@ export { Alert } from './Alert';
 export { Input, Select, Textarea, Form, FormField, Label } from './forms';
 
 // Editable Components
-export { EditableText, EditableHeading, EditableButton } from './EditableSystem';
+export { EditableText, EditableHeading } from './text';
+export { EditableButton } from './EditableSystem';
 export { EditableTextarea } from './EditableTextarea';
 
 // Data Display Components
@@ -21,6 +22,8 @@ export type { DataTableColumn, DataTableAction } from './DataTable';
 export { ActivityItem } from './ActivityItem';
 export { ActivityList } from './ActivityList';
 export { ActionButtonGroup } from './ActionButtonGroup';
+export { StatCard } from './StatCard';
+export { Card } from './Card';
 
 // Booking Components
 export { BookingCard } from './BookingCard';
@@ -55,4 +58,11 @@ export { LocationAutocomplete } from './LocationAutocomplete';
 export { default as Logo } from './Logo';
 
 // Skeleton Component
-export { Skeleton } from './Skeleton'; 
+export { Skeleton } from './Skeleton';
+
+// Layout Components
+export { Layout } from './Layout';
+export { AdminPageWrapper } from './AdminPageWrapper';
+
+// Notification Components
+export * from './notifications'; 

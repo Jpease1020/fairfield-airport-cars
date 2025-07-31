@@ -2,7 +2,8 @@
 
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { colors, spacing, fontSize } from '../../system/tokens/tokens';
+import { Stack, Container, Text, PositionedContainer } from '@/design/ui';
+import { colors, spacing, fontSize } from '../../../system/tokens/tokens';
 
 // Animation keyframes
 const spin = keyframes`
@@ -20,67 +21,35 @@ const dotPulse = keyframes`
   40% { opacity: 1; }
 `;
 
-// Styled loading components
-const StyledLoadingContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['size', 'centered'].includes(prop)
+// Single styled component for all animations
+const AnimatedElement = styled.span.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'delay'].includes(prop)
 })<{
-  size: 'sm' | 'md' | 'lg' | 'xl';
-  centered: boolean;
+  variant: 'spinner' | 'pulse' | 'dot';
+  delay?: number;
 }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: ${colors.text.secondary};
-  gap: ${({ size }) => {
-    switch (size) {
-      case 'sm': return spacing.xs;
-      case 'md': return spacing.sm;
-      case 'lg': return spacing.md;
-      case 'xl': return spacing.lg;
-      default: return spacing.sm;
+  ${({ variant, delay }) => {
+    switch (variant) {
+      case 'spinner':
+        return `animation: ${spin} 1s linear infinite;`;
+      case 'pulse':
+        return `animation: ${pulse} 2s ease-in-out infinite;`;
+      case 'dot':
+        return `
+          animation: ${dotPulse} 1.5s ease-in-out infinite;
+          animation-delay: ${delay || 0}s;
+        `;
+      default:
+        return '';
     }
-  }};
-  font-size: ${({ size }) => {
-    switch (size) {
-      case 'sm': return fontSize.sm;
-      case 'md': return fontSize.md;
-      case 'lg': return fontSize.lg;
-      case 'xl': return fontSize.xl;
-      default: return fontSize.md;
-    }
-  }};
-  ${({ centered }) => centered && `
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  `}
+  }}
 `;
 
-const StyledSpinner = styled.span`
-  animation: ${spin} 1s linear infinite;
-`;
-
-const StyledPulse = styled.span`
-  animation: ${pulse} 2s ease-in-out infinite;
-`;
-
-const StyledDots = styled.div`
+// Container for dots animation
+const DotsContainer = styled.div`
   display: flex;
   gap: ${spacing.xs};
-`;
-
-const StyledDot = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['delay'].includes(prop)
-})<{
-  delay: number;
-}>`
-  animation: ${dotPulse} 1.5s ease-in-out infinite;
-  animation-delay: ${({ delay }) => delay}s;
-`;
-
-const StyledText = styled.span`
-  margin-left: ${spacing.sm};
 `;
 
 export interface LoadingSpinnerProps {
@@ -102,52 +71,89 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   id,
   ...rest
 }) => {
+  const getSizeStyles = () => {
+    switch (size) {
+      case 'sm': return { fontSize: fontSize.sm, gap: spacing.xs };
+      case 'md': return { fontSize: fontSize.md, gap: spacing.sm };
+      case 'lg': return { fontSize: fontSize.lg, gap: spacing.md };
+      case 'xl': return { fontSize: fontSize.xl, gap: spacing.lg };
+      default: return { fontSize: fontSize.md, gap: spacing.sm };
+    }
+  };
+
+  const sizeStyles = getSizeStyles();
+
   const renderSpinner = () => {
     switch (variant) {
       case 'dots':
         return (
-          <StyledDots>
+          <DotsContainer>
             {[...Array(3)].map((_, i) => (
-              <StyledDot key={i} delay={i * 0.2}>
+              <AnimatedElement key={i} variant="dot" delay={i * 0.2}>
                 •
-              </StyledDot>
+              </AnimatedElement>
             ))}
-          </StyledDots>
+          </DotsContainer>
         );
 
       case 'pulse':
         return (
-          <StyledPulse>
+          <AnimatedElement variant="pulse">
             ●
-          </StyledPulse>
+          </AnimatedElement>
         );
 
       default:
         return (
-          <StyledSpinner>
+          <AnimatedElement variant="spinner">
             ○
-          </StyledSpinner>
+          </AnimatedElement>
         );
     }
   };
 
+  const content = (
+    <Stack 
+      direction="horizontal" 
+      spacing="sm" 
+      align="center" 
+      justify="center"
+    >
+      <Container>
+        {renderSpinner()}
+      </Container>
+      
+      {text && (
+        <Container>
+          <Text 
+            variant="body" 
+            size={size}
+          >
+            {text}
+          </Text>
+        </Container>
+      )}
+    </Stack>
+  );
+
   return (
-    <StyledLoadingContainer
+    <div
       id={id}
-      size={size}
-      centered={centered}
       role="status"
       aria-live="polite"
       aria-label={ariaLabel}
       {...rest}
     >
-      {renderSpinner()}
-      
-      {text && (
-        <StyledText>
-          {text}
-        </StyledText>
-      )}
-    </StyledLoadingContainer>
+      <PositionedContainer
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        position={centered ? 'absolute' : 'relative'}
+        top={centered ? '50%' : undefined}
+        left={centered ? '50%' : undefined}
+      >
+        {content}
+      </PositionedContainer>
+    </div>
   );
 }; 

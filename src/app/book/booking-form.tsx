@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
-  Card, 
+  ContentBox, 
   Grid, 
   GridItem,
   Text, 
@@ -272,11 +272,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
     <Container maxWidth="lg" padding="xl" data-testid="booking-form-container">
       <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
         {/* Single clean form container */}
-        <Stack spacing="xl" gap="xl" data-testid="booking-form-stack" fullWidth>
+        <Stack spacing="xl" data-testid="booking-form-stack">
           
           {/* Personal Information - Enhanced with card styling */}
-          <Card variant="elevated" padding="lg" id="contact-information-card" fullWidth>
-            <Stack spacing="lg" data-testid="contact-information-stack" fullWidth align="center" justify="center">
+          <ContentBox variant="elevated" padding="lg" id="contact-information-card">
+            <Stack spacing="lg" data-testid="contact-information-stack" align="center" justify="center">
               <H2 variant="primary" id="contact-information-title">
                 <EditableText field="booking.personalInfo.title" defaultValue="Contact Information">
                   Contact Information
@@ -323,11 +323,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 />
               </Stack>
             </Stack>
-          </Card>
+          </ContentBox>
 
           {/* Trip Details - Enhanced with card styling */}
-          <Card variant="elevated" padding="lg" id="trip-details-card" fullWidth>
-            <Stack spacing="lg" data-testid="trip-details-stack" fullWidth align="center" justify="center">
+          <ContentBox variant="elevated" padding="lg" id="trip-details-card">
+            <Stack spacing="lg" data-testid="trip-details-stack" align="center" justify="center">
               <H2 variant="primary" id="trip-details-title">
                 <EditableText field="booking.tripDetails.title" defaultValue="Trip Details">
                   Trip Details
@@ -347,7 +347,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     />
                   </Stack>
                   {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                    <Card variant="outlined" padding="sm" marginTop="sm" id="pickup-suggestions-card">
+                    <ContentBox variant="outlined" padding="sm" id="pickup-suggestions-card">
                       <Stack spacing="xs" data-testid="pickup-suggestions-stack">
                         {pickupSuggestions.map((prediction) => (
                           <Button
@@ -360,7 +360,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           </Button>
                         ))}
                       </Stack>
-                    </Card>
+                    </ContentBox>
                   )}
                 </GridItem>
                 
@@ -376,7 +376,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     />
                   </Stack>
                   {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-                    <Card variant="outlined" padding="sm" marginTop="sm" id="dropoff-suggestions-card">
+                    <ContentBox variant="outlined" padding="sm" id="dropoff-suggestions-card">
                       <Stack spacing="xs" data-testid="dropoff-suggestions-stack">
                         {dropoffSuggestions.map((prediction) => (
                           <Button
@@ -389,7 +389,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           </Button>
                         ))}
                       </Stack>
-                    </Card>
+                    </ContentBox>
                   )}
                 </GridItem>
               </Grid>
@@ -423,11 +423,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </GridItem>
               </Grid>
             </Stack>
-          </Card>
+          </ContentBox>
 
           {/* Additional Details - Enhanced with card styling */}
-          <Card variant="elevated" padding="lg" id="additional-information-card" fullWidth>
-            <Stack spacing="lg" data-testid="additional-information-stack" fullWidth align="center" justify="center">
+          <ContentBox variant="elevated" padding="lg" id="additional-information-card">
+            <Stack spacing="lg" data-testid="additional-information-stack" align="center" justify="center">
               <H2 variant="primary" id="additional-information-title">
                 <EditableText field="booking.additionalDetails.title" defaultValue="Additional Information">
                   Additional Information
@@ -465,12 +465,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </GridItem>
               </Grid>
             </Stack>
-          </Card>
+          </ContentBox>
 
           {/* Fare Calculation - Enhanced styling */}
           {fare !== null && (
-            <Card variant="elevated" padding="lg" data-testid="fare-section" id="fare-calculation-card" fullWidth>
-              <Stack spacing="md" align="center" justify="center" data-testid="fare-calculation-stack" fullWidth>
+            <ContentBox variant="elevated" padding="lg" data-testid="fare-section" id="fare-calculation-card">
+              <Stack spacing="md" align="center" justify="center" data-testid="fare-calculation-stack">
                 <H2 variant="primary" id="fare-calculation-title">
                   <EditableText field="booking.fare.title" defaultValue="Estimated Fare">
                     Estimated Fare
@@ -487,7 +487,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   ${fare?.toFixed(2) || '0.00'}
                 </Text>
               </Stack>
-            </Card>
+            </ContentBox>
           )}
 
           {/* Error and Success Messages */}
@@ -510,8 +510,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           )}
 
           {/* Action Buttons - Enhanced styling */}
-          <Card variant="elevated" padding="lg" id="action-buttons-card" fullWidth>
-            <Stack direction="vertical" spacing="lg" gap="lg" align="center" justify="center" data-testid="action-buttons-stack" fullWidth>
+          <ContentBox variant="elevated" padding="lg" id="action-buttons-card">
+            <Stack direction="vertical" spacing="lg" align="center" justify="center" data-testid="action-buttons-stack">
               <Button
                 type="button"
                 onClick={handleCalculateFare}
@@ -548,7 +548,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </EditableText>
               </Button>
             </Stack>
-          </Card>
+          </ContentBox>
         </Stack>
       </Form>
     </Container>
