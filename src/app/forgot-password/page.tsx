@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { resetPassword } from '@/lib/services/auth-service';
 import { 
-  Section,
   Container,
   Stack,
   H1,
@@ -43,10 +42,10 @@ export default function ForgotPasswordPage() {
   if (success) {
     return (
       <ToastProvider>
-        <Section variant="default" padding="xl" id="forgot-password-section">
-          <Container>
-            <Stack   align="center">
-              <Stack    align="center">
+        
+          <Container id="forgot-password-section">
+            <Stack align="center">
+              <Stack align="center">
                 <H1 align="center">
                   <EditableText field="customer.forgot_password.success_title" defaultValue="Check Your Email">
                     Check Your Email
@@ -78,15 +77,15 @@ export default function ForgotPasswordPage() {
               </Box>
             </Stack>
           </Container>
-        </Section>
+        
       </ToastProvider>
     );
   }
 
   return (
     <ToastProvider>
-      <Section variant="default" padding="xl" id="forgot-password-section">
-        <Container>
+      
+        <Container id="forgot-password-section">
           <Stack   align="center">
             <Stack    align="center">
               <H1 align="center">
@@ -172,7 +171,7 @@ export default function ForgotPasswordPage() {
             </Text>
           </Stack>
         </Container>
-      </Section>
+      
     </ToastProvider>
   );
 } 

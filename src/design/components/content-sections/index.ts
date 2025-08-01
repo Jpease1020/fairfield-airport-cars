@@ -2,9 +2,6 @@
 // Reusable content patterns built on Layer 1 (Grid) + Layer 2 (Containers)
 // These are non-specific, reusable content components
 
-// Section Patterns
-export * from './Section';
-
 // Content Grid Patterns
 export * from './ContentGrid';
 export * from './FeatureGrid';

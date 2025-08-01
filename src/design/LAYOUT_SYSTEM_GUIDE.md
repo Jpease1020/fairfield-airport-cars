@@ -277,19 +277,6 @@ Content sections are built on the layout building blocks and provide reusable pa
   />
 </PageLayout>
 ```
-
-### **Feature Grid**
-```tsx
-<PageLayout>
-  <Section title="Our Services">
-    <FeatureGrid 
-      features={services} 
-      columns={{ xs: 1, md: 2, lg: 3 }} 
-    />
-  </Section>
-</PageLayout>
-```
-
 ### **Content Cards**
 ```tsx
 <PageLayout>
@@ -341,22 +328,11 @@ Content sections are built on the layout building blocks and provide reusable pa
 ### **Import All Components**
 ```tsx
 import { 
-  PageLayout, Grid, Col, Row, Container, Box, Stack, Section,
+  PageLayout, Grid, Col, Row, Container, Box, Stack,
   HeroSection, FeatureGrid, ContentCard, DataTable, ActionGrid,
   ContactMethods, ActivityList
 } from '@/ui';
 ```
-
-### **Basic Page Structure**
-```tsx
-<PageLayout>
-  <HeroSection title="Welcome" />
-  <Section title="Features">
-    <FeatureGrid features={features} />
-  </Section>
-</PageLayout>
-```
-
 ### **Responsive Grid**
 ```tsx
 <Grid cols={{ xs: 1, sm: 2, md: 3, lg: 4 }} gap="md">
