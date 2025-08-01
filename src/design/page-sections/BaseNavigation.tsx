@@ -155,7 +155,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           <Button
             onClick={toggleMobileMenu}
             variant="ghost"
-            size="lg"
+            size="xl"
             data-testid={`${dataTestIdPrefix}-mobile-menu-button`}
             id="navigation-mobile-menu-button"
             aria-label="Toggle mobile menu"

@@ -23,4 +23,7 @@ export * from './ContentFooter';
 export * from './HeroSection';
 export * from './TestimonialCard';
 export * from './FAQSection';
-export * from './ContactMethods'; 
+export * from './ContactMethods';
+
+// Layout Components (re-exported for convenience)
+export { LayoutSection as Section } from '../../layout/containers/Section'; 
