@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Stack, Box, Grid, Col, Text, H4, Button } from '@/design/ui';
+import { Container, Stack, Box, Grid, Col, Text, H4, Button } from '@/ui';
 import React from 'react';
 
 interface ActionData {

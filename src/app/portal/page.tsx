@@ -9,8 +9,8 @@ import {
   Container,
   Stack,
   CustomerLayout
-} from '@/design/ui';
-import { EditableHeading, EditableText } from '@/design/ui';
+} from '@/ui';
+import { EditableHeading, EditableText } from '@/ui';
 
 function PortalPageContent() {
   const { addToast } = useToast();
@@ -80,7 +80,7 @@ function PortalPageContent() {
   ];
 
   return (
-    <CustomerLayout>
+    <>
       {/* Welcome Section */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -138,7 +138,7 @@ function PortalPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </CustomerLayout>
+    </>
   );
 }
 

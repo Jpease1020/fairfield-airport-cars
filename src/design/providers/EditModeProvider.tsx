@@ -77,7 +77,6 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
     setSaveMsg(null);
     try {
       const user = auth.currentUser;
-      console.log('Saving CMS content:', { localContent, user: user?.uid });
       
       const result = await cmsService.updateCMSConfiguration({
         pages: {
@@ -85,8 +84,6 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
           [pageType]: localContent,
         },
       }, user?.uid);
-      
-      console.log('Save result:', result);
       
       if (result.success) {
         setSaveMsg('Saved!');
@@ -96,8 +93,8 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
         setSaveMsg(`Failed to save: ${result.errors?.join(', ')}`);
       }
     } catch (error) {
-      console.error('Save error:', error);
       setSaveMsg('Failed to save.');
+      console.error('Failed to save:', error);
     } finally {
       setSaving(false);
     }

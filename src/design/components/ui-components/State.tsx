@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Stack, H3, Text, EditableText, PositionedContainer, LoadingSpinner } from '@/design/ui';
+import { Button, Stack, H3, Text, EditableText, PositionedContainer, LoadingSpinner } from '@/ui';
 
 export interface StateProps {
   type: 'loading' | 'empty' | 'error';

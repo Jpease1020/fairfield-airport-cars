@@ -52,15 +52,6 @@ export const LayoutEnforcer: React.FC<LayoutValidationProps> = ({ children }) =>
       if (!hasH1 && headings.length > 0) {
         violations.push(`⚠️ Page should have exactly one H1 heading.`);
       }
-      
-      // Log violations
-      if (violations.length > 0) {
-        console.group('🎨 Design System Violations');
-        violations.forEach(violation => console.warn(violation));
-        console.groupEnd();
-      } else {
-        console.log('✅ Design system compliance check passed!');
-      }
     }
   }, []);
 

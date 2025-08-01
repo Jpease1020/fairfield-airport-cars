@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Grid, Col, Container, Box, Stack, Text, H4 } from '@/design/ui';
+import { Grid, Col, Container, Box, Stack, Text, H4 } from '@/ui';
 import { ResponsiveValue } from '@/design/layout/shared-types';
 
 interface Feature {

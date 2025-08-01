@@ -13,8 +13,8 @@ import {
   Stack,
   Box,
   CustomerLayout
-} from '@/design/ui';
-import { EditableText, EditableHeading } from '@/design/ui';
+} from '@/ui';
+import { EditableText, EditableHeading } from '@/ui';
 
 function CancelPageContent() {
   const { addToast } = useToast();
@@ -112,7 +112,7 @@ function CancelPageContent() {
   ];
 
   return (
-    <CustomerLayout>
+    <>
       {/* Cancellation Form */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -178,7 +178,7 @@ function CancelPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </CustomerLayout>
+    </>
   );
 }
 

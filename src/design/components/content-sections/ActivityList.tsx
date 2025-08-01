@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack, Container, Box, Text, H4, ActivityItem } from '@/design/ui';
+import { Stack, Container, Box, Text, ActivityItem } from '@/ui';
 
 interface ActivityData {
   id: string | number;

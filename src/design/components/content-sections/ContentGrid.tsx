@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Grid, Col, Container, Box, Stack, Text, H3, H4 } from '@/design/ui';
+import { Grid, Col, Container, Box, Stack, Text, H4 } from '@/ui';
 
 interface ContentItem {
   id: string | number;

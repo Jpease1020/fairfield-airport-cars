@@ -11,8 +11,8 @@ import {
   ActionButtonGroup,
   Box,
   CustomerLayout
-} from '@/design/ui';
-import { EditableText } from '@/design/ui';
+} from '@/ui';
+import { EditableText } from '@/ui';
 
 function HelpPageContent() {
   const quickAnswers = [
@@ -129,8 +129,8 @@ function HelpPageContent() {
 
 export default function HelpPage() {
   return (
-    <CustomerLayout>
+    
       <HelpPageContent />
-    </CustomerLayout>
+    
   );
 }

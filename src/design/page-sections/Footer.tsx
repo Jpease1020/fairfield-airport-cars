@@ -8,7 +8,7 @@ import {
   EditableText, 
   Box, 
   Stack
-} from '@/design/ui';
+} from '@/ui';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();

@@ -30,7 +30,7 @@ This document outlines the comprehensive protection strategy for the Fairfield A
 ### **Layer 1: Grid System (Foundation)**
 ```tsx
 // ✅ Correct
-import { Grid, Col, Row } from '@/design/ui';
+import { Grid, Col, Row } from '@/ui';
 
 <Grid cols={3} gap="lg">
   <Col>Content</Col>
@@ -40,7 +40,7 @@ import { Grid, Col, Row } from '@/design/ui';
 ### **Layer 2: Content Layout**
 ```tsx
 // ✅ Correct
-import { Box, Stack } from '@/design/ui';
+import { Box, Stack } from '@/ui';
 
 <Stack spacing="lg" align="center">
   <Box variant="elevated" padding="md">
@@ -52,7 +52,7 @@ import { Box, Stack } from '@/design/ui';
 ### **Layer 3: Layout System**
 ```tsx
 // ✅ Correct
-import { Container, Section } from '@/design/ui';
+import { Container, Section } from '@/ui';
 
 <Container maxWidth="xl">
   <Section title="Title">Content</Section>
@@ -62,7 +62,7 @@ import { Container, Section } from '@/design/ui';
 ### **Layer 4: Page Layout**
 ```tsx
 // ✅ Correct
-import { PageLayout } from '@/design/ui';
+import { PageLayout } from '@/ui';
 
 <PageLayout>
   <div>Page content</div>
@@ -158,7 +158,7 @@ const StyledContent = styled.div`...`;
 import { Button } from '../components/ui-components/Button';
 
 // ✅ Correct
-import { Button } from '@/design/ui';
+import { Button } from '@/ui';
 ```
 
 ## 🎯 Quality Standards

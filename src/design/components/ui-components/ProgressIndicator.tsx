@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Text, Span, H3 } from '@/ui';
+import { Container, Text, H3 } from '@/ui';
 import { Stack } from '@/ui';
 
 interface ProgressIndicatorProps {

@@ -13,8 +13,8 @@ import {
   Button,
   LoadingSpinner,
   EditableText,
-} from '@/design/ui';
-import { AdminPageTemplate, ContentCard, Grid } from '@/design/ui';
+} from '@/ui';
+import { AdminPageTemplate, ContentCard, Grid } from '@/ui';
 
 function CustomerDashboardContent() {
   const [user, setUser] = useState<FirebaseUser | null>(null);

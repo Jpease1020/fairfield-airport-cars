@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Button, Span, EditableText, Stack, Container } from '@/design/ui';
+import { Button, Span, EditableText, Stack, Container } from '@/ui';
 
 const MobileMenuOverlay = styled.div`
   position: absolute;
@@ -92,9 +92,6 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
     
     return () => mediaQuery.removeEventListener('change', checkMobile);
   }, [containerWidth]);
-  
-  // Debug logging
-  console.log('Navigation width:', containerWidth, 'isMobile:', isMobile);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);

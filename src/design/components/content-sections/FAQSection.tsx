@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Stack, Text, H3, Button, Container, Span } from '@/design/ui';
+import { Box, Stack, Text, H3, Button, Container, Span } from '@/ui';
 
 export interface FAQItem {
   question: string;

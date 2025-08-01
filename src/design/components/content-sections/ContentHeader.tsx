@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Text, H2, H3, H4 } from '@/design/ui';
+import { Container, Stack, Text, H3 } from '@/ui';
 
 interface ContentHeaderProps {
   title?: string;

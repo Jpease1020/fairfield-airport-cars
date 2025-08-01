@@ -33,7 +33,7 @@ The `PageLayout` component is the single, unified page layout component that con
 ### **Usage**
 
 ```tsx
-import { PageLayout } from '@/design/ui';
+import { PageLayout } from '@/ui';
 
 // Basic customer layout (default)
 <PageLayout>
@@ -88,13 +88,13 @@ The following pages still use the old `CustomerLayout` import and need migration
 #### **From CustomerLayout**
 ```tsx
 // OLD (still works but deprecated)
-import { CustomerLayout } from '@/design/ui';
+import { CustomerLayout } from '@/ui';
 <CustomerLayout>
   <div>Content</div>
 </CustomerLayout>
 
 // NEW (recommended)
-import { PageLayout } from '@/design/ui';
+import { PageLayout } from '@/ui';
 <PageLayout>
   <div>Content</div>
 </PageLayout>
@@ -103,13 +103,13 @@ import { PageLayout } from '@/design/ui';
 #### **From StandardLayout**
 ```tsx
 // OLD (still works but deprecated)
-import { StandardLayout } from '@/design/ui';
+import { StandardLayout } from '@/ui';
 <StandardLayout showNavigation={false} showFooter={true}>
   <div>Content</div>
 </StandardLayout>
 
 // NEW (recommended)
-import { PageLayout } from '@/design/ui';
+import { PageLayout } from '@/ui';
 <PageLayout showNavigation={false} showFooter={true}>
   <div>Content</div>
 </PageLayout>
@@ -310,7 +310,7 @@ Content sections are built on the layout building blocks and provide reusable pa
 
 ### **Bundle Size**
 - Layout components are tree-shakeable
-- Import only what you need: `import { Grid, Col } from '@/design/ui'`
+- Import only what you need: `import { Grid, Col } from '@/ui'`
 - Content sections include only necessary dependencies
 
 ### **Rendering Performance**
@@ -344,7 +344,7 @@ import {
   PageLayout, Grid, Col, Row, Container, Box, Stack, Section,
   HeroSection, FeatureGrid, ContentCard, DataTable, ActionGrid,
   ContactMethods, ActivityList
-} from '@/design/ui';
+} from '@/ui';
 ```
 
 ### **Basic Page Structure**

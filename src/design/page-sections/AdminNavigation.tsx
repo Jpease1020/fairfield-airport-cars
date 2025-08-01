@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button, EditableText, BaseNavigation, NavigationItem } from '@/design/ui';
+import { Button, EditableText, BaseNavigation, NavigationItem } from '@/ui';
 
 export const AdminNavigation: React.FC = () => {
   const pathname = usePathname();

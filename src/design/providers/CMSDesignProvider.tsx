@@ -16,14 +16,13 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
           if (stored) {
             try {
               const config = JSON.parse(stored);
-              console.log('✅ CMS Design System loaded from storage');
             } catch {
-              console.warn('Invalid stored CMS config, using defaults');
+              //console.warn('Invalid stored CMS config, using defaults');
             }
           }
         }
       } catch (error) {
-        console.warn('CMS design system initialization failed, using defaults:', error);
+        //console.warn('CMS design system initialization failed, using defaults:', error);
       }
     };
 

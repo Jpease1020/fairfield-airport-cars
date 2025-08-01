@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, H2, Text } from '@/design/ui';
-import { EditableText } from '@/design/ui';
+import { Container, Stack, H2, Text } from '@/ui';
+import { EditableText } from '@/ui';
 
 interface SectionProps {
   children: React.ReactNode;

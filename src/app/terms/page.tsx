@@ -6,10 +6,10 @@ import {
   Container,
   Stack,
   Box,
-  CustomerLayout
-} from '@/design/ui';
-import { EditableText } from '@/design/ui';
-import { EditableHeading } from '@/design/ui';
+  
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { EditableHeading } from '@/ui';
 
 function TermsPageContent() {
   const termsSections = [
@@ -36,7 +36,7 @@ function TermsPageContent() {
   ];
 
   return (
-    <CustomerLayout>
+    <>
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg"  >
@@ -72,7 +72,7 @@ function TermsPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </CustomerLayout>
+    </>
   );
 }
 

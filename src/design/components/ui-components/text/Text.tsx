@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
+import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
 
 // Styled text component
 const StyledText = styled.p.withConfig({

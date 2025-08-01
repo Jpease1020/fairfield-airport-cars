@@ -14,9 +14,9 @@ import {
   Form,
   ToastProvider,
   LoadingSpinner
-} from '@/design/ui';
-import { Input, Select, Label } from '@/design/ui';
-import { EditableText } from '@/design/ui';
+} from '@/ui';
+import { Input, Select, Label } from '@/ui';
+import { EditableText } from '@/ui';
 import { Booking } from '@/types/booking';
 
 interface BookingFormProps {

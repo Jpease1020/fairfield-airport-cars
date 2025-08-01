@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Text } from '@/design/ui';
+import { Container, Stack, Text } from '@/ui';
 
 interface CardProps {
   children?: React.ReactNode;
@@ -63,18 +63,6 @@ export const Card: React.FC<CardProps> = ({
       default:
         return 'default';
     }
-  };
-
-  const getHoverStyles = () => {
-    if (!hover) return {};
-    return {
-      cursor: 'pointer',
-      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-      ':hover': {
-        transform: 'translateY(-2px)',
-        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)'
-      }
-    };
   };
 
   return (

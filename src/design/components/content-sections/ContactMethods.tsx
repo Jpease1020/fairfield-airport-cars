@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Stack, Text, H3, Button, Container, Grid, GridItem } from '@/design/ui';
+import { Box, Stack, Text, H3, Button, Container, Grid } from '@/ui';
 import Link from 'next/link';
 
 export interface ContactMethod {

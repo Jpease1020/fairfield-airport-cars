@@ -17,6 +17,10 @@ export * from './containers';
 // PageLayout - Unified page layout with navigation, content, and footer
 export * from './PageLayout';
 
+// Layer 5: Route-Based Layout Components (Automatic layout selection)
+// RouteBasedLayout - Automatically applies correct layout based on route
+export * from './RouteBasedLayout';
+
 // Temporary compatibility exports (will be removed after migration)
 export { PageLayout as CustomerLayout } from './PageLayout';
 export { PageLayout as StandardLayout } from './PageLayout';

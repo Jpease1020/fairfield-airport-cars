@@ -283,7 +283,6 @@ export const VoiceOutput: React.FC<VoiceOutputProps> = ({
     };
 
     utterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event.error);
       setIsSpeaking(false);
       const errorMsg = `Speech synthesis error: ${event.error}`;
       setError(errorMsg);
