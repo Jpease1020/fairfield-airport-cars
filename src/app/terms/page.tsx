@@ -6,7 +6,6 @@ import {
   Container,
   Stack,
   Box,
-  
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
@@ -37,15 +36,23 @@ function TermsPageContent() {
 
   return (
     <>
-      <GridSection variant="content" columns={1}>
-        <Container>
-          <Stack spacing="lg"  >
-            <Stack spacing="md" align="center">
-              <EditableHeading data-testid="terms-title" level={3} field="terms.title" defaultValue="📋 Terms of Service">📋 Terms of Service</EditableHeading>
-              <EditableText data-testid="terms-last-updated" field="terms.lastUpdated" defaultValue="Effective Date: January 1, 2024 | Last updated: January 2024">
-                Effective Date: January 1, 2024 | Last updated: January 2024
-              </EditableText>
-            </Stack>
+      {/* Hero Section */}
+      <Container maxWidth="full" padding="xl" variant="section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <EditableText field="terms.title" defaultValue="📋 Terms of Service" as="h1" align="center" data-testid="terms-title">
+              📋 Terms of Service
+            </EditableText>
+            <EditableText field="terms.lastUpdated" defaultValue="Effective Date: January 1, 2024 | Last updated: January 2024" variant="lead" align="center" size="lg" data-testid="terms-last-updated">
+              Effective Date: January 1, 2024 | Last updated: January 2024
+            </EditableText>
+          </Stack>
+        </Stack>
+      </Container>
+
+      {/* Content Section */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="lg">
             
             <EditableText data-testid="terms-intro" field="terms.intro" defaultValue="Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.">
               Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.
@@ -71,7 +78,6 @@ function TermsPageContent() {
             </Stack>
           </Stack>
         </Container>
-      </GridSection>
     </>
   );
 }

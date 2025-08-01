@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { login, signInWithGoogle } from '@/lib/services/auth-service';
+import { login, signInWithGoogle, authService } from '@/lib/services/auth-service';
 import { 
   Container,
   Stack,
@@ -91,8 +91,17 @@ export default function CustomerLoginPage() {
     setError(null);
     
     try {
-      await login(email, password);
-      router.push('/dashboard');
+      const userCredential = await login(email, password);
+      const user = userCredential.user;
+      
+      // Check if user is admin
+      const isAdmin = await authService.isAdmin(user.uid);
+      
+      if (isAdmin) {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error) {
       setError(`Failed to log in: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
@@ -105,8 +114,17 @@ export default function CustomerLoginPage() {
     setError(null);
     
     try {
-      await signInWithGoogle();
-      router.push('/dashboard');
+      const userCredential = await signInWithGoogle();
+      const user = userCredential.user;
+      
+      // Check if user is admin
+      const isAdmin = await authService.isAdmin(user.uid);
+      
+      if (isAdmin) {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error) {
       setError(`Failed to sign in with Google: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
@@ -130,31 +148,21 @@ export default function CustomerLoginPage() {
                   Welcome Back
                 </EditableText>
               </H1>
-              <Text align="center" variant="muted">
-                <EditableText field="customer.login.subtitle" defaultValue="Sign in to your account to manage your bookings">
-                  Sign in to your account to manage your bookings
-                </EditableText>
-              </Text>
+              <Stack align="center">
+                  <H2 align="center" id="login-title">
+                    <EditableText field="login.authTitle" defaultValue="Sign in to your account to manage your bookings">
+                      Sign in to your account to manage your bookings
+                    </EditableText>
+                  </H2>
+                </Stack>
             </Stack>
 
             <LoginCard variant="elevated" padding="xl" id="login-card">
               <Stack>
-                <Stack    align="center">
-                  <H2 align="center" id="login-title">
-                    <EditableText field="customer.login.authTitle" defaultValue="Customer Login">
-                      Customer Login
-                    </EditableText>
-                  </H2>
-                  <Text align="center" variant="muted">
-                    <EditableText field="customer.login.authDesc" defaultValue="Sign in to access your account">
-                      Sign in to access your account
-                    </EditableText>
-                  </Text>
-                </Stack>
 
                 <LoginForm onSubmit={handleFormSubmit} id="login-form">
-                  <Stack>
-                    <Stack   >
+                  <Stack align="center">
+                    <Stack>
                       <Label htmlFor="email">
                         <EditableText field="customer.login.emailLabel" defaultValue="Email Address">
                           Email Address

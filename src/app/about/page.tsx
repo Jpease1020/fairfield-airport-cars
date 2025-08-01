@@ -8,7 +8,7 @@ import {
   Text,
   ActionButtonGroup
 } from '@/ui';
-import { EditableText } from '@/ui';
+import { EditableText, EditableHeading } from '@/ui';
 
 function AboutPageContent() {
   const ctaActions = [
@@ -27,18 +27,16 @@ function AboutPageContent() {
   return (
     <>
       {/* Hero Section */}
-      <Container maxWidth="2xl" padding="xl">
-        <Stack spacing="2xl" align="center">
-          <H1 align="center">
-            <EditableText field="about.hero.title" defaultValue="About Fairfield Airport Cars">
+      <Container maxWidth="full" padding="xl" variant="section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <EditableHeading field="about.hero.title" defaultValue="About Fairfield Airport Cars" level={1} size="5xl" weight="bold" align="center">
               About Fairfield Airport Cars
-            </EditableText>
-          </H1>
-          <Text variant="lead" align="center">
-            <EditableText field="about.hero.subtitle" defaultValue="Professional airport transportation services">
+            </EditableHeading>
+            <EditableText field="about.hero.subtitle" defaultValue="Professional airport transportation services" variant="lead" align="center" size="lg">
               Professional airport transportation services
             </EditableText>
-          </Text>
+          </Stack>
         </Stack>
       </Container>
 

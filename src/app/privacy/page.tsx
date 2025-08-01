@@ -7,7 +7,8 @@ import {
   Container,
   Stack,
   Box,
-  CustomerLayout
+  CustomerLayout,
+  H1
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
@@ -90,17 +91,24 @@ function PrivacyPageContent() {
 
   return (
     <>
-      <GridSection variant="content" columns={1}>
-        <Container>
-          <Stack spacing="lg"  >
-            <Stack spacing="md" align="center">
-              <EditableHeading data-testid="privacy-title" level={3} field="privacy.title" defaultValue="🔒 Privacy Policy">🔒 Privacy Policy</EditableHeading>
-              <EditableText data-testid="privacy-effective-date" field="privacy.effectiveDate" defaultValue="Effective Date: January 1, 2024 | Last Updated: January 1, 2024">
-                Effective Date: January 1, 2024 | Last Updated: January 1, 2024
-              </EditableText>
-            </Stack>
-            
-            <Stack data-testid="privacy-sections-list" spacing="lg">
+      {/* Hero Section */}
+      <Container maxWidth="full" padding="xl" variant="section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <EditableText field="privacy.title" defaultValue="🔒 Privacy Policy" as="h1" align="center" data-testid="privacy-title">
+              🔒 Privacy Policy
+            </EditableText>
+            <EditableText field="privacy.effectiveDate" defaultValue="Effective Date: January 1, 2024 | Last Updated: January 1, 2024" variant="lead" align="center" size="lg" data-testid="privacy-effective-date">
+              Effective Date: January 1, 2024 | Last Updated: January 1, 2024
+            </EditableText>
+          </Stack>
+        </Stack>
+      </Container>
+
+      {/* Content Section */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="lg">
+          <Stack data-testid="privacy-sections-list" spacing="lg">
               {privacySections.map((section, index) => (
                 <Box key={index} data-testid={`privacy-section-${index}`}>
                   <Stack spacing="md">
@@ -127,7 +135,6 @@ function PrivacyPageContent() {
             </Stack>
           </Stack>
         </Container>
-      </GridSection>
     </>
   );
 }

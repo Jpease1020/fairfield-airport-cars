@@ -8,16 +8,22 @@ import { Button, Span, EditableText, Stack, Container } from '@/ui';
 const MobileMenuOverlay = styled.div`
   position: absolute;
   top: 100%;
-  left: 0;
   right: 0;
-  background-color: white;
+  width: 280px;
+  background: white;
   border: 1px solid var(--color-border);
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   padding: 1rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
   z-index: 50;
   margin-top: 0.5rem;
 `;
+
+const MobileMenuButton = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+<line x1="3" y1="6" x2="21" y2="6"></line>
+<line x1="3" y1="12" x2="21" y2="12"></line>
+<line x1="3" y1="18" x2="21" y2="18"></line>
+</svg>;
 
 // Hook to detect window size
 const useWindowSize = () => {
@@ -69,7 +75,6 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   mobileActions,
   dataTestIdPrefix = 'nav',
   editableFieldPrefix = 'navigation',
-  width = '100%'
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { width: containerWidth } = useWindowSize();
@@ -105,6 +110,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
     <nav 
       data-testid={`${dataTestIdPrefix}-container`}
       id="navigation-container"
+      style={{ position: 'relative' }}
     >
       <Container maxWidth="full" padding="md" margin="none">
         <Stack 
@@ -120,27 +126,29 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
 
         {/* Desktop Navigation - Hidden on mobile */}
         {!isMobile && (
-          <Stack direction="horizontal" align="center" spacing="sm">
-            {navigationItems.map((item, index) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                id={`navigation-desktop-link-${index + 1}`}
-              >
-                <Button 
-                  variant={item.current ? 'primary' : 'ghost'} 
-                  size="sm"
-                  data-testid={`${dataTestIdPrefix}-desktop-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  id={`navigation-desktop-button-${index + 1}`}
+          <div style={{ marginLeft: 'auto' }}>
+            <Stack direction="horizontal" align="center" spacing="sm">
+              {navigationItems.map((item, index) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  id={`navigation-desktop-link-${index + 1}`}
                 >
-                  <EditableText field={`${editableFieldPrefix}.${item.name.toLowerCase()}`}>
-                    {item.name}
-                  </EditableText>
-                </Button>
-              </Link>
-            ))}
-          </Stack>
+                  <Button 
+                    variant={item.current ? 'primary' : 'ghost'} 
+                    size="sm"
+                    data-testid={`${dataTestIdPrefix}-desktop-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    id={`navigation-desktop-button-${index + 1}`}
+                  >
+                    <EditableText field={`${editableFieldPrefix}.${item.name.toLowerCase()}`}>
+                      {item.name}
+                    </EditableText>
+                  </Button>
+                </Link>
+              ))}
+            </Stack>
+          </div>
         )}
 
         {/* Desktop Actions - Hidden on mobile */}
@@ -161,7 +169,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
           >
-            <Span>☰</Span>
+            <MobileMenuButton />
           </Button>
         )}
         </Stack>
@@ -173,7 +181,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
             id="navigation-mobile-menu"
             role="menu"
           >
-            <Stack spacing="sm">
+            <Stack spacing="xs">
               {navigationItems.map((item, index) => (
                 <Link
                   key={item.name}
@@ -196,13 +204,6 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                 </Link>
               ))}
             </Stack>
-
-            {/* Mobile Actions */}
-            {mobileActions && (
-              <Stack spacing="sm" margin="md" padding="md">
-                {mobileActions}
-              </Stack>
-            )}
           </MobileMenuOverlay>
         )}
       </Container>
