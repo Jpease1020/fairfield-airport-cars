@@ -14,7 +14,8 @@ import {
   LoadingSpinner,
   Alert,
   H1,
-  H2
+  H2,
+  AdminPageTemplate
 } from '@/design/components';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
 
@@ -28,6 +29,13 @@ function AdminDashboardContent() {
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -98,7 +106,7 @@ function AdminDashboardContent() {
         activity.push({
           type: 'booking',
           message: `New booking from ${booking.name} - ${booking.dropoffLocation}`,
-          time: new Date(booking.createdAt).toLocaleString(),
+          time: new Date(booking.createdAt).toLocaleDateString(),
           icon: '📅'
         });
       });
@@ -112,41 +120,17 @@ function AdminDashboardContent() {
       recentPayments.forEach(payment => {
         activity.push({
           type: 'payment',
-          message: `Payment received for booking #${payment.bookingId}`,
-          time: new Date(payment.createdAt).toLocaleString(),
+          message: `Payment received: ${formatCurrency(payment.amount)}`,
+          time: new Date(payment.createdAt).toLocaleDateString(),
           icon: '💰'
         });
       });
 
       setRecentActivity(activity);
-      console.log('✅ Dashboard data loaded successfully');
-      
-      // If no data exists, add helpful placeholder activity
-      if (activity.length === 0) {
-        setRecentActivity([
-          {
-            type: 'info',
-            message: 'No bookings yet - your first customer will appear here!',
-            time: new Date().toLocaleString(),
-            icon: '📝'
-          },
-          {
-            type: 'info', 
-            message: 'Add drivers to get started with your fleet',
-            time: new Date().toLocaleString(),
-            icon: '👨‍💼'
-          }
-        ]);
-      }
+      setLoading(false);
     } catch (err) {
       console.error('❌ Error loading dashboard data:', err);
-      // Don't set error if it's just empty data - that's normal for a new business
-      if (err instanceof Error && err.message.includes('permission')) {
-        setError('Authentication required. Please log in to view dashboard data.');
-      } else {
-        setError('Failed to load dashboard data. Check your connection and try again.');
-      }
-    } finally {
+      setError('Failed to load dashboard data. Please try again.');
       setLoading(false);
     }
   }, []);
@@ -154,70 +138,6 @@ function AdminDashboardContent() {
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
-
-  const quickActions = [
-    {
-      icon: '📅',
-      title: 'View Bookings',
-      description: 'Manage all customer reservations and bookings',
-      onClick: () => window.location.href = '/admin/bookings',
-      color: 'primary'
-    },
-    {
-      icon: '💰',
-      title: 'Payment Management',
-      description: 'Track payments, deposits, and process refunds',
-      onClick: () => window.location.href = '/admin/payments',
-      color: 'success'
-    },
-    {
-      icon: '👨‍💼',
-      title: 'Driver Management',
-      description: 'Manage your fleet and driver assignments',
-      onClick: () => window.location.href = '/admin/drivers',
-      color: 'warning'
-    },
-    {
-      icon: '📊',
-      title: 'Cost Tracking',
-      description: 'Monitor expenses and financial metrics',
-      onClick: () => window.location.href = '/admin/costs',
-      color: 'error'
-    }
-  ];
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
-  if (loading) {
-    return (
-      <Container>
-        <Stack spacing="lg" align="center">
-          <LoadingSpinner />
-          <Text variant="body">Loading dashboard data...</Text>
-        </Stack>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container>
-        <Stack spacing="lg" align="center">
-          <Alert variant="error" title="Error Loading Dashboard">
-            {error}
-          </Alert>
-          <Button onClick={fetchDashboardData} variant="primary">
-            Try Again
-          </Button>
-        </Stack>
-      </Container>
-    );
-  }
 
   const statsCards = [
     { 
@@ -250,17 +170,43 @@ function AdminDashboardContent() {
     }
   ];
 
-  return (
-    <Container>
-      <Stack spacing="xl">
-        {/* Header */}
-        <Stack spacing="md" align="center">
-          <H1>Dashboard</H1>
-          <Text variant="body" color="secondary" align="center">
-            Business overview and quick actions
-          </Text>
-        </Stack>
+  const quickActions = [
+    {
+      title: 'View Bookings',
+      description: 'See all current and past bookings',
+      icon: '📋',
+      onClick: () => window.location.href = '/admin/bookings'
+    },
+    {
+      title: 'Manage Drivers',
+      description: 'Add, edit, or remove drivers',
+      icon: '👨‍💼',
+      onClick: () => window.location.href = '/admin/drivers'
+    },
+    {
+      title: 'Edit Content',
+      description: 'Update website content and settings',
+      icon: '✏️',
+      onClick: () => window.location.href = '/admin/cms'
+    },
+    {
+      title: 'View Calendar',
+      description: 'See upcoming bookings and availability',
+      icon: '📅',
+      onClick: () => window.location.href = '/admin/calendar'
+    }
+  ];
 
+  return (
+    <AdminPageTemplate
+      title="Dashboard"
+      subtitle="Business overview and quick actions"
+      loading={loading}
+      error={error}
+      loadingMessage="Loading dashboard data..."
+      errorTitle="Error Loading Dashboard"
+    >
+      <Stack spacing="xl">
         {/* Statistics Overview */}
         <Stack spacing="lg" align="center">
           <H2>📊 Business Overview</H2>
@@ -299,11 +245,11 @@ function AdminDashboardContent() {
         <Grid cols={2} gap="lg" responsive>
           {quickActions.map((action, index) => (
             <GridItem key={index}>
-              <div onClick={action.onClick} style={{ cursor: 'pointer' }}>
-                <Box 
-                  variant="elevated" 
-                  padding="lg"
-                >
+              <Button 
+                variant="ghost"
+                onClick={action.onClick}
+                fullWidth
+              >
                 <Stack spacing="md">
                   <Stack direction="horizontal" spacing="md" align="center">
                     <Text size="xl">{action.icon}</Text>
@@ -313,8 +259,7 @@ function AdminDashboardContent() {
                     {action.description}
                   </Text>
                 </Stack>
-              </Box>
-              </div>
+              </Button>
             </GridItem>
           ))}
         </Grid>
@@ -353,7 +298,7 @@ function AdminDashboardContent() {
           </Stack>
         </Box>
       </Stack>
-    </Container>
+    </AdminPageTemplate>
   );
 }
 

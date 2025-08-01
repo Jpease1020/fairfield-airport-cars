@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { spacing, transitions } from '../../../system/tokens/tokens';
+import { spacing, transitions } from '@/design/system/tokens/tokens';
 import { StackProps } from './types';
 
 const StyledStack = styled.div.withConfig({

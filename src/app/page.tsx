@@ -18,7 +18,7 @@ import {
   HeroSection,
   FeatureGrid,
   ContentCard,
-  CustomerLayout
+  PageLayout
 } from '@/design/ui';
 import { EditableText } from '@/design/ui';
 import Link from 'next/link';
@@ -67,7 +67,7 @@ function HomePageContent() {
   ];
 
   return (
-    <CustomerLayout>
+    <PageLayout>
         {/* Hero Section */}
         <section data-testid="home-hero-section">
           <HeroSection
@@ -186,7 +186,7 @@ function HomePageContent() {
             </Stack>
           </Section>
         </section>
-      </CustomerLayout>
+      </PageLayout>
   );
 }
 

@@ -2,9 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import styled from 'styled-components';
 import { usePathname } from 'next/navigation';
 import { Button, EditableText } from '@/design/ui';
 import { BaseNavigation, NavigationItem } from './BaseNavigation';
+
+const LogoImage = styled.img`
+  max-width: 300px;
+`;
 
 export const CustomerNavigation: React.FC = () => {
   const pathname = usePathname();
@@ -19,15 +24,11 @@ export const CustomerNavigation: React.FC = () => {
 
   const logo = (
     <Link href="/" data-testid="nav-logo-link" id="nav-logo-link">
-      <img 
+      <LogoImage 
         src="/logos/NewLogoNoBackground.png" 
         alt="Fairfield Airport Cars"
-        style={{
-          height: '60px',
-          width: 'auto',
-          maxWidth: '300px',
-          objectFit: 'contain'
-        }}
+        height="60"
+        width="auto"
       />
     </Link>
   );

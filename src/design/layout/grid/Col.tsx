@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ColProps, ColSpan, ResponsiveColSpan, Breakpoint } from './types';
-import { spacing, breakpoints } from '../../../system/tokens/tokens';
+import { spacing, breakpoints } from '@/design/system/tokens/tokens';
 
 // Helper function to generate responsive flex basis
 const generateFlexBasis = (span: ColSpan | ResponsiveColSpan): string => {

@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
-import { Layout } from '@/ui';
+import { SimpleLayout } from '@/ui';
 import { GridSection, LoadingSpinner, Text, Container } from '@/ui';
 import { Box } from '@/ui';
 import { Stack } from '@/ui';
@@ -39,7 +39,7 @@ export default function EditBookingPage() {
 
   if (loading) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
@@ -51,13 +51,13 @@ export default function EditBookingPage() {
             </Stack>
           </Box>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   if (error) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
@@ -69,13 +69,13 @@ export default function EditBookingPage() {
             </Stack>
           </Box>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   if (!booking) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
@@ -87,12 +87,12 @@ export default function EditBookingPage() {
             </Stack>
           </Box>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   return (
-    <Layout>
+    <SimpleLayout>
       <GridSection variant="content" columns={1}>
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
@@ -104,6 +104,6 @@ export default function EditBookingPage() {
           </Stack>
         </Box>
       </GridSection>
-    </Layout>
+    </SimpleLayout>
   );
 }

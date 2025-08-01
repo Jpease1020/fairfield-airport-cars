@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Layout } from '@/ui';
+import { SimpleLayout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -74,7 +74,7 @@ function FeedbackPageContent() {
 
   if (submitted) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
                   <Box variant="elevated" padding="lg">
           <Stack spacing="md">
@@ -87,12 +87,12 @@ function FeedbackPageContent() {
           </Stack>
         </Box>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   return (
-    <Layout>
+    <SimpleLayout>
       <GridSection variant="content" columns={1}>
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
@@ -194,7 +194,7 @@ function FeedbackPageContent() {
           </Stack>
         </Box>
       </GridSection>
-    </Layout>
+    </SimpleLayout>
   );
 }
 

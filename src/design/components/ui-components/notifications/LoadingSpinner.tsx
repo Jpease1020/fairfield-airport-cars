@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { Stack, Container, Text, PositionedContainer } from '@/design/ui';
 import { colors, spacing, fontSize } from '../../../system/tokens/tokens';
 
@@ -32,16 +32,16 @@ const AnimatedElement = styled.span.withConfig({
   ${({ variant, delay }) => {
     switch (variant) {
       case 'spinner':
-        return `animation: ${spin} 1s linear infinite;`;
+        return css`animation: ${spin} 1s linear infinite;`;
       case 'pulse':
-        return `animation: ${pulse} 2s ease-in-out infinite;`;
+        return css`animation: ${pulse} 2s ease-in-out infinite;`;
       case 'dot':
-        return `
+        return css`
           animation: ${dotPulse} 1.5s ease-in-out infinite;
           animation-delay: ${delay || 0}s;
         `;
       default:
-        return '';
+        return css``;
     }
   }}
 `;

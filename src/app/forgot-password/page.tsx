@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
   if (success) {
     return (
       <ToastProvider>
-        <Section variant="brand" padding="xl" id="forgot-password-section">
+        <Section variant="default" padding="xl" id="forgot-password-section">
           <Container>
             <Stack   align="center">
               <Stack    align="center">
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <ToastProvider>
-      <Section variant="brand" padding="xl" id="forgot-password-section">
+      <Section variant="default" padding="xl" id="forgot-password-section">
         <Container>
           <Stack   align="center">
             <Stack    align="center">

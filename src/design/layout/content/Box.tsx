@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, transitions } from '../../../system/tokens/tokens';
+import { colors, spacing, borderRadius, transitions } from '@/design/system/tokens/tokens';
 import { BoxProps } from './types';
 
 const StyledBox = styled.div.withConfig({

@@ -19,29 +19,11 @@ export const CustomerFooter: React.FC = () => {
     <Box variant="filled" padding="lg" marginTop="lg" as="footer">
       <Container maxWidth="full" padding="md">
         {/* Main Footer Content */}
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column',
-          gap: '2rem',
-          marginBottom: '1.5rem'
-        }}>
+        <Stack spacing="xl" margin="lg">
           {/* Desktop: Side by side, Mobile: Stacked */}
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'row',
-            justifyContent: 'space-between', 
-            alignItems: 'flex-start',
-            gap: '2rem',
-            flexWrap: 'wrap'
-          }}>
+          <Stack direction="horizontal" justify="space-between" align="flex-start" spacing="xl" wrap="wrap">
             {/* Company Info */}
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: '0.5rem',
-              minWidth: '250px',
-              flex: '1 1 300px'
-            }}>
+            <Stack spacing="sm">
               <EditableText 
                 field="footer.companyName"
                 variant="lead" 
@@ -57,7 +39,7 @@ export const CustomerFooter: React.FC = () => {
               >
                 Professional airport transportation services
               </EditableText>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <Stack spacing="xs">
                 <EditableText 
                   field="footer.phone"
                   size="sm" 
@@ -72,35 +54,24 @@ export const CustomerFooter: React.FC = () => {
                 >
                   ✉️ info@fairfieldairportcars.com
                 </EditableText>
-              </div>
-            </div>
+              </Stack>
+            </Stack>
 
             {/* Quick Links */}
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: '0.5rem',
-              minWidth: '200px',
-              flex: '1 1 250px'
-            }}>
+            <Stack spacing="sm">
               <Text weight="semibold" size="sm" color="primary">Quick Links</Text>
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'row',
-                gap: '1rem',
-                flexWrap: 'wrap'
-              }}>
+              <Stack direction="horizontal" spacing="md" wrap="wrap">
                 {footerLinks.map((link) => (
                   <Link key={link.name} href={link.href}>
-                    <Text size="sm" color="secondary" style={{ textDecoration: 'none' }}>
+                    <Text size="sm" color="secondary">
                       {link.name}
                     </Text>
                   </Link>
                 ))}
-              </div>
-            </div>
-          </div>
-        </div>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Stack>
 
         {/* Bottom Bar - Improved Design */}
         
@@ -116,14 +87,7 @@ export const CustomerFooter: React.FC = () => {
             </Text>
             
             {/* Additional Info - Responsive Layout */}
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'row',
-              gap: '1.5rem',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}> 
+            <Stack direction="horizontal" spacing="lg" justify="center" align="center" wrap="wrap">
               <Text 
                 size="sm" 
                 color="secondary"
@@ -131,7 +95,7 @@ export const CustomerFooter: React.FC = () => {
               >
                 ✅ Licensed & Insured
               </Text>
-            </div>
+            </Stack>
           </Stack>
         
       </Container>

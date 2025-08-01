@@ -169,13 +169,8 @@ export class BackupService {
   }
 
   private async getAnalyticsData(): Promise<any[]> {
-    try {
-      // Mock analytics data - in production, fetch from analytics service
-      return [];
-    } catch (error) {
-      console.error('Failed to get analytics data:', error);
-      return [];
-    }
+    // Mock analytics data - in production, fetch from analytics service
+    return [];
   }
 
   private async calculateChecksum(data: string): Promise<string> {

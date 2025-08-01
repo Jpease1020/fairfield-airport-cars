@@ -12,7 +12,8 @@ import {
   Grid, 
   GridItem,
   StatusMessage,
-  LoadingSpinner
+  LoadingSpinner,
+  CustomerLayout
 } from '@/ui';
 
 interface TrackingData {
@@ -38,7 +39,7 @@ interface TrackingData {
   lastUpdated: string;
 }
 
-export default function TrackingPage() {
+function TrackingPageContent() {
   const params = useParams();
   const bookingId = params.bookingId as string;
   
@@ -255,5 +256,13 @@ export default function TrackingPage() {
         </Box>
       </Stack>
     </Container>
+  );
+}
+
+export default function TrackingPage() {
+  return (
+    <CustomerLayout>
+      <TrackingPageContent />
+    </CustomerLayout>
   );
 } 

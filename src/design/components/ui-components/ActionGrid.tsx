@@ -1,7 +1,6 @@
 import React from 'react';
-import { Box } from '@/ui';
+import { Box, Grid } from '@/ui';
 import { Container, Text, Span } from '@/ui';
-import { Grid } from '../layout/grid/Grid';
 import { Stack } from '@/ui';
 
 interface ActionData {

@@ -1,8 +1,39 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Button, Input, Select, Span, Link, Box, Stack } from '@/ui';
 import { Overlay } from '@/design/components/ui-components/Overlay';
+
+const AccessibilityToggleButton = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  width: auto;
+  display: inline-block;
+`;
+
+const SkipLink = styled.a`
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  font-size: 14px;
+  
+  &:focus {
+    top: 6px;
+  }
+  
+  &:not(:focus) {
+    top: -40px;
+  }
+`;
 
 interface AccessibilitySettings {
   highContrast: boolean;
@@ -124,16 +155,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
       {children}
 
       {/* Accessibility Toggle Button */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          zIndex: 1000,
-          width: 'auto',
-          display: 'inline-block'
-        }}
-      >
+      <AccessibilityToggleButton>
         <Box
           variant="elevated"
           padding="sm"
@@ -149,7 +171,7 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
             ♿
           </Button>
         </Box>
-      </div>
+      </AccessibilityToggleButton>
 
       {/* Accessibility Settings Panel */}
       <Overlay
@@ -210,29 +232,9 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
       </Overlay>
 
       {/* Skip to main content link */}
-      <Link 
-        href="#main-content"
-        style={{
-          position: 'absolute',
-          top: '-40px',
-          left: '6px',
-          background: '#000',
-          color: '#fff',
-          padding: '8px',
-          textDecoration: 'none',
-          borderRadius: '4px',
-          zIndex: 1000,
-          fontSize: '14px'
-        }}
-        onFocus={(e: React.FocusEvent<HTMLAnchorElement>) => {
-          e.target.style.top = '6px';
-        }}
-        onBlur={(e: React.FocusEvent<HTMLAnchorElement>) => {
-          e.target.style.top = '-40px';
-        }}
-      >
+      <SkipLink href="#main-content">
         Skip to main content
-      </Link>
+      </SkipLink>
     </>
   );
 };

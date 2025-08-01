@@ -2,7 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button, Span, EditableText } from '@/design/ui';
+import styled from 'styled-components';
+import { Button, Span, EditableText, Stack } from '@/design/ui';
+
+const MobileMenuOverlay = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  padding: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  margin-top: 0.5rem;
+`;
 
 // Hook to detect window size
 const useWindowSize = () => {
@@ -89,32 +104,18 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
 
   return (
     <nav 
-      style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        gap: '1.5rem',
-        position: 'relative'
-      }}
       data-testid={`${dataTestIdPrefix}-container`}
       id="navigation-container"
     >
-      {/* Logo */}
-      <div data-testid={`${dataTestIdPrefix}-logo`} id="navigation-logo">
-        {logo}
-      </div>
+      <Stack direction="horizontal" justify="space-between" align="center" spacing="lg">
+        {/* Logo */}
+        <div data-testid={`${dataTestIdPrefix}-logo`} id="navigation-logo">
+          {logo}
+        </div>
 
       {/* Desktop Navigation - Hidden on mobile */}
       {!isMobile && (
-        <div 
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            gap: '0.75rem'
-          }}
-          data-testid={`${dataTestIdPrefix}-desktop-menu`}
-          id="navigation-desktop-menu"
-        >
+        <Stack direction="horizontal" align="center" spacing="sm">
           {navigationItems.map((item, index) => (
             <Link
               key={item.name}
@@ -134,22 +135,14 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
               </Button>
             </Link>
           ))}
-        </div>
+        </Stack>
       )}
 
       {/* Desktop Actions - Hidden on mobile */}
       {!isMobile && actions && (
-        <div 
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}
-          data-testid={`${dataTestIdPrefix}-desktop-actions`}
-          id="navigation-desktop-actions"
-        >
+        <Stack direction="horizontal" align="center" spacing="sm">
           {actions}
-        </div>
+        </Stack>
       )}
 
       {/* Mobile Menu Button - Only visible on mobile */}
@@ -163,35 +156,19 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           aria-label="Toggle mobile menu"
           aria-expanded={mobileMenuOpen}
         >
-          <Span style={{ fontSize: '1.5rem' }}>☰</Span>
+          <Span>☰</Span>
         </Button>
       )}
+      </Stack>
 
       {/* Mobile Menu */}
       {isMobile && mobileMenuOpen && (
-        <div 
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '0.375rem',
-            padding: '1rem',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-            zIndex: 50,
-            marginTop: '0.5rem'
-          }}
+        <MobileMenuOverlay
           data-testid={`${dataTestIdPrefix}-mobile-menu`}
           id="navigation-mobile-menu"
           role="menu"
         >
-          <div 
-            style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
-            data-testid={`${dataTestIdPrefix}-mobile-menu-items`}
-            id="navigation-mobile-menu-items"
-          >
+          <Stack spacing="sm">
             {navigationItems.map((item, index) => (
               <Link
                 key={item.name}
@@ -213,26 +190,15 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                 </Button>
               </Link>
             ))}
-          </div>
+          </Stack>
 
           {/* Mobile Actions */}
           {mobileActions && (
-            <div 
-              style={{ 
-                display: 'flex', 
-                flexDirection: 'column',
-                gap: '0.5rem',
-                marginTop: '1rem',
-                paddingTop: '1rem',
-                borderTop: '1px solid #e5e7eb'
-              }}
-              data-testid={`${dataTestIdPrefix}-mobile-actions`}
-              id="navigation-mobile-actions"
-            >
+            <Stack spacing="sm" margin="md" padding="md">
               {mobileActions}
-            </div>
+            </Stack>
           )}
-        </div>
+        </MobileMenuOverlay>
       )}
     </nav>
   );

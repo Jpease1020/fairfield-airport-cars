@@ -105,7 +105,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Section variant="brand" padding="xl" id="login-section">
+    <Section variant="default" padding="xl" id="login-section">
       <Container maxWidth="lg">
         <Stack spacing="2xl" align="center">
           <Stack spacing="lg" align="center">

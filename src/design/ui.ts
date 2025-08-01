@@ -1,5 +1,5 @@
 // Layout Components
-export * from './components/layout';
+export * from './layout';
 
 // UI Components
 export * from './components/ui-components';
@@ -8,7 +8,7 @@ export * from './components/ui-components';
 export * from './components/content-sections';
 
 // Page Sections
-export * from './components/page-sections';
+export * from './page-sections';
 
 // Template Components
 // Templates removed - using clean components directly

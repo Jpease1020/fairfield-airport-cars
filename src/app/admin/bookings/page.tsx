@@ -14,7 +14,8 @@ import {
   DataTable,
   Alert,
   LoadingSpinner,
-  H1
+  H1,
+  AdminPageTemplate
 } from '@/design/components';
 
 function AdminBookingsPageContent() {
@@ -98,13 +99,19 @@ function AdminBookingsPageContent() {
       const driverName = 'Gregg';
       
       await updateDocument('bookings', booking.id!, { 
-        driverId, 
-        driverName 
+        driverId,
+        driverName,
+        status: 'confirmed' as Booking['status']
       });
       
       // Update local state
       setBookings(prev => prev.map(b => 
-        b.id === booking.id ? { ...b, driverId, driverName } : b
+        b.id === booking.id ? { 
+          ...b, 
+          driverId, 
+          driverName, 
+          status: 'confirmed' as Booking['status'] 
+        } : b
       ));
       
       console.log('✅ Driver assigned successfully');
@@ -118,8 +125,7 @@ function AdminBookingsPageContent() {
     switch (status) {
       case 'pending': return 'warning';
       case 'confirmed': return 'success';
-      case 'in-progress': return 'info';
-      case 'completed': return 'success';
+      case 'completed': return 'info';
       case 'cancelled': return 'error';
       default: return 'default';
     }
@@ -129,10 +135,9 @@ function AdminBookingsPageContent() {
     switch (status) {
       case 'pending': return '⏳';
       case 'confirmed': return '✅';
-      case 'in-progress': return '🚗';
       case 'completed': return '🎉';
       case 'cancelled': return '❌';
-      default: return '❓';
+      default: return '📋';
     }
   };
 
@@ -144,9 +149,7 @@ function AdminBookingsPageContent() {
   };
 
   const formatDate = (date: Date | null | undefined) => {
-    if (!date) {
-      return 'Date not set';
-    }
+    if (!date) return 'No date set';
     
     // Handle invalid dates
     if (isNaN(date.getTime())) {
@@ -166,32 +169,6 @@ function AdminBookingsPageContent() {
       return 'Date error';
     }
   };
-
-  if (loading) {
-    return (
-      <Container>
-        <Stack spacing="lg" align="center">
-          <LoadingSpinner />
-          <Text variant="body">Loading bookings from database...</Text>
-        </Stack>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container>
-        <Stack spacing="lg" align="center">
-          <Alert variant="error" title="Error Loading Bookings">
-            {error}
-          </Alert>
-          <Button onClick={fetchBookings} variant="primary">
-            Try Again
-          </Button>
-        </Stack>
-      </Container>
-    );
-  }
 
   const stats = {
     totalBookings: bookings.length,
@@ -274,15 +251,15 @@ function AdminBookingsPageContent() {
   }));
 
   return (
-    <Container>
+    <AdminPageTemplate
+      title="Booking Management"
+      subtitle="Manage all customer bookings and track their status"
+      loading={loading}
+      error={error}
+      loadingMessage="Loading bookings from database..."
+      errorTitle="Error Loading Bookings"
+    >
       <Stack spacing="xl">
-        <Stack spacing="md">
-          <H1>Booking Management</H1>
-          <Text variant="body" color="secondary">
-            Manage all customer bookings and track their status
-          </Text>
-        </Stack>
-
         {/* Status Filter */}
         <Stack spacing="sm">
           <Text variant="small" weight="medium">Filter by Status</Text>
@@ -345,7 +322,7 @@ function AdminBookingsPageContent() {
         {filteredBookings.length === 0 ? (
           <Box>
             <Stack spacing="md" align="center">
-                             <Text size="xl">📭</Text>
+              <Text size="xl">📭</Text>
               <Text size="lg" weight="medium">No Bookings Found</Text>
               <Text variant="body" color="secondary">
                 No bookings match your current filter criteria.
@@ -366,7 +343,7 @@ function AdminBookingsPageContent() {
           />
         )}
       </Stack>
-    </Container>
+    </AdminPageTemplate>
   );
 }
 
