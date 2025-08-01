@@ -14,7 +14,7 @@ import {
 import { Box } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
-import { Layout } from '@/ui';
+import { SimpleLayout } from '@/ui';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';
@@ -62,7 +62,7 @@ function DriverLocationContent() {
 
   if(!isClient) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
@@ -74,13 +74,13 @@ function DriverLocationContent() {
             </Stack>
           </Box>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   if(!allowed) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
@@ -96,12 +96,12 @@ function DriverLocationContent() {
             </Stack>
           </Box>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   return (
-    <Layout>
+    <SimpleLayout>
       <GridSection variant="content" columns={1}>
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
@@ -131,14 +131,14 @@ function DriverLocationContent() {
           </Stack>
         </Box>
       </GridSection>
-    </Layout>
+    </SimpleLayout>
   );
 }
 
 const DriverLocationPage = dynamic(() => Promise.resolve(() => {
   return (
     <Suspense fallback={
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
@@ -150,7 +150,7 @@ const DriverLocationPage = dynamic(() => Promise.resolve(() => {
             </Stack>
           </Box>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     }>
       <DriverLocationContent />
     </Suspense>

@@ -2,9 +2,9 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, transitions } from '../../../system/tokens/tokens';
+import { colors, spacing, transitions } from '@/design/system/tokens/tokens';
 import { Container } from '@/design/ui';
-import { LayoutSectionProps } from '../../../system/types';
+import { LayoutSectionProps } from '@/design/system/types';
 
 const StyledSection = styled.section.withConfig({
   shouldForwardProp: (prop) => !['variant', 'padding', 'margin', 'marginTop', 'marginBottom'].includes(prop)

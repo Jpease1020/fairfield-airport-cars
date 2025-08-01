@@ -2,10 +2,10 @@
 // Single import point for all components: import { Button, Box, Grid } from '@/design/components'
 
 // Layer 1: Grid System Components (Foundation)
-export * from './layout';
+export * from '../layout';
 
 // Layer 2: Layout System Components (Containers)
-export * from './layout';
+export * from '../layout';
 
 // Layer 3: UI Components (Interactive Elements)
 export * from './ui-components';
@@ -14,7 +14,7 @@ export * from './ui-components';
 export * from './content-sections';
 
 // Layer 5: Page Sections (Page-level components)
-export * from './page-sections';
+export * from '../page-sections';
 
 // Layer 5 & 6: Template Components (Page Templates & Patterns)
 // Templates removed - using clean components directly

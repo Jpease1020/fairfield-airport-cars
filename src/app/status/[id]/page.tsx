@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Layout } from '@/ui';
+import { SimpleLayout } from '@/ui';
 import { 
   GridSection,
   ActionButtonGroup,
@@ -96,7 +96,7 @@ function BookingStatusPageContent() {
 
   if (loading) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
@@ -105,13 +105,13 @@ function BookingStatusPageContent() {
             </EditableText>
           </Container>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   if (error) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Container>
             <EditableText field="status.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
@@ -133,12 +133,12 @@ function BookingStatusPageContent() {
             ]} />
           </Container>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   return (
-    <Layout>
+    <SimpleLayout>
       {/* Current Status */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -255,7 +255,7 @@ function BookingStatusPageContent() {
           </Text>
         </Container>
       </GridSection>
-    </Layout>
+    </SimpleLayout>
   );
 }
 

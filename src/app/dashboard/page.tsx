@@ -3,9 +3,9 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { onAuthChange, logout, getCustomerProfile } from '@/lib/services/auth-service';
-import { User } from 'firebase/auth';
-import { CustomerProfile } from '@/lib/services/auth-service';
+import { onAuthChange, logout, getCustomerProfile, authService } from '@/lib/services/auth-service';
+import { User as FirebaseUser } from 'firebase/auth';
+import { User } from '@/lib/services/auth-service';
 import { 
   Container,
   Stack,
@@ -17,8 +17,8 @@ import {
 import { AdminPageTemplate, ContentCard, Grid } from '@/design/ui';
 
 function CustomerDashboardContent() {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<CustomerProfile | null>(null);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -26,9 +26,18 @@ function CustomerDashboardContent() {
 
   useEffect(() => {
     setIsClient(true);
-    const unsubscribe = onAuthChange((firebaseUser: User | null) => {
+    const unsubscribe = onAuthChange(async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         setUser(firebaseUser);
+        
+        // Check if user is admin first
+        const isAdmin = await authService.isAdmin(firebaseUser.uid);
+        if (isAdmin) {
+          router.push('/admin');
+          return;
+        }
+        
+        // If not admin, load customer profile
         loadCustomerProfile(firebaseUser.uid);
       } else {
         router.push('/login');
@@ -114,13 +123,13 @@ function CustomerDashboardContent() {
     {
       icon: '📊',
       title: 'Total Bookings',
-      amount: profile.totalBookings.toString(),
+      amount: (profile.totalBookings || 0).toString(),
       subtitle: 'Total bookings'
     },
     {
       icon: '💰',
       title: 'Total Spent',
-      amount: `$${profile.totalSpent.toFixed(2)}`,
+      amount: `$${(profile.totalSpent || 0).toFixed(2)}`,
       subtitle: 'Total spent'
     },
     {

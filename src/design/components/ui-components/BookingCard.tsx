@@ -6,7 +6,7 @@ import { Button } from '@/ui';
 import { Container, H3, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
-import { Box } from '../layout/content/Box';
+import { Box } from '@/ui';
 
 interface BookingCardProps {
   booking: Booking;

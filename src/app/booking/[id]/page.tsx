@@ -13,7 +13,7 @@ import {
   Box,
   Card,
 } from '@/ui';
-import { Layout, Stack } from '@/ui';
+import { SimpleLayout, Stack } from '@/ui';
 import { Booking } from '@/types/booking';
 
 function BookingDetailsContent() {
@@ -69,7 +69,7 @@ function BookingDetailsContent() {
 
   if (loading) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Card title="Loading..." description="Fetching booking details">
             <Container>
@@ -77,13 +77,13 @@ function BookingDetailsContent() {
             </Container>
           </Card>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
   if (error || !booking) {
     return (
-      <Layout>
+      <SimpleLayout>
         <GridSection variant="content" columns={1}>
           <Card title="❌ Booking Not Found" description="The booking could not be found">
             <Container>
@@ -101,7 +101,7 @@ function BookingDetailsContent() {
             </Container>
           </Card>
         </GridSection>
-      </Layout>
+      </SimpleLayout>
     );
   }
 
@@ -127,7 +127,7 @@ function BookingDetailsContent() {
   ];
 
   return (
-    <Layout>
+    <SimpleLayout>
       {/* Booking Status */}
       <GridSection variant="content" columns={1}>
         <Card 
@@ -215,9 +215,9 @@ function BookingDetailsContent() {
         >
           <ActionButtonGroup buttons={actionButtons} />
         </Card>
-              </GridSection>
-      </Layout>
-    );
+      </GridSection>
+    </SimpleLayout>
+  );
 }
 
 export default function BookingDetailsPage() {

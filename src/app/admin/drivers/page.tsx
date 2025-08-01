@@ -14,7 +14,8 @@ import {
   DataTable,
   Alert,
   LoadingSpinner,
-  H1
+  H1,
+  AdminPageTemplate
 } from '@/design/components';
 
 function DriversPageContent() {
@@ -99,32 +100,6 @@ function DriversPageContent() {
     }).format(date);
   };
 
-  if (loading) {
-    return (
-      <Container>
-        <Stack spacing="lg" align="center">
-          <LoadingSpinner />
-          <Text variant="body">Loading drivers from database...</Text>
-        </Stack>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container>
-        <Stack spacing="lg" align="center">
-          <Alert variant="error" title="Error Loading Drivers">
-            {error}
-          </Alert>
-          <Button onClick={fetchDrivers} variant="primary">
-            Try Again
-          </Button>
-        </Stack>
-      </Container>
-    );
-  }
-
   const stats = {
     totalDrivers: drivers.length,
     availableDrivers: drivers.filter(d => d.status === 'available').length,
@@ -202,15 +177,15 @@ function DriversPageContent() {
   }));
 
   return (
-    <Container>
+    <AdminPageTemplate
+      title="Driver Management"
+      subtitle="Manage driver profiles, availability, and assignments"
+      loading={loading}
+      error={error}
+      loadingMessage="Loading drivers from database..."
+      errorTitle="Error Loading Drivers"
+    >
       <Stack spacing="xl">
-        <Stack spacing="md">
-          <H1>Driver Management</H1>
-          <Text variant="body" color="secondary">
-            Manage driver profiles, availability, and assignments
-          </Text>
-        </Stack>
-
         {/* Status Filter */}
         <Stack spacing="sm">
           <Text variant="small" weight="medium">Filter by Status</Text>
@@ -293,7 +268,7 @@ function DriversPageContent() {
           />
         )}
       </Stack>
-    </Container>
+    </AdminPageTemplate>
   );
 }
 

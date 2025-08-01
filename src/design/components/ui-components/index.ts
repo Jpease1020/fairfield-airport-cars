@@ -61,7 +61,7 @@ export { default as Logo } from './Logo';
 export { Skeleton } from './Skeleton';
 
 // Layout Components
-export { Layout } from './Layout';
+export { SimpleLayout } from './Layout';
 export { AdminPageWrapper } from './AdminPageWrapper';
 
 // Notification Components

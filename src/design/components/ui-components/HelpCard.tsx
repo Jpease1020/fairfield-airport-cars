@@ -1,11 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box } from '../layout/content/Box';
-import { Text } from './text';
-import { Stack } from '../layout/content/Stack';
-import { Container } from '../layout/containers/Container';
-import { EditableText } from '@/design/ui';
+import { Box, Text, Stack, Container, EditableText } from '@/ui';
 
 export interface HelpCardProps {
   // Core props

@@ -57,7 +57,7 @@ export const ContactMethods: React.FC<ContactMethodsProps> = ({
     <Container maxWidth="xl">
       <Stack spacing="xl">
         {(title || subtitle || description) && (
-          <Stack spacing="md" align={variant === 'centered' ? 'center' : 'left'}>
+          <Stack spacing="md" align={variant === 'centered' ? 'center' : 'flex-start'}>
             {title && <H3 align={variant === 'centered' ? 'center' : 'left'}>{title}</H3>}
             {subtitle && <Text variant="lead" align={variant === 'centered' ? 'center' : 'left'}>{subtitle}</Text>}
             {description && <Text variant="muted" align={variant === 'centered' ? 'center' : 'left'}>{description}</Text>}

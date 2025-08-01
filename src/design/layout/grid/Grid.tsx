@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { spacing } from '../../../system/tokens/tokens';
+import { spacing } from '@/design/system/tokens/tokens';
 import { Text, H2, Container } from '@/design/ui';
 import { ResponsiveValue, Breakpoint } from '../shared-types';
 

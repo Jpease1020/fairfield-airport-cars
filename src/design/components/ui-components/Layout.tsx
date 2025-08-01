@@ -3,11 +3,11 @@
 import React from 'react';
 import { Container } from '@/ui';
 
-interface LayoutProps {
+interface SimpleLayoutProps {
   children: React.ReactNode;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const SimpleLayout: React.FC<SimpleLayoutProps> = ({ children }) => {
   return (
     <Container variant="default" padding="none">
       {children}

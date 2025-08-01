@@ -41,11 +41,11 @@ export const StatCard: React.FC<StatCardProps> = ({
   const getChangeColor = () => {
     switch (changeType) {
       case 'positive':
-        return 'text-green-600';
+        return 'success';
       case 'negative':
-        return 'text-red-600';
+        return 'error';
       default:
-        return 'text-gray-600';
+        return 'muted';
     }
   };
 
@@ -64,7 +64,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           <Text variant="lead" size="xl" weight="bold">
             {statNumber}
           </Text>
-          <Text variant="muted" size="sm" className={getChangeColor()}>
+          <Text variant="muted" size="sm" color={getChangeColor()}>
             {statChange}
           </Text>
         </Stack>

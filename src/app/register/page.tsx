@@ -165,7 +165,7 @@ export default function CustomerRegisterPage() {
 
   return (
     <ToastProvider>
-      <Section variant="brand" padding="xl" id="register-section">
+      <Section variant="default" padding="xl" id="register-section">
         <Container>
           <Stack   align="center">
             <Stack    align="center">

@@ -6,7 +6,7 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  User,
+  User as FirebaseUser,
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -14,41 +14,32 @@ import {
   sendEmailVerification
 } from 'firebase/auth';
 
-export interface UserRole {
+export interface User {
   uid: string;
   email: string;
-  role: 'admin' | 'editor' | 'viewer' | 'customer';
-  permissions: string[];
+  role: 'admin' | 'customer' | 'driver';
+  name: string;
+  phone?: string;
   createdAt: Date;
   lastLogin: Date;
-  name?: string;
-  phone?: string;
+  permissions?: string[];
+  // Customer-specific fields
+  totalBookings?: number;
+  totalSpent?: number;
   preferences?: {
     defaultPickupLocation?: string;
     defaultDropoffLocation?: string;
     preferredPaymentMethod?: string;
-  };
-}
-
-export interface CustomerProfile {
-  uid: string;
-  email: string;
-  name: string;
-  phone: string;
-  createdAt: Date;
-  lastLogin: Date;
-  totalBookings: number;
-  totalSpent: number;
-  preferences: {
-    defaultPickupLocation?: string;
-    defaultDropoffLocation?: string;
-    preferredPaymentMethod?: string;
-    notifications: {
+    notifications?: {
       email: boolean;
       sms: boolean;
     };
   };
 }
+
+// Keep for backward compatibility
+export interface UserRole extends User {}
+export interface CustomerProfile extends User {}
 
 // Legacy auth functions for backward compatibility
 export const login = (email: string, password: string) => {
@@ -68,7 +59,7 @@ export const logout = () => {
   return signOut(auth);
 };
 
-export const onAuthChange = (callback: (user: User | null) => void) => {
+export const onAuthChange = (callback: (user: FirebaseUser | null) => void) => {
   return onAuthStateChanged(auth, callback);
 };
 
@@ -86,6 +77,7 @@ export const createCustomerAccount = async (email: string, password: string, nam
     const customerProfile: CustomerProfile = {
       uid: user.uid,
       email: email,
+      role: 'customer',
       name: name,
       phone: phone,
       createdAt: new Date(),
@@ -100,21 +92,7 @@ export const createCustomerAccount = async (email: string, password: string, nam
       }
     };
 
-    await setDoc(doc(db, 'customers', user.uid), customerProfile);
-
-    // Also create user role document for consistency
-    const userRole: UserRole = {
-      uid: user.uid,
-      email: email,
-      role: 'customer',
-      permissions: ['read', 'book'],
-      createdAt: new Date(),
-      lastLogin: new Date(),
-      name: name,
-      phone: phone
-    };
-
-    await setDoc(doc(db, 'users', user.uid), userRole);
+    await setDoc(doc(db, 'users', user.uid), customerProfile);
 
     return user;
   } catch (error) {
@@ -129,11 +107,13 @@ export const resetPassword = (email: string) => {
 
 export const getCustomerProfile = async (uid: string): Promise<CustomerProfile | null> => {
   try {
-    const customerDoc = await getDoc(doc(db, 'customers', uid));
-    if (!customerDoc.exists()) {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    if (!userDoc.exists()) {
       return null;
     }
-    return customerDoc.data() as CustomerProfile;
+    const userData = userDoc.data() as User;
+    // Only return if user is a customer
+    return userData.role === 'customer' ? userData as CustomerProfile : null;
   } catch (error) {
     console.error('Error getting customer profile:', error);
     return null;
@@ -142,7 +122,7 @@ export const getCustomerProfile = async (uid: string): Promise<CustomerProfile |
 
 export const updateCustomerProfile = async (uid: string, updates: Partial<CustomerProfile>) => {
   try {
-    await setDoc(doc(db, 'customers', uid), updates, { merge: true });
+    await setDoc(doc(db, 'users', uid), updates, { merge: true });
   } catch (error) {
     console.error('Error updating customer profile:', error);
     throw error;
@@ -176,11 +156,49 @@ export class AuthService {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (!userDoc.exists()) {
         console.log('User document does not exist for uid:', uid);
-        return null;
+        // Try to create a default user document
+        return await this.createDefaultUserDocument(uid);
       }
       return userDoc.data() as UserRole;
     } catch (error) {
       console.error('Error getting user role:', error);
+      return null;
+    }
+  }
+
+  async createDefaultUserDocument(uid: string): Promise<UserRole | null> {
+    try {
+      // Get the current Firebase user to get email
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.log('No current user found');
+        return null;
+      }
+
+      // Create a default user document
+      const defaultUser: User = {
+        uid: uid,
+        email: currentUser.email || '',
+        role: 'customer', // Default to customer, can be changed later
+        name: currentUser.displayName || 'User',
+        phone: currentUser.phoneNumber || '',
+        createdAt: new Date(),
+        lastLogin: new Date(),
+        totalBookings: 0,
+        totalSpent: 0,
+        preferences: {
+          notifications: {
+            email: true,
+            sms: true
+          }
+        }
+      };
+
+      await setDoc(doc(db, 'users', uid), defaultUser);
+      console.log('Created default user document for uid:', uid);
+      return defaultUser as UserRole;
+    } catch (error) {
+      console.error('Error creating default user document:', error);
       return null;
     }
   }
@@ -217,7 +235,7 @@ export class AuthService {
     if (!uid) return false;
     
     const userRole = await this.getUserRole(uid);
-    return userRole?.permissions.includes('write') || userRole?.role === 'admin';
+    return userRole?.permissions?.includes('write') || userRole?.role === 'admin';
   }
 
   async logUserActivity(uid: string, action: string, details?: any): Promise<void> {
@@ -231,6 +249,43 @@ export class AuthService {
       });
     } catch (error) {
       console.error('Error logging user activity:', error);
+    }
+  }
+
+  async setUserAsAdmin(uid: string): Promise<boolean> {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (!userDoc.exists()) {
+        console.log('User document does not exist, creating admin user');
+        const currentUser = auth.currentUser;
+        if (!currentUser) return false;
+
+        const adminUser: User = {
+          uid: uid,
+          email: currentUser.email || '',
+          role: 'admin',
+          name: currentUser.displayName || 'Admin',
+          phone: currentUser.phoneNumber || '',
+          createdAt: new Date(),
+          lastLogin: new Date(),
+          permissions: ['read', 'write', 'admin']
+        };
+
+        await setDoc(doc(db, 'users', uid), adminUser);
+        console.log('Created admin user document for uid:', uid);
+        return true;
+      } else {
+        // Update existing user to admin
+        await setDoc(doc(db, 'users', uid), {
+          role: 'admin',
+          permissions: ['read', 'write', 'admin']
+        }, { merge: true });
+        console.log('Updated user to admin for uid:', uid);
+        return true;
+      }
+    } catch (error) {
+      console.error('Error setting user as admin:', error);
+      return false;
     }
   }
 }

@@ -271,10 +271,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
     <Container maxWidth="2xl" padding="xl" data-testid="booking-form-container">
       <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
         {/* Single clean form container */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem', width: '100%' }} data-testid="booking-form-stack">
+        <Stack spacing="xl" data-testid="booking-form-stack">
           
           {/* Personal Information - Enhanced with card styling */}
-          <div style={{ width: '100%' }}>
+          <div>
             <Box variant="elevated" padding="lg" id="contact-information-card">
               <Stack spacing="lg" data-testid="contact-information-stack" align="center" justify="center">
               <H2 variant="primary" id="contact-information-title">
@@ -327,7 +327,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </div>
 
           {/* Trip Details - Enhanced with card styling */}
-          <div style={{ width: '100%' }}>
+          <div>
             <Box variant="elevated" padding="lg" id="trip-details-card">
             <Stack spacing="lg" data-testid="trip-details-stack" align="center" justify="center">
               <H2 variant="primary" id="trip-details-title">
@@ -429,7 +429,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           </div>
 
           {/* Additional Details - Enhanced with card styling */}
-          <div style={{ width: '100%' }}>
+          <div>
             <Box variant="elevated" padding="lg" id="additional-information-card">
             <Stack spacing="lg" data-testid="additional-information-stack" align="center" justify="center">
               <H2 variant="primary" id="additional-information-title">
@@ -515,7 +515,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           )}
 
           {/* Action Buttons - Enhanced styling */}
-          <div style={{ width: '100%' }}>
+          <div>
             <Box variant="elevated" padding="lg" id="action-buttons-card">
             <Stack direction="vertical" spacing="lg" align="center" justify="center" data-testid="action-buttons-stack">
               <Button
@@ -556,7 +556,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </Stack>
           </Box>
           </div>
-        </div>
+        </Stack>
       </Form>
     </Container>
   );

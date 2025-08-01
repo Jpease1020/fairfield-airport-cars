@@ -122,7 +122,7 @@ export default function CustomerLoginPage() {
 
   return (
     <ToastProvider>
-      <Section variant="brand" padding="xl" id="login-section">
+      <Section variant="default" padding="xl" id="login-section">
         <Container>
           <Stack   align="center">
             <Stack    align="center">
