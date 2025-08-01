@@ -524,9 +524,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
               data-testid="success-message" 
             />
           )}
-
-          {/* Action Buttons */}
-          <Stack spacing="lg" align="center">
+        </Stack>
+        <Container>
+        {/* Action Buttons */}
+        <Stack spacing="lg" align="center">
             <Button
               type="button"
               onClick={handleCalculateFare}
@@ -563,7 +564,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               </EditableText>
             </Button>
           </Stack>
-        </Stack>
+          </Container>
       </Form>
     </Container>
   );
