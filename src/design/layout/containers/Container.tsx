@@ -151,7 +151,7 @@ const StyledContainer = styled.div.withConfig({
         `;
       case 'section':
         return `
-          background-color: ${colors.background.secondary};
+          background-color: ${colors.background.tertiary};
           border-radius: ${borderRadius.default};
         `;
       case 'main':

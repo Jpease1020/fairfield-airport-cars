@@ -326,7 +326,7 @@ Content sections are built on the layout building blocks and provide reusable pa
 ## 🔄 Future Enhancements
 
 ### **Planned Features**
-- Admin navigation and footer components (currently using CustomerNavigation/CustomerFooter)
+- Admin navigation and footer components (currently using CustomerNavigation/Footer)
 - More specialized content sections
 - Advanced responsive breakpoints
 - Animation and transition support

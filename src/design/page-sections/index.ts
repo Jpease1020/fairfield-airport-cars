@@ -3,7 +3,7 @@
 
 export * from './BaseNavigation';
 export * from './CustomerNavigation';
-export * from './Footer'; // This file contains CustomerFooter component
+export * from './Footer'; // This file contains Footer component
 export * from './PageHeader';
 export * from './AdminNavigation';
 

@@ -24,7 +24,8 @@ export default {
         if (filename.includes('tokens') || 
             filename.includes('colors') || 
             filename.includes('cms-integrated-colors') ||
-            filename.includes('design-system')) {
+            filename.includes('design-system') ||
+            filename.includes('system/tokens')) {
           return {};
         }
         

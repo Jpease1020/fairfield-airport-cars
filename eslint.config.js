@@ -181,6 +181,78 @@ export default [
       'fairfield/enforce-design-system': 'error',
     },
   },
+  // 🛡️ DESIGN SYSTEM PROTECTION - Stricter rules for design directory
+  {
+    files: ['src/design/**/*.{js,jsx,ts,tsx}'],
+    ignores: [
+      'src/design/system/tokens/**/*', // Exclude design token files from hardcoded color detection
+      'src/design/system/tokens/*.ts'  // Exclude token files
+    ],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptPlugin,
+      'fairfield': fairfieldCustomRules,
+    },
+    rules: {
+      // 🚨 CRITICAL: Design system protection rules
+      'fairfield/no-hardcoded-colors': 'error',
+      'fairfield/no-inline-styles': 'error',
+      'fairfield/no-classname-props': 'error',
+      'fairfield/enforce-ui-imports': 'error',
+      'fairfield/no-multiple-styled-divs': 'error',
+      'fairfield/enforce-design-system': 'error',
+      
+      // 🔒 ADDITIONAL PROTECTION RULES FOR DESIGN DIRECTORY
+      '@typescript-eslint/no-explicit-any': 'error', // No any types in design system
+      '@typescript-eslint/no-unused-vars': 'error', // No unused variables
+      'no-console': 'error', // No console logs in design system
+      'no-debugger': 'error', // No debugger statements
+      
+      // 🚫 FORBIDDEN IN DESIGN SYSTEM
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/#[0-9a-fA-F]{3,6}/]',
+          message: '❌ Hardcoded colors are FORBIDDEN in design system. Use CSS variables or design tokens.'
+        },
+        {
+          selector: 'TemplateLiteral[quasis.0.value.raw*="#"]',
+          message: '❌ Hardcoded colors are FORBIDDEN in design system. Use CSS variables or design tokens.'
+        }
+      ],
+      
+      // 📦 IMPORT RESTRICTIONS FOR DESIGN SYSTEM
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../ui-components/*', './ui-components/*'],
+              message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.'
+            },
+            {
+              group: ['../components/ui-components/*', './components/ui-components/*'],
+              message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.'
+            },
+            {
+              group: ['../design/components/ui-components/*', './design/components/ui-components/*'],
+              message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.'
+            }
+            // Removed React import restriction - React imports are needed for JSX
+          ]
+        }
+      ],
+    },
+  },
   {
     ignores: [
       'src/future-features/**/*',
