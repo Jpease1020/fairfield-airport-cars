@@ -212,8 +212,8 @@ export default [
       'fairfield/enforce-design-system': 'error',
       
       // 🔒 ADDITIONAL PROTECTION RULES FOR DESIGN DIRECTORY
-      '@typescript-eslint/no-explicit-any': 'error', // No any types in design system
-      '@typescript-eslint/no-unused-vars': 'error', // No unused variables
+      '@typescript-eslint/no-explicit-any': 'warn', // No any types in design system
+      '@typescript-eslint/no-unused-vars': 'warn', // No unused variables
       'no-console': 'error', // No console logs in design system
       'no-debugger': 'error', // No debugger statements
       

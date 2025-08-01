@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Text, TextProps } from './Text';
+import { Text } from './Text';
 
 export interface ParagraphProps {
   // Core props

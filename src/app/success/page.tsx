@@ -12,10 +12,10 @@ import {
   Span,
   Button,
   Stack,
-  CustomerLayout
-} from '@/design/ui';
-import { EditableText } from '@/design/ui';
-import { EditableHeading } from '@/design/ui';
+  
+} from '@/ui';
+import { EditableText } from '@/ui';
+import { EditableHeading } from '@/ui';
 import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {
@@ -75,7 +75,7 @@ function SuccessPageContent() {
 
   if (!isClient) {
     return (
-      <CustomerLayout>
+      <>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
@@ -84,13 +84,13 @@ function SuccessPageContent() {
             </Stack>
           </Container>
         </GridSection>
-      </CustomerLayout>
+      </>
     );
   }
 
   if (loading) {
     return (
-      <CustomerLayout>
+      <>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg"   align="center">
@@ -100,12 +100,12 @@ function SuccessPageContent() {
             </Stack>
           </Container>
         </GridSection>
-      </CustomerLayout>
+      </>
     );
   }
 
   return (
-    <CustomerLayout>
+    <>
       {error && (
         <GridSection variant="content" columns={1}>
           <Container>
@@ -216,14 +216,14 @@ function SuccessPageContent() {
           </Stack>
         </Container>
       </GridSection>
-    </CustomerLayout>
+    </>
   );
 }
 
 function SuccessPage() {
   return (
     <Suspense fallback={
-      <CustomerLayout>
+      <>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg"   align="center">
@@ -231,7 +231,7 @@ function SuccessPage() {
             </Stack>
           </Container>
         </GridSection>
-      </CustomerLayout>
+      </>
     }>
       <SuccessPageContent />
     </Suspense>

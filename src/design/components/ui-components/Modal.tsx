@@ -1,7 +1,7 @@
 'use client';
 
 import React, { forwardRef } from 'react';
-import { colors, spacing, fontSize } from '../../system/tokens/tokens';
+import { fontSize } from '../../system/tokens/tokens';
 import { Button, H2 } from '@/ui';
 import { Overlay } from './Overlay';
 import { Container, Stack, Box } from '@/ui';

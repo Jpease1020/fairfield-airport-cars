@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack } from '@/design/ui';
-import { CustomerNavigation } from '@/design/page-sections/CustomerNavigation';
-import { Footer } from '@/design/page-sections/Footer';
+import { Container } from '@/ui';
+import { CustomerNavigation } from '@/ui';
+import { Footer } from '@/ui';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -39,7 +39,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   showFooter = true,
   variant = 'customer',
   maxWidth = 'full',
-  spacing = 'none'
 }) => {
   return (
     <>

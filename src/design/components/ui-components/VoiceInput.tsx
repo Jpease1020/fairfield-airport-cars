@@ -282,7 +282,6 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
     };
 
     recognitionRef.current.onerror = (event: { error: string }) => {
-      console.error('Speech recognition error:', event.error);
       const errorMsg = `Voice recognition error: ${event.error}`;
       setError(errorMsg);
       onError?.(errorMsg);
@@ -312,7 +311,6 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
       try {
         recognitionRef.current.start();
       } catch (err) {
-        console.error('Failed to start speech recognition', err);
         const errorMsg = 'Failed to start voice recognition';
         setError(errorMsg);
         onError?.(errorMsg);

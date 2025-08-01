@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { spacing } from '@/design/system/tokens/tokens';
-import { Text, H2, Container } from '@/design/ui';
+import { Text, H2, Container } from '@/ui';
 import { ResponsiveValue, Breakpoint } from '../shared-types';
 
 // Helper function to resolve responsive values

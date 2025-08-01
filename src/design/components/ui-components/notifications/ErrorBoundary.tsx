@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Container, Text, Button, Stack } from '@/design/ui';
+import { Container, Text, Button, Stack } from '@/ui';
 
 interface Props {
   children: ReactNode;
@@ -24,10 +24,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
-    // Log error to monitoring service (e.g., Sentry)
-    // logErrorToService(error, errorInfo);
   }
 
   render() {

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Container, Button, Stack, Text, Span } from '@/ui';
 import { Loader2, MapPin } from 'lucide-react';
-import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
+import { colors } from '../../system/tokens/tokens';
 
 const StyledLoader = styled(Loader2)`
   width: 1rem;
@@ -89,7 +89,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         setSuggestions(data.predictions || []);
       }
     } catch (error) {
-      console.error('Error fetching places:', error);
       setSuggestions([]);
     } finally {
       setIsLoading(false);

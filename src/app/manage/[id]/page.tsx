@@ -166,7 +166,7 @@ function ManageBookingPageContent() {
 
   if (loading) {
     return (
-      <CustomerLayout>
+      
         <GridSection variant="content" columns={1}>
           <Container>
             <EditableText field="manage.loading" defaultValue="Loading...">
@@ -174,13 +174,13 @@ function ManageBookingPageContent() {
             </EditableText>
           </Container>
         </GridSection>
-      </CustomerLayout>
+      
     );
   }
 
   if (error || !booking) {
     return (
-      <CustomerLayout>
+      
         <GridSection variant="content" columns={1}>
           <Container>
             <Text>
@@ -198,7 +198,7 @@ function ManageBookingPageContent() {
             ]} />
           </Container>
         </GridSection>
-      </CustomerLayout>
+      
     );
   }
 
@@ -253,7 +253,7 @@ function ManageBookingPageContent() {
   }
 
   return (
-    <CustomerLayout>
+    <>
       {/* Admin Edit Mode Toggle */}
       {isAdmin && (
         <GridSection variant="content" columns={1}>
@@ -426,7 +426,7 @@ function ManageBookingPageContent() {
           </Container>
         </GridSection>
       )}
-    </CustomerLayout>
+    </>
   );
 }
 

@@ -9,8 +9,8 @@ import {
   Text,
   ActionButtonGroup,
   CustomerLayout
-} from '@/design/ui';
-import { EditableText } from '@/design/ui';
+} from '@/ui';
+import { EditableText } from '@/ui';
 
 function AboutPageContent() {
   const ctaActions = [
@@ -73,8 +73,8 @@ function AboutPageContent() {
 
 export default function AboutPage() {
   return (
-    <CustomerLayout>
+    
       <AboutPageContent />
-    </CustomerLayout>
+    
   );
 } 

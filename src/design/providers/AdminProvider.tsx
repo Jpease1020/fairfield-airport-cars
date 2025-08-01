@@ -28,7 +28,7 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
 
   // Log state changes
   useEffect(() => {
-    console.log('🔧 AdminProvider - isAdmin state changed to:', isAdmin);
+    //console.log('🔧 AdminProvider - isAdmin state changed to:', isAdmin);
   }, [isAdmin]);
 
   // Check for admin mode in localStorage and URL params
@@ -48,30 +48,19 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
       const isLocalhost = window.location.hostname === 'localhost' || 
                          window.location.hostname === '127.0.0.1' ||
                          window.location.hostname.includes('localhost');
-      
-      console.log('🔧 AdminProvider - Initial check:', {
-        adminMode,
-        localStorageAdmin,
-        isDev,
-        isLocalhost,
-        NODE_ENV: process.env.NODE_ENV
-      });
-      
+           
       // Enable admin mode if any condition is met
       if (adminMode === 'true' || localStorageAdmin === 'true' || isDev || isLocalhost) {
-        console.log('🔧 AdminProvider - Admin mode enabled for testing');
         setIsAdmin(true);
         setLocalStorageChecked(true);
         
         // Set localStorage for persistence in development
         if ((isDev || isLocalhost) && !localStorageAdmin) {
-          console.log('🔧 AdminProvider - Setting localStorage for development');
           localStorage.setItem('admin-mode', 'true');
         }
       } else {
         // In development, always enable admin mode
         if (isDev || isLocalhost) {
-          console.log('🔧 AdminProvider - Enabling admin mode for development');
           setIsAdmin(true);
           localStorage.setItem('admin-mode', 'true');
         }
@@ -85,7 +74,6 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
     if (typeof window !== 'undefined') {
       const handleStorageChange = (e: StorageEvent) => {
         if (e.key === 'admin-mode') {
-          console.log('🔧 AdminProvider - localStorage admin-mode changed:', e.newValue);
           if (e.newValue === 'true') {
             setIsAdmin(true);
           } else {
@@ -103,18 +91,15 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   useEffect(() => {
     // Don't run Firebase auth check if we haven't checked localStorage yet
     if (!localStorageChecked) {
-      console.log('🔧 AdminProvider - Skipping Firebase auth check, localStorage not checked yet');
       return;
     }
 
     const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      console.log('🔍 AdminProvider - Auth state changed:', user?.email);
       
       // ALWAYS check localStorage first - if it's true, keep admin mode regardless of Firebase
       if (typeof window !== 'undefined') {
         const localStorageAdmin = localStorage.getItem('admin-mode');
         if (localStorageAdmin === 'true') {
-          console.log('🔧 AdminProvider - Keeping admin mode from localStorage (Firebase auth ignored)');
           setIsAdmin(true);
           return; // Exit early - don't let Firebase override this
         }
@@ -126,10 +111,8 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
         user.email === 'gregg@fairfieldairportcar.com' ||
         user.email === 'justinpease@gmail.com'
       )) {
-        console.log('✅ AdminProvider - User is admin via Firebase:', user.email);
         setIsAdmin(true);
       } else {
-        console.log('❌ AdminProvider - User is not admin via Firebase:', user?.email);
         setIsAdmin(false);
       }
     });
@@ -140,11 +123,8 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const toggleCommentMode = () => {
     const newMode = !commentMode;
     
-    console.log('🔄 AdminProvider - Toggling comment mode:', { current: commentMode, new: newMode, editMode });
-    
     // If turning on comment mode, turn off edit mode
     if (newMode && editMode) {
-      console.log('🔄 AdminProvider - Disabling edit mode due to comment mode activation');
       setEditMode(false);
     }
     
@@ -158,13 +138,9 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   };
 
   const toggleEditMode = () => {
-    const newMode = !editMode;
-    
-    console.log('🔄 AdminProvider - Toggling edit mode:', { current: editMode, new: newMode, commentMode });
-    
+    const newMode = !editMode;  
     // If turning on edit mode, turn off comment mode
     if (newMode && commentMode) {
-      console.log('🔄 AdminProvider - Disabling comment mode due to edit mode activation');
       setCommentMode(false);
       document.body.classList.remove('comment-mode-active');
     }

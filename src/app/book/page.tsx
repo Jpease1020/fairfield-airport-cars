@@ -17,21 +17,19 @@ import {
   Section,
   HeroSection,
   CustomerLayout
-} from '@/design/ui';
-import { EditableText } from '@/design/ui';
+} from '@/ui';
+import { EditableText } from '@/ui';
 import BookingForm from './booking-form';
 
 function BookPageContent() {
   return (
-    <CustomerLayout>
-      <Section
-        title="Complete Your Booking"
-        subtitle="Fill in your details below"
-        data-testid="book-form-section"
-      >
-        <BookingForm />
-      </Section>
-    </CustomerLayout>
+    <Section
+      title="Complete Your Booking"
+      subtitle="Fill in your details below"
+      data-testid="book-form-section"
+    >
+      <BookingForm />
+    </Section>
   );
 }
 

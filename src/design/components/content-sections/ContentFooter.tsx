@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Text, H4 } from '@/design/ui';
+import { Container, Stack, Text, H4 } from '@/ui';
 
 
 interface ContentFooterProps {

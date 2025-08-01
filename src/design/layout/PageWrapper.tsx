@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { AdminNavigation } from '../page-sections/AdminNavigation';
-import { LoadingSpinner, Text } from '@/design/ui';
-import { Container } from '../layout/containers/Container';
-import { Stack } from '../layout/content/Stack';
-import { PageHeader } from '../page-sections/PageHeader';
-import { Button, EditableText, H3 } from '../ui';
+import { LoadingSpinner, Text } from '@/ui';
+import { Container } from '@/ui';
+import { Stack } from '@/ui';
+import { PageHeader } from '@/ui';
+import { Button, EditableText, H3 } from '@/ui';
 
 interface ActionItemProps {
   label: string;

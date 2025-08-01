@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Button, Container, Box, Stack, Text, H4, Input } from '@/design/ui';
+import { Button, Container, Box, Stack, Text, H4, Input } from '@/ui';
 
 // DataTableColumn - BULLETPROOF TYPE SAFETY!
 export interface DataTableColumn<T> {
@@ -58,7 +58,6 @@ interface DataTableProps<T> {
 export function DataTable<T extends Record<string, any>>({
   data,
   columns,
-  actions = [],
   loading = false,
   pagination = true,
   pageSize = 10,
@@ -66,7 +65,6 @@ export function DataTable<T extends Record<string, any>>({
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data available',
   emptyIcon = '📊',
-  size = 'md',
   spacing = 'normal',
   showCards = true
 }: DataTableProps<T>) {

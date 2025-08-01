@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Stack, Container, Text, PositionedContainer } from '@/design/ui';
+import { Stack, Container, Text, PositionedContainer } from '@/ui';
 import { colors, spacing, fontSize } from '../../../system/tokens/tokens';
 
 // Animation keyframes

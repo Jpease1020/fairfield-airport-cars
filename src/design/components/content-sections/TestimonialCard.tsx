@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Stack, Text, H4, Span } from '@/design/ui';
+import { Box, Stack, Text, H4, Span } from '@/ui';
 
 export interface TestimonialItem {
   name: string;
@@ -21,7 +21,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
   testimonial,
   variant = 'default'
 }) => {
-  const { name, role, company, content, rating, avatar } = testimonial;
+  const { name, role, company, content, rating } = testimonial;
 
   return (
     <Box 

@@ -11,7 +11,7 @@ import {
   Button,
   LoadingSpinner,
   Alert
-} from '@/design/ui';
+} from '@/ui';
 
 export default function AdminSetupPage() {
   const [user, setUser] = useState<FirebaseUser | null>(null);

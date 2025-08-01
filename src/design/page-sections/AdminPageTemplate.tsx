@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Text, LoadingSpinner, AdminNavigation, PageHeader } from '@/design/ui';
+import { Container, Stack, Text, LoadingSpinner, AdminNavigation, PageHeader } from '@/ui';
 
 export interface AdminPageTemplateProps {
   children: React.ReactNode;

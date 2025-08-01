@@ -261,8 +261,8 @@ function TrackingPageContent() {
 
 export default function TrackingPage() {
   return (
-    <CustomerLayout>
+    <>
       <TrackingPageContent />
-    </CustomerLayout>
+    </>
   );
 } 

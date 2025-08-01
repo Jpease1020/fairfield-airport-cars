@@ -72,8 +72,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         }
       };
 
-      recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
+      recognitionRef.current.onerror = () => {        
         setIsListening(false);
       };
 
