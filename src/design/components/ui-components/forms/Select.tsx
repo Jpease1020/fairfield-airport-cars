@@ -31,25 +31,25 @@ const StyledSelect = styled.select.withConfig({
     switch (size) {
       case 'sm':
         return `
-          padding: ${spacing.sm} ${spacing.md};
+          padding: ${spacing.xs} ${spacing.sm};
           font-size: ${fontSize.sm};
           height: 2rem;
         `;
       case 'md':
         return `
-          padding: ${spacing.md} ${spacing.lg};
+          padding: ${spacing.sm} ${spacing.md};
           font-size: ${fontSize.md};
           height: 2.5rem;
         `;
       case 'lg':
         return `
-          padding: ${spacing.lg} ${spacing.xl};
+          padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.lg};
           height: 3rem;
         `;
       default:
         return `
-          padding: ${spacing.md} ${spacing.lg};
+          padding: ${spacing.sm} ${spacing.md};
           font-size: ${fontSize.md};
           height: 2.5rem;
         `;
