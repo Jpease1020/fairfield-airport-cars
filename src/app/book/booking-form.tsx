@@ -457,6 +457,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       data-testid="passengers-select"
                       fullWidth
                       style={{ width: '100%' }}
+                      size="lg"
                       options={[1, 2, 3, 4, 5, 6, 7, 8].map(num => ({
                         value: num.toString(),
                         label: `${num} passenger${num > 1 ? 's' : ''}`
