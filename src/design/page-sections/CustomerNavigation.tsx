@@ -11,7 +11,7 @@ const LogoImage = styled.img`
   max-width: 300px;
 `;
 
-export const CustomerNavigation: React.FC = () => {
+export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%' }) => {
   const pathname = usePathname();
 
   const navigationItems: NavigationItem[] = [
@@ -87,6 +87,7 @@ export const CustomerNavigation: React.FC = () => {
       mobileActions={mobileActions}
       dataTestIdPrefix="nav"
       editableFieldPrefix="navigation"
+      width={width}
     />
   );
 }; 

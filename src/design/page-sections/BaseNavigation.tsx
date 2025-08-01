@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Button, Span, EditableText, Stack } from '@/design/ui';
+import { Button, Span, EditableText, Stack, Container } from '@/design/ui';
 
 const MobileMenuOverlay = styled.div`
   position: absolute;
@@ -59,6 +59,7 @@ export interface BaseNavigationProps {
   mobileActions?: React.ReactNode;
   dataTestIdPrefix?: string;
   editableFieldPrefix?: string;
+  width?: string;
 }
 
 export const BaseNavigation: React.FC<BaseNavigationProps> = ({
@@ -67,10 +68,11 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   actions,
   mobileActions,
   dataTestIdPrefix = 'nav',
-  editableFieldPrefix = 'navigation'
+  editableFieldPrefix = 'navigation',
+  width = '100%'
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { width } = useWindowSize();
+  const { width: containerWidth } = useWindowSize();
   const [isMobile, setIsMobile] = useState(false);
   
   // Use both width detection and CSS media query for reliability
@@ -78,7 +80,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
     if (typeof window === 'undefined') return;
     
     const checkMobile = () => {
-      const widthCheck = width < 768;
+      const widthCheck = containerWidth < 768;
       const mediaQueryCheck = window.matchMedia('(max-width: 767px)').matches;
       setIsMobile(widthCheck || mediaQueryCheck);
     };
@@ -89,10 +91,10 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
     mediaQuery.addEventListener('change', checkMobile);
     
     return () => mediaQuery.removeEventListener('change', checkMobile);
-  }, [width]);
+  }, [containerWidth]);
   
   // Debug logging
-  console.log('Navigation width:', width, 'isMobile:', isMobile);
+  console.log('Navigation width:', containerWidth, 'isMobile:', isMobile);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -107,99 +109,106 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
       data-testid={`${dataTestIdPrefix}-container`}
       id="navigation-container"
     >
-      <Stack direction="horizontal" justify="space-between" align="center" spacing="lg">
-        {/* Logo */}
-        <div data-testid={`${dataTestIdPrefix}-logo`} id="navigation-logo">
-          {logo}
-        </div>
-
-      {/* Desktop Navigation - Hidden on mobile */}
-      {!isMobile && (
-        <Stack direction="horizontal" align="center" spacing="sm">
-          {navigationItems.map((item, index) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-              id={`navigation-desktop-link-${index + 1}`}
-            >
-              <Button 
-                variant={item.current ? 'primary' : 'ghost'} 
-                size="sm"
-                data-testid={`${dataTestIdPrefix}-desktop-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                id={`navigation-desktop-button-${index + 1}`}
-              >
-                <EditableText field={`${editableFieldPrefix}.${item.name.toLowerCase()}`}>
-                  {item.name}
-                </EditableText>
-              </Button>
-            </Link>
-          ))}
-        </Stack>
-      )}
-
-      {/* Desktop Actions - Hidden on mobile */}
-      {!isMobile && actions && (
-        <Stack direction="horizontal" align="center" spacing="sm">
-          {actions}
-        </Stack>
-      )}
-
-      {/* Mobile Menu Button - Only visible on mobile */}
-      {isMobile && (
-        <Button
-          onClick={toggleMobileMenu}
-          variant="ghost"
-          size="lg"
-          data-testid={`${dataTestIdPrefix}-mobile-menu-button`}
-          id="navigation-mobile-menu-button"
-          aria-label="Toggle mobile menu"
-          aria-expanded={mobileMenuOpen}
+      <Container maxWidth="full" padding="md" margin="none">
+        <Stack 
+          direction="horizontal" 
+          justify="space-between" 
+          align="center" 
+          spacing="lg"
         >
-          <Span>☰</Span>
-        </Button>
-      )}
-      </Stack>
+          {/* Logo */}
+          <div data-testid={`${dataTestIdPrefix}-logo`} id="navigation-logo">
+            {logo}
+          </div>
 
-      {/* Mobile Menu */}
-      {isMobile && mobileMenuOpen && (
-        <MobileMenuOverlay
-          data-testid={`${dataTestIdPrefix}-mobile-menu`}
-          id="navigation-mobile-menu"
-          role="menu"
-        >
-          <Stack spacing="sm">
+        {/* Desktop Navigation - Hidden on mobile */}
+        {!isMobile && (
+          <Stack direction="horizontal" align="center" spacing="sm">
             {navigationItems.map((item, index) => (
               <Link
                 key={item.name}
                 href={item.href}
-                onClick={closeMobileMenu}
-                data-testid={`${dataTestIdPrefix}-mobile-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                id={`navigation-mobile-link-${index + 1}`}
+                data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                id={`navigation-desktop-link-${index + 1}`}
               >
                 <Button 
                   variant={item.current ? 'primary' : 'ghost'} 
                   size="sm"
-                  fullWidth
-                  data-testid={`${dataTestIdPrefix}-mobile-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  id={`navigation-mobile-button-${index + 1}`}
+                  data-testid={`${dataTestIdPrefix}-desktop-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  id={`navigation-desktop-button-${index + 1}`}
                 >
-                  <EditableText field={`${editableFieldPrefix}.mobile.${item.name.toLowerCase()}`}>
+                  <EditableText field={`${editableFieldPrefix}.${item.name.toLowerCase()}`}>
                     {item.name}
                   </EditableText>
                 </Button>
               </Link>
             ))}
           </Stack>
+        )}
 
-          {/* Mobile Actions */}
-          {mobileActions && (
-            <Stack spacing="sm" margin="md" padding="md">
-              {mobileActions}
+        {/* Desktop Actions - Hidden on mobile */}
+        {!isMobile && actions && (
+          <Stack direction="horizontal" align="center" spacing="sm">
+            {actions}
+          </Stack>
+        )}
+
+        {/* Mobile Menu Button - Only visible on mobile */}
+        {isMobile && (
+          <Button
+            onClick={toggleMobileMenu}
+            variant="ghost"
+            size="lg"
+            data-testid={`${dataTestIdPrefix}-mobile-menu-button`}
+            id="navigation-mobile-menu-button"
+            aria-label="Toggle mobile menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <Span>☰</Span>
+          </Button>
+        )}
+        </Stack>
+
+        {/* Mobile Menu */}
+        {isMobile && mobileMenuOpen && (
+          <MobileMenuOverlay
+            data-testid={`${dataTestIdPrefix}-mobile-menu`}
+            id="navigation-mobile-menu"
+            role="menu"
+          >
+            <Stack spacing="sm">
+              {navigationItems.map((item, index) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={closeMobileMenu}
+                  data-testid={`${dataTestIdPrefix}-mobile-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  id={`navigation-mobile-link-${index + 1}`}
+                >
+                  <Button 
+                    variant={item.current ? 'primary' : 'ghost'} 
+                    size="sm"
+                    fullWidth
+                    data-testid={`${dataTestIdPrefix}-mobile-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    id={`navigation-mobile-button-${index + 1}`}
+                  >
+                    <EditableText field={`${editableFieldPrefix}.mobile.${item.name.toLowerCase()}`}>
+                      {item.name}
+                    </EditableText>
+                  </Button>
+                </Link>
+              ))}
             </Stack>
-          )}
-        </MobileMenuOverlay>
-      )}
+
+            {/* Mobile Actions */}
+            {mobileActions && (
+              <Stack spacing="sm" margin="md" padding="md">
+                {mobileActions}
+              </Stack>
+            )}
+          </MobileMenuOverlay>
+        )}
+      </Container>
     </nav>
   );
 }; 

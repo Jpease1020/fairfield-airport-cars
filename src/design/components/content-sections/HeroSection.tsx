@@ -16,6 +16,7 @@ export interface HeroSectionProps {
     label: string;
     href: string;
   };
+  'data-testid'?: string;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -23,46 +24,46 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   subtitle,
   description,
   primaryAction,
-  secondaryAction
+  secondaryAction,
+  'data-testid': dataTestId,
+  ...rest
 }) => {
   return (
-    <Container maxWidth="full" padding="xl">
-      <Container maxWidth="xl" padding="xl">
-        <Stack spacing="xl" align="center">
-          <Stack spacing="md" align="center">
-            <H1 align="center">{title}</H1>
-            {subtitle && (
-              <Text variant="lead" align="center" size="lg">
-                {subtitle}
-              </Text>
-            )}
-            {description && (
-              <Text variant="muted" align="center">
-                {description}
-              </Text>
-            )}
-          </Stack>
-          
-          {(primaryAction || secondaryAction) && (
-            <Stack direction="horizontal" spacing="md">
-              {primaryAction && (
-                <Link href={primaryAction.href}>
-                  <Button variant="primary" size="lg">
-                    {primaryAction.label}
-                  </Button>
-                </Link>
-              )}
-              {secondaryAction && (
-                <Link href={secondaryAction.href}>
-                  <Button variant="outline" size="lg">
-                    {secondaryAction.label}
-                  </Button>
-                </Link>
-              )}
-            </Stack>
+    <Container maxWidth="full" padding="xl" variant="section" data-testid={dataTestId} {...rest}>
+      <Stack spacing="xl" align="center">
+        <Stack spacing="md" align="center">
+          <H1 align="center">{title}</H1>
+          {subtitle && (
+            <Text variant="lead" align="center" size="lg">
+              {subtitle}
+            </Text>
+          )}
+          {description && (
+            <Text variant="muted" align="center">
+              {description}
+            </Text>
           )}
         </Stack>
-      </Container>
+        
+        {(primaryAction || secondaryAction) && (
+          <Stack direction="horizontal" spacing="md">
+            {primaryAction && (
+              <Link href={primaryAction.href}>
+                <Button variant="primary" size="lg">
+                  {primaryAction.label}
+                </Button>
+              </Link>
+            )}
+            {secondaryAction && (
+              <Link href={secondaryAction.href}>
+                <Button variant="outline" size="lg">
+                  {secondaryAction.label}
+                </Button>
+              </Link>
+            )}
+          </Stack>
+        )}
+      </Stack>
     </Container>
   );
 }; 

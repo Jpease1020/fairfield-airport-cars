@@ -4,20 +4,12 @@ import React from 'react';
 import { 
   Container,
   Stack,
-  H1,
-  H2,
-  H3,
   H4,
   Text,
   Button,
-  Grid,
-  GridItem,
-  Box,
   Span,
   Section,
   HeroSection,
-  FeatureGrid,
-  ContentCard,
   PageLayout
 } from '@/design/ui';
 import { EditableText } from '@/design/ui';
@@ -69,28 +61,27 @@ function HomePageContent() {
   return (
     <PageLayout>
         {/* Hero Section */}
-        <section data-testid="home-hero-section">
-          <HeroSection
-            title="Professional Airport Transportation"
-            subtitle="Reliable rides to and from Fairfield Airport"
-            description="Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed."
-            primaryAction={{
-              label: "Book Now",
-              href: "/book"
-            }}
-            secondaryAction={{
-              label: "Learn More",
-              href: "/about"
-            }}
-          />
-        </section>
+        <HeroSection
+          title="Professional Airport Transportation"
+          subtitle="Reliable rides to and from Fairfield Airport"
+          description="Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed."
+          primaryAction={{
+            label: "Book Now",
+            href: "/book"
+          }}
+          secondaryAction={{
+            label: "Learn More",
+            href: "/about"
+          }}
+          data-testid="home-hero-section"
+        />
 
         {/* Features Section */}
-        <section data-testid="home-features-section">
-          <Section
-            title="Why Choose Fairfield Airport Cars"
-            subtitle="Professional service you can count on"
-          >
+        <Section
+          title="Why Choose Fairfield Airport Cars"
+          subtitle="Professional service you can count on"
+          data-testid="home-features-section"
+        >
             <Stack 
               direction={{ xs: 'vertical', lg: 'horizontal' }}
               spacing={{ xs: 'md', lg: 'lg' }}
@@ -114,14 +105,13 @@ function HomePageContent() {
               ))}
             </Stack>
           </Section>
-        </section>
 
         {/* Testimonials Section */}
-        <section data-testid="home-testimonials-section">
-          <Section
-            title="What Our Customers Say"
-            subtitle="Real experiences from satisfied travelers"
-          >
+        <Section
+          title="What Our Customers Say"
+          subtitle="Real experiences from satisfied travelers"
+          data-testid="home-testimonials-section"
+        >
             <Stack 
               direction={{ xs: 'vertical', lg: 'horizontal' }}
               spacing={{ xs: 'md', lg: 'lg' }}
@@ -152,14 +142,13 @@ function HomePageContent() {
               ))}
             </Stack>
           </Section>
-        </section>
 
         {/* CTA Section */}
-        <section data-testid="home-cta-section">
-          <Section
-            title="Ready to Book Your Ride?"
-            subtitle="Get started in minutes"
-          >
+        <Section
+          title="Ready to Book Your Ride?"
+          subtitle="Get started in minutes"
+          data-testid="home-cta-section"
+        >
             <Stack spacing="lg" align="center" data-testid="cta-content">
               <Text variant="lead" align="center" data-testid="cta-description">
                 Join thousands of satisfied customers who trust Fairfield Airport Cars
@@ -185,7 +174,6 @@ function HomePageContent() {
               </Stack>
             </Stack>
           </Section>
-        </section>
       </PageLayout>
   );
 }

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Container, Stack } from '@/design/ui';
 import { CustomerNavigation } from '@/design/page-sections/CustomerNavigation';
-import { CustomerFooter } from '@/design/page-sections/Footer';
+import { Footer } from '@/design/page-sections/Footer';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -42,35 +42,27 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   spacing = 'none'
 }) => {
   return (
-    <Container as="div" maxWidth={maxWidth}>
-      <Stack spacing={spacing}>
-        {/* Navigation */}
-        {showNavigation && (
-          <Container variant="navigation" as="header" data-testid="page-layout-navigation">
-            {variant === 'customer' ? (
-              <CustomerNavigation />
-            ) : (
-              <CustomerNavigation /> // TODO: Add AdminNavigation when available
-            )}
-          </Container>
-        )}
-        
-        {/* Main Content */}
-        <Container as="main" maxWidth="full" data-testid="page-layout-main-content">
-          {children}
+    <>
+      {/* Navigation - Full Width */}
+      {showNavigation && (
+        <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="page-layout-navigation">
+          {variant === 'customer' ? (
+            <CustomerNavigation />
+          ) : (
+            <CustomerNavigation /> // TODO: Add AdminNavigation when available
+          )}
         </Container>
-        
-        {/* Footer */}
-        {showFooter && (
-          <Container variant="navigation" as="footer" data-testid="page-layout-footer">
-            {variant === 'customer' ? (
-              <CustomerFooter />
-            ) : (
-              <CustomerFooter /> // TODO: Add AdminFooter when available
-            )}
-          </Container>
-        )}
-      </Stack>
-    </Container>
+      )}
+      
+      {/* Main Content */}
+      <Container as="main" maxWidth={maxWidth} data-testid="page-layout-main-content">
+        {children}
+      </Container>
+      
+      {/* Footer - Full Width */}
+      {showFooter && ( 
+        <Footer data-testid="page-layout-footer"/>
+      )}
+    </>
   );
 }; 
