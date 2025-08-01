@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createCustomerAccount, signInWithGoogle } from '@/lib/services/auth-service';
 import { 
-  Section,
   Container,
   Stack,
   H1,
@@ -165,8 +164,8 @@ export default function CustomerRegisterPage() {
 
   return (
     <ToastProvider>
-      <Section variant="default" padding="xl" id="register-section">
-        <Container>
+      
+        <Container id="register-section">
           <Stack   align="center">
             <Stack    align="center">
               <H1 align="center">
@@ -344,7 +343,7 @@ export default function CustomerRegisterPage() {
             </LinkText>
           </Stack>
         </Container>
-      </Section>
+    
     </ToastProvider>
   );
 } 

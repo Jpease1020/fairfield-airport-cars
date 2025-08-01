@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { 
-  Section,
   Container,
   Stack,
   H1,
@@ -55,8 +54,8 @@ function HelpPageContent() {
   return (
     <>
       {/* Hero Section */}
-      <Section variant="default" padding="xl" data-testid="help-hero-section">
-        <Container maxWidth="2xl">
+      
+        <Container maxWidth="2xl" data-testid="help-hero-section">
           <Stack spacing="2xl" align="center">
             <H1 align="center" data-testid="help-title">
               <EditableText field="help.hero.title" defaultValue="Help & Support">
@@ -70,11 +69,8 @@ function HelpPageContent() {
             </Text>
           </Stack>
         </Container>
-      </Section>
-
-      {/* Quick Answers Section */}
-      <Section variant="default" padding="xl" data-testid="help-content">
-        <Container maxWidth="2xl">
+      
+        <Container maxWidth="2xl" data-testid="help-content">
           <Stack spacing="lg" align="center">
             <H2>
               <EditableText field="help.quickAnswers.title" defaultValue="Quick Answers">
@@ -102,10 +98,7 @@ function HelpPageContent() {
             ))}
           </Stack>
         </Container>
-      </Section>
-
-      {/* Contact Support Section */}
-      <Section variant="default" padding="xl">
+      
         <Container maxWidth="2xl">
           <Stack spacing="lg" align="center">
             <H2>
@@ -122,7 +115,7 @@ function HelpPageContent() {
             <ActionButtonGroup buttons={contactActions} spacing="md" />
           </Stack>
         </Container>
-      </Section>
+      
     </>
   );
 }

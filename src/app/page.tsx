@@ -8,8 +8,8 @@ import {
   Text,
   Button,
   Span,
-  Section,
-  HeroSection
+  HeroSection,
+  H2
 } from '@/ui';
 import { EditableText } from '@/ui';
 import Link from 'next/link';
@@ -76,17 +76,18 @@ function HomePageContent() {
       />
 
       {/* Features Section */}
-      <Section
-        title="Why Choose Fairfield Airport Cars"
-        subtitle="Professional service you can count on"
-        data-testid="home-features-section"
-      >
-        <Stack 
-          direction={{ xs: 'vertical', lg: 'horizontal' }}
-          spacing={{ xs: 'md', lg: 'lg' }}
-          align="stretch"
-          data-testid="features-stack"
-        >
+      <Container maxWidth="xl" padding="xl" data-testid="home-features-section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H2 align="center">Why Choose Fairfield Airport Cars</H2>
+            <Text variant="lead" align="center">Professional service you can count on</Text>
+          </Stack>
+          <Stack 
+            direction={{ xs: 'vertical', lg: 'horizontal' }}
+            spacing={{ xs: 'md', lg: 'lg' }}
+            align="stretch"
+            data-testid="features-stack"
+          >
           {features.map((feature, index) => (
             <Container key={index} variant="default" padding="lg">
               <Stack direction="vertical" spacing="md" align="center">
@@ -103,76 +104,81 @@ function HomePageContent() {
             </Container>
           ))}
         </Stack>
-      </Section>
+      </Stack>
+    </Container>
 
       {/* Testimonials Section */}
-      <Section
-        title="What Our Customers Say"
-        subtitle="Real experiences from satisfied travelers"
-        data-testid="home-testimonials-section"
-      >
-        <Stack 
-          direction={{ xs: 'vertical', lg: 'horizontal' }}
-          spacing={{ xs: 'md', lg: 'lg' }}
-          align="stretch"
-          data-testid="testimonials-stack"
-        >
-          {testimonials.map((testimonial, index) => (
-            <Container key={index} variant="elevated" padding="lg">
-              <Stack direction="vertical" spacing="md">
-                <Container>
-                  <H4>{testimonial.name}</H4>
-                  <Text variant="muted" size="sm">{testimonial.role}</Text>
-                </Container>
-                <Container>
-                  <Stack direction="vertical" spacing="md">
-                    <Text variant="lead" data-testid={`testimonial-content-${index + 1}`}>"{testimonial.content}"</Text>
-                    <Stack direction="horizontal" spacing="xs" data-testid={`testimonial-rating-${index + 1}`}>
-                      {[...Array(5)].map((_, i) => (
-                        <Span key={i} color={i < testimonial.rating ? 'primary' : 'muted'}>
-                          ★
-                        </Span>
-                      ))}
-                    </Stack>
-                  </Stack>
-                </Container>
-              </Stack>
-            </Container>
-          ))}
-        </Stack>
-      </Section>
-
-      {/* CTA Section */}
-      <Section
-        title="Ready to Book Your Ride?"
-        subtitle="Get started in minutes"
-        data-testid="home-cta-section"
-      >
-        <Stack spacing="lg" align="center" data-testid="cta-content">
-          <Text variant="lead" align="center" data-testid="cta-description">
-            Join thousands of satisfied customers who trust Fairfield Airport Cars
-          </Text>
+      <Container maxWidth="xl" padding="xl" data-testid="home-testimonials-section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H2 align="center">What Our Customers Say</H2>
+            <Text variant="lead" align="center">Real experiences from satisfied travelers</Text>
+          </Stack>
           <Stack 
-            direction={{ xs: 'vertical', sm: 'horizontal' }}
-            spacing={{ xs: 'sm', md: 'md' }} 
-            align="center"
-            justify="center"
-            wrap="wrap"
-            data-testid="cta-buttons"
+            direction={{ xs: 'vertical', lg: 'horizontal' }}
+            spacing={{ xs: 'md', lg: 'lg' }}
+            align="stretch"
+            data-testid="testimonials-stack"
           >
-            <Link href="/book" data-testid="cta-book-button">
-              <Button variant="primary" size="lg">
-                Book Your Ride
-              </Button>
-            </Link>
-            <Link href="/contact" data-testid="cta-contact-button">
-              <Button variant="outline" size="lg">
-                Contact Us
-              </Button>
-            </Link>
+            {testimonials.map((testimonial, index) => (
+              <Container key={index} variant="elevated" padding="lg">
+                <Stack direction="vertical" spacing="md">
+                  <Container>
+                    <H4>{testimonial.name}</H4>
+                    <Text variant="muted" size="sm">{testimonial.role}</Text>
+                  </Container>
+                  <Container>
+                    <Stack direction="vertical" spacing="md">
+                      <Text variant="lead" data-testid={`testimonial-content-${index + 1}`}>"{testimonial.content}"</Text>
+                      <Stack direction="horizontal" spacing="xs" data-testid={`testimonial-rating-${index + 1}`}>
+                        {[...Array(5)].map((_, i) => (
+                          <Span key={i} color={i < testimonial.rating ? 'primary' : 'muted'}>
+                            ★
+                          </Span>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  </Container>
+                </Stack>
+              </Container>
+            ))}
           </Stack>
         </Stack>
-      </Section>
+      </Container>
+
+      {/* CTA Section */}
+      <Container maxWidth="xl" padding="xl" data-testid="home-cta-section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H2 align="center">Ready to Book Your Ride?</H2>
+            <Text variant="lead" align="center">Get started in minutes</Text>
+          </Stack>
+          <Stack spacing="lg" align="center" data-testid="cta-content">
+            <Text variant="lead" align="center" data-testid="cta-description">
+              Join thousands of satisfied customers who trust Fairfield Airport Cars
+            </Text>
+            <Stack 
+              direction={{ xs: 'vertical', sm: 'horizontal' }}
+              spacing={{ xs: 'sm', md: 'md' }} 
+              align="center"
+              justify="center"
+              wrap="wrap"
+              data-testid="cta-buttons"
+            >
+              <Link href="/book" data-testid="cta-book-button">
+                <Button variant="primary" size="lg">
+                  Book Your Ride
+                </Button>
+              </Link>
+              <Link href="/contact" data-testid="cta-contact-button">
+                <Button variant="outline" size="lg">
+                  Contact Us
+                </Button>
+              </Link>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Container>
     </>
   );
 }

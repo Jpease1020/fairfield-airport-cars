@@ -54,11 +54,6 @@ import { Box, Stack } from '@/ui';
 // ✅ Correct
 import { Container, Section } from '@/ui';
 
-<Container maxWidth="xl">
-  <Section title="Title">Content</Section>
-</Container>
-```
-
 ### **Layer 4: Page Layout**
 ```tsx
 // ✅ Correct

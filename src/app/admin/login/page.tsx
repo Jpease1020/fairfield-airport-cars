@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { 
-  Section,
   Container,
   Stack,
   H1,
@@ -105,8 +104,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Section variant="default" padding="xl" id="login-section">
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" id="login-section">
         <Stack spacing="2xl" align="center">
           <Stack spacing="lg" align="center">
             <H1 align="center">
@@ -226,6 +224,5 @@ export default function LoginPage() {
           </LoginCard>
         </Stack>
       </Container>
-    </Section>
   );
 }

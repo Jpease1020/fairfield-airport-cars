@@ -13,10 +13,10 @@ import {
   StatusMessage,
   Form,
   ToastProvider,
-  LoadingSpinner
+  LoadingSpinner,
+  EditableText
 } from '@/ui';
 import { Input, Select, Label } from '@/ui';
-import { EditableText } from '@/ui';
 import { Booking } from '@/types/booking';
 
 interface BookingFormProps {
@@ -270,34 +270,34 @@ function BookingFormContent({ booking }: BookingFormProps) {
   return (
     <Container maxWidth="2xl" padding="xl" data-testid="booking-form-container">
       <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
-        {/* Single clean form container */}
         <Stack spacing="xl" data-testid="booking-form-stack">
           
-          {/* Personal Information - Enhanced with card styling */}
-          <div>
-            <Box variant="elevated" padding="lg" id="contact-information-card">
-              <Stack spacing="lg" data-testid="contact-information-stack" align="center" justify="center">
-              <H2 variant="primary" id="contact-information-title">
+          {/* Contact Information */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 align="center">
                 <EditableText field="booking.personalInfo.title" defaultValue="Contact Information">
                   Contact Information
                 </EditableText>
               </H2>
               
-              <Grid cols={2} gap="lg" responsive data-testid="contact-information-grid">
-                <GridItem data-testid="name-grid-item">
+              <Grid cols={1} gap="md" responsive>
+                <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="name">Full Name</Label>
                     <Input
                       id="name"
                       value={name}
-                      data-testid="name-input"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                       placeholder="Enter your full name"
+                      data-testid="name-input"
+                      fullWidth
+                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
                 
-                <GridItem data-testid="email-grid-item">
+                <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="email">Email Address</Label>
                     <Input
@@ -307,37 +307,41 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                       placeholder="Enter your email"
                       data-testid="email-input"
+                      fullWidth
+                      style={{ width: '100%' }}
+                    />
+                  </Stack>
+                </GridItem>
+                
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      value={phone}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+                      placeholder="(123) 456-7890"
+                      data-testid="phone-input"
+                      fullWidth
+                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
               </Grid>
-              
-              <Stack spacing="sm">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  value={phone}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
-                  placeholder="(123) 456-7890"
-                  data-testid="phone-input"
-                />
-              </Stack>
             </Stack>
           </Box>
-          </div>
 
-          {/* Trip Details - Enhanced with card styling */}
-          <div>
-            <Box variant="elevated" padding="lg" id="trip-details-card">
-            <Stack spacing="lg" data-testid="trip-details-stack" align="center" justify="center">
-              <H2 variant="primary" id="trip-details-title">
+          {/* Trip Details */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 align="center">
                 <EditableText field="booking.tripDetails.title" defaultValue="Trip Details">
                   Trip Details
                 </EditableText>
               </H2>
               
-              <Grid cols={2} gap="lg" responsive data-testid="location-grid">
-                <GridItem data-testid="pickup-location-grid-item">
+              <Grid cols={1} gap="md" responsive>
+                <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="pickupLocation">Pickup Location</Label>
                     <Input
@@ -346,11 +350,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePickupInputChange(e.target.value)}
                       placeholder="Enter pickup address"
                       data-testid="pickup-location-input"
+                      fullWidth
+                      style={{ width: '100%' }}
                     />
                   </Stack>
                   {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                    <Box variant="outlined" padding="sm" id="pickup-suggestions-card">
-                      <Stack spacing="xs" data-testid="pickup-suggestions-stack">
+                    <Box variant="outlined" padding="sm">
+                      <Stack spacing="xs">
                         {pickupSuggestions.map((prediction) => (
                           <Button
                             key={prediction.place_id}
@@ -366,7 +372,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   )}
                 </GridItem>
                 
-                <GridItem data-testid="dropoff-location-grid-item">
+                <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="dropoffLocation">Dropoff Location</Label>
                     <Input
@@ -375,11 +381,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDropoffInputChange(e.target.value)}
                       placeholder="Enter dropoff address"
                       data-testid="dropoff-location-input"
+                      fullWidth
+                      style={{ width: '100%' }}
                     />
                   </Stack>
                   {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-                    <Box variant="outlined" padding="sm" id="dropoff-suggestions-card">
-                      <Stack spacing="xs" data-testid="dropoff-suggestions-stack">
+                    <Box variant="outlined" padding="sm">
+                      <Stack spacing="xs">
                         {dropoffSuggestions.map((prediction) => (
                           <Button
                             key={prediction.place_id}
@@ -394,12 +402,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     </Box>
                   )}
                 </GridItem>
-              </Grid>
-              
-              <Grid cols={2} gap="lg" responsive data-testid="datetime-flight-grid">
-                <GridItem data-testid="pickup-datetime-grid-item">
-                  <Stack spacing="sm" data-testid="pickup-datetime-stack">
-                    <Label htmlFor="pickupDateTime" id="pickup-datetime-label">Pickup Date & Time</Label>
+                
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Label htmlFor="pickupDateTime">Pickup Date & Time</Label>
                     <Input
                       id="pickupDateTime"
                       type="datetime-local"
@@ -407,11 +413,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPickupDateTime(e.target.value)}
                       required
                       data-testid="pickup-datetime-input"
+                      fullWidth
+                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
                 
-                <GridItem data-testid="flight-number-grid-item">
+                <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="flightNumber">Flight Number (Optional)</Label>
                     <Input
@@ -420,33 +428,35 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFlightNumber(e.target.value)}
                       placeholder="e.g., AA123"
                       data-testid="flight-number-input"
+                      fullWidth
+                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
               </Grid>
             </Stack>
           </Box>
-          </div>
 
-          {/* Additional Details - Enhanced with card styling */}
-          <div>
-            <Box variant="elevated" padding="lg" id="additional-information-card">
-            <Stack spacing="lg" data-testid="additional-information-stack" align="center" justify="center">
-              <H2 variant="primary" id="additional-information-title">
+          {/* Additional Information */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 align="center">
                 <EditableText field="booking.additionalDetails.title" defaultValue="Additional Information">
                   Additional Information
                 </EditableText>
               </H2>
               
-              <Grid cols={2} gap="lg" responsive data-testid="passengers-notes-grid">
-                <GridItem data-testid="passengers-grid-item">
-                  <Stack spacing="sm" data-testid="passengers-stack">
-                    <Label htmlFor="passengers" id="passengers-label">Number of Passengers</Label>
+              <Grid cols={1} gap="md" responsive>
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Label htmlFor="passengers">Number of Passengers</Label>
                     <Select
                       id="passengers"
                       value={passengers.toString()}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(Number(e.target.value))}
                       data-testid="passengers-select"
+                      fullWidth
+                      style={{ width: '100%' }}
                       options={[1, 2, 3, 4, 5, 6, 7, 8].map(num => ({
                         value: num.toString(),
                         label: `${num} passenger${num > 1 ? 's' : ''}`
@@ -455,7 +465,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   </Stack>
                 </GridItem>
                 
-                <GridItem data-testid="notes-grid-item">
+                <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="notes">Special Requests</Label>
                     <Input
@@ -464,19 +474,20 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNotes(e.target.value)}
                       placeholder="Wheelchair, extra luggage, etc."
                       data-testid="notes-input"
+                      fullWidth
+                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
               </Grid>
             </Stack>
           </Box>
-          </div>
 
-          {/* Fare Calculation - Enhanced styling */}
+          {/* Fare Calculation */}
           {fare !== null && (
-            <Box variant="elevated" padding="lg" data-testid="fare-section" id="fare-calculation-card">
-              <Stack spacing="md" align="center" justify="center" data-testid="fare-calculation-stack">
-                <H2 variant="primary" id="fare-calculation-title">
+            <Box variant="elevated" padding="lg">
+              <Stack spacing="md" align="center">
+                <H2 align="center">
                   <EditableText field="booking.fare.title" defaultValue="Estimated Fare">
                     Estimated Fare
                   </EditableText>
@@ -486,7 +497,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   size="xl" 
                   color="primary"
                   weight="bold"
-                  id="fare-amount"
                   data-testid="fare-amount"
                 >
                   ${fare?.toFixed(2) || '0.00'}
@@ -514,48 +524,44 @@ function BookingFormContent({ booking }: BookingFormProps) {
             />
           )}
 
-          {/* Action Buttons - Enhanced styling */}
-          <div>
-            <Box variant="elevated" padding="lg" id="action-buttons-card">
-            <Stack direction="vertical" spacing="lg" align="center" justify="center" data-testid="action-buttons-stack">
-              <Button
-                type="button"
-                onClick={handleCalculateFare}
-                disabled={isCalculating || !pickupLocation || !dropoffLocation || !pickupDateTime}
-                variant="outline"
-                data-testid="calculate-fare-button"
-                size="lg"
-                fullWidth
-              >
-                {isCalculating ? (
-                  <>
-                    <LoadingSpinner />
-                    <EditableText field="booking.calculatingButton" defaultValue="Calculating...">
-                      Calculating...
-                    </EditableText>
-                  </>
-                ) : (
-                  <EditableText field="booking.calculateButton" defaultValue="Calculate Fare">
-                    Calculate Fare
+          {/* Action Buttons */}
+          <Stack spacing="lg" align="center">
+            <Button
+              type="button"
+              onClick={handleCalculateFare}
+              disabled={isCalculating || !pickupLocation || !dropoffLocation || !pickupDateTime}
+              variant="outline"
+              data-testid="calculate-fare-button"
+              size="lg"
+              fullWidth
+            >
+              {isCalculating ? (
+                <>
+                  <LoadingSpinner />
+                  <EditableText field="booking.calculatingButton" defaultValue="Calculating...">
+                    Calculating...
                   </EditableText>
-                )}
-              </Button>
-              
-              <Button
-                type="submit"
-                disabled={!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime || isCalculating}
-                variant="primary"
-                data-testid="book-now-button"
-                size="lg"
-                fullWidth
-              >
-                <EditableText field="booking.submitButton" defaultValue="Book Now">
-                  Book Now
+                </>
+              ) : (
+                <EditableText field="booking.calculateButton" defaultValue="Calculate Fare">
+                  Calculate Fare
                 </EditableText>
-              </Button>
-            </Stack>
-          </Box>
-          </div>
+              )}
+            </Button>
+            
+            <Button
+              type="submit"
+              disabled={!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime || isCalculating}
+              variant="primary"
+              data-testid="book-now-button"
+              size="lg"
+              fullWidth
+            >
+              <EditableText field="booking.submitButton" defaultValue="Book Now">
+                Book Now
+              </EditableText>
+            </Button>
+          </Stack>
         </Stack>
       </Form>
     </Container>
