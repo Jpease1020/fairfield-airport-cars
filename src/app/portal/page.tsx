@@ -8,7 +8,9 @@ import {
   useToast,
   Container,
   Stack,
-  CustomerLayout
+  CustomerLayout,
+  H1,
+  Text
 } from '@/ui';
 import { EditableHeading, EditableText } from '@/ui';
 
@@ -82,18 +84,18 @@ function PortalPageContent() {
   return (
     <>
       {/* Welcome Section */}
-      <GridSection variant="content" columns={1}>
-        <Container>
-          <Stack spacing="lg"  >
-            <Stack spacing="md" align="center">
-              <EditableHeading data-testid="portal-welcome-title" level={3} field="portal.welcome.title" defaultValue="👋 Welcome to Your Portal">👋 Welcome to Your Portal</EditableHeading>
-              <EditableText data-testid="portal-welcome-description" field="portal.welcome.description" defaultValue="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.">
-                Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.
-              </EditableText>
-            </Stack>
+      <Container maxWidth="full" padding="xl" variant="section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <EditableHeading field="portal.welcome.title" defaultValue="👋 Welcome to Your Portal" level={1} size="5xl" weight="bold" align="center" data-testid="portal-welcome-title">
+              👋 Welcome to Your Portal
+            </EditableHeading>
+            <EditableText field="portal.welcome.description" defaultValue="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away." variant="lead" align="center" size="lg" data-testid="portal-welcome-description">
+              Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.
+            </EditableText>
           </Stack>
-        </Container>
-      </GridSection>
+        </Stack>
+      </Container>
 
       {/* Portal Actions */}
       <GridSection variant="content" columns={1}>
