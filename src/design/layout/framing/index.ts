@@ -5,6 +5,7 @@
 export * from './Row';
 export * from './Col';
 export * from './Grid';
+export * from './Stack';
 export * from './types';
 
 // Container Components (from layout/containers)

@@ -1,14 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';
-import { SimpleLayout } from '@/ui';
-import { GridSection, LoadingSpinner, Text, Container } from '@/ui';
-import { Box } from '@/ui';
-import { Stack } from '@/ui';
 
 export default function EditBookingPage() {
   const params = useParams();
@@ -16,6 +13,7 @@ export default function EditBookingPage() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToast } = useToast();
 
   useEffect(() => {
     if (id) {
@@ -39,71 +37,100 @@ export default function EditBookingPage() {
 
   if (loading) {
     return (
-      <SimpleLayout>
+      <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
-          <Box variant="elevated" padding="lg">
-            <Stack spacing="md">
-              <Text size="lg" weight="bold">Loading...</Text>
-              <Text>Fetching booking details</Text>
-              <Container>
-                <LoadingSpinner text="Loading booking details..." />
-              </Container>
-            </Stack>
-          </Box>
+          <Container>
+            <LoadingSpinner />
+            <EditableText field="booking.edit.loading.message" defaultValue="Please wait while we fetch your booking details...">
+              Please wait while we fetch your booking details...
+            </EditableText>
+          </Container>
         </GridSection>
-      </SimpleLayout>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <SimpleLayout>
+      <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
-          <Box variant="elevated" padding="lg">
-            <Stack spacing="md">
-              <Text size="lg" weight="bold">❌ Error</Text>
-              <Text>Failed to load booking</Text>
-              <Text>
-                {error}
-              </Text>
-            </Stack>
-          </Box>
+          <Container>
+            <EditableText field="booking.edit.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
+              This could be due to an invalid booking ID or a temporary system issue.
+            </EditableText>
+            <ActionButtonGroup buttons={[
+              {
+                id: 'try-again',
+                label: 'Try Again',
+                onClick: () => window.location.reload(),
+                variant: 'primary',
+                icon: '🔄'
+              },
+              {
+                id: 'contact-support',
+                label: 'Contact Support',
+                onClick: () => addToast('info', 'Support: (203) 555-0123'),
+                variant: 'outline',
+                icon: '📞'
+              }
+            ]} />
+          </Container>
         </GridSection>
-      </SimpleLayout>
+      </Container>
     );
   }
 
   if (!booking) {
     return (
-      <SimpleLayout>
+      <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
-          <Box variant="elevated" padding="lg">
-            <Stack spacing="md">
-              <Text size="lg" weight="bold">❌ Booking Not Found</Text>
-              <Text>No booking found with the provided ID</Text>
-              <Text>
-                No booking found with the provided ID.
-              </Text>
-            </Stack>
-          </Box>
+          <Container>
+            <Text>
+              <EditableText field="booking.edit.not_found.title" defaultValue="❌ Booking Not Found">
+                ❌ Booking Not Found
+              </EditableText>
+            </Text>
+            <Text>
+              <EditableText field="booking.edit.not_found.description" defaultValue="No booking found with the provided ID">
+                No booking found with the provided ID
+              </EditableText>
+            </Text>
+            <ActionButtonGroup buttons={[
+              {
+                id: 'go-back',
+                label: 'Go Back',
+                onClick: () => window.history.back(),
+                variant: 'primary',
+                icon: '⬅️'
+              },
+              {
+                id: 'book-new-ride',
+                label: 'Book New Ride',
+                onClick: () => window.location.href = '/book',
+                variant: 'outline',
+                icon: '📅'
+              }
+            ]} />
+          </Container>
         </GridSection>
-      </SimpleLayout>
+      </Container>
     );
   }
 
   return (
-    <SimpleLayout>
+    <Container variant="default" padding="none">
       <GridSection variant="content" columns={1}>
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="md">
-            <Text size="lg" weight="bold">✏️ Edit Booking Details</Text>
-            <Text>Update your ride information</Text>
-            <Container>
-              <BookingForm booking={booking} />
-            </Container>
-          </Stack>
-        </Box>
+        <Container>
+          <Text>
+            <EditableText field="booking.edit.title" defaultValue="Edit Booking">
+              Edit Booking
+            </EditableText>
+          </Text>
+          <BookingForm 
+            booking={booking}
+          />
+        </Container>
       </GridSection>
-    </SimpleLayout>
+    </Container>
   );
 }

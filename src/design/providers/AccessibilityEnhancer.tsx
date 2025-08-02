@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Input, Select, Span, Link, Box, Stack } from '@/ui';
-import { Overlay } from '@/design/components/ui-components/Overlay';
+import { Overlay } from '@/design/components/base-components/Overlay';
 
 const AccessibilityToggleButton = styled.div`
   position: fixed;

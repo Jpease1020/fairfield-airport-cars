@@ -1,20 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { SimpleLayout } from '@/ui';
-import { 
-  GridSection,
-  ActionButtonGroup,
-  LoadingSpinner,
-  ToastProvider,
-  useToast,
-  Text,
-  Span,
-  Button,
-  Container,
-} from '@/ui';
-import { EditableText } from '@/ui';
+import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 
 function BookingStatusPageContent() {
   const params = useParams();
@@ -26,6 +14,7 @@ function BookingStatusPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [booking, setBooking] = useState<any>(null);
 
   const getStatusText = (status: any) => {
     const statusMap: { [key: string]: string } = {
@@ -58,6 +47,7 @@ function BookingStatusPageContent() {
         if (response.ok) {
           const data = await response.json();
           setStatus(data.status);
+          setBooking(data.booking);
           setEstimatedArrival(data.estimatedArrival ? new Date(data.estimatedArrival) : null);
         } else {
           setError('Failed to load booking status');
@@ -75,18 +65,21 @@ function BookingStatusPageContent() {
 
   const quickActions = [
     {
+      id: 'manage-booking',
       label: 'Manage Booking',
       onClick: () => window.location.href = `/manage/${bookingId}`,
       variant: 'primary' as const,
       icon: '📋'
     },
     {
+      id: 'contact-driver',
       label: 'Contact Driver',
       onClick: () => addToast('info', 'Driver contact feature coming soon'),
       variant: 'outline' as const,
       icon: '📞'
     },
     {
+      id: 'get-support',
       label: 'Get Support',
       onClick: () => addToast('info', 'Support: (203) 555-0123'),
       variant: 'outline' as const,
@@ -96,7 +89,7 @@ function BookingStatusPageContent() {
 
   if (loading) {
     return (
-      <SimpleLayout>
+      <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
@@ -105,13 +98,13 @@ function BookingStatusPageContent() {
             </EditableText>
           </Container>
         </GridSection>
-      </SimpleLayout>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <SimpleLayout>
+      <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
             <EditableText field="status.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
@@ -119,12 +112,14 @@ function BookingStatusPageContent() {
             </EditableText>
             <ActionButtonGroup buttons={[
               {
+                id: 'try-again',
                 label: 'Try Again',
                 onClick: () => window.location.reload(),
                 variant: 'primary',
                 icon: '🔄'
               },
               {
+                id: 'contact-support',
                 label: 'Contact Support',
                 onClick: () => addToast('info', 'Support: (203) 555-0123'),
                 variant: 'outline',
@@ -133,12 +128,12 @@ function BookingStatusPageContent() {
             ]} />
           </Container>
         </GridSection>
-      </SimpleLayout>
+      </Container>
     );
   }
 
   return (
-    <SimpleLayout>
+    <Container variant="default" padding="none">
       {/* Current Status */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -192,70 +187,66 @@ function BookingStatusPageContent() {
           >
             <EditableText field="status.showDetails.button" defaultValue={showDetails ? 'Hide' : 'Show'}>
               {showDetails ? 'Hide' : 'Show'}
-            </EditableText> 
-            <EditableText field="status.showDetails.text" defaultValue=" Booking Details">
-              Booking Details
+            </EditableText>
+            <EditableText field="status.showDetails.label" defaultValue=" booking details">
+              {' booking details'}
             </EditableText>
           </Button>
-
-          {showDetails && (
-            <Text>
-              <strong>
-                <EditableText field="status.details.bookingId" defaultValue="Booking ID:">
-                  Booking ID:
-                </EditableText>
-              </strong> {bookingId}<br />
-              <strong>
-                <EditableText field="status.details.status" defaultValue="Status:">
-                  Status:
-                </EditableText>
-              </strong> {getStatusText(status)}<br />
-              {estimatedArrival && (
-                <>
-                  <strong>
-                    <EditableText field="status.details.estimatedArrival" defaultValue="Estimated Arrival:">
-                      Estimated Arrival:
-                    </EditableText>
-                  </strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}<br />
-                </>
-              )}
-              <strong>
-                <EditableText field="status.details.support" defaultValue="Support:">
-                  Support:
-                </EditableText>
-              </strong> (203) 555-0123
-            </Text>
-          )}
         </Container>
       </GridSection>
 
-      {/* Status Timeline */}
-      <GridSection variant="content" columns={1}>
-        <Container>
-          <Text>
-            {[
-              { status: 'confirmed', label: 'Booking Confirmed', icon: '✅' },
-              { status: 'en-route', label: 'Driver En Route', icon: '👨‍💼' },
-              { status: 'arrived', label: 'Driver Arrived', icon: '📍' },
-              { status: 'completed', label: 'Trip Completed', icon: '🏁' }
-            ].map((step) => (
-              <Span key={step.status}>
-                {step.icon} 
-                <EditableText field={`status.timeline.${step.status}`} defaultValue={step.label}>
-                  {step.label}
-                </EditableText>
-                {getStatusText(status) === step.status && (
-                  <EditableText field="status.timeline.current" defaultValue=" (Current)">
-                    (Current)
+      {/* Booking Details */}
+      {showDetails && (
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <div>
+              <Text>
+                <strong>
+                  <EditableText field="status.bookingId.label" defaultValue="Booking ID:">
+                    Booking ID:
                   </EditableText>
-                )}
-                <br />
-              </Span>
-            ))}
-          </Text>
-        </Container>
-      </GridSection>
-    </SimpleLayout>
+                </strong> {bookingId}
+              </Text>
+              <Text>
+                <strong>
+                  <EditableText field="status.pickup.label" defaultValue="Pickup:">
+                    Pickup:
+                  </EditableText>
+                </strong> {booking?.pickupLocation || 'N/A'}
+              </Text>
+              <Text>
+                <strong>
+                  <EditableText field="status.dropoff.label" defaultValue="Dropoff:">
+                    Dropoff:
+                  </EditableText>
+                </strong> {booking?.dropoffLocation || 'N/A'}
+              </Text>
+              <Text>
+                <strong>
+                  <EditableText field="status.date.label" defaultValue="Date:">
+                    Date:
+                  </EditableText>
+                </strong> {booking?.date ? new Date(booking.date).toLocaleDateString() : 'N/A'}
+              </Text>
+              <Text>
+                <strong>
+                  <EditableText field="status.time.label" defaultValue="Time:">
+                    Time:
+                  </EditableText>
+                </strong> {booking?.time || 'N/A'}
+              </Text>
+              <Text>
+                <strong>
+                  <EditableText field="status.fare.label" defaultValue="Fare:">
+                    Fare:
+                  </EditableText>
+                </strong> ${booking?.fare || 'N/A'}
+              </Text>
+            </div>
+          </Container>
+        </GridSection>
+      )}
+    </Container>
   );
 }
 

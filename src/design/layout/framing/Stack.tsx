@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { spacing, transitions } from '@/design/system/tokens/tokens';
-import { StackProps } from './types';
+import { StackProps } from '../content/types';
 
 const StyledStack = styled.div.withConfig({
   shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'margin'].includes(prop)

@@ -190,6 +190,7 @@ function ManageBookingPageContent() {
             </Text>
             <ActionButtonGroup buttons={[
               {
+                id: 'book-new-ride',
                 label: 'Book a New Ride',
                 onClick: () => window.location.href = '/book',
                 variant: 'primary' as const,
@@ -204,12 +205,14 @@ function ManageBookingPageContent() {
 
   const actionButtons = [
     {
+      id: 'resend-confirmation',
       label: localContent?.resendButton || "Re-send Confirmation",
       onClick: handleResend,
       variant: 'outline' as const,
       icon: '📧'
     },
     {
+      id: 'view-status',
       label: localContent?.viewStatusButton || "View Status",
       onClick: () => router.push(`/status/${booking.id}`),
       variant: 'outline' as const,
@@ -220,6 +223,7 @@ function ManageBookingPageContent() {
   // Add cancel button if booking is not cancelled
   if (booking.status !== 'cancelled') {
     actionButtons.push({
+      id: 'cancel-ride',
       label: localContent?.cancelButton || "Cancel Ride",
       onClick: handleCancelBooking,
       variant: 'outline' as const,
@@ -230,6 +234,7 @@ function ManageBookingPageContent() {
   // Add pay balance button if there's a balance due
   if (booking.balanceDue > 0 && booking.status === 'completed') {
     actionButtons.push({
+      id: 'pay-balance',
       label: `${localContent?.payBalanceButton || "Pay Balance"} ($${booking.balanceDue.toFixed(2)})`,
       onClick: async () => {
         const res = await fetch('/api/complete-payment', { 
@@ -261,6 +266,7 @@ function ManageBookingPageContent() {
             {!editMode ? (
               <ActionButtonGroup buttons={[
                 {
+                  id: 'edit-mode',
                   label: 'Edit Mode',
                   onClick: () => setEditMode(true),
                   variant: 'primary' as const,
@@ -271,12 +277,14 @@ function ManageBookingPageContent() {
               <Container>
                 <ActionButtonGroup buttons={[
                   {
+                    id: 'save-changes',
                     label: 'Save Changes',
                     onClick: handleSave,
                     variant: 'primary' as const,
                     icon: '💾'
                   },
                   {
+                    id: 'cancel-edit',
                     label: 'Cancel',
                     onClick: handleCancel,
                     variant: 'outline' as const,

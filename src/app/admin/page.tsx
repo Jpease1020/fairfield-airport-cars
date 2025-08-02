@@ -15,7 +15,7 @@ import {
   Alert,
   H1,
   H2,
-  AdminPageTemplate
+  AdminPageWrapper
 } from '@/design/components';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
 
@@ -197,14 +197,41 @@ function AdminDashboardContent() {
     }
   ];
 
+  if (loading) {
+    return (
+      <AdminPageWrapper
+        title="Dashboard"
+        subtitle="Loading dashboard data..."
+      >
+        <Container>
+          <Stack direction="horizontal" spacing="md" align="center">
+            <LoadingSpinner />
+            <Text>Loading dashboard data...</Text>
+          </Stack>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminPageWrapper
+        title="Error Loading Dashboard"
+        subtitle={error}
+      >
+        <Container>
+          <Alert variant="error">
+            <Text>{error}</Text>
+          </Alert>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
   return (
-    <AdminPageTemplate
+    <AdminPageWrapper
       title="Dashboard"
       subtitle="Business overview and quick actions"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading dashboard data..."
-      errorTitle="Error Loading Dashboard"
     >
       <Stack spacing="xl">
         {/* Statistics Overview */}
@@ -298,7 +325,7 @@ function AdminDashboardContent() {
           </Stack>
         </Box>
       </Stack>
-    </AdminPageTemplate>
+    </AdminPageWrapper>
   );
 }
 

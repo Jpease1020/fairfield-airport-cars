@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   GridSection,
-  ActionButtonGroup,
   FeatureGrid,
   ToastProvider,
   useToast,
@@ -12,6 +11,7 @@ import {
   Container,
   Stack,
   Box,
+  Button,
   CustomerLayout
 } from '@/ui';
 import { EditableText, EditableHeading } from '@/ui';
@@ -133,7 +133,18 @@ function CancelPageContent() {
               </Text>
             </Stack>
             
-            <ActionButtonGroup data-testid="cancel-form-actions" buttons={quickActions} />
+            <Stack direction="horizontal" spacing="md" align="center" data-testid="cancel-form-actions">
+              {quickActions.map((action, index) => (
+                <Button
+                  key={index}
+                  variant={action.variant}
+                  onClick={action.onClick}
+                  disabled={action.disabled}
+                >
+                  {action.label}
+                </Button>
+              ))}
+            </Stack>
           </Stack>
         </Container>
       </GridSection>

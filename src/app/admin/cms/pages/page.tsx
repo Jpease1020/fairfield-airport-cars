@@ -14,8 +14,8 @@ import {
   HelpPageEditor
 } from "../PageEditors";
 import { EditableText } from '@/ui';
-import { useToast, ToastProvider } from "@/design/components/ui-components/notifications/Toast";
-import { StatusMessage } from "@/design/components/ui-components/notifications/StatusMessage";
+import { useToast, ToastProvider } from "@/design/components/base-components/notifications/Toast";
+import { StatusMessage } from "@/design/components/base-components/notifications/StatusMessage";
 import PageCommentWidget from "@/future-features/comment-system/PageCommentWidget";
 
 

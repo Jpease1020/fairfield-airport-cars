@@ -217,6 +217,7 @@ function CMSPageContent() {
                 
                 <ActionButtonGroup
                   buttons={[{
+                    id: `manage-${section.title.toLowerCase()}`,
                     label: `Manage ${section.title}`,
                     onClick: () => window.location.href = section.href,
                     variant: 'outline' as const,

@@ -6,7 +6,7 @@ import {
   Stack,
   H1,
   Text,
-  ActionButtonGroup
+  Button
 } from '@/ui';
 import { EditableText, EditableHeading } from '@/ui';
 
@@ -56,7 +56,17 @@ function AboutPageContent() {
             </EditableText>
           </Text>
           
-          <ActionButtonGroup buttons={ctaActions} />
+          <Stack direction="horizontal" spacing="md" align="center">
+            {ctaActions.map((action, index) => (
+              <Button
+                key={index}
+                variant={action.variant}
+                onClick={action.onClick}
+              >
+                {action.label}
+              </Button>
+            ))}
+          </Stack>
         </Stack>
       </Container>
     </>

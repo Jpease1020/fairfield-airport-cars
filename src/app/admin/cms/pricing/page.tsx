@@ -371,6 +371,7 @@ function PricingSettingsContent() {
               <ActionButtonGroup
                 buttons={[
                   {
+                    id: 'add-zone',
                     label: 'Add Zone',
                     onClick: addZone,
                     icon: '📍',
@@ -466,6 +467,7 @@ function PricingSettingsContent() {
                         <ActionButtonGroup
                           buttons={[
                             {
+                              id: `remove-zone-${index}`,
                               label: 'Remove Zone',
                               onClick: () => removeZone(index),
                               icon: '🗑️',

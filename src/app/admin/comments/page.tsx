@@ -5,7 +5,7 @@ import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/con
 import { AdminPageWrapper, GridSection, Box, Container, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
-import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
+import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/content-sections/DataTable';
 import withAuth from '../withAuth';
 
 function CommentsPageContent() {

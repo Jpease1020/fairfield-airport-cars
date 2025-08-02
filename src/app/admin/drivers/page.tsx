@@ -15,7 +15,7 @@ import {
   Alert,
   LoadingSpinner,
   H1,
-  AdminPageTemplate
+  AdminPageWrapper
 } from '@/design/components';
 
 function DriversPageContent() {
@@ -176,14 +176,41 @@ function DriversPageContent() {
     )
   }));
 
+  if (loading) {
+    return (
+      <AdminPageWrapper
+        title="Driver Management"
+        subtitle="Loading drivers from database..."
+      >
+        <Container>
+          <Stack direction="horizontal" spacing="md" align="center">
+            <LoadingSpinner />
+            <Text>Loading drivers from database...</Text>
+          </Stack>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminPageWrapper
+        title="Error Loading Drivers"
+        subtitle={error}
+      >
+        <Container>
+          <Alert variant="error">
+            <Text>{error}</Text>
+          </Alert>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
   return (
-    <AdminPageTemplate
+    <AdminPageWrapper
       title="Driver Management"
       subtitle="Manage driver profiles, availability, and assignments"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading drivers from database..."
-      errorTitle="Error Loading Drivers"
     >
       <Stack spacing="xl">
         {/* Status Filter */}
@@ -268,7 +295,7 @@ function DriversPageContent() {
           />
         )}
       </Stack>
-    </AdminPageTemplate>
+    </AdminPageWrapper>
   );
 }
 

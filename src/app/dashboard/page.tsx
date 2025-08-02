@@ -13,8 +13,9 @@ import {
   Button,
   LoadingSpinner,
   EditableText,
+  Alert,
 } from '@/ui';
-import { AdminPageTemplate, ContentCard, Grid } from '@/ui';
+import { AdminPageWrapper, ContentCard, Grid } from '@/ui';
 
 function CustomerDashboardContent() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -206,12 +207,41 @@ function CustomerDashboardContent() {
     </Stack>
   );
 
+  if (loading) {
+    return (
+      <AdminPageWrapper
+        title="Dashboard"
+        subtitle="Loading your profile..."
+      >
+        <Container>
+          <Stack direction="horizontal" spacing="md" align="center">
+            <LoadingSpinner />
+            <Text>Loading your profile...</Text>
+          </Stack>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminPageWrapper
+        title="Error Loading Dashboard"
+        subtitle={error}
+      >
+        <Container>
+          <Alert variant="error">
+            <Text>{error}</Text>
+          </Alert>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
   return (
-    <AdminPageTemplate
+    <AdminPageWrapper
       title={`Welcome back, ${profile.name}!`}
       subtitle="Manage your bookings and account"
-      loading={loading}
-      error={error}
     >
       <Stack spacing="xl">
         {/* Stats */}
@@ -270,7 +300,7 @@ function CustomerDashboardContent() {
           />
         </Stack>
       </Stack>
-    </AdminPageTemplate>
+    </AdminPageWrapper>
   );
 }
 

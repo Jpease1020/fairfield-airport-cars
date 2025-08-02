@@ -7,7 +7,7 @@ import {
   H1,
   H2,
   Text,
-  ActionButtonGroup,
+  Button,
   Box,
   CustomerLayout
 } from '@/ui';
@@ -103,7 +103,17 @@ function HelpPageContent() {
               </EditableText>
             </Text>
             
-            <ActionButtonGroup buttons={contactActions} spacing="md" />
+            <Stack direction="horizontal" spacing="md" align="center">
+              {contactActions.map((action, index) => (
+                <Button
+                  key={index}
+                  variant={action.variant}
+                  onClick={action.onClick}
+                >
+                  {action.label}
+                </Button>
+              ))}
+            </Stack>
           </Stack>
         </Container>
       

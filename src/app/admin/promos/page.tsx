@@ -361,6 +361,7 @@ function PromosPageContent() {
           <Container>
             <ActionButtonGroup
               buttons={[{
+                id: 'create-promo-code',
                 label: submitting ? 'Creating...' : 'Create Promo Code',
                 onClick: addPromo,
                 variant: 'primary' as const,

@@ -7,8 +7,8 @@ import {
   Stack,
   Box,
   GridSection,
-  ActionButtonGroup,
-  Text
+  Text,
+  Button
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { ToastProvider, useToast } from '@/ui';
@@ -93,14 +93,14 @@ function AddContentPage() {
                   <Stack spacing="md">
                     <Text size="lg" weight="bold">{page.icon} {page.title}</Text>
                     <Text variant="muted">{page.description}</Text>
-                    <ActionButtonGroup
-                      buttons={[{
-                        label: "Edit Content",
-                        onClick: () => handleNavigateToCMS(page.href),
-                        variant: 'primary' as const,
-                        icon: page.icon
-                      }]}
-                    />
+                    <Stack direction="horizontal" spacing="md" align="center">
+                      <Button
+                        variant="primary"
+                        onClick={() => handleNavigateToCMS(page.href)}
+                      >
+                        {page.icon} Edit Content
+                      </Button>
+                    </Stack>
                   </Stack>
                 </Container>
               </Box>
