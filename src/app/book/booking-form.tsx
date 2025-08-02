@@ -14,14 +14,28 @@ import {
   Form,
   ToastProvider,
   LoadingSpinner,
-  EditableText
+  EditableText,
 } from '@/ui';
-import { Input, Select, Label } from '@/ui';
+import { Input, Select, Label, Textarea } from '@/ui';
 import { Booking } from '@/types/booking';
 
 interface BookingFormProps {
   booking?: Booking;
 }
+
+// Vehicle and service options
+const VEHICLE_OPTIONS = [
+  { value: 'sedan', label: 'Sedan', description: 'Comfortable 4-seater', price: 0 },
+  { value: 'suv', label: 'SUV', description: 'Spacious 6-seater', price: 15 },
+  { value: 'luxury', label: 'Luxury', description: 'Premium vehicle', price: 25 },
+  { value: 'van', label: 'Van', description: 'Large group transport', price: 20 }
+];
+
+const SERVICE_LEVELS = [
+  { value: 'standard', label: 'Standard', description: 'Reliable airport transfer', price: 0 },
+  { value: 'premium', label: 'Premium', description: 'Enhanced service with amenities', price: 20 },
+  { value: 'luxury', label: 'Luxury', description: 'Ultimate comfort experience', price: 40 }
+];
 
 const useGoogleMapsScript = (apiKey: string) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -76,20 +90,37 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const [dropoffLocation, setDropoffLocation] = useState(booking?.dropoffLocation || '');
   const [pickupDateTime, setPickupDateTime] = useState(booking?.pickupDateTime ? new Date(booking.pickupDateTime).toISOString().slice(0, 16) : '');
   const [passengers, setPassengers] = useState(booking?.passengers || 1);
-  const [flightNumber, setFlightNumber] = useState(booking?.flightNumber || '');
+  const [flightNumber] = useState(booking?.flightNumber || '');
   const [notes, setNotes] = useState(booking?.notes || '');
   const [fare, setFare] = useState<number | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
+  const [_success, setSuccess] = useState<string | null>(null);
   const [pickupSuggestions, setPickupSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [dropoffSuggestions, setDropoffSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [showPickupSuggestions, setShowPickupSuggestions] = useState(false);
   const [showDropoffSuggestions, setShowDropoffSuggestions] = useState(false);
 
+  // Enhanced booking options
+  const [selectedVehicle, setSelectedVehicle] = useState('sedan');
+  const [selectedServiceLevel, setSelectedServiceLevel] = useState('standard');
+  const [specialRequests, setSpecialRequests] = useState({
+    childSeat: false,
+    wheelchair: false,
+    extraLuggage: false,
+    meetAndGreet: false,
+    flightTracking: false
+  });
+  const [flightInfo, setFlightInfo] = useState({
+    airline: '',
+    flightNumber: '',
+    arrivalTime: '',
+    terminal: ''
+  });
+
   const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMapsScript(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '');
 
-  const getPlacePredictions = async (input: string, callback: (predictions: google.maps.places.AutocompletePrediction[]) => void) => {
+  const getPlacePredictions = async (input: string, callback: (_predictions: google.maps.places.AutocompletePrediction[]) => void) => {
     if (!mapsLoaded || typeof window === 'undefined' || !window.google) {
       callback([]);
       return;
@@ -98,9 +129,17 @@ function BookingFormContent({ booking }: BookingFormProps) {
     try {
       const service = new window.google.maps.places.AutocompleteService();
       service.getPlacePredictions(
-        { input, componentRestrictions: { country: 'us' } },
-        (predictions) => {
-          callback(predictions || []);
+        {
+          input,
+          types: ['establishment', 'geocode'],
+          componentRestrictions: { country: 'us' }
+        },
+        (predictions, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+            callback(predictions);
+          } else {
+            callback([]);
+          }
         }
       );
     } catch (error) {
@@ -109,7 +148,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     }
   };
 
-  function debounce<T extends (...args: Parameters<T>) => void>(func: T, delay: number) {
+  function debounce<T extends (..._args: Parameters<T>) => void>(func: T, delay: number) {
     let timeoutId: NodeJS.Timeout;
     return (...args: Parameters<T>) => {
       clearTimeout(timeoutId);
@@ -119,35 +158,27 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
   const handlePickupInputChange = (value: string) => {
     setPickupLocation(value);
-    setShowPickupSuggestions(false);
+    setShowPickupSuggestions(value.length > 2);
     
     if (value.length > 2) {
-      const debouncedSearch = debounce(async (input: string) => {
-        const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve) => {
-          getPlacePredictions(input, resolve);
-        });
-        setPickupSuggestions(predictions);
-        setShowPickupSuggestions(true);
-      }, 300);
-      
-      debouncedSearch(value);
+      debounce(() => {
+        getPlacePredictions(value, setPickupSuggestions);
+      }, 300)();
+    } else {
+      setPickupSuggestions([]);
     }
   };
 
   const handleDropoffInputChange = (value: string) => {
     setDropoffLocation(value);
-    setShowDropoffSuggestions(false);
+    setShowDropoffSuggestions(value.length > 2);
     
     if (value.length > 2) {
-      const debouncedSearch = debounce(async (input: string) => {
-        const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve) => {
-          getPlacePredictions(input, resolve);
-        });
-        setDropoffSuggestions(predictions);
-        setShowDropoffSuggestions(true);
-      }, 300);
-      
-      debouncedSearch(value);
+      debounce(() => {
+        getPlacePredictions(value, setDropoffSuggestions);
+      }, 300)();
+    } else {
+      setDropoffSuggestions([]);
     }
   };
 
@@ -165,7 +196,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
   const handleCalculateFare = async () => {
     if (!pickupLocation || !dropoffLocation || !pickupDateTime) {
-      setError('Please fill in pickup and dropoff locations and pickup date/time');
+      setError('Please fill in pickup location, dropoff location, and pickup time to calculate fare');
       return;
     }
 
@@ -173,7 +204,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/estimate-fare', {
+      const response = await fetch('/api/booking/estimate-fare', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -183,6 +214,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
           dropoffLocation,
           pickupDateTime,
           passengers,
+          vehicleType: selectedVehicle,
+          serviceLevel: selectedServiceLevel,
+          specialRequests
         }),
       });
 
@@ -192,7 +226,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
       const data = await response.json();
       setFare(data.fare);
-      setSuccess('Fare calculated successfully!');
     } catch (error) {
       console.error('Error calculating fare:', error);
       setError('Failed to calculate fare. Please try again.');
@@ -229,6 +262,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
           flightNumber,
           notes,
           fare,
+          vehicleType: selectedVehicle,
+          serviceLevel: selectedServiceLevel,
+          specialRequests,
+          flightInfo: specialRequests.flightTracking ? flightInfo : null
         }),
       });
 
@@ -252,6 +289,20 @@ function BookingFormContent({ booking }: BookingFormProps) {
       console.error('Error creating booking:', error);
       setError('Failed to create booking. Please try again.');
     }
+  };
+
+  const handleSpecialRequestChange = (request: string, checked: boolean) => {
+    setSpecialRequests(prev => ({
+      ...prev,
+      [request]: checked
+    }));
+  };
+
+  const getTotalFare = () => {
+    if (!fare) return 0;
+    const vehiclePrice = VEHICLE_OPTIONS.find(v => v.value === selectedVehicle)?.price || 0;
+    const servicePrice = SERVICE_LEVELS.find(s => s.value === selectedServiceLevel)?.price || 0;
+    return fare + vehiclePrice + servicePrice;
   };
 
   if (mapsError) {
@@ -292,7 +343,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       placeholder="Enter your full name"
                       data-testid="name-input"
                       fullWidth
-                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
@@ -308,7 +358,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       placeholder="Enter your email"
                       data-testid="email-input"
                       fullWidth
-                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
@@ -323,7 +372,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       placeholder="(123) 456-7890"
                       data-testid="phone-input"
                       fullWidth
-                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
@@ -351,7 +399,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       placeholder="Enter pickup address"
                       data-testid="pickup-location-input"
                       fullWidth
-                      style={{ width: '100%' }}
                     />
                   </Stack>
                   {showPickupSuggestions && pickupSuggestions.length > 0 && (
@@ -382,7 +429,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       placeholder="Enter dropoff address"
                       data-testid="dropoff-location-input"
                       fullWidth
-                      style={{ width: '100%' }}
                     />
                   </Stack>
                   {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
@@ -411,72 +457,25 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       type="datetime-local"
                       value={pickupDateTime}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPickupDateTime(e.target.value)}
-                      required
                       data-testid="pickup-datetime-input"
                       fullWidth
-                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
                 
-                <GridItem>
-                  <Stack spacing="sm">
-                    <Label htmlFor="flightNumber">Flight Number (Optional)</Label>
-                    <Input
-                      id="flightNumber"
-                      value={flightNumber}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFlightNumber(e.target.value)}
-                      placeholder="e.g., AA123"
-                      data-testid="flight-number-input"
-                      fullWidth
-                      style={{ width: '100%' }}
-                    />
-                  </Stack>
-                </GridItem>
-              </Grid>
-            </Stack>
-          </Box>
-
-          {/* Additional Information */}
-          <Box variant="elevated" padding="lg">
-            <Stack spacing="lg">
-              <H2 align="center">
-                <EditableText field="booking.additionalDetails.title" defaultValue="Additional Information">
-                  Additional Information
-                </EditableText>
-              </H2>
-              
-              <Grid cols={1} gap="md" responsive>
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="passengers">Number of Passengers</Label>
                     <Select
                       id="passengers"
                       value={passengers.toString()}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(Number(e.target.value))}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(parseInt(e.target.value))}
                       data-testid="passengers-select"
                       fullWidth
-                      style={{ width: '100%' }}
-                      size="lg"
                       options={[1, 2, 3, 4, 5, 6, 7, 8].map(num => ({
                         value: num.toString(),
-                        label: `${num} passenger${num > 1 ? 's' : ''}`
+                        label: `${num} ${num === 1 ? 'passenger' : 'passengers'}`
                       }))}
-                    />
-                  </Stack>
-                </GridItem>
-                
-                <GridItem>
-                  <Stack spacing="sm">
-                    <Label htmlFor="notes">Special Requests</Label>
-                    <Input
-                      id="notes"
-                      value={notes}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNotes(e.target.value)}
-                      placeholder="Wheelchair, extra luggage, etc."
-                      data-testid="notes-input"
-                      fullWidth
-                      style={{ width: '100%' }}
                     />
                   </Stack>
                 </GridItem>
@@ -484,87 +483,319 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </Stack>
           </Box>
 
-          {/* Fare Calculation */}
-          {fare !== null && (
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="md" align="center">
-                <H2 align="center">
-                  <EditableText field="booking.fare.title" defaultValue="Estimated Fare">
-                    Estimated Fare
-                  </EditableText>
-                </H2>
-                <Text 
-                  variant="lead" 
-                  size="xl" 
-                  color="primary"
-                  weight="bold"
-                  data-testid="fare-amount"
-                >
-                  ${fare?.toFixed(2) || '0.00'}
-                </Text>
-              </Stack>
-            </Box>
-          )}
-
-          {/* Error and Success Messages */}
-          {error && (
-            <StatusMessage 
-              type="error" 
-              message={error} 
-              id="error-message" 
-              data-testid="error-message" 
-            />
-          )}
-          
-          {success && (
-            <StatusMessage 
-              type="success" 
-              message={success} 
-              id="success-message" 
-              data-testid="success-message" 
-            />
-          )}
-        </Stack>
-        <Container>
-        {/* Action Buttons */}
-        <Stack spacing="lg" align="center">
-            <Button
-              type="button"
-              onClick={handleCalculateFare}
-              disabled={isCalculating || !pickupLocation || !dropoffLocation || !pickupDateTime}
-              variant="outline"
-              data-testid="calculate-fare-button"
-              size="lg"
-              fullWidth
-            >
-              {isCalculating ? (
-                <>
-                  <LoadingSpinner />
-                  <EditableText field="booking.calculatingButton" defaultValue="Calculating...">
-                    Calculating...
-                  </EditableText>
-                </>
-              ) : (
-                <EditableText field="booking.calculateButton" defaultValue="Calculate Fare">
-                  Calculate Fare
+          {/* Vehicle & Service Selection */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 align="center">
+                <EditableText field="booking.vehicleService.title" defaultValue="Vehicle & Service Options">
+                  Vehicle & Service Options
                 </EditableText>
+              </H2>
+              
+              <Grid cols={2} gap="lg" responsive>
+                <GridItem>
+                  <Stack spacing="md">
+                    <Text weight="bold">Vehicle Type</Text>
+                    {VEHICLE_OPTIONS.map((vehicle) => (
+                      <Stack key={vehicle.value} direction="horizontal" align="center" spacing="sm">
+                        <input
+                          type="radio"
+                          id={`vehicle-${vehicle.value}`}
+                          name="vehicle"
+                          value={vehicle.value}
+                          checked={selectedVehicle === vehicle.value}
+                          onChange={(e) => setSelectedVehicle(e.target.value)}
+                        />
+                        <Stack spacing="xs">
+                          <Label htmlFor={`vehicle-${vehicle.value}`}>
+                            {vehicle.label} {vehicle.price > 0 && `(+$${vehicle.price})`}
+                          </Label>
+                          <Text variant="muted" size="sm">{vehicle.description}</Text>
+                        </Stack>
+                      </Stack>
+                    ))}
+                  </Stack>
+                </GridItem>
+                
+                <GridItem>
+                  <Stack spacing="md">
+                    <Text weight="bold">Service Level</Text>
+                    {SERVICE_LEVELS.map((service) => (
+                      <Stack key={service.value} direction="horizontal" align="center" spacing="sm">
+                        <input
+                          type="radio"
+                          id={`service-${service.value}`}
+                          name="service"
+                          value={service.value}
+                          checked={selectedServiceLevel === service.value}
+                          onChange={(e) => setSelectedServiceLevel(e.target.value)}
+                        />
+                        <Stack spacing="xs">
+                          <Label htmlFor={`service-${service.value}`}>
+                            {service.label} {service.price > 0 && `(+$${service.price})`}
+                          </Label>
+                          <Text variant="muted" size="sm">{service.description}</Text>
+                        </Stack>
+                      </Stack>
+                    ))}
+                  </Stack>
+                </GridItem>
+              </Grid>
+            </Stack>
+          </Box>
+
+          {/* Special Requests */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 align="center">
+                <EditableText field="booking.specialRequests.title" defaultValue="Special Requests">
+                  Special Requests
+                </EditableText>
+              </H2>
+              
+              <Grid cols={2} gap="md" responsive>
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <input
+                        type="checkbox"
+                        id="childSeat"
+                        checked={specialRequests.childSeat}
+                        onChange={(e) => handleSpecialRequestChange('childSeat', e.target.checked)}
+                      />
+                      <Label htmlFor="childSeat">Child Seat Required</Label>
+                    </Stack>
+                  </Stack>
+                </GridItem>
+                
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <input
+                        type="checkbox"
+                        id="wheelchair"
+                        checked={specialRequests.wheelchair}
+                        onChange={(e) => handleSpecialRequestChange('wheelchair', e.target.checked)}
+                      />
+                      <Label htmlFor="wheelchair">Wheelchair Accessible</Label>
+                    </Stack>
+                  </Stack>
+                </GridItem>
+                
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <input
+                        type="checkbox"
+                        id="extraLuggage"
+                        checked={specialRequests.extraLuggage}
+                        onChange={(e) => handleSpecialRequestChange('extraLuggage', e.target.checked)}
+                      />
+                      <Label htmlFor="extraLuggage">Extra Luggage Space</Label>
+                    </Stack>
+                  </Stack>
+                </GridItem>
+                
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <input
+                        type="checkbox"
+                        id="meetAndGreet"
+                        checked={specialRequests.meetAndGreet}
+                        onChange={(e) => handleSpecialRequestChange('meetAndGreet', e.target.checked)}
+                      />
+                      <Label htmlFor="meetAndGreet">Meet & Greet Service</Label>
+                    </Stack>
+                  </Stack>
+                </GridItem>
+                
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Stack direction="horizontal" align="center" spacing="sm">
+                      <input
+                        type="checkbox"
+                        id="flightTracking"
+                        checked={specialRequests.flightTracking}
+                        onChange={(e) => handleSpecialRequestChange('flightTracking', e.target.checked)}
+                      />
+                      <Label htmlFor="flightTracking">Flight Tracking</Label>
+                    </Stack>
+                  </Stack>
+                </GridItem>
+              </Grid>
+
+              {/* Flight Information (if flight tracking is selected) */}
+              {specialRequests.flightTracking && (
+                <Box variant="outlined" padding="md">
+                  <Stack spacing="md">
+                    <Text weight="bold">Flight Information</Text>
+                    <Grid cols={2} gap="md" responsive>
+                      <GridItem>
+                        <Stack spacing="sm">
+                          <Label htmlFor="airline">Airline</Label>
+                          <Input
+                            id="airline"
+                            value={flightInfo.airline}
+                            onChange={(e) => setFlightInfo(prev => ({ ...prev, airline: e.target.value }))}
+                            placeholder="e.g., Delta Airlines"
+                            fullWidth
+                          />
+                        </Stack>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Stack spacing="sm">
+                          <Label htmlFor="flightNumber">Flight Number</Label>
+                          <Input
+                            id="flightNumber"
+                            value={flightInfo.flightNumber}
+                            onChange={(e) => setFlightInfo(prev => ({ ...prev, flightNumber: e.target.value }))}
+                            placeholder="e.g., DL1234"
+                            fullWidth
+                          />
+                        </Stack>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Stack spacing="sm">
+                          <Label htmlFor="arrivalTime">Arrival Time</Label>
+                                                     <Input
+                             id="arrivalTime"
+                             type="text"
+                             value={flightInfo.arrivalTime}
+                             onChange={(e) => setFlightInfo(prev => ({ ...prev, arrivalTime: e.target.value }))}
+                             placeholder="HH:MM"
+                             fullWidth
+                           />
+                        </Stack>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Stack spacing="sm">
+                          <Label htmlFor="terminal">Terminal</Label>
+                          <Input
+                            id="terminal"
+                            value={flightInfo.terminal}
+                            onChange={(e) => setFlightInfo(prev => ({ ...prev, terminal: e.target.value }))}
+                            placeholder="e.g., Terminal 1"
+                            fullWidth
+                          />
+                        </Stack>
+                      </GridItem>
+                    </Grid>
+                  </Stack>
+                </Box>
               )}
-            </Button>
-            
-            <Button
-              type="submit"
-              disabled={!name || !email || !phone || !pickupLocation || !dropoffLocation || !pickupDateTime || isCalculating}
-              variant="primary"
-              data-testid="book-now-button"
-              size="lg"
-              fullWidth
-            >
-              <EditableText field="booking.submitButton" defaultValue="Book Now">
-                Book Now
-              </EditableText>
-            </Button>
-          </Stack>
-          </Container>
+            </Stack>
+          </Box>
+
+          {/* Additional Notes */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 align="center">
+                <EditableText field="booking.notes.title" defaultValue="Additional Notes">
+                  Additional Notes
+                </EditableText>
+              </H2>
+              
+              <Grid cols={1} gap="md" responsive>
+                <GridItem>
+                  <Stack spacing="sm">
+                    <Label htmlFor="notes">Special Instructions</Label>
+                    <Textarea
+                      id="notes"
+                      value={notes}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
+                      placeholder="Any special instructions or requests..."
+                      rows={4}
+                      fullWidth
+                    />
+                  </Stack>
+                </GridItem>
+              </Grid>
+            </Stack>
+          </Box>
+
+          {/* Fare Calculation & Submit */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 align="center">
+                <EditableText field="booking.fare.title" defaultValue="Fare & Booking">
+                  Fare & Booking
+                </EditableText>
+              </H2>
+              
+              <Stack spacing="md">
+                {fare && (
+                  <Box variant="outlined" padding="md">
+                    <Stack spacing="sm">
+                      <Text weight="bold">Estimated Fare Breakdown</Text>
+                      <Stack spacing="xs">
+                        <Stack direction="horizontal" justify="space-between">
+                          <Text>Base Fare:</Text>
+                          <Text>${fare.toFixed(2)}</Text>
+                        </Stack>
+                                                 {(() => {
+                           const vehicle = VEHICLE_OPTIONS.find(v => v.value === selectedVehicle);
+                           return vehicle && vehicle.price > 0 ? (
+                             <Stack direction="horizontal" justify="space-between">
+                               <Text>Vehicle Upgrade:</Text>
+                               <Text>+${vehicle.price.toFixed(2)}</Text>
+                             </Stack>
+                           ) : null;
+                         })()}
+                         {(() => {
+                           const service = SERVICE_LEVELS.find(s => s.value === selectedServiceLevel);
+                           return service && service.price > 0 ? (
+                             <Stack direction="horizontal" justify="space-between">
+                               <Text>Service Level:</Text>
+                               <Text>+${service.price.toFixed(2)}</Text>
+                             </Stack>
+                           ) : null;
+                         })()}
+                        <Stack direction="horizontal" justify="space-between">
+                          <Text weight="bold">Total:</Text>
+                          <Text weight="bold">${getTotalFare().toFixed(2)}</Text>
+                        </Stack>
+                      </Stack>
+                    </Stack>
+                  </Box>
+                )}
+                
+                <Stack direction="horizontal" spacing="md">
+                  <Button
+                    type="button"
+                    onClick={handleCalculateFare}
+                    disabled={isCalculating || !pickupLocation || !dropoffLocation || !pickupDateTime}
+                    variant="outline"
+                    fullWidth
+                  >
+                    {isCalculating ? (
+                      <>
+                        <LoadingSpinner size="sm" />
+                        Calculating...
+                      </>
+                    ) : (
+                      'Calculate Fare'
+                    )}
+                  </Button>
+                  
+                  <Button
+                    type="submit"
+                    disabled={!fare || isCalculating}
+                    variant="primary"
+                    fullWidth
+                  >
+                    <EditableText field="booking.submit" defaultValue="Book Now">
+                      Book Now
+                    </EditableText>
+                  </Button>
+                </Stack>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
       </Form>
     </Container>
   );
