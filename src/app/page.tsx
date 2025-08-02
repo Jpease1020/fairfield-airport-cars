@@ -76,7 +76,7 @@ function HomePageContent() {
       />
 
       {/* Features Section */}
-      <Container maxWidth="xl" padding="xl" data-testid="home-features-section">
+      <Container maxWidth="xl" padding="xl" variant="section" marginTop="xl" data-testid="home-features-section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
             <H2 align="center">Why Choose Fairfield Airport Cars</H2>
@@ -89,7 +89,7 @@ function HomePageContent() {
             data-testid="features-stack"
           >
           {features.map((feature, index) => (
-            <Container key={index} variant="default" padding="lg">
+            <Container key={index} variant="elevated" padding="lg">
               <Stack direction="vertical" spacing="md" align="center">
                 <Container>
                   <Text size="xl">{feature.icon}</Text>

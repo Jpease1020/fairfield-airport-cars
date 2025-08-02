@@ -62,7 +62,7 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({
         return (
           <Col key={feature.id || index}>
             {showCards ? (
-              <Box variant="default" padding="lg">
+              <Box variant="elevated" padding="lg">
                 <Stack direction="vertical" spacing="md" align="center">
                   <Container>
                     <Text size="xl">{feature.icon}</Text>

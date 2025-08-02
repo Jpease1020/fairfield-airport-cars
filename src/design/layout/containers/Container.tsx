@@ -7,7 +7,7 @@ import { colors, spacing, borderRadius, shadows, transitions } from '@/design/sy
 // Core Container component - foundational layout component
 interface ContainerProps {
   children: React.ReactNode;
-  variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated';
+  variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -21,7 +21,7 @@ interface ContainerProps {
 const StyledContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['variant', 'maxWidth', 'padding', 'margin', 'marginTop', 'marginBottom', 'spacing'].includes(prop)
 })<{
-  variant: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated';
+  variant: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
   maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -182,6 +182,33 @@ const StyledContainer = styled.div.withConfig({
           border: 1px solid ${colors.border.default};
           border-radius: ${borderRadius.default};
           box-shadow: ${shadows.lg};
+          cursor: pointer;
+          transition: all ${transitions.default};
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: ${shadows.xl};
+            border-color: ${colors.border.focus};
+          }
+        `;
+      case 'feature':
+        return `
+          background-color: ${colors.background.secondary};
+          border: 1px solid ${colors.border.default};
+          border-radius: ${borderRadius.default};
+          box-shadow: ${shadows.default};
+          cursor: pointer;
+          transition: all ${transitions.default};
+          
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: ${shadows.lg};
+            border-color: ${colors.border.focus};
+          }
+        `;
+      case 'hero':
+        return `
+          background-color: ${colors.primary[100]};
         `;
       default:
         return `
