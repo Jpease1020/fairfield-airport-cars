@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/utils/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/lib/utils/firebase';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -24,100 +25,39 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [commentMode, setCommentMode] = useState(false);
-  const [localStorageChecked, setLocalStorageChecked] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Log state changes
-  useEffect(() => {
-    //console.log('🔧 AdminProvider - isAdmin state changed to:', isAdmin);
-  }, [isAdmin]);
-
-  // Check for admin mode in localStorage and URL params
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Check for admin mode in URL params
-      const urlParams = new URLSearchParams(window.location.search);
-      const adminMode = urlParams.get('admin');
-      
-      // Check for admin mode in localStorage
-      const localStorageAdmin = localStorage.getItem('admin-mode');
-      
-      // Check if we're in development mode
-      const isDev = process.env.NODE_ENV === 'development';
-      
-      // Also check if we're on localhost (fallback for development)
-      const isLocalhost = window.location.hostname === 'localhost' || 
-                         window.location.hostname === '127.0.0.1' ||
-                         window.location.hostname.includes('localhost');
-           
-      // Enable admin mode if any condition is met
-      if (adminMode === 'true' || localStorageAdmin === 'true' || isDev || isLocalhost) {
-        setIsAdmin(true);
-        setLocalStorageChecked(true);
-        
-        // Set localStorage for persistence in development
-        if ((isDev || isLocalhost) && !localStorageAdmin) {
-          localStorage.setItem('admin-mode', 'true');
-        }
-      } else {
-        // In development, always enable admin mode
-        if (isDev || isLocalhost) {
-          setIsAdmin(true);
-          localStorage.setItem('admin-mode', 'true');
-        }
-        setLocalStorageChecked(true);
+  // Check if user has admin role in Firestore
+  const checkAdminRole = async (user: User) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return userData.role === 'admin' || 
+               (userData.permissions && userData.permissions.includes('admin'));
       }
+      return false;
+    } catch (error) {
+      console.error('Error checking admin role:', error);
+      return false;
     }
-  }, []);
+  };
 
-  // Listen for localStorage changes
+  // Admin detection from Firebase auth
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const handleStorageChange = (e: StorageEvent) => {
-        if (e.key === 'admin-mode') {
-          if (e.newValue === 'true') {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
-          }
-        }
-      };
-
-      window.addEventListener('storage', handleStorageChange);
-      return () => window.removeEventListener('storage', handleStorageChange);
-    }
-  }, []);
-
-  // Admin detection from Firebase auth (only if not already admin from localStorage)
-  useEffect(() => {
-    // Don't run Firebase auth check if we haven't checked localStorage yet
-    if (!localStorageChecked) {
-      return;
-    }
-
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      
-      // ALWAYS check localStorage first - if it's true, keep admin mode regardless of Firebase
-      if (typeof window !== 'undefined') {
-        const localStorageAdmin = localStorage.getItem('admin-mode');
-        if (localStorageAdmin === 'true') {
-          setIsAdmin(true);
-          return; // Exit early - don't let Firebase override this
-        }
-      }
-      
-      // Only check Firebase auth if localStorage is not 'true'
-      if (user && (
-        user.email === 'justin@fairfieldairportcar.com' || 
-        user.email === 'gregg@fairfieldairportcar.com' ||
-        user.email === 'justinpease@gmail.com'
-      )) {
-        setIsAdmin(true);
+    const unsub = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user) {
+        // Check if user has admin role in Firestore
+        const hasAdminRole = await checkAdminRole(user);
+        setIsAdmin(hasAdminRole);
       } else {
         setIsAdmin(false);
       }
+      setLoading(false);
     });
+    
     return () => unsub();
-  }, [localStorageChecked]);
+  }, []);
 
   // Handle comment mode toggle
   const toggleCommentMode = () => {
@@ -157,6 +97,15 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
     toggleEditMode,
     toggleCommentMode,
   };
+
+  // Show loading state while checking admin status
+  if (loading) {
+    return (
+      <AdminContext.Provider value={value}>
+        {children}
+      </AdminContext.Provider>
+    );
+  }
 
   return (
     <AdminContext.Provider value={value}>

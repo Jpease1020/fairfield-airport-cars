@@ -1,84 +1,61 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { onAuthChange, authService } from '@/lib/services/auth-service';
-import { User as FirebaseUser } from 'firebase/auth';
-import { 
-  Container,
-  Stack,
-  Text,
-  Button,
-  LoadingSpinner,
-  Alert
-} from '@/ui';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { authService } from '@/lib/services/auth-service';
+import { Container, Stack, H1, Text, Button } from '@/ui';
 
 export default function AdminSetupPage() {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [settingAdmin, setSettingAdmin] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthChange((firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-      } else {
-        router.push('/login');
-      }
-      setLoading(false);
-    });
-
-    return () => {
-      if (typeof unsubscribe === 'function') {
-        unsubscribe();
-      }
-    };
-  }, [router]);
+  const { user, isLoggedIn } = useAuth();
+  const [isSettingAdmin, setIsSettingAdmin] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleSetAsAdmin = async () => {
-    if (!user) return;
-    
-    setSettingAdmin(true);
-    setMessage(null);
-    setError(null);
+    if (!user) {
+      setMessage('❌ You must be logged in to set admin access');
+      return;
+    }
+
+    setIsSettingAdmin(true);
+    setMessage('');
 
     try {
       const success = await authService.setUserAsAdmin(user.uid);
       if (success) {
-        setMessage('Successfully set as admin! Redirecting to admin dashboard...');
-        setTimeout(() => {
-          router.push('/admin');
-        }, 2000);
+        setMessage('✅ Successfully set as admin! You can now access admin pages.');
       } else {
-        setError('Failed to set as admin. Please try again.');
+        setMessage('❌ Failed to set admin access. Please try again.');
       }
-    } catch (err) {
-      setError('Error setting as admin: ' + (err as Error).message);
+    } catch (error) {
+      console.error('Error setting admin:', error);
+      setMessage('❌ Error setting admin access. Please try again.');
     } finally {
-      setSettingAdmin(false);
+      setIsSettingAdmin(false);
     }
   };
 
-  if (loading) {
-    return (
-      <Container>
-        <Stack spacing="xl" align="center">
-          <LoadingSpinner size="lg" />
-          <Text>Loading...</Text>
-        </Stack>
-      </Container>
-    );
-  }
+  const handleCheckAdminStatus = async () => {
+    if (!user) {
+      setMessage('❌ You must be logged in to check admin status');
+      return;
+    }
 
-  if (!user) {
+    try {
+      const isAdmin = await authService.isAdmin(user.uid);
+      setMessage(isAdmin ? '👑 You are already an admin!' : '❌ You are not an admin yet.');
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setMessage('❌ Error checking admin status.');
+    }
+  };
+
+  if (!isLoggedIn) {
     return (
       <Container>
-        <Stack spacing="xl" align="center">
-          <Text>Please log in to access admin setup.</Text>
-          <Button onClick={() => router.push('/login')}>
+        <Stack spacing="xl" align="center" justify="center">
+          <H1>Admin Setup</H1>
+          <Text>You must be logged in to set up admin access.</Text>
+          <Button href="/login" variant="primary">
             Go to Login
           </Button>
         </Stack>
@@ -87,51 +64,58 @@ export default function AdminSetupPage() {
   }
 
   return (
-    <Container maxWidth="md" padding="xl">
-      <Stack spacing="xl" align="center">
-        <Text size="xl" weight="bold">Admin Setup</Text>
+    <Container>
+      <Stack spacing="xl" align="center" justify="center">
+        <H1>Admin Setup</H1>
         
         <Stack spacing="md" align="center">
-          <Text>Current User: {user.email}</Text>
-          <Text size="sm" variant="muted">UID: {user.uid}</Text>
+          <Text><strong>Current User:</strong> {user?.email}</Text>
+          <Text><strong>User ID:</strong> {user?.uid}</Text>
         </Stack>
 
-        {message && (
-          <Alert variant="success">
-            <Text>{message}</Text>
-          </Alert>
-        )}
-
-        {error && (
-          <Alert variant="error">
-            <Text>{error}</Text>
-          </Alert>
-        )}
-
         <Stack spacing="md" align="center">
-          <Text>Click the button below to set your account as admin:</Text>
+          <Button 
+            onClick={handleCheckAdminStatus}
+            variant="outline"
+            disabled={isSettingAdmin}
+          >
+            Check Admin Status
+          </Button>
+
           <Button 
             onClick={handleSetAsAdmin}
-            disabled={settingAdmin}
-            size="lg"
+            variant="primary"
+            disabled={isSettingAdmin}
           >
-            {settingAdmin ? (
-              <>
-                <LoadingSpinner size="sm" />
-                Setting as Admin...
-              </>
-            ) : (
-              'Set as Admin'
-            )}
+            {isSettingAdmin ? 'Setting Admin...' : 'Make Me Admin'}
           </Button>
         </Stack>
 
-        <Button 
-          variant="outline" 
-          onClick={() => router.push('/dashboard')}
-        >
-          Back to Dashboard
-        </Button>
+        {message && (
+          <div style={{ 
+            padding: '1rem', 
+            backgroundColor: '#f3f4f6', 
+            borderRadius: '0.5rem',
+            marginTop: '1rem'
+          }}>
+            <Text>{message}</Text>
+          </div>
+        )}
+
+        <Stack spacing="sm" align="center">
+          <Text size="sm" variant="muted">
+            After setting admin access, you can:
+          </Text>
+          <Text size="sm" variant="muted">
+            • Access /admin pages
+          </Text>
+          <Text size="sm" variant="muted">
+            • See "Admin" link in navigation
+          </Text>
+          <Text size="sm" variant="muted">
+            • Manage the application
+          </Text>
+        </Stack>
       </Stack>
     </Container>
   );

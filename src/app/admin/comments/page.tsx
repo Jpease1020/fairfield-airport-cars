@@ -6,6 +6,7 @@ import { AdminPageWrapper, GridSection, Box, Container, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
+import withAuth from '../withAuth';
 
 function CommentsPageContent() {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
@@ -301,4 +302,4 @@ const CommentsPage = () => {
   );
 };
 
-export default CommentsPage;
+export default withAuth(CommentsPage);

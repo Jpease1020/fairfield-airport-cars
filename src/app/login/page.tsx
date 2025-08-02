@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { login, signInWithGoogle, authService } from '@/lib/services/auth-service';
+import { login, signInWithGoogle } from '@/lib/services/auth-service';
 import { 
   Container,
   Stack,
@@ -91,17 +91,8 @@ export default function CustomerLoginPage() {
     setError(null);
     
     try {
-      const userCredential = await login(email, password);
-      const user = userCredential.user;
-      
-      // Check if user is admin
-      const isAdmin = await authService.isAdmin(user.uid);
-      
-      if (isAdmin) {
-        router.push('/admin');
-      } else {
-        router.push('/dashboard');
-      }
+      await login(email, password);
+      router.push('/dashboard');
     } catch (error) {
       setError(`Failed to log in: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
@@ -114,17 +105,8 @@ export default function CustomerLoginPage() {
     setError(null);
     
     try {
-      const userCredential = await signInWithGoogle();
-      const user = userCredential.user;
-      
-      // Check if user is admin
-      const isAdmin = await authService.isAdmin(user.uid);
-      
-      if (isAdmin) {
-        router.push('/admin');
-      } else {
-        router.push('/dashboard');
-      }
+      await signInWithGoogle();
+      router.push('/dashboard');
     } catch (error) {
       setError(`Failed to sign in with Google: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
