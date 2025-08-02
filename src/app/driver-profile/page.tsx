@@ -9,7 +9,8 @@ import {
   Box,
   Badge,
   ActionButtonGroup,
-  LoadingSpinner
+  LoadingSpinner,
+  GridSection
 } from '@/ui';
 import { driverProfileService, DriverProfile } from '@/lib/services/driver-profile-service';
 
@@ -31,6 +32,18 @@ const ProfileImage = styled.img`
   height: 100%;
   object-fit: cover;
 `;
+
+// Trust indicator component
+const TrustIndicator = ({ icon, label, verified }: { icon: string; label: string; verified: boolean }) => (
+  <Stack direction="horizontal" spacing="xs" align="center">
+    <Text variant="small" color={verified ? 'success' : 'muted'}>
+      {verified ? '✅' : '⏳'} {icon}
+    </Text>
+    <Text variant="small" color={verified ? 'success' : 'muted'}>
+      {label}
+    </Text>
+  </Stack>
+);
 
 export default function DriverProfilePage() {
   const [profile, setProfile] = useState<DriverProfile | null>(null);
@@ -84,6 +97,10 @@ export default function DriverProfilePage() {
     );
   }
 
+  const isInsuranceValid = new Date() < profile.credentials.insuranceExpiry;
+  const isLicenseValid = new Date() < profile.credentials.licenseExpiry;
+  const isVehicleInspected = new Date() < profile.vehicle.maintenanceHistory.nextService;
+
   return (
     <Container variant="default" padding="lg">
       <Stack direction="vertical" spacing="xl">
@@ -98,6 +115,7 @@ export default function DriverProfilePage() {
 
         <Box variant="outlined" padding="lg" rounded="lg">
           <Stack direction="vertical" spacing="lg">
+            {/* Driver Basic Info */}
             <Stack direction="horizontal" spacing="md" align="center">
               <ProfileImageContainer>
                 {profile.photo ? (
@@ -122,9 +140,42 @@ export default function DriverProfilePage() {
                     ⭐ {profile.rating} ({profile.totalRides} rides)
                   </Text>
                 </Stack>
+                <Text variant="small" color="muted">
+                  {profile.yearsOfService} years of service • {profile.specialties.join(', ')}
+                </Text>
               </Stack>
             </Stack>
 
+            {/* Trust Indicators */}
+            <Stack direction="vertical" spacing="md">
+              <Text variant="lead" weight="bold">
+                Safety & Trust Indicators
+              </Text>
+              <GridSection columns={2} gap="md">
+                <TrustIndicator 
+                  icon="🚗" 
+                  label="Background Check" 
+                  verified={profile.credentials.backgroundCheckStatus === 'verified'} 
+                />
+                <TrustIndicator 
+                  icon="📋" 
+                  label="License Valid" 
+                  verified={isLicenseValid} 
+                />
+                <TrustIndicator 
+                  icon="🛡️" 
+                  label="Insurance Active" 
+                  verified={isInsuranceValid} 
+                />
+                <TrustIndicator 
+                  icon="🔧" 
+                  label="Vehicle Inspected" 
+                  verified={isVehicleInspected} 
+                />
+              </GridSection>
+            </Stack>
+
+            {/* Contact Information */}
             <Stack direction="vertical" spacing="md">
               <Text variant="lead" weight="bold">
                 Contact Information
@@ -132,9 +183,11 @@ export default function DriverProfilePage() {
               <Stack direction="vertical" spacing="xs">
                 <Text variant="small">📞 {profile.phone}</Text>
                 <Text variant="small">📧 {profile.email}</Text>
+                <Text variant="small">🚨 Emergency: {profile.emergencyContact.name} ({profile.emergencyContact.phone})</Text>
               </Stack>
             </Stack>
 
+            {/* Vehicle Information */}
             <Stack direction="vertical" spacing="md">
               <Text variant="lead" weight="bold">
                 Vehicle Information
@@ -149,6 +202,25 @@ export default function DriverProfilePage() {
                 <Text variant="small">
                   👥 Capacity: {profile.vehicle.capacity} passengers
                 </Text>
+                <Text variant="small">
+                  🔧 Last service: {profile.vehicle.maintenanceHistory.lastService.toLocaleDateString()}
+                </Text>
+                <Text variant="small">
+                  ⚡ Features: {profile.vehicle.features.join(', ')}
+                </Text>
+              </Stack>
+            </Stack>
+
+            {/* Credentials */}
+            <Stack direction="vertical" spacing="md">
+              <Text variant="lead" weight="bold">
+                Professional Credentials
+              </Text>
+              <Stack direction="vertical" spacing="xs">
+                <Text variant="small">🆔 License: {profile.credentials.licenseNumber}</Text>
+                <Text variant="small">🛡️ Insurance: {profile.credentials.insuranceProvider} ({profile.credentials.insurancePolicyNumber})</Text>
+                <Text variant="small">📅 Background Check: {profile.credentials.backgroundCheckDate.toLocaleDateString()}</Text>
+                <Text variant="small">🗣️ Languages: {profile.languages.join(', ')}</Text>
               </Stack>
             </Stack>
           </Stack>
@@ -168,6 +240,13 @@ export default function DriverProfilePage() {
             onClick: () => window.open(`sms:${profile.phone}`),
             variant: 'outline',
             icon: '💬'
+          },
+          {
+            id: 'emergency',
+            label: 'Emergency Contact',
+            onClick: () => window.open(`tel:${profile.emergencyContact.phone}`),
+            variant: 'outline',
+            icon: '🚨'
           }
         ]} />
       </Stack>
