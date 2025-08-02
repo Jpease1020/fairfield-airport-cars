@@ -130,6 +130,13 @@ const StyledBox = styled.div.withConfig({
         return `
           background-color: ${colors.background.primary};
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+          transition: all ${transitions.default};
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+          }
         `;
       case 'outlined':
         return `

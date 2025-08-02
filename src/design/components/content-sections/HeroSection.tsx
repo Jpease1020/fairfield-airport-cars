@@ -29,7 +29,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   ...rest
 }) => {
   return (
-    <Container maxWidth="full" padding="xl" variant="section" data-testid={dataTestId} {...rest}>
+    <Container maxWidth="full" padding="xl" variant="hero" data-testid={dataTestId} {...rest}>
       <Stack spacing="xl" align="center">
         <Stack spacing="md" align="center">
           <H1 align="center">{title}</H1>

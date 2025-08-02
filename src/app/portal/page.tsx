@@ -99,11 +99,11 @@ function PortalPageContent() {
 
       {/* Portal Actions */}
       <GridSection variant="content" columns={1}>
-        <Container>
-          <Stack spacing="lg"  >
+        <Container marginTop="xl">
+          <Stack spacing="xl" align="center">
             <Stack spacing="md" align="center">
-              <EditableHeading data-testid="portal-features-title" level={3} field="portal.features.title" defaultValue="🎯 Portal Features">🎯 Portal Features</EditableHeading>
-              <EditableText data-testid="portal-features-description" field="portal.features.description" defaultValue="Access all available services and account management tools">
+              <EditableHeading data-testid="portal-features-title" level={3} field="portal.features.title" defaultValue="🎯 Portal Features" size="2xl" weight="semibold">🎯 Portal Features</EditableHeading>
+              <EditableText data-testid="portal-features-description" field="portal.features.description" defaultValue="Access all available services and account management tools" variant="lead" size="lg">
                 Access all available services and account management tools
               </EditableText>
             </Stack>
@@ -123,11 +123,11 @@ function PortalPageContent() {
 
       {/* Quick Stats */}
       <GridSection variant="content" columns={1}>
-        <Container>
-          <Stack spacing="lg"  >
+        <Container marginTop="xl">
+          <Stack spacing="xl" align="center">
             <Stack spacing="md" align="center">
-              <EditableHeading data-testid="portal-stats-title" level={3} field="portal.stats.title" defaultValue="📊 Account Overview">📊 Account Overview</EditableHeading>
-              <EditableText data-testid="portal-stats-description" field="portal.stats.description" defaultValue="Your account activity and statistics">
+              <EditableHeading data-testid="portal-stats-title" level={3} field="portal.stats.title" defaultValue="📊 Account Overview" size="2xl" weight="semibold">📊 Account Overview</EditableHeading>
+              <EditableText data-testid="portal-stats-description" field="portal.stats.description" defaultValue="Your account activity and statistics" variant="lead" size="lg">
                 Your account activity and statistics
               </EditableText>
             </Stack>
