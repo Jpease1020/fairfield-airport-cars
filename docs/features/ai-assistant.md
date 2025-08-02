@@ -1,9 +1,21 @@
 # AI Assistant
 
 ## Overview
-The AI Assistant provides intelligent support for administrators, helping with booking management, business information, and customer service tasks.
+The AI Assistant provides intelligent support for administrators, helping with booking management, business information, and customer service tasks. Currently disabled for production optimization.
 
-## Features
+## Status
+
+### ⚠️ **Currently Disabled**
+- **Reason:** Production optimization and resource management
+- **Status:** Code preserved for future reactivation
+- **Location:** `/admin/ai-assistant-disabled/`
+
+### 🔄 **Future Reactivation Plan**
+- **Timeline:** Phase 2 (Next Month)
+- **Priority:** Medium - Focus on core booking features first
+- **Dependencies:** Core system stability and performance optimization
+
+## Features (When Active)
 
 ### Chat Interface
 - **Real-time chat** with AI assistant
@@ -127,54 +139,54 @@ The AI Assistant provides intelligent support for administrators, helping with b
 
 ## Integration Points
 
-### Booking System
-- **Real-time data** - Current booking information
-- **Status updates** - Live booking status
-- **Action execution** - Direct booking modifications
+### Current Integrations
+- **Booking System** - Access to booking data
+- **Admin Dashboard** - Context from current page
+- **Business Settings** - Company information
+- **User Management** - Role-based responses
 
-### CMS System
-- **Business information** - Pricing, policies, content
-- **Dynamic responses** - Updated information
-- **Content management** - Help with CMS tasks
+### Planned Integrations
+- **Analytics Dashboard** - Business insights
+- **Customer Support** - Automated responses
+- **Notification System** - Smart alerts
+- **Reporting Tools** - Data analysis
 
-### Communication System
-- **Message templates** - Pre-written responses
-- **Communication history** - Past interactions
-- **Automated responses** - AI-generated messages
+## Reactivation Plan
 
-## Future Enhancements
+### Phase 1: Preparation (Week 1)
+- **Performance Review** - Ensure system can handle AI load
+- **API Key Management** - Secure OpenAI integration
+- **Testing Environment** - Validate functionality
+- **Documentation Update** - Current state and procedures
 
-### Planned Features
-- **Multi-language support** - International customers
-- **Advanced analytics** - Booking trends and insights
-- **Predictive assistance** - Proactive suggestions
-- **Integration with external tools** - Calendar, email, etc.
+### Phase 2: Implementation (Week 2)
+- **Feature Activation** - Enable AI assistant
+- **User Training** - Admin onboarding
+- **Monitoring Setup** - Track usage and performance
+- **Feedback Collection** - User experience optimization
 
-### Technical Improvements
-- **Better local AI** - Enhanced offline capabilities
-- **Voice recognition accuracy** - Improved speech processing
-- **Context memory** - Remembering conversation history
-- **Custom training** - Business-specific AI responses
+### Phase 3: Optimization (Week 3-4)
+- **Response Quality** - Improve AI accuracy
+- **Performance Tuning** - Optimize response times
+- **Feature Enhancement** - Add new capabilities
+- **Integration Expansion** - Connect with more systems
 
-## Usage Examples
+## Success Metrics
 
-### Daily Operations
-```
-User: "Show me today's bookings"
-AI: "You have 8 bookings today. 3 are confirmed, 4 are pending, and 1 needs attention. Would you like me to show you the details?"
+### Performance Metrics
+- **Response Time** - Target: <2 seconds
+- **Accuracy Rate** - Target: 90%+
+- **User Satisfaction** - Target: 4.5/5
+- **Usage Frequency** - Track adoption rate
 
-User: "What's the status of booking #123?"
-AI: "Booking #123 is confirmed for tomorrow at 2:30 PM. The customer is John Smith, pickup from Fairfield Station, dropoff at JFK Terminal 4. Payment is complete."
+### Business Metrics
+- **Admin Efficiency** - Time saved on common tasks
+- **Customer Support** - Reduced manual support requests
+- **Error Reduction** - Fewer booking mistakes
+- **Knowledge Sharing** - Improved team capabilities
 
-User: "Help me with a late cancellation"
-AI: "For late cancellations (within 2 hours), we don't offer refunds. However, you can offer a credit for future use. Would you like me to help you process this?"
-```
+---
 
-### Troubleshooting
-```
-User: "The payment system is down"
-AI: "I can help you troubleshoot the payment system. Let's check: 1) Square API status, 2) Your internet connection, 3) Recent error logs. What specific error are you seeing?"
-
-User: "A customer can't access their booking"
-AI: "Let's help them access their booking. You can: 1) Send them the direct link, 2) Check if their email is correct, 3) Verify the booking exists. What's their booking ID?"
-``` 
+*Last Updated: January 2025*  
+*Status: Disabled - Scheduled for Reactivation*  
+*Next Review: February 2025* 
