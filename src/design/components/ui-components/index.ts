@@ -29,7 +29,6 @@ export { Card } from './Card';
 export { BookingCard } from './BookingCard';
 
 // Admin Components
-export { ActionGrid } from './ActionGrid';
 export { EditModeToggle } from './EditModeToggle';
 
 // Status Components
