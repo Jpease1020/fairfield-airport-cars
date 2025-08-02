@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Plus } from 'lucide-react';
 import { Button } from '@/ui';
 import { Textarea } from '@/ui';

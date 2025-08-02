@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { 
   Container,
   Stack,
@@ -11,7 +10,6 @@ import {
   HeroSection,
   H2
 } from '@/ui';
-import { EditableText } from '@/ui';
 import Link from 'next/link';
 
 function HomePageContent() {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';
 import { 
   AdminPageWrapper,

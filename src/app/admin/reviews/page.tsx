@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
@@ -12,16 +12,13 @@ import {
   Button,
   LoadingSpinner,
   useToast,
-  DataTable
+  DataTable,
+  ToastProvider
 } from '@/ui';
 import { Star, MessageCircle, ExternalLink } from 'lucide-react';
 import { reviewAggregationService } from '@/lib/services/review-aggregation-service';
 
-interface ReviewManagementProps {
-  title?: string;
-}
-
-export default function ReviewManagementPage({ title = "Review Management" }: ReviewManagementProps) {
+function ReviewManagementPageContent() {
   const [aggregation, setAggregation] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -176,7 +173,7 @@ export default function ReviewManagementPage({ title = "Review Management" }: Re
     <Container maxWidth="xl" padding="xl">
       <Stack spacing="xl">
         <Stack spacing="md">
-          <Text size="xl" weight="bold">{title}</Text>
+          <Text size="xl" weight="bold">Review Management</Text>
           <Text variant="muted">Manage and respond to reviews across all platforms</Text>
         </Stack>
 
@@ -276,5 +273,13 @@ export default function ReviewManagementPage({ title = "Review Management" }: Re
         </Box>
       </Stack>
     </Container>
+  );
+}
+
+export default function ReviewManagementPage() {
+  return (
+    <ToastProvider>
+      <ReviewManagementPageContent />
+    </ToastProvider>
   );
 } 

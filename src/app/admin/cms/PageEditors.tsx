@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   Container, 
   Stack, 
@@ -125,7 +124,7 @@ export interface HomePageContent {
 
 export interface HomePageEditorProps {
   pageData: HomePageContent;
-  onFieldChange: (section: string, field: string, value: any) => void;
+  onFieldChange: (section: string, field: string, value: string | Array<{ title: string; description: string; icon: string }>) => void;
   onSave: () => void;
   saving: boolean;
 }

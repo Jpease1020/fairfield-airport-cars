@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Container, Text, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 import { Booking } from '@/types/booking';
@@ -223,7 +223,7 @@ function BookingDetailsContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           <EditableText field="booking.fare_info.title" defaultValue="💰 Fare Information">
-            "�� Fare Information"
+            "💰 Fare Information"
           </EditableText>
           <EditableText field="booking.fare_info.description" defaultValue="Payment details for your trip">
             Payment details for your trip

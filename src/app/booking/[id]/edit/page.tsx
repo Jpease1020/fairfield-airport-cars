@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Container, Text, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast } from '@/ui';
 import { getBooking } from '@/lib/services/booking-service';

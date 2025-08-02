@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { 
   Container, 
@@ -75,7 +75,7 @@ function TrackingPageContent() {
       } else {
         setError('Failed to load tracking data');
       }
-    } catch (_error) {
+    } catch (error) {
       setError('Failed to load tracking data');
     } finally {
       setLoading(false);

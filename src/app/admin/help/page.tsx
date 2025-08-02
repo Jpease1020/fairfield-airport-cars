@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { AdminPageWrapper, GridSection, Box, ActionGrid, Container, H3, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';

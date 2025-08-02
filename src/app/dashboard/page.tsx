@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { onAuthChange, logout, getCustomerProfile, authService } from '@/lib/services/auth-service';
+import { onAuthChange, getCustomerProfile, authService } from '@/lib/services/auth-service';
 import { User as FirebaseUser } from 'firebase/auth';
 import { User } from '@/lib/services/auth-service';
 import { 

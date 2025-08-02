@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
 import { AdminPageWrapper, GridSection, Box, Container, Text, EditableText, Stack, DataTable, DataTableColumn, DataTableAction } from '@/ui';
 import withAuth from '../withAuth';

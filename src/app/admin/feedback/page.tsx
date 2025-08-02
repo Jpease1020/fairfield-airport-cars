@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { AdminPageWrapper, GridSection, Box, Container, StatCard, Text, Stack, DataTable, DataTableColumn, DataTableAction, EditableText } from '@/ui';
 import { getAllBookings } from '@/lib/services/database-service';
 import withAuth from '../withAuth';

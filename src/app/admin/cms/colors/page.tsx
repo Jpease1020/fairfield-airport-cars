@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Container, Span, AdminPageWrapper, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/ui';
 import { getCMSConfig } from '@/lib/services/cms-service';
 import { EditableText, EditableHeading } from '@/ui';

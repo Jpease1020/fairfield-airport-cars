@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { 
   GridSection,
@@ -9,13 +9,11 @@ import {
   useToast,
   Text,
   Span,
-  Container,
-  CustomerLayout
+  Container
 } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
 import { Input } from '@/ui';
-import { BalancePaymentButton } from '@/design/components/business-components/BalancePaymentButton';
 
 function ManageBookingPageContent() {
   const params = useParams();

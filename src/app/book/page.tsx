@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Container, Stack, H2, Text } from '@/ui';
 import BookingForm from './booking-form';
 

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { 
   GridSection,
   FeatureGrid,
@@ -8,9 +7,7 @@ import {
   useToast,
   Container,
   Stack,
-  CustomerLayout,
-  H1,
-  Text
+  H2
 } from '@/ui';
 import { EditableHeading, EditableText } from '@/ui';
 

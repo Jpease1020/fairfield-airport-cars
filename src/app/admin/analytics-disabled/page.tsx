@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, H2, Text, Span } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';

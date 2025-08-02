@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Container, Text, Button, LoadingSpinner, EditableText, GridSection, useToast, ToastProvider, Box, Label, Textarea, Stack } from '@/ui';
 import { Star } from 'lucide-react';

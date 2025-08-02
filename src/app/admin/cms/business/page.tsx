@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';

@@ -14,10 +14,7 @@ import {
   EditableText,
   Alert,
   Input,
-  Label,
-  Box,
-  H1,
-  H2
+  Label
 } from '@/ui';
 import { AdminPageWrapper, ContentCard } from '@/ui';
 
@@ -226,16 +223,12 @@ function CustomerProfilePage() {
         {/* Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
-            <H1>
-              <EditableText field="customer.profile.title" defaultValue="My Profile">
-                My Profile
-              </EditableText>
-            </H1>
-            <Text variant="muted">
-              <EditableText field="customer.profile.subtitle" defaultValue="Manage your account information and preferences">
-                Manage your account information and preferences
-              </EditableText>
-            </Text>
+            <EditableText field="customer.profile.title" defaultValue="My Profile">
+              <Text size="xl" weight="bold">My Profile</Text>
+            </EditableText>
+            <EditableText field="customer.profile.subtitle" defaultValue="Manage your account information and preferences">
+              <Text variant="muted">Manage your account information and preferences</Text>
+            </EditableText>
           </Stack>
           {!isEditing && (
             <Button onClick={handleEdit} variant="primary">

@@ -5,8 +5,14 @@ import { getSettings } from '@/lib/business/settings-service';
 
 const mapsClient = new Client({});
 
+interface PricingSettings {
+  baseFare: number;
+  perMile: number;
+  perMinute: number;
+}
+
 // Fallback fare calculation when Google Maps API is unavailable
-const calculateFallbackFare = (origin: string, destination: string, settings: any) => {
+const calculateFallbackFare = (origin: string, destination: string, settings: PricingSettings) => {
   // Common airport routes with estimated distances
   const airportRoutes: { [key: string]: { [key: string]: number } } = {
     'Fairfield, CT': {
@@ -50,7 +56,7 @@ const calculateFallbackFare = (origin: string, destination: string, settings: an
   return calculateFareFromDistance(estimatedDistance, settings);
 };
 
-const calculateFareFromDistance = (distanceInMiles: number, settings: any) => {
+const calculateFareFromDistance = (distanceInMiles: number, settings: PricingSettings) => {
   const { baseFare, perMile, perMinute } = settings;
   
   // Estimate time based on distance (assuming 60 mph average)
@@ -101,7 +107,7 @@ export async function POST(request: Request) {
     } else {
       throw new Error('Google Maps API returned error');
     }
-  } catch (err) {
+  } catch (_err) {
     console.log('Google Maps API failed, using fallback calculation');
     
     // Use fallback calculation

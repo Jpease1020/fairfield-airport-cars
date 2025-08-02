@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
@@ -12,12 +12,12 @@ import {
   Button,
   LoadingSpinner,
   useToast,
-  DataTable
+  DataTable,
+  ToastProvider
 } from '@/ui';
 import { Calendar, Clock, MapPin, User, Car } from 'lucide-react';
 
-
-export default function DriverAvailabilityPage() {
+function DriverAvailabilityPageContent() {
   const [isAvailable, setIsAvailable] = useState(true);
   const [upcomingBookings, setUpcomingBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -253,5 +253,13 @@ export default function DriverAvailabilityPage() {
         </Box>
       </Stack>
     </Container>
+  );
+}
+
+export default function DriverAvailabilityPage() {
+  return (
+    <ToastProvider>
+      <DriverAvailabilityPageContent />
+    </ToastProvider>
   );
 } 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Stack, H3, Text, EditableText, PositionedContainer, LoadingSpinner } from '@/ui';
 
 export interface StateProps {

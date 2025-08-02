@@ -49,7 +49,6 @@ function CustomerBookingsPage() {
       } else {
         router.push('/login');
       }
-      setLoading(false);
     });
 
     return () => {

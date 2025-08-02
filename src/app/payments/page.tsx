@@ -56,8 +56,8 @@ function CustomerPaymentsPage() {
       if (firebaseUser) {
         setUser(firebaseUser);
         await loadCustomerProfile(firebaseUser.uid);
-        await loadPaymentHistory(firebaseUser.uid);
-        await loadPaymentMethods(firebaseUser.uid);
+        await loadPaymentHistory();
+        await loadPaymentMethods();
       } else {
         router.push('/login');
       }
@@ -85,7 +85,7 @@ function CustomerPaymentsPage() {
     }
   };
 
-  const loadPaymentHistory = async (_uid: string) => {
+  const loadPaymentHistory = async () => {
     try {
       // Mock payment history - replace with actual API call
       const mockPayments: Payment[] = [
@@ -142,7 +142,7 @@ function CustomerPaymentsPage() {
     }
   };
 
-  const loadPaymentMethods = async (_uid: string) => {
+  const loadPaymentMethods = async () => {
     try {
       // Mock payment methods - replace with actual API call
       const mockPaymentMethods: PaymentMethod[] = [

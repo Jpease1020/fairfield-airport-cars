@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import DraggableCommentSystem from './DraggableCommentSystem';
 import { useComments } from '@/hooks/useComments';
 

@@ -1,11 +1,10 @@
 'use client';
 
 import { 
-  GridSection,
-  ToastProvider,
   Container,
   Stack,
   Box,
+  ToastProvider,
 } from '@/ui';
 import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';

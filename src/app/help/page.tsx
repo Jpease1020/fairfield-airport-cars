@@ -1,15 +1,11 @@
 'use client';
 
-import React from 'react';
 import { 
   Container,
   Stack,
-  H1,
-  H2,
   Text,
   Button,
-  Box,
-  CustomerLayout
+  Box
 } from '@/ui';
 import { EditableText, EditableHeading } from '@/ui';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
@@ -95,8 +95,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const [notes, setNotes] = useState(booking?.notes || '');
   const [fare, setFare] = useState<number | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [_error, setError] = useState<string | null>(null);
-  const [_success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [pickupSuggestions, setPickupSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [dropoffSuggestions, setDropoffSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [showPickupSuggestions, setShowPickupSuggestions] = useState(false);
@@ -121,7 +121,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
   const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMapsScript(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '');
 
-  const getPlacePredictions = async (input: string, callback: (_predictions: google.maps.places.AutocompletePrediction[]) => void) => {
+  const getPlacePredictions = async (input: string, callback: (predictions: google.maps.places.AutocompletePrediction[]) => void) => {
     if (!mapsLoaded || typeof window === 'undefined' || !window.google) {
       callback([]);
       return;
@@ -149,7 +149,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     }
   };
 
-  function debounce<T extends (..._args: Parameters<T>) => void>(func: T, delay: number) {
+  function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
     let timeoutId: NodeJS.Timeout;
     return (...args: Parameters<T>) => {
       clearTimeout(timeoutId);

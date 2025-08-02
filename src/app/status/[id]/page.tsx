@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 
@@ -26,18 +26,6 @@ function BookingStatusPageContent() {
       'loading': 'Loading'
     };
     return statusMap[status] || 'Unknown';
-  };
-
-  const getStatusIcon = (status: any) => {
-    const iconMap: { [key: string]: string } = {
-      'confirmed': '✅',
-      'en-route': '👨‍💼',
-      'arrived': '📍',
-      'completed': '🏁',
-      'cancelled': '❌',
-      'loading': '⏳'
-    };
-    return iconMap[status] || '❓';
   };
 
   useEffect(() => {

@@ -1,16 +1,13 @@
 'use client';
 
 import { 
-  GridSection,
   ToastProvider,
   Text,
   Container,
   Stack,
   Box,
-  CustomerLayout,
-  H1
+  EditableText
 } from '@/ui';
-import { EditableText } from '@/ui';
 import { EditableHeading } from '@/ui';
 
 function PrivacyPageContent() {
