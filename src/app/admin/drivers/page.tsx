@@ -16,7 +16,7 @@ import {
   LoadingSpinner,
   H1,
   AdminPageWrapper
-} from '@/design/components';
+} from '@/ui';
 
 function DriversPageContent() {
   const [drivers, setDrivers] = useState<Driver[]>([]);

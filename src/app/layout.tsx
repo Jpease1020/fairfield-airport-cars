@@ -1,10 +1,6 @@
 import '@/design/globals.css';
 import { Analytics } from '@vercel/analytics/react';
-import { AccessibilityEnhancer } from '@/ui';
-import { ErrorBoundary } from '@/ui';
-import { CMSDesignProvider } from '@/design/providers/CMSDesignProvider';
-import { StyledComponentsRegistry } from '@/design/providers/StyledComponentsRegistry';
-import { RouteBasedLayout } from '@/design/layout';
+import { AccessibilityEnhancer, ErrorBoundary, CMSDesignProvider, StyledComponentsRegistry, RouteBasedLayout } from '@/ui';
 
 export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',

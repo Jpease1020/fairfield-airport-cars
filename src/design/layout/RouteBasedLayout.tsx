@@ -3,7 +3,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { PageLayout } from './PageLayout';
-import { AdminPageWrapper } from '@/design/page-sections/AdminPageWrapper';
+import { AdminPageWrapper } from '@/ui';
 
 interface RouteBasedLayoutProps {
   children: React.ReactNode;

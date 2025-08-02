@@ -1,5 +1,7 @@
 import { CMSConfiguration } from '@/types/cms';
 
+export { colors, spacing } from './tokens';
+
 export function generateCSSVariables(cmsConfig: CMSConfiguration): React.CSSProperties {
   const themeColors = cmsConfig?.themeColors || {};
   

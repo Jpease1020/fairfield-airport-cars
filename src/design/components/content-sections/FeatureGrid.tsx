@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Grid, Col, Container, Box, Stack, Text, H4 } from '@/ui';
-import { ResponsiveValue } from '@/design/layout/shared-types';
+import { ResponsiveValue } from '@/ui';   
 
 interface Feature {
   id?: string | number;

@@ -11,15 +11,14 @@ import {
   H2,
   Text,
   Box,
-  Form,
   Button,
-  ToastProvider
+  ToastProvider,
+  Input,
+  Label,
+  EditableText,
+  spacing
 } from '@/ui';
-import { Input } from '@/ui';
-import { Label } from '@/ui';
-import { EditableText } from '@/ui';
-import styled from 'styled-components';
-import { spacing, fontSize, fontWeight } from '@/design/system/tokens/tokens';
+import styled from 'styled-components'; 
 
 // Styled components for login page
 const LoginCard = styled(Box)`
