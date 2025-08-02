@@ -188,6 +188,7 @@ function ManualCostEntryPageContent() {
                 <ActionButtonGroup
                   buttons={[
                     {
+                      id: 'add-fuel-cost',
                       label: 'Add Fuel Cost',
                       onClick: () => {
                         setFormData(prev => ({ ...prev, category: 'Fuel', description: 'Vehicle fuel expense' }));
@@ -197,6 +198,7 @@ function ManualCostEntryPageContent() {
                       size: 'sm'
                     },
                     {
+                      id: 'add-maintenance',
                       label: 'Add Maintenance',
                       onClick: () => {
                         setFormData(prev => ({ ...prev, category: 'Maintenance', description: 'Vehicle maintenance and repairs' }));
@@ -206,6 +208,7 @@ function ManualCostEntryPageContent() {
                       size: 'sm'
                     },
                     {
+                      id: 'add-insurance',
                       label: 'Add Insurance',
                       onClick: () => {
                         setFormData(prev => ({ ...prev, category: 'Insurance', description: 'Vehicle insurance payment' }));
@@ -215,7 +218,7 @@ function ManualCostEntryPageContent() {
                       size: 'sm'
                     }
                   ]}
-                  orientation="horizontal"
+                  direction="horizontal"
                   spacing="sm"
                 />
               </Container>

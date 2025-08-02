@@ -11,5 +11,8 @@ export * from './ContentCard';
 // Action Components
 export * from './ActionGrid';
 
+// Data Display Components
+export * from './DataTable';
+
 // Marketing & Content Components
 export * from './HeroSection';

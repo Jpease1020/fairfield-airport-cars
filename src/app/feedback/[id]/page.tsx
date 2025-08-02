@@ -1,21 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { SimpleLayout } from '@/ui';
-import { 
-  GridSection,
-  ActionButtonGroup,
-  Form,
-  Button,
-  ToastProvider,
-  Text
-} from '@/ui';
-import { Box } from '@/ui';
-import { Stack } from '@/ui';
-import { Label } from '@/ui';
-import { Textarea } from '@/ui';
-import { EditableText } from '@/ui';
+import { Container, Text, Button, LoadingSpinner, EditableText, GridSection, useToast, ToastProvider, Box, Label, Textarea, Stack } from '@/ui';
 import { Star } from 'lucide-react';
 
 function FeedbackPageContent() {
@@ -25,6 +12,31 @@ function FeedbackPageContent() {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { addToast } = useToast();
+
+  useEffect(() => {
+    const fetchBookingDetails = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/bookings/${bookingId}`);
+        if (!response.ok) {
+          throw new Error('Booking not found or invalid');
+        }
+        const booking = await response.json();
+        setRating(booking.rating || 0);
+        setComment(booking.comment || '');
+      } catch (err) {
+        setError('Failed to load booking details.');
+        console.error('Error fetching booking details:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookingDetails();
+  }, [bookingId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,12 +58,14 @@ function FeedbackPageContent() {
 
       if (response.ok) {
         setSubmitted(true);
+        addToast('success', 'Feedback submitted successfully!');
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to submit feedback');
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);
+      addToast('error', 'Failed to submit feedback. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -72,129 +86,151 @@ function FeedbackPageContent() {
     }
   ];
 
+  if (loading) {
+    return (
+      <Container variant="default" padding="none">
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <LoadingSpinner />
+            <EditableText field="feedback.loading.message" defaultValue="Please wait while we fetch your booking details...">
+              Please wait while we fetch your booking details...
+            </EditableText>
+          </Container>
+        </GridSection>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container variant="default" padding="none">
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <EditableText field="feedback.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
+              This could be due to an invalid booking ID or a temporary system issue.
+            </EditableText>
+            <Stack direction="horizontal" spacing="md">
+              <Button
+                variant="primary"
+                onClick={() => window.location.reload()}
+              >
+                🔄 Try Again
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => addToast('info', 'Support: (203) 555-0123')}
+              >
+                📞 Contact Support
+              </Button>
+            </Stack>
+          </Container>
+        </GridSection>
+      </Container>
+    );
+  }
+
   if (submitted) {
     return (
-      <SimpleLayout>
+      <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
-                  <Box variant="elevated" padding="lg">
-          <Stack spacing="md">
-            <Text size="lg" weight="bold">✅ Feedback Submitted</Text>
-            <Text>We appreciate you taking the time to share your experience</Text>
-            <EditableText field="feedback.description" defaultValue="Your rating and comments help us improve our service and provide the best possible experience for all our customers.">
-              Your rating and comments help us improve our service and provide the best possible experience for all our customers.
-            </EditableText>
-            <ActionButtonGroup buttons={homeActions} />
-          </Stack>
-        </Box>
+          <Box variant="elevated" padding="lg">
+            <Text>
+              <EditableText field="feedback.success.title" defaultValue="Thank you for your feedback!">
+                Thank you for your feedback!
+              </EditableText>
+            </Text>
+            <Text>
+              <EditableText field="feedback.success.description" defaultValue="Your feedback helps us improve our service">
+                Your feedback helps us improve our service
+              </EditableText>
+            </Text>
+            <Stack direction="horizontal" spacing="md">
+              {homeActions.map((action, index) => (
+                <Button
+                  key={index}
+                  variant={action.variant}
+                  onClick={action.onClick}
+                >
+                  {action.icon} {action.label}
+                </Button>
+              ))}
+            </Stack>
+          </Box>
         </GridSection>
-      </SimpleLayout>
+      </Container>
     );
   }
 
   return (
-    <SimpleLayout>
+    <Container variant="default" padding="none">
       <GridSection variant="content" columns={1}>
         <Box variant="elevated" padding="lg">
-          <Stack spacing="md">
-            <Text size="lg" weight="bold">⭐ Rate Your Experience</Text>
-            <Text>How was your ride with Fairfield Airport Cars?</Text>
-          <Form onSubmit={handleSubmit}>
+          <Text>
+            <EditableText field="feedback.title" defaultValue="We'd love to hear about your experience">
+              We'd love to hear about your experience
+            </EditableText>
+          </Text>
+          
+          <div>
             <Text>
-              <Label htmlFor="rating">
-                <EditableText field="feedback.ratingLabel" defaultValue="How was your ride?">
-                  How was your ride?
-                </EditableText>
-              </Label>
+              <EditableText field="feedback.description" defaultValue="Please share your feedback about your recent ride">
+                Please share your feedback about your recent ride
+              </EditableText>
             </Text>
-            <Text>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star)}
-                  variant="ghost"
-                  size="sm"
-                  data-testid={`rating-star-${star}`}
-                >
-                  <Star />
-                </Button>
-              ))}
-            </Text>
-            <Text>
-              {rating === 0 && (
-                <EditableText field="feedback.clickStarToRate" defaultValue="Click a star to rate">
-                  Click a star to rate
-                </EditableText>
-              )}
-              {rating === 1 && (
-                <EditableText field="feedback.ratingPoor" defaultValue="Poor">
-                  Poor
-                </EditableText>
-              )}
-              {rating === 2 && (
-                <EditableText field="feedback.ratingFair" defaultValue="Fair">
-                  Fair
-                </EditableText>
-              )}
-              {rating === 3 && (
-                <EditableText field="feedback.ratingGood" defaultValue="Good">
-                  Good
-                </EditableText>
-              )}
-              {rating === 4 && (
-                <EditableText field="feedback.ratingVeryGood" defaultValue="Very Good">
-                  Very Good
-                </EditableText>
-              )}
-              {rating === 5 && (
-                <EditableText field="feedback.ratingExcellent" defaultValue="Excellent">
-                  Excellent
-                </EditableText>
-              )}
-            </Text>
-
-            <Text>
-              <Label htmlFor="comment">
-                <EditableText field="feedback.commentsLabel" defaultValue="Additional Comments (Optional)">
-                  Additional Comments (Optional)
-                </EditableText>
-              </Label>
-            </Text>
-            <Text>
-              <Textarea
-                id="comment"
-                value={comment}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
-                placeholder="Tell us about your experience..."
-                rows={4}
-                data-testid="comment-input"
-              />
-            </Text>
-
-            <Text>
+            
+            <form onSubmit={handleSubmit}>
+              <div>
+                <Label>
+                  <EditableText field="feedback.rating.label" defaultValue="Rating">
+                    Rating
+                  </EditableText>
+                </Label>
+                <div>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setRating(star)}
+                    >
+                      <Star
+                        size={24}
+                        fill={star <= rating ? '#FFD700' : 'none'}
+                        stroke={star <= rating ? '#FFD700' : '#000'}
+                      />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <Label>
+                  <EditableText field="feedback.comment.label" defaultValue="Comments">
+                    Comments
+                  </EditableText>
+                </Label>
+                <Textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Tell us about your experience..."
+                  rows={4}
+                />
+              </div>
+              
               <Button
                 type="submit"
-                disabled={loading || rating === 0}
+                disabled={rating === 0 || loading}
                 variant="primary"
-                size="lg"
-                data-testid="submit-feedback-button"
               >
-                {loading ? (
-                  <EditableText field="feedback.submitting" defaultValue="Submitting...">
-                    Submitting...
-                  </EditableText>
-                ) : (
-                  <EditableText field="feedback.submitFeedback" defaultValue="⭐ Submit Feedback">
-                    ⭐ Submit Feedback
-                  </EditableText>
-                )}
+                <EditableText field="feedback.submit.button" defaultValue="Submit Feedback">
+                  Submit Feedback
+                </EditableText>
               </Button>
-            </Text>
-          </Form>
-          </Stack>
+            </form>
+          </div>
         </Box>
       </GridSection>
-    </SimpleLayout>
+    </Container>
   );
 }
 

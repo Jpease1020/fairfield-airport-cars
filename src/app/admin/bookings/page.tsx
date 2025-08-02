@@ -15,7 +15,7 @@ import {
   Alert,
   LoadingSpinner,
   H1,
-  AdminPageTemplate
+  AdminPageWrapper
 } from '@/design/components';
 
 function AdminBookingsPageContent() {
@@ -250,14 +250,41 @@ function AdminBookingsPageContent() {
     )
   }));
 
+  if (loading) {
+    return (
+      <AdminPageWrapper
+        title="Booking Management"
+        subtitle="Loading bookings from database..."
+      >
+        <Container>
+          <Stack direction="horizontal" spacing="md" align="center">
+            <LoadingSpinner />
+            <Text>Loading bookings from database...</Text>
+          </Stack>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminPageWrapper
+        title="Error Loading Bookings"
+        subtitle={error}
+      >
+        <Container>
+          <Alert variant="error">
+            <Text>{error}</Text>
+          </Alert>
+        </Container>
+      </AdminPageWrapper>
+    );
+  }
+
   return (
-    <AdminPageTemplate
+    <AdminPageWrapper
       title="Booking Management"
       subtitle="Manage all customer bookings and track their status"
-      loading={loading}
-      error={error}
-      loadingMessage="Loading bookings from database..."
-      errorTitle="Error Loading Bookings"
     >
       <Stack spacing="xl">
         {/* Status Filter */}
@@ -343,7 +370,7 @@ function AdminBookingsPageContent() {
           />
         )}
       </Stack>
-    </AdminPageTemplate>
+    </AdminPageWrapper>
   );
 }
 

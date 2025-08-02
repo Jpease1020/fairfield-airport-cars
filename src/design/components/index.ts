@@ -8,7 +8,10 @@ export * from '../layout';
 export * from '../layout';
 
 // Layer 3: UI Components (Interactive Elements)
-export * from './ui-components';
+export * from './base-components';
+
+// Layer 3: Business Components (Domain-specific components)
+export * from './business-components';
 
 // Layer 3: Content Sections (Reusable content patterns)
 export * from './content-sections';

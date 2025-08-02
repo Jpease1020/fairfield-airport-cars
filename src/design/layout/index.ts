@@ -1,9 +1,9 @@
 // Layout Components
 // High-level structural components for page layout
 
-// Layer 1: Grid System Components (Foundation)
-// Grid, Row, Col - CSS Grid and Flexbox primitives
-export * from './grid';
+// Layer 1: Framing Components (Foundation)
+// Grid, Row, Col, Stack - CSS Grid and Flexbox structural primitives
+export * from './framing';
 
 // Layer 2: Content Layout Components (Content arrangement and styling)
 // Box, Stack - Content grouping and spacing
@@ -24,3 +24,4 @@ export * from './RouteBasedLayout';
 // Temporary compatibility exports (will be removed after migration)
 export { PageLayout as CustomerLayout } from './PageLayout';
 export { PageLayout as StandardLayout } from './PageLayout';
+

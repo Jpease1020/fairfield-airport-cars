@@ -2,7 +2,10 @@
 export * from './layout';
 
 // UI Components
-export * from './components/ui-components';
+export * from './components/base-components';
+
+// Business Components
+export * from './components/business-components';
 
 // Content Sections
 export * from './components/content-sections';

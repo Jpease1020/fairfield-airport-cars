@@ -3,7 +3,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { PageLayout } from './PageLayout';
-import { AdminPageTemplate } from '@/design/page-sections/AdminPageTemplate';
+import { AdminPageWrapper } from '@/design/page-sections/AdminPageWrapper';
 
 interface RouteBasedLayoutProps {
   children: React.ReactNode;
@@ -19,15 +19,15 @@ function ClientRouteBasedLayout({ children }: RouteBasedLayoutProps) {
     return <>{children}</>;
   }
   
-  // Admin pages get AdminPageTemplate
+  // Admin pages get AdminPageWrapper
   if (isAdminRoute) {
     return (
-      <AdminPageTemplate
+      <AdminPageWrapper
         title="Admin Dashboard"
         subtitle="Manage your airport transportation business"
       >
         {children}
-      </AdminPageTemplate>
+      </AdminPageWrapper>
     );
   }
   

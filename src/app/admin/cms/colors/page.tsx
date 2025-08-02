@@ -1,14 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Span } from '@/ui';
-import { AdminPageWrapper } from '@/ui';
-import { GridSection } from '@/ui';
-import { ActionButtonGroup } from '@/ui';
-import { Input } from '@/ui';
-import { ToastProvider, useToast } from '@/ui';
-import { StatusMessage } from '@/ui';
-import { Stack } from '@/ui';
+import { Container, Span, AdminPageWrapper, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/ui';
 import { getCMSConfig } from '@/lib/services/cms-service';
 import { EditableText, EditableHeading } from '@/ui';
 
@@ -161,30 +154,26 @@ function AdminColorsPageContent() {
                 This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
               </EditableText>
               
-              <ActionButtonGroup
-                buttons={[
-                  {
-                    label: 'Primary Gradient',
-                    onClick: () => addToast('info', 'This is how primary buttons look'),
-                    variant: 'primary' as const,
-                    icon: '🎨'
-                  },
-                  {
-                    label: 'Outline Style',
-                    onClick: () => addToast('info', 'This is how outline buttons look'),
-                    variant: 'outline' as const,
-                    icon: '⭕'
-                  },
-                  {
-                    label: 'Secondary Color',
-                    onClick: () => addToast('info', 'This is how secondary buttons look'),
-                    variant: 'secondary' as const,
-                    icon: '🔘'
-                  }
-                ]}
-                orientation="horizontal"
-                spacing="sm"
-              />
+              <Stack direction="horizontal" spacing="sm">
+                <Button
+                  variant="primary"
+                  onClick={() => addToast('info', 'This is how primary buttons look')}
+                >
+                  🎨 Primary Gradient
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => addToast('info', 'This is how outline buttons look')}
+                >
+                  ⭕ Outline Style
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => addToast('info', 'This is how secondary buttons look')}
+                >
+                  🔘 Secondary Color
+                </Button>
+              </Stack>
             </Container>
           </Container>
         </Container>

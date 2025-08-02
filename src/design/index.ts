@@ -6,7 +6,7 @@
 export * from './layout';
 
 // UI Components
-export * from './components/ui-components';
+export * from './components/base-components';
 
 // Content Sections
 export * from './components/content-sections';

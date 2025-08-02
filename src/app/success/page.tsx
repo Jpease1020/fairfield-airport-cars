@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
   GridSection,
-  ActionButtonGroup,
   LoadingSpinner,
   Text,
   Container,
@@ -191,7 +190,17 @@ function SuccessPageContent() {
               <EditableText data-testid="success-next-step-flight" field="success.nextSteps.items.3" defaultValue="✈️ We monitor your flight for any delays or changes">✈️ We monitor your flight for any delays or changes</EditableText>
             </Stack>
 
-            <ActionButtonGroup data-testid="success-actions" buttons={successActions} />
+            <Stack direction="horizontal" spacing="md" align="center" data-testid="success-actions">
+              {successActions.map((action, index) => (
+                <Button
+                  key={index}
+                  variant={action.variant}
+                  onClick={action.onClick}
+                >
+                  {action.label}
+                </Button>
+              ))}
+            </Stack>
           </Stack>
         </Container>
       </GridSection>

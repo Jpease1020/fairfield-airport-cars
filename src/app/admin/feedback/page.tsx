@@ -5,7 +5,7 @@ import { AdminPageWrapper, GridSection, Box, Container, StatCard, Text } from '@
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { useToast } from '@/ui';
-import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
+import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/content-sections/DataTable';
 import { getAllBookings } from '@/lib/services/database-service';
 import { EditableText } from '@/ui';
 import withAuth from '../withAuth';
