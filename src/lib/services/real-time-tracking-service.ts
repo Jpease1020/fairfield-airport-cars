@@ -253,7 +253,7 @@ class RealTimeTrackingService {
   }
 
   // Calculate distance between two points using Haversine formula
-  private calculateDistance(
+  calculateDistance(
     point1: { lat: number; lng: number },
     point2: { lat: number; lng: number }
   ): number {

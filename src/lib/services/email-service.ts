@@ -68,4 +68,17 @@ export async function sendConfirmationEmail(booking: Booking) {
   };
 
   await transporter.sendMail(mailOptions);
+}
+
+export async function sendSupportEmail(to: string, subject: string, message: string) {
+  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) return;
+
+  const mailOptions = {
+    from: `Fairfield Airport Cars <${EMAIL_FROM}>`,
+    to,
+    subject,
+    text: message,
+  };
+
+  await transporter.sendMail(mailOptions);
 } 
