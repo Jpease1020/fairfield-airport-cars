@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { cmsService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
+import withAuth from '../withAuth';
 
 import { 
   AdminPageWrapper,
@@ -309,4 +310,4 @@ const CMSPage = () => {
   );
 };
 
-export default CMSPage;
+export default withAuth(CMSPage);

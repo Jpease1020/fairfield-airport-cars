@@ -8,6 +8,7 @@ import { useToast } from '@/ui';
 import { DataTable, DataTableColumn, DataTableAction } from '@/design/components/ui-components/DataTable';
 import { getAllBookings } from '@/lib/services/database-service';
 import { EditableText } from '@/ui';
+import withAuth from '../withAuth';
 
 interface Feedback {
   id: string;
@@ -294,4 +295,4 @@ const FeedbackPage = () => {
   );
 };
 
-export default FeedbackPage;
+export default withAuth(FeedbackPage);

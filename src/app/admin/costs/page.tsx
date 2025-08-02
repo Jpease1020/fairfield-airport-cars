@@ -18,6 +18,7 @@ import {
   Stack,
 } from '@/ui';
 import { EditableText } from '@/ui';
+import withAuth from '../withAuth';
 
 function CostsPageContent() {
   const { addToast } = useToast();
@@ -330,10 +331,12 @@ function CostsPageContent() {
   );
 }
 
-export default function CostsPage() {
+function CostsPage() {
   return (
     <ToastProvider>
       <CostsPageContent />
     </ToastProvider>
   );
 }
+
+export default withAuth(CostsPage);
