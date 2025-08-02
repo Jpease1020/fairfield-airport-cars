@@ -13,6 +13,3 @@ export * from './ActionGrid';
 
 // Marketing & Content Components
 export * from './HeroSection';
-
-// Layout Components (re-exported for convenience)
-export { LayoutSection as Section } from '../../layout/containers/Section'; 
