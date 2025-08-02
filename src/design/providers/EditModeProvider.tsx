@@ -77,14 +77,14 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
     setSaveMsg(null);
     try {
       const user = auth.currentUser;
-      
+
       const result = await cmsService.updateCMSConfiguration({
         pages: {
           ...cmsConfig?.pages,
           [pageType]: localContent,
         },
       }, user?.uid);
-      
+
       if (result.success) {
         setSaveMsg('Saved!');
         setTimeout(() => setSaveMsg(null), 2000);
@@ -139,10 +139,10 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
   };
 
   // Standardized edit mode controls component
-  const EditModeControls: React.FC<{ cmsConfig: any; pageType: string; originalContent: any }> = ({ 
-    cmsConfig, 
-    pageType, 
-    originalContent 
+  const EditModeControls: React.FC<{ cmsConfig: any; pageType: string; originalContent: any }> = ({
+    cmsConfig,
+    pageType,
+    originalContent
   }) => {
     if (!isAdmin || !editMode) return null;
 

@@ -63,14 +63,7 @@ function CustomerDashboardContent() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      router.push('/');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
+
 
   const handleBookRide = () => {
     router.push('/book');

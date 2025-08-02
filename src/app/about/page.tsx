@@ -4,7 +4,6 @@ import React from 'react';
 import { 
   Container,
   Stack,
-  H1,
   Text,
   Button
 } from '@/ui';

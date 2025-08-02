@@ -15,6 +15,7 @@ import {
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';
 import { Input } from '@/ui';
+import { BalancePaymentButton } from '@/design/components/business-components/BalancePaymentButton';
 
 function ManageBookingPageContent() {
   const params = useParams();
@@ -232,15 +233,19 @@ function ManageBookingPageContent() {
   }
 
   // Add pay balance button if there's a balance due
-  if (booking.balanceDue > 0 && booking.status === 'completed') {
+  if (booking.balanceDue > 0 && (booking.status === 'completed' || booking.status === 'confirmed')) {
     actionButtons.push({
       id: 'pay-balance',
       label: `${localContent?.payBalanceButton || "Pay Balance"} ($${booking.balanceDue.toFixed(2)})`,
       onClick: async () => {
-        const res = await fetch('/api/complete-payment', { 
+        const res = await fetch('/api/payment/create-balance-session', { 
           method: 'POST', 
           headers: { 'Content-Type':'application/json' }, 
-          body: JSON.stringify({ bookingId: booking.id })
+          body: JSON.stringify({ 
+            bookingId: booking.id,
+            currency: 'USD',
+            description: `Balance Payment - Booking ${booking.id}`
+          })
         });
         if (res.ok) {
           const { paymentLinkUrl } = await res.json();
@@ -248,8 +253,7 @@ function ManageBookingPageContent() {
         } else {
           const errorMsg = localContent?.payBalanceErrorMessage || 'Failed to create balance payment link';
           setActionMsg(errorMsg);
-          // Assuming addToast is available from ToastProvider or similar
-          // addToast('error', errorMsg);
+          addToast('error', errorMsg);
         }
       },
       variant: 'outline' as const,
@@ -403,6 +407,16 @@ function ManageBookingPageContent() {
               </Span>
               <Span>${booking.fare?.toFixed(2)}</Span>
             </Container>
+            {booking.depositAmount && (
+              <Container>
+                <Span>
+                  <EditableText field="manage.depositAmount" defaultValue="Deposit Paid:">
+                    Deposit Paid:
+                  </EditableText>
+                </Span>
+                <Span>${booking.depositAmount.toFixed(2)}</Span>
+              </Container>
+            )}
             {booking.balanceDue > 0 && (
               <Container>
                 <Span>
@@ -411,6 +425,16 @@ function ManageBookingPageContent() {
                   </EditableText>
                 </Span>
                 <Span>${booking.balanceDue.toFixed(2)}</Span>
+              </Container>
+            )}
+            {booking.depositPaid && (
+              <Container>
+                <Span>
+                  <EditableText field="manage.depositStatus" defaultValue="Deposit Status:">
+                    Deposit Status:
+                  </EditableText>
+                </Span>
+                <Span>✅ Paid</Span>
               </Container>
             )}
           </Stack>

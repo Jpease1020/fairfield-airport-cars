@@ -11,8 +11,7 @@ import {
   Container,
   Stack,
   Box,
-  Button,
-  CustomerLayout
+  Button
 } from '@/ui';
 import { EditableText, EditableHeading } from '@/ui';
 

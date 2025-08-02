@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { updateBooking } from '@/lib/services/booking-service';
+import { updateBooking, getBooking } from '@/lib/services/booking-service';
 
 const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
 
@@ -44,13 +44,34 @@ export async function POST(req: Request) {
   try {
     const bookingId = payment.order_id;
     const tipCents = (payment as any).tipMoney?.amount || (payment as any).tip_money?.amount || 0;
-    await updateBooking(bookingId, {
-      status: 'confirmed',
-      depositPaid: true,
-      balanceDue: 0,
-      tipAmount: tipCents ? tipCents / 100 : undefined,
-      updatedAt: new Date(),
-    });
+    // Get the booking to check if this is a deposit or full payment
+    const booking = await getBooking(bookingId);
+    if (!booking) {
+      console.error('Booking not found for webhook:', bookingId);
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+
+    // Check if this is a deposit payment or full payment
+    const isDepositPayment = booking.depositAmount && booking.balanceDue > 0;
+    
+    if (isDepositPayment) {
+      // This is a deposit payment
+      await updateBooking(bookingId, {
+        status: 'confirmed',
+        depositPaid: true,
+        tipAmount: tipCents ? tipCents / 100 : undefined,
+        updatedAt: new Date(),
+      });
+    } else {
+      // This is a full payment or balance payment
+      await updateBooking(bookingId, {
+        status: 'confirmed',
+        depositPaid: true,
+        balanceDue: 0,
+        tipAmount: tipCents ? tipCents / 100 : undefined,
+        updatedAt: new Date(),
+      });
+    }
     return NextResponse.json({ message: 'Booking confirmed' });
   } catch {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

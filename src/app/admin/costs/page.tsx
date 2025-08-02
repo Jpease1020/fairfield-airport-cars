@@ -96,24 +96,7 @@ function CostsPageContent() {
   };
 
 
-  const headerActions = [
-    { 
-      label: 'Refresh', 
-      onClick: loadCosts, 
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: 'Export Report', 
-      onClick: () => addToast('info', 'Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Add Cost', 
-      onClick: () => window.location.href = '/admin/costs/manual-entry', 
-      variant: 'primary' as const 
-    }
-  ];
+
 
   // Table columns
   const columns: DataTableColumn<RealCostItem>[] = [

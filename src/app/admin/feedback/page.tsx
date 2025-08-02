@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { AdminPageWrapper, GridSection, Box, Container, StatCard, Text, Stack, Button, useToast, DataTable, DataTableColumn, DataTableAction, EditableText } from '@/ui';
+import { AdminPageWrapper, GridSection, Box, Container, StatCard, Text, Stack, DataTable, DataTableColumn, DataTableAction, EditableText } from '@/ui';
 import { getAllBookings } from '@/lib/services/database-service';
 import withAuth from '../withAuth';
 
@@ -18,11 +18,9 @@ interface Feedback {
 function FeedbackPageContent() {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const loadFeedback = async () => {
     try {
-      setError(null);
       setLoading(true);
       console.log('💬 Loading customer feedback...');
 
@@ -47,7 +45,6 @@ function FeedbackPageContent() {
       setFeedback(realFeedback);
     } catch (err) {
       console.error('❌ Error loading feedback:', err);
-      setError('Failed to load customer feedback. Please try again.');
     } finally {
       setLoading(false);
     }

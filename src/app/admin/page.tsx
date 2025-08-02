@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { NextPage } from 'next';
 import withAuth from './withAuth';
 import { 
   Container, 
@@ -13,7 +12,6 @@ import {
   GridItem,
   LoadingSpinner,
   Alert,
-  H1,
   H2,
   AdminPageWrapper
 } from '@/ui';

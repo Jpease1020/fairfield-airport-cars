@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AdminPageWrapper, GridSection, Box, ActionGrid, Container, H3, Text } from '@/ui';
 import { EditableText } from '@/ui';
 import { Stack } from '@/ui';
@@ -124,23 +124,7 @@ function AdminHelpPage() {
     }
   ];
 
-  const headerActions = [
-    { 
-      label: 'Print Guide', 
-      onClick: () => window.print(), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Documentation', 
-      onClick: () => window.location.href = '/docs', 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Contact Support', 
-      onClick: () => alert('Contact your developer for technical support'), 
-      variant: 'primary' as const 
-    }
-  ];
+
 
   return (
     <AdminPageWrapper

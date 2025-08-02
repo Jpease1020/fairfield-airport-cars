@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
+import { Container, Text, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast } from '@/ui';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '@/app/book/booking-form';

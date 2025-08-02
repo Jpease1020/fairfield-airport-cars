@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { NextPage } from 'next';
 import withAuth from '../withAuth';
 import { 
@@ -39,8 +39,6 @@ const CalendarDay = styled.div`
 `;
 
 function CalendarPageContent() {
-  const [selectedDate] = useState<Date>(new Date());
-  const [events] = useState<any[]>([]);
 
   return (
     <Container>

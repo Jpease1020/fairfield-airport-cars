@@ -18,6 +18,7 @@ import {
 } from '@/ui';
 import { Input, Select, Label, Textarea } from '@/ui';
 import { Booking } from '@/types/booking';
+import { ReviewTrustSignal } from '@/design/components/business-components/ReviewTrustSignal';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -246,7 +247,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setSuccess(null);
 
     try {
-      const response = await fetch('/api/booking', {
+      // First create the booking
+      const bookingResponse = await fetch('/api/booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -269,21 +271,45 @@ function BookingFormContent({ booking }: BookingFormProps) {
         }),
       });
 
-      if (!response.ok) {
+      if (!bookingResponse.ok) {
         throw new Error('Failed to create booking');
       }
 
-      const data = await response.json();
-      setSuccess('Booking created successfully!');
+      const bookingData = await bookingResponse.json();
+      const bookingId = bookingData.bookingId;
+      
+      // Calculate total fare including vehicle and service upgrades
+      const totalFare = getTotalFare();
+      
+      // Create deposit payment session
+      const depositResponse = await fetch('/api/payment/create-deposit-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId,
+          totalAmount: Math.round(totalFare * 100), // Convert to cents
+          currency: 'USD',
+          description: `Airport Transfer - ${pickupLocation} to ${dropoffLocation}`,
+        }),
+      });
+
+      if (!depositResponse.ok) {
+        throw new Error('Failed to create deposit payment');
+      }
+
+      const depositData = await depositResponse.json();
+      setSuccess('Booking created successfully! Please complete your deposit payment.');
       
       // Store booking ID in session storage for tracking
       if (typeof sessionStorage !== 'undefined') {
-        sessionStorage.setItem('lastBookingId', data.bookingId);
+        sessionStorage.setItem('lastBookingId', bookingId);
       }
       
-      // Redirect to booking status page
+      // Redirect to payment page
       if (typeof window !== 'undefined') {
-        window.location.href = `/booking/${data.bookingId}`;
+        window.location.href = depositData.paymentLinkUrl;
       }
     } catch (error) {
       console.error('Error creating booking:', error);
@@ -717,6 +743,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </Stack>
           </Box>
 
+          {/* Customer Trust Signal */}
+          <ReviewTrustSignal variant="compact" />
+          
           {/* Fare Calculation & Submit */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
@@ -757,6 +786,14 @@ function BookingFormContent({ booking }: BookingFormProps) {
                         <Stack direction="horizontal" justify="space-between">
                           <Text weight="bold">Total:</Text>
                           <Text weight="bold">${getTotalFare().toFixed(2)}</Text>
+                        </Stack>
+                        <Stack direction="horizontal" justify="space-between">
+                          <Text variant="muted">Deposit (50%):</Text>
+                          <Text variant="muted">${(getTotalFare() * 0.5).toFixed(2)}</Text>
+                        </Stack>
+                        <Stack direction="horizontal" justify="space-between">
+                          <Text variant="muted">Balance Due:</Text>
+                          <Text variant="muted">${(getTotalFare() * 0.5).toFixed(2)}</Text>
                         </Stack>
                       </Stack>
                     </Stack>

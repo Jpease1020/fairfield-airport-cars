@@ -8,11 +8,9 @@ import withAuth from '../withAuth';
 function CommentsPageContent() {
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const loadComments = async () => {
     try {
-      setError(null);
       setLoading(true);
       console.log('💬 Loading page comments...');
       
@@ -21,7 +19,6 @@ function CommentsPageContent() {
       setComments(commentsData);
     } catch (err) {
       console.error('❌ Error loading comments:', err);
-      setError('Failed to load comments. Please try again.');
     } finally {
       setLoading(false);
     }

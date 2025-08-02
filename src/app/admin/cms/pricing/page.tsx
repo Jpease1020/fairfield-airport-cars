@@ -11,7 +11,6 @@ import {
   ActionButtonGroup,
   ToastProvider,
   useToast,
-  H4,
   Container,
   Span,
   Text,
@@ -124,20 +123,7 @@ function PricingSettingsContent() {
     }
   };
 
-  const headerActions = [
-    { 
-      label: 'Save Changes', 
-      onClick: handleSave, 
-      variant: 'primary' as const,
-      disabled: loading || !settings
-    },
-    { 
-      label: 'Refresh', 
-      onClick: loadPricingSettings, 
-      variant: 'outline' as const,
-      disabled: loading
-    }
-  ];
+
 
   if (loading) {
     return (

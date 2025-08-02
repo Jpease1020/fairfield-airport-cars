@@ -11,7 +11,6 @@ import {
   Container,
   Box,
   Text,
-  H3,
   H4,
 } from '@/ui';
 import { Stack } from '@/ui';

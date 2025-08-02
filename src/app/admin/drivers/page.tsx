@@ -4,17 +4,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
 import withAuth from '../withAuth';
 import { getAllDrivers, getAvailableDrivers, updateDocument, type Driver } from '@/lib/services/database-service';
-import { 
-  Container, 
-  Stack, 
-  Text, 
-  Button, 
-  Box, 
+import {
+  Container,
+  Stack,
+  Text,
+  Button,
+  Box,
   Badge,
   DataTable,
   Alert,
   LoadingSpinner,
-  H1,
   AdminPageWrapper
 } from '@/ui';
 
@@ -31,16 +30,16 @@ function DriversPageContent() {
       console.log('👨‍💼 Loading drivers from database...');
 
       let fetchedDrivers: Driver[];
-      
+
       if (selectedStatus === 'available') {
         fetchedDrivers = await getAvailableDrivers();
       } else {
         fetchedDrivers = await getAllDrivers();
       }
-      
+
       console.log('✅ Drivers loaded from database:', fetchedDrivers.length, 'drivers');
       setDrivers(fetchedDrivers);
-      
+
       if (fetchedDrivers.length === 0) {
         console.log('📝 No drivers found in database');
       }
@@ -59,14 +58,14 @@ function DriversPageContent() {
   const handleStatusUpdate = async (driver: Driver, newStatus: Driver['status']) => {
     try {
       console.log(`🔄 Updating driver ${driver.id} status to ${newStatus}`);
-      
+
       await updateDocument('drivers', driver.id, { status: newStatus });
-      
+
       // Update local state
-      setDrivers(prev => prev.map(d => 
+      setDrivers(prev => prev.map(d =>
         d.id === driver.id ? { ...d, status: newStatus } : d
       ));
-      
+
       console.log('✅ Driver status updated successfully');
     } catch (err) {
       console.error('❌ Error updating driver status:', err);
@@ -107,8 +106,8 @@ function DriversPageContent() {
     offlineDrivers: drivers.filter(d => d.status === 'offline').length
   };
 
-  const filteredDrivers = selectedStatus === 'all' 
-    ? drivers 
+  const filteredDrivers = selectedStatus === 'all'
+    ? drivers
     : drivers.filter(d => d.status === selectedStatus);
 
   const tableData = filteredDrivers.map(driver => ({
@@ -148,25 +147,25 @@ function DriversPageContent() {
     joined: formatDate(driver.createdAt),
     actions: (
       <Stack direction="horizontal" spacing="sm">
-        <Button 
-          size="sm" 
-          variant="secondary" 
+        <Button
+          size="sm"
+          variant="secondary"
           onClick={() => handleStatusUpdate(driver, 'available')}
           disabled={driver.status === 'available'}
         >
           Set Available
         </Button>
-        <Button 
-          size="sm" 
-          variant="secondary" 
+        <Button
+          size="sm"
+          variant="secondary"
           onClick={() => handleStatusUpdate(driver, 'busy')}
           disabled={driver.status === 'busy'}
         >
           Set Busy
         </Button>
-        <Button 
-          size="sm" 
-          variant="secondary" 
+        <Button
+          size="sm"
+          variant="secondary"
           onClick={() => handleStatusUpdate(driver, 'offline')}
           disabled={driver.status === 'offline'}
         >
@@ -238,7 +237,7 @@ function DriversPageContent() {
               </Stack>
             </Stack>
           </Box>
-          
+
           <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
@@ -248,7 +247,7 @@ function DriversPageContent() {
               </Stack>
             </Stack>
           </Box>
-          
+
           <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🚗</Text>
@@ -258,7 +257,7 @@ function DriversPageContent() {
               </Stack>
             </Stack>
           </Box>
-          
+
           <Box>
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">⏸️</Text>

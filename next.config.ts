@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   // Webpack optimizations
-  webpack: (config, { isServer }) => {
+  webpack: (config, {}) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,

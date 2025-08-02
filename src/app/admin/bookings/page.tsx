@@ -14,7 +14,6 @@ import {
   DataTable,
   Alert,
   LoadingSpinner,
-  H1,
   AdminPageWrapper
 } from '@/ui';
 

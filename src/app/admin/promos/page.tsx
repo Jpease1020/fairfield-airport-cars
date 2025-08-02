@@ -14,7 +14,7 @@ import {
   Container,
   Span
 } from '@/ui';
-import { Box, StatCard, Card } from '@/ui';
+import { StatCard, Card } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
 import { Select } from '@/ui';
@@ -32,12 +32,10 @@ function PromosPageContent() {
     usageLimit: '' 
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const fetchPromos = async () => {
     try {
-      setError(null);
       setLoading(true);
       console.log('🎟️ Loading promo codes...');
       
@@ -51,7 +49,6 @@ function PromosPageContent() {
       }
     } catch (err) {
       console.error('❌ Error loading promos:', err);
-      setError('Failed to load promo codes. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -134,24 +131,7 @@ function PromosPageContent() {
     );
   };
 
-  const headerActions = [
-    { 
-      label: 'Refresh', 
-      onClick: fetchPromos, 
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: 'Export Report', 
-      onClick: () => alert('Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Analytics', 
-      onClick: () => alert('Promo analytics dashboard coming soon'), 
-      variant: 'primary' as const 
-    }
-  ];
+
 
   // Table columns
   const columns: DataTableColumn<PromoCode>[] = [

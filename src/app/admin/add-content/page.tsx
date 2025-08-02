@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { 
   AdminPageWrapper,
   Container,
@@ -11,11 +10,9 @@ import {
   Button
 } from '@/ui';
 import { EditableText } from '@/ui';
-import { ToastProvider, useToast } from '@/ui';
+import { ToastProvider } from '@/ui';
 
 function AddContentPage() {
-  const { addToast } = useToast();
-  const [loading, setLoading] = useState(false);
 
   const cmsPages = [
     {
