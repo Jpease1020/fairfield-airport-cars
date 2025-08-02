@@ -44,6 +44,7 @@ export interface BoxProps extends BaseContentProps {
   margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  style?: React.CSSProperties;
 }
 
  

@@ -28,4 +28,5 @@ export interface BaseLayoutProps {
   id?: string;
   as?: keyof React.JSX.IntrinsicElements;
   'data-testid'?: string;
+  style?: React.CSSProperties;
 } 
