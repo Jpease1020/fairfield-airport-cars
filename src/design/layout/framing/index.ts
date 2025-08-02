@@ -1,12 +1,6 @@
-// Grid System Components
-// CSS Grid and Flexbox-based grid system for responsive layouts
-
-// Core Grid Components
-export * from './Row';
-export * from './Col';
-export * from './Grid';
-export * from './Stack';
-export * from './types';
-
-// Container Components (from layout/containers)
-export * from '../containers/Container'; // Container, Spacer, PositionedContainer 
+export { Col } from './Col';
+export { Grid, GridSection, GridItem } from './Grid';
+export { Row } from './Row';
+export { Stack } from './Stack';
+export { type GridProps, type RowProps, type ColProps } from './types';
+export type { GridItemProps } from './Grid';

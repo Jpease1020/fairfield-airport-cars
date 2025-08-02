@@ -7,11 +7,7 @@ import {
   Box,
   Input,
   Label,
-  H1,
-  H2,
-  H3,
-  H4
-} from '@/design/components';
+} from '@/ui';
 import styled from 'styled-components';
 
 const ButtonGroup = styled.div`

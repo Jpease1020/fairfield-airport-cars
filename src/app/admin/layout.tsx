@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AdminProvider } from '@/design/providers/AdminProvider';
-import { EditModeProvider } from '@/design/providers/EditModeProvider';
-
+import { AdminProvider, EditModeProvider } from '@/ui';
 import { usePathname } from 'next/navigation';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {

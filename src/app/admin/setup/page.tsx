@@ -11,9 +11,9 @@ import {
   Button, 
   Box,
   H1,
-  Alert
-} from '@/design/components';
-import { colors } from '@/design/system/tokens/tokens';
+  Alert,
+  colors
+} from '@/ui';
 import styled from 'styled-components';
 
 const StyledLink = styled.a`

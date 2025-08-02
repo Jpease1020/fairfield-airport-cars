@@ -1,22 +1,15 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { cmsService } from "@/lib/services/cms-service";
 import { CMSConfiguration, HomePageContent, HelpPageContent, PageContent } from "@/types/cms";
 import { 
-  GridSection,
-  Container,
-} from "@/ui";
-import { 
-  GenericPageEditor,
+  GenericPageEditor,  
   HomePageEditor,
   BookingPageEditor,
   HelpPageEditor
 } from "../PageEditors";
-import { EditableText } from '@/ui';
-import { useToast, ToastProvider } from "@/design/components/base-components/notifications/Toast";
-import { StatusMessage } from "@/design/components/base-components/notifications/StatusMessage";
-import PageCommentWidget from "@/future-features/comment-system/PageCommentWidget";
+import { EditableText, useToast, ToastProvider, StatusMessage, Container, GridSection } from "@/ui";
 
 
 const PAGE_KEYS = [

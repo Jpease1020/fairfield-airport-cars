@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Container, Text, Button, LoadingSpinner, EditableText, GridSection, useToast, ToastProvider, Box, Label, Textarea, Stack } from '@/ui';
 import { Star } from 'lucide-react';
+import { colors } from '@/ui';
 
 function FeedbackPageContent() {
   const params = useParams();
@@ -195,8 +196,8 @@ function FeedbackPageContent() {
                     >
                       <Star
                         size={24}
-                        fill={star <= rating ? '#FFD700' : 'none'}
-                        stroke={star <= rating ? '#FFD700' : '#000'}
+                        fill={star <= rating ? colors.warning[500] : 'none'}
+                        stroke={star <= rating ? colors.warning[500] : colors.text.primary}
                       />
                     </Button>
                   ))}

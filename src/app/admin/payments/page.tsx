@@ -13,7 +13,7 @@ import {
   Alert,
   LoadingSpinner,
   H1
-} from '@/design/components';
+} from '@/ui';
 
 interface Payment {
   id: string;

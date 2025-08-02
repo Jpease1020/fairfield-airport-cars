@@ -16,7 +16,7 @@ import { Input } from '@/ui';
 import { Label } from '@/ui';
 import { EditableText } from '@/ui';
 import styled from 'styled-components';
-import { spacing, fontSize, fontWeight, colors } from '@/design/system/tokens/tokens';
+import { spacing, colors } from '@/ui';
 
 // Styled components for login page
 const LoginCard = styled(Box)`

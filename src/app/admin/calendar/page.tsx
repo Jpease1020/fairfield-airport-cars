@@ -8,9 +8,8 @@ import {
   Stack, 
   Text, 
   Box,
-  H1
-} from '@/design/components';
-import { colors } from '@/design/system/tokens/tokens';
+  H1,
+  colors } from '@/ui';
 import styled from 'styled-components';
 
 const CalendarHeader = styled.div`

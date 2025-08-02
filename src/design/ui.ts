@@ -1,26 +1,12 @@
-// Layout Components
+export * from './components';
 export * from './layout';
-
-// UI Components
-export * from './components/base-components';
-
-// Business Components
-export * from './components/business-components';
-
-// Content Sections
-export * from './components/content-sections';
-
-// Page Sections
 export * from './page-sections';
-
-// Template Components
-// Templates removed - using clean components directly
-
-// Icons
-export * from './components/icons';
-
-// Providers
 export * from './providers';
+export * from './skeletons';
+export * from './system';
+
+// Legacy aliases for backward compatibility
+export { PageLayout as CustomerLayout } from './layout/PageLayout';
 
 // System - explicit re-exports to avoid naming conflicts
 export type {
@@ -49,12 +35,15 @@ export type {
   TextProps,
   ButtonProps,
   ThemeToken
-} from './system';
+} from './system/types';
 
 export {
-  // Functions
-  isValidSpacing,
   isValidColorVariant,
+  isValidGridCols,
   isValidMaxWidth,
-  isValidGridCols
-} from './system'; 
+  isValidSpacing,
+} from './system/types';
+
+export {
+  generateCSSVariables,
+} from './system/tokens';

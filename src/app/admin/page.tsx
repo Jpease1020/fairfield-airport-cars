@@ -16,7 +16,7 @@ import {
   H1,
   H2,
   AdminPageWrapper
-} from '@/design/components';
+} from '@/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
 
 function AdminDashboardContent() {

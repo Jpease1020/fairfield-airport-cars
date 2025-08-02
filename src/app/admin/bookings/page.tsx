@@ -16,7 +16,7 @@ import {
   LoadingSpinner,
   H1,
   AdminPageWrapper
-} from '@/design/components';
+} from '@/ui';
 
 function AdminBookingsPageContent() {
   const [bookings, setBookings] = useState<Booking[]>([]);
