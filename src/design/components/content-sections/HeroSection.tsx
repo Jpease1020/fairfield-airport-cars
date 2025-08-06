@@ -1,7 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, H1, Text, Button } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { Stack } from '../../layout/framing/Stack';
+import { H1 } from '../base-components/text/Headings';
+import { Text } from '../base-components/text/Text';
+import { Button } from '../base-components/Button';
 import Link from 'next/link';
 
 export interface HeroSectionProps {

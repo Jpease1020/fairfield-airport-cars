@@ -1,8 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Container, Span, Text, Button } from '@/ui';
-import { Stack } from '@/ui';
+import { Container } from '../../../layout/containers/Container';
+import { Span } from '../text/Span';
+import { Text } from '../text/Text';
+import { Button } from '../Button';
+import { Stack } from '../../../layout/framing/Stack';
 
 export interface Toast {
   id: string;

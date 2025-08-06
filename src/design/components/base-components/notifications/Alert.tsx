@@ -3,8 +3,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '../../../system/tokens/tokens';
-import { Button } from '@/ui';
-import { Stack, Text } from '@/ui';
+import { Button } from '../Button';
+import { Stack } from '../../../layout/framing/Stack';
+import { Text } from '../text/Text';
 
 // Single styled component for alert container
 const AlertContainer = styled.div.withConfig({

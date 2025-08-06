@@ -1,12 +1,14 @@
 import React from 'react';
 import { Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
 import { Booking } from '@/types/booking';
-import { Badge } from '@/ui';
-import { Button } from '@/ui';
-import { Container, H3, Text } from '@/ui';
-import { EditableText } from '@/ui';
-import { Stack } from '@/ui';
-import { Box } from '@/ui';
+import { Badge } from '../base-components/Badge';
+import { Button } from '../base-components/Button';
+import { Container } from '../../layout/containers/Container';
+import { H3 } from '../base-components/text/Headings';
+import { Text } from '../base-components/text/Text';
+import { EditableText } from '../base-components/text/EditableText';
+import { Stack } from '../../layout/framing/Stack';
+import { Box } from '../../layout/content/Box';
 
 interface BookingCardProps {
   booking: Booking;

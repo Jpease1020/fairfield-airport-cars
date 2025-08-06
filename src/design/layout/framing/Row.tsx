@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { RowProps } from './types';
+import { RowProps } from '../content/types';
 import { spacing, breakpoints } from '@/design/system/tokens/tokens';
 
 // Styled Row component with flexbox properties

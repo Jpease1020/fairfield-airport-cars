@@ -1,7 +1,13 @@
 'use client';
 
-import { Container, Stack, Box, Grid, Col, Text, H4, Button } from '@/ui';
 import React from 'react';
+import { Container } from '../../layout/containers/Container';
+import { Stack } from '../../layout/framing/Stack';
+import { Box } from '../../layout/content/Box';
+import { Grid, GridItem } from '../../layout/framing/Grid';
+import { Text } from '../base-components/text/Text';
+import { H4 } from '../base-components/text/Headings';
+import { Button } from '../base-components/Button';
 
 interface ActionData {
   id: string | number;
@@ -57,7 +63,7 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
   return (
     <Grid cols={columns as 1 | 2 | 3 | 4 | 5 | 6 | 12} gap="md">
       {actions.map((action) => (
-        <Col key={action.id}>
+        <GridItem key={action.id}>
           <Box variant="default" padding="md">
             <Stack direction="vertical" spacing="md" align="center">
               <Container>
@@ -100,7 +106,7 @@ export const ActionGrid: React.FC<ActionGridProps> = ({
               </Container>
             </Stack>
           </Box>
-        </Col>
+        </GridItem>
       ))}
     </Grid>
   );

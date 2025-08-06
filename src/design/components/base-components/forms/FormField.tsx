@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Stack } from '@/ui';
+import { Stack } from '../../../layout/framing/Stack';
 import { colors, spacing, fontSize } from '../../../system/tokens/tokens';
 import { Label } from './Label';
 

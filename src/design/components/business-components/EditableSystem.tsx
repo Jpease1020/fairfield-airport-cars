@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/ui';
-import { H1, H2, H3, H4, H5, H6, Text } from '@/ui';
-import { Stack } from '@/ui';
+import { Button } from '../base-components/Button';
+import { H1, H2, H3, H4, H5, H6 } from '../base-components/text/Headings';
+import { Text } from '../base-components/text/Text';
+import { Stack } from '../../layout/framing/Stack';
 import { useEditMode } from '../../providers/EditModeProvider';
 import { getContent } from '@/lib/content/content-mapping';
 

@@ -6,7 +6,7 @@ import { spacing, transitions } from '@/design/system/tokens/tokens';
 import { StackProps } from '../content/types';
 
 const StyledStack = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'margin'].includes(prop)
+  shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'margin', 'fullWidth'].includes(prop)
 })<{
   direction: any;
   spacing: any;
@@ -15,8 +15,10 @@ const StyledStack = styled.div.withConfig({
   wrap: any;
   padding: any;
   margin: any;
+  fullWidth: boolean;
 }>`
   display: flex;
+  width: ${({ fullWidth }) => fullWidth ? '100%' : 'auto'};
   flex-direction: ${({ direction }) => {
     if (typeof direction === 'string') {
       return direction === 'horizontal' ? 'row' : 'column';
@@ -76,7 +78,7 @@ const StyledStack = styled.div.withConfig({
   }};
   transition: ${transitions.default};
 
-  /* Responsive breakpoints */
+  /* Enhanced Responsive breakpoints */
   ${({ direction, align, justify, wrap, spacing: spacingProp, padding, margin }) => {
     const breakpoints = {
       sm: '640px',
@@ -140,6 +142,7 @@ export const Stack: React.FC<StackProps> = ({
   wrap = 'nowrap',
   padding = 'none',
   margin = 'none',
+  fullWidth = false,
   as: Component = 'div',
   ...rest
 }) => {
@@ -152,6 +155,7 @@ export const Stack: React.FC<StackProps> = ({
       wrap={wrap}
       padding={padding}
       margin={margin}
+      fullWidth={fullWidth}
       as={Component}
       {...rest}
     >

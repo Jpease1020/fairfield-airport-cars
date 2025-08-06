@@ -1,7 +1,10 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Container, Text, Button, Stack } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { Text } from '../base-components/text/Text';
+import { Button } from '../base-components/Button';
+import { Stack } from '../../layout/framing/Stack';
 
 interface Props {
   children: ReactNode;

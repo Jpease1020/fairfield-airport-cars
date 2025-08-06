@@ -2,9 +2,11 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { spacing } from '@/design/system/tokens/tokens';
-import { Text, H2, Container } from '@/ui';
-import { ResponsiveValue, Breakpoint } from '../shared-types';
+import { spacing } from '../../system/tokens/tokens';
+import { Container } from '../../layout/containers/Container';
+import { ResponsiveValue, Breakpoint, GridCols, SpacingScale } from '../../system/shared-types';
+import { H2 } from '../../components/base-components/text/Headings';
+import { Text } from '../../components/base-components/text/Text';
 
 // Helper function to resolve responsive values
 const resolveResponsiveValue = <T,>(value: ResponsiveValue<T>, breakpoint: Breakpoint = 'xs'): T => {
@@ -19,24 +21,24 @@ const resolveResponsiveValue = <T,>(value: ResponsiveValue<T>, breakpoint: Break
 // Grid system components
 interface GridProps {
   children: React.ReactNode;
-  cols?: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12> | 1 | 2 | 3 | 4 | 5 | 6 | 12;
-  gap?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
+  cols?: ResponsiveValue<GridCols> | GridCols;
+  gap?: ResponsiveValue<SpacingScale>;
   responsive?: boolean;
-  margin?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
-  marginTop?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
-  marginBottom?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  margin?: ResponsiveValue<SpacingScale>;
+  marginTop?: ResponsiveValue<SpacingScale>;
+  marginBottom?: ResponsiveValue<SpacingScale>;
   as?: 'div' | 'section' | 'article';
 }
 
 const Grid = styled.div.withConfig({
   shouldForwardProp: (prop) => !['cols', 'gap', 'responsive', 'margin', 'marginTop', 'marginBottom'].includes(prop)
 })<{
-  cols: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12> | 1 | 2 | 3 | 4 | 5 | 6 | 12;
-  gap: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
+  cols: ResponsiveValue<GridCols> | GridCols;
+  gap: ResponsiveValue<SpacingScale>;
   responsive: boolean;
-  margin: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
-  marginTop: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
-  marginBottom: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  margin: ResponsiveValue<SpacingScale>;
+  marginTop: ResponsiveValue<SpacingScale>;
+  marginBottom: ResponsiveValue<SpacingScale>;
 }>`
   display: grid;
   grid-template-columns: ${({ cols, responsive }) => {
@@ -134,14 +136,14 @@ interface GridSectionProps {
   title?: string;
   subtitle?: string;
   variant?: 'content' | 'default' | 'actions' | 'stats';
-  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
-  columns?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  cols?: GridCols;
+  columns?: GridCols;
+  gap?: SpacingScale;
   responsive?: boolean;
-  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  padding?: SpacingScale;
+  margin?: SpacingScale;
+  marginTop?: SpacingScale;
+  marginBottom?: SpacingScale;
   as?: 'section' | 'div' | 'article';
 }
 
@@ -201,7 +203,7 @@ const GridSection: React.FC<GridSectionProps> = ({
 // GridItem component
 interface GridItemProps {
   children: React.ReactNode;
-  span?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  span?: GridCols;
 }
 
 const GridItemContainer = styled.div<{ $span: number }>`

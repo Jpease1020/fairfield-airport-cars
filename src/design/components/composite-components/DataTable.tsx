@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Button } from '@/ui';
-import { Container, Span, Text } from '@/ui';
-import { Input } from '@/ui';
-import { Stack } from '@/ui';
+import { Button } from '../base-components/Button';
+import { Container } from '../../layout/containers/Container';
+import { Span } from '../base-components/text/Span';
+import { Text } from '../base-components/text/Text';
+import { Input } from '../base-components/forms/Input';
+import { Stack } from '../../layout/framing/Stack';
 
 // DataTableColumn - BULLETPROOF TYPE SAFETY!
 export interface DataTableColumn<T> {

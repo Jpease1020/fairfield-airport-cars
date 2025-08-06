@@ -2,7 +2,10 @@
 
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Stack, Container, Text, PositionedContainer } from '@/ui';
+import { Stack } from '../../../layout/framing/Stack';
+import { Container } from '../../../layout/containers/Container';
+import { Text } from '../text/Text';
+import { PositionedContainer } from '../../../layout/containers/PositionedContainer';
 import { colors, spacing, fontSize } from '../../../system/tokens/tokens';
 
 // Animation keyframes
@@ -14,7 +17,7 @@ const spin = keyframes`
 const pulse = keyframes`
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
-`;
+`;    
 
 const dotPulse = keyframes`
   0%, 80%, 100% { opacity: 0.3; }

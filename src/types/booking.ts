@@ -27,5 +27,25 @@ export interface Booking {
   onMyWaySent?: boolean;
   createdAt: Date;
   updatedAt: Date;
+  
+  // Advanced Booking Features
+  vehicleType?: 'sedan' | 'suv' | 'luxury' | 'van';
+  serviceLevel?: 'standard' | 'premium' | 'luxury';
+  specialRequests?: {
+    childSeat?: boolean;
+    wheelchair?: boolean;
+    extraLuggage?: boolean;
+    meetAndGreet?: boolean;
+    flightTracking?: boolean;
+  };
+  flightInfo?: {
+    airline?: string;
+    flightNumber?: string;
+    arrivalTime?: string;
+    terminal?: string;
+  };
+  vehicleUpgradePrice?: number;
+  serviceLevelPrice?: number;
+  totalFare?: number;
 }
 

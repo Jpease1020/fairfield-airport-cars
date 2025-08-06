@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Badge } from '@/ui';
-import { Text } from '@/ui';
+import { Badge } from '../Badge';
+import { Text } from '../text/Text';
 
 interface StatusBadgeProps {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'in-progress' | 'success' | 'warning' | 'error';

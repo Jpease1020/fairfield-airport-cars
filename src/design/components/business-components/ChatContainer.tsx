@@ -2,8 +2,10 @@
 
 import React, { useRef, useEffect } from 'react';
 import { ChatMessage, ChatMessageData } from './ChatMessage';
-import { Container, Span, Text } from '@/ui';
-import { Stack } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { Span } from '../base-components/text/Span';
+import { Text } from '../base-components/text/Text';
+import { Stack } from '../../layout/framing/Stack';
 
 export interface ChatContainerProps {
   messages: ChatMessageData[];

@@ -2,9 +2,12 @@
 
 import React, { forwardRef } from 'react';
 import { fontSize } from '../../system/tokens/tokens';
-import { Button, H2 } from '@/ui';
+import { Button } from './Button';
+import { H2 } from './text/Headings'; 
 import { Overlay } from './Overlay';
-import { Container, Stack, Box } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { Stack } from '../../layout/framing/Stack';
+import { Box } from '../../layout/content/Box';
 
 export interface ModalProps {
   children: React.ReactNode;

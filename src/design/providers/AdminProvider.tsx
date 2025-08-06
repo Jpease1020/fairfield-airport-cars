@@ -38,7 +38,7 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error('Error checking admin role:', error);
+      // Error checking admin role - handled silently for security
       return false;
     }
   };

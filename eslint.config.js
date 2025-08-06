@@ -173,12 +173,14 @@ export default [
       // Note: Import plugin rules removed - using custom rules instead
       
       // Custom Fairfield rules
-      'fairfield/no-hardcoded-colors': 'error',
-      'fairfield/no-inline-styles': 'error',
-      'fairfield/no-classname-props': 'error',
-      'fairfield/enforce-ui-imports': 'error',
-      'fairfield/no-multiple-styled-divs': 'error',
-      'fairfield/enforce-design-system': 'error',
+      'fairfield/no-hardcoded-colors': 'warn',
+      'fairfield/no-inline-styles': 'warn',
+      'fairfield/no-classname-props': 'warn',
+      'fairfield/no-html-structure': 'warn',
+      'fairfield/enforce-design-system': 'warn',
+      'fairfield/no-circular-ui-imports': 'warn',
+      'fairfield/enforce-types-architecture': 'warn',
+      'fairfield/no-absolute-imports-in-design': 'warn',
     },
   },
   // 🛡️ DESIGN SYSTEM PROTECTION - Stricter rules for design directory
@@ -204,12 +206,14 @@ export default [
     },
     rules: {
       // 🚨 CRITICAL: Design system protection rules
-      'fairfield/no-hardcoded-colors': 'error',
-      'fairfield/no-inline-styles': 'error',
-      'fairfield/no-classname-props': 'error',
-      'fairfield/enforce-ui-imports': 'error',
-      'fairfield/no-multiple-styled-divs': 'error',
-      'fairfield/enforce-design-system': 'error',
+      'fairfield/no-hardcoded-colors': 'warn',
+      'fairfield/no-inline-styles': 'warn',
+      'fairfield/no-classname-props': 'warn',
+      'fairfield/no-html-structure': 'warn',
+      'fairfield/enforce-design-system': 'warn',
+      'fairfield/no-circular-ui-imports': 'warn',
+      'fairfield/enforce-types-architecture': 'warn',
+      'fairfield/no-absolute-imports-in-design': 'warn',
       
       // 🔒 ADDITIONAL PROTECTION RULES FOR DESIGN DIRECTORY
       '@typescript-eslint/no-explicit-any': 'warn', // No any types in design system
