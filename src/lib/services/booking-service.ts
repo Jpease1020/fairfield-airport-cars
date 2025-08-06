@@ -53,6 +53,15 @@ export interface Booking {
   onMyWaySent?: boolean;
   createdAt: Date;
   updatedAt: Date;
+  
+  // Real-time tracking fields
+  driverLocation?: {
+    lat: number;
+    lng: number;
+    timestamp: Date;
+    heading?: number;
+    speed?: number;
+  };
 }
 
 export interface Driver {

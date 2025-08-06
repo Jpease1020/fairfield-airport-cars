@@ -98,20 +98,65 @@ export async function refundPayment(orderId: string, amount: number, currency: s
       return;
     }
 
-    const paymentId = paymentIds[0];
+    // Process refund for each payment
+    for (const paymentId of paymentIds) {
+      await (squareClient as any).refundsApi.refundPayment({
+        paymentId,
+        idempotencyKey: uuidv4(),
+        amountMoney: {
+          amount: BigInt(amount),
+          currency: currency as 'USD' | 'EUR' | 'GBP' | 'CAD',
+        },
+      });
+    }
+  } catch (error) {
+    console.error('Square refund error:', error);
+    throw new Error('Failed to process refund.');
+  }
+}
 
-    const body = {
-      idempotencyKey: uuidv4(),
+interface CreatePaymentPayload {
+  sourceId: string;
+  amountMoney: {
+    amount: number;
+    currency: string;
+  };
+  idempotencyKey: string;
+  note?: string;
+  referenceId?: string;
+}
+
+export async function createPayment(payload: CreatePaymentPayload) {
+  try {
+    const response = await (squareClient as any).paymentsApi.createPayment({
+      sourceId: payload.sourceId,
       amountMoney: {
-        amount: BigInt(amount),
-        currency,
+        amount: BigInt(payload.amountMoney.amount),
+        currency: payload.amountMoney.currency as 'USD' | 'EUR' | 'GBP' | 'CAD',
       },
-      paymentId,
-    } as any;
+      idempotencyKey: payload.idempotencyKey,
+      note: payload.note,
+      referenceId: payload.referenceId,
+    });
 
-    await (squareClient as any).refundsApi.refundPayment(body);
-  } catch (err) {
-    console.error('Square refund error:', err);
-    throw err;
+    const payment = response.payment;
+    
+    if (!payment) {
+      throw new Error('Failed to create payment');
+    }
+
+    return {
+      success: true,
+      paymentId: payment.id,
+      status: payment.status,
+      amount: payment.amountMoney.amount,
+      currency: payment.amountMoney.currency,
+    };
+  } catch (error) {
+    console.error('Square payment error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Payment failed',
+    };
   }
 }

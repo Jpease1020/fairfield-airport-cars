@@ -1,146 +1,162 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  Container, 
-  Stack, 
-  Text, 
-  Button, 
-  Input, 
-  Label, 
-  Card, 
-  Badge,
-  Box
+  Container,
+  Stack,
+  Text,
+  Button,
+  Box,
+  Input,
+  Label,
+  Alert
 } from '@/ui';
 
 interface TipCalculatorProps {
   baseAmount: number;
-  onTipChange: (tipAmount: number, tipPercent: number) => void;
-  currency?: string;
-  showCustomTip?: boolean;
-  className?: string;
+  onTipChange: (tipAmount: number, tipPercentage: number) => void;
+  initialTipPercentage?: number;
+  disabled?: boolean;
 }
 
-const TIP_OPTIONS = [
-  { percent: 0, label: 'No Tip' },
-  { percent: 15, label: '15%' },
-  { percent: 18, label: '18%' },
-  { percent: 20, label: '20%' },
-  { percent: 25, label: '25%' }
-];
+const TIP_PERCENTAGES = [15, 18, 20, 25];
 
-export function TipCalculator({ 
-  baseAmount, 
-  onTipChange, 
-  currency = 'USD',
-  showCustomTip = true,
-  className 
+export function TipCalculator({
+  baseAmount,
+  onTipChange,
+  initialTipPercentage = 20,
+  disabled = false
 }: TipCalculatorProps) {
-  const [selectedTip, setSelectedTip] = useState(18);
-  const [customTip, setCustomTip] = useState('');
+  const [selectedPercentage, setSelectedPercentage] = useState(initialTipPercentage);
+  const [customPercentage, setCustomPercentage] = useState('');
+  const [tipAmount, setTipAmount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-  const calculateTip = (percent: number) => {
-    return Math.round((baseAmount * percent) / 100);
+  // Calculate tip and total when base amount or percentage changes
+  useEffect(() => {
+    const percentage = customPercentage ? parseFloat(customPercentage) : selectedPercentage;
+    const calculatedTip = (baseAmount * percentage) / 100;
+    const calculatedTotal = baseAmount + calculatedTip;
+
+    setTipAmount(calculatedTip);
+    setTotalAmount(calculatedTotal);
+    onTipChange(calculatedTip, percentage);
+  }, [baseAmount, selectedPercentage, customPercentage, onTipChange]);
+
+  // Handle percentage selection
+  const handlePercentageSelect = (percentage: number) => {
+    setSelectedPercentage(percentage);
+    setCustomPercentage('');
   };
 
-  const handleTipSelect = (percent: number) => {
-    setSelectedTip(percent);
-    setCustomTip('');
-    onTipChange(calculateTip(percent), percent);
+  // Handle custom percentage input
+  const handleCustomPercentageChange = (value: string) => {
+    setCustomPercentage(value);
+    if (value) {
+      setSelectedPercentage(0);
+    }
   };
 
-  const handleCustomTip = (value: string) => {
-    setCustomTip(value);
-    const amount = parseFloat(value) || 0;
-    const percent = baseAmount > 0 ? Math.round((amount / baseAmount) * 100) : 0;
-    setSelectedTip(percent);
-    onTipChange(amount, percent);
-  };
-
+  // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency
+      currency: 'USD',
     }).format(amount);
   };
 
-  const tipAmount = calculateTip(selectedTip);
-  const total = baseAmount + tipAmount;
-
   return (
     <Container>
-      <Card variant="elevated" padding="lg">
-        <Stack spacing="lg">
-          <Stack spacing="sm">
-            <Text variant="h3">💡 Add a Tip</Text>
-            <Text variant="body" color="muted">
-              Show your appreciation for excellent service
-            </Text>
+      <Stack spacing="lg">
+        {/* Header */}
+        <Stack spacing="sm">
+          <Text weight="bold" size="lg">Add a Tip</Text>
+          <Text variant="muted">
+            Show your appreciation for excellent service
+          </Text>
+        </Stack>
+
+        {/* Base Amount Display */}
+        <Box variant="outlined" padding="md">
+          <Stack direction="horizontal" justify="space-between" align="center">
+            <Text>Base Fare</Text>
+            <Text weight="bold">{formatCurrency(baseAmount)}</Text>
+          </Stack>
+        </Box>
+
+        {/* Tip Percentage Options */}
+        <Stack spacing="md">
+          <Text weight="bold">Select Tip Percentage</Text>
+          
+          <Stack direction="horizontal" spacing="sm">
+            {TIP_PERCENTAGES.map((percentage) => (
+              <Button
+                key={percentage}
+                variant={selectedPercentage === percentage && !customPercentage ? 'primary' : 'outline'}
+                onClick={() => handlePercentageSelect(percentage)}
+                disabled={disabled}
+                size="sm"
+              >
+                {percentage}%
+              </Button>
+            ))}
           </Stack>
 
-          <Stack spacing="md">
-            <Stack spacing="sm">
-              <Label>Tip Percentage</Label>
-              <Stack direction="horizontal" spacing="sm" wrap="wrap">
-                {TIP_OPTIONS.map((option) => (
-                  <Button
-                    key={option.percent}
-                    variant={selectedTip === option.percent ? 'primary' : 'outline'}
-                    size="sm"
-                    onClick={() => handleTipSelect(option.percent)}
-                  >
-                    {option.label}
-                  </Button>
-                ))}
-              </Stack>
-            </Stack>
-
-            {showCustomTip && (
-              <Stack spacing="sm">
-                <Label htmlFor="custom-tip">Custom Tip Amount</Label>
-                <Input
-                  id="custom-tip"
-                  type="number"
-                  placeholder="Enter custom tip amount"
-                  value={customTip}
-                  onChange={(e) => handleCustomTip(e.target.value)}
-                />
-                <Text variant="small" color="muted">
-                  Enter a specific dollar amount
-                </Text>
-              </Stack>
-            )}
-
-            <Box variant="elevated" padding="md">
-              <Stack spacing="sm">
-                <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text variant="body">Base Fare</Text>
-                  <Text variant="body" weight="medium">
-                    {formatCurrency(baseAmount)}
-                  </Text>
-                </Stack>
-
-                <Stack direction="horizontal" justify="space-between" align="center">
-                  <Stack direction="horizontal" spacing="sm" align="center">
-                    <Badge variant="success" size="sm">💡</Badge>
-                    <Text variant="body">Tip ({selectedTip}%)</Text>
-                  </Stack>
-                  <Text variant="body" weight="medium">
-                    {formatCurrency(tipAmount)}
-                  </Text>
-                </Stack>
-
-                <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text variant="h4" weight="bold">Total</Text>
-                  <Text variant="h4" weight="bold" color="primary">
-                    {formatCurrency(total)}
-                  </Text>
-                </Stack>
-              </Stack>
-            </Box>
+          {/* Custom Percentage Input */}
+          <Stack spacing="sm">
+            <Label htmlFor="customTip">Custom Percentage</Label>
+            <Input
+              id="customTip"
+              type="number"
+              value={customPercentage}
+              onChange={(e) => handleCustomPercentageChange(e.target.value)}
+              placeholder="Enter custom percentage"
+              min="0"
+              max="100"
+              step="0.1"
+              disabled={disabled}
+              fullWidth
+            />
           </Stack>
         </Stack>
-      </Card>
+
+        {/* Tip Amount Display */}
+        <Box variant="outlined" padding="lg">
+          <Stack spacing="md">
+            <Text weight="bold">Tip Breakdown</Text>
+            
+            <Stack spacing="sm">
+              <Stack direction="horizontal" justify="space-between" align="center">
+                <Text>Tip Amount</Text>
+                <Text weight="bold">{formatCurrency(tipAmount)}</Text>
+              </Stack>
+              
+              <Stack direction="horizontal" justify="space-between" align="center">
+                <Text>Tip Percentage</Text>
+                <Text weight="bold">
+                  {customPercentage ? `${customPercentage}%` : `${selectedPercentage}%`}
+                </Text>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Box>
+
+        {/* Total Amount */}
+        <Box variant="elevated" padding="lg">
+          <Stack direction="horizontal" justify="space-between" align="center">
+            <Text weight="bold" size="lg">Total Amount</Text>
+            <Text weight="bold" size="xl">{formatCurrency(totalAmount)}</Text>
+          </Stack>
+        </Box>
+
+        {/* Information */}
+        <Alert variant="info">
+          <Text size="sm">
+            Tips help support our drivers and ensure excellent service. 
+            All tips go directly to your driver.
+          </Text>
+        </Alert>
+      </Stack>
     </Container>
   );
 } 

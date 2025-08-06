@@ -192,16 +192,16 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   // Get status display text
   const getStatusDisplay = (status: TrackingData['status']) => {
     switch (status) {
+      case 'pending':
+        return 'Booking Pending';
       case 'confirmed':
-        return 'Booking Confirmed';
-      case 'driver-assigned':
         return 'Driver Assigned';
-      case 'en-route':
+      case 'in-progress':
         return 'Driver En Route';
-      case 'arrived':
-        return 'Driver Arrived';
       case 'completed':
         return 'Ride Completed';
+      case 'cancelled':
+        return 'Ride Cancelled';
       default:
         return 'Unknown Status';
     }
@@ -210,18 +210,18 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   // Get status color
   const getStatusColor = (status: TrackingData['status']) => {
     switch (status) {
+      case 'pending':
+        return 'warning';
       case 'confirmed':
-        return 'blue';
-      case 'driver-assigned':
-        return 'yellow';
-      case 'en-route':
-        return 'green';
-      case 'arrived':
-        return 'green';
+        return 'info';
+      case 'in-progress':
+        return 'success';
       case 'completed':
-        return 'gray';
+        return 'success';
+      case 'cancelled':
+        return 'error';
       default:
-        return 'blue';
+        return 'info';
     }
   };
 
@@ -277,12 +277,6 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
               </Badge>
             )}
           </Stack>
-          
-          {trackingData?.driverName && (
-            <Text variant="lead">
-              Driver: {trackingData.driverName}
-            </Text>
-          )}
           
           {trackingData?.estimatedArrival && (
             <Text>

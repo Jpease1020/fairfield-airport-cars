@@ -2,7 +2,7 @@
 // Provides real-time tracking functionality for React components
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { realTimeTrackingService, TrackingData, DriverLocation } from '@/lib/services/real-time-tracking-service';
+import { realTimeTrackingService, TrackingData } from '@/lib/services/real-time-tracking-service';
 
 export interface UseRealTimeTrackingOptions {
   bookingId: string;
@@ -17,120 +17,76 @@ export interface UseRealTimeTrackingReturn {
   error: string | null;
   isConnected: boolean;
   initializeTracking: () => Promise<void>;
-  updateDriverLocation: (location: DriverLocation) => Promise<void>;
-  updateBookingStatus: (status: TrackingData['status'], driverId?: string) => Promise<void>;
-  startLocationTracking: () => void;
-  stopLocationTracking: () => void;
-  cleanup: () => void;
+  updateDriverLocation: (location: { lat: number; lng: number; heading?: number; speed?: number }) => Promise<void>;
+  updateBookingStatus: (status: TrackingData['status']) => Promise<void>;
 }
 
-export const useRealTimeTracking = ({
-  bookingId,
-  autoInitialize = true,
-  enableLocationTracking = false,
-  enableWebSocket = true,
-}: UseRealTimeTrackingOptions): UseRealTimeTrackingReturn => {
+export function useRealTimeTracking(options: UseRealTimeTrackingOptions): UseRealTimeTrackingReturn {
+  const { bookingId, autoInitialize = true } = options;
+  
   const [trackingData, setTrackingData] = useState<TrackingData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  
-  const unsubscribeRef = useRef<(() => void) | null>(null);
-  const wsRef = useRef<WebSocket | null>(null);
 
   // Initialize tracking
   const initializeTracking = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-
-      // Initialize the tracking service
-      await realTimeTrackingService.initializeTracking(bookingId);
-
-      // Subscribe to tracking updates
-      const unsubscribe = realTimeTrackingService.subscribeToTracking(bookingId, (data) => {
+      
+      const data = await realTimeTrackingService.initializeTracking(bookingId);
+      if (data) {
         setTrackingData(data);
-        setIsConnected(true);
-        setLoading(false);
-      });
-
-      unsubscribeRef.current = unsubscribe;
-
-      // Initialize WebSocket if enabled
-      if (enableWebSocket) {
-        wsRef.current = realTimeTrackingService.initializeWebSocket(bookingId);
       }
-
-      console.log(`Real-time tracking initialized for booking: ${bookingId}`);
     } catch (err) {
-      console.error('Error initializing tracking:', err);
       setError(err instanceof Error ? err.message : 'Failed to initialize tracking');
+    } finally {
       setLoading(false);
     }
-  }, [bookingId, enableWebSocket]);
+  }, [bookingId]);
 
   // Update driver location
-  const updateDriverLocation = useCallback(async (location: DriverLocation) => {
+  const updateDriverLocation = useCallback(async (location: { lat: number; lng: number; heading?: number; speed?: number }) => {
     try {
       await realTimeTrackingService.updateDriverLocation(bookingId, location);
     } catch (err) {
       console.error('Error updating driver location:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update driver location');
+      throw err;
     }
   }, [bookingId]);
 
   // Update booking status
-  const updateBookingStatus = useCallback(async (status: TrackingData['status'], driverId?: string) => {
+  const updateBookingStatus = useCallback(async (status: TrackingData['status']) => {
     try {
-      await realTimeTrackingService.updateBookingStatus(bookingId, status, driverId);
+      await realTimeTrackingService.updateBookingStatus(bookingId, status);
     } catch (err) {
       console.error('Error updating booking status:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update booking status');
+      throw err;
     }
   }, [bookingId]);
 
-  // Start location tracking (for driver app)
-  const startLocationTracking = useCallback(() => {
-    if (enableLocationTracking) {
-      realTimeTrackingService.startDriverLocationTracking(bookingId);
-    }
-  }, [bookingId, enableLocationTracking]);
-
-  // Stop location tracking
-  const stopLocationTracking = useCallback(() => {
-    realTimeTrackingService.stopDriverLocationTracking(bookingId);
-  }, [bookingId]);
-
-  // Cleanup function
-  const cleanup = useCallback(() => {
-    // Unsubscribe from tracking updates
-    if (unsubscribeRef.current) {
-      unsubscribeRef.current();
-      unsubscribeRef.current = null;
-    }
-
-    // Close WebSocket connection
-    if (wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
-    }
-
-    // Cleanup tracking service
-    realTimeTrackingService.cleanup(bookingId);
-
-    setIsConnected(false);
-    setTrackingData(null);
-  }, [bookingId]);
-
-  // Auto-initialize on mount
+  // Auto-initialize if requested
   useEffect(() => {
-    if (autoInitialize) {
+    if (autoInitialize && bookingId) {
       initializeTracking();
     }
+  }, [autoInitialize, bookingId, initializeTracking]);
 
-    // Cleanup on unmount
-    return cleanup;
-  }, [autoInitialize, initializeTracking, cleanup]);
+  // Poll for tracking data updates
+  useEffect(() => {
+    if (!bookingId) return;
+
+    const pollInterval = setInterval(() => {
+      const data = realTimeTrackingService.getTrackingData(bookingId);
+      if (data) {
+        setTrackingData(data);
+        setIsConnected(true);
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [bookingId]);
 
   return {
     trackingData,
@@ -140,8 +96,5 @@ export const useRealTimeTracking = ({
     initializeTracking,
     updateDriverLocation,
     updateBookingStatus,
-    startLocationTracking,
-    stopLocationTracking,
-    cleanup,
   };
-}; 
+} 

@@ -6,160 +6,150 @@ import {
   Container, 
   Stack, 
   Box, 
-  H2, 
   Text, 
   Button, 
-  Grid, 
-  GridItem,
   LoadingSpinner,
   Badge,
   Alert
 } from '@/ui';
-import { EditableText } from '@/ui';
-import { LiveTrackingMap } from '@/components/business/LiveTrackingMap';
-import { useRealTimeTracking } from '@/hooks/useRealTimeTracking';
-import { TrackingData } from '@/lib/services/real-time-tracking-service';
+import { TrackingMap } from '@/components/business/TrackingMap';
+import { TrackingETADisplay } from '@/components/business/TrackingETADisplay';
+import { getBooking } from '@/lib/services/booking-service';
+import { realTimeTrackingService } from '@/lib/services/real-time-tracking-service';
+import { Booking } from '@/types/booking';
 
-function TrackingPageContent() {
+export default function TrackingPage() {
   const params = useParams();
   const bookingId = params.bookingId as string;
   
-  // Use real-time tracking hook
-  const {
-    trackingData,
-    loading,
-    error,
-    isConnected,
-  } = useRealTimeTracking({
-    bookingId,
-    autoInitialize: true,
-    enableLocationTracking: false,
-    enableWebSocket: true,
-  });
+  const [booking, setBooking] = useState<Booking | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
 
-  // Load booking details for additional info
-  const [bookingDetails, setBookingDetails] = useState<any>(null);
-  
+  // Load booking data
   useEffect(() => {
-    const loadBookingDetails = async () => {
+    const loadBooking = async () => {
       try {
-        const response = await fetch(`/api/booking/get-booking/${bookingId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setBookingDetails(data);
+        setLoading(true);
+        setError(null);
+
+        const bookingData = await getBooking(bookingId);
+        if (!bookingData) {
+          setError('Booking not found');
+          return;
         }
-      } catch (error) {
-        console.error('Error loading booking details:', error);
+
+        setBooking(bookingData);
+
+        // Initialize real-time tracking
+        await realTimeTrackingService.initializeTracking(bookingId);
+      } catch (err) {
+        console.error('Error loading booking:', err);
+        setError('Failed to load booking information');
+      } finally {
+        setLoading(false);
       }
     };
-    
-    loadBookingDetails();
+
+    if (bookingId) {
+      loadBooking();
+    }
   }, [bookingId]);
 
-  const getStatusColor = (status: TrackingData['status']) => {
-    switch (status) {
-      case 'confirmed': return 'info';
-      case 'driver-assigned': return 'warning';
-      case 'en-route': return 'success';
-      case 'arrived': return 'success';
-      case 'completed': return 'confirmed';
-      default: return 'info';
-    }
+  // Initialize WebSocket connection
+  useEffect(() => {
+    if (!bookingId || typeof window === 'undefined') return;
+
+    const initializeWebSocket = () => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/api/ws/bookings/${bookingId}`;
+      
+      const ws = new WebSocket(wsUrl);
+      
+      ws.onopen = () => {
+        console.log('WebSocket connected for tracking');
+        realTimeTrackingService.addConnection(bookingId, ws);
+      };
+      
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log('Received tracking update:', data);
+          
+          // Update booking state with new data
+          if (data.type === 'location_update') {
+            setBooking(prev => prev ? {
+              ...prev,
+              driverLocation: data.data.location,
+              estimatedArrival: data.data.estimatedArrival ? new Date(data.data.estimatedArrival) : prev.estimatedArrival,
+              updatedAt: new Date(data.data.lastUpdated),
+            } : null);
+          } else if (data.type === 'status_update') {
+            setBooking(prev => prev ? {
+              ...prev,
+              status: data.data.status,
+              updatedAt: new Date(data.data.lastUpdated),
+            } : null);
+          }
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
+        }
+      };
+      
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setError('Connection error - tracking updates may be delayed');
+      };
+      
+      ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        realTimeTrackingService.removeConnection(bookingId);
+        
+        // Attempt to reconnect after 5 seconds
+        setTimeout(() => {
+          initializeWebSocket();
+        }, 5000);
+      };
+      
+      setWsConnection(ws);
+    };
+
+    initializeWebSocket();
+
+    return () => {
+      if (wsConnection) {
+        wsConnection.close();
+      }
+      realTimeTrackingService.removeConnection(bookingId);
+    };
+  }, [bookingId, wsConnection]);
+
+  // Handle map load
+  const handleMapLoad = (map: google.maps.Map) => {
+    console.log('Map loaded successfully');
   };
 
-  const getStatusText = (status: TrackingData['status']) => {
-    switch (status) {
-      case 'confirmed': return 'Booking Confirmed';
-      case 'driver-assigned': return 'Driver Assigned';
-      case 'en-route': return 'Driver En Route';
-      case 'arrived': return 'Driver Arrived';
-      case 'completed': return 'Ride Completed';
-      default: return 'Unknown Status';
-    }
-  };
-
-  const getStatusIcon = (status: TrackingData['status']) => {
-    switch (status) {
-      case 'confirmed': return '📋';
-      case 'driver-assigned': return '👤';
-      case 'en-route': return '🚗';
-      case 'arrived': return '📍';
-      case 'completed': return '✅';
-      default: return '📋';
-    }
-  };
-
-  const formatETA = (eta?: Date) => {
-    if (!eta) return 'Calculating...';
-    
-    const now = new Date();
-    const diffMs = eta.getTime() - now.getTime();
-    const diffMins = Math.round(diffMs / 60000);
-    
-    if (diffMins <= 0) return 'Arriving now';
-    if (diffMins === 1) return '1 minute';
-    return `${diffMins} minutes`;
-  };
-
-  const handleCallDriver = () => {
-    if (bookingDetails?.driverPhone) {
-      window.open(`tel:${bookingDetails.driverPhone}`);
-    }
-  };
-
-  const handleTextDriver = () => {
-    if (bookingDetails?.driverPhone) {
-      window.open(`sms:${bookingDetails.driverPhone}`);
-    }
-  };
-
-  if (loading && !trackingData) {
+  if (loading) {
     return (
-      <Container padding="lg" maxWidth="xl">
-        <Stack spacing="lg" align="center">
+      <Container>
+        <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>
-            <EditableText field="tracking.loading" defaultValue="Loading tracking information...">
-              Loading tracking information...
-            </EditableText>
-          </Text>
+          <Text>Loading tracking information...</Text>
         </Stack>
       </Container>
     );
   }
 
-  if (error) {
+  if (error || !booking) {
     return (
-      <Container padding="lg" maxWidth="xl">
-        <Stack spacing="lg">
+      <Container>
+        <Stack spacing="lg" align="center">
           <Alert variant="error">
-            <Text>{error}</Text>
+            <Text>{error || 'Booking not found'}</Text>
           </Alert>
-          <Button onClick={() => window.location.href = '/'}>
-            <EditableText field="tracking.go_home" defaultValue="Go Home">
-              Go Home
-            </EditableText>
-          </Button>
-        </Stack>
-      </Container>
-    );
-  }
-
-  if (!trackingData) {
-    return (
-      <Container padding="lg" maxWidth="xl">
-        <Stack spacing="lg">
-          <Alert variant="error">
-            <Text>
-              <EditableText field="tracking.no_data" defaultValue="No tracking data available">
-                No tracking data available
-              </EditableText>
-            </Text>
-          </Alert>
-          <Button onClick={() => window.location.href = '/'}>
-            <EditableText field="tracking.go_home" defaultValue="Go Home">
-              Go Home
-            </EditableText>
+          <Button onClick={() => window.history.back()}>
+            Go Back
           </Button>
         </Stack>
       </Container>
@@ -167,218 +157,72 @@ function TrackingPageContent() {
   }
 
   return (
-    <Container padding="lg" maxWidth="xl">
+    <Container>
       <Stack spacing="xl">
-        {/* Header with Real-time Status */}
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="lg">
-            <Stack direction="horizontal" justify="space-between" align="center">
-              <Stack spacing="sm">
-                <H2>
-                  <EditableText field="tracking.title" defaultValue="Track Your Ride">
-                    Track Your Ride
-                  </EditableText>
-                </H2>
-                <Text variant="lead">
-                  <EditableText field="tracking.booking_id" defaultValue="Booking #">
-                    Booking #
-                  </EditableText>
-                  {trackingData.bookingId}
-                </Text>
-              </Stack>
-              <Stack align="center" spacing="sm">
-                <Text size="lg">{getStatusIcon(trackingData.status)}</Text>
-                <Badge variant={getStatusColor(trackingData.status)}>
-                  {getStatusText(trackingData.status)}
-                </Badge>
-                {isConnected && (
-                  <Text variant="muted" size="sm">
-                    <EditableText field="tracking.live" defaultValue="LIVE">
-                      LIVE
-                    </EditableText>
-                  </Text>
-                )}
-              </Stack>
-            </Stack>
-            
-            {/* Real-time Updates */}
-            <Stack direction="horizontal" justify="space-between" align="center">
-              <Text variant="muted" size="sm">
-                <EditableText field="tracking.last_updated" defaultValue="Last updated:">
-                  Last updated:
-                </EditableText> {trackingData.lastUpdated.toLocaleTimeString()}
-              </Text>
-            </Stack>
-          </Stack>
-        </Box>
+        {/* Page Header */}
+        <Stack spacing="sm">
+          <Text weight="bold" size="xl">Live Tracking</Text>
+          <Text variant="muted">
+            Track your ride in real-time
+          </Text>
+        </Stack>
 
-        {/* ETA and Driver Info */}
-        {(trackingData.status === 'en-route' || trackingData.status === 'arrived') && (
-          <Grid cols={2} gap="lg">
-            <Box variant="elevated" padding="md">
-              <Stack spacing="sm" align="center">
-                <Text size="lg">⏱️</Text>
-                <Text weight="bold">
-                  <EditableText field="tracking.eta" defaultValue="ETA">
-                    ETA
-                  </EditableText>
-                </Text>
-                <Text size="xl" color="primary">
-                  {formatETA(trackingData.estimatedArrival)}
-                </Text>
-              </Stack>
-            </Box>
-            
-            <Box variant="elevated" padding="md">
-              <Stack spacing="sm" align="center">
-                <Text size="lg">👤</Text>
-                <Text weight="bold">
-                  <EditableText field="tracking.driver" defaultValue="Driver">
-                    Driver
-                  </EditableText>
-                </Text>
-                <Text size="xl" color="primary">
-                  {trackingData.driverName || 'Assigned'}
-                </Text>
-              </Stack>
-            </Box>
-          </Grid>
-        )}
+        {/* Tracking Map */}
+        <TrackingMap
+          bookingId={booking.id!}
+          pickupLocation={booking.pickupLocation}
+          dropoffLocation={booking.dropoffLocation}
+          driverLocation={booking.driverLocation}
+          estimatedArrival={booking.estimatedArrival}
+          status={booking.status}
+          onMapLoad={handleMapLoad}
+        />
 
-        {/* Driver Information */}
-        {trackingData.driverName && (
-          <Box variant="elevated" padding="lg">
-            <Stack spacing="lg">
-              <H2>
-                <EditableText field="tracking.driver_title" defaultValue="Your Driver">
-                  Your Driver
-                </EditableText>
-              </H2>
+        {/* ETA Display */}
+        <TrackingETADisplay
+          bookingId={booking.id!}
+          estimatedArrival={booking.estimatedArrival}
+          driverLocation={booking.driverLocation}
+          status={booking.status}
+          pickupLocation={booking.pickupLocation}
+          dropoffLocation={booking.dropoffLocation}
+        />
+
+        {/* Booking Details */}
+        <Box variant="outlined" padding="lg">
+          <Stack spacing="md">
+            <Text weight="bold" size="lg">Booking Details</Text>
+            
+            <Stack spacing="sm">
+              <Stack direction="horizontal" justify="space-between" align="center">
+                <Text>Booking ID</Text>
+                <Text weight="bold">{booking.id}</Text>
+              </Stack>
               
-              <Grid cols={2} gap="lg" responsive>
-                <GridItem>
-                  <Stack spacing="sm">
-                    <Text variant="lead">
-                      <EditableText field="tracking.driver_name" defaultValue="Driver">
-                        Driver
-                      </EditableText>
-                    </Text>
-                    <Text weight="bold">{trackingData.driverName}</Text>
-                    {bookingDetails?.driverPhone && (
-                      <Text>📞 {bookingDetails.driverPhone}</Text>
-                    )}
-                  </Stack>
-                </GridItem>
-                
-                <GridItem>
-                  <Stack spacing="sm">
-                    <Text variant="lead">
-                      <EditableText field="tracking.vehicle_title" defaultValue="Vehicle">
-                        Vehicle
-                      </EditableText>
-                    </Text>
-                    {bookingDetails?.vehicleInfo && (
-                      <>
-                        <Text weight="bold">
-                          {bookingDetails.vehicleInfo.year} {bookingDetails.vehicleInfo.make} {bookingDetails.vehicleInfo.model}
-                        </Text>
-                        <Text>Color: {bookingDetails.vehicleInfo.color}</Text>
-                        <Text>Plate: {bookingDetails.vehicleInfo.licensePlate}</Text>
-                      </>
-                    )}
-                  </Stack>
-                </GridItem>
-              </Grid>
-
-              {bookingDetails?.driverPhone && (
-                <Stack direction="horizontal" spacing="md">
-                  <Button 
-                    variant="primary" 
-                    onClick={handleCallDriver}
-                    fullWidth
-                  >
-                    📞 <EditableText field="tracking.call_driver" defaultValue="Call Driver">
-                      Call Driver
-                    </EditableText>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleTextDriver}
-                    fullWidth
-                  >
-                    💬 <EditableText field="tracking.text_driver" defaultValue="Text Driver">
-                      Text Driver
-                    </EditableText>
-                  </Button>
+              <Stack direction="horizontal" justify="space-between" align="center">
+                <Text>Passenger</Text>
+                <Text weight="bold">{booking.name}</Text>
+              </Stack>
+              
+              <Stack direction="horizontal" justify="space-between" align="center">
+                <Text>Pickup Time</Text>
+                <Text weight="bold">
+                  {new Date(booking.pickupDateTime).toLocaleString()}
+                </Text>
+              </Stack>
+              
+              <Stack direction="horizontal" justify="space-between" align="center">
+                <Text>Fare</Text>
+                <Text weight="bold">${booking.fare.toFixed(2)}</Text>
+              </Stack>
+              
+              {booking.driverName && (
+                <Stack direction="horizontal" justify="space-between" align="center">
+                  <Text>Driver</Text>
+                  <Text weight="bold">{booking.driverName}</Text>
                 </Stack>
               )}
             </Stack>
-          </Box>
-        )}
-
-        {/* Trip Details */}
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="lg">
-            <H2>
-              <EditableText field="tracking.trip_details" defaultValue="Trip Details">
-                Trip Details
-              </EditableText>
-            </H2>
-            
-            <Grid cols={2} gap="lg" responsive>
-              <GridItem>
-                <Stack spacing="sm">
-                  <Text variant="lead">
-                    <EditableText field="tracking.pickup" defaultValue="Pickup">
-                      Pickup
-                    </EditableText>
-                  </Text>
-                  <Text>{trackingData.pickupLocation}</Text>
-                  {bookingDetails?.pickupDateTime && (
-                    <Text variant="muted">
-                      <EditableText field="tracking.pickup_time" defaultValue="Time:">
-                        Time:
-                      </EditableText> {new Date(bookingDetails.pickupDateTime).toLocaleString()}
-                    </Text>
-                  )}
-                </Stack>
-              </GridItem>
-              
-              <GridItem>
-                <Stack spacing="sm">
-                  <Text variant="lead">
-                    <EditableText field="tracking.dropoff" defaultValue="Dropoff">
-                      Dropoff
-                    </EditableText>
-                  </Text>
-                  <Text>{trackingData.dropoffLocation}</Text>
-                  {trackingData.estimatedArrival && (
-                    <Text variant="muted">
-                      <EditableText field="tracking.estimated_arrival" defaultValue="ETA:">
-                        ETA:
-                      </EditableText> {trackingData.estimatedArrival.toLocaleString()}
-                    </Text>
-                  )}
-                </Stack>
-              </GridItem>
-            </Grid>
-          </Stack>
-        </Box>
-
-        {/* Live Tracking Map */}
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="lg">
-            <H2>
-              <EditableText field="tracking.live_map" defaultValue="Live Map">
-                Live Map
-              </EditableText>
-            </H2>
-            
-            <LiveTrackingMap
-              bookingId={bookingId}
-              pickupLocation={trackingData.pickupLocation}
-              dropoffLocation={trackingData.dropoffLocation}
-            />
           </Stack>
         </Box>
 
@@ -386,28 +230,21 @@ function TrackingPageContent() {
         <Stack direction="horizontal" spacing="md">
           <Button 
             variant="outline" 
-            onClick={() => window.location.href = `/booking/${bookingId}`}
+            onClick={() => window.history.back()}
             fullWidth
           >
-            <EditableText field="tracking.view_booking" defaultValue="View Booking Details">
-              View Booking Details
-            </EditableText>
+            Back to Bookings
           </Button>
+          
           <Button 
-            variant="outline" 
-            onClick={() => window.location.href = '/bookings'}
+            variant="primary"
+            onClick={() => window.location.href = `/booking/${booking.id}`}
             fullWidth
           >
-            <EditableText field="tracking.all_bookings" defaultValue="All Bookings">
-              All Bookings
-            </EditableText>
+            View Booking Details
           </Button>
         </Stack>
       </Stack>
     </Container>
   );
-}
-
-export default function TrackingPage() {
-  return <TrackingPageContent />;
 } 
