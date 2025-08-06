@@ -13,7 +13,7 @@ export type SpacingScale = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 export type ColorVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'muted' | 'default';
 
 // Text Variants
-export type TextVariant = 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline';
+export type TextVariant = 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 // Text Sizes
 export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl';
