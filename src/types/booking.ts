@@ -28,6 +28,15 @@ export interface Booking {
   createdAt: Date;
   updatedAt: Date;
   
+  // Real-time tracking fields
+  driverLocation?: {
+    lat: number;
+    lng: number;
+    timestamp: Date;
+    heading?: number;
+    speed?: number;
+  };
+  
   // Advanced Booking Features
   vehicleType?: 'sedan' | 'suv' | 'luxury' | 'van';
   serviceLevel?: 'standard' | 'premium' | 'luxury';

@@ -783,7 +783,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   <TipCalculator
                     baseAmount={getTotalFare()}
                     onTipChange={handleTipChange}
-                    showCustomTip={true}
                   />
                 )}
                 

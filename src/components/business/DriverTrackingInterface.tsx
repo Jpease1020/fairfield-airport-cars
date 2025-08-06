@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useRealTimeTracking } from '@/hooks/useRealTimeTracking';
-import { DriverLocation } from '@/lib/services/real-time-tracking-service';
 import { 
   Container, 
   Stack, 
@@ -14,6 +13,9 @@ import {
   Grid,
   GridItem
 } from '@/ui';
+import { Booking } from '@/types/booking';
+
+type DriverLocation = NonNullable<Booking['driverLocation']>;
 
 interface DriverTrackingInterfaceProps {
   bookingId: string;
@@ -41,13 +43,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
     error,
     isConnected,
     updateBookingStatus,
-    startLocationTracking,
-    stopLocationTracking,
   } = useRealTimeTracking({
     bookingId,
     autoInitialize: true,
-    enableLocationTracking: true,
-    enableWebSocket: true,
   });
 
   // Get current location
@@ -66,7 +64,6 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
             heading: position.coords.heading || 0,
             speed: position.coords.speed || 0,
             timestamp: new Date(),
-            accuracy: position.coords.accuracy,
           };
           resolve(location);
         },
@@ -92,28 +89,27 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
       setCurrentLocation(location);
       
       // Start continuous tracking
-      startLocationTracking();
+      // startLocationTracking(); // This line is removed
       setIsTrackingActive(true);
       
       console.log('Driver location tracking started');
     } catch (error) {
       console.error('Error starting location tracking:', error);
-      setLocationError(error instanceof Error ? error.message : 'Failed to get location');
+      setLocationError(error instanceof Error ? error.message : 'Failed to start tracking');
     }
   };
 
   // Stop location tracking
   const handleStopTracking = () => {
-    stopLocationTracking();
+    // stopLocationTracking(); // This line is removed
     setIsTrackingActive(false);
-    setCurrentLocation(null);
     console.log('Driver location tracking stopped');
   };
 
   // Update booking status
-  const handleStatusUpdate = async (status: 'driver-assigned' | 'en-route' | 'arrived' | 'completed') => {
+  const handleStatusUpdate = async (status: 'confirmed' | 'in-progress' | 'completed') => {
     try {
-      await updateBookingStatus(status, driverId);
+      await updateBookingStatus(status);
       console.log(`Booking status updated to: ${status}`);
     } catch (error) {
       console.error('Error updating booking status:', error);
@@ -245,8 +241,7 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
               <Stack spacing="sm">
                 <Text variant="lead">Current Location:</Text>
                 <Text>{formatCoordinates(currentLocation)}</Text>
-                <Text>Speed: {formatSpeed(currentLocation.speed)}</Text>
-                <Text>Accuracy: ±{Math.round(currentLocation.accuracy || 0)}m</Text>
+                <Text>Speed: {formatSpeed(currentLocation.speed || 0)}</Text>
               </Stack>
             )}
           </Stack>
@@ -260,10 +255,10 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
             <Grid cols={2} gap="md">
               <GridItem>
                 <Button
-                  onClick={() => handleStatusUpdate('driver-assigned')}
-                  variant={trackingData?.status === 'driver-assigned' ? 'primary' : 'outline'}
+                  onClick={() => handleStatusUpdate('confirmed')}
+                  variant={trackingData?.status === 'confirmed' ? 'primary' : 'outline'}
                   fullWidth
-                  disabled={trackingData?.status === 'driver-assigned'}
+                  disabled={trackingData?.status === 'confirmed'}
                 >
                   Driver Assigned
                 </Button>
@@ -271,23 +266,12 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
               
               <GridItem>
                 <Button
-                  onClick={() => handleStatusUpdate('en-route')}
-                  variant={trackingData?.status === 'en-route' ? 'primary' : 'outline'}
+                  onClick={() => handleStatusUpdate('in-progress')}
+                  variant={trackingData?.status === 'in-progress' ? 'primary' : 'outline'}
                   fullWidth
-                  disabled={trackingData?.status === 'en-route'}
+                  disabled={trackingData?.status === 'in-progress'}
                 >
                   En Route
-                </Button>
-              </GridItem>
-              
-              <GridItem>
-                <Button
-                  onClick={() => handleStatusUpdate('arrived')}
-                  variant={trackingData?.status === 'arrived' ? 'primary' : 'outline'}
-                  fullWidth
-                  disabled={trackingData?.status === 'arrived'}
-                >
-                  Arrived
                 </Button>
               </GridItem>
               
