@@ -14,9 +14,10 @@ import {
   EditableText,
   Alert,
   Badge,
-  H1
+  H1,
+  ContentCard
 } from '@/ui';
-import { AdminPageWrapper, ContentCard } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 interface Booking {
   id: string;

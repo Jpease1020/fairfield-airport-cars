@@ -6,7 +6,6 @@ import { CMSConfiguration } from '@/types/cms';
 import withAuth from '../withAuth';
 
 import { 
-  AdminPageWrapper,
   GridSection, 
   Box, 
   ActionGrid,
@@ -15,9 +14,10 @@ import {
   ActionButtonGroup,
   Container,
   Text,
+  EditableText,
+  Stack
 } from '@/ui';
-import { EditableText } from '@/ui';
-import { Stack } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function CMSPageContent() {
   const { addToast } = useToast();

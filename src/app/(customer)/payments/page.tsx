@@ -15,9 +15,11 @@ import {
   Alert,
   Badge,
   Box,
-  H1
+  H1,
+  ContentCard,
+  Grid
 } from '@/ui';
-import { AdminPageWrapper, ContentCard, Grid } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 interface Payment {
   id: string;

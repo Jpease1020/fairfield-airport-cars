@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { 
-  AdminPageWrapper,
   ActionButtonGroup,
   StatusMessage,
   ToastProvider,
@@ -11,13 +10,12 @@ import {
   Container,
   Box,
   Text,
-  H3,
   H4,
+  Stack,
+  Input,
+  Label,
 } from '@/ui';
-import { Stack } from '@/ui';
-import { Input } from '@/ui';
-import { Label } from '@/ui';
-
+import { AdminPageWrapper } from '@/components/app';
 
 interface CostEntry {
   date: string;

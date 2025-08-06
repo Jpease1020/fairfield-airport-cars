@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { NextPage } from 'next';
 import withAuth from './withAuth';
 import { 
   Container, 
@@ -15,9 +14,9 @@ import {
   Alert,
   H1,
   H2,
-  AdminPageWrapper
 } from '@/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
+import { AdminPageWrapper } from '@/components/app';
 
 function AdminDashboardContent() {
   const [stats, setStats] = useState({

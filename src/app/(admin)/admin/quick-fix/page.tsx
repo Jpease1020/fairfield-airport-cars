@@ -2,15 +2,16 @@
 
 import { useState } from 'react';
 import { cmsService } from '@/lib/services/cms-service';
-import { 
-  AdminPageWrapper,
+import {
   Container,
   Button,
   Stack,
   StatusMessage,
+  ToastProvider,
+  useToast,
+  EditableText
 } from '@/ui';
-import { ToastProvider, useToast } from '@/ui';
-import { EditableText } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function QuickFixPage() {
   const { addToast } = useToast();

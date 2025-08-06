@@ -14,9 +14,8 @@ import {
   DataTable,
   Alert,
   LoadingSpinner,
-  H1,
-  AdminPageWrapper
 } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function DriversPageContent() {
   const [drivers, setDrivers] = useState<Driver[]>([]);

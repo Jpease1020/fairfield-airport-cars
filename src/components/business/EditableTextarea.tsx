@@ -1,9 +1,9 @@
 import React from 'react';
-import { Container } from '../../layout/containers/Container';
-import { Text } from '../base-components/text/Text';
-import { Stack } from '../../layout/framing/Stack';
-import { Label } from '../base-components/forms/Label';
-import { Textarea } from '../base-components/forms/Textarea';
+import { Container } from '@/design/layout/containers/Container';
+import { Text } from '@/design/components/base-components/text/Text';
+import { Stack } from '@/design/layout/framing/Stack';
+import { Label } from '@/design/components/base-components/forms/Label';
+import { Textarea } from '@/design/components/base-components/forms/Textarea';
 
 interface EditableTextareaProps {
   label?: string;

@@ -14,10 +14,13 @@ import {
   EditableText,
   Alert,
   Input,
-  Label,
-  H1
+  Label,  
+  H1,
+  ContentCard,
+  Grid,
+  GridItem
 } from '@/ui';
-import { AdminPageWrapper, ContentCard, Grid, GridItem } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function AddPaymentMethodPage() {
   const [user, setUser] = useState<FirebaseUser | null>(null);

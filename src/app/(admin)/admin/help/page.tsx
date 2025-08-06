@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { AdminPageWrapper, GridSection, Box, ActionGrid, Container, H3, Text } from '@/ui';
-import { EditableText } from '@/ui';
-import { Stack } from '@/ui';
+import React from 'react'; 
+import { GridSection, Box, ActionGrid, Container, Text, EditableText, Stack, H3 } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function AdminHelpPage() {
   const helpSections = [

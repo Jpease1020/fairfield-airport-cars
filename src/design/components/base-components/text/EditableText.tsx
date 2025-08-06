@@ -2,50 +2,33 @@
 
 import React from 'react';
 import { Text, TextProps } from './Text';
-import { useEditMode } from '../../../providers/EditModeProvider';
+import { ColorVariant } from '../../../system/shared-types';
 
 export interface EditableTextProps extends Omit<TextProps, 'children'> {
   field: string;
   children?: React.ReactNode;
   defaultValue?: string;
+  isEditable?: boolean;
+  value?: string;
   onFieldChange?: (field: string, value: string) => void;
-  forceEditMode?: boolean; // Only for admin when they explicitly want edit mode
+  color?: ColorVariant | 'inherit';
 }
 
 export const EditableText: React.FC<EditableTextProps> = ({
   field,
   children,
   defaultValue = '',
+  isEditable = false,
+  value,
   onFieldChange,
-  forceEditMode = false,
   color = 'inherit', // Default to inherit so it picks up parent color (like button text)
   ...textProps
 }) => {
-  // Check if we're in an admin context with edit mode
-  const isAdminContext = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
-  
-  // Only try to use edit mode in admin context AND when explicitly enabled
-  let editMode = false;
-  let localContent: any = null;
-  let handleFieldChange: any = null;
-
-  if (isAdminContext && forceEditMode) {
-    try {
-      const editModeHook = useEditMode();
-      editMode = editModeHook.editMode;
-      localContent = editModeHook.localContent;
-      handleFieldChange = editModeHook.handleFieldChange;
-    } catch (error) {
-      // Edit mode not available - fallback to display mode
-      editMode = false;
-    }
-  }
-
-  // Get value from database or use fallback
+  // Get value from props or fallback
   const getValue = (): string => {
-    // First priority: Database value
-    if (localContent && localContent[field]) {
-      return localContent[field];
+    // First priority: Explicit value prop
+    if (value !== undefined) {
+      return value;
     }
     // Second priority: Children as string
     if (children && typeof children === 'string') {
@@ -59,10 +42,6 @@ export const EditableText: React.FC<EditableTextProps> = ({
 
   // Handle field change
   const handleFieldChangeWrapper = (newValue: string) => {
-    if (handleFieldChange) {
-      const fieldParts = field.split('.');
-      handleFieldChange(fieldParts[0], fieldParts[1] || field, newValue);
-    }
     if (onFieldChange) {
       onFieldChange(field, newValue);
     }
@@ -83,7 +62,7 @@ export const EditableText: React.FC<EditableTextProps> = ({
     }
   };
 
-  if (editMode) {
+  if (isEditable) {
     return (
       <Text
         {...textProps}

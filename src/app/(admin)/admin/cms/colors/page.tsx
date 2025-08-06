@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Span, AdminPageWrapper, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/ui';
+import { Container, Span, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage, EditableText, EditableHeading } from '@/ui';
 import { getCMSConfig } from '@/lib/services/cms-service';
-import { EditableText, EditableHeading } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },

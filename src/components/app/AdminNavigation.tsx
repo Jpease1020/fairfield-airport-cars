@@ -3,9 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button } from '../../components/base-components/Button';
-import { EditableText } from '../../components/base-components/text/EditableText';
-import { BaseNavigation, NavigationItem } from './BaseNavigation';
+import { Button } from '../../design/components/base-components/Button';
+import { EditableText } from '../../design/components/base-components/text/EditableText';
+import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/BaseNavigation';
 
 export const AdminNavigation: React.FC = () => {
   const pathname = usePathname();

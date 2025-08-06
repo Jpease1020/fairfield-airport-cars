@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Container } from '../../layout/containers/Container';
-import { Text } from '../base-components/text/Text';
-import { Stack } from '../../layout/framing/Stack';
-import { Input } from '../base-components/forms/Input';
-import { Label } from '../base-components/forms/Label';
-import { Button } from '../base-components/Button';
-import { Card } from '../../layout/content/Card';
-import { Badge } from '../base-components/Badge';
+import { Container } from '@/design/layout/containers/Container';
+import { Text } from '@/design/components/base-components/text/Text';
+import { Stack } from '@/design/layout/framing/Stack';
+import { Input } from '@/design/components/base-components/forms/Input';
+import { Label } from '@/design/components/base-components/forms/Label';
+import { Button } from '@/design/components/base-components/Button';
+import { Card } from '@/design/layout/content/Card';
+import { Badge } from '@/design/components/base-components/Badge';
 
 interface TipCalculatorProps {
   baseAmount: number;

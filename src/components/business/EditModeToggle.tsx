@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button } from '../base-components/Button';
-import { Container } from '../../layout/containers/Container';
-import { EditableText } from '../base-components/text/EditableText';
+import { Button } from '@/design/components/base-components/Button';
+import { Container } from '@/design/layout/containers/Container';
+import { EditableText } from '@/design/components/base-components/text/EditableText';
 
 interface EditModeToggleProps {
   editMode: boolean;

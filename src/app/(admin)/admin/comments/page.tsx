@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { AdminPageWrapper, GridSection, Box, Container, Text, EditableText, Stack, DataTable, DataTableColumn, DataTableAction } from '@/ui';
+import { GridSection, Box, Container, Text, EditableText, Stack, DataTable, DataTableColumn, DataTableAction } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 import withAuth from '../withAuth';
 
 function CommentsPageContent() {

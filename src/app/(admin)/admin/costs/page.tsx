@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';
 import { 
-  AdminPageWrapper,
   GridSection, 
   Box, 
   ActionGrid,
@@ -16,8 +15,9 @@ import {
   Span,
   Text,
   Stack,
+  EditableText
 } from '@/ui';
-import { EditableText } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 import withAuth from '../withAuth';
 
 function CostsPageContent() {
