@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
-import BookingForm from '@/app/book/booking-form';
+import BookingForm from '../../../book/booking-form';
 
 export default function EditBookingPage() {
   const params = useParams();

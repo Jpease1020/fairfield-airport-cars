@@ -1,532 +1,420 @@
-# 🏗️ Fairfield Airport Cars - Architecture Analysis & Optimization
+# 🏗️ Architecture Analysis - Fairfield Airport Cars
 
-## 🚨 **CRITICAL RULE: PREVENT CODE DUPLICATION**
+## 📋 **Executive Summary**
 
-### **MANDATORY CODEBASE REVIEW BEFORE CREATING NEW CODE**
+This document analyzes the current architecture of Fairfield Airport Cars, identifies strengths and areas for improvement, and provides recommendations for optimal patterns and implementation strategies.
 
-**BEFORE creating ANY new code, you MUST:**
+## 🚫 **Anti-Duplication Lesson Learned**
 
-1. **Search the entire codebase** for similar functionality using:
-   - `codebase_search` for semantic matches
-   - `grep_search` for exact text/function names
-   - `file_search` for similar file names
+### **The Duplication Violation (January 2025)**
+**What Happened:**
+- Created 3 identical layout files: `(public)/layout.tsx`, `(customer)/layout.tsx`, `(admin)/layout.tsx`
+- Violated our own "no duplication" principle
+- Failed to search existing codebase for `RouteBasedLayout` component
 
-2. **Check these specific locations first:**
-   - `src/design/components/` - Reusable UI components
-   - `src/lib/services/` - Business logic services
-   - `src/app/` - Page components
-   - `src/types/` - TypeScript definitions
-   - `src/hooks/` - Custom React hooks
+**Root Cause:**
+- Didn't search existing codebase before creating new code
+- Ignored established patterns in favor of "quick solution"
+- Failed to follow our own architecture principles
 
-3. **If similar code exists:**
-   - **REUSE** existing code instead of creating new
-   - **EXTEND** existing functionality if needed
-   - **REFACTOR** existing code to be more generic
-   - **NEVER** create duplicates
+**Lesson Learned:**
+- **ALWAYS search existing codebase first** - Use `grep_search`, `file_search`, `codebase_search`
+- **Use existing patterns** - Don't create new when existing works
+- **Follow established architecture** - Respect the design system and patterns
+- **Document decisions** - Explain why new code is necessary
 
-4. **Examples of what to check:**
-   - Driver profile components (we had duplicates!)
-   - Service functions (booking, auth, etc.)
-   - UI components (buttons, forms, cards)
-   - Type definitions
-   - Utility functions
+**Prevention Measures:**
+- Added anti-duplication rules to `.cursorrules`
+- Integrated search requirements into development workflow
+- Added violation response procedures
+- Enhanced code review checklist
 
-5. **If you find similar code:**
-   - Ask user: "Should I reuse the existing [component/service] or create a new one?"
-   - Explain the differences and trade-offs
-   - Get explicit permission before creating new code
+## 🏗️ **Current Architecture Assessment**
 
-### **DUPLICATION PREVENTION CHECKLIST**
-
-- [ ] Searched codebase for similar functionality
-- [ ] Checked design system components
-- [ ] Checked service layer
-- [ ] Checked type definitions
-- [ ] Asked user for permission to create new code
-- [ ] Documented why new code is needed
-
-## 📊 Current State Analysis
-
-### ✅ **What's Working Well**
+### **Strengths**
 
 #### **1. Design System Architecture**
-- **Isolated Design Library**: Clean separation with `src/design/` directory
 - **Component Hierarchy**: Well-structured base → complex → business components
-- **Design Tokens**: Centralized color and spacing tokens
-- **ESLint Protection**: Strong rules preventing hardcoded colors and inline styles
-- **Import Aliases**: Proper `@/ui` and `@/design/components` usage
+- **Design Tokens**: Consistent colors, spacing, typography
+- **Protection Rules**: Strong ESLint rules preventing violations
+- **Isolation**: Clean separation between design system and app code
 
 #### **2. Authentication System**
 - **Firebase Integration**: Robust auth with role-based access
 - **Provider Pattern**: Clean AuthProvider with context
-- **Middleware Protection**: Route-level security
-- **Token Management**: Auto-refresh and proper token handling
+- **Role Management**: Simple admin vs customer roles
+- **Security**: Proper route protection and middleware
+
+#### **3. Performance Foundation**
+- **Next.js 15**: Latest framework with App Router
+- **TypeScript**: Full type safety and IntelliSense
+- **Code Splitting**: Route-based and component-level splitting
+- **Bundle Optimization**: Tree-shaking and lazy loading
+
+### **Areas for Improvement**
+
+#### **1. Provider Consolidation**
+- **Issue**: Multiple auth providers causing confusion
+- **Solution**: Unified AuthProvider with role detection
+- **Impact**: Cleaner state management and better performance
+
+#### **2. Route Organization**
+- **Issue**: Routes scattered without clear organization
+- **Solution**: Route groups (public, customer, admin)
+- **Impact**: Better code splitting and maintainability
 
 #### **3. Service Layer**
-- **Comprehensive Services**: 25+ specialized services
-- **Separation of Concerns**: Each service handles specific domain
-- **Performance Optimization**: Dedicated performance optimizer service
-- **Real-time Features**: WebSocket and tracking services
+- **Issue**: Services mixed with components
+- **Solution**: Domain-driven service organization
+- **Impact**: Better separation of concerns and reusability
 
-#### **4. Build Configuration**
-- **Advanced Webpack**: Optimized code splitting and bundle optimization
-- **Memory Allocation**: 8GB heap for complex builds
-- **TypeScript**: Strict type checking enabled
-- **ESLint**: Comprehensive custom rules
+## 🎯 **Optimal Architecture Patterns**
 
-### ⚠️ **Current Issues**
+### **1. App Router Strategy**
 
-#### **1. Build Failures**
-```
-unhandledRejection ReferenceError: self is not defined
-```
-- **Root Cause**: Server-side rendering conflicts with client-only code
-- **Impact**: Production builds failing
-- **Priority**: CRITICAL
-
-#### **2. Architecture Inconsistencies**
-- **Mixed Import Patterns**: Some relative imports in design system
-- **Provider Duplication**: Multiple auth providers
-- **Service Coupling**: Tight coupling between services
-- **File Organization**: Inconsistent directory structure
-
-#### **3. Performance Concerns**
-- **Bundle Size**: Large vendor chunks
-- **Code Splitting**: Not fully optimized
-- **Memory Usage**: High memory consumption during builds
-- **SSR Conflicts**: Client/server code mixing
-
-## 🎯 **Optimal Architecture Recommendations**
-
-### **1. Next.js 15 App Router Best Practices**
-
-#### **Directory Structure**
-```
-src/
-├── app/                    # App Router pages
-│   ├── (auth)/            # Auth group routes
-│   ├── (admin)/           # Admin group routes  
-│   ├── (customer)/        # Customer group routes
-│   └── api/               # API routes
-├── components/             # App-specific components
-├── lib/                   # Business logic
-│   ├── auth/              # Authentication
-│   ├── services/          # Service layer
-│   ├── utils/             # Utilities
-│   └── types/             # TypeScript types
-├── design/                # Design system (isolated)
-└── providers/             # React providers
-```
-
-#### **Route Groups Strategy**
+#### **Route Groups Implementation**
 ```typescript
-// (auth)/layout.tsx - Shared auth layout
-// (admin)/layout.tsx - Admin-specific layout
-// (customer)/layout.tsx - Customer-specific layout
+src/app/
+├── (public)/                   # Public pages (no auth)
+│   ├── page.tsx               # Home page
+│   ├── about/
+│   └── contact/
+├── (customer)/                 # Customer authenticated pages
+│   ├── book/
+│   │   └── page.tsx          # Booking form
+│   ├── bookings/
+│   │   └── page.tsx          # Customer's bookings
+│   ├── tracking/
+│   │   └── [id]/
+│   │       └── page.tsx      # Live tracking
+│   └── layout.tsx            # Customer layout
+├── (admin)/                    # Gregg's admin interface
+│   ├── dashboard/
+│   │   └── page.tsx          # Simple dashboard
+│   ├── bookings/
+│   │   └── page.tsx          # Manage bookings
+│   ├── schedule/
+│   │   └── page.tsx          # Gregg's schedule
+│   └── layout.tsx            # Admin layout
+├── api/                        # API routes
+│   ├── booking/
+│   │   └── route.ts          # Create bookings
+│   ├── tracking/
+│   │   └── route.ts          # Update location
+│   └── payment/
+│       └── route.ts          # Process payments
+├── layout.tsx                 # Root layout
+└── globals.css               # Global styles
 ```
 
-### **2. Authentication Architecture**
+#### **Benefits:**
+- **Code Splitting**: Each route group becomes a separate bundle
+- **Performance**: Automatic optimization by user type
+- **Security**: Clear auth boundaries
+- **Maintainability**: Organized and easy to navigate
 
-#### **Multi-Layer Security**
-```typescript
-// 1. Middleware (Route Protection)
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  // Role-based route protection
-  if (pathname.startsWith('/admin')) {
-    return await validateAdminAccess(request);
-  }
-  
-  if (pathname.startsWith('/customer')) {
-    return await validateCustomerAccess(request);
-  }
-}
+### **2. Provider Architecture**
 
-// 2. API Route Protection
-export async function GET(request: NextRequest) {
-  const session = await getServerSession();
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-}
-
-// 3. Component-Level Protection
-export function ProtectedComponent({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
-  
-  if (loading) return <LoadingSpinner />;
-  if (!user) return <LoginRedirect />;
-  
-  return <>{children}</>;
-}
-```
-
-#### **Session Management**
-```typescript
-// lib/auth/session.ts
-export class SessionManager {
-  static async createSession(user: User): Promise<Session> {
-    // Create secure session with JWT
-  }
-  
-  static async validateSession(token: string): Promise<User | null> {
-    // Validate session token
-  }
-  
-  static async refreshSession(sessionId: string): Promise<Session> {
-    // Refresh session before expiry
-  }
-}
-```
-
-### **3. Service Layer Architecture**
-
-#### **Domain-Driven Service Organization**
-```typescript
-// lib/services/
-├── auth/
-│   ├── auth-service.ts
-│   ├── session-service.ts
-│   └── permissions-service.ts
-├── booking/
-│   ├── booking-service.ts
-│   ├── pricing-service.ts
-│   └── availability-service.ts
-├── driver/
-│   ├── driver-service.ts
-│   ├── assignment-service.ts
-│   └── tracking-service.ts
-├── payment/
-│   ├── payment-service.ts
-│   ├── square-service.ts
-│   └── stripe-service.ts
-└── shared/
-    ├── notification-service.ts
-    ├── email-service.ts
-    └── performance-service.ts
-```
-
-#### **Service Interface Pattern**
-```typescript
-// lib/services/interfaces.ts
-export interface IBookingService {
-  createBooking(data: CreateBookingData): Promise<Booking>;
-  getBooking(id: string): Promise<Booking | null>;
-  updateBooking(id: string, data: UpdateBookingData): Promise<Booking>;
-  cancelBooking(id: string): Promise<void>;
-}
-
-export interface IAuthService {
-  authenticate(credentials: Credentials): Promise<AuthResult>;
-  validateToken(token: string): Promise<User | null>;
-  refreshToken(refreshToken: string): Promise<AuthResult>;
-}
-```
-
-### **4. Performance Optimization**
-
-#### **Code Splitting Strategy**
-```typescript
-// next.config.ts
-const nextConfig = {
-  experimental: {
-    optimizePackageImports: ['firebase', 'styled-components'],
-  },
-  webpack: (config, { isServer }) => {
-    // Dynamic imports for heavy components
-    config.plugins.push(
-      new webpack.optimize.SplitChunksPlugin({
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-          admin: {
-            test: /[\\/]src[\\/]app[\\/]admin[\\/]/,
-            name: 'admin',
-            chunks: 'all',
-          },
-          customer: {
-            test: /[\\/]src[\\/]app[\\/]customer[\\/]/,
-            name: 'customer',
-            chunks: 'all',
-          },
-        },
-      })
-    );
-    return config;
-  },
-};
-```
-
-#### **Lazy Loading Strategy**
-```typescript
-// components/LazyComponents.tsx
-import dynamic from 'next/dynamic';
-
-export const AdminDashboard = dynamic(() => import('./AdminDashboard'), {
-  loading: () => <AdminDashboardSkeleton />,
-  ssr: false,
-});
-
-export const BookingForm = dynamic(() => import('./BookingForm'), {
-  loading: () => <BookingFormSkeleton />,
-  ssr: true,
-});
-```
-
-### **5. State Management Architecture**
-
-#### **Provider Hierarchy**
+#### **Unified Provider Pattern**
 ```typescript
 // providers/AppProviders.tsx
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <ThemeProvider>
-          <NotificationProvider>
-            <PerformanceProvider>
-              {children}
-            </PerformanceProvider>
+      <AuthProvider>           // Unified auth with role detection
+        <ThemeProvider>        // Consistent styling
+          <NotificationProvider> // Simple notifications
+            {children}
           </NotificationProvider>
         </ThemeProvider>
       </AuthProvider>
     </ErrorBoundary>
   );
 }
+
+// providers/AuthProvider.tsx
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Simple role detection: 'admin' (Gregg) or 'customer'
+  const isAdmin = user?.role === 'admin';
+  const isCustomer = user?.role === 'customer';
+
+  return (
+    <AuthContext.Provider value={{ user, isAdmin, isCustomer, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
 ```
 
-#### **Context Optimization**
+#### **Benefits:**
+- **Single Source of Truth**: One auth provider for all roles
+- **Performance**: Reduced context providers
+- **Simplicity**: Easy to understand and maintain
+- **Type Safety**: Full TypeScript support
+
+### **3. Service Layer Organization**
+
+#### **Domain-Driven Structure**
 ```typescript
-// lib/hooks/useOptimizedContext.ts
-export function createOptimizedContext<T>(name: string) {
-  const Context = createContext<T | undefined>(undefined);
+src/lib/services/
+├── booking/
+│   ├── booking-service.ts     // Create/manage bookings
+│   └── availability-service.ts // Check availability
+├── tracking/
+│   ├── tracking-service.ts    // Update driver location
+│   └── notification-service.ts // Send status updates
+├── payment/
+│   └── payment-service.ts     // Process payments (Square)
+└── shared/
+    ├── auth-service.ts        // Simple authentication
+    └── email-service.ts       // Send confirmations
+```
+
+#### **Benefits:**
+- **Separation of Concerns**: Clear domain boundaries
+- **Reusability**: Services can be used across components
+- **Testing**: Easy to unit test individual services
+- **Maintainability**: Clear organization and structure
+
+### **4. Design System Integration**
+
+#### **Component Hierarchy**
+```typescript
+src/design/
+├── components/
+│   ├── base/                  # Foundation components
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Container.tsx
+│   │   └── Stack.tsx
+│   ├── business/              # Domain-specific components
+│   │   ├── BookingForm.tsx   # Booking form
+│   │   ├── TrackingMap.tsx   # Live tracking
+│   │   └── PaymentSummary.tsx # Payment display
+│   └── layout/               # Page structure
+│       ├── Navigation.tsx
+│       └── Footer.tsx
+├── tokens/
+│   ├── colors.ts             # Brand colors
+│   ├── spacing.ts            # Consistent spacing
+│   └── typography.ts         # Font system
+└── providers/
+    └── ThemeProvider.tsx     # Theme management
+```
+
+#### **Benefits:**
+- **Consistency**: Unified design language
+- **Performance**: Tree-shakable components
+- **Accessibility**: Built-in WCAG compliance
+- **Maintainability**: Centralized design tokens
+
+## 🚀 **Performance Optimization Strategy**
+
+### **1. Bundle Optimization**
+```typescript
+// next.config.ts
+const nextConfig = {
+  experimental: {
+    optimizePackageImports: ['@/design', '@/ui'],
+  },
+  webpack: (config, { isServer }) => {
+    // Code splitting by route groups
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      cacheGroups: {
+        public: {
+          test: /[\\/]src[\\/]app[\\/]\(public\)[\\/]/,
+          name: 'public',
+          chunks: 'all',
+        },
+        customer: {
+          test: /[\\/]src[\\/]app[\\/]\(customer\)[\\/]/,
+          name: 'customer',
+          chunks: 'all',
+        },
+        admin: {
+          test: /[\\/]src[\\/]app[\\/]\(admin\)[\\/]/,
+          name: 'admin',
+          chunks: 'all',
+        },
+      },
+    };
+    return config;
+  },
+};
+```
+
+### **2. Image Optimization**
+```typescript
+// Automatic image optimization
+import Image from 'next/image';
+
+// Optimized images with lazy loading
+<Image
+  src="/logos/fairfield_logo.png"
+  alt="Fairfield Airport Cars"
+  width={200}
+  height={60}
+  priority={false}
+  placeholder="blur"
+  blurDataURL="data:image/jpeg;base64,..."
+/>
+```
+
+### **3. Font Optimization**
+```typescript
+// Optimized font loading
+import { Inter } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+```
+
+## 🔐 **Security Implementation**
+
+### **1. Authentication Strategy**
+```typescript
+// middleware.ts
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   
-  const Provider = ({ children, value }: { children: ReactNode; value: T }) => {
-    const memoizedValue = useMemo(() => value, [value]);
-    return <Context.Provider value={memoizedValue}>{children}</Context.Provider>;
-  };
-  
-  const useHook = () => {
-    const context = useContext(Context);
-    if (!context) {
-      throw new Error(`use${name} must be used within ${name}Provider`);
+  // Admin routes (Gregg only)
+  if (pathname.startsWith('/admin')) {
+    const user = await getCurrentUser();
+    if (!user || user.role !== 'admin') {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
     }
-    return context;
-  };
+  }
   
-  return { Provider, useHook };
+  // Customer routes
+  if (pathname.startsWith('/bookings') || pathname.startsWith('/tracking')) {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+  }
+  
+  return NextResponse.next();
 }
 ```
 
-### **6. API Architecture**
-
-#### **RESTful API Structure**
+### **2. API Security**
 ```typescript
-// app/api/
-├── auth/
-│   ├── login/route.ts
-│   ├── logout/route.ts
-│   └── refresh/route.ts
-├── bookings/
-│   ├── route.ts
-│   └── [id]/route.ts
-├── drivers/
-│   ├── route.ts
-│   └── [id]/route.ts
-└── admin/
-    ├── analytics/route.ts
-    └── users/route.ts
-```
-
-#### **API Response Standardization**
-```typescript
-// lib/api/types.ts
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-  timestamp: string;
-}
-
-export interface PaginatedResponse<T> extends ApiResponse<T[]> {
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-```
-
-### **7. Error Handling Strategy**
-
-#### **Global Error Boundaries**
-```typescript
-// components/ErrorBoundary.tsx
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log to error monitoring service
-    console.error('Error caught by boundary:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return <ErrorFallback error={this.state.error} />;
+// API route protection
+export async function POST(request: Request) {
+  try {
+    // Validate user authentication
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    return this.props.children;
+    // Validate request data
+    const data = await request.json();
+    const validatedData = bookingSchema.parse(data);
+
+    // Process request
+    const result = await bookingService.createBooking(validatedData);
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 ```
 
-#### **API Error Handling**
-```typescript
-// lib/api/error-handler.ts
-export class ApiError extends Error {
-  constructor(
-    public statusCode: number,
-    public message: string,
-    public code?: string
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
+## 📊 **Performance Targets**
 
-export function handleApiError(error: unknown): ApiError {
-  if (error instanceof ApiError) {
-    return error;
-  }
-  
-  if (error instanceof Error) {
-    return new ApiError(500, error.message);
-  }
-  
-  return new ApiError(500, 'Unknown error occurred');
-}
-```
-
-## 🚀 **Implementation Priority**
-
-### **Phase 1: Critical Fixes (Week 1)**
-1. **Fix Build Issues**
-   - Resolve SSR/client conflicts
-   - Fix `self is not defined` error
-   - Optimize bundle splitting
-
-2. **Authentication Consolidation**
-   - Merge duplicate auth providers
-   - Standardize auth patterns
-   - Implement proper session management
-
-3. **Service Layer Cleanup**
-   - Organize services by domain
-   - Remove circular dependencies
-   - Standardize service interfaces
-
-### **Phase 2: Architecture Optimization (Week 2-3)**
-1. **Route Group Implementation**
-   - Implement auth/customer/admin route groups
-   - Optimize code splitting by user type
-   - Improve navigation structure
-
-2. **Performance Optimization**
-   - Implement lazy loading strategy
-   - Optimize bundle sizes
-   - Add performance monitoring
-
-3. **State Management**
-   - Optimize context providers
-   - Implement proper caching
-   - Add optimistic updates
-
-### **Phase 3: Advanced Features (Week 4+)**
-1. **Real-time Features**
-   - WebSocket optimization
-   - Live tracking improvements
-   - Push notification enhancements
-
-2. **Admin Dashboard**
-   - Advanced analytics
-   - Real-time monitoring
-   - Performance insights
-
-3. **Mobile Optimization**
-   - PWA enhancements
-   - Offline capabilities
-   - Touch interactions
-
-## 📈 **Success Metrics**
-
-### **Performance Targets**
+### **Technical Metrics**
 - **Page Load Time**: < 2 seconds
-- **Bundle Size**: < 500KB initial load
 - **Time to Interactive**: < 3 seconds
+- **Bundle Size**: < 300KB initial load
+- **Mobile Performance**: 90+ Lighthouse score
 - **Core Web Vitals**: All green
 
-### **Code Quality Targets**
-- **TypeScript Coverage**: 100%
-- **Test Coverage**: > 80%
-- **ESLint Errors**: 0
-- **Build Success Rate**: 100%
-
 ### **Business Metrics**
-- **Booking Conversion**: > 15%
-- **User Retention**: > 70%
-- **Admin Efficiency**: 50% faster workflows
-- **Error Rate**: < 1%
+- **Booking Conversion**: > 20%
+- **Customer Satisfaction**: > 4.5/5
+- **Mobile Usage**: > 80%
+- **Payment Success**: > 95%
 
-## 🔧 **Immediate Action Items**
+## 🎯 **Implementation Roadmap**
 
-### **1. Fix Build Issues**
-```bash
-# Investigate SSR conflicts
-grep -r "self" src/ --include="*.ts" --include="*.tsx"
+### **Phase 1: Foundation (Week 1)**
+1. **Route Structure Implementation**
+   - [ ] Set up route groups (public, customer, admin)
+   - [ ] Implement role-specific layouts
+   - [ ] Configure middleware protection
+   - [ ] Test all routing scenarios
 
-# Check for client-only code in server components
-grep -r "'use client'" src/app/ --include="*.tsx"
-```
+2. **Provider Consolidation**
+   - [ ] Create unified AuthProvider
+   - [ ] Implement role-specific providers
+   - [ ] Set up performance monitoring
+   - [ ] Add error boundaries
 
-### **2. Consolidate Authentication**
-```bash
-# Remove duplicate auth providers
-rm src/providers/UnifiedAuthProvider.tsx
-rm src/hooks/useAuth.ts
-```
+3. **Design System Foundation**
+   - [ ] Organize component hierarchy
+   - [ ] Set up design tokens
+   - [ ] Implement ESLint protection
+   - [ ] Create component documentation
 
-### **3. Service Layer Cleanup**
-```bash
-# Organize services by domain
-mkdir -p src/lib/services/{auth,booking,driver,payment,shared}
-```
+### **Phase 2: Core Services (Week 2)**
+1. **Service Layer Organization**
+   - [ ] Organize services by domain (auth, booking, driver, payment)
+   - [ ] Implement service interfaces
+   - [ ] Add comprehensive error handling
+   - [ ] Set up logging and monitoring
 
-### **4. Performance Monitoring**
-```bash
-# Add bundle analyzer
-npm install --save-dev webpack-bundle-analyzer
-```
+2. **Data Management**
+   - [ ] Implement data fetching patterns
+   - [ ] Set up caching strategy
+   - [ ] Add optimistic updates
+   - [ ] Configure real-time subscriptions
 
-## 🎯 **Next Steps**
+### **Phase 3: Performance Optimization (Week 3)**
+1. **Code Splitting**
+   - [ ] Implement route-based splitting
+   - [ ] Add component-level splitting
+   - [ ] Optimize bundle sizes
+   - [ ] Set up bundle analysis
 
-1. **Review and approve this architecture plan**
-2. **Prioritize Phase 1 fixes**
-3. **Implement critical build fixes**
-4. **Begin service layer reorganization**
-5. **Set up performance monitoring**
+2. **Caching Strategy**
+   - [ ] Implement static caching
+   - [ ] Add dynamic caching
+   - [ ] Set up CDN configuration
+   - [ ] Optimize image loading
 
-This architecture will provide a solid foundation for scaling the Fairfield Airport Cars application while maintaining code quality, performance, and developer experience. 
+## ✅ **Success Criteria**
+
+### **Architecture Quality**
+- ✅ **Build Time**: < 30 seconds
+- ✅ **Bundle Size**: < 300KB initial load
+- ✅ **TypeScript Coverage**: 100%
+- ✅ **ESLint Errors**: 0
+- ✅ **Test Coverage**: > 80%
+
+### **Performance Metrics**
+- ✅ **Page Load Time**: < 2 seconds
+- ✅ **Time to Interactive**: < 3 seconds
+- ✅ **Core Web Vitals**: All green
+- ✅ **Mobile Performance**: Optimized
+
+### **Developer Experience**
+- ✅ **Hot Reload**: < 1 second
+- ✅ **Type Safety**: No runtime errors
+- ✅ **Code Organization**: Clear structure
+- ✅ **Documentation**: Comprehensive guides
+
+## 🚀 **Conclusion**
+
+This architecture analysis provides a clear roadmap for building a scalable, performant, and maintainable application that serves Fairfield Airport Cars' specific business needs. By following these patterns and implementing the recommended improvements, we can create an excellent user experience while maintaining code quality and performance standards.
+
+The key is to **start with the foundation** (routes, providers, services) and **build incrementally** with a focus on **simplicity, performance, and maintainability**. 

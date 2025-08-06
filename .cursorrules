@@ -1,5 +1,75 @@
 # 🎯 Cursor Expert Evaluation Rules
 
+## 🚫 ANTI-DUPLICATION ENFORCEMENT (CRITICAL)
+
+### **MANDATORY BEFORE ANY NEW CODE:**
+1. **SEARCH FIRST** - Search codebase for existing patterns before writing ANY new code
+2. **REUSE EXISTING** - Modify existing code instead of creating duplicates
+3. **PATTERN CHECK** - Look for similar components, services, layouts, providers
+4. **DOCUMENT NECESSITY** - Explain why new code is needed if existing code can't be used
+
+### **FORBIDDEN ACTIONS (VIOLATION = IMMEDIATE STOP):**
+- ❌ Create duplicate layouts when layout system exists
+- ❌ Create duplicate providers when provider system exists  
+- ❌ Create duplicate services when service layer exists
+- ❌ Create duplicate components when design system exists
+- ❌ Create duplicate authentication when auth system exists
+- ❌ Create duplicate routing when routing system exists
+
+### **REQUIRED SEARCH PATTERNS BEFORE NEW CODE:**
+```bash
+# MANDATORY SEARCHES:
+grep_search "layout" - Find existing layout patterns
+grep_search "provider" - Find existing provider patterns  
+grep_search "service" - Find existing service patterns
+grep_search "component" - Find existing component patterns
+file_search "Layout" - Find layout files
+file_search "Provider" - Find provider files
+file_search "Service" - Find service files
+codebase_search "authentication" - Find auth patterns
+codebase_search "routing" - Find routing patterns
+```
+
+### **VIOLATION RESPONSE:**
+- **IMMEDIATE STOP** - If duplicate code is detected, stop immediately
+- **REVERT CHANGES** - Remove duplicate code and use existing
+- **DOCUMENT LESSON** - Add to architecture docs why duplication occurred
+- **UPDATE RULES** - Strengthen enforcement if needed
+
+### **CODE REVIEW CHECKLIST (ENFORCED):**
+- [ ] **Searched existing codebase** for similar functionality
+- [ ] **Checked if existing code can be modified** instead of duplicated
+- [ ] **Verified no similar patterns exist** in the codebase
+- [ ] **Asked: "Can I reuse existing code?"** before writing new code
+- [ ] **Documented why new code is necessary** if existing code can't be used
+
+## 🚫 FILE DELETION PROTECTION (CRITICAL)
+
+### **NEVER DELETE FILES WITHOUT EXPLICIT PERMISSION:**
+- ❌ **NEVER** delete files without asking "Should I delete [filename]?"
+- ❌ **NEVER** use `rm` or `delete_file` without explicit user approval
+- ❌ **NEVER** assume files are safe to delete
+- ❌ **NEVER** delete files in bulk without individual approval
+
+### **REQUIRED BEFORE ANY FILE DELETION:**
+1. **ASK EXPLICITLY**: "Should I delete [filename]?"
+2. **EXPLAIN WHY**: Explain why the file should be deleted
+3. **GET APPROVAL**: Wait for explicit user approval
+4. **CONFIRM ACTION**: Confirm the deletion before proceeding
+5. **DOCUMENT**: Note what was deleted and why
+
+### **SAFE FILE OPERATIONS:**
+- ✅ **MOVE FILES**: Use `mv` to reorganize instead of delete
+- ✅ **RENAME FILES**: Use `mv` to rename instead of delete
+- ✅ **ARCHIVE FILES**: Move to backup location instead of delete
+- ✅ **COMMENT OUT**: Comment out code instead of deleting files
+
+### **EXCEPTIONS (EMERGENCY ONLY):**
+- **Critical security issues** - Files with exposed secrets
+- **Build-breaking files** - Files causing immediate build failures
+- **Explicit user request** - User specifically asks for deletion
+- **Temporary files** - Clearly marked as temporary/test files
+
 ## Automated Daily Senior Developer Review
 - **Every 24 hours, run a comprehensive codebase review as if by a senior developer.**
 - The review must:
@@ -10,6 +80,7 @@
   - Confirm consistent code style and documentation
   - Provide actionable feedback and improvement suggestions
   - Highlight any regressions or risks from recent changes
+  - **CHECK FOR DUPLICATION** - Identify any duplicate code patterns
 - This review is **proactive** and must run automatically—never wait for a manual request.
 - Summarize findings and recommendations clearly for the team.
 
