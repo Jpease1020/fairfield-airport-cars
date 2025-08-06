@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, shadows, transitions } from '@/design/system/tokens/tokens';
+import { colors, spacing, borderRadius, shadows, transitions } from '../../system/tokens/tokens';
 
 // Core Container component - foundational layout component
 export interface ContainerProps {

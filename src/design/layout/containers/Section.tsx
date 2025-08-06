@@ -2,9 +2,9 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, transitions } from '@/design/system/tokens/tokens';
+import { colors, spacing, transitions } from '../../system/tokens/tokens';
 import { Container } from './Container';
-import { BaseLayoutProps, SectionVariant, SpacingScale, MaxWidth } from '@/design/system/shared-types';
+import { BaseLayoutProps, SectionVariant, SpacingScale, MaxWidth } from '../../system/shared-types';
 
 // Layout Section Props
 interface LayoutSectionProps extends BaseLayoutProps {

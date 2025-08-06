@@ -2,8 +2,30 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { spacing, transitions } from '@/design/system/tokens/tokens';
-import { StackProps } from '../content/types';
+import { spacing, transitions } from '../../system/tokens/tokens';
+// Define types locally for this component
+interface StackProps {
+  children: React.ReactNode;
+  direction?: 'horizontal' | 'vertical' | ResponsiveValue<'horizontal' | 'vertical'>;
+  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  align?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch' | ResponsiveValue<'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch'>;
+  justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | ResponsiveValue<'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly'>;
+  wrap?: 'nowrap' | 'wrap' | 'wrap-reverse' | ResponsiveValue<'nowrap' | 'wrap' | 'wrap-reverse'>;
+  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  fullWidth?: boolean;
+  as?: React.ElementType;
+  id?: string;
+}
+
+type ResponsiveValue<T> = T | {
+  xs?: T;
+  sm?: T;
+  md?: T;
+  lg?: T;
+  xl?: T;
+  '2xl'?: T;
+};
 
 const StyledStack = styled.div.withConfig({
   shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'margin', 'fullWidth'].includes(prop)

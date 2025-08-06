@@ -3,7 +3,6 @@
 import React from 'react';
 import { Heading, HeadingProps } from './Heading';
 import { useEditMode } from '../../../providers/EditModeProvider';
-import { getContent } from '@/lib/content/content-mapping';
 
 export interface EditableHeadingProps extends Omit<HeadingProps, 'children'> {
   field: string;
@@ -41,22 +40,17 @@ export const EditableHeading: React.FC<EditableHeadingProps> = ({
     }
   }
 
-  // Get value from database or use fallback
+  // Get value from props or fallback
   const getValue = (): string => {
-    // First priority: Database value
+    // First priority: Database value (passed from parent)
     if (localContent && localContent[field]) {
       return localContent[field];
     }
-    // Second priority: Content mapping (preserves existing content)
-    const mappedContent = getContent(field);
-    if (mappedContent) {
-      return mappedContent;
-    }
-    // Third priority: Children as string
+    // Second priority: Children as string
     if (children && typeof children === 'string') {
       return children;
     }
-    // Fourth priority: Default value
+    // Third priority: Default value
     return defaultValue;
   };
 

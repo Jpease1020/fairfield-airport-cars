@@ -133,26 +133,36 @@ export default {
         type: 'problem',
         hasSuggestions: true,
         docs: {
-          description: 'Disallow HTML elements for structure in favor of design system components',
+          description: 'Disallow raw HTML elements for structure in favor of design system components',
           category: 'Best Practices',
         },
       },
       create(context) {
         return {
-          ImportDeclaration(node) {
-            const source = node.source.value;
-            if (source === 'react' || source === 'react-dom') {
-              // Check if JSX is using div/span/p for structure
-              context.report({
-                node,
-                message: '❌ HTML elements for structure are forbidden. Use design system components (Container, Stack, Card, etc.) instead.',
-                suggest: [
-                  {
-                    desc: 'Replace with design system component',
-                    fix: (fixer) => fixer.replaceText(node.source, "'@/ui'")
-                  }
-                ]
-              });
+          JSXElement(node) {
+            const elementName = node.openingElement.name.name;
+            // Only flag raw HTML elements used for structure
+            if (['div', 'span', 'p', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav'].includes(elementName)) {
+              const hasStyle = node.openingElement.attributes.some(attr => 
+                attr.name && attr.name.name === 'style'
+              );
+              const hasClassName = node.openingElement.attributes.some(attr => 
+                attr.name && attr.name.name === 'className'
+              );
+              
+              // Only report if the element has styling or is being used for layout
+              if (hasStyle || hasClassName) {
+                context.report({
+                  node,
+                  message: '❌ Raw HTML elements for structure are forbidden. Use design system components (Container, Stack, Card, etc.) instead.',
+                  suggest: [
+                    {
+                      desc: 'Replace with design system component',
+                      fix: (fixer) => fixer.replaceText(node.openingElement.name, 'Box')
+                    }
+                  ]
+                });
+              }
             }
           }
         };

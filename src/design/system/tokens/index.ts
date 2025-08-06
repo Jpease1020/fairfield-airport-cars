@@ -1,4 +1,15 @@
-import { CMSConfiguration } from '@/types/cms';
+import React from 'react';
+
+// Define CMSConfiguration interface locally for this component
+interface CMSConfiguration {
+  themeColors?: Record<string, string>;
+  business?: {
+    branding?: {
+      primaryColor?: string;
+      secondaryColor?: string;
+    };
+  };
+}
 
 export { colors, spacing } from './tokens';
 
