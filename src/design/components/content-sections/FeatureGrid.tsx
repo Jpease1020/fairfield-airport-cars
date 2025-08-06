@@ -13,8 +13,8 @@ interface Feature {
 
 interface FeatureGridProps {
   features: Feature[];
-  columns?: ResponsiveValue<2 | 3 | 4>;
-  gap?: ResponsiveValue<'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
+  columns?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   showCards?: boolean;
   emptyMessage?: string;
   emptyIcon?: string;

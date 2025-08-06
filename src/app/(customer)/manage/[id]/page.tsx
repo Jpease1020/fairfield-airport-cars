@@ -9,8 +9,7 @@ import {
   useToast,
   Text,
   Span,
-  Container,
-  CustomerLayout
+  Container
 } from '@/ui';
 import { Stack } from '@/ui';
 import { EditableText } from '@/ui';

@@ -1,5 +1,58 @@
 # 🎯 Cursor Expert Evaluation Rules
 
+## 🚨 CRITICAL RULE: NO FILE DELETION WITHOUT PERMISSION
+
+**NEVER DELETE FILES WITHOUT EXPLICIT PERMISSION**
+- Always ask "Should I delete [filename]?" before deleting any file
+- Get approval for each file individually  
+- No bulk deletions without explicit permission
+- This applies to all file operations (delete, move, rename)
+- **NO EXCEPTIONS** - always ask first
+
+## 🚨 CRITICAL RULE: PREVENT CODE DUPLICATION
+
+**NEVER CREATE NEW CODE WITHOUT CHECKING FOR EXISTING SIMILAR CODE**
+
+**BEFORE creating ANY new code, you MUST:**
+
+1. **Search the entire codebase** for similar functionality:
+   - Use `codebase_search` for semantic matches
+   - Use `grep_search` for exact function/component names
+   - Use `file_search` for similar file names
+
+2. **Check these locations FIRST:**
+   - `src/design/components/` - Reusable UI components
+   - `src/lib/services/` - Business logic services
+   - `src/app/` - Page components
+   - `src/types/` - TypeScript definitions
+   - `src/hooks/` - Custom React hooks
+
+3. **If similar code exists:**
+   - **REUSE** existing code instead of creating new
+   - **EXTEND** existing functionality if needed
+   - **REFACTOR** existing code to be more generic
+   - **NEVER** create duplicates
+
+4. **Examples of what to check:**
+   - Driver profile components (we had duplicates!)
+   - Service functions (booking, auth, etc.)
+   - UI components (buttons, forms, cards)
+   - Type definitions
+   - Utility functions
+
+5. **If you find similar code:**
+   - Ask user: "Should I reuse the existing [component/service] or create a new one?"
+   - Explain the differences and trade-offs
+   - Get explicit permission before creating new code
+
+**DUPLICATION PREVENTION CHECKLIST:**
+- [ ] Searched codebase for similar functionality
+- [ ] Checked design system components
+- [ ] Checked service layer
+- [ ] Checked type definitions
+- [ ] Asked user for permission to create new code
+- [ ] Documented why new code is needed
+
 ## 🚫 ANTI-DUPLICATION ENFORCEMENT (CRITICAL)
 
 ### **MANDATORY BEFORE ANY NEW CODE:**

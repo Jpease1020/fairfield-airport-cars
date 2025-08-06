@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from './Button';
-import { Stack } from '../../layout/framing';
+import { Stack } from '../../layout/framing/Stack';
 
 export interface ActionButton {
   id: string;

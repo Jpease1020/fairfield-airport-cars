@@ -8,7 +8,9 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
   },
-  // Optimize images for better performance
+  // Server external packages
+  serverExternalPackages: ['firebase-admin'],
+  // Optimized image configuration
   images: {
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -17,8 +19,55 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // Webpack optimizations
-  webpack: (config, { isServer }) => {
+  // Advanced webpack optimization
+  webpack: (config, { isServer, dev, webpack }) => {
+    // Prevent Firebase Admin SDK from being bundled for client-side
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'firebase-admin': false,
+        'firebase-admin/app': false,
+        'firebase-admin/firestore': false,
+        'firebase-admin/auth': false,
+        'firebase-admin/messaging': false,
+      };
+    }
+
+    // Handle 'self is not defined' error in SSR
+    if (isServer) {
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'typeof self': JSON.stringify('undefined'),
+          'self': 'undefined',
+        })
+      );
+    }
+
+    // Production optimizations
+    if (!dev) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            styled: {
+              test: /[\\/]node_modules[\\/]styled-components[\\/]/,
+              name: 'styled-components',
+              chunks: 'all',
+              priority: 20,
+            },
+          },
+        },
+      };
+    }
+    
+    // Add fallbacks for Node.js modules
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
@@ -28,31 +77,13 @@ const nextConfig: NextConfig = {
       child_process: false,
     };
     
-    // Optimize bundle size
-    config.optimization = {
-      ...config.optimization,
-      splitChunks: {
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-          styled: {
-            test: /[\\/]node_modules[\\/]styled-components[\\/]/,
-            name: 'styled-components',
-            chunks: 'all',
-            priority: 20,
-          },
-        },
-      },
-    };
-    
     return config;
   },
   // Compression for better performance
   compress: true,
+  // Optimize for performance
+  poweredByHeader: false,
+  generateEtags: false,
   // Styled-components configuration
   compiler: {
     styledComponents: true,
