@@ -104,6 +104,8 @@ export type { NavigationItem } from './page-sections/nav/BaseNavigation';
 // Layer 7: App-Specific Components (depends on base components)
 export { AdminPageWrapper } from '../components/app/AdminPageWrapper';
 export { ErrorBoundary } from '../components/business/ErrorBoundary';
+export { LiveTrackingMap } from '../components/business/LiveTrackingMap';
+export { DriverTrackingInterface } from '../components/business/DriverTrackingInterface';
 
 // Layer 7: Providers (depends on base components)
 export { AccessibilityEnhancer } from './providers/AccessibilityEnhancer';
