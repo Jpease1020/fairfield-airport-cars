@@ -42,5 +42,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# temporary design library (not included in build)
+# temporary directories (not included in build)
 temp-design-library/
+temp-architectural-improvements/
+temp-types/
+scripts/monitoring/
+src/types/api.ts
+src/types/core.ts
