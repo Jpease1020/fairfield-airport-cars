@@ -2,8 +2,23 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { RowProps } from '../content/types';
-import { spacing, breakpoints } from '@/design/system/tokens/tokens';
+// Define types locally for this component
+interface RowProps {
+  children: React.ReactNode;
+  direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
+  wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
+  align?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  fullWidth?: boolean;
+  responsive?: boolean;
+  id?: string;
+  as?: React.ElementType;
+  'data-testid'?: string;
+}
+import { spacing, breakpoints } from '../../system/tokens/tokens';
 
 // Styled Row component with flexbox properties
 const StyledRow = styled.div.withConfig({

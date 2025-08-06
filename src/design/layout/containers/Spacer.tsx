@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { spacing } from '@/design/system/tokens/tokens';
+import { spacing } from '../../system/tokens/tokens';
 
 // Spacer component - simple spacing utility
 export interface SpacerProps {

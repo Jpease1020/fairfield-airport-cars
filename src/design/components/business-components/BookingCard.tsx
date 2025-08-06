@@ -1,6 +1,5 @@
 import React from 'react';
 import { Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
-import { Booking } from '@/types/booking';
 import { Badge } from '../base-components/Badge';
 import { Button } from '../base-components/Button';
 import { Container } from '../../layout/containers/Container';
@@ -9,6 +8,55 @@ import { Text } from '../base-components/text/Text';
 import { EditableText } from '../base-components/text/EditableText';
 import { Stack } from '../../layout/framing/Stack';
 import { Box } from '../../layout/content/Box';
+
+// Define Booking interface locally for this component
+interface Booking {
+  id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  pickupLocation: string;
+  dropoffLocation: string;
+  pickupDateTime: Date;
+  passengers: number;
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  fare: number;
+  dynamicFare?: number;
+  depositPaid: boolean;
+  balanceDue: number;
+  flightNumber?: string;
+  notes?: string;
+  driverId?: string;
+  driverName?: string;
+  estimatedArrival?: Date;
+  actualArrival?: Date;
+  tipAmount?: number;
+  cancellationFee?: number;
+  squareOrderId?: string;
+  depositAmount?: number;
+  reminderSent?: boolean;
+  onMyWaySent?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  vehicleType?: 'sedan' | 'suv' | 'luxury' | 'van';
+  serviceLevel?: 'standard' | 'premium' | 'luxury';
+  specialRequests?: {
+    childSeat?: boolean;
+    wheelchair?: boolean;
+    extraLuggage?: boolean;
+    meetAndGreet?: boolean;
+    flightTracking?: boolean;
+  };
+  flightInfo?: {
+    airline?: string;
+    flightNumber?: string;
+    arrivalTime?: string;
+    terminal?: string;
+  };
+  vehicleUpgradePrice?: number;
+  serviceLevelPrice?: number;
+  totalFare?: number;
+}
 
 interface BookingCardProps {
   booking: Booking;

@@ -2,8 +2,20 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, transitions } from '@/design/system/tokens/tokens';
-import { BoxProps } from './types';
+import { colors, spacing, borderRadius, transitions } from '../../system/tokens/tokens';
+
+// Define BoxProps interface locally for this component
+interface BoxProps {
+  children: React.ReactNode;
+  variant?: 'default' | 'elevated' | 'outlined' | 'filled';
+  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
+  id?: string;
+}
 
 const StyledBox = styled.div.withConfig({
   shouldForwardProp: (prop) => !['variant', 'padding', 'rounded', 'margin', 'marginTop', 'marginBottom'].includes(prop)

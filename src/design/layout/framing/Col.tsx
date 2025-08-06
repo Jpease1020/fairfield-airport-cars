@@ -2,8 +2,33 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { ColProps, ColSpan, ResponsiveColSpan } from '../content/types';
-import { spacing, breakpoints } from '@/design/system/tokens/tokens';
+// Define types locally for this component
+type ColSpan = number;
+type ResponsiveColSpan = {
+  xs?: number;
+  sm?: number;
+  md?: number;
+  lg?: number;
+  xl?: number;
+  '2xl'?: number;
+};
+
+interface ColProps {
+  children: React.ReactNode;
+  span?: ColSpan | ResponsiveColSpan;
+  offset?: ColSpan | ResponsiveColSpan;
+  align?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  order?: number;
+  grow?: boolean;
+  shrink?: boolean;
+  id?: string;
+  as?: React.ElementType;
+  'data-testid'?: string;
+}
+import { spacing, breakpoints } from '../../system/tokens/tokens';
 
 // Helper function to generate responsive flex basis
 const generateFlexBasis = (span: ColSpan | ResponsiveColSpan): string => {

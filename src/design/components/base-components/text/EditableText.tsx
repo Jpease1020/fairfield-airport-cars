@@ -3,7 +3,6 @@
 import React from 'react';
 import { Text, TextProps } from './Text';
 import { useEditMode } from '../../../providers/EditModeProvider';
-import { getContent } from '@/lib/content/content-mapping';
 
 export interface EditableTextProps extends Omit<TextProps, 'children'> {
   field: string;
@@ -48,16 +47,11 @@ export const EditableText: React.FC<EditableTextProps> = ({
     if (localContent && localContent[field]) {
       return localContent[field];
     }
-    // Second priority: Content mapping (preserves existing content)
-    const mappedContent = getContent(field);
-    if (mappedContent) {
-      return mappedContent;
-    }
-    // Third priority: Children as string
+    // Second priority: Children as string
     if (children && typeof children === 'string') {
       return children;
     }
-    // Fourth priority: Default value
+    // Third priority: Default value
     return defaultValue;
   };
 

@@ -1,4 +1,13 @@
-import { CMSConfiguration } from '@/types/cms';
+// Define CMSConfiguration interface locally for this component
+interface CMSConfiguration {
+  themeColors?: Record<string, string>;
+  business?: {
+    branding?: {
+      primaryColor?: string;
+      secondaryColor?: string;
+    };
+  };
+}
 
 export const getCMSColors = (cmsConfig: CMSConfiguration) => {
   const themeColors = cmsConfig.themeColors || {};

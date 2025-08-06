@@ -105,50 +105,6 @@ export default [
         'ignoreRestSiblings': true
       }],
 
-      
-
-      
-      // Architecture guardrails - using custom rules instead of no-restricted-syntax
-      
-      // Prevent className usage
-      'no-restricted-globals': [
-        'error',
-        {
-          name: 'className',
-          message: '❌ className is FORBIDDEN. Use styled-components and design tokens instead.'
-        }
-      ],
-      
-      // Prevent style props on design system components
-      'no-restricted-properties': [
-        'error',
-        {
-          object: 'Card',
-          property: 'style',
-          message: '❌ style prop is FORBIDDEN on design system components. Use design system props instead.'
-        },
-        {
-          object: 'Stack',
-          property: 'style',
-          message: '❌ style prop is FORBIDDEN on design system components. Use design system props instead.'
-        },
-        {
-          object: 'Box',
-          property: 'style',
-          message: '❌ style prop is FORBIDDEN on design system components. Use design system props instead.'
-        },
-        {
-          object: 'Container',
-          property: 'style',
-          message: '❌ style prop is FORBIDDEN on design system components. Use design system props instead.'
-        },
-        {
-          object: 'Text',
-          property: 'style',
-          message: '❌ style prop is FORBIDDEN on design system components. Use design system props instead.'
-        }
-      ],
-
       // Import consistency rules
       'no-restricted-imports': [
         'error',
@@ -170,17 +126,15 @@ export default [
         }
       ],
 
-      // Note: Import plugin rules removed - using custom rules instead
-      
-      // Custom Fairfield rules
-      'fairfield/no-hardcoded-colors': 'warn',
-      'fairfield/no-inline-styles': 'warn',
-      'fairfield/no-classname-props': 'warn',
-      'fairfield/no-html-structure': 'warn',
-      'fairfield/enforce-design-system': 'warn',
-      'fairfield/no-circular-ui-imports': 'warn',
-      'fairfield/enforce-types-architecture': 'warn',
-      'fairfield/no-absolute-imports-in-design': 'warn',
+      // Custom Fairfield rules (consolidated from multiple files)
+      'fairfield/no-hardcoded-colors': 'error',
+      'fairfield/no-inline-styles': 'error', // 🚨 CRITICAL: No inline styles anywhere
+      'fairfield/no-classname-props': 'error',
+      'fairfield/no-html-structure': 'error',
+      'fairfield/enforce-design-system': 'error',
+      'fairfield/no-circular-ui-imports': 'error',
+      'fairfield/enforce-types-architecture': 'error',
+      'fairfield/no-absolute-imports-in-design': 'error',
     },
   },
   // 🛡️ DESIGN SYSTEM PROTECTION - Stricter rules for design directory
@@ -206,33 +160,20 @@ export default [
     },
     rules: {
       // 🚨 CRITICAL: Design system protection rules
-      'fairfield/no-hardcoded-colors': 'warn',
-      'fairfield/no-inline-styles': 'warn',
-      'fairfield/no-classname-props': 'warn',
-      'fairfield/no-html-structure': 'warn',
-      'fairfield/enforce-design-system': 'warn',
-      'fairfield/no-circular-ui-imports': 'warn',
-      'fairfield/enforce-types-architecture': 'warn',
-      'fairfield/no-absolute-imports-in-design': 'warn',
+      'fairfield/no-hardcoded-colors': 'error',
+      'fairfield/no-inline-styles': 'error',
+      'fairfield/no-classname-props': 'error',
+      'fairfield/no-html-structure': 'error',
+      'fairfield/enforce-design-system': 'error',
+      'fairfield/no-circular-ui-imports': 'error',
+      'fairfield/enforce-types-architecture': 'error',
+      'fairfield/no-absolute-imports-in-design': 'error',
       
       // 🔒 ADDITIONAL PROTECTION RULES FOR DESIGN DIRECTORY
       '@typescript-eslint/no-explicit-any': 'warn', // No any types in design system
       '@typescript-eslint/no-unused-vars': 'warn', // No unused variables
       'no-console': 'error', // No console logs in design system
       'no-debugger': 'error', // No debugger statements
-      
-      // 🚫 FORBIDDEN IN DESIGN SYSTEM
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'Literal[value=/#[0-9a-fA-F]{3,6}/]',
-          message: '❌ Hardcoded colors are FORBIDDEN in design system. Use CSS variables or design tokens.'
-        },
-        {
-          selector: 'TemplateLiteral[quasis.0.value.raw*="#"]',
-          message: '❌ Hardcoded colors are FORBIDDEN in design system. Use CSS variables or design tokens.'
-        }
-      ],
       
       // 📦 IMPORT RESTRICTIONS FOR DESIGN SYSTEM
       'no-restricted-imports': [
@@ -251,7 +192,6 @@ export default [
               group: ['../design/components/ui-components/*', './design/components/ui-components/*'],
               message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.'
             }
-            // Removed React import restriction - React imports are needed for JSX
           ]
         }
       ],
