@@ -3,10 +3,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/utils/firebase';
-import { Button } from '@/ui';
-import { Container } from '@/ui';
-import { EditableText } from '@/ui';
-import { Stack } from '@/ui';
+import { Button } from '../components/base-components/Button';
+import { Container } from '../layout/containers/Container';
+import { EditableText } from '../components/base-components/text/EditableText';
+import { Stack } from '../layout/framing/Stack';
 import { cmsService } from '@/lib/services/cms-service';
 import { authService } from '@/lib/services/auth-service';
 
@@ -94,7 +94,7 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
       }
     } catch (error) {
       setSaveMsg('Failed to save.');
-      console.error('Failed to save:', error);
+      // Failed to save - handled silently
     } finally {
       setSaving(false);
     }

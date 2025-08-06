@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Text } from '@/ui';
+import { Container } from '../containers/Container';
+import { Stack } from '../framing/Stack';
+import { Text } from '../../components/base-components/text/Text';
 
 interface CardProps {
   children?: React.ReactNode;
@@ -29,7 +31,7 @@ interface CardProps {
  * </Card>
  * 
  * // Action Card
- * <Card title="Clickable Card" onClick={() => console.log('clicked')} hover>
+ * <Card title="Clickable Card" onClick={() => {}} hover>
  *   <p>Click me!</p>
  * </Card>
  * 

@@ -1,5 +1,9 @@
 import React from 'react';
-import { Container, H1, Text, Button, Stack } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { H1 } from '../base-components/text/Headings';
+import { Text } from '../base-components/text/Text';
+import { Button } from '../base-components/Button';
+import { Stack } from '../../layout/framing/Stack';
 import Link from 'next/link';
 
 interface StaticHeroSectionProps {

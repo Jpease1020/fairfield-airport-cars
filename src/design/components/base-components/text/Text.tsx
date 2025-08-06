@@ -3,16 +3,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
+import { BaseComponentProps, TextVariant, TextSize, FontWeight, TextAlign, ColorVariant, SpacingScale } from '../../../system/shared-types';
 
 // Styled text component
 const StyledText = styled.p.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'color'].includes(prop)
 })<{
-  variant: 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline';
-  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  weight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
-  align: 'left' | 'center' | 'right' | 'justify';
-  color: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info' | 'inherit';
+  variant: TextVariant;
+  size: TextSize;
+  weight: FontWeight;
+  align: TextAlign;
+  color: ColorVariant | 'inherit';
 }>`
   margin: 0;
   font-family: ${fontFamily.sans};
@@ -117,22 +118,35 @@ const StyledText = styled.p.withConfig({
   }}
 `;
 
-export interface TextProps {
+export interface TextProps extends BaseComponentProps {
   // Core props
   children: React.ReactNode;
   
   // Appearance
-  variant?: 'body' | 'lead' | 'small' | 'muted' | 'caption' | 'overline';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
-  align?: 'left' | 'center' | 'right' | 'justify';
-  color?: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info' | 'inherit';
+  variant?: TextVariant;
+  size?: TextSize;
+  weight?: FontWeight;
+  align?: TextAlign;
+  color?: ColorVariant | 'inherit';
+  
+  // Layout
+  marginTop?: SpacingScale;
+  marginBottom?: SpacingScale;
+  marginLeft?: SpacingScale;
+  marginRight?: SpacingScale;
   
   // HTML attributes
-  as?: 'p' | 'span' | 'div' | 'article' | 'blockquote';
+  as?: 'p' | 'span' | 'div' | 'article' | 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   
-  // Rest props
-  [key: string]: any;
+  // Content editing
+  contentEditable?: boolean;
+  suppressContentEditableWarning?: boolean;
+  
+  // Event handlers
+  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export const Text: React.FC<TextProps> = ({

@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, transitions, shadows, fontWeight } from '../../system/tokens/tokens';
 import { LoadingSpinner } from './notifications/LoadingSpinner';
+import { BaseComponentProps, ButtonVariant, ButtonSize } from '../../system/shared-types';
 
 // Styled button component with enhanced modern styling
 const StyledButton = styled.button.withConfig({
@@ -291,10 +292,10 @@ const StyledButton = styled.button.withConfig({
 `;
 
 // Button Component - Enhanced with better props and functionality
-export interface ButtonProps {
+export interface ButtonProps extends BaseComponentProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
@@ -304,7 +305,6 @@ export interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   shape?: 'default' | 'rounded' | 'pill' | 'square';
   as?: 'button' | 'a' | 'div';
-  id?: string;
   href?: string;
   target?: string;
   rel?: string;

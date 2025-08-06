@@ -2,13 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { 
-  Container, 
-  Text, 
-  EditableText, 
-  Box, 
-  Stack
-} from '@/ui';
+import { Container } from '../layout/containers/Container';
+import { Box } from '../layout/content/Box';
+import { Stack } from '../layout/framing/Stack';
+import { Text } from '../components/base-components/text/Text';
+import { EditableText } from '../components/base-components/text/EditableText';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();

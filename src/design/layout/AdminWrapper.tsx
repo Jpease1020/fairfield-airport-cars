@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { AdminProvider, EditModeProvider } from '@/ui';
+import { AdminProvider } from '../providers/AdminProvider';
+import { EditModeProvider } from '../providers/EditModeProvider';
 
 interface AdminWrapperProps {
   children: React.ReactNode;

@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Text } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { Stack } from '../../layout/framing/Stack';
+import { Text } from './text/Text';
 
 interface StatCardProps {
   children?: React.ReactNode;

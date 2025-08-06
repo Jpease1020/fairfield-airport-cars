@@ -3,8 +3,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, transitions } from '@/design/system/tokens/tokens';
-import { Container } from '@/ui';
-import { LayoutSectionProps } from '@/design/system/types';
+import { Container } from './Container';
+import { BaseLayoutProps, SectionVariant, SpacingScale, MaxWidth } from '@/design/system/shared-types';
+
+// Layout Section Props
+interface LayoutSectionProps extends BaseLayoutProps {
+  variant?: SectionVariant;
+  padding?: SpacingScale;
+  container?: boolean;
+  maxWidth?: MaxWidth;
+  fullWidth?: boolean;
+}
 
 const StyledSection = styled.section.withConfig({
   shouldForwardProp: (prop) => !['variant', 'padding', 'margin', 'marginTop', 'marginBottom'].includes(prop)

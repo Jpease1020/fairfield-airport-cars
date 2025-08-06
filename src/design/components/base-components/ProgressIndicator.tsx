@@ -1,6 +1,8 @@
 import React from 'react';
-import { Container, Text, H3 } from '@/ui';
-import { Stack } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { Text } from './text/Text';
+import { H3 } from './text/Headings';
+import { Stack } from '../../layout/framing/Stack';
 
 interface ProgressIndicatorProps {
   currentStep: number;

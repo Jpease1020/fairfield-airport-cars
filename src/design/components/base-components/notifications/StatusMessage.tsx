@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Alert } from '@/ui';
-import { Button } from '@/ui';
-import { Stack } from '@/ui';
-import { Text } from '@/ui';
+import { Alert } from './Alert';
+import { Button } from '../Button';
+import { Stack } from '../../../layout/framing/Stack';
+import { Text } from '../text/Text';
 
 
 

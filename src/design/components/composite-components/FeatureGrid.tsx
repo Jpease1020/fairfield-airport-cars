@@ -1,8 +1,13 @@
 'use client';
 
 import React from 'react';
-import { Grid, Col, Container, Box, Stack, Text, H4 } from '@/ui';
-import { ResponsiveValue } from '@/ui';   
+import { Grid } from '../../layout/framing/Grid';
+import { Col } from '../../layout/framing/Col';
+import { Container } from '../../layout/containers/Container';
+import { Box } from '../../layout/content/Box';
+import { Stack } from '../../layout/framing/Stack';
+import { Text } from '../base-components/text/Text';
+import { H4 } from '../base-components/text/Headings';
 
 interface Feature {
   id?: string | number;

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button } from '@/ui';
-import { Container, Span } from '@/ui';
+import { Button } from '../base-components/Button';
+import { Container } from '../../layout/containers/Container';
+import { Span } from '../base-components/text/Span';  
 
 export interface ChatMessageData {
   id: string;

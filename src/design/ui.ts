@@ -1,13 +1,45 @@
 // Main UI Export - For App Usage (No Circular Dependencies)
-// Layer 1: Foundation
-export * from './system/tokens/tokens';
-export * from './system/types';
 
-// Layer 2: Base Components (depends on foundation)
+// Layer 1: Foundation
+export * from './foundation/tokens/tokens';
+export * from './foundation/tokens/cms-integrated-colors';
+export * from './foundation/tokens/cms-integrated-spacing';
+export * from './foundation/tokens/cms-integrated-typography';
+export * from './foundation/utils';
+export * from './foundation/constants';
+export * from './foundation/styles';
+
+// Layer 2: System Types (separate from foundation to avoid conflicts)
+export * from './system/shared-types';
+
+// Layer 2: Layout Types (layout-specific type definitions)
+export type {
+  ColSpan,
+  ResponsiveColSpan,
+  MaxWidth,
+  GridGap,
+  BaseGridProps,
+  RowProps,
+  ColProps,
+  ContainerProps,
+  GridProps,
+  GridTheme
+} from './layout/framing/types';
+
+export type {
+  BaseContentProps,
+  StackProps,
+  BoxProps
+} from './layout/content/types';
+
+// Layer 3: Base Components (depends on foundation)
 // Core Components
 export { Button } from './components/base-components/Button';
+export type { ButtonProps } from './components/base-components/Button';
 export { Badge } from './components/base-components/Badge';
+export type { BadgeProps } from './components/base-components/Badge';
 export { Modal } from './components/base-components/Modal';
+export type { ModalProps } from './components/base-components/Modal';
 export { Overlay } from './components/base-components/Overlay';
 export { ProgressIndicator } from './components/base-components/ProgressIndicator';
 export { StarRating } from './components/base-components/StarRating';
@@ -50,35 +82,54 @@ export { Grid, GridItem, GridSection } from './layout/framing/Grid';
 export { Col } from './layout/framing/Col';
 export { Row } from './layout/framing/Row';
 
-// Layer 3: Business Components (depends on base components)
+// Layer 4: Business Components (depends on base components)
 export { BookingCard } from './components/business-components/BookingCard';
 export { ChatContainer } from './components/business-components/ChatContainer';
+export type { ChatContainerProps } from './components/business-components/ChatContainer';
 export { ChatInput } from './components/business-components/ChatInput';
+export type { ChatInputProps } from './components/business-components/ChatInput';
 export { ChatMessage } from './components/business-components/ChatMessage';
+export type { ChatMessageProps } from './components/business-components/ChatMessage';
 export { Editable, EditableButton } from './components/business-components/EditableSystem';
+export type { EditableProps } from './components/business-components/EditableSystem';
 export { EditableTextarea } from './components/business-components/EditableTextarea';
 export { ErrorBoundary } from './components/business-components/ErrorBoundary';
 export { VoiceInput } from './components/business-components/VoiceInput';
+export type { VoiceInputProps } from './components/business-components/VoiceInput';
 export { VoiceOutput } from './components/business-components/VoiceOutput';
+export type { VoiceOutputProps } from './components/business-components/VoiceOutput';
+export { PaymentSummary } from './components/business-components/PaymentSummary';
+export { TipCalculator } from './components/business-components/TipCalculator';
+export { DriverProfileCard } from './components/business-components/DriverProfileCard';
+export { ReviewShowcase } from './components/business-components/ReviewShowcase';
+export { EditModeToggle } from './components/business-components/EditModeToggle';
 
-// Layer 4: Content Sections (depends on base components)
-export { DataTable } from './components/content-sections/DataTable';
-export type { DataTableColumn, DataTableAction } from './components/content-sections/DataTable';
-export { ActionGrid } from './components/content-sections/ActionGrid';
-export { FeatureGrid } from './components/content-sections/FeatureGrid';
-export { ContentCard } from './components/content-sections/ContentCard';
+// Layer 4: Composite Components (depends on base components)
+export { DataTable } from './components/composite-components/DataTable';
+export type { DataTableColumn, DataTableAction } from './components/composite-components/DataTable';
+export { ActionGrid } from './components/composite-components/ActionGrid';
+export { FeatureGrid } from './components/composite-components/FeatureGrid';
+export { ContentCard } from './components/composite-components/ContentCard';
+export { FloatingEditButton } from './components/composite-components/FloatingEditButton';
+export { SettingToggle } from './components/composite-components/SettingToggle';
+
+// Layer 4: State Components (depends on base components)
+export { State } from './State';
+
+// Layer 5: Content Sections (depends on composite components)
 export { StaticHeroSection } from './components/content-sections/StaticHeroSection';
 export { HeroSection } from './components/content-sections/HeroSection';
 
-// Layer 5: Page Sections (depends on all previous layers)
+// Layer 6: Page Sections (depends on all previous layers)
 export { Footer } from './page-sections/Footer';
 export { AdminPageWrapper } from './page-sections/AdminPageWrapper';
 export { PageHeader } from './page-sections/PageHeader';
-export { BaseNavigation, type NavigationItem } from './page-sections/nav/BaseNavigation';
+export { BaseNavigation } from './page-sections/nav/BaseNavigation';
+export type { NavigationItem } from './page-sections/nav/BaseNavigation';
 export { CustomerNavigation } from './page-sections/nav/CustomerNavigation';
 export { AdminNavigation } from './page-sections/nav/AdminNavigation';
 
-// Layer 6: Providers (depends on base components)
+// Layer 7: Providers (depends on base components)
 export { AccessibilityEnhancer } from './providers/AccessibilityEnhancer';
 export { AdminProvider } from './providers/AdminProvider';
 export { CMSDesignProvider } from './providers/CMSDesignProvider';
@@ -86,16 +137,24 @@ export { EditModeProvider, useEditMode } from './providers/EditModeProvider';
 export { ThemeProvider } from './providers/ThemeProvider';
 export { StyledComponentsRegistry } from './providers/StyledComponentsRegistry';
 
-// Layer 7: Skeletons (depends on base components)
+// Layer 8: Skeletons (depends on base components)
 export { Skeleton } from './skeletons/Skeleton';
 
-// Layer 8: Icons (foundational)
+// Layer 9: Icons (foundational)
 export { default as Icon } from './components/icons/Icon';
 
-// Simplified layout system
+// Layer 10: Layout System
 export { SimpleLayout } from './layout/SimpleLayout';
 export { UnifiedLayout } from './layout/UnifiedLayout';
 export { AdminWrapper } from './layout/AdminWrapper';
 
-// Legacy alias for backward compatibility (if needed)
+// Legacy alias for backward compatibility
 export { SimpleLayout as CustomerLayout } from './layout/SimpleLayout';
+
+// System utilities
+export {
+  isValidColorVariant,
+  isValidGridCols,
+  isValidMaxWidth,
+  isValidSpacing,
+} from './system/shared-types';

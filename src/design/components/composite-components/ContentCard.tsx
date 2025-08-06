@@ -1,7 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Box, Text, H4 } from '@/ui';
+import { Container } from '../../layout/containers/Container';
+import { Stack } from '../../layout/framing/Stack';
+import { Box } from '../../layout/content/Box';
+import { Text } from '../base-components/text/Text';
+import { H4 } from '../base-components/text/Headings';
 
 interface ContentCardProps {
   title?: string;

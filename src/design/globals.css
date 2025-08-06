@@ -1,47 +1,340 @@
 /* Global styles for Fairfield Airport Cars */
 
-/* Import the consolidated design system variables */
+/* Critical CSS variables - load first to prevent FOUC */
 @import './styles/variables.css';
 
-/* Import the standard layout system */
+/* Import base styles */
+@import './styles/critical.css';
 @import './styles/standard-layout.css';
+@import './styles/page-editable.css';
 
-/* Additional global styles */
+/* Accessibility Enhancements - WCAG 2.1 AA Compliance */
+
+/* High Contrast Mode */
+.high-contrast {
+  --color-background-primary: #000000;
+  --color-background-secondary: #1a1a1a;
+  --color-background-tertiary: #2d2d2d;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e0e0e0;
+  --color-text-muted: #b0b0b0;
+  --color-primary: #ffff00;
+  --color-primary-hover: #ffff80;
+  --color-error: #ff4444;
+  --color-success: #44ff44;
+  --color-warning: #ffaa00;
+  --color-border: #ffffff;
+  --color-border-focus: #ffff00;
+  --shadow-elevated: 0 4px 8px rgba(255, 255, 255, 0.3);
+  --shadow-outlined: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Enhanced Focus Indicators */
+.enhanced-focus *:focus {
+  outline: 3px solid var(--color-border-focus, #ffff00);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.enhanced-focus button:focus,
+.enhanced-focus input:focus,
+.enhanced-focus select:focus,
+.enhanced-focus textarea:focus,
+.enhanced-focus a:focus {
+  outline: 3px solid var(--color-border-focus, #ffff00);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-background-primary), 0 0 0 4px var(--color-border-focus);
+}
+
+/* Reduce Motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Font Size Adjustments */
+.font-size-large {
+  font-size: 1.125rem;
+}
+
+.font-size-large h1 { font-size: 2.5rem; }
+.font-size-large h2 { font-size: 2rem; }
+.font-size-large h3 { font-size: 1.75rem; }
+.font-size-large h4 { font-size: 1.5rem; }
+.font-size-large h5 { font-size: 1.25rem; }
+.font-size-large h6 { font-size: 1.125rem; }
+
+.font-size-extra-large {
+  font-size: 1.25rem;
+}
+
+.font-size-extra-large h1 { font-size: 3rem; }
+.font-size-extra-large h2 { font-size: 2.5rem; }
+.font-size-extra-large h3 { font-size: 2rem; }
+.font-size-extra-large h4 { font-size: 1.75rem; }
+.font-size-extra-large h5 { font-size: 1.5rem; }
+.font-size-extra-large h6 { font-size: 1.25rem; }
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid var(--color-border-focus);
+  
+  &:focus {
+    top: 6px;
+    outline: 3px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+  
+  &:not(:focus) {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}
+
+/* Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Live Regions */
+[aria-live="polite"] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+[aria-live="assertive"] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Focus Trap */
+.focus-trap {
+  outline: none;
+}
+
+/* Keyboard Navigation */
+.keyboard-navigation *:focus {
+  outline: 3px solid var(--color-border-focus, #ffff00);
+  outline-offset: 2px;
+}
+
+/* High Contrast Button Styles */
+.high-contrast button {
+  border: 2px solid var(--color-border);
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+}
+
+.high-contrast button:hover {
+  background: var(--color-background-tertiary);
+  border-color: var(--color-primary);
+}
+
+.high-contrast button:active {
+  background: var(--color-primary);
+  color: var(--color-background-primary);
+}
+
+/* High Contrast Input Styles */
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea {
+  border: 2px solid var(--color-border);
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+}
+
+.high-contrast input:focus,
+.high-contrast select:focus,
+.high-contrast textarea:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 2px var(--color-background-primary), 0 0 0 4px var(--color-border-focus);
+}
+
+/* High Contrast Link Styles */
+.high-contrast a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.high-contrast a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: none;
+}
+
+/* High Contrast Card Styles */
+.high-contrast .card,
+.high-contrast .elevated {
+  border: 2px solid var(--color-border);
+  background: var(--color-background-secondary);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* High Contrast Status Styles */
+.high-contrast .error {
+  background: var(--color-error);
+  color: var(--color-background-primary);
+  border: 2px solid var(--color-error);
+}
+
+.high-contrast .success {
+  background: var(--color-success);
+  color: var(--color-background-primary);
+  border: 2px solid var(--color-success);
+}
+
+.high-contrast .loading {
+  background: var(--color-background-secondary);
+  border: 2px solid var(--color-border);
+}
+
+/* High Contrast Disabled States */
+.high-contrast button:disabled,
+.high-contrast input:disabled,
+.high-contrast select:disabled,
+.high-contrast textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-background-tertiary);
+  color: var(--color-text-muted);
+}
+
+/* Base Button Styles */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Root Variables */
+:root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f9fafb;
+  --color-background-tertiary: #f3f4f6;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #9ca3af;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-border: #e5e7eb;
+  --color-border-focus: #3b82f6;
+  --shadow-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-outlined: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-primary: #111827;
+    --color-background-secondary: #1f2937;
+    --color-background-tertiary: #374151;
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-text-muted: #9ca3af;
+    --color-border: #374151;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary: #0000ff;
+    --color-primary-hover: #0000cc;
+    --color-border-focus: #0000ff;
+    --shadow-elevated: 0 4px 8px rgba(0, 0, 0, 0.8);
+    --shadow-outlined: 0 0 0 3px rgba(0, 0, 255, 0.8);
+  }
+}
+
+/* HTML Base Styles */
 html {
   scroll-behavior: smooth;
 }
 
-/* Focus styles for accessibility */
+/* Focus Styles */
 *:focus {
-  outline: 2px solid var(--secondary-color);
+  outline: 2px solid var(--color-border-focus);
   outline-offset: 2px;
 }
 
-/* Selection styles */
+/* Selection Styles */
 ::selection {
-  background-color: var(--secondary-color);
+  background-color: var(--color-primary);
   color: white;
 }
 
-/* Scrollbar styles */
+/* Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background-muted);
+  background: var(--color-background-muted);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-light);
+  background: var(--color-text-muted);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--color-text-secondary);
 }
 
-/* Button spinner animation */
+/* Button Spinner Animation */
 @keyframes button-spin {
   from {
     transform: rotate(0deg);
@@ -53,4 +346,9 @@ html {
 
 .button-spinner {
   animation: button-spin 1s linear infinite;
+}
+
+/* Styled Components Registry */
+[data-styled-components] {
+  /* Ensure styled-components work properly */
 }

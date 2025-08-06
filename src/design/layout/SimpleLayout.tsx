@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Container } from '@/ui';
-import { CustomerNavigation } from '@/ui';
-import { AdminNavigation } from '@/ui';
-import { Footer } from '@/ui';
+import { Container } from './containers/Container';
+import { CustomerNavigation } from '../page-sections/nav/CustomerNavigation';
+import { AdminNavigation } from '../page-sections/nav/AdminNavigation';
+import { Footer } from '../page-sections/Footer';
 
 interface SimpleLayoutProps {
   children: React.ReactNode;

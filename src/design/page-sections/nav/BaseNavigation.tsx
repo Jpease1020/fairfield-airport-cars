@@ -3,7 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Button, EditableText, Stack, Container, PositionedContainer } from '@/ui';
+import { Button } from '../../components/base-components/Button';
+import { EditableText } from '../../components/base-components/text/EditableText';
+import { Stack } from '../../layout/framing/Stack';
+import { Container } from '../../layout/containers/Container';
+import { PositionedContainer } from '../../layout/containers/PositionedContainer';
 
 // Single styled component for mobile menu overlay
 const MobileMenuOverlay = styled.div`

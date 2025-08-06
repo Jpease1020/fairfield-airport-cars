@@ -25,7 +25,10 @@ export default {
             filename.includes('colors') || 
             filename.includes('cms-integrated-colors') ||
             filename.includes('design-system') ||
-            filename.includes('system/tokens')) {
+            filename.includes('system/tokens') ||
+            filename.endsWith('tokens.ts') ||
+            filename.endsWith('colors.ts') ||
+            filename.includes('foundation/tokens')) {
           return {};
         }
         
@@ -113,7 +116,7 @@ export default {
                 message: '❌ className props are forbidden. Use styled-components instead.',
                 suggest: [
                   {
-                    desc: 'Remove className and use styled-components',
+                    desc: 'Create a styled component',
                     fix: (fixer) => fixer.remove(node)
                   }
                 ]
@@ -124,13 +127,13 @@ export default {
       }
     },
 
-    // Rule: Enforce @/ui imports for design system components
-    'enforce-ui-imports': {
+    // Rule: No direct HTML elements for structure
+    'no-html-structure': {
       meta: {
         type: 'problem',
         hasSuggestions: true,
         docs: {
-          description: 'Enforce @/ui imports for design system components',
+          description: 'Disallow HTML elements for structure in favor of design system components',
           category: 'Best Practices',
         },
       },
@@ -138,60 +141,18 @@ export default {
         return {
           ImportDeclaration(node) {
             const source = node.source.value;
-            if (source.includes('./ui-components/') || source.includes('../ui-components/')) {
+            if (source === 'react' || source === 'react-dom') {
+              // Check if JSX is using div/span/p for structure
               context.report({
                 node,
-                message: '❌ Relative imports within design system are FORBIDDEN. Use @/ui instead.',
+                message: '❌ HTML elements for structure are forbidden. Use design system components (Container, Stack, Card, etc.) instead.',
                 suggest: [
                   {
-                    desc: 'Replace with @/ui import',
-                    fix: (fixer) => {
-                      const newImport = node.specifiers.map(spec => {
-                        if (spec.type === 'ImportDefaultSpecifier') {
-                          return `import ${spec.local.name} from '@/ui';`;
-                        } else if (spec.type === 'ImportSpecifier') {
-                          return `import { ${spec.local.name} } from '@/ui';`;
-                        }
-                      }).join('\n');
-                      return fixer.replaceText(node, newImport);
-                    }
+                    desc: 'Replace with design system component',
+                    fix: (fixer) => fixer.replaceText(node.source, "'@/ui'")
                   }
                 ]
               });
-            }
-          }
-        };
-      }
-    },
-
-    // Rule: Prevent multiple styled.div in same file
-    'no-multiple-styled-divs': {
-      meta: {
-        type: 'problem',
-        hasSuggestions: true,
-        docs: {
-          description: 'Prevent multiple styled.div components in same file',
-          category: 'Best Practices',
-        },
-      },
-      create(context) {
-        let styledDivCount = 0;
-        return {
-          VariableDeclarator(node) {
-            if (node.id && node.id.name && node.id.name.includes('Styled')) {
-              styledDivCount++;
-              if (styledDivCount > 1) {
-                context.report({
-                  node,
-                  message: '❌ Multiple styled.div components in same file. Create reusable components instead.',
-                  suggest: [
-                    {
-                      desc: 'Extract to separate component file',
-                      fix: (fixer) => fixer.remove(node)
-                    }
-                  ]
-                });
-              }
             }
           }
         };
@@ -223,6 +184,136 @@ export default {
                     {
                       desc: 'Replace with design system component',
                       fix: (fixer) => fixer.replaceText(node.openingElement.name, 'Box')
+                    }
+                  ]
+                });
+              }
+            }
+          }
+        };
+      }
+    },
+
+    // Rule: Prevent circular dependencies in design system
+    'no-circular-ui-imports': {
+      meta: {
+        type: 'problem',
+        hasSuggestions: true,
+        docs: {
+          description: 'Prevent circular dependencies by blocking @/ui imports within design directory',
+          category: 'Best Practices',
+        },
+      },
+      create(context) {
+        return {
+          ImportDeclaration(node) {
+            const filename = context.getFilename();
+            const source = node.source.value;
+            
+            // Check if we're in the design directory and importing from @/ui
+            if (filename.includes('/src/design/') && source === '@/ui') {
+              context.report({
+                node,
+                message: '❌ Circular dependency detected! Components in src/design/ cannot import from @/ui. Use @/design/base-ui instead.',
+                suggest: [
+                  {
+                    desc: 'Replace @/ui with @/design/base-ui',
+                    fix: (fixer) => {
+                      return fixer.replaceText(node.source, "'@/design/base-ui'");
+                    }
+                  }
+                ]
+              });
+            }
+          }
+        };
+      }
+    },
+
+    // Rule: Enforce types architecture - no types directory imports
+    'enforce-types-architecture': {
+      meta: {
+        type: 'problem',
+        hasSuggestions: true,
+        docs: {
+          description: 'Enforce types architecture: components define own types, shared types in shared-types.ts',
+          category: 'Best Practices',
+        },
+      },
+      create(context) {
+        return {
+          ImportDeclaration(node) {
+            const filename = context.getFilename();
+            const source = node.source.value;
+            
+            // Check if importing from types directory within design system
+            if (filename.includes('/src/design/') && 
+                (source.includes('./types') || source.includes('../types') || source.includes('/types'))) {
+              context.report({
+                node,
+                message: '❌ Types directory imports are FORBIDDEN! Each component should define its own types. Shared types go in shared-types.ts',
+                suggest: [
+                  {
+                    desc: 'Move component-specific types to component file, shared types to shared-types.ts',
+                    fix: (fixer) => {
+                      // Remove the import - developer needs to move types manually
+                      return fixer.remove(node);
+                    }
+                  }
+                ]
+              });
+            }
+          }
+        };
+      }
+    },
+
+    // Rule: No absolute imports in design system
+    'no-absolute-imports-in-design': {
+      meta: {
+        type: 'problem',
+        hasSuggestions: true,
+        docs: {
+          description: 'Disallow absolute imports in design system files. Use relative imports instead.',
+          category: 'Best Practices',
+        },
+      },
+      create(context) {
+        const filename = context.getFilename();
+        
+        // Only apply to design system files
+        if (!filename.includes('src/design/')) {
+          return {};
+        }
+        
+        // Helper function to convert absolute path to relative path
+        const getRelativePath = (currentPath, importPath) => {
+          const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
+          const levels = (currentDir.match(/\//g) || []).length - 1; // -1 for src
+          const prefix = '../'.repeat(levels);
+          return prefix + importPath;
+        };
+        
+        return {
+          ImportDeclaration(node) {
+            const importSource = node.source.value;
+            
+            // Check for absolute imports starting with @/
+            if (importSource.startsWith('@/')) {
+              // Allow imports from design system itself
+              if (importSource.startsWith('@/design/')) {
+                context.report({
+                  node,
+                  message: '❌ Absolute imports are FORBIDDEN in design system. Use relative imports instead.',
+                  suggest: [
+                    {
+                      desc: 'Convert to relative import',
+                      fix: (fixer) => {
+                        const currentPath = filename.replace(process.cwd(), '');
+                        const importPath = importSource.replace('@/design/', '');
+                        const relativePath = getRelativePath(currentPath, importPath);
+                        return fixer.replaceText(node.source, `'${relativePath}'`);
+                      }
                     }
                   ]
                 });

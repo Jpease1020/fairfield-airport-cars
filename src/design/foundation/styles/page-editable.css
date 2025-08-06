@@ -1,0 +1,23 @@
+/* Subtle, professional styles for inline editing */
+.editable-input,
+.editable-textarea {
+  background: #fff;
+  border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+  border-radius: 6px;
+  padding: 0.5em 0.75em;
+  font-size: 1rem;
+  color: #222;
+  box-shadow: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.editable-input:focus,
+.editable-textarea:focus {
+  border-color: #60a5fa; /* Tailwind blue-400 */
+  box-shadow: 0 0 0 2px #60a5fa33;
+}
+.edit-label {
+  font-size: 1em;
+  color: #6b7280; /* Tailwind gray-500 */
+  margin-bottom: 0.25em;
+  font-weight: 500;
+} 

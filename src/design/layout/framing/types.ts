@@ -7,7 +7,7 @@ import {
   Spacing,
   ResponsiveValue,
   BaseLayoutProps 
-} from '../shared-types';
+} from '../../system/shared-types';
 
 // Grid System Types - Comprehensive type definitions for CSS Grid and Flexbox system
 

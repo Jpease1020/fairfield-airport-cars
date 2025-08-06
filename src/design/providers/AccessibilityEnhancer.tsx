@@ -2,8 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Input, Select, Span, Link, Box, Stack } from '@/ui';
-import { Overlay } from '@/ui';
+import { Button } from '../components/base-components/Button';
+import { Input } from '../components/base-components/forms/Input';
+import { Select } from '../components/base-components/forms/Select';
+import { Span } from '../components/base-components/text/Span';
+import { Box } from '../layout/content/Box';
+import { Stack } from '../layout/framing/Stack';
+import { Overlay } from '../components/base-components/Overlay';
 
 const AccessibilityToggleButton = styled.div`
   position: fixed;
