@@ -2,33 +2,38 @@
 
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
-
-// Keyframe animations
+import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';   
+// Animations
 const fadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;   
+  }
 `;
 
 const slideIn = keyframes`
-  from { 
-    opacity: 0;
+  from {
     transform: translateY(-20px);
+    opacity: 0;
   }
-  to { 
-    opacity: 1;
+  to {
     transform: translateY(0);
+    opacity: 1;
   }
 `;
 
-// Styled components moved to separate file to avoid multiple styled.div rule
+// Combined styled component with all overlay variants
 const StyledOverlay = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isOpen', 'position', 'backdrop', 'overlayZIndex'].includes(prop)
+  shouldForwardProp: (prop) => !['isOpen', 'position', 'backdrop', 'overlayZIndex', 'variant', 'closeOnBackdropClick'].includes(prop)
 })<{
   isOpen: boolean;
   position: 'center' | 'top' | 'bottom' | 'left' | 'right';
   backdrop: boolean;
   overlayZIndex: number;
+  variant: 'modal' | 'dropdown' | 'tooltip';
+  closeOnBackdropClick: boolean;
 }>`
   position: fixed;
   inset: 0;
@@ -53,33 +58,28 @@ const StyledOverlay = styled.div.withConfig({
   padding: ${spacing.xl};
   backdrop-filter: ${({ backdrop }) => (backdrop ? 'blur(4px)' : 'none')};
   animation: ${({ isOpen }) => (isOpen ? `${fadeIn} 0.2s ease-out` : 'none')};
-`;
 
-const StyledBackdrop = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['closeOnBackdropClick'].includes(prop)
-})<{
-  closeOnBackdropClick: boolean;
-}>`
-  position: absolute;
-  inset: 0;
-  background-color: ${colors.background.overlay};
-  cursor: ${({ closeOnBackdropClick }) => (closeOnBackdropClick ? 'pointer' : 'default')};
-  transition: background-color 0.2s ease-out;
-`;
+  /* Backdrop styles */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: ${colors.background.overlay};
+    cursor: ${({ closeOnBackdropClick }) => (closeOnBackdropClick ? 'pointer' : 'default')};
+    transition: background-color 0.2s ease-out;
+  }
 
-const StyledContent = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant'].includes(prop)
-})<{
-  variant: 'modal' | 'dropdown' | 'tooltip';
-}>`
-  position: relative;
-  background-color: ${colors.background.primary};
-  border-radius: ${({ variant }) => (variant === 'modal' ? '8px' : '4px')};
-  box-shadow: ${shadows.xl};
-  max-height: ${({ variant }) => (variant === 'modal' ? `calc(100vh - ${spacing.xl} * 2)` : 'auto')};
-  overflow: hidden;
-  animation: ${slideIn} 0.2s ease-out;
-  outline: none;
+  /* Content styles */
+  & > * {
+    position: relative;
+    background-color: ${colors.background.primary};
+    border-radius: ${({ variant }) => (variant === 'modal' ? '8px' : '4px')};
+    box-shadow: ${shadows.xl};
+    max-height: ${({ variant }) => (variant === 'modal' ? `calc(100vh - ${spacing.xl} * 2)` : 'auto')};
+    overflow: hidden;
+    animation: ${slideIn} 0.2s ease-out;
+    outline: none;
+  }
 `;
 
 export interface OverlayProps {
@@ -143,15 +143,14 @@ export const Overlay: React.FC<OverlayProps> = ({
       position={position}
       backdrop={backdrop}
       overlayZIndex={overlayZIndex}
+      variant={variant}
+      closeOnBackdropClick={closeOnBackdropClick}
       role={variant === 'modal' ? 'dialog' : 'presentation'}
       aria-modal={variant === 'modal'}
       onClick={handleBackdropClick}
       {...rest}
     >
-      {backdrop && <StyledBackdrop closeOnBackdropClick={closeOnBackdropClick} />}
-      <StyledContent variant={variant}>
-        {children}
-      </StyledContent>
+      {children}
     </StyledOverlay>
   );
 }; 

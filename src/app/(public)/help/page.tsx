@@ -8,8 +8,7 @@ import {
   H2,
   Text,
   Button,
-  Box,
-  CustomerLayout
+  Box
 } from '@/ui';
 import { EditableText, EditableHeading } from '@/ui';
 

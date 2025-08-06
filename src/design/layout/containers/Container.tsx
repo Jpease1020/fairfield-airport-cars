@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { colors, spacing, borderRadius, shadows, transitions } from '@/design/system/tokens/tokens';
 
 // Core Container component - foundational layout component
-interface ContainerProps {
+export interface ContainerProps {
   children: React.ReactNode;
   variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
@@ -142,32 +142,44 @@ const StyledContainer = styled.div.withConfig({
   /* Variant styles */
   ${({ variant }) => {
     switch (variant) {
+      case 'default':
+        return `
+          background-color: transparent;
+          border: none;
+          box-shadow: none;
+        `;
       case 'card':
         return `
-          background-color: ${colors.background.primary};
+          background-color: ${colors.background.secondary};
           border: 1px solid ${colors.border.default};
-          border-radius: ${borderRadius.default};
-          box-shadow: ${shadows.default};
+          border-radius: ${borderRadius.lg};
+          box-shadow: ${shadows.sm};
         `;
       case 'section':
         return `
-          background-color: ${colors.background.tertiary};
-          border-radius: ${borderRadius.default};
+          background-color: ${colors.background.primary};
+          border: none;
+          box-shadow: none;
         `;
       case 'main':
         return `
           background-color: ${colors.background.primary};
+          border: none;
+          box-shadow: none;
           min-height: 100vh;
         `;
       case 'content':
         return `
-          background-color: ${colors.background.primary};
-          border-radius: ${borderRadius.default};
+          background-color: ${colors.background.secondary};
+          border: 1px solid ${colors.border.default};
+          border-radius: ${borderRadius.md};
+          box-shadow: ${shadows.md};
         `;
       case 'navigation':
         return `
           background-color: ${colors.background.primary};
           border-bottom: 1px solid ${colors.border.default};
+          box-shadow: ${shadows.sm};
         `;
       case 'tooltip':
         return `
@@ -180,39 +192,28 @@ const StyledContainer = styled.div.withConfig({
         return `
           background-color: ${colors.background.primary};
           border: 1px solid ${colors.border.default};
-          border-radius: ${borderRadius.default};
-          box-shadow: ${shadows.lg};
-          cursor: pointer;
-          transition: all ${transitions.default};
-          
-          &:hover {
-            transform: translateY(-2px);
-            box-shadow: ${shadows.xl};
-            border-color: ${colors.border.focus};
-          }
+          border-radius: ${borderRadius.lg};
+          box-shadow: ${shadows.xl};
         `;
       case 'feature':
         return `
           background-color: ${colors.background.secondary};
           border: 1px solid ${colors.border.default};
-          border-radius: ${borderRadius.default};
-          box-shadow: ${shadows.default};
-          cursor: pointer;
-          transition: all ${transitions.default};
-          
-          &:hover {
-            transform: translateY(-1px);
-            box-shadow: ${shadows.lg};
-            border-color: ${colors.border.focus};
-          }
+          border-radius: ${borderRadius.lg};
+          box-shadow: ${shadows.lg};
         `;
       case 'hero':
         return `
           background-color: ${colors.primary[100]};
+          border: none;
+          box-shadow: none;
+          text-align: center;
         `;
       default:
         return `
           background-color: transparent;
+          border: none;
+          box-shadow: none;
         `;
     }
   }}
@@ -246,114 +247,5 @@ export const Container: React.FC<ContainerProps> = ({
     >
       {children}
     </StyledContainer>
-  );
-};
-
-// Spacer component - simple spacing utility
-interface SpacerProps {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  axis?: 'horizontal' | 'vertical';
-}
-
-const StyledSpacer = styled.div<{
-  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  axis: 'horizontal' | 'vertical';
-}>`
-  ${({ size, axis }) => {
-    const space = spacing[size];
-    return axis === 'horizontal' 
-      ? `width: ${space}; height: 1px;`
-      : `height: ${space}; width: 100%;`;
-  }}
-`;
-
-export const Spacer: React.FC<SpacerProps> = ({ 
-  size = 'md', 
-  axis = 'vertical' 
-}) => {
-  return <StyledSpacer size={size} axis={axis} />;
-};
-
-// PositionedContainer component - for positioning needs
-interface PositionedContainerProps {
-  children: React.ReactNode;
-  position?: 'fixed' | 'absolute' | 'relative';
-  top?: string;
-  right?: string;
-  bottom?: string;
-  left?: string;
-  zIndex?: number;
-  display?: 'flex' | 'block' | 'inline' | 'inline-block';
-  flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
-  alignItems?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
-  justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
-  as?: 'div' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
-  id?: string;
-}
-
-const StyledPositionedContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['position', 'top', 'right', 'bottom', 'left', 'zIndex', 'display', 'flexDirection', 'alignItems', 'justifyContent'].includes(prop)
-})<{
-  position: 'fixed' | 'absolute' | 'relative';
-  top?: string;
-  right?: string;
-  bottom?: string;
-  left?: string;
-  zIndex?: number;
-  display: 'flex' | 'block' | 'inline' | 'inline-block';
-  flexDirection: 'row' | 'column' | 'row-reverse' | 'column-reverse';
-  alignItems: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
-  justifyContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
-}>`
-  position: ${({ position }) => position};
-  ${({ top }) => top && `top: ${top};`}
-  ${({ right }) => right && `right: ${right};`}
-  ${({ bottom }) => bottom && `bottom: ${bottom};`}
-  ${({ left }) => left && `left: ${left};`}
-  ${({ zIndex }) => zIndex && `z-index: ${zIndex};`}
-  display: ${({ display }) => display};
-  ${({ display, flexDirection, alignItems, justifyContent }) => 
-    display === 'flex' && `
-      flex-direction: ${flexDirection};
-      align-items: ${alignItems};
-      justify-content: ${justifyContent};
-    `
-  }
-`;
-
-export const PositionedContainer: React.FC<PositionedContainerProps> = ({
-  children,
-  position = 'relative',
-  top,
-  right,
-  bottom,
-  left,
-  zIndex,
-  display = 'block',
-  flexDirection = 'row',
-  alignItems = 'stretch',
-  justifyContent = 'flex-start',
-  as: Component = 'div',
-  id,
-  ...rest
-}) => {
-  return (
-    <StyledPositionedContainer
-      position={position}
-      top={top}
-      right={right}
-      bottom={bottom}
-      left={left}
-      zIndex={zIndex}
-      display={display}
-      flexDirection={flexDirection}
-      alignItems={alignItems}
-      justifyContent={justifyContent}
-      as={Component}
-      id={id}
-      {...rest}
-    >
-      {children}
-    </StyledPositionedContainer>
   );
 }; 

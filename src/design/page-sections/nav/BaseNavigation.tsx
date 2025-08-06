@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Button, Span, EditableText, Stack, Container } from '@/ui';
+import { Button, EditableText, Stack, Container, PositionedContainer } from '@/ui';
 
+// Single styled component for mobile menu overlay
 const MobileMenuOverlay = styled.div`
   position: absolute;
   top: 100%;
@@ -107,10 +108,10 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   };
 
   return (
-    <nav 
+    <PositionedContainer 
+      position="relative"
       data-testid={`${dataTestIdPrefix}-container`}
       id="navigation-container"
-      style={{ position: 'relative' }}
     >
       <Container maxWidth="full" padding="md" margin="none">
         <Stack 
@@ -120,13 +121,17 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           spacing="lg"
         >
           {/* Logo */}
-          <div data-testid={`${dataTestIdPrefix}-logo`} id="navigation-logo">
+          <PositionedContainer 
+            position="relative"
+            data-testid={`${dataTestIdPrefix}-logo`} 
+            id="navigation-logo"
+          >
             {logo}
-          </div>
+          </PositionedContainer>
 
         {/* Desktop Navigation - Hidden on mobile */}
         {!isMobile && (
-          <div style={{ marginLeft: 'auto' }}>
+          <PositionedContainer position="relative" display="flex" alignItems="center" justifyContent="flex-end">
             <Stack direction="horizontal" align="center" spacing="sm">
               {navigationItems.map((item, index) => (
                 <Link
@@ -148,7 +153,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                 </Link>
               ))}
             </Stack>
-          </div>
+          </PositionedContainer>
         )}
 
         {/* Desktop Actions - Hidden on mobile */}
@@ -207,6 +212,6 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           </MobileMenuOverlay>
         )}
       </Container>
-    </nav>
+    </PositionedContainer>
   );
 }; 

@@ -7,7 +7,6 @@ import {
   Container,
   Stack,
   Box,
-  CustomerLayout,
   H1
 } from '@/ui';
 import { EditableText } from '@/ui';

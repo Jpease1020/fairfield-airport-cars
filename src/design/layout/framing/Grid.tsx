@@ -19,7 +19,7 @@ const resolveResponsiveValue = <T,>(value: ResponsiveValue<T>, breakpoint: Break
 // Grid system components
 interface GridProps {
   children: React.ReactNode;
-  cols?: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12>;
+  cols?: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12> | 1 | 2 | 3 | 4 | 5 | 6 | 12;
   gap?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
   responsive?: boolean;
   margin?: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
@@ -31,7 +31,7 @@ interface GridProps {
 const Grid = styled.div.withConfig({
   shouldForwardProp: (prop) => !['cols', 'gap', 'responsive', 'margin', 'marginTop', 'marginBottom'].includes(prop)
 })<{
-  cols: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12>;
+  cols: ResponsiveValue<1 | 2 | 3 | 4 | 5 | 6 | 12> | 1 | 2 | 3 | 4 | 5 | 6 | 12;
   gap: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>;
   responsive: boolean;
   margin: ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;

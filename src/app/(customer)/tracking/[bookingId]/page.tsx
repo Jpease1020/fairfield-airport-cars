@@ -12,7 +12,6 @@ import {
   Grid, 
   GridItem,
   LoadingSpinner,
-  CustomerLayout,
   Badge,
   Alert
 } from '@/ui';
@@ -450,9 +449,5 @@ function TrackingPageContent() {
 }
 
 export default function TrackingPage() {
-  return (
-    <CustomerLayout>
-      <TrackingPageContent />
-    </CustomerLayout>
-  );
+  return <TrackingPageContent />;
 } 
