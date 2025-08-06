@@ -18,6 +18,7 @@ import {
 } from '@/ui';
 import { Input, Select, Label, Textarea } from '@/ui';
 import { Booking } from '@/types/booking';
+import { TipCalculator } from '@/components/business/TipCalculator';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -93,6 +94,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const [flightNumber] = useState(booking?.flightNumber || '');
   const [notes, setNotes] = useState(booking?.notes || '');
   const [fare, setFare] = useState<number | null>(null);
+  const [tipAmount, setTipAmount] = useState(0);
+  const [tipPercent, setTipPercent] = useState(18);
   const [isCalculating, setIsCalculating] = useState(false);
   const [_error, setError] = useState<string | null>(null);
   const [_success, setSuccess] = useState<string | null>(null);
@@ -262,6 +265,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
           flightNumber,
           notes,
           fare,
+          tipAmount,
+          tipPercent,
+          totalAmount: getTotalWithTip(),
           vehicleType: selectedVehicle,
           serviceLevel: selectedServiceLevel,
           specialRequests,
@@ -303,6 +309,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
     const vehiclePrice = VEHICLE_OPTIONS.find(v => v.value === selectedVehicle)?.price || 0;
     const servicePrice = SERVICE_LEVELS.find(s => s.value === selectedServiceLevel)?.price || 0;
     return fare + vehiclePrice + servicePrice;
+  };
+
+  const getTotalWithTip = () => {
+    return getTotalFare() + tipAmount;
+  };
+
+  const handleTipChange = (amount: number, percent: number) => {
+    setTipAmount(amount);
+    setTipPercent(percent);
   };
 
   if (mapsError) {
@@ -761,6 +776,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       </Stack>
                     </Stack>
                   </Box>
+                )}
+
+                {/* Tip Calculator */}
+                {fare && (
+                  <TipCalculator
+                    baseAmount={getTotalFare()}
+                    onTipChange={handleTipChange}
+                    showCustomTip={true}
+                  />
                 )}
                 
                 <Stack direction="horizontal" spacing="md">
