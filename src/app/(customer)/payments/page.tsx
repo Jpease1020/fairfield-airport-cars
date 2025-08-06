@@ -20,6 +20,7 @@ import {
   Grid
 } from '@/ui';
 import { AdminPageWrapper } from '@/components/app';
+import { BalanceSummary } from '@/components/business/BalanceTracker';
 
 interface Payment {
   id: string;
@@ -203,7 +204,6 @@ function CustomerPaymentsPage() {
   };
 
   const handlePayBalance = (payment: Payment) => {
-    // TODO: Implement balance payment
     router.push(`/payments/pay-balance/${payment.bookingId}`);
   };
 
@@ -291,35 +291,15 @@ function CustomerPaymentsPage() {
         </Stack>
 
         {/* Payment Summary */}
-        <Grid cols={3} gap="lg">
-          <ContentCard
-            title="Total Spent"
-            content={
-              <Text size="xl" weight="bold" color="primary">
-                ${totalSpent.toFixed(2)}
-              </Text>
-            }
-            variant="elevated"
-          />
-          <ContentCard
-            title="Payment Methods"
-            content={
-              <Text size="xl" weight="bold">
-                {paymentMethods.length}
-              </Text>
-            }
-            variant="elevated"
-          />
-          <ContentCard
-            title="Pending Payments"
-            content={
-              <Text size="xl" weight="bold" color="warning">
-                {pendingPayments.length}
-              </Text>
-            }
-            variant="elevated"
-          />
-        </Grid>
+        <BalanceSummary 
+          bookings={payments.map(payment => ({
+            id: payment.bookingId,
+            totalFare: payment.amount,
+            depositAmount: payment.type === 'deposit' ? payment.amount : 0,
+            balanceDue: payment.type === 'balance' ? payment.amount : 0,
+            status: 'confirmed' // This would come from actual booking data
+          }))}
+        />
 
         {/* Payment Methods */}
         <ContentCard
