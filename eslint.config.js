@@ -263,7 +263,8 @@ export default [
       'playwright-report/**/*',
       'tests/**/*',
       'vitest.config.ts',
-      'scripts/**/*'
+      'scripts/**/*',
+      'temp-design-library/**/*'
     ]
   }
 ];
