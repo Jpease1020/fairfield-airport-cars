@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button } from './components/base-components/Button';
-import { Stack } from './layout/framing/Stack';
-import { H3 } from './components/base-components/text/Headings';
-import { Text } from './components/base-components/text/Text';
-import { EditableText } from './components/base-components/text/EditableText';
-import { PositionedContainer } from './layout/containers/PositionedContainer';
-import { LoadingSpinner } from './components/base-components/notifications/LoadingSpinner';
+import { Button } from '../../design/components/base-components/Button';
+import { Stack } from '../../design/layout/framing/Stack';
+import { H3 } from '../../design/components/base-components/text/Headings';
+import { Text } from '../../design/components/base-components/text/Text';
+import { EditableText } from '../../design/components/base-components/text/EditableText';
+import { PositionedContainer } from '../../design/layout/containers/PositionedContainer';
+import { LoadingSpinner } from '../../design/components/base-components/notifications/LoadingSpinner';
 
 export interface StateProps {
   type: 'loading' | 'empty' | 'error';

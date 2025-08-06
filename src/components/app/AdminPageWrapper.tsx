@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Container } from '../layout/containers/Container';
-import { Stack } from '../layout/framing/Stack';
-import { H1 } from '../components/base-components/text/Headings';
-import { Text } from '../components/base-components/text/Text';
+import { Container } from '../../design/layout/containers/Container';
+import { Stack } from '../../design/layout/framing/Stack';
+import { H1 } from '../../design/components/base-components/text/Headings';
+import { Text } from '../../design/components/base-components/text/Text';
 
 interface AdminPageWrapperProps {
   children: React.ReactNode;

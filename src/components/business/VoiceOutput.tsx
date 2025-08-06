@@ -2,8 +2,8 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
-import { Button } from '../base-components/Button';
+import { colors, spacing, fontSize, transitions } from '../../design/foundation/tokens/tokens';
+import { Button } from '@/design/components/base-components/Button';
 import { Volume2, VolumeX, AlertCircle } from 'lucide-react';
 
 // Styled voice output container with enhanced layout

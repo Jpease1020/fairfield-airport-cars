@@ -82,28 +82,6 @@ export { Grid, GridItem, GridSection } from './layout/framing/Grid';
 export { Col } from './layout/framing/Col';
 export { Row } from './layout/framing/Row';
 
-// Layer 4: Business Components (depends on base components)
-export { BookingCard } from './components/business-components/BookingCard';
-export { ChatContainer } from './components/business-components/ChatContainer';
-export type { ChatContainerProps } from './components/business-components/ChatContainer';
-export { ChatInput } from './components/business-components/ChatInput';
-export type { ChatInputProps } from './components/business-components/ChatInput';
-export { ChatMessage } from './components/business-components/ChatMessage';
-export type { ChatMessageProps } from './components/business-components/ChatMessage';
-export { Editable, EditableButton } from './components/business-components/EditableSystem';
-export type { EditableProps } from './components/business-components/EditableSystem';
-export { EditableTextarea } from './components/business-components/EditableTextarea';
-export { ErrorBoundary } from './components/business-components/ErrorBoundary';
-export { VoiceInput } from './components/business-components/VoiceInput';
-export type { VoiceInputProps } from './components/business-components/VoiceInput';
-export { VoiceOutput } from './components/business-components/VoiceOutput';
-export type { VoiceOutputProps } from './components/business-components/VoiceOutput';
-export { PaymentSummary } from './components/business-components/PaymentSummary';
-export { TipCalculator } from './components/business-components/TipCalculator';
-export { DriverProfileCard } from './components/business-components/DriverProfileCard';
-export { ReviewShowcase } from './components/business-components/ReviewShowcase';
-export { EditModeToggle } from './components/business-components/EditModeToggle';
-
 // Layer 4: Composite Components (depends on base components)
 export { DataTable } from './components/composite-components/DataTable';
 export type { DataTableColumn, DataTableAction } from './components/composite-components/DataTable';
@@ -113,27 +91,23 @@ export { ContentCard } from './components/composite-components/ContentCard';
 export { FloatingEditButton } from './components/composite-components/FloatingEditButton';
 export { SettingToggle } from './components/composite-components/SettingToggle';
 
-// Layer 4: State Components (depends on base components)
-export { State } from './State';
-
 // Layer 5: Content Sections (depends on composite components)
 export { StaticHeroSection } from './components/content-sections/StaticHeroSection';
 export { HeroSection } from './components/content-sections/HeroSection';
 
 // Layer 6: Page Sections (depends on all previous layers)
 export { Footer } from './page-sections/Footer';
-export { AdminPageWrapper } from './page-sections/AdminPageWrapper';
 export { PageHeader } from './page-sections/PageHeader';
 export { BaseNavigation } from './page-sections/nav/BaseNavigation';
 export type { NavigationItem } from './page-sections/nav/BaseNavigation';
-export { CustomerNavigation } from './page-sections/nav/CustomerNavigation';
-export { AdminNavigation } from './page-sections/nav/AdminNavigation';
+
+// Layer 7: App-Specific Components (depends on base components)
+export { AdminPageWrapper } from '../components/app/AdminPageWrapper';
+export { ErrorBoundary } from '../components/business/ErrorBoundary';
 
 // Layer 7: Providers (depends on base components)
 export { AccessibilityEnhancer } from './providers/AccessibilityEnhancer';
-export { AdminProvider } from './providers/AdminProvider';
 export { CMSDesignProvider } from './providers/CMSDesignProvider';
-export { EditModeProvider, useEditMode } from './providers/EditModeProvider';
 export { ThemeProvider } from './providers/ThemeProvider';
 export { StyledComponentsRegistry } from './providers/StyledComponentsRegistry';
 
@@ -146,7 +120,6 @@ export { default as Icon } from './components/icons/Icon';
 // Layer 10: Layout System
 export { SimpleLayout } from './layout/SimpleLayout';
 export { UnifiedLayout } from './layout/UnifiedLayout';
-export { AdminWrapper } from './layout/AdminWrapper';
 
 // Legacy alias for backward compatibility
 export { SimpleLayout as CustomerLayout } from './layout/SimpleLayout';

@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
-import { Stack } from '@/ui';
-import { Box } from '@/ui';
-import { EditableText } from '@/ui';
+import { useEffect, useState } from 'react';
+import { GridSection, ActionGrid, Container, H3, Text, Stack, Box, EditableText } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 const AIAssistantSettingsPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -13,19 +11,6 @@ const AIAssistantSettingsPage = () => {
     setIsClient(true);
   }, []);
 
-  const headerActions = useMemo(() => [
-    <Button
-      key="back"
-      variant="outline"
-      onClick={() => {
-        if (typeof window !== 'undefined') {
-          window.location.href = '/admin/ai-assistant-disabled';
-        }
-      }}
-    >
-      🔙 Back to AI Assistant
-    </Button>
-  ], []);
 
   const settingsInfo = [
     {

@@ -6,11 +6,12 @@ import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '.
 
 // Styled Textarea component
 const StyledTextarea = styled.textarea.withConfig({
-  shouldForwardProp: (prop) => !['size', 'error', 'disabled'].includes(prop)
+  shouldForwardProp: (prop) => !['size', 'error', 'disabled', 'fullWidth'].includes(prop)
 })<{
   size: 'sm' | 'md' | 'lg';
   error: boolean;
   disabled: boolean;
+  fullWidth?: boolean;
 }>`
   display: block;
   width: 100%;

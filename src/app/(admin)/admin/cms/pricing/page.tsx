@@ -5,21 +5,20 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { cmsService } from '@/lib/services/cms-service';
 import { PricingSettings } from '@/types/cms';
 import { 
-  AdminPageWrapper,
   GridSection,
   Box,
   ActionButtonGroup,
   ToastProvider,
-  useToast,
-  H4,
+  useToast, 
   Container,
-  Span,
   Text,
+  Input,
+  Label,
+  EditableText,
+  Stack,
+  Span
 } from '@/ui';
-import { Input } from '@/ui';
-import { Label } from '@/ui';
-import { EditableText } from '@/ui';
-import { Stack } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function PricingSettingsContent() {
   const { addToast } = useToast();

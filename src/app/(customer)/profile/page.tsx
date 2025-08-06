@@ -15,11 +15,10 @@ import {
   Alert,
   Input,
   Label,
-  Box,
   H1,
-  H2
+  ContentCard
 } from '@/ui';
-import { AdminPageWrapper, ContentCard } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function CustomerProfilePage() {
   const [user, setUser] = useState<FirebaseUser | null>(null);

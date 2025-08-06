@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Container } from '../../layout/containers/Container';
-import { Text } from '../base-components/text/Text';
-import { Stack } from '../../layout/framing/Stack';
-import { Card } from '../../layout/content/Card';
-import { Badge } from '../base-components/Badge';
-import { Button } from '../base-components/Button';
-import { StarRating } from '../base-components/StarRating';
-import { LoadingSpinner } from '../base-components/notifications/LoadingSpinner';
-import { ActionButtonGroup } from '../base-components/ActionButtonGroup';
+import { Container } from '@/design/layout/containers/Container';
+import { Text } from '@/design/components/base-components/text/Text';
+import { Stack } from '@/design/layout/framing/Stack';
+import { Card } from '@/design/layout/content/Card';
+import { Badge } from '@/design/components/base-components/Badge';
+import { Button } from '@/design/components/base-components/Button';
+import { StarRating } from '@/design/components/base-components/StarRating';
+import { LoadingSpinner } from '@/design/components/base-components/notifications/LoadingSpinner';
+import { ActionButtonGroup } from '@/design/components/base-components/ActionButtonGroup';
 
 // Styled component for profile image container
 const ProfileImageContainer = styled.div`

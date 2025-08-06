@@ -1,18 +1,18 @@
 'use client';
 
 import React from 'react';
-import { Button } from '../base-components/Button';
-import { H1, H2, H3, H4, H5, H6 } from '../base-components/text/Headings';
-import { Text } from '../base-components/text/Text';
-import { Stack } from '../../layout/framing/Stack';
-import { useEditMode } from '../../providers/EditModeProvider';
-import { getContent } from '@/lib/content/content-mapping';
+import { Button } from '@/design/components/base-components/Button';
+import { H1, H2, H3, H4, H5, H6 } from '@/design/components/base-components/text/Headings';
+import { Text } from '@/design/components/base-components/text/Text';
+import { Stack } from '@/design/layout/framing/Stack';
 
 // Unified Editable Component
 export interface EditableProps {
   field: string;
   children?: React.ReactNode;
   defaultValue?: string;
+  isEditable?: boolean;
+  value?: string;
   type?: 'text' | 'heading' | 'button';
   level?: 1 | 2 | 3 | 4 | 5 | 6;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -23,6 +23,7 @@ export interface EditableProps {
   onClick?: () => void;
   icon?: string;
   id?: string;
+  onFieldChange?: (field: string, value: string) => void;
   [key: string]: any;
 }
 
@@ -30,6 +31,8 @@ export const Editable: React.FC<EditableProps> = ({
   field,
   children,
   defaultValue = '',
+  isEditable = false,
+  value,
   type = 'text',
   level = 2,
   variant = 'primary',
@@ -40,44 +43,20 @@ export const Editable: React.FC<EditableProps> = ({
   onClick,
   icon,
   id,
+  onFieldChange,
   ...rest
 }) => {
-  // Check if we're in an admin context with edit mode
-  const isAdminContext = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
-  
-  // Only try to use edit mode in admin context
-  let editMode = false;
-  let localContent: any = null;
-  let handleFieldChange: any = null;
-
-  if (isAdminContext) {
-    try {
-      const editModeHook = useEditMode();
-      editMode = editModeHook.editMode;
-      localContent = editModeHook.localContent;
-      handleFieldChange = editModeHook.handleFieldChange;
-    } catch (error) {
-      // Edit mode not available - fallback to display mode
-      editMode = false;
-    }
-  }
-
-  // Get value from database or use fallback
+  // Get value from props or fallback
   const getValue = (): string => {
-    // First priority: Database value
-    if (localContent && localContent[field]) {
-      return localContent[field];
+    // First priority: Explicit value prop
+    if (value !== undefined) {
+      return value;
     }
-    // Second priority: Content mapping (preserves existing content)
-    const mappedContent = getContent(field);
-    if (mappedContent) {
-      return mappedContent;
-    }
-    // Third priority: Children as string
+    // Second priority: Children as string
     if (children && typeof children === 'string') {
       return children;
     }
-    // Fourth priority: Default value
+    // Third priority: Default value
     return defaultValue;
   };
 
@@ -85,9 +64,8 @@ export const Editable: React.FC<EditableProps> = ({
 
   // Handle field change
   const handleFieldChangeWrapper = (newValue: string) => {
-    if (handleFieldChange) {
-      const fieldParts = field.split('.');
-      handleFieldChange(fieldParts[0], fieldParts[1] || field, newValue);
+    if (onFieldChange) {
+      onFieldChange(field, newValue);
     }
   };
 
@@ -105,7 +83,7 @@ export const Editable: React.FC<EditableProps> = ({
     handleFieldChangeWrapper(newValue);
   };
 
-  if (editMode && handleFieldChange) {
+  if (isEditable) {
     // Edit mode - render editable div
     return (
       <Stack direction="horizontal" align="center" justify="center">

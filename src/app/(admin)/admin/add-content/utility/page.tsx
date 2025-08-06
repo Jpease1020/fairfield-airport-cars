@@ -3,16 +3,17 @@
 import { useState } from 'react';
 import { cmsService } from '@/lib/services/cms-service';
 import { 
-  AdminPageWrapper,
   Container,
   Button,
   Stack,
   StatusMessage,
   Box,
   Text,
+  ToastProvider,
+  useToast,
+  EditableText
 } from '@/ui';
-import { ToastProvider, useToast } from '@/ui';
-import { EditableText } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function AddContentUtilityPage() {
   const { addToast } = useToast();

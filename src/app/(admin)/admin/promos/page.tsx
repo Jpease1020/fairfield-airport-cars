@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { PromoCode } from '@/types/promo';
 import { 
-  AdminPageWrapper,
   GridSection, 
   DataTable,
   DataTableColumn,
@@ -12,14 +11,16 @@ import {
   useToast,
   ActionButtonGroup,
   Container,
-  Span
+  Span,
+  Card,
+  Input,
+  Label,
+  Select,
+  EditableText,
+  Stack,
+  StatCard
 } from '@/ui';
-import { Box, StatCard, Card } from '@/ui';
-import { Input } from '@/ui';
-import { Label } from '@/ui';
-import { Select } from '@/ui';
-import { EditableText } from '@/ui';
-import { Stack } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function PromosPageContent() {
   const { addToast } = useToast();

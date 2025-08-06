@@ -1,22 +1,18 @@
 'use client';
 
-import { useState } from 'react';
 import { 
-  AdminPageWrapper,
   Container,
   Stack,
   Box,
   GridSection,
   Text,
-  Button
+  Button,
+  ToastProvider,
+  EditableText,
 } from '@/ui';
-import { EditableText } from '@/ui';
-import { ToastProvider, useToast } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function AddContentPage() {
-  const { addToast } = useToast();
-  const [loading, setLoading] = useState(false);
-
   const cmsPages = [
     {
       title: "🏠 Homepage Content",

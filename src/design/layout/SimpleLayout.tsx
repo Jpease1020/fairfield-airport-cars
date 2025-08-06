@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Container } from './containers/Container';
-import { CustomerNavigation } from '../page-sections/nav/CustomerNavigation';
-import { AdminNavigation } from '../page-sections/nav/AdminNavigation';
+import { CustomerNavigation } from '../../components/app/CustomerNavigation';
+import { AdminNavigation } from '../../components/app/AdminNavigation';
 import { Footer } from '../page-sections/Footer';
 
 interface SimpleLayoutProps {

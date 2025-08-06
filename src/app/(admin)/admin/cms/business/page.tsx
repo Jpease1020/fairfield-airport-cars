@@ -5,19 +5,19 @@ import withAuth from '../../withAuth';
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
 import { 
-  AdminPageWrapper,
   ToastProvider,
   useToast,
   GridSection,
   Container,
   Span,
   Text,
+  Stack,
+  EditableText,
+  Box,
+  Input,
+  Label,
 } from '@/ui';
-import { Stack } from '@/ui';
-import { EditableText } from '@/ui';
-import { Box } from '@/ui';
-import { Input } from '@/ui';
-import { Label } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 function BusinessPageContent() {
   const { addToast } = useToast();

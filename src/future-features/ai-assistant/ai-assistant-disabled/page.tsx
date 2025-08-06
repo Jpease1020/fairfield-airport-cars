@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AdminPageWrapper, Box, GridSection, ActionGrid, Container, H3, Text, Button } from '@/ui';
-import { Stack } from '@/ui';
-import { EditableText } from '@/ui';
+import { Box, GridSection, ActionGrid, Container, H3, Text, Button, Stack, EditableText } from '@/ui';
+import { AdminPageWrapper } from '@/components/app';
 
 const AIAssistantDisabledPage = () => {
   const [isClient, setIsClient] = useState(false);

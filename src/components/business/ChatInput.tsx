@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Button } from '../base-components/Button';
-import { Container } from '../../layout/containers/Container';
-import { Textarea } from '../base-components/forms/Textarea'; 
+import { Button } from '@/design/components/base-components/Button';
+import { Container } from '@/design/layout/containers/Container';
+import { Textarea } from '@/design/components/base-components/forms/Textarea'; 
 
 export interface ChatInputProps {
   value: string;

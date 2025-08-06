@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container } from '../../layout/containers/Container';
-import { Text } from '../base-components/text/Text';
-import { Stack } from '../../layout/framing/Stack';
-import { Card } from '../../layout/content/Card';
-import { StarRating } from '../base-components/StarRating';
-import { Badge } from '../base-components/Badge';
-import { LoadingSpinner } from '../base-components/notifications/LoadingSpinner';
+import { Container } from '@/design/layout/containers/Container';
+import { Text } from '@/design/components/base-components/text/Text';
+import { Stack } from '@/design/layout/framing/Stack';
+import { Card } from '@/design/layout/content/Card';
+import { StarRating } from '@/design/components/base-components/StarRating';
+import { Badge } from '@/design/components/base-components/Badge';
+import { LoadingSpinner } from '@/design/components/base-components/notifications/LoadingSpinner';
 import { Star } from 'lucide-react';
-import { Grid, GridItem } from '../../layout/framing/Grid';
+import { Grid, GridItem } from '@/design/layout/framing/Grid';
 
 interface ReviewShowcaseProps {
   title?: string;
