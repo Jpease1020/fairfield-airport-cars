@@ -12,6 +12,49 @@ As a senior Next.js architect, I'm designing this architecture specifically for 
 - **Maintainability**: Clean code that's easy to understand and modify
 - **No Duplication**: Every feature serves a clear purpose
 
+## 🚫 **Anti-Duplication Enforcement (CRITICAL)**
+
+### **MANDATORY BEFORE ANY NEW CODE:**
+1. **SEARCH FIRST** - Search codebase for existing patterns before writing ANY new code
+2. **REUSE EXISTING** - Modify existing code instead of creating duplicates
+3. **PATTERN CHECK** - Look for similar components, services, layouts, providers
+4. **DOCUMENT NECESSITY** - Explain why new code is needed if existing code can't be used
+
+### **FORBIDDEN ACTIONS (VIOLATION = IMMEDIATE STOP):**
+- ❌ Create duplicate layouts when layout system exists
+- ❌ Create duplicate providers when provider system exists  
+- ❌ Create duplicate services when service layer exists
+- ❌ Create duplicate components when design system exists
+- ❌ Create duplicate authentication when auth system exists
+- ❌ Create duplicate routing when routing system exists
+
+### **REQUIRED SEARCH PATTERNS BEFORE NEW CODE:**
+```bash
+# MANDATORY SEARCHES:
+grep_search "layout" - Find existing layout patterns
+grep_search "provider" - Find existing provider patterns  
+grep_search "service" - Find existing service patterns
+grep_search "component" - Find existing component patterns
+file_search "Layout" - Find layout files
+file_search "Provider" - Find provider files
+file_search "Service" - Find service files
+codebase_search "authentication" - Find auth patterns
+codebase_search "routing" - Find routing patterns
+```
+
+### **VIOLATION RESPONSE:**
+- **IMMEDIATE STOP** - If duplicate code is detected, stop immediately
+- **REVERT CHANGES** - Remove duplicate code and use existing
+- **DOCUMENT LESSON** - Add to architecture docs why duplication occurred
+- **UPDATE RULES** - Strengthen enforcement if needed
+
+### **CODE REVIEW CHECKLIST (ENFORCED):**
+- [ ] **Searched existing codebase** for similar functionality
+- [ ] **Checked if existing code can be modified** instead of duplicated
+- [ ] **Verified no similar patterns exist** in the codebase
+- [ ] **Asked: "Can I reuse existing code?"** before writing new code
+- [ ] **Documented why new code is necessary** if existing code can't be used
+
 ## 🏗️ **Architecture Philosophy**
 
 ### **Why This Approach for Your Business**
@@ -189,7 +232,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     const user = await getCurrentUser();
     if (!user || user.role !== 'admin') {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/auth/login', request.url));
     }
   }
   
@@ -197,7 +240,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/bookings') || pathname.startsWith('/tracking')) {
     const user = await getCurrentUser();
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/auth/login', request.url));
     }
   }
   
