@@ -1,303 +1,453 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { confluenceCommentsService, ConfluenceComment } from '@/lib/business/confluence-comments';
-import { GridSection, Box, Container, Text, EditableText, Stack, DataTable, DataTableColumn, DataTableAction } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
-import withAuth from '../withAuth';
+import { useState, useEffect } from 'react';
+import { useAdminStatus } from '@/hooks/useAdminStatus';
+import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
+import { commentExportService, type CommentExportOptions } from '@/lib/services/comment-export-service';
+import { Container, H2, H3, H4, Span } from '@/ui';
+import { Stack } from '@/ui';
+import { Button } from '@/ui';
+import { Textarea, Select, Input } from '@/ui';
+import { EditableText } from '@/ui';
+import { CheckCircle, Clock, AlertCircle, Search, Download, Eye, Edit, Trash2, BarChart3, FileText } from 'lucide-react';
+import StatusBadge from '@/components/business/StatusBadge';
 
-function CommentsPageContent() {
+export default function AdminCommentsPage() {
+  const { isAdmin } = useAdminStatus();
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
+  const [filteredComments, setFilteredComments] = useState<ConfluenceComment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [pageFilter, setPageFilter] = useState<string>('all');
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
+  const [exportFormat, setExportFormat] = useState<'csv' | 'json'>('csv');
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
+
+  // Load comments on mount
+  useEffect(() => {
+    if (isAdmin) {
+      loadComments();
+    }
+  }, [isAdmin]);
+
+  // Filter comments based on search and filters
+  useEffect(() => {
+    let filtered = comments;
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(comment => 
+        comment.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        comment.elementText.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        comment.pageTitle.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(comment => comment.status === statusFilter);
+    }
+
+    // Apply page filter
+    if (pageFilter !== 'all') {
+      filtered = filtered.filter(comment => comment.pageUrl === pageFilter);
+    }
+
+    setFilteredComments(filtered);
+  }, [comments, searchTerm, statusFilter, pageFilter]);
 
   const loadComments = async () => {
     try {
-      setError(null);
       setLoading(true);
-      console.log('💬 Loading page comments...');
-      
       const commentsData = await confluenceCommentsService.getComments();
-      console.log('✅ Comments loaded:', commentsData.length, 'comments');
       setComments(commentsData);
-    } catch (err) {
-      console.error('❌ Error loading comments:', err);
-      setError('Failed to load comments. Please try again.');
+    } catch (error) {
+      console.error('Error loading comments:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadComments();
-  }, []);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-      date: date.toLocaleDateString(),
-      time: date.toLocaleTimeString()
-    };
+  const handleStatusChange = async (commentId: string, newStatus: ConfluenceComment['status']) => {
+    try {
+      await confluenceCommentsService.updateComment(commentId, { status: newStatus });
+      await loadComments();
+    } catch (error) {
+      console.error('Error updating comment status:', error);
+    }
   };
 
-  const getCommentStatus = (comment: ConfluenceComment) => {
-    // Basic status logic - can be enhanced with real moderation status
-    if (comment.comment.length > 500) return 'Long';
-    if (comment.comment.includes('?')) return 'Question';
-    if (comment.comment.includes('!')) return 'Urgent';
-    return 'Normal';
+  const handleEditComment = async (commentId: string) => {
+    const comment = comments.find(c => c.id === commentId);
+    if (comment) {
+      setEditingComment(commentId);
+      setEditText(comment.comment);
+    }
   };
 
-  const renderStatus = (comment: ConfluenceComment) => {
-    const status = getCommentStatus(comment);
+  const handleSaveEdit = async (commentId: string) => {
+    try {
+      await confluenceCommentsService.updateComment(commentId, { comment: editText });
+      setEditingComment(null);
+      setEditText('');
+      await loadComments();
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
+  };
 
+  const handleDeleteComment = async (commentId: string) => {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      try {
+        await confluenceCommentsService.deleteComment(commentId);
+        await loadComments();
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+      }
+    }
+  };
+
+  const handleNavigateToElement = (comment: ConfluenceComment) => {
+    // Navigate to the page and highlight the element
+    window.open(comment.pageUrl, '_blank');
+  };
+
+  const _getStatusIcon = (status: ConfluenceComment['status']) => {
+    switch (status) {
+      case 'open':
+        return <AlertCircle size={16} />;
+      case 'in-progress':
+        return <Clock size={16} />;
+      case 'resolved':
+        return <CheckCircle size={16} />;
+      default:
+        return <Clock size={16} />;
+    }
+  };
+
+  const getUniquePages = () => {
+    const pages = [...new Set(comments.map(c => c.pageUrl))];
+    return pages.map(page => ({ value: page, label: page }));
+  };
+
+  const exportComments = async () => {
+    try {
+      const options: CommentExportOptions = {
+        format: exportFormat,
+        filters: {
+          status: statusFilter !== 'all' ? statusFilter : undefined,
+          pageUrl: pageFilter !== 'all' ? pageFilter : undefined
+        }
+      };
+      
+      await commentExportService.exportComments(filteredComments, options);
+    } catch (error) {
+      console.error('Error exporting comments:', error);
+    }
+  };
+
+  const generateAnalytics = async () => {
+    try {
+      const report = await commentExportService.generateAnalyticsReport(comments);
+      setAnalyticsData(JSON.parse(report));
+      setShowAnalytics(true);
+    } catch (error) {
+      console.error('Error generating analytics:', error);
+    }
+  };
+
+  if (!isAdmin) {
     return (
-      <Container>
-        <EditableText field="admin.comments.status" defaultValue={status}>
-          {status}
-        </EditableText>
+      <Container variant="elevated" padding="lg">
+        <H2>Access Denied</H2>
+        <Span>You must be an admin to view this page.</Span>
       </Container>
     );
-  };
+  }
 
+  if (loading) {
+    return (
+      <Container variant="elevated" padding="lg">
+        <H2>Loading Comments...</H2>
+      </Container>
+    );
+  }
 
-
-  // Table columns
-  const columns: DataTableColumn<ConfluenceComment>[] = [
-    {
-      key: 'createdBy',
-      label: 'Author',
-      sortable: true,
-      render: (_, comment) => (
-        <Container>
-          <Stack>
-            <EditableText field="admin.comments.author" defaultValue={comment.createdBy}>
-              {comment.createdBy}
+  return (
+    <Container variant="elevated" padding="lg">
+      <Stack spacing="lg">
+        {/* Header */}
+        <Container variant="elevated" padding="md">
+          <H2>
+            <EditableText field="adminComments.title" defaultValue="Comment Management">
+              Comment Management
             </EditableText>
-            <EditableText field="admin.comments.pageTitle" defaultValue={`📄 ${comment.pageTitle}`}>
-              📄 {comment.pageTitle}
-            </EditableText>
+          </H2>
+          <Span variant="default" size="sm" color="muted">
+            Manage all comments across the site
+          </Span>
+        </Container>
+
+        {/* Filters and Search */}
+        <Container variant="elevated" padding="md">
+          <Stack spacing="md">
+            <Container variant="elevated" padding="sm">
+              <H4>Filters</H4>
+              <Stack spacing="sm">
+                <Container variant="elevated" padding="xs">
+                  <Span variant="default" size="sm">Search:</Span>
+                  <Input
+                    type="text"
+                    placeholder="Search comments, elements, or pages..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    icon={<Search size={16} />}
+                  />
+                </Container>
+                
+                <Container variant="elevated" padding="xs">
+                  <Span variant="default" size="sm">Status:</Span>
+                  <Select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    options={[
+                      { value: 'all', label: 'All Statuses' },
+                      { value: 'open', label: 'Open' },
+                      { value: 'in-progress', label: 'In Progress' },
+                      { value: 'resolved', label: 'Resolved' }
+                    ]}
+                  />
+                </Container>
+
+                <Container variant="elevated" padding="xs">
+                  <Span variant="default" size="sm">Page:</Span>
+                  <Select
+                    value={pageFilter}
+                    onChange={(e) => setPageFilter(e.target.value)}
+                    options={[
+                      { value: 'all', label: 'All Pages' },
+                      ...getUniquePages()
+                    ]}
+                  />
+                </Container>
+              </Stack>
+            </Container>
+
+            <Container variant="elevated" padding="sm">
+              <Container variant="elevated" padding="xs">
+                <Span variant="default" size="sm">Export Format:</Span>
+                <Select
+                  value={exportFormat}
+                  onChange={(e) => setExportFormat(e.target.value as 'csv' | 'json')}
+                  options={[
+                    { value: 'csv', label: 'CSV' },
+                    { value: 'json', label: 'JSON' }
+                  ]}
+                />
+              </Container>
+              <Container variant="elevated" padding="xs">
+                <Button onClick={exportComments} variant="secondary">
+                  <Download size={16} />
+                  Export Comments
+                </Button>
+                <Button onClick={generateAnalytics} variant="secondary">
+                  <BarChart3 size={16} />
+                  Generate Analytics
+                </Button>
+              </Container>
+            </Container>
           </Stack>
         </Container>
-      )
-    },
-    {
-      key: 'comment',
-      label: 'Comment',
-      sortable: false,
-      render: (value) => (
-        <Container>
-          <EditableText field="admin.comments.comment" defaultValue={value}>
-            {value}
-          </EditableText>
+
+        {/* Comments List */}
+        <Container variant="elevated" padding="md">
+          <H3>
+            Comments ({filteredComments.length})
+          </H3>
+          
+          {filteredComments.length === 0 ? (
+            <Container variant="elevated" padding="lg">
+              <Span>No comments found matching your filters.</Span>
+            </Container>
+          ) : (
+            <Stack spacing="md">
+              {filteredComments.map((comment) => (
+                <Container
+                  key={comment.id}
+                  variant="elevated"
+                  padding="md"
+                >
+                  <Container variant="elevated" padding="sm">
+                    <Container variant="elevated" padding="xs">
+                      <Span variant="default" size="sm" color="muted">
+                        {comment.pageTitle}
+                      </Span>
+                      <Span variant="default" size="sm" color="muted">
+                        • {new Date(comment.createdAt).toLocaleDateString()}
+                      </Span>
+                    </Container>
+                    
+                    <Container variant="elevated" padding="xs">
+                      <Span variant="default" size="sm" color="muted">
+                        Element: {comment.elementText}
+                      </Span>
+                    </Container>
+                  </Container>
+
+                  <Container variant="elevated" padding="sm">
+                    <Container variant="elevated" padding="xs">
+                      <StatusBadge status={comment.status} />
+                    </Container>
+                  </Container>
+
+                  <Container variant="elevated" padding="sm">
+                    {editingComment === comment.id ? (
+                      <Container variant="elevated" padding="sm">
+                        <Textarea
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          rows={3}
+                        />
+                        <Container variant="elevated" padding="sm">
+                          <Button
+                            onClick={() => handleSaveEdit(comment.id)}
+                            variant="primary"
+                            size="sm"
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            onClick={() => setEditingComment(null)}
+                            variant="secondary"
+                            size="sm"
+                          >
+                            Cancel
+                          </Button>
+                        </Container>
+                      </Container>
+                    ) : (
+                      <Container variant="elevated" padding="sm">
+                        <Span>{comment.comment}</Span>
+                      </Container>
+                    )}
+                  </Container>
+
+                  <Container variant="elevated" padding="sm">
+                    <Button
+                      onClick={() => handleNavigateToElement(comment)}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      <Eye size={16} />
+                      View Element
+                    </Button>
+                    <Button
+                      onClick={() => handleEditComment(comment.id)}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      <Edit size={16} />
+                      Edit
+                    </Button>
+                    <Select
+                      value={comment.status}
+                      onChange={(e) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
+                      options={[
+                        { value: 'open', label: 'Open' },
+                        { value: 'in-progress', label: 'In Progress' },
+                        { value: 'resolved', label: 'Resolved' }
+                      ]}
+                    />
+                    <Button
+                      onClick={() => handleDeleteComment(comment.id)}
+                      variant="danger"
+                      size="sm"
+                    >
+                      <Trash2 size={16} />
+                      Delete
+                    </Button>
+                  </Container>
+                </Container>
+              ))}
+            </Stack>
+          )}
         </Container>
-      )
-    },
-    {
-      key: 'createdAt',
-      label: 'Date',
-      sortable: true,
-      render: (value) => {
-        const { date, time } = formatDate(value);
-        return (
-          <Container>
-            <Stack>
-              <EditableText field="admin.comments.date" defaultValue={date}>
-                {date}
+
+        {/* Analytics Section */}
+        {showAnalytics && analyticsData && (
+          <Container variant="elevated" padding="md">
+            <H3>
+              <EditableText field="adminComments.analyticsTitle" defaultValue="Comment Analytics">
+                Comment Analytics
               </EditableText>
-              <EditableText field="admin.comments.time" defaultValue={time}>
-                {time}
-              </EditableText>
+            </H3>
+            
+            <Stack spacing="md">
+              {/* Summary Stats */}
+              <Container variant="elevated" padding="sm">
+                <H4>Summary</H4>
+                <Container variant="elevated" padding="xs">
+                  <Span variant="default" size="sm">
+                    Total Comments: {analyticsData.summary.total}
+                  </Span>
+                  <Span variant="default" size="sm">
+                    Open: {analyticsData.summary.open}
+                  </Span>
+                  <Span variant="default" size="sm">
+                    In Progress: {analyticsData.summary.inProgress}
+                  </Span>
+                  <Span variant="default" size="sm">
+                    Resolved: {analyticsData.summary.resolved}
+                  </Span>
+                  {analyticsData.summary.averageResolutionTime && (
+                    <Span variant="default" size="sm">
+                      Avg Resolution Time: {analyticsData.summary.averageResolutionTime.toFixed(1)} days
+                    </Span>
+                  )}
+                </Container>
+              </Container>
+
+              {/* Comments by Page */}
+              <Container variant="elevated" padding="sm">
+                <H4>Comments by Page</H4>
+                <Stack spacing="sm">
+                  {analyticsData.pages.map((page: any) => (
+                    <Container key={page.page} variant="elevated" padding="xs">
+                      <Span variant="default" size="sm">
+                        <FileText size={16} />
+                        {page.page.split('/').pop() || page.page}
+                      </Span>
+                      <Span variant="default" size="sm" color="muted">
+                        Total: {page.count} | Open: {page.open} | In Progress: {page.inProgress} | Resolved: {page.resolved}
+                      </Span>
+                    </Container>
+                  ))}
+                </Stack>
+              </Container>
+
+              {/* Comments by Author */}
+              <Container variant="elevated" padding="sm">
+                <H4>Comments by Author</H4>
+                <Stack spacing="sm">
+                  {analyticsData.authors.map((author: any) => (
+                    <Container key={author.author} variant="elevated" padding="xs">
+                      <Span variant="default" size="sm">
+                        {author.author}
+                      </Span>
+                      <Span variant="default" size="sm" color="muted">
+                        Total: {author.count} | Open: {author.open} | In Progress: {author.inProgress} | Resolved: {author.resolved}
+                      </Span>
+                    </Container>
+                  ))}
+                </Stack>
+              </Container>
             </Stack>
           </Container>
-        );
-      }
-    },
-    {
-      key: 'actions',
-      label: 'Status',
-      sortable: false,
-      render: (_, comment) => renderStatus(comment)
-    }
-  ];
-
-  // Table actions
-  const actions: DataTableAction<ConfluenceComment>[] = [
-    {
-      label: 'View Full',
-      icon: '👁️',
-      onClick: (comment) => alert(`Full comment from ${comment.createdBy}:\n\n"${comment.comment}"\n\nPage: ${comment.pageTitle}`),
-      variant: 'outline'
-    },
-    {
-      label: 'Reply',
-      icon: '💬',
-      onClick: (comment) => alert(`Opening reply to comment from ${comment.createdBy} on page: ${comment.pageTitle}`),
-      variant: 'primary'
-    },
-    {
-      label: 'View Page',
-      icon: '📄',
-      onClick: (comment) => alert(`Viewing page: ${comment.pageTitle}`),
-      variant: 'outline'
-    },
-    {
-      label: 'Moderate',
-      icon: '🛡️',
-      onClick: (comment) => alert(`Moderating comment from ${comment.createdBy}`),
-      variant: 'outline'
-    }
-  ];
-
-  // Calculate stats
-  const totalComments = comments.length;
-  const recentComments = comments.filter(c => {
-    const commentDate = new Date(c.createdAt);
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return commentDate > weekAgo;
-  }).length;
-
-  const uniquePages = new Set(comments.map(c => c.pageTitle)).size;
-  const uniqueAuthors = new Set(comments.map(c => c.createdBy)).size;
-
-  return (
-    <AdminPageWrapper
-      title="Page Comments"
-      subtitle="Monitor and manage comments across all pages"
-    >
-      {/* Comment Statistics */}
-      <GridSection variant="stats" columns={4}>
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Total Comments</Text>
-            <Text size="xl" weight="bold">{totalComments.toString()}</Text>
-            <Text variant="muted" size="sm">All comments</Text>
-            <EditableText field="admin.comments.totalComments" defaultValue={`${totalComments} total comments`}>
-              {totalComments} total comments
-            </EditableText>
-          </Stack>
-        </Box>
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Recent Comments</Text>
-            <Text size="xl" weight="bold">{recentComments.toString()}</Text>
-            <Text variant="muted" size="sm">Last 7 days</Text>
-            <EditableText field="admin.comments.recentComments" defaultValue={`${recentComments} recent comments`}>
-              {recentComments} recent comments
-            </EditableText>
-          </Stack>
-        </Box>
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Pages with Comments</Text>
-            <Text size="xl" weight="bold">{uniquePages.toString()}</Text>
-            <Text variant="muted" size="sm">Active pages</Text>
-            <EditableText field="admin.comments.pagesWithComments" defaultValue={`${uniquePages} pages with comments`}>
-              {uniquePages} pages with comments
-            </EditableText>
-          </Stack>
-        </Box>
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Unique Authors</Text>
-            <Text size="xl" weight="bold">{uniqueAuthors.toString()}</Text>
-            <Text variant="muted" size="sm">Comment contributors</Text>
-            <EditableText field="admin.comments.uniqueAuthors" defaultValue={`${uniqueAuthors} unique authors`}>
-              {uniqueAuthors} unique authors
-            </EditableText>
-          </Stack>
-        </Box>
-      </GridSection>
-
-      {/* Comments Table */}
-      <GridSection variant="content" columns={1}>
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="md">
-            <Text variant="lead" size="md" weight="semibold">💬 All Comments</Text>
-            <Text variant="muted" size="sm">Search, sort, and manage comments across all pages</Text>
-                      <DataTable
-              data={comments}
-              columns={columns}
-              actions={actions}
-              loading={loading}
-              searchPlaceholder="Search by author, page, or comment text..."
-              emptyMessage="No comments found. Comments will appear here once users start commenting on pages."
-              emptyIcon="💬"
-              pageSize={10}
-            />
-          </Stack>
-          </Box>
-      </GridSection>
-
-      {/* Comment Analytics */}
-      <GridSection variant="content" columns={1}>
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="md">
-            <Text variant="lead" size="md" weight="semibold">📊 Comment Analytics</Text>
-            <Text variant="muted" size="sm">Insights into comment activity and engagement</Text>
-          </Stack>
-          <Stack direction="vertical" spacing="lg">
-            <Container>
-              <EditableText field="admin.comments.mostActivePages" defaultValue="Most Active Pages:">
-                Most Active Pages:
-              </EditableText>
-              <Stack direction="vertical" spacing="sm">
-                {Array.from(new Set(comments.map(c => c.pageTitle)))
-                  .map(page => ({
-                    page,
-                    count: comments.filter(c => c.pageTitle === page).length
-                  }))
-                  .sort((a, b) => b.count - a.count)
-                  .slice(0, 5)
-                  .map(({ page, count }) => (
-                    <Stack key={page} direction="horizontal" justify="space-between">
-                      <EditableText field="admin.comments.pageName" defaultValue={page}>
-                        {page}
-                      </EditableText>
-                      <EditableText field="admin.comments.commentCount" defaultValue={`${count} comments`}>
-                        {count} comments
-                      </EditableText>
-                    </Stack>
-                  ))}
-              </Stack>
-            </Container>
-            
-            <Container>
-              <EditableText field="admin.comments.topCommenters" defaultValue="Top Commenters:">
-                Top Commenters:
-              </EditableText>
-              <Stack direction="vertical" spacing="sm">
-                {Array.from(new Set(comments.map(c => c.createdBy)))
-                  .map(author => ({
-                    author,
-                    count: comments.filter(c => c.createdBy === author).length
-                  }))
-                  .sort((a, b) => b.count - a.count)
-                  .slice(0, 5)
-                  .map(({ author, count }) => (
-                    <Stack key={author} direction="horizontal" justify="space-between">
-                      <EditableText field="admin.comments.authorName" defaultValue={author}>
-                        {author}
-                      </EditableText>
-                      <EditableText field="admin.comments.authorCommentCount" defaultValue={`${count} comments`}>
-                        {count} comments
-                      </EditableText>
-                    </Stack>
-                  ))}
-              </Stack>
-            </Container>
-          </Stack>
-        </Box>
-      </GridSection>
-    </AdminPageWrapper>
+        )}
+      </Stack>
+    </Container>
   );
 }
-
-const CommentsPage = () => {
-  return (
-    <CommentsPageContent />
-  );
-};
-
-export default withAuth(CommentsPage);
