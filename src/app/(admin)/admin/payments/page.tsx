@@ -1,8 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { NextPage } from 'next';
-import withAuth from '../withAuth';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Stack, 
@@ -255,8 +253,8 @@ function PaymentsPageContent() {
   );
 }
 
-const PaymentsPage: NextPage = () => {
+const PaymentsPage = () => {
   return <PaymentsPageContent />;
 };
 
-export default withAuth(PaymentsPage); 
+export default PaymentsPage; 

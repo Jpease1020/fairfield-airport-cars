@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import withAuth from '../../withAuth';
+import React, { useState, useEffect } from 'react'; 
 import { cmsService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
 import { 
@@ -25,7 +24,7 @@ function BusinessPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadBusinessSettings = useCallback(async () => {
+  const loadBusinessSettings = async () => {
     setLoading(true);
     setError(null);
     
@@ -41,11 +40,11 @@ function BusinessPageContent() {
     } finally {
       setLoading(false);
     }
-  }, [addToast]);
+  };
 
   useEffect(() => {
     loadBusinessSettings();
-  }, [loadBusinessSettings]);
+  }, []);
 
   const handleInputChange = (section: keyof BusinessSettings, field: string, value: string) => {
     if (!settings) return;
@@ -387,4 +386,4 @@ const BusinessPage = () => {
   );
 };
 
-export default withAuth(BusinessPage);
+export default BusinessPage;

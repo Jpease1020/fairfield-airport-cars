@@ -4,11 +4,11 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { vi, describe, test, expect, beforeAll, afterEach, afterAll, beforeEach } from 'vitest';
 import { useRouter } from 'next/navigation';
-import HomePage from '@/app/(public)/page';
+import HomePage from '@/app/page';
 import BookPage from '@/app/(customer)/book/page';
 import AdminPage from '@/app/(admin)/admin/page';
 import HelpPage from '@/app/(public)/help/page';
-import CostsPage from '@/app/(admin)/costs/page';
+import CostsPage from '@/app/(admin)/admin/costs/page';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({

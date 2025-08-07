@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
-import withAuth from '../withAuth';
 import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
 import { 
   Container, 
@@ -377,4 +376,4 @@ const AdminBookingsPage: NextPage = () => {
   return <AdminBookingsPageContent />;
 };
 
-export default withAuth(AdminBookingsPage);
+export default AdminBookingsPage;

@@ -15,9 +15,7 @@ import {
   LoadingSpinner
 } from '@/ui';
 import { getDriver, updateDriverStatus, updateDriverLocation } from '@/lib/services/driver-service';
-import { getBookings, updateBookingStatus } from '@/lib/services/booking-service';
-
-interface DriverDashboardProps {}
+import { getBookings } from '@/lib/services/booking-service';
 
 function DriverDashboardContent() {
   const [driver, setDriver] = useState<any>(null);

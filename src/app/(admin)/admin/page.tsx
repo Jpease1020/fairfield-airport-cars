@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import withAuth from './withAuth';
 import { 
   Container, 
   Stack, 
@@ -12,7 +11,6 @@ import {
   GridItem,
   LoadingSpinner,
   Alert,
-  H1,
   H2,
 } from '@/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
@@ -332,4 +330,4 @@ function AdminDashboard() {
   return <AdminDashboardContent />;
 }
 
-export default withAuth(AdminDashboard); 
+export default AdminDashboard; 

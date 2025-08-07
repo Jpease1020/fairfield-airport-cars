@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { NextPage } from 'next';
-import withAuth from '../withAuth';
 import { 
   Container, 
   Stack, 
@@ -74,8 +72,8 @@ function CalendarPageContent() {
   );
 }
 
-const CalendarPage: NextPage = () => {
+const CalendarPage = () => {
   return <CalendarPageContent />;
 };
 
-export default withAuth(CalendarPage);
+export default CalendarPage;

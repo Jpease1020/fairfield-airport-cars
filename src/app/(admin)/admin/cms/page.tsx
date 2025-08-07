@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cmsService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
-import withAuth from '../withAuth';
 
 import { 
   GridSection, 
@@ -311,4 +310,4 @@ const CMSPage = () => {
   );
 };
 
-export default withAuth(CMSPage);
+export default CMSPage;
