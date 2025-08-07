@@ -206,17 +206,7 @@ export async function POST() {
           breakRequirements: "30-minute break every 4 hours"
         }
       },
-      analytics: {
-        googleAnalytics: {
-          enabled: false
-        },
-        reporting: {
-          dailyReports: true,
-          weeklyReports: true,
-          monthlyReports: true,
-          emailRecipients: ["admin@fairfieldairportcars.com"]
-        }
-      }
+
     });
 
     return NextResponse.json({ 
