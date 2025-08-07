@@ -23,9 +23,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if tracking is already active
-    if (driverLocationService.getTrackingStatus(bookingId)) {
+    const activeSubscriptions = driverLocationService.getActiveDriverSubscriptions();
+    if (activeSubscriptions.includes(driverId)) {
       return NextResponse.json(
-        { error: 'Tracking already active for this booking' },
+        { error: 'Tracking already active for this driver' },
         { status: 409 }
       );
     }
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Start driver tracking
-    await driverLocationService.startTracking(bookingId, driverId);
+    await driverLocationService.initializeDriverTracking(driverId);
 
     // Send real-time update
     await fetch(`${request.nextUrl.origin}/api/ws/bookings/${bookingId}`, {
@@ -75,6 +76,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const bookingId = searchParams.get('bookingId');
+    const driverId = searchParams.get('driverId');
 
     if (!bookingId) {
       return NextResponse.json(
@@ -83,8 +85,15 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    if (!driverId) {
+      return NextResponse.json(
+        { error: 'Driver ID is required' },
+        { status: 400 }
+      );
+    }
+
     // Stop driver tracking
-    driverLocationService.stopTracking(bookingId);
+    driverLocationService.stopDriverTracking(driverId);
 
     return NextResponse.json({
       success: true,
@@ -104,20 +113,23 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const bookingId = searchParams.get('bookingId');
+    const driverId = searchParams.get('driverId');
 
-    if (bookingId) {
-      // Get tracking status for specific booking
-      const isTracking = driverLocationService.getTrackingStatus(bookingId);
+    if (bookingId && driverId) {
+      // Get tracking status for specific booking and driver
+      const activeSubscriptions = driverLocationService.getActiveDriverSubscriptions();
+      const isTracking = activeSubscriptions.includes(driverId);
       return NextResponse.json({
         bookingId,
+        driverId,
         isTracking,
       });
     } else {
       // Get all active trackings
-      const activeTrackings = driverLocationService.getActiveTrackings();
+      const activeSubscriptions = driverLocationService.getActiveDriverSubscriptions();
       return NextResponse.json({
-        activeTrackings,
-        count: activeTrackings.length,
+        activeSubscriptions,
+        count: activeSubscriptions.length,
       });
     }
   } catch (error) {

@@ -21,3 +21,4 @@ export { DriverProfileCard } from './DriverProfileCard';
 export { ReviewShowcase } from './ReviewShowcase';
 export { EditModeToggle } from './EditModeToggle';
 export { default as CommentSystem } from './CommentSystem';
+export { NotificationManager } from './NotificationManager';
