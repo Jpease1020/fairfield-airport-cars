@@ -38,15 +38,11 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
 
   // Initialize real-time tracking for driver
   const {
-    trackingData,
+    bookingStatus,
     loading,
     error,
-    isConnected,
-    updateBookingStatus,
-  } = useRealTimeTracking({
-    bookingId,
-    autoInitialize: true,
-  });
+    updateStatus,
+  } = useRealTimeTracking(bookingId);
 
   // Get current location
   const getCurrentLocation = (): Promise<DriverLocation> => {
@@ -109,7 +105,7 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
   // Update booking status
   const handleStatusUpdate = async (status: 'confirmed' | 'in-progress' | 'completed') => {
     try {
-      await updateBookingStatus(status);
+      await updateStatus(status);
       console.log(`Booking status updated to: ${status}`);
     } catch (error) {
       console.error('Error updating booking status:', error);
@@ -193,16 +189,11 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
           <Text variant="lead">Driver: {driverName}</Text>
           <Stack direction="horizontal" align="center" spacing="md">
             <Badge 
-              variant={getStatusColor(trackingData?.status || 'confirmed')}
+              variant={getStatusColor(bookingStatus?.status || 'confirmed')}
               size="lg"
             >
-              {getStatusDisplay(trackingData?.status || 'confirmed')}
+              {getStatusDisplay(bookingStatus?.status || 'confirmed')}
             </Badge>
-            {isConnected && (
-              <Badge variant="success" size="sm">
-                Connected
-              </Badge>
-            )}
           </Stack>
         </Stack>
 
@@ -256,9 +247,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
               <GridItem>
                 <Button
                   onClick={() => handleStatusUpdate('confirmed')}
-                  variant={trackingData?.status === 'confirmed' ? 'primary' : 'outline'}
+                  variant={bookingStatus?.status === 'confirmed' ? 'primary' : 'outline'}
                   fullWidth
-                  disabled={trackingData?.status === 'confirmed'}
+                  disabled={bookingStatus?.status === 'confirmed'}
                 >
                   Driver Assigned
                 </Button>
@@ -267,9 +258,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
               <GridItem>
                 <Button
                   onClick={() => handleStatusUpdate('in-progress')}
-                  variant={trackingData?.status === 'in-progress' ? 'primary' : 'outline'}
+                  variant={bookingStatus?.status === 'in-progress' ? 'primary' : 'outline'}
                   fullWidth
-                  disabled={trackingData?.status === 'in-progress'}
+                  disabled={bookingStatus?.status === 'in-progress'}
                 >
                   En Route
                 </Button>
@@ -278,9 +269,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
               <GridItem>
                 <Button
                   onClick={() => handleStatusUpdate('completed')}
-                  variant={trackingData?.status === 'completed' ? 'primary' : 'outline'}
+                  variant={bookingStatus?.status === 'completed' ? 'primary' : 'outline'}
                   fullWidth
-                  disabled={trackingData?.status === 'completed'}
+                  disabled={bookingStatus?.status === 'completed'}
                 >
                   Completed
                 </Button>
@@ -301,9 +292,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
               <Text>
                 <strong>Dropoff:</strong> {dropoffLocation}
               </Text>
-              {trackingData?.estimatedArrival && (
+              {bookingStatus?.estimatedArrival && (
                 <Text>
-                  <strong>ETA:</strong> {trackingData.estimatedArrival.toLocaleTimeString()}
+                  <strong>ETA:</strong> {bookingStatus.estimatedArrival.toLocaleTimeString()}
                 </Text>
               )}
             </Stack>
@@ -311,7 +302,7 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
         </Card>
 
         {/* Connection Status */}
-        {!isConnected && (
+        {loading && (
           <Alert variant="warning" title="Connection Issue">
             Real-time updates may be delayed. Please check your connection.
           </Alert>

@@ -43,16 +43,10 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
 
   // Initialize real-time tracking
   const {
-    trackingData,
+    bookingStatus,
     loading,
     error,
-    isConnected,
-  } = useRealTimeTracking({
-    bookingId,
-    autoInitialize: true,
-    enableLocationTracking: false,
-    enableWebSocket: true,
-  });
+  } = useRealTimeTracking(bookingId);
 
   // Initialize Google Maps
   useEffect(() => {
@@ -101,13 +95,13 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
 
   // Update map when tracking data changes
   useEffect(() => {
-    if (!mapLoaded || !trackingData || !mapInstanceRef.current) return;
+    if (!mapLoaded || !bookingStatus || !mapInstanceRef.current) return;
 
-    updateMapWithTrackingData(trackingData);
-  }, [trackingData, mapLoaded]);
+    updateMapWithTrackingData(bookingStatus);
+  }, [bookingStatus, mapLoaded]);
 
   // Update map with tracking data
-  const updateMapWithTrackingData = (data: TrackingData) => {
+  const updateMapWithTrackingData = (data: any) => {
     if (!mapInstanceRef.current || !directionsService || !directionsRenderer) return;
 
     try {
@@ -266,21 +260,16 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
         <Stack spacing="sm">
           <Stack direction="horizontal" align="center" spacing="md">
             <Badge 
-              variant={getStatusColor(trackingData?.status || 'confirmed') as 'success' | 'warning' | 'error' | 'info' | 'pending' | 'confirmed' | 'completed' | 'cancelled'}
+              variant={getStatusColor(bookingStatus?.status || 'confirmed') as 'success' | 'warning' | 'error' | 'info' | 'pending' | 'confirmed' | 'completed' | 'cancelled'}
               size="lg"
             >
-              {getStatusDisplay(trackingData?.status || 'confirmed')}
+              {getStatusDisplay(bookingStatus?.status || 'confirmed')}
             </Badge>
-            {isConnected && (
-              <Badge variant="success" size="sm">
-                Live
-              </Badge>
-            )}
           </Stack>
           
-          {trackingData?.estimatedArrival && (
+          {bookingStatus?.estimatedArrival && (
             <Text>
-              Estimated arrival: {formatETA(trackingData.estimatedArrival)}
+              Estimated arrival: {formatETA(bookingStatus.estimatedArrival)}
             </Text>
           )}
         </Stack>
@@ -289,7 +278,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
         <MapContainer ref={mapRef} />
 
         {/* Connection Status */}
-        {!isConnected && (
+        {loading && (
           <Alert variant="warning" title="Connection Issue">
             Real-time updates may be delayed. Please refresh if tracking doesn't update.
           </Alert>
