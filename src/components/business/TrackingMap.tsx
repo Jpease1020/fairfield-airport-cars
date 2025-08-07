@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { 
   Container,
   Stack,
@@ -11,6 +11,7 @@ import {
 } from '@/ui';
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
+import { useRealTimeTracking } from '@/hooks/useRealTimeTracking';
 
 // Styled components for map elements
 const MapContainer = styled.div`
@@ -62,25 +63,29 @@ export function TrackingMap({
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<Map<string, google.maps.Marker>>(new Map());
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pickupCoords, setPickupCoords] = useState<google.maps.LatLngLiteral | null>(null);
   const [dropoffCoords, setDropoffCoords] = useState<google.maps.LatLngLiteral | null>(null);
 
+  // Real-time tracking hook
+  const {
+    bookingStatus,
+    loading: trackingLoading,
+    error: trackingError,
+    updateDriverLocation,
+    updateETA
+  } = useRealTimeTracking(bookingId);
+
   // Initialize map
   useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
-
     const initMap = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Load Google Maps API if not already loaded
-        if (!window.google?.maps) {
-          await loadGoogleMapsAPI();
-        }
+        // Load Google Maps API
+        await loadGoogleMapsAPI();
 
         // Get coordinates for pickup and dropoff locations
         const [pickup, dropoff] = await Promise.all([
@@ -89,31 +94,32 @@ export function TrackingMap({
         ]);
 
         if (!pickup || !dropoff) {
-          throw new Error('Could not get coordinates for locations');
+          throw new Error('Could not get coordinates for pickup or dropoff location');
         }
 
         setPickupCoords(pickup);
         setDropoffCoords(dropoff);
 
-        // Create map instance
+        // Initialize map
         const map = new google.maps.Map(mapRef.current!, {
           center: pickup,
           zoom: 12,
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: true,
-          zoomControl: true,
           styles: getMapStyles(),
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          disableDefaultUI: false,
+          zoomControl: true,
+          streetViewControl: false,
+          mapTypeControl: false,
+          fullscreenControl: false,
         });
 
         mapInstanceRef.current = map;
 
-        // Add pickup and dropoff markers
-        addMarker('pickup', pickup, 'Pickup Location', '🚗');
-        addMarker('dropoff', dropoff, 'Dropoff Location', '🏁');
+        // Add markers
+        addMarker('pickup', pickup, 'Pickup Location', '🏠');
+        addMarker('dropoff', dropoff, 'Dropoff Location', '✈️');
 
-        // Draw route between pickup and dropoff
+        // Draw route
         drawRoute(pickup, dropoff);
 
         // Call onMapLoad callback
@@ -124,7 +130,7 @@ export function TrackingMap({
         setLoading(false);
       } catch (err) {
         console.error('Error initializing map:', err);
-        setError('Failed to load map. Please try again.');
+        setError(err instanceof Error ? err.message : 'Failed to load map');
         setLoading(false);
       }
     };
@@ -134,33 +140,33 @@ export function TrackingMap({
 
   // Update driver location when it changes
   useEffect(() => {
-    if (!mapInstanceRef.current || !driverLocation) return;
-
-    const driverPos = {
-      lat: driverLocation.lat,
-      lng: driverLocation.lng,
-    };
-
-    // Update or create driver marker
-    updateDriverMarker(driverPos, driverLocation.heading);
-
-    // Center map on driver if status is 'in-progress'
-    if (status === 'in-progress') {
-      mapInstanceRef.current.setCenter(driverPos);
-      mapInstanceRef.current.setZoom(14);
+    if (bookingStatus?.driverLocation && mapInstanceRef.current) {
+      const location = bookingStatus.driverLocation;
+      updateDriverMarker(
+        { lat: location.lat, lng: location.lng },
+        location.heading
+      );
     }
-  }, [driverLocation, status]);
+  }, [bookingStatus?.driverLocation]);
+
+  // Update ETA when it changes
+  useEffect(() => {
+    if (bookingStatus?.estimatedArrival) {
+      // ETA is automatically updated through the real-time tracking hook
+      console.log('ETA updated:', bookingStatus.estimatedArrival);
+    }
+  }, [bookingStatus?.estimatedArrival]);
 
   // Load Google Maps API
   const loadGoogleMapsAPI = (): Promise<void> => {
     return new Promise((resolve, reject) => {
-      if (window.google?.maps) {
+      if (window.google && window.google.maps) {
         resolve();
         return;
       }
 
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=geometry,places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
       script.async = true;
       script.defer = true;
       
@@ -171,7 +177,7 @@ export function TrackingMap({
     });
   };
 
-  // Get coordinates for an address
+  // Get coordinates from address
   const getCoordinates = async (address: string): Promise<google.maps.LatLngLiteral | null> => {
     try {
       const geocoder = new google.maps.Geocoder();
@@ -181,6 +187,7 @@ export function TrackingMap({
         const location = result.results[0].geometry.location;
         return { lat: location.lat(), lng: location.lng() };
       }
+      
       return null;
     } catch (error) {
       console.error('Error geocoding address:', error);
@@ -210,38 +217,41 @@ export function TrackingMap({
     markersRef.current.set(id, marker);
   };
 
-  // Update driver marker
+  // Update driver marker with heading
   const updateDriverMarker = (position: google.maps.LatLngLiteral, heading?: number) => {
     if (!mapInstanceRef.current) return;
 
-    let driverMarker = markersRef.current.get('driver');
-    
-    if (!driverMarker) {
-      // Create new driver marker
-      driverMarker = new google.maps.Marker({
-        position,
-        map: mapInstanceRef.current,
-        title: 'Driver Location',
-        icon: {
-          url: 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300ff00"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>',
-          scaledSize: new google.maps.Size(40, 40),
-          anchor: new google.maps.Point(20, 20),
-        },
-      });
-      markersRef.current.set('driver', driverMarker);
-    } else {
-      // Update existing marker position
-      driverMarker.setPosition(position);
+    // Remove existing driver marker
+    const existingMarker = markersRef.current.get('driver');
+    if (existingMarker) {
+      existingMarker.setMap(null);
     }
 
-    // Rotate marker based on heading
-    if (heading !== undefined) {
-      // Note: Google Maps marker rotation is limited, so we'll skip rotation for now
-      // The marker will still update position correctly
+    // Create new driver marker with heading
+    const marker = new google.maps.Marker({
+      position,
+      map: mapInstanceRef.current,
+      title: 'Driver Location',
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 8,
+        fillColor: colors.success[600],
+        fillOpacity: 1,
+        strokeColor: colors.success[600],
+        strokeWeight: 2,
+        rotation: heading || 0,
+      },
+    });
+
+    markersRef.current.set('driver', marker);
+
+    // Center map on driver if status is in-progress
+    if (status === 'in-progress') {
+      mapInstanceRef.current.panTo(position);
     }
   };
 
-  // Draw route between two points
+  // Draw route between pickup and dropoff
   const drawRoute = (origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) => {
     if (!mapInstanceRef.current) return;
 
@@ -286,7 +296,7 @@ export function TrackingMap({
     },
   ];
 
-  if (loading) {
+  if (loading || trackingLoading) {
     return (
       <Container>
         <Stack spacing="lg" align="center">
@@ -297,11 +307,11 @@ export function TrackingMap({
     );
   }
 
-  if (error) {
+  if (error || trackingError) {
     return (
       <Container>
         <Alert variant="error">
-          <Text>{error}</Text>
+          <Text>{error || trackingError}</Text>
         </Alert>
       </Container>
     );
@@ -315,7 +325,7 @@ export function TrackingMap({
           <Stack spacing="xs">
             <Text weight="bold" size="lg">Live Tracking</Text>
             <Text variant="muted">
-              {status === 'in-progress' && driverLocation 
+              {status === 'in-progress' && bookingStatus?.driverLocation 
                 ? 'Driver is on the way'
                 : status === 'confirmed'
                 ? 'Driver assigned'
@@ -324,10 +334,10 @@ export function TrackingMap({
             </Text>
           </Stack>
           
-          {estimatedArrival && (
+          {bookingStatus?.estimatedArrival && (
             <Box variant="outlined" padding="sm">
               <Text size="sm" weight="bold">
-                ETA: {estimatedArrival.toLocaleTimeString()}
+                ETA: {new Date(bookingStatus.estimatedArrival).toLocaleTimeString()}
               </Text>
             </Box>
           )}
