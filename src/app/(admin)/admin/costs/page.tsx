@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';
+import { costAPIIntegrationService } from '@/lib/services/cost-api-integration';
+import { CostOptimizationPanel } from '@/components/business/CostOptimizationPanel';
 import { 
   GridSection, 
   Box, 
@@ -15,7 +17,11 @@ import {
   Span,
   Text,
   Stack,
-  EditableText
+  EditableText,
+  Button,
+  Badge,
+  LoadingSpinner,
+  Alert
 } from '@/ui';
 import { AdminPageWrapper } from '@/components/app';
 import withAuth from '../withAuth';
@@ -26,9 +32,13 @@ function CostsPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<any>(null);
+  const [showOptimization, setShowOptimization] = useState(false);
+  const [apiIntegrationLoading, setApiIntegrationLoading] = useState(false);
+  const [serviceProviders, setServiceProviders] = useState<any[]>([]);
 
   useEffect(() => {
     loadCosts();
+    loadServiceProviders();
   }, []);
 
   const loadCosts = async () => {
@@ -49,6 +59,25 @@ function CostsPageContent() {
       setError('Failed to load costs data. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadServiceProviders = () => {
+    const providers = costAPIIntegrationService.getServiceProviderStatus();
+    setServiceProviders(providers);
+  };
+
+  const updateCostsWithAPI = async () => {
+    try {
+      setApiIntegrationLoading(true);
+      await costAPIIntegrationService.updateCostsWithAPIData();
+      await loadCosts(); // Reload costs after API update
+      addToast('success', 'Cost data updated with real API information');
+    } catch (err) {
+      console.error('❌ Error updating costs with API:', err);
+      addToast('error', 'Failed to update costs with API data');
+    } finally {
+      setApiIntegrationLoading(false);
     }
   };
 
@@ -104,14 +133,20 @@ function CostsPageContent() {
       disabled: loading
     },
     { 
-      label: 'Export Report', 
-      onClick: () => addToast('info', 'Export functionality coming soon'), 
-      variant: 'outline' as const 
+      label: 'Update with API', 
+      onClick: updateCostsWithAPI, 
+      variant: 'outline' as const,
+      disabled: apiIntegrationLoading
+    },
+    { 
+      label: 'Cost Optimization', 
+      onClick: () => setShowOptimization(!showOptimization), 
+      variant: 'primary' as const 
     },
     { 
       label: 'Add Cost', 
       onClick: () => window.location.href = '/admin/costs/manual-entry', 
-      variant: 'primary' as const 
+      variant: 'outline' as const 
     }
   ];
 
@@ -209,32 +244,33 @@ function CostsPageContent() {
   const quickActions = [
     {
       id: 1,
+      icon: "💡",
+      label: "Cost Optimization",
+      onClick: () => setShowOptimization(!showOptimization)
+    },
+    {
+      id: 2,
+      icon: "🔄",
+      label: "Update with API",
+      onClick: updateCostsWithAPI
+    },
+    {
+      id: 3,
       icon: "📊",
       label: "Cost Analytics",
       onClick: () => addToast('info', 'Analytics dashboard coming soon')
     },
     {
-      id: 2,
-      icon: "📋",
-      label: "Export Report",
-      onClick: () => addToast('info', 'Export functionality coming soon')
-    },
-    {
-      id: 3,
+      id: 4,
       icon: "⚙️",
       label: "Cost Settings",
       href: "/admin/cms/business"
-    },
-    {
-      id: 4,
-      icon: "📅",
-      label: "Monthly Reports",
-      onClick: () => addToast('info', 'Monthly reports coming soon')
     }
   ];
 
   const overBudgetItems = costs.filter(c => c.actualMonthlyCost > c.projectedMonthlyCost).length;
   const pendingItems = costs.filter(c => c.actualMonthlyCost === 0).length;
+  const apiConnectedProviders = serviceProviders.filter(p => p.enabled).length;
 
   return (
     <AdminPageWrapper
@@ -283,11 +319,11 @@ function CostsPageContent() {
         
         <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Cost Categories</Text>
-            <Text size="xl" weight="bold">{costs.length.toString()}</Text>
-            <Text variant="muted" size="sm">Active tracking</Text>
-            <EditableText field="admin.costs.costCategories" defaultValue="Active cost categories">
-              Active cost categories
+            <Text variant="lead" size="md" weight="semibold">API Connected</Text>
+            <Text size="xl" weight="bold">{apiConnectedProviders.toString()}</Text>
+            <Text variant="muted" size="sm">Service providers</Text>
+            <EditableText field="admin.costs.apiConnected" defaultValue="Connected service providers">
+              Connected service providers
             </EditableText>
           </Stack>
         </Box>
@@ -311,6 +347,74 @@ function CostsPageContent() {
             emptyIcon="💰"
             pageSize={15}
           />
+          </Stack>
+        </Box>
+      </GridSection>
+
+      {/* Cost Optimization Panel */}
+      {showOptimization && (
+        <GridSection variant="content" columns={1}>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <Stack spacing="sm">
+                <Text variant="lead" size="md" weight="semibold">💡 Cost Optimization</Text>
+                <Text variant="muted" size="sm">AI-powered recommendations to reduce your business costs</Text>
+              </Stack>
+              <CostOptimizationPanel 
+                onOptimizationApplied={(optimizationId) => {
+                  addToast('success', `Optimization applied: ${optimizationId}`);
+                  loadCosts(); // Reload costs after optimization
+                }}
+                onRefresh={loadCosts}
+              />
+            </Stack>
+          </Box>
+        </GridSection>
+      )}
+
+      {/* Service Provider Status */}
+      <GridSection variant="content" columns={1}>
+        <Box variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Stack spacing="sm">
+              <Text variant="lead" size="md" weight="semibold">🔗 Service Provider Status</Text>
+              <Text variant="muted" size="sm">Real-time API connections for cost data</Text>
+            </Stack>
+            
+            <Stack spacing="md">
+              {serviceProviders.map((provider) => (
+                <Stack key={provider.id} direction="horizontal" justify="space-between" align="center">
+                  <Stack spacing="xs">
+                    <Text weight="bold">{provider.name}</Text>
+                    <Text variant="muted" size="sm">
+                      {provider.enabled ? 'Connected' : 'Not configured'}
+                    </Text>
+                  </Stack>
+                  
+                  <Stack direction="horizontal" align="center" spacing="sm">
+                    <Badge 
+                      variant={provider.enabled ? 'success' : 'warning'}
+                      size="sm"
+                    >
+                      {provider.enabled ? 'Active' : 'Inactive'}
+                    </Badge>
+                    
+                    {provider.lastUpdate && (
+                      <Text variant="muted" size="sm">
+                        Updated: {provider.lastUpdate.toLocaleTimeString()}
+                      </Text>
+                    )}
+                  </Stack>
+                </Stack>
+              ))}
+            </Stack>
+
+            {apiIntegrationLoading && (
+              <Stack direction="horizontal" align="center" spacing="sm">
+                <LoadingSpinner size="sm" />
+                <Text size="sm">Updating cost data with API...</Text>
+              </Stack>
+            )}
           </Stack>
         </Box>
       </GridSection>
