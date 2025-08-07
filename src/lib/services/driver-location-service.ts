@@ -1,238 +1,315 @@
-// Driver location tracking service with GPS simulation
-import { getBooking, updateBooking } from './booking-service';
+// Driver Location Service
+// Handles real-time GPS tracking for drivers with Firebase integration
+
+import { 
+  doc, 
+  onSnapshot, 
+  updateDoc, 
+  serverTimestamp,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs
+} from 'firebase/firestore';
+import { db } from '@/lib/utils/firebase';
 
 export interface DriverLocation {
   lat: number;
   lng: number;
   timestamp: Date;
-  heading?: number;
-  speed?: number;
-  accuracy?: number;
+  heading: number; // Direction in degrees (0-360)
+  speed: number; // Speed in mph
+  accuracy: number; // GPS accuracy in meters
+  altitude?: number; // Altitude in meters
+  batteryLevel?: number; // Device battery level (0-100)
+  isMoving: boolean;
 }
 
-export interface LocationUpdate {
-  bookingId: string;
-  location: DriverLocation;
+export interface DriverStatus {
+  driverId: string;
+  status: 'available' | 'busy' | 'offline' | 'en-route' | 'arrived';
+  currentLocation?: DriverLocation;
+  currentBookingId?: string;
+  lastUpdated: Date;
   estimatedArrival?: Date;
 }
 
+export interface LocationUpdate {
+  driverId: string;
+  location: DriverLocation;
+  bookingId?: string;
+  status?: DriverStatus['status'];
+}
+
 class DriverLocationService {
-  private activeTrackings = new Map<string, NodeJS.Timeout>();
-  private driverRoutes = new Map<string, DriverLocation[]>();
+  private activeSubscriptions: Map<string, () => void> = new Map();
+  private locationUpdateCallbacks: Map<string, (location: DriverLocation) => void> = new Map();
+  private statusUpdateCallbacks: Map<string, (status: DriverStatus) => void> = new Map();
 
-  // Start tracking a driver for a specific booking
-  async startTracking(bookingId: string, driverId: string): Promise<void> {
+  // Initialize real-time tracking for a driver
+  async initializeDriverTracking(driverId: string): Promise<void> {
     try {
-      const booking = await getBooking(bookingId);
-      if (!booking) {
-        throw new Error('Booking not found');
-      }
+      console.log('🚗 Initializing driver tracking for:', driverId);
+      
+      // Set up real-time subscription to driver document
+      const driverRef = doc(db, 'drivers', driverId);
+      
+      const unsubscribe = onSnapshot(driverRef, (doc) => {
+        if (doc.exists()) {
+          const data = doc.data();
+          this.handleDriverUpdate(driverId, data);
+        }
+      }, (error) => {
+        console.error('Driver tracking subscription error:', error);
+      });
 
-      // Generate route from driver location to pickup to dropoff
-      const route = await this.generateRoute(booking);
-      this.driverRoutes.set(bookingId, route);
-
-      // Start location updates
-      this.startLocationUpdates(bookingId, route);
-
-      console.log(`Started tracking for booking ${bookingId}, driver ${driverId}`);
+      this.activeSubscriptions.set(driverId, unsubscribe);
+      
+      console.log('✅ Driver tracking initialized for:', driverId);
     } catch (error) {
-      console.error('Error starting driver tracking:', error);
+      console.error('❌ Error initializing driver tracking:', error);
       throw error;
     }
   }
 
-  // Stop tracking a driver
-  stopTracking(bookingId: string): void {
-    const interval = this.activeTrackings.get(bookingId);
-    if (interval) {
-      clearInterval(interval);
-      this.activeTrackings.delete(bookingId);
-      this.driverRoutes.delete(bookingId);
-      console.log(`Stopped tracking for booking ${bookingId}`);
-    }
-  }
-
-  // Generate a realistic route for the driver
-  private async generateRoute(booking: any): Promise<DriverLocation[]> {
-    // For simulation, we'll create a route from a starting point to pickup to dropoff
-    const route: DriverLocation[] = [];
-    
-    // Starting point (simulated driver location)
-    const startPoint = {
-      lat: 41.2619, // Fairfield area
-      lng: -73.2897,
-    };
-
-    // Pickup coordinates (simplified)
-    const pickupCoords = await this.getCoordinates(booking.pickupLocation);
-    const dropoffCoords = await this.getCoordinates(booking.dropoffLocation);
-
-    if (!pickupCoords || !dropoffCoords) {
-      throw new Error('Could not get coordinates for pickup or dropoff');
-    }
-
-    // Generate route points
-    const totalPoints = 20; // Number of points in the route
-    
-    // Route from start to pickup
-    for (let i = 0; i < totalPoints / 2; i++) {
-      const progress = i / (totalPoints / 2);
-      const lat = startPoint.lat + (pickupCoords.lat - startPoint.lat) * progress;
-      const lng = startPoint.lng + (pickupCoords.lng - startPoint.lng) * progress;
-      
-      route.push({
-        lat,
-        lng,
-        timestamp: new Date(Date.now() + i * 30000), // 30 seconds apart
-        heading: this.calculateHeading(
-          i === 0 ? startPoint : route[i - 1],
-          { lat, lng }
-        ),
-        speed: 25 + Math.random() * 10, // 25-35 mph
-        accuracy: 5 + Math.random() * 5, // 5-10 meters
-      });
-    }
-
-    // Route from pickup to dropoff
-    for (let i = 0; i < totalPoints / 2; i++) {
-      const progress = i / (totalPoints / 2);
-      const lat = pickupCoords.lat + (dropoffCoords.lat - pickupCoords.lat) * progress;
-      const lng = pickupCoords.lng + (dropoffCoords.lng - pickupCoords.lng) * progress;
-      
-      route.push({
-        lat,
-        lng,
-        timestamp: new Date(Date.now() + (totalPoints / 2 + i) * 30000),
-        heading: this.calculateHeading(
-          i === 0 ? pickupCoords : route[totalPoints / 2 + i - 1],
-          { lat, lng }
-        ),
-        speed: 30 + Math.random() * 15, // 30-45 mph
-        accuracy: 5 + Math.random() * 5,
-      });
-    }
-
-    return route;
-  }
-
-  // Calculate heading between two points
-  private calculateHeading(from: { lat: number; lng: number }, to: { lat: number; lng: number }): number {
-    const dLng = to.lng - from.lng;
-    const y = Math.sin(dLng) * Math.cos(to.lat);
-    const x = Math.cos(from.lat) * Math.sin(to.lat) - Math.sin(from.lat) * Math.cos(to.lat) * Math.cos(dLng);
-    let heading = Math.atan2(y, x) * 180 / Math.PI;
-    
-    // Normalize to 0-360
-    heading = (heading + 360) % 360;
-    
-    return heading;
-  }
-
-  // Get coordinates from address
-  private async getCoordinates(address: string): Promise<{ lat: number; lng: number } | null> {
+  // Handle real-time driver updates
+  private handleDriverUpdate(driverId: string, data: any): void {
     try {
-      // For simulation, return hardcoded coordinates
-      // In production, use Google Geocoding API
-      const coordinates: Record<string, { lat: number; lng: number }> = {
-        'Fairfield University': { lat: 41.1745, lng: -73.2637 },
-        'Fairfield Metro Station': { lat: 41.1764, lng: -73.2897 },
-        'Fairfield Train Station': { lat: 41.1745, lng: -73.2637 },
-        'JFK Airport': { lat: 40.6413, lng: -73.7781 },
-        'LaGuardia Airport': { lat: 40.7769, lng: -73.8740 },
-        'Newark Airport': { lat: 40.6895, lng: -74.1745 },
-        'Bradley International Airport': { lat: 41.9389, lng: -72.6832 },
-        'Tweed New Haven Airport': { lat: 41.2637, lng: -72.8868 },
+      const driverStatus: DriverStatus = {
+        driverId,
+        status: data.status || 'offline',
+        currentLocation: data.currentLocation ? {
+          lat: data.currentLocation.lat,
+          lng: data.currentLocation.lng,
+          timestamp: data.currentLocation.timestamp?.toDate() || new Date(),
+          heading: data.currentLocation.heading || 0,
+          speed: data.currentLocation.speed || 0,
+          accuracy: data.currentLocation.accuracy || 0,
+          altitude: data.currentLocation.altitude,
+          batteryLevel: data.currentLocation.batteryLevel,
+          isMoving: data.currentLocation.speed > 0
+        } : undefined,
+        currentBookingId: data.currentBookingId,
+        lastUpdated: data.lastUpdated?.toDate() || new Date(),
+        estimatedArrival: data.estimatedArrival?.toDate()
       };
 
-      // Try to match address
-      for (const [key, coords] of Object.entries(coordinates)) {
-        if (address.toLowerCase().includes(key.toLowerCase())) {
-          return coords;
+      // Notify location update callbacks
+      if (driverStatus.currentLocation) {
+        const locationCallback = this.locationUpdateCallbacks.get(driverId);
+        if (locationCallback) {
+          locationCallback(driverStatus.currentLocation);
         }
       }
 
-      // Default to Fairfield area if no match
-      return { lat: 41.2619, lng: -73.2897 };
+      // Notify status update callbacks
+      const statusCallback = this.statusUpdateCallbacks.get(driverId);
+      if (statusCallback) {
+        statusCallback(driverStatus);
+      }
+
+      console.log('📍 Driver update received:', driverStatus);
     } catch (error) {
-      console.error('Error getting coordinates:', error);
+      console.error('Error handling driver update:', error);
+    }
+  }
+
+  // Update driver location in real-time
+  async updateDriverLocation(driverId: string, location: DriverLocation): Promise<void> {
+    try {
+      const driverRef = doc(db, 'drivers', driverId);
+      
+      await updateDoc(driverRef, {
+        currentLocation: {
+          lat: location.lat,
+          lng: location.lng,
+          timestamp: serverTimestamp(),
+          heading: location.heading,
+          speed: location.speed,
+          accuracy: location.accuracy,
+          altitude: location.altitude,
+          batteryLevel: location.batteryLevel,
+          isMoving: location.isMoving
+        },
+        lastUpdated: serverTimestamp()
+      });
+
+      console.log('📍 Driver location updated:', location);
+    } catch (error) {
+      console.error('Error updating driver location:', error);
+      throw error;
+    }
+  }
+
+  // Update driver status
+  async updateDriverStatus(driverId: string, status: DriverStatus['status'], bookingId?: string): Promise<void> {
+    try {
+      const driverRef = doc(db, 'drivers', driverId);
+      
+      const updateData: any = {
+        status,
+        lastUpdated: serverTimestamp()
+      };
+
+      if (bookingId) {
+        updateData.currentBookingId = bookingId;
+      }
+
+      await updateDoc(driverRef, updateData);
+
+      console.log('🔄 Driver status updated:', status);
+    } catch (error) {
+      console.error('Error updating driver status:', error);
+      throw error;
+    }
+  }
+
+  // Get driver's current location
+  async getDriverLocation(driverId: string): Promise<DriverLocation | null> {
+    try {
+      const driverRef = doc(db, 'drivers', driverId);
+      const driverDoc = await getDocs(query(collection(db, 'drivers'), where('id', '==', driverId), limit(1)));
+      
+      if (!driverDoc.empty) {
+        const data = driverDoc.docs[0].data();
+        if (data.currentLocation) {
+          return {
+            lat: data.currentLocation.lat,
+            lng: data.currentLocation.lng,
+            timestamp: data.currentLocation.timestamp?.toDate() || new Date(),
+            heading: data.currentLocation.heading || 0,
+            speed: data.currentLocation.speed || 0,
+            accuracy: data.currentLocation.accuracy || 0,
+            altitude: data.currentLocation.altitude,
+            batteryLevel: data.currentLocation.batteryLevel,
+            isMoving: data.currentLocation.speed > 0
+          };
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error getting driver location:', error);
       return null;
     }
   }
 
-  // Start location updates for a booking
-  private startLocationUpdates(bookingId: string, route: DriverLocation[]): void {
-    let currentIndex = 0;
-    
-    const interval = setInterval(async () => {
-      if (currentIndex >= route.length) {
-        // Route completed
-        this.stopTracking(bookingId);
-        return;
-      }
-
-      const location = route[currentIndex];
-      
-      try {
-        // Update booking with new location
-        await updateBooking(bookingId, {
-          driverLocation: location,
-          estimatedArrival: this.calculateETA(route, currentIndex),
-          updatedAt: new Date(),
-        });
-
-        // Send real-time update
-        await this.sendLocationUpdate(bookingId, location);
-
-        currentIndex++;
-      } catch (error) {
-        console.error('Error updating driver location:', error);
-      }
-    }, 30000); // Update every 30 seconds
-
-    this.activeTrackings.set(bookingId, interval);
-  }
-
-  // Calculate ETA based on current position in route
-  private calculateETA(route: DriverLocation[], currentIndex: number): Date {
-    const remainingPoints = route.length - currentIndex;
-    const remainingMinutes = remainingPoints * 0.5; // 30 seconds per point = 0.5 minutes
-    return new Date(Date.now() + remainingMinutes * 60000);
-  }
-
-  // Send location update via real-time API
-  private async sendLocationUpdate(bookingId: string, location: DriverLocation): Promise<void> {
+  // Get all available drivers near a location
+  async getAvailableDriversNearLocation(
+    latitude: number, 
+    longitude: number, 
+    radiusMiles: number = 10
+  ): Promise<DriverStatus[]> {
     try {
-      const response = await fetch(`/api/ws/bookings/${bookingId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'location_update',
-          data: {
-            location,
-            estimatedArrival: this.calculateETA(this.driverRoutes.get(bookingId) || [], 0),
-          },
-        }),
+      // TODO: Implement geospatial query with Firebase GeoFirestore
+      // For now, get all available drivers
+      const driversQuery = query(
+        collection(db, 'drivers'),
+        where('status', '==', 'available'),
+        orderBy('lastUpdated', 'desc'),
+        limit(20)
+      );
+
+      const driversSnapshot = await getDocs(driversQuery);
+      const drivers: DriverStatus[] = [];
+
+      driversSnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.currentLocation) {
+          // Calculate distance (simplified - should use proper geospatial query)
+          const distance = this.calculateDistance(
+            latitude, longitude,
+            data.currentLocation.lat, data.currentLocation.lng
+          );
+
+          if (distance <= radiusMiles) {
+            drivers.push({
+              driverId: doc.id,
+              status: data.status,
+              currentLocation: {
+                lat: data.currentLocation.lat,
+                lng: data.currentLocation.lng,
+                timestamp: data.currentLocation.timestamp?.toDate() || new Date(),
+                heading: data.currentLocation.heading || 0,
+                speed: data.currentLocation.speed || 0,
+                accuracy: data.currentLocation.accuracy || 0,
+                altitude: data.currentLocation.altitude,
+                batteryLevel: data.currentLocation.batteryLevel,
+                isMoving: data.currentLocation.speed > 0
+              },
+              currentBookingId: data.currentBookingId,
+              lastUpdated: data.lastUpdated?.toDate() || new Date(),
+              estimatedArrival: data.estimatedArrival?.toDate()
+            });
+          }
+        }
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      return drivers;
     } catch (error) {
-      console.error('Error sending location update:', error);
+      console.error('Error getting available drivers:', error);
+      return [];
     }
   }
 
-  // Get current tracking status
-  getTrackingStatus(bookingId: string): boolean {
-    return this.activeTrackings.has(bookingId);
+  // Calculate distance between two points (Haversine formula)
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 3959; // Earth's radius in miles
+    const dLat = this.toRadians(lat2 - lat1);
+    const dLon = this.toRadians(lon2 - lon1);
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
 
-  // Get all active trackings
-  getActiveTrackings(): string[] {
-    return Array.from(this.activeTrackings.keys());
+  private toRadians(degrees: number): number {
+    return degrees * (Math.PI / 180);
+  }
+
+  // Register callback for location updates
+  onLocationUpdate(driverId: string, callback: (location: DriverLocation) => void): void {
+    this.locationUpdateCallbacks.set(driverId, callback);
+  }
+
+  // Register callback for status updates
+  onStatusUpdate(driverId: string, callback: (status: DriverStatus) => void): void {
+    this.statusUpdateCallbacks.set(driverId, callback);
+  }
+
+  // Stop tracking for a driver
+  stopDriverTracking(driverId: string): void {
+    const unsubscribe = this.activeSubscriptions.get(driverId);
+    if (unsubscribe) {
+      unsubscribe();
+      this.activeSubscriptions.delete(driverId);
+    }
+    
+    this.locationUpdateCallbacks.delete(driverId);
+    this.statusUpdateCallbacks.delete(driverId);
+    
+    console.log('🛑 Driver tracking stopped for:', driverId);
+  }
+
+  // Get all active driver tracking subscriptions
+  getActiveDriverSubscriptions(): string[] {
+    return Array.from(this.activeSubscriptions.keys());
+  }
+
+  // Clean up all subscriptions
+  cleanup(): void {
+    this.activeSubscriptions.forEach((unsubscribe) => {
+      unsubscribe();
+    });
+    this.activeSubscriptions.clear();
+    this.locationUpdateCallbacks.clear();
+    this.statusUpdateCallbacks.clear();
+    
+    console.log('🧹 All driver tracking subscriptions cleaned up');
   }
 }
 

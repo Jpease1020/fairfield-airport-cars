@@ -2,6 +2,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getMessaging } from "firebase/messaging";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -28,4 +29,14 @@ try {
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { app, db, auth };
+// Initialize Firebase Messaging (client-side only)
+let messaging: any = null;
+if (typeof window !== 'undefined') {
+  try {
+    messaging = getMessaging(app);
+  } catch (error) {
+    console.warn('Firebase Messaging not available:', error);
+  }
+}
+
+export { app, db, auth, messaging };
