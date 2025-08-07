@@ -20,6 +20,17 @@ interface BroadcastNotificationRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Firebase is properly initialized
+    try {
+      getMessaging();
+    } catch (error) {
+      console.error('Firebase not initialized:', error);
+      return NextResponse.json(
+        { error: 'Firebase service not available' },
+        { status: 503 }
+      );
+    }
+
     const { notification, topic }: BroadcastNotificationRequest = await request.json();
 
     if (!notification?.title || !notification?.body) {
@@ -79,7 +90,7 @@ export async function POST(request: NextRequest) {
         .collection('user_tokens')
         .get();
 
-      const tokens = tokensSnapshot.docs.map(doc => doc.data().token).filter(Boolean);
+      const tokens = tokensSnapshot.docs.map((doc: any) => doc.data().token).filter(Boolean);
 
       if (tokens.length === 0) {
         return NextResponse.json(
