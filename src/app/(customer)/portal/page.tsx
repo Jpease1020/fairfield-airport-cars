@@ -8,7 +8,6 @@ import {
   useToast,
   Container,
   Stack,
-  CustomerLayout,
   H1,
   Text
 } from '@/ui';

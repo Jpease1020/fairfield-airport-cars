@@ -120,11 +120,7 @@ export { Skeleton } from './skeletons/Skeleton';
 export { default as Icon } from './components/icons/Icon';
 
 // Layer 10: Layout System
-export { SimpleLayout } from './layout/SimpleLayout';
 export { UnifiedLayout } from './layout/UnifiedLayout';
-
-// Legacy alias for backward compatibility
-export { SimpleLayout as CustomerLayout } from './layout/SimpleLayout';
 
 // System utilities
 export {

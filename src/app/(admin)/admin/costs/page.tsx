@@ -24,7 +24,6 @@ import {
   Alert
 } from '@/ui';
 import { AdminPageWrapper } from '@/components/app';
-import withAuth from '../withAuth';
 
 function CostsPageContent() {
   const { addToast } = useToast();
@@ -124,7 +123,6 @@ function CostsPageContent() {
     );
   };
 
-
   const headerActions = [
     { 
       label: 'Refresh', 
@@ -191,17 +189,6 @@ function CostsPageContent() {
       render: (_, cost) => {
         const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
         const isPositive = variance >= 0;
-        
-        // let varianceClass = 'cost-variance-neutral';
-        // if (cost.actualMonthlyCost === 0) {
-        //   varianceClass = 'cost-variance-pending';
-        // } else if (variance > 10) {
-        //   varianceClass = 'cost-variance-over';
-        // } else if (variance > 0) {
-        //   varianceClass = 'cost-variance-slightly-over';
-        // } else {
-        //   varianceClass = 'cost-variance-under';
-        // }
         
         return (
           <Container>
@@ -443,4 +430,4 @@ function CostsPage() {
   );
 }
 
-export default withAuth(CostsPage);
+export default CostsPage; 

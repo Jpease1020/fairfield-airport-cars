@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
-import withAuth from '../withAuth';
 import { getAllDrivers, getAvailableDrivers, updateDocument, type Driver } from '@/lib/services/database-service';
 import { 
   Container, 
@@ -302,4 +301,4 @@ const DriversPage: NextPage = () => {
   return <DriversPageContent />;
 };
 
-export default withAuth(DriversPage);
+export default DriversPage;
