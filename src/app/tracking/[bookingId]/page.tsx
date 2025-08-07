@@ -16,7 +16,7 @@ import {
 import { TrackingMap } from '@/components/business/TrackingMap';
 import { TrafficETA } from '@/components/business/TrafficETA';
 import { getBooking } from '@/lib/services/booking-service';
-import { firebaseTrackingService, type ETACalculation } from '@/lib/services/firebase-tracking-service';
+import { firebaseTrackingService, type ETACalculation, type DriverLocation } from '@/lib/services/firebase-tracking-service';
 import { Booking } from '@/types/booking';
 
 export default function EnhancedTrackingPage() {
@@ -28,8 +28,9 @@ export default function EnhancedTrackingPage() {
   const [error, setError] = useState<string | null>(null);
   const [etaCalculation, setETACalculation] = useState<ETACalculation | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [trackingActive, setTrackingActive] = useState(false);
 
-  // Load booking data
+  // Load booking data and initialize Firebase tracking
   useEffect(() => {
     const loadBooking = async () => {
       try {
@@ -46,9 +47,11 @@ export default function EnhancedTrackingPage() {
 
         // Initialize Firebase tracking
         await firebaseTrackingService.initializeTracking(bookingId);
+        setTrackingActive(true);
         
         // Set up location update callback
-        firebaseTrackingService.onLocationUpdate(bookingId, (location) => {
+        firebaseTrackingService.onLocationUpdate(bookingId, (location: DriverLocation) => {
+          console.log('📍 Driver location update received:', location);
           setBooking(prev => prev ? {
             ...prev,
             driverLocation: location,
@@ -56,6 +59,34 @@ export default function EnhancedTrackingPage() {
           } : null);
           setLastUpdate(new Date());
         });
+
+        // Set up ETA update callback
+        firebaseTrackingService.onETAUpdate(bookingId, (eta: ETACalculation) => {
+          console.log('🕐 ETA update received:', eta);
+          setETACalculation(eta);
+          setLastUpdate(new Date());
+        });
+
+        // Calculate initial ETA if booking is in progress
+        if (bookingData.status === 'in-progress' || bookingData.status === 'confirmed') {
+          try {
+            const initialETA = await firebaseTrackingService.calculateAdvancedETA(
+              bookingId,
+              bookingData.pickupLocation,
+              bookingData.dropoffLocation,
+              bookingData.driverLocation ? {
+                lat: bookingData.driverLocation.lat,
+                lng: bookingData.driverLocation.lng,
+                timestamp: bookingData.driverLocation.timestamp,
+                heading: bookingData.driverLocation.heading || 0,
+                speed: bookingData.driverLocation.speed || 0
+              } : undefined
+            );
+            setETACalculation(initialETA);
+          } catch (etaError) {
+            console.error('Error calculating initial ETA:', etaError);
+          }
+        }
 
       } catch (err) {
         console.error('Error loading booking:', err);
@@ -71,9 +102,11 @@ export default function EnhancedTrackingPage() {
 
     // Cleanup on unmount
     return () => {
-      firebaseTrackingService.stopTracking(bookingId);
+      if (trackingActive) {
+        firebaseTrackingService.stopTracking(bookingId);
+      }
     };
-  }, [bookingId]);
+  }, [bookingId, trackingActive]);
 
   // Handle ETA updates
   const handleETAUpdate = (eta: ETACalculation) => {
@@ -83,7 +116,31 @@ export default function EnhancedTrackingPage() {
 
   // Handle map load
   const handleMapLoad = (map: google.maps.Map) => {
-    console.log('Enhanced map loaded successfully');
+    console.log('🗺️ Enhanced map loaded successfully');
+  };
+
+  // Refresh tracking data
+  const refreshTracking = async () => {
+    if (!booking) return;
+    
+    try {
+      const updatedETA = await firebaseTrackingService.calculateAdvancedETA(
+        bookingId,
+        booking.pickupLocation,
+        booking.dropoffLocation,
+        booking.driverLocation ? {
+          lat: booking.driverLocation.lat,
+          lng: booking.driverLocation.lng,
+          timestamp: booking.driverLocation.timestamp,
+          heading: booking.driverLocation.heading || 0,
+          speed: booking.driverLocation.speed || 0
+        } : undefined
+      );
+      setETACalculation(updatedETA);
+      setLastUpdate(new Date());
+    } catch (err) {
+      console.error('Error refreshing tracking:', err);
+    }
   };
 
   if (loading) {
@@ -92,6 +149,9 @@ export default function EnhancedTrackingPage() {
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
           <Text>Loading enhanced tracking information...</Text>
+          <Text variant="muted" size="sm">
+            Initializing real-time location tracking...
+          </Text>
         </Stack>
       </Container>
     );
@@ -117,13 +177,25 @@ export default function EnhancedTrackingPage() {
       <Stack spacing="xl">
         {/* Page Header */}
         <Stack spacing="sm">
-          <Text weight="bold" size="xl">Enhanced Live Tracking</Text>
-          <Text variant="muted">
-            Real-time tracking with traffic-aware ETA calculations
-          </Text>
+          <Stack direction="horizontal" justify="space-between" align="center">
+            <Stack spacing="xs">
+              <Text weight="bold" size="xl">Enhanced Live Tracking</Text>
+              <Text variant="muted">
+                Real-time tracking with traffic-aware ETA calculations
+              </Text>
+            </Stack>
+            <Button 
+              variant="outline" 
+              onClick={refreshTracking}
+              disabled={!trackingActive}
+            >
+              Refresh ETA
+            </Button>
+          </Stack>
           {lastUpdate && (
             <Text variant="muted" size="sm">
               Last updated: {lastUpdate.toLocaleTimeString()}
+              {trackingActive && ' • Live tracking active'}
             </Text>
           )}
         </Stack>
@@ -133,7 +205,15 @@ export default function EnhancedTrackingPage() {
           {/* Tracking Map */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
-              <Text weight="bold" size="lg">Live Map</Text>
+              <Stack direction="horizontal" justify="space-between" align="center">
+                <Text weight="bold" size="lg">Live Map</Text>
+                <Badge 
+                  variant={trackingActive ? 'success' : 'warning'}
+                  size="sm"
+                >
+                  {trackingActive ? 'Live' : 'Offline'}
+                </Badge>
+              </Stack>
               <TrackingMap
                 bookingId={booking.id!}
                 pickupLocation={booking.pickupLocation}
@@ -242,6 +322,20 @@ export default function EnhancedTrackingPage() {
                 </Text>
               </Stack>
             )}
+
+            {/* Driver Location Info */}
+            {booking.driverLocation && (
+              <Stack spacing="sm">
+                <Text variant="muted" size="sm">Driver Location</Text>
+                <Text weight="bold">
+                  {booking.driverLocation.lat.toFixed(4)}, {booking.driverLocation.lng.toFixed(4)}
+                </Text>
+                <Text size="sm" variant="muted">
+                  Speed: {booking.driverLocation.speed || 0} mph • 
+                  Updated: {booking.driverLocation.timestamp.toLocaleTimeString()}
+                </Text>
+              </Stack>
+            )}
           </Stack>
         </Box>
 
@@ -272,6 +366,20 @@ export default function EnhancedTrackingPage() {
               <Text size="sm">
                 Your driver's location and ETA are being updated in real-time. 
                 The map will automatically refresh as your driver moves.
+                {trackingActive && ' Firebase tracking is connected and active.'}
+              </Text>
+            </Stack>
+          </Alert>
+        )}
+
+        {/* Tracking Status */}
+        {!trackingActive && booking.status !== 'completed' && (
+          <Alert variant="warning">
+            <Stack spacing="xs">
+              <Text weight="bold">Tracking Offline</Text>
+              <Text size="sm">
+                Real-time tracking is currently offline. ETA calculations may not be accurate.
+                Try refreshing the page to reconnect.
               </Text>
             </Stack>
           </Alert>
