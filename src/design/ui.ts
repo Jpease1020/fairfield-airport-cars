@@ -119,9 +119,6 @@ export { Skeleton } from './skeletons/Skeleton';
 // Layer 9: Icons (foundational)
 export { default as Icon } from './components/icons/Icon';
 
-// Layer 10: Layout System
-export { UnifiedLayout } from './layout/UnifiedLayout';
-
 // System utilities
 export {
   isValidColorVariant,

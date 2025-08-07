@@ -1,6 +1,8 @@
 import React from 'react';
+import { CustomerNavigation } from '@/components/app/CustomerNavigation';
+import { Container } from '@/design/layout/containers/Container';
+import { Footer } from '@/design/page-sections/Footer';
 import { 
-  Container,
   Stack,
   H4,
   Text,
@@ -9,7 +11,6 @@ import {
   H2
 } from '@/ui';
 import { StaticHeroSection } from '@/ui';
-import Link from 'next/link';
 
 function HomePageContent() {
   // Features data
@@ -172,6 +173,18 @@ function HomePageContent() {
   );
 }
 
-export default function HomePage() {
-  return <HomePageContent />;
+export default function RootPage() {
+  return (
+    <div>
+      <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation">
+        <CustomerNavigation />
+      </Container>
+      
+      <Container as="main" maxWidth="full" data-testid="layout-main-content">
+        <HomePageContent />
+      </Container>
+      
+      <Footer data-testid="layout-footer"/>
+    </div>
+  );
 } 
