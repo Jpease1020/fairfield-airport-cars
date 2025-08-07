@@ -47,11 +47,15 @@ class FirebaseTrackingService {
   private activeSubscriptions: Map<string, () => void> = new Map();
   private locationUpdateCallbacks: Map<string, (location: DriverLocation) => void> = new Map();
   private etaUpdateCallbacks: Map<string, (eta: ETACalculation) => void> = new Map();
+  private googleMapsLoaded = false;
 
   // Initialize real-time tracking for a booking
   async initializeTracking(bookingId: string): Promise<void> {
     try {
       console.log('🚀 Initializing Firebase tracking for booking:', bookingId);
+      
+      // Load Google Maps API if not already loaded
+      await this.loadGoogleMapsAPI();
       
       // Set up real-time subscription to booking document
       const bookingRef = doc(db, 'bookings', bookingId);
@@ -72,6 +76,29 @@ class FirebaseTrackingService {
       console.error('❌ Error initializing Firebase tracking:', error);
       throw error;
     }
+  }
+
+  // Load Google Maps API
+  private async loadGoogleMapsAPI(): Promise<void> {
+    if (this.googleMapsLoaded || (window.google && window.google.maps)) {
+      this.googleMapsLoaded = true;
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,geometry`;
+      script.async = true;
+      script.defer = true;
+      
+      script.onload = () => {
+        this.googleMapsLoaded = true;
+        resolve();
+      };
+      script.onerror = () => reject(new Error('Failed to load Google Maps API'));
+      
+      document.head.appendChild(script);
+    });
   }
 
   // Handle real-time tracking updates
@@ -159,6 +186,9 @@ class FirebaseTrackingService {
     try {
       console.log('🕐 Calculating advanced ETA for booking:', bookingId);
 
+      // Load Google Maps API if needed
+      await this.loadGoogleMapsAPI();
+
       // Get current traffic conditions
       const trafficConditions = await this.getTrafficConditions(pickupLocation, dropoffLocation);
       
@@ -197,29 +227,62 @@ class FirebaseTrackingService {
     }
   }
 
-  // Get traffic conditions for a route
+  // Get traffic conditions for a route using Google Maps API
   private async getTrafficConditions(pickup: string, dropoff: string): Promise<'low' | 'medium' | 'high'> {
     try {
-      // TODO: Integrate with Google Maps Traffic API
-      // For now, use time-based approximation
-      const now = new Date();
-      const hour = now.getHours();
+      if (!this.googleMapsLoaded || !window.google?.maps) {
+        // Fallback to time-based approximation
+        return this.getTimeBasedTrafficConditions();
+      }
+
+      // Use Google Maps Distance Matrix API for traffic conditions
+      const service = new google.maps.DistanceMatrixService();
       
-      // Peak hours: 7-9 AM and 4-7 PM
-      if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) {
-        return 'high';
-      } else if ((hour >= 6 && hour <= 10) || (hour >= 15 && hour <= 20)) {
-        return 'medium';
-      } else {
+      const response = await service.getDistanceMatrix({
+        origins: [pickup],
+        destinations: [dropoff],
+        travelMode: google.maps.TravelMode.DRIVING,
+        drivingOptions: {
+          departureTime: new Date(),
+          trafficModel: google.maps.TrafficModel.BEST_GUESS
+        }
+      });
+
+      if (response.rows[0]?.elements[0]?.duration_in_traffic) {
+        const durationInTraffic = response.rows[0].elements[0].duration_in_traffic.value;
+        const durationNoTraffic = response.rows[0].elements[0].duration.value;
+        
+        // Calculate traffic multiplier
+        const trafficMultiplier = durationInTraffic / durationNoTraffic;
+        
+        if (trafficMultiplier > 1.5) return 'high';
+        if (trafficMultiplier > 1.2) return 'medium';
         return 'low';
       }
+
+      return this.getTimeBasedTrafficConditions();
     } catch (error) {
       console.error('Error getting traffic conditions:', error);
+      return this.getTimeBasedTrafficConditions();
+    }
+  }
+
+  // Fallback time-based traffic conditions
+  private getTimeBasedTrafficConditions(): 'low' | 'medium' | 'high' {
+    const now = new Date();
+    const hour = now.getHours();
+    
+    // Peak hours: 7-9 AM and 4-7 PM
+    if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) {
+      return 'high';
+    } else if ((hour >= 6 && hour <= 10) || (hour >= 15 && hour <= 20)) {
+      return 'medium';
+    } else {
       return 'low';
     }
   }
 
-  // Calculate route with traffic awareness
+  // Calculate route with traffic awareness using Google Maps API
   private async calculateRouteWithTraffic(
     currentLocation: DriverLocation,
     pickup: string,
@@ -227,48 +290,102 @@ class FirebaseTrackingService {
     trafficConditions: 'low' | 'medium' | 'high'
   ): Promise<{ distance: number; duration: number; polyline: string }> {
     try {
-      // TODO: Integrate with Google Maps Directions API with traffic
-      // For now, use simplified calculation
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Calculate base distance (simplified)
-      const baseDistance = this.calculateDistance(pickup, dropoff);
-      const baseDuration = baseDistance * 2; // 2 minutes per mile
-      
-      // Apply traffic multiplier
-      let trafficMultiplier = 1;
-      switch (trafficConditions) {
-        case 'low':
-          trafficMultiplier = 1;
-          break;
-        case 'medium':
-          trafficMultiplier = 1.3;
-          break;
-        case 'high':
-          trafficMultiplier = 1.7;
-          break;
+      if (!this.googleMapsLoaded || !window.google?.maps) {
+        // Fallback calculation
+        return this.calculateFallbackRoute(pickup, dropoff, trafficConditions);
       }
+
+      const directionsService = new google.maps.DirectionsService();
       
-      const adjustedDuration = Math.round(baseDuration * trafficMultiplier);
-      
-      return {
-        distance: baseDistance,
-        duration: adjustedDuration,
-        polyline: '' // TODO: Get actual polyline from Google Maps API
-      };
+      const response = await directionsService.route({
+        origin: pickup,
+        destination: dropoff,
+        travelMode: google.maps.TravelMode.DRIVING,
+        drivingOptions: {
+          departureTime: new Date(),
+          trafficModel: google.maps.TrafficModel.BEST_GUESS
+        }
+      });
+
+      if (response.routes.length > 0) {
+        const route = response.routes[0];
+        const leg = route.legs[0];
+        
+        return {
+          distance: (leg.distance?.value || 0) / 1609.34, // Convert meters to miles
+          duration: Math.round((leg.duration_in_traffic?.value || leg.duration?.value || 0) / 60), // Convert seconds to minutes
+          polyline: (route.overview_polyline as any)?.encoded_polyline || ''
+        };
+      }
+
+      return this.calculateFallbackRoute(pickup, dropoff, trafficConditions);
     } catch (error) {
       console.error('Error calculating route with traffic:', error);
-      throw error;
+      return this.calculateFallbackRoute(pickup, dropoff, trafficConditions);
     }
   }
 
-  // Calculate distance between two locations
-  private calculateDistance(from: string, to: string): number {
-    // TODO: Use Google Maps Distance Matrix API
-    // For now, return estimated distance
-    return 15; // 15 miles as default
+  // Fallback route calculation
+  private calculateFallbackRoute(
+    pickup: string, 
+    dropoff: string, 
+    trafficConditions: 'low' | 'medium' | 'high'
+  ): { distance: number; duration: number; polyline: string } {
+    // Simulate API call delay
+    const baseDistance = 15; // Default distance for fallback
+    const baseDuration = baseDistance * 2; // 2 minutes per mile
+    
+    // Apply traffic multiplier
+    let trafficMultiplier = 1;
+    switch (trafficConditions) {
+      case 'low':
+        trafficMultiplier = 1;
+        break;
+      case 'medium':
+        trafficMultiplier = 1.3;
+        break;
+      case 'high':
+        trafficMultiplier = 1.7;
+        break;
+    }
+    
+    const adjustedDuration = Math.round(baseDuration * trafficMultiplier);
+    
+    return {
+      distance: baseDistance,
+      duration: adjustedDuration,
+      polyline: '' // No polyline in fallback
+    };
+  }
+
+  // Calculate distance between two locations using Google Maps Geocoding
+  private async calculateDistance(from: string, to: string): Promise<number> {
+    try {
+      if (!this.googleMapsLoaded || !window.google?.maps) {
+        return 15; // Default fallback distance
+      }
+
+      const geocoder = new google.maps.Geocoder();
+      
+      const [fromResult, toResult] = await Promise.all([
+        geocoder.geocode({ address: from }),
+        geocoder.geocode({ address: to })
+      ]);
+
+      if (fromResult.results.length > 0 && toResult.results.length > 0) {
+        const fromLocation = fromResult.results[0].geometry.location;
+        const toLocation = toResult.results[0].geometry.location;
+        
+        // Calculate distance using Haversine formula
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(fromLocation, toLocation);
+        return distance / 1609.34; // Convert meters to miles
+      }
+
+      return 15; // Default fallback distance
+    } catch (error) {
+      console.error('Error calculating distance:', error);
+      return 15; // Default fallback distance
+    }
   }
 
   // Calculate confidence level for ETA
