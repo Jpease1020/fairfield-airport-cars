@@ -2,7 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import { X, CheckCircle, Clock } from 'lucide-react';
-import { useAdmin } from '@/design/providers/AdminProvider';
+import { useAdminStatus } from '@/hooks/useAdminStatus';
 import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
 import { Container, H4, Span } from '@/ui';
 import { Stack, Box } from '@/ui';
@@ -10,17 +10,17 @@ import { Button } from '@/ui';
 import { Textarea, Select } from '@/ui';
 import { EditableText } from '@/ui';
 
-interface SimpleCommentSystemProps {
+interface CommentSystemProps {
   children: ReactNode;
 }
 
-const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
-  const { isAdmin, commentMode } = useAdmin();
+const CommentSystem = ({ children }: CommentSystemProps) => {
+  const { isAdmin } = useAdminStatus();
+  const [commentMode, setCommentMode] = useState(false);
   const [comments, setComments] = useState<ConfluenceComment[]>([]);
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
-
 
   // Load comments from Firebase
   useEffect(() => {
@@ -77,8 +77,6 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
       const elementText = target.textContent?.trim() || target.tagName.toLowerCase();
       
       console.log('💬 CommentSystem - Adding comment to element:', elementText);
-      
-      // Calculate position for comment box
       
       setSelectedElement(target);
       setActiveCommentBox(elementId);
@@ -287,6 +285,7 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
     });
   }, [comments, isAdmin]);
 
+  // Don't render if not admin
   if (!isAdmin) {
     return <>{children}</>;
   }
@@ -294,156 +293,124 @@ const SimpleCommentSystem = ({ children }: SimpleCommentSystemProps) => {
   return (
     <>
       {children}
+      
+      {/* Comment Mode Toggle Button */}
+      <Container
+        variant="elevated"
+        padding="md"
+      >
+        <Button
+          onClick={() => setCommentMode(!commentMode)}
+          variant={commentMode ? 'primary' : 'secondary'}
+        >
+          {commentMode ? '✓' : '○'} Comments
+        </Button>
+      </Container>
 
-              {/* Comment Box */}
-        {activeCommentBox && selectedElement && (
-          <Container
-            data-comment-box
-            variant="elevated"
-            padding="md"
-          >
-            <Stack direction="horizontal" align="center" justify="space-between">
+      {/* Comment Box */}
+      {activeCommentBox && (
+        <Container
+          data-comment-box
+          variant="elevated"
+          padding="lg"
+        >
+          <Container variant="elevated" padding="sm">
             <H4>
-              {existingComments.length > 0 ? (
-                <EditableText field="simpleCommentSystem.commentsHeading" defaultValue={`Comments (${existingComments.length})`}>
-                  {`Comments (${existingComments.length})`}
-                </EditableText>
-              ) : (
-                <EditableText field="simpleCommentSystem.addCommentHeading" defaultValue="Add Comment">
-                  Add Comment
-                </EditableText>
-              )}
+              <EditableText field="simpleCommentSystem.commentsHeading" defaultValue={`Comments (${existingComments.length})`}>
+                Comments ({existingComments.length})
+              </EditableText>
             </H4>
             <Button
-              onClick={() => {
-                setActiveCommentBox(null);
-                setSelectedElement(null);
-              }}
+              onClick={() => setActiveCommentBox(null)}
+              variant="ghost"
             >
               <X />
             </Button>
-          </Stack>
-        
-        <Container>
-          <strong>Element:</strong> {selectedElement.textContent?.slice(0, 50) || selectedElement.tagName.toLowerCase()}
-        </Container>
-        
-        {/* Existing Comments */}
-        {existingComments.length > 0 && (
-          <Stack spacing="md">
-            {existingComments.map(comment => (
-              <Box key={comment.id}>
-                <Stack direction="horizontal" align="center" justify="space-between">
-                  <Container>
-                    {getStatusIcon(comment.status)}
-                    <Span>
-                      <EditableText field="simpleCommentSystem.statusLabel" defaultValue={comment.status}>
-                        {comment.status}
-                      </EditableText>
+          </Container>
+
+          {/* Existing Comments */}
+          {existingComments.length > 0 && (
+            <Container variant="elevated" padding="sm">
+              {existingComments.map((comment) => (
+                <Container
+                  key={comment.id}
+                  variant="elevated"
+                  padding="sm"
+                >
+                  <Container variant="elevated" padding="xs">
+                    <Span variant="default" size="xs" color="muted">
+                      {new Date(comment.createdAt).toLocaleDateString()}
                     </Span>
+                    <Container variant="elevated" padding="xs">
+                      <Select
+                        value={comment.status}
+                        onChange={(e) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
+                        options={[
+                          { value: 'open', label: 'Open' },
+                          { value: 'in-progress', label: 'In Progress' },
+                          { value: 'resolved', label: 'Resolved' }
+                        ]}
+                      />
+                      <Button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        variant="danger"
+                      >
+                        Delete
+                      </Button>
+                    </Container>
                   </Container>
-                  <Button
-                    onClick={() => handleDeleteComment(comment.id)}
-                  >
-                    <X />
-                  </Button>
-                </Stack>
-                
-                <Textarea
-                  value={comment.comment}
-                  onChange={(e) => handleEditComment(comment.id, e.target.value)}
-                  rows={2}
-                />
-                
-                <Container>
-                  <Select
-                    value={comment.status}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
-                    options={[
-                      { value: 'open', label: 'Open' },
-                      { value: 'in-progress', label: 'In Progress' },
-                      { value: 'resolved', label: 'Resolved' }
-                    ]}
+                  <Container variant="elevated" padding="xs">
+                    <EditableText field="simpleCommentSystem.statusLabel" defaultValue={comment.status}>
+                      {comment.status}
+                    </EditableText>
+                  </Container>
+                  <Textarea
+                    value={comment.comment}
+                    onChange={(e) => handleEditComment(comment.id, e.target.value)}
+                    rows={3}
                   />
                 </Container>
-              </Box>
-            ))}
-          </Stack>
-        )}
-        
-        {/* New Comment Input */}
-        <Container>
-          <Textarea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Add a new comment..."
-            rows={3}
-            autoFocus
-          />
-          
-          <Stack direction="horizontal" spacing="sm">
-            <Button
-              onClick={handleAddComment}
-              disabled={!commentText.trim()}
-            >
-              <EditableText field="simpleCommentSystem.addCommentButton" defaultValue="Add Comment">
+              ))}
+            </Container>
+          )}
+
+          {/* Add New Comment */}
+          <Container variant="elevated" padding="sm">
+            <H4>
+              <EditableText field="simpleCommentSystem.addCommentHeading" defaultValue="Add Comment">
                 Add Comment
               </EditableText>
-            </Button>
-            <Button
-              onClick={() => {
-                setActiveCommentBox(null);
-                setSelectedElement(null);
-              }}
-            >
-              <EditableText field="simpleCommentSystem.closeButton" defaultValue="Close">
-                Close
-              </EditableText>
-            </Button>
-          </Stack>
+            </H4>
+            <Textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Enter your comment..."
+              rows={4}
+            />
+            <Container variant="elevated" padding="sm">
+              <Button
+                onClick={() => setActiveCommentBox(null)}
+                variant="secondary"
+              >
+                <EditableText field="simpleCommentSystem.closeButton" defaultValue="Close">
+                  Close
+                </EditableText>
+              </Button>
+              <Button
+                onClick={handleAddComment}
+                disabled={!commentText.trim()}
+                variant="primary"
+              >
+                <EditableText field="simpleCommentSystem.addCommentButton" defaultValue="Add Comment">
+                  Add Comment
+                </EditableText>
+              </Button>
+            </Container>
+          </Container>
         </Container>
-      </Container>
-    )}
-
-      {/* Global Styles */}
-      <style jsx global>{`
-        .simple-comment-icon {
-          transition: all 0.2s ease;
-        }
-        
-        .simple-comment-icon:hover {
-          transform: scale(1.1);
-        }
-        
-        .comment-mode-active * {
-          cursor: pointer !important;
-        }
-        
-        .comment-mode-active *:hover {
-          outline: 2px dashed #3b82f6 !important;
-          outline-offset: 1px !important;
-          background-color: rgba(59, 130, 246, 0.05) !important;
-        }
-        
-        .comment-mode-active *:hover::after {
-          content: "💬";
-          position: absolute;
-          top: 2px;
-          right: 2px;
-          background: #3b82f6;
-          color: white;
-          border-radius: 50%;
-          width: 16px;
-          height: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 8px;
-          z-index: 50;
-        }
-      `}</style>
+      )}
     </>
   );
 };
 
-export default SimpleCommentSystem; 
+export default CommentSystem; 

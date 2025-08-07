@@ -5,6 +5,7 @@ import { Container } from './containers/Container';
 import { CustomerNavigation } from '../../components/app/CustomerNavigation';
 import { AdminNavigation } from '../../components/app/AdminNavigation';
 import { Footer } from '../page-sections/Footer';
+import { CommentSystem } from '../../components/business';
 
 interface SimpleLayoutProps {
   children: React.ReactNode;
@@ -65,7 +66,7 @@ export const SimpleLayout: React.FC<SimpleLayoutProps> = ({
   const shouldShowFooter = showFooter && variant !== 'public';
 
   return (
-    <>
+    <CommentSystem>
       {/* Navigation - Full Width */}
       {getNavigation() && (
         <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation">
@@ -82,6 +83,6 @@ export const SimpleLayout: React.FC<SimpleLayoutProps> = ({
       {shouldShowFooter && ( 
         <Footer data-testid="layout-footer"/>
       )}
-    </>
+    </CommentSystem>
   );
 }; 
