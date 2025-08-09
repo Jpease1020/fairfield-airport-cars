@@ -308,6 +308,7 @@ export interface ButtonProps extends BaseComponentProps {
   href?: string;
   target?: string;
   rel?: string;
+  cmsKey?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -327,10 +328,13 @@ export const Button: React.FC<ButtonProps> = ({
   href,
   target,
   rel,
+  cmsKey,
   ...rest
 }) => {
   // Determine the component to render
   const renderComponent = href ? 'a' : Component;
+  const ref = React.useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
+  const label = typeof children === 'string' ? children : undefined;
   
   return (
     <StyledButton
@@ -348,6 +352,7 @@ export const Button: React.FC<ButtonProps> = ({
       href={href}
       target={target}
       rel={rel}
+      ref={ref as any}
       {...rest}
     >
       {loading && <LoadingSpinner size="sm" />}

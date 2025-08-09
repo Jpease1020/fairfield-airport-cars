@@ -7,12 +7,13 @@ import {
   Container,
   Stack,
   Box,
-  H1
+  H1,
+  H4
 } from '@/ui';
-import { EditableText } from '@/ui';
-import { EditableHeading } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function PrivacyPageContent() {
+  const { cmsData } = useCMSData();
   const privacySections = [
     {
       title: "1. Information We Collect",
@@ -94,12 +95,12 @@ function PrivacyPageContent() {
       <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <EditableText field="privacy.title" defaultValue="🔒 Privacy Policy" as="h1" align="center" data-testid="privacy-title">
-              🔒 Privacy Policy
-            </EditableText>
-            <EditableText field="privacy.effectiveDate" defaultValue="Effective Date: January 1, 2024 | Last Updated: January 1, 2024" variant="lead" align="center" size="lg" data-testid="privacy-effective-date">
-              Effective Date: January 1, 2024 | Last Updated: January 1, 2024
-            </EditableText>
+            <H1 align="center" data-testid="privacy-title">
+              {getCMSField(cmsData, 'privacy.title', '🔒 Privacy Policy')}
+            </H1>
+            <Text variant="lead" align="center" size="lg" data-testid="privacy-effective-date">
+              {getCMSField(cmsData, 'privacy.effectiveDate', 'Effective Date: January 1, 2024 | Last Updated: January 1, 2024')}
+            </Text>
           </Stack>
         </Stack>
       </Container>
@@ -111,21 +112,19 @@ function PrivacyPageContent() {
               {privacySections.map((section, index) => (
                 <Box key={index} data-testid={`privacy-section-${index}`}>
                   <Stack spacing="md">
-                    <EditableHeading data-testid={`privacy-section-title-${index}`} level={4} field={`privacy.sections.${index}.title`} defaultValue={section.title}>
-                      {section.title}
-                    </EditableHeading>
-                    <EditableText data-testid={`privacy-section-content-${index}`} field={`privacy.sections.${index}.content`} defaultValue={section.content}>
-                      {section.content}
-                    </EditableText>
+                    <H4 data-testid={`privacy-section-title-${index}`}>
+                      {getCMSField(cmsData, `privacy.sections.${index}.title`, section.title)}
+                    </H4>
+                    <Text data-testid={`privacy-section-content-${index}`}>
+                      {getCMSField(cmsData, `privacy.sections.${index}.content`, section.content)}
+                    </Text>
                     {section.items && (
                       <Stack data-testid={`privacy-section-items-${index}`} spacing="sm">
-                        {section.items.map((item, itemIndex) => (
-                          <Text key={itemIndex} data-testid={`privacy-section-item-${index}-${itemIndex}`}>
-                            <EditableText field={`privacy.sections.${index}.items.${itemIndex}`} defaultValue={item}>
-                              • {item}
-                            </EditableText>
-                          </Text>
-                        ))}
+                         {section.items.map((item, itemIndex) => (
+                           <Text key={itemIndex} data-testid={`privacy-section-item-${index}-${itemIndex}`}>
+                             {`• ${getCMSField(cmsData, `privacy.sections.${index}.items.${itemIndex}` , item)}`}
+                           </Text>
+                         ))}
                       </Stack>
                     )}
                   </Stack>

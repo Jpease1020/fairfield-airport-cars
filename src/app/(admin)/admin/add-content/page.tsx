@@ -8,11 +8,11 @@ import {
   Text,
   Button,
   ToastProvider,
-  EditableText,
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function AddContentPage() {
+  const { cmsData } = useCMSData();
   const cmsPages = [
     {
       title: "🏠 Homepage Content",
@@ -57,10 +57,7 @@ function AddContentPage() {
   };
 
   return (
-    <AdminPageWrapper
-      title="Content Management System"
-      subtitle="Edit website content and business information"
-    >
+
       <Container>
         <Stack spacing="lg">
           <Box>
@@ -68,9 +65,7 @@ function AddContentPage() {
               <Stack spacing="md">
                 <Text size="lg" weight="bold">📝 Content Editing Guide</Text>
                 <Text variant="muted">This is where you can edit all the text and content on your website. Choose a section below to get started.</Text>
-                <EditableText field="admin.cms.guide.description" defaultValue="To edit content on your website:">
-                  To edit content on your website:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.cms.guide.description', 'To edit content on your website:')}
                 <Stack spacing="sm">
                   <Container>1. Choose a section below that you want to edit</Container>
                   <Container>2. Click the "Edit Content" button to go to that section</Container>
@@ -119,7 +114,7 @@ function AddContentPage() {
           </Box>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    
   );
 }
 

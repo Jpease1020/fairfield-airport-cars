@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';   
 // Animations
 const fadeIn = keyframes`
@@ -57,7 +57,7 @@ const StyledOverlay = styled.div.withConfig({
   z-index: ${({ overlayZIndex }) => overlayZIndex};
   padding: ${spacing.xl};
   backdrop-filter: ${({ backdrop }) => (backdrop ? 'blur(4px)' : 'none')};
-  animation: ${({ isOpen }) => (isOpen ? `${fadeIn} 0.2s ease-out` : 'none')};
+  animation: ${({ isOpen }) => (isOpen ? css`${fadeIn} 0.2s ease-out` : 'none')};
 
   /* Backdrop styles */
   &::before {
@@ -77,7 +77,7 @@ const StyledOverlay = styled.div.withConfig({
     box-shadow: ${shadows.xl};
     max-height: ${({ variant }) => (variant === 'modal' ? `calc(100vh - ${spacing.xl} * 2)` : 'auto')};
     overflow: hidden;
-    animation: ${slideIn} 0.2s ease-out;
+    animation: ${css`${slideIn} 0.2s ease-out`};
     outline: none;
   }
 `;

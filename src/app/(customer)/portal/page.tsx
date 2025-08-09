@@ -11,10 +11,11 @@ import {
   H1,
   Text
 } from '@/ui';
-import { EditableHeading, EditableText } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function PortalPageContent() {
   const { addToast } = useToast();
+  const { cmsData } = useCMSData();
 
   const portalActions = [
     {
@@ -86,12 +87,12 @@ function PortalPageContent() {
       <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <EditableHeading field="portal.welcome.title" defaultValue="👋 Welcome to Your Portal" level={1} size="5xl" weight="bold" align="center" data-testid="portal-welcome-title">
-              👋 Welcome to Your Portal
-            </EditableHeading>
-            <EditableText field="portal.welcome.description" defaultValue="Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away." variant="lead" align="center" size="lg" data-testid="portal-welcome-description">
-              Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.
-            </EditableText>
+            <H1 align="center" data-testid="portal-welcome-title">
+              {getCMSField(cmsData, 'portal.welcome.title', '👋 Welcome to Your Portal')}
+            </H1>
+            <Text variant="lead" align="center" size="lg" data-testid="portal-welcome-description">
+              {getCMSField(cmsData, 'portal.welcome.description', 'Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.')}
+            </Text>
           </Stack>
         </Stack>
       </Container>
@@ -101,10 +102,12 @@ function PortalPageContent() {
         <Container marginTop="xl">
           <Stack spacing="xl" align="center">
             <Stack spacing="md" align="center">
-              <EditableHeading data-testid="portal-features-title" level={3} field="portal.features.title" defaultValue="🎯 Portal Features" size="2xl" weight="semibold">🎯 Portal Features</EditableHeading>
-              <EditableText data-testid="portal-features-description" field="portal.features.description" defaultValue="Access all available services and account management tools" variant="lead" size="lg">
-                Access all available services and account management tools
-              </EditableText>
+              <Text data-testid="portal-features-title" weight="semibold" size="2xl">
+                {getCMSField(cmsData, 'portal.features.title', '🎯 Portal Features')}
+              </Text>
+              <Text data-testid="portal-features-description" variant="lead" size="lg">
+                {getCMSField(cmsData, 'portal.features.description', 'Access all available services and account management tools')}
+              </Text>
             </Stack>
             
             <FeatureGrid 
@@ -125,10 +128,12 @@ function PortalPageContent() {
         <Container marginTop="xl">
           <Stack spacing="xl" align="center">
             <Stack spacing="md" align="center">
-              <EditableHeading data-testid="portal-stats-title" level={3} field="portal.stats.title" defaultValue="📊 Account Overview" size="2xl" weight="semibold">📊 Account Overview</EditableHeading>
-              <EditableText data-testid="portal-stats-description" field="portal.stats.description" defaultValue="Your account activity and statistics" variant="lead" size="lg">
-                Your account activity and statistics
-              </EditableText>
+              <Text data-testid="portal-stats-title" weight="semibold" size="2xl">
+                {getCMSField(cmsData, 'portal.stats.title', '📊 Account Overview')}
+              </Text>
+              <Text data-testid="portal-stats-description" variant="lead" size="lg">
+                {getCMSField(cmsData, 'portal.stats.description', 'Your account activity and statistics')}
+              </Text>
             </Stack>
             
             <FeatureGrid 

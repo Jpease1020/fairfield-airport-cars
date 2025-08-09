@@ -13,10 +13,11 @@ import {
   Box,
   Button
 } from '@/ui';
-import { EditableText, EditableHeading } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function CancelPageContent() {
   const { addToast } = useToast();
+  const { cmsData } = useCMSData();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [bookingId] = useState('');
@@ -117,10 +118,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
-              <EditableHeading data-testid="cancel-form-title" level={3} field="cancel.form.title" defaultValue="📝 Cancel Your Booking">📝 Cancel Your Booking</EditableHeading>
-              <EditableText data-testid="cancel-form-description" field="cancel.form.description" defaultValue="Please provide your booking details to process the cancellation">
-                Please provide your booking details to process the cancellation
-              </EditableText>
+              <Text data-testid="cancel-form-title" weight="bold">{getCMSField(cmsData, 'cancel.form.title', '📝 Cancel Your Booking')}</Text>
+              <Text data-testid="cancel-form-description">{getCMSField(cmsData, 'cancel.form.description', 'Please provide your booking details to process the cancellation')}</Text>
             </Stack>
             
             <Stack data-testid="cancel-form-fields" spacing="md">
@@ -153,10 +152,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
-              <EditableHeading data-testid="cancel-policy-title" level={3} field="cancel.policy.title" defaultValue="📋 Cancellation Policy">📋 Cancellation Policy</EditableHeading>
-              <EditableText data-testid="cancel-policy-description" field="cancel.policy.description" defaultValue="Important information about our cancellation terms">
-                Important information about our cancellation terms
-              </EditableText>
+              <Text data-testid="cancel-policy-title" weight="bold">{getCMSField(cmsData, 'cancel.policy.title', '📋 Cancellation Policy')}</Text>
+              <Text data-testid="cancel-policy-description">{getCMSField(cmsData, 'cancel.policy.description', 'Important information about our cancellation terms')}</Text>
             </Stack>
             
             <Stack data-testid="cancel-policy-list" spacing="md">
@@ -178,10 +175,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
-              <EditableHeading data-testid="cancel-alternatives-title" level={3} field="cancel.alternatives.title" defaultValue="🔄 Alternative Options">🔄 Alternative Options</EditableHeading>
-              <EditableText data-testid="cancel-alternatives-description" field="cancel.alternatives.description" defaultValue="Consider these alternatives before cancelling">
-                Consider these alternatives before cancelling
-              </EditableText>
+              <Text data-testid="cancel-alternatives-title" weight="bold">{getCMSField(cmsData, 'cancel.alternatives.title', '🔄 Alternative Options')}</Text>
+              <Text data-testid="cancel-alternatives-description">{getCMSField(cmsData, 'cancel.alternatives.description', 'Consider these alternatives before cancelling')}</Text>
             </Stack>
             
             <FeatureGrid data-testid="cancel-alternatives-grid" features={alternativeOptions} columns={3} />

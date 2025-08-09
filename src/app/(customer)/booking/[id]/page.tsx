@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
+import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 import { Booking } from '@/types/booking';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function BookingDetailsContent() {
+  const { cmsData } = useCMSData();
   const params = useParams();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,9 +65,7 @@ function BookingDetailsContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            <EditableText field="booking.loading.message" defaultValue="Please wait while we fetch your booking details...">
-              Please wait while we fetch your booking details...
-            </EditableText>
+            {getCMSField(cmsData, 'booking.loading.message', 'Please wait while we fetch your booking details...')}
           </Container>
         </GridSection>
       </Container>
@@ -77,9 +77,7 @@ function BookingDetailsContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            <EditableText field="booking.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
-              This could be due to an invalid booking ID or a temporary system issue.
-            </EditableText>
+            {getCMSField(cmsData, 'booking.error.description', 'This could be due to an invalid booking ID or a temporary system issue.')}
             <ActionButtonGroup buttons={[
               {
                 id: 'try-again',
@@ -107,9 +105,7 @@ function BookingDetailsContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            <EditableText field="booking.not_found.description" defaultValue="The booking you are looking for could not be found.">
-              The booking you are looking for could not be found.
-            </EditableText>
+            {getCMSField(cmsData, 'booking.not_found.description', 'The booking you are looking for could not be found.')}
             <ActionButtonGroup buttons={[
               {
                 id: 'book-new-ride',
@@ -154,40 +150,26 @@ function BookingDetailsContent() {
       {/* Booking Status */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <EditableText field="booking.status.title" defaultValue={`${getStatusIcon(booking.status)} Booking Status`}>
-            {`${getStatusIcon(booking.status)} Booking Status`}
-          </EditableText>
-          <EditableText field="booking.status.description" defaultValue={`Your booking is currently ${booking.status}`}>
-            Your booking is currently {booking.status}
-          </EditableText>
+          {getCMSField(cmsData, 'booking.status.title', `${getStatusIcon(booking.status)} Booking Status`)}
+          {getCMSField(cmsData, 'booking.status.description', `Your booking is currently ${booking.status}`)}
         </Container>
       </GridSection>
 
       {/* Trip Details */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <EditableText field="booking.trip_details.title" defaultValue="📍 Trip Details">
-            "📍 Trip Details"
-          </EditableText>
-          <EditableText field="booking.trip_details.description" defaultValue="Your pickup and dropoff information">
-            Your pickup and dropoff information
-          </EditableText>
+          {getCMSField(cmsData, 'booking.trip_details.title', '📍 Trip Details')}
+          {getCMSField(cmsData, 'booking.trip_details.description', 'Your pickup and dropoff information')}
           <Container>
-            <EditableText field="booking.pickup_location.label" defaultValue="Pickup Location:">
-              Pickup Location:
-            </EditableText>
+            {getCMSField(cmsData, 'booking.pickup_location.label', 'Pickup Location:')}
             <Text>{booking.pickupLocation}</Text>
           </Container>
           <Container>
-            <EditableText field="booking.dropoff_location.label" defaultValue="Dropoff Location:">
-              Dropoff Location:
-            </EditableText>
+            {getCMSField(cmsData, 'booking.dropoff_location.label', 'Dropoff Location:')}
             <Text>{booking.dropoffLocation}</Text>
           </Container>
           <Container>
-            <EditableText field="booking.pickup_datetime.label" defaultValue="Pickup Date & Time:">
-              Pickup Date & Time:
-            </EditableText>
+            {getCMSField(cmsData, 'booking.pickup_datetime.label', 'Pickup Date & Time:')}
             <Text>{formatDateTime(booking.pickupDateTime)}</Text>
           </Container>
         </Container>
@@ -196,24 +178,14 @@ function BookingDetailsContent() {
       {/* Passenger Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <EditableText field="booking.passenger_info.title" defaultValue="👤 Passenger Information">
-            "👤 Passenger Information"
-          </EditableText>
-          <EditableText field="booking.passenger_info.description" defaultValue="Your contact details for this booking">
-            Your contact details for this booking
-          </EditableText>
+            {getCMSField(cmsData, 'booking.passenger_info.title', '👤 Passenger Information')}
+          {getCMSField(cmsData, 'booking.passenger_info.description', 'Your contact details for this booking')}
           <Container spacing="lg">
-            <EditableText field="booking.passenger_name.label" defaultValue="Passenger:">
-              Passenger:
-            </EditableText>
+            {getCMSField(cmsData, 'booking.passenger_name.label', 'Passenger:')}
             <Text>{booking.name}</Text>
-            <EditableText field="booking.passenger_phone.label" defaultValue="Phone:">
-              Phone:
-            </EditableText>
+            {getCMSField(cmsData, 'booking.passenger_phone.label', 'Phone:')}
             <Text>{booking.phone}</Text>
-            <EditableText field="booking.passenger_email.label" defaultValue="Email:">
-              Email:
-            </EditableText>
+            {getCMSField(cmsData, 'booking.passenger_email.label', 'Email:')}
             <Text>{booking.email}</Text>
           </Container>
         </Container>
@@ -222,16 +194,10 @@ function BookingDetailsContent() {
       {/* Fare Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <EditableText field="booking.fare_info.title" defaultValue="💰 Fare Information">
-            "�� Fare Information"
-          </EditableText>
-          <EditableText field="booking.fare_info.description" defaultValue="Payment details for your trip">
-            Payment details for your trip
-          </EditableText>
+          {getCMSField(cmsData, 'booking.fare_info.title', '💰 Fare Information')}
+          {getCMSField(cmsData, 'booking.fare_info.description', 'Payment details for your trip')}
           <Container spacing="md">
-            <EditableText field="booking.total_fare.label" defaultValue="Total Fare:">
-              Total Fare:
-            </EditableText>
+            {getCMSField(cmsData, 'booking.total_fare.label', 'Total Fare:')}
             <Text>Includes all fees and taxes</Text>
             <Text size="lg">
               ${booking.fare?.toFixed(2)}
@@ -243,12 +209,8 @@ function BookingDetailsContent() {
       {/* Actions */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <EditableText field="booking.quick_actions.title" defaultValue="🎯 Quick Actions">
-            "🎯 Quick Actions"
-          </EditableText>
-          <EditableText field="booking.quick_actions.description" defaultValue="Manage your booking or book another ride">
-            Manage your booking or book another ride
-          </EditableText>
+          {getCMSField(cmsData, 'booking.quick_actions.title', '🎯 Quick Actions')}
+          {getCMSField(cmsData, 'booking.quick_actions.description', 'Manage your booking or book another ride')}
           <ActionButtonGroup buttons={actionButtons} />
         </Container>
       </GridSection>

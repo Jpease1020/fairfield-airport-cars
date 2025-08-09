@@ -7,12 +7,7 @@ import { auth, db } from '@/lib/utils/firebase';
 
 interface AdminContextType {
   isAdmin: boolean;
-  editMode: boolean;
-  commentMode: boolean;
-  setEditMode: (mode: boolean) => void;
-  setCommentMode: (mode: boolean) => void;
-  toggleEditMode: () => void;
-  toggleCommentMode: () => void;
+  loading: boolean;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -23,8 +18,6 @@ interface AdminProviderProps {
 
 export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [commentMode, setCommentMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Check if user has admin role in Firestore
@@ -59,43 +52,9 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
     return () => unsub();
   }, []);
 
-  // Handle comment mode toggle
-  const toggleCommentMode = () => {
-    const newMode = !commentMode;
-    
-    // If turning on comment mode, turn off edit mode
-    if (newMode && editMode) {
-      setEditMode(false);
-    }
-    
-    setCommentMode(newMode);
-    
-    if (newMode) {
-      document.body.classList.add('comment-mode-active');
-    } else {
-      document.body.classList.remove('comment-mode-active');
-    }
-  };
-
-  const toggleEditMode = () => {
-    const newMode = !editMode;  
-    // If turning on edit mode, turn off comment mode
-    if (newMode && commentMode) {
-      setCommentMode(false);
-      document.body.classList.remove('comment-mode-active');
-    }
-    
-    setEditMode(newMode);
-  };
-
   const value: AdminContextType = {
     isAdmin,
-    editMode,
-    commentMode,
-    setEditMode,
-    setCommentMode,
-    toggleEditMode,
-    toggleCommentMode,
+    loading,
   };
 
   // Show loading state while checking admin status
@@ -120,4 +79,4 @@ export const useAdmin = (): AdminContextType => {
     throw new Error('useAdmin must be used within an AdminProvider');
   }
   return context;
-}; 
+};

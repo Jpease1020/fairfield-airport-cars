@@ -8,7 +8,7 @@ import StatusBadge from '@/components/business/StatusBadge';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { Select } from '@/ui';
-import { EditableText } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider'; 
 
 interface CommentStatusManagerProps {
   comment: ConfluenceComment;
@@ -25,6 +25,7 @@ export default function CommentStatusManager({
   onDelete,
   isEditing = false
 }: CommentStatusManagerProps) {
+  const { cmsData } = useCMSData();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleStatusChange = async (newStatus: ConfluenceComment['status']) => {
@@ -76,9 +77,7 @@ export default function CommentStatusManager({
         {/* Status Header */}
         <Container variant="elevated" padding="sm">
           <H4>
-            <EditableText field="commentStatusManager.statusHeader" defaultValue="Comment Status">
-              Comment Status
-            </EditableText>
+            {getCMSField(cmsData, 'commentStatusManager.statusHeader', 'Comment Status')}
           </H4>
           <Container variant="elevated" padding="xs">
             <StatusBadge status={comment.status} />
@@ -92,9 +91,7 @@ export default function CommentStatusManager({
         <Container variant="elevated" padding="sm">
           <Container variant="elevated" padding="xs">
             <Span variant="default" size="sm">
-              <EditableText field="commentStatusManager.changeStatus" defaultValue="Change Status:">
-                Change Status:
-              </EditableText>
+              {getCMSField(cmsData, 'commentStatusManager.changeStatus', 'Change Status:')}
             </Span>
             <Select
               value={comment.status}
@@ -112,9 +109,7 @@ export default function CommentStatusManager({
         {/* Quick Actions */}
         <Container variant="elevated" padding="sm">
           <H4>
-            <EditableText field="commentStatusManager.quickActions" defaultValue="Quick Actions">
-              Quick Actions
-            </EditableText>
+            {getCMSField(cmsData, 'commentStatusManager.quickActions', 'Quick Actions')}
           </H4>
           <Container variant="elevated" padding="sm">
             <Button
@@ -124,19 +119,15 @@ export default function CommentStatusManager({
               disabled={isEditing}
             >
               <Edit size={16} />
-              <EditableText field="commentStatusManager.editButton" defaultValue="Edit">
-                Edit
-              </EditableText>
+              {getCMSField(cmsData, 'commentStatusManager.editButton', 'Edit')}
             </Button>
-            <Button
+            <Button 
               onClick={handleDelete}
               variant="danger"
               size="sm"
             >
               <Trash2 size={16} />
-              <EditableText field="commentStatusManager.deleteButton" defaultValue="Delete">
-                Delete
-              </EditableText>
+              {getCMSField(cmsData, 'commentStatusManager.deleteButton', 'Delete')}
             </Button>
           </Container>
         </Container>
@@ -144,9 +135,7 @@ export default function CommentStatusManager({
         {/* Status History */}
         <Container variant="elevated" padding="sm">
           <H4>
-            <EditableText field="commentStatusManager.history" defaultValue="Status History">
-              Status History
-            </EditableText>
+            {getCMSField(cmsData, 'commentStatusManager.history', 'Status History')}
           </H4>
           <Container variant="elevated" padding="xs">
             <Span variant="default" size="sm" color="muted">
@@ -166,27 +155,19 @@ export default function CommentStatusManager({
         {/* Element Information */}
         <Container variant="elevated" padding="sm">
           <H4>
-            <EditableText field="commentStatusManager.elementInfo" defaultValue="Element Information">
-              Element Information
-            </EditableText>
+            {getCMSField(cmsData, 'commentStatusManager.elementInfo', 'Element Information')}
           </H4>
           <Container variant="elevated" padding="xs">
             <Span variant="default" size="sm">
-              <EditableText field="commentStatusManager.element" defaultValue="Element:">
-                Element:
-              </EditableText>
+              {getCMSField(cmsData, 'commentStatusManager.element', 'Element:')}
               {comment.elementText}
             </Span>
             <Span variant="default" size="sm">
-              <EditableText field="commentStatusManager.page" defaultValue="Page:">
-                Page:
-              </EditableText>
+              {getCMSField(cmsData, 'commentStatusManager.page', 'Page:')}
               {comment.pageTitle}
             </Span>
             <Span variant="default" size="sm">
-              <EditableText field="commentStatusManager.author" defaultValue="Author:">
-                Author:
-              </EditableText>
+              {getCMSField(cmsData, 'commentStatusManager.author', 'Author:')}
               {comment.createdBy}
             </Span>
           </Container>

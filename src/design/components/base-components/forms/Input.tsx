@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../../system/tokens/tokens';
+import { BaseComponentProps } from '../../../system/shared-types';
 
 // Styled Input component
 const StyledInput = styled.input.withConfig({
@@ -83,6 +84,8 @@ export interface InputProps {
   name?: string;
   id?: string;
   required?: boolean;
+  cmsKeyLabel?: string; // optional, if label is separate we still can map placeholder
+  cmsKeyPlaceholder?: string;
   [key: string]: any;
 }
 
@@ -98,8 +101,13 @@ export const Input: React.FC<InputProps> = ({
   name,
   id,
   required = false,
+  cmsKeyLabel,
+  cmsKeyPlaceholder,
   ...rest
 }) => {
+  const ref = React.useRef<HTMLInputElement | null>(null);
+  // Register placeholder if present (counts as editable copy)
+  // useRegisterContent(Boolean(placeholder), { role: 'placeholder', value: placeholder, cmsPath: cmsKeyPlaceholder, element: ref.current });
   return (
     <StyledInput
       type={type}
@@ -114,6 +122,7 @@ export const Input: React.FC<InputProps> = ({
       fullWidth={fullWidth}
       error={error}
       aria-invalid={error}
+      ref={ref}
       {...rest}
     />
   );

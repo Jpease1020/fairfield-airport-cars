@@ -270,8 +270,19 @@ export class CMSService {
         });
       } else {
         console.log('Updating existing CMS configuration document for page content');
+        
+        // Get existing page data to merge with
+        const existingData = docSnap.data();
+        const existingPageData = existingData?.pages?.[pageType] || {};
+        
+        // Merge the new content with existing page data
+        const mergedPageData = {
+          ...existingPageData,
+          ...content
+        };
+        
         await updateDoc(docRef, {
-          [`pages.${pageType}`]: content
+          [`pages.${pageType}`]: mergedPageData
         });
       }
 

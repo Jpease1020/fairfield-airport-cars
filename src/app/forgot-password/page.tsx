@@ -16,9 +16,10 @@ import {
 } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
-import { EditableText } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 export default function ForgotPasswordPage() {
+  const { cmsData } = useCMSData();
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -47,30 +48,22 @@ export default function ForgotPasswordPage() {
             <Stack align="center">
               <Stack align="center">
                 <H1 align="center">
-                  <EditableText field="customer.forgot_password.success_title" defaultValue="Check Your Email">
-                    Check Your Email
-                  </EditableText>
+                  {getCMSField(cmsData, 'customer.forgot_password.success_title', 'Check Your Email')}
                 </H1>
                 <Text align="center" variant="muted">
-                  <EditableText field="customer.forgot_password.success_message" defaultValue="We've sent a password reset link to your email address.">
-                    We've sent a password reset link to your email address.
-                  </EditableText>
+                  {getCMSField(cmsData, 'customer.forgot_password.success_message', 'We\'ve sent a password reset link to your email address.')}
                 </Text>
               </Stack>
 
               <Box variant="elevated" padding="xl">
                 <Stack align="center">
                   <Text align="center" variant="muted">
-                    <EditableText field="customer.forgot_password.check_email" defaultValue="Please check your email and click the link to reset your password.">
-                      Please check your email and click the link to reset your password.
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.forgot_password.check_email', 'Please check your email and click the link to reset your password.')}
                   </Text>
                   
                   <Text variant="muted" align="center" marginTop="md">
                     <Link href="/login">
-                      <EditableText field="customer.forgot_password.back_to_login" defaultValue="Back to Login">
-                        Back to Login
-                      </EditableText>
+                      {getCMSField(cmsData, 'customer.forgot_password.back_to_login', 'Back to Login')}
                     </Link>
                   </Text>
                 </Stack>
@@ -89,14 +82,10 @@ export default function ForgotPasswordPage() {
           <Stack   align="center">
             <Stack    align="center">
               <H1 align="center">
-                <EditableText field="customer.forgot_password.title" defaultValue="Forgot Your Password?">
-                  Forgot Your Password?
-                </EditableText>
+                {getCMSField(cmsData, 'customer.forgot_password.title', 'Forgot Your Password?')}
               </H1>
               <Text align="center" variant="muted">
-                <EditableText field="customer.forgot_password.subtitle" defaultValue="Enter your email address and we'll send you a link to reset your password">
-                  Enter your email address and we'll send you a link to reset your password
-                </EditableText>
+                {getCMSField(cmsData, 'customer.forgot_password.subtitle', 'Enter your email address and we\'ll send you a link to reset your password')}
               </Text>
             </Stack>
 
@@ -104,14 +93,10 @@ export default function ForgotPasswordPage() {
               <Stack>
                 <Stack    align="center">
                   <H2 align="center" id="forgot-password-title">
-                    <EditableText field="customer.forgot_password.authTitle" defaultValue="Reset Password">
-                      Reset Password
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.forgot_password.authTitle', 'Reset Password')}
                   </H2>
                   <Text align="center" variant="muted">
-                    <EditableText field="customer.forgot_password.authDesc" defaultValue="Enter your email to receive reset instructions">
-                      Enter your email to receive reset instructions
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.forgot_password.authDesc', 'Enter your email to receive reset instructions')}
                   </Text>
                 </Stack>
 
@@ -119,9 +104,7 @@ export default function ForgotPasswordPage() {
                   <Stack>
                     <Stack   >
                       <Label htmlFor="email">
-                        <EditableText field="customer.forgot_password.emailLabel" defaultValue="Email Address">
-                          Email Address
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.forgot_password.emailLabel', 'Email Address')}
                       </Label>
                       <Input
                         id="email"
@@ -137,9 +120,7 @@ export default function ForgotPasswordPage() {
                     {error && (
                       <Stack    align="center">
                         <Text color="error" align="center">
-                          <EditableText field="customer.forgot_password.errorIcon" defaultValue="⚠️">
-                            ⚠️
-                          </EditableText>
+                            {getCMSField(cmsData, 'customer.forgot_password.errorIcon', '⚠️')}
                           {' '}
                           {error}
                         </Text>
@@ -153,9 +134,7 @@ export default function ForgotPasswordPage() {
                       disabled={loading}
                       data-testid="reset-password-button"
                     >
-                      <EditableText field="customer.forgot_password.reset_button" defaultValue={loading ? '🔄 Sending...' : '📧 Send Reset Link'}>
-                        {loading ? '🔄 Sending...' : '📧 Send Reset Link'}
-                      </EditableText>
+                      {getCMSField(cmsData, 'customer.forgot_password.reset_button', loading ? '🔄 Sending...' : '📧 Send Reset Link')}
                     </Button>
                   </Stack>
                 </Form>
@@ -164,9 +143,7 @@ export default function ForgotPasswordPage() {
 
             <Text variant="muted" align="center" marginTop="md">
               <Link href="/login">
-                <EditableText field="customer.forgot_password.back_to_login" defaultValue="Back to Login">
-                  Back to Login
-                </EditableText>
+                {getCMSField(cmsData, 'customer.forgot_password.back_to_login', 'Back to Login')}
               </Link>
             </Text>
           </Stack>

@@ -15,10 +15,10 @@ import {
   ToastProvider,
   Input,
   Label,
-  EditableText,
   spacing
 } from '@/ui';
 import styled from 'styled-components'; 
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 // Styled components for login page
 const LoginCard = styled(Box)`
@@ -78,6 +78,7 @@ const LinkText = styled(Text)`
 `;
 
 export default function CustomerLoginPage() {
+  const { cmsData } = useCMSData();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -125,15 +126,11 @@ export default function CustomerLoginPage() {
           <Stack   align="center">
             <Stack    align="center">
               <H1 align="center">
-                <EditableText field="customer.login.title" defaultValue="Welcome Back">
-                  Welcome Back
-                </EditableText>
+                {getCMSField(cmsData, 'customer.login.title', 'Welcome Back')}
               </H1>
               <Stack align="center">
                   <H2 align="center" id="login-title">
-                    <EditableText field="login.authTitle" defaultValue="Sign in to your account to manage your bookings">
-                      Sign in to your account to manage your bookings
-                    </EditableText>
+                    {getCMSField(cmsData, 'login.authTitle', 'Sign in to your account to manage your bookings')}
                   </H2>
                 </Stack>
             </Stack>
@@ -145,9 +142,7 @@ export default function CustomerLoginPage() {
                   <Stack align="center">
                     <Stack>
                       <Label htmlFor="email">
-                        <EditableText field="customer.login.emailLabel" defaultValue="Email Address">
-                          Email Address
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.login.emailLabel', 'Email Address')}
                       </Label>
                       <Input
                         id="email"
@@ -162,9 +157,7 @@ export default function CustomerLoginPage() {
 
                     <Stack   >
                       <Label htmlFor="password">
-                        <EditableText field="customer.login.passwordLabel" defaultValue="Password">
-                          Password
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.login.passwordLabel', 'Password')}
                       </Label>
                       <Input
                         id="password"
@@ -180,9 +173,7 @@ export default function CustomerLoginPage() {
                     {error && (
                       <Stack    align="center">
                         <Text variant="muted" align="center" color="error">
-                          <EditableText field="customer.login.errorIcon" defaultValue="⚠️">
-                            ⚠️
-                          </EditableText>
+                          {getCMSField(cmsData, 'customer.login.errorIcon', '⚠️')}
                           {' '}
                           {error}
                         </Text>
@@ -196,16 +187,12 @@ export default function CustomerLoginPage() {
                       disabled={loading}
                       data-testid="signin-button"
                     >
-                      <EditableText field="customer.login.sign_in_button" defaultValue={loading ? '🔄 Signing In...' : '🔐 Sign In'}>
-                        {loading ? '🔄 Signing In...' : '🔐 Sign In'}
-                      </EditableText>
+                      {getCMSField(cmsData, 'customer.login.sign_in_button', loading ? '🔄 Signing In...' : '🔐 Sign In')}
                     </Button>
 
                     <OrDivider>
                       <Text variant="muted">
-                        <EditableText field="customer.login.or_separator" defaultValue="or">
-                          or
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.login.or_separator', 'or')}
                       </Text>
                     </OrDivider>
 
@@ -217,9 +204,7 @@ export default function CustomerLoginPage() {
                       disabled={loading}
                       data-testid="google-signin-button"
                     >
-                      <EditableText field="customer.login.google_sign_in_button" defaultValue={loading ? '🔄 Connecting...' : 'Sign In with Google'}>
-                        {loading ? '🔄 Connecting...' : 'Sign In with Google'}
-                      </EditableText>
+                      {getCMSField(cmsData, 'customer.login.google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign In with Google')}
                     </Button>
                   </Stack>
                 </LoginForm>
@@ -227,21 +212,15 @@ export default function CustomerLoginPage() {
             </LoginCard>
 
             <LinkText variant="muted">
-              <EditableText field="customer.login.no_account" defaultValue="Don't have an account?">
-                Don't have an account?{' '}
-              </EditableText>
+              {getCMSField(cmsData, 'customer.login.no_account', "Don't have an account?")}
               <Link href="/register">
-                <EditableText field="customer.login.signup_link" defaultValue="Sign up">
-                  Sign up
-                </EditableText>
+                {getCMSField(cmsData, 'customer.login.signup_link', 'Sign up')}
               </Link>
             </LinkText>
 
             <LinkText variant="muted">
               <Link href="/forgot-password">
-                <EditableText field="customer.login.forgot_password" defaultValue="Forgot your password?">
-                  Forgot your password?
-                </EditableText>
+                {getCMSField(cmsData, 'customer.login.forgot_password', 'Forgot your password?')}
               </Link>
             </LinkText>
           </Stack>

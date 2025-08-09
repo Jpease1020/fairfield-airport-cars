@@ -11,16 +11,14 @@ import {
   Text,
   ToastProvider,
   useToast,
-  EditableText
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
-
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 function AddContentUtilityPage() {
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
+  const { cmsData } = useCMSData();
   const missingContent = {
     pages: {
       success: {
@@ -213,10 +211,7 @@ function AddContentUtilityPage() {
   };
 
   return (
-    <AdminPageWrapper
-      title="Add Missing Content (Utility)"
-      subtitle="Add missing content to the database - Use this only when needed"
-    >
+    
       <Container>
         <Stack spacing="lg">
           <Box>
@@ -224,9 +219,7 @@ function AddContentUtilityPage() {
               <Stack spacing="md">
                 <Text size="lg" weight="bold">⚠️ Utility Tool</Text>
                 <Text variant="muted">This is a utility tool to add missing content. For regular content editing, use the main CMS interface.</Text>
-                <EditableText field="admin.addContent.utility.description" defaultValue="This tool will add missing content to the database, including:">
-                  This tool will add missing content to the database, including:
-                </EditableText>
+                  {getCMSField(cmsData, 'admin.addContent.utility.description', 'This tool will add missing content to the database, including:')}
                 <Stack spacing="sm">
                   <Container>• Success page messages and titles</Container>
                   <Container>• Help page sections and FAQ</Container>
@@ -258,13 +251,11 @@ function AddContentUtilityPage() {
             disabled={loading}
             variant="primary"
           >
-            <EditableText field="admin.addContent.utility.button" defaultValue={loading ? 'Adding Content...' : 'Add Missing Content'}>
-              {loading ? 'Adding Content...' : 'Add Missing Content'}
-            </EditableText>
+            {getCMSField(cmsData, 'admin.addContent.utility.button', loading ? 'Adding Content...' : 'Add Missing Content')}
           </Button>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    
   );
 }
 

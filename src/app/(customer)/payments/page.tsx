@@ -11,7 +11,6 @@ import {
   Text,
   Button,
   LoadingSpinner,
-  EditableText,
   Alert,
   Badge,
   Box,
@@ -19,7 +18,7 @@ import {
   ContentCard,
   Grid
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { BalanceSummary } from '@/components/business/BalanceTracker';
 
 interface Payment {
@@ -44,6 +43,7 @@ interface PaymentMethod {
 }
 
 function CustomerPaymentsPage() {
+  const { cmsData } = useCMSData();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -244,16 +244,13 @@ function CustomerPaymentsPage() {
 
   if (error) {
     return (
-      <AdminPageWrapper
-        title="Error Loading Payments"
-        subtitle={error}
-      >
+      
         <Container>
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
@@ -264,29 +261,20 @@ function CustomerPaymentsPage() {
   const pendingPayments = payments.filter(p => p.status === 'pending');
 
   return (
-    <AdminPageWrapper
-      title="My Payments"
-      subtitle="Manage your payment methods and view transaction history"
-    >
+    <>
       <Stack spacing="xl">
         {/* Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1>
-              <EditableText field="customer.payments.title" defaultValue="My Payments">
-                My Payments
-              </EditableText>
+              {getCMSField(cmsData, 'customer.payments.title', 'My Payments')}
             </H1>
             <Text variant="muted">
-              <EditableText field="customer.payments.subtitle" defaultValue="Manage your payment methods and view transaction history">
-                Manage your payment methods and view transaction history
-              </EditableText>
+              {getCMSField(cmsData, 'customer.payments.subtitle', 'Manage your payment methods and view transaction history')}
             </Text>
           </Stack>
           <Button onClick={handleAddPaymentMethod} variant="primary">
-            <EditableText field="customer.payments.add_payment_method" defaultValue="Add Payment Method">
-              Add Payment Method
-            </EditableText>
+            {getCMSField(cmsData, 'customer.payments.add_payment_method', 'Add Payment Method')}
           </Button>
         </Stack>
 
@@ -309,14 +297,10 @@ function CustomerPaymentsPage() {
               {paymentMethods.length === 0 ? (
                 <Stack spacing="md" align="center">
                   <Text variant="muted" align="center">
-                    <EditableText field="customer.payments.no_payment_methods" defaultValue="No payment methods saved yet.">
-                      No payment methods saved yet.
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.payments.no_payment_methods', 'No payment methods saved yet.')}
                   </Text>
                   <Button onClick={handleAddPaymentMethod} variant="primary">
-                    <EditableText field="customer.payments.add_first_method" defaultValue="Add Payment Method">
-                      Add Payment Method
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.payments.add_first_method', 'Add Payment Method')}
                   </Button>
                 </Stack>
               ) : (
@@ -341,16 +325,12 @@ function CustomerPaymentsPage() {
                         </Stack>
                         <Stack direction="horizontal" spacing="sm">
                           <Button variant="outline" size="sm">
-                            <EditableText field="customer.payments.edit_method" defaultValue="Edit">
-                              Edit
-                            </EditableText>
+                            {getCMSField(cmsData, 'customer.payments.edit_method', 'Edit')}
                           </Button>
                           {!method.isDefault && (
-                            <Button variant="outline" size="sm">
-                              <EditableText field="customer.payments.set_default" defaultValue="Set Default">
-                                Set Default
-                              </EditableText>
-                            </Button>
+                              <Button variant="outline" size="sm">
+                                {getCMSField(cmsData, 'customer.payments.set_default', 'Set Default')}
+                              </Button>
                           )}
                         </Stack>
                       </Stack>
@@ -371,9 +351,7 @@ function CustomerPaymentsPage() {
               {payments.length === 0 ? (
                 <Stack spacing="md" align="center">
                   <Text variant="muted" align="center">
-                    <EditableText field="customer.payments.no_payments" defaultValue="No payment history yet.">
-                      No payment history yet.
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.payments.no_payments', 'No payment history yet.')}
                   </Text>
                 </Stack>
               ) : (
@@ -405,16 +383,12 @@ function CustomerPaymentsPage() {
                           <Stack spacing="xs">
                             {payment.paymentMethod && (
                               <Text variant="muted" size="sm">
-                                <EditableText field="customer.payments.payment_method" defaultValue="Payment Method:">
-                                  Payment Method:
-                                </EditableText> {payment.paymentMethod}
+                                {getCMSField(cmsData, 'customer.payments.payment_method', 'Payment Method:')} {payment.paymentMethod}
                               </Text>
                             )}
                             {payment.transactionId && (
                               <Text variant="muted" size="sm">
-                                <EditableText field="customer.payments.transaction_id" defaultValue="Transaction ID:">
-                                  Transaction ID:
-                                </EditableText> {payment.transactionId}
+                                {getCMSField(cmsData, 'customer.payments.transaction_id', 'Transaction ID:')} {payment.transactionId}
                               </Text>
                             )}
                           </Stack>
@@ -425,9 +399,7 @@ function CustomerPaymentsPage() {
                               size="sm"
                               onClick={() => handleViewBooking(payment.bookingId)}
                             >
-                              <EditableText field="customer.payments.view_booking" defaultValue="View Booking">
-                                View Booking
-                              </EditableText>
+                              {getCMSField(cmsData, 'customer.payments.view_booking', 'View Booking')}
                             </Button>
                             {payment.status === 'pending' && payment.type === 'balance' && (
                               <Button 
@@ -435,9 +407,7 @@ function CustomerPaymentsPage() {
                                 size="sm"
                                 onClick={() => handlePayBalance(payment)}
                               >
-                                <EditableText field="customer.payments.pay_balance" defaultValue="Pay Balance">
-                                  Pay Balance
-                                </EditableText>
+                                {getCMSField(cmsData, 'customer.payments.pay_balance', 'Pay Balance')}
                               </Button>
                             )}
                           </Stack>
@@ -452,7 +422,7 @@ function CustomerPaymentsPage() {
           variant="elevated"
         />
       </Stack>
-    </AdminPageWrapper>
+    </>
   );
 }
 

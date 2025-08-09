@@ -9,6 +9,7 @@ import {
   Label,
 } from '@/ui';
 import styled from 'styled-components';
+import { HomePageContent as CMSHomePageContent } from '@/types/cms';
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -107,21 +108,7 @@ export const GenericPageEditor: React.FC<GenericPageEditorProps> = ({
   );
 };
 
-export interface HomePageContent {
-  hero: {
-    title: string;
-    subtitle: string;
-    ctaText: string;
-  };
-  features: {
-    title: string;
-    items: Array<{
-      title: string;
-      description: string;
-      icon: string;
-    }>;
-  };
-}
+export type HomePageContent = CMSHomePageContent;
 
 export interface HomePageEditorProps {
   pageData: HomePageContent;
@@ -193,17 +180,17 @@ export const HomePageEditor: React.FC<HomePageEditorProps> = ({
           </Container>
           
           <Container>
-            <Label htmlFor="hero-cta">Call-to-Action Button Text</Label>
+            <Label htmlFor="hero-cta">Primary Button Text</Label>
             <Input
               id="hero-cta"
-              value={pageData.hero.ctaText}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFieldChange('hero', 'ctaText', e.target.value)}
-              placeholder="Enter CTA text"
+              value={pageData.hero.primaryButton}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFieldChange('hero', 'primaryButton', e.target.value)}
+              placeholder="Enter primary button text"
             />
             <Text size="sm" color="secondary">Text for the main action button</Text>
           </Container>
         </Stack>
-      </Box>Box
+      </Box>
 
       {/* Features Section */}
       <Box variant="elevated" padding="lg">

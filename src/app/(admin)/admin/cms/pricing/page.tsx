@@ -14,13 +14,13 @@ import {
   Text,
   Input,
   Label,
-  EditableText,
   Stack,
   Span
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function PricingSettingsContent() {
+  const { cmsData } = useCMSData();
   const { addToast } = useToast();
   const [settings, setSettings] = useState<PricingSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -140,39 +140,26 @@ function PricingSettingsContent() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Pricing Settings"
-        subtitle="Loading pricing configuration..."
-      >
+      <>
         <Container>
-          <EditableText field="admin.cms.pricing.loading" defaultValue="Loading...">
-            Loading pricing settings...
-          </EditableText>
+          {getCMSField(cmsData, 'admin.cms.pricing.loading', 'Loading pricing settings...')}
         </Container>
-      </AdminPageWrapper>
+      </>
     );
   }
 
   if (!settings) {
     return (
-      <AdminPageWrapper
-        title="Pricing Settings"
-        subtitle="Error loading settings"
-      >
+      <>
         <Container>
-          <EditableText field="admin.cms.pricing.error" defaultValue="Error loading settings">
-            Failed to load pricing settings. Please try refreshing the page.
-          </EditableText>
+          {getCMSField(cmsData, 'admin.cms.pricing.error', 'Failed to load pricing settings. Please try refreshing the page.')}
         </Container>
-      </AdminPageWrapper>
+      </>
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Pricing Settings"
-      subtitle="Configure your service rates and pricing structure"
-    >
+    <>
       <Container>
         {saved && (
           <Box variant="elevated" padding="lg">
@@ -195,14 +182,14 @@ function PricingSettingsContent() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
-                    <EditableText field="admin.cms.pricing.basePricingTitle" defaultValue="💰 Base Pricing">💰 Base Pricing</EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.basePricingTitle', '💰 Base Pricing')}
                   </Text>
                   <Text variant="muted" size="sm">
-                    <EditableText field="admin.cms.pricing.basePricingDesc" defaultValue="Configure your base fare structure and rates">Configure your base fare structure and rates</EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.basePricingDesc', 'Configure your base fare structure and rates')}
                   </Text>
                 </Stack>
                 <div>
-                  <Label htmlFor="baseFare"><EditableText field="admin.cms.pricing.baseFareLabel" defaultValue="Base Fare ($)">Base Fare ($)</EditableText></Label>
+                  <Label htmlFor="baseFare">{getCMSField(cmsData, 'admin.cms.pricing.baseFareLabel', 'Base Fare ($)')}</Label>
                   <Input
                     id="baseFare"
                     type="number"
@@ -215,7 +202,7 @@ function PricingSettingsContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="perMile"><EditableText field="admin.cms.pricing.perMileLabel" defaultValue="Per Mile Rate ($)">Per Mile Rate ($)</EditableText></Label>
+                  <Label htmlFor="perMile">{getCMSField(cmsData, 'admin.cms.pricing.perMileLabel', 'Per Mile Rate ($)')}</Label>
                   <Input
                     id="perMile"
                     type="number"
@@ -228,7 +215,7 @@ function PricingSettingsContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="perMinute"><EditableText field="admin.cms.pricing.perMinuteLabel" defaultValue="Per Minute Rate ($)">Per Minute Rate ($)</EditableText></Label>
+                  <Label htmlFor="perMinute">{getCMSField(cmsData, 'admin.cms.pricing.perMinuteLabel', 'Per Minute Rate ($)')}</Label>
                   <Input
                     id="perMinute"
                     type="number"
@@ -241,7 +228,7 @@ function PricingSettingsContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="depositPercent"><EditableText field="admin.cms.pricing.depositPercentLabel" defaultValue="Deposit Percentage (%)">Deposit Percentage (%)</EditableText></Label>
+                  <Label htmlFor="depositPercent">{getCMSField(cmsData, 'admin.cms.pricing.depositPercentLabel', 'Deposit Percentage (%)')}</Label>
                   <Input
                     id="depositPercent"
                     type="number"
@@ -254,7 +241,7 @@ function PricingSettingsContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="bufferMinutes"><EditableText field="admin.cms.pricing.bufferMinutesLabel" defaultValue="Buffer Minutes">Buffer Minutes</EditableText></Label>
+                  <Label htmlFor="bufferMinutes">{getCMSField(cmsData, 'admin.cms.pricing.bufferMinutesLabel', 'Buffer Minutes')}</Label>
                   <Input
                     id="bufferMinutes"
                     type="number"
@@ -307,14 +294,14 @@ function PricingSettingsContent() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
-                    <EditableText field="admin.cms.pricing.cancellationTitle" defaultValue="⏰ Cancellation Policy">⏰ Cancellation Policy</EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.cancellationTitle', '⏰ Cancellation Policy')}
                   </Text>
                   <Text variant="muted" size="sm">
-                    <EditableText field="admin.cms.pricing.cancellationDesc" defaultValue="Set refund percentages for different cancellation timeframes">Set refund percentages for different cancellation timeframes</EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.cancellationDesc', 'Set refund percentages for different cancellation timeframes')}
                   </Text>
                 </Stack>
                 <div>
-                  <Label htmlFor="over24hRefund"><EditableText field="admin.cms.pricing.over24hRefundLabel" defaultValue="Over 24h Refund (%)">Over 24h Refund (%)</EditableText></Label>
+                  <Label htmlFor="over24hRefund">{getCMSField(cmsData, 'admin.cms.pricing.over24hRefundLabel', 'Over 24h Refund (%)')}</Label>
                   <Input
                     id="over24hRefund"
                     type="number"
@@ -327,7 +314,7 @@ function PricingSettingsContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="between3And24hRefund"><EditableText field="admin.cms.pricing.between3And24hRefundLabel" defaultValue="3-24h Refund (%)">3-24h Refund (%)</EditableText></Label>
+                  <Label htmlFor="between3And24hRefund">{getCMSField(cmsData, 'admin.cms.pricing.between3And24hRefundLabel', '3-24h Refund (%)')}</Label>
                   <Input
                     id="between3And24hRefund"
                     type="number"
@@ -340,7 +327,7 @@ function PricingSettingsContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="under3hRefund"><EditableText field="admin.cms.pricing.under3hRefundLabel" defaultValue="Under 3h Refund (%)">Under 3h Refund (%)</EditableText></Label>
+                  <Label htmlFor="under3hRefund">{getCMSField(cmsData, 'admin.cms.pricing.under3hRefundLabel', 'Under 3h Refund (%)')}</Label>
                   <Input
                     id="under3hRefund"
                     type="number"
@@ -361,10 +348,10 @@ function PricingSettingsContent() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
-                    <EditableText field="admin.cms.pricing.zonesTitle" defaultValue="📍 Pricing Zones">📍 Pricing Zones</EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.zonesTitle', '📍 Pricing Zones')}
                   </Text>
                   <Text variant="muted" size="sm">
-                    <EditableText field="admin.cms.pricing.zonesDesc" defaultValue="Configure custom pricing for different geographic areas">Configure custom pricing for different geographic areas</EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.zonesDesc', 'Configure custom pricing for different geographic areas')}
                   </Text>
                 </Stack>
               <ActionButtonGroup
@@ -390,13 +377,9 @@ function PricingSettingsContent() {
                         Add zones for different areas with custom pricing
                       </Text>
                     </Stack>
-                    <EditableText field="admin.cms.pricing.noZones.message" defaultValue="No pricing zones configured">
-                      No pricing zones configured
-                    </EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.noZones.message', 'No pricing zones configured')}
                     <br />
-                    <EditableText field="admin.cms.pricing.noZones.description" defaultValue="Add zones for different areas with custom pricing">
-                      Add zones for different areas with custom pricing
-                    </EditableText>
+                    {getCMSField(cmsData, 'admin.cms.pricing.noZones.description', 'Add zones for different areas with custom pricing')}
                   </Stack>
                 </Box>
               ) : (
@@ -415,7 +398,7 @@ function PricingSettingsContent() {
                       </Stack>
                       <Stack spacing="sm">
                         <div>
-                          <Label htmlFor={`zone-name-${index}`}><EditableText field="admin.cms.pricing.zoneNameLabel" defaultValue="Zone Name">Zone Name</EditableText></Label>
+                          <Label htmlFor={`zone-name-${index}`}>{getCMSField(cmsData, 'admin.cms.pricing.zoneNameLabel', 'Zone Name')}</Label>
                           <Input
                             id={`zone-name-${index}`}
                             value={zone.name}
@@ -425,7 +408,7 @@ function PricingSettingsContent() {
                         </div>
 
                         <div>
-                          <Label htmlFor={`zone-baseFare-${index}`}><EditableText field="admin.cms.pricing.zoneBaseFareLabel" defaultValue="Base Fare ($)">Base Fare ($)</EditableText></Label>
+                          <Label htmlFor={`zone-baseFare-${index}`}>{getCMSField(cmsData, 'admin.cms.pricing.zoneBaseFareLabel', 'Base Fare ($)')}</Label>
                           <Input
                             id={`zone-baseFare-${index}`}
                             type="number"
@@ -438,7 +421,7 @@ function PricingSettingsContent() {
                         </div>
 
                         <div>
-                          <Label htmlFor={`zone-perMile-${index}`}><EditableText field="admin.cms.pricing.zonePerMileLabel" defaultValue="Per Mile ($)">Per Mile ($)</EditableText></Label>
+                          <Label htmlFor={`zone-perMile-${index}`}>{getCMSField(cmsData, 'admin.cms.pricing.zonePerMileLabel', 'Per Mile ($)')}</Label>
                           <Input
                             id={`zone-perMile-${index}`}
                             type="number"
@@ -451,7 +434,7 @@ function PricingSettingsContent() {
                         </div>
 
                         <div>
-                          <Label htmlFor={`zone-perMinute-${index}`}><EditableText field="admin.cms.pricing.zonePerMinuteLabel" defaultValue="Per Minute ($)">Per Minute ($)</EditableText></Label>
+                          <Label htmlFor={`zone-perMinute-${index}`}>{getCMSField(cmsData, 'admin.cms.pricing.zonePerMinuteLabel', 'Per Minute ($)')}</Label>
                           <Input
                             id={`zone-perMinute-${index}`}
                             type="number"
@@ -484,7 +467,7 @@ function PricingSettingsContent() {
           </GridSection>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    </>
   );
 }
 

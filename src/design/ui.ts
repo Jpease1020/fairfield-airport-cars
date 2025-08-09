@@ -48,8 +48,6 @@ export { ActionButtonGroup } from './components/base-components/ActionButtonGrou
 
 // Text Components
 export { Text } from './components/base-components/text/Text';
-export { EditableText } from './components/base-components/text/EditableText';
-export { EditableHeading } from './components/base-components/text/EditableHeading';
 export { Heading } from './components/base-components/text/Heading';
 export { H1, H2, H3, H4, H5, H6 } from './components/base-components/text/Headings';
 export { Link } from './components/base-components/text/Link';
@@ -102,7 +100,6 @@ export { BaseNavigation } from './page-sections/nav/BaseNavigation';
 export type { NavigationItem } from './page-sections/nav/BaseNavigation';
 
 // Layer 7: App-Specific Components (depends on base components)
-export { AdminPageWrapper } from '../components/app/AdminPageWrapper';
 export { ErrorBoundary } from '../components/business/ErrorBoundary';
 export { LiveTrackingMap } from '../components/business/LiveTrackingMap';
 export { DriverTrackingInterface } from '../components/business/DriverTrackingInterface';
@@ -110,6 +107,7 @@ export { DriverTrackingInterface } from '../components/business/DriverTrackingIn
 // Layer 7: Providers (depends on base components)
 export { AccessibilityEnhancer } from './providers/AccessibilityEnhancer';
 export { CMSDesignProvider } from './providers/CMSDesignProvider';
+export { EditModeProvider } from './providers/EditModeProvider';
 export { ThemeProvider } from './providers/ThemeProvider';
 export { StyledComponentsRegistry } from './providers/StyledComponentsRegistry';
 

@@ -14,7 +14,6 @@ import {
   H2,
 } from '@/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
-import { AdminPageWrapper } from '@/components/app';
 
 function AdminDashboardContent() {
   const [stats, setStats] = useState({
@@ -196,40 +195,31 @@ function AdminDashboardContent() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Dashboard"
-        subtitle="Loading dashboard data..."
-      >
+      
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
             <Text>Loading dashboard data...</Text>
           </Stack>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   if (error) {
     return (
-      <AdminPageWrapper
-        title="Error Loading Dashboard"
-        subtitle={error}
-      >
+      
         <Container>
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Dashboard"
-      subtitle="Business overview and quick actions"
-    >
+  
       <Stack spacing="xl">
         {/* Statistics Overview */}
         <Stack spacing="lg" align="center">
@@ -322,7 +312,7 @@ function AdminDashboardContent() {
           </Stack>
         </Box>
       </Stack>
-    </AdminPageWrapper>
+    
   );
 }
 

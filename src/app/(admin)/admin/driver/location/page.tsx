@@ -13,7 +13,7 @@ import {
   ActionButtonGroup,
   useToast
 } from '@/ui';
-import { EditableText } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';
@@ -22,7 +22,7 @@ function DriverLocationContent() {
   const search = useSearchParams();
   const allowed = search.get('key') === process.env.NEXT_PUBLIC_DRIVER_SECRET;
   const { addToast } = useToast();
-  
+  const { cmsData } = useCMSData();
   const [status, setStatus] = useState('Requesting location permission…');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -66,9 +66,7 @@ function DriverLocationContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            <EditableText field="driver.location.loading.message" defaultValue="Please wait while we initialize location services...">
-              Please wait while we initialize location services...
-            </EditableText>
+            {getCMSField(cmsData, 'driver.location.loading.message', 'Please wait while we initialize location services...')}
           </Container>
         </GridSection>
       </Container>
@@ -81,14 +79,10 @@ function DriverLocationContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Text>
-              <EditableText field="driver.location.unauthorized.title" defaultValue="❌ Unauthorized">
-                ❌ Unauthorized
-              </EditableText>
+              {getCMSField(cmsData, 'driver.location.unauthorized.title', '❌ Unauthorized')}
             </Text>
             <Text>
-              <EditableText field="driver.location.unauthorized.description" defaultValue="You are not authorized to access this page.">
-                You are not authorized to access this page.
-              </EditableText>
+              {getCMSField(cmsData, 'driver.location.unauthorized.description', 'You are not authorized to access this page.')}
             </Text>
             <ActionButtonGroup buttons={[
               {
@@ -117,16 +111,12 @@ function DriverLocationContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Text>
-            <EditableText field="driver.location.title" defaultValue="📍 Location Status">
-              📍 Location Status
-            </EditableText>
+            {getCMSField(cmsData, 'driver.location.title', '📍 Location Status')}
           </Text>
           
           <div>
             <Text>
-              <EditableText field="driver.location.status.label" defaultValue="Status:">
-                Status:
-              </EditableText>
+              {getCMSField(cmsData, 'driver.location.status.label', 'Status:')}
               {' '}{status}
             </Text>
             
@@ -134,15 +124,11 @@ function DriverLocationContent() {
               <div>
                 <Text>
                   <strong>
-                    <EditableText field="driver.location.coordinates.label" defaultValue="Current Coordinates:">
-                      Current Coordinates:
-                    </EditableText>
+                    {getCMSField(cmsData, 'driver.location.coordinates.label', 'Current Coordinates:')}
                   </strong>
                 </Text>
                 <Text>
-                  <EditableText field="driver.location.coords" defaultValue={`Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`}>
-                    Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
-                  </EditableText>
+                  {getCMSField(cmsData, 'driver.location.coords', `Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`)}
                 </Text>
               </div>
             )}

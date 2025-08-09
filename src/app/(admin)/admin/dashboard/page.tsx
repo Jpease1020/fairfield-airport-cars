@@ -12,12 +12,13 @@ import {
   Text,
   Button,
   LoadingSpinner,
-  EditableText,
   Alert,
 } from '@/ui';
-import { AdminPageWrapper, ContentCard, Grid } from '@/ui';
+import { ContentCard, Grid } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function CustomerDashboardContent() {
+  const { cmsData } = useCMSData();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -182,67 +183,50 @@ function CustomerDashboardContent() {
   const recentBookingsContent = profile.totalBookings === 0 ? (
     <Stack spacing="md" align="center">
       <Text variant="muted">
-        <EditableText field="customer.dashboard.no_bookings" defaultValue="No bookings yet. Book your first ride!">
-          No bookings yet. Book your first ride!
-        </EditableText>
+        {getCMSField(cmsData, 'customer.dashboard.no_bookings', 'No bookings yet. Book your first ride!')}
       </Text>
       <Button onClick={handleBookRide} variant="primary">
-        <EditableText field="customer.dashboard.book_first_ride" defaultValue="Book Your First Ride">
-          Book Your First Ride
-        </EditableText>
+        {getCMSField(cmsData, 'customer.dashboard.book_first_ride', 'Book Your First Ride')}
       </Button>
     </Stack>
   ) : (
     <Stack spacing="md">
       <Text variant="muted">
-        <EditableText field="customer.dashboard.bookings_count" defaultValue={`You have ${profile.totalBookings} total bookings.`}>
-          You have {profile.totalBookings} total bookings.
-        </EditableText>
+        {getCMSField(cmsData, 'customer.dashboard.bookings_count', `You have ${profile.totalBookings} total bookings.`)}
       </Text>
       <Button variant="outline" onClick={handleViewBookings}>
-        <EditableText field="customer.dashboard.view_all_bookings" defaultValue="View All Bookings">
-          View All Bookings
-        </EditableText>
+        {getCMSField(cmsData, 'customer.dashboard.view_all_bookings', 'View All Bookings')}
       </Button>
     </Stack>
   );
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Dashboard"
-        subtitle="Loading your profile..."
-      >
+      
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
             <Text>Loading your profile...</Text>
           </Stack>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   if (error) {
     return (
-      <AdminPageWrapper
-        title="Error Loading Dashboard"
-        subtitle={error}
-      >
+      
         <Container>
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
         </Container>
-      </AdminPageWrapper>
+    
     );
   }
 
   return (
-    <AdminPageWrapper
-      title={`Welcome back, ${profile.name}!`}
-      subtitle="Manage your bookings and account"
-    >
+    <>
       <Stack spacing="xl">
         {/* Stats */}
         <Grid cols={3} gap="lg">
@@ -300,7 +284,7 @@ function CustomerDashboardContent() {
           />
         </Stack>
       </Stack>
-    </AdminPageWrapper>
+    </>
   );
 }
 

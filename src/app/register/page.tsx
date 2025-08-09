@@ -15,10 +15,10 @@ import {
   ToastProvider,
   Input,
   Label,
-  EditableText,
   spacing
 } from '@/ui';
 import styled from 'styled-components';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 // Styled components for registration page
 const RegisterCard = styled(Box)`
@@ -78,6 +78,7 @@ const LinkText = styled(Text)`
 `;
 
 export default function CustomerRegisterPage() {
+  const { cmsData } = useCMSData();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -168,14 +169,10 @@ export default function CustomerRegisterPage() {
           <Stack   align="center">
             <Stack    align="center">
               <H1 align="center">
-                <EditableText field="customer.register.title" defaultValue="Create Your Account">
-                  Create Your Account
-                </EditableText>
+                {getCMSField(cmsData, 'customer.register.title', 'Create Your Account')}
               </H1>
               <Text align="center" variant="muted">
-                <EditableText field="customer.register.subtitle" defaultValue="Sign up to start booking your airport rides">
-                  Sign up to start booking your airport rides
-                </EditableText>
+                {getCMSField(cmsData, 'customer.register.subtitle', 'Sign up to start booking your airport rides')}
               </Text>
             </Stack>
 
@@ -183,14 +180,10 @@ export default function CustomerRegisterPage() {
               <Stack>
                 <Stack    align="center">
                   <H2 align="center" id="register-title">
-                    <EditableText field="customer.register.authTitle" defaultValue="Customer Registration">
-                      Customer Registration
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.register.authTitle', 'Customer Registration')}
                   </H2>
                   <Text align="center" variant="muted">
-                    <EditableText field="customer.register.authDesc" defaultValue="Create your account to manage bookings">
-                      Create your account to manage bookings
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.register.authDesc', 'Create your account to manage bookings')}
                   </Text>
                 </Stack>
 
@@ -198,9 +191,7 @@ export default function CustomerRegisterPage() {
                   <Stack>
                     <Stack   >
                       <Label htmlFor="name">
-                        <EditableText field="customer.register.nameLabel" defaultValue="Full Name">
-                          Full Name
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.register.nameLabel', 'Full Name')}
                       </Label>
                       <Input
                         id="name"
@@ -215,9 +206,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="email">
-                        <EditableText field="customer.register.emailLabel" defaultValue="Email Address">
-                          Email Address
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.register.emailLabel', 'Email Address')}
                       </Label>
                       <Input
                         id="email"
@@ -232,9 +221,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="phone">
-                        <EditableText field="customer.register.phoneLabel" defaultValue="Phone Number">
-                          Phone Number
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.register.phoneLabel', 'Phone Number')}
                       </Label>
                       <Input
                         id="phone"
@@ -249,9 +236,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="password">
-                        <EditableText field="customer.register.passwordLabel" defaultValue="Password">
-                          Password
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.register.passwordLabel', 'Password')}
                       </Label>
                       <Input
                         id="password"
@@ -266,9 +251,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="confirmPassword">
-                        <EditableText field="customer.register.confirmPasswordLabel" defaultValue="Confirm Password">
-                          Confirm Password
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.register.confirmPasswordLabel', 'Confirm Password')}
                       </Label>
                       <Input
                         id="confirmPassword"
@@ -284,9 +267,7 @@ export default function CustomerRegisterPage() {
                     {error && (
                       <Stack    align="center">
                         <Text variant="muted" align="center" color="error">
-                          <EditableText field="customer.register.errorIcon" defaultValue="⚠️">
-                            ⚠️
-                          </EditableText>
+                          {getCMSField(cmsData, 'customer.register.errorIcon', '⚠️')}
                           {' '}
                           {error}
                         </Text>
@@ -300,16 +281,12 @@ export default function CustomerRegisterPage() {
                       disabled={loading}
                       data-testid="register-button"
                     >
-                      <EditableText field="customer.register.sign_up_button" defaultValue={loading ? '🔄 Creating Account...' : '📝 Create Account'}>
-                        {loading ? '🔄 Creating Account...' : '📝 Create Account'}
-                      </EditableText>
+                        {getCMSField(cmsData, 'customer.register.sign_up_button', loading ? '🔄 Creating Account...' : '📝 Create Account')}
                     </Button>
 
                     <OrDivider>
                       <Text variant="muted">
-                        <EditableText field="customer.register.or_separator" defaultValue="or">
-                          or
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.register.or_separator', 'or')}
                       </Text>
                     </OrDivider>
 
@@ -321,9 +298,7 @@ export default function CustomerRegisterPage() {
                       disabled={loading}
                       data-testid="google-signin-button"
                     >
-                      <EditableText field="customer.register.google_sign_in_button" defaultValue={loading ? '🔄 Connecting...' : 'Sign Up with Google'}>
-                        {loading ? '🔄 Connecting...' : 'Sign Up with Google'}
-                      </EditableText>
+                      {getCMSField(cmsData, 'customer.register.google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign Up with Google')}
                     </Button>
                   </Stack>
                 </RegisterForm>
@@ -331,13 +306,9 @@ export default function CustomerRegisterPage() {
             </RegisterCard>
 
             <LinkText variant="muted">
-              <EditableText field="customer.register.have_account" defaultValue="Already have an account?">
-                Already have an account?{' '}
-              </EditableText>
+              {getCMSField(cmsData, 'customer.register.have_account', 'Already have an account?')}
               <Link href="/login">
-                <EditableText field="customer.register.signin_link" defaultValue="Sign in">
-                  Sign in
-                </EditableText>
+                {getCMSField(cmsData, 'customer.register.signin_link', 'Sign in')}
               </Link>
             </LinkText>
           </Stack>

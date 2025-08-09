@@ -9,17 +9,17 @@ interface FloatingEditButtonProps {
   isAdmin?: boolean;
   isAuthenticated?: boolean;
   editMode?: boolean;
+  commentMode?: boolean;
   onToggleEditMode?: () => void;
   onToggleCommentMode?: () => void;
-  onToggleSiteMode?: () => void;
   isLoading?: boolean;
 }
 
 const FloatingContainer = styled.div`
   position: fixed;
-  bottom: 20px;
+  top: 120px;
   right: 20px;
-  z-index: 1000;
+  z-index: 10000;
 `;
 
 const FloatingButton = styled(Button)`
@@ -31,7 +31,7 @@ const FloatingButton = styled(Button)`
 
 const AdminPanel = styled.div<{ $isOpen: boolean }>`
   position: absolute;
-  bottom: 60px;
+  top: 60px;
   right: 0;
   background: var(--background-card);
   border: 1px solid var(--border-color);
@@ -41,12 +41,20 @@ const AdminPanel = styled.div<{ $isOpen: boolean }>`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: ${props => props.$isOpen ? 'block' : 'none'};
   border-top: 1px solid var(--border-color);
+  z-index: 10001;
 `;
 
 const PanelContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+`;
+
+const PanelText = styled(Text)`
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
 `;
 
 const PanelButton = styled.button<{ $isActive?: boolean }>`
@@ -72,24 +80,48 @@ const Divider = styled.div`
   margin: 8px 0;
 `;
 
-const HamburgerIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-    <path d="M2 4h16v2H2V4zm0 5h16v2H2V9zm0 5h16v2H2v-2z" />
-  </svg>
-);
+const HamburgerIcon = styled.div<{ $isOpen: boolean }>`
+  width: 20px;
+  height: 20px;
+  position: relative;
+  
+  span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    position: absolute;
+    left: 0;
+    transition: all 0.3s ease;
+    
+    &:nth-child(1) {
+      top: ${props => props.$isOpen ? '50%' : '25%'};
+      transform: ${props => props.$isOpen ? 'translateY(-50%) rotate(45deg)' : 'none'};
+    }
+    
+    &:nth-child(2) {
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: ${props => props.$isOpen ? '0' : '1'};
+    }
+    
+    &:nth-child(3) {
+      top: ${props => props.$isOpen ? '50%' : '75%'};
+      transform: ${props => props.$isOpen ? 'translateY(-50%) rotate(-45deg)' : 'none'};
+    }
+  }
+`;
 
 export const FloatingEditButton: React.FC<FloatingEditButtonProps> = ({
   isAdmin = false,
   isAuthenticated = false,
   editMode = false,
+  commentMode = false,
   onToggleEditMode,
   onToggleCommentMode,
-  onToggleSiteMode,
   isLoading = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [commentMode, setCommentMode] = useState(false);
-  const [siteMode, setSiteMode] = useState('live');
 
   // Don't render if not logged in or not admin
   if (isLoading) {
@@ -100,75 +132,61 @@ export const FloatingEditButton: React.FC<FloatingEditButtonProps> = ({
     return null;
   }
 
-  const togglePanel = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleEditMode = () => {
+  const handleEditMode = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (onToggleEditMode) {
       onToggleEditMode();
     }
   };
 
-  const handleCommentMode = () => {
-    setCommentMode(!commentMode);
+  const handleCommentMode = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (onToggleCommentMode) {
       onToggleCommentMode();
     }
   };
 
-  const handleSiteMode = () => {
-    setSiteMode(siteMode === 'live' ? 'draft' : 'live');
-    if (onToggleSiteMode) {
-      onToggleSiteMode();
-    }
-  };
-
   return (
-    <FloatingContainer>
+    <FloatingContainer className="floating-edit-button">
       <FloatingButton
-        variant="primary"
-        size="sm"
-        onClick={togglePanel}
+        onClick={(e?: React.MouseEvent<HTMLButtonElement>) => {
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          setIsOpen(!isOpen);
+        }}
+        data-testid="floating-edit-button"
+        data-admin-control="true"
       >
-        <HamburgerIcon />
+        <HamburgerIcon $isOpen={isOpen}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </HamburgerIcon>
       </FloatingButton>
-
-      <AdminPanel $isOpen={isOpen}>
+      
+      <AdminPanel $isOpen={isOpen} className="admin-panel">
         <PanelContent>
-          <Text variant="small" weight="semibold" color="muted">
-            Admin Panel
-          </Text>
-
-          <PanelButton
-            onClick={handleEditMode}
-            $isActive={editMode}
-          >
+          <PanelText>Admin Controls</PanelText>
+          <PanelButton onClick={handleEditMode} $isActive={editMode} data-admin-control="true">
             {editMode ? '✓' : '○'} Edit Mode
           </PanelButton>
-
-          <PanelButton
-            onClick={handleCommentMode}
-            $isActive={commentMode}
-          >
+          <PanelButton onClick={handleCommentMode} $isActive={commentMode} data-admin-control="true">
             {commentMode ? '✓' : '○'} Comments
           </PanelButton>
-
-          <PanelButton
-            onClick={handleSiteMode}
-            $isActive={siteMode === 'draft'}
-          >
-            {siteMode === 'draft' ? '✓' : '○'} {siteMode === 'live' ? 'Live Mode' : 'Draft Mode'}
-          </PanelButton>
-
           <Divider />
-
-          <PanelButton onClick={() => window.open('/admin', '_blank')}>
-            → Admin Dashboard
+          <PanelButton as="a" href="/admin" data-admin-control="true">
+            📊 Admin Dashboard
           </PanelButton>
-
-          <PanelButton onClick={() => window.open('/admin/cms', '_blank')}>
-            → Content Manager
+          <PanelButton as="a" href="/admin/cms" data-admin-control="true">
+            📝 Content Manager
           </PanelButton>
         </PanelContent>
       </AdminPanel>

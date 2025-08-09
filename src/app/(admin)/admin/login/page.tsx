@@ -14,9 +14,9 @@ import {
 } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
-import { EditableText } from '@/ui';
 import styled from 'styled-components';
 import { spacing, colors } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 // Styled components for login page
 const LoginCard = styled(Box)`
@@ -67,7 +67,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
+  const { cmsData } = useCMSData();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -108,38 +108,28 @@ export default function LoginPage() {
         <Stack spacing="2xl" align="center">
           <Stack spacing="lg" align="center">
             <H1 align="center">
-              <EditableText field="admin.login.title" defaultValue="🔐 Admin Login">
-                🔐 Admin Login
-              </EditableText>
+              {getCMSField(cmsData, 'admin.login.title', '🔐 Admin Login')}
             </H1>
             <Text variant="lead" align="center">
-              <EditableText field="admin.login.subtitle" defaultValue="Enter your credentials to access the admin dashboard">
-                Enter your credentials to access the admin dashboard
-              </EditableText>
+              {getCMSField(cmsData, 'admin.login.subtitle', 'Enter your credentials to access the admin dashboard')}
             </Text>
           </Stack>
           
           <LoginCard variant="elevated" padding="xl" id="login-card">
             <Stack spacing="lg">
               <H2 align="center" id="login-title">
-                <EditableText field="admin.login.authTitle" defaultValue="Admin Authentication">
-                  Admin Authentication
-                </EditableText>
+                {getCMSField(cmsData, 'admin.login.authTitle', 'Admin Authentication')}
               </H2>
               
               <Text align="center" color="secondary">
-                <EditableText field="admin.login.authDesc" defaultValue="Sign in to access the admin dashboard">
-                  Sign in to access the admin dashboard
-                </EditableText>
+                {getCMSField(cmsData, 'admin.login.authDesc', 'Sign in to access the admin dashboard')}
               </Text>
               
               <LoginForm onSubmit={handleFormSubmit} id="login-form">
                 <Stack spacing="lg">
                   <Stack spacing="sm" align="center">
                     <Label htmlFor="email" id="email-label">
-                      <EditableText field="admin.login.emailLabel" defaultValue="Email Address">
-                        Email Address
-                      </EditableText>
+                      {getCMSField(cmsData, 'admin.login.emailLabel', 'Email Address')}
                     </Label>
                     <Input
                       id="email"
@@ -156,9 +146,7 @@ export default function LoginPage() {
                   
                   <Stack spacing="sm">
                     <Label htmlFor="password" id="password-label">
-                      <EditableText field="admin.login.passwordLabel" defaultValue="Password">
-                        Password
-                      </EditableText>
+                      {getCMSField(cmsData, 'admin.login.passwordLabel', 'Password')}
                     </Label>
                     <Input
                       id="password"
@@ -175,9 +163,7 @@ export default function LoginPage() {
                   
                   {error && (
                     <Stack direction="horizontal" spacing="sm" align="center">
-                      <EditableText field="admin.login.errorIcon" defaultValue="⚠️">
-                        ⚠️
-                      </EditableText>
+                      {getCMSField(cmsData, 'admin.login.errorIcon', '⚠️')}
                       <Text color="error" id="error-message">{error}</Text>
                     </Stack>
                   )}
@@ -191,16 +177,12 @@ export default function LoginPage() {
                     id="sign-in-button"
                     data-testid="sign-in-button"
                   >
-                    <EditableText field="admin.login.sign_in_button" defaultValue={loading ? '🔄 Signing In...' : '🔐 Sign In'}>
-                      {loading ? '🔄 Signing In...' : '🔐 Sign In'}
-                    </EditableText>
+                    {getCMSField(cmsData, 'admin.login.sign_in_button', loading ? '🔄 Signing In...' : '🔐 Sign In')}
                   </Button>
                   
                   <OrDivider id="or-divider">
                     <Text size="sm" color="secondary" id="or-text">
-                      <EditableText field="admin.login.or_separator" defaultValue="or">
-                        or
-                      </EditableText>
+                      {getCMSField(cmsData, 'admin.login.or_separator', 'or')}
                     </Text>
                   </OrDivider>
                   
@@ -214,9 +196,7 @@ export default function LoginPage() {
                     id="google-sign-in-button"
                     data-testid="google-sign-in-button"
                   >
-                      <EditableText field="admin.login.google_sign_in_button" defaultValue={loading ? '🔄 Connecting...' : 'Sign In with Google'}>
-                        {loading ? '🔄 Connecting...' : 'Sign In with Google'}
-                      </EditableText>
+                      {getCMSField(cmsData, 'admin.login.google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign In with Google')}
                                       </Button>
                 </Stack>
               </LoginForm>
