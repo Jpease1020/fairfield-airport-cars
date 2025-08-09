@@ -49,3 +49,6 @@ temp-types/
 scripts/monitoring/
 src/types/api.ts
 src/types/core.ts
+
+# CMS migration temp files
+/temp/

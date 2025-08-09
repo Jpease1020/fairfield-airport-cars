@@ -1,0 +1,207 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { cmsService } from '@/lib/services/cms-service';
+
+function sliceConfigByPage(fullConfig: any, page: string | null) {
+  if (!page) return fullConfig;
+  const pages = fullConfig?.pages || {};
+  const sliced: any = { pages: {} };
+  if (pages[page]) {
+    sliced.pages[page] = pages[page];
+  }
+  // include common sections used globally
+  if (fullConfig.footer) sliced.footer = fullConfig.footer;
+  if (fullConfig.business) sliced.business = fullConfig.business;
+  return sliced;
+}
+
+// Ensure this route runs in the Node.js runtime (not Edge) to avoid firebase-admin issues
+export const runtime = 'nodejs';
+// Disable ISR/caching for CMS API
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = searchParams.get('page');
+    
+    console.log('Fetching CMS configuration from Firebase...');
+    
+    // Get real data from Firebase
+    const cmsConfig = await cmsService.getCMSConfiguration();
+    
+    if (cmsConfig) {
+      console.log('CMS configuration loaded from Firebase:', cmsConfig);
+      return NextResponse.json(sliceConfigByPage(cmsConfig, page));
+    } else {
+      console.log('No CMS configuration found in Firebase, returning default config');
+      // Return default config if no data exists in Firebase
+      const defaultConfig = {
+        pages: {
+          home: {
+            title: 'Fairfield Airport Cars',
+            subtitle: 'Premium Airport Transportation',
+            description: 'Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area.',
+            hero: {
+              title: 'Professional Airport Transportation',
+              subtitle: 'Reliable rides to and from Fairfield Airport',
+              description: 'Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.',
+              primaryButton: 'Book Now',
+              secondaryButton: 'Learn More'
+            },
+            features: {
+              title: 'Why Choose Fairfield Airport Cars',
+              subtitle: 'Professional service you can count on',
+              items: [
+                { title: 'On-Time Service', description: 'Reliable pickup times with flight tracking and real-time updates' },
+                { title: 'Clean Vehicles', description: 'Well-maintained, professional fleet with luxury options' },
+                { title: 'Easy Booking', description: 'Secure online booking and payment with instant confirmation' }
+              ]
+            },
+            testimonials: {
+              title: 'What Our Customers Say',
+              subtitle: 'Trusted by travelers and businesses',
+              items: [
+                { name: 'Sarah Johnson', role: 'Business Traveler', content: 'Fairfield Airport Cars made my business trips stress-free.' },
+                { name: 'Mike Chen', role: 'Frequent Flyer', content: 'The best airport transportation service I\'ve used.' },
+                { name: 'Lisa Rodriguez', role: 'Travel Consultant', content: 'I recommend Fairfield Airport Cars to all my clients.' }
+              ]
+            },
+            cta: {
+              title: 'Ready to Book Your Ride?',
+              subtitle: 'Get started with your airport transportation today',
+              primaryButton: 'Book Now',
+              secondaryButton: 'Learn More'
+            }
+          },
+          'test-edit-mode': {
+            title: 'Test Edit Mode Page',
+            description: 'This page has editable content. Try clicking the edit button (top-right) to open the editor.',
+            customText: 'This text should be editable in the CMS editor.',
+            instructions: 'Click the edit button to modify the content above. You can edit the title, description, custom text, and instructions.',
+            reloadButton: 'Reload Page'
+          },
+          booking: {
+            title: 'Book Your Ride',
+            subtitle: 'Premium airport transportation service',
+            description: 'Reserve your luxury airport transportation with our professional drivers.'
+          },
+          help: {
+            title: 'Help & Support',
+            subtitle: 'We\'re here to help',
+            description: 'Find answers to common questions and get support when you need it.'
+          },
+          about: {
+            title: 'About Us',
+            subtitle: 'Your trusted transportation partner',
+            description: 'Learn more about our commitment to excellence and customer satisfaction.'
+          }
+        },
+        business: {
+          company: {
+            name: 'Fairfield Airport Cars',
+            tagline: 'Premium Airport Transportation',
+            phone: '+1-203-555-0123',
+            email: 'info@fairfieldairportcar.com',
+            address: 'Fairfield, CT',
+            hours: '24/7 Service',
+            website: 'https://fairfieldairportcar.com'
+          },
+          social: {
+            facebook: '',
+            instagram: '',
+            twitter: ''
+          },
+          branding: {
+            primaryColor: 'var(--primary-color)',
+            secondaryColor: 'var(--secondary-color)',
+            logoUrl: '/NewLogoNoBackground.svg'
+          }
+        },
+        pricing: {
+          baseFare: 50,
+          perMileRate: 2.5,
+          airportSurcharge: 10,
+          depositPercent: 25
+        },
+        bookingForm: {
+          fullNameLabel: 'Full Name',
+          emailLabel: 'Email Address',
+          phoneLabel: 'Phone Number',
+          pickupLocationLabel: 'Pickup Location',
+          dropoffLocationLabel: 'Dropoff Location',
+          pickupDateTimeLabel: 'Pickup Date and Time',
+          passengersLabel: 'Passengers',
+          flightNumberLabel: 'Flight Number (Optional)',
+          notesLabel: 'Notes (Optional)',
+          calculateFareButton: 'Calculate Fare',
+          calculatingFareButton: 'Calculating...',
+          bookNowButton: 'Book Now',
+          updateBookingButton: 'Update Booking',
+          estimatedFareLabel: 'Estimated Fare:',
+          errorEnterLocations: 'Please enter both pickup and drop-off locations.',
+          errorCalculateFare: 'Could not calculate fare. Please check the addresses.',
+          errorCalculateBeforeBooking: 'Please calculate the fare before booking.',
+          errorTimeConflict: 'Selected time conflicts with another booking. Please choose a different time.',
+          errorCreateBooking: 'Failed to create booking.',
+          errorUpdateBooking: 'Failed to update booking.',
+          successBookingCreated: 'Booking created successfully! Sending confirmation...',
+          successBookingUpdated: 'Booking updated successfully!',
+          loading: 'Loading...'
+        }
+      } as const;
+      return NextResponse.json(sliceConfigByPage(defaultConfig as any, page), { headers: { 'x-default-data': '1' } });
+    }
+  } catch (error) {
+    console.error('CMS API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load CMS configuration' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { fieldPath, value } = body;
+    
+    if (!fieldPath || value === undefined) {
+      return NextResponse.json(
+        { error: 'Missing fieldPath or value' },
+        { status: 400 }
+      );
+    }
+    
+    console.log('Updating CMS field:', fieldPath, '=', value);
+    
+    // Use cmsService to update the field
+    const pathParts = fieldPath.split('.');
+    const nested: any = {};
+    let cursor: any = nested;
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      cursor[pathParts[i]] = {};
+      cursor = cursor[pathParts[i]];
+    }
+    cursor[pathParts[pathParts.length - 1]] = value;
+    
+    const result = await cmsService.updateCMSConfiguration(nested);
+    
+    if (result.success) {
+      console.log('CMS field updated successfully');
+      return NextResponse.json({ success: true });
+    } else {
+      console.error('Failed to update CMS field:', result.errors);
+      return NextResponse.json(
+        { error: result.errors?.join(', ') || 'Failed to save' },
+        { status: 500 }
+      );
+    }
+  } catch (error) {
+    console.error('CMS update error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update CMS configuration' },
+      { status: 500 }
+    );
+  }
+} 

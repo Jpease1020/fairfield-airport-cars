@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, H2, Text, Button, Stack, Box, EditableText, Span } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { BackupService } from '@/lib/services/backup-service';
 import { Download, Upload, Trash2, RefreshCw, Calendar, HardDrive } from 'lucide-react';
 
@@ -14,6 +14,7 @@ interface BackupInfo {
 }
 
 export default function BackupManagementPage() {
+  const { cmsData } = useCMSData();
   const [backups, setBackups] = useState<BackupInfo[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
@@ -108,18 +109,13 @@ export default function BackupManagementPage() {
   };
 
   return (
-    <AdminPageWrapper
-      title="Backup Management"
-      subtitle="Create, restore, and manage system backups"
-    >
+    
       <Container>
         <Stack direction="vertical" spacing="lg">
           {/* Backup Actions */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.backup.actions" defaultValue="Backup Actions">
-                Backup Actions
-              </EditableText>
+              {getCMSField(cmsData, 'admin.backup.actions', 'Backup Actions')}
             </H2>
             <Stack direction="horizontal" spacing="sm">
               <Button
@@ -129,9 +125,7 @@ export default function BackupManagementPage() {
               >
                 <Download size={16} />
                 <Span>
-                  <EditableText field="admin.backup.create" defaultValue="Create Backup">
-                    {isCreating ? 'Creating...' : 'Create Backup'}
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.backup.create', 'Create Backup')}
                 </Span>
               </Button>
               <Button
@@ -140,9 +134,7 @@ export default function BackupManagementPage() {
               >
                 <RefreshCw size={16} />
                 <Span>
-                  <EditableText field="admin.backup.refresh" defaultValue="Refresh">
-                    Refresh
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.backup.refresh', 'Refresh')}
                 </Span>
               </Button>
             </Stack>
@@ -152,27 +144,19 @@ export default function BackupManagementPage() {
           {config && (
             <Box variant="elevated" padding="md">
               <H2>
-                <EditableText field="admin.backup.configuration" defaultValue="Backup Configuration">
-                  Backup Configuration
-                </EditableText>
+                {getCMSField(cmsData, 'admin.backup.configuration', 'Backup Configuration')}
               </H2>
               <Stack direction="vertical" spacing="sm">
                 <Text size="sm">
-                  <EditableText field="admin.backup.frequency" defaultValue="Frequency:">
-                    Frequency:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.backup.frequency', 'Frequency:')}
                   <Span variant="default"> {config.frequency}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.backup.retention" defaultValue="Retention:">
-                    Retention:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.backup.retention', 'Retention:')}
                   <Span variant="default"> {config.retentionDays} days</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.backup.compression" defaultValue="Compression:">
-                    Compression:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.backup.compression', 'Compression:')}
                   <Span variant="default"> {config.compression ? 'Enabled' : 'Disabled'}</Span>
                 </Text>
               </Stack>
@@ -182,15 +166,11 @@ export default function BackupManagementPage() {
           {/* Backup List */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.backup.list" defaultValue="Available Backups">
-                Available Backups
-              </EditableText>
+              {getCMSField(cmsData, 'admin.backup.list', 'Available Backups')}
             </H2>
             {backups.length === 0 ? (
               <Text size="sm">
-                <EditableText field="admin.backup.noBackups" defaultValue="No backups available">
-                  No backups available
-                </EditableText>
+                {getCMSField(cmsData, 'admin.backup.noBackups', 'No backups available')}
               </Text>
             ) : (
               <Stack direction="vertical" spacing="sm">
@@ -218,9 +198,7 @@ export default function BackupManagementPage() {
                         >
                           <Upload size={14} />
                           <Span>
-                            <EditableText field="admin.backup.restore" defaultValue="Restore">
-                              Restore
-                            </EditableText>
+                              {getCMSField(cmsData, 'admin.backup.restore', 'Restore')}
                           </Span>
                         </Button>
                         <Button
@@ -230,9 +208,7 @@ export default function BackupManagementPage() {
                         >
                           <Trash2 size={14} />
                           <Span>
-                            <EditableText field="admin.backup.delete" defaultValue="Delete">
-                              Delete
-                            </EditableText>
+                            {getCMSField(cmsData, 'admin.backup.delete', 'Delete')}
                           </Span>
                         </Button>
                       </Stack>
@@ -246,14 +222,12 @@ export default function BackupManagementPage() {
           {/* Status */}
           <Box variant="elevated" padding="sm">
             <Text size="sm">
-              <EditableText field="admin.backup.status" defaultValue="Last updated:">
-                Last updated:
-              </EditableText>
+              {getCMSField(cmsData, 'admin.backup.status', 'Last updated:')}
               <Span> {new Date().toLocaleString()}</Span>
             </Text>
           </Box>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    
   );
 } 

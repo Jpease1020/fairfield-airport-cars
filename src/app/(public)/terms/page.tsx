@@ -6,11 +6,14 @@ import {
   Container,
   Stack,
   Box,
+  H1,
+  H4,
+  Text
 } from '@/ui';
-import { EditableText } from '@/ui';
-import { EditableHeading } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function TermsPageContent() {
+  const { cmsData } = useCMSData();
   const termsSections = [
     {
       title: "Booking",
@@ -40,12 +43,12 @@ function TermsPageContent() {
       <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <EditableText field="terms.title" defaultValue="📋 Terms of Service" as="h1" align="center" data-testid="terms-title">
-              📋 Terms of Service
-            </EditableText>
-            <EditableText field="terms.lastUpdated" defaultValue="Effective Date: January 1, 2024 | Last updated: January 2024" variant="lead" align="center" size="lg" data-testid="terms-last-updated">
-              Effective Date: January 1, 2024 | Last updated: January 2024
-            </EditableText>
+            <H1 align="center" data-testid="terms-title">
+              {getCMSField(cmsData, 'terms.title', '📋 Terms of Service')}
+            </H1>
+            <Text variant="lead" align="center" size="lg" data-testid="terms-last-updated">
+              {getCMSField(cmsData, 'terms.lastUpdated', 'Effective Date: January 1, 2024 | Last updated: January 2024')}
+            </Text>
           </Stack>
         </Stack>
       </Container>
@@ -54,24 +57,24 @@ function TermsPageContent() {
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="lg">
             
-            <EditableText data-testid="terms-intro" field="terms.intro" defaultValue="Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.">
-              Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.
-            </EditableText>
+            <Text data-testid="terms-intro">
+              {getCMSField(cmsData, 'terms.intro', 'Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.')}
+            </Text>
             
-            <EditableText data-testid="terms-service-description" field="terms.serviceDescription" defaultValue="We provide airport transportation services in the Fairfield area, including pickup and drop-off at local airports.">
-              We provide airport transportation services in the Fairfield area, including pickup and drop-off at local airports.
-            </EditableText>
+            <Text data-testid="terms-service-description">
+              {getCMSField(cmsData, 'terms.serviceDescription', 'We provide airport transportation services in the Fairfield area, including pickup and drop-off at local airports.')}
+            </Text>
             
             <Stack data-testid="terms-sections-list" spacing="lg">
               {termsSections.map((section, index) => (
                 <Box key={index} data-testid={`terms-section-${index}`}>
                   <Stack spacing="md">
-                    <EditableHeading data-testid={`terms-section-title-${index}`} level={4} field={`terms.sections.${index}.title`} defaultValue={section.title}>
-                      {section.title}
-                    </EditableHeading>
-                    <EditableText data-testid={`terms-section-content-${index}`} field={`terms.sections.${index}.content`} defaultValue={section.content}>
-                      {section.content}
-                    </EditableText>
+                    <H4 data-testid={`terms-section-title-${index}`}>
+                      {getCMSField(cmsData, `terms.sections.${index}.title`, section.title)}
+                    </H4>
+                    <Text data-testid={`terms-section-content-${index}`}>
+                      {getCMSField(cmsData, `terms.sections.${index}.content`, section.content)}
+                    </Text>
                   </Stack>
                 </Box>
               ))}

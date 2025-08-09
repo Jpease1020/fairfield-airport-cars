@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react'; 
-import { GridSection, Box, ActionGrid, Container, Text, EditableText, Stack, H3 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { GridSection, Box, ActionGrid, Container, Text, Stack, H3 } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function AdminHelpPage() {
+  const { cmsData } = useCMSData();
   const helpSections = [
     {
       title: "Managing Bookings",
@@ -142,10 +143,7 @@ function AdminHelpPage() {
   ];
 
   return (
-    <AdminPageWrapper
-      title="Admin Help & Guide"
-      subtitle="Everything you need to know about managing your car service business"
-    >
+    <>
       {/* Help Sections */}
       <GridSection variant="content" columns={2}>
         {helpSections.map((section, sectionIndex) => (
@@ -158,24 +156,16 @@ function AdminHelpPage() {
               </Stack>
             <Container>
               <H3>
-                <EditableText field="admin.help.section.title" defaultValue={section.title}>
-                  {section.title}
-                </EditableText>
+                {getCMSField(cmsData, 'admin.help.section.title', section.title)}
               </H3>
-              <EditableText field="admin.help.section.description" defaultValue={section.description}>
-                {section.description}
-              </EditableText>
+              {getCMSField(cmsData, 'admin.help.section.description', section.description)}
             </Container>
             
             <Stack spacing="md">
               {section.items.map((item, index) => (
                 <Container key={index}>
-                  <EditableText field={`admin.help.question.${index}`} defaultValue={item.question}>
-                    {item.question}
-                  </EditableText>
-                  <EditableText field={`admin.help.answer.${index}`} defaultValue={item.answer}>
-                    {item.answer}
-                  </EditableText>
+                  {getCMSField(cmsData, `admin.help.question.${index}`, item.question)}
+                  {getCMSField(cmsData, `admin.help.answer.${index}`, item.answer)}
                 </Container>
               ))}
             </Stack>
@@ -193,27 +183,19 @@ function AdminHelpPage() {
             </Stack>
           <Stack spacing="md">
             <Container>
-              <EditableText field="admin.help.technical_support" defaultValue="Contact your developer for technical support">
-                Contact your developer for technical support
-              </EditableText>
+              {getCMSField(cmsData, 'admin.help.technical_support', 'Contact your developer for technical support')}
             </Container>
             
             <Container>
-              <EditableText field="admin.help.business_docs" defaultValue="Check the business documentation in your project files">
-                Check the business documentation in your project files
-              </EditableText>
+              {getCMSField(cmsData, 'admin.help.business_docs', 'Check the business documentation in your project files')}
             </Container>
             
             <Container>
-              <EditableText field="admin.help.cms_settings" defaultValue="Review your CMS settings for configuration options">
-                Review your CMS settings for configuration options
-              </EditableText>
+              {getCMSField(cmsData, 'admin.help.cms_settings', 'Review your CMS settings for configuration options')}
             </Container>
             
             <Container>
-              <EditableText field="admin.help.admin_dashboard" defaultValue="Use the Admin Dashboard to monitor your business metrics">
-                Use the Admin Dashboard to monitor your business metrics
-              </EditableText>
+              {getCMSField(cmsData, 'admin.help.admin_dashboard', 'Use the Admin Dashboard to monitor your business metrics')}
             </Container>
           </Stack>
           </Stack>
@@ -259,7 +241,7 @@ function AdminHelpPage() {
           </Stack>
         </Box>
       </GridSection>
-    </AdminPageWrapper>
+    </>
   );
 }
 

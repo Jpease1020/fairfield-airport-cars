@@ -8,9 +8,9 @@ import { Container, H2, H3, H4, Span } from '@/ui';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { Textarea, Select, Input } from '@/ui';
-import { EditableText } from '@/ui';
 import { CheckCircle, Clock, AlertCircle, Search, Download, Eye, Edit, Trash2, BarChart3, FileText } from 'lucide-react';
 import StatusBadge from '@/components/business/StatusBadge';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 export default function AdminCommentsPage() {
   const { isAdmin } = useAdminStatus();
@@ -25,7 +25,7 @@ export default function AdminCommentsPage() {
   const [exportFormat, setExportFormat] = useState<'csv' | 'json'>('csv');
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<any>(null);
-
+  const { cmsData } = useCMSData();
   // Load comments on mount
   useEffect(() => {
     if (isAdmin) {
@@ -182,9 +182,7 @@ export default function AdminCommentsPage() {
         {/* Header */}
         <Container variant="elevated" padding="md">
           <H2>
-            <EditableText field="adminComments.title" defaultValue="Comment Management">
-              Comment Management
-            </EditableText>
+            {getCMSField(cmsData, 'adminComments.title', 'Comment Management')}
           </H2>
           <Span variant="default" size="sm" color="muted">
             Manage all comments across the site
@@ -380,9 +378,7 @@ export default function AdminCommentsPage() {
         {showAnalytics && analyticsData && (
           <Container variant="elevated" padding="md">
             <H3>
-              <EditableText field="adminComments.analyticsTitle" defaultValue="Comment Analytics">
-                Comment Analytics
-              </EditableText>
+              {getCMSField(cmsData, 'adminComments.analyticsTitle', 'Comment Analytics')}
             </H3>
             
             <Stack spacing="md">

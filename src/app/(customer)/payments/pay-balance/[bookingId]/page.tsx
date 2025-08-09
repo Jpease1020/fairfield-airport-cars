@@ -17,7 +17,7 @@ import {
   Grid,
   GridItem
 } from '@/ui';
-import { EditableText } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface BalancePaymentPageProps {
   bookingId: string;
@@ -42,7 +42,8 @@ interface BookingDetails {
 }
 
 function BalancePaymentPageContent() {
-  const params = useParams();
+  const { cmsData } = useCMSData();
+    const params = useParams();
   const router = useRouter();
   const bookingId = params.bookingId as string;
   
@@ -202,14 +203,10 @@ function BalancePaymentPageContent() {
         {/* Header */}
         <Stack spacing="lg">
           <H1 align="center">
-            <EditableText field="payments.balance.title" defaultValue="Pay Remaining Balance">
-              Pay Remaining Balance
-            </EditableText>
+            {getCMSField(cmsData, 'payments.balance.title', 'Pay Remaining Balance')}
           </H1>
           <Text variant="lead" align="center">
-            <EditableText field="payments.balance.subtitle" defaultValue="Complete your payment for booking #">
-              Complete your payment for booking #
-            </EditableText>
+            {getCMSField(cmsData, 'payments.balance.subtitle', 'Complete your payment for booking #')}
             {bookingId}
           </Text>
         </Stack>
@@ -218,18 +215,14 @@ function BalancePaymentPageContent() {
         <Card variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>
-              <EditableText field="payments.balance.booking_summary" defaultValue="Booking Summary">
-                Booking Summary
-              </EditableText>
+              {getCMSField(cmsData, 'payments.balance.booking_summary', 'Booking Summary')}
             </H2>
             
             <Grid cols={2} gap="lg" responsive>
               <GridItem>
                 <Stack spacing="sm">
                   <Text variant="lead">
-                    <EditableText field="payments.balance.passenger" defaultValue="Passenger">
-                      Passenger
-                    </EditableText>
+                    {getCMSField(cmsData, 'payments.balance.passenger', 'Passenger')}
                   </Text>
                   <Text weight="bold">{bookingDetails.name}</Text>
                 </Stack>
@@ -238,9 +231,7 @@ function BalancePaymentPageContent() {
               <GridItem>
                 <Stack spacing="sm">
                   <Text variant="lead">
-                    <EditableText field="payments.balance.status" defaultValue="Status">
-                      Status
-                    </EditableText>
+                    {getCMSField(cmsData, 'payments.balance.status', 'Status')}
                   </Text>
                   <Badge variant={getStatusColor(bookingDetails.status)}>
                     {bookingDetails.status}
@@ -253,9 +244,7 @@ function BalancePaymentPageContent() {
               <GridItem>
                 <Stack spacing="sm">
                   <Text variant="lead">
-                    <EditableText field="payments.balance.pickup" defaultValue="Pickup">
-                      Pickup
-                    </EditableText>
+                    {getCMSField(cmsData, 'payments.balance.pickup', 'Pickup')}
                   </Text>
                   <Text>{bookingDetails.pickupLocation}</Text>
                   <Text variant="muted">{formatDate(bookingDetails.pickupDateTime)}</Text>
@@ -265,9 +254,7 @@ function BalancePaymentPageContent() {
               <GridItem>
                 <Stack spacing="sm">
                   <Text variant="lead">
-                    <EditableText field="payments.balance.dropoff" defaultValue="Dropoff">
-                      Dropoff
-                    </EditableText>
+                    {getCMSField(cmsData, 'payments.balance.dropoff', 'Dropoff')}
                   </Text>
                   <Text>{bookingDetails.dropoffLocation}</Text>
                 </Stack>
@@ -279,9 +266,7 @@ function BalancePaymentPageContent() {
                 <GridItem>
                   <Stack spacing="sm">
                     <Text variant="lead">
-                      <EditableText field="payments.balance.driver" defaultValue="Driver">
-                        Driver
-                      </EditableText>
+                      {getCMSField(cmsData, 'payments.balance.driver', 'Driver')}
                     </Text>
                     <Text>{bookingDetails.driverName}</Text>
                   </Stack>
@@ -290,9 +275,7 @@ function BalancePaymentPageContent() {
                 <GridItem>
                   <Stack spacing="sm">
                     <Text variant="lead">
-                      <EditableText field="payments.balance.vehicle" defaultValue="Vehicle">
-                        Vehicle
-                      </EditableText>
+                      {getCMSField(cmsData, 'payments.balance.vehicle', 'Vehicle')}
                     </Text>
                     <Text>{bookingDetails.vehicleType || 'Standard'}</Text>
                     {bookingDetails.serviceLevel && (
@@ -309,9 +292,7 @@ function BalancePaymentPageContent() {
         <Card variant="elevated" padding="lg">
           <Stack spacing="lg">
             <H2>
-              <EditableText field="payments.balance.payment_summary" defaultValue="Payment Summary">
-                Payment Summary
-              </EditableText>
+              {getCMSField(cmsData, 'payments.balance.payment_summary', 'Payment Summary')}
             </H2>
             
             <Box variant="outlined" padding="md">
@@ -335,9 +316,7 @@ function BalancePaymentPageContent() {
                 
                 <Stack direction="horizontal" justify="space-between" align="center">
                   <Text variant="h4" weight="bold">
-                    <EditableText field="payments.balance.remaining_balance" defaultValue="Remaining Balance">
-                      Remaining Balance
-                    </EditableText>
+                      {getCMSField(cmsData, 'payments.balance.remaining_balance', 'Remaining Balance')}
                   </Text>
                   <Text variant="h4" weight="bold" color="primary">
                     {formatCurrency(bookingDetails.balanceDue)}
@@ -349,14 +328,10 @@ function BalancePaymentPageContent() {
             {/* Payment Amount Input */}
             <Stack spacing="sm">
               <Text variant="lead">
-                <EditableText field="payments.balance.payment_amount" defaultValue="Payment Amount">
-                  Payment Amount
-                </EditableText>
+                {getCMSField(cmsData, 'payments.balance.payment_amount', 'Payment Amount')}
               </Text>
               <Text variant="body" color="muted">
-                <EditableText field="payments.balance.payment_amount_help" defaultValue="You can pay the full balance or a partial amount">
-                  You can pay the full balance or a partial amount
-                </EditableText>
+                {getCMSField(cmsData, 'payments.balance.payment_amount_help', 'You can pay the full balance or a partial amount')}
               </Text>
               
               <Stack direction="horizontal" spacing="md">
@@ -365,9 +340,7 @@ function BalancePaymentPageContent() {
                   onClick={() => setPaymentAmount(bookingDetails.balanceDue)}
                   disabled={paymentAmount === bookingDetails.balanceDue}
                 >
-                  <EditableText field="payments.balance.pay_full" defaultValue="Pay Full Balance">
-                    Pay Full Balance
-                  </EditableText>
+                  {getCMSField(cmsData, 'payments.balance.pay_full', 'Pay Full Balance')}
                 </Button>
                 
                 <Button
@@ -375,9 +348,7 @@ function BalancePaymentPageContent() {
                   onClick={() => setPaymentAmount(Math.min(bookingDetails.balanceDue / 2, bookingDetails.balanceDue))}
                   disabled={paymentAmount === Math.min(bookingDetails.balanceDue / 2, bookingDetails.balanceDue)}
                 >
-                  <EditableText field="payments.balance.pay_half" defaultValue="Pay Half">
-                    Pay Half
-                  </EditableText>
+                  {getCMSField(cmsData, 'payments.balance.pay_half', 'Pay Half')}
                 </Button>
               </Stack>
               
@@ -393,9 +364,7 @@ function BalancePaymentPageContent() {
                 variant="outline"
                 fullWidth
               >
-                <EditableText field="payments.balance.back" defaultValue="Back to Payments">
-                  Back to Payments
-                </EditableText>
+                {getCMSField(cmsData, 'payments.balance.back', 'Back to Payments')}
               </Button>
               
               <Button
@@ -411,9 +380,7 @@ function BalancePaymentPageContent() {
                   </>
                 ) : (
                   <>
-                    <EditableText field="payments.balance.pay_now" defaultValue="Pay Now">
-                      Pay Now
-                    </EditableText>
+                    {getCMSField(cmsData, 'payments.balance.pay_now', 'Pay Now')}
                   </>
                 )}
               </Button>

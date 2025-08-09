@@ -11,16 +11,16 @@ import {
   Text,
   Button,
   LoadingSpinner,
-  EditableText,
   Alert,
   Input,
   Label,
   H1,
   ContentCard
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function CustomerProfilePage() {
+  const { cmsData } = useCMSData();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -217,30 +217,21 @@ function CustomerProfilePage() {
   }
 
   return (
-    <AdminPageWrapper
-      title="My Profile"
-      subtitle="Manage your account information and preferences"
-    >
+    <>
       <Stack spacing="xl">
         {/* Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1>
-              <EditableText field="customer.profile.title" defaultValue="My Profile">
-                My Profile
-              </EditableText>
+              {getCMSField(cmsData, 'customer.profile.title', 'My Profile')}
             </H1>
             <Text variant="muted">
-              <EditableText field="customer.profile.subtitle" defaultValue="Manage your account information and preferences">
-                Manage your account information and preferences
-              </EditableText>
+              {getCMSField(cmsData, 'customer.profile.subtitle', 'Manage your account information and preferences')}
             </Text>
           </Stack>
           {!isEditing && (
             <Button onClick={handleEdit} variant="primary">
-              <EditableText field="customer.profile.edit_profile" defaultValue="Edit Profile">
-                Edit Profile
-              </EditableText>
+              {getCMSField(cmsData, 'customer.profile.edit_profile', 'Edit Profile')}
             </Button>
           )}
         </Stack>
@@ -266,9 +257,7 @@ function CustomerProfilePage() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Label htmlFor="name">
-                    <EditableText field="customer.profile.name_label" defaultValue="Full Name">
-                      Full Name
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.name_label', 'Full Name')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -286,23 +275,17 @@ function CustomerProfilePage() {
 
                 <Stack spacing="sm">
                   <Label htmlFor="email">
-                    <EditableText field="customer.profile.email_label" defaultValue="Email Address">
-                      Email Address
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.email_label', 'Email Address')}
                   </Label>
                   <Text>{profile.email}</Text>
                   <Text variant="muted" size="sm">
-                    <EditableText field="customer.profile.email_note" defaultValue="Email cannot be changed">
-                      Email cannot be changed
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.email_note', 'Email cannot be changed')}
                   </Text>
                 </Stack>
 
                 <Stack spacing="sm">
                   <Label htmlFor="phone">
-                    <EditableText field="customer.profile.phone_label" defaultValue="Phone Number">
-                      Phone Number
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.phone_label', 'Phone Number')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -322,14 +305,10 @@ function CustomerProfilePage() {
               {isEditing && (
                 <Stack direction="horizontal" spacing="sm">
                   <Button onClick={handleSave} variant="primary" disabled={saving}>
-                    <EditableText field="customer.profile.save_button" defaultValue={saving ? 'Saving...' : 'Save Changes'}>
-                      {saving ? 'Saving...' : 'Save Changes'}
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.save_button', saving ? 'Saving...' : 'Save Changes')}
                   </Button>
                   <Button onClick={handleCancel} variant="outline">
-                    <EditableText field="customer.profile.cancel_button" defaultValue="Cancel">
-                      Cancel
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.cancel_button', 'Cancel')}
                   </Button>
                 </Stack>
               )}
@@ -346,9 +325,7 @@ function CustomerProfilePage() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Label htmlFor="defaultPickupLocation">
-                    <EditableText field="customer.profile.default_pickup_label" defaultValue="Default Pickup Location">
-                      Default Pickup Location
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.default_pickup_label', 'Default Pickup Location')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -365,9 +342,7 @@ function CustomerProfilePage() {
 
                 <Stack spacing="sm">
                   <Label htmlFor="defaultDropoffLocation">
-                    <EditableText field="customer.profile.default_dropoff_label" defaultValue="Default Dropoff Location">
-                      Default Dropoff Location
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.default_dropoff_label', 'Default Dropoff Location')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -395,9 +370,7 @@ function CustomerProfilePage() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Label>
-                    <EditableText field="customer.profile.notifications_label" defaultValue="Notification Settings">
-                      Notification Settings
-                    </EditableText>
+                    {getCMSField(cmsData, 'customer.profile.notifications_label', 'Notification Settings')}
                   </Label>
                   <Stack spacing="sm">
                     <Stack direction="horizontal" align="center" spacing="sm">
@@ -409,9 +382,7 @@ function CustomerProfilePage() {
                         disabled={!isEditing}
                       />
                       <Label htmlFor="emailNotifications">
-                        <EditableText field="customer.profile.email_notifications" defaultValue="Email Notifications">
-                          Email Notifications
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.profile.email_notifications', 'Email Notifications')}
                       </Label>
                     </Stack>
                     <Stack direction="horizontal" align="center" spacing="sm">
@@ -423,9 +394,7 @@ function CustomerProfilePage() {
                         disabled={!isEditing}
                       />
                       <Label htmlFor="smsNotifications">
-                        <EditableText field="customer.profile.sms_notifications" defaultValue="SMS Notifications">
-                          SMS Notifications
-                        </EditableText>
+                        {getCMSField(cmsData, 'customer.profile.sms_notifications', 'SMS Notifications')}
                       </Label>
                     </Stack>
                   </Stack>
@@ -452,7 +421,7 @@ function CustomerProfilePage() {
           variant="elevated"
         />
       </Stack>
-    </AdminPageWrapper>
+    </>
   );
 }
 

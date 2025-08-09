@@ -16,7 +16,9 @@ export interface HomePageContent {
   hero: {
     title: string;
     subtitle: string;
-    ctaText: string;
+    description: string;
+    primaryButton: string;
+    secondaryButton: string;
   };
   features: {
     title: string;
@@ -235,6 +237,13 @@ export interface CMSConfiguration {
   pages: {
     home: HomePageContent;
     help: HelpPageContent;
+    'test-edit-mode'?: {
+      title: string;
+      description: string;
+      customText: string;
+      instructions: string;
+      reloadButton: string;
+    };
     booking?: {
       title: string;
       subtitle: string;
@@ -344,7 +353,9 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       hero: {
         title: 'Fairfield Airport Car Service',
         subtitle: "Reliable, comfortable rides to and from Fairfield Airport",
-        ctaText: "Book Your Ride"
+        description: "Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.",
+        primaryButton: "Book Your Ride",
+        secondaryButton: "Learn More"
       },
       features: {
         title: "Why Choose Us",

@@ -14,11 +14,11 @@ import {
   Form,
   ToastProvider,
   LoadingSpinner,
-  EditableText,
 } from '@/ui';
 import { Input, Select, Label, Textarea } from '@/ui';
 import { Booking } from '@/types/booking';
 import { TipCalculator } from '@/components/business/TipCalculator';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -50,18 +50,35 @@ const useGoogleMapsScript = (apiKey: string) => {
 
     if (typeof document === 'undefined') return;
 
+    let isCancelled = false;
+    const checkPlaces = () => {
+      if (isCancelled) return;
+      if (typeof window !== 'undefined' && (window as any).google && (window as any).google.maps && (window as any).google.maps.places) {
+        setIsLoaded(true);
+        return;
+      }
+      // Stop retrying after 50 attempts (~5s)
+      const attempts = Number((window as any).__gmapsAttempts || 0) + 1;
+      (window as any).__gmapsAttempts = attempts;
+      if (attempts > 50) {
+        setIsError(true);
+        return;
+      }
+      setTimeout(checkPlaces, 100);
+    };
+
+    // Avoid duplicate loads
+    const existing = document.querySelector('script[data-gmaps="true"]') as HTMLScriptElement | null;
+    if (existing) {
+      checkPlaces();
+      return;
+    }
+
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
     script.async = true;
     script.defer = true;
-
-    const checkPlaces = () => {
-      if (typeof window !== 'undefined' && window.google && window.google.maps && window.google.maps.places) {
-        setIsLoaded(true);
-      } else {
-        setTimeout(checkPlaces, 100);
-      }
-    };
+    script.setAttribute('data-gmaps', 'true');
 
     script.onload = () => {
       checkPlaces();
@@ -74,9 +91,7 @@ const useGoogleMapsScript = (apiKey: string) => {
     document.head.appendChild(script);
 
     return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
+      isCancelled = true;
     };
   }, [apiKey]);
 
@@ -84,6 +99,7 @@ const useGoogleMapsScript = (apiKey: string) => {
 };
 
 function BookingFormContent({ booking }: BookingFormProps) {
+  const { cmsData } = useCMSData();
   const [name, setName] = useState(booking?.name || '');
   const [email, setEmail] = useState(booking?.email || '');
   const [phone, setPhone] = useState(booking?.phone || '');
@@ -342,9 +358,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
               <H2 align="center">
-                <EditableText field="booking.personalInfo.title" defaultValue="Contact Information">
-                  Contact Information
-                </EditableText>
+                {getCMSField(cmsData, 'booking.personalInfo.title', 'Contact Information')}
               </H2>
               
               <Grid cols={1} gap="md" responsive>
@@ -398,9 +412,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
               <H2 align="center">
-                <EditableText field="booking.tripDetails.title" defaultValue="Trip Details">
-                  Trip Details
-                </EditableText>
+                {getCMSField(cmsData, 'booking.tripDetails.title', 'Trip Details')}
               </H2>
               
               <Grid cols={1} gap="md" responsive>
@@ -498,74 +510,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </Stack>
           </Box>
 
-          {/* Vehicle & Service Selection */}
-          <Box variant="elevated" padding="lg">
-            <Stack spacing="lg">
-              <H2 align="center">
-                <EditableText field="booking.vehicleService.title" defaultValue="Vehicle & Service Options">
-                  Vehicle & Service Options
-                </EditableText>
-              </H2>
-              
-              <Grid cols={2} gap="lg" responsive>
-                <GridItem>
-                  <Stack spacing="md">
-                    <Text weight="bold">Vehicle Type</Text>
-                    {VEHICLE_OPTIONS.map((vehicle) => (
-                      <Stack key={vehicle.value} direction="horizontal" align="center" spacing="sm">
-                        <input
-                          type="radio"
-                          id={`vehicle-${vehicle.value}`}
-                          name="vehicle"
-                          value={vehicle.value}
-                          checked={selectedVehicle === vehicle.value}
-                          onChange={(e) => setSelectedVehicle(e.target.value)}
-                        />
-                        <Stack spacing="xs">
-                          <Label htmlFor={`vehicle-${vehicle.value}`}>
-                            {vehicle.label} {vehicle.price > 0 && `(+$${vehicle.price})`}
-                          </Label>
-                          <Text variant="muted" size="sm">{vehicle.description}</Text>
-                        </Stack>
-                      </Stack>
-                    ))}
-                  </Stack>
-                </GridItem>
-                
-                <GridItem>
-                  <Stack spacing="md">
-                    <Text weight="bold">Service Level</Text>
-                    {SERVICE_LEVELS.map((service) => (
-                      <Stack key={service.value} direction="horizontal" align="center" spacing="sm">
-                        <input
-                          type="radio"
-                          id={`service-${service.value}`}
-                          name="service"
-                          value={service.value}
-                          checked={selectedServiceLevel === service.value}
-                          onChange={(e) => setSelectedServiceLevel(e.target.value)}
-                        />
-                        <Stack spacing="xs">
-                          <Label htmlFor={`service-${service.value}`}>
-                            {service.label} {service.price > 0 && `(+$${service.price})`}
-                          </Label>
-                          <Text variant="muted" size="sm">{service.description}</Text>
-                        </Stack>
-                      </Stack>
-                    ))}
-                  </Stack>
-                </GridItem>
-              </Grid>
-            </Stack>
-          </Box>
-
           {/* Special Requests */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
               <H2 align="center">
-                <EditableText field="booking.specialRequests.title" defaultValue="Special Requests">
-                  Special Requests
-                </EditableText>
+                {getCMSField(cmsData, 'booking.specialRequests.title', 'Special Requests')}
               </H2>
               
               <Grid cols={2} gap="md" responsive>
@@ -675,14 +624,14 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       <GridItem>
                         <Stack spacing="sm">
                           <Label htmlFor="arrivalTime">Arrival Time</Label>
-                                                     <Input
-                             id="arrivalTime"
-                             type="text"
-                             value={flightInfo.arrivalTime}
-                             onChange={(e) => setFlightInfo(prev => ({ ...prev, arrivalTime: e.target.value }))}
-                             placeholder="HH:MM"
-                             fullWidth
-                           />
+                          <Input
+                            id="arrivalTime"
+                            type="text"
+                            value={flightInfo.arrivalTime}
+                            onChange={(e) => setFlightInfo(prev => ({ ...prev, arrivalTime: e.target.value }))}
+                            placeholder="HH:MM"
+                            fullWidth
+                          />
                         </Stack>
                       </GridItem>
                       
@@ -709,9 +658,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
               <H2 align="center">
-                <EditableText field="booking.notes.title" defaultValue="Additional Notes">
-                  Additional Notes
-                </EditableText>
+                {getCMSField(cmsData, 'booking.notes.title', 'Additional Notes')}
               </H2>
               
               <Grid cols={1} gap="md" responsive>
@@ -736,9 +683,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
               <H2 align="center">
-                <EditableText field="booking.fare.title" defaultValue="Fare & Booking">
-                  Fare & Booking
-                </EditableText>
+                {getCMSField(cmsData, 'booking.fare.title', 'Fare & Booking')}
               </H2>
               
               <Stack spacing="md">
@@ -751,24 +696,24 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           <Text>Base Fare:</Text>
                           <Text>${fare.toFixed(2)}</Text>
                         </Stack>
-                                                 {(() => {
-                           const vehicle = VEHICLE_OPTIONS.find(v => v.value === selectedVehicle);
-                           return vehicle && vehicle.price > 0 ? (
-                             <Stack direction="horizontal" justify="space-between">
-                               <Text>Vehicle Upgrade:</Text>
-                               <Text>+${vehicle.price.toFixed(2)}</Text>
-                             </Stack>
-                           ) : null;
-                         })()}
-                         {(() => {
-                           const service = SERVICE_LEVELS.find(s => s.value === selectedServiceLevel);
-                           return service && service.price > 0 ? (
-                             <Stack direction="horizontal" justify="space-between">
-                               <Text>Service Level:</Text>
-                               <Text>+${service.price.toFixed(2)}</Text>
-                             </Stack>
-                           ) : null;
-                         })()}
+                        {(() => {
+                          const vehicle = VEHICLE_OPTIONS.find(v => v.value === selectedVehicle);
+                          return vehicle && vehicle.price > 0 ? (
+                            <Stack direction="horizontal" justify="space-between">
+                              <Text>Vehicle Upgrade:</Text>
+                              <Text>+${vehicle.price.toFixed(2)}</Text>
+                            </Stack>
+                          ) : null;
+                        })()}
+                        {(() => {
+                          const service = SERVICE_LEVELS.find(s => s.value === selectedServiceLevel);
+                          return service && service.price > 0 ? (
+                            <Stack direction="horizontal" justify="space-between">
+                              <Text>Service Level:</Text>
+                              <Text>+${service.price.toFixed(2)}</Text>
+                            </Stack>
+                          ) : null;
+                        })()}
                         <Stack direction="horizontal" justify="space-between">
                           <Text weight="bold">Total:</Text>
                           <Text weight="bold">${getTotalFare().toFixed(2)}</Text>
@@ -810,9 +755,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     variant="primary"
                     fullWidth
                   >
-                    <EditableText field="booking.submit" defaultValue="Book Now">
-                      Book Now
-                    </EditableText>
+                    {getCMSField(cmsData, 'booking.submit', 'Book Now')}
                   </Button>
                 </Stack>
               </Stack>

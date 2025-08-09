@@ -25,7 +25,9 @@ export async function POST() {
           hero: {
             title: businessSettings?.company?.name || 'Fairfield Airport Car Service',
             subtitle: "Premium Transportation",
-            ctaText: "Book Your Ride Now"
+            description: "Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.",
+            primaryButton: "Book Your Ride Now",
+            secondaryButton: "Learn More"
           },
           features: {
             title: "Why Choose Us?",

@@ -167,25 +167,25 @@ const RULES = {
     {
       name: 'hardcoded text that should be editable',
       pattern: /<Text[^>]*>[^<]*[a-zA-Z][^<]*<\/Text>/g,
-      message: '⚠️  WARNING: Hardcoded text detected. Consider using EditableText for database-driven content.',
+      message: '⚠️  WARNING: Hardcoded text detected. Consider using getCMSField for database-driven content.',
       severity: 'warning'
     },
     {
       name: 'hardcoded span text',
       pattern: /<Span[^>]*>[^<]*[a-zA-Z][^<]*<\/Span>/g,
-      message: '⚠️  WARNING: Hardcoded text detected. Consider using EditableText for database-driven content.',
+      message: '⚠️  WARNING: Hardcoded text detected. Consider using getCMSField for database-driven content.',
       severity: 'warning'
     },
     {
       name: 'hardcoded heading text',
       pattern: /<H[1-6][^>]*>[^<]*[a-zA-Z][^<]*<\/H[1-6]>/g,
-      message: '⚠️  WARNING: Hardcoded text detected. Consider using EditableText for database-driven content.',
+      message: '⚠️  WARNING: Hardcoded text detected. Consider using getCMSField for database-driven content.',
       severity: 'warning'
     },
     {
       name: 'hardcoded text in buttons',
       pattern: /<Button[^>]*>[^<]*[a-zA-Z][^<]*<\/Button>/g,
-      message: '⚠️  WARNING: Hardcoded button text detected. Consider using EditableText for database-driven content.',
+      message: '⚠️  WARNING: Hardcoded button text detected. Consider using getCMSField for database-driven content.',
       severity: 'warning'
     },
     {

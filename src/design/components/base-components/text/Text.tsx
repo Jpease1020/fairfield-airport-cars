@@ -141,6 +141,7 @@ export interface TextProps extends BaseComponentProps {
   // Content editing
   contentEditable?: boolean;
   suppressContentEditableWarning?: boolean;
+  cmsKey?: string;
   
   // Event handlers
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
@@ -157,8 +158,10 @@ export const Text: React.FC<TextProps> = ({
   align = 'left',
   color = 'default',
   as: Component = 'p',
+  cmsKey,
   ...rest
 }) => {
+  const ref = React.useRef<HTMLElement | null>(null);
   return (
     <StyledText
       as={Component}
@@ -167,6 +170,7 @@ export const Text: React.FC<TextProps> = ({
       weight={weight}
       align={align}
       color={color}
+      ref={ref as any}
       {...rest}
     >
       {children}

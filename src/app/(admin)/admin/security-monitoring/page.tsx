@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, H2, Text, Button, Stack, Box, EditableText, Span } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { Shield, AlertTriangle, Eye, RefreshCw, Lock, Unlock, User, Globe } from 'lucide-react';
-
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 interface SecurityEvent {
   type: 'authentication' | 'authorization' | 'data_access' | 'payment' | 'api_call' | 'error' | 'threat';
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -21,6 +20,7 @@ interface SecurityEvent {
 }
 
 export default function SecurityMonitoringPage() {
+  const { cmsData } = useCMSData();
   const [events, setEvents] = useState<SecurityEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<SecurityEvent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -163,34 +163,24 @@ export default function SecurityMonitoringPage() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Security Monitoring"
-        subtitle="Loading security data..."
-      >
+      
         <Container>
           <Text>
-            <EditableText field="admin.securityMonitoring.loading" defaultValue="Loading...">
-              Loading...
-            </EditableText>
+            {getCMSField(cmsData, 'admin.securityMonitoring.loading', 'Loading...')}
           </Text>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Security Monitoring"
-      subtitle="Track and monitor security events"
-    >
+    <>
       <Container>
         <Stack direction="vertical" spacing="lg">
           {/* Header Actions */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.securityMonitoring.actions" defaultValue="Security Monitoring">
-                Security Monitoring
-              </EditableText>
+              {getCMSField(cmsData, 'admin.securityMonitoring.actions', 'Security Monitoring')}
             </H2>
             <Stack direction="horizontal" spacing="sm">
               <Button
@@ -199,9 +189,7 @@ export default function SecurityMonitoringPage() {
               >
                 <RefreshCw size={16} />
                 <Span>
-                  <EditableText field="admin.securityMonitoring.refresh" defaultValue="Refresh">
-                    Refresh
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.refresh', 'Refresh')}
                 </Span>
               </Button>
               <Button
@@ -211,9 +199,7 @@ export default function SecurityMonitoringPage() {
               >
                 <Shield size={16} />
                 <Span>
-                  <EditableText field="admin.securityMonitoring.clear" defaultValue="Clear All">
-                    Clear All
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.clear', 'Clear All')}
                 </Span>
               </Button>
             </Stack>
@@ -222,33 +208,23 @@ export default function SecurityMonitoringPage() {
           {/* Security Stats */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.securityMonitoring.stats" defaultValue="Security Statistics">
-                Security Statistics
-              </EditableText>
+              {getCMSField(cmsData, 'admin.securityMonitoring.stats', 'Security Statistics')}
             </H2>
             <Stack direction="horizontal" spacing="md">
               <Text size="sm">
-                <EditableText field="admin.securityMonitoring.total" defaultValue="Total Events:">
-                  Total Events:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.securityMonitoring.total', 'Total Events:')}
                 <Span variant="default"> {stats.total}</Span>
               </Text>
               <Text size="sm">
-                <EditableText field="admin.securityMonitoring.threats" defaultValue="Threats:">
-                  Threats:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.securityMonitoring.threats', 'Threats:')}
                 <Span variant="default"> {stats.threats}</Span>
               </Text>
               <Text size="sm">
-                <EditableText field="admin.securityMonitoring.failures" defaultValue="Failures:">
-                  Failures:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.securityMonitoring.failures', 'Failures:')}
                 <Span variant="default"> {stats.failures}</Span>
               </Text>
               <Text size="sm">
-                <EditableText field="admin.securityMonitoring.successful" defaultValue="Successful:">
-                  Successful:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.securityMonitoring.successful', 'Successful:')}
                 <Span variant="default"> {stats.successful}</Span>
               </Text>
             </Stack>
@@ -257,15 +233,11 @@ export default function SecurityMonitoringPage() {
           {/* Security Events */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.securityMonitoring.events" defaultValue="Security Events">
-                Security Events
-              </EditableText>
+              {getCMSField(cmsData, 'admin.securityMonitoring.events', 'Security Events')}
             </H2>
             {events.length === 0 ? (
               <Text size="sm">
-                <EditableText field="admin.securityMonitoring.noEvents" defaultValue="No security events recorded">
-                  No security events recorded
-                </EditableText>
+                {getCMSField(cmsData, 'admin.securityMonitoring.noEvents', 'No security events recorded')}
               </Text>
             ) : (
               <Stack direction="vertical" spacing="sm">
@@ -304,9 +276,7 @@ export default function SecurityMonitoringPage() {
                         >
                           <Eye size={14} />
                           <Span>
-                            <EditableText field="admin.securityMonitoring.view" defaultValue="View">
-                              View
-                            </EditableText>
+                            {getCMSField(cmsData, 'admin.securityMonitoring.view', 'View')}
                           </Span>
                         </Button>
                       </Stack>
@@ -321,77 +291,53 @@ export default function SecurityMonitoringPage() {
           {selectedEvent && (
             <Box variant="elevated" padding="md">
               <H2>
-                <EditableText field="admin.securityMonitoring.details" defaultValue="Event Details">
-                  Event Details
-                </EditableText>
+                {getCMSField(cmsData, 'admin.securityMonitoring.details', 'Event Details')}
               </H2>
               <Stack direction="vertical" spacing="sm">
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.type" defaultValue="Type:">
-                    Type:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.type', 'Type:')}
                   <Span variant="default"> {selectedEvent.type}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.action" defaultValue="Action:">
-                    Action:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.action', 'Action:')}
                   <Span variant="default"> {selectedEvent.action}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.severity" defaultValue="Severity:">
-                    Severity:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.severity', 'Severity:')}
                   <Span variant="default"> {selectedEvent.severity}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.timestamp" defaultValue="Timestamp:">
-                    Timestamp:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.timestamp', 'Timestamp:')}
                   <Span variant="default"> {new Date(selectedEvent.timestamp).toLocaleString()}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.userId" defaultValue="User ID:">
-                    User ID:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.userId', 'User ID:')}
                   <Span variant="default"> {selectedEvent.userId || 'Unknown'}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.sessionId" defaultValue="Session ID:">
-                    Session ID:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.sessionId', 'Session ID:')}
                   <Span variant="default"> {selectedEvent.sessionId}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.ipAddress" defaultValue="IP Address:">
-                    IP Address:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.ipAddress', 'IP Address:')}
                   <Span variant="default"> {selectedEvent.ipAddress}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.resource" defaultValue="Resource:">
-                    Resource:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.resource', 'Resource:')}
                   <Span variant="default"> {selectedEvent.resource}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.success" defaultValue="Success:">
-                    Success:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.success', 'Success:')}
                   <Span variant="default"> {selectedEvent.success ? 'Yes' : 'No'}</Span>
                 </Text>
                 {selectedEvent.errorMessage && (
                   <Text size="sm">
-                    <EditableText field="admin.securityMonitoring.error" defaultValue="Error:">
-                      Error:
-                    </EditableText>
+                    {getCMSField(cmsData, 'admin.securityMonitoring.error', 'Error:')}
                     <Span variant="default"> {selectedEvent.errorMessage}</Span>
                   </Text>
                 )}
                 <Text size="sm">
-                  <EditableText field="admin.securityMonitoring.details" defaultValue="Details:">
-                    Details:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.details', 'Details:')}
                 </Text>
                 <Box variant="elevated" padding="sm">
                   <Text size="xs" variant="muted">
@@ -403,9 +349,7 @@ export default function SecurityMonitoringPage() {
                   variant="outline"
                   size="sm"
                 >
-                  <EditableText field="admin.securityMonitoring.close" defaultValue="Close">
-                    Close
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.securityMonitoring.close', 'Close')}
                 </Button>
               </Stack>
             </Box>
@@ -414,14 +358,12 @@ export default function SecurityMonitoringPage() {
           {/* Status */}
           <Box variant="elevated" padding="sm">
             <Text size="sm" variant="muted">
-              <EditableText field="admin.securityMonitoring.status" defaultValue="Last updated:">
-                Last updated:
-              </EditableText>
+              {getCMSField(cmsData, 'admin.securityMonitoring.status', 'Last updated:')}
               <Span> {new Date().toLocaleString()}</Span>
             </Text>
           </Box>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    </>
   );
 } 

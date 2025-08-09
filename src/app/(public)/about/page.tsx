@@ -8,16 +8,19 @@ import {
   Text,
   Button
 } from '@/ui';
-import { EditableText, EditableHeading } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function AboutPageContent() {
+  const { cmsData } = useCMSData();
   const ctaActions = [
     {
+      field: 'about.cta.primaryButton',
       label: 'Book Your Ride',
       onClick: () => window.location.href = '/book',
       variant: 'primary' as const
     },
     {
+      field: 'about.cta.secondaryButton',
       label: 'Contact Us',
       onClick: () => window.location.href = '/help',
       variant: 'secondary' as const
@@ -30,12 +33,12 @@ function AboutPageContent() {
       <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <EditableHeading field="about.hero.title" defaultValue="About Fairfield Airport Cars" level={1} size="5xl" weight="bold" align="center">
-              About Fairfield Airport Cars
-            </EditableHeading>
-            <EditableText field="about.hero.subtitle" defaultValue="Professional airport transportation services" variant="lead" align="center" size="lg">
-              Professional airport transportation services
-            </EditableText>
+            <H1 align="center">
+              {getCMSField(cmsData, 'about.hero.title', 'About Fairfield Airport Cars')}
+            </H1>
+            <Text variant="lead" align="center" size="lg">
+              {getCMSField(cmsData, 'about.hero.subtitle', 'Professional airport transportation services')}
+            </Text>
           </Stack>
         </Stack>
       </Container>
@@ -44,16 +47,15 @@ function AboutPageContent() {
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="lg" align="center">
           <Text align="center" size="lg">
-            <EditableText field="about.description" defaultValue="We provide reliable, professional airport transportation throughout Fairfield County. Licensed drivers, clean vehicles, on-time service.">
-              We provide reliable, professional airport transportation throughout Fairfield County. 
-              Licensed drivers, clean vehicles, on-time service.
-            </EditableText>
+            {getCMSField(
+              cmsData,
+              'about.description',
+              'We provide reliable, professional airport transportation throughout Fairfield County. Licensed drivers, clean vehicles, on-time service.'
+            )}
           </Text>
           
           <Text align="center">
-            <EditableText field="about.cta.subtitle" defaultValue="Ready to book your ride?">
-              Ready to book your ride?
-            </EditableText>
+            {getCMSField(cmsData, 'about.cta.subtitle', 'Ready to book your ride?')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
@@ -63,7 +65,7 @@ function AboutPageContent() {
                 variant={action.variant}
                 onClick={action.onClick}
               >
-                {action.label}
+                {getCMSField(cmsData, action.field, action.label)}
               </Button>
             ))}
           </Stack>

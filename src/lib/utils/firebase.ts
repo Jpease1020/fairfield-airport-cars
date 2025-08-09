@@ -2,7 +2,9 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getMessaging } from "firebase/messaging";
+// NOTE: Do not import firebase/messaging at module scope.
+// The messaging package accesses browser globals at import time and will crash on the server.
+// We dynamically import it only when running in the browser.
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -32,11 +34,15 @@ const auth = getAuth(app);
 // Initialize Firebase Messaging (client-side only)
 let messaging: any = null;
 if (typeof window !== 'undefined') {
-  try {
-    messaging = getMessaging(app);
-  } catch (error) {
-    console.warn('Firebase Messaging not available:', error);
-  }
+  (async () => {
+    try {
+      const { getMessaging } = await import('firebase/messaging');
+      messaging = getMessaging(app);
+    } catch (error) {
+      // Messaging is optional; log and continue
+      console.warn('Firebase Messaging not available:', error);
+    }
+  })();
 }
 
 export { app, db, auth, messaging };

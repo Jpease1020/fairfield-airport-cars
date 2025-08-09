@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { GridSection, ActionGrid, Container, H3, Text, Stack, Box, EditableText } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { GridSection, ActionGrid, Container, H3, Text, Stack, Box } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 const AIAssistantSettingsPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -39,26 +39,20 @@ const AIAssistantSettingsPage = () => {
     }
   ];
 
+  const { cmsData } = useCMSData();
+
   if (!isClient) {
     return (
-      <AdminPageWrapper
-        title="AI Assistant Settings"
-        subtitle="Loading configuration..."
-      >
+      
         <Text>
-          <EditableText field="aiAssistantSettings.loading" defaultValue="Loading...">
-            Loading...
-          </EditableText>
+          {getCMSField(cmsData, 'aiAssistantSettings.loading', 'Loading...')}
         </Text>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="AI Assistant Settings"
-      subtitle="Configure AI assistant preferences and access"
-    >
+    <>
       <GridSection variant="content" columns={1}>
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
@@ -66,41 +60,27 @@ const AIAssistantSettingsPage = () => {
             <Text>Current status and available options</Text>
           <Container>
             <H3>
-              <EditableText field="aiAssistantSettings.featureNotAvailable" defaultValue="🚫 Feature Not Available">
-                🚫 Feature Not Available
-              </EditableText>
+              {getCMSField(cmsData, 'aiAssistantSettings.featureNotAvailable', '🚫 Feature Not Available')}
             </H3>
             <Text>
-              <EditableText field="aiAssistantSettings.disabledDescription" defaultValue="The AI assistant feature is currently disabled for your account. This may be due to:">
-                The AI assistant feature is currently disabled for your account. This may be due to:
-              </EditableText>
+              {getCMSField(cmsData, 'aiAssistantSettings.disabledDescription', 'The AI assistant feature is currently disabled for your account. This may be due to:')}
             </Text>
             <Stack spacing="sm">
               <Text>
-                <EditableText field="aiAssistantSettings.subscriptionLimitations" defaultValue="• Subscription plan limitations">
-                  • Subscription plan limitations
-                </EditableText>
+                {getCMSField(cmsData, 'aiAssistantSettings.subscriptionLimitations', '• Subscription plan limitations')}
               </Text>
               <Text>
-                <EditableText field="aiAssistantSettings.regionalRestrictions" defaultValue="• Regional availability restrictions">
-                  • Regional availability restrictions
-                </EditableText>
+                {getCMSField(cmsData, 'aiAssistantSettings.regionalRestrictions', '• Regional availability restrictions')}
               </Text>
               <Text>
-                <EditableText field="aiAssistantSettings.systemMaintenance" defaultValue="• System maintenance or updates">
-                  • System maintenance or updates
-                </EditableText>
+                {getCMSField(cmsData, 'aiAssistantSettings.systemMaintenance', '• System maintenance or updates')}
               </Text>
               <Text>
-                <EditableText field="aiAssistantSettings.accountConfiguration" defaultValue="• Account configuration settings">
-                  • Account configuration settings
-                </EditableText>
+                {getCMSField(cmsData, 'aiAssistantSettings.accountConfiguration', '• Account configuration settings')}
               </Text>
             </Stack>
             <Text>
-              <EditableText field="aiAssistantSettings.contactSupport" defaultValue="Contact support for information about enabling this feature.">
-                Contact support for information about enabling this feature.
-              </EditableText>
+              {getCMSField(cmsData, 'aiAssistantSettings.contactSupport', 'Contact support for information about enabling this feature.')}
             </Text>
           </Container>
           </Stack>
@@ -116,7 +96,7 @@ const AIAssistantSettingsPage = () => {
           </Stack>
         </Box>
       </GridSection>
-    </AdminPageWrapper>
+    </>
   );
 };
 

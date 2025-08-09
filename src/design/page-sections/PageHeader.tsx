@@ -3,8 +3,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Container } from '../layout/containers/Container';
-import { EditableText } from '../components/base-components/text/EditableText';
-import { EditableHeading } from '../components/base-components/text/EditableHeading';
+import { useCMSData, getCMSField } from '../providers/CMSDesignProvider';
+import { Heading } from '../components/base-components/text/Heading';
+import { Text } from '../components/base-components/text/Text';
 
 const ActionsContainer = styled.div`
   display: flex;
@@ -31,6 +32,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   margin = 'none',
   spacing = 'md'
 }) => {
+  const { cmsData } = useCMSData();
   return (
     <Container 
       as="header" 
@@ -40,18 +42,18 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     >
       {title && (
         typeof title === 'string' ? (
-          <EditableHeading field="page_header.title" defaultValue={title}>
-            {title}
-          </EditableHeading>
+          <Heading>
+            {getCMSField(cmsData, 'page_header.title', title)}
+          </Heading>
         ) : (
           title
         )
       )}
       {subtitle && (
         typeof subtitle === 'string' ? (
-          <EditableText field="page_header.subtitle" defaultValue={subtitle}>
-            {subtitle}
-          </EditableText>
+          <Text>
+            {getCMSField(cmsData, 'page_header.subtitle', subtitle)}
+          </Text>
         ) : (
           subtitle
         )

@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
+import { BaseComponentProps, TextVariant, TextSize, FontWeight, TextAlign, ColorVariant } from '../../../system/shared-types';
 
 // Styled heading component
 const StyledHeading = styled.h1.withConfig({
@@ -112,6 +113,7 @@ export interface HeadingProps {
   // HTML attributes
   id?: string;
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span';
+  cmsKey?: string; // optional explicit cms path
   
   // Rest props
   [key: string]: any;
@@ -125,8 +127,10 @@ export const Heading: React.FC<HeadingProps> = ({
   align = 'left',
   id, 
   as: Component = 'h1',
+  cmsKey,
   ...rest
 }) => {
+  const ref = React.useRef<HTMLElement | null>(null);
   return (
     <StyledHeading
       as={Component}
@@ -135,6 +139,7 @@ export const Heading: React.FC<HeadingProps> = ({
       weight={weight}
       align={align}
       id={id}
+      ref={ref as any}
       {...rest}
     >
       {children}

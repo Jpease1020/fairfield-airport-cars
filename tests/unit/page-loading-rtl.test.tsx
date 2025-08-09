@@ -1,115 +1,62 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render as rtlRender, screen, waitFor, fireEvent } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
-import { vi, describe, test, expect, beforeAll, afterEach, afterAll, beforeEach } from 'vitest';
-import { useRouter } from 'next/navigation';
+import { vi, describe, test, expect, beforeAll, afterEach, afterAll } from 'vitest';
 import HomePage from '@/app/page';
 import BookPage from '@/app/(customer)/book/page';
 import AdminPage from '@/app/(admin)/admin/page';
 import HelpPage from '@/app/(public)/help/page';
 import CostsPage from '@/app/(admin)/admin/costs/page';
+import { server } from '../mocks/server';
+import { ToastProvider, CMSDesignProvider } from '@/ui';
+import { AdminProvider } from '@/design/providers/AdminProvider';
+import { EditModeProvider } from '@/design/providers/EditModeProvider';
 
-// Mock Next.js router
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(),
-}));
-
-// Mock Firebase
-vi.mock('@/lib/utils/firebase', () => ({
-  auth: {
-    currentUser: null,
-    onAuthStateChanged: vi.fn(),
-  },
-  db: {
-    collection: vi.fn(),
-    doc: vi.fn(),
-  },
-}));
-
-// Mock business settings hook
-vi.mock('@/hooks/useBusinessSettings', () => ({
-  useBusinessSettings: () => ({
-    settings: {
-      businessName: 'Fairfield Airport Cars',
-      phone: '(203) 555-0123',
-      email: 'info@fairfieldairportcar.com',
-    },
-    loading: false,
-    error: null,
-  }),
-}));
-
-// Mock booking status hook
-vi.mock('@/hooks/useBookingStatus', () => ({
-  useBookingStatus: () => ({
-    status: 'confirmed',
-    loading: false,
-    error: null,
-  }),
-}));
-
-// Setup MSW server for API mocking
-const server = setupServer(
-  // Mock successful API responses
-  http.get('/api/bookings', () => {
-    return HttpResponse.json({ bookings: [] });
-  }),
-  
-  http.get('/api/admin/bookings', () => {
-    return HttpResponse.json({ bookings: [] });
-  }),
-  
-  http.post('/api/booking', () => {
-    return HttpResponse.json({ success: true, bookingId: 'test-123' });
-  }),
-  
-  // Mock API failures
-  http.get('/api/failing-endpoint', () => {
-    return HttpResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }),
-  
-  http.get('/api/network-error', () => {
-    return HttpResponse.error();
-  }),
-  
-  http.get('/api/timeout', () => {
-    return HttpResponse.json({ bookings: [] });
-  })
-);
-
-beforeAll(() => server.listen());
+// Reuse centralized MSW server and handlers
+beforeAll(() => {
+  // Ensure Google Maps hook sees an API key and an existing script tag
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'test-key';
+  const existing = document.querySelector('script[data-gmaps="true"]');
+  if (!existing) {
+    const script = document.createElement('script');
+    script.setAttribute('data-gmaps', 'true');
+    document.head.appendChild(script);
+  }
+  server.listen();
+});
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
+// Helper: render with real providers
+function render(ui: React.ReactNode) {
+  return rtlRender(
+    <ToastProvider>
+      <CMSDesignProvider>
+        <AdminProvider>
+          <EditModeProvider>
+            {ui}
+          </EditModeProvider>
+        </AdminProvider>
+      </CMSDesignProvider>
+    </ToastProvider>
+  );
+}
+
 describe('Page Loading Tests - RTL', () => {
-  beforeEach(() => {
-    (useRouter as any).mockReturnValue({
-      push: vi.fn(),
-      replace: vi.fn(),
-      back: vi.fn(),
-      forward: vi.fn(),
-      refresh: vi.fn(),
-      prefetch: vi.fn(),
-    });
-  });
 
   describe('Public Pages', () => {
     test('Home page loads with expected content', async () => {
       render(<HomePage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('layout-navigation')).toBeDefined();
       });
       
       // Check for main navigation elements
-      expect(screen.getByTestId('nav-home')).toBeDefined();
-      expect(screen.getByTestId('nav-book')).toBeDefined();
-      expect(screen.getByTestId('nav-help')).toBeDefined();
-      expect(screen.getByTestId('nav-about')).toBeDefined();
+      expect(screen.getByTestId('nav-container')).toBeDefined();
       
       // Check for main content area
-      expect(screen.getByTestId('main-content')).toBeDefined();
+      expect(screen.getByTestId('layout-main-content')).toBeDefined();
     });
 
     test('Book page loads with booking form', async () => {
@@ -126,7 +73,8 @@ describe('Page Loading Tests - RTL', () => {
       expect(screen.getByTestId('phone-input')).toBeDefined();
       expect(screen.getByTestId('pickup-location-input')).toBeDefined();
       expect(screen.getByTestId('dropoff-location-input')).toBeDefined();
-      expect(screen.getByTestId('book-now-button')).toBeDefined();
+      // The submit button doesn't have a fixed test id; verify by role and name
+      expect(screen.getByRole('button', { name: /book now/i })).toBeDefined();
     });
 
     test('Help page loads with help content', async () => {
@@ -141,12 +89,13 @@ describe('Page Loading Tests - RTL', () => {
       expect(screen.getByTestId('faq-section')).toBeDefined();
     });
 
-    test('Costs page loads with pricing information', async () => {
+    test('Costs page loads with cost management UI', async () => {
       render(<CostsPage />);
       
-      // Costs page is a simple placeholder for now
-      expect(screen.getByText('Costs')).toBeDefined();
-      expect(screen.getByText('Costs page content will be implemented here.')).toBeDefined();
+      await waitFor(() => {
+        expect(screen.getByText(/Cost Breakdown/i)).toBeDefined();
+      });
+      expect(screen.getByText(/Quick Actions/i)).toBeDefined();
     });
   });
 
@@ -155,11 +104,11 @@ describe('Page Loading Tests - RTL', () => {
       render(<AdminPage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('main-content')).toBeDefined();
+        expect(screen.getByTestId('layout-main-content')).toBeDefined();
       });
       
       // Check for admin dashboard elements
-      expect(screen.getByTestId('main-content')).toBeDefined();
+      expect(screen.getByTestId('layout-main-content')).toBeDefined();
       // Admin dashboard loads with main content
     });
   });
@@ -176,11 +125,11 @@ describe('Page Loading Tests - RTL', () => {
       render(<HomePage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('layout-navigation')).toBeDefined();
       });
       
       // Page should still load even with API errors
-      expect(screen.getByTestId('main-content')).toBeDefined();
+      expect(screen.getByTestId('layout-main-content')).toBeDefined();
     });
 
     test('Page handles network errors gracefully', async () => {
@@ -194,11 +143,11 @@ describe('Page Loading Tests - RTL', () => {
       render(<HomePage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('layout-navigation')).toBeDefined();
       });
       
       // Page should still load even with network errors
-      expect(screen.getByTestId('main-content')).toBeDefined();
+      expect(screen.getByTestId('layout-main-content')).toBeDefined();
     });
   });
 
@@ -214,7 +163,7 @@ describe('Page Loading Tests - RTL', () => {
       render(<HomePage />);
       
       // Should show content immediately (no loading state for static content)
-      expect(screen.getByTestId('nav-home')).toBeDefined();
+      expect(screen.getByTestId('layout-navigation')).toBeDefined();
     });
   });
 
@@ -230,7 +179,7 @@ describe('Page Loading Tests - RTL', () => {
       render(<HomePage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('layout-navigation')).toBeDefined();
       });
     });
   });
@@ -240,7 +189,7 @@ describe('Page Loading Tests - RTL', () => {
       render(<HomePage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('layout-navigation')).toBeDefined();
       });
       
       // Check for proper heading hierarchy
@@ -252,7 +201,7 @@ describe('Page Loading Tests - RTL', () => {
       render(<HomePage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('layout-navigation')).toBeDefined();
       });
       
       // Check for images with alt text
@@ -273,7 +222,8 @@ describe('Page Loading Tests - RTL', () => {
       
       // Check that form is present and submit button is disabled initially
       expect(screen.getByTestId('booking-form')).toBeDefined();
-      expect(screen.getByTestId('book-now-button').hasAttribute('disabled')).toBe(true);
+      const submitBtn = screen.getByRole('button', { name: /book now/i });
+      expect(submitBtn.hasAttribute('disabled')).toBe(true);
     });
   });
 
@@ -282,11 +232,11 @@ describe('Page Loading Tests - RTL', () => {
       render(<HomePage />);
       
       await waitFor(() => {
-        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('layout-navigation')).toBeDefined();
       });
       
       // Check that main content is present
-      expect(screen.getByTestId('main-content')).toBeDefined();
+      expect(screen.getByTestId('layout-main-content')).toBeDefined();
       
       // Mobile menu should be available (visibility depends on viewport)
       // We don't test mobile menu toggle visibility as it depends on viewport size

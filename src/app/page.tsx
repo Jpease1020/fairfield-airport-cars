@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { CustomerNavigation } from '@/components/app/CustomerNavigation';
 import { Container } from '@/design/layout/containers/Container';
@@ -11,8 +12,10 @@ import {
   H2
 } from '@/ui';
 import { StaticHeroSection } from '@/ui';
+import { usePageData } from '@/hooks/usePageData';
 
 function HomePageContent() {
+  const { data: cmsData, loading, error } = usePageData('home');
   // Features data
   const features = [
     {
@@ -59,15 +62,15 @@ function HomePageContent() {
     <>
       {/* Hero Section */}
       <StaticHeroSection
-        title="Professional Airport Transportation"
-        subtitle="Reliable rides to and from Fairfield Airport"
-        description="Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed."
+        title={cmsData?.pages?.home?.hero?.title || 'Professional Airport Transportation'}
+        subtitle={cmsData?.pages?.home?.hero?.subtitle || 'Reliable rides to and from Fairfield Airport'}
+        description={cmsData?.pages?.home?.hero?.description || 'Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.'}
         primaryAction={{
-          label: "Book Now",
+          label: cmsData?.pages?.home?.hero?.primaryButton || 'Book Now',
           href: "/book"
         }}
         secondaryAction={{
-          label: "Learn More",
+          label: cmsData?.pages?.home?.hero?.secondaryButton || 'Learn More',
           href: "/about"
         }}
       />
@@ -76,8 +79,12 @@ function HomePageContent() {
       <Container maxWidth="xl" padding="xl" variant="section" marginTop="xl" data-testid="home-features-section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H2 align="center">Why Choose Fairfield Airport Cars</H2>
-            <Text variant="lead" align="center">Professional service you can count on</Text>
+            <H2 align="center">
+              {cmsData?.pages?.home?.features?.title || 'Why Choose Fairfield Airport Cars'}
+            </H2>
+            <Text variant="lead" align="center">
+              {cmsData?.pages?.home?.features?.subtitle || 'Professional service you can count on'}
+            </Text>
           </Stack>
           <Stack 
             direction={{ xs: 'vertical', lg: 'horizontal' }}
@@ -92,10 +99,14 @@ function HomePageContent() {
                   <Text size="xl">{feature.icon}</Text>
                 </Container>
                 <Container>
-                  <H4>{feature.title}</H4>
+                  <H4>
+                    {cmsData?.pages?.home?.features?.items?.[index]?.title || feature.title}
+                  </H4>
                 </Container>
                 <Container>
-                  <Text variant="muted">{feature.description}</Text>
+                  <Text variant="muted">
+                    {cmsData?.pages?.home?.features?.items?.[index]?.description || feature.description}
+                  </Text>
                 </Container>
               </Stack>
             </Container>
@@ -108,8 +119,12 @@ function HomePageContent() {
       <Container maxWidth="xl" padding="xl" variant="section" marginTop="xl" data-testid="home-testimonials-section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H2 align="center">What Our Customers Say</H2>
-            <Text variant="lead" align="center">Trusted by travelers and businesses</Text>
+            <H2 align="center">
+              {cmsData?.pages?.home?.testimonials?.title || 'What Our Customers Say'}
+            </H2>
+            <Text variant="lead" align="center">
+              {cmsData?.pages?.home?.testimonials?.subtitle || 'Trusted by travelers and businesses'}
+            </Text>
           </Stack>
           <Stack 
             direction={{ xs: 'vertical', lg: 'horizontal' }}
@@ -120,22 +135,30 @@ function HomePageContent() {
           {testimonials.map((testimonial, index) => (
             <Container key={index} variant="elevated" padding="lg">
               <Stack direction="vertical" spacing="md">
-                <Container>
-                  <Text variant="muted" size="sm">{testimonial.content}</Text>
-                </Container>
+                    <Container>
+                      <Text variant="muted" size="sm">
+                        {cmsData?.pages?.home?.testimonials?.items?.[index]?.content || testimonial.content}
+                      </Text>
+                    </Container>
                 <Container>
                   <Stack direction="horizontal" spacing="sm" align="center">
-                    <Container>
-                      <Text weight="semibold">{testimonial.name}</Text>
-                    </Container>
-                    <Container>
-                      <Text variant="muted" size="sm">{testimonial.role}</Text>
-                    </Container>
-                    {testimonial.company && (
-                      <Container>
-                        <Text variant="muted" size="sm">• {testimonial.company}</Text>
-                      </Container>
-                    )}
+                        <Container>
+                          <Text weight="semibold">
+                            {cmsData?.pages?.home?.testimonials?.items?.[index]?.name || testimonial.name}
+                          </Text>
+                        </Container>
+                        <Container>
+                          <Text variant="muted" size="sm">
+                            {cmsData?.pages?.home?.testimonials?.items?.[index]?.role || testimonial.role}
+                          </Text>
+                        </Container>
+                        {testimonial.company && (
+                        <Container>
+                          <Text variant="muted" size="sm">
+                            • {cmsData?.pages?.home?.testimonials?.items?.[index]?.company || testimonial.company}
+                          </Text>
+                        </Container>
+                      )}
                   </Stack>
                 </Container>
                 <Container>
@@ -156,15 +179,19 @@ function HomePageContent() {
       <Container maxWidth="xl" padding="xl" variant="section" marginTop="xl" data-testid="home-cta-section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H2 align="center">Ready to Book Your Ride?</H2>
-            <Text variant="lead" align="center">Get started with your airport transportation today</Text>
+            <H2 align="center">
+              {cmsData?.pages?.home?.cta?.title || 'Ready to Book Your Ride?'}
+            </H2>
+            <Text variant="lead" align="center">
+              {cmsData?.pages?.home?.cta?.subtitle || 'Get started with your airport transportation today'}
+            </Text>
           </Stack>
           <Stack direction={{ xs: 'vertical', sm: 'horizontal' }} spacing="md">
             <Button as="a" href="/book">
-              Book Now
+              {cmsData?.pages?.home?.cta?.primaryButton || 'Book Now'}
             </Button>
             <Button variant="outline" as="a" href="/about">
-              Learn More
+              {cmsData?.pages?.home?.cta?.secondaryButton || 'Learn More'}
             </Button>
           </Stack>
         </Stack>

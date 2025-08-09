@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Button } from '../../components/base-components/Button';
-import { EditableText } from '../../components/base-components/text/EditableText';
+import { useCMSData, getCMSField } from '../../providers/CMSDesignProvider';
 import { Stack } from '../../layout/framing/Stack';
 import { Container } from '../../layout/containers/Container';
 import { PositionedContainer } from '../../layout/containers/PositionedContainer';
@@ -81,6 +81,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   dataTestIdPrefix = 'nav',
   editableFieldPrefix = 'navigation',
 }) => {
+  const { cmsData } = useCMSData();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { width: containerWidth } = useWindowSize();
   const [isMobile, setIsMobile] = useState(false);
@@ -150,9 +151,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                     data-testid={`${dataTestIdPrefix}-desktop-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                     id={`navigation-desktop-button-${index + 1}`}
                   >
-                    <EditableText field={`${editableFieldPrefix}.${item.name.toLowerCase()}`}>
-                      {item.name}
-                    </EditableText>
+                    {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase()}`, item.name)}
                   </Button>
                 </Link>
               ))}
@@ -206,9 +205,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                     data-testid={`${dataTestIdPrefix}-mobile-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                     id={`navigation-mobile-button-${index + 1}`}
                   >
-                    <EditableText field={`${editableFieldPrefix}.mobile.${item.name.toLowerCase()}`}>
-                      {item.name}
-                    </EditableText>
+                    {getCMSField(cmsData, `${editableFieldPrefix}.mobile.${item.name.toLowerCase()}`, item.name)}
                   </Button>
                 </Link>
               ))}

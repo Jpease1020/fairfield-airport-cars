@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Container, H2, Text, Span, Button, Stack, Box, EditableText } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { Container, H2, Text, Span, Button, Stack, Box } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { useChat } from '@/hooks/useChat';
 import { Mic, MicOff, Send, MessageCircle } from 'lucide-react';
 
@@ -10,7 +10,7 @@ export default function AIAssistantPage() {
   const [isListening, setIsListening] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const { messages, sendMessage, isLoading } = useChat();
-
+  const { cmsData } = useCMSData();
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     
@@ -51,18 +51,13 @@ export default function AIAssistantPage() {
   ];
 
   return (
-    <AdminPageWrapper
-      title="AI Assistant"
-      subtitle="Get help with booking management, business information, and customer service"
-    >
+    
       <Container>
         <Stack direction="vertical" spacing="lg">
           {/* Quick Actions */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.aiAssistant.quickQuestions" defaultValue="Quick Questions">
-                Quick Questions
-              </EditableText>
+              {getCMSField(cmsData, 'admin.aiAssistant.quickQuestions', 'Quick Questions')}
             </H2>
             <Stack direction="horizontal" spacing="sm">
               {quickQuestions.map((question, index) => (
@@ -81,18 +76,14 @@ export default function AIAssistantPage() {
           {/* Chat Interface */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.aiAssistant.chat" defaultValue="Chat with AI Assistant">
-                Chat with AI Assistant
-              </EditableText>
+              {getCMSField(cmsData, 'admin.aiAssistant.chat', 'Chat with AI Assistant')}
             </H2>
             
             {/* Messages */}
             <Box variant="elevated" padding="sm">
               {messages.length === 0 ? (
                 <Text variant="muted" size="sm">
-                  <EditableText field="admin.aiAssistant.welcome" defaultValue="Ask me anything about bookings, business information, or customer service!">
-                    Ask me anything about bookings, business information, or customer service!
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.aiAssistant.welcome', 'Ask me anything about bookings, business information, or customer service!')}
                 </Text>
               ) : (
                 <Stack direction="vertical" spacing="sm">
@@ -145,35 +136,25 @@ export default function AIAssistantPage() {
           {/* Capabilities */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.aiAssistant.capabilities" defaultValue="What I can help with">
-                What I can help with
-              </EditableText>
+              {getCMSField(cmsData, 'admin.aiAssistant.capabilities', 'What I can help with')}
             </H2>
             <Stack direction="vertical" spacing="sm">
               <Text size="sm">
-                <EditableText field="admin.aiAssistant.bookingInfo" defaultValue="📋 Booking Information - Query booking details, status, and history">
-                  📋 Booking Information - Query booking details, status, and history
-                </EditableText>
+                {getCMSField(cmsData, 'admin.aiAssistant.bookingInfo', '📋 Booking Information - Query booking details, status, and history')}
               </Text>
               <Text size="sm">
-                <EditableText field="admin.aiAssistant.businessInfo" defaultValue="💼 Business Information - Access pricing, policies, and company details">
-                  💼 Business Information - Access pricing, policies, and company details
-                </EditableText>
+                {getCMSField(cmsData, 'admin.aiAssistant.businessInfo', '💼 Business Information - Access pricing, policies, and company details')}
               </Text>
               <Text size="sm">
-                <EditableText field="admin.aiAssistant.customerService" defaultValue="🎧 Customer Service - Help with common questions and issues">
-                  🎧 Customer Service - Help with common questions and issues
-                </EditableText>
+                {getCMSField(cmsData, 'admin.aiAssistant.customerService', '🎧 Customer Service - Help with common questions and issues')}
               </Text>
               <Text size="sm">
-                <EditableText field="admin.aiAssistant.troubleshooting" defaultValue="🔧 Troubleshooting - Assist with technical problems">
-                  🔧 Troubleshooting - Assist with technical problems
-                </EditableText>
+                {getCMSField(cmsData, 'admin.aiAssistant.troubleshooting', '🔧 Troubleshooting - Assist with technical problems')}
               </Text>
             </Stack>
           </Box>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    
   );
 } 
