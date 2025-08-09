@@ -14,7 +14,6 @@ import {
   Alert,
   LoadingSpinner,
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
 
 function DriversPageContent() {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -176,40 +175,31 @@ function DriversPageContent() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Driver Management"
-        subtitle="Loading drivers from database..."
-      >
+      
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
             <Text>Loading drivers from database...</Text>
           </Stack>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   if (error) {
     return (
-      <AdminPageWrapper
-        title="Error Loading Drivers"
-        subtitle={error}
-      >
+      
         <Container>
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Driver Management"
-      subtitle="Manage driver profiles, availability, and assignments"
-    >
+    <>
       <Stack spacing="xl">
         {/* Status Filter */}
         <Stack spacing="sm">
@@ -293,7 +283,7 @@ function DriversPageContent() {
           />
         )}
       </Stack>
-    </AdminPageWrapper>
+    </>
   );
 }
 

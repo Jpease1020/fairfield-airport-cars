@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cmsService } from '@/lib/services/cms-service';
+import { CMSConfiguration } from '../../../../types/cms';
 
 export async function POST() {
   try {
@@ -107,7 +108,7 @@ export async function POST() {
     };
     
     // Update the CMS configuration
-    const result = await cmsService.updateCMSConfiguration(missingContent);
+    const result = await cmsService.updateCMSConfiguration(missingContent as unknown as Partial<CMSConfiguration>);
     
     if (result.success) {
       console.log('✅ Successfully added missing content to CMS!');

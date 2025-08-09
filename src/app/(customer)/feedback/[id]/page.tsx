@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Container, Text, Button, LoadingSpinner, EditableText, GridSection, useToast, ToastProvider, Box, Label, Textarea, Stack } from '@/ui';
+import { Container, Text, Button, LoadingSpinner, GridSection, useToast, ToastProvider, Box, Label, Textarea, Stack } from '@/ui';
 import { Star } from 'lucide-react';
 import { colors } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function FeedbackPageContent() {
   const params = useParams();
@@ -14,7 +15,7 @@ function FeedbackPageContent() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const { cmsData } = useCMSData();
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -93,9 +94,7 @@ function FeedbackPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            <EditableText field="feedback.loading.message" defaultValue="Please wait while we fetch your booking details...">
-              Please wait while we fetch your booking details...
-            </EditableText>
+            {getCMSField(cmsData, 'feedback.loading.message', 'Please wait while we fetch your booking details...')}
           </Container>
         </GridSection>
       </Container>
@@ -107,21 +106,19 @@ function FeedbackPageContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            <EditableText field="feedback.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
-              This could be due to an invalid booking ID or a temporary system issue.
-            </EditableText>
+            {getCMSField(cmsData, 'feedback.error.description', 'This could be due to an invalid booking ID or a temporary system issue.')}
             <Stack direction="horizontal" spacing="md">
               <Button
                 variant="primary"
                 onClick={() => window.location.reload()}
               >
-                🔄 Try Again
+                {getCMSField(cmsData, 'feedback.actions.try_again', '🔄 Try Again')}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => addToast('info', 'Support: (203) 555-0123')}
               >
-                📞 Contact Support
+                {getCMSField(cmsData, 'feedback.actions.contact_support', '📞 Contact Support')}
               </Button>
             </Stack>
           </Container>
@@ -136,14 +133,10 @@ function FeedbackPageContent() {
         <GridSection variant="content" columns={1}>
           <Box variant="elevated" padding="lg">
             <Text>
-              <EditableText field="feedback.success.title" defaultValue="Thank you for your feedback!">
-                Thank you for your feedback!
-              </EditableText>
+              {getCMSField(cmsData, 'feedback.success.title', 'Thank you for your feedback!')}
             </Text>
             <Text>
-              <EditableText field="feedback.success.description" defaultValue="Your feedback helps us improve our service">
-                Your feedback helps us improve our service
-              </EditableText>
+              {getCMSField(cmsData, 'feedback.success.description', 'Your feedback helps us improve our service')}
             </Text>
             <Stack direction="horizontal" spacing="md">
               {homeActions.map((action, index) => (
@@ -167,24 +160,18 @@ function FeedbackPageContent() {
       <GridSection variant="content" columns={1}>
         <Box variant="elevated" padding="lg">
           <Text>
-            <EditableText field="feedback.title" defaultValue="We'd love to hear about your experience">
-              We'd love to hear about your experience
-            </EditableText>
+            {getCMSField(cmsData, 'feedback.title', "We'd love to hear about your experience")}
           </Text>
           
           <div>
             <Text>
-              <EditableText field="feedback.description" defaultValue="Please share your feedback about your recent ride">
-                Please share your feedback about your recent ride
-              </EditableText>
+              {getCMSField(cmsData, 'feedback.description', 'Please share your feedback about your recent ride')}
             </Text>
             
             <form onSubmit={handleSubmit}>
               <div>
                 <Label>
-                  <EditableText field="feedback.rating.label" defaultValue="Rating">
-                    Rating
-                  </EditableText>
+                  {getCMSField(cmsData, 'feedback.rating.label', 'Rating')}
                 </Label>
                 <div>
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -206,14 +193,12 @@ function FeedbackPageContent() {
               
               <div>
                 <Label>
-                  <EditableText field="feedback.comment.label" defaultValue="Comments">
-                    Comments
-                  </EditableText>
+                  {getCMSField(cmsData, 'feedback.comment.label', 'Comments')}
                 </Label>
                 <Textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Tell us about your experience..."
+                  placeholder={getCMSField(cmsData, 'feedback.comment.placeholder', 'Tell us about your experience...')}
                   rows={4}
                 />
               </div>
@@ -223,9 +208,7 @@ function FeedbackPageContent() {
                 disabled={rating === 0 || loading}
                 variant="primary"
               >
-                <EditableText field="feedback.submit.button" defaultValue="Submit Feedback">
-                  Submit Feedback
-                </EditableText>
+                {getCMSField(cmsData, 'feedback.submit.button', 'Submit Feedback')}
               </Button>
             </form>
           </div>

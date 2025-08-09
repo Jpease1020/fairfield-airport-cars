@@ -12,10 +12,11 @@ import {
   Container
 } from '@/ui';
 import { Stack } from '@/ui';
-import { EditableText } from '@/ui';
 import { Input } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function ManageBookingPageContent() {
+  const { cmsData } = useCMSData();
   const params = useParams();
   const router = useRouter();
   const { addToast } = useToast();
@@ -168,9 +169,7 @@ function ManageBookingPageContent() {
       
         <GridSection variant="content" columns={1}>
           <Container>
-            <EditableText field="manage.loading" defaultValue="Loading...">
-              Loading...
-            </EditableText>
+            <Text>{getCMSField(cmsData, 'pages.manage.loading', 'Loading...')}</Text>
           </Container>
         </GridSection>
       
@@ -183,9 +182,7 @@ function ManageBookingPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Text>
-              <EditableText field="manage.notFound" defaultValue={error || localContent?.notFoundMessage || 'Booking not found'}>
-                {error || localContent?.notFoundMessage || 'Booking not found'}
-              </EditableText>
+              {getCMSField(cmsData, 'pages.manage.notFound', error || localContent?.notFoundMessage || 'Booking not found')}
             </Text>
             <ActionButtonGroup buttons={[
               {
@@ -354,17 +351,13 @@ function ManageBookingPageContent() {
           <Stack direction="vertical" spacing="md">
             <Container>
               <Span>
-                <EditableText field="manage.bookingId" defaultValue="Booking ID:">
-                  Booking ID:
-                </EditableText>
+                {getCMSField(cmsData, 'pages.manage.labels.bookingId', 'Booking ID:')}
               </Span>
               <Span>{booking.id}</Span>
             </Container>
             <Container>
               <Span>
-                <EditableText field="manage.status" defaultValue="Status:">
-                  Status:
-                </EditableText>
+                {getCMSField(cmsData, 'pages.manage.labels.status', 'Status:')}
               </Span>
               <Span>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
@@ -372,42 +365,32 @@ function ManageBookingPageContent() {
             </Container>
             <Container>
               <Span>
-                <EditableText field="manage.passenger" defaultValue="Passenger:">
-                  Passenger:
-                </EditableText>
+                {getCMSField(cmsData, 'pages.manage.labels.passenger', 'Passenger:')}
               </Span>
               <Span>{booking.name}</Span>
             </Container>
             <Container>
               <Span>
-                <EditableText field="manage.route" defaultValue="Route:">
-                  Route:
-                </EditableText>
+                {getCMSField(cmsData, 'pages.manage.labels.route', 'Route:')}
               </Span>
               <Span>{booking.pickupLocation} → {booking.dropoffLocation}</Span>
             </Container>
             <Container>
               <Span>
-                <EditableText field="manage.pickupTime" defaultValue="Pickup Time:">
-                  Pickup Time:
-                </EditableText>
+                {getCMSField(cmsData, 'pages.manage.labels.pickupTime', 'Pickup Time:')}
               </Span>
               <Span>{new Date(booking.pickupDateTime).toLocaleString()}</Span>
             </Container>
             <Container>
               <Span>
-                <EditableText field="manage.totalFare" defaultValue="Total Fare:">
-                  Total Fare:
-                </EditableText>
+                {getCMSField(cmsData, 'pages.manage.labels.totalFare', 'Total Fare:')}
               </Span>
               <Span>${booking.fare?.toFixed(2)}</Span>
             </Container>
             {booking.balanceDue > 0 && (
               <Container>
                 <Span>
-                  <EditableText field="manage.balanceDue" defaultValue="Balance Due:">
-                    Balance Due:
-                  </EditableText>
+                  {getCMSField(cmsData, 'pages.manage.labels.balanceDue', 'Balance Due:')}
                 </Span>
                 <Span>${booking.balanceDue.toFixed(2)}</Span>
               </Container>
@@ -427,9 +410,7 @@ function ManageBookingPageContent() {
       {actionMsg && (
         <GridSection variant="content" columns={1}>
           <Container>
-            <EditableText field="manage.actionMessage" defaultValue={actionMsg}>
-              {actionMsg}
-            </EditableText>
+            <Text>{getCMSField(cmsData, 'pages.manage.actionMessage', actionMsg)}</Text>
           </Container>
         </GridSection>
       )}

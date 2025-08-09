@@ -9,8 +9,8 @@ import {
   BookingPageEditor,
   HelpPageEditor
 } from "../PageEditors";
-import { EditableText, useToast, ToastProvider, StatusMessage, Container, GridSection } from "@/ui";
-
+import { useToast, ToastProvider, StatusMessage, Container, GridSection } from "@/ui";
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 const PAGE_KEYS = [
   { key: "home", label: "Homepage", icon: "🏠" },
@@ -36,7 +36,7 @@ function PagesCMSContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const { cmsData } = useCMSData();
   const loadPages = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -142,9 +142,7 @@ function PagesCMSContent() {
     return (
       <Container>
         <Container>
-          <EditableText field="admin.cms.pages.loading" defaultValue="Loading...">
-            Loading...
-          </EditableText>
+          {getCMSField(cmsData, 'admin.cms.pages.loading', 'Loading...')}
         </Container>
       </Container>
     );
@@ -222,9 +220,7 @@ function PagesCMSContent() {
             return (
               <Container key={key}>
                 <Container>
-                  <EditableText field="admin.cms.pages.customEditor" defaultValue="Custom editor for this page type coming soon...">
-                    Custom editor for this page type coming soon...
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.cms.pages.customEditor', 'Custom editor for this page type coming soon...')}
                 </Container>
               </Container>
             );

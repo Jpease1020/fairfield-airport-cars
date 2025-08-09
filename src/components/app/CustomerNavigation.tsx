@@ -5,11 +5,11 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { usePathname } from 'next/navigation';
 import { Button } from '../../design/components/base-components/Button';
-import { EditableText } from '../../design/components/base-components/text/EditableText';
 import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/BaseNavigation';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/utils/firebase';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 const LogoImage = styled.img`
   max-width: 300px;
@@ -19,7 +19,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
   const pathname = usePathname();
   const { isAdmin } = useAdminStatus();
   const { isLoggedIn } = useAuth();
-
+  const { cmsData } = useCMSData();
   const navigationItems: NavigationItem[] = [
     ...(pathname !== '/' ? [{ name: 'Home', href: '/', current: false }] : []),
     ...(pathname !== '/book' ? [{ name: 'Book a Ride', href: '/book', current: false }] : []),
@@ -50,7 +50,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-login-button" 
           id="nav-login-button"
         >
-          <EditableText field="navigation.login">Login</EditableText>
+          {getCMSField(cmsData, 'navigation.login', 'Login')}
         </Button>
       ) : (
         <Button 
@@ -60,7 +60,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-logout-button" 
           id="nav-logout-button"
         >
-          <EditableText field="navigation.logout">Logout</EditableText>
+          {getCMSField(cmsData, 'navigation.logout', 'Logout')}
         </Button>
       )}
       {pathname !== '/book' && (
@@ -71,7 +71,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-book-now-button" 
           id="nav-book-now-button"
         >
-          <EditableText field="navigation.bookNow">Book Now</EditableText>
+          {getCMSField(cmsData, 'navigation.bookNow', 'Book Now')}
         </Button>
       )}
     </>
@@ -87,7 +87,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-mobile-login-button" 
           id="nav-mobile-login-button"
         >
-          <EditableText field="navigation.mobile.login">Login</EditableText>
+          {getCMSField(cmsData, 'navigation.mobile.login', 'Login')}
         </Button>
       ) : (
         <Button 
@@ -97,7 +97,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-mobile-logout-button" 
           id="nav-mobile-logout-button"
         >
-          <EditableText field="navigation.mobile.logout">Logout</EditableText>
+          {getCMSField(cmsData, 'navigation.mobile.logout', 'Logout')}
         </Button>
       )}
       {pathname !== '/book' && (
@@ -108,7 +108,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-mobile-book-now-button" 
           id="nav-mobile-book-now-button"
         >
-          <EditableText field="navigation.mobile.bookNow">Book Now</EditableText>
+          {getCMSField(cmsData, 'navigation.mobile.bookNow', 'Book Now')}
         </Button>
       )}
     </>

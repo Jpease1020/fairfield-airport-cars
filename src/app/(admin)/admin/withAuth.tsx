@@ -6,7 +6,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { User } from 'firebase/auth';
 import { Container } from '@/ui';
-import { EditableText } from '@/ui';
 
 const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
   const WithAuthComponent = (props: P) => {
@@ -61,9 +60,7 @@ const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
     if (loading) {
       return (
         <Container>
-          <EditableText field="admin.loading" defaultValue="Loading...">
-            Loading...
-          </EditableText>
+          Loading...
         </Container>
       );
     }

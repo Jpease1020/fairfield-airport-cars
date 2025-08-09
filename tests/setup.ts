@@ -1,6 +1,53 @@
 // Test setup file for Vitest
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 import React from 'react';
+
+// TypeScript declarations for custom matchers
+declare module 'vitest' {
+  interface Assertion<T = any> {
+    toBeInTheDocument(): T;
+    toHaveTextContent(text: string): T;
+    toHaveValue(value: string): T;
+    toHaveAttribute(attribute: string, value?: string): T;
+  }
+}
+
+// Add DOM matchers for Vitest (replacing jest-dom)
+expect.extend({
+  toBeInTheDocument(received) {
+    const pass = received !== null && received !== undefined;
+    return {
+      pass,
+      message: () => `expected element ${pass ? 'not ' : ''}to be in the document`,
+    };
+  },
+  toHaveTextContent(received, expectedText) {
+    const textContent = received?.textContent || '';
+    const pass = textContent.includes(expectedText);
+    return {
+      pass,
+      message: () => `expected element to have text content "${expectedText}", but got "${textContent}"`,
+    };
+  },
+  toHaveValue(received, expectedValue) {
+    const value = (received as HTMLInputElement)?.value || '';
+    const pass = value === expectedValue;
+    return {
+      pass,
+      message: () => `expected element to have value "${expectedValue}", but got "${value}"`,
+    };
+  },
+  toHaveAttribute(received, attribute, expectedValue) {
+    const element = received as HTMLElement;
+    const hasAttribute = element.hasAttribute(attribute);
+    const actualValue = element.getAttribute(attribute);
+    const pass = hasAttribute && (expectedValue === undefined || actualValue === expectedValue);
+    return {
+      pass,
+      message: () => `expected element to have attribute "${attribute}"${expectedValue ? ` with value "${expectedValue}"` : ''}, but got "${actualValue}"`,
+    };
+  },
+});
 
 // Mock Firebase
 vi.mock('firebase/app', () => ({
@@ -59,6 +106,11 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
   usePathname: () => '/',
   useParams: () => ({}),
+}));
+
+// Prevent Firebase Messaging from initializing in jsdom environment
+vi.mock('firebase/messaging', () => ({
+  getMessaging: vi.fn(() => ({})),
 }));
 
 // Mock Google Maps
@@ -155,3 +207,16 @@ vi.mock('next/link', () => ({
     return React.createElement('a', { href, ...props }, children);
   },
 })); 
+
+// Mock our Firebase utils module so hooks can call auth.onAuthStateChanged safely
+vi.mock('@/lib/utils/firebase', () => ({
+  auth: {
+    onAuthStateChanged: (callback: any) => {
+      // Simulate unauthenticated by default
+      callback(null);
+      return () => {};
+    },
+    signOut: vi.fn(),
+  },
+  db: {},
+}));

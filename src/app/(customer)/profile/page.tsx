@@ -11,16 +11,16 @@ import {
   Text,
   Button,
   LoadingSpinner,
-  EditableText,
   Alert,
   Input,
   Label,
   H1,
   ContentCard
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function CustomerProfilePage() {
+  const { cmsData } = useCMSData();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -186,7 +186,7 @@ function CustomerProfilePage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Initializing profile...</Text>
+          <Text>{getCMSField(cmsData, 'profile.loading.initializing', 'Initializing profile...')}</Text>
         </Stack>
       </Container>
     );
@@ -197,7 +197,7 @@ function CustomerProfilePage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading your profile...</Text>
+          <Text>{getCMSField(cmsData, 'profile.loading.loading_profile', 'Loading your profile...')}</Text>
         </Stack>
       </Container>
     );
@@ -207,9 +207,9 @@ function CustomerProfilePage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">Please log in to view your profile.</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'profile.login_required', 'Please log in to view your profile.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            Go to Login
+            {getCMSField(cmsData, 'profile.go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -217,30 +217,21 @@ function CustomerProfilePage() {
   }
 
   return (
-    <AdminPageWrapper
-      title="My Profile"
-      subtitle="Manage your account information and preferences"
-    >
+    <>
       <Stack spacing="xl">
         {/* Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1>
-              <EditableText field="customer.profile.title" defaultValue="My Profile">
-                My Profile
-              </EditableText>
+              {getCMSField(cmsData, 'profile.title', 'My Profile')}
             </H1>
             <Text variant="muted">
-              <EditableText field="customer.profile.subtitle" defaultValue="Manage your account information and preferences">
-                Manage your account information and preferences
-              </EditableText>
+              {getCMSField(cmsData, 'profile.subtitle', 'Manage your account information and preferences')}
             </Text>
           </Stack>
           {!isEditing && (
             <Button onClick={handleEdit} variant="primary">
-              <EditableText field="customer.profile.edit_profile" defaultValue="Edit Profile">
-                Edit Profile
-              </EditableText>
+              {getCMSField(cmsData, 'profile.edit_profile', 'Edit Profile')}
             </Button>
           )}
         </Stack>
@@ -260,15 +251,13 @@ function CustomerProfilePage() {
 
         {/* Profile Information */}
         <ContentCard
-          title="Personal Information"
+          title={getCMSField(cmsData, 'profile.section_personal', 'Personal Information')}
           content={
             <Stack spacing="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Label htmlFor="name">
-                    <EditableText field="customer.profile.name_label" defaultValue="Full Name">
-                      Full Name
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.name_label', 'Full Name')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -276,7 +265,7 @@ function CustomerProfilePage() {
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      placeholder="Enter your full name"
+                       placeholder={getCMSField(cmsData, 'profile.name_placeholder', 'Enter your full name')}
                       required
                     />
                   ) : (
@@ -286,23 +275,17 @@ function CustomerProfilePage() {
 
                 <Stack spacing="sm">
                   <Label htmlFor="email">
-                    <EditableText field="customer.profile.email_label" defaultValue="Email Address">
-                      Email Address
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.email_label', 'Email Address')}
                   </Label>
                   <Text>{profile.email}</Text>
                   <Text variant="muted" size="sm">
-                    <EditableText field="customer.profile.email_note" defaultValue="Email cannot be changed">
-                      Email cannot be changed
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.email_note', 'Email cannot be changed')}
                   </Text>
                 </Stack>
 
                 <Stack spacing="sm">
                   <Label htmlFor="phone">
-                    <EditableText field="customer.profile.phone_label" defaultValue="Phone Number">
-                      Phone Number
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.phone_label', 'Phone Number')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -310,7 +293,7 @@ function CustomerProfilePage() {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="Enter your phone number"
+                       placeholder={getCMSField(cmsData, 'profile.phone_placeholder', 'Enter your phone number')}
                       required
                     />
                   ) : (
@@ -322,14 +305,10 @@ function CustomerProfilePage() {
               {isEditing && (
                 <Stack direction="horizontal" spacing="sm">
                   <Button onClick={handleSave} variant="primary" disabled={saving}>
-                    <EditableText field="customer.profile.save_button" defaultValue={saving ? 'Saving...' : 'Save Changes'}>
-                      {saving ? 'Saving...' : 'Save Changes'}
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.save_button', saving ? 'Saving...' : 'Save Changes')}
                   </Button>
                   <Button onClick={handleCancel} variant="outline">
-                    <EditableText field="customer.profile.cancel_button" defaultValue="Cancel">
-                      Cancel
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.cancel_button', 'Cancel')}
                   </Button>
                 </Stack>
               )}
@@ -340,15 +319,13 @@ function CustomerProfilePage() {
 
         {/* Preferences */}
         <ContentCard
-          title="Booking Preferences"
+          title={getCMSField(cmsData, 'profile.section_booking', 'Booking Preferences')}
           content={
             <Stack spacing="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Label htmlFor="defaultPickupLocation">
-                    <EditableText field="customer.profile.default_pickup_label" defaultValue="Default Pickup Location">
-                      Default Pickup Location
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.default_pickup_label', 'Default Pickup Location')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -356,7 +333,7 @@ function CustomerProfilePage() {
                       type="text"
                       value={formData.defaultPickupLocation}
                       onChange={(e) => handleInputChange('defaultPickupLocation', e.target.value)}
-                      placeholder="e.g., Fairfield Airport"
+                       placeholder={getCMSField(cmsData, 'profile.default_pickup_placeholder', 'e.g., Fairfield Airport')}
                     />
                                      ) : (
                      <Text>{profile.preferences?.defaultPickupLocation || 'Not set'}</Text>
@@ -365,9 +342,7 @@ function CustomerProfilePage() {
 
                 <Stack spacing="sm">
                   <Label htmlFor="defaultDropoffLocation">
-                    <EditableText field="customer.profile.default_dropoff_label" defaultValue="Default Dropoff Location">
-                      Default Dropoff Location
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.default_dropoff_label', 'Default Dropoff Location')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -375,7 +350,7 @@ function CustomerProfilePage() {
                       type="text"
                       value={formData.defaultDropoffLocation}
                       onChange={(e) => handleInputChange('defaultDropoffLocation', e.target.value)}
-                      placeholder="e.g., Downtown Fairfield"
+                       placeholder={getCMSField(cmsData, 'profile.default_dropoff_placeholder', 'e.g., Downtown Fairfield')}
                     />
                                      ) : (
                      <Text>{profile.preferences?.defaultDropoffLocation || 'Not set'}</Text>
@@ -389,15 +364,13 @@ function CustomerProfilePage() {
 
         {/* Notification Preferences */}
         <ContentCard
-          title="Notification Preferences"
+          title={getCMSField(cmsData, 'profile.section_notifications', 'Notification Preferences')}
           content={
             <Stack spacing="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Label>
-                    <EditableText field="customer.profile.notifications_label" defaultValue="Notification Settings">
-                      Notification Settings
-                    </EditableText>
+                    {getCMSField(cmsData, 'profile.notifications_label', 'Notification Settings')}
                   </Label>
                   <Stack spacing="sm">
                     <Stack direction="horizontal" align="center" spacing="sm">
@@ -409,9 +382,7 @@ function CustomerProfilePage() {
                         disabled={!isEditing}
                       />
                       <Label htmlFor="emailNotifications">
-                        <EditableText field="customer.profile.email_notifications" defaultValue="Email Notifications">
-                          Email Notifications
-                        </EditableText>
+                        {getCMSField(cmsData, 'profile.email_notifications', 'Email Notifications')}
                       </Label>
                     </Stack>
                     <Stack direction="horizontal" align="center" spacing="sm">
@@ -423,9 +394,7 @@ function CustomerProfilePage() {
                         disabled={!isEditing}
                       />
                       <Label htmlFor="smsNotifications">
-                        <EditableText field="customer.profile.sms_notifications" defaultValue="SMS Notifications">
-                          SMS Notifications
-                        </EditableText>
+                        {getCMSField(cmsData, 'profile.sms_notifications', 'SMS Notifications')}
                       </Label>
                     </Stack>
                   </Stack>
@@ -438,7 +407,7 @@ function CustomerProfilePage() {
 
         {/* Account Information */}
         <ContentCard
-          title="Account Information"
+          title={getCMSField(cmsData, 'profile.section_account', 'Account Information')}
           content={
             <Stack spacing="md">
               <Stack spacing="sm">
@@ -452,7 +421,7 @@ function CustomerProfilePage() {
           variant="elevated"
         />
       </Stack>
-    </AdminPageWrapper>
+    </>
   );
 }
 

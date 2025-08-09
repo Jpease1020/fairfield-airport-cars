@@ -1,0 +1,154 @@
+'use client';
+
+import React, { useMemo, useState } from 'react';
+import styled from 'styled-components';
+import { Overlay, Container, Stack, Box, Button, Input, Text, Label } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+
+interface PageEditorDrawerProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const DrawerBody = styled(Box)`
+  width: min(720px, 100vw);
+  height: 100vh;
+  max-height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 11000; /* Above floating controls */
+  overflow-y: auto;
+`;
+
+// Derive a predictable page id from route
+function derivePageId(route: string): string {
+  const clean = route.replace(/^\//, '').replace(/\/$/, '');
+  if (!clean) return 'home';
+  const [first, ...rest] = clean.split('/');
+  if (first === 'booking' && rest.length > 0) return 'bookingDetails';
+  // Map /book route to CMS "booking" section
+  if (first === 'book') return 'booking';
+  return first;
+}
+
+export const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({ isOpen, onClose }) => {
+  const { cmsData, updateField } = useCMSData();
+  const [localEdits, setLocalEdits] = useState<Record<string, string>>({});
+
+  const route = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const pageId = useMemo(() => derivePageId(route), [route]);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    console.log('[Editor] isOpen:', isOpen, 'route:', route, 'pageId:', pageId);
+    console.log('[Editor] cmsData present:', !!cmsData);
+    if (cmsData) {
+      console.log('[Editor] Pages in CMS data:', Object.keys(cmsData.pages || {}));
+      console.log('[Editor] Page data for', pageId, ':', (cmsData.pages as any)?.[pageId]);
+    }
+  }, [isOpen, cmsData, route, pageId]);
+
+  // Get flat list of string fields for this page
+  type Field = { key: string; label: string; value: string; path: string };
+  const fields: Array<Field> = useMemo(() => {
+    const results: Array<Field> = [];
+    if (!cmsData) return results;
+
+    const labelize = (k: string) => k.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase());
+
+    const collectStrings = (node: any, basePath: string, depth: number = 0) => {
+      if (!node || typeof node !== 'object' || depth > 4) return;
+      for (const key of Object.keys(node)) {
+        const val = node[key];
+        const path = basePath ? `${basePath}.${key}` : key;
+        if (typeof val === 'string') {
+          const last = key.split('.').pop() || key;
+          results.push({ key: path, label: labelize(last), value: val, path });
+        } else if (val && typeof val === 'object') {
+          collectStrings(val, path, depth + 1);
+        }
+      }
+    };
+
+    // 1) strings under pages[pageId]
+    const pageRoot: any = (cmsData as any)?.pages?.[pageId] ?? null;
+    console.log('[Editor] Page root for', pageId, ':', pageRoot);
+    if (pageRoot && typeof pageRoot === 'object') {
+      collectStrings(pageRoot, `pages.${pageId}`);
+    }
+
+    // 2) strings under root section keyed by pageId (e.g., booking.*)
+    const rootSection: any = (cmsData as any)?.[pageId] ?? null;
+    console.log('[Editor] Root section for', pageId, ':', rootSection);
+    if (rootSection && typeof rootSection === 'object') {
+      collectStrings(rootSection, `${pageId}`);
+    }
+
+    console.log('[Editor] computed fields count:', results.length, 'for pageId:', pageId);
+    console.log('[Editor] Found fields:', results.map(f => ({ key: f.key, label: f.label, value: f.value })));
+    return results;
+  }, [cmsData, pageId]);
+
+  const handleChange = (fieldKey: string, value: string) => {
+    setLocalEdits(prev => ({ ...prev, [fieldKey]: value }));
+  };
+
+  const handleSaveAll = async () => {
+    const entries = Object.entries(localEdits);
+    console.log('[Editor] saving entries:', entries);
+    for (const [path, value] of entries) {
+      await updateField(path, value);
+    }
+    setLocalEdits({});
+    onClose();
+  };
+
+  return (
+    <Overlay isOpen={isOpen} onClose={onClose} variant="modal" position="right" closeOnBackdropClick zIndex={10990}>
+      <DrawerBody as="section" variant="elevated" padding="none" data-admin-control="true">
+        <Stack spacing="none">
+          {/* Header */}
+          <Container padding="lg" variant="elevated">
+            <Stack direction="horizontal" align="center" justify="space-between">
+              <Stack spacing="xs">
+                <Text size="md" weight="semibold">Edit Content</Text>
+                <Text size="sm" color="secondary">Page: {pageId}</Text>
+              </Stack>
+              <Stack direction="horizontal" spacing="sm">
+                <Button variant="ghost" onClick={onClose}>Close</Button>
+                <Button variant="primary" onClick={handleSaveAll} disabled={Object.keys(localEdits).length === 0}>Save All</Button>
+              </Stack>
+            </Stack>
+          </Container>
+
+          {/* Body */}
+          <Container padding="lg">
+            <Stack spacing="md">
+              {fields.length === 0 && (
+                <Text size="sm" color="secondary">No editable text fields detected for this page.</Text>
+              )}
+              {fields.map(({ key, label, value, path }) => (
+                <Box key={key} variant="default">
+                  <Stack spacing="xs">
+                    <Label htmlFor={`field-${key}`}>{label}</Label>
+                    <Input
+                      id={`field-${key}`}
+                      value={localEdits[path] ?? value}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(path, e.target.value)}
+                      placeholder={label}
+                    />
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
+          </Container>
+        </Stack>
+      </DrawerBody>
+    </Overlay>
+  );
+};
+
+export default PageEditorDrawer;
+
+

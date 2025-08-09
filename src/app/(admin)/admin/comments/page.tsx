@@ -2,20 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
-import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
+import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
 import { commentExportService, type CommentExportOptions } from '@/lib/services/comment-export-service';
 import { Container, H2, H3, H4, Span } from '@/ui';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { Textarea, Select, Input } from '@/ui';
-import { EditableText } from '@/ui';
 import { CheckCircle, Clock, AlertCircle, Search, Download, Eye, Edit, Trash2, BarChart3, FileText } from 'lucide-react';
 import StatusBadge from '@/components/business/StatusBadge';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 export default function AdminCommentsPage() {
   const { isAdmin } = useAdminStatus();
-  const [comments, setComments] = useState<ConfluenceComment[]>([]);
-  const [filteredComments, setFilteredComments] = useState<ConfluenceComment[]>([]);
+  const [comments, setComments] = useState<CommentRecord[]>([]);
+  const [filteredComments, setFilteredComments] = useState<CommentRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -25,7 +25,7 @@ export default function AdminCommentsPage() {
   const [exportFormat, setExportFormat] = useState<'csv' | 'json'>('csv');
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<any>(null);
-
+  const { cmsData } = useCMSData();
   // Load comments on mount
   useEffect(() => {
     if (isAdmin) {
@@ -62,7 +62,7 @@ export default function AdminCommentsPage() {
   const loadComments = async () => {
     try {
       setLoading(true);
-      const commentsData = await confluenceCommentsService.getComments();
+      const commentsData = await commentsService.getComments();
       setComments(commentsData);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -71,9 +71,9 @@ export default function AdminCommentsPage() {
     }
   };
 
-  const handleStatusChange = async (commentId: string, newStatus: ConfluenceComment['status']) => {
+  const handleStatusChange = async (commentId: string, newStatus: CommentRecord['status']) => {
     try {
-      await confluenceCommentsService.updateComment(commentId, { status: newStatus });
+      await commentsService.updateComment(commentId, { status: newStatus });
       await loadComments();
     } catch (error) {
       console.error('Error updating comment status:', error);
@@ -90,7 +90,7 @@ export default function AdminCommentsPage() {
 
   const handleSaveEdit = async (commentId: string) => {
     try {
-      await confluenceCommentsService.updateComment(commentId, { comment: editText });
+      await commentsService.updateComment(commentId, { comment: editText });
       setEditingComment(null);
       setEditText('');
       await loadComments();
@@ -102,7 +102,7 @@ export default function AdminCommentsPage() {
   const handleDeleteComment = async (commentId: string) => {
     if (confirm('Are you sure you want to delete this comment?')) {
       try {
-        await confluenceCommentsService.deleteComment(commentId);
+      await commentsService.deleteComment(commentId);
         await loadComments();
       } catch (error) {
         console.error('Error deleting comment:', error);
@@ -110,12 +110,12 @@ export default function AdminCommentsPage() {
     }
   };
 
-  const handleNavigateToElement = (comment: ConfluenceComment) => {
+  const handleNavigateToElement = (comment: CommentRecord) => {
     // Navigate to the page and highlight the element
     window.open(comment.pageUrl, '_blank');
   };
 
-  const _getStatusIcon = (status: ConfluenceComment['status']) => {
+  const _getStatusIcon = (status: CommentRecord['status']) => {
     switch (status) {
       case 'open':
         return <AlertCircle size={16} />;
@@ -182,9 +182,7 @@ export default function AdminCommentsPage() {
         {/* Header */}
         <Container variant="elevated" padding="md">
           <H2>
-            <EditableText field="adminComments.title" defaultValue="Comment Management">
-              Comment Management
-            </EditableText>
+            {getCMSField(cmsData, 'adminComments.title', 'Comment Management')}
           </H2>
           <Span variant="default" size="sm" color="muted">
             Manage all comments across the site
@@ -354,7 +352,7 @@ export default function AdminCommentsPage() {
                     </Button>
                     <Select
                       value={comment.status}
-                      onChange={(e) => handleStatusChange(comment.id, e.target.value as ConfluenceComment['status'])}
+                      onChange={(e) => handleStatusChange(comment.id, e.target.value as CommentRecord['status'])}
                       options={[
                         { value: 'open', label: 'Open' },
                         { value: 'in-progress', label: 'In Progress' },
@@ -380,9 +378,7 @@ export default function AdminCommentsPage() {
         {showAnalytics && analyticsData && (
           <Container variant="elevated" padding="md">
             <H3>
-              <EditableText field="adminComments.analyticsTitle" defaultValue="Comment Analytics">
-                Comment Analytics
-              </EditableText>
+              {getCMSField(cmsData, 'adminComments.analyticsTitle', 'Comment Analytics')}
             </H3>
             
             <Stack spacing="md">

@@ -9,11 +9,11 @@ import {
   StatusMessage,
   ToastProvider,
   useToast,
-  EditableText
-} from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+} from '@/ui';  
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function QuickFixPage() {
+  const { cmsData } = useCMSData();
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -157,15 +157,10 @@ function QuickFixPage() {
   };
 
   return (
-    <AdminPageWrapper
-      title="Quick Fix - Add Missing Content"
-      subtitle="Add missing content to make the app production-ready"
-    >
+    <>
       <Container>
         <Stack spacing="md">
-          <EditableText field="admin.quickFix.description" defaultValue="This will add all missing content to the database, making the app ready for real customers:">
-            This will add all missing content to the database, making the app ready for real customers:
-          </EditableText>
+          {getCMSField(cmsData, 'admin.quickFix.description', 'This will add all missing content to the database, making the app ready for real customers:')}
           <Stack spacing="sm">
             <Container>Success page messages and titles</Container>
             <Container>Error page content and messages</Container>
@@ -195,13 +190,11 @@ function QuickFixPage() {
             disabled={loading}
             variant="primary"
           >
-            <EditableText field="admin.quickFix.button" defaultValue={loading ? 'Adding Content...' : '🚀 Make App Production-Ready'}>
-              {loading ? 'Adding Content...' : '🚀 Make App Production-Ready'}
-            </EditableText>
+            {getCMSField(cmsData, 'admin.quickFix.button', loading ? 'Adding Content...' : '🚀 Make App Production-Ready')}
           </Button>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    </>
   );
 }
 

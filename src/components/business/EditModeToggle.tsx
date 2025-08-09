@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/design/components/base-components/Button';
 import { Container } from '@/design/layout/containers/Container';
-import { EditableText } from '@/design/components/base-components/text/EditableText';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface EditModeToggleProps {
   editMode: boolean;
@@ -20,13 +20,12 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
   onSave,
   onCancel,
 }) => {
+  const { cmsData } = useCMSData();
   if (!editMode) {
     return (
       <Container>
         <Button onClick={onEdit}>
-          <EditableText field="editModeToggle.editModeButton" defaultValue="Edit Mode">
-            Edit Mode
-          </EditableText>
+          {getCMSField(cmsData, 'editModeToggle.editModeButton', 'Edit Mode')}
         </Button>
       </Container>
     );
@@ -35,20 +34,10 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
   return (
     <Container>
       <Button onClick={onSave} disabled={saving}>
-        {saving ? (
-          <EditableText field="editModeToggle.savingButton" defaultValue="Saving...">
-            Saving...
-          </EditableText>
-        ) : (
-          <EditableText field="editModeToggle.saveButton" defaultValue="Save">
-            Save
-          </EditableText>
-        )}
+        {saving ? getCMSField(cmsData, 'editModeToggle.savingButton', 'Saving...') : getCMSField(cmsData, 'editModeToggle.saveButton', 'Save')}
       </Button>
       <Button onClick={onCancel} disabled={saving} variant="outline">
-        <EditableText field="editModeToggle.cancelButton" defaultValue="Cancel">
-          Cancel
-        </EditableText>
+        {getCMSField(cmsData, 'editModeToggle.cancelButton', 'Cancel')}
       </Button>
       {saveMsg && <Container>{saveMsg}</Container>}
     </Container>

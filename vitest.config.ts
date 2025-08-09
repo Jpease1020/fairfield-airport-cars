@@ -82,8 +82,17 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+    alias: [
+      // Order matters: more specific aliases first
+      { find: '@/ui', replacement: path.resolve(__dirname, './src/design/ui.ts') },
+      { find: '@/design', replacement: path.resolve(__dirname, './src/design') },
+      { find: '@/components', replacement: path.resolve(__dirname, './src/components') },
+      { find: '@/hooks', replacement: path.resolve(__dirname, './src/hooks') },
+      { find: '@/lib', replacement: path.resolve(__dirname, './src/lib') },
+      { find: '@/types', replacement: path.resolve(__dirname, './src/types') },
+      { find: '@/app', replacement: path.resolve(__dirname, './src/app') },
+      { find: '@/utils', replacement: path.resolve(__dirname, './src/utils') },
+      { find: '@', replacement: path.resolve(__dirname, './src') },
+    ],
   },
 }); 

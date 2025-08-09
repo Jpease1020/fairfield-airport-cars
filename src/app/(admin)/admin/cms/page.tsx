@@ -13,10 +13,9 @@ import {
   ActionButtonGroup,
   Container,
   Text,
-  EditableText,
   Stack
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function CMSPageContent() {
   const { addToast } = useToast();
@@ -24,7 +23,7 @@ function CMSPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
+  const { cmsData } = useCMSData();
   useEffect(() => {
     loadCMSConfig();
   }, []);
@@ -178,10 +177,7 @@ function CMSPageContent() {
   ];
 
   return (
-    <AdminPageWrapper
-      title="Content Management System"
-      subtitle="Manage website content, branding, and configuration"
-    >
+    <>
       {/* CMS Sections Grid */}
       <GridSection variant="content" columns={3}>
         {cmsSections.map((section) => (
@@ -206,9 +202,7 @@ function CMSPageContent() {
               
               <Stack direction="horizontal" align="center" justify="space-between">
                 <Text>
-                  <EditableText field="admin.cms.statusLabel" defaultValue="Status:">
-                    Status:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.cms.statusLabel', 'Status:')}
                 </Text>
                 <Text>
                   {section.status}
@@ -259,9 +253,7 @@ function CMSPageContent() {
               <Stack spacing="md">
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Text>
-                    <EditableText field="admin.cms.lastUpdatedLabel" defaultValue="Last Updated">
-                      Last Updated
-                    </EditableText>
+                    {getCMSField(cmsData, 'admin.cms.lastUpdatedLabel', 'Last Updated')}
                   </Text>
                   <Text>
                     {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
@@ -271,9 +263,7 @@ function CMSPageContent() {
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     <Text>
-                      <EditableText field="admin.cms.configurationStatusLabel" defaultValue="Configuration Status">
-                        Configuration Status
-                      </EditableText>
+                      {getCMSField(cmsData, 'admin.cms.configurationStatusLabel', 'Configuration Status')}
                     </Text>
                     <Text>
                       {config ? 'Fully Configured' : 'Needs Setup'}
@@ -284,9 +274,7 @@ function CMSPageContent() {
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     <Text>
-                      <EditableText field="admin.cms.autoSaveLabel" defaultValue="Auto-Save">
-                        Auto-Save
-                      </EditableText>
+                      {getCMSField(cmsData, 'admin.cms.autoSaveLabel', 'Auto-Save')}
                     </Text>
                     <Text>
                       Enabled
@@ -298,7 +286,7 @@ function CMSPageContent() {
           </Box>
         </GridSection>
       )}
-    </AdminPageWrapper>
+    </>
   );
 }
 

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { colors, fontSize, fontWeight, spacing, transitions } from '../../../system/tokens/tokens';
+import { colors, spacing, fontSize, fontWeight, transitions } from '../../../system/tokens/tokens';
+import { BaseComponentProps } from '../../../system/shared-types';
 
 // Styled label component with proper prop filtering
 const StyledLabel = styled.label.withConfig({
@@ -124,6 +125,7 @@ export interface LabelProps {
   
   // HTML attributes
   id?: string;
+  cmsKey?: string;
   
   // Rest props
   [key: string]: any;
@@ -145,14 +147,18 @@ export const Label: React.FC<LabelProps> = ({
   
   // HTML attributes
   id,
+  cmsKey,
   
   // Rest props
   ...rest
 }) => {
+  const ref = React.useRef<any>(null);
+  const label = typeof children === 'string' ? children : undefined;
   return (
     <StyledLabel
       htmlFor={htmlFor}
       id={id}
+      ref={ref}
       variant={variant}
       size={size}
       weight={weight}

@@ -11,13 +11,12 @@ import {
   Text,
   Button,
   LoadingSpinner,
-  EditableText,
   Alert,
   Badge,
   H1,
   ContentCard
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface Booking {
   id: string;
@@ -32,6 +31,7 @@ interface Booking {
 }
 
 function CustomerBookingsPage() {
+  const { cmsData } = useCMSData();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -153,7 +153,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Initializing bookings...</Text>
+          <Text>{getCMSField(cmsData, 'bookings.loading.initializing', 'Initializing bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -164,7 +164,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading your bookings...</Text>
+          <Text>{getCMSField(cmsData, 'bookings.loading.loading_bookings', 'Loading your bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -174,9 +174,9 @@ function CustomerBookingsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">Please log in to view your bookings.</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'bookings.login_required', 'Please log in to view your bookings.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            Go to Login
+            {getCMSField(cmsData, 'bookings.go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -185,62 +185,46 @@ function CustomerBookingsPage() {
 
   if (error) {
     return (
-      <AdminPageWrapper
-        title="Error Loading Bookings"
-        subtitle={error}
-      >
+      
         <Container>
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="My Bookings"
-      subtitle="View and manage your airport rides"
-    >
+    <>
       <Stack spacing="xl">
         {/* Header with Book New Ride button */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1>
-              <EditableText field="customer.bookings.title" defaultValue="My Bookings">
-                My Bookings
-              </EditableText>
+              {getCMSField(cmsData, 'bookings.title', 'My Bookings')}
             </H1>
             <Text variant="muted">
-              <EditableText field="customer.bookings.subtitle" defaultValue="View and manage your airport rides">
-                View and manage your airport rides
-              </EditableText>
+              {getCMSField(cmsData, 'bookings.subtitle', 'View and manage your airport rides')}
             </Text>
           </Stack>
           <Button onClick={handleBookNewRide} variant="primary">
-            <EditableText field="customer.bookings.book_new_ride" defaultValue="Book New Ride">
-              Book New Ride
-            </EditableText>
+            {getCMSField(cmsData, 'bookings.book_new_ride', 'Book New Ride')}
           </Button>
         </Stack>
 
         {/* Bookings List */}
         {bookings.length === 0 ? (
           <ContentCard
-            title="No Bookings Yet"
+            title={getCMSField(cmsData, 'bookings.no_bookings_title', 'No Bookings Yet')}
             content={
               <Stack spacing="lg" align="center">
                 <Text variant="muted" align="center">
-                  <EditableText field="customer.bookings.no_bookings" defaultValue="You haven't made any bookings yet. Book your first ride!">
-                    You haven't made any bookings yet. Book your first ride!
-                  </EditableText>
+                  {getCMSField(cmsData, 'bookings.no_bookings', "You haven't made any bookings yet. Book your first ride!")}
                 </Text>
-                <Button onClick={handleBookNewRide} variant="primary">
-                  <EditableText field="customer.bookings.book_first_ride" defaultValue="Book Your First Ride">
-                    Book Your First Ride
-                  </EditableText>
-                </Button>
+                  <Button onClick={handleBookNewRide} variant="primary">
+                    {getCMSField(cmsData, 'bookings.book_first_ride', 'Book Your First Ride')}
+                  </Button>
               </Stack>
             }
             variant="elevated"
@@ -276,24 +260,20 @@ function CustomerBookingsPage() {
                     </Stack>
 
                     <Stack direction="horizontal" spacing="sm">
-                      <Button 
+                        <Button 
                         variant="outline" 
                         onClick={() => handleViewBooking(booking.id)}
                         size="sm"
                       >
-                        <EditableText field="customer.bookings.view_details" defaultValue="View Details">
-                          View Details
-                        </EditableText>
+                         {getCMSField(cmsData, 'bookings.view_details', 'View Details')}
                       </Button>
                       {booking.status === 'confirmed' || booking.status === 'in-progress' ? (
-                        <Button 
+                           <Button 
                           variant="primary" 
                           onClick={() => handleTrackBooking(booking.id)}
                           size="sm"
                         >
-                          <EditableText field="customer.bookings.track_ride" defaultValue="Track Ride">
-                            Track Ride
-                          </EditableText>
+                         {getCMSField(cmsData, 'bookings.track_ride', 'Track Ride')}
                         </Button>
                       ) : null}
                     </Stack>
@@ -305,7 +285,7 @@ function CustomerBookingsPage() {
           </Stack>
         )}
       </Stack>
-    </AdminPageWrapper>
+    </>
   );
 }
 

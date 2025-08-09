@@ -3,9 +3,9 @@ import { Button } from '../../design/components/base-components/Button';
 import { Stack } from '../../design/layout/framing/Stack';
 import { H3 } from '../../design/components/base-components/text/Headings';
 import { Text } from '../../design/components/base-components/text/Text';
-import { EditableText } from '../../design/components/base-components/text/EditableText';
 import { PositionedContainer } from '../../design/layout/containers/PositionedContainer';
 import { LoadingSpinner } from '../../design/components/base-components/notifications/LoadingSpinner';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 export interface StateProps {
   type: 'loading' | 'empty' | 'error';
@@ -44,7 +44,7 @@ export const State: React.FC<StateProps> = ({
     relaxed: 'lg'
   } as const;
 
-
+  const { cmsData } = useCMSData();
 
   const renderIcon = () => {
     if (type === 'loading' && showSpinner) {
@@ -96,11 +96,9 @@ export const State: React.FC<StateProps> = ({
     return (
       <Stack direction="vertical" align="center" spacing="sm">
         {typeof finalTitle === 'string' ? (
-          <EditableText field={`state.${type}.title`} defaultValue={finalTitle}>
-            <H3 size={titleSize} weight="semibold" align="center">
-              {finalTitle}
-            </H3>
-          </EditableText>
+          <H3 size={titleSize} weight="semibold" align="center">
+            {getCMSField(cmsData, `state.${type}.title`, finalTitle)}
+          </H3>
         ) : (
           <H3 size={titleSize} weight="semibold" align="center">
             {finalTitle}
@@ -118,16 +116,15 @@ export const State: React.FC<StateProps> = ({
     return (
       <Stack direction="vertical" align="center" spacing="lg">
         {typeof description === 'string' ? (
-          <EditableText field={`state.${type}.description`} defaultValue={description}>
-            <Text 
+          <Text 
               variant="body" 
               size={textSize} 
               color="secondary" 
               align="center"
             >
-              {description}
+              {getCMSField(cmsData, `state.${type}.description`, description) || description  }
             </Text>
-          </EditableText>
+
         ) : (
           <Text 
             variant="body" 
@@ -135,7 +132,7 @@ export const State: React.FC<StateProps> = ({
             color="secondary" 
             align="center"
           >
-            {description}
+            {getCMSField(cmsData, `state.${type}.description`, description) || description}
           </Text>
         )}
       </Stack>

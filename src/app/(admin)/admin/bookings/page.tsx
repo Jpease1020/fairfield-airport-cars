@@ -14,7 +14,6 @@ import {
   Alert,
   LoadingSpinner,
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
 
 function AdminBookingsPageContent() {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -250,40 +249,31 @@ function AdminBookingsPageContent() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Booking Management"
-        subtitle="Loading bookings from database..."
-      >
+     
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
             <Text>Loading bookings from database...</Text>
           </Stack>
         </Container>
-      </AdminPageWrapper>
+     
     );
   }
 
   if (error) {
     return (
-      <AdminPageWrapper
-        title="Error Loading Bookings"
-        subtitle={error}
-      >
+     
         <Container>
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
         </Container>
-      </AdminPageWrapper>
+     
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Booking Management"
-      subtitle="Manage all customer bookings and track their status"
-    >
+    
       <Stack spacing="xl">
         {/* Status Filter */}
         <Stack spacing="sm">
@@ -368,7 +358,7 @@ function AdminBookingsPageContent() {
           />
         )}
       </Stack>
-    </AdminPageWrapper>
+    
   );
 }
 

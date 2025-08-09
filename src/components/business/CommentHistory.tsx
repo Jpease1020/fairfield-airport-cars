@@ -8,7 +8,7 @@ import StatusBadge from '@/components/business/StatusBadge';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { Select, Input } from '@/ui';
-import { EditableText } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface CommentHistoryProps {
   comments: ConfluenceComment[];
@@ -30,7 +30,7 @@ export default function CommentHistory({
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-
+  const { cmsData } = useCMSData();
   // Filter and sort comments
   useEffect(() => {
     let filtered = [...comments];
@@ -167,9 +167,7 @@ export default function CommentHistory({
         {/* Header */}
         <Container variant="elevated" padding="md">
           <H3>
-            <EditableText field="commentHistory.title" defaultValue="Comment History">
-              Comment History
-            </EditableText>
+            {getCMSField(cmsData, 'commentHistory.title', 'Comment History')}
           </H3>
           <Span variant="default" size="sm" color="muted">
             {filteredComments.length} comments found
@@ -180,9 +178,7 @@ export default function CommentHistory({
         {showFilters && (
           <Container variant="elevated" padding="md">
             <H4>
-              <EditableText field="commentHistory.filters" defaultValue="Filters">
-                Filters
-              </EditableText>
+              {getCMSField(cmsData, 'commentHistory.filters', 'Filters')}
             </H4>
             <Stack spacing="md">
               <Container variant="elevated" padding="sm">
@@ -262,9 +258,7 @@ export default function CommentHistory({
           {Object.keys(groupedComments).length === 0 ? (
             <Container variant="elevated" padding="lg">
               <Span>
-                <EditableText field="commentHistory.noComments" defaultValue="No comments found matching your filters.">
-                  No comments found matching your filters.
-                </EditableText>
+                {getCMSField(cmsData, 'commentHistory.noComments', 'No comments found matching your filters.')}
               </Span>
             </Container>
           ) : (

@@ -1,7 +1,11 @@
 import '@/design/globals.css';
 import { Analytics } from '@vercel/analytics/react';
-import { AccessibilityEnhancer, ErrorBoundary, CMSDesignProvider, StyledComponentsRegistry, Container } from '@/ui';
+import { AccessibilityEnhancer, ErrorBoundary, StyledComponentsRegistry, Container } from '@/ui';
 import { CommentSystem } from '../components/business';
+import { AdminProvider } from '@/design/providers/AdminProvider';
+import { EditModeProvider } from '@/design/providers/EditModeProvider';
+import { CMSDesignProvider } from '@/design/providers/CMSDesignProvider';
+import { AdminContent } from './AdminContent';
 
 export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',
@@ -26,14 +30,11 @@ export default function RootLayout({
         <StyledComponentsRegistry>
           <ErrorBoundary>
             <CMSDesignProvider>
-              <AccessibilityEnhancer>
-                <CommentSystem>
-                  <Container as="main" maxWidth="full" data-testid="layout-main-content">
-                    {children}
-                  </Container>
-                </CommentSystem>
-                <Analytics />
-              </AccessibilityEnhancer>
+              <AdminProvider>
+                <EditModeProvider>
+                  <AdminContent>{children}</AdminContent>
+                </EditModeProvider>
+              </AdminProvider>
             </CMSDesignProvider>
           </ErrorBoundary>
         </StyledComponentsRegistry>
