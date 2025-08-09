@@ -145,6 +145,43 @@ export default [
       'no-undef': 'off',
     },
   },
+  // Re-enable no-undef on website pages to catch undefined variables there
+  {
+    files: ['src/app/**/*.{js,jsx,ts,tsx}'],
+    languageOptions: {
+      globals: {
+        HTMLScriptElement: 'readonly',
+        HTMLAnchorElement: 'readonly',
+        HTMLLabelElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'error',
+    },
+  },
+  // Test files: define common testing globals to avoid false no-undef
+  {
+    files: ['tests/**/*.{js,jsx,ts,tsx}'],
+    languageOptions: {
+      globals: {
+        // Vitest
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        // Playwright
+        page: 'readonly',
+        browser: 'readonly',
+        context: 'readonly',
+      },
+    },
+  },
   // 🛡️ DESIGN SYSTEM PROTECTION - Stricter rules for design directory
   {
     files: ['src/design/**/*.{js,jsx,ts,tsx}'],
