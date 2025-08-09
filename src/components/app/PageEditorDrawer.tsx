@@ -105,9 +105,10 @@ function derivePageId(route: string): string {
   const clean = route.replace(/^\//, '').replace(/\/$/, '');
   if (!clean) return 'home';
   const [first, ...rest] = clean.split('/');
-  if (first === 'booking' && rest.length > 0) return 'bookingDetails';
-  // Map /book route to CMS "booking" section
+  // Align with CMSDesignProvider derivePageIdFromPath so drawer and provider load the same page
+  if (first === 'booking' && rest.length > 0) return 'booking';
   if (first === 'book') return 'booking';
+  if (first === 'payments' && rest[0] === 'pay-balance') return 'payments';
   return first;
 }
 
