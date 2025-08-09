@@ -179,14 +179,7 @@ export const FloatingEditButton: React.FC<FloatingEditButtonProps> = ({
             {editMode ? '✓' : '○'} Edit Mode
           </PanelButton>
           <PanelButton onClick={handleCommentMode} $isActive={commentMode} data-admin-control="true">
-            {commentMode ? '✓' : '○'} Comments
-          </PanelButton>
-          <Divider />
-          <PanelButton as="a" href="/admin" data-admin-control="true">
-            📊 Admin Dashboard
-          </PanelButton>
-          <PanelButton as="a" href="/admin/cms" data-admin-control="true">
-            📝 Content Manager
+            {commentMode ? '✓' : '○'} Comment Mode
           </PanelButton>
         </PanelContent>
       </AdminPanel>

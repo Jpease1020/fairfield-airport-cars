@@ -5,6 +5,7 @@ import { AccessibilityEnhancer, Container, FloatingEditButton } from '@/ui';
 import { PageEditorDrawer } from '@/components/app/PageEditorDrawer';
 import { CommentsDrawer } from '@/components/app/CommentsDrawer';
 import { CommentSystem } from '../components/business';
+import { commentsService } from '@/lib/business/comments-service';
 import { useAdmin } from '@/design/providers/AdminProvider';
 import { useEditMode } from '@/design/providers/EditModeProvider';
 import { useAuth } from '@/hooks/useAuth';
@@ -43,6 +44,26 @@ const AdminInteractionGuard = styled.div<{ $isActive: boolean }>`
   `}
 `;
 
+const CommentsHandle = styled.button<{ $isOpen: boolean }>`
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-right: none;
+  padding: 8px 6px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  z-index: 11020;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 64px;
+`;
+
 interface AdminContentProps {
   children: React.ReactNode;
 }
@@ -55,6 +76,7 @@ export function AdminContent({ children }: AdminContentProps) {
   const isAdminModeActive = editMode || commentMode;
   const [isEditorOpen, setIsEditorOpen] = React.useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = React.useState(false);
+  const [hasComments, setHasComments] = React.useState(false);
 
   const closeEditor = React.useCallback(() => {
     setIsEditorOpen(false);
@@ -62,14 +84,19 @@ export function AdminContent({ children }: AdminContentProps) {
     setEditMode?.(false);
   }, [setEditMode]);
 
-  // Auto-open comments drawer when comment mode turns on; allow manual close
+  // Load comment summary to decide if we show the handle
   React.useEffect(() => {
-    if (commentMode) {
-      setIsCommentsOpen(true);
-    } else {
-      setIsCommentsOpen(false);
-    }
-  }, [commentMode]);
+    let mounted = true;
+    (async () => {
+      try {
+        const summary = await commentsService.getCommentSummary();
+        if (mounted) setHasComments(summary.total > 0);
+      } catch {
+        if (mounted) setHasComments(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <>
@@ -77,12 +104,24 @@ export function AdminContent({ children }: AdminContentProps) {
       <AccessibilityEnhancer>
         <CommentSystem>
           <AdminInteractionGuard $isActive={isAdminModeActive}>
-            <Container as="main" maxWidth="full" data-testid="layout-main-content">
+            <Container as="main" maxWidth="full" data-testid="layout-main-content" padding="none"> 
               {children}
             </Container>
           </AdminInteractionGuard>
         </CommentSystem>
       </AccessibilityEnhancer>
+
+      {/* Comments toggle handle */}
+      {isAdmin && (hasComments || commentMode) && (
+        <CommentsHandle
+          aria-label="Toggle comments drawer"
+          onClick={() => setIsCommentsOpen((v) => !v)}
+          $isOpen={isCommentsOpen}
+          data-admin-control="true"
+        >
+          {isCommentsOpen ? '›' : '‹'}
+        </CommentsHandle>
+      )}
       
       <FloatingEditButton
         isAdmin={isAdmin}

@@ -34,7 +34,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
       <LogoImage 
         src="/logos/NewLogoNoBackground.png" 
         alt="Fairfield Airport Cars"
-        height="60"
+        height="120"
         width="auto"
       />
     </Link>

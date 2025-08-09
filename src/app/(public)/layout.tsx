@@ -12,7 +12,7 @@ export default function PublicLayout({
 }) {
   return (
     <div>
-      <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation">
+      <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none"> 
         <CustomerNavigation />
       </Container>
       

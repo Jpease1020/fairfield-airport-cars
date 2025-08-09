@@ -91,14 +91,12 @@ export default function AdminLayout({
 
   // Render admin pages with admin navigation for authenticated admin users
   return (
-    <div>
+    <>
       {/* Admin Navigation Header */}
       <AdminNavigation />
       
       {/* Admin Page Content */}
-      <div>
-        {children}
-      </div>
-    </div>
+      {children}
+    </>
   );
 } 
