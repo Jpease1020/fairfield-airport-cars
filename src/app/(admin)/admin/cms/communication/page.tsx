@@ -15,7 +15,7 @@ import {
   Textarea,
   SettingToggle,
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData } from '@/design/providers/CMSDesignProvider';
 
 function CommunicationPageContent() {
   const { addToast } = useToast();
@@ -24,7 +24,7 @@ function CommunicationPageContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { cmsData } = useCMSData();
+  useCMSData();
   
   const ensureEmailTemplates = (t: EmailTemplates | null): EmailTemplates => t ?? DEFAULT_CMS_CONFIG.communication.email;
   const ensureSMSTemplates = (t: SMSTemplates | null): SMSTemplates => t ?? DEFAULT_CMS_CONFIG.communication.sms;
@@ -74,20 +74,7 @@ function CommunicationPageContent() {
     }
   };
 
-  const headerActions = [
-    { 
-      label: 'Refresh', 
-      onClick: loadCommunicationSettings, 
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: 'Save Changes', 
-      onClick: handleSave, 
-      variant: 'primary' as const,
-      disabled: saving || loading
-    }
-  ];
+  // headerActions removed (unused)
 
   const emailTemplateSections = [
     {

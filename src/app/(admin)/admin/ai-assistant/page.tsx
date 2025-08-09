@@ -1,10 +1,10 @@
 'use client';
-
-import { useEffect, useState } from 'react';
-import { Container, H2, Text, Span, Button, Stack, Box } from '@/ui';
+ 
+import { useState } from 'react';
+import { Container, H2, Text, Button, Stack, Box } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { useChat } from '@/hooks/useChat';
-import { Mic, MicOff, Send, MessageCircle } from 'lucide-react';
+import { Mic, MicOff, Send } from 'lucide-react';
 
 export default function AIAssistantPage() {
   const [isListening, setIsListening] = useState(false);

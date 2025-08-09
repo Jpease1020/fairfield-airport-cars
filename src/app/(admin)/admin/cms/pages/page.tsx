@@ -161,7 +161,7 @@ function PagesCMSContent() {
 
       <GridSection variant="content" columns={1}>
         <Container>
-          {PAGE_KEYS.map(({ key, label, icon }) => {
+          {PAGE_KEYS.map(({ key, label, icon: _icon }) => {
             const pageData = pages[key as keyof typeof pages];
             if (!pageData) return null;
 

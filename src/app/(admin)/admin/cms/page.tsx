@@ -78,25 +78,7 @@ function CMSPageContent() {
     }
   };
 
-  const headerActions = [
-    { 
-      label: 'Refresh', 
-      onClick: loadCMSConfig, 
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: 'Export Config', 
-      onClick: () => addToast('info', 'Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Initialize CMS', 
-      onClick: handleInitializeCMS, 
-      variant: 'primary' as const,
-      disabled: loading
-    }
-  ];
+  // headerActions removed (unused)
 
   const cmsSections = [
     {

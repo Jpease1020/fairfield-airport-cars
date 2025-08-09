@@ -37,9 +37,8 @@ const CalendarDay = styled.div`
 `;
 
 function CalendarPageContent() {
-  const [selectedDate] = useState<Date>(new Date());
-  const [events] = useState<any[]>([]);
-
+  // State placeholders removed as they were unused
+   
   return (
     <Container>
       <Stack spacing="xl">
