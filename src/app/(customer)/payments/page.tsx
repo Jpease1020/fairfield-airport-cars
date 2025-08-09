@@ -212,7 +212,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Initializing payments...</Text>
+          <Text>{getCMSField(cmsData, 'payments.loading.initializing', 'Initializing payments...')}</Text>
         </Stack>
       </Container>
     );
@@ -223,7 +223,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading your payment information...</Text>
+          <Text>{getCMSField(cmsData, 'payments.loading.loading_info', 'Loading your payment information...')}</Text>
         </Stack>
       </Container>
     );
@@ -233,9 +233,9 @@ function CustomerPaymentsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">Please log in to view your payments.</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'payments.login_required', 'Please log in to view your payments.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            Go to Login
+            {getCMSField(cmsData, 'payments.go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -267,14 +267,14 @@ function CustomerPaymentsPage() {
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1>
-              {getCMSField(cmsData, 'customer.payments.title', 'My Payments')}
+              {getCMSField(cmsData, 'payments.title', 'My Payments')}
             </H1>
             <Text variant="muted">
-              {getCMSField(cmsData, 'customer.payments.subtitle', 'Manage your payment methods and view transaction history')}
+              {getCMSField(cmsData, 'payments.subtitle', 'Manage your payment methods and view transaction history')}
             </Text>
           </Stack>
           <Button onClick={handleAddPaymentMethod} variant="primary">
-            {getCMSField(cmsData, 'customer.payments.add_payment_method', 'Add Payment Method')}
+            {getCMSField(cmsData, 'payments.add_payment_method', 'Add Payment Method')}
           </Button>
         </Stack>
 
@@ -291,16 +291,16 @@ function CustomerPaymentsPage() {
 
         {/* Payment Methods */}
         <ContentCard
-          title="Payment Methods"
+          title={getCMSField(cmsData, 'payments.section_methods', 'Payment Methods')}
           content={
             <Stack spacing="lg">
               {paymentMethods.length === 0 ? (
                 <Stack spacing="md" align="center">
                   <Text variant="muted" align="center">
-                    {getCMSField(cmsData, 'customer.payments.no_payment_methods', 'No payment methods saved yet.')}
+                    {getCMSField(cmsData, 'payments.no_payment_methods', 'No payment methods saved yet.')}
                   </Text>
                   <Button onClick={handleAddPaymentMethod} variant="primary">
-                    {getCMSField(cmsData, 'customer.payments.add_first_method', 'Add Payment Method')}
+                    {getCMSField(cmsData, 'payments.add_first_method', 'Add Payment Method')}
                   </Button>
                 </Stack>
               ) : (
@@ -324,12 +324,12 @@ function CustomerPaymentsPage() {
                           )}
                         </Stack>
                         <Stack direction="horizontal" spacing="sm">
-                          <Button variant="outline" size="sm">
-                            {getCMSField(cmsData, 'customer.payments.edit_method', 'Edit')}
-                          </Button>
+                           <Button variant="outline" size="sm">
+                             {getCMSField(cmsData, 'payments.edit_method', 'Edit')}
+                           </Button>
                           {!method.isDefault && (
                               <Button variant="outline" size="sm">
-                                {getCMSField(cmsData, 'customer.payments.set_default', 'Set Default')}
+                                {getCMSField(cmsData, 'payments.set_default', 'Set Default')}
                               </Button>
                           )}
                         </Stack>
@@ -345,13 +345,13 @@ function CustomerPaymentsPage() {
 
         {/* Payment History */}
         <ContentCard
-          title="Payment History"
+          title={getCMSField(cmsData, 'payments.section_history', 'Payment History')}
           content={
             <Stack spacing="lg">
               {payments.length === 0 ? (
                 <Stack spacing="md" align="center">
                   <Text variant="muted" align="center">
-                    {getCMSField(cmsData, 'customer.payments.no_payments', 'No payment history yet.')}
+                    {getCMSField(cmsData, 'payments.no_payments', 'No payment history yet.')}
                   </Text>
                 </Stack>
               ) : (
@@ -383,23 +383,23 @@ function CustomerPaymentsPage() {
                           <Stack spacing="xs">
                             {payment.paymentMethod && (
                               <Text variant="muted" size="sm">
-                                {getCMSField(cmsData, 'customer.payments.payment_method', 'Payment Method:')} {payment.paymentMethod}
+                    {getCMSField(cmsData, 'payments.payment_method', 'Payment Method:')} {payment.paymentMethod}
                               </Text>
                             )}
                             {payment.transactionId && (
                               <Text variant="muted" size="sm">
-                                {getCMSField(cmsData, 'customer.payments.transaction_id', 'Transaction ID:')} {payment.transactionId}
+                    {getCMSField(cmsData, 'payments.transaction_id', 'Transaction ID:')} {payment.transactionId}
                               </Text>
                             )}
                           </Stack>
                           
                           <Stack direction="horizontal" spacing="sm">
-                            <Button 
+                              <Button 
                               variant="outline" 
                               size="sm"
                               onClick={() => handleViewBooking(payment.bookingId)}
                             >
-                              {getCMSField(cmsData, 'customer.payments.view_booking', 'View Booking')}
+                                {getCMSField(cmsData, 'payments.view_booking', 'View Booking')}
                             </Button>
                             {payment.status === 'pending' && payment.type === 'balance' && (
                               <Button 
@@ -407,7 +407,7 @@ function CustomerPaymentsPage() {
                                 size="sm"
                                 onClick={() => handlePayBalance(payment)}
                               >
-                                {getCMSField(cmsData, 'customer.payments.pay_balance', 'Pay Balance')}
+                                {getCMSField(cmsData, 'payments.pay_balance', 'Pay Balance')}
                               </Button>
                             )}
                           </Stack>

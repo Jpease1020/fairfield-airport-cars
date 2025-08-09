@@ -198,7 +198,9 @@ function BookingDetailsContent() {
           {getCMSField(cmsData, 'booking.fare_info.description', 'Payment details for your trip')}
           <Container spacing="md">
             {getCMSField(cmsData, 'booking.total_fare.label', 'Total Fare:')}
-            <Text>Includes all fees and taxes</Text>
+            <Text>
+              {getCMSField(cmsData, 'booking.fare_info.includes_fees', 'Includes all fees and taxes')}
+            </Text>
             <Text size="lg">
               ${booking.fare?.toFixed(2)}
             </Text>

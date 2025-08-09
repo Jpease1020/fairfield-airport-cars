@@ -153,7 +153,7 @@ export const FloatingEditButton: React.FC<FloatingEditButtonProps> = ({
   };
 
   return (
-    <FloatingContainer className="floating-edit-button">
+    <FloatingContainer data-admin-control="true">
       <FloatingButton
         onClick={(e?: React.MouseEvent<HTMLButtonElement>) => {
           if (e) {
@@ -172,7 +172,7 @@ export const FloatingEditButton: React.FC<FloatingEditButtonProps> = ({
         </HamburgerIcon>
       </FloatingButton>
       
-      <AdminPanel $isOpen={isOpen} className="admin-panel">
+      <AdminPanel $isOpen={isOpen} data-admin-control="true">
         <PanelContent>
           <PanelText>Admin Controls</PanelText>
           <PanelButton onClick={handleEditMode} $isActive={editMode} data-admin-control="true">

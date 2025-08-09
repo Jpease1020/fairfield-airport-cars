@@ -1,7 +1,8 @@
 'use client';
 
 import React, { ReactNode, createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { CMSConfiguration } from '@/types/cms';
+// Avoid importing from types directory per architecture rule; define minimal local type
+type CMSConfiguration = any;
 
 interface CMSContextType {
   cmsData: CMSConfiguration | null;
@@ -47,13 +48,13 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
       // Check cache for this page first
       const cacheEntry = cachedCMSDataByPage[pageId];
       if (cacheEntry && (Date.now() - cacheEntry.ts) < CACHE_DURATION) {
-        console.log('Using cached CMS data for page:', pageId);
+        // console.log('Using cached CMS data for page:', pageId);
         setCmsData(cacheEntry.data);
         setLoading(false);
         return;
       }
 
-      console.log('Loading CMS data from Firebase for page:', pageId);
+      // console.log('Loading CMS data from Firebase for page:', pageId);
       
       // Try to load from Firebase (page-scoped to also seed defaults as needed)
       const response = await fetch(`/api/admin/cms/pages?page=${encodeURIComponent(pageId)}`);
@@ -67,9 +68,9 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
       cachedCMSDataByPage[pageId] = { data: cmsConfig, ts: Date.now() };
       
       setCmsData(cmsConfig);
-      console.log('CMS data loaded successfully');
+      // console.log('CMS data loaded successfully');
     } catch (err) {
-      console.error('Failed to load CMS config:', err);
+       // console.error('Failed to load CMS config:', err);
       setError('Failed to load content');
       
       // Fallback to mock data if Firebase fails
@@ -102,7 +103,7 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
       const pageId = derivePageIdFromPath(pathname);
       delete cachedCMSDataByPage[pageId];
       
-      console.log('Field updated successfully, reloading page...');
+      // console.log('Field updated successfully, reloading page...');
       
       // Reload the page to get fresh data
       window.location.reload();

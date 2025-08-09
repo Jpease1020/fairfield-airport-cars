@@ -167,6 +167,28 @@ export async function GET(request: NextRequest) {
             description: 'No booking found with the provided ID'
           }
         };
+        // Form labels and placeholders used in booking form
+        (defaultPageContent as any).form = {
+          full_name: 'Full Name',
+          full_name_placeholder: 'Enter your full name',
+          email: 'Email Address',
+          email_placeholder: 'Enter your email',
+          phone: 'Phone Number',
+          phone_placeholder: '(123) 456-7890',
+          pickup: 'Pickup Location',
+          pickup_placeholder: 'Enter pickup address',
+          dropoff: 'Dropoff Location',
+          dropoff_placeholder: 'Enter dropoff address',
+          pickup_time: 'Pickup Date & Time',
+          passengers: 'Number of Passengers',
+          calculate_fare: 'Calculate Fare',
+          calculating: 'Calculating...'
+        };
+        (defaultPageContent as any).fare = {
+          vehicle_upgrade: 'Vehicle Upgrade:',
+          service_level: 'Service Level:',
+          total: 'Total:',
+        };
       } else if (page === 'bookings') {
         defaultPageContent.title = 'My Bookings';
         defaultPageContent.subtitle = 'View and manage your airport rides';
@@ -175,6 +197,14 @@ export async function GET(request: NextRequest) {
         (defaultPageContent as any).book_new_ride = 'Book New Ride';
         (defaultPageContent as any).view_details = 'View Details';
         (defaultPageContent as any).track_ride = 'Track Ride';
+        // Loading and auth prompts
+        (defaultPageContent as any).loading = {
+          initializing: 'Initializing bookings...',
+          loading_bookings: 'Loading your bookings...'
+        };
+        (defaultPageContent as any).login_required = 'Please log in to view your bookings.';
+        (defaultPageContent as any).go_to_login = 'Go to Login';
+        (defaultPageContent as any).no_bookings_title = 'No Bookings Yet';
       } else if (page === 'payments') {
         defaultPageContent.title = 'My Payments';
         defaultPageContent.subtitle = 'Manage your payment methods and view transaction history';
@@ -188,6 +218,14 @@ export async function GET(request: NextRequest) {
         (defaultPageContent as any).transaction_id = 'Transaction ID:';
         (defaultPageContent as any).view_booking = 'View Booking';
         (defaultPageContent as any).pay_balance = 'Pay Balance';
+        (defaultPageContent as any).section_methods = 'Payment Methods';
+        (defaultPageContent as any).section_history = 'Payment History';
+        (defaultPageContent as any).loading = {
+          initializing: 'Initializing payments...',
+          loading_info: 'Loading your payment information...'
+        };
+        (defaultPageContent as any).login_required = 'Please log in to view your payments.';
+        (defaultPageContent as any).go_to_login = 'Go to Login';
         (defaultPageContent as any).add_method = {
           title: 'Add Payment Method',
           subtitle: 'Securely add a new payment method to your account',
@@ -200,7 +238,11 @@ export async function GET(request: NextRequest) {
           save_button: 'Add Payment Method',
           cancel_button: 'Cancel',
           security_notice: 'Your payment information is encrypted and securely processed by Square. We do not store your full card details on our servers.',
-          ssl_notice: '256-bit SSL encryption'
+          ssl_notice: '256-bit SSL encryption',
+          initializing: 'Initializing...',
+          loading: 'Loading...',
+          login_required: 'Please log in to add payment methods.',
+          go_to_login: 'Go to Login'
         };
         (defaultPageContent as any).balance = {
           title: 'Pay Remaining Balance',
@@ -219,25 +261,102 @@ export async function GET(request: NextRequest) {
           pay_full: 'Pay Full Balance',
           pay_half: 'Pay Half',
           back: 'Back to Payments',
-          pay_now: 'Pay Now'
+          pay_now: 'Pay Now',
+          loading: 'Loading booking details...',
+          not_found: 'Booking not found',
+          paid: 'This booking is fully paid!',
+          total_fare: 'Total Fare:',
+          deposit_paid: 'Deposit Paid:',
+          tip: 'Tip'
         };
       } else if (page === 'about') {
         defaultPageContent.title = 'About Fairfield Airport Cars';
         defaultPageContent.subtitle = 'Professional airport transportation services';
         defaultPageContent.description = 'We provide reliable, professional airport transportation throughout Fairfield County.';
+        (defaultPageContent as any).hero = {
+          title: 'About Fairfield Airport Cars',
+          subtitle: 'Professional airport transportation services'
+        };
+        (defaultPageContent as any).cta = {
+          subtitle: 'Ready to book your ride?',
+          primaryButton: 'Book Your Ride',
+          secondaryButton: 'Contact Us'
+        };
       } else if (page === 'help') {
         defaultPageContent.title = 'Help & Support';
         defaultPageContent.subtitle = 'Quick answers and support';
         defaultPageContent.description = 'Find answers to common questions and get support when you need it.';
+        (defaultPageContent as any).hero = {
+          title: 'Help & Support',
+          subtitle: 'Quick answers and support'
+        };
+        (defaultPageContent as any).quickAnswers = {
+          title: 'Quick Answers',
+          0: { question: 'How far in advance should I book?', answer: 'Book at least 24 hours in advance, especially during peak travel seasons.' },
+          1: { question: 'Can I cancel my booking?', answer: 'Yes, cancel up to 4 hours before pickup for a full refund.' },
+          2: { question: 'Do you track flights?', answer: 'Yes, we monitor flight schedules and adjust pickup times accordingly.' },
+          3: { question: 'What payment methods do you accept?', answer: 'All major credit cards, debit cards, and cash payments.' }
+        } as any;
+        (defaultPageContent as any).contact = {
+          title: 'Need More Help?',
+          subtitle: 'Contact our support team',
+          primaryButton: 'Call Support',
+          secondaryButton: 'Email Support',
+          tertiaryButton: 'Book a Ride'
+        };
       } else if (page === 'privacy') {
         defaultPageContent.title = '🔒 Privacy Policy';
         defaultPageContent.effectiveDate = 'Effective Date: January 1, 2024 | Last Updated: January 1, 2024';
         defaultPageContent.description = 'Your privacy is important to us. This policy describes how we collect, use, and protect your information.';
+        (defaultPageContent as any).sections = {
+          0: {
+            title: '1. Information We Collect',
+            content: 'We collect information you provide directly to us when you book our services, including:',
+            items: [
+              'Name and contact information (phone, email, address)',
+              'Pickup and destination locations',
+              'Travel dates and times',
+              'Flight information (when applicable)',
+              'Payment information',
+              'Special requests or preferences'
+            ]
+          },
+          1: {
+            title: '2. How We Use Information',
+            content: 'We use the information we collect to:',
+            items: [
+              'Provide and coordinate transportation services',
+              'Process payments and send confirmations',
+              'Communicate with you about your bookings',
+              'Send service updates and notifications',
+              'Improve our services and customer experience',
+              'Comply with legal obligations'
+            ]
+          },
+          2: {
+            title: '3. Information Sharing',
+            content: 'We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:',
+            items: [
+              'With our drivers to coordinate your transportation',
+              'With payment processors to handle transactions',
+              'When required by law or legal process',
+              'To protect our rights, property, or safety',
+              'With your explicit consent'
+            ]
+          }
+        } as any;
       } else if (page === 'terms') {
         defaultPageContent.title = '📋 Terms of Service';
         defaultPageContent.lastUpdated = 'Effective Date: January 1, 2024 | Last updated: January 2024';
         defaultPageContent.intro = 'Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.';
         defaultPageContent.serviceDescription = 'We provide airport transportation services in the Fairfield area, including pickup and drop-off at local airports.';
+        (defaultPageContent as any).sections = {
+          0: { title: 'Booking', content: 'All bookings must be made through our website or by phone. We require at least 24 hours notice for all reservations.' },
+          1: { title: 'Payment', content: 'Payment is processed through Square. We accept all major credit cards and digital payments.' },
+          2: { title: 'Cancellation Policy', content: 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.' },
+          3: { title: 'Liability', content: 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.' },
+          4: { title: 'Contact', content: 'For questions about these terms, please contact us at the information provided on our website.' }
+        } as any;
       } else if (page === 'portal') {
         (defaultPageContent as any).welcome = {
           title: '👋 Welcome to Your Portal',
@@ -267,6 +386,20 @@ export async function GET(request: NextRequest) {
         (defaultPageContent as any).notifications_label = 'Notification Settings';
         (defaultPageContent as any).email_notifications = 'Email Notifications';
         (defaultPageContent as any).sms_notifications = 'SMS Notifications';
+        (defaultPageContent as any).section_personal = 'Personal Information';
+        (defaultPageContent as any).section_booking = 'Booking Preferences';
+        (defaultPageContent as any).section_notifications = 'Notification Preferences';
+        (defaultPageContent as any).section_account = 'Account Information';
+        (defaultPageContent as any).name_placeholder = 'Enter your full name';
+        (defaultPageContent as any).phone_placeholder = 'Enter your phone number';
+        (defaultPageContent as any).default_pickup_placeholder = 'e.g., Fairfield Airport';
+        (defaultPageContent as any).default_dropoff_placeholder = 'e.g., Downtown Fairfield';
+        (defaultPageContent as any).loading = {
+          initializing: 'Initializing profile...',
+          loading_profile: 'Loading your profile...'
+        };
+        (defaultPageContent as any).login_required = 'Please log in to view your profile.';
+        (defaultPageContent as any).go_to_login = 'Go to Login';
       } else if (page === 'feedback') {
         (defaultPageContent as any).loading = { message: 'Please wait while we fetch your booking details...' };
         (defaultPageContent as any).error = { description: 'This could be due to an invalid booking ID or a temporary system issue.' };
@@ -277,8 +410,12 @@ export async function GET(request: NextRequest) {
         defaultPageContent.title = "We'd love to hear about your experience";
         defaultPageContent.description = 'Please share your feedback about your recent ride';
         (defaultPageContent as any).rating = { label: 'Rating' };
-        (defaultPageContent as any).comment = { label: 'Comments' };
+        (defaultPageContent as any).comment = { label: 'Comments', placeholder: 'Tell us about your experience...' };
         (defaultPageContent as any).submit = { button: 'Submit Feedback' };
+        (defaultPageContent as any).actions = {
+          try_again: '🔄 Try Again',
+          contact_support: '📞 Contact Support'
+        };
       } else if (page === 'status') {
         (defaultPageContent as any).loading = { message: 'Please wait while we fetch your booking details...' };
         (defaultPageContent as any).error = { description: 'This could be due to an invalid booking ID or a temporary system issue.' };
@@ -297,6 +434,11 @@ export async function GET(request: NextRequest) {
           date: 'Date:',
           time: 'Time:',
           fare: 'Fare:'
+        };
+      } else if (page === 'bookingDetails') {
+        // Ensure booking details page also has fare_info helper strings
+        (defaultPageContent as any).fare_info = {
+          includes_fees: 'Includes all fees and taxes'
         };
       } else if (page === 'manage') {
         (defaultPageContent as any).labels = {

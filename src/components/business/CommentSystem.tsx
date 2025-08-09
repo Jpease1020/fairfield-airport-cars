@@ -125,99 +125,60 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
       {children}
       
       {/* Simple Comment Mode Toggle Button */}
-      <div className="fixed bottom-5 right-5 z-50">
-        <Container
-          variant="elevated"
-          padding="md"
+      <Container variant="elevated" padding="md">
+        <Button
+          onClick={() => setCommentMode(!commentMode)}
+          variant={commentMode ? 'primary' : 'secondary'}
         >
-          <Button
-            onClick={() => setCommentMode(!commentMode)}
-            variant={commentMode ? 'primary' : 'secondary'}
-          >
-            {commentMode ? '✓' : '○'} Comments
-          </Button>
-        </Container>
-      </div>
+          {commentMode ? '✓' : '○'} Comments
+        </Button>
+      </Container>
 
       {/* Comment Box */}
       {activeCommentBox && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 max-w-lg max-h-[80vh] overflow-auto">
-          <Container
-            data-comment-box
-            variant="elevated"
-            padding="lg"
-          >
+        <Container data-comment-box variant="elevated" padding="lg">
+          <Container variant="elevated" padding="sm">
+            <H4>Add Comment</H4>
+            <Button onClick={() => setActiveCommentBox(null)} variant="ghost">
+              <X />
+            </Button>
+          </Container>
+          <Container variant="elevated" padding="sm">
+            <H4>Add Comment</H4>
+            <Textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Enter your comment..."
+              rows={4}
+            />
             <Container variant="elevated" padding="sm">
-              <H4>
-                {/* {getCMSField(cmsData, 'simpleCommentSystem.commentsHeading', 'Add Comment')} */}
+              <Button onClick={() => setActiveCommentBox(null)} variant="secondary">
+                Close
+              </Button>
+              <Button onClick={handleAddComment} disabled={!commentText.trim()} variant="primary">
                 Add Comment
-              </H4>
-              <Button
-                onClick={() => setActiveCommentBox(null)}
-                variant="ghost"
-              >
-                <X />
               </Button>
             </Container>
-
-            {/* Add New Comment */}
-            <Container variant="elevated" padding="sm">
-              <H4>
-                {/* {getCMSField(cmsData, 'simpleCommentSystem.addCommentHeading', 'Add Comment')} */}
-                Add Comment
-              </H4>
-              <Textarea
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Enter your comment..."
-                rows={4}
-              />
-              <Container variant="elevated" padding="sm">
-                <Button
-                  onClick={() => setActiveCommentBox(null)}
-                  variant="secondary"
-                >
-                  {/* {getCMSField(cmsData, 'simpleCommentSystem.closeButton', 'Close')} */}
-                Close
-                </Button>
-                <Button
-                  onClick={handleAddComment}
-                  disabled={!commentText.trim()}
-                  variant="primary"
-                >
-                  {/* {getCMSField(cmsData, 'simpleCommentSystem.addCommentButton', 'Add Comment')} */}
-                Add Comment
-                </Button>
-              </Container>
-            </Container>
           </Container>
-        </div>
+        </Container>
       )}
 
       {/* Comments List (Simple) */}
       {commentMode && comments.length > 0 && (
-        <div className="fixed top-5 right-5 z-40 max-w-sm max-h-[60vh] overflow-auto">
-          <Container variant="elevated" padding="md">
-            <H4>Comments ({comments.length})</H4>
-            <Stack spacing="sm">
-              {comments.map((comment) => (
-                <Container key={comment.id} variant="elevated" padding="sm">
-                  <Span size="xs" color="muted">
-                    {comment.elementText}
-                  </Span>
-                  <Text>{comment.comment}</Text>
-                  <Button
-                    onClick={() => handleDeleteComment(comment.id)}
-                    variant="danger"
-                    size="sm"
-                  >
-                    Delete
-                  </Button>
-                </Container>
-              ))}
-            </Stack>
-          </Container>
-        </div>
+        <Container variant="elevated" padding="md">
+          <H4>Comments ({comments.length})</H4>
+          <Stack spacing="sm">
+            {comments.map((comment) => (
+              <Container key={comment.id} variant="elevated" padding="sm">
+                <Span size="xs" color="muted">{comment.elementText}</Span>
+                <Text>{comment.comment}</Text>
+                <Button onClick={() => handleDeleteComment(comment.id)} variant="danger" size="sm">
+                  Delete
+                </Button>
+              </Container>
+            ))}
+          </Stack>
+        </Container>
       )}
     </>
   );

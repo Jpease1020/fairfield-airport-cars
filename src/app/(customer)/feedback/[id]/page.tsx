@@ -112,13 +112,13 @@ function FeedbackPageContent() {
                 variant="primary"
                 onClick={() => window.location.reload()}
               >
-                🔄 Try Again
+                {getCMSField(cmsData, 'feedback.actions.try_again', '🔄 Try Again')}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => addToast('info', 'Support: (203) 555-0123')}
               >
-                📞 Contact Support
+                {getCMSField(cmsData, 'feedback.actions.contact_support', '📞 Contact Support')}
               </Button>
             </Stack>
           </Container>
@@ -198,7 +198,7 @@ function FeedbackPageContent() {
                 <Textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Tell us about your experience..."
+                  placeholder={getCMSField(cmsData, 'feedback.comment.placeholder', 'Tell us about your experience...')}
                   rows={4}
                 />
               </div>

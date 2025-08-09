@@ -146,7 +146,7 @@ function BalancePaymentPageContent() {
       <Container padding="lg" maxWidth="xl">
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading booking details...</Text>
+          <Text>{getCMSField(cmsData, 'payments.balance.loading', 'Loading booking details...')}</Text>
         </Stack>
       </Container>
     );
@@ -160,7 +160,7 @@ function BalancePaymentPageContent() {
             <Text>{error}</Text>
           </Alert>
           <Button onClick={() => router.push('/payments')}>
-            Back to Payments
+            {getCMSField(cmsData, 'payments.balance.back', 'Back to Payments')}
           </Button>
         </Stack>
       </Container>
@@ -172,10 +172,10 @@ function BalancePaymentPageContent() {
       <Container padding="lg" maxWidth="xl">
         <Stack spacing="lg">
           <Alert variant="error">
-            <Text>Booking not found</Text>
+            <Text>{getCMSField(cmsData, 'payments.balance.not_found', 'Booking not found')}</Text>
           </Alert>
           <Button onClick={() => router.push('/payments')}>
-            Back to Payments
+            {getCMSField(cmsData, 'payments.balance.back', 'Back to Payments')}
           </Button>
         </Stack>
       </Container>
@@ -187,7 +187,7 @@ function BalancePaymentPageContent() {
       <Container padding="lg" maxWidth="xl">
         <Stack spacing="lg">
           <Alert variant="success">
-            <Text>This booking is fully paid!</Text>
+            <Text>{getCMSField(cmsData, 'payments.balance.paid', 'This booking is fully paid!')}</Text>
           </Alert>
           <Button onClick={() => router.push(`/booking/${bookingId}`)}>
             View Booking Details
@@ -298,18 +298,18 @@ function BalancePaymentPageContent() {
             <Box variant="outlined" padding="md">
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text>Total Fare:</Text>
+                  <Text>{getCMSField(cmsData, 'payments.balance.total_fare', 'Total Fare:')}</Text>
                   <Text weight="medium">{formatCurrency(bookingDetails.totalFare)}</Text>
                 </Stack>
                 
                 <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text>Deposit Paid:</Text>
+                  <Text>{getCMSField(cmsData, 'payments.balance.deposit_paid', 'Deposit Paid:')}</Text>
                   <Text weight="medium" color="success">-{formatCurrency(bookingDetails.depositAmount)}</Text>
                 </Stack>
                 
                 {bookingDetails.tipAmount && bookingDetails.tipAmount > 0 && (
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text>Tip ({bookingDetails.tipPercent}%):</Text>
+                    <Text>{getCMSField(cmsData, 'payments.balance.tip', 'Tip')} ({bookingDetails.tipPercent}%):</Text>
                     <Text weight="medium">+{formatCurrency(bookingDetails.tipAmount)}</Text>
                   </Stack>
                 )}
