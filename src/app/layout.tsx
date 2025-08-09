@@ -1,7 +1,5 @@
 import '@/design/globals.css';
-import { Analytics } from '@vercel/analytics/react';
-import { AccessibilityEnhancer, ErrorBoundary, StyledComponentsRegistry, Container } from '@/ui';
-import { CommentSystem } from '../components/business';
+import { ErrorBoundary, StyledComponentsRegistry } from '@/ui';  
 import { AdminProvider } from '@/design/providers/AdminProvider';
 import { EditModeProvider } from '@/design/providers/EditModeProvider';
 import { CMSDesignProvider } from '@/design/providers/CMSDesignProvider';

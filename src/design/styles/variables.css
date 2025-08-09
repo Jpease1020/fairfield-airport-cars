@@ -49,14 +49,19 @@
   --background-tertiary: #f3f4f6;
   --background-disabled: #f9fafb;
   --background-overlay: rgba(0, 0, 0, 0.5);
+  --background-card: var(--background-primary);
+  --background-modal: var(--background-primary);
+  --background-input: var(--background-secondary);
   
   /* Border Colors */
   --border-color: #e5e7eb;
   --border-light: #e5e7eb;
   --border-default: #d1d5db;
+  --border-medium: var(--border-default);
   --border-dark: #9ca3af;
   --border-focus: #0B1F3A;
   --border-error: #dc2626;
+  --border-success: var(--success-color);
   
   /* Success Colors */
   --success-color: #16a34a;
@@ -100,6 +105,16 @@
   
   /* Info Colors */
   --info-color: #3b82f6;
+  --status-info: var(--info-color);
+  --status-success: var(--success-color);
+  --status-warning: var(--warning-color);
+  --status-error: var(--error-color);
+
+  /* Interactive Colors */
+  --interactive-hover: var(--primary-hover);
+  --interactive-active: var(--primary-color);
+  --interactive-focus: var(--border-focus);
+  --interactive-disabled: var(--background-disabled);
   
   /* Gray Scale */
   --gray-50: #f9fafb;

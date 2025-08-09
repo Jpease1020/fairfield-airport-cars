@@ -16,6 +16,7 @@ interface StackProps {
   fullWidth?: boolean;
   as?: React.ElementType;
   id?: string;
+  style?: React.CSSProperties;
 }
 
 type ResponsiveValue<T> = T | {

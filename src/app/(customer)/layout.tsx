@@ -11,8 +11,8 @@ export default function CustomerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation">
+    <>
+      <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
         <CustomerNavigation />
       </Container>
       
@@ -21,6 +21,6 @@ export default function CustomerLayout({
       </Container>
       
       <Footer data-testid="layout-footer"/>
-    </div>
+    </>
   );
 }
