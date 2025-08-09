@@ -7,6 +7,8 @@ import { Container, H4, Span } from '@/ui';
 import { Stack, Text } from '@/ui';
 import { Button } from '@/ui';
 import { Textarea } from '@/ui';
+import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
+import { useAuth } from '@/hooks/useAuth';
 // import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface CommentSystemProps {
@@ -22,6 +24,7 @@ interface LocalComment {
 
 const CommentSystem = ({ children }: CommentSystemProps) => {
   const { isAdmin } = useAdminStatus();
+  const { user } = useAuth();
   const [commentMode, setCommentMode] = useState(false);
   const [comments, setComments] = useState<LocalComment[]>([]);
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
@@ -74,6 +77,40 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
     return () => document.removeEventListener('click', handleClick);
   }, [isAdmin, commentMode, handleClick]);
 
+  // Load existing comments for this page (best-effort)
+  useEffect(() => {
+    if (!isAdmin) return;
+    const load = async () => {
+      try {
+        const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
+        const existing = await confluenceCommentsService.getComments({ pageUrl });
+        const mapped: LocalComment[] = existing.map((c) => ({
+          id: c.id,
+          elementText: c.elementText,
+          comment: c.comment,
+          createdAt: new Date(c.createdAt),
+        }));
+        setComments(mapped);
+      } catch {
+        // Non-blocking; page still works without preloaded comments
+      }
+    };
+    load();
+  }, [isAdmin]);
+
+  function computeElementSelector(element: HTMLElement): string {
+    if (element.id) return `#${element.id}`;
+    const classes = (element.className || '')
+      .toString()
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((c) => `.${c}`)
+      .join('');
+    const tag = element.tagName.toLowerCase();
+    return `${tag}${classes}`;
+  }
+
   // Close comment box when clicking outside
   const handleClickOutside = useCallback((e: MouseEvent) => {
     const target = e.target as Element;
@@ -92,27 +129,58 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
     }
   }, [activeCommentBox, handleClickOutside]);
 
-  const handleAddComment = useCallback(() => {
+  const handleAddComment = useCallback(async () => {
     if (!commentText.trim() || !selectedElement) return;
 
     const elementId = `comment-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const elementText = selectedElement.textContent?.trim() || selectedElement.tagName.toLowerCase();
-    
-    const newComment: LocalComment = {
-      id: elementId,
-      elementText,
-      comment: commentText.trim(),
-      createdAt: new Date()
-    };
+    const elementSelector = computeElementSelector(selectedElement);
+    const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
+    const pageTitle = typeof document !== 'undefined' ? document.title : '';
+    const createdBy = user?.email || user?.uid || 'anonymous';
 
-    setComments(prev => [...prev, newComment]);
-    setActiveCommentBox(null);
-    setSelectedElement(null);
-    setCommentText('');
-  }, [commentText, selectedElement]);
+    try {
+      const newId = await confluenceCommentsService.addComment({
+        elementId,
+        elementText,
+        elementSelector,
+        pageUrl,
+        pageTitle,
+        comment: commentText.trim(),
+        status: 'open',
+        createdBy,
+      } as Omit<ConfluenceComment, 'id' | 'createdAt' | 'updatedAt'>);
 
-  const handleDeleteComment = useCallback((commentId: string) => {
-    setComments(prev => prev.filter(c => c.id !== commentId));
+      const newComment: LocalComment = {
+        id: newId,
+        elementText,
+        comment: commentText.trim(),
+        createdAt: new Date(),
+      };
+      setComments((prev) => [newComment, ...prev]);
+    } catch {
+      // Fallback to local-only entry if persistence fails
+      const localFallback: LocalComment = {
+        id: elementId,
+        elementText,
+        comment: commentText.trim(),
+        createdAt: new Date(),
+      };
+      setComments((prev) => [localFallback, ...prev]);
+    } finally {
+      setActiveCommentBox(null);
+      setSelectedElement(null);
+      setCommentText('');
+    }
+  }, [commentText, selectedElement, user]);
+
+  const handleDeleteComment = useCallback(async (commentId: string) => {
+    try {
+      await confluenceCommentsService.deleteComment(commentId);
+    } catch {
+      // ignore errors; we'll still prune locally
+    }
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
   }, []);
 
   // Don't render if not admin
