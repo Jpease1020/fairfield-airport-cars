@@ -3,6 +3,7 @@
 import React from 'react';
 import { AccessibilityEnhancer, Container, FloatingEditButton } from '@/ui';
 import { PageEditorDrawer } from '@/components/app/PageEditorDrawer';
+import { CommentsDrawer } from '@/components/app/CommentsDrawer';
 import { CommentSystem } from '../components/business';
 import { useAdmin } from '@/design/providers/AdminProvider';
 import { useEditMode } from '@/design/providers/EditModeProvider';
@@ -53,12 +54,22 @@ export function AdminContent({ children }: AdminContentProps) {
 
   const isAdminModeActive = editMode || commentMode;
   const [isEditorOpen, setIsEditorOpen] = React.useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = React.useState(false);
 
   const closeEditor = React.useCallback(() => {
     setIsEditorOpen(false);
     // Ensure edit mode is turned off when closing the drawer
     setEditMode?.(false);
   }, [setEditMode]);
+
+  // Auto-open comments drawer when comment mode turns on; allow manual close
+  React.useEffect(() => {
+    if (commentMode) {
+      setIsCommentsOpen(true);
+    } else {
+      setIsCommentsOpen(false);
+    }
+  }, [commentMode]);
 
   return (
     <>
@@ -84,6 +95,10 @@ export function AdminContent({ children }: AdminContentProps) {
       {/* Admin-only content editor drawer */}
       {isAdmin && !!user && (
         <PageEditorDrawer isOpen={isEditorOpen || editMode} onClose={closeEditor} />
+      )}
+      {/* Admin-only comments drawer */}
+      {isAdmin && !!user && (
+        <CommentsDrawer isOpen={isCommentsOpen} onClose={() => setIsCommentsOpen(false)} />
       )}
     </>
   );
