@@ -13,6 +13,7 @@ interface PageEditorDrawerProps {
 
 const DrawerBody = styled(Box)`
   width: min(720px, 100vw);
+  max-width: 50vw;
   height: 100vh;
   max-height: 100vh;
   position: fixed;
@@ -23,6 +24,11 @@ const DrawerBody = styled(Box)`
   background: ${colors.background.primary};
   box-shadow: ${shadows.xl};
   border-left: 1px solid ${colors.border.light};
+
+  @media (max-width: 768px) {
+    width: 100vw;
+    max-width: 100vw;
+  }
 `;
 
 const HeaderContainer = styled(Container)`
