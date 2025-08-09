@@ -77,7 +77,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   logo,
   navigationItems,
   actions,
-  mobileActions,
+  mobileActions: _mobileActions,
   dataTestIdPrefix = 'nav',
   editableFieldPrefix = 'navigation',
 }) => {

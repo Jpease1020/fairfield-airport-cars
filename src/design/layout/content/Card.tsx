@@ -51,7 +51,7 @@ export const Card: React.FC<CardProps> = ({
   padding = 'lg',
   spacing = 'md',
   onClick,
-  hover = false,
+  hover: _hover = false,
   as: Component = 'div',
   id,
   ...rest

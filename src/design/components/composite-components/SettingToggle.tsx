@@ -3,8 +3,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, shadows, transitions } from '../../system/tokens/tokens';
-import { Label } from '../base-components/forms/Label';
-import { Input } from '../base-components/forms/Input';
 import { Text } from '../base-components/text/Text';
 
 // Styled setting toggle container

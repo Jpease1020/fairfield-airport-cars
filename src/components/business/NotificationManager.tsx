@@ -14,7 +14,7 @@ export function NotificationManager({
   showSettings = false, 
   onNotificationReceived: onNotificationReceivedProp 
 }: NotificationManagerProps) {
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const {
     isSupported,
     isInitialized,

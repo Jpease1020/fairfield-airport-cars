@@ -3,7 +3,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, fontWeight, transitions } from '../../../system/tokens/tokens';
-import { BaseComponentProps } from '../../../system/shared-types';
 
 // Styled label component with proper prop filtering
 const StyledLabel = styled.label.withConfig({

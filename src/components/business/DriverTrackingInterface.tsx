@@ -28,7 +28,7 @@ interface DriverTrackingInterfaceProps {
 export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = ({
   bookingId,
   driverName,
-  driverId,
+  driverId: _driverId,
   pickupLocation,
   dropoffLocation,
 }) => { 
