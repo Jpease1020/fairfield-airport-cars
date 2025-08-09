@@ -25,8 +25,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = searchParams.get('page');
     
-    console.log('Fetching CMS configuration from Firebase...');
-    
+  
     // Get real data from Firebase
     let cmsConfig: any = await cmsService.getCMSConfiguration();
     

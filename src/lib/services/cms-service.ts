@@ -33,18 +33,13 @@ export class CMSService {
   async getCMSConfiguration(): Promise<CMSConfiguration | null> {
     try {
       const docRef = doc(db, 'cms', 'configuration');
-      console.log('Getting CMS configuration from:', docRef);
-      
       const docSnap = await getDoc(docRef);
-      console.log('Document exists:', docSnap.exists());
       
       if (docSnap.exists()) {
         const data = docSnap.data();
-        console.log('CMS configuration data:', data);
         return data as CMSConfiguration;
       }
       
-      console.log('No CMS configuration document found');
       return null;
     } catch (error) {
       console.error('Error getting CMS configuration:', error as Error);

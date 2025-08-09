@@ -12,11 +12,7 @@ interface CommentsDrawerProps {
 
 const DrawerBody = styled(Box)`
   width: min(560px, 100vw);
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 11000;
+  max-height: 90vh;
   overflow-y: auto;
 `;
 
@@ -55,7 +51,6 @@ export const CommentsDrawer: React.FC<CommentsDrawerProps> = ({ isOpen, onClose 
   useEffect(() => {
     if (!isOpen) return;
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, scope, status, pageUrl]);
 
   const updateStatus = async (id: string, newStatus: CommentRecord['status']) => {
@@ -77,7 +72,7 @@ export const CommentsDrawer: React.FC<CommentsDrawerProps> = ({ isOpen, onClose 
   };
 
   return (
-    <Overlay isOpen={isOpen} onClose={onClose} variant="modal" position="right" closeOnBackdropClick zIndex={10990}>
+    <Overlay isOpen={isOpen} onClose={onClose} variant="dropdown" position="right" closeOnBackdropClick zIndex={10990}>
       <DrawerBody as="section" variant="elevated" padding="none" data-admin-control="true">
         <Stack spacing="none">
           <Container padding="lg">
@@ -89,16 +84,24 @@ export const CommentsDrawer: React.FC<CommentsDrawerProps> = ({ isOpen, onClose 
 
           <Container padding="md">
             <Stack direction="horizontal" spacing="md" align="center">
-              <Select value={scope} onChange={(e: any) => setScope(e.target.value)}>
-                <option value="page">Page ({pageId})</option>
-                <option value="app">App-wide</option>
-              </Select>
-              <Select value={status} onChange={(e: any) => setStatus(e.target.value)}>
-                <option value="all">All</option>
-                <option value="open">Open</option>
-                <option value="in-progress">In Progress</option>
-                <option value="resolved">Resolved</option>
-              </Select>
+              <Select
+                value={scope}
+                onChange={(e: any) => setScope(e.target.value)}
+                options={[
+                  { value: 'page', label: `Page (${pageId})` },
+                  { value: 'app', label: 'App-wide' },
+                ]}
+              />
+              <Select
+                value={status}
+                onChange={(e: any) => setStatus(e.target.value)}
+                options={[
+                  { value: 'all', label: 'All' },
+                  { value: 'open', label: 'Open' },
+                  { value: 'in-progress', label: 'In Progress' },
+                  { value: 'resolved', label: 'Resolved' },
+                ]}
+              />
               <Button variant="outline" onClick={load}>Refresh</Button>
             </Stack>
           </Container>
@@ -117,7 +120,7 @@ export const CommentsDrawer: React.FC<CommentsDrawerProps> = ({ isOpen, onClose 
                       <Text>{c.comment}</Text>
                       <Text size="xs" color="secondary">by {c.createdBy}</Text>
                     </Stack>
-                    <Stack spacing="xs" align="end">
+                    <Stack spacing="xs" align="flex-end">
                       <Stack direction="horizontal" spacing="xs">
                         <Button variant="ghost" size="sm" onClick={() => jumpToElement(c.elementSelector)}>Jump</Button>
                         <Button variant="ghost" size="sm" onClick={() => updateStatus(c.id, 'open')}>Open</Button>

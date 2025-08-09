@@ -16,6 +16,11 @@ export interface ContainerProps {
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
   id?: string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  style?: React.CSSProperties;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
+  role?: string;
 }
 
 const StyledContainer = styled.div.withConfig({

@@ -202,7 +202,7 @@ function HomePageContent() {
 
 export default function RootPage() {
   return (
-    <div>
+    <>
       <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation">
         <CustomerNavigation />
       </Container>
@@ -212,6 +212,6 @@ export default function RootPage() {
       </Container>
       
       <Footer data-testid="layout-footer"/>
-    </div>
+    </>
   );
 } 
