@@ -13,7 +13,7 @@ export interface DataTableColumn<T> {
   key: keyof T | 'actions';
   label: string;
   sortable?: boolean;
-  render?: (value: any, row: T, index: number) => React.ReactNode;
+  render?: (value: T[keyof T], row: T, index: number) => React.ReactNode;
   width?: string;
   align?: 'left' | 'center' | 'right';
   variant?: 'default' | 'numeric' | 'action';
@@ -45,7 +45,7 @@ interface DataTableProps<T> {
   spacing?: 'compact' | 'normal' | 'relaxed';
 }
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends Record<string, unknown>>({
   data,
   columns,
   actions = [],

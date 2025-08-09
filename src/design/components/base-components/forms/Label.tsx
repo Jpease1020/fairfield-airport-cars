@@ -153,7 +153,6 @@ export const Label: React.FC<LabelProps> = ({
   ...rest
 }) => {
   const ref = React.useRef<HTMLLabelElement | null>(null);
-  const label = typeof children === 'string' ? children : undefined;
   return (
     <StyledLabel
       htmlFor={htmlFor}

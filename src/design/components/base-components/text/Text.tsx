@@ -161,7 +161,6 @@ export const Text: React.FC<TextProps> = ({
   cmsKey,
   ...rest
 }) => {
-  const ref = React.useRef<HTMLElement | null>(null);
   return (
     <StyledText
       as={Component}
@@ -170,7 +169,6 @@ export const Text: React.FC<TextProps> = ({
       weight={weight}
       align={align}
       color={color}
-      ref={ref as any}
       {...rest}
     >
       {children}

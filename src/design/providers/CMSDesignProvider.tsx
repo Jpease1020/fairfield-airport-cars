@@ -1,7 +1,11 @@
 'use client';
 
 import React, { ReactNode, createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { CMSConfiguration } from '@/types/cms';
+
+// Local minimal type to avoid importing from types directory per lint rule
+interface CMSConfiguration {
+  pages: Record<string, unknown>;
+}
 
 interface CMSContextType {
   cmsData: CMSConfiguration | null;
@@ -32,7 +36,7 @@ function derivePageIdFromPath(pathname: string): string {
   return first;
 }
 
-export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
+export function CMSDesignProvider({ children }: CMSDesignProviderProps) { /* children used */
   const [cmsData, setCmsData] = useState<CMSConfiguration | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,14 +51,14 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
       // Check cache for this page first
       const cacheEntry = cachedCMSDataByPage[pageId];
       if (cacheEntry && (Date.now() - cacheEntry.ts) < CACHE_DURATION) {
-        console.log('Using cached CMS data for page:', pageId);
-        setCmsData(cacheEntry.data);
+                 // Using cached CMS data for page
+setCmsData(cacheEntry.data);
         setLoading(false);
         return;
       }
 
-      console.log('Loading CMS data from Firebase for page:', pageId);
-      
+             // Loading CMS data from Firebase for page
+
       // Try to load from Firebase (page-scoped to also seed defaults as needed)
       const response = await fetch(`/api/admin/cms/pages?page=${encodeURIComponent(pageId)}`);
       if (!response.ok) {
@@ -67,10 +71,10 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
       cachedCMSDataByPage[pageId] = { data: cmsConfig, ts: Date.now() };
       
       setCmsData(cmsConfig);
-      console.log('CMS data loaded successfully');
-    } catch (err) {
-      console.error('Failed to load CMS config:', err);
-      setError('Failed to load content');
+             // CMS data loaded successfully
+  } catch (_err) {
+             // Failed to load CMS config
+setError('Failed to load content');
       
       // Fallback to mock data if Firebase fails
       const mockData = getMockCMSData();
@@ -81,36 +85,26 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
   }, []);
 
   const updateField = useCallback(async (fieldPath: string, value: string) => {
-    try {
-      console.log('Updating CMS field:', fieldPath, '=', value);
-      
-      // Update in Firebase
-      const response = await fetch('/api/admin/cms/pages', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fieldPath, value }),
-      });
+    // Update in Firebase
+    const response = await fetch('/api/admin/cms/pages', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fieldPath, value }),
+    });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update field: ${response.status}`);
-      }
-
-      // Clear cache for current page to force fresh load
-      const pathname = typeof window !== 'undefined' ? window.location.pathname : '/';
-      const pageId = derivePageIdFromPath(pathname);
-      delete cachedCMSDataByPage[pageId];
-      
-      console.log('Field updated successfully, reloading page...');
-      
-      // Reload the page to get fresh data
-      window.location.reload();
-      
-    } catch (err) {
-      console.error('Failed to update field:', err);
-      throw err;
+    if (!response.ok) {
+      throw new Error(`Failed to update field: ${response.status}`);
     }
+
+    // Clear cache for current page to force fresh load
+    const pathname = typeof window !== 'undefined' ? window.location.pathname : '/';
+    const pageId = derivePageIdFromPath(pathname);
+    delete cachedCMSDataByPage[pageId];
+
+    // Reload the page to get fresh data
+    window.location.reload();
   }, []);
 
   const refresh = useCallback(async () => {

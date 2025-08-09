@@ -137,6 +137,14 @@ export default [
       'fairfield/no-absolute-imports-in-design': 'error',
     },
   },
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      // no-undef does not understand TypeScript types like HTMLAnchorElement
+      // and can incorrectly flag them. Disable for TS files.
+      'no-undef': 'off',
+    },
+  },
   // 🛡️ DESIGN SYSTEM PROTECTION - Stricter rules for design directory
   {
     files: ['src/design/**/*.{js,jsx,ts,tsx}'],

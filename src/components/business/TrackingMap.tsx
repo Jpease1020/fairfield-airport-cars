@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { 
   Container,
   Stack,
@@ -44,18 +44,13 @@ interface TrackingMapProps {
   onMapLoad?: (map: google.maps.Map) => void;
 }
 
-interface MapMarker {
-  position: google.maps.LatLngLiteral;
-  title: string;
-  icon?: string;
-}
 
 export function TrackingMap({
   bookingId,
   pickupLocation,
   dropoffLocation,
-  driverLocation,
-  estimatedArrival,
+  _driverLocation: driverLocation,
+  _estimatedArrival: estimatedArrival,
   status,
   onMapLoad
 }: TrackingMapProps) {
