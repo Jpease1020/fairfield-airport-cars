@@ -9,11 +9,11 @@ After analyzing the current codebase and comparing with the disabled-components 
 ### **🏗️ Design System (COMPLETE)**
 - ✅ **Base Components** - Box, Button, Container, Section, Grid/Row/Col, Stack
 - ✅ **Form Components** - Input, Select, Textarea, Label, FormField
-- ✅ **Text Components** - SmartText, SmartHeading, EditableHeading, EditableText
+- ✅ **Text Components** - 
 - ✅ **Notification Components** - Alert, StatusBadge, StatusMessage, LoadingSpinner
 - ✅ **Business Components** - BalancePaymentButton, BookingCard, PaymentSummary, TipCalculator
 - ✅ **Composite Components** - ActionButtonGroup, Card, DataTable, Modal, StatCard
-- ✅ **Page Structure** - AdminPageWrapper, Footer, Navigation, PageHeader
+- ✅ **Page Structure** - Footer, Navigation, PageHeader
 
 ### **💳 Payment System (COMPLETE)**
 - ✅ **Square Integration** - Complete payment processing with webhooks
@@ -196,7 +196,6 @@ After analyzing the current codebase and comparing with the disabled-components 
 **Current Status:** ⚠️ **BASIC IMPLEMENTATION** - Basic CMS exists
 - ✅ CMS service exists (`cms-service.ts`)
 - ✅ Basic content management working
-- ✅ EditableText components implemented
 - ❌ No advanced features
 - ❌ No content version control
 - ❌ No dynamic pricing management

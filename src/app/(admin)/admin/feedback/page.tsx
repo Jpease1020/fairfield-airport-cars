@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { GridSection, Box, Container, StatCard, Text, Stack, DataTable, DataTableColumn, DataTableAction, EditableText } from '@/ui';
+import { GridSection, Box, Container, StatCard, Text, Stack, DataTable, DataTableColumn, DataTableAction } from '@/ui';
 import { getAllBookings } from '@/lib/services/database-service';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface Feedback {
   id: string;
@@ -16,6 +16,7 @@ interface Feedback {
 }
 
 function FeedbackPageContent() {
+  const { cmsData } = useCMSData();
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,12 +91,8 @@ function FeedbackPageContent() {
     return (
       <Container>
         <Stack>
-          <EditableText field="admin.feedback.ratingStars" defaultValue={getRatingStars(rating)}>
-            {getRatingStars(rating)}
-          </EditableText>
-          <EditableText field="admin.feedback.ratingScore" defaultValue={`${rating}/5`}>
-            {rating}/5
-          </EditableText>
+          {getCMSField(cmsData, 'admin.feedback.ratingStars', getRatingStars(rating))}
+          {getCMSField(cmsData, 'admin.feedback.ratingScore', `${rating}/5`)}
         </Stack>
       </Container>
     );
@@ -110,15 +107,9 @@ function FeedbackPageContent() {
       render: (_, feedback) => (
         <Container>
           <Stack>
-            <EditableText field="admin.feedback.customerName" defaultValue={feedback.customerName}>
-              {feedback.customerName}
-            </EditableText>
-            <EditableText field="admin.feedback.customerEmail" defaultValue={`📧 ${feedback.customerEmail}`}>
-              📧 {feedback.customerEmail}
-            </EditableText>
-            <EditableText field="admin.feedback.bookingId" defaultValue={`🎫 ${feedback.bookingId}`}>
-              🎫 {feedback.bookingId}
-            </EditableText>
+            {getCMSField(cmsData, 'admin.feedback.customerName', feedback.customerName)}
+            {getCMSField(cmsData, 'admin.feedback.customerEmail', `📧 ${feedback.customerEmail}`)}
+            {getCMSField(cmsData, 'admin.feedback.bookingId', `🎫 ${feedback.bookingId}`)}
           </Stack>
         </Container>
       )
@@ -135,9 +126,7 @@ function FeedbackPageContent() {
       sortable: false,
       render: (value) => (
         <Container>
-          <EditableText field="admin.feedback.comment" defaultValue={value}>
-            {value}
-          </EditableText>
+          {getCMSField(cmsData, 'admin.feedback.comment', value)}
         </Container>
       )
     },
@@ -150,12 +139,8 @@ function FeedbackPageContent() {
         return (
           <Container>
             <Stack>
-              <EditableText field="admin.feedback.date" defaultValue={date.toLocaleDateString()}>
-                {date.toLocaleDateString()}
-              </EditableText>
-              <EditableText field="admin.feedback.time" defaultValue={date.toLocaleTimeString()}>
-                {date.toLocaleTimeString()}
-              </EditableText>
+              {getCMSField(cmsData, 'admin.feedback.date', date.toLocaleDateString())}
+              {getCMSField(cmsData, 'admin.feedback.time', date.toLocaleTimeString())}
             </Stack>
           </Container>
         );
@@ -187,10 +172,7 @@ function FeedbackPageContent() {
   ];
 
   return (
-    <AdminPageWrapper
-      title="Customer Feedback"
-      subtitle="Monitor and manage customer reviews and ratings"
-    >
+    <>
       {/* Feedback Statistics */}
       <GridSection variant="stats" columns={4}>
         <StatCard
@@ -200,9 +182,7 @@ function FeedbackPageContent() {
           statChange="Customer reviews collected"
           changeType="neutral"
         >
-          <EditableText field="admin.feedback.totalReviews" defaultValue={`${feedbackStats.totalFeedback} total reviews`}>
-            {feedbackStats.totalFeedback} total reviews
-          </EditableText>
+          {getCMSField(cmsData, 'admin.feedback.totalReviews', `${feedbackStats.totalFeedback} total reviews`)}
         </StatCard>
         <StatCard
           title="Average Rating"
@@ -264,15 +244,9 @@ function FeedbackPageContent() {
               
               return (
                 <Stack key={rating} direction="horizontal" justify="space-between" align="center">
-                  <EditableText field="admin.feedback.stars" defaultValue={'★'.repeat(rating)}>
-                    {'★'.repeat(rating)}
-                  </EditableText>
-                  <EditableText field="admin.feedback.count" defaultValue={count.toString()}>
-                    {count}
-                  </EditableText>
-                  <EditableText field="admin.feedback.percentage" defaultValue={`${percentage.toFixed(0)}%`}>
-                    {percentage.toFixed(0)}%
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.feedback.stars', '★'.repeat(rating))}
+                  {getCMSField(cmsData, 'admin.feedback.count', count.toString())}
+                  {getCMSField(cmsData, 'admin.feedback.percentage', `${percentage.toFixed(0)}%`)}
                 </Stack>
               );
             })}
@@ -280,7 +254,7 @@ function FeedbackPageContent() {
           </Stack>
         </Box>
       </GridSection>
-    </AdminPageWrapper>
+    </>
   );
 }
 

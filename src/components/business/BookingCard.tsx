@@ -5,9 +5,9 @@ import { Button } from '@/design/components/base-components/Button';
 import { Container } from '@/design/layout/containers/Container';
 import { H3 } from '@/design/components/base-components/text/Headings';
 import { Text } from '@/design/components/base-components/text/Text';
-import { EditableText } from '@/design/components/base-components/text/EditableText';
 import { Stack } from '@/design/layout/framing/Stack';
 import { Box } from '@/design/layout/content/Box';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 // Define Booking interface locally for this component
 interface Booking {
@@ -69,7 +69,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
   showActions = false,
   onAction
 }) => {
-
+  const { cmsData } = useCMSData();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -92,19 +92,13 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {/* Header */}
       <Stack direction="horizontal" align="center" justify="space-between" spacing="md">
         <H3>
-          <EditableText field="bookingCard.customerName" defaultValue={booking.name}>
-            {booking.name}
-          </EditableText>
+          {getCMSField(cmsData, 'bookingCard.customerName', booking.name)}
         </H3>
         <Text>
-          <EditableText field="bookingCard.bookingNumber" defaultValue={`Booking #${booking.id}`}>
-            Booking #{booking.id}
-          </EditableText>
+          {getCMSField(cmsData, 'bookingCard.bookingNumber', `Booking #${booking.id}`)}
         </Text>
         <Badge>
-          <EditableText field="bookingCard.status" defaultValue={booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}>
-            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-          </EditableText>
+          {getCMSField(cmsData, 'bookingCard.status', booking.status.charAt(0).toUpperCase() + booking.status.slice(1))}
         </Badge>
       </Stack>
 
@@ -114,9 +108,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <Stack direction="horizontal" align="center" spacing="sm">
             <Calendar />
             <Text size="sm">
-              <EditableText field="bookingCard.date" defaultValue={formatDate(booking.pickupDateTime.toString())}>
-                {formatDate(booking.pickupDateTime.toString())}
-              </EditableText>
+              {getCMSField(cmsData, 'bookingCard.date', formatDate(booking.pickupDateTime.toString()))}
             </Text>
           </Stack>
         </Container>
@@ -124,9 +116,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <Stack direction="horizontal" align="center" spacing="sm">
             <Clock />
             <Text size="sm">
-              <EditableText field="bookingCard.time" defaultValue={formatTime(booking.pickupDateTime.toString())}>
-                {formatTime(booking.pickupDateTime.toString())}
-              </EditableText>
+              {getCMSField(cmsData, 'bookingCard.time', formatTime(booking.pickupDateTime.toString()))}
             </Text>
           </Stack>
         </Container>
@@ -139,14 +129,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
             <MapPin />
             <Stack direction="vertical" spacing="xs">
               <Text size="xs">
-                <EditableText field="bookingCard.pickupLabel" defaultValue="Pickup:">
-                  Pickup:
-                </EditableText>
+                {getCMSField(cmsData, 'bookingCard.pickupLabel', 'Pickup:')}
               </Text>
               <Text size="sm">
-                <EditableText field="bookingCard.pickupLocation" defaultValue={booking.pickupLocation}>
-                  {booking.pickupLocation}
-                </EditableText>
+                {getCMSField(cmsData, 'bookingCard.pickupLocation', booking.pickupLocation)}
               </Text>
             </Stack>
           </Stack>
@@ -156,14 +142,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
             <MapPin />
             <Stack direction="vertical" spacing="xs">
               <Text size="xs">
-                <EditableText field="bookingCard.dropoffLabel" defaultValue="Drop-off:">
-                  Drop-off:
-                </EditableText>
+                {getCMSField(cmsData, 'bookingCard.dropoffLabel', 'Drop-off:')}
               </Text>
               <Text size="sm">
-                <EditableText field="bookingCard.dropoffLocation" defaultValue={booking.dropoffLocation}>
-                  {booking.dropoffLocation}
-                </EditableText>
+                {getCMSField(cmsData, 'bookingCard.dropoffLocation', booking.dropoffLocation)}
               </Text>
             </Stack>
           </Stack>
@@ -173,21 +155,15 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {/* Passenger Info */}
       <Container>
         <Text size="sm">
-          <EditableText field="bookingCard.passengersLabel" defaultValue={`Passengers: ${booking.passengers}`}>
-            Passengers: {booking.passengers}
-          </EditableText>
+          {getCMSField(cmsData, 'bookingCard.passengersLabel', `Passengers: ${booking.passengers}`)}
         </Text>
         {booking.notes && (
           <Container>
             <Text size="xs">
-              <EditableText field="bookingCard.notesLabel" defaultValue="Notes:">
-                Notes:
-              </EditableText>
+                {getCMSField(cmsData, 'bookingCard.notesLabel', 'Notes:')}
             </Text>
             <Text size="sm">
-              <EditableText field="bookingCard.notes" defaultValue={booking.notes}>
-                {booking.notes}
-              </EditableText>
+              {getCMSField(cmsData, 'bookingCard.notes', booking.notes)}
             </Text>
           </Container>
         )}
@@ -197,14 +173,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
       <Stack direction="horizontal" align="center" spacing="sm">
         <DollarSign />
         <Text size="sm">
-          <EditableText field="bookingCard.totalFareLabel" defaultValue="Total Fare:">
-            Total Fare:
-          </EditableText>
+          {getCMSField(cmsData, 'bookingCard.totalFareLabel', 'Total Fare:')}
         </Text>
         <Text size="lg">
-          <EditableText field="bookingCard.fare" defaultValue={`$${booking.fare}`}>
-            ${booking.fare}
-          </EditableText>
+          {getCMSField(cmsData, 'bookingCard.fare', `$${booking.fare}`)}
         </Text>
       </Stack>
 
@@ -216,9 +188,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
             size="sm"
             onClick={() => onAction('view')}
           >
-            <EditableText field="bookingCard.viewDetailsButton" defaultValue="View Details">
-              View Details
-            </EditableText>
+            {getCMSField(cmsData, 'bookingCard.viewDetailsButton', 'View Details')}
           </Button>
           {booking.status === 'pending' && (
             <>
@@ -227,18 +197,14 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 size="sm"
                 onClick={() => onAction('edit')}
               >
-                <EditableText field="bookingCard.editButton" defaultValue="Edit">
-                  Edit
-                </EditableText>
+                {getCMSField(cmsData, 'bookingCard.editButton', 'Edit')}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('cancel')}
               >
-                <EditableText field="bookingCard.cancelButton" defaultValue="Cancel">
-                  Cancel
-                </EditableText>
+                {getCMSField(cmsData, 'bookingCard.cancelButton', 'Cancel')}
               </Button>
             </>
           )}

@@ -16,13 +16,13 @@ import {
   Input,
   Label,
   Select,
-  EditableText,
   Stack,
   StatCard
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function PromosPageContent() {
+  const { cmsData } = useCMSData();
   const { addToast } = useToast();
   const [promos, setPromos] = useState<PromoCode[]>([]);
   const [form, setForm] = useState({ 
@@ -252,10 +252,7 @@ function PromosPageContent() {
   const expiringPromos = promos.filter(p => getPromoStatus(p) === 'Expiring Soon').length;
 
   return (
-    <AdminPageWrapper
-      title="Promo Codes"
-      subtitle="Create and manage promotional discount codes"
-    >
+    <>
       {/* Promo Statistics */}
       <GridSection variant="stats" columns={4}>
         <StatCard
@@ -291,13 +288,13 @@ function PromosPageContent() {
       {/* Add New Promo Form */}
       <GridSection variant="content" columns={1}>
         <Card
-          title={<EditableText field="admin.promos.createPromoTitle" defaultValue="🎟️ Create New Promo Code">🎟️ Create New Promo Code</EditableText>}
-          description={<EditableText field="admin.promos.createPromoDesc" defaultValue="Add a new promotional discount code for your customers">Add a new promotional discount code for your customers</EditableText>}
+          title={getCMSField(cmsData, 'admin.promos.createPromoTitle', '🎟️ Create New Promo Code')}
+          description={getCMSField(cmsData, 'admin.promos.createPromoDesc', 'Add a new promotional discount code for your customers')}
         >
           <Stack spacing="md">
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.code" defaultValue="Code (uppercase) *">Code (uppercase) *</EditableText>
+                {getCMSField(cmsData, 'admin.promos.form.code', 'Code (uppercase) *')}
               </Label>
               <Input
                 type="text"
@@ -310,7 +307,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.type" defaultValue="Type *">Type *</EditableText>
+                {getCMSField(cmsData, 'admin.promos.form.type', 'Type *')}
               </Label>
               <Select 
                 value={form.type} 
@@ -324,7 +321,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.value" defaultValue="Value *">Value *</EditableText>
+                {getCMSField(cmsData, 'admin.promos.form.value', 'Value *')}
               </Label>
               <Input
                 type="number"
@@ -337,7 +334,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.expiresAt" defaultValue="Expires At">Expires At</EditableText>
+                {getCMSField(cmsData, 'admin.promos.form.expiresAt', 'Expires At')}
               </Label>
               <Input
                 type="date"
@@ -348,7 +345,7 @@ function PromosPageContent() {
             
             <Container>
               <Label>
-                <EditableText field="admin.promos.form.usageLimit" defaultValue="Usage Limit">Usage Limit</EditableText>
+                {getCMSField(cmsData, 'admin.promos.form.usageLimit', 'Usage Limit')}
               </Label>
               <Input
                 type="number"
@@ -377,8 +374,8 @@ function PromosPageContent() {
       {/* Promo Codes Table */}
       <GridSection variant="content" columns={1}>
         <Card
-          title={<EditableText field="admin.promos.allPromosTitle" defaultValue="🎟️ All Promo Codes">🎟️ All Promo Codes</EditableText>}
-          description={<EditableText field="admin.promos.allPromosDesc" defaultValue="Search, sort, and manage your promotional discount codes">Search, sort, and manage your promotional discount codes</EditableText>}
+          title={getCMSField(cmsData, 'admin.promos.allPromosTitle', '🎟️ All Promo Codes')}
+          description={getCMSField(cmsData, 'admin.promos.allPromosDesc', 'Search, sort, and manage your promotional discount codes')}
         >
           <DataTable
             data={promos}
@@ -393,7 +390,7 @@ function PromosPageContent() {
           />
         </Card>
       </GridSection>
-    </AdminPageWrapper>
+    </>
   );
 }
 

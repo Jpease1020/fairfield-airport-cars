@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
+import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '../../../book/booking-form';
-
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 export default function EditBookingPage() {
   const params = useParams();
   const { id } = params;
@@ -14,7 +14,7 @@ export default function EditBookingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToast } = useToast();
-
+  const { cmsData } = useCMSData();
   useEffect(() => {
     if (id) {
       const fetchBooking = async () => {
@@ -41,9 +41,7 @@ export default function EditBookingPage() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            <EditableText field="booking.edit.loading.message" defaultValue="Please wait while we fetch your booking details...">
-              Please wait while we fetch your booking details...
-            </EditableText>
+            {getCMSField(cmsData, 'booking.edit.loading.message', 'Please wait while we fetch your booking details...')}
           </Container>
         </GridSection>
       </Container>
@@ -55,9 +53,7 @@ export default function EditBookingPage() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            <EditableText field="booking.edit.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
-              This could be due to an invalid booking ID or a temporary system issue.
-            </EditableText>
+            {getCMSField(cmsData, 'booking.edit.error.description', 'This could be due to an invalid booking ID or a temporary system issue.')}
             <ActionButtonGroup buttons={[
               {
                 id: 'try-again',
@@ -86,14 +82,10 @@ export default function EditBookingPage() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Text>
-              <EditableText field="booking.edit.not_found.title" defaultValue="❌ Booking Not Found">
-                ❌ Booking Not Found
-              </EditableText>
+              {getCMSField(cmsData, 'booking.edit.not_found.title', '❌ Booking Not Found')}
             </Text>
             <Text>
-              <EditableText field="booking.edit.not_found.description" defaultValue="No booking found with the provided ID">
-                No booking found with the provided ID
-              </EditableText>
+              {getCMSField(cmsData, 'booking.edit.not_found.description', 'No booking found with the provided ID')}
             </Text>
             <ActionButtonGroup buttons={[
               {
@@ -122,9 +114,7 @@ export default function EditBookingPage() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Text>
-            <EditableText field="booking.edit.title" defaultValue="Edit Booking">
-              Edit Booking
-            </EditableText>
+            {getCMSField(cmsData, 'booking.edit.title', 'Edit Booking')}
           </Text>
           <BookingForm 
             booking={booking}

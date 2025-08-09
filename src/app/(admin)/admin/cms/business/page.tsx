@@ -11,14 +11,14 @@ import {
   Span,
   Text,
   Stack,
-  EditableText,
   Box,
   Input,
   Label,
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function BusinessPageContent() {
+  const { cmsData } = useCMSData();
   const { addToast } = useToast();
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -96,54 +96,36 @@ function BusinessPageContent() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Business Settings"
-        subtitle="Configure your company information and branding"
-      >
+      
         <Container>
-          <EditableText field="admin.cms.business.loading" defaultValue="Loading...">
-            Loading...
-          </EditableText>
+          {getCMSField(cmsData, 'admin.cms.business.loading', 'Loading...')}
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   if (error) {
     return (
-      <AdminPageWrapper
-        title="Business Settings"
-        subtitle="Configure your company information and branding"
-      >
+      
         <Container>
-          <EditableText field="admin.cms.business.error" defaultValue="Error loading settings">
-            Error loading settings
-          </EditableText>
+          {getCMSField(cmsData, 'admin.cms.business.error', 'Error loading settings')}
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   if (!settings) {
     return (
-      <AdminPageWrapper
-        title="Business Settings"
-        subtitle="Configure your company information and branding"
-      >
+      
         <Container>
-          <EditableText field="admin.cms.business.noSettings" defaultValue="No settings found">
-            No settings found
-          </EditableText>
+          {getCMSField(cmsData, 'admin.cms.business.noSettings', 'No settings found')}
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Business Settings"
-      subtitle="Configure your company information and branding"
-    >
+    <>
 
       {settings && (
         <GridSection variant="content" columns={1}>
@@ -232,13 +214,9 @@ function BusinessPageContent() {
                 <Text>Links to your social media profiles</Text>
                 
                 <Stack spacing="md">
-                  <EditableText field="admin.cms.business.social" defaultValue="Social Media">
-                    Social Media
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.cms.business.social', 'Social Media')}
                   
-                  <EditableText field="admin.cms.business.socialDesc" defaultValue="Your social media profiles">
-                    Your social media profiles
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.cms.business.socialDesc', 'Your social media profiles')}
                   
                   <Container>
                     <Label htmlFor="social-facebook">Facebook URL</Label>
@@ -294,14 +272,10 @@ function BusinessPageContent() {
                     <Text size="sm" color="secondary">Main brand color for buttons and accents</Text>
                     <Stack direction="horizontal" spacing="sm" align="center">
                       <Span>
-                        <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
-                          Preview:
-                        </EditableText>
+                        {getCMSField(cmsData, 'admin.cms.business.preview', 'Preview:')}
                       </Span>
                       <Span>
-                        <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
-                          Color preview
-                        </EditableText>
+                        {getCMSField(cmsData, 'admin.cms.business.colorPreview', 'Color preview')}
                       </Span>
                     </Stack>
                   </Container>
@@ -317,14 +291,10 @@ function BusinessPageContent() {
                     <Text size="sm" color="secondary">Secondary brand color for highlights</Text>
                     <Stack direction="horizontal" spacing="sm" align="center">
                       <Span>
-                        <EditableText field="admin.cms.business.preview" defaultValue="Preview:">
-                          Preview:
-                        </EditableText>
+                        {getCMSField(cmsData, 'admin.cms.business.preview', 'Preview:')}
                       </Span>
                       <Span>
-                        <EditableText field="admin.cms.business.colorPreview" defaultValue="Color preview">
-                          Color preview
-                        </EditableText>
+                        {getCMSField(cmsData, 'admin.cms.business.colorPreview', 'Color preview')}
                       </Span>
                     </Stack>
                   </Container>
@@ -350,31 +320,19 @@ function BusinessPageContent() {
                 <Text>How your business information will appear to customers</Text>
                 
                 <Stack spacing="lg">
-                  <EditableText field="admin.cms.business.companyName" defaultValue="Company Name">
-                    Company Name
-                  </EditableText>
-                  <EditableText field="admin.cms.business.companyNameDesc" defaultValue="Your business name as it appears to customers">
-                    Your business name as it appears to customers
-                  </EditableText>
-                  <EditableText field="admin.cms.business.phone" defaultValue="Phone Number">
-                    Phone Number
-                  </EditableText>
-                  <EditableText field="admin.cms.business.email" defaultValue="Email Address">
-                    Email Address
-                  </EditableText>
-                  <EditableText field="admin.cms.business.address" defaultValue="Address">
-                    Address
-                  </EditableText>
-                  <EditableText field="admin.cms.business.hours" defaultValue="Business Hours">
-                    Business Hours
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.cms.business.companyName', 'Company Name')}
+                  {getCMSField(cmsData, 'admin.cms.business.companyNameDesc', 'Your business name as it appears to customers')}
+                  {getCMSField(cmsData, 'admin.cms.business.phone', 'Phone Number')}
+                  {getCMSField(cmsData, 'admin.cms.business.email', 'Email Address')}
+                  {getCMSField(cmsData, 'admin.cms.business.address', 'Address')}
+                  {getCMSField(cmsData, 'admin.cms.business.hours', 'Business Hours')}
                 </Stack>
               </Stack>
             </Box>
           </Container>
         </GridSection>
       )}
-    </AdminPageWrapper>
+    </>
   );
 }
 

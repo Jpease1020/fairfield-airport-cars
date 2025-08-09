@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, H2, Text, Button, Stack, Box, EditableText, Span } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { AlertTriangle, XCircle, RefreshCw, Trash2, Eye, AlertCircle } from 'lucide-react';
-
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 interface ErrorEvent {
   message: string;
   stack?: string;
@@ -14,7 +13,11 @@ interface ErrorEvent {
   context?: Record<string, any>;
 }
 
+
+
+
 export default function ErrorMonitoringPage() {
+  const { cmsData } = useCMSData();
   const [errors, setErrors] = useState<ErrorEvent[]>([]);
   const [selectedError, setSelectedError] = useState<ErrorEvent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -115,34 +118,24 @@ export default function ErrorMonitoringPage() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Error Monitoring"
-        subtitle="Loading error data..."
-      >
+      
         <Container>
           <Text>
-            <EditableText field="admin.errorMonitoring.loading" defaultValue="Loading...">
-              Loading...
-            </EditableText>
+            {getCMSField(cmsData, 'admin.errorMonitoring.loading', 'Loading...')}
           </Text>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Error Monitoring"
-      subtitle="Track and manage application errors"
-    >
+    <>
       <Container>
         <Stack direction="vertical" spacing="lg">
           {/* Header Actions */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.errorMonitoring.actions" defaultValue="Error Monitoring">
-                Error Monitoring
-              </EditableText>
+              {getCMSField(cmsData, 'admin.errorMonitoring.actions', 'Error Monitoring')}
             </H2>
             <Stack direction="horizontal" spacing="sm">
               <Button
@@ -151,9 +144,7 @@ export default function ErrorMonitoringPage() {
               >
                 <RefreshCw size={16} />
                 <Span>
-                  <EditableText field="admin.errorMonitoring.refresh" defaultValue="Refresh">
-                    Refresh
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.refresh', 'Refresh')}
                 </Span>
               </Button>
               <Button
@@ -163,9 +154,7 @@ export default function ErrorMonitoringPage() {
               >
                 <Trash2 size={16} />
                 <Span>
-                  <EditableText field="admin.errorMonitoring.clear" defaultValue="Clear All">
-                    Clear All
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.clear', 'Clear All')}
                 </Span>
               </Button>
             </Stack>
@@ -174,27 +163,19 @@ export default function ErrorMonitoringPage() {
           {/* Error Summary */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.errorMonitoring.summary" defaultValue="Error Summary">
-                Error Summary
-              </EditableText>
+              {getCMSField(cmsData, 'admin.errorMonitoring.summary', 'Error Summary')}
             </H2>
             <Stack direction="horizontal" spacing="md">
               <Text size="sm">
-                <EditableText field="admin.errorMonitoring.total" defaultValue="Total Errors:">
-                  Total Errors:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.errorMonitoring.total', 'Total Errors:')}
                 <Span variant="default"> {errorCount}</Span>
               </Text>
               <Text size="sm">
-                <EditableText field="admin.errorMonitoring.high" defaultValue="High Severity:">
-                  High Severity:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.errorMonitoring.high', 'High Severity:')}
                 <Span variant="default"> {errors.filter(e => getErrorSeverity(e) === 'high').length}</Span>
               </Text>
               <Text size="sm">
-                <EditableText field="admin.errorMonitoring.medium" defaultValue="Medium Severity:">
-                  Medium Severity:
-                </EditableText>
+                {getCMSField(cmsData, 'admin.errorMonitoring.medium', 'Medium Severity:')}
                 <Span variant="default"> {errors.filter(e => getErrorSeverity(e) === 'medium').length}</Span>
               </Text>
             </Stack>
@@ -203,15 +184,11 @@ export default function ErrorMonitoringPage() {
           {/* Error List */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.errorMonitoring.list" defaultValue="Recent Errors">
-                Recent Errors
-              </EditableText>
+              {getCMSField(cmsData, 'admin.errorMonitoring.list', 'Recent Errors')}
             </H2>
             {errors.length === 0 ? (
               <Text variant="muted" size="sm">
-                <EditableText field="admin.errorMonitoring.noErrors" defaultValue="No errors recorded">
-                  No errors recorded
-                </EditableText>
+                {getCMSField(cmsData, 'admin.errorMonitoring.noErrors', 'No errors recorded')}
               </Text>
             ) : (
               <Stack direction="vertical" spacing="sm">
@@ -241,9 +218,7 @@ export default function ErrorMonitoringPage() {
                           >
                             <Eye size={14} />
                             <Span>
-                              <EditableText field="admin.errorMonitoring.view" defaultValue="View">
-                                View
-                              </EditableText>
+                              {getCMSField(cmsData, 'admin.errorMonitoring.view', 'View')}
                             </Span>
                           </Button>
                           <Button
@@ -253,9 +228,7 @@ export default function ErrorMonitoringPage() {
                           >
                             <Trash2 size={14} />
                             <Span>
-                              <EditableText field="admin.errorMonitoring.delete" defaultValue="Delete">
-                                Delete
-                              </EditableText>
+                              {getCMSField(cmsData, 'admin.errorMonitoring.delete', 'Delete')}
                             </Span>
                           </Button>
                         </Stack>
@@ -271,47 +244,33 @@ export default function ErrorMonitoringPage() {
           {selectedError && (
             <Box variant="elevated" padding="md">
               <H2>
-                <EditableText field="admin.errorMonitoring.details" defaultValue="Error Details">
-                  Error Details
-                </EditableText>
+                {getCMSField(cmsData, 'admin.errorMonitoring.details', 'Error Details')}
               </H2>
               <Stack direction="vertical" spacing="sm">
                 <Text size="sm">
-                  <EditableText field="admin.errorMonitoring.message" defaultValue="Message:">
-                    Message:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.message', 'Message:')}
                   <Span variant="default"> {selectedError.message}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.errorMonitoring.url" defaultValue="URL:">
-                    URL:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.url', 'URL:')}
                   <Span variant="default"> {selectedError.url}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.errorMonitoring.timestamp" defaultValue="Timestamp:">
-                    Timestamp:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.timestamp', 'Timestamp:')}
                   <Span variant="default"> {new Date(selectedError.timestamp).toLocaleString()}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.errorMonitoring.userAgent" defaultValue="User Agent:">
-                    User Agent:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.userAgent', 'User Agent:')}
                   <Span variant="default"> {selectedError.userAgent}</Span>
                 </Text>
                 {selectedError.context && (
                   <Text size="sm">
-                    <EditableText field="admin.errorMonitoring.context" defaultValue="Context:">
-                      Context:
-                    </EditableText>
+                    {getCMSField(cmsData, 'admin.errorMonitoring.context', 'Context:')}
                     <Span variant="default"> {JSON.stringify(selectedError.context, null, 2)}</Span>
                   </Text>
                 )}
                 <Text size="sm">
-                  <EditableText field="admin.errorMonitoring.stack" defaultValue="Stack Trace:">
-                    Stack Trace:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.stack', 'Stack Trace:')}
                 </Text>
                 <Box variant="elevated" padding="sm">
                   <Text size="xs" variant="muted">
@@ -323,9 +282,7 @@ export default function ErrorMonitoringPage() {
                   variant="outline"
                   size="sm"
                 >
-                  <EditableText field="admin.errorMonitoring.close" defaultValue="Close">
-                    Close
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.errorMonitoring.close', 'Close')}
                 </Button>
               </Stack>
             </Box>
@@ -334,14 +291,12 @@ export default function ErrorMonitoringPage() {
           {/* Status */}
           <Box variant="elevated" padding="sm">
             <Text size="sm" variant="muted">
-              <EditableText field="admin.errorMonitoring.status" defaultValue="Last updated:">
-                Last updated:
-              </EditableText>
+              {getCMSField(cmsData, 'admin.errorMonitoring.status', 'Last updated:')}
               <Span> {new Date().toLocaleString()}</Span>
             </Text>
           </Box>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    </>
   );
 } 

@@ -4,11 +4,21 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '../../design/components/base-components/Button';
-import { EditableText } from '../../design/components/base-components/text/EditableText';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/BaseNavigation';
+import { auth } from '../../lib/utils/firebase';
 
 export const AdminNavigation: React.FC = () => {
   const pathname = usePathname();
+  const { cmsData } = useCMSData();
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const navigationItems: NavigationItem[] = [
     { name: 'Dashboard', href: '/admin', current: pathname === '/admin' },
@@ -21,14 +31,14 @@ export const AdminNavigation: React.FC = () => {
 
   const logo = (
     <Link href="/admin" data-testid="admin-nav-logo-link" id="admin-nav-logo-link">
-      <EditableText field="adminNavigation.title">Admin Panel</EditableText>
+      {getCMSField(cmsData, 'adminNavigation.title', 'Admin Panel')}
     </Link>
   );
 
   const actions = (
     <Link href="/" data-testid="admin-nav-view-site-link" id="admin-nav-view-site-link">
       <Button variant="outline" size="sm" data-testid="admin-nav-view-site-button" id="admin-nav-view-site-button">
-        <EditableText field="adminNavigation.viewSiteButton">View Site</EditableText>
+        {getCMSField(cmsData, 'adminNavigation.viewSiteButton', 'View Site')}
       </Button>
     </Link>
   );
@@ -36,16 +46,27 @@ export const AdminNavigation: React.FC = () => {
   const mobileActions = (
     <Link href="/" data-testid="admin-nav-mobile-view-site-link" id="admin-nav-mobile-view-site-link">
       <Button variant="outline" size="sm" data-testid="admin-nav-mobile-view-site-button" id="admin-nav-mobile-view-site-button">
-        <EditableText field="adminNavigation.mobile.viewSiteButton">View Site</EditableText>
+        {getCMSField(cmsData, 'adminNavigation.mobile.viewSiteButton', 'View Site')}
       </Button>
     </Link>
   );
+
+  const logoutButton = (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleLogout}
+    >
+      🚪 Logout
+    </Button>
+  );
+
 
   return (
     <BaseNavigation
       logo={logo}
       navigationItems={navigationItems}
-      actions={actions}
+      actions={[actions, logoutButton] as React.ReactNode[]}
       mobileActions={mobileActions}
       dataTestIdPrefix="admin-nav"
       editableFieldPrefix="adminNavigation"

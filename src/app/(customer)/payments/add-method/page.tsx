@@ -11,7 +11,6 @@ import {
   Text,
   Button,
   LoadingSpinner,
-  EditableText,
   Alert,
   Input,
   Label,  
@@ -19,10 +18,11 @@ import {
   ContentCard,
   Grid,
   GridItem
-} from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+} from '@/ui';  
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function AddPaymentMethodPage() {
+  const { cmsData } = useCMSData();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -152,7 +152,7 @@ function AddPaymentMethodPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Initializing...</Text>
+          <Text>{getCMSField(cmsData, 'payments.add_method.initializing', 'Initializing...')}</Text>
         </Stack>
       </Container>
     );
@@ -163,7 +163,7 @@ function AddPaymentMethodPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading...</Text>
+          <Text>{getCMSField(cmsData, 'payments.add_method.loading', 'Loading...')}</Text>
         </Stack>
       </Container>
     );
@@ -173,9 +173,9 @@ function AddPaymentMethodPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">Please log in to add payment methods.</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'payments.add_method.login_required', 'Please log in to add payment methods.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            Go to Login
+            {getCMSField(cmsData, 'payments.add_method.go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -183,22 +183,15 @@ function AddPaymentMethodPage() {
   }
 
   return (
-    <AdminPageWrapper
-      title="Add Payment Method"
-      subtitle="Securely add a new payment method to your account"
-    >
+    <>
       <Stack spacing="xl">
         {/* Header */}
         <Stack spacing="sm">
           <H1>
-            <EditableText field="customer.payments.add_method.title" defaultValue="Add Payment Method">
-              Add Payment Method
-            </EditableText>
+            {getCMSField(cmsData, 'payments.add_method.title', 'Add Payment Method')}
           </H1>
           <Text variant="muted">
-            <EditableText field="customer.payments.add_method.subtitle" defaultValue="Securely add a new payment method to your account">
-              Securely add a new payment method to your account
-            </EditableText>
+            {getCMSField(cmsData, 'payments.add_method.subtitle', 'Securely add a new payment method to your account')}
           </Text>
         </Stack>
 
@@ -223,10 +216,8 @@ function AddPaymentMethodPage() {
               <Stack spacing="lg">
                 <Stack spacing="md">
                   <Stack spacing="sm">
-                    <Label htmlFor="cardNumber">
-                      <EditableText field="customer.payments.add_method.card_number" defaultValue="Card Number">
-                        Card Number
-                      </EditableText>
+                     <Label htmlFor="cardNumber">
+                      {getCMSField(cmsData, 'payments.add_method.card_number', 'Card Number')}
                     </Label>
                     <Input
                       id="cardNumber"
@@ -241,10 +232,8 @@ function AddPaymentMethodPage() {
                   </Stack>
 
                   <Stack spacing="sm">
-                    <Label htmlFor="cardholderName">
-                      <EditableText field="customer.payments.add_method.cardholder_name" defaultValue="Cardholder Name">
-                        Cardholder Name
-                      </EditableText>
+                     <Label htmlFor="cardholderName">
+                      {getCMSField(cmsData, 'payments.add_method.cardholder_name', 'Cardholder Name')}
                     </Label>
                     <Input
                       id="cardholderName"
@@ -260,10 +249,8 @@ function AddPaymentMethodPage() {
                   <Grid cols={3} gap="md">
                     <GridItem>
                       <Stack spacing="sm">
-                        <Label htmlFor="expiryMonth">
-                          <EditableText field="customer.payments.add_method.expiry_month" defaultValue="Expiry Month">
-                            Expiry Month
-                          </EditableText>
+                         <Label htmlFor="expiryMonth">
+                           {getCMSField(cmsData, 'payments.add_method.expiry_month', 'Expiry Month')}
                         </Label>
                                               <select
                         id="expiryMonth"
@@ -283,10 +270,8 @@ function AddPaymentMethodPage() {
 
                     <GridItem>
                       <Stack spacing="sm">
-                        <Label htmlFor="expiryYear">
-                          <EditableText field="customer.payments.add_method.expiry_year" defaultValue="Expiry Year">
-                            Expiry Year
-                          </EditableText>
+                         <Label htmlFor="expiryYear">
+                           {getCMSField(cmsData, 'payments.add_method.expiry_year', 'Expiry Year')}
                         </Label>
                                               <select
                         id="expiryYear"
@@ -306,10 +291,8 @@ function AddPaymentMethodPage() {
 
                     <GridItem>
                       <Stack spacing="sm">
-                        <Label htmlFor="cvv">
-                          <EditableText field="customer.payments.add_method.cvv" defaultValue="CVV">
-                            CVV
-                          </EditableText>
+                         <Label htmlFor="cvv">
+                           {getCMSField(cmsData, 'payments.add_method.cvv', 'CVV')}
                         </Label>
                         <Input
                           id="cvv"
@@ -333,9 +316,7 @@ function AddPaymentMethodPage() {
                       onChange={(e) => handleInputChange('isDefault', e.target.checked)}
                     />
                     <Label htmlFor="isDefault">
-                      <EditableText field="customer.payments.add_method.set_default" defaultValue="Set as default payment method">
-                        Set as default payment method
-                      </EditableText>
+                      {getCMSField(cmsData, 'payments.add_method.set_default', 'Set as default payment method')}
                     </Label>
                   </Stack>
                 </Stack>
@@ -347,9 +328,7 @@ function AddPaymentMethodPage() {
                     disabled={saving}
                     fullWidth
                   >
-                    <EditableText field="customer.payments.add_method.save_button" defaultValue={saving ? 'Adding...' : 'Add Payment Method'}>
-                      {saving ? 'Adding...' : 'Add Payment Method'}
-                    </EditableText>
+                    {getCMSField(cmsData, 'payments.add_method.save_button', saving ? 'Adding...' : 'Add Payment Method')}
                   </Button>
                   <Button 
                     type="button"
@@ -357,9 +336,7 @@ function AddPaymentMethodPage() {
                     variant="outline"
                     fullWidth
                   >
-                    <EditableText field="customer.payments.add_method.cancel_button" defaultValue="Cancel">
-                      Cancel
-                    </EditableText>
+                    {getCMSField(cmsData, 'payments.add_method.cancel_button', 'Cancel')}
                   </Button>
                 </Stack>
               </Stack>
@@ -374,16 +351,12 @@ function AddPaymentMethodPage() {
           content={
             <Stack spacing="md">
               <Text variant="muted">
-                <EditableText field="customer.payments.add_method.security_notice" defaultValue="Your payment information is encrypted and securely processed by Square. We do not store your full card details on our servers.">
-                  Your payment information is encrypted and securely processed by Square. We do not store your full card details on our servers.
-                </EditableText>
+                 {getCMSField(cmsData, 'payments.add_method.security_notice', 'Your payment information is encrypted and securely processed by Square. We do not store your full card details on our servers.')}
               </Text>
               <Stack direction="horizontal" align="center" spacing="sm">
-                <Text variant="muted" size="sm">🔒</Text>
+           <Text variant="muted" size="sm">🔒</Text>
                 <Text variant="muted" size="sm">
-                  <EditableText field="customer.payments.add_method.ssl_notice" defaultValue="256-bit SSL encryption">
-                    256-bit SSL encryption
-                  </EditableText>
+                   {getCMSField(cmsData, 'payments.add_method.ssl_notice', '256-bit SSL encryption')}
                 </Text>
               </Stack>
             </Stack>
@@ -391,7 +364,7 @@ function AddPaymentMethodPage() {
           variant="outlined"
         />
       </Stack>
-    </AdminPageWrapper>
+    </>
   );
 }
 

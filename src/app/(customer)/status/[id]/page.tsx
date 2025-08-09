@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Container, Text, Button, LoadingSpinner, EditableText, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
+import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function BookingStatusPageContent() {
+  const { cmsData } = useCMSData();
   const params = useParams();
   const { addToast } = useToast();
   const bookingId = params.id as string;
@@ -93,9 +95,9 @@ function BookingStatusPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            <EditableText field="status.loading.message" defaultValue="Please wait while we fetch your booking details...">
-              Please wait while we fetch your booking details...
-            </EditableText>
+            <Text>
+              {getCMSField(cmsData, 'pages.status.loading.message', 'Please wait while we fetch your booking details...')}
+            </Text>
           </Container>
         </GridSection>
       </Container>
@@ -107,20 +109,20 @@ function BookingStatusPageContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            <EditableText field="status.error.description" defaultValue="This could be due to an invalid booking ID or a temporary system issue.">
-              This could be due to an invalid booking ID or a temporary system issue.
-            </EditableText>
+            <Text>
+              {getCMSField(cmsData, 'pages.status.error.description', 'This could be due to an invalid booking ID or a temporary system issue.')}
+            </Text>
             <ActionButtonGroup buttons={[
               {
                 id: 'try-again',
-                label: 'Try Again',
+                label: getCMSField(cmsData, 'pages.status.actions.tryAgain', 'Try Again'),
                 onClick: () => window.location.reload(),
                 variant: 'primary',
                 icon: '🔄'
               },
               {
                 id: 'contact-support',
-                label: 'Contact Support',
+                label: getCMSField(cmsData, 'pages.status.actions.contactSupport', 'Contact Support'),
                 onClick: () => addToast('info', 'Support: (203) 555-0123'),
                 variant: 'outline',
                 icon: '📞'
@@ -138,32 +140,18 @@ function BookingStatusPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Text>
-            <EditableText field="status.confirmed.description" defaultValue="Your ride is confirmed and driver assigned">
-              {getStatusText(status) === 'confirmed' && 'Your ride is confirmed and driver assigned'}
-            </EditableText>
-            <EditableText field="status.enRoute.description" defaultValue="Your driver is on the way to pick you up">
-              {getStatusText(status) === 'en-route' && 'Your driver is on the way to pick you up'}
-            </EditableText>
-            <EditableText field="status.arrived.description" defaultValue="Your driver has arrived at the pickup location">
-              {getStatusText(status) === 'arrived' && 'Your driver has arrived at the pickup location'}
-            </EditableText>
-            <EditableText field="status.completed.description" defaultValue="Your ride has been completed successfully">
-              {getStatusText(status) === 'completed' && 'Your ride has been completed successfully'}
-            </EditableText>
-            <EditableText field="status.cancelled.description" defaultValue="This booking has been cancelled">
-              {getStatusText(status) === 'cancelled' && 'This booking has been cancelled'}
-            </EditableText>
-            <EditableText field="status.unknown.description" defaultValue="We are processing your booking request">
-              {getStatusText(status) === 'Unknown' && 'We are processing your booking request'}
-            </EditableText>
+            {getStatusText(status) === 'confirmed' && getCMSField(cmsData, 'pages.status.confirmed.description', 'Your ride is confirmed and driver assigned')}
+            {getStatusText(status) === 'en-route' && getCMSField(cmsData, 'pages.status.enRoute.description', 'Your driver is on the way to pick you up')}
+            {getStatusText(status) === 'arrived' && getCMSField(cmsData, 'pages.status.arrived.description', 'Your driver has arrived at the pickup location')}
+            {getStatusText(status) === 'completed' && getCMSField(cmsData, 'pages.status.completed.description', 'Your ride has been completed successfully')}
+            {getStatusText(status) === 'cancelled' && getCMSField(cmsData, 'pages.status.cancelled.description', 'This booking has been cancelled')}
+            {getStatusText(status) === 'Unknown' && getCMSField(cmsData, 'pages.status.unknown.description', 'We are processing your booking request')}
           </Text>
 
           {estimatedArrival && (
             <Text>
               <strong>
-                <EditableText field="status.estimatedArrival.label" defaultValue="⏰ Estimated Arrival:">
-                  ⏰ Estimated Arrival:
-                </EditableText>
+                {getCMSField(cmsData, 'pages.status.estimatedArrival.label', '⏰ Estimated Arrival:')}
               </strong> {estimatedArrival ? estimatedArrival.toString() : 'Calculating...'}
             </Text>
           )}
@@ -185,12 +173,8 @@ function BookingStatusPageContent() {
             variant="ghost"
             size="sm"
           >
-            <EditableText field="status.showDetails.button" defaultValue={showDetails ? 'Hide' : 'Show'}>
-              {showDetails ? 'Hide' : 'Show'}
-            </EditableText>
-            <EditableText field="status.showDetails.label" defaultValue=" booking details">
-              {' booking details'}
-            </EditableText>
+            {getCMSField(cmsData, 'pages.status.showDetails.button', showDetails ? 'Hide' : 'Show')}
+            {getCMSField(cmsData, 'pages.status.showDetails.label', ' booking details')}
           </Button>
         </Container>
       </GridSection>
@@ -202,44 +186,32 @@ function BookingStatusPageContent() {
             <div>
               <Text>
                 <strong>
-                  <EditableText field="status.bookingId.label" defaultValue="Booking ID:">
-                    Booking ID:
-                  </EditableText>
+                  {getCMSField(cmsData, 'pages.status.labels.bookingId', 'Booking ID:')}
                 </strong> {bookingId}
               </Text>
               <Text>
                 <strong>
-                  <EditableText field="status.pickup.label" defaultValue="Pickup:">
-                    Pickup:
-                  </EditableText>
+                  {getCMSField(cmsData, 'pages.status.labels.pickup', 'Pickup:')}
                 </strong> {booking?.pickupLocation || 'N/A'}
               </Text>
               <Text>
                 <strong>
-                  <EditableText field="status.dropoff.label" defaultValue="Dropoff:">
-                    Dropoff:
-                  </EditableText>
+                  {getCMSField(cmsData, 'pages.status.labels.dropoff', 'Dropoff:')}
                 </strong> {booking?.dropoffLocation || 'N/A'}
               </Text>
               <Text>
                 <strong>
-                  <EditableText field="status.date.label" defaultValue="Date:">
-                    Date:
-                  </EditableText>
+                  {getCMSField(cmsData, 'pages.status.labels.date', 'Date:')}
                 </strong> {booking?.date ? new Date(booking.date).toLocaleDateString() : 'N/A'}
               </Text>
               <Text>
                 <strong>
-                  <EditableText field="status.time.label" defaultValue="Time:">
-                    Time:
-                  </EditableText>
+                  {getCMSField(cmsData, 'pages.status.labels.time', 'Time:')}
                 </strong> {booking?.time || 'N/A'}
               </Text>
               <Text>
                 <strong>
-                  <EditableText field="status.fare.label" defaultValue="Fare:">
-                    Fare:
-                  </EditableText>
+                  {getCMSField(cmsData, 'pages.status.labels.fare', 'Fare:')}
                 </strong> ${booking?.fare || 'N/A'}
               </Text>
             </div>

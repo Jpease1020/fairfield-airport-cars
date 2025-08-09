@@ -79,6 +79,7 @@ export interface TextareaProps {
   name?: string;
   id?: string;
   required?: boolean;
+  cmsKeyPlaceholder?: string;
   [key: string]: any;
 }
 
@@ -93,8 +94,10 @@ export const Textarea: React.FC<TextareaProps> = ({
   name,
   id,
   required = false,
+  cmsKeyPlaceholder,
   ...rest
 }) => {
+  const ref = React.useRef<HTMLTextAreaElement | null>(null);
   return (
     <StyledTextarea
       value={value}
@@ -108,6 +111,7 @@ export const Textarea: React.FC<TextareaProps> = ({
       size={size}
       error={error}
       aria-invalid={error}
+      ref={ref}
       {...rest}
     />
   );

@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, H2, Text, Button, Stack, Box, EditableText, Span } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { History, GitBranch, User, Calendar, FileText, CheckCircle, XCircle } from 'lucide-react';
-
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 interface ContentVersion {
   id: string;
   pageType: string;
@@ -20,6 +19,7 @@ interface ContentVersion {
 }
 
 export default function VersionControlPage() {
+  const { cmsData } = useCMSData();
   const [versions, setVersions] = useState<ContentVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<ContentVersion | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,34 +118,24 @@ export default function VersionControlPage() {
 
   if (loading) {
     return (
-      <AdminPageWrapper
-        title="Version Control"
-        subtitle="Loading version history..."
-      >
+      
         <Container>
           <Text>
-            <EditableText field="admin.versionControl.loading" defaultValue="Loading...">
-              Loading...
-            </EditableText>
+            {getCMSField(cmsData, 'admin.versionControl.loading', 'Loading...')}
           </Text>
         </Container>
-      </AdminPageWrapper>
+      
     );
   }
 
   return (
-    <AdminPageWrapper
-      title="Version Control"
-      subtitle="Track and manage content changes"
-    >
+    <>
       <Container>
         <Stack direction="vertical" spacing="lg">
           {/* Header Actions */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.versionControl.actions" defaultValue="Version Control">
-                Version Control
-              </EditableText>
+              {getCMSField(cmsData, 'admin.versionControl.actions', 'Version Control')}
             </H2>
             <Stack direction="horizontal" spacing="sm">
               <Button
@@ -154,9 +144,7 @@ export default function VersionControlPage() {
               >
                 <History size={16} />
                 <Span>
-                  <EditableText field="admin.versionControl.refresh" defaultValue="Refresh">
-                    Refresh
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.refresh', 'Refresh')}
                 </Span>
               </Button>
             </Stack>
@@ -165,15 +153,11 @@ export default function VersionControlPage() {
           {/* Version List */}
           <Box variant="elevated" padding="md">
             <H2>
-              <EditableText field="admin.versionControl.history" defaultValue="Version History">
-                Version History
-              </EditableText>
+              {getCMSField(cmsData, 'admin.versionControl.history', 'Version History')}
             </H2>
             {versions.length === 0 ? (
               <Text variant="muted" size="sm">
-                <EditableText field="admin.versionControl.noVersions" defaultValue="No versions available">
-                  No versions available
-                </EditableText>
+                {getCMSField(cmsData, 'admin.versionControl.noVersions', 'No versions available')}
               </Text>
             ) : (
               <Stack direction="vertical" spacing="sm">
@@ -220,9 +204,7 @@ export default function VersionControlPage() {
                         >
                           <FileText size={14} />
                           <Span>
-                            <EditableText field="admin.versionControl.view" defaultValue="View">
-                              View
-                            </EditableText>
+                            {getCMSField(cmsData, 'admin.versionControl.view', 'View')}
                           </Span>
                         </Button>
                         {!version.approved && (
@@ -234,9 +216,7 @@ export default function VersionControlPage() {
                             >
                               <CheckCircle size={14} />
                               <Span>
-                                <EditableText field="admin.versionControl.approve" defaultValue="Approve">
-                                  Approve
-                                </EditableText>
+                                {getCMSField(cmsData, 'admin.versionControl.approve', 'Approve')}
                               </Span>
                             </Button>
                             <Button
@@ -246,9 +226,7 @@ export default function VersionControlPage() {
                             >
                               <XCircle size={14} />
                               <Span>
-                                <EditableText field="admin.versionControl.reject" defaultValue="Reject">
-                                  Reject
-                                </EditableText>
+                                {getCMSField(cmsData, 'admin.versionControl.reject', 'Reject')}
                               </Span>
                             </Button>
                           </>
@@ -260,9 +238,7 @@ export default function VersionControlPage() {
                         >
                           <History size={14} />
                           <Span>
-                            <EditableText field="admin.versionControl.revert" defaultValue="Revert">
-                              Revert
-                            </EditableText>
+                            {getCMSField(cmsData, 'admin.versionControl.revert', 'Revert')}
                           </Span>
                         </Button>
                       </Stack>
@@ -277,52 +253,36 @@ export default function VersionControlPage() {
           {selectedVersion && (
             <Box variant="elevated" padding="md">
               <H2>
-                <EditableText field="admin.versionControl.details" defaultValue="Version Details">
-                  Version Details
-                </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.details', 'Version Details')}
               </H2>
               <Stack direction="vertical" spacing="sm">
                 <Text size="sm">
-                  <EditableText field="admin.versionControl.pageType" defaultValue="Page Type:">
-                    Page Type:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.pageType', 'Page Type:')}
                   <Span variant="default"> {selectedVersion.pageType}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.versionControl.field" defaultValue="Field:">
-                    Field:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.field', 'Field:')}
                   <Span variant="default"> {selectedVersion.field}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.versionControl.oldValue" defaultValue="Old Value:">
-                    Old Value:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.oldValue', 'Old Value:')}
                   <Span variant="default"> {formatValue(selectedVersion.oldValue)}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.versionControl.newValue" defaultValue="New Value:">
-                    New Value:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.newValue', 'New Value:')}
                   <Span variant="default"> {formatValue(selectedVersion.newValue)}</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.versionControl.author" defaultValue="Author:">
-                    Author:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.author', 'Author:')}
                   <Span variant="default"> {selectedVersion.author} ({selectedVersion.authorEmail})</Span>
                 </Text>
                 <Text size="sm">
-                  <EditableText field="admin.versionControl.timestamp" defaultValue="Timestamp:">
-                    Timestamp:
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.timestamp', 'Timestamp:')}
                   <Span variant="default"> {new Date(selectedVersion.timestamp).toLocaleString()}</Span>
                 </Text>
                 {selectedVersion.comment && (
                   <Text size="sm">
-                    <EditableText field="admin.versionControl.comment" defaultValue="Comment:">
-                      Comment:
-                    </EditableText>
+                    {getCMSField(cmsData, 'admin.versionControl.comment', 'Comment:')}
                     <Span variant="default"> {selectedVersion.comment}</Span>
                   </Text>
                 )}
@@ -331,9 +291,7 @@ export default function VersionControlPage() {
                   variant="outline"
                   size="sm"
                 >
-                  <EditableText field="admin.versionControl.close" defaultValue="Close">
-                    Close
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.versionControl.close', 'Close')}
                 </Button>
               </Stack>
             </Box>
@@ -342,14 +300,12 @@ export default function VersionControlPage() {
           {/* Status */}
           <Box variant="elevated" padding="sm">
             <Text size="sm" variant="muted">
-              <EditableText field="admin.versionControl.status" defaultValue="Last updated:">
-                Last updated:
-              </EditableText>
+              {getCMSField(cmsData, 'admin.versionControl.status', 'Last updated:')}
               <Span> {new Date().toLocaleString()}</Span>
             </Text>
           </Box>
         </Stack>
       </Container>
-    </AdminPageWrapper>
+    </>
   );
 } 

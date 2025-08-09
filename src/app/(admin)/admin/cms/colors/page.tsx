@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Span, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage, EditableText, EditableHeading } from '@/ui';
+import { Container, Span, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { getCMSConfig } from '@/lib/services/cms-service';
-import { AdminPageWrapper } from '@/components/app';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
@@ -29,6 +29,7 @@ const setCSSVar = (key: string, value: string) => {
 
 function AdminColorsPageContent() {
   const { addToast } = useToast();
+  const { cmsData } = useCMSData();
   const [colors, setColors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,10 +80,7 @@ function AdminColorsPageContent() {
   };
 
   return (
-    <AdminPageWrapper
-      title="Color Scheme"
-      subtitle="Customize your admin and site colors"
-    >
+    <>
       {/* Error Message */}
       {error && (
         <StatusMessage 
@@ -109,15 +107,11 @@ function AdminColorsPageContent() {
                       ●
                     </Span>
                     <Span>
-                      <EditableText field={`admin.cms.colors.${key.replace('--', '')}`} defaultValue={label}>
-                        {label}
-                      </EditableText>
+                      {getCMSField(cmsData, `admin.cms.colors.${key.replace('--', '')}`, label)}
                     </Span>
                   </Stack>
                   
-                  <EditableText field="admin.cms.colors.description" defaultValue={description}>
-                    {description}
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.cms.colors.description', description)}
                   
                   <Stack direction="horizontal" spacing="sm">
                     <Input
@@ -146,13 +140,11 @@ function AdminColorsPageContent() {
               data-background={colors['--background'] || 'var(--background-primary)'}
               data-foreground={colors['--foreground'] || 'var(--text-primary)'}
             >
-              <EditableHeading field="admin.cms.colors.primaryExample" defaultValue="Primary Color Example">
-                Primary Color Example
-              </EditableHeading>
+              <Span weight="bold">
+                {getCMSField(cmsData, 'admin.cms.colors.primaryExample', 'Primary Color Example')}
+              </Span>
               
-              <EditableText field="admin.cms.colors.previewDescription" defaultValue="This is a preview of your current color scheme. The colors you choose will be applied throughout your application.">
-                This is a preview of your current color scheme. The colors you choose will be applied throughout your application.
-              </EditableText>
+              {getCMSField(cmsData, 'admin.cms.colors.previewDescription', 'This is a preview of your current color scheme. The colors you choose will be applied throughout your application.')}
               
               <Stack direction="horizontal" spacing="sm">
                 <Button
@@ -178,7 +170,7 @@ function AdminColorsPageContent() {
           </Container>
         </Container>
       </GridSection>
-    </AdminPageWrapper>
+    </>
   );
 }
 

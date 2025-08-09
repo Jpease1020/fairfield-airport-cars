@@ -37,7 +37,6 @@ export interface ComponentConfig {
   id: string;
   type: string; // 'Button', 'Box', 'Text', etc.
   props: Record<string, any>;
-  content?: EditableContent[];
   position: {
     row: number;
     col: number;
@@ -45,14 +44,6 @@ export interface ComponentConfig {
   };
 }
 
-export interface EditableContent {
-  id: string;
-  type: 'text' | 'heading' | 'image' | 'button';
-  content: string;
-  databaseKey: string; // Links to CMS
-  editable: boolean;
-  validation?: ValidationRules;
-}
 
 export interface ValidationRules {
   required?: boolean;

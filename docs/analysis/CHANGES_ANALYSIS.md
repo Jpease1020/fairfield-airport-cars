@@ -130,9 +130,8 @@
 
 ##### **Component Updates**
 - **Deleted**: `src/design/components/base-components/notifications/Toast.tsx`
-- **Modified**: `src/design/components/base-components/text/EditableHeading.tsx`
 - **Modified**: `src/design/components/base-components/text/SmartHeading.tsx`
-- **Modified**: `src/design/components/base-components/text/SmartTextMultiline.tsx`
+
 - **Modified**: `src/design/components/business-components/BalancePaymentButton.tsx`
 - **Modified**: `src/design/components/business-components/DriverProfile.tsx`
 - **Modified**: `src/design/components/business-components/DriverProfileCard.tsx`
@@ -164,7 +163,6 @@
 - **Deleted**: `src/design/layout/framing/Stack.tsx`
 
 ##### **Page Sections Updates**
-- **Modified**: `src/design/page-sections/AdminPageWrapper.tsx`
 - **Modified**: `src/design/page-sections/Footer.tsx`
 - **Modified**: `src/design/page-sections/PageHeader.tsx`
 - **Modified**: `src/design/page-sections/nav/AdminNavigation.tsx`
@@ -246,7 +244,6 @@
 - **Focus**:
   - Move RouteBasedLayout to app-specific location
   - Remove business logic providers from design library
-  - Make SmartText component framework-agnostic
   - Consolidate CMS providers
   - Fix import paths and architecture violations
 

@@ -6,9 +6,10 @@ import { Container } from '../layout/containers/Container';
 import { Box } from '../layout/content/Box';
 import { Stack } from '../layout/framing/Stack';
 import { Text } from '../components/base-components/text/Text';
-import { EditableText } from '../components/base-components/text/EditableText';
+import { useCMSData, getCMSField } from '../providers/CMSDesignProvider';
 
 export const Footer: React.FC = () => {
+  const { cmsData } = useCMSData();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
@@ -31,36 +32,19 @@ export const Footer: React.FC = () => {
         >
           {/* Company Info */}
           <Stack spacing="sm" align="center">
-            <EditableText 
-              field="footer.companyName"
-              variant="lead" 
-              weight="semibold" 
-              color="primary"
-            >
-              Fairfield Airport Cars
-            </EditableText>
-            <EditableText 
-              field="footer.tagline"
-              size="sm" 
-              color="secondary"
-            >
-              Professional airport transportation services
-            </EditableText>
+            <Text variant="lead" weight="semibold" color="primary">
+              {getCMSField(cmsData, 'footer.companyName', 'Fairfield Airport Cars')}
+            </Text>
+            <Text size="sm" color="secondary">
+              {getCMSField(cmsData, 'footer.tagline', 'Professional airport transportation services')}
+            </Text>
             <Stack spacing="xs" align="center">
-              <EditableText 
-                field="footer.phone"
-                size="sm" 
-                color="secondary"
-              >
-                📞 (203) 555-0123
-              </EditableText>
-              <EditableText 
-                field="footer.email"
-                size="sm" 
-                color="secondary"
-              >
-                ✉️ info@fairfieldairportcars.com
-              </EditableText>
+              <Text size="sm" color="secondary">
+                {getCMSField(cmsData, 'footer.phone', '📞 (203) 555-0123')}
+              </Text>
+              <Text size="sm" color="secondary">
+                {getCMSField(cmsData, 'footer.email', '✉️ info@fairfieldairportcars.com')}
+              </Text>
             </Stack>
           </Stack>
 

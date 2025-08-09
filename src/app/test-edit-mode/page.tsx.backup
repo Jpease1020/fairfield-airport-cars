@@ -1,0 +1,61 @@
+'use client';
+
+import React from 'react';
+import { Container, H2, Text, Button } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+
+export default function TestEditModePage() {
+  const { cmsData, loading, error } = useCMSData();
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('[TestEditMode] CMS Data:', cmsData);
+    console.log('[TestEditMode] Loading:', loading);
+    console.log('[TestEditMode] Error:', error);
+    
+    if (cmsData) {
+      console.log('[TestEditMode] Pages:', cmsData.pages);
+      console.log('[TestEditMode] Test page data:', cmsData.pages?.['test-edit-mode']);
+    }
+  }, [cmsData, loading, error]);
+
+  if (loading) {
+    return (
+      <Container variant="elevated" padding="lg">
+        <H2>Loading CMS data...</H2>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container variant="elevated" padding="lg">
+        <H2>Error loading CMS data: {error}</H2>
+      </Container>
+    );
+  }
+
+  return (
+    <Container variant="elevated" padding="lg">
+      <H2>{getCMSField(cmsData, 'pages.test-edit-mode.title', 'Test Edit Mode Page')}</H2>
+      <Text>
+        {getCMSField(cmsData, 'pages.test-edit-mode.description', 'This page has editable content. Try clicking the edit button (top-right) to open the editor.')}
+      </Text>
+      <Text>
+        Company Name: {getCMSField(cmsData, 'business.company.name', 'Not found')}
+      </Text>
+      <Text>
+        Home Title: {getCMSField(cmsData, 'pages.home.title', 'Not found')}
+      </Text>
+      <Text>
+        {getCMSField(cmsData, 'pages.test-edit-mode.customText', 'This text should be editable in the CMS editor.')}
+      </Text>
+      <Text>
+        {getCMSField(cmsData, 'pages.test-edit-mode.instructions', 'Click the edit button to modify the content above. You can edit the title, description, custom text, and instructions.')}
+      </Text>
+      <Button onClick={() => window.location.reload()}>
+        {getCMSField(cmsData, 'pages.test-edit-mode.reloadButton', 'Reload Page')}
+      </Button>
+    </Container>
+  );
+}

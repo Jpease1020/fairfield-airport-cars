@@ -17,15 +17,15 @@ import {
   Span,
   Text,
   Stack,
-  EditableText,
   Button,
   Badge,
   LoadingSpinner,
   Alert
 } from '@/ui';
-import { AdminPageWrapper } from '@/components/app';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 function CostsPageContent() {
+  const { cmsData } = useCMSData();
   const { addToast } = useToast();
   const [costs, setCosts] = useState<RealCostItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,9 +156,7 @@ function CostsPageContent() {
       sortable: true,
       render: (_, cost) => (
         <Container>
-          <EditableText field="admin.costs.category" defaultValue={cost.category}>
-            {cost.category}
-          </EditableText>
+          {getCMSField(cmsData, 'admin.costs.category', cost.category)}
         </Container>
       )
     },
@@ -167,9 +165,9 @@ function CostsPageContent() {
       label: 'Projected',
       sortable: true,
       render: (value) => (
-        <EditableText field="admin.costs.projectedCost" defaultValue={`$${(value || 0).toFixed(2)}`}>
-          ${(value || 0).toFixed(2)}
-        </EditableText>
+        <Container>
+          {getCMSField(cmsData, 'admin.costs.projectedCost', `$${(value || 0).toFixed(2)}`)}
+        </Container>
       )
     },
     {
@@ -177,9 +175,9 @@ function CostsPageContent() {
       label: 'Actual',
       sortable: true,
       render: (value) => (
-        <EditableText field="admin.costs.actualCost" defaultValue={`$${(value || 0).toFixed(2)}`}>
-          ${(value || 0).toFixed(2)}
-        </EditableText>
+        <Container>
+          {getCMSField(cmsData, 'admin.costs.actualCost', `$${(value || 0).toFixed(2)}`)}
+        </Container>
       )
     },
     {
@@ -260,10 +258,7 @@ function CostsPageContent() {
   const apiConnectedProviders = serviceProviders.filter(p => p.enabled).length;
 
   return (
-    <AdminPageWrapper
-      title="Cost Tracking"
-      subtitle="Monitor and manage your business costs and expenses"
-    >
+    <>
       {/* Stats Overview */}
       <GridSection variant="stats" columns={4}>
         <Box variant="elevated" padding="lg">
@@ -276,9 +271,7 @@ function CostsPageContent() {
                 : 'No projection'
               }
             </Text>
-            <EditableText field="admin.costs.totalMonthlyCost" defaultValue="Total monthly cost tracking">
-              Total monthly cost tracking
-            </EditableText>
+            {getCMSField(cmsData, 'admin.costs.totalMonthlyCost', 'Total monthly cost tracking')}
           </Stack>
         </Box>
         
@@ -287,9 +280,7 @@ function CostsPageContent() {
             <Text variant="lead" size="md" weight="semibold">Projected Monthly</Text>
             <Text size="xl" weight="bold">{summary ? formatCurrency(summary.totalProjectedCost) : '$0'}</Text>
             <Text variant="muted" size="sm">{costs.length} cost categories</Text>
-            <EditableText field="admin.costs.projectedMonthly" defaultValue="Projected monthly costs">
-              Projected monthly costs
-            </EditableText>
+            {getCMSField(cmsData, 'admin.costs.projectedMonthly', 'Projected monthly costs')}
           </Stack>
         </Box>
         
@@ -298,9 +289,7 @@ function CostsPageContent() {
             <Text variant="lead" size="md" weight="semibold">Over Budget Items</Text>
             <Text size="xl" weight="bold">{overBudgetItems.toString()}</Text>
             <Text variant="muted" size="sm">{pendingItems} pending updates</Text>
-            <EditableText field="admin.costs.overBudgetItems" defaultValue="Items over budget">
-              Items over budget
-            </EditableText>
+            {getCMSField(cmsData, 'admin.costs.overBudgetItems', 'Items over budget')}
           </Stack>
         </Box>
         
@@ -309,9 +298,7 @@ function CostsPageContent() {
             <Text variant="lead" size="md" weight="semibold">API Connected</Text>
             <Text size="xl" weight="bold">{apiConnectedProviders.toString()}</Text>
             <Text variant="muted" size="sm">Service providers</Text>
-            <EditableText field="admin.costs.apiConnected" defaultValue="Connected service providers">
-              Connected service providers
-            </EditableText>
+            {getCMSField(cmsData, 'admin.costs.apiConnected', 'Connected service providers')}
           </Stack>
         </Box>
       </GridSection>
@@ -418,7 +405,7 @@ function CostsPageContent() {
           </Stack>
         </Box>
       </GridSection>
-    </AdminPageWrapper>
+    </>
   );
 }
 

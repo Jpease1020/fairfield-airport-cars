@@ -38,7 +38,8 @@
     "test:user:cleanup": "node scripts/setup-test-user.js cleanup",
     "test:e2e:with-auth": "npm run test:user:setup && npm run test:e2e:pages && npm run test:user:cleanup",
     "test:e2e:auth": "playwright test --config config/playwright.config.ts tests/e2e/authenticated-page-test.spec.ts",
-    "test:e2e:simple-auth": "playwright test --config config/playwright.config.ts tests/e2e/simple-auth-test.spec.ts"
+    "test:e2e:simple-auth": "playwright test --config config/playwright.config.ts tests/e2e/simple-auth-test.spec.ts",
+    "perf:optimize": "./scripts/performance-optimize.sh"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",

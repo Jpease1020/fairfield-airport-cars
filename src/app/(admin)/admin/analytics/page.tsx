@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, H2, Text, Span } from '@/ui';
-import { EditableText } from '@/ui';
-import { EditableHeading } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { Box } from '@/ui';
@@ -22,6 +21,7 @@ export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const { cmsData } = useCMSData();
 
   useEffect(() => {
     fetchAnalytics();
@@ -67,9 +67,7 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <Container>
-        <EditableText field="admin.analytics.loading" defaultValue="🔄 Loading analytics...">
-          🔄 Loading analytics...
-        </EditableText>
+        {getCMSField(cmsData, 'admin.analytics.loading', '🔄 Loading analytics...')}
       </Container>
     );
   }
@@ -77,25 +75,17 @@ export default function AnalyticsPage() {
   return (
     <Container>
       <Stack direction="vertical" spacing="md">
-        <EditableHeading field="admin.analytics.title" defaultValue="Analytics Dashboard">
-          Analytics Dashboard
-        </EditableHeading>
-        <EditableText field="admin.analytics.userInteractions.description" defaultValue="User interactions, errors, and performance metrics">
-          User interactions, errors, and performance metrics
-        </EditableText>
+        <Text weight="bold">{getCMSField(cmsData, 'admin.analytics.title', 'Analytics Dashboard')}</Text>
+        <Text>{getCMSField(cmsData, 'admin.analytics.userInteractions.description', 'User interactions, errors, and performance metrics')}</Text>
         <Button onClick={fetchAnalytics} variant="outline" size="sm">
           <Span>🔄</Span>
-          <EditableText field="admin.analytics.refreshButton" defaultValue="Refresh">
-            Refresh
-          </EditableText>
+          {getCMSField(cmsData, 'admin.analytics.refreshButton', 'Refresh')}
         </Button>
       </Stack>
       
       {lastUpdated && (
         <Container>
-          <EditableText field="admin.analytics.lastUpdated" defaultValue={`Last updated: ${lastUpdated.toLocaleString()}`}>
-            Last updated: {lastUpdated.toLocaleString()}
-          </EditableText>
+          {getCMSField(cmsData, 'admin.analytics.lastUpdated', `Last updated: ${lastUpdated.toLocaleString()}`)}
         </Container>
       )}
 
@@ -103,12 +93,8 @@ export default function AnalyticsPage() {
         {!analytics ? (
           <Stack direction="vertical" spacing="md" align="center">
             <Span>⚠️</Span>
-            <EditableHeading field="admin.analytics.noData.title" defaultValue="No Analytics Data">
-              No Analytics Data
-            </EditableHeading>
-            <EditableText field="admin.analytics.noData.message" defaultValue="Analytics data will appear here once users start interacting with the app.">
-              Analytics data will appear here once users start interacting with the app.
-            </EditableText>
+            <Text weight="bold">{getCMSField(cmsData, 'admin.analytics.noData.title', 'No Analytics Data')}</Text>
+            <Text>{getCMSField(cmsData, 'admin.analytics.noData.message', 'Analytics data will appear here once users start interacting with the app.')}</Text>
           </Stack>
         ) : (
           <Container>
@@ -156,9 +142,7 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>🖱️</Span>
-                  <EditableText field="admin.analytics.topInteractionTypes" defaultValue="Top Interaction Types">
-                    Top Interaction Types
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.analytics.topInteractionTypes', 'Top Interaction Types')}
                 </H2>
                 <Container>
                   {getTopInteractions().map(([type, count]) => (
@@ -178,9 +162,7 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>⚠️</Span>
-                  <EditableText field="admin.analytics.topErrorTypes" defaultValue="Top Error Types">
-                    Top Error Types
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.analytics.topErrorTypes', 'Top Error Types')}
                 </H2>
                 <Container>
                   {getTopErrors().map(([type, count]) => (
@@ -198,9 +180,7 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>📝</Span>
-                  <EditableText field="admin.analytics.mostInteractedElements" defaultValue="Most Interacted Elements">
-                    Most Interacted Elements
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.analytics.mostInteractedElements', 'Most Interacted Elements')}
                 </H2>
                 <Container>
                   {getTopElements().map(([element, count]) => (
@@ -218,9 +198,7 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>⏰</Span>
-                  <EditableText field="admin.analytics.recentActivity" defaultValue="Recent Activity">
-                    Recent Activity
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.analytics.recentActivity', 'Recent Activity')}
                 </H2>
                 <Container>
                   {analytics.recentInteractions.slice(0, 5).map((interaction, index) => (
@@ -240,9 +218,7 @@ export default function AnalyticsPage() {
               <Container>
                 <H2>
                   <Span>⚠️</Span>
-                  <EditableText field="admin.analytics.recentErrors" defaultValue="Recent Errors">
-                    Recent Errors
-                  </EditableText>
+                  {getCMSField(cmsData, 'admin.analytics.recentErrors', 'Recent Errors')}
                 </H2>
                 <Container>
                   {analytics.recentErrors.slice(0, 10).map((error, index) => (
@@ -252,9 +228,7 @@ export default function AnalyticsPage() {
                         <Span>{new Date(error.timestamp).toLocaleString()}</Span>
                       </Stack>
                       <Text>
-                        <EditableText field="admin.analytics.errorDetails" defaultValue={`Type: ${error.type} • Page: ${error.page}`}>
-                          Type: {error.type} • Page: {error.page}
-                        </EditableText>
+                        {getCMSField(cmsData, 'admin.analytics.errorDetails', `Type: ${error.type} • Page: ${error.page}`)}
                       </Text>
                     </Container>
                   ))}
