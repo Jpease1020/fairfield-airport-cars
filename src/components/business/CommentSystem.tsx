@@ -7,8 +7,9 @@ import { Container, H4, Span } from '@/ui';
 import { Stack, Text } from '@/ui';
 import { Button } from '@/ui';
 import { Textarea } from '@/ui';
-import { confluenceCommentsService, type ConfluenceComment } from '@/lib/business/confluence-comments';
+import { commentsService, type CommentRecord, type CommentScope } from '@/lib/business/comments-service';
 import { useAuth } from '@/hooks/useAuth';
+import { useEditMode } from '@/design/providers/EditModeProvider';
 // import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 
 interface CommentSystemProps {
@@ -25,10 +26,11 @@ interface LocalComment {
 const CommentSystem = ({ children }: CommentSystemProps) => {
   const { isAdmin } = useAdminStatus();
   const { user } = useAuth();
-  const [commentMode, setCommentMode] = useState(false);
+  const { commentMode } = (useEditMode() as any) || { commentMode: false };
   const [comments, setComments] = useState<LocalComment[]>([]);
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
+  const [scope, setScope] = useState<CommentScope>('page');
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   // const { cmsData } = useCMSData();
 
@@ -83,7 +85,7 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
     const load = async () => {
       try {
         const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
-        const existing = await confluenceCommentsService.getComments({ pageUrl });
+        const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
         const mapped: LocalComment[] = existing.map((c) => ({
           id: c.id,
           elementText: c.elementText,
@@ -140,7 +142,7 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
     const createdBy = user?.email || user?.uid || 'anonymous';
 
     try {
-      const newId = await confluenceCommentsService.addComment({
+      const newId = await commentsService.addComment({
         elementId,
         elementText,
         elementSelector,
@@ -149,7 +151,8 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
         comment: commentText.trim(),
         status: 'open',
         createdBy,
-      } as Omit<ConfluenceComment, 'id' | 'createdAt' | 'updatedAt'>);
+        scope,
+      } as Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>);
 
       const newComment: LocalComment = {
         id: newId,
@@ -176,12 +179,14 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
 
   const handleDeleteComment = useCallback(async (commentId: string) => {
     try {
-      await confluenceCommentsService.deleteComment(commentId);
+      await commentsService.deleteComment(commentId);
     } catch {
       // ignore errors; we'll still prune locally
     }
     setComments((prev) => prev.filter((c) => c.id !== commentId));
   }, []);
+
+  // Inline controls minimal: checkbox for app-wide scope when adding
 
   // Don't render if not admin
   if (!isAdmin) {
@@ -192,15 +197,7 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
     <>
       {children}
       
-      {/* Simple Comment Mode Toggle Button */}
-      <Container variant="elevated" padding="md">
-        <Button
-          onClick={() => setCommentMode(!commentMode)}
-          variant={commentMode ? 'primary' : 'secondary'}
-        >
-          {commentMode ? '✓' : '○'} Comments
-        </Button>
-      </Container>
+      {/* Comment mode is controlled by FloatingEditButton via EditModeProvider */}
 
       {/* Comment Box */}
       {activeCommentBox && (
@@ -219,6 +216,16 @@ const CommentSystem = ({ children }: CommentSystemProps) => {
               placeholder="Enter your comment..."
               rows={4}
             />
+            <Container variant="elevated" padding="sm">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={scope === 'app'}
+                  onChange={(e) => setScope(e.target.checked ? 'app' : 'page')}
+                />
+                &nbsp;App-wide comment
+              </label>
+            </Container>
             <Container variant="elevated" padding="sm">
               <Button onClick={() => setActiveCommentBox(null)} variant="secondary">
                 Close
