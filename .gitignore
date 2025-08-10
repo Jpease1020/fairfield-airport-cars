@@ -52,3 +52,6 @@ src/types/core.ts
 
 # CMS migration temp files
 /temp/
+
+# ESLint automation artifacts
+scripts/eslint-automation/automation-results.json
