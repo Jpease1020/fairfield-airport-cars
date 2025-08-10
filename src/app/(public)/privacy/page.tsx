@@ -1,7 +1,6 @@
 'use client';
 
-import { 
-  GridSection,
+import {
   ToastProvider,
   Text,
   Container,

@@ -1,7 +1,6 @@
 import { pushNotificationService } from './push-notification-service';
 import { getBooking } from './booking-service';
 import { cmsService } from './cms-service';
-import { Booking } from '@/types/booking';
 
 interface BookingNotificationData {
   bookingId: string;

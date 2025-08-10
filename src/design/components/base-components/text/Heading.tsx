@@ -3,7 +3,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
-import { BaseComponentProps, TextVariant, TextSize, FontWeight, TextAlign, ColorVariant } from '../../../system/shared-types';
 
 // Styled heading component
 const StyledHeading = styled.h1.withConfig({

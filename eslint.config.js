@@ -3,6 +3,7 @@ import nextPlugin from '@next/eslint-plugin-next';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import fairfieldCustomRules from './scripts/eslint-rules/fairfield-custom-rules.js';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 
 export default [
@@ -88,6 +89,7 @@ export default [
       '@typescript-eslint': typescriptPlugin,
       '@next/next': nextPlugin,
       'fairfield': fairfieldCustomRules,
+      'unused-imports': unusedImports,
     },
     rules: {
       // TypeScript rules
@@ -104,6 +106,8 @@ export default [
         'caughtErrorsIgnorePattern': '^_',
         'ignoreRestSiblings': true
       }],
+      // Auto-remove unused imports on --fix
+      'unused-imports/no-unused-imports': 'error',
 
       // Import consistency rules
       'no-restricted-imports': [

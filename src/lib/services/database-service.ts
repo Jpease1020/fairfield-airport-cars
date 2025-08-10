@@ -2,7 +2,6 @@ import { db } from '@/lib/utils/firebase';
 import { 
   collection, 
   doc, 
-  getDoc, 
   getDocs, 
   addDoc, 
   updateDoc, 
@@ -10,9 +9,7 @@ import {
   query, 
   where, 
   orderBy, 
-  limit, 
-  serverTimestamp,
-  Timestamp 
+  serverTimestamp 
 } from 'firebase/firestore';
 
 // Helper function to safely convert Firestore dates to JavaScript Date objects

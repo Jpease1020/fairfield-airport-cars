@@ -1,4 +1,3 @@
-import { listBookings } from './booking-service';
 
 interface UserPreferences {
   accessibility: {

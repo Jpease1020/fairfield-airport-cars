@@ -15,8 +15,7 @@ import {
   Badge,
   Box,
   H1,
-  ContentCard,
-  Grid
+  ContentCard
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 import { BalanceSummary } from '@/components/business/BalanceTracker';

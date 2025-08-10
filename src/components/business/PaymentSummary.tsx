@@ -6,7 +6,6 @@ import { Text } from '@/design/components/base-components/text/Text';
 import { Stack } from '@/design/layout/framing/Stack';
 import { Card } from '@/design/layout/content/Card';
 import { Badge } from '@/design/components/base-components/Badge';
-import { Button } from '@/design/components/base-components/Button';
 
 interface PaymentSummaryProps {
   baseFare: number;
