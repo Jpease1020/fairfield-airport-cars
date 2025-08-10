@@ -3,6 +3,7 @@
 import { ESLint } from 'eslint';
 import { Octokit } from 'octokit';
 import chalk from 'chalk';
+import { execSync } from 'node:child_process';
 
 // Simple configuration - no complex config files needed
 const CONFIG = {
@@ -92,6 +93,20 @@ async function runESLintAutomation({ owner, repo, isDryRun, maxRetries }) {
     batchesProcessed: processedBatches.length,
     totalBatches: batches.length
   };
+}
+
+function runCommand(command) {
+  return execSync(command, { stdio: 'pipe' }).toString().trim();
+}
+
+function ensureGitIdentityConfigured() {
+  try {
+    runCommand('git config user.name');
+    runCommand('git config user.email');
+  } catch {
+    runCommand('git config user.name "github-actions[bot]"');
+    runCommand('git config user.email "41898282+github-actions[bot]@users.noreply.github.com"');
+  }
 }
 
 async function analyzeCodebase() {
@@ -213,27 +228,48 @@ function createBatches(issues) {
 async function processBatch(batch, { owner, repo, maxRetries }) {
   const branchName = `${CONFIG.branchPrefix}batch-${batch.number}`;
   const prTitle = `🔧 ESLint Fixes - Batch ${batch.number} (${batch.issues.length} issues, ${batch.files.length} files)`;
-  
+
   try {
+    ensureGitIdentityConfigured();
+
+    // Start from base branch and create working branch
+    try {
+      runCommand(`git checkout ${CONFIG.baseBranch}`);
+    } catch {}
+    try {
+      runCommand(`git checkout -b ${branchName}`);
+    } catch {
+      // Branch may already exist locally; switch to it
+      runCommand(`git checkout ${branchName}`);
+    }
+
+    // Run ESLint with auto-fix on the files in this batch
+    const filesToFix = Array.from(batch.files);
+    const eslintFixer = new ESLint({ overrideConfigFile: 'eslint.config.js', fix: true, ignore: true });
+    const fixResults = await eslintFixer.lintFiles(filesToFix);
+    await ESLint.outputFixes(fixResults);
+
+    // Check for changes
+    const status = runCommand('git status --porcelain');
+    if (!status) {
+      console.log(chalk.yellow('ℹ️ No fixable changes produced for this batch; skipping PR'));
+      // Cleanup branch if created
+      try { runCommand(`git checkout ${CONFIG.baseBranch}`); } catch {}
+      try { runCommand(`git branch -D ${branchName}`); } catch {}
+      return false;
+    }
+
+    // Stage only affected files
+    for (const filePath of filesToFix) {
+      try { runCommand(`git add "${filePath}"`); } catch {}
+    }
+
+    // Commit and push
+    runCommand(`git commit -m "${prTitle.replace(/"/g, '\\"')}"`);
+    runCommand(`git push -u origin ${branchName}`);
+
+    // Create PR via GitHub API
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-    
-    // Create branch
-    const { data: ref } = await octokit.rest.git.getRef({
-      owner,
-      repo,
-      ref: `heads/${CONFIG.baseBranch}`
-    });
-
-    await octokit.rest.git.createRef({
-      owner,
-      repo,
-      ref: `refs/heads/${branchName}`,
-      sha: ref.object.sha
-    });
-
-    console.log(chalk.green(`✅ Created branch: ${branchName}`));
-
-    // Create PR
     const { data: pr } = await octokit.rest.pulls.create({
       owner,
       repo,
