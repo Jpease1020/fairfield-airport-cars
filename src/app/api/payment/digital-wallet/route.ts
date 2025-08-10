@@ -4,9 +4,9 @@ import { updateBooking } from '@/lib/services/booking-service';
 
 export async function POST(request: NextRequest) {
   try {
-    const { bookingId, amount, paymentMethod, paymentDetails } = await request.json();
+    const { bookingId, amount, sourceId } = await request.json();
 
-    if (!bookingId || !amount || !paymentMethod || !paymentDetails) {
+    if (!bookingId || !amount || !sourceId) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
         { status: 400 }
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Process payment with Square
     const paymentResult = await createPayment({
-      sourceId: paymentDetails.token || paymentDetails.paymentData,
+      sourceId,
       amountMoney: {
         amount: Math.round(amount * 100), // Convert to cents
         currency: 'USD',
