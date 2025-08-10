@@ -329,6 +329,7 @@ ${batch.files.map(f => `- \`${f.split('/').slice(-2).join('/')}\``).join('\n')}
 
 async function saveResults(results) {
   const fs = await import('fs/promises');
+  const path = await import('node:path');
   const resultsData = {
     success: results.success,
     batchesProcessed: results.batchesProcessed,
@@ -336,8 +337,13 @@ async function saveResults(results) {
     timestamp: new Date().toISOString()
   };
 
+  const dir = 'scripts/eslint-automation';
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch {}
+
   await fs.writeFile(
-    'scripts/eslint-automation/automation-results.json',
+    path.join(dir, 'automation-results.json'),
     JSON.stringify(resultsData, null, 2)
   );
 }
