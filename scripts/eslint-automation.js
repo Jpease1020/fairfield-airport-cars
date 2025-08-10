@@ -245,14 +245,26 @@ async function processBatch(batch, { owner, repo, maxRetries }) {
 
     // Run ESLint with auto-fix on the files in this batch
     const filesToFix = Array.from(batch.files);
-    const eslintFixer = new ESLint({ overrideConfigFile: 'eslint.config.js', fix: true, ignore: true });
+    const eslintFixer = new ESLint({
+      overrideConfigFile: 'eslint.config.js',
+      fix: true,
+      // Try all fix categories to maximize automatic changes
+      fixTypes: ['problem', 'suggestion', 'layout'],
+      ignore: true
+    });
     const fixResults = await eslintFixer.lintFiles(filesToFix);
     await ESLint.outputFixes(fixResults);
 
     // Check for changes
     const status = runCommand('git status --porcelain');
     if (!status) {
-      console.log(chalk.yellow('ℹ️ No fixable changes produced for this batch; skipping PR'));
+      // Log a brief breakdown of fixable counts to help diagnose
+      const fixableCounts = fixResults.reduce((acc, r) => {
+        const changed = (r.output && r.output !== '') ? 1 : 0;
+        acc.changed += changed;
+        return acc;
+      }, { changed: 0 });
+      console.log(chalk.yellow(`ℹ️ No fixable changes produced for this batch (files changed by ESLint: ${fixableCounts.changed}); skipping PR`));
       // Cleanup branch if created
       try { runCommand(`git checkout ${CONFIG.baseBranch}`); } catch {}
       try { runCommand(`git branch -D ${branchName}`); } catch {}
