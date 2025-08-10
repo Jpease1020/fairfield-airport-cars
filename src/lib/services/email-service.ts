@@ -69,3 +69,17 @@ export async function sendConfirmationEmail(booking: Booking) {
 
   await transporter.sendMail(mailOptions);
 } 
+
+export async function sendTestEmail(to: string, subject = 'Test Email', text = 'This is a test email from Fairfield Airport Cars.') {
+  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
+    return false;
+  }
+  const mailOptions = {
+    from: EMAIL_FROM,
+    to,
+    subject,
+    text,
+  };
+  await transporter.sendMail(mailOptions);
+  return true;
+}
