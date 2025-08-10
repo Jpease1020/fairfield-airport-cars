@@ -55,7 +55,9 @@ jobs:
         run: |
           if [ -f "scripts/eslint-automation/automation-results.json" ]; then
             echo "has_results=true" >> $GITHUB_OUTPUT
-            echo "results=$(cat scripts/eslint-automation/automation-results.json)" >> $GITHUB_OUTPUT
+            echo "results<<EOF" >> $GITHUB_OUTPUT
+            cat scripts/eslint-automation/automation-results.json >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
           else
             echo "has_results=false" >> $GITHUB_OUTPUT
           fi
@@ -66,13 +68,13 @@ jobs:
         with:
           script: |
             const results = JSON.parse('${{ steps.check-results.outputs.results }}');
-
+            
             if (results.success && results.batchesProcessed > 0) {
               const comment = `🤖 ESLint automation completed successfully!
 
-              **Batches Processed**: ${results.batchesProcessed}/${results.totalBatches}
+**Batches Processed**: ${results.batchesProcessed}/${results.totalBatches}
 
-              New pull requests have been created for ESLint fixes. Check the [ESLint automation](https://github.com/${{ github.repository }}/actions) for details.`;
+New pull requests have been created for ESLint fixes. Check the [ESLint automation](https://github.com/${{ github.repository }}/actions) for details.`;
 
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
