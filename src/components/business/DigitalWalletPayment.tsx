@@ -1,15 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { 
-  Container,
-  Stack,
-  Text,
-  Button,
-  Box,
-  Alert,
-  LoadingSpinner
-} from '@/ui';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Container, Stack, Text, Button, Box, Alert, LoadingSpinner } from '@/ui';
 
 interface DigitalWalletPaymentProps {
   amount: number;
@@ -19,279 +11,115 @@ interface DigitalWalletPaymentProps {
   disabled?: boolean;
 }
 
-interface PaymentRequestData {
-  methodData: PaymentMethodData[];
-  details: PaymentDetailsInit;
-  options?: PaymentOptions;
+type SquarePayments = any;
+
+async function loadSquareSdk(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  if ((window as any).Square) return;
+  await new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://web.squarecdn.com/v1/square.js';
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Square SDK'));
+    document.head.appendChild(script);
+  });
 }
 
-interface PaymentMethodData {
-  supportedMethods: string;
-  data?: any;
-}
-
-interface PaymentDetailsInit {
-  id?: string;
-  total: PaymentItem;
-  displayItems?: PaymentItem[];
-}
-
-interface PaymentItem {
-  label: string;
-  amount: PaymentCurrencyAmount;
-  pending?: boolean;
-}
-
-interface PaymentCurrencyAmount {
-  currency: string;
-  value: string;
-}
-
-interface PaymentOptions {
-  requestPayerName?: boolean;
-  requestPayerEmail?: boolean;
-  requestPayerPhone?: boolean;
-  requestShipping?: boolean;
-  shippingType?: 'shipping' | 'delivery' | 'pickup';
-}
-
-// Type definitions for Payment Request API
-interface PaymentRequest {
-  show(): Promise<PaymentResponse>;
-  abort(): Promise<void>;
-  canMakePayment(): Promise<PaymentRequestCanMakePaymentResult>;
-  hasEnrolledInstrument(): Promise<PaymentRequestHasEnrolledInstrumentResult>;
-}
-
-interface PaymentResponse {
-  methodName: string;
-  details: any;
-  payerName?: string;
-  payerEmail?: string;
-  payerPhone?: string;
-  shippingAddress?: any;
-  shippingOption?: string;
-  complete(result: PaymentComplete): void;
-  retry(errorFields: PaymentValidationErrors): void;
-}
-
-interface PaymentRequestCanMakePaymentResult {
-  canMakePayment: boolean;
-  canMakePaymentWithActiveCard?: boolean;
-  canMakePaymentWithEnrolledInstrument?: boolean;
-  canMakePaymentWithEnrolledInstrumentAndActiveCard?: boolean;
-}
-
-interface PaymentRequestHasEnrolledInstrumentResult {
-  hasEnrolledInstrument: boolean;
-  hasEnrolledInstrumentWithActiveCard?: boolean;
-}
-
-interface PaymentComplete {
-  status: 'success' | 'fail' | 'unknown';
-  methodName?: string;
-}
-
-interface PaymentValidationErrors {
-  error: string;
-  paymentMethod?: any;
-  payer?: any;
-  payerName?: any;
-  payerEmail?: any;
-  payerPhone?: any;
-  shippingAddress?: any;
-  shippingOption?: any;
-}
-
-export function DigitalWalletPayment({
-  amount,
-  bookingId,
-  onPaymentSuccess,
-  onPaymentError,
-  disabled = false
-}: DigitalWalletPaymentProps) {
-  const [isSupported, setIsSupported] = useState(false);
+export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPaymentError, disabled = false }: DigitalWalletPaymentProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest | null>(null);
+  const [appleSupported, setAppleSupported] = useState(false);
+  const [googleSupported, setGoogleSupported] = useState(false);
+  const paymentsRef = useRef<SquarePayments | null>(null);
 
-  // Check if digital wallet payments are supported
-  useEffect(() => {
-    const checkSupport = () => {
-      // Check if Payment Request API is supported
-      if (!window.PaymentRequest) {
-        setIsSupported(false);
+  const initSquare = useCallback(async () => {
+    try {
+      await loadSquareSdk();
+      const appId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID as string;
+      const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID as string;
+      if (!appId || !locationId) {
+        setError('Square is not configured.');
         return;
       }
+      const payments = await (window as any).Square.payments(appId, locationId);
+      paymentsRef.current = payments;
 
-      // Check for Apple Pay support
-      const isApplePaySupported = (window as any).ApplePaySession && (window as any).ApplePaySession.canMakePayments();
-      
-      // Check for Google Pay support
-      const isGooglePaySupported = (window as any).google && (window as any).google.payments;
-      
-      setIsSupported(isApplePaySupported || isGooglePaySupported);
-    };
+      // Apple Pay support
+      try {
+        const applePay = await payments.applePay({ countryCode: 'US', currencyCode: 'USD' });
+        const canApple = await applePay.canMakePayment();
+        setAppleSupported(!!canApple);
+      } catch {
+        setAppleSupported(false);
+      }
 
-    checkSupport();
+      // Google Pay support
+      try {
+        const googlePay = await payments.googlePay({ countryCode: 'US', currencyCode: 'USD' });
+        const canGoogle = await googlePay.canMakePayment();
+        setGoogleSupported(!!canGoogle);
+      } catch {
+        setGoogleSupported(false);
+      }
+    } catch (e) {
+      setError('Failed to initialize Square payments');
+    }
   }, []);
 
-  // Initialize payment request
   useEffect(() => {
-    if (!isSupported || !amount) return;
+    initSquare();
+  }, [initSquare]);
 
-    try {
-      const methodData: PaymentMethodData[] = [
-        {
-          supportedMethods: 'https://apple.com/apple-pay',
-          data: {
-            version: 3,
-            merchantIdentifier: process.env.NEXT_PUBLIC_APPLE_PAY_MERCHANT_ID,
-            merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-            supportedNetworks: ['visa', 'masterCard', 'amex'],
-            countryCode: 'US',
-          },
-        },
-        {
-          supportedMethods: 'https://google.com/pay',
-          data: {
-            environment: 'TEST',
-            apiVersion: 2,
-            apiVersionMinor: 0,
-            allowedPaymentMethods: [
-              {
-                type: 'CARD',
-                parameters: {
-                  allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                  allowedCardNetworks: ['VISA', 'MASTERCARD'],
-                },
-                tokenizationSpecification: {
-                  type: 'PAYMENT_GATEWAY',
-                  parameters: {
-                    gateway: 'square',
-                    gatewayMerchantId: process.env.NEXT_PUBLIC_SQUARE_MERCHANT_ID,
-                  },
-                },
-              },
-            ],
-            merchantInfo: {
-              merchantName: 'Fairfield Airport Cars',
-            },
-            transactionInfo: {
-              totalPriceStatus: 'FINAL',
-              totalPrice: amount.toString(),
-              currencyCode: 'USD',
-              countryCode: 'US',
-            },
-          },
-        },
-      ];
-
-      const details: PaymentDetailsInit = {
-        total: {
-          label: 'Fairfield Airport Cars',
-          amount: {
-            currency: 'USD',
-            value: amount.toString(),
-          },
-        },
-        displayItems: [
-          {
-            label: 'Transportation Service',
-            amount: {
-              currency: 'USD',
-              value: amount.toString(),
-            },
-          },
-        ],
-      };
-
-      const options: PaymentOptions = {
-        requestPayerName: true,
-        requestPayerEmail: true,
-        requestPayerPhone: true,
-      };
-
-      const request = new (window as any).PaymentRequest(methodData, details, options);
-      setPaymentRequest(request);
-    } catch (err) {
-      console.error('Error initializing payment request:', err);
-      setError('Failed to initialize payment');
-    }
-  }, [isSupported, amount]);
-
-  // Handle payment
-  const handlePayment = async () => {
-    if (!paymentRequest || disabled) return;
-
-    try {
+  const tokenizeAndPay = useCallback(
+    async (method: 'apple' | 'google') => {
+      if (!paymentsRef.current || disabled) return;
       setIsLoading(true);
       setError(null);
-
-      // Show payment request
-      const response = await paymentRequest.show();
-      
-      if (response.details) {
-        // Process payment with Square
-        const paymentResult = await processPaymentWithSquare(response, bookingId);
-        
-        if (paymentResult.success) {
-          onPaymentSuccess(paymentResult);
+      try {
+        let token: string | undefined;
+        if (method === 'apple') {
+          const applePay = await paymentsRef.current.applePay({ countryCode: 'US', currencyCode: 'USD' });
+          const result = await applePay.tokenize({ total: { amount: amount.toFixed(2), label: 'Fairfield Airport Cars' } });
+          if (result.status === 'OK') token = result.token;
+          else throw new Error(result.status || 'Apple Pay failed');
         } else {
-          throw new Error(paymentResult.error || 'Payment failed');
+          const googlePay = await paymentsRef.current.googlePay({ countryCode: 'US', currencyCode: 'USD' });
+          const result = await googlePay.tokenize({ total: { amount: amount.toFixed(2), label: 'Fairfield Airport Cars' } });
+          if (result.status === 'OK') token = result.token;
+          else throw new Error(result.status || 'Google Pay failed');
         }
-      } else {
-        throw new Error('Payment was cancelled');
+        if (!token) throw new Error('Tokenization failed');
+
+        const resp = await fetch('/api/payment/digital-wallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookingId, amount, sourceId: token })
+        });
+        if (!resp.ok) {
+          const data = await resp.json().catch(() => ({}));
+          throw new Error((data as any).error || 'Payment processing failed');
+        }
+        const data = await resp.json();
+        onPaymentSuccess(data);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Payment failed';
+        setError(message);
+        onPaymentError(message);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Payment error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Payment failed';
-      setError(errorMessage);
-      onPaymentError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [amount, bookingId, disabled, onPaymentError, onPaymentSuccess]
+  );
 
-  // Process payment with Square
-  const processPaymentWithSquare = async (
-    paymentResponse: PaymentResponse,
-    bookingId: string
-  ) => {
-    try {
-      const response = await fetch('/api/payment/digital-wallet', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          bookingId,
-          amount,
-          paymentMethod: paymentResponse.methodName,
-          paymentDetails: paymentResponse.details,
-        }),
-      });
+  const supported = appleSupported || googleSupported;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Payment processing failed');
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error processing payment with Square:', error);
-      throw error;
-    }
-  };
-
-  if (!isSupported) {
+  if (!supported) {
     return (
       <Container>
         <Alert variant="warning">
-          <Text>
-            Digital wallet payments are not supported on this device. 
-            Please use a different payment method.
-          </Text>
+          <Text>Apple Pay / Google Pay not available on this device or domain is not verified.</Text>
         </Alert>
       </Container>
     );
@@ -300,62 +128,61 @@ export function DigitalWalletPayment({
   return (
     <Container>
       <Stack spacing="lg">
-        {/* Header */}
         <Stack spacing="sm">
           <Text weight="bold" size="lg">Digital Wallet Payment</Text>
-          <Text variant="muted">
-            Pay securely with Apple Pay or Google Pay
-          </Text>
+          <Text variant="muted">Pay securely with Apple Pay or Google Pay</Text>
         </Stack>
 
-        {/* Payment Amount */}
         <Box variant="outlined" padding="lg">
           <Stack direction="horizontal" justify="space-between" align="center">
             <Text weight="bold">Total Amount</Text>
-            <Text weight="bold" size="lg">
-              ${amount.toFixed(2)}
-            </Text>
+            <Text weight="bold" size="lg">${amount.toFixed(2)}</Text>
           </Stack>
         </Box>
 
-        {/* Payment Buttons */}
         <Stack spacing="md">
-          <Button
-            variant="primary"
-            onClick={handlePayment}
-            disabled={disabled || isLoading || !paymentRequest}
-            fullWidth
-            size="lg"
-          >
-            {isLoading ? (
-              <Stack direction="horizontal" align="center" spacing="sm">
-                <LoadingSpinner size="sm" />
-                <Text>Processing Payment...</Text>
-              </Stack>
-            ) : (
-              <Stack direction="horizontal" align="center" spacing="sm">
-                <Text>🍎</Text>
-                <Text>Pay with Apple Pay / Google Pay</Text>
-              </Stack>
-            )}
-          </Button>
+          {appleSupported && (
+            <Button variant="primary" onClick={() => tokenizeAndPay('apple')} disabled={disabled || isLoading} fullWidth size="lg">
+              {isLoading ? (
+                <Stack direction="horizontal" align="center" spacing="sm">
+                  <LoadingSpinner size="sm" />
+                  <Text>Processing...</Text>
+                </Stack>
+              ) : (
+                <Stack direction="horizontal" align="center" spacing="sm">
+                  <Text>🍎</Text>
+                  <Text>Pay with Apple Pay</Text>
+                </Stack>
+              )}
+            </Button>
+          )}
+          {googleSupported && (
+            <Button variant="secondary" onClick={() => tokenizeAndPay('google')} disabled={disabled || isLoading} fullWidth size="lg">
+              {isLoading ? (
+                <Stack direction="horizontal" align="center" spacing="sm">
+                  <LoadingSpinner size="sm" />
+                  <Text>Processing...</Text>
+                </Stack>
+              ) : (
+                <Stack direction="horizontal" align="center" spacing="sm">
+                  <Text>GPay</Text>
+                  <Text>Pay with Google Pay</Text>
+                </Stack>
+              )}
+            </Button>
+          )}
         </Stack>
 
-        {/* Error Display */}
         {error && (
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
         )}
 
-        {/* Security Notice */}
         <Alert variant="info">
-          <Text size="sm">
-            Your payment information is encrypted and securely processed. 
-            We never store your payment details.
-          </Text>
+          <Text size="sm">Your payment information is encrypted and securely processed. We never store your payment details.</Text>
         </Alert>
       </Stack>
     </Container>
   );
-} 
+}
