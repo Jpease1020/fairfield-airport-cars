@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       force_run:
@@ -27,6 +29,7 @@ jobs:
           (contains(github.event.pull_request.title, 'ESLint') ||
            contains(github.event.pull_request.title, 'eslint-fixes')) }} ||
        github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'push' ||
        github.event.inputs.force_run == 'true')
 
     runs-on: ubuntu-latest
