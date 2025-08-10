@@ -68,14 +68,17 @@ async function runESLintAutomation({ owner, repo, isDryRun, maxRetries }) {
   const batches = createBatches(issues);
   console.log(chalk.blue(`📦 Created ${batches.length} batches`));
 
-  // Step 3: Process batches (limit to 1 per run to avoid overwhelming)
-  const maxBatches = Math.min(1, batches.length);
+  // Step 3: Process multiple batches per run to ensure progress
+  const maxBatchesToProcess = Math.min(
+    parseInt(process.env.ESLINT_MAX_BATCHES || '5'),
+    batches.length
+  );
   const processedBatches = [];
 
-  for (let i = 0; i < maxBatches; i++) {
+  for (let i = 0; i < maxBatchesToProcess; i++) {
     const batch = batches[i];
     console.log(chalk.blue(`\n📦 Processing Batch ${batch.number}...`));
-    
+
     if (isDryRun) {
       console.log(chalk.yellow('🔍 DRY RUN - No actual changes will be made'));
       console.log(chalk.gray(`  Would create branch: ${CONFIG.branchPrefix}batch-${batch.number}`));
@@ -191,8 +194,17 @@ function createBatches(issues) {
     issuesByFile[issue.file].push(issue);
   }
 
-  // Create simple batches
-  for (const [file, fileIssues] of Object.entries(issuesByFile)) {
+  // Order files so those with fixable issues are processed first
+  const filesOrdered = Object.entries(issuesByFile)
+    .map(([file, fileIssues]) => ({
+      file,
+      fileIssues,
+      fixableCount: fileIssues.reduce((n, i) => n + (i.fixable ? 1 : 0), 0)
+    }))
+    .sort((a, b) => b.fixableCount - a.fixableCount);
+
+  // Create simple batches using the ordered files
+  for (const { file, fileIssues } of filesOrdered) {
     // Check if adding this file would exceed limits
     if (currentBatch.length + fileIssues.length > CONFIG.maxIssuesPerPR ||
         currentFiles.size + 1 > CONFIG.maxFilesPerPR) {
