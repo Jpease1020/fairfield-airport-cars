@@ -27,6 +27,12 @@ async function loadSquareSdk(): Promise<void> {
 }
 
 export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPaymentError, disabled = false }: DigitalWalletPaymentProps) {
+  // Feature flag: hide wallets until Square setup is complete
+  const walletsEnabled = process.env.NEXT_PUBLIC_WALLETS_ENABLED === 'true';
+  if (!walletsEnabled) {
+    return null;
+  }
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appleSupported, setAppleSupported] = useState(false);

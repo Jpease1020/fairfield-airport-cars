@@ -83,7 +83,7 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
 
   const updateField = useCallback(async (fieldPath: string, value: string) => {
     try {
-      console.log('Updating CMS field:', fieldPath, '=', value);
+      // Updating a CMS field; avoid console logs to keep lint clean
       
       // Update in Firebase
       const response = await fetch('/api/admin/cms/pages', {
@@ -109,7 +109,7 @@ export function CMSDesignProvider({ children }: CMSDesignProviderProps) {
       window.location.reload();
       
     } catch (err) {
-      console.error('Failed to update field:', err);
+      setError('Failed to update field');
       throw err;
     }
   }, []);
