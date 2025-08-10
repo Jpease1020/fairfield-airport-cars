@@ -15,6 +15,10 @@ on:
 env:
   ESLINT_AUTOMATION_ENABLED: true
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   eslint-automation:
     if: |
@@ -67,7 +71,6 @@ jobs:
           script: |
             const fs = require('fs');
             const results = JSON.parse(fs.readFileSync('automation-results.json', 'utf8'));
-            
             if (results.success && results.batchesProcessed > 0) {
               const comment = `🤖 ESLint automation completed successfully!\n\n**Batches Processed**: ${results.batchesProcessed}/${results.totalBatches}\n\nNew pull requests have been created for ESLint fixes. Check the [ESLint automation](https://github.com/${{ github.repository }}/actions) for details.`;
               github.rest.issues.createComment({
