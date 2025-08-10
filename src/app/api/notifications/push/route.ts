@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getMessaging } from 'firebase-admin/messaging';
-import { adminServices } from '@/lib/utils/firebase-admin';
 
 interface PushNotificationRequest {
   token: string;

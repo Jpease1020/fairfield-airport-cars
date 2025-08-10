@@ -1,7 +1,7 @@
 // Cost API Integration Service
 // Handles real-time cost data fetching from various service providers
 
-import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';
+import { realCostTrackingService } from '@/lib/business/real-cost-tracking';
 
 export interface APICostData {
   service: string;

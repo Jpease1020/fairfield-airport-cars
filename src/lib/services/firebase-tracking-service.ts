@@ -5,12 +5,7 @@ import {
   doc, 
   onSnapshot, 
   updateDoc, 
-  serverTimestamp,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit
+  serverTimestamp
 } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 

@@ -17,10 +17,8 @@ import {
   Span,
   Text,
   Stack,
-  Button,
   Badge,
-  LoadingSpinner,
-  Alert
+  LoadingSpinner
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
 

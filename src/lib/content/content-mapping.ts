@@ -1,4 +1,4 @@
-import { colors, spacing, fontSize, fontWeight, fontFamily, transitions } from '@/design/system/tokens/tokens';
+import { colors } from '@/design/system/tokens/tokens';
 
 // Comprehensive content mapping for all hardcoded text in the application
 // This ensures all existing content is preserved and can be made editable

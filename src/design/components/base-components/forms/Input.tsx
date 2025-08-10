@@ -3,7 +3,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../../system/tokens/tokens';
-import { BaseComponentProps } from '../../../system/shared-types';
 
 // Styled Input component
 const StyledInput = styled.input.withConfig({

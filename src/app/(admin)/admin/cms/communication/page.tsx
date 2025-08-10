@@ -15,7 +15,7 @@ import {
   Textarea,
   SettingToggle,
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData } from '@/design/providers/CMSDesignProvider';
 
 function CommunicationPageContent() {
   const { addToast } = useToast();

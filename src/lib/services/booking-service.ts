@@ -1,6 +1,6 @@
 import { db } from '@/lib/utils/firebase';
 import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
-import { assignDriverToBooking as assignDriver, getDriver } from './driver-service';
+import { getDriver } from './driver-service';
 import { createPaymentLink } from './square-service';
 
 // Helper function to safely convert Firestore dates to JavaScript Date objects

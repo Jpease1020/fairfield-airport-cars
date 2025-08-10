@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { 
   Container,
   Stack,
@@ -44,18 +44,10 @@ interface TrackingMapProps {
   onMapLoad?: (map: google.maps.Map) => void;
 }
 
-interface MapMarker {
-  position: google.maps.LatLngLiteral;
-  title: string;
-  icon?: string;
-}
-
 export function TrackingMap({
   bookingId,
   pickupLocation,
   dropoffLocation,
-  driverLocation,
-  estimatedArrival,
   status,
   onMapLoad
 }: TrackingMapProps) {
@@ -65,16 +57,14 @@ export function TrackingMap({
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pickupCoords, setPickupCoords] = useState<google.maps.LatLngLiteral | null>(null);
-  const [dropoffCoords, setDropoffCoords] = useState<google.maps.LatLngLiteral | null>(null);
+  // Coordinates are computed locally for route drawing; no need to store in state
 
   // Real-time tracking hook
   const {
     bookingStatus,
     loading: trackingLoading,
     error: trackingError,
-    updateDriverLocation,
-    updateETA
+    // Unused here; updates are handled within the hook
   } = useRealTimeTracking(bookingId);
 
   // Initialize map
@@ -96,9 +86,6 @@ export function TrackingMap({
         if (!pickup || !dropoff) {
           throw new Error('Could not get coordinates for pickup or dropoff location');
         }
-
-        setPickupCoords(pickup);
-        setDropoffCoords(dropoff);
 
         // Initialize map
         const map = new google.maps.Map(mapRef.current!, {

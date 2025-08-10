@@ -1,7 +1,7 @@
 // Component Variants System
 // Extracted from existing Button and Box components for reusability
 
-import { colors, spacing, fontSize, fontWeight, borderRadius, shadows, transitions } from './tokens';
+import { colors, spacing, fontSize, fontWeight, shadows } from './tokens';
 
 // Button Variants
 export const buttonVariants = {
