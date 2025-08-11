@@ -103,7 +103,9 @@ class CommentsService {
   private saveToLocalStorage(list: CommentRecord[]) {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(list));
-    } catch {}
+    } catch (error) {
+      console.warn('Failed to save comments to localStorage');
+    }
   }
 
   private addToLocalStorage(comment: Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>): string {
