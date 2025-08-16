@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Button, Span, Text } from '@/ui';
-import { MessageSquare, AlertTriangle } from 'lucide-react';
+import { Container, Stack, Button, Span, Text, Drawer } from '@/ui';
+import { MessageSquare, AlertTriangle, X } from 'lucide-react';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
 
 const FloatingCommentBox = styled.div<{ $top: number; $left: number }>`
@@ -12,20 +12,6 @@ const FloatingCommentBox = styled.div<{ $top: number; $left: number }>`
   left: ${({ $left }) => `${$left}px`};
   z-index: 11050;
   transform: translate(8px, 8px);
-`;
-
-const OrphanedCommentsContainer = styled.div`
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 11040;
-  max-width: 300px;
-  max-height: 400px;
-  overflow-y: auto;
-  background: var(--background-card);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 `;
 
 interface GlobalCommentIconsProps {
@@ -38,6 +24,7 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
   const [commentAnchors, setCommentAnchors] = useState<Record<string, { top: number; left: number }>>({});
   const [hoveredCommentId, setHoveredCommentId] = useState<string | null>(null);
   const [orphanedComments, setOrphanedComments] = useState<CommentRecord[]>([]);
+  const [showCommentsDrawer, setShowCommentsDrawer] = useState(false);
 
   // Load existing comments for this page
   useEffect(() => {
@@ -92,6 +79,12 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
         if (!el && comment.elementSelector && comment.elementSelector !== comment.elementId) {
           el = document.querySelector(comment.elementSelector) as HTMLElement;
         }
+        
+        // Additional fallback: try to find by CMS ID if elementSelector is a CMS path
+        if (!el && comment.elementSelector && comment.elementSelector.includes('.')) {
+          // Look for elements with data-cms-id that matches the elementSelector
+          el = document.querySelector(`[data-cms-id="${comment.elementSelector}"]`) as HTMLElement;
+        }
 
         if (el) {
           // Element found - position icon
@@ -124,6 +117,33 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
 
   return (
     <>
+      {/* Comments indicator and drawer toggle */}
+      {(comments.length > 0 || orphanedComments.length > 0) && (
+        <Container
+          variant="default"
+          padding="sm"
+          style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            zIndex: 11040,
+            cursor: 'pointer',
+            background: 'var(--background-card)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+          }}
+          onClick={() => setShowCommentsDrawer(true)}
+        >
+          <Stack direction="horizontal" align="center" spacing="sm">
+            <MessageSquare size={16} />
+            <Span size="sm" weight="semibold">
+              Comments ({comments.length + orphanedComments.length})
+            </Span>
+          </Stack>
+        </Container>
+      )}
+
       {/* Comment icons (tooltip-like) when in comment mode */}
       {Object.keys(commentAnchors).map((id, index) => (
         <Container key={`wrap_${id}`} variant="default" padding="none">
@@ -156,35 +176,72 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
         </Container>
       ))}
 
-      {/* Orphaned Comments Container - shows comments for elements that can't be found */}
-      {orphanedComments.length > 0 && (
-        <OrphanedCommentsContainer>
-          <Container variant="elevated" padding="sm">
-            <Stack spacing="sm">
-              <Stack direction="horizontal" align="center" spacing="sm">
-                <AlertTriangle size={16} color="orange" />
-                <Span size="sm" weight="semibold">Orphaned Comments</Span>
-                <Span size="xs" color="muted">({orphanedComments.length})</Span>
-              </Stack>
-              <Text size="xs" color="muted">
-                These comments are for elements that can no longer be found on this page.
-              </Text>
-            </Stack>
-          </Container>
-          
-          {orphanedComments.map((comment) => (
-            <Container key={comment.id} variant="default" padding="sm">
-              <Stack spacing="xs">
-                <Span size="sm" weight="medium">{comment.elementText}</Span>
-                <Text size="sm">{comment.comment}</Text>
-                <Span size="xs" color="muted">
-                  Created: {new Date(comment.createdAt).toLocaleDateString()}
-                </Span>
+      {/* Comments Drawer - shows all comments and orphaned comments */}
+      <Drawer
+        isOpen={showCommentsDrawer}
+        onClose={() => setShowCommentsDrawer(false)}
+        title="Page Comments"
+        position="right"
+        width={400}
+        headerVariant="prominent"
+        actions={
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowCommentsDrawer(false)}
+          >
+            <X size={16} />
+          </Button>
+        }
+      >
+        <Stack spacing="lg">
+          {/* Active Comments */}
+          {comments.length > 0 && (
+            <Container variant="elevated" padding="md">
+              <Stack spacing="sm">
+                <Span size="sm" weight="semibold">Active Comments ({comments.length})</Span>
+                {comments.map((comment) => (
+                  <Container key={comment.id} variant="default" padding="sm">
+                    <Stack spacing="xs">
+                      <Span size="sm" weight="medium">{comment.elementText}</Span>
+                      <Text size="sm">{comment.comment}</Text>
+                      <Span size="xs" color="muted">
+                        Created: {new Date(comment.createdAt).toLocaleDateString()}
+                      </Span>
+                    </Stack>
+                  </Container>
+                ))}
               </Stack>
             </Container>
-          ))}
-        </OrphanedCommentsContainer>
-      )}
+          )}
+          
+          {/* Orphaned Comments */}
+          {orphanedComments.length > 0 && (
+            <Container variant="elevated" padding="md">
+              <Stack spacing="sm">
+                <Stack direction="horizontal" align="center" spacing="sm">
+                  <AlertTriangle size={16} color="orange" />
+                  <Span size="sm" weight="semibold">Orphaned Comments ({orphanedComments.length})</Span>
+                </Stack>
+                <Text size="xs" color="muted">
+                  These comments are for elements that can no longer be found on this page.
+                </Text>
+                {orphanedComments.map((comment) => (
+                  <Container key={comment.id} variant="default" padding="sm">
+                    <Stack spacing="xs">
+                      <Span size="sm" weight="medium">{comment.elementText}</Span>
+                      <Text size="sm">{comment.comment}</Text>
+                                             <Span size="xs" color="muted">
+                         Created: {new Date(comment.createdAt).toLocaleDateString()}
+                       </Span>
+                     </Stack>
+                   </Container>
+                 ))}
+               </Stack>
+             </Container>
+           )}
+         </Stack>
+       </Drawer>
     </>
   );
 }
