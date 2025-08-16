@@ -77,7 +77,7 @@ function AboutPageContent() {
           <Stack direction="horizontal" spacing="md" align="center">
             <Button
               variant="primary"
-              data-cms-id="pages.about.cta.primaryButton"
+              cmsKey="pages.about.cta.primaryButton"
               interactionMode={mode}
               onClick={() => router.push('/book')}
             >
@@ -86,7 +86,7 @@ function AboutPageContent() {
             
             <Button
               variant="secondary"
-              data-cms-id="pages.about.cta.secondaryButton"
+              cmsKey="pages.about.cta.secondaryButton"
               interactionMode={mode}
               onClick={() => router.push('/help')}
             >
