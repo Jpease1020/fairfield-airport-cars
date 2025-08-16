@@ -12,7 +12,7 @@ import {
   ToastProvider,
   useToast,
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 function AddContentUtilityPage() {
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);

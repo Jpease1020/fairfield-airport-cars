@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function BookingStatusPageContent() {
   const { cmsData } = useCMSData();

@@ -15,7 +15,7 @@ import {
   Text,
   Stack
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function CMSPageContent() {
   const { addToast } = useToast();
@@ -36,7 +36,7 @@ function CMSPageContent() {
       
       const cmsConfig = await cmsService.getCMSConfiguration();
       setConfig(cmsConfig);
-      if (cmsConfig) {
+      if (cmsConfig && cmsConfig.lastUpdated) {
         setLastUpdated(cmsConfig.lastUpdated);
       }
       

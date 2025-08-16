@@ -16,7 +16,8 @@ import {
   H1,
   ContentCard
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 interface Booking {
   id: string;
@@ -32,6 +33,7 @@ interface Booking {
 
 function CustomerBookingsPage() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -153,7 +155,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'bookings.loading.initializing', 'Initializing bookings...')}</Text>
+          <Text>{getCMSField(cmsData, 'pages.bookings.loading.initializing', 'Initializing bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -164,7 +166,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'bookings.loading.loading_bookings', 'Loading your bookings...')}</Text>
+          <Text>{getCMSField(cmsData, 'pages.bookings.loading.loading_bookings', 'Loading your bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -174,9 +176,9 @@ function CustomerBookingsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">{getCMSField(cmsData, 'bookings.login_required', 'Please log in to view your bookings.')}</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'pages.bookings.login_required', 'Please log in to view your bookings.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'bookings.go_to_login', 'Go to Login')}
+            {getCMSField(cmsData, 'pages.bookings.go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -201,30 +203,47 @@ function CustomerBookingsPage() {
         {/* Header with Book New Ride button */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
-            <H1>
-              {getCMSField(cmsData, 'bookings.title', 'My Bookings')}
+            <H1 
+              data-cms-id="pages.bookings.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.bookings.title', 'My Bookings')}
             </H1>
-            <Text variant="muted">
-              {getCMSField(cmsData, 'bookings.subtitle', 'View and manage your airport rides')}
+            <Text 
+              variant="muted"
+              data-cms-id="pages.bookings.subtitle"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.bookings.subtitle', 'View and manage your airport rides')}
             </Text>
           </Stack>
-          <Button onClick={handleBookNewRide} variant="primary">
-            {getCMSField(cmsData, 'bookings.book_new_ride', 'Book New Ride')}
+          <Button 
+            onClick={handleBookNewRide} 
+            variant="primary"
+            data-cms-id="pages.bookings.book_new_ride"
+            interactionMode={mode}
+          >
+            {getCMSField(cmsData, 'pages.bookings.book_new_ride', 'Book New Ride')}
           </Button>
         </Stack>
 
         {/* Bookings List */}
         {bookings.length === 0 ? (
           <ContentCard
-            title={getCMSField(cmsData, 'bookings.no_bookings_title', 'No Bookings Yet')}
+            title={getCMSField(cmsData, 'pages.bookings.no_bookings_title', 'No Bookings Yet')}
             content={
               <Stack spacing="lg" align="center">
                 <Text variant="muted" align="center">
-                  {getCMSField(cmsData, 'bookings.no_bookings', "You haven't made any bookings yet. Book your first ride!")}
+                  {getCMSField(cmsData, 'pages.bookings.no_bookings', "You haven't made any bookings yet. Book your first ride!")}
                 </Text>
-                  <Button onClick={handleBookNewRide} variant="primary">
-                    {getCMSField(cmsData, 'bookings.book_first_ride', 'Book Your First Ride')}
-                  </Button>
+                                      <Button 
+                      onClick={handleBookNewRide} 
+                      variant="primary"
+                      data-cms-id="pages.bookings.book_first_ride"
+                      interactionMode={mode}
+                    >
+                      {getCMSField(cmsData, 'pages.bookings.book_first_ride', 'Book Your First Ride')}
+                    </Button>
               </Stack>
             }
             variant="elevated"
@@ -265,7 +284,7 @@ function CustomerBookingsPage() {
                         onClick={() => handleViewBooking(booking.id)}
                         size="sm"
                       >
-                         {getCMSField(cmsData, 'bookings.view_details', 'View Details')}
+                         {getCMSField(cmsData, 'pages.bookings.view_details', 'View Details')}
                       </Button>
                       {booking.status === 'confirmed' || booking.status === 'in-progress' ? (
                            <Button 
@@ -273,7 +292,7 @@ function CustomerBookingsPage() {
                           onClick={() => handleTrackBooking(booking.id)}
                           size="sm"
                         >
-                         {getCMSField(cmsData, 'bookings.track_ride', 'Track Ride')}
+                         {getCMSField(cmsData, 'pages.bookings.track_ride', 'Track Ride')}
                         </Button>
                       ) : null}
                     </Stack>

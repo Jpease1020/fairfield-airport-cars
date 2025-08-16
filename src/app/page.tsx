@@ -1,217 +1,496 @@
 "use client";
+
 import React from 'react';
-import { CustomerNavigation } from '@/components/app/CustomerNavigation';
-import { Container } from '@/design/layout/containers/Container';
-import { Footer } from '@/design/page-sections/Footer';
-import { 
-  Stack,
-  H4,
-  Text,
-  Button,
-  Span,
-  H2
-} from '@/ui';
-import { StaticHeroSection } from '@/ui';
-import { usePageData } from '@/hooks/usePageData';
+import { useRouter } from 'next/navigation';
+import { Container, Stack, Col } from '@/ui';
+import { H1, H2, Text, Button } from '@/design/components/base-components/Components';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+
 
 function HomePageContent() {
-  const { data: cmsData, loading, error } = usePageData('home');
-  // Features data
-  const features = [
-    {
-      icon: "⏰",
-      title: "On-Time Service",
-      description: "Reliable pickup times with flight tracking and real-time updates"
-    },
-    {
-      icon: "🚙",
-      title: "Clean Vehicles", 
-      description: "Well-maintained, professional fleet with luxury options"
-    },
-    {
-      icon: "💳",
-      title: "Easy Booking",
-      description: "Secure online booking and payment with instant confirmation"
-    }
-  ];
-
-  // Testimonials data
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Business Traveler",
-      company: "Tech Corp",
-      content: "Fairfield Airport Cars made my business trips stress-free. Always on time and professional service.",
-      rating: 5
-    },
-    {
-      name: "Mike Chen",
-      role: "Frequent Flyer",
-      content: "The best airport transportation service I've used. Clean cars and friendly drivers.",
-      rating: 5
-    },
-    {
-      name: "Lisa Rodriguez",
-      role: "Travel Consultant",
-      content: "I recommend Fairfield Airport Cars to all my clients. Reliable and professional.",
-      rating: 5
-    }
-  ];
-
+  const router = useRouter();
+  const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
+  
+  // Debug: Log the CMS data structure
+  console.log('Home page CMS data:', cmsData);
+  
   return (
     <>
       {/* Hero Section */}
-      <StaticHeroSection
-        title={cmsData?.pages?.home?.hero?.title || 'Professional Airport Transportation'}
-        subtitle={cmsData?.pages?.home?.hero?.subtitle || 'Reliable rides to and from Fairfield Airport'}
-        description={cmsData?.pages?.home?.hero?.description || 'Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.'}
-        primaryAction={{
-          label: cmsData?.pages?.home?.hero?.primaryButton || 'Book Now',
-          href: "/book"
-        }}
-        secondaryAction={{
-          label: cmsData?.pages?.home?.hero?.secondaryButton || 'Learn More',
-          href: "/about"
-        }}
-      />
-
-      {/* Features Section */}
-      <Container maxWidth="xl" padding="xl" variant="section" marginTop="xl" data-testid="home-features-section">
+      <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H2 align="center">
-              {cmsData?.pages?.home?.features?.title || 'Why Choose Fairfield Airport Cars'}
+            <H1 
+              align="center" 
+              data-cms-id="pages.home.hero.title" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.hero.title', 'Professional Airport Transportation')}
+            </H1>
+            <Text 
+              variant="lead" 
+              align="center" 
+              size="xl" 
+              data-cms-id="pages.home.hero.subtitle" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.hero.subtitle', 'Reliable rides to and from Fairfield County airports')}
+            </Text>
+            <Text 
+              align="center" 
+              size="lg" 
+              data-cms-id="pages.home.hero.description" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.hero.description', 'Professional drivers, clean vehicles, on-time service. Book your airport ride with confidence.')}
+            </Text>
+            
+            <Stack direction="horizontal" spacing="md" align="center">
+              <Button
+                variant="primary"
+                size="lg"
+                data-cms-id="pages.home.hero.primaryButton"
+                interactionMode={mode}
+                onClick={() => router.push('/book')}
+              >
+                {getCMSField(cmsData, 'pages.home.hero.primaryButton', 'Book Now')}
+              </Button>
+              
+              <Button
+                variant="secondary"
+                size="lg"
+                data-cms-id="pages.home.hero.secondaryButton"
+                interactionMode={mode}
+                onClick={() => router.push('/about')}
+              >
+                {getCMSField(cmsData, 'pages.home.hero.secondaryButton', 'Learn More')}
+              </Button>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Container>
+
+      {/* Features Section */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H2 
+              align="center" 
+              data-cms-id="pages.home.features.title" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.features.title', 'Why Choose Us')}
             </H2>
-            <Text variant="lead" align="center">
-              {cmsData?.pages?.home?.features?.subtitle || 'Professional service you can count on'}
+            <Text 
+              align="center" 
+              size="lg" 
+              data-cms-id="pages.home.features.subtitle" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.features.subtitle', 'Professional service you can count on')}
             </Text>
           </Stack>
-          <Stack 
-            direction={{ xs: 'vertical', lg: 'horizontal' }}
-            spacing={{ xs: 'md', lg: 'lg' }}
-            align="stretch"
-            data-testid="features-stack"
-          >
-          {features.map((feature, index) => (
-            <Container key={index} variant="elevated" padding="lg">
-              <Stack direction="vertical" spacing="md" align="center">
-                <Container>
-                  <Text size="xl">{feature.icon}</Text>
-                </Container>
-                <Container>
-                  <H4>
-                    {cmsData?.pages?.home?.features?.items?.[index]?.title || feature.title}
-                  </H4>
-                </Container>
-                <Container>
-                  <Text variant="muted">
-                    {cmsData?.pages?.home?.features?.items?.[index]?.description || feature.description}
-                  </Text>
-                </Container>
+          
+          <Stack direction="horizontal" spacing="xl" align="stretch">
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text size="xl" align="center">⏰</Text>
+                <Text 
+                  align="center" 
+                  variant="lead" 
+                  data-cms-id="pages.home.features.item1.title" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.features.item1.title', 'On-Time Service')}
+                </Text>
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.features.item1.description" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.features.item1.description', 'Reliable pickup times with flight tracking and real-time updates')}
+                </Text>
               </Stack>
-            </Container>
-          ))}
+            </Col>
+            
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text size="xl" align="center">🚙</Text>
+                <Text 
+                  align="center" 
+                  variant="lead" 
+                  data-cms-id="pages.home.features.item2.title" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.features.item2.title', 'Clean Vehicles')}
+                </Text>
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.features.item2.description" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.features.item2.description', 'Well-maintained, professional fleet with luxury options')}
+                </Text>
+              </Stack>
+            </Col>
+            
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text size="xl" align="center">💳</Text>
+                <Text 
+                  align="center" 
+                  variant="lead" 
+                  data-cms-id="pages.home.features.item3.title" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.features.item3.title', 'Easy Booking')}
+                </Text>
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.features.item3.description" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.features.item3.description', 'Secure online booking and payment with instant confirmation')}
+                </Text>
+              </Stack>
+            </Col>
+          </Stack>
+        </Stack>
+      </Container>
+
+      {/* Fleet Section */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H2 
+              align="center" 
+              data-cms-id="pages.home.fleet.title" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.fleet.title', 'Our Fleet')}
+            </H2>
+            <Text 
+              align="center" 
+              size="lg" 
+              data-cms-id="pages.home.fleet.description" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.fleet.description', 'You will ride in a meticulously maintained Chevrolet Suburban or a similar full-size luxury SUV, offering ample space for passengers and luggage.')}
+            </Text>
+          </Stack>
+          
+          <Stack direction="horizontal" spacing="xl" align="stretch">
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text 
+                  align="center" 
+                  variant="lead" 
+                  data-cms-id="pages.home.fleet.vehicle1.title" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicle1.title', 'Luxury SUV')}
+                </Text>
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.fleet.vehicle1.description" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicle1.description', 'Spacious Chevrolet Suburban with premium amenities including complimentary water, Wi-Fi, and phone chargers.')}
+                </Text>
+              </Stack>
+            </Col>
+            
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text 
+                  align="center" 
+                  variant="lead" 
+                  data-cms-id="pages.home.fleet.vehicle2.title" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicle2.title', 'Professional Service')}
+                </Text>
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.fleet.vehicle2.description" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicle2.description', 'Experienced drivers with background checks, ensuring your safety and comfort throughout your journey.')}
+                </Text>
+              </Stack>
+            </Col>
           </Stack>
         </Stack>
       </Container>
 
       {/* Testimonials Section */}
-      <Container maxWidth="xl" padding="xl" variant="section" marginTop="xl" data-testid="home-testimonials-section">
+      <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H2 align="center">
-              {cmsData?.pages?.home?.testimonials?.title || 'What Our Customers Say'}
+            <H2 
+              align="center" 
+              data-cms-id="pages.home.testimonials.title" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.testimonials.title', 'What Our Customers Say')}
             </H2>
-            <Text variant="lead" align="center">
-              {cmsData?.pages?.home?.testimonials?.subtitle || 'Trusted by travelers and businesses'}
+            <Text 
+              align="center" 
+              size="lg" 
+              data-cms-id="pages.home.testimonials.subtitle" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.testimonials.subtitle', 'Real feedback from satisfied customers')}
             </Text>
           </Stack>
-          <Stack 
-            direction={{ xs: 'vertical', lg: 'horizontal' }}
-            spacing={{ xs: 'md', lg: 'lg' }}
-            align="stretch"
-            data-testid="testimonials-stack"
-          >
-          {testimonials.map((testimonial, index) => (
-            <Container key={index} variant="elevated" padding="lg">
-              <Stack direction="vertical" spacing="md">
-                    <Container>
-                      <Text variant="muted" size="sm">
-                        {cmsData?.pages?.home?.testimonials?.items?.[index]?.content || testimonial.content}
-                      </Text>
-                    </Container>
-                <Container>
-                  <Stack direction="horizontal" spacing="sm" align="center">
-                        <Container>
-                          <Text weight="semibold">
-                            {cmsData?.pages?.home?.testimonials?.items?.[index]?.name || testimonial.name}
-                          </Text>
-                        </Container>
-                        <Container>
-                          <Text variant="muted" size="sm">
-                            {cmsData?.pages?.home?.testimonials?.items?.[index]?.role || testimonial.role}
-                          </Text>
-                        </Container>
-                        {testimonial.company && (
-                        <Container>
-                          <Text variant="muted" size="sm">
-                            • {cmsData?.pages?.home?.testimonials?.items?.[index]?.company || testimonial.company}
-                          </Text>
-                        </Container>
-                      )}
-                  </Stack>
-                </Container>
-                <Container>
-                  <Stack direction="horizontal" spacing="xs">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Span key={i}>⭐</Span>
-                    ))}
-                  </Stack>
-                </Container>
+          
+          <Stack direction="horizontal" spacing="xl" align="stretch">
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.testimonials.item1.content" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.testimonials.item1.content', 'Fairfield Airport Cars made my business trips stress-free. Always on time and professional service.')}
+                </Text>
+                <Stack spacing="xs" align="center">
+                  <Text 
+                    align="center" 
+                    variant="lead" 
+                    data-cms-id="pages.home.testimonials.item1.name" 
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.home.testimonials.item1.name', 'Sarah Johnson')}
+                  </Text>
+                  <Text 
+                    align="center" 
+                    size="sm" 
+                    data-cms-id="pages.home.testimonials.item1.role" 
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.home.testimonials.item1.role', 'Business Traveler')}
+                  </Text>
+                  <Text 
+                    align="center" 
+                    size="sm" 
+                    data-cms-id="pages.home.testimonials.item1.company" 
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.home.testimonials.item1.company', 'Tech Corp')}
+                  </Text>
+                </Stack>
               </Stack>
-            </Container>
-          ))}
+            </Col>
+            
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.testimonials.item2.content" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.testimonials.item2.content', 'The best airport transportation service I\'ve used. Clean cars and friendly drivers.')}
+                </Text>
+                <Stack spacing="xs" align="center">
+                  <Text 
+                    align="center" 
+                    variant="lead" 
+                    data-cms-id="pages.home.testimonials.item2.name" 
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.home.testimonials.item2.name', 'Mike Chen')}
+                  </Text>
+                  <Text 
+                    align="center" 
+                    size="sm" 
+                    data-cms-id="pages.home.testimonials.item2.role" 
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.home.testimonials.item2.role', 'Frequent Flyer')}
+                  </Text>
+                </Stack>
+              </Stack>
+            </Col>
+            
+            <Col grow align="center" padding="md">
+              <Stack spacing="md" align="center">
+                <Text 
+                  align="center" 
+                  data-cms-id="pages.home.testimonials.item3.content" 
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'pages.home.testimonials.item3.content', 'I recommend Fairfield Airport Cars to all my clients. Reliable and professional.')}
+                </Text>
+                <Stack spacing="xs" align="center">
+                  <Text 
+                    align="center" 
+                    variant="lead" 
+                    data-cms-id="pages.home.testimonials.item3.name" 
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.home.testimonials.item3.name', 'Lisa Rodriguez')}
+                  </Text>
+                  <Text 
+                    align="center" 
+                    size="sm" 
+                    data-cms-id="pages.home.testimonials.item3.role" 
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.home.testimonials.item3.role', 'Travel Consultant')}
+                  </Text>
+                </Stack>
+              </Stack>
+            </Col>
+          </Stack>
+        </Stack>
+      </Container>
+
+      {/* FAQ Section */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H2 
+              align="center" 
+              data-cms-id="pages.home.faq.title" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.faq.title', 'Frequently Asked Questions')}
+            </H2>
+            <Text 
+              align="center" 
+              size="lg" 
+              data-cms-id="pages.home.faq.subtitle" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.home.faq.subtitle', 'Everything you need to know about our service')}
+            </Text>
+          </Stack>
+          
+          <Stack spacing="lg" align="stretch">
+            <Stack spacing="md" align="stretch">
+              <Text 
+                variant="lead" 
+                weight="semibold"
+                data-cms-id="pages.home.faq.item1.question" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item1.question', 'Which airports do you serve?')}
+              </Text>
+              <Text 
+                data-cms-id="pages.home.faq.item1.answer" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item1.answer', 'We provide service to and from all major airports in the New York and Connecticut area, including JFK, LaGuardia (LGA), Newark (EWR), Westchester (HPN), and Bradley (BDL).')}
+              </Text>
+            </Stack>
+            
+            <Stack spacing="md" align="stretch">
+              <Text 
+                variant="lead" 
+                weight="semibold"
+                data-cms-id="pages.home.faq.item2.question" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item2.question', 'How far in advance should I book my ride?')}
+              </Text>
+              <Text 
+                data-cms-id="pages.home.faq.item2.answer" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item2.answer', 'We recommend booking at least 24 hours in advance to ensure availability. However, we will always do our best to accommodate last-minute requests.')}
+              </Text>
+            </Stack>
+            
+            <Stack spacing="md" align="stretch">
+              <Text 
+                variant="lead" 
+                weight="semibold"
+                data-cms-id="pages.home.faq.item3.question" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item3.question', 'What is your cancellation policy?')}
+              </Text>
+              <Text 
+                data-cms-id="pages.home.faq.item3.answer" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item3.answer', 'You can cancel for a full refund up to 12 hours before your scheduled pickup time. Cancellations within 12 hours of pickup are non-refundable.')}
+              </Text>
+            </Stack>
+            
+            <Stack spacing="md" align="stretch">
+              <Text 
+                variant="lead" 
+                weight="semibold"
+                data-cms-id="pages.home.faq.item4.question" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item4.question', 'What kind of vehicle will I be riding in?')}
+              </Text>
+              <Text 
+                data-cms-id="pages.home.faq.item4.answer" 
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.home.faq.item4.answer', 'You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers.')}
+              </Text>
+            </Stack>
           </Stack>
         </Stack>
       </Container>
 
       {/* CTA Section */}
-      <Container maxWidth="xl" padding="xl" variant="section" marginTop="xl" data-testid="home-cta-section">
-        <Stack spacing="xl" align="center">
-          <Stack spacing="md" align="center">
-            <H2 align="center">
-              {cmsData?.pages?.home?.cta?.title || 'Ready to Book Your Ride?'}
-            </H2>
-            <Text variant="lead" align="center">
-              {cmsData?.pages?.home?.cta?.subtitle || 'Get started with your airport transportation today'}
-            </Text>
-          </Stack>
-          <Stack direction={{ xs: 'vertical', sm: 'horizontal' }} spacing="md">
-            <Button as="a" href="/book">
-              {cmsData?.pages?.home?.cta?.primaryButton || 'Book Now'}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="lg" align="center">
+          <H2 
+            align="center" 
+            data-cms-id="pages.home.cta.title" 
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.home.cta.title', 'Ready to Book Your Ride?')}
+          </H2>
+          <Text 
+            align="center" 
+            size="lg" 
+            data-cms-id="pages.home.cta.subtitle" 
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.home.cta.subtitle', 'Professional airport transportation at your service')}
+          </Text>
+          
+          <Stack direction="horizontal" spacing="md" align="center">
+            <Button
+              variant="primary"
+              size="lg"
+              data-cms-id="pages.home.cta.primaryButton"
+              interactionMode={mode}
+              onClick={() => router.push('/book')}
+            >
+              {getCMSField(cmsData, 'pages.home.cta.primaryButton', 'Book Now')}
             </Button>
-            <Button variant="outline" as="a" href="/about">
-              {cmsData?.pages?.home?.cta?.secondaryButton || 'Learn More'}
+            
+            <Button
+              variant="secondary"
+              size="lg"
+              data-cms-id="pages.home.cta.secondaryButton"
+              interactionMode={mode}
+              onClick={() => router.push('/about')}
+            >
+              {getCMSField(cmsData, 'pages.home.cta.secondaryButton', 'Learn More')}
             </Button>
           </Stack>
         </Stack>
       </Container>
+      
+      {/* CMS editing handled globally by AppContent */}
     </>
   );
 }
 
-export default function RootPage() {
+export default function HomePage() {
   return (
-    <>
-      <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation">
-        <CustomerNavigation />
-      </Container>
-      
-      <Container as="main" maxWidth="full" data-testid="layout-main-content">
-        <HomePageContent />
-      </Container>
-      
-      <Footer data-testid="layout-footer"/>
-    </>
+    <HomePageContent />
   );
 } 

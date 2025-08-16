@@ -17,10 +17,12 @@ import {
   H1,
   ContentCard
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function CustomerProfilePage() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -186,7 +188,7 @@ function CustomerProfilePage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'profile.loading.initializing', 'Initializing profile...')}</Text>
+          <Text>{getCMSField(cmsData, 'pages.profile.loading.initializing', 'Initializing profile...')}</Text>
         </Stack>
       </Container>
     );
@@ -197,7 +199,7 @@ function CustomerProfilePage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'profile.loading.loading_profile', 'Loading your profile...')}</Text>
+          <Text>{getCMSField(cmsData, 'pages.profile.loading.loading_profile', 'Loading your profile...')}</Text>
         </Stack>
       </Container>
     );
@@ -207,10 +209,10 @@ function CustomerProfilePage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">{getCMSField(cmsData, 'profile.login_required', 'Please log in to view your profile.')}</Text>
-          <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'profile.go_to_login', 'Go to Login')}
-          </Button>
+          <Text variant="muted">{getCMSField(cmsData, 'pages.profile.login_required', 'Please log in to view your profile.')}</Text>
+                      <Button onClick={() => router.push('/login')}>
+              {getCMSField(cmsData, 'pages.profile.go_to_login', 'Go to Login')}
+            </Button>
         </Stack>
       </Container>
     );
@@ -222,16 +224,28 @@ function CustomerProfilePage() {
         {/* Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
-            <H1>
-              {getCMSField(cmsData, 'profile.title', 'My Profile')}
+            <H1 
+              data-cms-id="pages.profile.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.profile.title', 'My Profile')}
             </H1>
-            <Text variant="muted">
-              {getCMSField(cmsData, 'profile.subtitle', 'Manage your account information and preferences')}
+            <Text 
+              variant="muted"
+              data-cms-id="pages.profile.subtitle"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.profile.subtitle', 'Manage your account information and preferences')}
             </Text>
           </Stack>
           {!isEditing && (
-            <Button onClick={handleEdit} variant="primary">
-              {getCMSField(cmsData, 'profile.edit_profile', 'Edit Profile')}
+            <Button 
+              onClick={handleEdit} 
+              variant="primary"
+              data-cms-id="pages.profile.edit_profile"
+              interactionMode={mode}
+            >
+              {getCMSField(cmsData, 'pages.profile.edit_profile', 'Edit Profile')}
             </Button>
           )}
         </Stack>
@@ -251,13 +265,13 @@ function CustomerProfilePage() {
 
         {/* Profile Information */}
         <ContentCard
-          title={getCMSField(cmsData, 'profile.section_personal', 'Personal Information')}
+          title={getCMSField(cmsData, 'pages.profile.section_personal', 'Personal Information')}
           content={
             <Stack spacing="lg">
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Label htmlFor="name">
-                    {getCMSField(cmsData, 'profile.name_label', 'Full Name')}
+                    {getCMSField(cmsData, 'pages.profile.name_label', 'Full Name')}
                   </Label>
                   {isEditing ? (
                     <Input
@@ -265,7 +279,7 @@ function CustomerProfilePage() {
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                       placeholder={getCMSField(cmsData, 'profile.name_placeholder', 'Enter your full name')}
+                       placeholder={getCMSField(cmsData, 'pages.profile.name_placeholder', 'Enter your full name')}
                       required
                     />
                   ) : (

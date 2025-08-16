@@ -15,7 +15,7 @@ import {
   Input,
   Label,
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function BusinessPageContent() {
   const { cmsData } = useCMSData();

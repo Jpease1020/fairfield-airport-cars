@@ -11,11 +11,13 @@ import {
   H1,
   Text
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function PortalPageContent() {
   const { addToast } = useToast();
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
 
   const portalActions = [
     {
@@ -87,11 +89,23 @@ function PortalPageContent() {
       <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H1 align="center" data-testid="portal-welcome-title">
-              {getCMSField(cmsData, 'portal.welcome.title', '👋 Welcome to Your Portal')}
+            <H1 
+              align="center" 
+              data-testid="portal-welcome-title"
+              data-cms-id="pages.portal.welcome.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.portal.welcome.title', '👋 Welcome to Your Portal')}
             </H1>
-            <Text variant="lead" align="center" size="lg" data-testid="portal-welcome-description">
-              {getCMSField(cmsData, 'portal.welcome.description', 'Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.')}
+            <Text 
+              variant="lead" 
+              align="center" 
+              size="lg" 
+              data-testid="portal-welcome-description"
+              data-cms-id="pages.portal.welcome.description"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.portal.welcome.description', 'Manage your Fairfield Airport Cars account, bookings, and preferences from this central hub. Your reliable transportation partner is just a click away.')}
             </Text>
           </Stack>
         </Stack>
@@ -102,11 +116,23 @@ function PortalPageContent() {
         <Container marginTop="xl">
           <Stack spacing="xl" align="center">
             <Stack spacing="md" align="center">
-              <Text data-testid="portal-features-title" weight="semibold" size="2xl">
-                {getCMSField(cmsData, 'portal.features.title', '🎯 Portal Features')}
+              <Text 
+                data-testid="portal-features-title" 
+                weight="semibold" 
+                size="2xl"
+                data-cms-id="pages.portal.features.title"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.portal.features.title', '🎯 Portal Features')}
               </Text>
-              <Text data-testid="portal-features-description" variant="lead" size="lg">
-                {getCMSField(cmsData, 'portal.features.description', 'Access all available services and account management tools')}
+              <Text 
+                data-testid="portal-features-description" 
+                variant="lead" 
+                size="lg"
+                data-cms-id="pages.portal.features.description"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.portal.features.description', 'Access all available services and account management tools')}
               </Text>
             </Stack>
             
@@ -128,11 +154,23 @@ function PortalPageContent() {
         <Container marginTop="xl">
           <Stack spacing="xl" align="center">
             <Stack spacing="md" align="center">
-              <Text data-testid="portal-stats-title" weight="semibold" size="2xl">
-                {getCMSField(cmsData, 'portal.stats.title', '📊 Account Overview')}
+              <Text 
+                data-testid="portal-stats-title" 
+                weight="semibold" 
+                size="2xl"
+                data-cms-id="pages.portal.stats.title"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.portal.stats.title', '📊 Account Overview')}
               </Text>
-              <Text data-testid="portal-stats-description" variant="lead" size="lg">
-                {getCMSField(cmsData, 'portal.stats.description', 'Your account activity and statistics')}
+              <Text 
+                data-testid="portal-stats-description" 
+                variant="lead" 
+                size="lg"
+                data-cms-id="pages.portal.stats.description"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.portal.stats.description', 'Your account activity and statistics')}
               </Text>
             </Stack>
             

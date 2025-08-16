@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Button } from '../../components/base-components/Button';
-import { useCMSData, getCMSField } from '../../providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '../../hooks/useCMSData';
 import { Stack } from '../../layout/framing/Stack';
 import { Container } from '../../layout/containers/Container';
 import { PositionedContainer } from '../../layout/containers/PositionedContainer';

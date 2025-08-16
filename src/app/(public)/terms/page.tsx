@@ -9,32 +9,12 @@ import {
   H4,
   Text
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function TermsPageContent() {
   const { cmsData } = useCMSData();
-  const termsSections = [
-    {
-      title: "Booking",
-      content: "All bookings must be made through our website or by phone. We require at least 24 hours notice for all reservations."
-    },
-    {
-      title: "Payment",
-      content: "Payment is processed through Square. We accept all major credit cards and digital payments."
-    },
-    {
-      title: "Cancellation Policy",
-      content: "Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup."
-    },
-    {
-      title: "Liability",
-      content: "We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals."
-    },
-    {
-      title: "Contact",
-      content: "For questions about these terms, please contact us at the information provided on our website."
-    }
-  ];
+  const { mode } = useInteractionMode();
 
   return (
     <>
@@ -42,11 +22,23 @@ function TermsPageContent() {
       <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H1 align="center" data-testid="terms-title">
-              {getCMSField(cmsData, 'terms.title', '📋 Terms of Service')}
+            <H1 
+              align="center" 
+              data-testid="terms-title"
+              data-cms-id="pages.terms.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.terms.title', '📋 Terms of Service')}
             </H1>
-            <Text variant="lead" align="center" size="lg" data-testid="terms-last-updated">
-              {getCMSField(cmsData, 'terms.lastUpdated', 'Effective Date: January 1, 2024 | Last updated: January 2024')}
+            <Text 
+              variant="lead" 
+              align="center" 
+              size="lg" 
+              data-testid="terms-last-updated"
+              data-cms-id="pages.terms.lastUpdated"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.terms.lastUpdated', 'Effective Date: January 1, 2024 | Last updated: January 2024')}
             </Text>
           </Stack>
         </Stack>
@@ -55,31 +47,80 @@ function TermsPageContent() {
       {/* Content Section */}
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="lg">
-            
-            <Text data-testid="terms-intro">
-              {getCMSField(cmsData, 'terms.intro', 'Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.')}
-            </Text>
-            
-            <Text data-testid="terms-service-description">
-              {getCMSField(cmsData, 'terms.serviceDescription', 'We provide airport transportation services in the Fairfield area, including pickup and drop-off at local airports.')}
-            </Text>
-            
-            <Stack data-testid="terms-sections-list" spacing="lg">
-              {termsSections.map((section, index) => (
-                <Box key={index} data-testid={`terms-section-${index}`}>
-                  <Stack spacing="md">
-                    <H4 data-testid={`terms-section-title-${index}`}>
-                      {getCMSField(cmsData, `terms.sections.${index}.title`, section.title)}
-                    </H4>
-                    <Text data-testid={`terms-section-content-${index}`}>
-                      {getCMSField(cmsData, `terms.sections.${index}.content`, section.content)}
-                    </Text>
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
+          <Text 
+            data-testid="terms-intro"
+            data-cms-id="pages.terms.intro"
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.terms.intro', 'Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.')}
+          </Text>
+          
+          <Text 
+            data-testid="terms-service-description"
+            data-cms-id="pages.terms.serviceDescription"
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.terms.serviceDescription', 'We provide airport transportation services in the Fairfield area, including pickup and drop-off at local airports.')}
+          </Text>
+          
+          <Stack data-testid="terms-sections-list" spacing="lg">
+            <Box data-testid="terms-section-0">
+              <Stack spacing="md">
+                <H4 data-testid="terms-section-title-0" data-cms-id="pages.terms.sections.item1.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item1.title', 'Booking')}
+                </H4>
+                <Text data-testid="terms-section-content-0" data-cms-id="pages.terms.sections.item1.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item1.content', 'All bookings must be made through our website or by phone. We require at least 24 hours notice for all reservations.')}
+                </Text>
+              </Stack>
+            </Box>
+
+            <Box data-testid="terms-section-1">
+              <Stack spacing="md">
+                <H4 data-testid="terms-section-title-1" data-cms-id="pages.terms.sections.item2.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item2.title', 'Payment')}
+                </H4>
+                <Text data-testid="terms-section-content-1" data-cms-id="pages.terms.sections.item2.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item2.content', 'Payment is processed through Square. We accept all major credit cards and digital payments.')}
+                </Text>
+              </Stack>
+            </Box>
+
+            <Box data-testid="terms-section-2">
+              <Stack spacing="md">
+                <H4 data-testid="terms-section-title-2" data-cms-id="pages.terms.sections.item3.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item3.title', 'Cancellation Policy')}
+                </H4>
+                <Text data-testid="terms-section-content-2" data-cms-id="pages.terms.sections.item3.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item3.content', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.')}
+                </Text>
+              </Stack>
+            </Box>
+
+            <Box data-testid="terms-section-3">
+              <Stack spacing="md">
+                <H4 data-testid="terms-section-title-3" data-cms-id="pages.terms.sections.item4.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item4.title', 'Liability')}
+                </H4>
+                <Text data-testid="terms-section-content-3" data-cms-id="pages.terms.sections.item4.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item4.content', 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.')}
+                </Text>
+              </Stack>
+            </Box>
+
+            <Box data-testid="terms-section-4">
+              <Stack spacing="md">
+                <H4 data-testid="terms-section-title-4" data-cms-id="pages.terms.sections.item5.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item5.title', 'Contact')}
+                </H4>
+                <Text data-testid="terms-section-content-4" data-cms-id="pages.terms.sections.item5.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.item5.content', 'For questions about these terms, please contact us at the information provided on our website.')}
+                </Text>
+              </Stack>
+            </Box>
           </Stack>
-        </Container>
+        </Stack>
+      </Container>
     </>
   );
 }

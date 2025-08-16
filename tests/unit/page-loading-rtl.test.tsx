@@ -8,9 +8,9 @@ import AdminPage from '@/app/(admin)/admin/page';
 import HelpPage from '@/app/(public)/help/page';
 import CostsPage from '@/app/(admin)/admin/costs/page';
 import { server } from '../mocks/server';
-import { ToastProvider, CMSDesignProvider } from '@/ui';
+import { ToastProvider } from '@/ui';
 import { AdminProvider } from '@/design/providers/AdminProvider';
-import { EditModeProvider } from '@/design/providers/EditModeProvider';
+import { InteractionModeProvider } from '@/design/providers/InteractionModeProvider';
 
 // Reuse centralized MSW server and handlers
 beforeAll(() => {
@@ -31,13 +31,11 @@ afterAll(() => server.close());
 function render(ui: React.ReactNode) {
   return rtlRender(
     <ToastProvider>
-      <CMSDesignProvider>
-        <AdminProvider>
-          <EditModeProvider>
-            {ui}
-          </EditModeProvider>
-        </AdminProvider>
-      </CMSDesignProvider>
+      <AdminProvider>
+        <InteractionModeProvider>
+          {ui}
+        </InteractionModeProvider>
+      </AdminProvider>
     </ToastProvider>
   );
 }

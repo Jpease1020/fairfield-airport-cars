@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { History, GitBranch, User, Calendar, FileText, CheckCircle, XCircle } from 'lucide-react';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 interface ContentVersion {
   id: string;
   pageType: string;

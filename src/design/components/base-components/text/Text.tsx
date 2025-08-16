@@ -7,14 +7,16 @@ import { BaseComponentProps, TextVariant, TextSize, FontWeight, TextAlign, Color
 
 // Styled text component
 const StyledText = styled.p.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'color'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'color', 'isInteractive'].includes(prop)
 })<{
   variant: TextVariant;
   size: TextSize;
   weight: FontWeight;
   align: TextAlign;
   color: ColorVariant | 'inherit';
+  isInteractive?: boolean;
 }>`
+  cursor: ${({ isInteractive }) => isInteractive ? 'pointer' : 'default'};
   margin: 0;
   font-family: ${fontFamily.sans};
   transition: ${transitions.default};
@@ -148,6 +150,12 @@ export interface TextProps extends BaseComponentProps {
   onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  
+  // Interaction mode
+  mode?: 'edit' | 'comment' | null;
+  
+  // Styling
+  style?: React.CSSProperties;
 }
 
 export const Text: React.FC<TextProps> = ({
@@ -159,9 +167,38 @@ export const Text: React.FC<TextProps> = ({
   color = 'default',
   as: Component = 'p',
   cmsKey,
+  mode,
   ...rest
 }) => {
   const ref = React.useRef<HTMLElement | null>(null);
+  
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Get cmsId from either cmsKey prop or data-cms-id attribute
+    const cmsId = cmsKey || (e.currentTarget as HTMLElement).getAttribute('data-cms-id');
+    
+    if (mode === 'edit' && cmsId) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Dispatch custom event to open edit modal
+      const event = new (window as any).CustomEvent('openInlineEditor', {
+        detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
+      });
+      document.dispatchEvent(event);
+    } else if (mode === 'comment' && cmsId) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Dispatch custom event to open comment modal
+      const event = new (window as any).CustomEvent('openCommentModal', {
+        detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
+      });
+      document.dispatchEvent(event);
+    }
+    
+    rest.onClick?.(e);
+  };
+  
   return (
     <StyledText
       as={Component}
@@ -171,9 +208,16 @@ export const Text: React.FC<TextProps> = ({
       align={align}
       color={color}
       ref={ref as any}
+      onClick={mode ? handleClick : rest.onClick}
+      isInteractive={!!mode}
       {...rest}
     >
       {children}
     </StyledText>
   );
-}; 
+};
+
+// Convenience wrapper for paragraphs
+export const Paragraph: React.FC<TextProps> = (props) => (
+  <Text as="p" {...props} />
+); 

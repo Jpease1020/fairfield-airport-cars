@@ -19,7 +19,7 @@ import {
   Stack,
   StatCard
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function PromosPageContent() {
   const { cmsData } = useCMSData();

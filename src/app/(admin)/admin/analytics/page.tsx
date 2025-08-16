@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, H2, Text, Span } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { Box } from '@/ui';
