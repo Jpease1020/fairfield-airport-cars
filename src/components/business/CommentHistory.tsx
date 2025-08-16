@@ -8,7 +8,7 @@ import StatusBadge from '@/components/business/StatusBadge';
 import { Stack } from '@/ui';
 import { Button } from '@/ui';
 import { Select, Input } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 interface CommentHistoryProps {
   comments: ConfluenceComment[];

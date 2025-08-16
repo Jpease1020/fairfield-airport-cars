@@ -13,7 +13,7 @@ import {
   Stack,
   
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { Booking } from '@/types/booking';
 
 function SuccessPageContent() {

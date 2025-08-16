@@ -112,7 +112,7 @@ const HamburgerIcon = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
-export const FloatingEditButton: React.FC<FloatingEditButtonProps> = ({
+export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
   isAdmin = false,
   isAuthenticated = false,
   editMode = false,

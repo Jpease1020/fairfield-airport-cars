@@ -99,23 +99,6 @@ export interface TemplateCategories {
   };
 }
 
-export interface ComponentRegistry {
-  [key: string]: {
-    component: React.ComponentType<any>;
-    defaultProps: Record<string, any>;
-    category: 'layout' | 'content' | 'form' | 'navigation' | 'feedback';
-    description: string;
-    props: {
-      [key: string]: {
-        type: string;
-        required: boolean;
-        default?: any;
-        description: string;
-      };
-    };
-  };
-}
-
 export interface PageProps {
   template: PageTemplate;
   content?: Record<string, any>;

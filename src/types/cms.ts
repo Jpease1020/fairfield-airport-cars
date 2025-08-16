@@ -334,16 +334,16 @@ export interface CMSConfiguration {
   business: BusinessSettings;
   pricing: PricingSettings;
   payment: PaymentSettings;
-  communication: {
-    email: EmailTemplates;
-    sms: SMSTemplates;
+  communication?: {
+    email?: EmailTemplates;
+    sms?: SMSTemplates;
   };
+  themeColors?: Record<string, string>;
   driver: DriverSettings;
-  analytics: AnalyticsSettings;
+  analytics?: AnalyticsSettings;
   bookingForm: BookingFormText;
-  lastUpdated: Date;
-  version: string;
-  themeColors?: Record<string, string>; // <-- add this line
+  lastUpdated?: Date;
+  version?: string;
 }
 
 // Default configurations

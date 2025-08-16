@@ -2,7 +2,12 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface EditModeContextType {
+export type InteractionMode = 'edit' | 'comment' | null;
+
+interface InteractionContextType {
+  mode: InteractionMode;
+  setMode: (mode: InteractionMode | null) => void;
+  isActive: boolean;
   editMode: boolean;
   commentMode: boolean;
   setEditMode: (mode: boolean) => void;
@@ -11,15 +16,18 @@ interface EditModeContextType {
   toggleCommentMode: () => void;
 }
 
-const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
+const InteractionContext = createContext<InteractionContextType | undefined>(undefined);
 
-interface EditModeProviderProps {
+interface InteractionModeProviderProps {
   children: ReactNode;
 }
 
-export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) => {
+export function InteractionModeProvider({ children }: InteractionModeProviderProps) {
+  const [mode, setMode] = useState<InteractionMode>(null);
   const [editMode, setEditMode] = useState(false);
   const [commentMode, setCommentMode] = useState(false);
+
+  const isActive = mode !== null;
 
   // Handle comment mode toggle
   const toggleCommentMode = () => {
@@ -28,9 +36,11 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
     // If turning on comment mode, turn off edit mode
     if (newMode && editMode) {
       setEditMode(false);
+      setMode(null);
     }
     
     setCommentMode(newMode);
+    setMode(newMode ? 'comment' : null);
     
     if (newMode) {
       document.body.classList.add('comment-mode-active');
@@ -48,9 +58,13 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
     }
     
     setEditMode(newMode);
+    setMode(newMode ? 'edit' : null);
   };
 
-  const value: EditModeContextType = {
+  const value: InteractionContextType = {
+    mode,
+    setMode,
+    isActive,
     editMode,
     commentMode,
     setEditMode,
@@ -60,16 +74,19 @@ export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) 
   };
 
   return (
-    <EditModeContext.Provider value={value}>
+    <InteractionContext.Provider value={value}>
       {children}
-    </EditModeContext.Provider>
+    </InteractionContext.Provider>
   );
-};
+}
 
-export const useEditMode = (): EditModeContextType => {
-  const context = useContext(EditModeContext);
+export function useInteractionMode() {
+  const context = useContext(InteractionContext);
   if (context === undefined) {
-    throw new Error('useEditMode must be used within an EditModeProvider');
+    throw new Error('useInteractionMode must be used within an InteractionModeProvider');
   }
   return context;
-}; 
+}
+
+// Backward compatibility hook alias
+export const useEditMode = useInteractionMode;

@@ -17,7 +17,7 @@ import {
   Stack,
   Span
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function PricingSettingsContent() {
   const { cmsData } = useCMSData();

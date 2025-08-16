@@ -10,49 +10,12 @@ import {
   Button,
   Box
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function HelpPageContent() {
   const { cmsData } = useCMSData();
-  const quickAnswers = [
-    {
-      question: "How far in advance should I book?",
-      answer: "Book at least 24 hours in advance, especially during peak travel seasons."
-    },
-    {
-      question: "Can I cancel my booking?",
-      answer: "Yes, cancel up to 4 hours before pickup for a full refund."
-    },
-    {
-      question: "Do you track flights?",
-      answer: "Yes, we monitor flight schedules and adjust pickup times accordingly."
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer: "All major credit cards, debit cards, and cash payments."
-    }
-  ];
-
-  const contactActions = [
-    {
-      field: 'help.contact.primaryButton',
-      label: 'Call Support',
-      onClick: () => window.location.href = 'tel:+12035550123',
-      variant: 'primary' as const
-    },
-    {
-      field: 'help.contact.secondaryButton',
-      label: 'Email Support',
-      onClick: () => window.location.href = 'mailto:support@fairfieldairportcars.com',
-      variant: 'secondary' as const
-    },
-    {
-      field: 'help.contact.tertiaryButton',
-      label: 'Book a Ride',
-      onClick: () => window.location.href = '/book',
-      variant: 'outline' as const
-    }
-  ];
+  const { mode } = useInteractionMode();
 
   return (
     <>
@@ -60,70 +23,161 @@ function HelpPageContent() {
       <Container maxWidth="full" padding="xl" variant="section" data-testid="help-hero-section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H1 align="center" data-testid="help-title">
-              {getCMSField(cmsData, 'help.hero.title', 'Help & Support')}
+            <H1 
+              align="center" 
+              data-testid="help-title"
+              data-cms-id="pages.help.hero.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.help.hero.title', 'Help & Support')}
             </H1>
-            <Text variant="lead" align="center" size="lg">
-              {getCMSField(cmsData, 'help.hero.subtitle', 'Quick answers and support')}
+            <Text 
+              variant="lead" 
+              align="center" 
+              size="lg"
+              data-cms-id="pages.help.hero.subtitle"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.help.hero.subtitle', 'Quick answers and support')}
             </Text>
           </Stack>
         </Stack>
       </Container>
       
-        <Container maxWidth="2xl" data-testid="help-content">
-          <Stack spacing="lg" align="center">
-            <H2>
-              {getCMSField(cmsData, 'help.quickAnswers.title', 'Quick Answers')}
-            </H2>
-          </Stack>
-          
-          <Stack spacing="lg" data-testid="faq-section">
-            {quickAnswers.map((item, index) => (
-              <Box key={index} variant="elevated" padding="lg" data-testid={`faq-item-${index}`}>
-                <Stack spacing="md">
-                  <H2>
-                    {getCMSField(cmsData, `help.quickAnswers.${index}.question`, item.question)}
-                  </H2>
-                  <Text>
-                    {getCMSField(cmsData, `help.quickAnswers.${index}.answer`, item.answer)}
-                  </Text>
-                </Stack>
-              </Box>
-            ))}
-          </Stack>
-        </Container>
-      
-        <Container maxWidth="2xl">
-          <Stack spacing="lg" align="center">
-            <H2>
-              {getCMSField(cmsData, 'help.contact.title', 'Need More Help?')}
-            </H2>
-            <Text variant="lead" align="center">
-              {getCMSField(cmsData, 'help.contact.subtitle', 'Contact our support team')}
-            </Text>
-            
-            <Stack direction="horizontal" spacing="md" align="center">
-              {contactActions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant={action.variant}
-                  onClick={action.onClick}
-                >
-                  {getCMSField(cmsData, action.field, action.label)}
-                </Button>
-              ))}
+      <Container maxWidth="2xl" data-testid="help-content">
+        <Stack spacing="lg" align="center">
+          <H2 
+            data-cms-id="pages.help.quickAnswers.title"
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.help.quickAnswers.title', 'Quick Answers')}
+          </H2>
+        </Stack>
+        
+        <Stack spacing="lg" data-testid="faq-section">
+          <Box variant="elevated" padding="lg" data-testid="faq-item-0">
+            <Stack spacing="md">
+              <H2 
+                data-cms-id="pages.help.quickAnswers.item1.question"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item1.question', 'How far in advance should I book?')}
+              </H2>
+              <Text 
+                data-cms-id="pages.help.quickAnswers.item1.answer"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item1.answer', 'Book at least 24 hours in advance, especially during peak travel seasons.')}
+              </Text>
             </Stack>
-          </Stack>
-        </Container>
+          </Box>
+
+          <Box variant="elevated" padding="lg" data-testid="faq-item-1">
+            <Stack spacing="md">
+              <H2 
+                data-cms-id="pages.help.quickAnswers.item2.question"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item2.question', 'Can I cancel my booking?')}
+              </H2>
+              <Text 
+                data-cms-id="pages.help.quickAnswers.item2.answer"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item2.answer', 'Yes, cancel up to 4 hours before pickup for a full refund.')}
+              </Text>
+            </Stack>
+          </Box>
+
+          <Box variant="elevated" padding="lg" data-testid="faq-item-2">
+            <Stack spacing="md">
+              <H2 
+                data-cms-id="pages.help.quickAnswers.item3.question"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item3.question', 'Do you track flights?')}
+              </H2>
+              <Text 
+                data-cms-id="pages.help.quickAnswers.item3.answer"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item3.answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
+              </Text>
+            </Stack>
+          </Box>
+
+          <Box variant="elevated" padding="lg" data-testid="faq-item-3">
+            <Stack spacing="md">
+              <H2 
+                data-cms-id="pages.help.quickAnswers.item4.question"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item4.question', 'What payment methods do you accept?')}
+              </H2>
+              <Text 
+                data-cms-id="pages.help.quickAnswers.item4.answer"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.help.quickAnswers.item4.answer', 'All major credit cards, debit cards, and cash payments.')}
+              </Text>
+            </Stack>
+          </Box>
+        </Stack>
+      </Container>
       
+      <Container maxWidth="2xl">
+        <Stack spacing="lg" align="center">
+          <H2 
+            data-cms-id="pages.help.contact.title"
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.help.contact.title', 'Need More Help?')}
+          </H2>
+          <Text 
+            variant="lead" 
+            align="center"
+            data-cms-id="pages.help.contact.subtitle"
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.help.contact.subtitle', 'Contact our support team')}
+          </Text>
+          
+          <Stack direction="horizontal" spacing="md" align="center">
+            <Button
+              variant="primary"
+              onClick={() => window.location.href = 'tel:+12035550123'}
+              data-cms-id="pages.help.contact.primaryButton"
+              interactionMode={mode}
+            >
+              {getCMSField(cmsData, 'pages.help.contact.primaryButton', 'Call Support')}
+            </Button>
+            
+            <Button
+              variant="secondary"
+              onClick={() => window.location.href = 'mailto:support@fairfieldairportcars.com'}
+              data-cms-id="pages.help.contact.secondaryButton"
+              interactionMode={mode}
+            >
+              {getCMSField(cmsData, 'pages.help.contact.secondaryButton', 'Email Support')}
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => window.location.href = '/book'}
+              data-cms-id="pages.help.contact.tertiaryButton"
+              interactionMode={mode}
+            >
+              {getCMSField(cmsData, 'pages.help.contact.tertiaryButton', 'Book a Ride')}
+            </Button>
+          </Stack>
+        </Stack>
+      </Container>
     </>
   );
 }
 
 export default function HelpPage() {
   return (
-    
-      <HelpPageContent />
-    
+    <HelpPageContent />
   );
 }

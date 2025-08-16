@@ -41,18 +41,21 @@ export type { BadgeProps } from './components/base-components/Badge';
 export { Modal } from './components/base-components/Modal';
 export type { ModalProps } from './components/base-components/Modal';
 export { Overlay } from './components/base-components/Overlay';
+export { Drawer } from './components/base-components/Drawer';
+export type { DrawerProps } from './components/base-components/Drawer';
 export { ProgressIndicator } from './components/base-components/ProgressIndicator';
 export { StarRating } from './components/base-components/StarRating';
 export { StatCard } from './components/base-components/StatCard';
 export { ActionButtonGroup } from './components/base-components/ActionButtonGroup';
 
 // Text Components
-export { Text } from './components/base-components/text/Text';
-export { Heading } from './components/base-components/text/Heading';
+export { Text, Paragraph } from './components/base-components/text/Text';
 export { H1, H2, H3, H4, H5, H6 } from './components/base-components/text/Headings';
 export { Link } from './components/base-components/text/Link';
-export { Paragraph } from './components/base-components/text/Paragraph';
 export { Span } from './components/base-components/text/Span';
+
+// Editable HOC
+export { withEditable } from './components/base-components/withEditable';
 
 // Form Components
 export { Form } from './components/base-components/forms/Form';
@@ -86,7 +89,7 @@ export type { DataTableColumn, DataTableAction } from './components/composite-co
 export { ActionGrid } from './components/composite-components/ActionGrid';
 export { FeatureGrid } from './components/composite-components/FeatureGrid';
 export { ContentCard } from './components/composite-components/ContentCard';
-export { FloatingEditButton } from './components/composite-components/FloatingEditButton';
+export { AdminHamburger } from './components/composite-components/AdminHamburger';
 export { SettingToggle } from './components/composite-components/SettingToggle';
 
 // Layer 5: Content Sections (depends on composite components)
@@ -106,8 +109,7 @@ export { DriverTrackingInterface } from '../components/business/DriverTrackingIn
 
 // Layer 7: Providers (depends on base components)
 export { AccessibilityEnhancer } from './providers/AccessibilityEnhancer';
-export { CMSDesignProvider } from './providers/CMSDesignProvider';
-export { EditModeProvider } from './providers/EditModeProvider';
+export { InteractionModeProvider, useInteractionMode, useEditMode } from './providers/InteractionModeProvider';
 export { ThemeProvider } from './providers/ThemeProvider';
 export { StyledComponentsRegistry } from './providers/StyledComponentsRegistry';
 

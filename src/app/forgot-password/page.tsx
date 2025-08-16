@@ -16,7 +16,7 @@ import {
 } from '@/ui';
 import { Input } from '@/ui';
 import { Label } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 export default function ForgotPasswordPage() {
   const { cmsData } = useCMSData();

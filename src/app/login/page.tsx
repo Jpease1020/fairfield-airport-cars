@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { login, signInWithGoogle } from '@/lib/services/auth-service';
+import { login, signInWithGoogle, authService } from '@/lib/services/auth-service';
+import { auth } from '@/lib/utils/firebase';
 import { 
   Container,
   Stack,
@@ -18,7 +19,7 @@ import {
   spacing
 } from '@/ui';
 import styled from 'styled-components'; 
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 // Styled components for login page
 const LoginCard = styled(Box)`
@@ -92,7 +93,12 @@ export default function CustomerLoginPage() {
     
     try {
       await login(email, password);
-      router.push('/dashboard');
+      const current = auth.currentUser;
+      if (current && await authService.isAdmin(current.uid)) {
+        router.push('/admin');
+      } else {
+        router.push('/portal');
+      }
     } catch (error) {
       setError(`Failed to log in: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
@@ -106,7 +112,12 @@ export default function CustomerLoginPage() {
     
     try {
       await signInWithGoogle();
-      router.push('/dashboard');
+      const current = auth.currentUser;
+      if (current && await authService.isAdmin(current.uid)) {
+        router.push('/admin');
+      } else {
+        router.push('/portal');
+      }
     } catch (error) {
       setError(`Failed to sign in with Google: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {

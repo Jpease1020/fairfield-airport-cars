@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Container, H2, Text, Button, Stack, Box } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useChat } from '@/hooks/useChat';
 import { Mic, MicOff, Send } from 'lucide-react';
 

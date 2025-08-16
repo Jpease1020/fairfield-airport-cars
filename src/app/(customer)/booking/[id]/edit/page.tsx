@@ -6,7 +6,7 @@ import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToa
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '../../../book/booking-form';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 export default function EditBookingPage() {
   const params = useParams();
   const { id } = params;
