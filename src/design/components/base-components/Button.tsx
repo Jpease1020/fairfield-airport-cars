@@ -344,6 +344,21 @@ export const Button: React.FC<ButtonProps> = ({
     if (interactionMode && !disableInteractionOverride) {
       e.preventDefault();
       e.stopPropagation();
+      
+      // If we have a cmsKey, dispatch the appropriate edit event
+      if (cmsKey) {
+        if (interactionMode === 'edit') {
+          const event = new (window as any).CustomEvent('openInlineEditor', {
+            detail: { cmsId: cmsKey, element: e.currentTarget, x: e.clientX, y: e.clientY }
+          });
+          document.dispatchEvent(event);
+        } else if (interactionMode === 'comment') {
+          const event = new (window as any).CustomEvent('openCommentModal', {
+            detail: { cmsId: cmsKey, element: e.currentTarget, x: e.clientX, y: e.clientY }
+          });
+          document.dispatchEvent(event);
+        }
+      }
       return;
     }
     
