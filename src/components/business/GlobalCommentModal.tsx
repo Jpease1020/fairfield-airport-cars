@@ -31,6 +31,7 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   const [clickPosition, setClickPosition] = useState<{ x: number; y: number } | null>(null);
   const [computedPosition, setComputedPosition] = useState<{ top: number; left: number } | null>(null);
+  const [currentCmsId, setCurrentCmsId] = useState<string | null>(null);
   
   const boxRef = useRef<HTMLDivElement | null>(null);
 
@@ -106,6 +107,7 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
       setActiveCommentBox(`comment-${Date.now()}-${Math.random().toString(36).slice(2)}`);
       setCommentText('');
       setClickPosition({ x, y });
+      setCurrentCmsId(cmsId); // Store the CMS ID for the comment
       
       // Mark the element as active
       try {
@@ -202,16 +204,19 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
     setSelectedElement(null);
     setClickPosition(null);
     setCommentText('');
+    setCurrentCmsId(null); // Clear the CMS ID when closing
   }, [selectedElement]);
 
   const handleAddComment = useCallback(async () => {
     if (!commentText.trim() || !selectedElement) return;
 
-    // Generate consistent ID structure with page scoping
+    // Use CMS ID if available, otherwise generate a fallback ID
     const timestamp = Date.now();
     const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
     const pageSlug = pageUrl.replace(/^\//, '').replace(/\//g, '.') || 'unknown';
-    const elementId = `${pageSlug}.comment-${timestamp}`;
+    
+    // Prefer CMS ID over generated ID for better integration
+    const elementId = currentCmsId || `${pageSlug}.comment-${timestamp}`;
     const elementText = selectedElement.textContent?.trim() || selectedElement.tagName.toLowerCase();
     const pageTitle = typeof document !== 'undefined' ? document.title : '';
     const createdBy = user?.email || user?.uid || 'anonymous';
@@ -220,11 +225,11 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
       // Add unique identifier to the DOM element for reliable tracking
       selectedElement.setAttribute('data-comment-id', elementId);
       
-      // Save comment with element ID (not CSS selector)
+      // Save comment with CMS ID when available
       await commentsService.addComment({
         elementId,
         elementText,
-        elementSelector: elementId, // Use ID as selector for now (will be updated)
+        elementSelector: currentCmsId || elementId, // Use CMS ID as selector when available
         pageUrl,
         pageTitle,
         comment: commentText.trim(),
