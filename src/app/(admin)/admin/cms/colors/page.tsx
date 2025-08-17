@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Span, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { getCMSConfig } from '@/lib/services/cms-service';
 
 const COLOR_VARIABLES = [

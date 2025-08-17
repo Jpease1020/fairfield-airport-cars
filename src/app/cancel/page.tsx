@@ -13,7 +13,7 @@ import {
   Box,
   Button
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function CancelPageContent() {
   const { addToast } = useToast();

@@ -13,7 +13,7 @@ import {
   ActionButtonGroup,
   useToast
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';

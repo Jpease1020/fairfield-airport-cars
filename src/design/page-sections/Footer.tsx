@@ -6,7 +6,7 @@ import { Container } from '../layout/containers/Container';
 import { Box } from '../layout/content/Box';
 import { Stack } from '../layout/framing/Stack';
 import { Text } from '../components/base-components/text/Text';
-import { useCMSData, getCMSField } from '../providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '../hooks/useCMSData';
 
 export const Footer: React.FC = () => {
   const { cmsData } = useCMSData();

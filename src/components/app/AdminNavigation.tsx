@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '../../design/components/base-components/Button';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/BaseNavigation';
 import { auth } from '../../lib/utils/firebase';
 

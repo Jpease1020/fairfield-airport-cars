@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createCustomerAccount, signInWithGoogle } from '@/lib/services/auth-service';
+import { createCustomerAccount, signInWithGoogle, authService } from '@/lib/services/auth-service';
+import { auth } from '@/lib/utils/firebase';
 import { 
   Container,
   Stack,
@@ -18,7 +19,7 @@ import {
   spacing
 } from '@/ui';
 import styled from 'styled-components';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 // Styled components for registration page
 const RegisterCard = styled(Box)`
@@ -135,7 +136,14 @@ export default function CustomerRegisterPage() {
         formData.name,
         formData.phone
       );
-      router.push('/dashboard');
+      {
+        const current = auth.currentUser;
+        if (current && await authService.isAdmin(current.uid)) {
+          router.push('/admin');
+        } else {
+          router.push('/portal');
+        }
+      }
     } catch (error) {
       setError(`Failed to create account: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
@@ -149,7 +157,14 @@ export default function CustomerRegisterPage() {
     
     try {
       await signInWithGoogle();
-      router.push('/dashboard');
+      {
+        const current = auth.currentUser;
+        if (current && await authService.isAdmin(current.uid)) {
+          router.push('/admin');
+        } else {
+          router.push('/portal');
+        }
+      }
     } catch (error) {
       setError(`Failed to sign in with Google: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {

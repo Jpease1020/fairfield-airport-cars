@@ -1,73 +1,97 @@
 'use client';
 
 import React from 'react';
-import { 
-  Container,
-  Stack,
-  H1,
-  Text,
-  Button
-} from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useRouter } from 'next/navigation';
+import { Container, Stack } from '@/ui';
+import { H1, Text, Button } from '@/design/components/base-components/Components';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useAdmin } from '@/design/providers/AdminProvider';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function AboutPageContent() {
+  const router = useRouter();
   const { cmsData } = useCMSData();
-  const ctaActions = [
-    {
-      field: 'about.cta.primaryButton',
-      label: 'Book Your Ride',
-      onClick: () => window.location.href = '/book',
-      variant: 'primary' as const
-    },
-    {
-      field: 'about.cta.secondaryButton',
-      label: 'Contact Us',
-      onClick: () => window.location.href = '/help',
-      variant: 'secondary' as const
-    }
-  ];
-
+  const { isAdmin } = useAdmin();
+  const { mode } = useInteractionMode();
+  
+  // Debug: Log the CMS data structure
+  console.log('About page CMS data:', cmsData);
+  console.log('Looking for title at path: pages.about.title');
+  console.log('Title value:', getCMSField(cmsData, 'pages.about.title', 'FALLBACK TEXT'));
+  
   return (
     <>
       {/* Hero Section */}
       <Container maxWidth="full" padding="xl" variant="section">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H1 align="center">
-              {getCMSField(cmsData, 'about.hero.title', 'About Fairfield Airport Cars')}
+            <H1 
+              align="center" 
+              data-cms-id="pages.about.title" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.about.title', 'About Fairfield Airport Cars')}
             </H1>
-            <Text variant="lead" align="center" size="lg">
-              {getCMSField(cmsData, 'about.hero.subtitle', 'Professional airport transportation services')}
+            <Text 
+              variant="lead" 
+              align="center" 
+              size="lg" 
+              data-cms-id="pages.about.subtitle" 
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.about.subtitle', 'Professional airport transportation services')}
             </Text>
           </Stack>
         </Stack>
       </Container>
 
-      {/* Simple Content Section */}
+      {/* Main Content Section */}
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="lg" align="center">
-          <Text align="center" size="lg">
+          <Text 
+            align="center" 
+            size="lg" 
+            data-cms-id="pages.about.description" 
+            mode={mode}
+          >
             {getCMSField(
               cmsData,
-              'about.description',
+              'pages.about.description',
               'We provide reliable, professional airport transportation throughout Fairfield County. Licensed drivers, clean vehicles, on-time service.'
             )}
           </Text>
-          
-          <Text align="center">
-            {getCMSField(cmsData, 'about.cta.subtitle', 'Ready to book your ride?')}
+        </Stack>
+      </Container>
+
+      {/* CTA Section */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="lg" align="center">
+          <Text 
+            align="center" 
+            data-cms-id="pages.about.cta.subtitle" 
+            mode={mode}
+          >
+            {getCMSField(cmsData, 'pages.about.cta.subtitle', 'Ready to book your ride?')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
-            {ctaActions.map((action, index) => (
-              <Button
-                key={index}
-                variant={action.variant}
-                onClick={action.onClick}
-              >
-                {getCMSField(cmsData, action.field, action.label)}
-              </Button>
-            ))}
+            <Button
+              variant="primary"
+              cmsKey="pages.about.cta.primaryButton"
+              interactionMode={mode}
+              onClick={() => router.push('/book')}
+            >
+              {getCMSField(cmsData, 'pages.about.cta.primaryButton', 'Book Now')}
+            </Button>
+            
+            <Button
+              variant="secondary"
+              cmsKey="pages.about.cta.secondaryButton"
+              interactionMode={mode}
+              onClick={() => router.push('/help')}
+            >
+              {getCMSField(cmsData, 'pages.about.cta.secondaryButton', 'Learn More')}
+            </Button>
           </Stack>
         </Stack>
       </Container>
@@ -77,8 +101,6 @@ function AboutPageContent() {
 
 export default function AboutPage() {
   return (
-    
-      <AboutPageContent />
-    
+    <AboutPageContent />
   );
 } 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/design/components/base-components/Button';
 import { Container } from '@/design/layout/containers/Container';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 interface EditModeToggleProps {
   editMode: boolean;

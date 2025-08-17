@@ -3,8 +3,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Container } from '../layout/containers/Container';
-import { useCMSData, getCMSField } from '../providers/CMSDesignProvider';
-import { Heading } from '../components/base-components/text/Heading';
+import { useCMSData, getCMSField } from '../hooks/useCMSData';
+import { H1 } from '../components/base-components/text/Headings';
 import { Text } from '../components/base-components/text/Text';
 
 const ActionsContainer = styled.div`
@@ -42,9 +42,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     >
       {title && (
         typeof title === 'string' ? (
-          <Heading>
+          <H1>
             {getCMSField(cmsData, 'page_header.title', title)}
-          </Heading>
+          </H1>
         ) : (
           title
         )

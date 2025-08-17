@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { Container, Text, Button, LoadingSpinner, GridSection, useToast, ToastProvider, Box, Label, Textarea, Stack } from '@/ui';
 import { Star } from 'lucide-react';
 import { colors } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function FeedbackPageContent() {
   const params = useParams();

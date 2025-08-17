@@ -5,7 +5,7 @@ import { H3 } from '../../design/components/base-components/text/Headings';
 import { Text } from '../../design/components/base-components/text/Text';
 import { PositionedContainer } from '../../design/layout/containers/PositionedContainer';
 import { LoadingSpinner } from '../../design/components/base-components/notifications/LoadingSpinner';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 export interface StateProps {
   type: 'loading' | 'empty' | 'error';

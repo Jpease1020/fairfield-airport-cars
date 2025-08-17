@@ -16,7 +16,7 @@ import { Input } from '@/ui';
 import { Label } from '@/ui';
 import styled from 'styled-components';
 import { spacing, colors } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 // Styled components for login page
 const LoginCard = styled(Box)`

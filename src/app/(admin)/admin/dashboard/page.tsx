@@ -15,7 +15,7 @@ import {
   Alert,
 } from '@/ui';
 import { ContentCard, Grid } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function CustomerDashboardContent() {
   const { cmsData } = useCMSData();

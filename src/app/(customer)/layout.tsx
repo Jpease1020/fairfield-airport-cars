@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import { CustomerNavigation } from '@/components/app/CustomerNavigation';
-import { Footer } from '@/design/page-sections/Footer';
 import { Container } from '@/design/layout/containers/Container';
 
 export default function CustomerLayout({
@@ -12,15 +10,9 @@ export default function CustomerLayout({
 }) {
   return (
     <>
-      <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
-        <CustomerNavigation />
-      </Container>
-      
       <Container as="main" maxWidth="full" data-testid="layout-main-content">
         {children}
       </Container>
-      
-      <Footer data-testid="layout-footer"/>
     </>
   );
 }

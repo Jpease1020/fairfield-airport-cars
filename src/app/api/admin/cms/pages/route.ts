@@ -269,17 +269,18 @@ export async function GET(request: NextRequest) {
           tip: 'Tip'
         };
       } else if (page === 'about') {
-        defaultPageContent.title = 'About Fairfield Airport Cars';
-        defaultPageContent.subtitle = 'Professional airport transportation services';
-        defaultPageContent.description = 'We provide reliable, professional airport transportation throughout Fairfield County.';
-        (defaultPageContent as any).hero = {
+        defaultPageContent.hero = {
           title: 'About Fairfield Airport Cars',
           subtitle: 'Professional airport transportation services'
         };
-        (defaultPageContent as any).cta = {
+        defaultPageContent.content = {
+          description: 'We provide reliable, professional airport transportation throughout Fairfield County. Licensed drivers, clean vehicles, on-time service.',
+          features: 'Our services include airport pickup and dropoff, corporate transportation, and special event shuttles.'
+        };
+        defaultPageContent.cta = {
           subtitle: 'Ready to book your ride?',
-          primaryButton: 'Book Your Ride',
-          secondaryButton: 'Contact Us'
+          primaryButton: 'Book Now',
+          secondaryButton: 'Learn More'
         };
       } else if (page === 'help') {
         defaultPageContent.title = 'Help & Support';
@@ -498,20 +499,29 @@ export async function PUT(request: NextRequest) {
     const pathParts = fieldPath.split('.');
     if (pathParts[0] === 'pages' && pathParts.length >= 3) {
       const pageType = pathParts[1];
-      const fieldName = pathParts[2];
       
       // Get current page data
       const currentData = await cmsService.getCMSConfiguration();
       const currentPageData = currentData?.pages?.[pageType as keyof typeof currentData.pages] || {};
       
-      // Update only the specific field
-      const updatedPageData = {
-        ...currentPageData,
-        [fieldName]: value
-      };
+      // Handle nested field paths (e.g., "hero.title" -> currentPageData.hero.title = value)
+      const fieldPathParts = pathParts.slice(2); // Remove "pages" and pageType
+      let cursor: any = currentPageData;
+      
+      // Navigate to the parent object of the field we want to update
+      for (let i = 0; i < fieldPathParts.length - 1; i++) {
+        if (!cursor[fieldPathParts[i]]) {
+          cursor[fieldPathParts[i]] = {};
+        }
+        cursor = cursor[fieldPathParts[i]];
+      }
+      
+      // Set the actual field value
+      const lastFieldName = fieldPathParts[fieldPathParts.length - 1];
+      cursor[lastFieldName] = value;
       
       // Use the page-specific update method
-      const result = await cmsService.updatePageContent(pageType, updatedPageData);
+      const result = await cmsService.updatePageContent(pageType, currentPageData);
       
       if (result.success) {
         console.log('CMS field updated successfully');

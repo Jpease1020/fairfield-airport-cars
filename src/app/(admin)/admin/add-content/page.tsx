@@ -9,7 +9,7 @@ import {
   Button,
   ToastProvider,
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function AddContentPage() {
   const { cmsData } = useCMSData();
