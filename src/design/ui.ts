@@ -54,9 +54,6 @@ export { H1, H2, H3, H4, H5, H6 } from './components/base-components/text/Headin
 export { Link } from './components/base-components/text/Link';
 export { Span } from './components/base-components/text/Span';
 
-// Editable HOC
-export { withEditable } from './components/base-components/withEditable';
-
 // Form Components
 export { Form } from './components/base-components/forms/Form';
 export { FormField } from './components/base-components/forms/FormField';
