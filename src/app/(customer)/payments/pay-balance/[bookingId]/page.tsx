@@ -16,9 +16,6 @@ import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { GridSection } from '@/ui';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
-interface BalancePaymentPageProps {
-  bookingId: string;
-}
 
 interface BookingDetails {
   id: string;

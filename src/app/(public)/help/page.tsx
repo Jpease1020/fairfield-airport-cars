@@ -58,16 +58,16 @@ function HelpPageContent() {
           <Box variant="elevated" padding="lg" data-testid="faq-item-0">
             <Stack spacing="md">
               <H2 
-                data-cms-id="pages.help.quickAnswers.item1.question"
+                                  data-cms-id="pages.help.quickAnswers.items.0.question"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item1.question', 'How far in advance should I book?')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.question', 'How far in advance should I book?')}
               </H2>
               <Text 
-                data-cms-id="pages.help.quickAnswers.item1.answer"
+                                  data-cms-id="pages.help.quickAnswers.items.0.answer"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item1.answer', 'Book at least 24 hours in advance, especially during peak travel seasons.')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.answer', 'Book at least 24 hours in advance, especially during peak travel seasons.')}
               </Text>
             </Stack>
           </Box>
@@ -75,16 +75,16 @@ function HelpPageContent() {
           <Box variant="elevated" padding="lg" data-testid="faq-item-1">
             <Stack spacing="md">
               <H2 
-                data-cms-id="pages.help.quickAnswers.item2.question"
+                                  data-cms-id="pages.help.quickAnswers.items.1.question"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item2.question', 'Can I cancel my booking?')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.question', 'Can I cancel my booking?')}
               </H2>
               <Text 
-                data-cms-id="pages.help.quickAnswers.item2.answer"
+                                  data-cms-id="pages.help.quickAnswers.items.1.answer"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item2.answer', 'Yes, cancel up to 4 hours before pickup for a full refund.')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.answer', 'Yes, cancel up to 4 hours before pickup for a full refund.')}
               </Text>
             </Stack>
           </Box>
@@ -92,13 +92,13 @@ function HelpPageContent() {
           <Box variant="elevated" padding="lg" data-testid="faq-item-2">
             <Stack spacing="md">
               <H2 
-                data-cms-id="pages.help.quickAnswers.item3.question"
+                                  data-cms-id="pages.help.quickAnswers.items.2.question"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item3.question', 'Do you track flights?')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.2.question', 'Do you track flights?')}
               </H2>
               <Text 
-                data-cms-id="pages.help.quickAnswers.item3.answer"
+                                  data-cms-id="pages.help.quickAnswers.items.2.answer"
                 mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.item3.answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
@@ -109,13 +109,13 @@ function HelpPageContent() {
           <Box variant="elevated" padding="lg" data-testid="faq-item-3">
             <Stack spacing="md">
               <H2 
-                data-cms-id="pages.help.quickAnswers.item4.question"
+                                  data-cms-id="pages.help.quickAnswers.items.3.question"
                 mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.item4.question', 'What payment methods do you accept?')}
               </H2>
               <Text 
-                data-cms-id="pages.help.quickAnswers.item4.answer"
+                                  data-cms-id="pages.help.quickAnswers.items.3.answer"
                 mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.item4.answer', 'All major credit cards, debit cards, and cash payments.')}
