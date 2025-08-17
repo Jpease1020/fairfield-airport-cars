@@ -125,7 +125,7 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
           style={{
             position: 'fixed',
             top: '20px',
-            right: '20px',
+            left: '20px',
             zIndex: 11040,
             cursor: 'pointer',
             background: 'var(--background-card)',
@@ -177,13 +177,13 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
       ))}
 
       {/* Comments Drawer - shows all comments and orphaned comments */}
-      <Drawer
-        isOpen={showCommentsDrawer}
-        onClose={() => setShowCommentsDrawer(false)}
-        title="Page Comments"
-        position="right"
-        width={400}
-        headerVariant="prominent"
+             <Drawer
+         isOpen={showCommentsDrawer}
+         onClose={() => setShowCommentsDrawer(false)}
+         title="Page Comments"
+         position="left"
+         width={400}
+         headerVariant="prominent"
         actions={
           <Button
             variant="ghost"
