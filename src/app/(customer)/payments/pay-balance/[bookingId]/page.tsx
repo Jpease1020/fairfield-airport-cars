@@ -8,16 +8,13 @@ import {
   Text, 
   Button, 
   LoadingSpinner,
-  Alert,
-  Card,
   Box,
   H1,
-  H2,
-  Badge,
-  Grid,
-  GridItem
+  H2
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { GridSection } from '@/ui';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 interface BalancePaymentPageProps {
   bookingId: string;
@@ -43,7 +40,8 @@ interface BookingDetails {
 
 function BalancePaymentPageContent() {
   const { cmsData } = useCMSData();
-    const params = useParams();
+  const { mode } = useInteractionMode();
+  const params = useParams();
   const router = useRouter();
   const bookingId = params.bookingId as string;
   
@@ -52,6 +50,8 @@ function BalancePaymentPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
+  const [tipAmount, setTipAmount] = useState<number>(0);
+  const [tipPercent, setTipPercent] = useState<number>(15);
 
   useEffect(() => {
     const loadBookingDetails = async () => {
@@ -63,18 +63,18 @@ function BalancePaymentPageContent() {
           setBookingDetails(data);
           setPaymentAmount(data.balanceDue);
         } else {
-          setError('Failed to load booking details');
+          setError(getCMSField(cmsData, 'pages.payBalance.errors.loadFailed', 'Failed to load booking details'));
         }
       } catch (error) {
         console.error('Error loading booking details:', error);
-        setError('Failed to load booking details');
+        setError(getCMSField(cmsData, 'pages.payBalance.errors.loadFailed', 'Failed to load booking details'));
       } finally {
         setLoading(false);
       }
     };
     
     loadBookingDetails();
-  }, [bookingId]);
+  }, [bookingId, cmsData]);
 
   const handlePayBalance = async () => {
     if (!bookingDetails || paymentAmount <= 0) return;
@@ -91,303 +91,302 @@ function BalancePaymentPageContent() {
           bookingId: bookingId,
           amount: paymentAmount,
           type: 'balance',
-          description: `Balance payment for booking #${bookingId}`,
+          description: getCMSField(cmsData, 'pages.payBalance.payment.description', `Balance payment for booking #${bookingId}`),
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create payment session');
+        throw new Error(getCMSField(cmsData, 'pages.payBalance.errors.createSessionFailed', 'Failed to create payment session'));
       }
 
-      const data = await response.json();
-      
-      // Redirect to Square checkout
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      }
+      const { url } = await response.json();
+      window.location.href = url;
     } catch (error) {
-      console.error('Error processing payment:', error);
-      setError('Failed to process payment. Please try again.');
+      console.error('Error creating payment session:', error);
+      setError(getCMSField(cmsData, 'pages.payBalance.errors.paymentFailed', 'Failed to process payment. Please try again.'));
     } finally {
       setProcessing(false);
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
+  const handleTipChange = (percent: number) => {
+    setTipPercent(percent);
+    const tipAmount = (paymentAmount * percent) / 100;
+    setTipAmount(tipAmount);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const getTotalAmount = () => {
+    return paymentAmount + tipAmount;
   };
 
-  const getStatusColor = (status: string) => {
+  // Helper function to get status variant for badge
+  const getStatusVariant = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'success';
-      case 'in-progress': return 'warning';
-      case 'completed': return 'confirmed';
-      case 'cancelled': return 'error';
-      default: return 'info';
+      case 'completed':
+        return 'success';
+      case 'in-progress':
+        return 'info';
+      case 'confirmed':
+        return 'warning';
+      case 'cancelled':
+        return 'error';
+      case 'pending':
+        return 'pending';
+      default:
+        return 'default';
     }
   };
 
   if (loading) {
     return (
-      <Container padding="lg" maxWidth="xl">
-        <Stack spacing="lg" align="center">
-          <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'payments.balance.loading', 'Loading booking details...')}</Text>
-        </Stack>
+      <Container variant="default" padding="none">
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <Stack spacing="lg" align="center">
+              <LoadingSpinner />
+              <Text align="center" data-cms-id="pages.payBalance.loading.message" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.loading.message', 'Loading booking details...')}
+              </Text>
+            </Stack>
+          </Container>
+        </GridSection>
       </Container>
     );
   }
 
   if (error) {
     return (
-      <Container padding="lg" maxWidth="xl">
-        <Stack spacing="lg">
-          <Alert variant="error">
-            <Text>{error}</Text>
-          </Alert>
-          <Button onClick={() => router.push('/payments')}>
-            {getCMSField(cmsData, 'payments.balance.back', 'Back to Payments')}
-          </Button>
-        </Stack>
+      <Container variant="default" padding="none">
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <Stack spacing="lg" align="center">
+              <H1 align="center" data-cms-id="pages.payBalance.error.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.error.title', 'Unable to Load Booking')}
+              </H1>
+              <Text align="center" data-cms-id="pages.payBalance.error.description" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.error.description', 'We could not load the booking details. Please check your booking ID and try again.')}
+              </Text>
+              <Button
+                onClick={() => router.push('/bookings')}
+                variant="primary"
+                data-cms-id="pages.payBalance.error.viewBookings"
+              >
+                {getCMSField(cmsData, 'pages.payBalance.error.viewBookings', 'View My Bookings')}
+              </Button>
+            </Stack>
+          </Container>
+        </GridSection>
       </Container>
     );
   }
 
   if (!bookingDetails) {
     return (
-      <Container padding="lg" maxWidth="xl">
-        <Stack spacing="lg">
-          <Alert variant="error">
-            <Text>{getCMSField(cmsData, 'payments.balance.not_found', 'Booking not found')}</Text>
-          </Alert>
-          <Button onClick={() => router.push('/payments')}>
-            {getCMSField(cmsData, 'payments.balance.back', 'Back to Payments')}
-          </Button>
-        </Stack>
+      <Container variant="default" padding="none">
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <Stack spacing="lg" align="center">
+              <H1 align="center" data-cms-id="pages.payBalance.noBooking.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.noBooking.title', 'No Booking Found')}
+              </H1>
+              <Text align="center" data-cms-id="pages.payBalance.noBooking.description" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.noBooking.description', 'The booking you are looking for could not be found.')}
+              </Text>
+              <Button
+                onClick={() => router.push('/bookings')}
+                variant="primary"
+                data-cms-id="pages.payBalance.noBooking.viewBookings"
+              >
+                {getCMSField(cmsData, 'pages.payBalance.noBooking.viewBookings', 'View My Bookings')}
+              </Button>
+            </Stack>
+          </Container>
+        </GridSection>
       </Container>
     );
   }
 
   if (bookingDetails.balanceDue <= 0) {
     return (
-      <Container padding="lg" maxWidth="xl">
-        <Stack spacing="lg">
-          <Alert variant="success">
-            <Text>{getCMSField(cmsData, 'payments.balance.paid', 'This booking is fully paid!')}</Text>
-          </Alert>
-          <Button onClick={() => router.push(`/booking/${bookingId}`)}>
-            View Booking Details
-          </Button>
-        </Stack>
+      <Container variant="default" padding="none">
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <Stack spacing="lg" align="center">
+              <H1 align="center" data-cms-id="pages.payBalance.noBalance.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.noBalance.title', 'No Balance Due')}
+              </H1>
+              <Text align="center" data-cms-id="pages.payBalance.noBalance.description" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.noBalance.description', 'This booking has no outstanding balance. All payments have been completed.')}
+              </Text>
+              <Button
+                onClick={() => router.push('/bookings')}
+                variant="primary"
+                data-cms-id="pages.payBalance.noBalance.viewBookings"
+              >
+                {getCMSField(cmsData, 'pages.payBalance.noBalance.viewBookings', 'View My Bookings')}
+              </Button>
+            </Stack>
+          </Container>
+        </GridSection>
       </Container>
     );
   }
 
   return (
-    <Container padding="lg" maxWidth="xl">
-      <Stack spacing="xl">
-        {/* Header */}
-        <Stack spacing="lg">
-          <H1 align="center">
-            {getCMSField(cmsData, 'payments.balance.title', 'Pay Remaining Balance')}
-          </H1>
-          <Text variant="lead" align="center">
-            {getCMSField(cmsData, 'payments.balance.subtitle', 'Complete your payment for booking #')}
-            {bookingId}
-          </Text>
-        </Stack>
-
-        {/* Booking Summary */}
-        <Card variant="elevated" padding="lg">
-          <Stack spacing="lg">
-            <H2>
-              {getCMSField(cmsData, 'payments.balance.booking_summary', 'Booking Summary')}
-            </H2>
-            
-            <Grid cols={2} gap="lg" responsive>
-              <GridItem>
-                <Stack spacing="sm">
-                  <Text variant="lead">
-                    {getCMSField(cmsData, 'payments.balance.passenger', 'Passenger')}
-                  </Text>
-                  <Text weight="bold">{bookingDetails.name}</Text>
-                </Stack>
-              </GridItem>
-              
-              <GridItem>
-                <Stack spacing="sm">
-                  <Text variant="lead">
-                    {getCMSField(cmsData, 'payments.balance.status', 'Status')}
-                  </Text>
-                  <Badge variant={getStatusColor(bookingDetails.status)}>
-                    {bookingDetails.status}
-                  </Badge>
-                </Stack>
-              </GridItem>
-            </Grid>
-
-            <Grid cols={2} gap="lg" responsive>
-              <GridItem>
-                <Stack spacing="sm">
-                  <Text variant="lead">
-                    {getCMSField(cmsData, 'payments.balance.pickup', 'Pickup')}
-                  </Text>
-                  <Text>{bookingDetails.pickupLocation}</Text>
-                  <Text variant="muted">{formatDate(bookingDetails.pickupDateTime)}</Text>
-                </Stack>
-              </GridItem>
-              
-              <GridItem>
-                <Stack spacing="sm">
-                  <Text variant="lead">
-                    {getCMSField(cmsData, 'payments.balance.dropoff', 'Dropoff')}
-                  </Text>
-                  <Text>{bookingDetails.dropoffLocation}</Text>
-                </Stack>
-              </GridItem>
-            </Grid>
-
-            {bookingDetails.driverName && (
-              <Grid cols={2} gap="lg" responsive>
-                <GridItem>
-                  <Stack spacing="sm">
-                    <Text variant="lead">
-                      {getCMSField(cmsData, 'payments.balance.driver', 'Driver')}
-                    </Text>
-                    <Text>{bookingDetails.driverName}</Text>
-                  </Stack>
-                </GridItem>
-                
-                <GridItem>
-                  <Stack spacing="sm">
-                    <Text variant="lead">
-                      {getCMSField(cmsData, 'payments.balance.vehicle', 'Vehicle')}
-                    </Text>
-                    <Text>{bookingDetails.vehicleType || 'Standard'}</Text>
-                    {bookingDetails.serviceLevel && (
-                      <Text variant="muted">{bookingDetails.serviceLevel} service</Text>
-                    )}
-                  </Stack>
-                </GridItem>
-              </Grid>
-            )}
+    <Container variant="default" padding="none">
+      {/* Page Header */}
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Stack spacing="lg" align="center">
+            <H1 align="center" data-cms-id="pages.payBalance.title" mode={mode}>
+              {getCMSField(cmsData, 'pages.payBalance.title', 'Pay Outstanding Balance')}
+            </H1>
+            <Text align="center" data-cms-id="pages.payBalance.subtitle" mode={mode}>
+              {getCMSField(cmsData, 'pages.payBalance.subtitle', `Complete payment for your ride from booking #${bookingId}`)}
+            </Text>
           </Stack>
-        </Card>
+        </Container>
+      </GridSection>
 
-        {/* Payment Summary */}
-        <Card variant="elevated" padding="lg">
-          <Stack spacing="lg">
-            <H2>
-              {getCMSField(cmsData, 'payments.balance.payment_summary', 'Payment Summary')}
-            </H2>
-            
-            <Box variant="outlined" padding="md">
-              <Stack spacing="sm">
-                <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text>{getCMSField(cmsData, 'payments.balance.total_fare', 'Total Fare:')}</Text>
-                  <Text weight="medium">{formatCurrency(bookingDetails.totalFare)}</Text>
+      {/* Booking Summary */}
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 data-cms-id="pages.payBalance.bookingSummary.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.bookingSummary.title', 'Booking Summary')}
+              </H2>
+              
+              <Stack direction="horizontal" spacing="lg">
+                <Stack spacing="sm">
+                  <Text variant="muted" size="sm" data-cms-id="pages.pay-balance.pickup" mode={mode}>
+                    {getCMSField(cmsData, 'pages.pay-balance.pickup', 'Pickup')}
+                  </Text>
+                  <Text weight="bold">{bookingDetails.pickupLocation}</Text>
                 </Stack>
                 
-                <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text>{getCMSField(cmsData, 'payments.balance.deposit_paid', 'Deposit Paid:')}</Text>
-                  <Text weight="medium" color="success">-{formatCurrency(bookingDetails.depositAmount)}</Text>
-                </Stack>
-                
-                {bookingDetails.tipAmount && bookingDetails.tipAmount > 0 && (
-                  <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text>{getCMSField(cmsData, 'payments.balance.tip', 'Tip')} ({bookingDetails.tipPercent}%):</Text>
-                    <Text weight="medium">+{formatCurrency(bookingDetails.tipAmount)}</Text>
-                  </Stack>
-                )}
-                
-                <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text variant="h4" weight="bold">
-                      {getCMSField(cmsData, 'payments.balance.remaining_balance', 'Remaining Balance')}
+                <Stack spacing="sm">
+                  <Text variant="muted" size="sm" data-cms-id="pages.pay-balance.dropoff" mode={mode}>
+                    {getCMSField(cmsData, 'pages.pay-balance.dropoff', 'Dropoff')}
                   </Text>
-                  <Text variant="h4" weight="bold" color="primary">
-                    {formatCurrency(bookingDetails.balanceDue)}
-                  </Text>
+                  <Text weight="bold">{bookingDetails.dropoffLocation}</Text>
                 </Stack>
               </Stack>
-            </Box>
-
-            {/* Payment Amount Input */}
-            <Stack spacing="sm">
-              <Text variant="lead">
-                {getCMSField(cmsData, 'payments.balance.payment_amount', 'Payment Amount')}
-              </Text>
-              <Text variant="body" color="muted">
-                {getCMSField(cmsData, 'payments.balance.payment_amount_help', 'You can pay the full balance or a partial amount')}
-              </Text>
-              
-              <Stack direction="horizontal" spacing="md">
-                <Button
-                  variant="outline"
-                  onClick={() => setPaymentAmount(bookingDetails.balanceDue)}
-                  disabled={paymentAmount === bookingDetails.balanceDue}
-                >
-                  {getCMSField(cmsData, 'payments.balance.pay_full', 'Pay Full Balance')}
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={() => setPaymentAmount(Math.min(bookingDetails.balanceDue / 2, bookingDetails.balanceDue))}
-                  disabled={paymentAmount === Math.min(bookingDetails.balanceDue / 2, bookingDetails.balanceDue)}
-                >
-                  {getCMSField(cmsData, 'payments.balance.pay_half', 'Pay Half')}
-                </Button>
-              </Stack>
-              
-              <Text variant="h4" weight="bold" color="primary">
-                {formatCurrency(paymentAmount)}
-              </Text>
             </Stack>
+          </Box>
+        </Container>
+      </GridSection>
 
-            {/* Action Buttons */}
-            <Stack direction="horizontal" spacing="md">
-              <Button
-                onClick={() => router.push('/payments')}
-                variant="outline"
-                fullWidth
-              >
-                {getCMSField(cmsData, 'payments.balance.back', 'Back to Payments')}
-              </Button>
+      {/* Payment Details */}
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 data-cms-id="pages.payBalance.paymentDetails.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.paymentDetails.title', 'Payment Details')}
+              </H2>
+              
+              <Stack direction="horizontal" spacing="lg">
+                <Stack spacing="md">
+                  <Text data-cms-id="pages.payBalance.paymentDetails.totalFare" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.payBalance.paymentDetails.totalFareLabel', 'Total Fare:')}</strong> ${bookingDetails.totalFare.toFixed(2)}
+                  </Text>
+                  <Text data-cms-id="pages.payBalance.paymentDetails.depositPaid" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.payBalance.paymentDetails.depositPaidLabel', 'Deposit Paid:')}</strong> ${bookingDetails.depositAmount.toFixed(2)}
+                  </Text>
+                  <Text data-cms-id="pages.payBalance.paymentDetails.balanceDue" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.payBalance.paymentDetails.balanceDueLabel', 'Balance Due:')}</strong> ${bookingDetails.balanceDue.toFixed(2)}
+                  </Text>
+                </Stack>
+                
+                <Stack spacing="md">
+                  <Text data-cms-id="pages.payBalance.paymentDetails.tipAmount" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.payBalance.paymentDetails.tipAmountLabel', 'Tip Amount:')}</strong> ${tipAmount.toFixed(2)}
+                  </Text>
+                  <Text data-cms-id="pages.payBalance.paymentDetails.totalPayment" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.payBalance.paymentDetails.totalPaymentLabel', 'Total Payment:')}</strong> ${getTotalAmount().toFixed(2)}
+                  </Text>
+                </Stack>
+              </Stack>
+            </Stack>
+          </Box>
+        </Container>
+      </GridSection>
+
+      {/* Tip Selection */}
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <H2 data-cms-id="pages.payBalance.tipSelection.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.tipSelection.title', 'Add a Tip (Optional)')}
+              </H2>
+              
+              <Text data-cms-id="pages.payBalance.tipSelection.description" mode={mode}>
+                {getCMSField(cmsData, 'pages.payBalance.tipSelection.description', 'Show your appreciation for excellent service by adding a tip to your payment.')}
+              </Text>
+              
+              <Stack direction="horizontal" spacing="md" align="center">
+                {[0, 10, 15, 20, 25].map((percent) => (
+                  <Button
+                    key={percent}
+                    variant={tipPercent === percent ? 'primary' : 'outline'}
+                    onClick={() => handleTipChange(percent)}
+                    data-cms-id={`pages.payBalance.tipSelection.${percent}percent`}
+                  >
+                    {percent === 0 ? getCMSField(cmsData, 'pages.payBalance.tipSelection.noTip', 'No Tip') : `${percent}%`}
+                  </Button>
+                ))}
+              </Stack>
+              
+              {tipPercent > 0 && (
+                <Text align="center" data-cms-id="pages.payBalance.tipSelection.tipAmount" mode={mode}>
+                  {getCMSField(cmsData, 'pages.payBalance.tipSelection.tipAmountText', `Tip amount: $${tipAmount.toFixed(2)} (${tipPercent}% of balance due)`)}
+                </Text>
+              )}
+            </Stack>
+          </Box>
+        </Container>
+      </GridSection>
+
+      {/* Payment Actions */}
+      <GridSection variant="content" columns={1}>
+        <Container>
+          <Stack spacing="lg" align="center">
+            <Stack spacing="md" align="center">
+              <Text size="lg" data-cms-id="pages.payBalance.payment.totalAmount" mode={mode}>
+                <strong>{getCMSField(cmsData, 'pages.payBalance.payment.totalAmountLabel', 'Total Amount to Pay:')}</strong> ${getTotalAmount().toFixed(2)}
+              </Text>
               
               <Button
                 onClick={handlePayBalance}
-                disabled={processing || paymentAmount <= 0}
                 variant="primary"
-                fullWidth
+                size="lg"
+                disabled={processing || paymentAmount <= 0}
+                data-cms-id="pages.payBalance.payment.payButton"
               >
                 {processing ? (
-                  <>
-                    <LoadingSpinner size="sm" />
-                    Processing...
-                  </>
+                  getCMSField(cmsData, 'pages.payBalance.payment.processing', 'Processing...')
                 ) : (
-                  <>
-                    {getCMSField(cmsData, 'payments.balance.pay_now', 'Pay Now')}
-                  </>
+                  getCMSField(cmsData, 'pages.payBalance.payment.payNow', 'Pay Now')
                 )}
               </Button>
             </Stack>
+            
+            <Text size="sm" variant="muted" data-cms-id="pages.payBalance.payment.securityNote" mode={mode}>
+              {getCMSField(cmsData, 'pages.payBalance.payment.securityNote', '🔒 Your payment information is secure and encrypted. We use industry-standard security measures to protect your data.')}
+            </Text>
+            
+            <Button
+              onClick={() => router.push('/bookings')}
+              variant="outline"
+              data-cms-id="pages.payBalance.payment.backToBookings"
+            >
+              {getCMSField(cmsData, 'pages.payBalance.payment.backToBookings', 'Back to Bookings')}
+            </Button>
           </Stack>
-        </Card>
-      </Stack>
+        </Container>
+      </GridSection>
     </Container>
   );
 }
