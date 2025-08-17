@@ -20,4 +20,23 @@
   color: #6b7280; /* Tailwind gray-500 */
   margin-bottom: 0.25em;
   font-weight: 500;
+}
+
+/* Cursor styles for editable elements */
+[data-editable="true"] {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+[data-editable="true"]:hover {
+  background-color: rgba(59, 130, 246, 0.05); /* Subtle blue background on hover */
+}
+
+/* When not in edit mode, show default cursor */
+body:not(.edit-mode-active) [data-editable="true"] {
+  cursor: default;
+}
+
+body:not(.edit-mode-active) [data-editable="true"]:hover {
+  background-color: transparent;
 } 

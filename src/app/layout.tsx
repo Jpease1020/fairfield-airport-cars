@@ -1,9 +1,11 @@
 import '@/design/globals.css';
-import { ErrorBoundary, StyledComponentsRegistry } from '@/ui';  
+import { ErrorBoundary, StyledComponentsRegistry, AccessibilityEnhancer } from '@/ui';  
 import { AdminProvider } from '@/design/providers/AdminProvider';
-import { EditModeProvider } from '@/design/providers/EditModeProvider';
-import { CMSDesignProvider } from '@/design/providers/CMSDesignProvider';
-import { AdminContent } from './AdminContent';
+import { InteractionModeProvider } from '@/design/providers/InteractionModeProvider';
+import { AppContent } from './AppContent';
+import { SmartNavigation } from '@/components/app/SmartNavigation';
+import { Footer } from '@/design/page-sections/Footer';
+import { Container } from '@/design/layout/containers/Container';
 
 export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',
@@ -27,13 +29,21 @@ export default function RootLayout({
       <body>
         <StyledComponentsRegistry>
           <ErrorBoundary>
-            <CMSDesignProvider>
+            <AccessibilityEnhancer>
               <AdminProvider>
-                <EditModeProvider>
-                  <AdminContent>{children}</AdminContent>
-                </EditModeProvider>
+                <InteractionModeProvider>
+                  <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
+                    <SmartNavigation />
+                  </Container>
+                  
+                  <Container as="main" maxWidth="full" data-testid="layout-main-content">
+                    <AppContent>{children}</AppContent>
+                  </Container>
+                  
+                  <Footer data-testid="layout-footer"/>
+                </InteractionModeProvider>
               </AdminProvider>
-            </CMSDesignProvider>
+            </AccessibilityEnhancer>
           </ErrorBoundary>
         </StyledComponentsRegistry>
       </body>

@@ -309,6 +309,8 @@ export interface ButtonProps extends BaseComponentProps {
   target?: string;
   rel?: string;
   cmsKey?: string;
+  disableInteractionOverride?: boolean;
+  interactionMode?: 'edit' | 'comment' | null;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -329,11 +331,39 @@ export const Button: React.FC<ButtonProps> = ({
   target,
   rel,
   cmsKey,
+  disableInteractionOverride,
+  interactionMode = null,
   ...rest
 }) => {
   // Determine the component to render
   const renderComponent = href ? 'a' : Component;
   const ref = React.useRef<any>(null);
+  
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // If we're in edit/comment mode and this button doesn't have the override
+    if (interactionMode && !disableInteractionOverride) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // If we have a cmsKey, dispatch the appropriate edit event
+      if (cmsKey) {
+        if (interactionMode === 'edit') {
+          const event = new (window as any).CustomEvent('openInlineEditor', {
+            detail: { cmsId: cmsKey, element: e.currentTarget, x: e.clientX, y: e.clientY }
+          });
+          document.dispatchEvent(event);
+        } else if (interactionMode === 'comment') {
+          const event = new (window as any).CustomEvent('openCommentModal', {
+            detail: { cmsId: cmsKey, element: e.currentTarget, x: e.clientX, y: e.clientY }
+          });
+          document.dispatchEvent(event);
+        }
+      }
+      return;
+    }
+    
+    onClick?.(e);
+  };
   
   return (
     <StyledButton
@@ -345,7 +375,7 @@ export const Button: React.FC<ButtonProps> = ({
       loading={loading}
       type={type}
       disabled={disabled || loading}
-      onClick={onClick}
+      onClick={handleClick}
       aria-busy={loading}
       id={id}
       href={href}
@@ -360,4 +390,4 @@ export const Button: React.FC<ButtonProps> = ({
       {!loading && icon && iconPosition === 'right' && icon}
     </StyledButton>
   );
-}; 
+};

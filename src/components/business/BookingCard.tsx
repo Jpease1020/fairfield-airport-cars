@@ -7,7 +7,7 @@ import { H3 } from '@/design/components/base-components/text/Headings';
 import { Text } from '@/design/components/base-components/text/Text';
 import { Stack } from '@/design/layout/framing/Stack';
 import { Box } from '@/design/layout/content/Box';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 // Define Booking interface locally for this component
 interface Booking {

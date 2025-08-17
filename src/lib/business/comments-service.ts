@@ -24,15 +24,31 @@ class CommentsService {
   async addComment(comment: Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const commentRef = doc(collection(db, this.collectionName));
     const now = new Date().toISOString();
+    
+    // Debug: Log the comment data and document reference
+    console.log('CommentsService.addComment - Input comment:', comment);
+    console.log('CommentsService.addComment - Document reference:', commentRef.path);
+    
+    const commentData = {
+      ...comment,
+      id: commentRef.id,
+      createdAt: now,
+      updatedAt: now,
+    };
+    
+    console.log('CommentsService.addComment - Final comment data:', commentData);
+    
     try {
-      await setDoc(commentRef, {
-        ...comment,
-        id: commentRef.id,
-        createdAt: now,
-        updatedAt: now,
-      });
+      await setDoc(commentRef, commentData);
+      console.log('CommentsService.addComment - Successfully saved comment');
       return commentRef.id;
     } catch (error) {
+      console.error('CommentsService.addComment - Firestore error:', error);
+      console.error('CommentsService.addComment - Error details:', {
+        code: (error as any)?.code,
+        message: (error as any)?.message,
+        details: (error as any)?.details
+      });
       // Fallback for permission or offline
       return this.addToLocalStorage(comment);
     }
@@ -103,7 +119,9 @@ class CommentsService {
   private saveToLocalStorage(list: CommentRecord[]) {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(list));
-    } catch {}
+    } catch (error) {
+      console.warn('Failed to save comments to localStorage');
+    }
   }
 
   private addToLocalStorage(comment: Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>): string {

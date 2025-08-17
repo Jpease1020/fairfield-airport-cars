@@ -19,7 +19,7 @@ import {
   Grid,
   GridItem
 } from '@/ui';  
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function AddPaymentMethodPage() {
   const { cmsData } = useCMSData();

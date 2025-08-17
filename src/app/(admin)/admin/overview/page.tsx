@@ -1,7 +1,7 @@
 'use client';
 
 import withAuth from '../withAuth';
-import { Container, Stack, Heading, Text, Link, Box } from '@/ui';
+import { Container, Stack, H1, H2, Text, Link, Box } from '@/ui';
 
 type NavItem = { label: string; href?: string; note?: string };
 
@@ -43,7 +43,7 @@ const adminItems: NavItem[] = [
 function List({ title, items }: { title: string; items: NavItem[] }) {
   return (
     <Stack spacing="md">
-      <Heading level={2}>{title}</Heading>
+      <H2>{title}</H2>
       <Stack spacing="sm">
         {items.map((item) => (
           <Stack key={item.label} direction="horizontal" spacing="xs">
@@ -66,7 +66,7 @@ function OverviewContent() {
     <Container>
       <Stack spacing="xl">
         <Stack spacing="xs">
-          <Heading level={1}>Admin Overview</Heading>
+          <H1>Admin Overview</H1>
           <Text variant="muted">Quick access for Gregg: customer vs admin pages.</Text>
         </Stack>
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { GridSection, ActionGrid, Container, H3, Text, Stack, Box } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 const AIAssistantSettingsPage = () => {
   const [isClient, setIsClient] = useState(false);

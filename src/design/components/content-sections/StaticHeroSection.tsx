@@ -10,13 +10,18 @@ interface StaticHeroSectionProps {
   title?: string;
   subtitle?: string;
   description?: string;
+  titleId?: string;
+  subtitleId?: string;
+  descriptionId?: string;
   primaryAction?: {
     label: string;
     href: string;
+    labelId?: string;
   };
   secondaryAction?: {
     label: string;
     href: string;
+    labelId?: string;
   };
 }
 
@@ -24,6 +29,9 @@ export function StaticHeroSection({
   title = "Professional Airport Transportation",
   subtitle = "Reliable rides to and from Fairfield Airport",
   description = "Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.",
+  titleId,
+  subtitleId,
+  descriptionId,
   primaryAction = {
     label: "Book Now",
     href: "/book"
@@ -37,13 +45,13 @@ export function StaticHeroSection({
     <Container variant="hero" padding="xl">
       <Stack spacing="xl" align="center">
         <Stack spacing="md" align="center">
-          <H1 size="2xl" color="primary" align="center">
+          <H1 size="2xl" color="primary" align="center" data-cms-id={titleId}>
             {title}
           </H1>
-          <Text variant="lead" size="lg" align="center">
+          <Text variant="lead" size="lg" align="center" data-cms-id={subtitleId}>
             {subtitle}
           </Text>
-          <Text variant="muted" size="md" align="center">
+          <Text variant="muted" size="md" align="center" data-cms-id={descriptionId}>
             {description}
           </Text>
         </Stack>
@@ -54,12 +62,12 @@ export function StaticHeroSection({
           align="center"
         >
           <Link href={primaryAction.href}>
-            <Button variant="primary" size="lg">
+            <Button variant="primary" size="lg" data-cms-id={primaryAction.labelId}>
               {primaryAction.label}
             </Button>
           </Link>
           <Link href={secondaryAction.href}>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" data-cms-id={secondaryAction.labelId}>
               {secondaryAction.label}
             </Button>
           </Link>

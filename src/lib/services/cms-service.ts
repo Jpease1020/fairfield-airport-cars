@@ -97,11 +97,21 @@ export class CMSService {
   async updateEmailTemplates(templates: Partial<EmailTemplates>): Promise<void> {
     const config = await this.getCMSConfiguration();
     if (config) {
+      const currentEmail = config.communication?.email || {};
+      const mergedEmail: EmailTemplates = {
+        bookingConfirmation: { subject: '', body: '', includeCalendarInvite: false },
+        bookingReminder: { subject: '', body: '', sendHoursBefore: 24 },
+        cancellation: { subject: '', body: '' },
+        feedback: { subject: '', body: '', sendDaysAfter: 7 },
+        ...currentEmail,
+        ...templates
+      };
+      
       await this.updateCMSConfiguration({
         ...config,
         communication: {
           ...config.communication,
-          email: { ...config.communication.email, ...templates }
+          email: mergedEmail
         }
       });
     }
@@ -110,11 +120,21 @@ export class CMSService {
   async updateSMSTemplates(templates: Partial<SMSTemplates>): Promise<void> {
     const config = await this.getCMSConfiguration();
     if (config) {
+      const currentSMS = config.communication?.sms || {};
+      const mergedSMS: SMSTemplates = {
+        bookingConfirmation: '',
+        bookingReminder: '',
+        driverEnRoute: '',
+        driverArrived: '',
+        ...currentSMS,
+        ...templates
+      };
+      
       await this.updateCMSConfiguration({
         ...config,
         communication: {
           ...config.communication,
-          sms: { ...config.communication.sms, ...templates }
+          sms: mergedSMS
         }
       });
     }
@@ -217,6 +237,9 @@ export class CMSService {
     userId?: string
   ): Promise<{ success: boolean; errors?: string[] }> {
     try {
+      console.log('=== updatePageContent START ===');
+      console.log('Parameters:', { pageType, userId, contentKeys: Object.keys(content) });
+      
       // Validate user permissions - temporarily allow all authenticated users to edit
       if (userId) {
         // For now, allow any authenticated user to edit
@@ -237,8 +260,10 @@ export class CMSService {
       //   };
       // }
 
+      console.log('Getting current CMS configuration...');
       // Get current content for versioning (temporarily disabled)
-      await this.getCMSConfiguration();
+      const currentConfig = await this.getCMSConfiguration();
+      console.log('Current CMS config loaded:', currentConfig ? 'yes' : 'no');
 
       // Save versions for changes (temporarily disabled due to permission issues)
       // if (currentContent && userId && userEmail) {
@@ -251,48 +276,86 @@ export class CMSService {
       //   );
       // }
 
+      console.log('Preparing to update Firestore...');
       // Update the configuration
       const docRef = doc(db, 'cms', 'configuration');
+      console.log('Document reference created for path: cms/configuration');
       
       // Check if document exists, if not create it
+      console.log('Checking if document exists...');
       const docSnap = await getDoc(docRef);
+      console.log('Document exists:', docSnap.exists());
+      
       if (!docSnap.exists()) {
         console.log('Creating new CMS configuration document for page content');
-        await setDoc(docRef, {
+        const newData = {
           pages: {
             [pageType]: content
           }
-        });
+        };
+        console.log('New data to create:', newData);
+        
+        try {
+          await setDoc(docRef, newData);
+          console.log('✅ Document created successfully');
+        } catch (setError) {
+          console.error('❌ Error creating document:', setError);
+          throw setError;
+        }
       } else {
         console.log('Updating existing CMS configuration document for page content');
         
         // Get existing page data to merge with
         const existingData = docSnap.data();
+        console.log('Existing data:', existingData);
         const existingPageData = existingData?.pages?.[pageType] || {};
+        console.log('Existing page data for', pageType, ':', existingPageData);
         
         // Merge the new content with existing page data
         const mergedPageData = {
           ...existingPageData,
           ...content
         };
+        console.log('Merged page data:', mergedPageData);
         
-        await updateDoc(docRef, {
+        const updateData = {
           [`pages.${pageType}`]: mergedPageData
-        });
+        };
+        console.log('Update data to send:', updateData);
+        
+        try {
+          await updateDoc(docRef, updateData);
+          console.log('✅ Document updated successfully');
+        } catch (updateError) {
+          console.error('❌ Error updating document:', updateError);
+          throw updateError;
+        }
       }
 
       // Log activity
       if (userId) {
-        await authService.logUserActivity(userId, 'page_update', {
-          pageType,
-          changes: Object.keys(content),
-          timestamp: new Date()
-        });
+        try {
+          await authService.logUserActivity(userId, 'page_update', {
+            pageType,
+            changes: Object.keys(content),
+            timestamp: new Date()
+          });
+          console.log('✅ User activity logged successfully');
+        } catch (logError) {
+          console.warn('⚠️ Failed to log user activity:', logError);
+        }
       }
 
+      console.log('=== updatePageContent SUCCESS ===');
       return { success: true };
     } catch (error) {
+      console.error('=== updatePageContent ERROR ===');
       console.error('Error updating page content:', error as Error);
+      console.error('Error details:', {
+        message: (error as Error).message,
+        stack: (error as Error).stack,
+        name: (error as Error).name
+      });
       return { success: false, errors: ['Failed to update page content'] };
     }
   }

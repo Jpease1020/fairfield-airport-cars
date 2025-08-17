@@ -10,7 +10,7 @@ import {
   HelpPageEditor
 } from "../PageEditors";
 import { useToast, ToastProvider, StatusMessage, Container, GridSection } from "@/ui";
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 const PAGE_KEYS = [
   { key: "home", label: "Homepage", icon: "🏠" },

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { GridSection, Box, Container, StatCard, Text, Stack, DataTable, DataTableColumn, DataTableAction } from '@/ui';
 import { getAllBookings } from '@/lib/services/database-service';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 interface Feedback {
   id: string;

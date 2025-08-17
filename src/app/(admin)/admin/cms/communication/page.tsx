@@ -15,7 +15,7 @@ import {
   Textarea,
   SettingToggle,
 } from '@/ui';
-import { useCMSData } from '@/design/providers/CMSDesignProvider';
+import { useCMSData } from '@/design/hooks/useCMSData';
 
 function CommunicationPageContent() {
   const { addToast } = useToast();
@@ -26,8 +26,8 @@ function CommunicationPageContent() {
   const [error, setError] = useState<string | null>(null);
   const { cmsData } = useCMSData();
   
-  const ensureEmailTemplates = (t: EmailTemplates | null): EmailTemplates => t ?? DEFAULT_CMS_CONFIG.communication.email;
-  const ensureSMSTemplates = (t: SMSTemplates | null): SMSTemplates => t ?? DEFAULT_CMS_CONFIG.communication.sms;
+  const ensureEmailTemplates = (t: EmailTemplates | null): EmailTemplates => t ?? DEFAULT_CMS_CONFIG.communication?.email ?? {} as EmailTemplates;
+  const ensureSMSTemplates = (t: SMSTemplates | null): SMSTemplates => t ?? DEFAULT_CMS_CONFIG.communication?.sms ?? {} as SMSTemplates;
   useEffect(() => {
     loadCommunicationSettings();
   }, []);
@@ -39,8 +39,8 @@ function CommunicationPageContent() {
       
       const config = await cmsService.getCMSConfiguration();
       if (config?.communication) {
-        setEmailTemplates(config.communication.email);
-        setSmsTemplates(config.communication.sms);
+        setEmailTemplates(config.communication.email || null);
+        setSmsTemplates(config.communication.sms || null);
       }
     } catch (err) {
       console.error('Error loading communication settings:', err);

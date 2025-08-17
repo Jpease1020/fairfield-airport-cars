@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { Shield, AlertTriangle, Eye, RefreshCw, Lock, Unlock, User, Globe } from 'lucide-react';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 interface SecurityEvent {
   type: 'authentication' | 'authorization' | 'data_access' | 'payment' | 'api_call' | 'error' | 'threat';
   severity: 'low' | 'medium' | 'high' | 'critical';

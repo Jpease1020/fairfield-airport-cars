@@ -17,7 +17,8 @@ import {
   H1,
   ContentCard
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 import { BalanceSummary } from '@/components/business/BalanceTracker';
 
 interface Payment {
@@ -43,6 +44,7 @@ interface PaymentMethod {
 
 function CustomerPaymentsPage() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -211,7 +213,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'payments.loading.initializing', 'Initializing payments...')}</Text>
+          <Text>{getCMSField(cmsData, 'pages.payments.loading.initializing', 'Initializing payments...')}</Text>
         </Stack>
       </Container>
     );
@@ -222,7 +224,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'payments.loading.loading_info', 'Loading your payment information...')}</Text>
+          <Text>{getCMSField(cmsData, 'pages.payments.loading.loading_info', 'Loading your payment information...')}</Text>
         </Stack>
       </Container>
     );
@@ -232,9 +234,9 @@ function CustomerPaymentsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">{getCMSField(cmsData, 'payments.login_required', 'Please log in to view your payments.')}</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'pages.payments.login_required', 'Please log in to view your payments.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'payments.go_to_login', 'Go to Login')}
+            {getCMSField(cmsData, 'pages.payments.go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -265,15 +267,27 @@ function CustomerPaymentsPage() {
         {/* Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
-            <H1>
-              {getCMSField(cmsData, 'payments.title', 'My Payments')}
+            <H1 
+              data-cms-id="pages.payments.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.payments.title', 'My Payments')}
             </H1>
-            <Text variant="muted">
-              {getCMSField(cmsData, 'payments.subtitle', 'Manage your payment methods and view transaction history')}
+            <Text 
+              variant="muted"
+              data-cms-id="pages.payments.subtitle"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.payments.subtitle', 'Manage your payment methods and view transaction history')}
             </Text>
           </Stack>
-          <Button onClick={handleAddPaymentMethod} variant="primary">
-            {getCMSField(cmsData, 'payments.add_payment_method', 'Add Payment Method')}
+          <Button 
+            onClick={handleAddPaymentMethod} 
+            variant="primary"
+            data-cms-id="pages.payments.add_payment_method"
+            interactionMode={mode}
+          >
+            {getCMSField(cmsData, 'pages.payments.add_payment_method', 'Add Payment Method')}
           </Button>
         </Stack>
 

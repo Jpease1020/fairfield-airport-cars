@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { AlertTriangle, XCircle, RefreshCw, Trash2, Eye, AlertCircle } from 'lucide-react';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 interface ErrorEvent {
   message: string;
   stack?: string;

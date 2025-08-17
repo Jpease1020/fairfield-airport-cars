@@ -10,7 +10,7 @@ import { Button } from '@/ui';
 import { Textarea, Select, Input } from '@/ui';
 import { CheckCircle, Clock, AlertCircle, Search, Download, Eye, Edit, Trash2, BarChart3, FileText } from 'lucide-react';
 import StatusBadge from '@/components/business/StatusBadge';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 export default function AdminCommentsPage() {
   const { isAdmin } = useAdminStatus();

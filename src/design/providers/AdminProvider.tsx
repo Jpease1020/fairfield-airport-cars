@@ -57,15 +57,7 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
     loading,
   };
 
-  // Show loading state while checking admin status
-  if (loading) {
-    return (
-      <AdminContext.Provider value={value}>
-        {children}
-      </AdminContext.Provider>
-    );
-  }
-
+  // Always render the provider with the current value
   return (
     <AdminContext.Provider value={value}>
       {children}

@@ -9,7 +9,7 @@ import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/B
 import { useAdminStatus } from '@/hooks/useAdminStatus';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/utils/firebase';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 const LogoImage = styled.img`
   max-width: 300px;

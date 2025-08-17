@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Container, H2, Text, Button } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 export default function PerformanceTestPage() {
   const { cmsData, loading, error } = useCMSData();

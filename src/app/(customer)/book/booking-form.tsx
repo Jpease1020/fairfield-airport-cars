@@ -18,7 +18,8 @@ import {
 import { Input, Select, Label, Textarea } from '@/ui';
 import { Booking } from '@/types/booking';
 import { TipCalculator } from '@/components/business/TipCalculator';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -100,6 +101,7 @@ const useGoogleMapsScript = (apiKey: string) => {
 
 function BookingFormContent({ booking }: BookingFormProps) {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [name, setName] = useState(booking?.name || '');
   const [email, setEmail] = useState(booking?.email || '');
   const [phone, setPhone] = useState(booking?.phone || '');
@@ -357,15 +359,19 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Contact Information */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center">
-                {getCMSField(cmsData, 'booking.personalInfo.title', 'Contact Information')}
+              <H2 
+                align="center"
+                data-cms-id="pages.booking.personalInfo.title"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.booking.personalInfo.title', 'Contact Information')}
               </H2>
               
               <Grid cols={1} gap="md" responsive>
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="name">
-                      {getCMSField(cmsData, 'booking.form.full_name', 'Full Name')}
+                      {getCMSField(cmsData, 'pages.booking.form.full_name', 'Full Name')}
                     </Label>
                     <Input
                       id="name"
@@ -381,7 +387,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="email">
-                      {getCMSField(cmsData, 'booking.form.email', 'Email Address')}
+                      {getCMSField(cmsData, 'pages.booking.form.email', 'Email Address')}
                     </Label>
                     <Input
                       id="email"
@@ -398,7 +404,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="phone">
-                      {getCMSField(cmsData, 'booking.form.phone', 'Phone Number')}
+                      {getCMSField(cmsData, 'pages.booking.form.phone', 'Phone Number')}
                     </Label>
                     <Input
                       id="phone"
@@ -417,15 +423,19 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Trip Details */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center">
-                {getCMSField(cmsData, 'booking.tripDetails.title', 'Trip Details')}
+              <H2 
+                align="center"
+                data-cms-id="pages.booking.tripDetails.title"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.booking.tripDetails.title', 'Trip Details')}
               </H2>
               
               <Grid cols={1} gap="md" responsive>
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="pickupLocation">
-                      {getCMSField(cmsData, 'booking.form.pickup', 'Pickup Location')}
+                      {getCMSField(cmsData, 'pages.booking.form.pickup', 'Pickup Location')}
                     </Label>
                     <Input
                       id="pickupLocation"
@@ -457,7 +467,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="dropoffLocation">
-                      {getCMSField(cmsData, 'booking.form.dropoff', 'Dropoff Location')}
+                      {getCMSField(cmsData, 'pages.booking.form.dropoff', 'Dropoff Location')}
                     </Label>
                     <Input
                       id="dropoffLocation"
@@ -489,7 +499,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="pickupDateTime">
-                      {getCMSField(cmsData, 'booking.form.pickup_time', 'Pickup Date & Time')}
+                      {getCMSField(cmsData, 'pages.booking.form.pickup_time', 'Pickup Date & Time')}
                     </Label>
                     <Input
                       id="pickupDateTime"
@@ -505,7 +515,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 <GridItem>
                   <Stack spacing="sm">
                     <Label htmlFor="passengers">
-                      {getCMSField(cmsData, 'booking.form.passengers', 'Number of Passengers')}
+                      {getCMSField(cmsData, 'pages.booking.form.passengers', 'Number of Passengers')}
                     </Label>
                     <Select
                       id="passengers"
@@ -527,8 +537,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Special Requests */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center">
-                {getCMSField(cmsData, 'booking.specialRequests.title', 'Special Requests')}
+              <H2 
+                align="center"
+                data-cms-id="pages.booking.specialRequests.title"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.booking.specialRequests.title', 'Special Requests')}
               </H2>
               
               <Grid cols={2} gap="md" responsive>
@@ -671,8 +685,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Additional Notes */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center">
-                {getCMSField(cmsData, 'booking.notes.title', 'Additional Notes')}
+              <H2 
+                align="center"
+                data-cms-id="pages.booking.notes.title"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.booking.notes.title', 'Additional Notes')}
               </H2>
               
               <Grid cols={1} gap="md" responsive>
@@ -696,8 +714,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
           {/* Fare Calculation & Submit */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center">
-                {getCMSField(cmsData, 'booking.fare.title', 'Fare & Booking')}
+              <H2 
+                align="center"
+                data-cms-id="pages.booking.fare.title"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'pages.booking.fare.title', 'Fare & Booking')}
               </H2>
               
               <Stack spacing="md">
@@ -714,7 +736,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           const vehicle = VEHICLE_OPTIONS.find(v => v.value === selectedVehicle);
                           return vehicle && vehicle.price > 0 ? (
                             <Stack direction="horizontal" justify="space-between">
-                               <Text>{getCMSField(cmsData, 'booking.fare.vehicle_upgrade', 'Vehicle Upgrade:')}</Text>
+                               <Text>{getCMSField(cmsData, 'pages.booking.fare.vehicle_upgrade', 'Vehicle Upgrade:')}</Text>
                               <Text>+${vehicle.price.toFixed(2)}</Text>
                             </Stack>
                           ) : null;
@@ -723,13 +745,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           const service = SERVICE_LEVELS.find(s => s.value === selectedServiceLevel);
                           return service && service.price > 0 ? (
                             <Stack direction="horizontal" justify="space-between">
-                               <Text>{getCMSField(cmsData, 'booking.fare.service_level', 'Service Level:')}</Text>
+                               <Text>{getCMSField(cmsData, 'pages.booking.fare.service_level', 'Service Level:')}</Text>
                               <Text>+${service.price.toFixed(2)}</Text>
                             </Stack>
                           ) : null;
                         })()}
                         <Stack direction="horizontal" justify="space-between">
-                           <Text weight="bold">{getCMSField(cmsData, 'booking.fare.total', 'Total:')}</Text>
+                           <Text weight="bold">{getCMSField(cmsData, 'pages.booking.fare.total', 'Total:')}</Text>
                           <Text weight="bold">${getTotalFare().toFixed(2)}</Text>
                         </Stack>
                       </Stack>
@@ -756,10 +778,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
                      {isCalculating ? (
                       <>
                         <LoadingSpinner size="sm" />
-                         {getCMSField(cmsData, 'booking.form.calculating', 'Calculating...')}
+                         {getCMSField(cmsData, 'pages.booking.form.calculating', 'Calculating...')}
                       </>
                     ) : (
-                       getCMSField(cmsData, 'booking.form.calculate_fare', 'Calculate Fare')
+                       getCMSField(cmsData, 'pages.booking.form.calculate_fare', 'Calculate Fare')
                     )}
                   </Button>
                   
@@ -769,7 +791,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     variant="primary"
                     fullWidth
                   >
-                    {getCMSField(cmsData, 'booking.submit', 'Book Now')}
+                    {getCMSField(cmsData, 'pages.booking.submit', 'Book Now')}
                   </Button>
                 </Stack>
               </Stack>

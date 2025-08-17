@@ -2,7 +2,7 @@
 
 import React from 'react'; 
 import { GridSection, Box, ActionGrid, Container, Text, Stack, H3 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function AdminHelpPage() {
   const { cmsData } = useCMSData();

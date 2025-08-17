@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/providers/CMSDesignProvider';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { BackupService } from '@/lib/services/backup-service';
 import { Download, Upload, Trash2, RefreshCw, Calendar, HardDrive } from 'lucide-react';
 
