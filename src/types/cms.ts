@@ -244,10 +244,134 @@ export interface CMSConfiguration {
       instructions: string;
       reloadButton: string;
     };
-    booking?: {
+    booking: {
       title: string;
       subtitle: string;
-      description?: string;
+      description: string;
+      hero: {
+        title: string;
+        subtitle: string;
+      };
+      personalInfo: {
+        title: string;
+      };
+      tripDetails: {
+        title: string;
+      };
+      specialRequests: {
+        title: string;
+      };
+      notes: {
+        title: string;
+      };
+      fare: {
+        title: string;
+        breakdown: {
+          title: string;
+          base: {
+            label: string;
+            value: string;
+          };
+          vehicle: {
+            label: string;
+            value: string;
+          };
+          service: {
+            label: string;
+            value: string;
+          };
+          total: {
+            label: string;
+            value: string;
+          };
+        };
+      };
+      form: {
+        name: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        email: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        phone: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        pickupLocation: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        dropoffLocation: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        pickupDateTime: {
+          label: string;
+          input: string;
+        };
+        passengers: {
+          label: string;
+          select: string;
+        };
+        childSeat: {
+          label: string;
+          checkbox: string;
+        };
+        wheelchair: {
+          label: string;
+          checkbox: string;
+        };
+        extraLuggage: {
+          label: string;
+          checkbox: string;
+        };
+        meetAndGreet: {
+          label: string;
+          checkbox: string;
+        };
+        flightTracking: {
+          label: string;
+          checkbox: string;
+        };
+        airline: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        flightNumber: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        arrivalTime: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        terminal: {
+          label: string;
+          placeholder: string;
+          input: string;
+        };
+        notes: {
+          label: string;
+          placeholder: string;
+          textarea: string;
+        };
+        calculating: string;
+        calculate_fare: string;
+        submit: string;
+      };
+      flightInfo: {
+        title: string;
+      };
     };
     success?: {
       title: string;
@@ -379,47 +503,60 @@ export interface CMSConfiguration {
         };
       };
     };
-    profile?: {
+    profile: {
       title: string;
       subtitle: string;
       editProfile: string;
       saveChanges: string;
       cancel: string;
       loading: {
+        initializing: string;
         loadingProfile: string;
         savingChanges: string;
       };
       loginRequired: string;
       goToLogin: string;
       sections: {
-        personalInfo: {
-          title: string;
-          nameLabel: string;
-          emailLabel: string;
-          phoneLabel: string;
-        };
-        preferences: {
-          title: string;
-          defaultPickupLabel: string;
-          defaultDropoffLabel: string;
-          notificationsLabel: string;
-          emailNotifications: string;
-          smsNotifications: string;
-        };
-        actions: {
-          title: string;
-          changePassword: string;
-          deleteAccount: string;
-        };
+        personal: string;
+        booking: string;
+        notifications: string;
+        account: string;
       };
-      messages: {
-        profileUpdated: string;
-        profileUpdateFailed: string;
-        passwordChanged: string;
-        passwordChangeFailed: string;
+      name_label: string;
+      name_placeholder: string;
+      email_label: string;
+      phone_label: string;
+      phone_placeholder: string;
+      default_pickup_label: string;
+      default_pickup_placeholder: string;
+      default_pickup_input: string;
+      default_pickup_value: string;
+      default_pickup_not_set: string;
+      default_dropoff_label: string;
+      default_dropoff_placeholder: string;
+      default_dropoff_input: string;
+      default_dropoff_value: string;
+      default_dropoff_not_set: string;
+      notifications_label: string;
+      email_notifications_label: string;
+      email_notifications_text: string;
+      email_notifications_checkbox: string;
+      sms_notifications_label: string;
+      sms_notifications_text: string;
+      sms_notifications_checkbox: string;
+      save_button: string;
+      cancel_button: string;
+      email: {
+        note: string;
+      };
+      account: {
+        memberSinceLabel: string;
+        lastLoginLabel: string;
+        totalBookingsLabel: string;
+        totalSpentLabel: string;
       };
     };
-    payments?: {
+    payments: {
       title: string;
       subtitle: string;
       addPaymentMethod: string;
@@ -429,15 +566,30 @@ export interface CMSConfiguration {
       noPaymentMethods: string;
       addFirstMethod: string;
       sections: {
-        currentMethods: {
-          title: string;
-          defaultLabel: string;
-          setDefault: string;
-          remove: string;
+        methods: string;
+        history: string;
+      };
+      noMethods: {
+        message: string;
+      };
+      noHistory: {
+        message: string;
+      };
+      method: {
+        [key: string]: {
+          type: string;
+          details: string;
+          icon: string;
+          status: string;
         };
-        addNew: {
-          title: string;
+      };
+      history: {
+        [key: string]: {
+          icon: string;
           description: string;
+          date: string;
+          amount: string;
+          status: string;
         };
       };
     };
@@ -462,10 +614,13 @@ export interface CMSConfiguration {
       successMessage: string;
       errorMessage: string;
     };
-    bookings?: {
+    bookings: {
       title: string;
       subtitle: string;
+      bookNewRide: string;
       noBookings: string;
+      noBookingsTitle: string;
+      bookFirstRide: string;
       createFirst: string;
       filters: {
         all: string;
@@ -485,6 +640,22 @@ export interface CMSConfiguration {
         inProgress: string;
         completed: string;
         cancelled: string;
+      };
+      loading: {
+        initializing: string;
+        loadingBookings: string;
+      };
+      loginRequired: string;
+      goToLogin: string;
+      booking: {
+        [key: string]: {
+          title: string;
+          statusText: string;
+          viewStatus: string;
+          manage: string;
+          feedback: string;
+          payBalance: string;
+        };
       };
     };
     'booking-form'?: {
@@ -548,49 +719,8 @@ export interface CMSConfiguration {
         live: string;
       };
       map?: {
-        title: string;
-        status: {
-          live: string;
-          offline: string;
-        };
-      };
-      etaDetails?: {
-        title: string;
-        current: string;
-        minutes: string;
-        miles: string;
-        traffic: string;
-        confidence: string;
-      };
-      bookingDetails?: {
-        title: string;
-        bookingId: string;
-        passenger: string;
-        status: string;
-        pickupTime: string;
-        fare: string;
-        driver: string;
-        driverNotAssigned: string;
-        route: string;
-      };
-      driverLocationDetails?: {
-        title: string;
-        speed: string;
-        mph: string;
-        updated: string;
-      };
-      actions?: {
-        backToBookings: string;
-        viewBooking: string;
-      };
-      liveUpdates?: {
-        title: string;
-        description: string;
-        firebase: string;
-      };
-      offline?: {
-        title: string;
-        description: string;
+        loading: string;
+        error: string;
       };
     };
   };
@@ -733,7 +863,131 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
     booking: {
       title: "Book Your Ride",
       subtitle: "Premium airport transportation service",
-      description: "Reserve your luxury airport transportation with our professional drivers. We serve all major airports in the NY and CT area."
+      description: "Reserve your luxury airport transportation with our professional drivers. We serve all major airports in the NY and CT area.",
+      hero: {
+        title: "Complete Your Booking",
+        subtitle: "Fill in your details below"
+      },
+      personalInfo: {
+        title: "Contact Information"
+      },
+      tripDetails: {
+        title: "Trip Details"
+      },
+      specialRequests: {
+        title: "Special Requests"
+      },
+      notes: {
+        title: "Additional Notes"
+      },
+      fare: {
+        title: "Fare & Booking",
+        breakdown: {
+          title: "Estimated Fare Breakdown",
+          base: {
+            label: "Base Fare:",
+            value: "$0.00"
+          },
+          vehicle: {
+            label: "Vehicle Upgrade:",
+            value: "+$0.00"
+          },
+          service: {
+            label: "Service Level:",
+            value: "+$0.00"
+          },
+          total: {
+            label: "Total:",
+            value: "$0.00"
+          }
+        }
+      },
+      form: {
+        name: {
+          label: "Full Name",
+          placeholder: "Enter your full name",
+          input: "name-input"
+        },
+        email: {
+          label: "Email Address",
+          placeholder: "Enter your email",
+          input: "email-input"
+        },
+        phone: {
+          label: "Phone Number",
+          placeholder: "(123) 456-7890",
+          input: "phone-input"
+        },
+        pickupLocation: {
+          label: "Pickup Location",
+          placeholder: "Enter pickup address",
+          input: "pickup-input"
+        },
+        dropoffLocation: {
+          label: "Dropoff Location",
+          placeholder: "Enter dropoff address",
+          input: "dropoff-input"
+        },
+        pickupDateTime: {
+          label: "Pickup Date & Time",
+          input: "datetime-input"
+        },
+        passengers: {
+          label: "Number of Passengers",
+          select: "passengers-select"
+        },
+        childSeat: {
+          label: "Child Seat Required",
+          checkbox: "child-seat-checkbox"
+        },
+        wheelchair: {
+          label: "Wheelchair Accessible",
+          checkbox: "wheelchair-checkbox"
+        },
+        extraLuggage: {
+          label: "Extra Luggage Space",
+          checkbox: "luggage-checkbox"
+        },
+        meetAndGreet: {
+          label: "Meet & Greet Service",
+          checkbox: "meet-greet-checkbox"
+        },
+        flightTracking: {
+          label: "Flight Tracking",
+          checkbox: "flight-tracking-checkbox"
+        },
+        airline: {
+          label: "Airline",
+          placeholder: "e.g., Delta Airlines",
+          input: "airline-input"
+        },
+        flightNumber: {
+          label: "Flight Number",
+          placeholder: "e.g., DL1234",
+          input: "flight-number-input"
+        },
+        arrivalTime: {
+          label: "Arrival Time",
+          placeholder: "HH:MM",
+          input: "arrival-time-input"
+        },
+        terminal: {
+          label: "Terminal",
+          placeholder: "e.g., Terminal 1",
+          input: "terminal-input"
+        },
+        notes: {
+          label: "Special Instructions",
+          placeholder: "Any special instructions or requests...",
+          textarea: "notes-textarea"
+        },
+        calculating: "Calculating...",
+        calculate_fare: "Calculate Fare",
+        submit: "Book Now"
+      },
+      flightInfo: {
+        title: "Flight Information"
+      }
     },
     success: {
       title: "Payment Successful!",
@@ -885,68 +1139,6 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
         }
       }
     },
-    profile: {
-      title: "My Profile",
-      subtitle: "Manage your account settings and preferences.",
-      editProfile: "Edit Profile",
-      saveChanges: "Save Changes",
-      cancel: "Cancel",
-      loading: {
-        loadingProfile: "Loading profile...",
-        savingChanges: "Saving changes..."
-      },
-      loginRequired: "Please log in to access this feature.",
-      goToLogin: "Go to Login",
-      sections: {
-        personalInfo: {
-          title: "Personal Information",
-          nameLabel: "Full Name",
-          emailLabel: "Email Address",
-          phoneLabel: "Phone Number"
-        },
-        preferences: {
-          title: "Preferences",
-          defaultPickupLabel: "Default Pickup Location",
-          defaultDropoffLabel: "Default Dropoff Location",
-          notificationsLabel: "Notifications",
-          emailNotifications: "Email Notifications",
-          smsNotifications: "SMS Notifications"
-        },
-        actions: {
-          title: "Actions",
-          changePassword: "Change Password",
-          deleteAccount: "Delete Account"
-        }
-      },
-      messages: {
-        profileUpdated: "Profile updated successfully!",
-        profileUpdateFailed: "Failed to update profile. Please try again.",
-        passwordChanged: "Password changed successfully!",
-        passwordChangeFailed: "Failed to change password. Please try again."
-      }
-    },
-    payments: {
-      title: "Manage Payment Methods",
-      subtitle: "Add, manage, and set default payment methods.",
-      addPaymentMethod: "Add New Payment Method",
-      managePaymentMethods: "Current Payment Methods",
-      paymentHistory: "Payment History",
-      balance: "Remaining Balance",
-      noPaymentMethods: "No payment methods added yet. Add one to make your next booking hassle-free!",
-      addFirstMethod: "Add your first payment method to get started.",
-      sections: {
-        currentMethods: {
-          title: "Current Payment Methods",
-          defaultLabel: "Set as Default",
-          setDefault: "Set as Default",
-          remove: "Remove"
-        },
-        addNew: {
-          title: "Add New Payment Method",
-          description: "Enter your card details to add a new payment method."
-        }
-      }
-    },
     'add-payment-method': {
       title: "Add New Payment Method",
       subtitle: "Securely add your payment details.",
@@ -971,7 +1163,10 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
     bookings: {
       title: "My Bookings",
       subtitle: "Your airport ride history and current status.",
+      bookNewRide: "Book New Ride",
       noBookings: "You haven't booked any rides yet. Start your journey with us!",
+      noBookingsTitle: "No Bookings Found",
+      bookFirstRide: "Book Your First Ride",
       createFirst: "Create your first booking now.",
       filters: {
         all: "All Bookings",
@@ -991,6 +1186,30 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
         inProgress: "In Progress",
         completed: "Completed",
         cancelled: "Cancelled"
+      },
+      loading: {
+        initializing: "Initializing...",
+        loadingBookings: "Loading your bookings..."
+      },
+      loginRequired: "Please log in to view your bookings.",
+      goToLogin: "Go to Login",
+      booking: {
+        pending: {
+          title: "Pending",
+          statusText: "Awaiting confirmation",
+          viewStatus: "View Status",
+          manage: "Manage",
+          feedback: "Feedback",
+          payBalance: "Pay Balance"
+        },
+        confirmed: {
+          title: "Confirmed",
+          statusText: "Ride confirmed",
+          viewStatus: "View Status",
+          manage: "Manage",
+          feedback: "Feedback",
+          payBalance: "Pay Balance"
+        }
       }
     },
     'booking-form': {
@@ -1054,51 +1273,12 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
         live: "Live"
       },
       map: {
-        title: "Map",
-        status: {
-          live: "Live",
-          offline: "Offline"
-        }
-      },
-      etaDetails: {
-        title: "ETA",
-        current: "Current:",
-        minutes: "Minutes",
-        miles: "Miles",
-        traffic: "Traffic",
-        confidence: "Confidence"
-      },
-      bookingDetails: {
-        title: "Booking Details",
-        bookingId: "Booking ID:",
-        passenger: "Passenger:",
-        status: "Status:",
-        pickupTime: "Pickup Time:",
-        fare: "Fare:",
-        driver: "Driver:",
-        driverNotAssigned: "Driver not assigned",
-        route: "Route:"
-      },
-      driverLocationDetails: {
-        title: "Driver Location",
-        speed: "Speed:",
-        mph: "MPH",
-        updated: "Updated:"
-      },
-      actions: {
-        backToBookings: "Back to Bookings",
-        viewBooking: "View Booking"
-      },
-      liveUpdates: {
-        title: "Live Updates",
-        description: "Real-time updates from the driver's app.",
-        firebase: "Using Firebase for real-time updates."
-      },
-      offline: {
-        title: "Offline",
-        description: "Could not connect to tracking service. Please check your internet connection."
+        loading: "Loading map...",
+        error: "Failed to load map"
       }
-    }
+    },
+    profile: {} as any,
+    payments: {} as any
   },
   business: {
     company: {

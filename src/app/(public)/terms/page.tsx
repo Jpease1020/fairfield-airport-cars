@@ -66,55 +66,55 @@ function TermsPageContent() {
           <Stack data-testid="terms-sections-list" spacing="lg">
             <Box data-testid="terms-section-0">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-0" data-cms-id="pages.terms.sections.item1.title" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item1.title', 'Booking')}
+                <H4 data-testid="terms-section-title-0" data-cms-id="pages.terms.sections.0.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.0.title', 'Booking')}
                 </H4>
-                <Text data-testid="terms-section-content-0" data-cms-id="pages.terms.sections.item1.content" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item1.content', 'All bookings must be made through our website or by phone. We require at least 24 hours notice for all reservations.')}
+                <Text data-testid="terms-section-content-0" data-cms-id="pages.terms.sections.0.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.0.content', 'All bookings must be made through our website or by phone. We require at least 24 hours notice for all reservations.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-1">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-1" data-cms-id="pages.terms.sections.item2.title" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item2.title', 'Payment')}
+                <H4 data-testid="terms-section-title-1" data-cms-id="pages.terms.sections.1.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.1.title', 'Payment')}
                 </H4>
-                <Text data-testid="terms-section-content-1" data-cms-id="pages.terms.sections.item2.content" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item2.content', 'Payment is processed through Square. We accept all major credit cards and digital payments.')}
+                <Text data-testid="terms-section-content-1" data-cms-id="pages.terms.sections.1.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.1.content', 'Payment is processed through Square. We accept all major credit cards and digital payments.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-2">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-2" data-cms-id="pages.terms.sections.item3.title" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item3.title', 'Cancellation Policy')}
+                <H4 data-testid="terms-section-title-2" data-cms-id="pages.terms.sections.2.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.2.title', 'Cancellation Policy')}
                 </H4>
-                <Text data-testid="terms-section-content-2" data-cms-id="pages.terms.sections.item3.content" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item3.content', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.')}
+                <Text data-testid="terms-section-content-2" data-cms-id="pages.terms.sections.2.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.2.content', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-3">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-3" data-cms-id="pages.terms.sections.item4.title" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item4.title', 'Liability')}
+                <H4 data-testid="terms-section-title-3" data-cms-id="pages.terms.sections.3.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.3.title', 'Liability')}
                 </H4>
-                <Text data-testid="terms-section-content-3" data-cms-id="pages.terms.sections.item4.content" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item4.content', 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.')}
+                <Text data-testid="terms-section-content-3" data-cms-id="pages.terms.sections.3.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.3.content', 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-4">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-4" data-cms-id="pages.terms.sections.item5.title" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item5.title', 'Contact')}
+                <H4 data-testid="terms-section-title-4" data-cms-id="pages.terms.sections.4.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.4.title', 'Contact')}
                 </H4>
-                <Text data-testid="terms-section-content-4" data-cms-id="pages.terms.sections.item5.content" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.item5.content', 'For questions about these terms, please contact us at the information provided on our website.')}
+                <Text data-testid="terms-section-content-4" data-cms-id="pages.terms.sections.4.content" mode={mode}>
+                  {getCMSField(cmsData, 'pages.terms.sections.4.content', 'For questions about these terms, please contact us at the information provided on our website.')}
                 </Text>
               </Stack>
             </Box>

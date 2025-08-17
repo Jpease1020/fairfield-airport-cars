@@ -100,17 +100,17 @@ function HomePageContent() {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.features.item1.title" 
+                  data-cms-id="pages.home.features.items.0.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.item1.title', 'On-Time Service')}
+                  {getCMSField(cmsData, 'pages.home.features.items.0.title', 'On-Time Service')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.features.item1.description" 
+                  data-cms-id="pages.home.features.items.0.description" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.item1.description', 'Reliable pickup times with flight tracking and real-time updates')}
+                  {getCMSField(cmsData, 'pages.home.features.items.0.description', 'Reliable pickup times with flight tracking and real-time updates')}
                 </Text>
               </Stack>
             </Col>
@@ -121,17 +121,17 @@ function HomePageContent() {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.features.item2.title" 
+                  data-cms-id="pages.home.features.items.1.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.item2.title', 'Clean Vehicles')}
+                  {getCMSField(cmsData, 'pages.home.features.items.1.title', 'Clean Vehicles')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.features.item2.description" 
+                  data-cms-id="pages.home.features.items.1.description" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.item2.description', 'Well-maintained, professional fleet with luxury options')}
+                  {getCMSField(cmsData, 'pages.home.features.items.1.description', 'Well-maintained, professional fleet with luxury options')}
                 </Text>
               </Stack>
             </Col>
@@ -142,17 +142,17 @@ function HomePageContent() {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.features.item3.title" 
+                  data-cms-id="pages.home.features.items.2.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.item3.title', 'Easy Booking')}
+                  {getCMSField(cmsData, 'pages.home.features.items.2.title', 'Easy Booking')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.features.item3.description" 
+                  data-cms-id="pages.home.features.items.2.description" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.item3.description', 'Secure online booking and payment with instant confirmation')}
+                  {getCMSField(cmsData, 'pages.home.features.items.2.description', 'Secure online booking and payment with instant confirmation')}
                 </Text>
               </Stack>
             </Col>
@@ -187,17 +187,17 @@ function HomePageContent() {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.fleet.vehicle1.title" 
+                  data-cms-id="pages.home.fleet.vehicles.0.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicle1.title', 'Luxury SUV')}
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.0.title', 'Luxury SUV')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.fleet.vehicle1.description" 
+                  data-cms-id="pages.home.fleet.vehicles.0.description" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicle1.description', 'Spacious Chevrolet Suburban with premium amenities including complimentary water, Wi-Fi, and phone chargers.')}
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.0.description', 'Spacious Chevrolet Suburban with premium amenities including complimentary water, Wi-Fi, and phone chargers.')}
                 </Text>
               </Stack>
             </Col>
@@ -207,17 +207,17 @@ function HomePageContent() {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.fleet.vehicle2.title" 
+                  data-cms-id="pages.home.fleet.vehicles.1.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicle2.title', 'Professional Service')}
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.1.title', 'Professional Service')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.fleet.vehicle2.description" 
+                  data-cms-id="pages.home.fleet.vehicles.1.description" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicle2.description', 'Experienced drivers with background checks, ensuring your safety and comfort throughout your journey.')}
+                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.1.description', 'Experienced drivers with background checks, ensuring your safety and comfort throughout your journey.')}
                 </Text>
               </Stack>
             </Col>
@@ -251,35 +251,35 @@ function HomePageContent() {
               <Stack spacing="md" align="center">
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.testimonials.item1.content" 
+                  data-cms-id="pages.home.testimonials.items.0.content" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.testimonials.item1.content', 'Fairfield Airport Cars made my business trips stress-free. Always on time and professional service.')}
+                  {getCMSField(cmsData, 'pages.home.testimonials.items.0.content', 'Fairfield Airport Cars made my business trips stress-free. Always on time and professional service.')}
                 </Text>
                 <Stack spacing="xs" align="center">
                   <Text 
                     align="center" 
                     variant="lead" 
-                    data-cms-id="pages.home.testimonials.item1.name" 
+                    data-cms-id="pages.home.testimonials.items.0.name" 
                     mode={mode}
                   >
-                    {getCMSField(cmsData, 'pages.home.testimonials.item1.name', 'Sarah Johnson')}
+                    {getCMSField(cmsData, 'pages.home.testimonials.items.0.name', 'Sarah Johnson')}
                   </Text>
                   <Text 
                     align="center" 
                     size="sm" 
-                    data-cms-id="pages.home.testimonials.item1.role" 
+                    data-cms-id="pages.home.testimonials.items.0.role" 
                     mode={mode}
                   >
-                    {getCMSField(cmsData, 'pages.home.testimonials.item1.role', 'Business Traveler')}
+                    {getCMSField(cmsData, 'pages.home.testimonials.items.0.role', 'Business Traveler')}
                   </Text>
                   <Text 
                     align="center" 
                     size="sm" 
-                    data-cms-id="pages.home.testimonials.item1.company" 
+                    data-cms-id="pages.home.testimonials.items.0.company" 
                     mode={mode}
                   >
-                    {getCMSField(cmsData, 'pages.home.testimonials.item1.company', 'Tech Corp')}
+                    {getCMSField(cmsData, 'pages.home.testimonials.items.0.company', 'Tech Corp')}
                   </Text>
                 </Stack>
               </Stack>
@@ -289,27 +289,27 @@ function HomePageContent() {
               <Stack spacing="md" align="center">
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.testimonials.item2.content" 
+                  data-cms-id="pages.home.testimonials.items.1.content" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.testimonials.item2.content', 'The best airport transportation service I\'ve used. Clean cars and friendly drivers.')}
+                  {getCMSField(cmsData, 'pages.home.testimonials.items.1.content', 'The best airport transportation service I\'ve used. Clean cars and friendly drivers.')}
                 </Text>
                 <Stack spacing="xs" align="center">
                   <Text 
                     align="center" 
                     variant="lead" 
-                    data-cms-id="pages.home.testimonials.item2.name" 
+                    data-cms-id="pages.home.testimonials.items.1.name" 
                     mode={mode}
                   >
-                    {getCMSField(cmsData, 'pages.home.testimonials.item2.name', 'Mike Chen')}
+                    {getCMSField(cmsData, 'pages.home.testimonials.items.1.name', 'Mike Chen')}
                   </Text>
                   <Text 
                     align="center" 
                     size="sm" 
-                    data-cms-id="pages.home.testimonials.item2.role" 
+                    data-cms-id="pages.home.testimonials.items.1.role" 
                     mode={mode}
                   >
-                    {getCMSField(cmsData, 'pages.home.testimonials.item2.role', 'Frequent Flyer')}
+                    {getCMSField(cmsData, 'pages.home.testimonials.items.1.role', 'Frequent Flyer')}
                   </Text>
                 </Stack>
               </Stack>
@@ -319,27 +319,27 @@ function HomePageContent() {
               <Stack spacing="md" align="center">
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.testimonials.item3.content" 
+                  data-cms-id="pages.home.testimonials.items.2.content" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.testimonials.item3.content', 'I recommend Fairfield Airport Cars to all my clients. Reliable and professional.')}
+                  {getCMSField(cmsData, 'pages.home.testimonials.items.2.content', 'I recommend Fairfield Airport Cars to all my clients. Reliable and professional.')}
                 </Text>
                 <Stack spacing="xs" align="center">
                   <Text 
                     align="center" 
                     variant="lead" 
-                    data-cms-id="pages.home.testimonials.item3.name" 
+                    data-cms-id="pages.home.testimonials.items.2.name" 
                     mode={mode}
                   >
-                    {getCMSField(cmsData, 'pages.home.testimonials.item3.name', 'Lisa Rodriguez')}
+                    {getCMSField(cmsData, 'pages.home.testimonials.items.2.name', 'Lisa Rodriguez')}
                   </Text>
                   <Text 
                     align="center" 
                     size="sm" 
-                    data-cms-id="pages.home.testimonials.item3.role" 
+                    data-cms-id="pages.home.testimonials.items.2.role" 
                     mode={mode}
                   >
-                    {getCMSField(cmsData, 'pages.home.testimonials.item3.role', 'Travel Consultant')}
+                    {getCMSField(cmsData, 'pages.home.testimonials.items.2.role', 'Travel Consultant')}
                   </Text>
                 </Stack>
               </Stack>
@@ -374,33 +374,16 @@ function HomePageContent() {
               <Text 
                 variant="lead" 
                 weight="semibold"
-                data-cms-id="pages.home.faq.item1.question" 
+                                  data-cms-id="pages.home.faq.items.0.question" 
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.home.faq.item1.question', 'Which airports do you serve?')}
+                                  {getCMSField(cmsData, 'pages.home.faq.items.0.question', 'Which airports do you serve?')}
               </Text>
               <Text 
-                data-cms-id="pages.home.faq.item1.answer" 
+                                  data-cms-id="pages.home.faq.items.0.answer" 
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.home.faq.item1.answer', 'We provide service to and from all major airports in the New York and Connecticut area, including JFK, LaGuardia (LGA), Newark (EWR), Westchester (HPN), and Bradley (BDL).')}
-              </Text>
-            </Stack>
-            
-            <Stack spacing="md" align="stretch">
-              <Text 
-                variant="lead" 
-                weight="semibold"
-                data-cms-id="pages.home.faq.item2.question" 
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'pages.home.faq.item2.question', 'How far in advance should I book my ride?')}
-              </Text>
-              <Text 
-                data-cms-id="pages.home.faq.item2.answer" 
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'pages.home.faq.item2.answer', 'We recommend booking at least 24 hours in advance to ensure availability. However, we will always do our best to accommodate last-minute requests.')}
+                                  {getCMSField(cmsData, 'pages.home.faq.items.0.answer', 'We provide service to and from all major airports in the New York and Connecticut area, including JFK, LaGuardia (LGA), Newark (EWR), Westchester (HPN), and Bradley (BDL).')}
               </Text>
             </Stack>
             
@@ -408,16 +391,16 @@ function HomePageContent() {
               <Text 
                 variant="lead" 
                 weight="semibold"
-                data-cms-id="pages.home.faq.item3.question" 
+                                  data-cms-id="pages.home.faq.items.1.question" 
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.home.faq.item3.question', 'What is your cancellation policy?')}
+                                  {getCMSField(cmsData, 'pages.home.faq.items.1.question', 'How far in advance should I book my ride?')}
               </Text>
               <Text 
-                data-cms-id="pages.home.faq.item3.answer" 
+                                  data-cms-id="pages.home.faq.items.1.answer" 
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.home.faq.item3.answer', 'You can cancel for a full refund up to 12 hours before your scheduled pickup time. Cancellations within 12 hours of pickup are non-refundable.')}
+                                  {getCMSField(cmsData, 'pages.home.faq.items.1.answer', 'We recommend booking at least 24 hours in advance to ensure availability. However, we will always do our best to accommodate last-minute requests.')}
               </Text>
             </Stack>
             
@@ -425,16 +408,33 @@ function HomePageContent() {
               <Text 
                 variant="lead" 
                 weight="semibold"
-                data-cms-id="pages.home.faq.item4.question" 
+                                  data-cms-id="pages.home.faq.items.2.question" 
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.home.faq.item4.question', 'What kind of vehicle will I be riding in?')}
+                                  {getCMSField(cmsData, 'pages.home.faq.items.2.question', 'What is your cancellation policy?')}
               </Text>
               <Text 
-                data-cms-id="pages.home.faq.item4.answer" 
+                                  data-cms-id="pages.home.faq.items.2.answer" 
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.home.faq.item4.answer', 'You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers.')}
+                                  {getCMSField(cmsData, 'pages.home.faq.items.2.answer', 'You can cancel for a full refund up to 12 hours before your scheduled pickup time. Cancellations within 12 hours of pickup are non-refundable.')}
+              </Text>
+            </Stack>
+            
+            <Stack spacing="md" align="stretch">
+              <Text 
+                variant="lead" 
+                weight="semibold"
+                                  data-cms-id="pages.home.faq.items.3.question" 
+                mode={mode}
+              >
+                                  {getCMSField(cmsData, 'pages.home.faq.items.3.question', 'What kind of vehicle will I be riding in?')}
+              </Text>
+              <Text 
+                                  data-cms-id="pages.home.faq.items.3.answer" 
+                mode={mode}
+              >
+                                  {getCMSField(cmsData, 'pages.home.faq.items.3.answer', 'You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers.')}
               </Text>
             </Stack>
           </Stack>
