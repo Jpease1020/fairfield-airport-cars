@@ -19,6 +19,7 @@ export interface DrawerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   maxWidth?: string; // e.g., '50vw'
   bodyPadding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   headerVariant?: 'default' | 'minimal' | 'prominent';
+  headerMargin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   stickyHeader?: boolean;
   actions?: React.ReactNode; // header right-side actions
   footer?: React.ReactNode;
@@ -56,6 +57,7 @@ const DrawerPanel = styled(Box)<DrawerPanelProps>`
 interface HeaderContainerProps {
   $sticky: boolean;
   $variant: 'default' | 'minimal' | 'prominent';
+  $margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 const HeaderContainer = styled(Container)<HeaderContainerProps>`
@@ -68,6 +70,8 @@ const HeaderContainer = styled(Container)<HeaderContainerProps>`
   `}
   padding: ${({ $variant }) =>
     $variant === 'minimal' ? spacing.md : $variant === 'prominent' ? spacing.xl : spacing.lg};
+  margin: ${({ $margin }) => $margin === 'none' ? '0' : '0 auto'};
+  width: 100%;
 `;
 
 const TitleText = styled(Text)`
@@ -83,6 +87,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(({
   maxWidth,
   bodyPadding = 'md',
   headerVariant = 'default',
+  headerMargin = 'md',
   stickyHeader = true,
   actions,
   footer,
@@ -124,7 +129,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(({
       >
         <Stack spacing="none">
           {(title || showCloseButton || actions) && (
-            <HeaderContainer $sticky={stickyHeader} $variant={headerVariant}>
+            <HeaderContainer $sticky={stickyHeader} $variant={headerVariant} $margin={headerMargin}>
               <Stack direction="horizontal" align="center" justify="space-between">
                 <Stack spacing="xs">
                   {title && (

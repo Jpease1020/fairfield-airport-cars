@@ -39,13 +39,4 @@ body:not(.edit-mode-active) [data-editable="true"] {
 
 body:not(.edit-mode-active) [data-editable="true"]:hover {
   background-color: transparent;
-}
-
-/* withEditable component styles */
-[data-cursor="pointer"] {
-  cursor: pointer;
-}
-
-[data-display="inline-block"] {
-  display: inline-block;
 } 

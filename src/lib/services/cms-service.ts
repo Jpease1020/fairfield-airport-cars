@@ -97,11 +97,21 @@ export class CMSService {
   async updateEmailTemplates(templates: Partial<EmailTemplates>): Promise<void> {
     const config = await this.getCMSConfiguration();
     if (config) {
+      const currentEmail = config.communication?.email || {};
+      const mergedEmail: EmailTemplates = {
+        bookingConfirmation: { subject: '', body: '', includeCalendarInvite: false },
+        bookingReminder: { subject: '', body: '', sendHoursBefore: 24 },
+        cancellation: { subject: '', body: '' },
+        feedback: { subject: '', body: '', sendDaysAfter: 7 },
+        ...currentEmail,
+        ...templates
+      };
+      
       await this.updateCMSConfiguration({
         ...config,
         communication: {
           ...config.communication,
-          email: { ...config.communication.email, ...templates }
+          email: mergedEmail
         }
       });
     }
@@ -110,11 +120,21 @@ export class CMSService {
   async updateSMSTemplates(templates: Partial<SMSTemplates>): Promise<void> {
     const config = await this.getCMSConfiguration();
     if (config) {
+      const currentSMS = config.communication?.sms || {};
+      const mergedSMS: SMSTemplates = {
+        bookingConfirmation: '',
+        bookingReminder: '',
+        driverEnRoute: '',
+        driverArrived: '',
+        ...currentSMS,
+        ...templates
+      };
+      
       await this.updateCMSConfiguration({
         ...config,
         communication: {
           ...config.communication,
-          sms: { ...config.communication.sms, ...templates }
+          sms: mergedSMS
         }
       });
     }

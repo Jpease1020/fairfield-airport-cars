@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Container, Stack, Button, Span, Text, Drawer } from '@/ui';
-import { MessageSquare, AlertTriangle, X } from 'lucide-react';
+import { ChevronRight, AlertTriangle, X, MessageSquare } from 'lucide-react';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
 
 const FloatingCommentBox = styled.div<{ $top: number; $left: number }>`
@@ -12,6 +12,38 @@ const FloatingCommentBox = styled.div<{ $top: number; $left: number }>`
   left: ${({ $left }) => `${$left}px`};
   z-index: 11050;
   transform: translate(8px, 8px);
+`;
+
+const CommentsDrawerHandle = styled(Container)`
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 11040;
+  cursor: pointer;
+  background: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    left: 8px;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const RotatingChevron = styled(ChevronRight)<{ $isOpen: boolean }>`
+  transform: ${({ $isOpen }) => $isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
+  transition: transform 0.2s ease;
+`;
+
+const FullWidthContainer = styled(Container)`
+  width: 100%;
 `;
 
 interface GlobalCommentIconsProps {
@@ -117,31 +149,24 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
 
   return (
     <>
-      {/* Comments indicator and drawer toggle */}
+      {/* Comments drawer handle - small tab that sticks out from left edge */}
       {(comments.length > 0 || orphanedComments.length > 0) && (
-        <Container
+        <CommentsDrawerHandle
           variant="default"
           padding="sm"
-          style={{
-            position: 'fixed',
-            top: '20px',
-            left: '20px',
-            zIndex: 11040,
-            cursor: 'pointer',
-            background: 'var(--background-card)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-          }}
-          onClick={() => setShowCommentsDrawer(true)}
+          data-admin-control="true"
+          onClick={() => setShowCommentsDrawer(!showCommentsDrawer)}
         >
           <Stack direction="horizontal" align="center" spacing="sm">
-            <MessageSquare size={16} />
-            <Span size="sm" weight="semibold">
-              Comments ({comments.length + orphanedComments.length})
+            <RotatingChevron 
+              size={16} 
+              $isOpen={showCommentsDrawer}
+            />
+            <Span size="xs" weight="semibold">
+              {comments.length + orphanedComments.length}
             </Span>
           </Stack>
-        </Container>
+        </CommentsDrawerHandle>
       )}
 
       {/* Comment icons (tooltip-like) when in comment mode */}
@@ -176,50 +201,51 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
         </Container>
       ))}
 
-      {/* Comments Drawer - shows all comments and orphaned comments */}
-             <Drawer
-         isOpen={showCommentsDrawer}
-         onClose={() => setShowCommentsDrawer(false)}
-         title="Page Comments"
-         position="left"
-         width={400}
-         headerVariant="prominent"
-        actions={
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowCommentsDrawer(false)}
-          >
-            <X size={16} />
-          </Button>
-        }
-      >
-        <Stack spacing="lg">
+                            {/* Comments Drawer - shows all comments and orphaned comments */}
+        <Drawer
+          isOpen={showCommentsDrawer}
+          onClose={() => setShowCommentsDrawer(false)}
+          title="Page Comments"
+          position="left"
+          width={400}
+          headerVariant="minimal"
+          headerMargin="none"
+          actions={
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCommentsDrawer(false)}
+            >
+              <X size={16} />
+            </Button>
+          }
+        >
+                <Stack spacing="lg" align="stretch">
           {/* Active Comments */}
           {comments.length > 0 && (
-            <Container variant="elevated" padding="md">
-              <Stack spacing="sm">
+            <FullWidthContainer variant="elevated" padding="md">
+              <Stack spacing="sm" align="flex-start">
                 <Span size="sm" weight="semibold">Active Comments ({comments.length})</Span>
                 {comments.map((comment) => (
-                  <Container key={comment.id} variant="default" padding="sm">
-                    <Stack spacing="xs">
+                  <FullWidthContainer key={comment.id} variant="default" padding="sm">
+                    <Stack spacing="xs" align="flex-start">
                       <Span size="sm" weight="medium">{comment.elementText}</Span>
                       <Text size="sm">{comment.comment}</Text>
                       <Span size="xs" color="muted">
                         Created: {new Date(comment.createdAt).toLocaleDateString()}
                       </Span>
                     </Stack>
-                  </Container>
+                  </FullWidthContainer>
                 ))}
               </Stack>
-            </Container>
+            </FullWidthContainer>
           )}
           
           {/* Orphaned Comments */}
           {orphanedComments.length > 0 && (
-            <Container variant="elevated" padding="md">
-              <Stack spacing="sm">
-                <Stack direction="horizontal" align="center" spacing="sm">
+            <FullWidthContainer variant="elevated" padding="md">
+              <Stack spacing="sm" align="flex-start">
+                <Stack direction="horizontal" align="flex-start" spacing="sm">
                   <AlertTriangle size={16} color="orange" />
                   <Span size="sm" weight="semibold">Orphaned Comments ({orphanedComments.length})</Span>
                 </Stack>
@@ -227,20 +253,20 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
                   These comments are for elements that can no longer be found on this page.
                 </Text>
                 {orphanedComments.map((comment) => (
-                  <Container key={comment.id} variant="default" padding="sm">
-                    <Stack spacing="xs">
+                  <FullWidthContainer key={comment.id} variant="default" padding="sm">
+                    <Stack spacing="xs" align="flex-start">
                       <Span size="sm" weight="medium">{comment.elementText}</Span>
                       <Text size="sm">{comment.comment}</Text>
-                                             <Span size="xs" color="muted">
-                         Created: {new Date(comment.createdAt).toLocaleDateString()}
-                       </Span>
-                     </Stack>
-                   </Container>
-                 ))}
-               </Stack>
-             </Container>
-           )}
-         </Stack>
+                      <Span size="xs" color="muted">
+                        Created: {new Date(comment.createdAt).toLocaleDateString()}
+                      </Span>
+                    </Stack>
+                  </FullWidthContainer>
+                ))}
+              </Stack>
+            </FullWidthContainer>
+          )}
+        </Stack>
        </Drawer>
     </>
   );

@@ -225,18 +225,24 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
       // Add unique identifier to the DOM element for reliable tracking
       selectedElement.setAttribute('data-comment-id', elementId);
       
-      // Save comment with CMS ID when available
-      await commentsService.addComment({
+      // Prepare comment data
+      const commentData = {
         elementId,
         elementText,
         elementSelector: currentCmsId || elementId, // Use CMS ID as selector when available
         pageUrl,
         pageTitle,
         comment: commentText.trim(),
-        status: 'open',
+        status: 'open' as const,
         createdBy,
         scope,
-      } as Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>);
+      } as Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>;
+      
+      // Debug: Log the comment data being sent
+      console.log('Saving comment with data:', commentData);
+      
+      // Save comment with CMS ID when available
+      await commentsService.addComment(commentData);
 
       // Dispatch custom event to notify other components about new comment
       const event = new (window as any).CustomEvent('commentAdded', {
