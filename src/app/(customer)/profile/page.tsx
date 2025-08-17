@@ -15,7 +15,8 @@ import {
   Input,
   Label,
   H1,
-  ContentCard
+  ContentCard,
+  GridSection
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
@@ -293,7 +294,7 @@ function CustomerProfilePage() {
                   </Label>
                   <Text>{profile.email}</Text>
                   <Text variant="muted" size="sm">
-                    {getCMSField(cmsData, 'profile.email_note', 'Email cannot be changed')}
+                    {getCMSField(cmsData, 'pages.profile.email.note', 'Email cannot be changed')}
                   </Text>
                 </Stack>
 
@@ -331,109 +332,121 @@ function CustomerProfilePage() {
           variant="elevated"
         />
 
-        {/* Preferences */}
-        <ContentCard
-          title={getCMSField(cmsData, 'profile.section_booking', 'Booking Preferences')}
-          content={
-            <Stack spacing="lg">
-              <Stack spacing="md">
-                <Stack spacing="sm">
-                  <Label htmlFor="defaultPickupLocation">
-                    {getCMSField(cmsData, 'profile.default_pickup_label', 'Default Pickup Location')}
-                  </Label>
-                  {isEditing ? (
+        {/* Booking Preferences Section */}
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <ContentCard
+              title={getCMSField(cmsData, 'pages.profile.section_booking', 'Booking Preferences')}
+              data-cms-id="pages.profile.section_booking"
+              content={
+                <Stack spacing="md">
+                  <Stack spacing="sm">
+                    <Label htmlFor="defaultPickupLocation" data-cms-id="pages.profile.default_pickup_label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.profile.default_pickup_label', 'Default Pickup Location')}
+                    </Label>
                     <Input
                       id="defaultPickupLocation"
                       type="text"
                       value={formData.defaultPickupLocation}
                       onChange={(e) => handleInputChange('defaultPickupLocation', e.target.value)}
-                       placeholder={getCMSField(cmsData, 'profile.default_pickup_placeholder', 'e.g., Fairfield Airport')}
+                      placeholder={getCMSField(cmsData, 'pages.profile.default_pickup_placeholder', 'e.g., Fairfield Airport')}
+                      data-cms-id="pages.profile.default_pickup_input"
                     />
-                                     ) : (
-                     <Text>{profile.preferences?.defaultPickupLocation || 'Not set'}</Text>
-                   )}
-                </Stack>
-
-                <Stack spacing="sm">
-                  <Label htmlFor="defaultDropoffLocation">
-                    {getCMSField(cmsData, 'profile.default_dropoff_label', 'Default Dropoff Location')}
-                  </Label>
-                  {isEditing ? (
+                    <Text data-cms-id="pages.profile.default_pickup_value" mode={mode}>
+                      {profile.preferences?.defaultPickupLocation || getCMSField(cmsData, 'pages.profile.default_pickup_not_set', 'Not set')}
+                    </Text>
+                  </Stack>
+                  
+                  <Stack spacing="sm">
+                    <Label htmlFor="defaultDropoffLocation" data-cms-id="pages.profile.default_dropoff_label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.profile.default_dropoff_label', 'Default Dropoff Location')}
+                    </Label>
                     <Input
                       id="defaultDropoffLocation"
                       type="text"
                       value={formData.defaultDropoffLocation}
                       onChange={(e) => handleInputChange('defaultDropoffLocation', e.target.value)}
-                       placeholder={getCMSField(cmsData, 'profile.default_dropoff_placeholder', 'e.g., Downtown Fairfield')}
+                      placeholder={getCMSField(cmsData, 'pages.profile.default_dropoff_placeholder', 'e.g., Downtown Fairfield')}
+                      data-cms-id="pages.profile.default_dropoff_input"
                     />
-                                     ) : (
-                     <Text>{profile.preferences?.defaultDropoffLocation || 'Not set'}</Text>
-                   )}
+                    <Text data-cms-id="pages.profile.default_dropoff_value" mode={mode}>
+                      {profile.preferences?.defaultDropoffLocation || getCMSField(cmsData, 'pages.profile.default_dropoff_not_set', 'Not set')}
+                    </Text>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Stack>
-          }
-          variant="elevated"
-        />
+              }
+            />
+          </Container>
+        </GridSection>
 
-        {/* Notification Preferences */}
-        <ContentCard
-          title={getCMSField(cmsData, 'profile.section_notifications', 'Notification Preferences')}
-          content={
-            <Stack spacing="lg">
-              <Stack spacing="md">
-                <Stack spacing="sm">
-                  <Label>
-                    {getCMSField(cmsData, 'profile.notifications_label', 'Notification Settings')}
+        {/* Notification Preferences Section */}
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <ContentCard
+              title={getCMSField(cmsData, 'pages.profile.section_notifications', 'Notification Preferences')}
+              data-cms-id="pages.profile.section_notifications"
+              content={
+                <Stack spacing="md">
+                  <Label data-cms-id="pages.profile.notifications_label" mode={mode}>
+                    {getCMSField(cmsData, 'pages.profile.notifications_label', 'Notification Settings')}
                   </Label>
+                  
                   <Stack spacing="sm">
-                    <Stack direction="horizontal" align="center" spacing="sm">
+                    <Label htmlFor="emailNotifications" data-cms-id="pages.profile.email_notifications_label" mode={mode}>
                       <input
                         type="checkbox"
                         id="emailNotifications"
                         checked={formData.notifications.email}
                         onChange={(e) => handleInputChange('notifications.email', e.target.checked)}
-                        disabled={!isEditing}
+                        data-cms-id="pages.profile.email_notifications_checkbox"
                       />
-                      <Label htmlFor="emailNotifications">
-                        {getCMSField(cmsData, 'profile.email_notifications', 'Email Notifications')}
-                      </Label>
-                    </Stack>
-                    <Stack direction="horizontal" align="center" spacing="sm">
+                      {getCMSField(cmsData, 'pages.profile.email_notifications_text', 'Receive email notifications')}
+                    </Label>
+                  </Stack>
+                  
+                  <Stack spacing="sm">
+                    <Label htmlFor="smsNotifications" data-cms-id="pages.profile.sms_notifications_label" mode={mode}>
                       <input
                         type="checkbox"
                         id="smsNotifications"
                         checked={formData.notifications.sms}
                         onChange={(e) => handleInputChange('notifications.sms', e.target.checked)}
-                        disabled={!isEditing}
+                        data-cms-id="pages.profile.sms_notifications_checkbox"
                       />
-                      <Label htmlFor="smsNotifications">
-                        {getCMSField(cmsData, 'profile.sms_notifications', 'SMS Notifications')}
-                      </Label>
-                    </Stack>
+                      {getCMSField(cmsData, 'pages.profile.sms_notifications_text', 'Receive SMS notifications')}
+                    </Label>
                   </Stack>
                 </Stack>
-              </Stack>
-            </Stack>
-          }
-          variant="elevated"
-        />
+              }
+            />
+          </Container>
+        </GridSection>
 
-        {/* Account Information */}
-        <ContentCard
-          title={getCMSField(cmsData, 'profile.section_account', 'Account Information')}
-          content={
-            <Stack spacing="md">
-              <Stack spacing="sm">
-                <Text><strong>Member Since:</strong> {new Date(profile.createdAt).toLocaleDateString()}</Text>
-                <Text><strong>Last Login:</strong> {new Date(profile.lastLogin).toLocaleDateString()}</Text>
-                <Text><strong>Total Bookings:</strong> {profile.totalBookings || 0}</Text>
-                <Text><strong>Total Spent:</strong> ${(profile.totalSpent || 0).toFixed(2)}</Text>
-              </Stack>
-            </Stack>
-          }
-          variant="elevated"
-        />
+        {/* Account Information Section */}
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <ContentCard
+              title={getCMSField(cmsData, 'pages.profile.section_account', 'Account Information')}
+              data-cms-id="pages.profile.section_account"
+              content={
+                <Stack spacing="sm">
+                  <Text data-cms-id="pages.profile.account.memberSince" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.profile.account.memberSinceLabel', 'Member Since:')}</strong> {new Date(profile.createdAt).toLocaleDateString()}
+                  </Text>
+                  <Text data-cms-id="pages.profile.account.lastLogin" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.profile.account.lastLoginLabel', 'Last Login:')}</strong> {new Date(profile.lastLogin).toLocaleDateString()}
+                  </Text>
+                  <Text data-cms-id="pages.profile.account.totalBookings" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.profile.account.totalBookingsLabel', 'Total Bookings:')}</strong> {profile.totalBookings || 0}
+                  </Text>
+                  <Text data-cms-id="pages.profile.account.totalSpent" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pages.profile.account.totalSpentLabel', 'Total Spent:')}</strong> ${(profile.totalSpent || 0).toFixed(2)}
+                  </Text>
+                </Stack>
+              }
+            />
+          </Container>
+        </GridSection>
       </Stack>
     </>
   );

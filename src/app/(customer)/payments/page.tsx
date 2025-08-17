@@ -12,7 +12,6 @@ import {
   Button,
   LoadingSpinner,
   Alert,
-  Badge,
   Box,
   H1,
   ContentCard
@@ -304,135 +303,81 @@ function CustomerPaymentsPage() {
 
         {/* Payment Methods */}
         <ContentCard
-          title={getCMSField(cmsData, 'payments.section_methods', 'Payment Methods')}
+          title={getCMSField(cmsData, 'pages.payments.section_methods', 'Payment Methods')}
+          data-cms-id="pages.payments.section_methods"
           content={
-            <Stack spacing="lg">
+            <Stack spacing="md">
               {paymentMethods.length === 0 ? (
-                <Stack spacing="md" align="center">
-                  <Text variant="muted" align="center">
-                    {getCMSField(cmsData, 'payments.no_payment_methods', 'No payment methods saved yet.')}
-                  </Text>
-                  <Button onClick={handleAddPaymentMethod} variant="primary">
-                    {getCMSField(cmsData, 'payments.add_first_method', 'Add Payment Method')}
-                  </Button>
-                </Stack>
+                <Text variant="muted" align="center" data-cms-id="pages.payments.noMethods.message" mode={mode}>
+                  {getCMSField(cmsData, 'pages.payments.noMethods.message', 'No payment methods added yet')}
+                </Text>
               ) : (
-                <Stack spacing="md">
-                  {paymentMethods.map((method) => (
-                    <Box key={method.id} variant="outlined" padding="md">
-                      <Stack direction="horizontal" justify="space-between" align="center">
-                        <Stack spacing="sm">
-                          <Stack direction="horizontal" align="center" spacing="sm">
-                            <Text weight="bold">
-                              {method.brand} •••• {method.last4}
-                            </Text>
-                            {method.isDefault && (
-                              <Badge variant="success" size="sm">Default</Badge>
-                            )}
-                          </Stack>
-                          {method.expiryDate && (
-                            <Text variant="muted" size="sm">
-                              Expires {method.expiryDate}
-                            </Text>
-                          )}
-                        </Stack>
-                        <Stack direction="horizontal" spacing="sm">
-                           <Button variant="outline" size="sm">
-                             {getCMSField(cmsData, 'payments.edit_method', 'Edit')}
-                           </Button>
-                          {!method.isDefault && (
-                              <Button variant="outline" size="sm">
-                                {getCMSField(cmsData, 'payments.set_default', 'Set Default')}
-                              </Button>
-                          )}
-                        </Stack>
+                paymentMethods.map((method) => (
+                  <Box key={method.id} variant="outlined" padding="md" data-cms-id={`pages.payments.method.${method.id}`}>
+                    <Stack direction="horizontal" justify="space-between" align="center">
+                      <Stack spacing="sm">
+                        <Text weight="bold" data-cms-id={`pages.payments.method.${method.id}.type`} mode={mode}>
+                          {getCMSField(cmsData, `pages.payments.method.${method.id}.type`, method.type === 'card' ? 'Credit Card' : 'Bank Account')}
+                        </Text>
+                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.method.${method.id}.details`} mode={mode}>
+                          {getCMSField(cmsData, `pages.payments.method.${method.id}.details`, method.type === 'card' ? `**** **** **** ${method.last4}` : `****${method.last4}`)}
+                        </Text>
                       </Stack>
-                    </Box>
-                  ))}
-                </Stack>
+                      <Stack spacing="sm" align="flex-end">
+                        <Text size="lg" data-cms-id={`pages.payments.method.${method.id}.icon`} mode={mode}>
+                          {method.type === 'card' ? '💳' : '🏦'}
+                        </Text>
+                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.method.${method.id}.status`} mode={mode}>
+                          {getCMSField(cmsData, `pages.payments.method.${method.id}.status`, method.isDefault ? 'Default' : '')}
+                        </Text>
+                      </Stack>
+                    </Stack>
+                  </Box>
+                ))
               )}
             </Stack>
           }
-          variant="elevated"
         />
 
         {/* Payment History */}
         <ContentCard
-          title={getCMSField(cmsData, 'payments.section_history', 'Payment History')}
+          title={getCMSField(cmsData, 'pages.payments.section_history', 'Payment History')}
+          data-cms-id="pages.payments.section_history"
           content={
-            <Stack spacing="lg">
+            <Stack spacing="md">
               {payments.length === 0 ? (
-                <Stack spacing="md" align="center">
-                  <Text variant="muted" align="center">
-                    {getCMSField(cmsData, 'payments.no_payments', 'No payment history yet.')}
-                  </Text>
-                </Stack>
+                <Text variant="muted" align="center" data-cms-id="pages.payments.noHistory.message" mode={mode}>
+                  {getCMSField(cmsData, 'pages.payments.noHistory.message', 'No payment history available')}
+                </Text>
               ) : (
-                <Stack spacing="md">
-                  {payments.map((payment) => (
-                    <Box key={payment.id} variant="outlined" padding="md">
-                      <Stack spacing="md">
-                        <Stack direction="horizontal" justify="space-between" align="center">
-                          <Stack direction="horizontal" align="center" spacing="sm">
-                            <Text size="lg">{getPaymentTypeIcon(payment.type)}</Text>
-                            <Stack spacing="xs">
-                              <Text weight="bold">{payment.description}</Text>
-                              <Text variant="muted" size="sm">
-                                {new Date(payment.date).toLocaleDateString()} at {new Date(payment.date).toLocaleTimeString()}
-                              </Text>
-                            </Stack>
-                          </Stack>
-                          <Stack align="flex-end" spacing="sm">
-                            <Text weight="bold" size="lg">
-                              ${payment.amount.toFixed(2)}
-                            </Text>
-                            <Badge variant={getPaymentStatusColor(payment.status)}>
-                              {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
-                            </Badge>
-                          </Stack>
-                        </Stack>
-                        
-                        <Stack direction="horizontal" justify="space-between" align="center">
-                          <Stack spacing="xs">
-                            {payment.paymentMethod && (
-                              <Text variant="muted" size="sm">
-                    {getCMSField(cmsData, 'payments.payment_method', 'Payment Method:')} {payment.paymentMethod}
-                              </Text>
-                            )}
-                            {payment.transactionId && (
-                              <Text variant="muted" size="sm">
-                    {getCMSField(cmsData, 'payments.transaction_id', 'Transaction ID:')} {payment.transactionId}
-                              </Text>
-                            )}
-                          </Stack>
-                          
-                          <Stack direction="horizontal" spacing="sm">
-                              <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleViewBooking(payment.bookingId)}
-                            >
-                                {getCMSField(cmsData, 'payments.view_booking', 'View Booking')}
-                            </Button>
-                            {payment.status === 'pending' && payment.type === 'balance' && (
-                              <Button 
-                                variant="primary" 
-                                size="sm"
-                                onClick={() => handlePayBalance(payment)}
-                              >
-                                {getCMSField(cmsData, 'payments.pay_balance', 'Pay Balance')}
-                              </Button>
-                            )}
-                          </Stack>
-                        </Stack>
+                payments.map((payment) => (
+                  <Box key={payment.id} variant="outlined" padding="md" data-cms-id={`pages.payments.history.${payment.id}`}>
+                    <Stack direction="horizontal" justify="space-between" align="center">
+                      <Stack spacing="sm">
+                        <Text size="lg" data-cms-id={`pages.payments.history.${payment.id}.icon`} mode={mode}>
+                          {payment.type === 'deposit' ? '💰' : payment.type === 'balance' ? '💳' : payment.type === 'tip' ? '💝' : '💵'}
+                        </Text>
+                        <Text weight="bold" data-cms-id={`pages.payments.history.${payment.id}.description`} mode={mode}>
+                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.description`, payment.description)}
+                        </Text>
+                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.history.${payment.id}.date`} mode={mode}>
+                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.date`, new Date(payment.date).toLocaleDateString())}
+                        </Text>
                       </Stack>
-                    </Box>
-                  ))}
-                </Stack>
+                      <Stack spacing="sm" align="flex-end">
+                        <Text weight="bold" size="lg" data-cms-id={`pages.payments.history.${payment.id}.amount`} mode={mode}>
+                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.amount`, `$${payment.amount.toFixed(2)}`)}
+                        </Text>
+                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.history.${payment.id}.status`} mode={mode}>
+                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.status`, payment.status)}
+                        </Text>
+                      </Stack>
+                    </Stack>
+                  </Box>
+                ))
               )}
             </Stack>
           }
-          variant="elevated"
         />
       </Stack>
     </>

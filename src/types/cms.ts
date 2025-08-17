@@ -330,6 +330,269 @@ export interface CMSConfiguration {
     about?: PageContent;
     terms?: PageContent;
     privacy?: PageContent;
+    // NEW: Complete CMS coverage for all 16 pages
+    portal?: {
+      welcome: {
+        title: string;
+        subtitle: string;
+        description: string;
+      };
+      actions: {
+        myBookings: {
+          label: string;
+          description: string;
+        };
+        bookingStatus: {
+          label: string;
+          description: string;
+        };
+        accountSettings: {
+          label: string;
+          description: string;
+        };
+        support: {
+          label: string;
+          description: string;
+        };
+        bookNewRide: {
+          label: string;
+          description: string;
+        };
+        contactUs: {
+          label: string;
+          description: string;
+          contactInfo: string;
+        };
+      };
+      stats: {
+        totalBookings: {
+          title: string;
+          description: string;
+        };
+        loyaltyStatus: {
+          title: string;
+          description: string;
+        };
+        preferredContact: {
+          title: string;
+          description: string;
+        };
+      };
+    };
+    profile?: {
+      title: string;
+      subtitle: string;
+      editProfile: string;
+      saveChanges: string;
+      cancel: string;
+      loading: {
+        loadingProfile: string;
+        savingChanges: string;
+      };
+      loginRequired: string;
+      goToLogin: string;
+      sections: {
+        personalInfo: {
+          title: string;
+          nameLabel: string;
+          emailLabel: string;
+          phoneLabel: string;
+        };
+        preferences: {
+          title: string;
+          defaultPickupLabel: string;
+          defaultDropoffLabel: string;
+          notificationsLabel: string;
+          emailNotifications: string;
+          smsNotifications: string;
+        };
+        actions: {
+          title: string;
+          changePassword: string;
+          deleteAccount: string;
+        };
+      };
+      messages: {
+        profileUpdated: string;
+        profileUpdateFailed: string;
+        passwordChanged: string;
+        passwordChangeFailed: string;
+      };
+    };
+    payments?: {
+      title: string;
+      subtitle: string;
+      addPaymentMethod: string;
+      managePaymentMethods: string;
+      paymentHistory: string;
+      balance: string;
+      noPaymentMethods: string;
+      addFirstMethod: string;
+      sections: {
+        currentMethods: {
+          title: string;
+          defaultLabel: string;
+          setDefault: string;
+          remove: string;
+        };
+        addNew: {
+          title: string;
+          description: string;
+        };
+      };
+    };
+    'add-payment-method'?: {
+      title: string;
+      subtitle: string;
+      cardNumberLabel: string;
+      expiryLabel: string;
+      cvvLabel: string;
+      nameLabel: string;
+      saveButton: string;
+      cancelButton: string;
+      successMessage: string;
+      errorMessage: string;
+    };
+    'pay-balance'?: {
+      title: string;
+      subtitle: string;
+      balanceLabel: string;
+      payButton: string;
+      cancelButton: string;
+      successMessage: string;
+      errorMessage: string;
+    };
+    bookings?: {
+      title: string;
+      subtitle: string;
+      noBookings: string;
+      createFirst: string;
+      filters: {
+        all: string;
+        upcoming: string;
+        completed: string;
+        cancelled: string;
+      };
+      actions: {
+        viewDetails: string;
+        edit: string;
+        cancel: string;
+        track: string;
+      };
+      status: {
+        pending: string;
+        confirmed: string;
+        inProgress: string;
+        completed: string;
+        cancelled: string;
+      };
+    };
+    'booking-form'?: {
+      title: string;
+      subtitle: string;
+      description: string;
+      formLabels: {
+        fullName: string;
+        email: string;
+        phone: string;
+        pickupLocation: string;
+        dropoffLocation: string;
+        pickupDateTime: string;
+        passengers: string;
+        flightNumber: string;
+        notes: string;
+      };
+      buttons: {
+        calculateFare: string;
+        bookNow: string;
+        update: string;
+      };
+      messages: {
+        calculating: string;
+        fareCalculated: string;
+        bookingSuccess: string;
+        bookingError: string;
+      };
+    };
+    tracking?: {
+      title: string;
+      subtitle: string;
+      liveTracking: string;
+      driverLocation: string;
+      eta: string;
+      lastUpdate: string;
+      refresh: string;
+      errors: {
+        bookingNotFound: string;
+        loadFailed: string;
+        trackingFailed: string;
+      };
+      status: {
+        driverEnRoute: string;
+        driverArrived: string;
+        pickupComplete: string;
+        inTransit: string;
+        completed: string;
+      };
+      // Additional fields that the page actually uses
+      loading?: {
+        message: string;
+        subtitle: string;
+      };
+      error?: {
+        goBack: string;
+      };
+      refreshETA?: string;
+      lastUpdateDetails?: {
+        label: string;
+        live: string;
+      };
+      map?: {
+        title: string;
+        status: {
+          live: string;
+          offline: string;
+        };
+      };
+      etaDetails?: {
+        title: string;
+        current: string;
+        minutes: string;
+        miles: string;
+        traffic: string;
+        confidence: string;
+      };
+      bookingDetails?: {
+        title: string;
+        bookingId: string;
+        passenger: string;
+        status: string;
+        pickupTime: string;
+        fare: string;
+        driver: string;
+        driverNotAssigned: string;
+        route: string;
+      };
+      driverLocationDetails?: {
+        title: string;
+        speed: string;
+        mph: string;
+        updated: string;
+      };
+      actions?: {
+        backToBookings: string;
+        viewBooking: string;
+      };
+      liveUpdates?: {
+        title: string;
+        description: string;
+        firebase: string;
+      };
+      offline?: {
+        title: string;
+        description: string;
+      };
+    };
   };
   business: BusinessSettings;
   pricing: PricingSettings;
@@ -549,6 +812,292 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       alertErrorMessage: "Failed to load booking status.",
       loadingMessage: "Loading ride status...",
       liveDriverHeader: "Live Driver Location"
+    },
+    about: {
+      id: "about",
+      title: "About Us",
+      content: "We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.",
+      metaDescription: "About Fairfield Airport Car Service - Learn about our reliable airport transportation service.",
+      lastUpdated: new Date(),
+      isActive: true
+    },
+    terms: {
+      id: "terms",
+      title: "Terms of Service",
+      content: "By using our services, you agree to our terms of service. We reserve the right to modify these terms at any time. Please review them periodically.",
+      metaDescription: "Fairfield Airport Car Service Terms of Service - Important legal information.",
+      lastUpdated: new Date(),
+      isActive: true
+    },
+    privacy: {
+      id: "privacy",
+      title: "Privacy Policy",
+      content: "Your privacy is important to us. We collect and use your data in accordance with our privacy policy. This policy outlines how we handle your personal information and data.",
+      metaDescription: "Fairfield Airport Car Service Privacy Policy - Information on how we protect your personal data.",
+      lastUpdated: new Date(),
+      isActive: true
+    },
+    portal: {
+      welcome: {
+        title: "Welcome to Your Airport Car Service Portal",
+        subtitle: "Your one-stop for all your airport transportation needs.",
+        description: "Manage your bookings, track your rides, and update your preferences from the comfort of your device."
+      },
+      actions: {
+        myBookings: {
+          label: "My Bookings",
+          description: "View and manage your current and past airport rides."
+        },
+        bookingStatus: {
+          label: "Booking Status",
+          description: "Check the current status of your active or upcoming rides."
+        },
+        accountSettings: {
+          label: "Account Settings",
+          description: "Update your personal information and preferences."
+        },
+        support: {
+          label: "Support",
+          description: "Get help with any issues or questions you might have."
+        },
+        bookNewRide: {
+          label: "Book New Ride",
+          description: "Reserve your next airport transportation with ease."
+        },
+        contactUs: {
+          label: "Contact Us",
+          description: "Have a question or need assistance? Reach out to us.",
+          contactInfo: "info@fairfieldairportcars.com"
+        }
+      },
+      stats: {
+        totalBookings: {
+          title: "Total Bookings",
+          description: "Track your overall booking history."
+        },
+        loyaltyStatus: {
+          title: "Loyalty Status",
+          description: "View your current loyalty status and benefits."
+        },
+        preferredContact: {
+          title: "Preferred Contact",
+          description: "Select your preferred method for communication."
+        }
+      }
+    },
+    profile: {
+      title: "My Profile",
+      subtitle: "Manage your account settings and preferences.",
+      editProfile: "Edit Profile",
+      saveChanges: "Save Changes",
+      cancel: "Cancel",
+      loading: {
+        loadingProfile: "Loading profile...",
+        savingChanges: "Saving changes..."
+      },
+      loginRequired: "Please log in to access this feature.",
+      goToLogin: "Go to Login",
+      sections: {
+        personalInfo: {
+          title: "Personal Information",
+          nameLabel: "Full Name",
+          emailLabel: "Email Address",
+          phoneLabel: "Phone Number"
+        },
+        preferences: {
+          title: "Preferences",
+          defaultPickupLabel: "Default Pickup Location",
+          defaultDropoffLabel: "Default Dropoff Location",
+          notificationsLabel: "Notifications",
+          emailNotifications: "Email Notifications",
+          smsNotifications: "SMS Notifications"
+        },
+        actions: {
+          title: "Actions",
+          changePassword: "Change Password",
+          deleteAccount: "Delete Account"
+        }
+      },
+      messages: {
+        profileUpdated: "Profile updated successfully!",
+        profileUpdateFailed: "Failed to update profile. Please try again.",
+        passwordChanged: "Password changed successfully!",
+        passwordChangeFailed: "Failed to change password. Please try again."
+      }
+    },
+    payments: {
+      title: "Manage Payment Methods",
+      subtitle: "Add, manage, and set default payment methods.",
+      addPaymentMethod: "Add New Payment Method",
+      managePaymentMethods: "Current Payment Methods",
+      paymentHistory: "Payment History",
+      balance: "Remaining Balance",
+      noPaymentMethods: "No payment methods added yet. Add one to make your next booking hassle-free!",
+      addFirstMethod: "Add your first payment method to get started.",
+      sections: {
+        currentMethods: {
+          title: "Current Payment Methods",
+          defaultLabel: "Set as Default",
+          setDefault: "Set as Default",
+          remove: "Remove"
+        },
+        addNew: {
+          title: "Add New Payment Method",
+          description: "Enter your card details to add a new payment method."
+        }
+      }
+    },
+    'add-payment-method': {
+      title: "Add New Payment Method",
+      subtitle: "Securely add your payment details.",
+      cardNumberLabel: "Card Number",
+      expiryLabel: "Expiry Date (MM/YY)",
+      cvvLabel: "CVV",
+      nameLabel: "Name on Card",
+      saveButton: "Save Payment Method",
+      cancelButton: "Cancel",
+      successMessage: "Payment method added successfully!",
+      errorMessage: "Failed to add payment method. Please check your details and try again."
+    },
+    'pay-balance': {
+      title: "Pay Remaining Balance",
+      subtitle: "Complete your payment to finalize your booking.",
+      balanceLabel: "Remaining Balance:",
+      payButton: "Pay Now",
+      cancelButton: "Cancel",
+      successMessage: "Payment successful! Your booking is confirmed.",
+      errorMessage: "Failed to process payment. Please try again."
+    },
+    bookings: {
+      title: "My Bookings",
+      subtitle: "Your airport ride history and current status.",
+      noBookings: "You haven't booked any rides yet. Start your journey with us!",
+      createFirst: "Create your first booking now.",
+      filters: {
+        all: "All Bookings",
+        upcoming: "Upcoming",
+        completed: "Completed",
+        cancelled: "Cancelled"
+      },
+      actions: {
+        viewDetails: "View Details",
+        edit: "Edit",
+        cancel: "Cancel",
+        track: "Track Ride"
+      },
+      status: {
+        pending: "Pending",
+        confirmed: "Confirmed",
+        inProgress: "In Progress",
+        completed: "Completed",
+        cancelled: "Cancelled"
+      }
+    },
+    'booking-form': {
+      title: "Book Your Ride",
+      subtitle: "Premium airport transportation service",
+      description: "Reserve your luxury airport transportation with our professional drivers. We serve all major airports in the NY and CT area.",
+      formLabels: {
+        fullName: "Full Name",
+        email: "Email Address",
+        phone: "Phone Number",
+        pickupLocation: "Pickup Location",
+        dropoffLocation: "Dropoff Location",
+        pickupDateTime: "Pickup Date and Time",
+        passengers: "Passengers",
+        flightNumber: "Flight Number (Optional)",
+        notes: "Notes (Optional)"
+      },
+      buttons: {
+        calculateFare: "Calculate Fare",
+        bookNow: "Book Now",
+        update: "Update Booking"
+      },
+      messages: {
+        calculating: "Calculating...",
+        fareCalculated: "Estimated Fare: {estimatedFare}",
+        bookingSuccess: "Booking created successfully! Sending confirmation...",
+        bookingError: "Failed to create booking. Please try again."
+      }
+    },
+    tracking: {
+      title: "Live Ride Tracking",
+      subtitle: "Track your ride in real-time.",
+      liveTracking: "Live Tracking",
+      driverLocation: "Current Driver Location:",
+      eta: "Estimated Time of Arrival:",
+      lastUpdate: "Last Update:",
+      refresh: "Refresh",
+      errors: {
+        bookingNotFound: "Booking not found with the provided ID.",
+        loadFailed: "Failed to load tracking data. Please try again later.",
+        trackingFailed: "Failed to load tracking data. Please try again later."
+      },
+      status: {
+        driverEnRoute: "Your driver {driverName} is en route and will arrive in approximately {eta} minutes.",
+        driverArrived: "Your driver {driverName} has arrived at {pickupLocation}. Safe travels!",
+        pickupComplete: "Your ride is complete. Thank you for choosing us!",
+        inTransit: "Your driver is on the way to your destination.",
+        completed: "Your ride is complete. Thank you for choosing us!"
+      },
+      // Additional fields that the page actually uses
+      loading: {
+        message: "Loading tracking data...",
+        subtitle: "Please wait a moment."
+      },
+      error: {
+        goBack: "Go back to bookings"
+      },
+      refreshETA: "Refresh ETA",
+      lastUpdateDetails: {
+        label: "Last Update:",
+        live: "Live"
+      },
+      map: {
+        title: "Map",
+        status: {
+          live: "Live",
+          offline: "Offline"
+        }
+      },
+      etaDetails: {
+        title: "ETA",
+        current: "Current:",
+        minutes: "Minutes",
+        miles: "Miles",
+        traffic: "Traffic",
+        confidence: "Confidence"
+      },
+      bookingDetails: {
+        title: "Booking Details",
+        bookingId: "Booking ID:",
+        passenger: "Passenger:",
+        status: "Status:",
+        pickupTime: "Pickup Time:",
+        fare: "Fare:",
+        driver: "Driver:",
+        driverNotAssigned: "Driver not assigned",
+        route: "Route:"
+      },
+      driverLocationDetails: {
+        title: "Driver Location",
+        speed: "Speed:",
+        mph: "MPH",
+        updated: "Updated:"
+      },
+      actions: {
+        backToBookings: "Back to Bookings",
+        viewBooking: "View Booking"
+      },
+      liveUpdates: {
+        title: "Live Updates",
+        description: "Real-time updates from the driver's app.",
+        firebase: "Using Firebase for real-time updates."
+      },
+      offline: {
+        title: "Offline",
+        description: "Could not connect to tracking service. Please check your internet connection."
+      }
     }
   },
   business: {
