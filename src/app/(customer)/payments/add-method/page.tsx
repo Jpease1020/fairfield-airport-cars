@@ -17,7 +17,9 @@ import {
   H1,
   ContentCard,
   Grid,
-  GridItem
+  GridItem,
+  Select,
+  GridSection
 } from '@/ui';  
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
@@ -209,141 +211,148 @@ function AddPaymentMethodPage() {
         )}
 
         {/* Payment Method Form */}
-        <ContentCard
-          title="Card Information"
-          content={
-            <form onSubmit={handleSubmit}>
-              <Stack spacing="lg">
-                <Stack spacing="md">
-                  <Stack spacing="sm">
-                     <Label htmlFor="cardNumber">
-                      {getCMSField(cmsData, 'payments.add_method.card_number', 'Card Number')}
-                    </Label>
-                    <Input
-                      id="cardNumber"
-                      type="text"
-                      value={formData.cardNumber}
-                      onChange={(e) => handleInputChange('cardNumber', formatCardNumber(e.target.value))}
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={19}
-                      required
-                      fullWidth
-                    />
-                  </Stack>
-
-                  <Stack spacing="sm">
-                     <Label htmlFor="cardholderName">
-                      {getCMSField(cmsData, 'payments.add_method.cardholder_name', 'Cardholder Name')}
-                    </Label>
-                    <Input
-                      id="cardholderName"
-                      type="text"
-                      value={formData.cardholderName}
-                      onChange={(e) => handleInputChange('cardholderName', e.target.value)}
-                      placeholder="John Doe"
-                      required
-                      fullWidth
-                    />
-                  </Stack>
-
-                  <Grid cols={3} gap="md">
-                    <GridItem>
-                      <Stack spacing="sm">
-                         <Label htmlFor="expiryMonth">
-                           {getCMSField(cmsData, 'payments.add_method.expiry_month', 'Expiry Month')}
-                        </Label>
-                                              <select
-                        id="expiryMonth"
-                        value={formData.expiryMonth}
-                        onChange={(e) => handleInputChange('expiryMonth', e.target.value)}
-                        required
-                      >
-                          <option value="">Month</option>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                            <option key={month} value={month.toString().padStart(2, '0')}>
-                              {month.toString().padStart(2, '0')}
-                            </option>
-                          ))}
-                        </select>
-                      </Stack>
-                    </GridItem>
-
-                    <GridItem>
-                      <Stack spacing="sm">
-                         <Label htmlFor="expiryYear">
-                           {getCMSField(cmsData, 'payments.add_method.expiry_year', 'Expiry Year')}
-                        </Label>
-                                              <select
-                        id="expiryYear"
-                        value={formData.expiryYear}
-                        onChange={(e) => handleInputChange('expiryYear', e.target.value)}
-                        required
-                      >
-                          <option value="">Year</option>
-                          {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => (
-                            <option key={year} value={year.toString()}>
-                              {year}
-                            </option>
-                          ))}
-                        </select>
-                      </Stack>
-                    </GridItem>
-
-                    <GridItem>
-                      <Stack spacing="sm">
-                         <Label htmlFor="cvv">
-                           {getCMSField(cmsData, 'payments.add_method.cvv', 'CVV')}
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <ContentCard
+              title={getCMSField(cmsData, 'pages.addPaymentMethod.form.title', 'Add Payment Method')}
+              data-cms-id="pages.addPaymentMethod.form.title"
+              content={
+                <form onSubmit={handleSubmit}>
+                  <Stack spacing="lg">
+                    {/* Credit Card Fields */}
+                    <Stack spacing="md">
+                      <Stack spacing="md">
+                        <Label htmlFor="cardNumber" data-cms-id="pages.addPaymentMethod.form.card.number.label">
+                          {getCMSField(cmsData, 'pages.addPaymentMethod.form.card.number.label', 'Card Number')}
                         </Label>
                         <Input
-                          id="cvv"
+                          id="cardNumber"
                           type="text"
-                          value={formData.cvv}
-                          onChange={(e) => handleInputChange('cvv', e.target.value.replace(/\D/g, ''))}
-                          placeholder="123"
-                          maxLength={4}
+                          value={formData.cardNumber}
+                          onChange={(e) => handleInputChange('cardNumber', e.target.value)}
+                          placeholder={getCMSField(cmsData, 'pages.addPaymentMethod.form.card.number.placeholder', '1234 5678 9012 3456')}
+                          data-cms-id="pages.addPaymentMethod.form.card.number.input"
                           required
-                          fullWidth
                         />
                       </Stack>
-                    </GridItem>
-                  </Grid>
+                      
+                      <Grid cols={2} gap="md" responsive>
+                        <GridItem>
+                          <Stack spacing="md">
+                            <Label htmlFor="expiryMonth" data-cms-id="pages.addPaymentMethod.form.card.expiryMonth.label">
+                              {getCMSField(cmsData, 'pages.addPaymentMethod.form.card.expiryMonth.label', 'Expiry Month')}
+                            </Label>
+                            <Select
+                              id="expiryMonth"
+                              value={formData.expiryMonth}
+                              onChange={(e) => handleInputChange('expiryMonth', e.target.value)}
+                              data-cms-id="pages.addPaymentMethod.form.card.expiryMonth.select"
+                              required
+                              options={Array.from({ length: 12 }, (_, i) => i + 1).map(month => ({
+                                value: month.toString().padStart(2, '0'),
+                                label: month.toString().padStart(2, '0')
+                              }))}
+                            />
+                          </Stack>
+                        </GridItem>
+                        
+                        <GridItem>
+                          <Stack spacing="md">
+                            <Label htmlFor="expiryYear" data-cms-id="pages.addPaymentMethod.form.card.expiryYear.label">
+                              {getCMSField(cmsData, 'pages.addPaymentMethod.form.card.expiryYear.label', 'Expiry Year')}
+                            </Label>
+                            <Select
+                              id="expiryYear"
+                              value={formData.expiryYear}
+                              onChange={(e) => handleInputChange('expiryYear', e.target.value)}
+                              data-cms-id="pages.addPaymentMethod.form.card.expiryYear.select"
+                              required
+                              options={Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => ({
+                                value: year.toString(),
+                                label: year.toString()
+                              }))}
+                            />
+                          </Stack>
+                        </GridItem>
+                      </Grid>
+                      
+                      <Grid cols={2} gap="md" responsive>
+                        <GridItem>
+                          <Stack spacing="md">
+                            <Label htmlFor="cvv" data-cms-id="pages.addPaymentMethod.form.card.cvv.label">
+                              {getCMSField(cmsData, 'pages.addPaymentMethod.form.card.cvv.label', 'CVV')}
+                            </Label>
+                            <Input
+                              id="cvv"
+                              type="text"
+                              value={formData.cvv}
+                              onChange={(e) => handleInputChange('cvv', e.target.value)}
+                              placeholder={getCMSField(cmsData, 'pages.addPaymentMethod.form.card.cvv.placeholder', '123')}
+                              data-cms-id="pages.addPaymentMethod.form.card.cvv.input"
+                              required
+                            />
+                          </Stack>
+                        </GridItem>
+                        
+                        <GridItem>
+                          <Stack spacing="md">
+                            <Label htmlFor="cardholderName" data-cms-id="pages.addPaymentMethod.form.card.name.label">
+                              {getCMSField(cmsData, 'pages.addPaymentMethod.form.card.name.label', 'Cardholder Name')}
+                            </Label>
+                            <Input
+                              id="cardholderName"
+                              type="text"
+                              value={formData.cardholderName}
+                              onChange={(e) => handleInputChange('cardholderName', e.target.value)}
+                              placeholder={getCMSField(cmsData, 'pages.addPaymentMethod.form.card.name.placeholder', 'John Doe')}
+                              data-cms-id="pages.addPaymentMethod.form.card.name.input"
+                              required
+                            />
+                          </Stack>
+                        </GridItem>
+                      </Grid>
+                    </Stack>
 
-                  <Stack direction="horizontal" align="center" spacing="sm">
-                    <input
-                      type="checkbox"
-                      id="isDefault"
-                      checked={formData.isDefault}
-                      onChange={(e) => handleInputChange('isDefault', e.target.checked)}
-                    />
-                    <Label htmlFor="isDefault">
-                      {getCMSField(cmsData, 'payments.add_method.set_default', 'Set as default payment method')}
-                    </Label>
+                    {/* Default Payment Method */}
+                    <Stack spacing="md">
+                      <Label htmlFor="isDefault" data-cms-id="pages.addPaymentMethod.form.default.label">
+                        <input
+                          type="checkbox"
+                          id="isDefault"
+                          checked={formData.isDefault}
+                          onChange={(e) => handleInputChange('isDefault', e.target.checked)}
+                          data-cms-id="pages.addPaymentMethod.form.default.checkbox"
+                        />
+                        {getCMSField(cmsData, 'pages.addPaymentMethod.form.default.text', 'Set as default payment method')}
+                      </Label>
+                    </Stack>
+
+                    {/* Submit Button */}
+                    <Stack spacing="md" align="center">
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        size="lg"
+                        disabled={saving}
+                        data-cms-id="pages.addPaymentMethod.form.submit.button"
+                      >
+                        {saving ? (
+                          getCMSField(cmsData, 'pages.addPaymentMethod.form.submit.loading', 'Adding Payment Method...')
+                        ) : (
+                          getCMSField(cmsData, 'pages.addPaymentMethod.form.submit.text', 'Add Payment Method')
+                        )}
+                      </Button>
+                      
+                      <Text size="sm" variant="muted" data-cms-id="pages.addPaymentMethod.form.submit.note">
+                        {getCMSField(cmsData, 'pages.addPaymentMethod.form.submit.note', '🔒 Your payment information is secure and encrypted')}
+                      </Text>
+                    </Stack>
                   </Stack>
-                </Stack>
-
-                <Stack direction="horizontal" spacing="md">
-                  <Button 
-                    type="submit" 
-                    variant="primary" 
-                    disabled={saving}
-                    fullWidth
-                  >
-                    {getCMSField(cmsData, 'payments.add_method.save_button', saving ? 'Adding...' : 'Add Payment Method')}
-                  </Button>
-                  <Button 
-                    type="button"
-                    onClick={handleCancel}
-                    variant="outline"
-                    fullWidth
-                  >
-                    {getCMSField(cmsData, 'payments.add_method.cancel_button', 'Cancel')}
-                  </Button>
-                </Stack>
-              </Stack>
-            </form>
-          }
-          variant="elevated"
-        />
+                </form>
+              }
+            />
+          </Container>
+        </GridSection>
 
         {/* Security Notice */}
         <ContentCard

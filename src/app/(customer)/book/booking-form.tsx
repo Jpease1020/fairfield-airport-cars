@@ -370,15 +370,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
               <Grid cols={1} gap="md" responsive>
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="name">
-                      {getCMSField(cmsData, 'pages.booking.form.full_name', 'Full Name')}
+                    <Label htmlFor="name" data-cms-id="pages.booking.form.name.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.name.label', 'Full Name')}
                     </Label>
                     <Input
                       id="name"
                       value={name}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                      placeholder={getCMSField(cmsData, 'booking.form.full_name_placeholder', 'Enter your full name')}
-                      data-testid="name-input"
+                      placeholder={getCMSField(cmsData, 'pages.booking.form.name.placeholder', 'Enter your full name')}
+                      data-cms-id="pages.booking.form.name.input"
                       fullWidth
                     />
                   </Stack>
@@ -386,16 +386,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="email">
-                      {getCMSField(cmsData, 'pages.booking.form.email', 'Email Address')}
+                    <Label htmlFor="email" data-cms-id="pages.booking.form.email.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.email.label', 'Email Address')}
                     </Label>
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                      placeholder={getCMSField(cmsData, 'booking.form.email_placeholder', 'Enter your email')}
-                      data-testid="email-input"
+                      placeholder={getCMSField(cmsData, 'pages.booking.form.email.placeholder', 'Enter your email')}
+                      data-cms-id="pages.booking.form.email.input"
                       fullWidth
                     />
                   </Stack>
@@ -403,15 +403,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="phone">
-                      {getCMSField(cmsData, 'pages.booking.form.phone', 'Phone Number')}
+                    <Label htmlFor="phone" data-cms-id="pages.booking.form.phone.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.phone.label', 'Phone Number')}
                     </Label>
                     <Input
                       id="phone"
                       value={phone}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
-                      placeholder={getCMSField(cmsData, 'booking.form.phone_placeholder', '(123) 456-7890')}
-                      data-testid="phone-input"
+                      placeholder={getCMSField(cmsData, 'pages.booking.form.phone.placeholder', '(123) 456-7890')}
+                      data-cms-id="pages.booking.form.phone.input"
                       fullWidth
                     />
                   </Stack>
@@ -434,15 +434,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
               <Grid cols={1} gap="md" responsive>
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="pickupLocation">
-                      {getCMSField(cmsData, 'pages.booking.form.pickup', 'Pickup Location')}
+                    <Label htmlFor="pickupLocation" data-cms-id="pages.booking.form.pickupLocation.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.pickupLocation.label', 'Pickup Location')}
                     </Label>
                     <Input
                       id="pickupLocation"
                       value={pickupLocation}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePickupInputChange(e.target.value)}
-                      placeholder={getCMSField(cmsData, 'booking.form.pickup_placeholder', 'Enter pickup address')}
-                      data-testid="pickup-location-input"
+                      placeholder={getCMSField(cmsData, 'pages.booking.form.pickupLocation.placeholder', 'Enter pickup address')}
+                      data-cms-id="pages.booking.form.pickupLocation.input"
                       fullWidth
                     />
                   </Stack>
@@ -466,15 +466,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="dropoffLocation">
-                      {getCMSField(cmsData, 'pages.booking.form.dropoff', 'Dropoff Location')}
+                    <Label htmlFor="dropoffLocation" data-cms-id="pages.booking.form.dropoffLocation.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.dropoffLocation.label', 'Dropoff Location')}
                     </Label>
                     <Input
                       id="dropoffLocation"
                       value={dropoffLocation}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDropoffInputChange(e.target.value)}
-                      placeholder={getCMSField(cmsData, 'booking.form.dropoff_placeholder', 'Enter dropoff address')}
-                      data-testid="dropoff-location-input"
+                      placeholder={getCMSField(cmsData, 'pages.booking.form.dropoffLocation.placeholder', 'Enter dropoff address')}
+                      data-cms-id="pages.booking.form.dropoffLocation.input"
                       fullWidth
                     />
                   </Stack>
@@ -498,15 +498,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="pickupDateTime">
-                      {getCMSField(cmsData, 'pages.booking.form.pickup_time', 'Pickup Date & Time')}
+                    <Label htmlFor="pickupDateTime" data-cms-id="pages.booking.form.pickupDateTime.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.pickupDateTime.label', 'Pickup Date & Time')}
                     </Label>
                     <Input
                       id="pickupDateTime"
                       type="datetime-local"
                       value={pickupDateTime}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPickupDateTime(e.target.value)}
-                      data-testid="pickup-datetime-input"
+                      data-cms-id="pages.booking.form.pickupDateTime.input"
                       fullWidth
                     />
                   </Stack>
@@ -514,14 +514,14 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="passengers">
-                      {getCMSField(cmsData, 'pages.booking.form.passengers', 'Number of Passengers')}
+                    <Label htmlFor="passengers" data-cms-id="pages.booking.form.passengers.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.passengers.label', 'Number of Passengers')}
                     </Label>
                     <Select
                       id="passengers"
                       value={passengers.toString()}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPassengers(parseInt(e.target.value))}
-                      data-testid="passengers-select"
+                      data-cms-id="pages.booking.form.passengers.select"
                       fullWidth
                       options={[1, 2, 3, 4, 5, 6, 7, 8].map(num => ({
                         value: num.toString(),
@@ -554,8 +554,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                         id="childSeat"
                         checked={specialRequests.childSeat}
                         onChange={(e) => handleSpecialRequestChange('childSeat', e.target.checked)}
+                        data-cms-id="pages.booking.form.childSeat.checkbox"
                       />
-                      <Label htmlFor="childSeat">Child Seat Required</Label>
+                      <Label htmlFor="childSeat" data-cms-id="pages.booking.form.childSeat.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.childSeat.label', 'Child Seat Required')}
+                      </Label>
                     </Stack>
                   </Stack>
                 </GridItem>
@@ -568,8 +571,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                         id="wheelchair"
                         checked={specialRequests.wheelchair}
                         onChange={(e) => handleSpecialRequestChange('wheelchair', e.target.checked)}
+                        data-cms-id="pages.booking.form.wheelchair.checkbox"
                       />
-                      <Label htmlFor="wheelchair">Wheelchair Accessible</Label>
+                      <Label htmlFor="wheelchair" data-cms-id="pages.booking.form.wheelchair.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.wheelchair.label', 'Wheelchair Accessible')}
+                      </Label>
                     </Stack>
                   </Stack>
                 </GridItem>
@@ -582,8 +588,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                         id="extraLuggage"
                         checked={specialRequests.extraLuggage}
                         onChange={(e) => handleSpecialRequestChange('extraLuggage', e.target.checked)}
+                        data-cms-id="pages.booking.form.extraLuggage.checkbox"
                       />
-                      <Label htmlFor="extraLuggage">Extra Luggage Space</Label>
+                      <Label htmlFor="extraLuggage" data-cms-id="pages.booking.form.extraLuggage.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.extraLuggage.label', 'Extra Luggage Space')}
+                      </Label>
                     </Stack>
                   </Stack>
                 </GridItem>
@@ -596,8 +605,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                         id="meetAndGreet"
                         checked={specialRequests.meetAndGreet}
                         onChange={(e) => handleSpecialRequestChange('meetAndGreet', e.target.checked)}
+                        data-cms-id="pages.booking.form.meetAndGreet.checkbox"
                       />
-                      <Label htmlFor="meetAndGreet">Meet & Greet Service</Label>
+                      <Label htmlFor="meetAndGreet" data-cms-id="pages.booking.form.meetAndGreet.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.meetAndGreet.label', 'Meet & Greet Service')}
+                      </Label>
                     </Stack>
                   </Stack>
                 </GridItem>
@@ -610,8 +622,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                         id="flightTracking"
                         checked={specialRequests.flightTracking}
                         onChange={(e) => handleSpecialRequestChange('flightTracking', e.target.checked)}
+                        data-cms-id="pages.booking.form.flightTracking.checkbox"
                       />
-                      <Label htmlFor="flightTracking">Flight Tracking</Label>
+                      <Label htmlFor="flightTracking" data-cms-id="pages.booking.form.flightTracking.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.flightTracking.label', 'Flight Tracking')}
+                      </Label>
                     </Stack>
                   </Stack>
                 </GridItem>
@@ -621,16 +636,21 @@ function BookingFormContent({ booking }: BookingFormProps) {
               {specialRequests.flightTracking && (
                 <Box variant="outlined" padding="md">
                   <Stack spacing="md">
-                    <Text weight="bold">Flight Information</Text>
+                    <Text weight="bold" data-cms-id="pages.booking.form.flightInfo.title" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.flightInfo.title', 'Flight Information')}
+                    </Text>
                     <Grid cols={2} gap="md" responsive>
                       <GridItem>
                         <Stack spacing="sm">
-                          <Label htmlFor="airline">Airline</Label>
+                          <Label htmlFor="airline" data-cms-id="pages.booking.form.airline.label" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.form.airline.label', 'Airline')}
+                          </Label>
                           <Input
                             id="airline"
                             value={flightInfo.airline}
                             onChange={(e) => setFlightInfo(prev => ({ ...prev, airline: e.target.value }))}
-                            placeholder="e.g., Delta Airlines"
+                            placeholder={getCMSField(cmsData, 'pages.booking.form.airline.placeholder', 'e.g., Delta Airlines')}
+                            data-cms-id="pages.booking.form.airline.input"
                             fullWidth
                           />
                         </Stack>
@@ -638,12 +658,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       
                       <GridItem>
                         <Stack spacing="sm">
-                          <Label htmlFor="flightNumber">Flight Number</Label>
+                          <Label htmlFor="flightNumber" data-cms-id="pages.booking.form.flightNumber.label" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.form.flightNumber.label', 'Flight Number')}
+                          </Label>
                           <Input
                             id="flightNumber"
                             value={flightInfo.flightNumber}
                             onChange={(e) => setFlightInfo(prev => ({ ...prev, flightNumber: e.target.value }))}
-                            placeholder="e.g., DL1234"
+                            placeholder={getCMSField(cmsData, 'pages.booking.form.flightNumber.placeholder', 'e.g., DL1234')}
+                            data-cms-id="pages.booking.form.flightNumber.input"
                             fullWidth
                           />
                         </Stack>
@@ -651,13 +674,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       
                       <GridItem>
                         <Stack spacing="sm">
-                          <Label htmlFor="arrivalTime">Arrival Time</Label>
+                          <Label htmlFor="arrivalTime" data-cms-id="pages.booking.form.arrivalTime.label" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.form.arrivalTime.label', 'Arrival Time')}
+                          </Label>
                           <Input
                             id="arrivalTime"
                             type="text"
                             value={flightInfo.arrivalTime}
                             onChange={(e) => setFlightInfo(prev => ({ ...prev, arrivalTime: e.target.value }))}
-                            placeholder="HH:MM"
+                            placeholder={getCMSField(cmsData, 'pages.booking.form.arrivalTime.placeholder', 'HH:MM')}
+                            data-cms-id="pages.booking.form.arrivalTime.input"
                             fullWidth
                           />
                         </Stack>
@@ -665,12 +691,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       
                       <GridItem>
                         <Stack spacing="sm">
-                          <Label htmlFor="terminal">Terminal</Label>
+                          <Label htmlFor="terminal" data-cms-id="pages.booking.form.terminal.label" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.form.terminal.label', 'Terminal')}
+                          </Label>
                           <Input
                             id="terminal"
                             value={flightInfo.terminal}
                             onChange={(e) => setFlightInfo(prev => ({ ...prev, terminal: e.target.value }))}
-                            placeholder="e.g., Terminal 1"
+                            placeholder={getCMSField(cmsData, 'pages.booking.form.terminal.placeholder', 'e.g., Terminal 1')}
+                            data-cms-id="pages.booking.form.terminal.input"
                             fullWidth
                           />
                         </Stack>
@@ -696,13 +725,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
               <Grid cols={1} gap="md" responsive>
                 <GridItem>
                   <Stack spacing="sm">
-                    <Label htmlFor="notes">Special Instructions</Label>
+                    <Label htmlFor="notes" data-cms-id="pages.booking.form.notes.label" mode={mode}>
+                      {getCMSField(cmsData, 'pages.booking.form.notes.label', 'Special Instructions')}
+                    </Label>
                     <Textarea
                       id="notes"
                       value={notes}
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
-                      placeholder="Any special instructions or requests..."
+                      placeholder={getCMSField(cmsData, 'pages.booking.form.notes.placeholder', 'Any special instructions or requests...')}
                       rows={4}
+                      data-cms-id="pages.booking.form.notes.textarea"
                       fullWidth
                     />
                   </Stack>
@@ -726,18 +758,28 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 {fare && (
                   <Box variant="outlined" padding="md">
                     <Stack spacing="sm">
-                      <Text weight="bold">Estimated Fare Breakdown</Text>
+                      <Text weight="bold" data-cms-id="pages.booking.fare.breakdown.title" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.fare.breakdown.title', 'Estimated Fare Breakdown')}
+                      </Text>
                       <Stack spacing="xs">
                         <Stack direction="horizontal" justify="space-between">
-                          <Text>Base Fare:</Text>
-                          <Text>${fare.toFixed(2)}</Text>
+                          <Text data-cms-id="pages.booking.fare.base.label" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.fare.base.label', 'Base Fare:')}
+                          </Text>
+                          <Text data-cms-id="pages.booking.fare.base.value" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.fare.base.value', `$${fare.toFixed(2)}`)}
+                          </Text>
                         </Stack>
                         {(() => {
                           const vehicle = VEHICLE_OPTIONS.find(v => v.value === selectedVehicle);
                           return vehicle && vehicle.price > 0 ? (
                             <Stack direction="horizontal" justify="space-between">
-                               <Text>{getCMSField(cmsData, 'pages.booking.fare.vehicle_upgrade', 'Vehicle Upgrade:')}</Text>
-                              <Text>+${vehicle.price.toFixed(2)}</Text>
+                               <Text data-cms-id="pages.booking.fare.vehicle.label" mode={mode}>
+                                {getCMSField(cmsData, 'pages.booking.fare.vehicle.label', 'Vehicle Upgrade:')}
+                              </Text>
+                              <Text data-cms-id="pages.booking.fare.vehicle.value" mode={mode}>
+                                {getCMSField(cmsData, 'pages.booking.fare.vehicle.value', `+$${vehicle.price.toFixed(2)}`)}
+                              </Text>
                             </Stack>
                           ) : null;
                         })()}
@@ -745,14 +787,22 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           const service = SERVICE_LEVELS.find(s => s.value === selectedServiceLevel);
                           return service && service.price > 0 ? (
                             <Stack direction="horizontal" justify="space-between">
-                               <Text>{getCMSField(cmsData, 'pages.booking.fare.service_level', 'Service Level:')}</Text>
-                              <Text>+${service.price.toFixed(2)}</Text>
+                               <Text data-cms-id="pages.booking.fare.service.label" mode={mode}>
+                                {getCMSField(cmsData, 'pages.booking.fare.service.label', 'Service Level:')}
+                              </Text>
+                              <Text data-cms-id="pages.booking.fare.service.value" mode={mode}>
+                                {getCMSField(cmsData, 'pages.booking.fare.service.value', `+$${service.price.toFixed(2)}`)}
+                              </Text>
                             </Stack>
                           ) : null;
                         })()}
                         <Stack direction="horizontal" justify="space-between">
-                           <Text weight="bold">{getCMSField(cmsData, 'pages.booking.fare.total', 'Total:')}</Text>
-                          <Text weight="bold">${getTotalFare().toFixed(2)}</Text>
+                           <Text weight="bold" data-cms-id="pages.booking.fare.total.label" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.fare.total.label', 'Total:')}
+                          </Text>
+                          <Text weight="bold" data-cms-id="pages.booking.fare.total.value" mode={mode}>
+                            {getCMSField(cmsData, 'pages.booking.fare.total.value', `$${getTotalFare().toFixed(2)}`)}
+                          </Text>
                         </Stack>
                       </Stack>
                     </Stack>

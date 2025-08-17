@@ -11,15 +11,21 @@ import {
   LoadingSpinner,
   Badge,
   Alert,
-  GridSection
+  GridSection,
+  H1,
+  H2
 } from '@/ui';
 import { TrackingMap } from '@/components/business/TrackingMap';
 import { TrafficETA } from '@/components/business/TrafficETA';
 import { getBooking } from '@/lib/services/booking-service';
 import { firebaseTrackingService, type ETACalculation, type DriverLocation } from '@/lib/services/firebase-tracking-service';
 import { Booking } from '@/types/booking';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 export default function EnhancedTrackingPage() {
+  const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const params = useParams();
   const bookingId = params.bookingId as string;
   
@@ -39,7 +45,7 @@ export default function EnhancedTrackingPage() {
 
         const bookingData = await getBooking(bookingId);
         if (!bookingData) {
-          setError('Booking not found');
+          setError(getCMSField(cmsData, 'pages.tracking.errors.bookingNotFound', 'Booking not found'));
           return;
         }
 
@@ -90,7 +96,7 @@ export default function EnhancedTrackingPage() {
 
       } catch (err) {
         console.error('Error loading booking:', err);
-        setError('Failed to load booking information');
+        setError(getCMSField(cmsData, 'pages.tracking.errors.loadFailed', 'Failed to load booking information'));
       } finally {
         setLoading(false);
       }
@@ -106,7 +112,7 @@ export default function EnhancedTrackingPage() {
         firebaseTrackingService.stopTracking(bookingId);
       }
     };
-  }, [bookingId, trackingActive]);
+  }, [bookingId, trackingActive, cmsData]);
 
   // Handle ETA updates
   const handleETAUpdate = (eta: ETACalculation) => {
@@ -148,9 +154,11 @@ export default function EnhancedTrackingPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading enhanced tracking information...</Text>
-          <Text variant="muted" size="sm">
-            Initializing real-time location tracking...
+          <Text data-cms-id="pages.tracking.loading.message" mode={mode}>
+            {getCMSField(cmsData, 'pages.tracking.loading.message', 'Loading enhanced tracking information...')}
+          </Text>
+          <Text variant="muted" size="sm" data-cms-id="pages.tracking.loading.subtitle" mode={mode}>
+            {getCMSField(cmsData, 'pages.tracking.loading.subtitle', 'Initializing real-time location tracking...')}
           </Text>
         </Stack>
       </Container>
@@ -162,10 +170,12 @@ export default function EnhancedTrackingPage() {
       <Container>
         <Stack spacing="lg" align="center">
           <Alert variant="error">
-            <Text>{error || 'Booking not found'}</Text>
+            <Text data-cms-id="pages.tracking.error.message" mode={mode}>
+              {error || getCMSField(cmsData, 'pages.tracking.errors.bookingNotFound', 'Booking not found')}
+            </Text>
           </Alert>
-          <Button onClick={() => window.history.back()}>
-            Go Back
+          <Button onClick={() => window.history.back()} data-cms-id="pages.tracking.error.goBack">
+            {getCMSField(cmsData, 'pages.tracking.error.goBack', 'Go Back')}
           </Button>
         </Stack>
       </Container>
@@ -179,23 +189,26 @@ export default function EnhancedTrackingPage() {
         <Stack spacing="sm">
           <Stack direction="horizontal" justify="space-between" align="center">
             <Stack spacing="xs">
-              <Text weight="bold" size="xl">Enhanced Live Tracking</Text>
-              <Text variant="muted">
-                Real-time tracking with traffic-aware ETA calculations
+              <H1 data-cms-id="pages.tracking.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.title', 'Enhanced Live Tracking')}
+              </H1>
+              <Text variant="muted" data-cms-id="pages.tracking.subtitle" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.subtitle', 'Real-time tracking with traffic-aware ETA calculations')}
               </Text>
             </Stack>
             <Button 
               variant="outline" 
               onClick={refreshTracking}
               disabled={!trackingActive}
+              data-cms-id="pages.tracking.refreshETA"
             >
-              Refresh ETA
+              {getCMSField(cmsData, 'pages.tracking.refreshETA', 'Refresh ETA')}
             </Button>
           </Stack>
           {lastUpdate && (
-            <Text variant="muted" size="sm">
-              Last updated: {lastUpdate.toLocaleTimeString()}
-              {trackingActive && ' • Live tracking active'}
+            <Text variant="muted" size="sm" data-cms-id="pages.tracking.lastUpdate" mode={mode}>
+              {getCMSField(cmsData, 'pages.tracking.lastUpdate.label', 'Last updated:')} {lastUpdate.toLocaleTimeString()}
+              {trackingActive && getCMSField(cmsData, 'pages.tracking.lastUpdate.live', ' • Live tracking active')}
             </Text>
           )}
         </Stack>
@@ -206,12 +219,18 @@ export default function EnhancedTrackingPage() {
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text weight="bold" size="lg">Live Map</Text>
+                <H2 data-cms-id="pages.tracking.map.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.map.title', 'Live Map')}
+                </H2>
                 <Badge 
                   variant={trackingActive ? 'success' : 'warning'}
                   size="sm"
+                  data-cms-id="pages.tracking.map.status"
                 >
-                  {trackingActive ? 'Live' : 'Offline'}
+                  {trackingActive ? 
+                    getCMSField(cmsData, 'pages.tracking.map.status.live', 'Live') : 
+                    getCMSField(cmsData, 'pages.tracking.map.status.offline', 'Offline')
+                  }
                 </Badge>
               </Stack>
               <TrackingMap
@@ -229,7 +248,9 @@ export default function EnhancedTrackingPage() {
           {/* Traffic-Aware ETA */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
-              <Text weight="bold" size="lg">Traffic-Aware ETA</Text>
+              <H2 data-cms-id="pages.tracking.eta.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.eta.title', 'Traffic-Aware ETA')}
+              </H2>
               <TrafficETA
                 bookingId={booking.id!}
                 pickupLocation={booking.pickupLocation}
@@ -250,21 +271,29 @@ export default function EnhancedTrackingPage() {
         {/* Booking Details */}
         <Box variant="outlined" padding="lg">
           <Stack spacing="md">
-            <Text weight="bold" size="lg">Booking Details</Text>
+            <H2 data-cms-id="pages.tracking.bookingDetails.title" mode={mode}>
+              {getCMSField(cmsData, 'pages.tracking.bookingDetails.title', 'Booking Details')}
+            </H2>
             
             <GridSection variant="content" columns={3}>
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Booking ID</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.bookingDetails.bookingId" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.bookingDetails.bookingId', 'Booking ID')}
+                </Text>
                 <Text weight="bold">{booking.id}</Text>
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Passenger</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.bookingDetails.passenger" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.bookingDetails.passenger', 'Passenger')}
+                </Text>
                 <Text weight="bold">{booking.name}</Text>
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Status</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.bookingDetails.status" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.bookingDetails.status', 'Status')}
+                </Text>
                 <Badge 
                   variant={
                     booking.status === 'completed' ? 'success' :
@@ -274,36 +303,45 @@ export default function EnhancedTrackingPage() {
                     booking.status === 'pending' ? 'pending' :
                     'default'
                   }
+                  data-cms-id="pages.tracking.bookingDetails.statusValue"
                 >
-                  {booking.status}
+                  {getCMSField(cmsData, `pages.tracking.bookingDetails.status.${booking.status}`, booking.status)}
                 </Badge>
               </Stack>
             </GridSection>
 
             <GridSection variant="content" columns={3}>
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Pickup Time</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.bookingDetails.pickupTime" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.bookingDetails.pickupTime', 'Pickup Time')}
+                </Text>
                 <Text weight="bold">
                   {new Date(booking.pickupDateTime).toLocaleString()}
                 </Text>
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Fare</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.bookingDetails.fare" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.bookingDetails.fare', 'Fare')}
+                </Text>
                 <Text weight="bold">${booking.fare.toFixed(2)}</Text>
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Driver</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.bookingDetails.driver" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.bookingDetails.driver', 'Driver')}
+                </Text>
                 <Text weight="bold">
-                  {booking.driverName || 'Not assigned yet'}
+                  {booking.driverName || getCMSField(cmsData, 'pages.tracking.bookingDetails.driverNotAssigned', 'Not assigned yet')}
                 </Text>
               </Stack>
             </GridSection>
 
             {/* Route Information */}
             <Stack spacing="sm">
-              <Text variant="muted" size="sm">Route</Text>
+              <Text variant="muted" size="sm" data-cms-id="pages.tracking.bookingDetails.route" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.bookingDetails.route', 'Route')}
+              </Text>
               <Text weight="bold">
                 {booking.pickupLocation} → {booking.dropoffLocation}
               </Text>
@@ -312,13 +350,15 @@ export default function EnhancedTrackingPage() {
             {/* ETA Information */}
             {etaCalculation && (
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Current ETA</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.eta.current" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.eta.current', 'Current ETA')}
+                </Text>
                 <Text weight="bold">
                   {etaCalculation.estimatedArrival.toLocaleTimeString()} 
-                  ({etaCalculation.duration} min, {etaCalculation.distance.toFixed(1)} miles)
+                  ({etaCalculation.duration} {getCMSField(cmsData, 'pages.tracking.eta.minutes', 'min')}, {etaCalculation.distance.toFixed(1)} {getCMSField(cmsData, 'pages.tracking.eta.miles', 'miles')})
                 </Text>
-                <Text size="sm" variant="muted">
-                  Traffic: {etaCalculation.trafficConditions} • Confidence: {(etaCalculation.confidence * 100).toFixed(0)}%
+                <Text size="sm" variant="muted" data-cms-id="pages.tracking.eta.details" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.eta.traffic', 'Traffic:')} {etaCalculation.trafficConditions} • {getCMSField(cmsData, 'pages.tracking.eta.confidence', 'Confidence:')} {(etaCalculation.confidence * 100).toFixed(0)}%
                 </Text>
               </Stack>
             )}
@@ -326,13 +366,15 @@ export default function EnhancedTrackingPage() {
             {/* Driver Location Info */}
             {booking.driverLocation && (
               <Stack spacing="sm">
-                <Text variant="muted" size="sm">Driver Location</Text>
+                <Text variant="muted" size="sm" data-cms-id="pages.tracking.driverLocation.title" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.driverLocation.title', 'Driver Location')}
+                </Text>
                 <Text weight="bold">
                   {booking.driverLocation.lat.toFixed(4)}, {booking.driverLocation.lng.toFixed(4)}
                 </Text>
-                <Text size="sm" variant="muted">
-                  Speed: {booking.driverLocation.speed || 0} mph • 
-                  Updated: {booking.driverLocation.timestamp.toLocaleTimeString()}
+                <Text size="sm" variant="muted" data-cms-id="pages.tracking.driverLocation.details" mode={mode}>
+                  {getCMSField(cmsData, 'pages.tracking.driverLocation.speed', 'Speed:')} {booking.driverLocation.speed || 0} {getCMSField(cmsData, 'pages.tracking.driverLocation.mph', 'mph')} • 
+                  {getCMSField(cmsData, 'pages.tracking.driverLocation.updated', 'Updated:')} {booking.driverLocation.timestamp.toLocaleTimeString()}
                 </Text>
               </Stack>
             )}
@@ -345,16 +387,18 @@ export default function EnhancedTrackingPage() {
             variant="outline" 
             onClick={() => window.history.back()}
             fullWidth
+            data-cms-id="pages.tracking.actions.backToBookings"
           >
-            Back to Bookings
+            {getCMSField(cmsData, 'pages.tracking.actions.backToBookings', 'Back to Bookings')}
           </Button>
           
           <Button 
             variant="primary"
             onClick={() => window.location.href = `/booking/${booking.id}`}
             fullWidth
+            data-cms-id="pages.tracking.actions.viewBooking"
           >
-            View Booking Details
+            {getCMSField(cmsData, 'pages.tracking.actions.viewBooking', 'View Booking Details')}
           </Button>
         </Stack>
 
@@ -362,11 +406,12 @@ export default function EnhancedTrackingPage() {
         {booking.status === 'in-progress' && (
           <Alert variant="info">
             <Stack spacing="xs">
-              <Text weight="bold">Live Updates Active</Text>
-              <Text size="sm">
-                Your driver's location and ETA are being updated in real-time. 
-                The map will automatically refresh as your driver moves.
-                {trackingActive && ' Firebase tracking is connected and active.'}
+              <Text weight="bold" data-cms-id="pages.tracking.liveUpdates.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.liveUpdates.title', 'Live Updates Active')}
+              </Text>
+              <Text size="sm" data-cms-id="pages.tracking.liveUpdates.description" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.liveUpdates.description', 'Your driver\'s location and ETA are being updated in real-time. The map will automatically refresh as your driver moves.')}
+                {trackingActive && getCMSField(cmsData, 'pages.tracking.liveUpdates.firebase', ' Firebase tracking is connected and active.')}
               </Text>
             </Stack>
           </Alert>
@@ -376,10 +421,11 @@ export default function EnhancedTrackingPage() {
         {!trackingActive && booking.status !== 'completed' && (
           <Alert variant="warning">
             <Stack spacing="xs">
-              <Text weight="bold">Tracking Offline</Text>
-              <Text size="sm">
-                Real-time tracking is currently offline. ETA calculations may not be accurate.
-                Try refreshing the page to reconnect.
+              <Text weight="bold" data-cms-id="pages.tracking.offline.title" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.offline.title', 'Tracking Offline')}
+              </Text>
+              <Text size="sm" data-cms-id="pages.tracking.offline.description" mode={mode}>
+                {getCMSField(cmsData, 'pages.tracking.offline.description', 'Real-time tracking is currently offline. ETA calculations may not be accurate. Try refreshing the page to reconnect.')}
               </Text>
             </Stack>
           </Alert>

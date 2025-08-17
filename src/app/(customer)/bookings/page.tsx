@@ -13,6 +13,7 @@ import {
   LoadingSpinner,
   Alert,
   Badge,
+  Box,
   H1,
   ContentCard
 } from '@/ui';
@@ -29,6 +30,9 @@ interface Booking {
   driverName?: string;
   vehicleInfo?: string;
   createdAt: string;
+  balanceDue?: number;
+  passengers?: number;
+  vehicleType?: string;
 }
 
 function CustomerBookingsPage() {
@@ -85,7 +89,10 @@ function CustomerBookingsPage() {
           fare: 45.00,
           driverName: 'John Smith',
           vehicleInfo: 'Black Sedan - ABC123',
-          createdAt: '2024-01-10T08:00:00Z'
+          createdAt: '2024-01-10T08:00:00Z',
+          balanceDue: 0,
+          passengers: 2,
+          vehicleType: 'Sedan'
         },
         {
           id: '2',
@@ -96,7 +103,10 @@ function CustomerBookingsPage() {
           fare: 50.00,
           driverName: 'Sarah Johnson',
           vehicleInfo: 'White SUV - XYZ789',
-          createdAt: '2024-01-12T09:00:00Z'
+          createdAt: '2024-01-12T09:00:00Z',
+          balanceDue: 10.00,
+          passengers: 1,
+          vehicleType: 'SUV'
         },
         {
           id: '3',
@@ -105,7 +115,10 @@ function CustomerBookingsPage() {
           pickupDateTime: '2024-01-25T16:00:00Z',
           status: 'pending',
           fare: 35.00,
-          createdAt: '2024-01-14T11:00:00Z'
+          createdAt: '2024-01-14T11:00:00Z',
+          balanceDue: 0,
+          passengers: 1,
+          vehicleType: 'Sedan'
         }
       ];
       
@@ -116,7 +129,7 @@ function CustomerBookingsPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
       case 'completed': return 'completed';
       case 'confirmed': return 'confirmed';
@@ -251,55 +264,57 @@ function CustomerBookingsPage() {
         ) : (
           <Stack spacing="lg">
             {bookings.map((booking) => (
-              <ContentCard
-                key={booking.id}
-                title={`Booking #${booking.id}`}
-                content={
-                  <Stack spacing="md">
-                                         <Stack direction="horizontal" justify="space-between" align="center">
-                       <Badge variant={getStatusColor(booking.status)}>
-                         {getStatusText(booking.status)}
-                       </Badge>
-                       <Text weight="bold" size="lg">
-                         ${booking.fare.toFixed(2)}
-                       </Text>
-                     </Stack>
-                    
-                    <Stack spacing="sm">
-                      <Text><strong>From:</strong> {booking.pickupLocation}</Text>
-                      <Text><strong>To:</strong> {booking.dropoffLocation}</Text>
-                      <Text><strong>Date:</strong> {new Date(booking.pickupDateTime).toLocaleDateString()}</Text>
-                      <Text><strong>Time:</strong> {new Date(booking.pickupDateTime).toLocaleTimeString()}</Text>
-                      {booking.driverName && (
-                        <Text><strong>Driver:</strong> {booking.driverName}</Text>
-                      )}
-                      {booking.vehicleInfo && (
-                        <Text><strong>Vehicle:</strong> {booking.vehicleInfo}</Text>
-                      )}
-                    </Stack>
-
-                    <Stack direction="horizontal" spacing="sm">
-                        <Button 
-                        variant="outline" 
-                        onClick={() => handleViewBooking(booking.id)}
-                        size="sm"
-                      >
-                         {getCMSField(cmsData, 'pages.bookings.view_details', 'View Details')}
-                      </Button>
-                      {booking.status === 'confirmed' || booking.status === 'in-progress' ? (
-                           <Button 
-                          variant="primary" 
-                          onClick={() => handleTrackBooking(booking.id)}
-                          size="sm"
-                        >
-                         {getCMSField(cmsData, 'pages.bookings.track_ride', 'Track Ride')}
-                        </Button>
-                      ) : null}
-                    </Stack>
+              <Box key={booking.id} variant="elevated" padding="lg" data-cms-id={`pages.bookings.booking.${booking.id}`}>
+                <Stack spacing="md">
+                  <Stack direction="horizontal" justify="space-between" align="center">
+                    <Text weight="bold" size="lg" data-cms-id={`pages.bookings.booking.${booking.id}.title`} mode={mode}>
+                      {getCMSField(cmsData, `pages.bookings.booking.${booking.id}.title`, `Booking #${booking.id}`)}
+                    </Text>
+                    <Badge variant={getStatusVariant(booking.status)} data-cms-id={`pages.bookings.booking.${booking.id}.status`}>
+                      {getCMSField(cmsData, `pages.bookings.booking.${booking.id}.statusText`, getStatusText(booking.status))}
+                    </Badge>
                   </Stack>
-                }
-                variant="elevated"
-              />
+                  
+                  <Stack direction="horizontal" spacing="md" align="center">
+                    <Button
+                      onClick={() => router.push(`/status/${booking.id}`)}
+                      variant="outline"
+                      size="sm"
+                      data-cms-id={`pages.bookings.booking.${booking.id}.viewStatus`}
+                    >
+                      {getCMSField(cmsData, 'pages.bookings.booking.viewStatus', 'View Status')}
+                    </Button>
+                    <Button
+                      onClick={() => router.push(`/manage/${booking.id}`)}
+                      variant="outline"
+                      size="sm"
+                      data-cms-id={`pages.bookings.booking.${booking.id}.manage`}
+                    >
+                      {getCMSField(cmsData, 'pages.bookings.booking.manage', 'Manage')}
+                    </Button>
+                    {booking.status === 'completed' && (
+                      <Button
+                        onClick={() => router.push(`/feedback/${booking.id}`)}
+                        variant="outline"
+                        size="sm"
+                        data-cms-id={`pages.bookings.booking.${booking.id}.feedback`}
+                      >
+                        {getCMSField(cmsData, 'pages.bookings.booking.feedback', 'Leave Feedback')}
+                      </Button>
+                    )}
+                    {booking.status === 'completed' && (booking.balanceDue || 0) > 0 && (
+                      <Button
+                        onClick={() => router.push(`/payments/pay-balance/${booking.id}`)}
+                        variant="primary"
+                        size="sm"
+                        data-cms-id={`pages.bookings.booking.${booking.id}.payBalance`}
+                      >
+                        {getCMSField(cmsData, 'pages.bookings.booking.payBalance', `Pay Balance ($${(booking.balanceDue || 0).toFixed(2)})`)}
+                      </Button>
+                    )}
+                  </Stack>
+                </Stack>
+              </Box>
             ))}
           </Stack>
         )}

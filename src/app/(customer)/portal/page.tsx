@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { 
-  GridSection,
+import {
   FeatureGrid,
   ToastProvider,
   useToast,
@@ -23,44 +22,44 @@ function PortalPageContent() {
     {
       id: 1,
       icon: "📋",
-      label: "My Bookings",
-      description: "View and manage your current and past bookings",
+      label: getCMSField(cmsData, 'pages.portal.actions.myBookings.label', 'My Bookings'),
+      description: getCMSField(cmsData, 'pages.portal.actions.myBookings.description', 'View and manage your current and past bookings'),
       href: "/manage"
     },
     {
       id: 2,
       icon: "📅",
-      label: "Booking Status",
-      description: "Check the status of your upcoming rides",
+      label: getCMSField(cmsData, 'pages.portal.actions.bookingStatus.label', 'Booking Status'),
+      description: getCMSField(cmsData, 'pages.portal.actions.bookingStatus.description', 'Check the status of your upcoming rides'),
       href: "/status"
     },
     {
       id: 3,
       icon: "⚙️",
-      label: "Account Settings",
-      description: "Update your profile and preferences",
+      label: getCMSField(cmsData, 'pages.portal.actions.accountSettings.label', 'Account Settings'),
+      description: getCMSField(cmsData, 'pages.portal.actions.accountSettings.description', 'Update your profile and preferences'),
       href: "#"
     },
     {
       id: 4,
       icon: "💬",
-      label: "Support",
-      description: "Get help with your bookings",
+      label: getCMSField(cmsData, 'pages.portal.actions.support.label', 'Support'),
+      description: getCMSField(cmsData, 'pages.portal.actions.support.description', 'Get help with your bookings'),
       href: "/help"
     },
     {
       id: 5,
       icon: "📅",
-      label: "Book New Ride",
-      description: "Schedule your next airport transportation",
+      label: getCMSField(cmsData, 'pages.portal.actions.bookNewRide.label', 'Book New Ride'),
+      description: getCMSField(cmsData, 'pages.portal.actions.bookNewRide.description', 'Schedule your next airport transportation'),
       href: "/book"
     },
     {
       id: 6,
       icon: "📞",
-      label: "Contact Us",
-      description: "Reach out for immediate assistance",
-      onClick: () => addToast('info', 'Contact information: (203) 555-0123'),
+      label: getCMSField(cmsData, 'pages.portal.actions.contactUs.label', 'Contact Us'),
+      description: getCMSField(cmsData, 'pages.portal.actions.contactUs.description', 'Reach out for immediate assistance'),
+      onClick: () => addToast('info', getCMSField(cmsData, 'pages.portal.actions.contactUs.contactInfo', 'Contact information: (203) 555-0123')),
       href: "#"
     }
   ];
@@ -68,18 +67,18 @@ function PortalPageContent() {
   const accountStats = [
     {
       icon: "🎯",
-      title: "Total Bookings",
-      description: "Feature coming soon"
+      title: getCMSField(cmsData, 'pages.portal.stats.totalBookings.title', 'Total Bookings'),
+      description: getCMSField(cmsData, 'pages.portal.stats.totalBookings.description', 'Feature coming soon')
     },
     {
       icon: "⭐",
-      title: "Loyalty Status",
-      description: "Valued Customer"
+      title: getCMSField(cmsData, 'pages.portal.stats.loyaltyStatus.title', 'Loyalty Status'),
+      description: getCMSField(cmsData, 'pages.portal.stats.loyaltyStatus.description', 'Valued Customer')
     },
     {
       icon: "📱",
-      title: "Preferred Contact",
-      description: "SMS & Email"
+      title: getCMSField(cmsData, 'pages.portal.stats.preferredContact.title', 'Preferred Contact'),
+      description: getCMSField(cmsData, 'pages.portal.stats.preferredContact.description', 'SMS & Email')
     }
   ];
 
@@ -100,7 +99,7 @@ function PortalPageContent() {
             <Text 
               variant="lead" 
               align="center" 
-              size="lg" 
+              size="lg"
               data-testid="portal-welcome-description"
               data-cms-id="pages.portal.welcome.description"
               mode={mode}
@@ -111,77 +110,75 @@ function PortalPageContent() {
         </Stack>
       </Container>
 
-      {/* Portal Actions */}
-      <GridSection variant="content" columns={1}>
-        <Container marginTop="xl">
-          <Stack spacing="xl" align="center">
-            <Stack spacing="md" align="center">
-              <Text 
-                data-testid="portal-features-title" 
-                weight="semibold" 
-                size="2xl"
-                data-cms-id="pages.portal.features.title"
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'pages.portal.features.title', '🎯 Portal Features')}
-              </Text>
-              <Text 
-                data-testid="portal-features-description" 
-                variant="lead" 
-                size="lg"
-                data-cms-id="pages.portal.features.description"
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'pages.portal.features.description', 'Access all available services and account management tools')}
-              </Text>
-            </Stack>
-            
-            <FeatureGrid 
-              data-testid="portal-features-grid"
-              features={portalActions.map(action => ({
-                icon: action.icon,
-                title: action.label,
-                description: action.description
-              }))} 
-              columns={3} 
-            />
+      {/* Portal Features */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H1 
+              align="center" 
+              data-testid="portal-features-title"
+              data-cms-id="pages.portal.features.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.portal.features.title', '🎯 Portal Features')}
+            </H1>
+            <Text 
+              align="center" 
+              size="lg"
+              data-testid="portal-features-description"
+              data-cms-id="pages.portal.features.description"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.portal.features.description', 'Access all available services and account management tools')}
+            </Text>
           </Stack>
-        </Container>
-      </GridSection>
+          
+          <FeatureGrid
+            features={portalActions.map((action, index) => ({
+              id: action.id,
+              icon: action.icon,
+              title: action.label,
+              description: action.description
+            }))}
+            columns={3}
+          />
+        </Stack>
+      </Container>
 
-      {/* Quick Stats */}
-      <GridSection variant="content" columns={1}>
-        <Container marginTop="xl">
-          <Stack spacing="xl" align="center">
-            <Stack spacing="md" align="center">
-              <Text 
-                data-testid="portal-stats-title" 
-                weight="semibold" 
-                size="2xl"
-                data-cms-id="pages.portal.stats.title"
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'pages.portal.stats.title', '📊 Account Overview')}
-              </Text>
-              <Text 
-                data-testid="portal-stats-description" 
-                variant="lead" 
-                size="lg"
-                data-cms-id="pages.portal.stats.description"
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'pages.portal.stats.description', 'Your account activity and statistics')}
-              </Text>
-            </Stack>
-            
-            <FeatureGrid 
-              data-testid="portal-stats-grid"
-              features={accountStats} 
-              columns={3} 
-            />
+      {/* Account Overview */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H1 
+              align="center" 
+              data-testid="portal-stats-title"
+              data-cms-id="pages.portal.stats.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.portal.stats.title', '📊 Account Overview')}
+            </H1>
+            <Text 
+              align="center" 
+              size="lg"
+              data-testid="portal-stats-description"
+              data-cms-id="pages.portal.stats.description"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'pages.portal.stats.description', 'Your account activity and statistics')}
+            </Text>
           </Stack>
-        </Container>
-      </GridSection>
+          
+          <FeatureGrid
+            features={accountStats.map((stat, index) => ({
+              id: stat.title,
+              icon: stat.icon,
+              title: stat.title,
+              description: stat.description
+            }))}
+            columns={3}
+          />
+        </Stack>
+      </Container>
     </>
   );
 }
