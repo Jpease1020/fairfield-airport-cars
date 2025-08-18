@@ -1,4 +1,13 @@
-import { collection, doc, setDoc, updateDoc, query, where, orderBy, getDocs, deleteDoc } from 'firebase/firestore';
+import { 
+  collection, 
+  doc, 
+  addDoc, 
+  getDocs, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  orderBy
+} from 'firebase/firestore';
 import { db } from '../utils/firebase';
 
 export type CommentScope = 'page' | 'app';
@@ -21,36 +30,16 @@ export interface CommentRecord {
 class CommentsService {
   private readonly collectionName = 'comments';
 
-  async addComment(comment: Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
-    const commentRef = doc(collection(db, this.collectionName));
-    const now = new Date().toISOString();
-    
-    // Debug: Log the comment data and document reference
-    console.log('CommentsService.addComment - Input comment:', comment);
-    console.log('CommentsService.addComment - Document reference:', commentRef.path);
-    
-    const commentData = {
-      ...comment,
-      id: commentRef.id,
-      createdAt: now,
-      updatedAt: now,
-    };
-    
-    console.log('CommentsService.addComment - Final comment data:', commentData);
+  async addComment(commentData: Omit<CommentRecord, 'id' | 'createdAt'>): Promise<string> {
+    console.log('📝 Adding comment to Firebase:', commentData);
     
     try {
-      await setDoc(commentRef, commentData);
-      console.log('CommentsService.addComment - Successfully saved comment');
-      return commentRef.id;
+      const docRef = await addDoc(collection(db, this.collectionName), commentData);
+      console.log('✅ Comment added successfully to Firebase');
+      return docRef.id;
     } catch (error) {
-      console.error('CommentsService.addComment - Firestore error:', error);
-      console.error('CommentsService.addComment - Error details:', {
-        code: (error as any)?.code,
-        message: (error as any)?.message,
-        details: (error as any)?.details
-      });
-      // Fallback for permission or offline
-      return this.addToLocalStorage(comment);
+      console.error('❌ Firebase addComment failed:', error);
+      throw error;
     }
   }
 
@@ -61,18 +50,46 @@ class CommentsService {
     scope?: CommentScope;
   } = {}): Promise<CommentRecord[]> {
     try {
+      console.log('🔥 Attempting to get comments from Firebase...');
       const base = collection(db, this.collectionName);
-      const constraints: any[] = [];
-      if (filters.status) constraints.push(where('status', '==', filters.status));
-      if (filters.pageUrl) constraints.push(where('pageUrl', '==', filters.pageUrl));
-      if (filters.elementId) constraints.push(where('elementId', '==', filters.elementId));
-      if (filters.scope) constraints.push(where('scope', '==', filters.scope));
-      constraints.push(orderBy('createdAt', 'desc'));
-      const q = query(base, ...constraints);
+      
+      // Simplified query to avoid index requirement
+      // We'll filter in JavaScript instead of using complex Firestore queries
+      let q = query(base, orderBy('createdAt', 'desc'));
+      
+      console.log('📡 Firebase query (simplified):', q);
       const snap = await getDocs(q);
-      return snap.docs.map(d => d.data() as CommentRecord);
+      console.log('✅ Firebase query successful, got', snap.docs.length, 'comments');
+      
+      // Filter in JavaScript to avoid index requirements
+      let comments = snap.docs.map(d => d.data() as CommentRecord);
+      
+      if (filters.status) {
+        comments = comments.filter(c => c.status === filters.status);
+      }
+      if (filters.pageUrl) {
+        comments = comments.filter(c => c.pageUrl === filters.pageUrl);
+      }
+      if (filters.elementId) {
+        comments = comments.filter(c => c.elementId === filters.elementId);
+      }
+      if (filters.scope) {
+        comments = comments.filter(c => c.scope === filters.scope);
+      }
+      
+      console.log('🔍 After filtering:', comments.length, 'comments');
+      return comments;
+      
     } catch (error) {
-      return this.getFromLocalStorage();
+      console.error('❌ Firebase getComments failed:', error);
+      console.error('Error details:', {
+        code: (error as any)?.code,
+        message: (error as any)?.message,
+        details: (error as any)?.details
+      });
+      
+      // Don't fall back to localStorage - let the error bubble up
+      throw new Error(`Failed to get comments from Firebase: ${(error as any)?.message || 'Unknown error'}`);
     }
   }
 
@@ -80,17 +97,32 @@ class CommentsService {
     try {
       const ref = doc(db, this.collectionName, commentId);
       await updateDoc(ref, { ...updates, updatedAt: new Date().toISOString() });
+      console.log('✅ Comment updated successfully in Firebase');
     } catch (error) {
-      this.updateInLocalStorage(commentId, updates);
+      console.error('❌ Firebase updateComment failed:', error);
+      throw new Error(`Failed to update comment in Firebase: ${(error as any)?.message || 'Unknown error'}`);
     }
   }
 
   async deleteComment(commentId: string): Promise<void> {
+    console.log('🗑️ CommentsService.deleteComment called with ID:', commentId);
+    
     try {
       const ref = doc(db, this.collectionName, commentId);
+      console.log('📡 Firestore document reference:', ref.path);
+      
       await deleteDoc(ref);
+      console.log('✅ Comment deleted successfully from Firestore');
     } catch (error) {
-      this.deleteFromLocalStorage(commentId);
+      console.error('❌ Firestore delete failed:', error);
+      console.error('Error details:', {
+        code: (error as any)?.code,
+        message: (error as any)?.message,
+        details: (error as any)?.details
+      });
+      
+      // Don't fall back to localStorage - let the error bubble up
+      throw new Error(`Failed to delete comment from Firebase: ${(error as any)?.message || 'Unknown error'}`);
     }
   }
 
@@ -102,51 +134,6 @@ class CommentsService {
       inProgress: comments.filter(c => c.status === 'in-progress').length,
       resolved: comments.filter(c => c.status === 'resolved').length,
     };
-  }
-
-  // Local storage fallbacks
-  private storageKey = 'comments-storage';
-
-  private getFromLocalStorage(): CommentRecord[] {
-    try {
-      const raw = localStorage.getItem(this.storageKey);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  private saveToLocalStorage(list: CommentRecord[]) {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(list));
-    } catch (error) {
-      console.warn('Failed to save comments to localStorage');
-    }
-  }
-
-  private addToLocalStorage(comment: Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>): string {
-    const now = new Date().toISOString();
-    const id = `local_${Date.now()}`;
-    const full: CommentRecord = { ...comment, id, createdAt: now, updatedAt: now };
-    const list = this.getFromLocalStorage();
-    list.push(full);
-    this.saveToLocalStorage(list);
-    return id;
-  }
-
-  private updateInLocalStorage(id: string, updates: Partial<CommentRecord>) {
-    const list = this.getFromLocalStorage();
-    const idx = list.findIndex(c => c.id === id);
-    if (idx !== -1) {
-      list[idx] = { ...list[idx], ...updates, updatedAt: new Date().toISOString() } as CommentRecord;
-      this.saveToLocalStorage(list);
-    }
-  }
-
-  private deleteFromLocalStorage(id: string) {
-    const list = this.getFromLocalStorage();
-    const filtered = list.filter(c => c.id !== id);
-    this.saveToLocalStorage(filtered);
   }
 }
 
