@@ -735,6 +735,188 @@ export interface CMSConfiguration {
   driver: DriverSettings;
   analytics?: AnalyticsSettings;
   bookingForm: BookingFormText;
+  admin?: {
+    // Overview Page
+    overview: {
+      title: string;
+      subtitle: string;
+      sections: {
+        list: { title: string };
+        customer: { title: string };
+        admin: { title: string };
+      };
+    };
+    // Dashboard Page
+    dashboard: {
+      loading: { message: string };
+      error: { message: string; loadFailed: string };
+      stats: {
+        totalBookings: { title: string; noBookings: string };
+      };
+      activity: {
+        bookingTemplate: string;
+        paymentTemplate: string;
+      };
+    };
+    // Analytics Page
+    analytics: {
+      loading: { message: string };
+      title: string;
+      userInteractions: { description: string };
+      refreshButton: string;
+      lastUpdated: string;
+      noData: { title: string; message: string };
+      sections: {
+        overview: {
+          totalInteractions: { title: string; description: string };
+          totalErrors: { title: string; description: string };
+          errorRate: { title: string; description: string };
+          activeElements: { title: string; description: string };
+        };
+        detailed: {
+          topInteractionTypes: { title: string; item: string };
+          topErrorTypes: { title: string; item: string };
+          topElementTypes: { title: string; item: string };
+          recentActivity: { title: string; item: string };
+          recentErrors: { title: string; item: string; details: string };
+        };
+      };
+    };
+    // Bookings Page
+    bookings: {
+      error: {
+        loadBookingsFailed: string;
+        updateStatusFailed: string;
+        deleteBookingFailed: string;
+        assignDriverFailed: string;
+      };
+      loading: { loadingBookings: string };
+      sections: {
+        filter: {
+          title: string;
+          allBookings: string;
+          pending: string;
+          confirmed: string;
+          completed: string;
+          cancelled: string;
+        };
+        stats: {
+          totalBookings: string;
+          confirmed: string;
+          inProgress: string;
+          totalRevenue: string;
+        };
+        table: {
+          noBookings: { title: string; description: string };
+          columns: {
+            customer: string;
+            route: string;
+            dateTime: string;
+            status: string;
+            fare: string;
+            actions: string;
+          };
+          actions: {
+            confirm: string;
+            assignDriver: string;
+            delete: string;
+          };
+        };
+      };
+    };
+    // Comments Page
+    comments: {
+      confirmations: { deleteComment: string };
+      access: { accessDenied: string; description: string };
+      loading: { title: string };
+      header: { title: string; description: string };
+      filters: {
+        title: string;
+        search: { label: string; placeholder: string };
+        status: {
+          label: string;
+          allStatuses: string;
+          open: string;
+          inProgress: string;
+          resolved: string;
+        };
+        page: { label: string; allPages: string };
+      };
+      export: {
+        format: { label: string; csv: string; json: string };
+        exportButton: string;
+        generateAnalytics: string;
+      };
+      list: {
+        title: string;
+        noComments: string;
+        comment: { pageTitle: string; elementLabel: string };
+      };
+    };
+    // Calendar Page
+    calendar: {
+      title: string;
+      sections: {
+        header: { title: string };
+        days: {
+          sun: string; mon: string; tue: string; wed: string;
+          thu: string; fri: string; sat: string;
+        };
+      };
+    };
+    // Quick Fix Page
+    quickFix: {
+      sections: {
+        description: string;
+        content: {
+          successPage: string;
+          errorPage: string;
+          bookingForm: string;
+          navigation: string;
+          adminDashboard: string;
+        };
+        addContentButton: string;
+      };
+      missingContent: {
+        pages: {
+          success: {
+            title: string; subtitle: string; message: string;
+            nextSteps: string; driverContact: string;
+            emailConfirmation: string; calendarInvite: string;
+            backToHome: string;
+          };
+          error: {
+            title: string; subtitle: string; message: string;
+            tryAgain: string; contactSupport: string;
+            backToHome: string;
+          };
+        };
+        bookingForm: {
+          title: string; subtitle: string;
+          pickupLocationLabel: string; pickupLocationPlaceholder: string;
+          dropoffLocationLabel: string; dropoffLocationPlaceholder: string;
+          pickupDateLabel: string; pickupTimeLabel: string;
+          additionalDetails: { title: string; description: string };
+          passengersLabel: string; luggageLabel: string;
+          specialRequestsLabel: string;
+          actionButtons: { title: string; description: string };
+          calculateFareButton: string; bookNowButton: string;
+          estimatedFareLabel: string;
+        };
+      };
+      messages: {
+        contentAddedSuccess: string;
+        contentAddedToast: string;
+      };
+      errors: {
+        noConfigFound: string;
+        saveFailed: string;
+        addContentFailed: string;
+      };
+    };
+    // Other admin pages...
+    [key: string]: any;
+  };
   lastUpdated?: Date;
   version?: string;
 }

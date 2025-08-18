@@ -2,6 +2,8 @@
 
 import withAuth from '../withAuth';
 import { Container, Stack, H1, H2, Text, Link, Box } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 type NavItem = { label: string; href?: string; note?: string };
 
@@ -41,9 +43,14 @@ const adminItems: NavItem[] = [
 ];
 
 function List({ title, items }: { title: string; items: NavItem[] }) {
+  const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
+  
   return (
     <Stack spacing="md">
-      <H2>{title}</H2>
+      <H2 data-cms-id="admin.overview.sections.list.title" mode={mode}>
+        {getCMSField(cmsData, 'admin.overview.sections.list.title', title)}
+      </H2>
       <Stack spacing="sm">
         {items.map((item) => (
           <Stack key={item.label} direction="horizontal" spacing="xs">
@@ -62,20 +69,27 @@ function List({ title, items }: { title: string; items: NavItem[] }) {
 }
 
 function OverviewContent() {
+  const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
+  
   return (
     <Container>
       <Stack spacing="xl">
         <Stack spacing="xs">
-          <H1>Admin Overview</H1>
-          <Text variant="muted">Quick access for Gregg: customer vs admin pages.</Text>
+          <H1 data-cms-id="admin.overview.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.overview.title', 'Admin Overview')}
+          </H1>
+          <Text variant="muted" data-cms-id="admin.overview.subtitle" mode={mode}>
+            {getCMSField(cmsData, 'admin.overview.subtitle', 'Quick access for Gregg: customer vs admin pages.')}
+          </Text>
         </Stack>
 
         <Stack direction="horizontal" spacing="xl" wrap="wrap">
           <Box>
-            <List title="Customer Pages & Features" items={customerItems} />
+            <List title={getCMSField(cmsData, 'admin.overview.sections.customer.title', 'Customer Pages & Features')} items={customerItems} />
           </Box>
           <Box>
-            <List title="Admin Pages & Features" items={adminItems} />
+            <List title={getCMSField(cmsData, 'admin.overview.sections.admin.title', 'Admin Pages & Features')} items={adminItems} />
           </Box>
         </Stack>
       </Stack>

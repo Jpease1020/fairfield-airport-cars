@@ -49,30 +49,32 @@ function CMSPageContent() {
     }
   };
 
-  const handleInitializeCMS = async () => {
+
+
+  const updateAdminCMSData = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Initializing CMS...');
+      addToast('info', 'Updating admin CMS data...');
       
-      const response = await fetch('/api/admin/init-cms', {
+      const response = await fetch('/api/admin/cms/update-admin-cms', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       });
       
       const result = await response.json();
       
       if (result.success) {
+        addToast('success', `Admin CMS data updated successfully! ${result.updatedSections} sections updated.`);
+        // Reload the config to show updated data
         await loadCMSConfig();
-        addToast('success', 'CMS initialized successfully!');
-        console.log('✅ CMS initialized successfully');
       } else {
-        throw new Error(result.message);
+        addToast('error', `Failed to update admin CMS data: ${result.error}`);
       }
-    } catch (err) {
-      console.error('❌ Error initializing CMS:', err);
-      addToast('error', 'Failed to initialize CMS: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } catch (error) {
+      console.error('Error updating admin CMS data:', error);
+      addToast('error', 'Failed to update admin CMS data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -80,21 +82,16 @@ function CMSPageContent() {
 
   const headerActions = [
     { 
-      label: 'Refresh', 
-      onClick: loadCMSConfig, 
+      label: 'Refresh',
+      onClick: loadCMSConfig,
       variant: 'outline' as const,
-      disabled: loading
+      icon: '🔄'
     },
-    { 
-      label: 'Export Config', 
-      onClick: () => addToast('info', 'Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: 'Initialize CMS', 
-      onClick: handleInitializeCMS, 
+    {
+      label: 'Update Admin CMS Data',
+      onClick: updateAdminCMSData,
       variant: 'primary' as const,
-      disabled: loading
+      icon: '⚡'
     }
   ];
 

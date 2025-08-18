@@ -20,9 +20,11 @@ import {
   StatCard
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function PromosPageContent() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const { addToast } = useToast();
   const [promos, setPromos] = useState<PromoCode[]>([]);
   const [form, setForm] = useState({ 
@@ -64,7 +66,7 @@ function PromosPageContent() {
 
   const addPromo = async () => {
     if (!form.code || !form.value) {
-      addToast('error', 'Please fill in required fields');
+      addToast('error', getCMSField(cmsData, 'admin.promos.messages.fillRequiredFields', 'Please fill in required fields'));
       return;
     }
 
@@ -85,32 +87,32 @@ function PromosPageContent() {
       if (res.ok) {
         setForm({ code: '', type: 'percent', value: '', expiresAt: '', usageLimit: '' });
         await fetchPromos();
-        addToast('success', 'Promo code created successfully!');
+        addToast('success', getCMSField(cmsData, 'admin.promos.messages.promoCreated', 'Promo code created successfully!'));
       } else {
         throw new Error('Failed to create promo code');
       }
     } catch (err) {
       console.error('❌ Error creating promo:', err);
-      addToast('error', 'Failed to create promo code. Please try again.');
+      addToast('error', getCMSField(cmsData, 'admin.promos.messages.createFailed', 'Failed to create promo code. Please try again.'));
     } finally {
       setSubmitting(false);
     }
   };
 
   const deletePromo = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this promo code?')) return;
+    if (!confirm(getCMSField(cmsData, 'admin.promos.confirmations.deletePromo', 'Are you sure you want to delete this promo code?'))) return;
 
     try {
       const res = await fetch(`/api/promos/${id}`, { method: 'DELETE' });
       if (res.ok) {
         await fetchPromos();
-        addToast('success', 'Promo code deleted successfully!');
+        addToast('success', getCMSField(cmsData, 'admin.promos.messages.promoDeleted', 'Promo code deleted successfully!'));
       } else {
         throw new Error('Failed to delete promo code');
       }
     } catch (err) {
       console.error('❌ Error deleting promo:', err);
-      addToast('error', 'Failed to delete promo code. Please try again.');
+      addToast('error', getCMSField(cmsData, 'admin.promos.messages.deleteFailed', 'Failed to delete promo code. Please try again.'));
     }
   };
 
@@ -119,10 +121,10 @@ function PromosPageContent() {
   };
 
   const getPromoStatus = (promo: PromoCode) => {
-    if (promo.expiresAt && new Date(promo.expiresAt) < new Date()) return 'Expired';
-    if (promo.usageLimit && (promo.usageCount || 0) >= promo.usageLimit) return 'Limit Reached';
-    if (promo.expiresAt && new Date(promo.expiresAt) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) return 'Expiring Soon';
-    return 'Active';
+    if (promo.expiresAt && new Date(promo.expiresAt) < new Date()) return getCMSField(cmsData, 'admin.promos.status.expired', 'Expired');
+    if (promo.usageLimit && (promo.usageCount || 0) >= promo.usageLimit) return getCMSField(cmsData, 'admin.promos.status.limitReached', 'Limit Reached');
+    if (promo.expiresAt && new Date(promo.expiresAt) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) return getCMSField(cmsData, 'admin.promos.status.expiringSoon', 'Expiring Soon');
+    return getCMSField(cmsData, 'admin.promos.status.active', 'Active');
   };
 
   const renderStatus = (promo: PromoCode) => {
@@ -137,18 +139,18 @@ function PromosPageContent() {
 
   const headerActions = [
     { 
-      label: 'Refresh', 
+      label: getCMSField(cmsData, 'admin.promos.sections.header.refresh', 'Refresh'), 
       onClick: fetchPromos, 
       variant: 'outline' as const,
       disabled: loading
     },
     { 
-      label: 'Export Report', 
+      label: getCMSField(cmsData, 'admin.promos.sections.header.exportReport', 'Export Report'), 
       onClick: () => alert('Export functionality coming soon'), 
       variant: 'outline' as const 
     },
     { 
-      label: 'Analytics', 
+      label: getCMSField(cmsData, 'admin.promos.sections.header.analytics', 'Analytics'), 
       onClick: () => alert('Promo analytics dashboard coming soon'), 
       variant: 'primary' as const 
     }
@@ -158,7 +160,7 @@ function PromosPageContent() {
   const columns: DataTableColumn<PromoCode>[] = [
     {
       key: 'code',
-      label: 'Promo Code',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.columns.code.label', 'Promo Code'),
       sortable: true,
       render: (value) => (
         <Span>
@@ -168,17 +170,17 @@ function PromosPageContent() {
     },
     {
       key: 'type',
-      label: 'Type',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.columns.type.label', 'Type'),
       sortable: true,
       render: (value) => (
         <Span>
-          {value === 'percent' ? 'Percentage' : 'Fixed Amount'}
+          {value === 'percent' ? getCMSField(cmsData, 'admin.promos.sections.table.columns.type.percentage', 'Percentage') : getCMSField(cmsData, 'admin.promos.sections.table.columns.type.fixedAmount', 'Fixed Amount')}
         </Span>
       )
     },
     {
       key: 'value',
-      label: 'Discount',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.columns.discount.label', 'Discount'),
       sortable: true,
       render: (_, promo) => (
         <Span>
@@ -188,13 +190,13 @@ function PromosPageContent() {
     },
     {
       key: 'expiresAt',
-      label: 'Expiry',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.columns.expiry.label', 'Expiry'),
       sortable: true,
-      render: (value) => value ? new Date(value).toLocaleDateString() : 'No expiry'
+      render: (value) => value ? new Date(value).toLocaleDateString() : getCMSField(cmsData, 'admin.promos.sections.table.columns.expiry.noExpiry', 'No expiry')
     },
     {
       key: 'usageCount',
-      label: 'Usage',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.columns.usage.label', 'Usage'),
       sortable: true,
       render: (_, promo) => (
         <Container>
@@ -202,14 +204,14 @@ function PromosPageContent() {
             {promo.usageCount || 0}
           </Span>
           <Span>
-            /{promo.usageLimit || '∞'}
+            /{promo.usageLimit || getCMSField(cmsData, 'admin.promos.sections.table.columns.usage.unlimited', '∞')}
           </Span>
         </Container>
       )
     },
     {
       key: 'actions',
-      label: 'Status',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.columns.status.label', 'Status'),
       sortable: false,
       render: (_, promo) => renderStatus(promo)
     }
@@ -218,28 +220,28 @@ function PromosPageContent() {
   // Table actions
   const actions: DataTableAction<PromoCode>[] = [
     {
-      label: 'Copy Code',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.actions.copyCode', 'Copy Code'),
       icon: '📋',
       onClick: (promo) => {
         navigator.clipboard.writeText(promo.code);
-        alert(`Promo code "${promo.code}" copied to clipboard!`);
+        alert(`${getCMSField(cmsData, 'admin.promos.messages.codeCopied', 'Promo code')} "${promo.code}" ${getCMSField(cmsData, 'admin.promos.messages.copiedToClipboard', 'copied to clipboard!')}`);
       },
       variant: 'outline'
     },
     {
-      label: 'View Usage',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.actions.viewUsage', 'View Usage'),
       icon: '📊',
-      onClick: (promo) => alert(`Usage statistics for ${promo.code} coming soon`),
+      onClick: (promo) => alert(`${getCMSField(cmsData, 'admin.promos.messages.usageStats', 'Usage statistics for')} ${promo.code} ${getCMSField(cmsData, 'admin.promos.messages.comingSoon', 'coming soon')}`),
       variant: 'outline'
     },
     {
-      label: 'Edit',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.actions.edit', 'Edit'),
       icon: '✏️',
-      onClick: (promo) => alert(`Edit functionality for ${promo.code} coming soon`),
+      onClick: (promo) => alert(`${getCMSField(cmsData, 'admin.promos.messages.editFunctionality', 'Edit functionality for')} ${promo.code} ${getCMSField(cmsData, 'admin.promos.messages.comingSoon', 'coming soon')}`),
       variant: 'primary'
     },
     {
-      label: 'Delete',
+      label: getCMSField(cmsData, 'admin.promos.sections.table.actions.delete', 'Delete'),
       icon: '🗑️',
       onClick: (promo) => promo.id && deletePromo(promo.id),
       variant: 'outline'
@@ -247,40 +249,40 @@ function PromosPageContent() {
   ];
 
   // Calculate stats
-  const activePromos = promos.filter(p => getPromoStatus(p) === 'Active').length;
+  const activePromos = promos.filter(p => getPromoStatus(p) === getCMSField(cmsData, 'admin.promos.status.active', 'Active')).length;
   const totalUsage = promos.reduce((sum, p) => sum + (p.usageCount || 0), 0);
-  const expiringPromos = promos.filter(p => getPromoStatus(p) === 'Expiring Soon').length;
+  const expiringPromos = promos.filter(p => getPromoStatus(p) === getCMSField(cmsData, 'admin.promos.status.expiringSoon', 'Expiring Soon')).length;
 
   return (
     <>
       {/* Promo Statistics */}
       <GridSection variant="stats" columns={4}>
         <StatCard
-          title="Total Promos"
+          title={getCMSField(cmsData, 'admin.promos.sections.stats.totalPromos.title', 'Total Promos')}
           icon="🎟️"
           statNumber={promos.length.toString()}
-          statChange="Created codes"
+          statChange={getCMSField(cmsData, 'admin.promos.sections.stats.totalPromos.description', 'Created codes')}
           changeType="neutral"
         />
         <StatCard
-          title="Active Promos"
+          title={getCMSField(cmsData, 'admin.promos.sections.stats.activePromos.title', 'Active Promos')}
           icon="✅"
           statNumber={activePromos.toString()}
-          statChange="Currently usable"
+          statChange={getCMSField(cmsData, 'admin.promos.sections.stats.activePromos.description', 'Currently usable')}
           changeType="positive"
         />
         <StatCard
-          title="Total Usage"
+          title={getCMSField(cmsData, 'admin.promos.sections.stats.totalUsage.title', 'Total Usage')}
           icon="📊"
           statNumber={totalUsage.toString()}
-          statChange="Times used"
+          statChange={getCMSField(cmsData, 'admin.promos.sections.stats.totalUsage.description', 'Times used')}
           changeType="positive"
         />
         <StatCard
-          title="Expiring Soon"
+          title={getCMSField(cmsData, 'admin.promos.sections.stats.expiringSoon.title', 'Expiring Soon')}
           icon="⏰"
           statNumber={expiringPromos.toString()}
-          statChange="Within 7 days"
+          statChange={getCMSField(cmsData, 'admin.promos.sections.stats.expiringSoon.description', 'Within 7 days')}
           changeType={expiringPromos > 0 ? 'negative' : 'neutral'}
         />
       </GridSection>
@@ -313,8 +315,8 @@ function PromosPageContent() {
                 value={form.type} 
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, type: e.target.value})}
                 options={[
-                  { value: 'percent', label: 'Percentage %' },
-                  { value: 'flat', label: 'Fixed Amount $' }
+                  { value: 'percent', label: getCMSField(cmsData, 'admin.promos.form.type.percentage', 'Percentage %') },
+                  { value: 'flat', label: getCMSField(cmsData, 'admin.promos.form.type.fixedAmount', 'Fixed Amount $') }
                 ]}
               />
             </Container>
@@ -360,7 +362,7 @@ function PromosPageContent() {
             <ActionButtonGroup
               buttons={[{
                 id: 'create-promo-code',
-                label: submitting ? 'Creating...' : 'Create Promo Code',
+                label: submitting ? getCMSField(cmsData, 'admin.promos.createPromoButton.submitting', 'Creating...') : getCMSField(cmsData, 'admin.promos.createPromoButton.label', 'Create Promo Code'),
                 onClick: addPromo,
                 variant: 'primary' as const,
                 disabled: !form.code || !form.value || submitting,

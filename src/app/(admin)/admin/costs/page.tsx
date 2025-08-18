@@ -21,9 +21,11 @@ import {
   LoadingSpinner
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function CostsPageContent() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const { addToast } = useToast();
   const [costs, setCosts] = useState<RealCostItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,24 +125,24 @@ function CostsPageContent() {
 
   const headerActions = [
     { 
-      label: 'Refresh', 
+      label: getCMSField(cmsData, 'admin.costs.sections.header.refresh', 'Refresh'), 
       onClick: loadCosts, 
       variant: 'outline' as const,
       disabled: loading
     },
     { 
-      label: 'Update with API', 
+      label: getCMSField(cmsData, 'admin.costs.sections.header.updateWithAPI', 'Update with API'), 
       onClick: updateCostsWithAPI, 
       variant: 'outline' as const,
       disabled: apiIntegrationLoading
     },
     { 
-      label: 'Cost Optimization', 
+      label: getCMSField(cmsData, 'admin.costs.sections.header.costOptimization', 'Cost Optimization'), 
       onClick: () => setShowOptimization(!showOptimization), 
       variant: 'primary' as const 
     },
     { 
-      label: 'Add Cost', 
+      label: getCMSField(cmsData, 'admin.costs.sections.header.addCost', 'Add Cost'), 
       onClick: () => window.location.href = '/admin/costs/manual-entry', 
       variant: 'outline' as const 
     }
@@ -150,37 +152,37 @@ function CostsPageContent() {
   const columns: DataTableColumn<RealCostItem>[] = [
     {
       key: 'category',
-      label: 'Category',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.columns.category.label', 'Category'),
       sortable: true,
       render: (_, cost) => (
         <Container>
-          {getCMSField(cmsData, 'admin.costs.category', cost.category)}
+          {getCMSField(cmsData, 'admin.costs.sections.table.columns.category.field', cost.category)}
         </Container>
       )
     },
     {
       key: 'projectedMonthlyCost',
-      label: 'Projected',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.columns.projectedCost.label', 'Projected'),
       sortable: true,
       render: (value) => (
         <Container>
-          {getCMSField(cmsData, 'admin.costs.projectedCost', `$${(value || 0).toFixed(2)}`)}
+          {getCMSField(cmsData, 'admin.costs.sections.table.columns.projectedCost.field', `$${(value || 0).toFixed(2)}`)}
         </Container>
       )
     },
     {
       key: 'actualMonthlyCost',
-      label: 'Actual',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.columns.actualCost.label', 'Actual'),
       sortable: true,
       render: (value) => (
         <Container>
-          {getCMSField(cmsData, 'admin.costs.actualCost', `$${(value || 0).toFixed(2)}`)}
+          {getCMSField(cmsData, 'admin.costs.sections.table.columns.actualCost.field', `$${(value || 0).toFixed(2)}`)}
         </Container>
       )
     },
     {
       key: 'actions',
-      label: 'Variance',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.columns.variance.label', 'Variance'),
       sortable: false,
       render: (_, cost) => {
         const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
@@ -196,7 +198,7 @@ function CostsPageContent() {
     },
     {
       key: 'actions',
-      label: 'Status',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.columns.status.label', 'Status'),
       sortable: false,
       render: (_, cost) => renderStatus(cost)
     }
@@ -205,19 +207,19 @@ function CostsPageContent() {
   // Table actions
   const actions: DataTableAction<RealCostItem>[] = [
     {
-      label: 'View Details',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.actions.viewDetails', 'View Details'),
       icon: '👁️',
       onClick: (cost) => addToast('info', `Detailed cost breakdown for ${cost.category} coming soon`),
       variant: 'outline'
     },
     {
-      label: 'Update Cost',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.actions.updateCost', 'Update Cost'),
       icon: '✏️',
       onClick: (cost) => addToast('info', `Cost updating for ${cost.category} coming soon`),
       variant: 'primary'
     },
     {
-      label: 'View History',
+      label: getCMSField(cmsData, 'admin.costs.sections.table.actions.viewHistory', 'View History'),
       icon: '📊',
       onClick: (cost) => addToast('info', `Cost history for ${cost.category} coming soon`),
       variant: 'outline'
@@ -228,25 +230,25 @@ function CostsPageContent() {
     {
       id: 1,
       icon: "💡",
-      label: "Cost Optimization",
+      label: getCMSField(cmsData, 'admin.costs.sections.quickActions.costOptimization', 'Cost Optimization'),
       onClick: () => setShowOptimization(!showOptimization)
     },
     {
       id: 2,
       icon: "🔄",
-      label: "Update with API",
+      label: getCMSField(cmsData, 'admin.costs.sections.quickActions.updateWithAPI', 'Update with API'),
       onClick: updateCostsWithAPI
     },
     {
       id: 3,
       icon: "📊",
-      label: "Cost Analytics",
+      label: getCMSField(cmsData, 'admin.costs.sections.quickActions.costAnalytics', 'Cost Analytics'),
       onClick: () => addToast('info', 'Analytics dashboard coming soon')
     },
     {
       id: 4,
       icon: "⚙️",
-      label: "Cost Settings",
+      label: getCMSField(cmsData, 'admin.costs.sections.quickActions.costSettings', 'Cost Settings'),
       href: "/admin/cms/business"
     }
   ];
@@ -261,42 +263,64 @@ function CostsPageContent() {
       <GridSection variant="stats" columns={4}>
         <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Total Monthly Cost</Text>
+            <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.stats.totalMonthlyCost.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.totalMonthlyCost.title', 'Total Monthly Cost')}
+            </Text>
             <Text size="xl" weight="bold">{summary ? formatCurrency(summary.totalActualCost) : '$0'}</Text>
-            <Text variant="muted" size="sm">
+            <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.stats.totalMonthlyCost.description" mode={mode}>
               {summary && summary.totalProjectedCost > 0 
                 ? `${((summary.totalActualCost / summary.totalProjectedCost - 1) * 100).toFixed(1)}% vs projected`
-                : 'No projection'
+                : getCMSField(cmsData, 'admin.costs.sections.stats.totalMonthlyCost.noProjection', 'No projection')
               }
             </Text>
-            {getCMSField(cmsData, 'admin.costs.totalMonthlyCost', 'Total monthly cost tracking')}
+            <Text data-cms-id="admin.costs.sections.stats.totalMonthlyCost.tracking" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.totalMonthlyCost.tracking', 'Total monthly cost tracking')}
+            </Text>
           </Stack>
         </Box>
         
         <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Projected Monthly</Text>
+            <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.stats.projectedMonthly.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.projectedMonthly.title', 'Projected Monthly')}
+            </Text>
             <Text size="xl" weight="bold">{summary ? formatCurrency(summary.totalProjectedCost) : '$0'}</Text>
-            <Text variant="muted" size="sm">{costs.length} cost categories</Text>
-            {getCMSField(cmsData, 'admin.costs.projectedMonthly', 'Projected monthly costs')}
+            <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.stats.projectedMonthly.categories" mode={mode}>
+              {costs.length} {getCMSField(cmsData, 'admin.costs.sections.stats.projectedMonthly.categories', 'cost categories')}
+            </Text>
+            <Text data-cms-id="admin.costs.sections.stats.projectedMonthly.description" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.projectedMonthly.description', 'Projected monthly costs')}
+            </Text>
           </Stack>
         </Box>
         
         <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">Over Budget Items</Text>
+            <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.stats.overBudgetItems.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.overBudgetItems.title', 'Over Budget Items')}
+            </Text>
             <Text size="xl" weight="bold">{overBudgetItems.toString()}</Text>
-            <Text variant="muted" size="sm">{pendingItems} pending updates</Text>
-            {getCMSField(cmsData, 'admin.costs.overBudgetItems', 'Items over budget')}
+            <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.stats.overBudgetItems.pending" mode={mode}>
+              {pendingItems} {getCMSField(cmsData, 'admin.costs.sections.stats.overBudgetItems.pendingText', 'pending updates')}
+            </Text>
+            <Text data-cms-id="admin.costs.sections.stats.overBudgetItems.description" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.overBudgetItems.description', 'Items over budget')}
+            </Text>
           </Stack>
         </Box>
         
         <Box variant="elevated" padding="lg">
           <Stack spacing="sm">
-            <Text variant="lead" size="md" weight="semibold">API Connected</Text>
+            <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.stats.apiConnected.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.apiConnected.title', 'API Connected')}
+            </Text>
             <Text size="xl" weight="bold">{apiConnectedProviders.toString()}</Text>
-            <Text variant="muted" size="sm">Service providers</Text>
-            {getCMSField(cmsData, 'admin.costs.apiConnected', 'Connected service providers')}
+            <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.stats.apiConnected.providers" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.apiConnected.providers', 'Service providers')}
+            </Text>
+            <Text data-cms-id="admin.costs.sections.stats.apiConnected.description" mode={mode}>
+              {getCMSField(cmsData, 'admin.costs.sections.stats.apiConnected.description', 'Connected service providers')}
+            </Text>
           </Stack>
         </Box>
       </GridSection>
@@ -306,8 +330,12 @@ function CostsPageContent() {
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">💰 Cost Breakdown</Text>
-              <Text variant="muted" size="sm">Search, sort, and manage your business cost categories</Text>
+              <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.table.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.costs.sections.table.title', '💰 Cost Breakdown')}
+              </Text>
+              <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.table.description" mode={mode}>
+                {getCMSField(cmsData, 'admin.costs.sections.table.description', 'Search, sort, and manage your business cost categories')}
+              </Text>
             </Stack>
           <DataTable
             data={costs}
@@ -329,8 +357,12 @@ function CostsPageContent() {
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack spacing="sm">
-                <Text variant="lead" size="md" weight="semibold">💡 Cost Optimization</Text>
-                <Text variant="muted" size="sm">AI-powered recommendations to reduce your business costs</Text>
+                <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.optimizationPanel.title" mode={mode}>
+                  {getCMSField(cmsData, 'admin.costs.sections.optimizationPanel.title', '💡 Cost Optimization')}
+                </Text>
+                <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.optimizationPanel.description" mode={mode}>
+                  {getCMSField(cmsData, 'admin.costs.sections.optimizationPanel.description', 'AI-powered recommendations to reduce your business costs')}
+                </Text>
               </Stack>
               <CostOptimizationPanel 
                 onOptimizationApplied={(optimizationId) => {
@@ -349,8 +381,12 @@ function CostsPageContent() {
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">🔗 Service Provider Status</Text>
-              <Text variant="muted" size="sm">Real-time API connections for cost data</Text>
+              <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.serviceProviders.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.costs.sections.serviceProviders.title', '🔗 Service Provider Status')}
+              </Text>
+              <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.serviceProviders.description" mode={mode}>
+                {getCMSField(cmsData, 'admin.costs.sections.serviceProviders.description', 'Real-time API connections for cost data')}
+              </Text>
             </Stack>
             
             <Stack spacing="md">
@@ -396,8 +432,12 @@ function CostsPageContent() {
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">⚡ Quick Actions</Text>
-              <Text variant="muted" size="sm">Manage your cost tracking and generate reports</Text>
+              <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.costs.sections.quickActions.quickActionsTitle" mode={mode}>
+                {getCMSField(cmsData, 'admin.costs.sections.quickActions.quickActionsTitle', '⚡ Quick Actions')}
+              </Text>
+              <Text variant="muted" size="sm" data-cms-id="admin.costs.sections.quickActions.quickActionsDescription" mode={mode}>
+                {getCMSField(cmsData, 'admin.costs.sections.quickActions.quickActionsDescription', 'Manage your cost tracking and generate reports')}
+              </Text>
             </Stack>
             <ActionGrid actions={quickActions} columns={4} />
           </Stack>

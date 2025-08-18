@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { History, GitBranch, User, Calendar, FileText, CheckCircle, XCircle } from 'lucide-react';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 interface ContentVersion {
   id: string;
   pageType: string;
@@ -20,6 +21,7 @@ interface ContentVersion {
 
 export default function VersionControlPage() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [versions, setVersions] = useState<ContentVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<ContentVersion | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,9 +106,9 @@ export default function VersionControlPage() {
   };
 
   const getChangeType = (oldValue: any, newValue: any) => {
-    if (!oldValue && newValue) return 'Added';
-    if (oldValue && !newValue) return 'Removed';
-    return 'Modified';
+    if (!oldValue && newValue) return getCMSField(cmsData, 'admin.versionControl.sections.changes.added', 'Added');
+    if (oldValue && !newValue) return getCMSField(cmsData, 'admin.versionControl.sections.changes.removed', 'Removed');
+    return getCMSField(cmsData, 'admin.versionControl.sections.changes.modified', 'Modified');
   };
 
   const formatValue = (value: any) => {
@@ -118,13 +120,11 @@ export default function VersionControlPage() {
 
   if (loading) {
     return (
-      
-        <Container>
-          <Text>
-            {getCMSField(cmsData, 'admin.versionControl.loading', 'Loading...')}
-          </Text>
-        </Container>
-      
+      <Container>
+        <Text data-cms-id="admin.versionControl.sections.loading.message" mode={mode}>
+          {getCMSField(cmsData, 'admin.versionControl.sections.loading.message', 'Loading...')}
+        </Text>
+      </Container>
     );
   }
 
@@ -134,17 +134,19 @@ export default function VersionControlPage() {
         <Stack direction="vertical" spacing="lg">
           {/* Header Actions */}
           <Box variant="elevated" padding="md">
-            <H2>
-              {getCMSField(cmsData, 'admin.versionControl.actions', 'Version Control')}
+            <H2 data-cms-id="admin.versionControl.sections.header.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.versionControl.sections.header.title', 'Version Control')}
             </H2>
             <Stack direction="horizontal" spacing="sm">
               <Button
                 onClick={loadVersions}
                 variant="outline"
+                data-cms-id="admin.versionControl.sections.header.refresh"
+                interactionMode={mode}
               >
                 <History size={16} />
                 <Span>
-                  {getCMSField(cmsData, 'admin.versionControl.refresh', 'Refresh')}
+                  {getCMSField(cmsData, 'admin.versionControl.sections.header.refresh', 'Refresh')}
                 </Span>
               </Button>
             </Stack>
@@ -152,12 +154,12 @@ export default function VersionControlPage() {
 
           {/* Version List */}
           <Box variant="elevated" padding="md">
-            <H2>
-              {getCMSField(cmsData, 'admin.versionControl.history', 'Version History')}
+            <H2 data-cms-id="admin.versionControl.sections.history.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.versionControl.sections.history.title', 'Version History')}
             </H2>
             {versions.length === 0 ? (
-              <Text variant="muted" size="sm">
-                {getCMSField(cmsData, 'admin.versionControl.noVersions', 'No versions available')}
+              <Text variant="muted" size="sm" data-cms-id="admin.versionControl.sections.history.noVersions" mode={mode}>
+                {getCMSField(cmsData, 'admin.versionControl.sections.history.noVersions', 'No versions available')}
               </Text>
             ) : (
               <Stack direction="vertical" spacing="sm">
@@ -166,10 +168,10 @@ export default function VersionControlPage() {
                     <Stack direction="horizontal" spacing="sm" align="center">
                       <GitBranch size={16} />
                       <Stack direction="vertical" spacing="xs">
-                        <Text size="sm" weight="semibold">
+                        <Text size="sm" weight="semibold" data-cms-id="admin.versionControl.sections.history.version.title" mode={mode}>
                           {version.pageType} - {version.field}
                         </Text>
-                        <Text size="xs" variant="muted">
+                        <Text size="xs" variant="muted" data-cms-id="admin.versionControl.sections.history.version.details" mode={mode}>
                           <User size={12} />
                           <Span> {version.author}</Span>
                           <Span> • </Span>
@@ -180,21 +182,21 @@ export default function VersionControlPage() {
                           <Span> {getChangeType(version.oldValue, version.newValue)}</Span>
                         </Text>
                         {version.comment && (
-                          <Text size="xs" variant="muted">
+                          <Text size="xs" variant="muted" data-cms-id="admin.versionControl.sections.history.version.comment" mode={mode}>
                             "{version.comment}"
                           </Text>
                         )}
                       </Stack>
                       <Stack direction="horizontal" spacing="xs">
                         {version.approved ? (
-                          <Span variant="default" size="xs">
+                          <Span variant="default" size="xs" data-cms-id="admin.versionControl.sections.history.version.approved" mode={mode}>
                             <CheckCircle size={12} />
-                            <Span> Approved</Span>
+                            <Span> {getCMSField(cmsData, 'admin.versionControl.sections.history.version.status.approved', 'Approved')}</Span>
                           </Span>
                         ) : (
-                          <Span variant="default" size="xs">
+                          <Span variant="default" size="xs" data-cms-id="admin.versionControl.sections.history.version.pending" mode={mode}>
                             <XCircle size={12} />
-                            <Span> Pending</Span>
+                            <Span> {getCMSField(cmsData, 'admin.versionControl.sections.history.version.status.pending', 'Pending')}</Span>
                           </Span>
                         )}
                         <Button

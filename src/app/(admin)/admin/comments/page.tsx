@@ -11,9 +11,11 @@ import { Textarea, Select, Input } from '@/ui';
 import { CheckCircle, Clock, AlertCircle, Search, Download, Eye, Edit, Trash2, BarChart3, FileText } from 'lucide-react';
 import StatusBadge from '@/components/business/StatusBadge';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 export default function AdminCommentsPage() {
   const { isAdmin } = useAdminStatus();
+  const { mode } = useInteractionMode();
   const [comments, setComments] = useState<CommentRecord[]>([]);
   const [filteredComments, setFilteredComments] = useState<CommentRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,7 +102,7 @@ export default function AdminCommentsPage() {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (confirm('Are you sure you want to delete this comment?')) {
+    if (confirm(getCMSField(cmsData, 'admin.comments.confirmations.deleteComment', 'Are you sure you want to delete this comment?'))) {
       try {
       await commentsService.deleteComment(commentId);
         await loadComments();
@@ -162,8 +164,12 @@ export default function AdminCommentsPage() {
   if (!isAdmin) {
     return (
       <Container variant="elevated" padding="lg">
-        <H2>Access Denied</H2>
-        <Span>You must be an admin to view this page.</Span>
+        <H2 data-cms-id="admin.comments.access.accessDenied" mode={mode}>
+          {getCMSField(cmsData, 'admin.comments.access.accessDenied', 'Access Denied')}
+        </H2>
+        <Span data-cms-id="admin.comments.access.description" mode={mode}>
+          {getCMSField(cmsData, 'admin.comments.access.description', 'You must be an admin to view this page.')}
+        </Span>
       </Container>
     );
   }
@@ -171,7 +177,9 @@ export default function AdminCommentsPage() {
   if (loading) {
     return (
       <Container variant="elevated" padding="lg">
-        <H2>Loading Comments...</H2>
+        <H2 data-cms-id="admin.comments.loading.title" mode={mode}>
+          {getCMSField(cmsData, 'admin.comments.loading.title', 'Loading Comments...')}
+        </H2>
       </Container>
     );
   }
@@ -181,11 +189,11 @@ export default function AdminCommentsPage() {
       <Stack spacing="lg">
         {/* Header */}
         <Container variant="elevated" padding="md">
-          <H2>
-            {getCMSField(cmsData, 'adminComments.title', 'Comment Management')}
+          <H2 data-cms-id="admin.comments.header.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.comments.header.title', 'Comment Management')}
           </H2>
-          <Span variant="default" size="sm" color="muted">
-            Manage all comments across the site
+          <Span variant="default" size="sm" color="muted" data-cms-id="admin.comments.header.description" mode={mode}>
+            {getCMSField(cmsData, 'admin.comments.header.description', 'Manage all comments across the site')}
           </Span>
         </Container>
 
@@ -193,13 +201,17 @@ export default function AdminCommentsPage() {
         <Container variant="elevated" padding="md">
           <Stack spacing="md">
             <Container variant="elevated" padding="sm">
-              <H4>Filters</H4>
+              <H4 data-cms-id="admin.comments.filters.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.comments.filters.title', 'Filters')}
+              </H4>
               <Stack spacing="sm">
                 <Container variant="elevated" padding="xs">
-                  <Span variant="default" size="sm">Search:</Span>
+                  <Span variant="default" size="sm" data-cms-id="admin.comments.filters.search.label" mode={mode}>
+                    {getCMSField(cmsData, 'admin.comments.filters.search.label', 'Search:')}
+                  </Span>
                   <Input
                     type="text"
-                    placeholder="Search comments, elements, or pages..."
+                    placeholder={getCMSField(cmsData, 'admin.comments.filters.search.placeholder', 'Search comments, elements, or pages...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     icon={<Search size={16} />}
@@ -207,26 +219,30 @@ export default function AdminCommentsPage() {
                 </Container>
                 
                 <Container variant="elevated" padding="xs">
-                  <Span variant="default" size="sm">Status:</Span>
+                  <Span variant="default" size="sm" data-cms-id="admin.comments.filters.status.label" mode={mode}>
+                    {getCMSField(cmsData, 'admin.comments.filters.status.label', 'Status:')}
+                  </Span>
                   <Select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     options={[
-                      { value: 'all', label: 'All Statuses' },
-                      { value: 'open', label: 'Open' },
-                      { value: 'in-progress', label: 'In Progress' },
-                      { value: 'resolved', label: 'Resolved' }
+                      { value: 'all', label: getCMSField(cmsData, 'admin.comments.filters.status.allStatuses', 'All Statuses') },
+                      { value: 'open', label: getCMSField(cmsData, 'admin.comments.filters.status.open', 'Open') },
+                      { value: 'in-progress', label: getCMSField(cmsData, 'admin.comments.filters.status.inProgress', 'In Progress') },
+                      { value: 'resolved', label: getCMSField(cmsData, 'admin.comments.filters.status.resolved', 'Resolved') }
                     ]}
                   />
                 </Container>
 
                 <Container variant="elevated" padding="xs">
-                  <Span variant="default" size="sm">Page:</Span>
+                  <Span variant="default" size="sm" data-cms-id="admin.comments.filters.page.label" mode={mode}>
+                    {getCMSField(cmsData, 'admin.comments.filters.page.label', 'Page:')}
+                  </Span>
                   <Select
                     value={pageFilter}
                     onChange={(e) => setPageFilter(e.target.value)}
                     options={[
-                      { value: 'all', label: 'All Pages' },
+                      { value: 'all', label: getCMSField(cmsData, 'admin.comments.filters.page.allPages', 'All Pages') },
                       ...getUniquePages()
                     ]}
                   />
@@ -236,24 +252,26 @@ export default function AdminCommentsPage() {
 
             <Container variant="elevated" padding="sm">
               <Container variant="elevated" padding="xs">
-                <Span variant="default" size="sm">Export Format:</Span>
+                <Span variant="default" size="sm" data-cms-id="admin.comments.export.format.label" mode={mode}>
+                  {getCMSField(cmsData, 'admin.comments.export.format.label', 'Export Format:')}
+                </Span>
                 <Select
                   value={exportFormat}
                   onChange={(e) => setExportFormat(e.target.value as 'csv' | 'json')}
                   options={[
-                    { value: 'csv', label: 'CSV' },
-                    { value: 'json', label: 'JSON' }
+                    { value: 'csv', label: getCMSField(cmsData, 'admin.comments.export.format.csv', 'CSV') },
+                    { value: 'json', label: getCMSField(cmsData, 'admin.comments.export.format.json', 'JSON') }
                   ]}
                 />
               </Container>
               <Container variant="elevated" padding="xs">
-                <Button onClick={exportComments} variant="secondary">
+                <Button onClick={exportComments} variant="secondary" data-cms-id="admin.comments.export.exportButton" interactionMode={mode}>
                   <Download size={16} />
-                  Export Comments
+                  {getCMSField(cmsData, 'admin.comments.export.exportButton', 'Export Comments')}
                 </Button>
-                <Button onClick={generateAnalytics} variant="secondary">
+                <Button onClick={generateAnalytics} variant="secondary" data-cms-id="admin.comments.export.generateAnalytics" interactionMode={mode}>
                   <BarChart3 size={16} />
-                  Generate Analytics
+                  {getCMSField(cmsData, 'admin.comments.export.generateAnalytics', 'Generate Analytics')}
                 </Button>
               </Container>
             </Container>
@@ -262,13 +280,15 @@ export default function AdminCommentsPage() {
 
         {/* Comments List */}
         <Container variant="elevated" padding="md">
-          <H3>
-            Comments ({filteredComments.length})
+          <H3 data-cms-id="admin.comments.list.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.comments.list.title', 'Comments')} ({filteredComments.length})
           </H3>
           
           {filteredComments.length === 0 ? (
             <Container variant="elevated" padding="lg">
-              <Span>No comments found matching your filters.</Span>
+              <Span data-cms-id="admin.comments.list.noComments" mode={mode}>
+                {getCMSField(cmsData, 'admin.comments.list.noComments', 'No comments found matching your filters.')}
+              </Span>
             </Container>
           ) : (
             <Stack spacing="md">
@@ -280,7 +300,7 @@ export default function AdminCommentsPage() {
                 >
                   <Container variant="elevated" padding="sm">
                     <Container variant="elevated" padding="xs">
-                      <Span variant="default" size="sm" color="muted">
+                      <Span variant="default" size="sm" color="muted" data-cms-id="admin.comments.list.comment.pageTitle" mode={mode}>
                         {comment.pageTitle}
                       </Span>
                       <Span variant="default" size="sm" color="muted">
@@ -289,8 +309,8 @@ export default function AdminCommentsPage() {
                     </Container>
                     
                     <Container variant="elevated" padding="xs">
-                      <Span variant="default" size="sm" color="muted">
-                        Element: {comment.elementText}
+                      <Span variant="default" size="sm" color="muted" data-cms-id="admin.comments.list.comment.element" mode={mode}>
+                        {getCMSField(cmsData, 'admin.comments.list.comment.elementLabel', 'Element:')} {comment.elementText}
                       </Span>
                     </Container>
                   </Container>
