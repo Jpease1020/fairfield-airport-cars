@@ -12,6 +12,8 @@ import {
   LoadingSpinner,
   H1
 } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 interface Payment {
   id: string;
@@ -25,6 +27,9 @@ interface Payment {
 }
 
 function PaymentsPageContent() {
+  const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
+  
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -97,7 +102,7 @@ function PaymentsPageContent() {
       const data = await response.json();
       setPayments(data.payments || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch payments');
+      setError(getCMSField(cmsData, 'admin.payments.error.fetchFailed', 'Failed to fetch payments'));
     } finally {
       setLoading(false);
     }
@@ -105,14 +110,16 @@ function PaymentsPageContent() {
 
   useEffect(() => {
     fetchPayments();
-  }, []);
+  }, [cmsData]);
 
   if (loading) {
     return (
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner />
-          <Text variant="body">Loading payments from database...</Text>
+          <Text variant="body" data-cms-id="admin.payments.loading.loadingPayments" mode={mode}>
+            {getCMSField(cmsData, 'admin.payments.loading.loadingPayments', 'Loading payments from database...')}
+          </Text>
         </Stack>
       </Container>
     );
@@ -122,11 +129,11 @@ function PaymentsPageContent() {
     return (
       <Container>
         <Stack spacing="lg" align="center">
-          <Alert variant="error" title="Error Loading Payments">
+          <Alert variant="error" title={getCMSField(cmsData, 'admin.payments.error.title', 'Error Loading Payments')}>
             {error}
           </Alert>
-          <Button onClick={fetchPayments} variant="primary">
-            Try Again
+          <Button onClick={fetchPayments} variant="primary" data-cms-id="admin.payments.error.tryAgain" interactionMode={mode}>
+            {getCMSField(cmsData, 'admin.payments.error.tryAgain', 'Try Again')}
           </Button>
         </Stack>
       </Container>
@@ -150,8 +157,10 @@ function PaymentsPageContent() {
         size="sm" 
         variant="secondary" 
         onClick={() => handleRefund(payment)}
+        data-cms-id="admin.payments.sections.table.actions.refund"
+        interactionMode={mode}
       >
-        Refund
+        {getCMSField(cmsData, 'admin.payments.sections.table.actions.refund', 'Refund')}
       </Button>
     ) : null
   }));
@@ -160,24 +169,28 @@ function PaymentsPageContent() {
     <Container>
       <Stack spacing="xl">
         <Stack spacing="md">
-          <H1>Payment Management</H1>
-          <Text variant="body" color="secondary">
-            Track all payment transactions and manage refunds
+          <H1 data-cms-id="admin.payments.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.payments.title', 'Payment Management')}
+          </H1>
+          <Text variant="body" color="secondary" data-cms-id="admin.payments.subtitle" mode={mode}>
+            {getCMSField(cmsData, 'admin.payments.subtitle', 'Track all payment transactions and manage refunds')}
           </Text>
         </Stack>
 
         {/* Status Filter */}
         <Stack spacing="sm">
-          <Text variant="small" weight="medium">Filter by Status</Text>
+          <Text variant="small" weight="medium" data-cms-id="admin.payments.sections.filter.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.payments.sections.filter.title', 'Filter by Status')}
+          </Text>
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="all">All Payments</option>
-            <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
-            <option value="failed">Failed</option>
-            <option value="refunded">Refunded</option>
+            <option value="all">{getCMSField(cmsData, 'admin.payments.sections.filter.allPayments', 'All Payments')}</option>
+            <option value="completed">{getCMSField(cmsData, 'admin.payments.sections.filter.completed', 'Completed')}</option>
+            <option value="pending">{getCMSField(cmsData, 'admin.payments.sections.filter.pending', 'Pending')}</option>
+            <option value="failed">{getCMSField(cmsData, 'admin.payments.sections.filter.failed', 'Failed')}</option>
+            <option value="refunded">{getCMSField(cmsData, 'admin.payments.sections.filter.refunded', 'Refunded')}</option>
           </select>
         </Stack>
 
@@ -187,7 +200,9 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">💰</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">Total Payments</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.payments.sections.stats.totalPayments" mode={mode}>
+                  {getCMSField(cmsData, 'admin.payments.sections.stats.totalPayments', 'Total Payments')}
+                </Text>
                 <Text size="xl" weight="bold">{stats.totalPayments}</Text>
               </Stack>
             </Stack>
@@ -197,7 +212,9 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">Completed</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.payments.sections.stats.completed" mode={mode}>
+                  {getCMSField(cmsData, 'admin.payments.sections.stats.completed', 'Completed')}
+                </Text>
                 <Text size="xl" weight="bold">{stats.completedPayments}</Text>
               </Stack>
             </Stack>
@@ -207,7 +224,9 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">📊</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">Total Revenue</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.payments.sections.stats.totalRevenue" mode={mode}>
+                  {getCMSField(cmsData, 'admin.payments.sections.stats.totalRevenue', 'Total Revenue')}
+                </Text>
                 <Text size="xl" weight="bold">{formatCurrency(stats.totalAmount)}</Text>
               </Stack>
             </Stack>
@@ -217,7 +236,9 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🔄</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">Net Revenue</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.payments.sections.stats.netRevenue" mode={mode}>
+                  {getCMSField(cmsData, 'admin.payments.sections.stats.netRevenue', 'Net Revenue')}
+                </Text>
                 <Text size="xl" weight="bold">{formatCurrency(stats.netRevenue)}</Text>
               </Stack>
             </Stack>
@@ -229,9 +250,11 @@ function PaymentsPageContent() {
           <Box>
             <Stack spacing="md" align="center">
               <Text size="xl">💳</Text>
-              <Text size="lg" weight="medium">No Payments Found</Text>
-              <Text variant="body" color="secondary">
-                No payments match your current filter criteria.
+              <Text size="lg" weight="medium" data-cms-id="admin.payments.sections.table.noPayments.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.payments.sections.table.noPayments.title', 'No Payments Found')}
+              </Text>
+              <Text variant="body" color="secondary" data-cms-id="admin.payments.sections.table.noPayments.description" mode={mode}>
+                {getCMSField(cmsData, 'admin.payments.sections.table.noPayments.description', 'No payments match your current filter criteria.')}
               </Text>
             </Stack>
           </Box>
@@ -239,12 +262,12 @@ function PaymentsPageContent() {
           <DataTable
             data={tableData}
             columns={[
-              { key: 'customer', label: 'Customer' },
-              { key: 'email', label: 'Email' },
-              { key: 'amount', label: 'Amount' },
-              { key: 'status', label: 'Status' },
-              { key: 'date', label: 'Date' },
-              { key: 'actions', label: 'Actions' }
+              { key: 'customer', label: getCMSField(cmsData, 'admin.payments.sections.table.columns.customer', 'Customer') },
+              { key: 'email', label: getCMSField(cmsData, 'admin.payments.sections.table.columns.email', 'Email') },
+              { key: 'amount', label: getCMSField(cmsData, 'admin.payments.sections.table.columns.amount', 'Amount') },
+              { key: 'status', label: getCMSField(cmsData, 'admin.payments.sections.table.columns.status', 'Status') },
+              { key: 'date', label: getCMSField(cmsData, 'admin.payments.sections.table.columns.date', 'Date') },
+              { key: 'actions', label: getCMSField(cmsData, 'admin.payments.sections.table.columns.actions', 'Actions') }
             ]}
           />
         )}

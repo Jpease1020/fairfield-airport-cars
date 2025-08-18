@@ -14,6 +14,7 @@ import {
   useToast
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = 'gregg';
@@ -23,6 +24,7 @@ function DriverLocationContent() {
   const allowed = search.get('key') === process.env.NEXT_PUBLIC_DRIVER_SECRET;
   const { addToast } = useToast();
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [status, setStatus] = useState('Requesting location permission…');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -66,7 +68,9 @@ function DriverLocationContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            {getCMSField(cmsData, 'driver.location.loading.message', 'Please wait while we initialize location services...')}
+            <Text data-cms-id="driver.location.loading.message" mode={mode}>
+              {getCMSField(cmsData, 'driver.location.loading.message', 'Please wait while we initialize location services...')}
+            </Text>
           </Container>
         </GridSection>
       </Container>
@@ -78,23 +82,23 @@ function DriverLocationContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            <Text>
+            <Text data-cms-id="driver.location.unauthorized.title" mode={mode}>
               {getCMSField(cmsData, 'driver.location.unauthorized.title', '❌ Unauthorized')}
             </Text>
-            <Text>
+            <Text data-cms-id="driver.location.unauthorized.description" mode={mode}>
               {getCMSField(cmsData, 'driver.location.unauthorized.description', 'You are not authorized to access this page.')}
             </Text>
             <ActionButtonGroup buttons={[
               {
                 id: 'go-back',
-                label: 'Go Back',
+                label: getCMSField(cmsData, 'driver.location.actions.goBack', 'Go Back'),
                 onClick: () => window.history.back(),
                 variant: 'primary',
                 icon: '⬅️'
               },
               {
                 id: 'contact-support',
-                label: 'Contact Support',
+                label: getCMSField(cmsData, 'driver.location.actions.contactSupport', 'Contact Support'),
                 onClick: () => addToast('info', 'Support: (203) 555-0123'),
                 variant: 'outline',
                 icon: '📞'
@@ -110,24 +114,24 @@ function DriverLocationContent() {
     <Container variant="default" padding="none">
       <GridSection variant="content" columns={1}>
         <Container>
-          <Text>
+          <Text data-cms-id="driver.location.title" mode={mode}>
             {getCMSField(cmsData, 'driver.location.title', '📍 Location Status')}
           </Text>
           
           <div>
-            <Text>
+            <Text data-cms-id="driver.location.status.label" mode={mode}>
               {getCMSField(cmsData, 'driver.location.status.label', 'Status:')}
               {' '}{status}
             </Text>
             
             {coords && (
               <div>
-                <Text>
+                <Text data-cms-id="driver.location.coordinates.label" mode={mode}>
                   <strong>
                     {getCMSField(cmsData, 'driver.location.coordinates.label', 'Current Coordinates:')}
                   </strong>
                 </Text>
-                <Text>
+                <Text data-cms-id="driver.location.coords" mode={mode}>
                   {getCMSField(cmsData, 'driver.location.coords', `Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`)}
                 </Text>
               </div>
@@ -137,14 +141,14 @@ function DriverLocationContent() {
           <ActionButtonGroup buttons={[
             {
               id: 'refresh-location',
-              label: 'Refresh Location',
+              label: getCMSField(cmsData, 'driver.location.actions.refreshLocation', 'Refresh Location'),
               onClick: () => window.location.reload(),
               variant: 'primary',
               icon: '🔄'
             },
             {
               id: 'stop-sharing',
-              label: 'Stop Sharing',
+              label: getCMSField(cmsData, 'driver.location.actions.stopSharing', 'Stop Sharing'),
               onClick: () => {
                 setStatus('Location sharing stopped');
                 addToast('info', 'Location sharing stopped');

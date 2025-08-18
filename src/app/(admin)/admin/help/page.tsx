@@ -3,122 +3,101 @@
 import React from 'react'; 
 import { GridSection, Box, ActionGrid, Container, Text, Stack, H3 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function AdminHelpPage() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const helpSections = [
     {
-      title: "Managing Bookings",
-      icon: "📖",
-      description: "Learn how to handle customer bookings efficiently",
+      title: getCMSField(cmsData, 'admin.help.sections.booking.title', 'Booking Management'),
+      icon: "📋",
+      description: getCMSField(cmsData, 'admin.help.sections.booking.description', 'How to manage bookings and customer requests'),
       items: [
         {
-          question: "How do I view all upcoming rides?",
-          answer: "Go to Admin → Bookings to see all current and upcoming bookings. You can filter by status (pending, confirmed, completed, cancelled)."
+          question: getCMSField(cmsData, 'admin.help.sections.booking.q1.question', 'How do I view all bookings?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.booking.q1.answer', 'Go to Admin > Bookings to see all current and past bookings. You can filter by status, date, and customer.')
         },
         {
-          question: "How do I update a booking status?",
-          answer: "In the Bookings page, click on any booking to view details. Use the status dropdown to change from 'pending' to 'confirmed', 'completed', or 'cancelled'."
+          question: getCMSField(cmsData, 'admin.help.sections.booking.q2.question', 'How do I assign a driver to a booking?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.booking.q2.answer', 'In the Bookings page, click on a booking and use the "Assign Driver" option. You can select from available drivers.')
         },
         {
-          question: "What happens when I confirm a booking?",
-          answer: "The customer receives an SMS and email confirmation with ride details and a calendar invite. The booking status changes to 'confirmed'."
+          question: getCMSField(cmsData, 'admin.help.sections.booking.q3.question', 'What if a customer wants to cancel?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.booking.q3.answer', 'Customers can cancel through their portal, or you can cancel manually in the Admin > Bookings section.')
         },
         {
-          question: "How do I handle cancellations?",
-          answer: "Customers can cancel through their booking link, or you can cancel manually in the admin. Refunds are processed automatically based on your cancellation policy."
+          question: getCMSField(cmsData, 'admin.help.sections.booking.q4.question', 'How do I handle no-shows?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.booking.q4.answer', 'Mark the booking as "No Show" in the status field. This helps track patterns and adjust policies.')
         }
       ]
     },
     {
-      title: "Content Management (CMS)",
-      icon: "⚙️",
-      description: "Update your business information and website content",
+      title: getCMSField(cmsData, 'admin.help.sections.drivers.title', 'Driver Management'),
+      icon: "👨‍💼",
+      description: getCMSField(cmsData, 'admin.help.sections.drivers.description', 'Managing your driver roster and availability'),
       items: [
         {
-          question: "How do I update my business information?",
-          answer: "Go to Admin → CMS → Business Settings to edit your company name, phone, email, address, and hours."
+          question: getCMSField(cmsData, 'admin.help.sections.drivers.q1.question', 'How do I add a new driver?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q1.answer', 'Go to Admin > Drivers and click "Add Driver". Fill in their details and vehicle information.')
         },
         {
-          question: "Can I change the homepage content?",
-          answer: "Yes! Go to Admin → CMS → Pages → Homepage to edit the hero section, features, and contact information."
+          question: getCMSField(cmsData, 'admin.help.sections.drivers.q2.question', 'How do I update driver status?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q2.answer', 'In the Drivers page, use the status buttons to set drivers as Available, Busy, or Offline.')
         },
         {
-          question: "How do I update pricing?",
-          answer: "Go to Admin → CMS → Pricing to set your base fare, per-mile rate, and cancellation policies."
+          question: getCMSField(cmsData, 'admin.help.sections.drivers.q3.question', 'What if a driver is late?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q3.answer', 'Update their status to "Busy" and contact them directly. You can also update the booking status to reflect delays.')
         },
         {
-          question: "Can I edit email and SMS templates?",
-          answer: "Yes! Go to Admin → CMS → Communication to customize all email and SMS messages sent to customers."
+          question: getCMSField(cmsData, 'admin.help.sections.drivers.q4.question', 'How do I track driver performance?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q4.answer', 'View driver ratings and feedback in the Drivers page. Monitor completion rates and customer satisfaction.')
         }
       ]
     },
     {
-      title: "Customer Communication",
-      icon: "📧",
-      description: "Manage automated messages and customer interactions",
-      items: [
-        {
-          question: "What emails do customers receive?",
-          answer: "Booking confirmations (with calendar invite), 24-hour reminders, cancellation confirmations, and feedback requests after completed rides."
-        },
-        {
-          question: "What SMS messages are sent?",
-          answer: "Booking confirmations, 24-hour reminders, 'on my way' notifications, and feedback requests."
-        },
-        {
-          question: "How do I send a custom message to a customer?",
-          answer: "In the Bookings page, click on a booking and use the 'Send Message' feature to send a custom SMS."
-        },
-        {
-          question: "Can I customize the message templates?",
-          answer: "Yes! Go to Admin → CMS → Communication to edit all email and SMS templates with your own wording."
-        }
-      ]
-    },
-    {
-      title: "Payments & Billing",
+      title: getCMSField(cmsData, 'admin.help.sections.payments.title', 'Payment Processing'),
       icon: "💳",
-      description: "Handle payments, refunds, and billing processes",
+      description: getCMSField(cmsData, 'admin.help.sections.payments.description', 'Managing payments and financial transactions'),
       items: [
         {
-          question: "How do payments work?",
-          answer: "Customers pay a 50% deposit when booking. The remaining balance is collected after the ride. All payments are processed through Square."
+          question: getCMSField(cmsData, 'admin.help.sections.payments.q1.question', 'How do I view payment history?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.payments.q1.answer', 'Go to Admin > Payments to see all payment transactions, including successful payments and refunds.')
         },
         {
-          question: "How do I handle refunds?",
-          answer: "Refunds are processed automatically based on your cancellation policy. Full refunds for >24h cancellations, 50% for 3-24h, no refund for <3h."
+          question: getCMSField(cmsData, 'admin.help.sections.payments.q2.question', 'What if a payment fails?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.payments.q2.answer', 'Failed payments are marked in the system. Contact the customer to update their payment method and retry.')
         },
         {
-          question: "Can customers tip?",
-          answer: "Yes! The Square checkout includes tipping options. Tips are automatically added to your earnings."
+          question: getCMSField(cmsData, 'admin.help.sections.payments.q3.question', 'How do I process refunds?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.payments.q3.answer', 'In the Payments page, find the transaction and use the refund option. Enter the amount and reason for the refund.')
         },
         {
-          question: "How do I view payment history?",
-          answer: "Check your Square dashboard for detailed payment history and reports."
+          question: getCMSField(cmsData, 'admin.help.sections.payments.q4.question', 'How do I track revenue?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.payments.q4.answer', 'Use the Analytics page to view revenue trends, payment success rates, and financial summaries.')
         }
       ]
     },
     {
-      title: "Technical Support",
+      title: getCMSField(cmsData, 'admin.help.sections.technical.title', 'Technical Support'),
       icon: "❓",
-      description: "Troubleshooting and technical assistance",
+      description: getCMSField(cmsData, 'admin.help.sections.technical.description', 'Troubleshooting and technical assistance'),
       items: [
         {
-          question: "What if the booking form isn't working?",
-          answer: "Check that your Google Maps API key is configured in the environment variables. Contact your developer if issues persist."
+          question: getCMSField(cmsData, 'admin.help.sections.technical.q1.question', 'What if the booking form isn\'t working?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.technical.q1.answer', 'Check that your Google Maps API key is configured in the environment variables. Contact your developer if issues persist.')
         },
         {
-          question: "How do I reset my admin password?",
-          answer: "Contact your developer to reset your Firebase authentication credentials."
+          question: getCMSField(cmsData, 'admin.help.sections.technical.q2.question', 'How do I reset my admin password?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.technical.q2.answer', 'Contact your developer to reset your Firebase authentication credentials.')
         },
         {
-          question: "What if SMS/email isn't sending?",
-          answer: "Check that Twilio and email credentials are configured in environment variables. Contact your developer for setup assistance."
+          question: getCMSField(cmsData, 'admin.help.sections.technical.q3.question', 'What if SMS/email isn\'t sending?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.technical.q3.answer', 'Check that Twilio and email credentials are configured in environment variables. Contact your developer for setup assistance.')
         },
         {
-          question: "How do I backup my data?",
-          answer: "All data is stored in Firebase Firestore and automatically backed up. Contact your developer for data export if needed."
+          question: getCMSField(cmsData, 'admin.help.sections.technical.q4.question', 'How do I backup my data?'),
+          answer: getCMSField(cmsData, 'admin.help.sections.technical.q4.answer', 'All data is stored in Firebase Firestore and automatically backed up. Contact your developer for data export if needed.')
         }
       ]
     }
@@ -126,18 +105,18 @@ function AdminHelpPage() {
 
   const headerActions = [
     { 
-      label: 'Print Guide', 
+      label: getCMSField(cmsData, 'admin.help.sections.header.printGuide', 'Print Guide'), 
       onClick: () => window.print(), 
       variant: 'outline' as const 
     },
     { 
-      label: 'Documentation', 
+      label: getCMSField(cmsData, 'admin.help.sections.header.documentation', 'Documentation'), 
       onClick: () => window.location.href = '/docs', 
       variant: 'outline' as const 
     },
     { 
-      label: 'Contact Support', 
-      onClick: () => alert('Contact your developer for technical support'), 
+      label: getCMSField(cmsData, 'admin.help.sections.header.contactSupport', 'Contact Support'), 
+      onClick: () => alert(getCMSField(cmsData, 'admin.help.messages.contactDeveloper', 'Contact your developer for technical support')), 
       variant: 'primary' as const 
     }
   ];
@@ -151,21 +130,31 @@ function AdminHelpPage() {
             key={sectionIndex}
           >
             <Stack spacing="md">
-                <Text variant="lead" size="md" weight="semibold">{section.icon} {section.title}</Text>
-                <Text variant="muted" size="sm">{section.description}</Text>
+                <Text variant="lead" size="md" weight="semibold" data-cms-id={`admin.help.sections.${sectionIndex}.title`} mode={mode}>
+                  {section.icon} {section.title}
+                </Text>
+                <Text variant="muted" size="sm" data-cms-id={`admin.help.sections.${sectionIndex}.description`} mode={mode}>
+                  {section.description}
+                </Text>
               </Stack>
             <Container>
-              <H3>
-                {getCMSField(cmsData, 'admin.help.section.title', section.title)}
+              <H3 data-cms-id={`admin.help.sections.${sectionIndex}.sectionTitle`} mode={mode}>
+                {getCMSField(cmsData, `admin.help.sections.${sectionIndex}.sectionTitle`, section.title)}
               </H3>
-              {getCMSField(cmsData, 'admin.help.section.description', section.description)}
+              <Text data-cms-id={`admin.help.sections.${sectionIndex}.sectionDescription`} mode={mode}>
+                {getCMSField(cmsData, `admin.help.sections.${sectionIndex}.sectionDescription`, section.description)}
+              </Text>
             </Container>
             
             <Stack spacing="md">
               {section.items.map((item, index) => (
                 <Container key={index}>
-                  {getCMSField(cmsData, `admin.help.question.${index}`, item.question)}
-                  {getCMSField(cmsData, `admin.help.answer.${index}`, item.answer)}
+                  <Text weight="semibold" data-cms-id={`admin.help.sections.${sectionIndex}.q${index + 1}.question`} mode={mode}>
+                    {getCMSField(cmsData, `admin.help.sections.${sectionIndex}.q${index + 1}.question`, item.question)}
+                  </Text>
+                  <Text variant="muted" size="sm" data-cms-id={`admin.help.sections.${sectionIndex}.q${index + 1}.answer`} mode={mode}>
+                    {getCMSField(cmsData, `admin.help.sections.${sectionIndex}.q${index + 1}.answer`, item.answer)}
+                  </Text>
                 </Container>
               ))}
             </Stack>
@@ -178,24 +167,36 @@ function AdminHelpPage() {
         <Box>
           <Stack spacing="md">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">📞 Need More Help?</Text>
-              <Text variant="muted" size="sm">If you can't find the answer you're looking for, here are additional resources</Text>
+              <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.help.sections.additionalResources.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.help.sections.additionalResources.title', '📞 Need More Help?')}
+              </Text>
+              <Text variant="muted" size="sm" data-cms-id="admin.help.sections.additionalResources.description" mode={mode}>
+                {getCMSField(cmsData, 'admin.help.sections.additionalResources.description', 'If you can\'t find the answer you\'re looking for, here are additional resources')}
+              </Text>
             </Stack>
           <Stack spacing="md">
             <Container>
-              {getCMSField(cmsData, 'admin.help.technical_support', 'Contact your developer for technical support')}
+              <Text data-cms-id="admin.help.sections.additionalResources.technicalSupport" mode={mode}>
+                {getCMSField(cmsData, 'admin.help.sections.additionalResources.technicalSupport', 'Contact your developer for technical support')}
+              </Text>
             </Container>
             
             <Container>
-              {getCMSField(cmsData, 'admin.help.business_docs', 'Check the business documentation in your project files')}
+              <Text data-cms-id="admin.help.sections.additionalResources.businessDocs" mode={mode}>
+                {getCMSField(cmsData, 'admin.help.sections.additionalResources.businessDocs', 'Check the business documentation in your project files')}
+              </Text>
             </Container>
             
             <Container>
-              {getCMSField(cmsData, 'admin.help.cms_settings', 'Review your CMS settings for configuration options')}
+              <Text data-cms-id="admin.help.sections.additionalResources.cmsSettings" mode={mode}>
+                {getCMSField(cmsData, 'admin.help.sections.additionalResources.cmsSettings', 'Review your CMS settings for configuration options')}
+              </Text>
             </Container>
             
             <Container>
-              {getCMSField(cmsData, 'admin.help.admin_dashboard', 'Use the Admin Dashboard to monitor your business metrics')}
+              <Text data-cms-id="admin.help.sections.additionalResources.adminDashboard" mode={mode}>
+                {getCMSField(cmsData, 'admin.help.sections.additionalResources.adminDashboard', 'Use the Admin Dashboard to monitor your business metrics')}
+              </Text>
             </Container>
           </Stack>
           </Stack>

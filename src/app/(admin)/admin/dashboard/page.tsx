@@ -16,9 +16,11 @@ import {
 } from '@/ui';
 import { ContentCard, Grid } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function CustomerDashboardContent() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,7 +92,9 @@ function CustomerDashboardContent() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Initializing dashboard...</Text>
+          <Text data-cms-id="admin.dashboard.sections.loading.message" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.loading.message', 'Loading your dashboard...')}
+          </Text>
         </Stack>
       </Container>
     );
@@ -101,7 +105,9 @@ function CustomerDashboardContent() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading your dashboard...</Text>
+          <Text data-cms-id="admin.dashboard.sections.loading.message" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.loading.message', 'Loading your dashboard...')}
+          </Text>
         </Stack>
       </Container>
     );
@@ -111,9 +117,11 @@ function CustomerDashboardContent() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">Please log in to access your dashboard.</Text>
-          <Button onClick={() => router.push('/login')}>
-            Go to Login
+          <Text variant="muted" data-cms-id="admin.dashboard.sections.login.message" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.login.message', 'Please log in to access your dashboard.')}
+          </Text>
+          <Button onClick={() => router.push('/login')} data-cms-id="admin.dashboard.sections.login.button" interactionMode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.login.button', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -124,21 +132,21 @@ function CustomerDashboardContent() {
   const stats = [
     {
       icon: '📊',
-      title: 'Total Bookings',
+      title: getCMSField(cmsData, 'admin.dashboard.sections.stats.totalBookings.title', 'Total Bookings'),
       amount: (profile.totalBookings || 0).toString(),
-      subtitle: 'Total bookings'
+      subtitle: getCMSField(cmsData, 'admin.dashboard.sections.stats.totalBookings.subtitle', 'Total bookings')
     },
     {
       icon: '💰',
-      title: 'Total Spent',
+      title: getCMSField(cmsData, 'admin.dashboard.sections.stats.totalSpent.title', 'Total Spent'),
       amount: `$${(profile.totalSpent || 0).toFixed(2)}`,
-      subtitle: 'Total spent'
+      subtitle: getCMSField(cmsData, 'admin.dashboard.sections.stats.totalSpent.subtitle', 'Total spent')
     },
     {
       icon: '🎉',
-      title: 'Member Since',
+      title: getCMSField(cmsData, 'admin.dashboard.sections.stats.memberSince.title', 'Member Since'),
       amount: new Date(profile.createdAt).toLocaleDateString(),
-      subtitle: 'Member since'
+      subtitle: getCMSField(cmsData, 'admin.dashboard.sections.stats.memberSince.subtitle', 'Member since')
     }
   ];
 
@@ -146,20 +154,20 @@ function CustomerDashboardContent() {
   const quickActions = [
     {
       icon: '🚗',
-      title: 'Book a Ride',
-      description: 'Schedule your next airport ride',
+      title: getCMSField(cmsData, 'admin.dashboard.sections.quickActions.bookRide.title', 'Book a Ride'),
+      description: getCMSField(cmsData, 'admin.dashboard.sections.quickActions.bookRide.description', 'Schedule your next airport ride'),
       onClick: handleBookRide
     },
     {
       icon: '📋',
-      title: 'View Bookings',
-      description: 'Check your booking history',
+      title: getCMSField(cmsData, 'admin.dashboard.sections.quickActions.viewBookings.title', 'View Bookings'),
+      description: getCMSField(cmsData, 'admin.dashboard.sections.quickActions.viewBookings.description', 'Check your booking history'),
       onClick: handleViewBookings
     },
     {
       icon: '👤',
-      title: 'Edit Profile',
-      description: 'Update your information',
+      title: getCMSField(cmsData, 'admin.dashboard.sections.quickActions.editProfile.title', 'Edit Profile'),
+      description: getCMSField(cmsData, 'admin.dashboard.sections.quickActions.editProfile.description', 'Update your information'),
       onClick: handleEditProfile
     }
   ];
@@ -168,13 +176,23 @@ function CustomerDashboardContent() {
   const profileContent = (
     <Stack spacing="md">
       <Stack spacing="sm">
-        <Text><strong>Name:</strong> {profile.name}</Text>
-        <Text><strong>Email:</strong> {profile.email}</Text>
-        <Text><strong>Phone:</strong> {profile.phone}</Text>
+        <Text data-cms-id="admin.dashboard.sections.profile.name" mode={mode}>
+          <strong>{getCMSField(cmsData, 'admin.dashboard.sections.profile.nameLabel', 'Name:')}</strong> {profile.name}
+        </Text>
+        <Text data-cms-id="admin.dashboard.sections.profile.email" mode={mode}>
+          <strong>{getCMSField(cmsData, 'admin.dashboard.sections.profile.emailLabel', 'Email:')}</strong> {profile.email}
+        </Text>
+        <Text data-cms-id="admin.dashboard.sections.profile.phone" mode={mode}>
+          <strong>{getCMSField(cmsData, 'admin.dashboard.sections.profile.phoneLabel', 'Phone:')}</strong> {profile.phone}
+        </Text>
       </Stack>
       <Stack spacing="sm">
-        <Text><strong>Member Since:</strong> {new Date(profile.createdAt).toLocaleDateString()}</Text>
-        <Text><strong>Last Login:</strong> {new Date(profile.lastLogin).toLocaleDateString()}</Text>
+        <Text data-cms-id="admin.dashboard.sections.profile.memberSince" mode={mode}>
+          <strong>{getCMSField(cmsData, 'admin.dashboard.sections.profile.memberSinceLabel', 'Member Since:')}</strong> {new Date(profile.createdAt).toLocaleDateString()}
+        </Text>
+        <Text data-cms-id="admin.dashboard.sections.profile.lastLogin" mode={mode}>
+          <strong>{getCMSField(cmsData, 'admin.dashboard.sections.profile.lastLoginLabel', 'Last Login:')}</strong> {new Date(profile.lastLogin).toLocaleDateString()}
+        </Text>
       </Stack>
     </Stack>
   );
@@ -182,46 +200,44 @@ function CustomerDashboardContent() {
   // Recent bookings content
   const recentBookingsContent = profile.totalBookings === 0 ? (
     <Stack spacing="md" align="center">
-      <Text variant="muted">
-        {getCMSField(cmsData, 'customer.dashboard.no_bookings', 'No bookings yet. Book your first ride!')}
+      <Text variant="muted" data-cms-id="admin.dashboard.sections.recentBookings.noBookings" mode={mode}>
+        {getCMSField(cmsData, 'admin.dashboard.sections.recentBookings.noBookings', 'No bookings yet. Book your first ride!')}
       </Text>
-      <Button onClick={handleBookRide} variant="primary">
-        {getCMSField(cmsData, 'customer.dashboard.book_first_ride', 'Book Your First Ride')}
+      <Button onClick={handleBookRide} variant="primary" data-cms-id="admin.dashboard.sections.recentBookings.bookFirstRide" interactionMode={mode}>
+        {getCMSField(cmsData, 'admin.dashboard.sections.recentBookings.bookFirstRide', 'Book Your First Ride')}
       </Button>
     </Stack>
   ) : (
     <Stack spacing="md">
-      <Text variant="muted">
-        {getCMSField(cmsData, 'customer.dashboard.bookings_count', `You have ${profile.totalBookings} total bookings.`)}
+      <Text variant="muted" data-cms-id="admin.dashboard.sections.recentBookings.bookingsCount" mode={mode}>
+        {getCMSField(cmsData, 'admin.dashboard.sections.recentBookings.bookingsCount', `You have ${profile.totalBookings} total bookings.`)}
       </Text>
-      <Button variant="outline" onClick={handleViewBookings}>
-        {getCMSField(cmsData, 'customer.dashboard.view_all_bookings', 'View All Bookings')}
+      <Button variant="outline" onClick={handleViewBookings} data-cms-id="admin.dashboard.sections.recentBookings.viewAllBookings" interactionMode={mode}>
+        {getCMSField(cmsData, 'admin.dashboard.sections.recentBookings.viewAllBookings', 'View All Bookings')}
       </Button>
     </Stack>
   );
 
   if (loading) {
     return (
-      
-        <Container>
-          <Stack direction="horizontal" spacing="md" align="center">
-            <LoadingSpinner />
-            <Text>Loading your profile...</Text>
-          </Stack>
-        </Container>
-      
+      <Container>
+        <Stack direction="horizontal" spacing="md" align="center">
+          <LoadingSpinner />
+          <Text data-cms-id="admin.dashboard.sections.loading.profile" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.loading.profile', 'Loading your profile...')}
+          </Text>
+        </Stack>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      
-        <Container>
-          <Alert variant="error">
-            <Text>{error}</Text>
-          </Alert>
-        </Container>
-    
+      <Container>
+        <Alert variant="error">
+          <Text data-cms-id="admin.dashboard.sections.error.message" mode={mode}>{error}</Text>
+        </Alert>
+      </Container>
     );
   }
 
@@ -260,6 +276,8 @@ function CustomerDashboardContent() {
                   variant="ghost" 
                   onClick={action.onClick}
                   fullWidth
+                  data-cms-id={`admin.dashboard.sections.quickActions.${index}.button`}
+                  interactionMode={mode}
                 >
                   {action.title}
                 </Button>
@@ -273,12 +291,12 @@ function CustomerDashboardContent() {
         {/* Recent Activity */}
         <Stack spacing="lg">
           <ContentCard
-            title="Profile Information"
+            title={getCMSField(cmsData, 'admin.dashboard.sections.recentActivity.profileInformation.title', 'Profile Information')}
             content={profileContent}
             variant="elevated"
           />
           <ContentCard
-            title="Recent Bookings"
+            title={getCMSField(cmsData, 'admin.dashboard.sections.recentActivity.recentBookings.title', 'Recent Bookings')}
             content={recentBookingsContent}
             variant="elevated"
           />

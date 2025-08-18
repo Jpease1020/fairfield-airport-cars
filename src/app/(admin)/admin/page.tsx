@@ -14,8 +14,15 @@ import {
   H2,
 } from '@/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useAdmin } from '@/design/providers/AdminProvider';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function AdminDashboardContent() {
+  const { cmsData } = useCMSData();
+  const { isAdmin } = useAdmin();
+  const { mode } = useInteractionMode();
+  
   const [stats, setStats] = useState({
     totalBookings: 0,
     activeDrivers: 0,
@@ -101,7 +108,7 @@ function AdminDashboardContent() {
       recentBookings.forEach(booking => {
         activity.push({
           type: 'booking',
-          message: `New booking from ${booking.name} - ${booking.dropoffLocation}`,
+          message: getCMSField(cmsData, 'admin.dashboard.activity.bookingTemplate', `New booking from ${booking.name} - ${booking.dropoffLocation}`),
           time: new Date(booking.createdAt).toLocaleDateString(),
           icon: '📅'
         });
@@ -116,7 +123,7 @@ function AdminDashboardContent() {
       recentPayments.forEach(payment => {
         activity.push({
           type: 'payment',
-          message: `Payment received: ${formatCurrency(payment.amount)}`,
+          message: getCMSField(cmsData, 'admin.dashboard.activity.paymentTemplate', `Payment received: ${formatCurrency(payment.amount)}`),
           time: new Date(payment.createdAt).toLocaleDateString(),
           icon: '💰'
         });
@@ -126,7 +133,7 @@ function AdminDashboardContent() {
       setLoading(false);
     } catch (err) {
       console.error('❌ Error loading dashboard data:', err);
-      setError('Failed to load dashboard data. Please try again.');
+      setError(getCMSField(cmsData, 'admin.dashboard.error.loadFailed', 'Failed to load dashboard data. Please try again.'));
       setLoading(false);
     }
   }, []);
@@ -137,57 +144,63 @@ function AdminDashboardContent() {
 
   const statsCards = [
     { 
-      title: 'Total Bookings', 
+      title: getCMSField(cmsData, 'admin.dashboard.stats.totalBookings.title', 'Total Bookings'), 
       value: stats.totalBookings.toString(), 
       icon: '📊', 
-      change: stats.totalBookings === 0 ? 'No bookings yet' : 'All time bookings',
+      change: stats.totalBookings === 0 ? 
+        getCMSField(cmsData, 'admin.dashboard.stats.totalBookings.noBookings', 'No bookings yet') : 
+        getCMSField(cmsData, 'admin.dashboard.stats.totalBookings.allTime', 'All time bookings'),
       changeType: 'neutral' as const
     },
     { 
-      title: 'Active Drivers', 
+      title: getCMSField(cmsData, 'admin.dashboard.stats.activeDrivers.title', 'Active Drivers'), 
       value: stats.activeDrivers.toString(), 
       icon: '👨‍💼', 
-      change: stats.activeDrivers === 0 ? 'Add drivers to get started' : 'Available now',
+      change: stats.activeDrivers === 0 ? 
+        getCMSField(cmsData, 'admin.dashboard.stats.activeDrivers.noDrivers', 'Add drivers to get started') : 
+        getCMSField(cmsData, 'admin.dashboard.stats.activeDrivers.available', 'Available now'),
       changeType: 'neutral' as const
     },
     { 
-      title: 'Revenue This Month', 
+      title: getCMSField(cmsData, 'admin.dashboard.stats.revenue.title', 'Revenue This Month'), 
       value: formatCurrency(stats.revenueThisMonth), 
       icon: '💰', 
-      change: stats.revenueThisMonth === 0 ? 'No revenue yet' : 'Completed payments',
+      change: stats.revenueThisMonth === 0 ? 
+        getCMSField(cmsData, 'admin.dashboard.stats.revenue.noRevenue', 'No revenue yet') : 
+        getCMSField(cmsData, 'admin.dashboard.stats.revenue.completed', 'Completed payments'),
       changeType: 'positive' as const
     },
     { 
-      title: 'Customer Rating', 
+      title: getCMSField(cmsData, 'admin.dashboard.stats.customerRating.title', 'Customer Rating'), 
       value: `${stats.customerRating}/5`, 
       icon: '⭐', 
-      change: 'Average rating',
+      change: getCMSField(cmsData, 'admin.dashboard.stats.customerRating.average', 'Average rating'),
       changeType: 'neutral' as const
     }
   ];
 
   const quickActions = [
     {
-      title: 'View Bookings',
-      description: 'See all current and past bookings',
+      title: getCMSField(cmsData, 'admin.dashboard.quickActions.viewBookings.title', 'View Bookings'),
+      description: getCMSField(cmsData, 'admin.dashboard.quickActions.viewBookings.description', 'See all current and past bookings'),
       icon: '📋',
       onClick: () => window.location.href = '/admin/bookings'
     },
     {
-      title: 'Manage Drivers',
-      description: 'Add, edit, or remove drivers',
+      title: getCMSField(cmsData, 'admin.dashboard.quickActions.manageDrivers.title', 'Manage Drivers'),
+      description: getCMSField(cmsData, 'admin.dashboard.quickActions.manageDrivers.description', 'Add, edit, or remove drivers'),
       icon: '👨‍💼',
       onClick: () => window.location.href = '/admin/drivers'
     },
     {
-      title: 'Edit Content',
-      description: 'Update website content and settings',
+      title: getCMSField(cmsData, 'admin.dashboard.quickActions.editContent.title', 'Edit Content'),
+      description: getCMSField(cmsData, 'admin.dashboard.quickActions.editContent.description', 'Update website content and settings'),
       icon: '✏️',
       onClick: () => window.location.href = '/admin/cms'
     },
     {
-      title: 'View Calendar',
-      description: 'See upcoming bookings and availability',
+      title: getCMSField(cmsData, 'admin.dashboard.quickActions.viewCalendar.title', 'View Calendar'),
+      description: getCMSField(cmsData, 'admin.dashboard.quickActions.viewCalendar.description', 'See upcoming bookings and availability'),
       icon: '📅',
       onClick: () => window.location.href = '/admin/calendar'
     }
@@ -195,37 +208,39 @@ function AdminDashboardContent() {
 
   if (loading) {
     return (
-      
-        <Container>
-          <Stack direction="horizontal" spacing="md" align="center">
-            <LoadingSpinner />
-            <Text>Loading dashboard data...</Text>
-          </Stack>
-        </Container>
-      
+      <Container>
+        <Stack direction="horizontal" spacing="md" align="center">
+          <LoadingSpinner />
+          <Text data-cms-id="admin.dashboard.loading.message" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.loading.message', 'Loading dashboard data...')}
+          </Text>
+        </Stack>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      
-        <Container>
-          <Alert variant="error">
-            <Text>{error}</Text>
-          </Alert>
-        </Container>
-      
+      <Container>
+        <Alert variant="error">
+          <Text data-cms-id="admin.dashboard.error.message" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.error.message', error)}
+          </Text>
+        </Alert>
+      </Container>
     );
   }
 
   return (
-  
+    <Container>
       <Stack spacing="xl">
         {/* Statistics Overview */}
         <Stack spacing="lg" align="center">
-          <H2>📊 Business Overview</H2>
-          <Text variant="body" color="secondary" align="center">
-            Key metrics and performance indicators
+          <H2 data-cms-id="admin.dashboard.sections.stats.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.stats.title', '📊 Business Overview')}
+          </H2>
+          <Text variant="body" color="secondary" align="center" data-cms-id="admin.dashboard.sections.stats.description" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.stats.description', 'Key metrics and performance indicators')}
           </Text>
         </Stack>
         
@@ -250,9 +265,11 @@ function AdminDashboardContent() {
 
         {/* Quick Actions */}
         <Stack spacing="lg" align="center">
-          <H2>⚡ Quick Actions</H2>
-          <Text variant="body" color="secondary" align="center">
-            Common administrative tasks
+          <H2 data-cms-id="admin.dashboard.sections.quickActions.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.quickActions.title', '⚡ Quick Actions')}
+          </H2>
+          <Text variant="body" color="secondary" align="center" data-cms-id="admin.dashboard.sections.quickActions.description" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.quickActions.description', 'Common administrative tasks')}
           </Text>
         </Stack>
         
@@ -280,9 +297,11 @@ function AdminDashboardContent() {
 
         {/* Recent Activity */}
         <Stack spacing="lg" align="center">
-          <H2>📈 Recent Activity</H2>
-          <Text variant="body" color="secondary" align="center">
-            Latest bookings and system updates
+          <H2 data-cms-id="admin.dashboard.sections.recentActivity.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.recentActivity.title', '📈 Recent Activity')}
+          </H2>
+          <Text variant="body" color="secondary" align="center" data-cms-id="admin.dashboard.sections.recentActivity.description" mode={mode}>
+            {getCMSField(cmsData, 'admin.dashboard.sections.recentActivity.description', 'Latest bookings and system updates')}
           </Text>
         </Stack>
         
@@ -291,7 +310,9 @@ function AdminDashboardContent() {
             {recentActivity.length === 0 ? (
               <Stack spacing="md" align="center">
                 <Text size="xl">📭</Text>
-                <Text>No recent activity to display</Text>
+                <Text data-cms-id="admin.dashboard.sections.recentActivity.noActivity" mode={mode}>
+                  {getCMSField(cmsData, 'admin.dashboard.sections.recentActivity.noActivity', 'No recent activity to display')}
+                </Text>
               </Stack>
             ) : (
               recentActivity.map((activity, index) => (
@@ -312,7 +333,7 @@ function AdminDashboardContent() {
           </Stack>
         </Box>
       </Stack>
-    
+    </Container>
   );
 }
 

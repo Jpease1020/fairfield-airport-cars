@@ -12,7 +12,7 @@ export async function POST() {
     if (!currentConfig) {
       return NextResponse.json({ 
         success: false, 
-        error: 'No CMS configuration found. Please run npm run init-cms first.' 
+        error: 'No CMS configuration found. Please check your Firebase CMS setup.' 
       });
     }
     

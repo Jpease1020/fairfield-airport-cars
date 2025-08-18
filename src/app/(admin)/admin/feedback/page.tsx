@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { GridSection, Box, Container, StatCard, Text, Stack, DataTable, DataTableColumn, DataTableAction } from '@/ui';
 import { getAllBookings } from '@/lib/services/database-service';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 interface Feedback {
   id: string;
@@ -17,6 +18,7 @@ interface Feedback {
 
 function FeedbackPageContent() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,45 +104,45 @@ function FeedbackPageContent() {
   const columns: DataTableColumn<Feedback>[] = [
     {
       key: 'customerName',
-      label: 'Customer',
+      label: getCMSField(cmsData, 'admin.feedback.sections.table.columns.customer.label', 'Customer'),
       sortable: true,
       render: (_, feedback) => (
         <Container>
           <Stack>
-            {getCMSField(cmsData, 'admin.feedback.customerName', feedback.customerName)}
-            {getCMSField(cmsData, 'admin.feedback.customerEmail', `📧 ${feedback.customerEmail}`)}
-            {getCMSField(cmsData, 'admin.feedback.bookingId', `🎫 ${feedback.bookingId}`)}
+            {getCMSField(cmsData, 'admin.feedback.sections.table.columns.customer.name', feedback.customerName)}
+            {getCMSField(cmsData, 'admin.feedback.sections.table.columns.customer.email', `📧 ${feedback.customerEmail}`)}
+            {getCMSField(cmsData, 'admin.feedback.sections.table.columns.customer.bookingId', `🎫 ${feedback.bookingId}`)}
           </Stack>
         </Container>
       )
     },
     {
       key: 'rating',
-      label: 'Rating',
+      label: getCMSField(cmsData, 'admin.feedback.sections.table.columns.rating.label', 'Rating'),
       sortable: true,
       render: (value) => renderRating(value)
     },
     {
       key: 'comment',
-      label: 'Feedback',
+      label: getCMSField(cmsData, 'admin.feedback.sections.table.columns.comment.label', 'Feedback'),
       sortable: false,
       render: (value) => (
         <Container>
-          {getCMSField(cmsData, 'admin.feedback.comment', value)}
+          {getCMSField(cmsData, 'admin.feedback.sections.table.columns.comment.text', value)}
         </Container>
       )
     },
     {
       key: 'createdAt',
-      label: 'Date',
+      label: getCMSField(cmsData, 'admin.feedback.sections.table.columns.date.label', 'Date'),
       sortable: true,
       render: (value) => {
         const date = new Date(value);
         return (
           <Container>
             <Stack>
-              {getCMSField(cmsData, 'admin.feedback.date', date.toLocaleDateString())}
-              {getCMSField(cmsData, 'admin.feedback.time', date.toLocaleTimeString())}
+              {getCMSField(cmsData, 'admin.feedback.sections.table.columns.date.date', date.toLocaleDateString())}
+              {getCMSField(cmsData, 'admin.feedback.sections.table.columns.date.time', date.toLocaleTimeString())}
             </Stack>
           </Container>
         );
@@ -151,19 +153,19 @@ function FeedbackPageContent() {
   // Table actions
   const actions: DataTableAction<Feedback>[] = [
     {
-      label: 'View Details',
+      label: getCMSField(cmsData, 'admin.feedback.sections.table.actions.viewDetails', 'View Details'),
       icon: '👁️',
       onClick: (feedback) => alert(`Viewing feedback details for ${feedback.customerName}`),
       variant: 'outline'
     },
     {
-      label: 'Reply',
+      label: getCMSField(cmsData, 'admin.feedback.sections.table.actions.reply', 'Reply'),
       icon: '💬',
       onClick: (feedback) => alert(`Reply functionality for ${feedback.customerName} coming soon`),
       variant: 'primary'
     },
     {
-      label: 'Flag',
+      label: getCMSField(cmsData, 'admin.feedback.sections.table.actions.flag', 'Flag'),
       icon: '🚩',
       onClick: (feedback) => alert(`Flag feedback from ${feedback.customerName} coming soon`),
       variant: 'outline',
@@ -176,33 +178,33 @@ function FeedbackPageContent() {
       {/* Feedback Statistics */}
       <GridSection variant="stats" columns={4}>
         <StatCard
-          title="Total Reviews"
+          title={getCMSField(cmsData, 'admin.feedback.sections.stats.totalReviews.title', 'Total Reviews')}
           icon="📝"
           statNumber={feedbackStats.totalFeedback.toString()}
-          statChange="Customer reviews collected"
+          statChange={getCMSField(cmsData, 'admin.feedback.sections.stats.totalReviews.description', 'Customer reviews collected')}
           changeType="neutral"
         >
-          {getCMSField(cmsData, 'admin.feedback.totalReviews', `${feedbackStats.totalFeedback} total reviews`)}
+          {getCMSField(cmsData, 'admin.feedback.sections.stats.totalReviews.details', `${feedbackStats.totalFeedback} total reviews`)}
         </StatCard>
         <StatCard
-          title="Average Rating"
+          title={getCMSField(cmsData, 'admin.feedback.sections.stats.averageRating.title', 'Average Rating')}
           icon="⭐"
           statNumber={feedbackStats.averageRating.toFixed(1)}
-          statChange="Out of 5 stars"
+          statChange={getCMSField(cmsData, 'admin.feedback.sections.stats.averageRating.description', 'Out of 5 stars')}
           changeType="positive"
         />
         <StatCard
-          title="5-Star Reviews"
+          title={getCMSField(cmsData, 'admin.feedback.sections.stats.fiveStar.title', '5-Star Reviews')}
           icon="🌟"
           statNumber={feedbackStats.fiveStarCount.toString()}
-          statChange={`${((feedbackStats.fiveStarCount / feedbackStats.totalFeedback) * 100).toFixed(0)}% of total`}
+          statChange={`${((feedbackStats.fiveStarCount / feedbackStats.totalFeedback) * 100).toFixed(0)}% ${getCMSField(cmsData, 'admin.feedback.sections.stats.fiveStar.description', 'of total')}`}
           changeType="positive"
         />
         <StatCard
-          title="Positive Reviews"
+          title={getCMSField(cmsData, 'admin.feedback.sections.stats.positive.title', 'Positive Reviews')}
           icon="👍"
           statNumber={`${feedbackStats.positivePercentage.toFixed(0)}%`}
-          statChange="4+ star ratings"
+          statChange={getCMSField(cmsData, 'admin.feedback.sections.stats.positive.description', '4+ star ratings')}
           changeType="positive"
         />
       </GridSection>
@@ -212,16 +214,20 @@ function FeedbackPageContent() {
         <Box>
           <Stack spacing="md">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">💬 Customer Reviews</Text>
-              <Text variant="muted" size="sm">Search, sort, and manage customer feedback and ratings</Text>
+              <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.feedback.sections.table.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.feedback.sections.table.title', '💬 Customer Reviews')}
+              </Text>
+              <Text variant="muted" size="sm" data-cms-id="admin.feedback.sections.table.description" mode={mode}>
+                {getCMSField(cmsData, 'admin.feedback.sections.table.description', 'Search, sort, and manage customer feedback and ratings')}
+              </Text>
             </Stack>
           <DataTable
             data={feedback}
             columns={columns}
             actions={actions}
             loading={loading}
-            searchPlaceholder="Search by customer name, email, or feedback text..."
-            emptyMessage="No customer feedback available yet. Reviews will appear here once customers submit them."
+            searchPlaceholder={getCMSField(cmsData, 'admin.feedback.sections.table.searchPlaceholder', 'Search by customer name, email, or feedback text...')}
+            emptyMessage={getCMSField(cmsData, 'admin.feedback.sections.table.emptyMessage', 'No customer feedback available yet. Reviews will appear here once customers submit them.')}
             emptyIcon="⭐"
             pageSize={10}
           />
@@ -234,8 +240,12 @@ function FeedbackPageContent() {
         <Box>
           <Stack spacing="md">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">📊 Rating Distribution</Text>
-              <Text variant="muted" size="sm">Breakdown of customer ratings</Text>
+              <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.feedback.sections.ratingDistribution.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.feedback.sections.ratingDistribution.title', '📊 Rating Distribution')}
+              </Text>
+              <Text variant="muted" size="sm" data-cms-id="admin.feedback.sections.ratingDistribution.description" mode={mode}>
+                {getCMSField(cmsData, 'admin.feedback.sections.ratingDistribution.description', 'Breakdown of customer ratings')}
+              </Text>
             </Stack>
           <Stack direction="vertical" spacing="md">
             {[5, 4, 3, 2, 1].map(rating => {
@@ -244,9 +254,9 @@ function FeedbackPageContent() {
               
               return (
                 <Stack key={rating} direction="horizontal" justify="space-between" align="center">
-                  {getCMSField(cmsData, 'admin.feedback.stars', '★'.repeat(rating))}
-                  {getCMSField(cmsData, 'admin.feedback.count', count.toString())}
-                  {getCMSField(cmsData, 'admin.feedback.percentage', `${percentage.toFixed(0)}%`)}
+                  {getCMSField(cmsData, 'admin.feedback.sections.ratingDistribution.stars', '★'.repeat(rating))}
+                  {getCMSField(cmsData, 'admin.feedback.sections.ratingDistribution.count', count.toString())}
+                  {getCMSField(cmsData, 'admin.feedback.sections.ratingDistribution.percentage', `${percentage.toFixed(0)}%`)}
                 </Stack>
               );
             })}

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Container, H2, Text, Button, Stack, Box, Span } from '@/ui';
 import { AlertTriangle, XCircle, RefreshCw, Trash2, Eye, AlertCircle } from 'lucide-react';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 interface ErrorEvent {
   message: string;
   stack?: string;
@@ -18,6 +19,7 @@ interface ErrorEvent {
 
 export default function ErrorMonitoringPage() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const [errors, setErrors] = useState<ErrorEvent[]>([]);
   const [selectedError, setSelectedError] = useState<ErrorEvent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -112,19 +114,17 @@ export default function ErrorMonitoringPage() {
   };
 
   const formatStack = (stack?: string) => {
-    if (!stack) return 'No stack trace available';
+    if (!stack) return getCMSField(cmsData, 'admin.errorMonitoring.sections.errors.noStackTrace', 'No stack trace available');
     return stack.split('\n').slice(0, 5).join('\n') + '...';
   };
 
   if (loading) {
     return (
-      
-        <Container>
-          <Text>
-            {getCMSField(cmsData, 'admin.errorMonitoring.loading', 'Loading...')}
-          </Text>
-        </Container>
-      
+      <Container>
+        <Text data-cms-id="admin.errorMonitoring.sections.loading.message" mode={mode}>
+          {getCMSField(cmsData, 'admin.errorMonitoring.sections.loading.message', 'Loading...')}
+        </Text>
+      </Container>
     );
   }
 
@@ -134,27 +134,31 @@ export default function ErrorMonitoringPage() {
         <Stack direction="vertical" spacing="lg">
           {/* Header Actions */}
           <Box variant="elevated" padding="md">
-            <H2>
-              {getCMSField(cmsData, 'admin.errorMonitoring.actions', 'Error Monitoring')}
+            <H2 data-cms-id="admin.errorMonitoring.sections.header.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.errorMonitoring.sections.header.title', 'Error Monitoring')}
             </H2>
             <Stack direction="horizontal" spacing="sm">
               <Button
                 onClick={loadErrors}
                 variant="outline"
+                data-cms-id="admin.errorMonitoring.sections.header.refresh"
+                interactionMode={mode}
               >
                 <RefreshCw size={16} />
                 <Span>
-                  {getCMSField(cmsData, 'admin.errorMonitoring.refresh', 'Refresh')}
+                  {getCMSField(cmsData, 'admin.errorMonitoring.sections.header.refresh', 'Refresh')}
                 </Span>
               </Button>
               <Button
                 onClick={handleClearErrors}
                 variant="danger"
                 disabled={errors.length === 0}
+                data-cms-id="admin.errorMonitoring.sections.header.clearAll"
+                interactionMode={mode}
               >
                 <Trash2 size={16} />
                 <Span>
-                  {getCMSField(cmsData, 'admin.errorMonitoring.clear', 'Clear All')}
+                  {getCMSField(cmsData, 'admin.errorMonitoring.sections.header.clearAll', 'Clear All')}
                 </Span>
               </Button>
             </Stack>
@@ -162,20 +166,20 @@ export default function ErrorMonitoringPage() {
 
           {/* Error Summary */}
           <Box variant="elevated" padding="md">
-            <H2>
-              {getCMSField(cmsData, 'admin.errorMonitoring.summary', 'Error Summary')}
+            <H2 data-cms-id="admin.errorMonitoring.sections.summary.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.errorMonitoring.sections.summary.title', 'Error Summary')}
             </H2>
             <Stack direction="horizontal" spacing="md">
-              <Text size="sm">
-                {getCMSField(cmsData, 'admin.errorMonitoring.total', 'Total Errors:')}
+              <Text size="sm" data-cms-id="admin.errorMonitoring.sections.summary.total" mode={mode}>
+                {getCMSField(cmsData, 'admin.errorMonitoring.sections.summary.total', 'Total Errors:')}
                 <Span variant="default"> {errorCount}</Span>
               </Text>
-              <Text size="sm">
-                {getCMSField(cmsData, 'admin.errorMonitoring.high', 'High Severity:')}
+              <Text size="sm" data-cms-id="admin.errorMonitoring.sections.summary.high" mode={mode}>
+                {getCMSField(cmsData, 'admin.errorMonitoring.sections.summary.high', 'High Severity:')}
                 <Span variant="default"> {errors.filter(e => getErrorSeverity(e) === 'high').length}</Span>
               </Text>
-              <Text size="sm">
-                {getCMSField(cmsData, 'admin.errorMonitoring.medium', 'Medium Severity:')}
+              <Text size="sm" data-cms-id="admin.errorMonitoring.sections.summary.medium" mode={mode}>
+                {getCMSField(cmsData, 'admin.errorMonitoring.sections.summary.medium', 'Medium Severity:')}
                 <Span variant="default"> {errors.filter(e => getErrorSeverity(e) === 'medium').length}</Span>
               </Text>
             </Stack>
@@ -183,12 +187,12 @@ export default function ErrorMonitoringPage() {
 
           {/* Error List */}
           <Box variant="elevated" padding="md">
-            <H2>
-              {getCMSField(cmsData, 'admin.errorMonitoring.list', 'Recent Errors')}
+            <H2 data-cms-id="admin.errorMonitoring.sections.list.title" mode={mode}>
+              {getCMSField(cmsData, 'admin.errorMonitoring.sections.list.title', 'Recent Errors')}
             </H2>
             {errors.length === 0 ? (
-              <Text variant="muted" size="sm">
-                {getCMSField(cmsData, 'admin.errorMonitoring.noErrors', 'No errors recorded')}
+              <Text variant="muted" size="sm" data-cms-id="admin.errorMonitoring.sections.list.noErrors" mode={mode}>
+                {getCMSField(cmsData, 'admin.errorMonitoring.sections.list.noErrors', 'No errors recorded')}
               </Text>
             ) : (
               <Stack direction="vertical" spacing="sm">

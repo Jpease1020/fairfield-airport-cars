@@ -174,7 +174,7 @@ This index organizes all our planning, analysis, and implementation documents fo
 ### **Key Documents for Reference**
 - **Master Architecture**: `architecture/MASTER_ARCHITECTURE.md` - **DEFINITIVE GUIDE**
 - **Feature Analysis**: `features/FEATURE_ANALYSIS.md` - **UPDATED** - Current implementation status
-- **CMS System**: `CMS_SYSTEM_DOCUMENTATION.md` - **NEW** - Complete CMS documentation
+- **CMS System**: `CMS_COMPLETE_DOCUMENTATION.md` - **NEW** - Complete CMS documentation
 - **Next.js Optimization**: `implementation/NEXTJS_OPTIMIZATION_GUIDE.md` - Best practices
 - **Implementation Roadmap**: `analysis/COMPREHENSIVE_SUMMARY.md` - Detailed plan
 

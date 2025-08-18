@@ -10,7 +10,7 @@ Scripts for setting up the application and admin users.
 - **`setup-test-user.js`** - Creates test user accounts
 - **`setup-admin-user.js`** - Creates admin user accounts  
 - **`setup-admin.js`** - General admin setup utilities
-- **`init-cms.js`** - Initializes CMS with default content
+
 
 ### `/cleanup/` - Maintenance & Cleanup Scripts
 Scripts for cleaning up code, files, and maintaining code quality.
@@ -66,7 +66,7 @@ Scripts that have been completed or are no longer needed.
 ### Setup Environment
 ```bash
 # Initialize CMS with default content
-node scripts/setup/init-cms.js
+
 
 # Setup admin user
 node scripts/setup/setup-admin.js

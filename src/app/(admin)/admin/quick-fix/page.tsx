@@ -9,11 +9,14 @@ import {
   StatusMessage,
   ToastProvider,
   useToast,
+  Text,
 } from '@/ui';  
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function QuickFixPage() {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,96 +25,47 @@ function QuickFixPage() {
   const missingContent = {
     pages: {
       success: {
-        title: "Booking Confirmed!",
-        subtitle: "Your airport transportation has been booked successfully",
-        paymentSuccessTitle: "Payment Successful!",
-        paymentSuccessMessage: "Your payment has been processed successfully.",
-        noBookingTitle: "Booking Not Found",
-        noBookingMessage: "We couldn't find your booking. Please check your email or contact support.",
-        currentStatusLabel: "Current Status",
-        viewDetailsButton: "View Booking Details",
-        loadingMessage: "Processing your booking..."
+        title: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.title', 'Booking Confirmed!'),
+        subtitle: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.subtitle', 'Your airport transfer is confirmed'),
+        message: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.message', 'We\'ll send you a confirmation email with all the details. Your driver will contact you 30 minutes before pickup.'),
+        nextSteps: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.nextSteps', 'What happens next?'),
+        driverContact: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.driverContact', 'Driver will contact you 30 minutes before pickup'),
+        emailConfirmation: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.emailConfirmation', 'Check your email for confirmation details'),
+        calendarInvite: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.calendarInvite', 'Calendar invite added to your schedule'),
+        backToHome: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.success.backToHome', 'Back to Home')
       },
-              help: {
-        title: "Help & Support",
-        subtitle: "Find answers to common questions and get assistance",
-        sections: [
-          {
-            title: "Booking Help",
-            content: "Learn how to book, modify, or cancel your ride"
-          },
-          {
-            title: "Payment Support", 
-            content: "Get help with payments, refunds, and billing"
-          },
-          {
-            title: "Service Information",
-            content: "Learn about our vehicles, drivers, and service areas"
-          },
-          {
-            title: "Airport Transportation",
-            content: "Specialized airport pickup and drop-off services"
-          }
-        ],
-        faq: [
-          {
-            question: "How far in advance should I book?",
-            answer: "We recommend booking at least 24 hours in advance for guaranteed availability.",
-            category: "booking" as const
-          },
-          {
-            question: "What payment methods do you accept?",
-            answer: "We accept all major credit cards, debit cards, and digital wallets.",
-            category: "payment" as const
-          },
-          {
-            question: "Can I cancel my booking?",
-            answer: "Yes, you can cancel up to 3 hours before pickup for a full refund.",
-            category: "cancellation" as const
-          },
-          {
-            question: "What if my flight is delayed?",
-            answer: "We monitor flight status and automatically adjust pickup times for delays.",
-            category: "general" as const
-          }
-        ],
-        contactInfo: {
-          phone: "(555) 123-4567",
-          email: "support@fairfieldairportcars.com",
-          hours: "24/7 Support"
-        }
+      error: {
+        title: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.error.title', 'Something went wrong'),
+        subtitle: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.error.subtitle', 'We couldn\'t process your request'),
+        message: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.error.message', 'Please try again or contact support if the problem persists.'),
+        tryAgain: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.error.tryAgain', 'Try Again'),
+        contactSupport: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.error.contactSupport', 'Contact Support'),
+        backToHome: getCMSField(cmsData, 'admin.quickFix.missingContent.pages.error.backToHome', 'Back to Home')
       }
     },
     bookingForm: {
-      personalInfo: {
-        title: "Personal Information",
-        description: "Please provide your contact details for the booking"
-      },
-      fullNameLabel: "Full Name",
-      emailLabel: "Email Address",
-      phoneLabel: "Phone Number",
-      tripDetails: {
-        title: "Trip Details",
-        description: "Tell us about your journey"
-      },
-      pickupLocationLabel: "Pickup Location",
-      dropoffLocationLabel: "Dropoff Location",
-      pickupDateLabel: "Pickup Date",
-      pickupTimeLabel: "Pickup Time",
+      title: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.title', 'Book Your Airport Transfer'),
+      subtitle: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.subtitle', 'Reliable transportation to and from the airport'),
+      pickupLocationLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.pickupLocationLabel', 'Pickup Location'),
+      pickupLocationPlaceholder: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.pickupLocationPlaceholder', 'Enter pickup address or location'),
+      dropoffLocationLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.dropoffLocationLabel', 'Dropoff Location'),
+      dropoffLocationPlaceholder: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.dropoffLocationPlaceholder', 'Enter destination address'),
+      pickupDateLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.pickupDateLabel', 'Pickup Date'),
+      pickupTimeLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.pickupTimeLabel', 'Pickup Time'),
       additionalDetails: {
-        title: "Additional Details",
-        description: "Any special requirements or notes"
+        title: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.additionalDetails.title', 'Additional Details'),
+        description: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.additionalDetails.description', 'Any special requirements or notes')
       },
-      passengersLabel: "Number of Passengers",
-      luggageLabel: "Number of Luggage Pieces",
-      specialRequestsLabel: "Special Requests",
+      passengersLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.passengersLabel', 'Number of Passengers'),
+      luggageLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.luggageLabel', 'Number of Luggage Pieces'),
+      specialRequestsLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.specialRequestsLabel', 'Special Requests'),
       actionButtons: {
-        title: "Complete Your Booking",
-        description: "Review your details and proceed to payment"
+        title: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.actionButtons.title', 'Complete Your Booking'),
+        description: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.actionButtons.description', 'Review your details and proceed to payment')
       },
-      calculateFareButton: "Calculate Fare",
-      bookNowButton: "Book Now",
-      estimatedFareLabel: "Estimated Fare"
+      calculateFareButton: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.calculateFareButton', 'Calculate Fare'),
+      bookNowButton: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.bookNowButton', 'Book Now'),
+      estimatedFareLabel: getCMSField(cmsData, 'admin.quickFix.missingContent.bookingForm.estimatedFareLabel', 'Estimated Fare')
     }
   };
 
@@ -124,31 +78,30 @@ function QuickFixPage() {
       const currentConfig = await cmsService.getCMSConfiguration();
       
       if (!currentConfig) {
-        throw new Error('No CMS configuration found');
+        throw new Error(getCMSField(cmsData, 'admin.quickFix.errors.noConfigFound', 'No CMS configuration found'));
       }
 
       const updatedConfig = {
         ...currentConfig,
-        pages: {
-          ...currentConfig.pages,
-          ...missingContent.pages
-        },
-        bookingForm: {
-          ...currentConfig.bookingForm,
-          ...missingContent.bookingForm
-        }
+        admin: {
+          ...currentConfig.admin,
+          quickFix: {
+            ...currentConfig.admin?.quickFix,
+            missingContent
+          }
+        } as any
       };
 
       const result = await cmsService.updateCMSConfiguration(updatedConfig);
       
       if (result.success) {
-        setSuccess('Successfully added missing content to the database!');
-        addToast('success', 'Content added successfully');
+        setSuccess(getCMSField(cmsData, 'admin.quickFix.messages.contentAddedSuccess', 'Successfully added missing content to the database!'));
+        addToast('success', getCMSField(cmsData, 'admin.quickFix.messages.contentAddedToast', 'Content added successfully'));
       } else {
-        throw new Error(result.errors?.join(', ') || 'Failed to save content');
+        throw new Error(result.errors?.join(', ') || getCMSField(cmsData, 'admin.quickFix.errors.saveFailed', 'Failed to save content'));
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to add content';
+      const errorMessage = err instanceof Error ? err.message : getCMSField(cmsData, 'admin.quickFix.errors.addContentFailed', 'Failed to add content');
       setError(errorMessage);
       addToast('error', errorMessage);
     } finally {
@@ -160,13 +113,35 @@ function QuickFixPage() {
     <>
       <Container>
         <Stack spacing="md">
-          {getCMSField(cmsData, 'admin.quickFix.description', 'This will add all missing content to the database, making the app ready for real customers:')}
+          <Text data-cms-id="admin.quickFix.sections.description" mode={mode}>
+            {getCMSField(cmsData, 'admin.quickFix.sections.description', 'This will add all missing content to the database, making the app ready for real customers:')}
+          </Text>
           <Stack spacing="sm">
-            <Container>Success page messages and titles</Container>
-            <Container>Error page content and messages</Container>
-            <Container>Booking form labels and descriptions</Container>
-            <Container>Navigation and footer content</Container>
-            <Container>Admin dashboard text and labels</Container>
+            <Container>
+              <Text data-cms-id="admin.quickFix.sections.content.successPage" mode={mode}>
+                {getCMSField(cmsData, 'admin.quickFix.sections.content.successPage', 'Success page messages and titles')}
+              </Text>
+            </Container>
+            <Container>
+              <Text data-cms-id="admin.quickFix.sections.content.errorPage" mode={mode}>
+                {getCMSField(cmsData, 'admin.quickFix.sections.content.errorPage', 'Error page content and messages')}
+              </Text>
+            </Container>
+            <Container>
+              <Text data-cms-id="admin.quickFix.sections.content.bookingForm" mode={mode}>
+                {getCMSField(cmsData, 'admin.quickFix.sections.content.bookingForm', 'Booking form labels and descriptions')}
+              </Text>
+            </Container>
+            <Container>
+              <Text data-cms-id="admin.quickFix.sections.content.navigation" mode={mode}>
+                {getCMSField(cmsData, 'admin.quickFix.sections.content.navigation', 'Navigation and footer content')}
+              </Text>
+            </Container>
+            <Container>
+              <Text data-cms-id="admin.quickFix.sections.content.adminDashboard" mode={mode}>
+                {getCMSField(cmsData, 'admin.quickFix.sections.content.adminDashboard', 'Admin dashboard text and labels')}
+              </Text>
+            </Container>
           </Stack>
           
           {error && (
@@ -189,8 +164,10 @@ function QuickFixPage() {
             onClick={handleAddContent}
             disabled={loading}
             variant="primary"
+            data-cms-id="admin.quickFix.sections.addContentButton"
+            interactionMode={mode}
           >
-            {getCMSField(cmsData, 'admin.quickFix.button', loading ? 'Adding Content...' : '🚀 Make App Production-Ready')}
+            {getCMSField(cmsData, 'admin.quickFix.sections.addContentButton', loading ? 'Adding Content...' : '🚀 Make App Production-Ready')}
           </Button>
         </Stack>
       </Container>

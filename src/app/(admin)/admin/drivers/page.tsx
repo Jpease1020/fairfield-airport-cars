@@ -14,8 +14,15 @@ import {
   Alert,
   LoadingSpinner,
 } from '@/ui';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useAdmin } from '@/design/providers/AdminProvider';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function DriversPageContent() {
+  const { cmsData } = useCMSData();
+  const { isAdmin } = useAdmin();
+  const { mode } = useInteractionMode();
+  
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,11 +50,11 @@ function DriversPageContent() {
       }
     } catch (err) {
       console.error('❌ Error loading drivers from database:', err);
-      setError('Failed to load drivers from database. Please try again.');
+      setError(getCMSField(cmsData, 'admin.drivers.error.loadDriversFailed', 'Failed to load drivers from database. Please try again.'));
     } finally {
       setLoading(false);
     }
-  }, [selectedStatus]);
+  }, [selectedStatus, cmsData]);
 
   useEffect(() => {
     fetchDrivers();
@@ -67,7 +74,7 @@ function DriversPageContent() {
       console.log('✅ Driver status updated successfully');
     } catch (err) {
       console.error('❌ Error updating driver status:', err);
-      setError('Failed to update driver status');
+      setError(getCMSField(cmsData, 'admin.drivers.error.updateStatusFailed', 'Failed to update driver status'));
     }
   };
 
@@ -94,39 +101,55 @@ function DriversPageContent() {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-    }).format(date);
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(date));
   };
 
-  const stats = {
-    totalDrivers: drivers.length,
-    availableDrivers: drivers.filter(d => d.status === 'available').length,
-    busyDrivers: drivers.filter(d => d.status === 'busy').length,
-    offlineDrivers: drivers.filter(d => d.status === 'offline').length
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
   };
+
+  if (!isAdmin) {
+    return (
+      <Container>
+        <Alert variant="error">
+          <Text>{getCMSField(cmsData, 'admin.drivers.error.accessDenied', 'Access denied. Admin privileges required.')}</Text>
+        </Alert>
+      </Container>
+    );
+  }
 
   const filteredDrivers = selectedStatus === 'all' 
     ? drivers 
     : drivers.filter(d => d.status === selectedStatus);
 
+  const stats = {
+    totalDrivers: drivers.length,
+    availableDrivers: drivers.filter(d => d.status === 'available').length,
+    busyDrivers: drivers.filter(d => d.status === 'busy').length,
+    offlineDrivers: drivers.filter(d => d.status === 'offline').length,
+  };
+
   const tableData = filteredDrivers.map(driver => ({
     id: driver.id,
     driver: (
       <Stack spacing="xs">
-        <Text variant="body" weight="medium">{driver.name}</Text>
+        <Text weight="medium">{driver.name}</Text>
         <Text variant="small" color="secondary">{driver.email}</Text>
         <Text variant="small" color="secondary">{driver.phone}</Text>
       </Stack>
     ),
-    vehicle: (
-      <Stack spacing="xs">
-        <Text variant="small">
-          {driver.vehicleInfo.make} {driver.vehicleInfo.model} ({driver.vehicleInfo.year})
-        </Text>
-        <Text variant="small" color="secondary">
-          {driver.vehicleInfo.color} • {driver.vehicleInfo.licensePlate}
-        </Text>
-      </Stack>
-    ),
+          vehicle: (
+        <Stack spacing="xs">
+          <Text weight="medium">{driver.vehicleInfo.make} {driver.vehicleInfo.model}</Text>
+          <Text variant="small" color="secondary">{driver.vehicleInfo.year} • {driver.vehicleInfo.color}</Text>
+          <Text variant="small" color="secondary">{driver.vehicleInfo.licensePlate}</Text>
+        </Stack>
+      ),
     status: (
       <Badge variant={getStatusVariant(driver.status)}>
         {getStatusIcon(driver.status)} {driver.status}
@@ -134,15 +157,15 @@ function DriversPageContent() {
     ),
     rating: (
       <Stack spacing="xs">
-        <Text variant="body" weight="medium">
-          {driver.rating ? `${driver.rating}/5.0` : 'N/A'}
+        <Text variant="small" weight="medium">
+          {driver.rating ? `${driver.rating.toFixed(1)} ⭐` : 'No rating yet'}
         </Text>
         <Text variant="small" color="secondary">
-          {driver.totalRides ? `${driver.totalRides} rides` : 'No rides yet'}
+          {driver.totalRides ? `${driver.totalRides} rides` : getCMSField(cmsData, 'admin.drivers.sections.table.noRides', 'No rides yet')}
         </Text>
       </Stack>
     ),
-    joined: formatDate(driver.createdAt),
+    joined: formatDate(driver.createdAt || new Date()),
     actions: (
       <Stack direction="horizontal" spacing="sm">
         <Button 
@@ -150,24 +173,30 @@ function DriversPageContent() {
           variant="secondary" 
           onClick={() => handleStatusUpdate(driver, 'available')}
           disabled={driver.status === 'available'}
+          data-cms-id="admin.drivers.sections.table.actions.setAvailable"
+          interactionMode={mode}
         >
-          Set Available
+          {getCMSField(cmsData, 'admin.drivers.sections.table.actions.setAvailable', 'Set Available')}
         </Button>
         <Button 
           size="sm" 
           variant="secondary" 
           onClick={() => handleStatusUpdate(driver, 'busy')}
           disabled={driver.status === 'busy'}
+          data-cms-id="admin.drivers.sections.table.actions.setBusy"
+          interactionMode={mode}
         >
-          Set Busy
+          {getCMSField(cmsData, 'admin.drivers.sections.table.actions.setBusy', 'Set Busy')}
         </Button>
         <Button 
           size="sm" 
           variant="secondary" 
           onClick={() => handleStatusUpdate(driver, 'offline')}
           disabled={driver.status === 'offline'}
+          data-cms-id="admin.drivers.sections.table.actions.setOffline"
+          interactionMode={mode}
         >
-          Set Offline
+          {getCMSField(cmsData, 'admin.drivers.sections.table.actions.setOffline', 'Set Offline')}
         </Button>
       </Stack>
     )
@@ -175,26 +204,24 @@ function DriversPageContent() {
 
   if (loading) {
     return (
-      
-        <Container>
-          <Stack direction="horizontal" spacing="md" align="center">
-            <LoadingSpinner />
-            <Text>Loading drivers from database...</Text>
-          </Stack>
-        </Container>
-      
+      <Container>
+        <Stack direction="horizontal" spacing="md" align="center">
+          <LoadingSpinner />
+          <Text data-cms-id="admin.drivers.loading.loadingDrivers" mode={mode}>
+            {getCMSField(cmsData, 'admin.drivers.loading.loadingDrivers', 'Loading drivers from database...')}
+          </Text>
+        </Stack>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      
-        <Container>
-          <Alert variant="error">
-            <Text>{error}</Text>
-          </Alert>
-        </Container>
-      
+      <Container>
+        <Alert variant="error">
+          <Text>{error}</Text>
+        </Alert>
+      </Container>
     );
   }
 
@@ -203,15 +230,17 @@ function DriversPageContent() {
       <Stack spacing="xl">
         {/* Status Filter */}
         <Stack spacing="sm">
-          <Text variant="small" weight="medium">Filter by Status</Text>
+          <Text variant="small" weight="medium" data-cms-id="admin.drivers.sections.filter.title" mode={mode}>
+            {getCMSField(cmsData, 'admin.drivers.sections.filter.title', 'Filter by Status')}
+          </Text>
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="all">All Drivers</option>
-            <option value="available">Available</option>
-            <option value="busy">Busy</option>
-            <option value="offline">Offline</option>
+            <option value="all">{getCMSField(cmsData, 'admin.drivers.sections.filter.allDrivers', 'All Drivers')}</option>
+            <option value="available">{getCMSField(cmsData, 'admin.drivers.sections.filter.available', 'Available')}</option>
+            <option value="busy">{getCMSField(cmsData, 'admin.drivers.sections.filter.busy', 'Busy')}</option>
+            <option value="offline">{getCMSField(cmsData, 'admin.drivers.sections.filter.offline', 'Offline')}</option>
           </select>
         </Stack>
 
@@ -221,7 +250,9 @@ function DriversPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">👨‍💼</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">Total Drivers</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.drivers.sections.stats.totalDrivers" mode={mode}>
+                  {getCMSField(cmsData, 'admin.drivers.sections.stats.totalDrivers', 'Total Drivers')}
+                </Text>
                 <Text size="xl" weight="bold">{stats.totalDrivers}</Text>
               </Stack>
             </Stack>
@@ -231,7 +262,9 @@ function DriversPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">Available</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.drivers.sections.stats.available" mode={mode}>
+                  {getCMSField(cmsData, 'admin.drivers.sections.stats.available', 'Available')}
+                </Text>
                 <Text size="xl" weight="bold">{stats.availableDrivers}</Text>
               </Stack>
             </Stack>
@@ -241,7 +274,9 @@ function DriversPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🚗</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">On Trip</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.drivers.sections.stats.onTrip" mode={mode}>
+                  {getCMSField(cmsData, 'admin.drivers.sections.stats.onTrip', 'On Trip')}
+                </Text>
                 <Text size="xl" weight="bold">{stats.busyDrivers}</Text>
               </Stack>
             </Stack>
@@ -251,7 +286,9 @@ function DriversPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">⏸️</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary">Offline</Text>
+                <Text variant="small" color="secondary" data-cms-id="admin.drivers.sections.stats.offline" mode={mode}>
+                  {getCMSField(cmsData, 'admin.drivers.sections.stats.offline', 'Offline')}
+                </Text>
                 <Text size="xl" weight="bold">{stats.offlineDrivers}</Text>
               </Stack>
             </Stack>
@@ -263,9 +300,11 @@ function DriversPageContent() {
           <Box>
             <Stack spacing="md" align="center">
               <Text size="xl">👨‍💼</Text>
-              <Text size="lg" weight="medium">No Drivers Found</Text>
-              <Text variant="body" color="secondary">
-                No drivers match your current filter criteria.
+              <Text size="lg" weight="medium" data-cms-id="admin.drivers.sections.table.noDrivers.title" mode={mode}>
+                {getCMSField(cmsData, 'admin.drivers.sections.table.noDrivers.title', 'No Drivers Found')}
+              </Text>
+              <Text variant="body" color="secondary" data-cms-id="admin.drivers.sections.table.noDrivers.description" mode={mode}>
+                {getCMSField(cmsData, 'admin.drivers.sections.table.noDrivers.description', 'No drivers match your current filter criteria.')}
               </Text>
             </Stack>
           </Box>
@@ -273,12 +312,12 @@ function DriversPageContent() {
           <DataTable
             data={tableData}
             columns={[
-              { key: 'driver', label: 'Driver' },
-              { key: 'vehicle', label: 'Vehicle' },
-              { key: 'status', label: 'Status' },
-              { key: 'rating', label: 'Rating' },
-              { key: 'joined', label: 'Joined' },
-              { key: 'actions', label: 'Actions' }
+              { key: 'driver', label: getCMSField(cmsData, 'admin.drivers.sections.table.columns.driver', 'Driver') },
+              { key: 'vehicle', label: getCMSField(cmsData, 'admin.drivers.sections.table.columns.vehicle', 'Vehicle') },
+              { key: 'status', label: getCMSField(cmsData, 'admin.drivers.sections.table.columns.status', 'Status') },
+              { key: 'rating', label: getCMSField(cmsData, 'admin.drivers.sections.table.columns.rating', 'Rating') },
+              { key: 'joined', label: getCMSField(cmsData, 'admin.drivers.sections.table.columns.joined', 'Joined') },
+              { key: 'actions', label: getCMSField(cmsData, 'admin.drivers.sections.table.columns.actions', 'Actions') }
             ]}
           />
         )}

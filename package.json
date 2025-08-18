@@ -19,7 +19,7 @@
     "cleanup:audit": "./temp/check-unused-code.sh",
     "deploy": "npm run build && vercel --prod",
     "deploy:preview": "npm run build && vercel",
-    "init-cms": "node scripts/init-cms.js",
+
     "migrate-content": "node scripts/migrate-content-to-cms.js",
     "add-missing-content": "node scripts/add-missing-content.js",
     "fix-cms": "node scripts/fix-cms-permissions.js",
