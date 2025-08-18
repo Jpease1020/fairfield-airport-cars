@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Button, Span, Text, Drawer } from '@/ui';
-import { ChevronRight, AlertTriangle, X, MessageSquare } from 'lucide-react';
+import { Container, Stack, Button, Span, Text, Drawer, Select, Textarea, Modal } from '@/ui';
+import { ChevronRight, AlertTriangle, X, MessageSquare, Edit, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
+import { useCMSData } from '@/design/hooks/useCMSData';
 
 const FloatingCommentBox = styled.div<{ $top: number; $left: number }>`
   position: fixed;
@@ -46,17 +47,63 @@ const FullWidthContainer = styled(Container)`
   width: 100%;
 `;
 
+const StyledTooltip = styled(Container)`
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+  transform: translateY(0);
+  
+  &.tooltip-enter {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  
+  &.tooltip-exit {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+`;
+
+const ClickableCommentButton = styled(Button)`
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    background-color: var(--background-hover);
+  }
+`;
+
+const HighlightedCommentContainer = styled(FullWidthContainer)<{ $isSelected: boolean }>`
+  border: ${({ $isSelected }) => $isSelected ? '2px solid var(--primary-500)' : 'none'};
+  background-color: ${({ $isSelected }) => $isSelected ? 'var(--background-hover)' : 'transparent'};
+  transition: all 0.2s ease;
+`;
+
+const DebugText = styled(Span)`
+  font-family: monospace;
+  font-size: 10px;
+`;
+
 interface GlobalCommentIconsProps {
   isAdmin: boolean;
   commentMode?: boolean;
 }
 
 export default function GlobalCommentIcons({ isAdmin, commentMode = false }: GlobalCommentIconsProps) {
+  const { cmsData } = useCMSData();
   const [comments, setComments] = useState<CommentRecord[]>([]);
   const [commentAnchors, setCommentAnchors] = useState<Record<string, { top: number; left: number }>>({});
   const [hoveredCommentId, setHoveredCommentId] = useState<string | null>(null);
   const [orphanedComments, setOrphanedComments] = useState<CommentRecord[]>([]);
   const [showCommentsDrawer, setShowCommentsDrawer] = useState(false);
+  const [tooltipTimeout, setTooltipTimeout] = useState<NodeJS.Timeout | null>(null);
+  
+  // Comment management state
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ show: boolean; commentId: string | null }>({ show: false, commentId: null });
+  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
 
   // Load existing comments for this page
   useEffect(() => {
@@ -65,6 +112,8 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
       try {
         const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
         const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+        console.log('📊 Loaded comments:', existing);
+        console.log('🆔 Comment IDs:', existing.map(c => ({ id: c.id, elementId: c.elementId, elementText: c.elementText })));
         setComments(existing);
       } catch {
         // Non-blocking; page still works without preloaded comments
@@ -94,6 +143,33 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
     document.addEventListener('commentAdded', handleCommentAdded);
     return () => document.removeEventListener('commentAdded', handleCommentAdded);
   }, []);
+
+  // Cleanup tooltip timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+      }
+    };
+  }, [tooltipTimeout]);
+
+  // Scroll to selected comment when drawer opens
+  useEffect(() => {
+    if (showCommentsDrawer && selectedCommentId) {
+      // Small delay to ensure drawer is fully rendered
+      const timer = setTimeout(() => {
+        const commentElement = document.querySelector(`[data-comment-id="${selectedCommentId}"]`);
+        if (commentElement) {
+          commentElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showCommentsDrawer, selectedCommentId]);
 
   // Compute icon anchors for each comment with element validation
   useEffect(() => {
@@ -147,8 +223,148 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
   // Don't render if not admin or comment mode not active
   if (!isAdmin || !commentMode) return null;
 
+  // Comment management functions
+  const handleEditComment = (commentId: string) => {
+    const comment = comments.find(c => c.id === commentId);
+    if (comment) {
+      setEditingComment(commentId);
+      setEditText(comment.comment);
+    }
+  };
+
+  const handleSaveEdit = async (commentId: string) => {
+    try {
+      await commentsService.updateComment(commentId, { comment: editText });
+      setEditingComment(null);
+      setEditText('');
+      // Refresh comments
+      const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
+      const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+      setComments(existing);
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingComment(null);
+    setEditText('');
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    console.log('🗑️ Delete comment called for ID:', commentId);
+    
+    // Show custom confirmation modal instead of browser confirm
+    setShowDeleteConfirm({ show: true, commentId });
+  };
+
+  const confirmDelete = async () => {
+    const commentId = showDeleteConfirm.commentId;
+    if (!commentId) return;
+    
+    console.log('✅ User confirmed deletion, proceeding...');
+    
+    try {
+      console.log('📡 Calling commentsService.deleteComment...');
+      await commentsService.deleteComment(commentId);
+      console.log('✅ Comment deleted successfully from database');
+      
+      // Refresh comments
+      const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
+      console.log('🔄 Refreshing comments for page:', pageUrl);
+      const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+      console.log('📊 Refreshed comments count:', existing.length);
+      setComments(existing);
+      
+      // Success feedback via console instead of alert
+      console.log('🎉 Comment deleted successfully!');
+      
+    } catch (error) {
+      console.error('❌ Error deleting comment:', error);
+      // Error feedback via console instead of alert
+      console.error('💥 Failed to delete comment. Check console for details.');
+    } finally {
+      // Close the confirmation modal
+      setShowDeleteConfirm({ show: false, commentId: null });
+    }
+  };
+
+  const cancelDelete = () => {
+    console.log('❌ User cancelled deletion');
+    setShowDeleteConfirm({ show: false, commentId: null });
+  };
+
+  const handleStatusChange = async (commentId: string, newStatus: CommentRecord['status']) => {
+    setUpdatingStatus(commentId);
+    try {
+      await commentsService.updateComment(commentId, { status: newStatus });
+      // Refresh comments
+      const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
+      const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+      setComments(existing);
+    } catch (error) {
+      console.error('Error updating comment status:', error);
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+
+  const getStatusIcon = (status: CommentRecord['status']) => {
+    switch (status) {
+      case 'open':
+        return <AlertCircle size={16} />;
+      case 'in-progress':
+        return <Clock size={16} />;
+      case 'resolved':
+        return <CheckCircle size={16} />;
+      default:
+        return <Clock size={16} />;
+    }
+  };
+
+  const getStatusDescription = (status: CommentRecord['status']) => {
+    switch (status) {
+      case 'open':
+        return 'Needs attention';
+      case 'in-progress':
+        return 'Being worked on';
+      case 'resolved':
+        return 'Completed';
+      default:
+        return 'Unknown status';
+    }
+  };
+
   return (
     <>
+      {/* Custom Delete Confirmation Modal */}
+      <Modal 
+        isOpen={showDeleteConfirm.show} 
+        onClose={cancelDelete}
+        size="sm"
+        title="Delete Comment"
+        footer={
+          <Stack direction="horizontal" spacing="sm" justify="flex-end">
+            <Button 
+              variant="outline" 
+              onClick={cancelDelete}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="danger" 
+              onClick={confirmDelete}
+            >
+              Delete
+            </Button>
+          </Stack>
+        }
+      >
+        <Text>
+          Are you sure you want to delete this comment? This action cannot be undone.
+        </Text>
+      </Modal>
+
       {/* Comments drawer handle - small tab that sticks out from left edge */}
       {(comments.length > 0 || orphanedComments.length > 0) && (
         <CommentsDrawerHandle
@@ -178,24 +394,62 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
               padding="none"
               data-comment-id={id}
               data-testid={`comment-icon-${index + 1}`}
-              onMouseEnter={() => setHoveredCommentId(id)}
-              onMouseLeave={() => setHoveredCommentId((curr) => (curr === id ? null : curr))}
+              onMouseEnter={() => {
+                // Clear any existing timeout
+                if (tooltipTimeout) {
+                  clearTimeout(tooltipTimeout);
+                }
+                // Set a small delay before showing tooltip
+                const timeout = setTimeout(() => setHoveredCommentId(id), 300);
+                setTooltipTimeout(timeout);
+              }}
+              onMouseLeave={() => {
+                // Clear timeout and hide tooltip immediately
+                if (tooltipTimeout) {
+                  clearTimeout(tooltipTimeout);
+                  setTooltipTimeout(null);
+                }
+                setHoveredCommentId((curr) => (curr === id ? null : curr));
+              }}
+              onClick={() => {
+                // Open the comments drawer when icon is clicked
+                setShowCommentsDrawer(true);
+                // Set this comment as selected for highlighting
+                setSelectedCommentId(id);
+                // Hide tooltip when clicking
+                setHoveredCommentId(null);
+                if (tooltipTimeout) {
+                  clearTimeout(tooltipTimeout);
+                  setTooltipTimeout(null);
+                }
+              }}
             >
               <Stack direction="horizontal" spacing="none">
-                <Button variant="ghost" size="sm" data-comment-id={id}>
+                <ClickableCommentButton 
+                  variant="ghost" 
+                  size="sm" 
+                  data-comment-id={id}
+                >
                   <MessageSquare size={14} />
-                </Button>
+                </ClickableCommentButton>
               </Stack>
             </Container>
           </FloatingCommentBox>
           {hoveredCommentId === id && (
-            <FloatingCommentBox $top={commentAnchors[id].top} $left={commentAnchors[id].left}>
-              <Container variant="tooltip" padding="none" role="tooltip">
-                <Container variant="default" padding="none">
-                  <Span size="xs" color="muted">{comments.find(c => c.id === id)?.elementText}</Span>
-                  <Text>{comments.find(c => c.id === id)?.comment}</Text>
-                </Container>
-              </Container>
+            <FloatingCommentBox $top={commentAnchors[id].top - 10} $left={commentAnchors[id].left + 30}>
+              <StyledTooltip variant="tooltip" padding="md" role="tooltip">
+                <Stack spacing="sm" align="flex-start">
+                  <Span size="xs" color="muted" weight="medium">
+                    {comments.find(c => c.id === id)?.elementText || 'Comment'}
+                  </Span>
+                  <Text size="sm" weight="medium">
+                    {comments.find(c => c.id === id)?.comment || 'No comment text'}
+                  </Text>
+                  <Span size="xs" color="muted">
+                    Status: {comments.find(c => c.id === id)?.status || 'unknown'}
+                  </Span>
+                </Stack>
+              </StyledTooltip>
             </FloatingCommentBox>
           )}
         </Container>
@@ -204,10 +458,13 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
                             {/* Comments Drawer - shows all comments and orphaned comments */}
         <Drawer
           isOpen={showCommentsDrawer}
-          onClose={() => setShowCommentsDrawer(false)}
+          onClose={() => {
+            setShowCommentsDrawer(false);
+            setSelectedCommentId(null); // Clear selection when drawer closes
+          }}
           title="Page Comments"
           position="left"
-          width={400}
+          width={500}
           headerVariant="minimal"
           headerMargin="none"
           actions={
@@ -227,15 +484,105 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
               <Stack spacing="sm" align="flex-start">
                 <Span size="sm" weight="semibold">Active Comments ({comments.length})</Span>
                 {comments.map((comment) => (
-                  <FullWidthContainer key={comment.id} variant="default" padding="sm">
-                    <Stack spacing="xs" align="flex-start">
-                      <Span size="sm" weight="medium">{comment.elementText}</Span>
-                      <Text size="sm">{comment.comment}</Text>
-                      <Span size="xs" color="muted">
-                        Created: {new Date(comment.createdAt).toLocaleDateString()}
-                      </Span>
+                  <HighlightedCommentContainer 
+                    key={comment.id} 
+                    $isSelected={selectedCommentId === comment.id} 
+                    padding="md"
+                  >
+                    <Stack spacing="md" align="flex-start">
+                      {/* Comment Header */}
+                      <Stack direction="horizontal" align="center" justify="space-between" spacing="sm">
+                        <Stack direction="horizontal" align="center" spacing="sm">
+                          {getStatusIcon(comment.status)}
+                          <Span size="sm" weight="medium">{comment.elementText}</Span>
+                        </Stack>
+                        <Stack direction="horizontal" spacing="xs">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditComment(comment.id)}
+                            disabled={editingComment === comment.id}
+                          >
+                            <Edit size={14} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteComment(comment.id)}
+                          >
+                            <Trash2 size={14} />
+                          </Button>
+                        </Stack>
+                      </Stack>
+
+                      {/* Comment Content */}
+                      {editingComment === comment.id ? (
+                        <Stack spacing="sm" align="stretch">
+                          <Textarea
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            placeholder="Edit comment..."
+                            rows={3}
+                          />
+                          <Stack direction="horizontal" spacing="sm">
+                            <Button
+                              size="sm"
+                              onClick={() => handleSaveEdit(comment.id)}
+                              disabled={!editText.trim()}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={handleCancelEdit}
+                            >
+                              Cancel
+                            </Button>
+                          </Stack>
+                        </Stack>
+                      ) : (
+                        <Text size="sm">{comment.comment}</Text>
+                      )}
+
+                      {/* Comment Metadata */}
+                      <Stack spacing="xs" align="flex-start">
+                        <Span size="xs" color="muted">
+                          Created: {new Date(comment.createdAt).toLocaleDateString()}
+                        </Span>
+                        <Span size="xs" color="muted">
+                          Author: {comment.createdBy}
+                        </Span>
+                        {/* Debug: Show actual IDs */}
+                        <DebugText color="secondary">
+                          Firebase ID: {comment.id}
+                        </DebugText>
+                        <DebugText color="secondary">
+                          Element ID: {comment.elementId}
+                        </DebugText>
+                      </Stack>
+
+                      {/* Status Management */}
+                      <Stack spacing="sm" align="flex-start">
+                        <Span size="xs" weight="medium">Status:</Span>
+                        <Stack direction="horizontal" align="center" spacing="sm">
+                          <Select
+                            value={comment.status}
+                            onChange={(e) => handleStatusChange(comment.id, e.target.value as CommentRecord['status'])}
+                            disabled={updatingStatus === comment.id}
+                            options={[
+                              { value: 'open', label: 'Open' },
+                              { value: 'in-progress', label: 'In Progress' },
+                              { value: 'resolved', label: 'Resolved' }
+                            ]}
+                          />
+                          <Span size="xs" color="muted">
+                            {getStatusDescription(comment.status)}
+                          </Span>
+                        </Stack>
+                      </Stack>
                     </Stack>
-                  </FullWidthContainer>
+                  </HighlightedCommentContainer>
                 ))}
               </Stack>
             </FullWidthContainer>
@@ -260,6 +607,15 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
                       <Span size="xs" color="muted">
                         Created: {new Date(comment.createdAt).toLocaleDateString()}
                       </Span>
+                      <Stack direction="horizontal" spacing="xs">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteComment(comment.id)}
+                        >
+                          <Trash2 size={14} />
+                        </Button>
+                      </Stack>
                     </Stack>
                   </FullWidthContainer>
                 ))}
