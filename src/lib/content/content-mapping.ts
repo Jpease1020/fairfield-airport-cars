@@ -240,7 +240,7 @@ export const CONTENT_MAPPING = {
 
     contactInfo: {
       phone: "(555) 123-4567",
-      email: "support@fairfieldairportcars.com", 
+              email: "rides@fairfieldairportcars.com", 
       hours: "24/7"
     },
 

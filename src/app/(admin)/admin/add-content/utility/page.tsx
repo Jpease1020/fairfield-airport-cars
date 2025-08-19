@@ -115,7 +115,7 @@ function AddContentUtilityPage() {
         ],
         contactInfo: {
           phone: "(203) 555-0123",
-          email: "support@fairfieldairportcars.com",
+          email: "rides@fairfieldairportcars.com",
           hours: "24/7"
         },
         contactSection: {

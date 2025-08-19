@@ -155,7 +155,7 @@ const COMPLETE_CMS_CONFIG = {
       ],
       contactInfo: {
         phone: "(555) 123-4567",
-        email: "support@fairfieldairportcars.com",
+        email: "rides@fairfieldairportcars.com",
         hours: "24/7"
       },
       contactSection: {

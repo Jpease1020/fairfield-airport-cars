@@ -12,7 +12,7 @@ const customerItems: NavItem[] = [
   { label: 'My Bookings', href: '/bookings' },
   { label: 'Payment Methods', href: '/payments/add-method' },
   { label: 'Payments', href: '/payments' },
-          { label: 'Customer Dashboard', href: '/portal' },
+          { label: 'Customer Dashboard', href: '/dashboard' },
   { label: 'Profile', href: '/profile' },
   { label: 'Manage Booking (by ID)', note: '/manage/:id' },
   { label: 'Track Status (by ID)', note: '/status/:id' },

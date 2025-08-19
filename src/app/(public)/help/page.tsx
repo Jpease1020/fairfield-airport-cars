@@ -154,7 +154,7 @@ function HelpPageContent() {
             
             <Button
               variant="secondary"
-              onClick={() => window.location.href = 'mailto:support@fairfieldairportcars.com'}
+              onClick={() => window.location.href = 'mailto:rides@fairfieldairportcars.com'}
               data-cms-id="pages.help.contact.secondaryButton"
               interactionMode={mode}
             >

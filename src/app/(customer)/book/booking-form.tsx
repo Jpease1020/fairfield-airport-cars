@@ -95,7 +95,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
   // Trip details phase
   const [pickupLocation, setPickupLocation] = useState(booking?.pickupLocation || '');
   const [dropoffLocation, setDropoffLocation] = useState(booking?.dropoffLocation || '');
-  const [pickupDateTime, setPickupDateTime] = useState(booking?.pickupDateTime ? new Date(booking.pickupDateTime).toISOString().slice(0, 16) : '');
+  const [pickupDateTime, setPickupDateTime] = useState(booking?.pickupDateTime ? new Date(booking?.pickupDateTime).toISOString().slice(0, 16) : '');
+  const [fareType, setFareType] = useState<'personal' | 'business'>('personal');
   const [flightInfo, setFlightInfo] = useState({
     airline: '',
     flightNumber: '',
@@ -105,6 +106,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
   
   // Payment phase
   const [fare, setFare] = useState<number | null>(null);
+  const [baseFare, setBaseFare] = useState<number | null>(null);
   const [tipAmount, setTipAmount] = useState(0);
   const [tipPercent, setTipPercent] = useState(15);
   
@@ -219,6 +221,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           origin: pickupLocation,
           destination: dropoffLocation,
           pickupDateTime,
+          fareType, // Pass fareType to the backend
         }),
       });
 
@@ -230,6 +233,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
       const data = await response.json();
       setFare(data.fare);
+      setBaseFare(data.baseFare); // Store base fare for tip calculation
     } catch (error) {
       console.error('Error calculating fare:', error);
       setError('Failed to calculate fare. Please try again.');
@@ -246,7 +250,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
     }, 1000); // Debounce for 1 second
 
     return () => clearTimeout(timeoutId);
-  }, [pickupLocation, dropoffLocation, pickupDateTime]);
+  }, [pickupLocation, dropoffLocation, pickupDateTime, fareType]); // Add fareType to dependencies
 
   // Handle phase transitions
   const handleBookNow = () => {
@@ -292,7 +296,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
           tipAmount,
           tipPercent,
           totalAmount: getTotalWithTip(),
-          flightInfo
+          flightInfo,
+          fareType, // Include fareType in the submission
         }),
       });
 
@@ -467,6 +472,88 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 </Stack>
               </Box>
 
+              {/* Fare Type Selection */}
+              <Box variant="elevated" padding="lg">
+                <Stack spacing="lg">
+                  <H2 align="center" data-cms-id="pages.booking.fareType.title" mode={mode}>
+                    {getCMSField(cmsData, 'pages.booking.fareType.title', 'Fare Type')}
+                  </H2>
+                  <Grid cols={2} gap="md" responsive>
+                    <GridItem>
+                      <Button
+                        onClick={() => setFareType('personal')}
+                        variant={fareType === 'personal' ? 'primary' : 'outline'}
+                        fullWidth
+                      >
+                        {getCMSField(cmsData, 'pages.booking.fareType.personal', 'Personal Ride')}
+                      </Button>
+                    </GridItem>
+                    <GridItem>
+                      <Button
+                        onClick={() => setFareType('business')}
+                        variant={fareType === 'business' ? 'primary' : 'outline'}
+                        fullWidth
+                      >
+                        {getCMSField(cmsData, 'pages.booking.fareType.business', 'Business Ride')}
+                      </Button>
+                    </GridItem>
+                  </Grid>
+                </Stack>
+              </Box>
+
+              {/* Fare Type Selection */}
+              <Box variant="elevated" padding="lg">
+                <Stack spacing="lg">
+                  <H2 
+                    align="center"
+                    data-cms-id="pages.booking.fareType.title"
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.booking.fareType.title', 'Fare Type')}
+                  </H2>
+                  
+                  <Grid cols={2} gap="md" responsive>
+                    <GridItem>
+                      <Stack spacing="sm">
+                        <Label htmlFor="personalFare" data-cms-id="pages.booking.form.personalFare.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.personalFare.label', 'Personal Ride')}
+                        </Label>
+                        <input
+                          id="personalFare"
+                          type="radio"
+                          name="fareType"
+                          checked={fareType === 'personal'}
+                          onChange={() => setFareType('personal')}
+                          data-cms-id="pages.booking.form.personalFare.input"
+                        />
+                        <Text size="sm" color="secondary" data-cms-id="pages.booking.form.personalFare.description" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.personalFare.description', 'Get 10% off our standard rate')}
+                        </Text>
+                      </Stack>
+                    </GridItem>
+                    
+                    <GridItem>
+                      <Stack spacing="sm">
+                        <Label htmlFor="businessFare" data-cms-id="pages.booking.form.businessFare.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.businessFare.label', 'Business Ride')}
+                        </Label>
+                        <input
+                          id="businessFare"
+                          type="radio"
+                          name="fareType"
+                          checked={fareType === 'business'}
+                          onChange={() => setFareType('business')}
+                          data-cms-id="pages.booking.form.businessFare.input"
+                        />
+                        <Text size="sm" color="secondary" data-cms-id="pages.booking.form.businessFare.description" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.businessFare.description', 'Standard business rate')}
+                        </Text>
+                      </Stack>
+                    </GridItem>
+                  </Grid>
+                </Stack>
+              </Box>
+
               {/* Flight Information */}
               <Box variant="elevated" padding="lg">
                 <Stack spacing="lg">
@@ -567,6 +654,11 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           <Text size="xl" weight="bold">
                             {getCMSField(cmsData, 'pages.booking.fare.amount', `$${fare.toFixed(2)}`)}
                           </Text>
+                          {baseFare && fareType === 'personal' && baseFare > fare && (
+                            <Text size="sm" color="secondary">
+                              {getCMSField(cmsData, 'pages.booking.fare.discount', `Original: $${baseFare.toFixed(2)} - 10% discount applied!`)}
+                            </Text>
+                          )}
                           <Text size="sm" color="secondary">
                             {getCMSField(cmsData, 'pages.booking.fare.description', 'Estimated fare for your trip')}
                           </Text>
@@ -788,7 +880,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                             {getCMSField(cmsData, 'pages.booking.fare.base.label', 'Base Fare:')}
                           </Text>
                           <Text data-cms-id="pages.booking.fare.base.value" mode={mode}>
-                            {getCMSField(cmsData, 'pages.booking.fare.base.value', `$${fare?.toFixed(2)}`)}
+                            {getCMSField(cmsData, 'pages.booking.fare.base.value', `$${baseFare?.toFixed(2)}`)}
                           </Text>
                         </Stack>
                         <Stack direction="horizontal" justify="space-between">
