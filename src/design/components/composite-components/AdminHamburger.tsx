@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Text } from '../base-components/text/Text';
 import { Button } from '../base-components/Button';
+import { FlexboxContainer } from '../base-components/FlexboxContainer';
+import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
 
 interface FloatingEditButtonProps {
   editMode?: boolean;
@@ -12,75 +14,97 @@ interface FloatingEditButtonProps {
   onToggleCommentMode?: () => void;
 }
 
-const FloatingContainer = styled.div`
+// Floating container - needs fixed positioning for global access
+const FloatingContainer = styled(FlexboxContainer)`
   position: fixed;
   top: 120px;
   right: 20px;
-  z-index: 10000;
+  z-index: ${zIndex.dropdown};
 `;
 
+// Floating button with flexbox-based styling
 const FloatingButton = styled(Button)`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: ${shadows.md};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-const AdminPanel = styled.div<{ $isOpen: boolean }>`
+// Admin panel - uses flexbox with limited absolute positioning for dropdown
+const AdminPanel = styled(FlexboxContainer)<{ $isOpen: boolean }>`
   position: absolute;
   top: 60px;
   right: 0;
-  background: var(--background-card);
-  border: 1px solid var(--border-color);
+  background: ${colors.background.primary};
+  border: 1px solid ${colors.border.default};
   border-radius: 8px;
-  padding: 16px;
+  padding: ${spacing.md};
   min-width: 200px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  display: ${props => props.$isOpen ? 'block' : 'none'};
-  border-top: 1px solid var(--border-color);
-  z-index: 10001;
-`;
-
-const PanelContent = styled.div`
-  display: flex;
+  box-shadow: ${shadows.md};
+  display: ${props => props.$isOpen ? 'flex' : 'none'};
+  border-top: 1px solid ${colors.border.default};
+  z-index: ${zIndex.dropdown + 1};
   flex-direction: column;
-  gap: 8px;
+  gap: ${spacing.sm};
 `;
 
+// Panel content - flexbox-based layout
+const PanelContent = styled(FlexboxContainer)`
+  flex-direction: column;
+  gap: ${spacing.sm};
+`;
+
+// Panel text with flexbox-based styling
 const PanelText = styled(Text)`
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
+  color: ${colors.text.secondary};
+  margin-bottom: ${spacing.sm};
+  display: flex;
+  align-items: center;
 `;
 
+// Panel button with flexbox-based styling
 const PanelButton = styled.button<{ $isActive?: boolean }>`
   background: none;
   border: none;
-  padding: 8px 12px;
+  padding: ${spacing.sm} ${spacing.md};
   text-align: left;
   cursor: pointer;
   border-radius: 4px;
   font-size: 14px;
-  color: var(--text-primary);
-  background-color: ${props => props.$isActive ? 'var(--primary-color)' : 'transparent'};
-  color: ${props => props.$isActive ? 'white' : 'var(--text-primary)'};
+  color: ${colors.text.primary};
+  background-color: ${props => props.$isActive ? colors.primary[600] : 'transparent'};
+  color: ${props => props.$isActive ? colors.text.white : colors.text.primary};
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${props => props.$isActive ? 'var(--primary-color)' : 'var(--background-secondary)'};
+    background-color: ${props => props.$isActive ? colors.primary[600] : colors.background.secondary};
   }
 `;
 
+// Divider with flexbox-based styling
 const Divider = styled.div`
   height: 1px;
-  background: var(--border-color);
-  margin: 8px 0;
+  background: ${colors.border.default};
+  margin: ${spacing.sm} 0;
+  align-self: stretch;
 `;
 
-const HamburgerIcon = styled.div<{ $isOpen: boolean }>`
+// Hamburger icon with flexbox-based animation
+const HamburgerIcon = styled(FlexboxContainer)<{ $isOpen: boolean }>`
   width: 20px;
   height: 20px;
   position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   
   span {
     display: block;
@@ -138,7 +162,11 @@ export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
   };
 
   return (
-    <FloatingContainer data-admin-control="true">
+    <FloatingContainer 
+      data-admin-control="true"
+      direction="column"
+      align="flex-end"
+    >
       <FloatingButton
         onClick={(e?: React.MouseEvent<HTMLButtonElement>) => {
           if (e) {
@@ -157,7 +185,12 @@ export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
         </HamburgerIcon>
       </FloatingButton>
       
-      <AdminPanel $isOpen={isOpen} data-admin-control="true">
+      <AdminPanel 
+        $isOpen={isOpen} 
+        data-admin-control="true"
+        direction="column"
+        align="stretch"
+      >
         <PanelContent>
           <PanelText>Admin Controls</PanelText>
           <PanelButton onClick={handleEditMode} $isActive={editMode} data-admin-control="true">

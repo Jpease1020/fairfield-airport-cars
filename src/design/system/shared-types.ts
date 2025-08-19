@@ -12,6 +12,83 @@ export type SpacingScale = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 // Limited margin for flexbox positioning (only 'auto' and 'none')
 export type FlexboxMargin = 'auto' | 'none';
 
+// Breakpoint values
+export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+
+// Responsive value type - can be a single value or breakpoint-specific values
+export type ResponsiveValue<T> = T | {
+  xs?: T;
+  sm?: T;
+  md?: T;
+  lg?: T;
+  xl?: T;
+  '2xl'?: T;
+};
+
+// Flexbox positioning properties (primary)
+export interface FlexboxPositioningProps {
+  // Flexbox-first positioning
+  alignSelf?: ResponsiveValue<'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline'>;
+  order?: ResponsiveValue<number>;
+  flex?: ResponsiveValue<string>;
+  flexGrow?: ResponsiveValue<number>;
+  flexShrink?: ResponsiveValue<number>;
+  flexBasis?: ResponsiveValue<string>;
+  
+  // Limited positioning for edge cases (modals, dropdowns, etc.)
+  position?: ResponsiveValue<'relative' | 'absolute' | 'fixed' | 'sticky'>;
+  top?: ResponsiveValue<string>;
+  right?: ResponsiveValue<string>;
+  bottom?: ResponsiveValue<string>;
+  left?: ResponsiveValue<string>;
+  zIndex?: ResponsiveValue<number>;
+  
+  // Flexbox layout properties
+  direction?: ResponsiveValue<'row' | 'column' | 'row-reverse' | 'column-reverse'>;
+  wrap?: ResponsiveValue<'nowrap' | 'wrap' | 'wrap-reverse'>;
+  align?: ResponsiveValue<'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch'>;
+  justify?: ResponsiveValue<'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly'>;
+}
+
+// Extended flexbox properties for complex layouts
+export interface ExtendedFlexboxProps extends FlexboxPositioningProps {
+  // Grid positioning (when using CSS Grid)
+  gridArea?: string;
+  gridColumn?: string;
+  gridRow?: string;
+  justifySelf?: ResponsiveValue<'start' | 'end' | 'center' | 'stretch'>;
+  // Note: alignSelf is inherited from FlexboxPositioningProps and supports flexbox values
+  // For grid-specific alignment, use the gridAlignSelf property below
+  
+  // Grid-specific alignment (separate from flexbox alignSelf)
+  gridAlignSelf?: ResponsiveValue<'start' | 'end' | 'center' | 'stretch'>;
+  
+  // Spacing and sizing
+  gap?: ResponsiveValue<string>;
+  padding?: ResponsiveValue<string>;
+  margin?: ResponsiveValue<string>;
+  
+  // Responsive behavior
+  responsive?: boolean;
+  breakpoint?: ResponsiveValue<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+}
+
+// Utility types for common positioning patterns
+export type FlexboxAlignment = 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
+export type FlexboxJustification = 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+export type FlexboxDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
+export type FlexboxWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
+
+// Positioning context types
+export type PositioningContext = 'flexbox' | 'grid' | 'absolute' | 'fixed' | 'sticky';
+
+// Component positioning strategy
+export interface PositioningStrategy {
+  primary: 'flexbox' | 'grid' | 'positioning';
+  fallback?: 'flexbox' | 'grid' | 'positioning';
+  responsive?: boolean;
+}
+
 // Color Variants
 export type ColorVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'muted' | 'default';
 
@@ -106,11 +183,7 @@ export interface BaseLayoutProps extends BaseComponentProps {
 
 // ===== RESPONSIVE TYPES =====
 
-// Responsive value type for responsive design
-export type ResponsiveValue<T> = T | Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl', T>>;
-
-// Breakpoint type
-export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+// Note: ResponsiveValue and Breakpoint types are defined above in the foundation types section
 
 // ===== LAYOUT TYPES =====
 

@@ -48,6 +48,10 @@ export { StarRating } from './components/base-components/StarRating';
 export { StatCard } from './components/base-components/StatCard';
 export { ActionButtonGroup } from './components/base-components/ActionButtonGroup';
 
+// Layout Components
+export { FlexboxContainer } from './components/base-components/FlexboxContainer';
+export type { FlexboxContainerProps } from './components/base-components/FlexboxContainer';
+
 // Text Components
 export { Text, Paragraph } from './components/base-components/text/Text';
 export { H1, H2, H3, H4, H5, H6 } from './components/base-components/text/Headings';

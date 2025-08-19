@@ -4,7 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../../system/tokens/tokens';
 
-// Styled Select component
+// Styled Select component with flexbox
 const StyledSelect = styled.select.withConfig({
   shouldForwardProp: (prop) => !['size', 'fullWidth', 'error', 'disabled'].includes(prop)
 })<{
@@ -13,8 +13,10 @@ const StyledSelect = styled.select.withConfig({
   error: boolean;
   disabled: boolean;
 }>`
-  display: block;
+  display: flex;
+  align-items: center;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  min-width: 0; /* Allow flexbox shrinking */
   border: 1px solid ${({ error }) => (error ? colors.border.error : colors.border.default)};
   border-radius: ${borderRadius.default};
   background-color: ${({ disabled }) => (disabled ? colors.background.disabled : colors.background.primary)};
@@ -25,6 +27,7 @@ const StyledSelect = styled.select.withConfig({
   font-family: inherit;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  flex: ${({ fullWidth }) => (fullWidth ? '1' : 'none')};
 
   /* Size styles */
   ${({ size }) => {
@@ -34,24 +37,28 @@ const StyledSelect = styled.select.withConfig({
           padding: ${spacing.xs} ${spacing.sm};
           font-size: ${fontSize.sm};
           height: 2rem;
+          min-height: 2rem;
         `;
       case 'md':
         return `
           padding: ${spacing.sm} ${spacing.md};
           font-size: ${fontSize.md};
           height: 2.5rem;
+          min-height: 2.5rem;
         `;
       case 'lg':
         return `
           padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.lg};
           height: 3rem;
+          min-height: 3rem;
         `;
       default:
         return `
           padding: ${spacing.sm} ${spacing.md};
           font-size: ${fontSize.md};
           height: 2.5rem;
+          min-height: 2.5rem;
         `;
     }
   }}
@@ -67,6 +74,35 @@ const StyledSelect = styled.select.withConfig({
     border-color: ${colors.border.error};
     box-shadow: ${shadows.error};
   `}
+
+  /* Responsive behavior */
+  @media (max-width: 768px) {
+    ${({ size }) => {
+      if (size === 'lg') {
+        return `
+          padding: ${spacing.sm} ${spacing.md};
+          font-size: ${fontSize.md};
+          height: 2.5rem;
+          min-height: 2.5rem;
+        `;
+      }
+      return '';
+    }}
+  }
+
+  @media (max-width: 640px) {
+    ${({ size }) => {
+      if (size === 'md' || size === 'lg') {
+        return `
+          padding: ${spacing.xs} ${spacing.sm};
+          font-size: ${fontSize.sm};
+          height: 2rem;
+          min-height: 2rem;
+        `;
+      }
+      return '';
+    }}
+  }
 `;
 
 // Select Component
