@@ -109,7 +109,7 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
     const load = async () => {
       try {
         const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
-        const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+        const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
         console.log('📊 Loaded comments:', existing);
         console.log('🆔 Comment IDs:', existing.map(c => ({ id: c.id, elementId: c.elementId, elementText: c.elementText })));
         setComments(existing);
@@ -129,7 +129,7 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
       const load = async () => {
         try {
           const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
-          const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+          const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
           setComments(existing);
         } catch {
           // Non-blocking
@@ -237,7 +237,7 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
       setEditText('');
       // Refresh comments
       const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
-      const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+      const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
       setComments(existing);
     } catch (error) {
       console.error('Error updating comment:', error);
@@ -270,7 +270,7 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
       // Refresh comments
       const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
       console.log('🔄 Refreshing comments for page:', pageUrl);
-      const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+      const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
       console.log('📊 Refreshed comments count:', existing.length);
       setComments(existing);
       
@@ -298,7 +298,7 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
       await commentsService.updateComment(commentId, { status: newStatus });
       // Refresh comments
       const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
-      const existing = await commentsService.getComments({ pageUrl, scope: 'page' });
+      const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
       setComments(existing);
     } catch (error) {
       console.error('Error updating comment status:', error);
