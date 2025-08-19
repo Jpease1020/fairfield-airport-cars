@@ -14,11 +14,10 @@ const FloatingEditorBox = styled.div<{ $top: number; $left: number }>`
 `;
 
 interface InlineTextEditorProps {
-  isAdmin: boolean;
   editMode?: boolean;
 }
 
-export default function InlineTextEditor({ isAdmin, editMode = false }: InlineTextEditorProps) {
+export default function InlineTextEditor({ editMode = false }: InlineTextEditorProps) {
   const { cmsData, updateField } = useCMSData();
 
   const [activePath, setActivePath] = useState<string | null>(null);
@@ -126,8 +125,6 @@ export default function InlineTextEditor({ isAdmin, editMode = false }: InlineTe
       closeEditor();
     }
   }, [activePath, value, updateField, closeEditor]);
-
-  if (!isAdmin) return null;
 
   return (
     <>

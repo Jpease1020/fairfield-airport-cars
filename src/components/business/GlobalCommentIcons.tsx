@@ -85,11 +85,10 @@ const DebugText = styled(Span)`
 `;
 
 interface GlobalCommentIconsProps {
-  isAdmin: boolean;
   commentMode?: boolean;
 }
 
-export default function GlobalCommentIcons({ isAdmin, commentMode = false }: GlobalCommentIconsProps) {
+export default function GlobalCommentIcons({ commentMode = false }: GlobalCommentIconsProps) {
   const { cmsData } = useCMSData();
   const [comments, setComments] = useState<CommentRecord[]>([]);
   const [commentAnchors, setCommentAnchors] = useState<Record<string, { top: number; left: number }>>({});
@@ -107,7 +106,6 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
 
   // Load existing comments for this page
   useEffect(() => {
-    if (!isAdmin) return;
     const load = async () => {
       try {
         const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
@@ -120,7 +118,7 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
       }
     };
     load();
-  }, [isAdmin]);
+  }, []);
 
   // Listen for new comments being added
   useEffect(() => {
@@ -221,7 +219,7 @@ export default function GlobalCommentIcons({ isAdmin, commentMode = false }: Glo
   }, [comments, commentMode]);
 
   // Don't render if not admin or comment mode not active
-  if (!isAdmin || !commentMode) return null;
+  if (!commentMode) return null;
 
   // Comment management functions
   const handleEditComment = (commentId: string) => {

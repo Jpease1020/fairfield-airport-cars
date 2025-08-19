@@ -6,13 +6,10 @@ import { Text } from '../base-components/text/Text';
 import { Button } from '../base-components/Button';
 
 interface FloatingEditButtonProps {
-  isAdmin?: boolean;
-  isAuthenticated?: boolean;
   editMode?: boolean;
   commentMode?: boolean;
   onToggleEditMode?: () => void;
   onToggleCommentMode?: () => void;
-  isLoading?: boolean;
 }
 
 const FloatingContainer = styled.div`
@@ -113,24 +110,12 @@ const HamburgerIcon = styled.div<{ $isOpen: boolean }>`
 `;
 
 export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
-  isAdmin = false,
-  isAuthenticated = false,
   editMode = false,
   commentMode = false,
   onToggleEditMode,
   onToggleCommentMode,
-  isLoading = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  // Don't render if not logged in or not admin
-  if (isLoading) {
-    return null;
-  }
-  
-  if (!isAuthenticated || !isAdmin) {
-    return null;
-  }
 
   const handleEditMode = (e?: React.MouseEvent<HTMLButtonElement>) => {
     if (e) {
