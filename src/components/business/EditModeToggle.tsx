@@ -25,7 +25,7 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
     return (
       <Container>
         <Button onClick={onEdit}>
-          {getCMSField(cmsData, 'editModeToggle.editModeButton', 'Edit Mode')}
+          {getCMSField(cmsData, 'editModeToggle.editModeButton', 'Edit Copy')}
         </Button>
       </Container>
     );

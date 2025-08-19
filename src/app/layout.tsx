@@ -2,10 +2,13 @@ import '@/design/globals.css';
 import { ErrorBoundary, StyledComponentsRegistry, AccessibilityEnhancer } from '@/ui';  
 import { AdminProvider } from '@/design/providers/AdminProvider';
 import { InteractionModeProvider } from '@/design/providers/InteractionModeProvider';
+import { DemoModeProvider } from '@/design/providers/DemoModeProvider';
 import { AppContent } from './AppContent';
-import { SmartNavigation } from '@/components/app/SmartNavigation';
+import { NavigationManager } from '@/components/app/NavigationManager';
 import { Footer } from '@/design/page-sections/Footer';
 import { Container } from '@/design/layout/containers/Container';
+import { isDemoModeEnabled } from '@/lib/config/feature-flags';
+import { DemoModeIndicator } from '../components/demo/DemoModeIndicator';
 
 export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',
@@ -18,6 +21,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const demoModeEnabled = isDemoModeEnabled();
+
   return (
     <html lang="en">
       <head>
@@ -32,15 +37,33 @@ export default function RootLayout({
             <AccessibilityEnhancer>
               <AdminProvider>
                 <InteractionModeProvider>
-                  <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
-                    <SmartNavigation />
-                  </Container>
-                  
-                  <Container as="main" maxWidth="full" data-testid="layout-main-content">
-                    <AppContent>{children}</AppContent>
-                  </Container>
-                  
-                  <Footer data-testid="layout-footer"/>
+                  {demoModeEnabled ? (
+                    <DemoModeProvider>
+                      <DemoModeIndicator />
+                      
+                      {/* Intelligent Navigation - renders the right nav for each route */}
+                      <NavigationManager />
+                      
+                      {/* Main content */}
+                      <Container as="main" maxWidth="full" data-testid="layout-main-content">
+                        <AppContent>{children}</AppContent>
+                      </Container>
+                      
+                      <Footer data-testid="layout-footer"/>
+                    </DemoModeProvider>
+                  ) : (
+                    <>
+                      {/* Intelligent Navigation - renders the right nav for each route */}
+                      <NavigationManager />
+                      
+                      {/* Main content */}
+                      <Container as="main" maxWidth="full" data-testid="layout-main-content">
+                        <AppContent>{children}</AppContent>
+                      </Container>
+                      
+                      <Footer data-testid="layout-footer"/>
+                    </>
+                  )}
                 </InteractionModeProvider>
               </AdminProvider>
             </AccessibilityEnhancer>
