@@ -45,7 +45,7 @@ export const Footer: React.FC = () => {
       as="footer"
     >
       <Stack justify="center" align="center" fullWidth>
-        <Container maxWidth="2xl" margin="none" spacing="xl">
+        <Container maxWidth="6xl" margin="none" spacing="xl">
           {/* Company Info */}
           <Stack spacing="sm" align="center">
             <Text 
