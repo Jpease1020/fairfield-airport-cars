@@ -28,7 +28,7 @@ interface StaticHeroSectionProps {
 export function StaticHeroSection({
   title = "Professional Airport Transportation",
   subtitle = "Reliable rides to and from Fairfield Airport",
-  description = "Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.",
+      description = "Book your ride with confidence. Professional driver, clean vehicle, and on-time service guaranteed.",
   titleId,
   subtitleId,
   descriptionId,

@@ -24,7 +24,7 @@ const COMPLETE_CMS_CONFIG = {
       hero: {
         title: "Fairfield Airport Car Service",
         subtitle: "Premium Transportation",
-        description: "Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.",
+        description: "Book your ride with confidence. Professional driver, clean vehicle, and on-time service guaranteed.",
         primaryButton: "Book Your Ride Now",
         secondaryButton: "Learn More"
       },
@@ -37,7 +37,7 @@ const COMPLETE_CMS_CONFIG = {
             icon: "star"
           },
           {
-            title: "Luxury Vehicles",
+            title: "Luxury Vehicle",
             description: "Travel in comfort and style in a modern, spacious black SUV.",
             icon: "car"
           },
@@ -63,19 +63,13 @@ const COMPLETE_CMS_CONFIG = {
           }
         ]
       },
-      fleet: {
-        title: "Our Fleet",
-        description: "You will ride in a meticulously maintained Chevrolet Suburban or a similar full-size luxury SUV, offering ample space for passengers and luggage.",
-        vehicles: [
-          {
-            title: "Luxury SUV",
-            description: "Spacious Chevrolet Suburban with premium amenities including complimentary water, Wi-Fi, and phone chargers."
-          },
-          {
-            title: "Professional Service",
-            description: "Experienced drivers with background checks, ensuring your safety and comfort throughout your journey."
-          }
-        ]
+      vehicle: {
+        title: "Our Vehicle",
+        description: "You will ride in a meticulously maintained Chevrolet Suburban, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.",
+        features: {
+          title: "Luxury SUV Service",
+          description: "Professional driver with background checks, ensuring your safety and comfort throughout your journey."
+        }
       },
       faq: {
         title: "Frequently Asked Questions",
@@ -120,7 +114,7 @@ const COMPLETE_CMS_CONFIG = {
     about: {
       id: "about",
       title: "About Us",
-      content: "We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.",
+              content: "We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional driver is background-checked and equipped with a clean, well-maintained vehicle to ensure a smooth and enjoyable journey for you.",
       metaDescription: "About Fairfield Airport Car Service - Learn about our reliable airport transportation service.",
       lastUpdated: new Date(),
       isActive: true

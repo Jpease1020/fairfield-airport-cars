@@ -35,7 +35,7 @@ describe('Home Page - CMS Rules Compliance', () => {
     
     // Check that CMS data is being used
     expect(screen.getByText('Reliable rides to and from Fairfield County airports')).toBeInTheDocument();
-    expect(screen.getByText('Professional drivers, clean vehicles, on-time service. Book your airport ride with confidence.')).toBeInTheDocument();
+    expect(screen.getByText('Professional driver, clean vehicle, on-time service. Book your airport ride with confidence.')).toBeInTheDocument();
   });
 
   it('should have proper data-cms-id attributes on all editable elements', () => {
@@ -85,7 +85,7 @@ describe('Home Page - CMS Rules Compliance', () => {
     // Check that fallback content is professional and meaningful
     expect(screen.getByText('Professional Airport Transportation')).toBeInTheDocument();
     expect(screen.getByText('Reliable rides to and from Fairfield County airports')).toBeInTheDocument();
-    expect(screen.getByText('Professional drivers, clean vehicles, on-time service. Book your airport ride with confidence.')).toBeInTheDocument();
+    expect(screen.getByText('Professional driver, clean vehicle, on-time service. Book your airport ride with confidence.')).toBeInTheDocument();
     expect(screen.getByText('Book Now')).toBeInTheDocument();
     expect(screen.getByText('Learn More')).toBeInTheDocument();
   });

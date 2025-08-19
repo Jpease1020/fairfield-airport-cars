@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
         defaultPageContent.description = 'Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area.';
         defaultPageContent.hero.title = 'Professional Airport Transportation';
         defaultPageContent.hero.subtitle = 'Reliable rides to and from Fairfield Airport';
-        defaultPageContent.hero.description = 'Book your ride with confidence. Professional drivers, clean vehicles, and on-time service guaranteed.';
+        defaultPageContent.hero.description = 'Book your ride with confidence. Professional driver, clean vehicle, and on-time service guaranteed.';
         defaultPageContent.hero.primaryButton = 'Book Now';
         defaultPageContent.hero.secondaryButton = 'Learn More';
       } else if (page === 'booking') {
@@ -274,7 +274,7 @@ export async function GET(request: NextRequest) {
           subtitle: 'Professional airport transportation services'
         };
         defaultPageContent.content = {
-          description: 'We provide reliable, professional airport transportation throughout Fairfield County. Licensed drivers, clean vehicles, on-time service.',
+          description: 'We provide reliable, professional airport transportation throughout Fairfield County. Licensed driver, clean vehicle, on-time service.',
           features: 'Our services include airport pickup and dropoff, corporate transportation, and special event shuttles.'
         };
         defaultPageContent.cta = {

@@ -142,14 +142,6 @@ function DashboardPageContent() {
                 <Box 
                   variant="elevated" 
                   padding="lg"
-                  as="button"
-                  onClick={() => {
-                    if (action.onClick) {
-                      action.onClick();
-                    } else if (action.href && action.href !== '#') {
-                      window.location.href = action.href;
-                    }
-                  }}
                 >
                   <Stack direction="vertical" spacing="md" align="center">
                     <Container>

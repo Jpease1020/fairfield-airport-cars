@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Container, Stack, Col } from '@/ui';
+import { Container, Stack, Col, Box } from '@/ui';
 import { H1, H2, Text, Button } from '@/design/components/base-components/Components';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
@@ -44,7 +44,7 @@ function HomePageContent() {
               data-cms-id="pages.home.hero.description" 
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.home.hero.description', 'Professional drivers, clean vehicles, on-time service. Book your airport ride with confidence.')}
+              {getCMSField(cmsData, 'pages.home.hero.description', 'Professional driver, clean vehicle, on-time service. Book your airport ride with confidence.')}
             </Text>
             
             <Stack direction="horizontal" spacing="md" align="center">
@@ -94,6 +94,7 @@ function HomePageContent() {
           </Stack>
           
           <Stack direction="horizontal" spacing="xl" align="stretch">
+          <Box variant="elevated" padding="lg">
             <Col grow align="center" padding="md">
               <Stack spacing="md" align="center">
                 <Text size="xl" align="center">⏰</Text>
@@ -114,7 +115,9 @@ function HomePageContent() {
                 </Text>
               </Stack>
             </Col>
-            
+            </Box>
+            <Box variant="elevated" padding="lg">
+
             <Col grow align="center" padding="md">
               <Stack spacing="md" align="center">
                 <Text size="xl" align="center">🚙</Text>
@@ -124,18 +127,19 @@ function HomePageContent() {
                   data-cms-id="pages.home.features.items.1.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.items.1.title', 'Clean Vehicles')}
+                  {getCMSField(cmsData, 'pages.home.features.items.1.title', 'Clean Vehicle')}
                 </Text>
                 <Text 
                   align="center" 
                   data-cms-id="pages.home.features.items.1.description" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.features.items.1.description', 'Well-maintained, professional fleet with luxury options')}
+                  {getCMSField(cmsData, 'pages.home.features.items.1.description', 'Well-maintained, professional vehicle with luxury options')}
                 </Text>
               </Stack>
             </Col>
-            
+            </Box>
+            <Box variant="elevated" padding="lg">
             <Col grow align="center" padding="md">
               <Stack spacing="md" align="center">
                 <Text size="xl" align="center">💳</Text>
@@ -156,72 +160,53 @@ function HomePageContent() {
                 </Text>
               </Stack>
             </Col>
+            </Box>
           </Stack>
         </Stack>
       </Container>
 
-      {/* Fleet Section */}
+      {/* Vehicle Section */}
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
             <H2 
               align="center" 
-              data-cms-id="pages.home.fleet.title" 
+              data-cms-id="pages.home.vehicle.title" 
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.home.fleet.title', 'Our Fleet')}
+              {getCMSField(cmsData, 'pages.home.vehicle.title', 'Our Vehicle')}
             </H2>
             <Text 
               align="center" 
               size="lg" 
-              data-cms-id="pages.home.fleet.description" 
+              data-cms-id="pages.home.vehicle.description" 
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.home.fleet.description', 'You will ride in a meticulously maintained Chevrolet Suburban or a similar full-size luxury SUV, offering ample space for passengers and luggage.')}
+              {getCMSField(cmsData, 'pages.home.vehicle.description', 'You will ride in a meticulously maintained Chevrolet Suburban, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.')}
             </Text>
           </Stack>
           
-          <Stack direction="horizontal" spacing="xl" align="stretch">
+          <Box variant="elevated" padding="lg">
             <Col grow align="center" padding="md">
               <Stack spacing="md" align="center">
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.fleet.vehicles.0.title" 
+                  data-cms-id="pages.home.vehicle.features.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.0.title', 'Luxury SUV')}
+                  {getCMSField(cmsData, 'pages.home.vehicle.features.title', 'Luxury SUV Service')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.fleet.vehicles.0.description" 
+                  data-cms-id="pages.home.vehicle.features.description" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.0.description', 'Spacious Chevrolet Suburban with premium amenities including complimentary water, Wi-Fi, and phone chargers.')}
+                  {getCMSField(cmsData, 'pages.home.vehicle.features.description', 'Professional driver with background checks, ensuring your safety and comfort throughout your journey.')}
                 </Text>
               </Stack>
             </Col>
-            
-            <Col grow align="center" padding="md">
-              <Stack spacing="md" align="center">
-                <Text 
-                  align="center" 
-                  variant="lead" 
-                  data-cms-id="pages.home.fleet.vehicles.1.title" 
-                  mode={mode}
-                >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.1.title', 'Professional Service')}
-                </Text>
-                <Text 
-                  align="center" 
-                  data-cms-id="pages.home.fleet.vehicles.1.description" 
-                  mode={mode}
-                >
-                  {getCMSField(cmsData, 'pages.home.fleet.vehicles.1.description', 'Experienced drivers with background checks, ensuring your safety and comfort throughout your journey.')}
-                </Text>
-              </Stack>
-            </Col>
-          </Stack>
+          </Box>
         </Stack>
       </Container>
 

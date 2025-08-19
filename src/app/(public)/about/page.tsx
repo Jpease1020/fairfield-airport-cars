@@ -57,7 +57,7 @@ function AboutPageContent() {
             {getCMSField(
               cmsData,
               'pages.about.description',
-              'We provide reliable, professional airport transportation throughout Fairfield County. Licensed drivers, clean vehicles, on-time service.'
+              'We provide reliable, professional airport transportation throughout Fairfield County. Licensed driver, clean vehicle, on-time service.'
             )}
           </Text>
         </Stack>
