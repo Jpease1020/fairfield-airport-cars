@@ -235,7 +235,7 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
         status: 'open' as const,
         createdBy,
         scope,
-      } as Omit<CommentRecord, 'id' | 'createdAt'>;
+      } as Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>;
       
       // Debug: Log the comment data being sent
       console.log('Saving comment with data:', commentData);

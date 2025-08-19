@@ -30,12 +30,23 @@ export interface CommentRecord {
 class CommentsService {
   private readonly collectionName = 'comments';
 
-  async addComment(commentData: Omit<CommentRecord, 'id' | 'createdAt'>): Promise<string> {
+  async addComment(commentData: Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     console.log('📝 Adding comment to Firebase:', commentData);
+    console.log('📝 Collection name:', this.collectionName);
     
     try {
-      const docRef = await addDoc(collection(db, this.collectionName), commentData);
-      console.log('✅ Comment added successfully to Firebase');
+      // Add timestamps automatically
+      const commentWithTimestamps = {
+        ...commentData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      console.log('📝 Comment with timestamps:', commentWithTimestamps);
+      
+      const docRef = await addDoc(collection(db, this.collectionName), commentWithTimestamps);
+      console.log('✅ Comment added successfully to Firebase with ID:', docRef.id);
+      console.log('✅ Document path:', docRef.path);
       return docRef.id;
     } catch (error) {
       console.error('❌ Firebase addComment failed:', error);
@@ -58,23 +69,49 @@ class CommentsService {
       let q = query(base, orderBy('createdAt', 'desc'));
       
       console.log('📡 Firebase query (simplified):', q);
+      console.log('📡 Query path:', base.path);
       const snap = await getDocs(q);
       console.log('✅ Firebase query successful, got', snap.docs.length, 'comments');
+      console.log('📡 All document IDs returned:', snap.docs.map(d => d.id));
+      console.log('📡 All document paths returned:', snap.docs.map(d => d.ref.path));
       
       // Filter in JavaScript to avoid index requirements
-      let comments = snap.docs.map(d => d.data() as CommentRecord);
+      let comments = snap.docs.map(d => {
+        const data = d.data() as CommentRecord;
+        console.log(`📄 Document ${d.id} at ${d.ref.path}:`, data);
+        console.log(`📄 Document ${d.id} createdAt:`, data.createdAt);
+        return data;
+      });
+      
+      console.log('🔍 Raw comments before filtering:', comments.map(c => ({ 
+        id: c.id, 
+        pageUrl: c.pageUrl, 
+        scope: c.scope, 
+        elementId: c.elementId 
+      })));
+      console.log('🔍 Applied filters:', filters);
       
       if (filters.status) {
         comments = comments.filter(c => c.status === filters.status);
+        console.log('🔍 After status filter:', comments.length, 'comments');
       }
       if (filters.pageUrl) {
-        comments = comments.filter(c => c.pageUrl === filters.pageUrl);
+        console.log('🔍 Filtering by pageUrl:', filters.pageUrl);
+        console.log('🔍 Comment pageUrls:', comments.map(c => c.pageUrl));
+        comments = comments.filter(c => {
+          const matches = c.pageUrl === filters.pageUrl;
+          console.log(`🔍 Comment ${c.id}: ${c.pageUrl} === ${filters.pageUrl} = ${matches}`);
+          return matches;
+        });
+        console.log('🔍 After pageUrl filter:', comments.length, 'comments');
       }
       if (filters.elementId) {
         comments = comments.filter(c => c.elementId === filters.elementId);
+        console.log('🔍 After elementId filter:', comments.length, 'comments');
       }
       if (filters.scope) {
         comments = comments.filter(c => c.scope === filters.scope);
+        console.log('🔍 After scope filter:', comments.length, 'comments');
       }
       
       console.log('🔍 After filtering:', comments.length, 'comments');
