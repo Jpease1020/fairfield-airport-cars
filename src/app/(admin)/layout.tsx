@@ -9,6 +9,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { User } from 'firebase/auth';
 import { Container } from '@/ui';
+import { AdminNavigation } from '@/components/app/AdminNavigation';
 
 export default function AdminLayout({
   children,
@@ -20,7 +21,6 @@ export default function AdminLayout({
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
-
   // Check if user has admin role in Firestore
   const checkAdminRole = async (user: User) => {
     try {
@@ -89,6 +89,14 @@ export default function AdminLayout({
     return null; // or a redirect component
   }
 
-  // Render admin pages (navigation handled by NavigationManager)
-  return <>{children}</>;
+  // Render admin pages with admin navigation for authenticated admin users
+  return (
+    <>
+      {/* Admin Navigation Header */}
+      <AdminNavigation />
+      
+      {/* Admin Page Content */}
+      {children}
+    </>
+  );
 } 

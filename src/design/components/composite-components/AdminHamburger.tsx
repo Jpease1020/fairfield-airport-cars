@@ -1,37 +1,97 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useInteractionMode } from '../../providers/InteractionModeProvider';
-import { useDemoMode } from '../../../hooks/useDemoMode';
+import { Text } from '../base-components/text/Text';
+import { Button } from '../base-components/Button';
 
-const AdminHamburgerContainer = styled.div`
+interface FloatingEditButtonProps {
+  isAdmin?: boolean;
+  isAuthenticated?: boolean;
+  editMode?: boolean;
+  commentMode?: boolean;
+  onToggleEditMode?: () => void;
+  onToggleCommentMode?: () => void;
+  isLoading?: boolean;
+}
+
+const FloatingContainer = styled.div`
   position: fixed;
   top: 120px;
   right: 20px;
   z-index: 10000;
 `;
 
-const AdminHamburgerButton = styled.button<{ $isOpen: boolean }>`
+const FloatingButton = styled(Button)`
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+`;
+
+const AdminPanel = styled.div<{ $isOpen: boolean }>`
+  position: absolute;
+  top: 60px;
+  right: 0;
   background: var(--background-card);
   border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 200px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
+  display: ${props => props.$isOpen ? 'block' : 'none'};
+  border-top: 1px solid var(--border-color);
+  z-index: 10001;
+`;
+
+const PanelContent = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const PanelText = styled(Text)`
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+`;
+
+const PanelButton = styled.button<{ $isActive?: boolean }>`
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--text-primary);
+  background-color: ${props => props.$isActive ? 'var(--primary-color)' : 'transparent'};
+  color: ${props => props.$isActive ? 'white' : 'var(--text-primary)'};
+
+  &:hover {
+    background-color: ${props => props.$isActive ? 'var(--primary-color)' : 'var(--background-secondary)'};
+  }
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  background: var(--border-color);
+  margin: 8px 0;
+`;
+
+const HamburgerIcon = styled.div<{ $isOpen: boolean }>`
+  width: 20px;
+  height: 20px;
   position: relative;
   
   span {
     display: block;
-    width: 20px;
+    width: 100%;
     height: 2px;
     background: currentColor;
     position: absolute;
-    left: 15px;
+    left: 0;
     transition: all 0.3s ease;
     
     &:nth-child(1) {
@@ -52,103 +112,77 @@ const AdminHamburgerButton = styled.button<{ $isOpen: boolean }>`
   }
 `;
 
-const AdminHamburgerPanel = styled.div`
-  position: absolute;
-  top: 60px;
-  right: 0;
-  background: var(--background-card);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
-  min-width: 200px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-top: 1px solid var(--border-color);
-  z-index: 10001;
-`;
-
-const PanelText = styled.div`
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-`;
-
-const PanelButton = styled.button<{ $isActive?: boolean }>`
-  background: none;
-  border: none;
-  padding: 8px 12px;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-  color: var(--text-primary);
-  background-color: ${props => props.$isActive ? 'var(--primary-color)' : 'transparent'};
-  color: ${props => props.$isActive ? 'white' : 'var(--text-primary)'};
-  width: 100%;
-  margin-bottom: 4px;
-
-  &:hover {
-    background-color: ${props => props.$isActive ? 'var(--primary-color)' : 'var(--background-secondary)'};
-  }
-`;
-
-export const AdminHamburger: React.FC = () => {
+export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
+  isAdmin = false,
+  isAuthenticated = false,
+  editMode = false,
+  commentMode = false,
+  onToggleEditMode,
+  onToggleCommentMode,
+  isLoading = false
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { editMode, commentMode, setEditMode, setCommentMode } = useInteractionMode();
-  const { isDemoMode, toggleDemoMode } = useDemoMode();
 
-  const handleEditMode = () => {
-    setEditMode(!editMode);
-    if (commentMode) setCommentMode(false);
+  // Don't render if not logged in or not admin
+  if (isLoading) {
+    return null;
+  }
+  
+  if (!isAuthenticated || !isAdmin) {
+    return null;
+  }
+
+  const handleEditMode = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (onToggleEditMode) {
+      onToggleEditMode();
+    }
   };
 
-  const handleCommentMode = () => {
-    setCommentMode(!commentMode);
-    if (editMode) setEditMode(false);
+  const handleCommentMode = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (onToggleCommentMode) {
+      onToggleCommentMode();
+    }
   };
-
-  const handleDemoMode = async () => {
-    await toggleDemoMode(!isDemoMode);
-  };
-
-  // Close panel when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && !(event.target as Element).closest('[data-testid="admin-hamburger-container"]')) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
 
   return (
-    <AdminHamburgerContainer data-testid="admin-hamburger-container">
-      <AdminHamburgerButton
-        onClick={() => setIsOpen(!isOpen)}
-        $isOpen={isOpen}
-        data-testid="admin-hamburger-button"
+    <FloatingContainer data-admin-control="true">
+      <FloatingButton
+        onClick={(e?: React.MouseEvent<HTMLButtonElement>) => {
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          setIsOpen(!isOpen);
+        }}
+        data-testid="floating-edit-button"
+        data-admin-control="true"
       >
-        <span></span>
-        <span></span>
-        <span></span>
-      </AdminHamburgerButton>
-
-      {isOpen && (
-        <AdminHamburgerPanel data-testid="admin-hamburger-panel">
+        <HamburgerIcon $isOpen={isOpen}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </HamburgerIcon>
+      </FloatingButton>
+      
+      <AdminPanel $isOpen={isOpen} data-admin-control="true">
+        <PanelContent>
           <PanelText>Admin Controls</PanelText>
           <PanelButton onClick={handleEditMode} $isActive={editMode} data-admin-control="true">
-            {editMode ? '✓' : '○'} Edit Copy
+            {editMode ? '✓' : '○'} Edit Mode
           </PanelButton>
           <PanelButton onClick={handleCommentMode} $isActive={commentMode} data-admin-control="true">
             {commentMode ? '✓' : '○'} Comment Mode
           </PanelButton>
-          <PanelButton onClick={handleDemoMode} $isActive={isDemoMode} data-admin-control="true">
-            {isDemoMode ? '✓' : '○'} Demo Mode
-          </PanelButton>
-        </AdminHamburgerPanel>
-      )}
-    </AdminHamburgerContainer>
+        </PanelContent>
+      </AdminPanel>
+    </FloatingContainer>
   );
 }; 
