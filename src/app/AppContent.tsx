@@ -25,22 +25,23 @@ export function AppContent({ children }: AppContentProps) {
       </Container>
       
       {/* Inline CMS Text Editor (edit mode only) */}
-      <InlineTextEditor isAdmin={isAdmin} editMode={editMode} />
+      {isAdmin && <InlineTextEditor editMode={editMode} />}
 
       {/* Global Comment Modal (comment mode only) */}
-      <GlobalCommentModal isAdmin={isAdmin} commentMode={commentMode} />
+      {isAdmin && <GlobalCommentModal commentMode={commentMode} />}
 
       {/* Global Comment Icons (comment mode only) */}
-      <GlobalCommentIcons isAdmin={isAdmin} commentMode={commentMode} />
+      {isAdmin && <GlobalCommentIcons commentMode={commentMode} />}
 
-      <AdminHamburger
-        isAdmin={isAdmin}
-        isAuthenticated={!!user}
-        editMode={editMode}
-        commentMode={commentMode}
-        onToggleEditMode={toggleEditMode}
-        onToggleCommentMode={toggleCommentMode}
-      />
+      {/* Admin Hamburger - only for admin users */}
+      {isAdmin && (
+        <AdminHamburger
+          editMode={editMode}
+          commentMode={commentMode}
+          onToggleEditMode={toggleEditMode}
+          onToggleCommentMode={toggleCommentMode}
+        />
+      )}
     </>
   );
 }

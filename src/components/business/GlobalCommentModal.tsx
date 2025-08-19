@@ -16,11 +16,10 @@ const FloatingCommentBox = styled.div<{ $top: number; $left: number }>`
 `;
 
 interface GlobalCommentModalProps {
-  isAdmin: boolean;
   commentMode?: boolean;
 }
 
-export default function GlobalCommentModal({ isAdmin, commentMode = false }: GlobalCommentModalProps) {
+export default function GlobalCommentModal({ commentMode = false }: GlobalCommentModalProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   
@@ -37,7 +36,7 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
 
   // Global click handler for comment mode
   const handleClick = useCallback((e: MouseEvent) => {
-    if (!isAdmin || !commentMode) return;
+    if (!user || !commentMode) return;
 
     // Prevent default behavior when comment mode is active
     e.preventDefault();
@@ -84,19 +83,19 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
     } else {
       setClickPosition({ x: e.clientX, y: e.clientY });
     }
-  }, [isAdmin, commentMode]);
+  }, [user, commentMode]);
 
   // Global click event listener
   React.useEffect(() => {
-    if (!isAdmin || !commentMode) return;
+    if (!user || !commentMode) return;
 
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
-  }, [isAdmin, commentMode, handleClick]);
+  }, [user, commentMode, handleClick]);
 
   // Event listener for openCommentModal events
   React.useEffect(() => {
-    if (!isAdmin) return;
+    if (!user) return;
 
     const handleOpenCommentModal = (e: Event) => {
       const customEvent = e as any;
@@ -119,7 +118,7 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
 
     document.addEventListener('openCommentModal', handleOpenCommentModal);
     return () => document.removeEventListener('openCommentModal', handleOpenCommentModal);
-  }, [isAdmin]);
+  }, [user]);
 
   // Smart positioning logic
   useLayoutEffect(() => {
@@ -258,7 +257,7 @@ export default function GlobalCommentModal({ isAdmin, commentMode = false }: Glo
   }, [commentText, selectedElement, user, scope, closeCommentBox]);
 
   // Don't render if not admin
-  if (!isAdmin) return null;
+  if (!user) return null;
 
   return (
     <>
