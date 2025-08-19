@@ -13,7 +13,7 @@ import {
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
-function PortalPageContent() {
+function DashboardPageContent() {
   const { addToast } = useToast();
   const { cmsData } = useCMSData();
   const { mode } = useInteractionMode();
@@ -94,7 +94,7 @@ function PortalPageContent() {
               data-cms-id="pages.portal.welcome.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.portal.welcome.title', '👋 Welcome to Your Portal')}
+              {getCMSField(cmsData, 'pages.portal.welcome.title', '👋 Welcome to Your Dashboard')}
             </H1>
             <Text 
               variant="lead" 
@@ -120,7 +120,7 @@ function PortalPageContent() {
               data-cms-id="pages.portal.features.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.portal.features.title', '🎯 Portal Features')}
+                              {getCMSField(cmsData, 'pages.portal.features.title', '🎯 Dashboard Features')}
             </H1>
             <Text 
               align="center" 
@@ -183,10 +183,10 @@ function PortalPageContent() {
   );
 }
 
-export default function PortalPage() {
+export default function DashboardPage() {
   return (
     <ToastProvider>
-      <PortalPageContent />
+      <DashboardPageContent />
     </ToastProvider>
   );
 }

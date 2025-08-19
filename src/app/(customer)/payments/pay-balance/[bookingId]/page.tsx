@@ -31,8 +31,6 @@ interface BookingDetails {
   tipPercent?: number;
   status: string;
   driverName?: string;
-  vehicleType?: string;
-  serviceLevel?: string;
 }
 
 function BalancePaymentPageContent() {

@@ -18,7 +18,6 @@ interface Booking {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: Date;
-  passengers: number;
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
   fare: number;
   dynamicFare?: number;
@@ -38,23 +37,12 @@ interface Booking {
   onMyWaySent?: boolean;
   createdAt: Date;
   updatedAt: Date;
-  vehicleType?: 'sedan' | 'suv' | 'luxury' | 'van';
-  serviceLevel?: 'standard' | 'premium' | 'luxury';
-  specialRequests?: {
-    childSeat?: boolean;
-    wheelchair?: boolean;
-    extraLuggage?: boolean;
-    meetAndGreet?: boolean;
-    flightTracking?: boolean;
-  };
   flightInfo?: {
     airline?: string;
     flightNumber?: string;
     arrivalTime?: string;
     terminal?: string;
   };
-  vehicleUpgradePrice?: number;
-  serviceLevelPrice?: number;
   totalFare?: number;
 }
 
@@ -152,22 +140,17 @@ const BookingCard: React.FC<BookingCardProps> = ({
         </Container>
       </Stack>
 
-      {/* Passenger Info */}
-      <Container>
-        <Text size="sm">
-          {getCMSField(cmsData, 'bookingCard.passengersLabel', `Passengers: ${booking.passengers}`)}
-        </Text>
-        {booking.notes && (
-          <Container>
-            <Text size="xs">
-                {getCMSField(cmsData, 'bookingCard.notesLabel', 'Notes:')}
-            </Text>
-            <Text size="sm">
-              {getCMSField(cmsData, 'bookingCard.notes', booking.notes)}
-            </Text>
-          </Container>
-        )}
-      </Container>
+      {/* Notes */}
+      {booking.notes && (
+        <Container>
+          <Text size="xs">
+              {getCMSField(cmsData, 'bookingCard.notesLabel', 'Notes:')}
+          </Text>
+          <Text size="sm">
+            {getCMSField(cmsData, 'bookingCard.notes', booking.notes)}
+          </Text>
+        </Container>
+      )}
 
       {/* Price */}
       <Stack direction="horizontal" align="center" spacing="sm">

@@ -163,7 +163,6 @@ function SuccessPageContent() {
                 <Text data-testid="success-pickup-location"><strong>From:</strong> {booking.pickupLocation}</Text>
                 <Text data-testid="success-dropoff-location"><strong>To:</strong> {booking.dropoffLocation}</Text>
                 <Text data-testid="success-pickup-time"><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</Text>
-                <Text data-testid="success-passengers"><strong>Passengers:</strong> {booking.passengers}</Text>
               </Stack>
             </Stack>
           </Container>

@@ -25,7 +25,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
     ...(pathname !== '/book' ? [{ name: 'Book a Ride', href: '/book', current: false }] : []),
     ...(pathname !== '/about' ? [{ name: 'About', href: '/about', current: false }] : []),
     ...(pathname !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
-    ...(pathname !== '/portal' ? [{ name: 'Portal', href: '/portal', current: false }] : []),
+    ...(pathname !== '/portal' ? [{ name: 'My Dashboard', href: '/portal', current: false }] : []),
     ...(isAdmin && !pathname.startsWith('/admin') ? [{ name: 'Admin', href: '/admin', current: false }] : []),
   ];
 

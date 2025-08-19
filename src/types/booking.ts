@@ -7,7 +7,6 @@ export interface Booking {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: Date;
-  passengers: number;
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
   fare: number;
   dynamicFare?: number;
@@ -38,23 +37,12 @@ export interface Booking {
   };
   
   // Advanced Booking Features
-  vehicleType?: 'sedan' | 'suv' | 'luxury' | 'van';
-  serviceLevel?: 'standard' | 'premium' | 'luxury';
-  specialRequests?: {
-    childSeat?: boolean;
-    wheelchair?: boolean;
-    extraLuggage?: boolean;
-    meetAndGreet?: boolean;
-    flightTracking?: boolean;
-  };
   flightInfo?: {
     airline?: string;
     flightNumber?: string;
     arrivalTime?: string;
     terminal?: string;
   };
-  vehicleUpgradePrice?: number;
-  serviceLevelPrice?: number;
   totalFare?: number;
 }
 

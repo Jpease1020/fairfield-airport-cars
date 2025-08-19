@@ -2,22 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button } from '../components/base-components/Button';
-import { Input } from '../components/base-components/forms/Input';
-import { Select } from '../components/base-components/forms/Select';
-import { Span } from '../components/base-components/text/Span';
-import { Box } from '../layout/content/Box';
-import { Stack } from '../layout/framing/Stack';
-import { Overlay } from '../components/base-components/Overlay';
-
-const AccessibilityToggleButton = styled.div`
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  width: auto;
-  display: inline-block;
-`;
 
 const SkipLink = styled.a`
   position: absolute;
@@ -158,83 +142,6 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
   return (
     <>
       {children}
-
-      {/* Accessibility Toggle Button */}
-      <AccessibilityToggleButton>
-        <Box
-          variant="elevated"
-          padding="sm"
-          rounded="full"
-          margin="none"
-        >
-          <Button
-            onClick={() => setShowPanel(!showPanel)}
-            variant="outline"
-            size="sm"
-            aria-label="Toggle accessibility options (Alt + A)"
-          >
-            ♿
-          </Button>
-        </Box>
-      </AccessibilityToggleButton>
-
-      {/* Accessibility Settings Panel */}
-      <Overlay
-        isOpen={showPanel}
-        onClose={() => setShowPanel(false)}
-        variant="modal"
-        position="center"
-        closeOnBackdropClick={true}
-        closeOnEscape={true}
-      >
-        <Box>
-            <Stack direction="vertical" spacing="md">
-              {/* High Contrast */}
-              <Stack direction="horizontal" align="center" spacing="sm">
-                <Input
-                  type="checkbox"
-                  checked={settings.highContrast}
-                  onChange={(e) => updateSetting('highContrast', e.target.checked)}
-                />
-                <Span>High Contrast Mode</Span>
-              </Stack>
-
-              {/* Reduce Motion */}
-              <Stack direction="horizontal" align="center" spacing="sm">
-                <Input
-                  type="checkbox"
-                  checked={settings.reduceMotion}
-                  onChange={(e) => updateSetting('reduceMotion', e.target.checked)}
-                />
-                <Span>Reduce Motion</Span>
-              </Stack>
-
-              {/* Enhanced Focus */}
-              <Stack direction="horizontal" align="center" spacing="sm">
-                <Input
-                  type="checkbox"
-                  checked={settings.focusIndicators}
-                  onChange={(e) => updateSetting('focusIndicators', e.target.checked)}
-                />
-                <Span>Enhanced Focus Indicators</Span>
-              </Stack>
-
-              {/* Font Size */}
-              <Stack direction="vertical" spacing="sm">
-                <Span>Font Size</Span>
-                <Select
-                  value={settings.fontSize}
-                  onChange={(e) => updateSetting('fontSize', e.target.value as AccessibilitySettings['fontSize'])}
-                  options={[
-                    { value: 'normal', label: 'Normal' },
-                    { value: 'large', label: 'Large' },
-                    { value: 'extra-large', label: 'Extra Large' }
-                  ]}
-                />
-              </Stack>
-            </Stack>
-        </Box>
-      </Overlay>
 
       {/* Skip to main content link */}
       <SkipLink href="#main-content">

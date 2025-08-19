@@ -11,8 +11,6 @@ interface PaymentSummaryProps {
   baseFare: number;
   tipAmount: number;
   tipPercent: number;
-  vehicleUpgrade?: number;
-  serviceLevel?: number;
   currency?: string;
 }
 
@@ -20,8 +18,6 @@ export function PaymentSummary({
   baseFare, 
   tipAmount, 
   tipPercent, 
-  vehicleUpgrade = 0, 
-  serviceLevel = 0,
   currency = 'USD' 
 }: PaymentSummaryProps) {
   const formatCurrency = (amount: number) => {
@@ -31,7 +27,7 @@ export function PaymentSummary({
     }).format(amount);
   };
 
-  const subtotal = baseFare + vehicleUpgrade + serviceLevel;
+  const subtotal = baseFare;
   const total = subtotal + tipAmount;
 
   return (
@@ -54,24 +50,6 @@ export function PaymentSummary({
                 {formatCurrency(baseFare)}
               </Text>
             </Stack>
-
-            {vehicleUpgrade > 0 && (
-              <Stack direction="horizontal" spacing="sm" justify="space-between">
-                <Text variant="body">Vehicle Upgrade</Text>
-                <Text variant="body" weight="medium">
-                  {formatCurrency(vehicleUpgrade)}
-                </Text>
-              </Stack>
-            )}
-
-            {serviceLevel > 0 && (
-              <Stack direction="horizontal" spacing="sm" justify="space-between">
-                <Text variant="body">Service Level</Text>
-                <Text variant="body" weight="medium">
-                  {formatCurrency(serviceLevel)}
-                </Text>
-              </Stack>
-            )}
 
             <Card variant="default" padding="xs">
               <Stack direction="horizontal" spacing="sm" justify="space-between">

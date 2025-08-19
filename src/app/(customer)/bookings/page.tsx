@@ -32,7 +32,6 @@ interface Booking {
   createdAt: string;
   balanceDue?: number;
   passengers?: number;
-  vehicleType?: string;
 }
 
 function CustomerBookingsPage() {
@@ -92,7 +91,6 @@ function CustomerBookingsPage() {
           createdAt: '2024-01-10T08:00:00Z',
           balanceDue: 0,
           passengers: 2,
-          vehicleType: 'Sedan'
         },
         {
           id: '2',
@@ -106,7 +104,6 @@ function CustomerBookingsPage() {
           createdAt: '2024-01-12T09:00:00Z',
           balanceDue: 10.00,
           passengers: 1,
-          vehicleType: 'SUV'
         },
         {
           id: '3',
@@ -118,7 +115,6 @@ function CustomerBookingsPage() {
           createdAt: '2024-01-14T11:00:00Z',
           balanceDue: 0,
           passengers: 1,
-          vehicleType: 'Sedan'
         }
       ];
       
