@@ -9,20 +9,24 @@ import { Stack } from '../../layout/framing/Stack';
 import { Container } from '../../layout/containers/Container';
 import { PositionedContainer } from '../../layout/containers/PositionedContainer';
 import { Text } from '../../components/base-components/text/Text';
+import { FlexboxContainer } from '../../components/base-components/FlexboxContainer';
+import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
 
-// Single styled component for mobile menu overlay
-const MobileMenuOverlay = styled.div`
+// Mobile menu overlay with flexbox positioning
+const MobileMenuOverlay = styled(FlexboxContainer)`
   position: absolute;
   top: 100%;
   right: 0;
   width: 280px;
-  background: white;
-  border: 1px solid var(--color-border);
+  background: ${colors.background.primary};
+  border: 1px solid ${colors.border.default};
   border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-  z-index: 50;
-  margin-top: 0.5rem;
+  padding: ${spacing.md};
+  box-shadow: ${shadows.lg};
+  z-index: ${zIndex.dropdown};
+  margin-top: ${spacing.sm};
+  flex-direction: column;
+  align-items: stretch;
 `;
 
 const MobileMenuButton = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -114,141 +118,123 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   };
 
   return (
-    <PositionedContainer 
+    <PositionedContainer
       position="relative"
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="space-between"
       data-testid={`${dataTestIdPrefix}-container`}
-      id="navigation-container"
     >
-      <Container maxWidth="full" padding="md" margin="none">
-        <Stack 
-          direction="horizontal" 
-          justify="space-between" 
-          align="center" 
-          spacing="lg"
-        >
-          {/* Logo */}
-          <PositionedContainer 
-            position="relative"
-            data-testid={`${dataTestIdPrefix}-logo`} 
-            id="navigation-logo"
-          >
-            {logo}
-          </PositionedContainer>
-
-        {/* Desktop Navigation - Hidden on mobile */}
-        {!isMobile && (
-          <PositionedContainer position="relative" display="flex" alignItems="center" justifyContent="flex-end">
-            <Stack direction="horizontal" align="center" spacing="sm">
-              {navigationItems.map((item, index) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  id={`navigation-desktop-link-${index + 1}`}
-                >
-                  <Button 
-                    variant={item.current ? 'primary' : 'ghost'} 
-                    size="sm"
-                    data-testid={`${dataTestIdPrefix}-desktop-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                    id={`navigation-desktop-button-${index + 1}`}
-                  >
-                    {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase()}`, item.name)}
-                  </Button>
-                </Link>
-              ))}
-            </Stack>
-          </PositionedContainer>
-        )}
-
-        {/* Desktop Actions - Hidden on mobile */}
-        {!isMobile && actions && (
-          <Stack direction="horizontal" align="center" spacing="sm">
-            {Array.isArray(actions) 
-              ? actions.map((action, index) => (
-                  <React.Fragment key={`action-${index}`}>
-                    {action}
-                  </React.Fragment>
-                ))
-              : actions
-            }
-          </Stack>
-        )}
-
-        {/* Mobile Menu Button - Only visible on mobile */}
-        {isMobile && (
-          <Button
-            onClick={toggleMobileMenu}
-            variant="ghost"
-            size="xl"
-            data-testid={`${dataTestIdPrefix}-mobile-menu-button`}
-            id="navigation-mobile-menu-button"
-            aria-label="Toggle mobile menu"
-            aria-expanded={mobileMenuOpen}
-          >
-            <MobileMenuButton />
-          </Button>
-        )}
-        </Stack>
-
-        {/* Mobile Menu */}
-        {isMobile && mobileMenuOpen && (
-          <MobileMenuOverlay
-            data-testid={`${dataTestIdPrefix}-mobile-menu`}
-            id="navigation-mobile-menu"
-            role="menu"
-          >
-            {/* Mobile Menu Header with Close Button */}
-            <Stack direction="horizontal" justify="space-between" align="center" spacing="sm">
-              <Text weight="semibold" size="sm">Menu</Text>
-              <Button
-                onClick={closeMobileMenu}
-                variant="ghost"
-                size="sm"
-                aria-label="Close mobile menu"
-                data-testid={`${dataTestIdPrefix}-mobile-close-button`}
-              >
-                ✕
-              </Button>
-            </Stack>
-            
-            <Stack spacing="md">
-              {navigationItems.map((item, index) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={closeMobileMenu}
-                  data-testid={`${dataTestIdPrefix}-mobile-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  id={`navigation-mobile-link-${index + 1}`}
-                >
-                  <Button 
-                    variant={item.current ? 'primary' : 'ghost'} 
-                    size="sm"
-                    fullWidth
-                    data-testid={`${dataTestIdPrefix}-mobile-button-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-                    id={`navigation-mobile-button-${index + 1}`}
-                  >
-                    {getCMSField(cmsData, `${editableFieldPrefix}.mobile.${item.name.toLowerCase()}`, item.name)}
-                  </Button>
-                </Link>
-              ))}
-              
-              {/* Mobile Actions */}
-              {mobileActions && (
-                <Stack spacing="xs">
-                  {Array.isArray(mobileActions) 
-                    ? mobileActions.map((action, index) => (
-                        <React.Fragment key={`mobile-action-${index}`}>
-                          {action}
-                        </React.Fragment>
-                      ))
-                    : mobileActions
-                  }
-                </Stack>
-              )}
-            </Stack>
-          </MobileMenuOverlay>
-        )}
+      {/* Logo */}
+      <Container>
+        {logo}
       </Container>
+
+      {/* Desktop Navigation */}
+      {!isMobile && (
+        <Stack direction="horizontal" spacing="lg" align="center">
+          {navigationItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+            >
+              <Text
+                variant={item.current ? 'body' : 'body'}
+                weight={item.current ? 'semibold' : 'medium'}
+                size="md"
+              >
+                {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`, item.name)}
+              </Text>
+            </Link>
+          ))}
+        </Stack>
+      )}
+
+      {/* Desktop Actions */}
+      {!isMobile && actions && (
+        <Stack direction="horizontal" spacing="md" align="center">
+          {Array.isArray(actions) 
+            ? actions.map((action, index) => (
+                <React.Fragment key={`action-${index}`}>
+                  {action}
+                </React.Fragment>
+              ))
+            : actions
+          }
+        </Stack>
+      )}
+
+      {/* Mobile Menu Button - Only visible on mobile */}
+      {isMobile && (
+        <Button
+          onClick={toggleMobileMenu}
+          variant="ghost"
+          size="xl"
+          data-testid={`${dataTestIdPrefix}-mobile-menu-button`}
+          id="navigation-mobile-menu-button"
+          aria-label="Toggle mobile menu"
+          aria-expanded={mobileMenuOpen}
+        >
+          <MobileMenuButton />
+        </Button>
+      )}
+
+      {/* Mobile Menu */}
+      {isMobile && mobileMenuOpen && (
+        <MobileMenuOverlay
+          data-testid={`${dataTestIdPrefix}-mobile-menu`}
+          id="navigation-mobile-menu"
+        >
+          {/* Mobile Menu Header with Close Button */}
+          <Stack direction="horizontal" justify="space-between" align="center" spacing="sm">
+            <Text weight="semibold" size="sm">Menu</Text>
+            <Button
+              onClick={closeMobileMenu}
+              variant="ghost"
+              size="sm"
+              aria-label="Close mobile menu"
+              data-testid={`${dataTestIdPrefix}-mobile-close-button`}
+            >
+              ✕
+            </Button>
+          </Stack>
+          
+          <Stack spacing="md">
+            {navigationItems.map((item, index) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={closeMobileMenu}
+                data-testid={`${dataTestIdPrefix}-mobile-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+              >
+                <Text
+                  variant="body"
+                  weight={item.current ? 'semibold' : 'medium'}
+                  size="md"
+                >
+                  {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`, item.name)}
+                </Text>
+              </Link>
+            ))}
+          </Stack>
+          
+          {/* Mobile Actions */}
+          {mobileActions && (
+            <Stack spacing="sm">
+              {Array.isArray(mobileActions) 
+                ? mobileActions.map((action, index) => (
+                    <React.Fragment key={`mobile-action-${index}`}>
+                      {action}
+                    </React.Fragment>
+                  ))
+                : mobileActions
+              }
+            </Stack>
+          )}
+        </MobileMenuOverlay>
+      )}
     </PositionedContainer>
   );
 }; 

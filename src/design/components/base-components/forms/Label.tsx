@@ -4,7 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, fontWeight, transitions } from '../../../system/tokens/tokens';
 
-// Styled label component with proper prop filtering
+// Styled label component with flexbox and proper prop filtering
 const StyledLabel = styled.label.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'required', 'disabled'].includes(prop)
 })<{
@@ -14,11 +14,13 @@ const StyledLabel = styled.label.withConfig({
   required: boolean;
   disabled: boolean;
 }>`
-  display: inline-block;
+  display: flex;
+  align-items: center;
   font-family: inherit;
   line-height: 1.4;
   transition: ${transitions.default};
   cursor: pointer;
+  min-width: 0; /* Allow flexbox shrinking */
 
   /* Size styles */
   ${({ size }) => {
@@ -105,6 +107,31 @@ const StyledLabel = styled.label.withConfig({
     outline: 2px solid ${colors.primary[600]};
     outline-offset: 2px;
     border-radius: 4px;
+  }
+
+  /* Responsive behavior */
+  @media (max-width: 768px) {
+    ${({ size }) => {
+      if (size === 'lg') {
+        return `
+          font-size: ${fontSize.md};
+          margin-bottom: ${spacing.md};
+        `;
+      }
+      return '';
+    }}
+  }
+
+  @media (max-width: 640px) {
+    ${({ size }) => {
+      if (size === 'md' || size === 'lg') {
+        return `
+          font-size: ${fontSize.sm};
+          margin-bottom: ${spacing.sm};
+        `;
+      }
+      return '';
+    }}
   }
 `;
 

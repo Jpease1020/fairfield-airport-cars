@@ -4,8 +4,10 @@ import React from 'react';
 import styled from 'styled-components';
 
 const StyledForm = styled.form`
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  min-width: 0; /* Allow flexbox shrinking */
 `;
 
 export interface FormProps {

@@ -247,6 +247,7 @@ export const Col: React.FC<ColProps> = ({
 }) => {
   // Deprecation warning for offset prop
   if (offset && process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.warn(
       '⚠️  Col offset prop is deprecated and conflicts with flexbox spacing.\n' +
       '   Use Spacer component or Grid with start/end props instead.\n' +

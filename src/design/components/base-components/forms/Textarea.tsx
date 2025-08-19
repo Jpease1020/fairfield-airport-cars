@@ -4,7 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '../../../system/tokens/tokens';
 
-// Styled Textarea component
+// Styled Textarea component with flexbox
 const StyledTextarea = styled.textarea.withConfig({
   shouldForwardProp: (prop) => !['size', 'error', 'disabled', 'fullWidth'].includes(prop)
 })<{
@@ -13,8 +13,10 @@ const StyledTextarea = styled.textarea.withConfig({
   disabled: boolean;
   fullWidth?: boolean;
 }>`
-  display: block;
+  display: flex;
+  align-items: flex-start;
   width: 100%;
+  min-width: 0; /* Allow flexbox shrinking */
   border: 1px solid ${({ error }) => (error ? colors.border.error : colors.border.default)};
   border-radius: ${borderRadius.default};
   background-color: ${({ disabled }) => (disabled ? colors.background.disabled : colors.background.primary)};
@@ -27,6 +29,7 @@ const StyledTextarea = styled.textarea.withConfig({
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   resize: vertical;
   min-height: 3em;
+  flex: 1;
 
   /* Size styles */
   ${({ size }) => {
@@ -65,6 +68,31 @@ const StyledTextarea = styled.textarea.withConfig({
     border-color: ${colors.border.error};
     box-shadow: ${shadows.error};
   `}
+
+  /* Responsive behavior */
+  @media (max-width: 768px) {
+    ${({ size }) => {
+      if (size === 'lg') {
+        return `
+          padding: ${spacing.md} ${spacing.lg};
+          font-size: ${fontSize.md};
+        `;
+      }
+      return '';
+    }}
+  }
+
+  @media (max-width: 640px) {
+    ${({ size }) => {
+      if (size === 'md' || size === 'lg') {
+        return `
+          padding: ${spacing.sm} ${spacing.md};
+          font-size: ${fontSize.sm};
+        `;
+      }
+      return '';
+    }}
+  }
 `;
 
 // Textarea Component
