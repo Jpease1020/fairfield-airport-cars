@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createBooking, getBooking } from '@/lib/services/booking-service';
 import { createPaymentLink } from '@/lib/services/square-service';
+import { updateCustomerProfile } from '@/lib/services/auth-service';
+import { getAdminAuth } from '@/lib/utils/firebase-admin';
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +34,32 @@ export async function POST(request: Request) {
       depositPaid: false,
       balanceDue: bookingData.fare
     });
+
+    // If user wants to save info for future rides, update their profile
+    if (bookingData.saveInfoForFuture && bookingData.email) {
+      try {
+        const adminAuth = getAdminAuth();
+        // Get user by email to find their UID
+        const userQuery = await adminAuth.getUserByEmail(bookingData.email);
+        if (userQuery) {
+          await updateCustomerProfile(userQuery.uid, {
+            name: bookingData.name,
+            phone: bookingData.phone,
+            preferences: {
+              defaultPickupLocation: bookingData.pickupLocation,
+              defaultDropoffLocation: bookingData.dropoffLocation,
+              notifications: {
+                email: true,
+                sms: true
+              }
+            }
+          });
+        }
+      } catch (profileError) {
+        console.error('Failed to update user profile:', profileError);
+        // Don't fail the booking if profile update fails
+      }
+    }
 
     // Get the created booking to return payment info
     const booking = await getBooking(bookingId);
