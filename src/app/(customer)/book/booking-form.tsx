@@ -380,7 +380,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
             <>
               {/* Trip Details */}
               <Box variant="elevated" padding="lg">
-                <Stack spacing="lg">
+                <Stack spacing="lg" align="center">
                   <H2 
                     align="center"
                     data-cms-id="pages.booking.tripDetails.title"
@@ -389,7 +389,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {getCMSField(cmsData, 'pages.booking.tripDetails.title', 'Where & When?')}
                   </H2>
                   
-                  <Stack spacing="lg">
+                  <Stack spacing="lg" align="center">
                     <Stack spacing="sm">
                       <Label htmlFor="pickupLocation" data-cms-id="pages.booking.form.pickupLocation.label" mode={mode}>
                         {getCMSField(cmsData, 'pages.booking.form.pickupLocation.label', 'Pickup Location')}
