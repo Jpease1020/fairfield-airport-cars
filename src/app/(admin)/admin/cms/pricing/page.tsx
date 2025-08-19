@@ -270,14 +270,14 @@ function PricingSettingsContent() {
                 <div>
                   <strong>Fairfield, CT → JFK Airport:</strong>
                   <ul>
-                    <li>Lyft/Uber: ~$120-180 (estimated)</li>
+                    <li>Competitor: ~$120-180 (estimated)</li>
                     <li>Your Current Rate: ${settings.baseFare + (65 * settings.perMile) + (65 * settings.perMinute)}</li>
                   </ul>
                 </div>
                 <div>
                   <strong>Fairfield, CT → LaGuardia Airport:</strong>
                   <ul>
-                    <li>Lyft/Uber: ~$100-150 (estimated)</li>
+                    <li>Competitor: ~$100-150 (estimated)</li>
                     <li>Your Current Rate: ${settings.baseFare + (55 * settings.perMile) + (55 * settings.perMinute)}</li>
                   </ul>
                 </div>

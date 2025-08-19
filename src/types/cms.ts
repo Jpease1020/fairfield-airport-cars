@@ -1032,7 +1032,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       ],
       contactInfo: {
         phone: "(555) 123-4567",
-        email: "support@fairfieldairportcars.com",
+        email: "rides@fairfieldairportcars.com",
         hours: "24/7"
       },
       contactSection: {
