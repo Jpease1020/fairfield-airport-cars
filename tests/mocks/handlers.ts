@@ -29,8 +29,8 @@ export const mockCMSData = {
     features: {
       items: [
         {
-          title: 'Professional Drivers',
-          description: 'Licensed, insured, and experienced drivers',
+                  title: 'Professional Driver',
+        description: 'Licensed, insured, and experienced driver',
           icon: 'car'
         },
         {

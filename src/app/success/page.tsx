@@ -237,7 +237,7 @@ function SuccessPageContent() {
             
               <Stack spacing="md" align="center">
                 <Text data-testid="success-emergency-phone">{getCMSField(cmsData, 'success.emergencyContact.phone', '📞 (203) 555-0123')}</Text>
-                <Text data-testid="success-emergency-message">{getCMSField(cmsData, 'success.emergencyContact.message', 'Save this number! Our drivers are available to assist you.')}</Text>
+                <Text data-testid="success-emergency-message">{getCMSField(cmsData, 'success.emergencyContact.message', 'Save this number! Our driver is available to assist you.')}</Text>
               </Stack>
           </Stack>
         </Container>

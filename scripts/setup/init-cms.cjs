@@ -38,7 +38,7 @@ const COMPLETE_CMS_CONFIG = {
           },
           {
             title: "Luxury Vehicle",
-            description: "Travel in comfort and style in a modern, spacious black SUV.",
+            description: "Travel in comfort and style in a modern, spacious luxury vehicle.",
             icon: "car"
           },
           {
@@ -57,17 +57,17 @@ const COMPLETE_CMS_CONFIG = {
             icon: "shield"
           },
           {
-            title: "Professional Drivers",
-            description: "Experienced, courteous, and background-checked drivers.",
+                    title: "Professional Driver",
+        description: "Experienced, courteous, and background-checked driver.",
             icon: "users"
           }
         ]
       },
       vehicle: {
         title: "Our Vehicle",
-        description: "You will ride in a meticulously maintained Chevrolet Suburban, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.",
+        description: "You will ride in a meticulously maintained luxury vehicle, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.",
         features: {
-          title: "Luxury SUV Service",
+          title: "Luxury Vehicle Service",
           description: "Professional driver with background checks, ensuring your safety and comfort throughout your journey."
         }
       },
@@ -89,7 +89,7 @@ const COMPLETE_CMS_CONFIG = {
           },
           {
             question: "What kind of vehicle will I be riding in?",
-            answer: "You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers."
+            answer: "You will be riding in a modern, clean, and comfortable luxury vehicle, equipped with complimentary water, Wi-Fi, and phone chargers."
           }
         ]
       },
@@ -100,7 +100,7 @@ const COMPLETE_CMS_CONFIG = {
       },
       about: {
         title: "About Our Service",
-        content: "We provide reliable airport transportation services in the Fairfield area. Our professional drivers ensure you arrive at your destination safely and on time."
+        content: "We provide reliable airport transportation services in the Fairfield area. Our professional driver ensures you arrive at your destination safely and on time."
       },
       contact: {
         title: "Contact Us",

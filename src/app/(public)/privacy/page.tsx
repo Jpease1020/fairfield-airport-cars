@@ -120,7 +120,7 @@ function PrivacyPageContent() {
                 </Text>
                 <Stack data-testid="privacy-section-items-2" spacing="sm">
                   <Text data-testid="privacy-section-item-2-0" data-cms-id="pages.privacy.sections.2.items.0" mode={mode}>
-                    {`• ${getCMSField(cmsData, 'pages.privacy.sections.2.items.0', 'With our drivers to coordinate your transportation')}`}
+                    {`• ${getCMSField(cmsData, 'pages.privacy.sections.2.items.0', 'With our driver to coordinate your transportation')}`}
                   </Text>
                   <Text data-testid="privacy-section-item-2-1" data-cms-id="pages.privacy.sections.2.items.1" mode={mode}>
                     {`• ${getCMSField(cmsData, 'pages.privacy.sections.2.items.1', 'With payment processors to handle transactions')}`}

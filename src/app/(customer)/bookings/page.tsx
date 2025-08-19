@@ -100,7 +100,7 @@ function CustomerBookingsPage() {
           status: 'confirmed',
           fare: 50.00,
           driverName: 'Sarah Johnson',
-          vehicleInfo: 'White SUV - XYZ789',
+          vehicleInfo: 'Luxury Vehicle - XYZ789',
           createdAt: '2024-01-12T09:00:00Z',
           balanceDue: 10.00,
           passengers: 1,

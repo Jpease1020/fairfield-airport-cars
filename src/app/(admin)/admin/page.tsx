@@ -153,12 +153,12 @@ function AdminDashboardContent() {
       changeType: 'neutral' as const
     },
     { 
-      title: getCMSField(cmsData, 'admin.dashboard.stats.activeDrivers.title', 'Active Drivers'), 
+              title: getCMSField(cmsData, 'admin.dashboard.stats.activeDriver.title', 'Active Driver'), 
       value: stats.activeDrivers.toString(), 
       icon: '👨‍💼', 
-      change: stats.activeDrivers === 0 ? 
-        getCMSField(cmsData, 'admin.dashboard.stats.activeDrivers.noDrivers', 'Add drivers to get started') : 
-        getCMSField(cmsData, 'admin.dashboard.stats.activeDrivers.available', 'Available now'),
+              change: stats.activeDrivers === 0 ?
+          getCMSField(cmsData, 'admin.dashboard.stats.activeDriver.noDriver', 'Add driver to get started') :
+          getCMSField(cmsData, 'admin.dashboard.stats.activeDriver.available', 'Available now'),
       changeType: 'neutral' as const
     },
     { 
@@ -187,10 +187,10 @@ function AdminDashboardContent() {
       onClick: () => window.location.href = '/admin/bookings'
     },
     {
-      title: getCMSField(cmsData, 'admin.dashboard.quickActions.manageDrivers.title', 'Manage Drivers'),
-      description: getCMSField(cmsData, 'admin.dashboard.quickActions.manageDrivers.description', 'Add, edit, or remove drivers'),
+              title: getCMSField(cmsData, 'admin.dashboard.quickActions.manageDriver.title', 'Manage Driver'),
+        description: getCMSField(cmsData, 'admin.dashboard.quickActions.manageDriver.description', 'Add, edit, or remove driver'),
       icon: '👨‍💼',
-      onClick: () => window.location.href = '/admin/drivers'
+              onClick: () => window.location.href = '/admin/driver'
     },
     {
       title: getCMSField(cmsData, 'admin.dashboard.quickActions.editContent.title', 'Edit Content'),

@@ -33,25 +33,25 @@ function AdminHelpPage() {
       ]
     },
     {
-      title: getCMSField(cmsData, 'admin.help.sections.drivers.title', 'Driver Management'),
+      title: getCMSField(cmsData, 'admin.help.sections.driver.title', 'Driver Management'),
       icon: "👨‍💼",
-      description: getCMSField(cmsData, 'admin.help.sections.drivers.description', 'Managing your driver roster and availability'),
+      description: getCMSField(cmsData, 'admin.help.sections.driver.description', 'Managing your driver and availability'),
       items: [
         {
-          question: getCMSField(cmsData, 'admin.help.sections.drivers.q1.question', 'How do I add a new driver?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q1.answer', 'Go to Admin > Drivers and click "Add Driver". Fill in their details and vehicle information.')
+                  question: getCMSField(cmsData, 'admin.help.sections.driver.q1.question', 'How do I update driver information?'),
+        answer: getCMSField(cmsData, 'admin.help.sections.driver.q1.answer', 'Go to Admin > Driver and update the driver details and vehicle information.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.drivers.q2.question', 'How do I update driver status?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q2.answer', 'In the Drivers page, use the status buttons to set drivers as Available, Busy, or Offline.')
+                  question: getCMSField(cmsData, 'admin.help.sections.driver.q2.question', 'How do I update driver status?'),
+        answer: getCMSField(cmsData, 'admin.help.sections.driver.q2.answer', 'In the Driver page, use the status buttons to set driver as Available, Busy, or Offline.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.drivers.q3.question', 'What if a driver is late?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q3.answer', 'Update their status to "Busy" and contact them directly. You can also update the booking status to reflect delays.')
+                  question: getCMSField(cmsData, 'admin.help.sections.driver.q3.question', 'What if the driver is late?'),
+        answer: getCMSField(cmsData, 'admin.help.sections.driver.q3.answer', 'Update the driver status to "Busy" and contact them directly. You can also update the booking status to reflect delays.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.drivers.q4.question', 'How do I track driver performance?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.drivers.q4.answer', 'View driver ratings and feedback in the Drivers page. Monitor completion rates and customer satisfaction.')
+                  question: getCMSField(cmsData, 'admin.help.sections.driver.q4.question', 'How do I track driver performance?'),
+        answer: getCMSField(cmsData, 'admin.help.sections.driver.q4.answer', 'View driver ratings and feedback in the Driver page. Monitor completion rates and customer satisfaction.')
         }
       ]
     },
@@ -229,7 +229,7 @@ function AdminHelpPage() {
                 id: 3,
                 icon: "👨‍💼",
                 label: "Driver Management",
-                onClick: () => window.location.href = '/admin/drivers'
+                onClick: () => window.location.href = '/admin/driver'
               },
               {
                 id: 4,

@@ -53,9 +53,9 @@ const adminCMSData = {
           noBookings: 'No bookings yet',
           allTime: 'All time bookings'
         },
-        activeDrivers: {
-          title: 'Active Drivers',
-          noDrivers: 'Add drivers to get started',
+        activeDriver: {
+          title: 'Active Driver',
+          noDriver: 'Add driver to get started',
           available: 'Available now'
         },
         revenue: {
@@ -73,9 +73,9 @@ const adminCMSData = {
           title: 'View Bookings',
           description: 'See all current and past bookings'
         },
-        manageDrivers: {
-          title: 'Manage Drivers',
-          description: 'Add, edit, or remove drivers'
+        manageDriver: {
+          title: 'Manage Driver',
+          description: 'Add, edit, or remove driver'
         },
         editContent: {
           title: 'Edit Content',
@@ -345,7 +345,7 @@ const adminCMSData = {
     },
 
     // Driver Location Page
-    driver: {
+    driverLocation: {
       location: {
         loading: {
           message: 'Requesting location permission...'
@@ -365,10 +365,10 @@ const adminCMSData = {
       }
     },
 
-    // Drivers Page
-    drivers: {
+    // Driver Page
+    driver: {
       error: {
-        loadDriversFailed: 'Failed to load drivers from database. Please try again.',
+        loadDriverFailed: 'Failed to load driver from database. Please try again.',
         updateStatusFailed: 'Failed to update driver status'
       }
     },
