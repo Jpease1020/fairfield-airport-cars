@@ -365,6 +365,11 @@ export interface CMSConfiguration {
           placeholder: string;
           textarea: string;
         };
+        saveInfoForFuture: {
+          label: string;
+          description: string;
+          input: string;
+        };
         calculating: string;
         calculate_fare: string;
         submit: string;
@@ -1156,6 +1161,11 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
           label: "Special Instructions",
           placeholder: "Any special instructions or requests...",
           textarea: "notes-textarea"
+        },
+        saveInfoForFuture: {
+          label: "Save this booking for future use",
+          description: "Check this box if you want to save this booking for future reference.",
+          input: "save-future-checkbox"
         },
         calculating: "Calculating...",
         calculate_fare: "Calculate Fare",

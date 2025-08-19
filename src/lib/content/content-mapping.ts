@@ -119,7 +119,17 @@ export const CONTENT_MAPPING = {
       "6 passengers",
       "7 passengers",
       "8 passengers"
-    ]
+    ],
+    notes: {
+      label: "Special Instructions",
+      placeholder: "Any special instructions or requests...",
+      textarea: "notes-textarea"
+    },
+    saveInfoForFuture: {
+      label: "Save my information for future rides",
+      description: "We'll remember your contact details and preferences to make future bookings faster. You can change this anytime in your profile settings.",
+      input: "save-future-checkbox"
+    }
   },
 
   // Success Page Content

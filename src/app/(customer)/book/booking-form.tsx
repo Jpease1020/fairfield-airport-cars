@@ -115,6 +115,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const [email, setEmail] = useState(booking?.email || '');
   const [phone, setPhone] = useState(booking?.phone || '');
   const [notes, setNotes] = useState(booking?.notes || '');
+  const [saveInfoForFuture, setSaveInfoForFuture] = useState(true);
   
   // Form state
   const [isCalculating, setIsCalculating] = useState(false);
@@ -298,6 +299,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           totalAmount: getTotalWithTip(),
           flightInfo,
           fareType, // Include fareType in the submission
+          saveInfoForFuture, // Include saveInfoForFuture in the submission
         }),
       });
 
@@ -859,6 +861,25 @@ function BookingFormContent({ booking }: BookingFormProps) {
                       </Stack>
                     </GridItem>
                   </Grid>
+                </Stack>
+              </Box>
+
+              {/* Save Info for Future Rides Checkbox */}
+              <Box variant="elevated" padding="lg">
+                <Stack spacing="sm">
+                  <Label htmlFor="saveInfoForFuture" data-cms-id="pages.booking.form.saveInfoForFuture.label" mode={mode}>
+                    {getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.label', 'Save my information for future rides')}
+                  </Label>
+                  <input
+                    id="saveInfoForFuture"
+                    type="checkbox"
+                    checked={saveInfoForFuture}
+                    onChange={(e) => setSaveInfoForFuture(e.target.checked)}
+                    data-cms-id="pages.booking.form.saveInfoForFuture.input"
+                  />
+                  <Text size="sm" color="secondary" data-cms-id="pages.booking.form.saveInfoForFuture.description" mode={mode}>
+                    {getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.description', 'We\'ll remember your contact details and preferences to make future bookings faster. You can change this anytime in your profile settings.')}
+                  </Text>
                 </Stack>
               </Box>
 
