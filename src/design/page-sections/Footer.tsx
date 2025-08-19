@@ -38,15 +38,14 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <Box variant="filled" padding="none" margin="none" as="footer">
-      <Container maxWidth="2xl" margin="none">
-        <Stack 
-          direction={{ xs: 'vertical', md: 'horizontal' }} 
-          justify={{ xs: 'center', md: 'space-between' }} 
-          align={{ xs: 'center', md: 'flex-start' }} 
-          spacing={{ xs: 'lg', md: 'xl' }} 
-          wrap="wrap"
-        >
+    <Box 
+      variant="filled" 
+      padding="xl"
+      margin="none" 
+      as="footer"
+    >
+      <Stack justify="center" align="center" fullWidth>
+        <Container maxWidth="2xl" margin="none" spacing="xl">
           {/* Company Info */}
           <Stack spacing="sm" align="center">
             <Text 
@@ -56,76 +55,66 @@ export const Footer: React.FC = () => {
               data-cms-id="footer.companyName"
               mode={mode}
             >
-              {getCMSField(cmsData, 'footer.companyName', 'Fairfield Airport Cars')}
+              {getCMSField(cmsData, 'footer.companyName', 'Fairfield Airport Cars')} {getCMSField(cmsData, 'footer.licensed', '✅ Licensed & Insured')}
             </Text>
-            <Text 
-              size="sm" 
-              color="secondary"
-              weight="medium"
-              data-cms-id="footer.licensed"
-              mode={mode}
-            >
-              {getCMSField(cmsData, 'footer.licensed', '✅ Licensed & Insured')}
-            </Text>
-
+          </Stack>
+          <Stack 
+            direction={{ xs: 'vertical', md: 'horizontal' }} 
+            justify={{ xs: 'center', md: 'space-between' }} 
+            align={{ xs: 'center', md: 'flex-start' }} 
+            spacing={{ xs: 'lg', md: '2xl' }} 
+            wrap="wrap"
+          >
             <Stack spacing="xs" align="center">
-              <Text 
-                size="sm" 
-                color="secondary"
-                data-cms-id="footer.phone"
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'footer.phone', '📞 (203) 555-0123')}
-              </Text>
-              <Text 
-                size="sm" 
-                color="secondary"
-                data-cms-id="footer.email"
-                mode={mode}
-              >
-                {getCMSField(cmsData, 'footer.email', '✉️ rides@fairfieldairportcars.com')}
-              </Text>
-            </Stack>
-          </Stack>
+                <Text 
+                  size="sm" 
+                  color="secondary"
+                  data-cms-id="footer.phone"
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'footer.phone', '(203) 555-0123')}
+                </Text>
+                <Text 
+                  size="sm" 
+                  color="secondary"
+                  data-cms-id="footer.email"
+                  mode={mode}
+                >
+                  {getCMSField(cmsData, 'footer.email', '✉️ rides@fairfieldairportcars.com')}
+                </Text>
+              </Stack>
 
-          {/* Quick Links */}
-          <Stack spacing="sm" align="center">
-            <Text 
-              weight="semibold" 
-              size="sm" 
-              color="primary"
-              data-cms-id="footer.quickLinks.title"
-              mode={mode}
-            >
-              {getCMSField(cmsData, 'footer.quickLinks.title', 'Quick Links')}
-            </Text>
-            <Stack 
-              direction={{ xs: 'vertical', sm: 'horizontal' }} 
-              spacing={{ xs: 'sm', sm: 'md' }} 
-              wrap="wrap"
-              align="center"
-            >
-              {footerLinks.map((link) => (
-                <Link key={link.label} href={link.href}>
-                  <Text size="sm" color="secondary">
-                    {link.label}
-                  </Text>
-                </Link>
-              ))}
+            {/* Quick Links */}
+            <Stack spacing="sm" align="center">
+              <Stack 
+                direction={{ xs: 'vertical', sm: 'horizontal' }} 
+                spacing={{ xs: 'sm', sm: 'md' }} 
+                wrap="wrap"
+                align="center"
+                justify="center"
+              >
+                {footerLinks.map((link) => (
+                  <Link key={link.label} href={link.href}>
+                    <Text size="sm" color="secondary">
+                      {link.label}
+                    </Text>
+                  </Link>
+                ))}
+              </Stack>
+              <Text 
+                size="sm" 
+                color="secondary" 
+                weight="medium"
+                align="center"
+                data-cms-id="footer.copyright"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'footer.copyright', `© ${currentYear} Fairfield Airport Cars. All rights reserved.`)}
+              </Text>
             </Stack>
-            <Text 
-              size="sm" 
-              color="secondary" 
-              weight="medium"
-              align="center"
-              data-cms-id="footer.copyright"
-              mode={mode}
-            >
-              {getCMSField(cmsData, 'footer.copyright', `© ${currentYear} Fairfield Airport Cars. All rights reserved.`)}
-            </Text>
-          </Stack>
-        </Stack>          
-      </Container>
+          </Stack>          
+        </Container>
+      </Stack>
     </Box>
   );
 }; 

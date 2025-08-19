@@ -5,8 +5,7 @@ import {
   Container, 
   Stack, 
   Box, 
-  Grid, 
-  GridItem,
+  RadioButton,
   Text, 
   H2, 
   Button, 
@@ -341,7 +340,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
   if (mapsError) {
     return (
-      <Container maxWidth="lg" padding="xl">
+              <Container maxWidth="4xl" padding="xl">
         <StatusMessage 
           type="error" 
           message="Failed to load Google Maps. Please refresh the page and try again." 
@@ -353,7 +352,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
   }
 
   return (
-    <Container maxWidth="2xl" padding="xl" data-testid="booking-form-container">
+          <Container maxWidth="5xl" padding="xl" data-testid="booking-form-container">
       <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
         <Stack spacing="xl" data-testid="booking-form-stack">
           
@@ -390,21 +389,19 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {getCMSField(cmsData, 'pages.booking.tripDetails.title', 'Where & When?')}
                   </H2>
                   
-                  <Grid cols={1} gap="md" responsive>
-                    <GridItem>
-                      <Stack spacing="sm">
-                        <Label htmlFor="pickupLocation" data-cms-id="pages.booking.form.pickupLocation.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.pickupLocation.label', 'Pickup Location')}
-                        </Label>
-                        <Input
-                          id="pickupLocation"
-                          value={pickupLocation}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePickupInputChange(e.target.value)}
-                          placeholder={getCMSField(cmsData, 'pages.booking.form.pickupLocation.placeholder', 'Enter pickup address')}
-                          data-cms-id="pages.booking.form.pickupLocation.input"
-                          fullWidth
-                        />
-                      </Stack>
+                  <Stack spacing="lg">
+                    <Stack spacing="sm">
+                      <Label htmlFor="pickupLocation" data-cms-id="pages.booking.form.pickupLocation.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.pickupLocation.label', 'Pickup Location')}
+                      </Label>
+                      <Input
+                        id="pickupLocation"
+                        value={pickupLocation}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePickupInputChange(e.target.value)}
+                        placeholder={getCMSField(cmsData, 'pages.booking.form.pickupLocation.placeholder', 'Enter pickup address')}
+                        data-cms-id="pages.booking.form.pickupLocation.input"
+                        fullWidth
+                      />
                       {showPickupSuggestions && pickupSuggestions.length > 0 && (
                         <Box variant="outlined" padding="sm">
                           <Stack spacing="xs">
@@ -421,22 +418,20 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           </Stack>
                         </Box>
                       )}
-                    </GridItem>
+                    </Stack>
                     
-                    <GridItem>
-                      <Stack spacing="sm">
-                        <Label htmlFor="dropoffLocation" data-cms-id="pages.booking.form.dropoffLocation.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.dropoffLocation.label', 'Dropoff Location')}
-                        </Label>
-                        <Input
-                          id="dropoffLocation"
-                          value={dropoffLocation}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDropoffInputChange(e.target.value)}
-                          placeholder={getCMSField(cmsData, 'pages.booking.form.dropoffLocation.placeholder', 'Enter dropoff address')}
-                          data-cms-id="pages.booking.form.dropoffLocation.input"
-                          fullWidth
-                        />
-                      </Stack>
+                    <Stack spacing="sm">
+                      <Label htmlFor="dropoffLocation" data-cms-id="pages.booking.form.dropoffLocation.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.dropoffLocation.label', 'Dropoff Location')}
+                      </Label>
+                      <Input
+                        id="dropoffLocation"
+                        value={dropoffLocation}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDropoffInputChange(e.target.value)}
+                        placeholder={getCMSField(cmsData, 'pages.booking.form.dropoffLocation.placeholder', 'Enter dropoff address')}
+                        data-cms-id="pages.booking.form.dropoffLocation.input"
+                        fullWidth
+                      />
                       {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
                         <Box variant="outlined" padding="sm">
                           <Stack spacing="xs">
@@ -453,55 +448,26 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           </Stack>
                         </Box>
                       )}
-                    </GridItem>
+                    </Stack>
                     
-                    <GridItem>
-                      <Stack spacing="sm">
-                        <Label htmlFor="pickupDateTime" data-cms-id="pages.booking.form.pickupDateTime.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.pickupDateTime.label', 'Pickup Date & Time')}
-                        </Label>
-                        <Input
-                          id="pickupDateTime"
-                          type="datetime-local"
-                          value={pickupDateTime}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPickupDateTime(e.target.value)}
-                          data-cms-id="pages.booking.form.pickupDateTime.input"
-                          fullWidth
-                        />
-                      </Stack>
-                    </GridItem>
-                  </Grid>
+                    <Stack spacing="sm">
+                      <Label htmlFor="pickupDateTime" data-cms-id="pages.booking.form.pickupDateTime.label" mode={mode}>
+                        {getCMSField(cmsData, 'pages.booking.form.pickupDateTime.label', 'Pickup Date & Time')}
+                      </Label>
+                      <Input
+                        id="pickupDateTime"
+                        type="datetime-local"
+                        value={pickupDateTime}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPickupDateTime(e.target.value)}
+                        data-cms-id="pages.booking.form.pickupDateTime.input"
+                        fullWidth
+                      />
+                    </Stack>
+                  </Stack>
                 </Stack>
               </Box>
 
-              {/* Fare Type Selection */}
-              <Box variant="elevated" padding="lg">
-                <Stack spacing="lg">
-                  <H2 align="center" data-cms-id="pages.booking.fareType.title" mode={mode}>
-                    {getCMSField(cmsData, 'pages.booking.fareType.title', 'Fare Type')}
-                  </H2>
-                  <Grid cols={2} gap="md" responsive>
-                    <GridItem>
-                      <Button
-                        onClick={() => setFareType('personal')}
-                        variant={fareType === 'personal' ? 'primary' : 'outline'}
-                        fullWidth
-                      >
-                        {getCMSField(cmsData, 'pages.booking.fareType.personal', 'Personal Ride')}
-                      </Button>
-                    </GridItem>
-                    <GridItem>
-                      <Button
-                        onClick={() => setFareType('business')}
-                        variant={fareType === 'business' ? 'primary' : 'outline'}
-                        fullWidth
-                      >
-                        {getCMSField(cmsData, 'pages.booking.fareType.business', 'Business Ride')}
-                      </Button>
-                    </GridItem>
-                  </Grid>
-                </Stack>
-              </Box>
+
 
               {/* Fare Type Selection */}
               <Box variant="elevated" padding="lg">
@@ -514,45 +480,31 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {getCMSField(cmsData, 'pages.booking.fareType.title', 'Fare Type')}
                   </H2>
                   
-                  <Grid cols={2} gap="md" responsive>
-                    <GridItem>
-                      <Stack spacing="sm">
-                        <Label htmlFor="personalFare" data-cms-id="pages.booking.form.personalFare.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.personalFare.label', 'Personal Ride')}
-                        </Label>
-                        <input
-                          id="personalFare"
-                          type="radio"
-                          name="fareType"
-                          checked={fareType === 'personal'}
-                          onChange={() => setFareType('personal')}
-                          data-cms-id="pages.booking.form.personalFare.input"
-                        />
-                        <Text size="sm" color="secondary" data-cms-id="pages.booking.form.personalFare.description" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.personalFare.description', 'Get 10% off our standard rate')}
-                        </Text>
-                      </Stack>
-                    </GridItem>
+                  <Stack direction={{ xs: 'vertical', md: 'horizontal' }} spacing="lg">
+                    <RadioButton
+                      id="personalFare"
+                      name="fareType"
+                      value="personal"
+                      checked={fareType === 'personal'}
+                      onChange={(value) => setFareType(value as 'personal' | 'business')}
+                      label={getCMSField(cmsData, 'pages.booking.form.personalFare.label', 'Personal Ride')}
+                      description={getCMSField(cmsData, 'pages.booking.form.personalFare.description', 'Get 10% off our standard rate')}
+                      variant="elevated"
+                      size="lg"
+                    />
                     
-                    <GridItem>
-                      <Stack spacing="sm">
-                        <Label htmlFor="businessFare" data-cms-id="pages.booking.form.businessFare.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.businessFare.label', 'Business Ride')}
-                        </Label>
-                        <input
-                          id="businessFare"
-                          type="radio"
-                          name="fareType"
-                          checked={fareType === 'business'}
-                          onChange={() => setFareType('business')}
-                          data-cms-id="pages.booking.form.businessFare.input"
-                        />
-                        <Text size="sm" color="secondary" data-cms-id="pages.booking.form.businessFare.description" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.businessFare.description', 'Standard business rate')}
-                        </Text>
-                      </Stack>
-                    </GridItem>
-                  </Grid>
+                    <RadioButton
+                      id="businessFare"
+                      name="fareType"
+                      value="business"
+                      checked={fareType === 'business'}
+                      onChange={(value) => setFareType(value as 'personal' | 'business')}
+                      label={getCMSField(cmsData, 'pages.booking.form.businessFare.label', 'Business Ride')}
+                      description={getCMSField(cmsData, 'pages.booking.form.businessFare.description', 'Standard business rate')}
+                      variant="elevated"
+                      size="lg"
+                    />
+                  </Stack>
                 </Stack>
               </Box>
 
@@ -567,9 +519,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {getCMSField(cmsData, 'pages.booking.flightInfo.title', 'Flight Information')}
                   </H2>
                   
-                  <Grid cols={2} gap="md" responsive>
-                    <GridItem>
-                      <Stack spacing="sm">
+                  <Stack spacing="lg">
+                    <Stack spacing="sm">
                         <Label htmlFor="airline" data-cms-id="pages.booking.form.airline.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.airline.label', 'Airline')}
                         </Label>
@@ -582,10 +533,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
+
                     
-                    <GridItem>
-                      <Stack spacing="sm">
+                    <Stack spacing="sm">
                         <Label htmlFor="flightNumber" data-cms-id="pages.booking.form.flightNumber.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.flightNumber.label', 'Flight Number')}
                         </Label>
@@ -598,10 +548,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
+
                     
-                    <GridItem>
-                      <Stack spacing="sm">
+                    <Stack spacing="sm">
                         <Label htmlFor="arrivalTime" data-cms-id="pages.booking.form.arrivalTime.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.arrivalTime.label', 'Arrival Time')}
                         </Label>
@@ -615,10 +564,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
+
                     
-                    <GridItem>
-                      <Stack spacing="sm">
+                    <Stack spacing="sm">
                         <Label htmlFor="terminal" data-cms-id="pages.booking.form.terminal.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.terminal.label', 'Terminal')}
                         </Label>
@@ -631,8 +579,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
-                  </Grid>
+
+                  </Stack>
                 </Stack>
               </Box>
 
@@ -779,9 +727,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {getCMSField(cmsData, 'pages.booking.personalInfo.title', 'Contact Information')}
                   </H2>
                   
-                  <Grid cols={1} gap="md" responsive>
-                    <GridItem>
-                      <Stack spacing="sm">
+                  <Stack spacing="lg">
+                    <Stack spacing="sm">
                         <Label htmlFor="name" data-cms-id="pages.booking.form.name.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.name.label', 'Full Name')}
                         </Label>
@@ -794,10 +741,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
+
                     
-                    <GridItem>
-                      <Stack spacing="sm">
+                    <Stack spacing="sm">
                         <Label htmlFor="email" data-cms-id="pages.booking.form.email.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.email.label', 'Email Address')}
                         </Label>
@@ -811,10 +757,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
+
                     
-                    <GridItem>
-                      <Stack spacing="sm">
+                    <Stack spacing="sm">
                         <Label htmlFor="phone" data-cms-id="pages.booking.form.phone.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.phone.label', 'Phone Number')}
                         </Label>
@@ -827,8 +772,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
-                  </Grid>
+
+                  </Stack>
                 </Stack>
               </Box>
 
@@ -843,9 +788,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     {getCMSField(cmsData, 'pages.booking.notes.title', 'Additional Notes')}
                   </H2>
                   
-                  <Grid cols={1} gap="md" responsive>
-                    <GridItem>
-                      <Stack spacing="sm">
+                  <Stack spacing="lg">
+                    <Stack spacing="sm">
                         <Label htmlFor="notes" data-cms-id="pages.booking.form.notes.label" mode={mode}>
                           {getCMSField(cmsData, 'pages.booking.form.notes.label', 'Special Instructions')}
                         </Label>
@@ -859,8 +803,8 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           fullWidth
                         />
                       </Stack>
-                    </GridItem>
-                  </Grid>
+
+                  </Stack>
                 </Stack>
               </Box>
 

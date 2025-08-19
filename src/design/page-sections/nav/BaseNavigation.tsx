@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { Button } from '../../components/base-components/Button';
 import { useCMSData, getCMSField } from '../../hooks/useCMSData';
 import { Stack } from '../../layout/framing/Stack';
-import { Container } from '../../layout/containers/Container';
 import { PositionedContainer } from '../../layout/containers/PositionedContainer';
 import { Text } from '../../components/base-components/text/Text';
 import { FlexboxContainer } from '../../components/base-components/FlexboxContainer';
@@ -125,15 +124,14 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
       alignItems="center"
       justifyContent="space-between"
       data-testid={`${dataTestIdPrefix}-container`}
+      gap={{ xs: spacing.md, md: spacing.xl }}
     >
       {/* Logo */}
-      <Container>
-        {logo}
-      </Container>
+      {logo}
 
       {/* Desktop Navigation */}
       {!isMobile && (
-        <Stack direction="horizontal" spacing="lg" align="center">
+        <Stack direction="horizontal" spacing="xl" align="center">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
@@ -154,7 +152,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
 
       {/* Desktop Actions */}
       {!isMobile && actions && (
-        <Stack direction="horizontal" spacing="md" align="center">
+        <Stack direction="horizontal" spacing="lg" align="center">
           {Array.isArray(actions) 
             ? actions.map((action, index) => (
                 <React.Fragment key={`action-${index}`}>
