@@ -28,7 +28,7 @@ function TermsPageContent() {
               data-cms-id="pages.terms.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.terms.title', '📋 Terms of Service')}
+              {getCMSField(cmsData, 'pages.terms.title', 'Terms of Service')}
             </H1>
             <Text 
               variant="lead" 
@@ -38,7 +38,7 @@ function TermsPageContent() {
               data-cms-id="pages.terms.lastUpdated"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.terms.lastUpdated', 'Effective Date: January 1, 2024 | Last updated: January 2024')}
+              {getCMSField(cmsData, 'pages.terms.lastUpdated')}
             </Text>
           </Stack>
         </Stack>
@@ -52,7 +52,7 @@ function TermsPageContent() {
             data-cms-id="pages.terms.intro"
             mode={mode}
           >
-            {getCMSField(cmsData, 'pages.terms.intro', 'Welcome to Fairfield Airport Cars. By using our service, you agree to these terms and conditions.')}
+            {getCMSField(cmsData, 'pages.terms.intro', 'By using our services, you agree to our terms of service. We reserve the right to modify these terms at any time. Please review them periodically.')}
           </Text>
           
           <Text 
@@ -60,17 +60,17 @@ function TermsPageContent() {
             data-cms-id="pages.terms.serviceDescription"
             mode={mode}
           >
-            {getCMSField(cmsData, 'pages.terms.serviceDescription', 'We provide airport transportation services in the Fairfield area, including pickup and drop-off at local airports.')}
+            {getCMSField(cmsData, 'pages.terms.serviceDescription')}
           </Text>
           
           <Stack data-testid="terms-sections-list" spacing="lg">
             <Box data-testid="terms-section-0">
               <Stack spacing="md">
                 <H4 data-testid="terms-section-title-0" data-cms-id="pages.terms.sections.0.title" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.0.title', 'Booking')}
+                  {getCMSField(cmsData, 'pages.terms.sections.0.title')}
                 </H4>
                 <Text data-testid="terms-section-content-0" data-cms-id="pages.terms.sections.0.content" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.0.content', 'All bookings must be made through our website or by phone. We require at least 24 hours notice for all reservations.')}
+                                      {getCMSField(cmsData, 'pages.terms.sections.0.content')}
                 </Text>
               </Stack>
             </Box>
@@ -78,10 +78,10 @@ function TermsPageContent() {
             <Box data-testid="terms-section-1">
               <Stack spacing="md">
                 <H4 data-testid="terms-section-title-1" data-cms-id="pages.terms.sections.1.title" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.1.title', 'Payment')}
+                  {getCMSField(cmsData, 'pages.terms.sections.1.title')}
                 </H4>
                 <Text data-testid="terms-section-content-1" data-cms-id="pages.terms.sections.1.content" mode={mode}>
-                  {getCMSField(cmsData, 'pages.terms.sections.1.content', 'Payment is processed through Square. We accept all major credit cards and digital payments.')}
+                                      {getCMSField(cmsData, 'pages.terms.sections.1.content')}
                 </Text>
               </Stack>
             </Box>

@@ -30,7 +30,7 @@ function AboutPageContent() {
               data-cms-id="pages.about.title" 
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.about.title', 'About Fairfield Airport Cars')}
+              {getCMSField(cmsData, 'pages.about.title', 'About Us')}
             </H1>
             <Text 
               variant="lead" 
@@ -39,7 +39,7 @@ function AboutPageContent() {
               data-cms-id="pages.about.subtitle" 
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.about.subtitle', 'Professional airport transportation services')}
+              {getCMSField(cmsData, 'pages.about.subtitle')}
             </Text>
           </Stack>
         </Stack>
@@ -57,7 +57,7 @@ function AboutPageContent() {
             {getCMSField(
               cmsData,
               'pages.about.description',
-              'We provide reliable, professional airport transportation throughout Fairfield County. Licensed driver, clean vehicle, on-time service.'
+              'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'
             )}
           </Text>
         </Stack>
@@ -71,7 +71,7 @@ function AboutPageContent() {
             data-cms-id="pages.about.cta.subtitle" 
             mode={mode}
           >
-            {getCMSField(cmsData, 'pages.about.cta.subtitle', 'Ready to book your ride?')}
+            {getCMSField(cmsData, 'pages.about.cta.subtitle')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
@@ -81,7 +81,7 @@ function AboutPageContent() {
               interactionMode={mode}
               onClick={() => router.push('/book')}
             >
-              {getCMSField(cmsData, 'pages.about.cta.primaryButton', 'Book Now')}
+              {getCMSField(cmsData, 'pages.about.cta.primaryButton')}
             </Button>
             
             <Button
@@ -90,7 +90,7 @@ function AboutPageContent() {
               interactionMode={mode}
               onClick={() => router.push('/help')}
             >
-              {getCMSField(cmsData, 'pages.about.cta.secondaryButton', 'Learn More')}
+              {getCMSField(cmsData, 'pages.about.cta.secondaryButton')}
             </Button>
           </Stack>
         </Stack>
