@@ -8,6 +8,7 @@ import { useCMSData, getCMSField } from '../../hooks/useCMSData';
 import { Stack } from '../../layout/framing/Stack';
 import { Container } from '../../layout/containers/Container';
 import { PositionedContainer } from '../../layout/containers/PositionedContainer';
+import { Text } from '../../components/base-components/text/Text';
 
 // Single styled component for mobile menu overlay
 const MobileMenuOverlay = styled.div`
@@ -196,7 +197,21 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
             id="navigation-mobile-menu"
             role="menu"
           >
-            <Stack spacing="xs">
+            {/* Mobile Menu Header with Close Button */}
+            <Stack direction="horizontal" justify="space-between" align="center" spacing="sm">
+              <Text weight="semibold" size="sm">Menu</Text>
+              <Button
+                onClick={closeMobileMenu}
+                variant="ghost"
+                size="sm"
+                aria-label="Close mobile menu"
+                data-testid={`${dataTestIdPrefix}-mobile-close-button`}
+              >
+                ✕
+              </Button>
+            </Stack>
+            
+            <Stack spacing="md">
               {navigationItems.map((item, index) => (
                 <Link
                   key={item.name}

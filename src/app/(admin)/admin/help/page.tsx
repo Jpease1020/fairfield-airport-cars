@@ -24,7 +24,7 @@ function AdminHelpPage() {
         },
         {
           question: getCMSField(cmsData, 'admin.help.sections.booking.q3.question', 'What if a customer wants to cancel?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.booking.q3.answer', 'Customers can cancel through their portal, or you can cancel manually in the Admin > Bookings section.')
+          answer: getCMSField(cmsData, 'admin.help.sections.booking.q3.answer', 'Customers can cancel through their dashboard, or you can cancel manually in the Admin > Bookings section.')
         },
         {
           question: getCMSField(cmsData, 'admin.help.sections.booking.q4.question', 'How do I handle no-shows?'),

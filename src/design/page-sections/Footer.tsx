@@ -7,50 +7,98 @@ import { Box } from '../layout/content/Box';
 import { Stack } from '../layout/framing/Stack';
 import { Text } from '../components/base-components/text/Text';
 import { useCMSData, getCMSField } from '../hooks/useCMSData';
+import { useInteractionMode } from '../providers/InteractionModeProvider';
 
 export const Footer: React.FC = () => {
   const { cmsData } = useCMSData();
+  const { mode } = useInteractionMode();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    { label: 'About', href: '/about' },
-    { label: 'Help', href: '/help' },
-    { label: 'Privacy', href: '/privacy' },
-    { label: 'Terms', href: '/terms' },
-    { label: 'Contact', href: '/help' },
+    { 
+      label: getCMSField(cmsData, 'footer.links.about.label', 'About'), 
+      href: '/about' 
+    },
+    { 
+      label: getCMSField(cmsData, 'footer.links.help.label', 'Help'), 
+      href: '/help' 
+    },
+    { 
+      label: getCMSField(cmsData, 'footer.links.privacy.label', 'Privacy'), 
+      href: '/privacy' 
+    },
+    { 
+      label: getCMSField(cmsData, 'footer.links.terms.label', 'Terms'), 
+      href: '/terms' 
+    },
+    { 
+      label: getCMSField(cmsData, 'footer.links.contact.label', 'Contact'), 
+      href: '/contact' 
+    },
   ];
 
   return (
-    <Box variant="filled" padding="lg" margin="none" as="footer">
-      <Container maxWidth="2xl" margin="md">
+    <Box variant="filled" padding="none" margin="none" as="footer">
+      <Container maxWidth="2xl" margin="none">
         <Stack 
-          direction={{ xs: 'vertical', lg: 'horizontal' }} 
-          justify={{ xs: 'center', lg: 'space-between' }} 
-          align={{ xs: 'center', lg: 'flex-start' }} 
-          spacing={{ xs: 'lg', lg: 'xl' }} 
+          direction={{ xs: 'vertical', md: 'horizontal' }} 
+          justify={{ xs: 'center', md: 'space-between' }} 
+          align={{ xs: 'center', md: 'flex-start' }} 
+          spacing={{ xs: 'lg', md: 'xl' }} 
           wrap="wrap"
         >
           {/* Company Info */}
           <Stack spacing="sm" align="center">
-            <Text variant="lead" weight="semibold" color="primary">
+            <Text 
+              variant="lead" 
+              weight="semibold" 
+              color="primary"
+              data-cms-id="footer.companyName"
+              mode={mode}
+            >
               {getCMSField(cmsData, 'footer.companyName', 'Fairfield Airport Cars')}
             </Text>
-            <Text size="sm" color="secondary">
-              {getCMSField(cmsData, 'footer.tagline', 'Professional airport transportation services')}
+            <Text 
+              size="sm" 
+              color="secondary"
+              weight="medium"
+              data-cms-id="footer.licensed"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'footer.licensed', '✅ Licensed & Insured')}
             </Text>
+
             <Stack spacing="xs" align="center">
-              <Text size="sm" color="secondary">
+              <Text 
+                size="sm" 
+                color="secondary"
+                data-cms-id="footer.phone"
+                mode={mode}
+              >
                 {getCMSField(cmsData, 'footer.phone', '📞 (203) 555-0123')}
               </Text>
-              <Text size="sm" color="secondary">
-                {getCMSField(cmsData, 'footer.email', '✉️ info@fairfieldairportcars.com')}
+              <Text 
+                size="sm" 
+                color="secondary"
+                data-cms-id="footer.email"
+                mode={mode}
+              >
+                {getCMSField(cmsData, 'footer.email', '✉️ rides@fairfieldairportcars.com')}
               </Text>
             </Stack>
           </Stack>
 
           {/* Quick Links */}
           <Stack spacing="sm" align="center">
-            <Text weight="semibold" size="sm" color="primary">Quick Links</Text>
+            <Text 
+              weight="semibold" 
+              size="sm" 
+              color="primary"
+              data-cms-id="footer.quickLinks.title"
+              mode={mode}
+            >
+              {getCMSField(cmsData, 'footer.quickLinks.title', 'Quick Links')}
+            </Text>
             <Stack 
               direction={{ xs: 'vertical', sm: 'horizontal' }} 
               spacing={{ xs: 'sm', sm: 'md' }} 
@@ -65,30 +113,18 @@ export const Footer: React.FC = () => {
                 </Link>
               ))}
             </Stack>
-          </Stack>
-        </Stack>
-        
-        {/* Bottom Bar */}
-        <Stack spacing="md" align="center" justify="center">
-          <Text 
-            size="sm" 
-            color="secondary" 
-            weight="medium"
-            align="center"
-          >
-            © {currentYear} Fairfield Airport Cars. All rights reserved.
-          </Text>
-          
-          <Stack direction="horizontal" spacing="lg" justify="center" align="center" wrap="wrap">
             <Text 
               size="sm" 
-              color="secondary"
+              color="secondary" 
               weight="medium"
+              align="center"
+              data-cms-id="footer.copyright"
+              mode={mode}
             >
-              ✅ Licensed & Insured
+              {getCMSField(cmsData, 'footer.copyright', `© ${currentYear} Fairfield Airport Cars. All rights reserved.`)}
             </Text>
           </Stack>
-        </Stack>
+        </Stack>          
       </Container>
     </Box>
   );

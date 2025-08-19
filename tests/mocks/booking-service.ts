@@ -10,7 +10,6 @@ export const mockBooking: Booking = {
   dropoffLocation: 'JFK Airport',
   pickupDateTime: new Date('2024-12-25T10:00:00Z'),
   flightNumber: 'AA123',
-  passengers: 2,
   notes: 'Test booking for visual testing',
   status: 'pending',
   fare: 150.00,
