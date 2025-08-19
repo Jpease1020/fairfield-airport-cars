@@ -1,3 +1,5 @@
+'use client';
+
 import { Container, Stack, Box, H1, H2, Text, Grid, GridItem, Button, Input, Label, Textarea } from '@/ui';
 import { getCMSField, useCMSData } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
