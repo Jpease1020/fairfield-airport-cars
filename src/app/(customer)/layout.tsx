@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Container } from '@/design/layout/containers/Container';
 
 export default function CustomerLayout({
   children,
@@ -9,10 +8,10 @@ export default function CustomerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <Container as="main" maxWidth="full" data-testid="layout-main-content">
+    <div>
+      <main data-testid="layout-main-content">
         {children}
-      </Container>
-    </>
+      </main>
+    </div>
   );
 }
