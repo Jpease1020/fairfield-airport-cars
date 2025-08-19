@@ -1,5 +1,6 @@
 'use client';
 
+import '@/design/globals.css';
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -9,7 +10,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { User } from 'firebase/auth';
 import { Container } from '@/ui';
-import { AdminNavigation } from '@/components/app/AdminNavigation';
 
 export default function AdminLayout({
   children,
@@ -92,9 +92,6 @@ export default function AdminLayout({
   // Render admin pages with admin navigation for authenticated admin users
   return (
     <>
-      {/* Admin Navigation Header */}
-      <AdminNavigation />
-      
       {/* Admin Page Content */}
       {children}
     </>
