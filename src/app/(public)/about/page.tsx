@@ -1,24 +1,64 @@
-'use client';
-
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { Container, Stack } from '@/ui';
 import { H1, Text, Button } from '@/design/components/base-components/Components';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { useAdmin } from '@/design/providers/AdminProvider';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { cmsService } from '@/lib/services/cms-service';
+import { CMSConfiguration } from '@/types/cms';
+import Link from 'next/link';
 
-function AboutPageContent() {
-  const router = useRouter();
-  const { cmsData } = useCMSData();
-  const { isAdmin } = useAdmin();
-  const { mode } = useInteractionMode();
+// Load CMS data at build time for instant page loads
+export async function generateStaticParams() {
+  return [{ page: 'about' }];
+}
+
+export async function generateMetadata() {
+  const cmsData = await cmsService.getCMSConfiguration();
+  const aboutData = cmsData?.pages?.about;
   
-  // Debug: Log the CMS data structure
-  console.log('About page CMS data:', cmsData);
-  console.log('Looking for title at path: pages.about.title');
-  console.log('Title value:', getCMSField(cmsData, 'pages.about.title', 'FALLBACK TEXT'));
+  return {
+    title: aboutData?.title || 'About Us - Fairfield Airport Cars',
+    description: aboutData?.content || 'Learn about Fairfield Airport Car Service - your trusted partner for reliable airport transportation.',
+    keywords: 'about, airport transportation, Fairfield, professional drivers, reliable service',
+  };
+}
+
+// Get CMS data at build time
+async function getCMSData(): Promise<CMSConfiguration | null> {
+  try {
+    return await cmsService.getCMSConfiguration();
+  } catch (error) {
+    console.error('Failed to load CMS data at build time:', error);
+    return null;
+  }
+}
+
+// Helper function to get field value with fallback
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
   
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const directParts = fieldPath.split('.');
+  let value = resolvePath(cmsData, directParts);
+
+  if (value === undefined && directParts[0] !== 'pages') {
+    const fallbackParts = ['pages', ...directParts];
+    value = resolvePath(cmsData, fallbackParts);
+  }
+
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
+
+function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
   return (
     <>
       {/* Hero Section */}
@@ -28,7 +68,6 @@ function AboutPageContent() {
             <H1 
               align="center" 
               data-cms-id="pages.about.title" 
-              mode={mode}
             >
               {getCMSField(cmsData, 'pages.about.title', 'About Us')}
             </H1>
@@ -37,9 +76,8 @@ function AboutPageContent() {
               align="center" 
               size="lg" 
               data-cms-id="pages.about.subtitle" 
-              mode={mode}
             >
-              {getCMSField(cmsData, 'pages.about.subtitle')}
+              {getCMSField(cmsData, 'pages.about.subtitle', 'Your Trusted Airport Transportation Partner')}
             </Text>
           </Stack>
         </Stack>
@@ -52,7 +90,6 @@ function AboutPageContent() {
             align="center" 
             size="lg" 
             data-cms-id="pages.about.description" 
-            mode={mode}
           >
             {getCMSField(
               cmsData,
@@ -69,29 +106,28 @@ function AboutPageContent() {
           <Text 
             align="center" 
             data-cms-id="pages.about.cta.subtitle" 
-            mode={mode}
           >
-            {getCMSField(cmsData, 'pages.about.cta.subtitle')}
+            {getCMSField(cmsData, 'pages.about.cta.subtitle', 'Ready to experience premium airport transportation?')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
-            <Button
-              variant="primary"
-              cmsKey="pages.about.cta.primaryButton"
-              interactionMode={mode}
-              onClick={() => router.push('/book')}
-            >
-              {getCMSField(cmsData, 'pages.about.cta.primaryButton')}
-            </Button>
+            <Link href="/book">
+              <Button
+                variant="primary"
+                data-cms-id="pages.about.cta.primaryButton"
+              >
+                {getCMSField(cmsData, 'pages.about.cta.primaryButton', 'Book Your Ride')}
+              </Button>
+            </Link>
             
-            <Button
-              variant="secondary"
-              cmsKey="pages.about.cta.secondaryButton"
-              interactionMode={mode}
-              onClick={() => router.push('/help')}
-            >
-              {getCMSField(cmsData, 'pages.about.cta.secondaryButton')}
-            </Button>
+            <Link href="/help">
+              <Button
+                variant="secondary"
+                data-cms-id="pages.about.cta.secondaryButton"
+              >
+                {getCMSField(cmsData, 'pages.about.cta.secondaryButton', 'Get Help')}
+              </Button>
+            </Link>
           </Stack>
         </Stack>
       </Container>
@@ -99,8 +135,9 @@ function AboutPageContent() {
   );
 }
 
-export default function AboutPage() {
-  return (
-    <AboutPageContent />
-  );
+export default async function AboutPage() {
+  // Load CMS data at build time for instant page loads
+  const cmsData = await getCMSData();
+  
+  return <AboutPageContent cmsData={cmsData} />;
 } 

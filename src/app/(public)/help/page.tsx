@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { 
   Container,
@@ -10,13 +8,64 @@ import {
   Button,
   Box
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { cmsService } from '@/lib/services/cms-service';
+import { CMSConfiguration } from '@/types/cms';
+import Link from 'next/link';
 
-function HelpPageContent() {
-  const { cmsData } = useCMSData();
-  const { mode } = useInteractionMode();
+// Load CMS data at build time for instant page loads
+export async function generateStaticParams() {
+  return [{ page: 'help' }];
+}
 
+export async function generateMetadata() {
+  const cmsData = await cmsService.getCMSConfiguration();
+  const helpData = cmsData?.pages?.help;
+  
+  return {
+    title: helpData?.title || 'Help & FAQs - Fairfield Airport Cars',
+    description: helpData?.subtitle || 'Find answers to common questions about our airport transportation service.',
+    keywords: 'help, FAQ, airport transportation, booking, cancellation policy, flight tracking',
+  };
+}
+
+// Get CMS data at build time
+async function getCMSData(): Promise<CMSConfiguration | null> {
+  try {
+    return await cmsService.getCMSConfiguration();
+  } catch (error) {
+    console.error('Failed to load CMS data at build time:', error);
+    return null;
+  }
+}
+
+// Helper function to get field value with fallback
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const directParts = fieldPath.split('.');
+  let value = resolvePath(cmsData, directParts);
+
+  if (value === undefined && directParts[0] !== 'pages') {
+    const fallbackParts = ['pages', ...directParts];
+    value = resolvePath(cmsData, fallbackParts);
+  }
+
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
+
+function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
   return (
     <>
       {/* Hero Section */}
@@ -27,7 +76,6 @@ function HelpPageContent() {
               align="center" 
               data-testid="help-title"
               data-cms-id="pages.help.hero.title"
-              mode={mode}
             >
               {getCMSField(cmsData, 'pages.help.hero.title', 'Help & FAQs')}
             </H1>
@@ -36,9 +84,8 @@ function HelpPageContent() {
               align="center" 
               size="lg"
               data-cms-id="pages.help.hero.subtitle"
-              mode={mode}
             >
-              {getCMSField(cmsData, 'pages.help.hero.subtitle')}
+              {getCMSField(cmsData, 'pages.help.hero.subtitle', 'Find answers to common questions about our service')}
             </Text>
           </Stack>
         </Stack>
@@ -48,9 +95,8 @@ function HelpPageContent() {
         <Stack spacing="lg" align="center">
           <H2 
             data-cms-id="pages.help.quickAnswers.title"
-            mode={mode}
           >
-            {getCMSField(cmsData, 'pages.help.quickAnswers.title')}
+            {getCMSField(cmsData, 'pages.help.quickAnswers.title', 'Quick Answers')}
           </H2>
         </Stack>
         
@@ -59,13 +105,11 @@ function HelpPageContent() {
             <Stack spacing="md">
               <H2 
                                   data-cms-id="pages.help.quickAnswers.items.0.question"
-                mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.question', 'How far in advance should I book?')}
               </H2>
               <Text 
                                   data-cms-id="pages.help.quickAnswers.items.0.answer"
-                mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.answer', 'We recommend booking at least 24 hours in advance for airport rides.')}
               </Text>
@@ -76,13 +120,11 @@ function HelpPageContent() {
             <Stack spacing="md">
               <H2 
                                   data-cms-id="pages.help.quickAnswers.items.1.question"
-                mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.question', 'What is your cancellation policy?')}
               </H2>
               <Text 
                                   data-cms-id="pages.help.quickAnswers.items.1.answer"
-                mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.answer', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations 3-24 hours before receive 50% refund.')}
               </Text>
@@ -93,13 +135,11 @@ function HelpPageContent() {
             <Stack spacing="md">
               <H2 
                                   data-cms-id="pages.help.quickAnswers.items.2.question"
-                mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.items.2.question', 'Do you track flights?')}
               </H2>
               <Text 
                                   data-cms-id="pages.help.quickAnswers.items.2.answer"
-                mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.items.2.answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
               </Text>
@@ -110,15 +150,13 @@ function HelpPageContent() {
             <Stack spacing="md">
               <H2 
                                   data-cms-id="pages.help.quickAnswers.items.3.question"
-                mode={mode}
               >
                 {getCMSField(cmsData, 'pages.help.quickAnswers.items.3.question', 'What payment methods do you accept?')}
               </H2>
               <Text 
                                   data-cms-id="pages.help.quickAnswers.items.3.answer"
-                mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item4.answer', 'All major credit cards, debit cards, and cash payments.')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.3.answer', 'All major credit cards, debit cards, and cash payments.')}
               </Text>
             </Stack>
           </Box>
@@ -129,7 +167,6 @@ function HelpPageContent() {
         <Stack spacing="lg" align="center">
           <H2 
             data-cms-id="pages.help.contact.title"
-            mode={mode}
           >
             {getCMSField(cmsData, 'pages.help.contact.title', 'Need More Help?')}
           </H2>
@@ -137,38 +174,37 @@ function HelpPageContent() {
             variant="lead" 
             align="center"
             data-cms-id="pages.help.contact.subtitle"
-            mode={mode}
           >
             {getCMSField(cmsData, 'pages.help.contact.subtitle', 'Contact our support team')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
-            <Button
-              variant="primary"
-              onClick={() => window.location.href = 'tel:+12035550123'}
-              data-cms-id="pages.help.contact.primaryButton"
-              interactionMode={mode}
-            >
-              {getCMSField(cmsData, 'pages.help.contact.primaryButton', 'Call Support')}
-            </Button>
+            <Link href="tel:+12035550123">
+              <Button
+                variant="primary"
+                data-cms-id="pages.help.contact.primaryButton"
+              >
+                {getCMSField(cmsData, 'pages.help.contact.primaryButton', 'Call Support')}
+              </Button>
+            </Link>
             
-            <Button
-              variant="secondary"
-              onClick={() => window.location.href = 'mailto:rides@fairfieldairportcars.com'}
-              data-cms-id="pages.help.contact.secondaryButton"
-              interactionMode={mode}
-            >
-              {getCMSField(cmsData, 'pages.help.contact.secondaryButton', 'Email Support')}
-            </Button>
+            <Link href="mailto:rides@fairfieldairportcars.com">
+              <Button
+                variant="secondary"
+                data-cms-id="pages.help.contact.secondaryButton"
+              >
+                {getCMSField(cmsData, 'pages.help.contact.secondaryButton', 'Email Support')}
+              </Button>
+            </Link>
             
-            <Button
-              variant="outline"
-              onClick={() => window.location.href = '/book'}
-              data-cms-id="pages.help.contact.tertiaryButton"
-              interactionMode={mode}
-            >
-              {getCMSField(cmsData, 'pages.help.contact.tertiaryButton', 'Book a Ride')}
-            </Button>
+            <Link href="/book">
+              <Button
+                variant="outline"
+                data-cms-id="pages.help.contact.tertiaryButton"
+              >
+                {getCMSField(cmsData, 'pages.help.contact.tertiaryButton', 'Book a Ride')}
+              </Button>
+            </Link>
           </Stack>
         </Stack>
       </Container>
@@ -176,8 +212,9 @@ function HelpPageContent() {
   );
 }
 
-export default function HelpPage() {
-  return (
-    <HelpPageContent />
-  );
+export default async function HelpPage() {
+  // Load CMS data at build time for instant page loads
+  const cmsData = await getCMSData();
+  
+  return <HelpPageContent cmsData={cmsData} />;
 }
