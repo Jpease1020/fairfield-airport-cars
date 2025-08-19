@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, borderRadius, transitions } from '../../system/tokens/tokens';
+import { FlexboxMargin } from '../../system/shared-types';
 
 // Define BoxProps interface locally for this component
 interface BoxProps {
@@ -10,24 +11,38 @@ interface BoxProps {
   variant?: 'default' | 'elevated' | 'outlined' | 'filled';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin?: FlexboxMargin;  // Limited margin for flexbox positioning
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order?: number;
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
   id?: string;
 }
 
 const StyledBox = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'padding', 'rounded', 'margin', 'marginTop', 'marginBottom'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'padding', 'rounded', 'spacing', 'margin', 'alignSelf', 'order'].includes(prop)
 })<{
   variant: 'default' | 'elevated' | 'outlined' | 'filled';
   padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   rounded: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order: number;
 }>`
   transition: ${transitions.default};
+  display: flex;
+  flex-direction: column;
+  align-self: ${({ alignSelf }) => alignSelf};
+  order: ${({ order }) => order};
+
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
 
   /* Padding styles */
   ${({ padding }) => {
@@ -69,69 +84,25 @@ const StyledBox = styled.div.withConfig({
     }
   }}
 
-  /* Margin styles */
-  ${({ margin }) => {
-    switch (margin) {
+  /* Internal spacing for content */
+  ${({ spacing: spacingProp }) => {
+    switch (spacingProp) {
       case 'none':
-        return `margin: 0;`;
+        return `gap: 0;`;
       case 'xs':
-        return `margin: ${spacing.xs};`;
+        return `gap: ${spacing.xs};`;
       case 'sm':
-        return `margin: ${spacing.sm};`;
+        return `gap: ${spacing.sm};`;
       case 'md':
-        return `margin: ${spacing.md};`;
+        return `gap: ${spacing.md};`;
       case 'lg':
-        return `margin: ${spacing.lg};`;
+        return `gap: ${spacing.lg};`;
       case 'xl':
-        return `margin: ${spacing.xl};`;
+        return `gap: ${spacing.xl};`;
       case '2xl':
-        return `margin: ${spacing['2xl']};`;
+        return `gap: ${spacing['2xl']};`;
       default:
-        return `margin: 0;`;
-    }
-  }}
-
-  /* Margin top styles */
-  ${({ marginTop }) => {
-    switch (marginTop) {
-      case 'none':
-        return `margin-top: 0;`;
-      case 'xs':
-        return `margin-top: ${spacing.xs};`;
-      case 'sm':
-        return `margin-top: ${spacing.sm};`;
-      case 'md':
-        return `margin-top: ${spacing.md};`;
-      case 'lg':
-        return `margin-top: ${spacing.lg};`;
-      case 'xl':
-        return `margin-top: ${spacing.xl};`;
-      case '2xl':
-        return `margin-top: ${spacing['2xl']};`;
-      default:
-        return `margin-top: 0;`;
-    }
-  }}
-
-  /* Margin bottom styles */
-  ${({ marginBottom }) => {
-    switch (marginBottom) {
-      case 'none':
-        return `margin-bottom: 0;`;
-      case 'xs':
-        return `margin-bottom: ${spacing.xs};`;
-      case 'sm':
-        return `margin-bottom: ${spacing.sm};`;
-      case 'md':
-        return `margin-bottom: ${spacing.md};`;
-      case 'lg':
-        return `margin-bottom: ${spacing.lg};`;
-      case 'xl':
-        return `margin-bottom: ${spacing.xl};`;
-      case '2xl':
-        return `margin-bottom: ${spacing['2xl']};`;
-      default:
-        return `margin-bottom: 0;`;
+        return `gap: 0;`;
     }
   }}
 
@@ -172,9 +143,10 @@ export const Box: React.FC<BoxProps> = ({
   variant = 'default',
   padding = 'md',
   rounded = 'md',
+  spacing = 'none',
   margin = 'none',
-  marginTop = 'none',
-  marginBottom = 'none',
+  alignSelf = 'stretch',
+  order = 0,
   as: Component = 'div',
   ...rest
 }) => {
@@ -183,9 +155,10 @@ export const Box: React.FC<BoxProps> = ({
       variant={variant}
       padding={padding}
       rounded={rounded}
+      spacing={spacing}
       margin={margin}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
+      alignSelf={alignSelf}
+      order={order}
       as={Component}
       {...rest}
     >

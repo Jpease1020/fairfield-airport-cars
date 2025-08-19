@@ -3,6 +3,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { spacing, transitions } from '../../system/tokens/tokens';
+import { FlexboxMargin } from '../../system/shared-types';
+
 // Define types locally for this component
 interface StackProps {
   children: React.ReactNode;
@@ -12,6 +14,9 @@ interface StackProps {
   justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | ResponsiveValue<'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly'>;
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse' | ResponsiveValue<'nowrap' | 'wrap' | 'wrap-reverse'>;
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  margin?: FlexboxMargin;  // Limited margin for flexbox positioning
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  order?: number;
   fullWidth?: boolean;
   as?: React.ElementType;
   id?: string;
@@ -28,7 +33,7 @@ type ResponsiveValue<T> = T | {
 };
 
 const StyledStack = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'fullWidth'].includes(prop)
+  shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'margin', 'alignSelf', 'order', 'fullWidth'].includes(prop)
 })<{
   direction: any;
   spacing: any;
@@ -36,6 +41,9 @@ const StyledStack = styled.div.withConfig({
   justify: any;
   wrap: any;
   padding: any;
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  order: number;
   fullWidth: boolean;
 }>`
   display: flex;
@@ -58,6 +66,17 @@ const StyledStack = styled.div.withConfig({
     if (typeof wrap === 'string') return wrap;
     return wrap?.xs || 'nowrap';
   }};
+  align-self: ${({ alignSelf }) => alignSelf};
+  order: ${({ order }) => order};
+  
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
+  
   gap: ${({ spacing: spacingProp }) => {
     if (typeof spacingProp === 'string') {
       if (spacingProp === 'none') return '0';
@@ -143,6 +162,9 @@ export const Stack: React.FC<StackProps> = ({
   justify = 'flex-start',
   wrap = 'nowrap',
   padding = 'none',
+  margin = 'none',
+  alignSelf = 'stretch',
+  order = 0,
   fullWidth = false,
   as: Component = 'div',
   ...rest
@@ -155,6 +177,9 @@ export const Stack: React.FC<StackProps> = ({
       justify={justify}
       wrap={wrap}
       padding={padding}
+      margin={margin}
+      alignSelf={alignSelf}
+      order={order}
       fullWidth={fullWidth}
       as={Component}
       {...rest}
@@ -162,4 +187,6 @@ export const Stack: React.FC<StackProps> = ({
       {children}
     </StyledStack>
   );
-}; 
+};
+
+export type { StackProps }; 

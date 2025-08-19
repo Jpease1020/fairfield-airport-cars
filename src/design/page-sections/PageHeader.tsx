@@ -6,6 +6,7 @@ import { Container } from '../layout/containers/Container';
 import { useCMSData, getCMSField } from '../hooks/useCMSData';
 import { H1 } from '../components/base-components/text/Headings';
 import { Text } from '../components/base-components/text/Text';
+import { FlexboxMargin } from '../system/shared-types';
 
 const ActionsContainer = styled.div`
   display: flex;
@@ -19,7 +20,7 @@ interface PageHeaderProps {
   subtitle?: string | React.ReactNode;
   actions?: React.ReactNode[];
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin?: FlexboxMargin; // Limited margin for flexbox positioning
   spacing?: 'sm' | 'md' | 'lg';
 }
 

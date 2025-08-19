@@ -2,9 +2,9 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { spacing } from '../../system/tokens/tokens';
+import { spacing, colors, borderRadius, shadows } from '../../system/tokens/tokens';
 import { Container } from '../../layout/containers/Container';
-import { ResponsiveValue, Breakpoint, GridCols, SpacingScale } from '../../system/shared-types';
+import { ResponsiveValue, Breakpoint, GridCols, SpacingScale, FlexboxMargin } from '../../system/shared-types';
 import { H2 } from '../../components/base-components/text/Headings';
 import { Text } from '../../components/base-components/text/Text';
 
@@ -24,21 +24,23 @@ interface GridProps {
   cols?: ResponsiveValue<GridCols> | GridCols;
   gap?: ResponsiveValue<SpacingScale>;
   responsive?: boolean;
-  margin?: ResponsiveValue<SpacingScale>;
-  marginTop?: ResponsiveValue<SpacingScale>;
-  marginBottom?: ResponsiveValue<SpacingScale>;
+  spacing?: ResponsiveValue<SpacingScale>;
+  margin?: FlexboxMargin;  // Limited margin for flexbox positioning
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order?: number;
   as?: 'div' | 'section' | 'article';
 }
 
 const Grid = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['cols', 'gap', 'responsive', 'margin', 'marginTop', 'marginBottom'].includes(prop)
+  shouldForwardProp: (prop) => !['cols', 'gap', 'responsive', 'spacing', 'margin', 'alignSelf', 'order'].includes(prop)
 })<{
   cols: ResponsiveValue<GridCols> | GridCols;
   gap: ResponsiveValue<SpacingScale>;
   responsive: boolean;
-  margin: ResponsiveValue<SpacingScale>;
-  marginTop: ResponsiveValue<SpacingScale>;
-  marginBottom: ResponsiveValue<SpacingScale>;
+  spacing: ResponsiveValue<SpacingScale>;
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order: number;
 }>`
   display: grid;
   grid-template-columns: ${({ cols, responsive }) => {
@@ -52,18 +54,22 @@ const Grid = styled.div.withConfig({
     const resolvedGap = resolveResponsiveValue(gap);
     return resolvedGap === 'none' ? '0' : spacing[resolvedGap as keyof typeof spacing];
   }};
-  margin: ${({ margin }) => {
-    const resolvedMargin = resolveResponsiveValue(margin);
-    return resolvedMargin === 'none' ? '0' : spacing[resolvedMargin as keyof typeof spacing];
-  }};
-  margin-top: ${({ marginTop }) => {
-    const resolvedMarginTop = resolveResponsiveValue(marginTop);
-    return resolvedMarginTop === 'none' ? '0' : spacing[resolvedMarginTop as keyof typeof spacing];
-  }};
-  margin-bottom: ${({ marginBottom }) => {
-    const resolvedMarginBottom = resolveResponsiveValue(marginBottom);
-    return resolvedMarginBottom === 'none' ? '0' : spacing[resolvedMarginBottom as keyof typeof spacing];
-  }};
+  align-self: ${({ alignSelf }) => alignSelf};
+  order: ${({ order }) => order};
+  
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
+  
+  /* Internal spacing for content */
+  ${({ spacing: spacingProp }) => {
+    const resolvedSpacing = resolveResponsiveValue(spacingProp);
+    return resolvedSpacing === 'none' ? '' : `gap: ${spacing[resolvedSpacing as keyof typeof spacing]};`;
+  }}
   
   /* Responsive breakpoints for better mobile experience */
   @media (max-width: 1024px) {
@@ -109,9 +115,10 @@ const GridComponent: React.FC<GridProps> = ({
   cols = 3, 
   gap = 'md', 
   responsive = false,
+  spacing = 'none',
   margin = 'none',
-  marginTop = 'none',
-  marginBottom = 'none',
+  alignSelf = 'stretch',
+  order = 0,
   as: Component = 'div',
   children
 }) => {
@@ -120,9 +127,10 @@ const GridComponent: React.FC<GridProps> = ({
       cols={cols}
       gap={gap}
       responsive={responsive}
+      spacing={spacing}
       margin={margin}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
+      alignSelf={alignSelf}
+      order={order}
       as={Component}
     >
       {children}
@@ -141,50 +149,97 @@ interface GridSectionProps {
   gap?: SpacingScale;
   responsive?: boolean;
   padding?: SpacingScale;
-  margin?: SpacingScale;
-  marginTop?: SpacingScale;
-  marginBottom?: SpacingScale;
+  spacing?: SpacingScale;
+  margin?: FlexboxMargin;  // Limited margin for flexbox positioning
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order?: number;
   as?: 'section' | 'div' | 'article';
 }
 
 const GridSectionContainer = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['padding', 'margin', 'marginTop', 'marginBottom'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'padding', 'spacing', 'margin', 'alignSelf', 'order'].includes(prop)
 })<{
+  variant: 'content' | 'default' | 'actions' | 'stats';
   padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order: number;
 }>`
   padding: ${({ padding }) => padding === 'none' ? '0' : spacing[padding as keyof typeof spacing]};
-  margin: ${({ margin }) => margin === 'none' ? '0' : spacing[margin as keyof typeof spacing]};
-  margin-top: ${({ marginTop }) => marginTop === 'none' ? '0' : spacing[marginTop as keyof typeof spacing]};
-  margin-bottom: ${({ marginBottom }) => marginBottom === 'none' ? '0' : spacing[marginBottom as keyof typeof spacing]};
+  align-self: ${({ alignSelf }) => alignSelf};
+  order: ${({ order }) => order};
+  
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
+  
+  /* Internal spacing for content */
+  ${({ spacing: spacingProp }) => {
+    return spacingProp === 'none' ? '' : `gap: ${spacing[spacingProp as keyof typeof spacing]};`;
+  }}
+
+  /* Variant styles */
+  ${({ variant }) => {
+    switch (variant) {
+      case 'content':
+        return `
+          background-color: ${colors.background.secondary};
+          border-radius: ${borderRadius.md};
+          box-shadow: ${shadows.sm};
+        `;
+      case 'actions':
+        return `
+          background-color: ${colors.background.primary};
+          border: 1px solid ${colors.border.default};
+          border-radius: ${borderRadius.lg};
+        `;
+      case 'stats':
+        return `
+          background-color: ${colors.primary[50]};
+          border: 1px solid ${colors.primary[200]};
+          border-radius: ${borderRadius.lg};
+        `;
+      default:
+        return `
+          background-color: transparent;
+        `;
+    }
+  }}
 `;
 
 const GridSection: React.FC<GridSectionProps> = ({ 
   children,
   title,
   subtitle,
+  variant = 'default',
   cols = 3,
   columns,
   gap = 'md',
   responsive = false,
   padding = 'lg',
+  spacing = 'none',
   margin = 'none',
-  marginTop = 'none',
-  marginBottom = 'none',
+  alignSelf = 'stretch',
+  order = 0,
   as: Component = 'section'
 }) => {
   return (
     <GridSectionContainer
+      variant={variant}
       padding={padding}
+      spacing={spacing}
       margin={margin}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
+      alignSelf={alignSelf}
+      order={order}
       as={Component}
     >
       {(title || subtitle) && (
-        <Container variant="default" padding="none" margin="none" marginBottom="lg">
+        <Container variant="default" padding="none" spacing="lg">
           {title && <H2 size="lg">{title}</H2>}
           {subtitle && <Text variant="muted" size="sm">{subtitle}</Text>}
         </Container>
@@ -193,6 +248,10 @@ const GridSection: React.FC<GridSectionProps> = ({
         cols={columns || cols}
         gap={gap}
         responsive={responsive}
+        spacing={spacing}
+        margin={margin}
+        alignSelf={alignSelf}
+        order={order}
       >
         {children}
       </GridComponent>
@@ -204,19 +263,86 @@ const GridSection: React.FC<GridSectionProps> = ({
 interface GridItemProps {
   children: React.ReactNode;
   span?: GridCols;
+  start?: GridCols; // Grid column start position (1-12)
+  end?: GridCols;   // Grid column end position (1-13)
+  margin?: FlexboxMargin;
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order?: number;
 }
 
-const GridItemContainer = styled.div<{ $span: number }>`
-  grid-column: span ${({ $span }) => $span};
-  min-width: 0; // Prevent overflow
+const GridItemContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['$span', '$start', '$end', 'margin', 'alignSelf', 'order'].includes(prop)
+})<{ 
+  $span: number;
+  $start?: number;
+  $end?: number;
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order: number;
+}>`
+  /* Grid positioning */
+  ${({ $span, $start, $end }) => {
+    if ($start && $end) {
+      return `grid-column: ${$start} / ${$end};`;
+    } else if ($start) {
+      return `grid-column: ${$start} / span ${$span};`;
+    } else {
+      return `grid-column: span ${$span};`;
+    }
+  }}
+  
+  /* Flexbox properties for content */
+  display: flex;
+  flex-direction: column;
+  align-self: ${({ alignSelf }) => alignSelf};
+  order: ${({ order }) => order};
+
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
 `;
 
+/**
+ * GridItem Component - Enhanced grid item with positioning
+ * 
+ * Provides precise grid positioning with start/end columns,
+ * replacing the need for margin-based offsets.
+ * 
+ * @example
+ * ```tsx
+ * <Grid cols={12} gap="md">
+ *   <GridItem span={6} start={3}>Centered content (starts at column 3)</GridItem>
+ *   <GridItem span={4} start={9}>Right-aligned content</GridItem>
+ * </Grid>
+ * 
+ * // Or use start/end directly
+ * <Grid cols={12}>
+ *   <GridItem start={2} end={8}>Spans columns 2-7</GridItem>
+ * </Grid>
+ * ```
+ */
 const GridItem: React.FC<GridItemProps> = ({ 
   children, 
-  span = 1
+  span = 1,
+  start,
+  end,
+  margin = 'none',
+  alignSelf = 'stretch',
+  order = 0
 }) => {
   return (
-    <GridItemContainer $span={span}>
+    <GridItemContainer 
+      $span={span}
+      $start={start}
+      $end={end}
+      margin={margin}
+      alignSelf={alignSelf}
+      order={order}
+    >
       {children}
     </GridItemContainer>
   );

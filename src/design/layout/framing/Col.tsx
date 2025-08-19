@@ -2,6 +2,9 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import { spacing, breakpoints } from '../../system/tokens/tokens';
+import { FlexboxMargin } from '../../system/shared-types';
+
 // Define types locally for this component
 type ColSpan = number;
 type ResponsiveColSpan = {
@@ -16,10 +19,31 @@ type ResponsiveColSpan = {
 interface ColProps {
   children: React.ReactNode;
   span?: ColSpan | ResponsiveColSpan;
+  /** 
+   * @deprecated Use Spacer component or Grid with start/end props instead.
+   * Offset uses margin-left which conflicts with flexbox spacing.
+   * 
+   * @example
+   * // ❌ Old way (conflicts with flexbox)
+   * <Col span={6} offset={2}>Content</Col>
+   * 
+   * // ✅ New way (flexbox-first)
+   * <Row>
+   *   <Spacer span={2} />
+   *   <Col span={6}>Content</Col>
+   * </Row>
+   * 
+   * // ✅ Or use Grid for complex layouts
+   * <Grid cols={12}>
+   *   <GridItem span={6} start={3}>Content</GridItem>
+   * </Grid>
+   */
   offset?: ColSpan | ResponsiveColSpan;
   align?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
   justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin?: FlexboxMargin;  // Limited margin for flexbox positioning
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
   order?: number;
   grow?: boolean;
   shrink?: boolean;
@@ -27,7 +51,6 @@ interface ColProps {
   as?: React.ElementType;
   'data-testid'?: string;
 }
-import { spacing, breakpoints } from '../../system/tokens/tokens';
 
 // Helper function to generate responsive flex basis
 const generateFlexBasis = (span: ColSpan | ResponsiveColSpan): string => {
@@ -147,13 +170,15 @@ const generateOffset = (offset: ColSpan | ResponsiveColSpan): string => {
 
 // Styled Column component
 const StyledCol = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['span', 'offset', 'align', 'justify', 'padding', 'order', 'grow', 'shrink'].includes(prop)
+  shouldForwardProp: (prop) => !['span', 'offset', 'align', 'justify', 'padding', 'margin', 'alignSelf', 'order', 'grow', 'shrink'].includes(prop)
 })<{
   span?: ColSpan | ResponsiveColSpan;
   offset?: ColSpan | ResponsiveColSpan;
   align: ColProps['align'];
   justify: ColProps['justify'];
   padding: ColProps['padding'];
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
   order: number;
   grow: boolean;
   shrink: boolean;
@@ -162,9 +187,18 @@ const StyledCol = styled.div.withConfig({
   flex-direction: column;
   align-items: ${({ align }) => align};
   justify-content: ${({ justify }) => justify};
+  align-self: ${({ alignSelf }) => alignSelf};
   order: ${({ order }) => order};
   flex-grow: ${({ grow }) => grow ? '1' : '0'};
   flex-shrink: ${({ shrink }) => shrink ? '1' : '0'};
+  
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
   
   /* Column span */
   ${({ span }) => span && generateFlexBasis(span)}
@@ -201,6 +235,8 @@ export const Col: React.FC<ColProps> = ({
   align = 'stretch',
   justify = 'flex-start',
   padding = 'none',
+  margin = 'none',
+  alignSelf = 'stretch',
   order = 0,
   grow = false,
   shrink = true,
@@ -209,6 +245,15 @@ export const Col: React.FC<ColProps> = ({
   'data-testid': testId,
   ...rest
 }) => {
+  // Deprecation warning for offset prop
+  if (offset && process.env.NODE_ENV === 'development') {
+    console.warn(
+      '⚠️  Col offset prop is deprecated and conflicts with flexbox spacing.\n' +
+      '   Use Spacer component or Grid with start/end props instead.\n' +
+      '   See: https://docs.example.com/migration/flexbox-spacing'
+    );
+  }
+
   return (
     <StyledCol
       span={span}
@@ -216,6 +261,8 @@ export const Col: React.FC<ColProps> = ({
       align={align}
       justify={justify}
       padding={padding}
+      margin={margin}
+      alignSelf={alignSelf}
       order={order}
       grow={grow}
       shrink={shrink}
@@ -227,4 +274,6 @@ export const Col: React.FC<ColProps> = ({
       {children}
     </StyledCol>
   );
-}; 
+};
+
+export type { ColProps }; 
