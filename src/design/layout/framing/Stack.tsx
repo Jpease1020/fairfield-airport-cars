@@ -12,7 +12,6 @@ interface StackProps {
   justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | ResponsiveValue<'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly'>;
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse' | ResponsiveValue<'nowrap' | 'wrap' | 'wrap-reverse'>;
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
   fullWidth?: boolean;
   as?: React.ElementType;
   id?: string;
@@ -29,7 +28,7 @@ type ResponsiveValue<T> = T | {
 };
 
 const StyledStack = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'margin', 'fullWidth'].includes(prop)
+  shouldForwardProp: (prop) => !['direction', 'spacing', 'align', 'justify', 'wrap', 'padding', 'fullWidth'].includes(prop)
 })<{
   direction: any;
   spacing: any;
@@ -37,7 +36,6 @@ const StyledStack = styled.div.withConfig({
   justify: any;
   wrap: any;
   padding: any;
-  margin: any;
   fullWidth: boolean;
 }>`
   display: flex;
@@ -86,23 +84,10 @@ const StyledStack = styled.div.withConfig({
     const pad = padding?.xs || 'none';
     return pad === 'none' ? '0' : spacing[pad as keyof typeof spacing];
   }};
-  margin: ${({ margin }) => {
-    if (typeof margin === 'string') {
-      if (margin === 'none') return '0';
-      return margin === 'xs' ? spacing.xs :
-             margin === 'sm' ? spacing.sm :
-             margin === 'md' ? spacing.md :
-             margin === 'lg' ? spacing.lg :
-             margin === 'xl' ? spacing.xl :
-             margin === '2xl' ? spacing['2xl'] : '0';
-    }
-    const marg = margin?.xs || 'none';
-    return marg === 'none' ? '0' : spacing[marg as keyof typeof spacing];
-  }};
   transition: ${transitions.default};
 
   /* Enhanced Responsive breakpoints */
-  ${({ direction, align, justify, wrap, spacing: spacingProp, padding, margin }) => {
+  ${({ direction, align, justify, wrap, spacing: spacingProp, padding }) => {
     const breakpoints = {
       sm: '640px',
       md: '768px', 
@@ -143,12 +128,6 @@ const StyledStack = styled.div.withConfig({
         responsiveStyles.push(`padding: ${padValue};`);
       }
       
-      if (margin && typeof margin === 'object' && margin[breakpoint]) {
-        const marg = margin[breakpoint];
-        const margValue = marg === 'none' ? '0' : spacing[marg as keyof typeof spacing];
-        responsiveStyles.push(`margin: ${margValue};`);
-      }
-      
       return responsiveStyles.length > 0 
         ? `@media (min-width: ${width}) { ${responsiveStyles.join(' ')} }`
         : '';
@@ -164,7 +143,6 @@ export const Stack: React.FC<StackProps> = ({
   justify = 'flex-start',
   wrap = 'nowrap',
   padding = 'none',
-  margin = 'none',
   fullWidth = false,
   as: Component = 'div',
   ...rest
@@ -177,7 +155,6 @@ export const Stack: React.FC<StackProps> = ({
       justify={justify}
       wrap={wrap}
       padding={padding}
-      margin={margin}
       fullWidth={fullWidth}
       as={Component}
       {...rest}

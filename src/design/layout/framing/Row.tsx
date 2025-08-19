@@ -11,7 +11,6 @@ interface RowProps {
   justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
   gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   fullWidth?: boolean;
   responsive?: boolean;
   id?: string;
@@ -22,7 +21,7 @@ import { spacing, breakpoints } from '../../system/tokens/tokens';
 
 // Styled Row component with flexbox properties
 const StyledRow = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['direction', 'wrap', 'align', 'justify', 'gap', 'padding', 'margin', 'fullWidth', 'responsive'].includes(prop)
+  shouldForwardProp: (prop) => !['direction', 'wrap', 'align', 'justify', 'gap', 'padding', 'fullWidth', 'responsive'].includes(prop)
 })<{
   direction: RowProps['direction'];
   wrap: RowProps['wrap'];
@@ -30,7 +29,6 @@ const StyledRow = styled.div.withConfig({
   justify: RowProps['justify'];
   gap: RowProps['gap'];
   padding: RowProps['padding'];
-  margin: RowProps['margin'];
   fullWidth: boolean;
   responsive: boolean;
 }>`
@@ -47,9 +45,6 @@ const StyledRow = styled.div.withConfig({
   /* Padding */
   padding: ${({ padding }) => padding === 'none' ? '0' : spacing[padding as keyof typeof spacing]};
   
-  /* Margin */
-  margin: ${({ margin }) => margin === 'none' ? '0' : spacing[margin as keyof typeof spacing]};
-  
   /* Responsive behavior */
   ${({ responsive }) => responsive && `
     @media (max-width: ${breakpoints.sm}) {
@@ -62,7 +57,8 @@ const StyledRow = styled.div.withConfig({
  * Row Component - Flexbox row container
  * 
  * Provides a flexible row layout with responsive behavior and comprehensive
- * flexbox controls for alignment, spacing, and direction.
+ * flexbox controls for alignment, spacing, and direction. Spacing between rows
+ * is handled by parent containers using gap prop.
  * 
  * @example
  * ```tsx
@@ -80,7 +76,6 @@ export const Row: React.FC<RowProps> = ({
   justify = 'flex-start',
   gap = 'none',
   padding = 'none',
-  margin = 'none',
   fullWidth = false,
   responsive = false,
   id,
@@ -96,7 +91,6 @@ export const Row: React.FC<RowProps> = ({
       justify={justify}
       gap={gap}
       padding={padding}
-      margin={margin}
       fullWidth={fullWidth}
       responsive={responsive}
       id={id}

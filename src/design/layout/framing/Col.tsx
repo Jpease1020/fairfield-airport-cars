@@ -20,7 +20,6 @@ interface ColProps {
   align?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
   justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   order?: number;
   grow?: boolean;
   shrink?: boolean;
@@ -148,14 +147,13 @@ const generateOffset = (offset: ColSpan | ResponsiveColSpan): string => {
 
 // Styled Column component
 const StyledCol = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['span', 'offset', 'align', 'justify', 'padding', 'margin', 'order', 'grow', 'shrink'].includes(prop)
+  shouldForwardProp: (prop) => !['span', 'offset', 'align', 'justify', 'padding', 'order', 'grow', 'shrink'].includes(prop)
 })<{
   span?: ColSpan | ResponsiveColSpan;
   offset?: ColSpan | ResponsiveColSpan;
   align: ColProps['align'];
   justify: ColProps['justify'];
   padding: ColProps['padding'];
-  margin: ColProps['margin'];
   order: number;
   grow: boolean;
   shrink: boolean;
@@ -176,16 +174,14 @@ const StyledCol = styled.div.withConfig({
   
   /* Padding */
   padding: ${({ padding }) => padding === 'none' ? '0' : spacing[padding as keyof typeof spacing]};
-  
-  /* Margin */
-  margin: ${({ margin }) => margin === 'none' ? '0' : spacing[margin as keyof typeof spacing]};
 `;
 
 /**
  * Column Component - Flexible column with responsive spans
  * 
  * Provides a flexible column layout with responsive spans, offsets,
- * and comprehensive flexbox controls.
+ * and comprehensive flexbox controls. Spacing between columns is handled
+ * by parent Row/Stack components using gap prop.
  * 
  * @example
  * ```tsx
@@ -205,7 +201,6 @@ export const Col: React.FC<ColProps> = ({
   align = 'stretch',
   justify = 'flex-start',
   padding = 'none',
-  margin = 'none',
   order = 0,
   grow = false,
   shrink = true,
@@ -221,7 +216,6 @@ export const Col: React.FC<ColProps> = ({
       align={align}
       justify={justify}
       padding={padding}
-      margin={margin}
       order={order}
       grow={grow}
       shrink={shrink}
