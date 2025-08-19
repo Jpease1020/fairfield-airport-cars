@@ -29,7 +29,7 @@ function HelpPageContent() {
               data-cms-id="pages.help.hero.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.help.hero.title', 'Help & Support')}
+              {getCMSField(cmsData, 'pages.help.hero.title', 'Help & FAQs')}
             </H1>
             <Text 
               variant="lead" 
@@ -38,7 +38,7 @@ function HelpPageContent() {
               data-cms-id="pages.help.hero.subtitle"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.help.hero.subtitle', 'Quick answers and support')}
+              {getCMSField(cmsData, 'pages.help.hero.subtitle')}
             </Text>
           </Stack>
         </Stack>
@@ -50,7 +50,7 @@ function HelpPageContent() {
             data-cms-id="pages.help.quickAnswers.title"
             mode={mode}
           >
-            {getCMSField(cmsData, 'pages.help.quickAnswers.title', 'Quick Answers')}
+            {getCMSField(cmsData, 'pages.help.quickAnswers.title')}
           </H2>
         </Stack>
         
@@ -67,7 +67,7 @@ function HelpPageContent() {
                                   data-cms-id="pages.help.quickAnswers.items.0.answer"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.answer', 'Book at least 24 hours in advance, especially during peak travel seasons.')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.answer', 'We recommend booking at least 24 hours in advance for airport rides.')}
               </Text>
             </Stack>
           </Box>
@@ -78,13 +78,13 @@ function HelpPageContent() {
                                   data-cms-id="pages.help.quickAnswers.items.1.question"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.question', 'Can I cancel my booking?')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.question', 'What is your cancellation policy?')}
               </H2>
               <Text 
                                   data-cms-id="pages.help.quickAnswers.items.1.answer"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.answer', 'Yes, cancel up to 4 hours before pickup for a full refund.')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.answer', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations 3-24 hours before receive 50% refund.')}
               </Text>
             </Stack>
           </Box>
@@ -101,7 +101,7 @@ function HelpPageContent() {
                                   data-cms-id="pages.help.quickAnswers.items.2.answer"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item3.answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.2.answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
               </Text>
             </Stack>
           </Box>
@@ -112,7 +112,7 @@ function HelpPageContent() {
                                   data-cms-id="pages.help.quickAnswers.items.3.question"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.item4.question', 'What payment methods do you accept?')}
+                {getCMSField(cmsData, 'pages.help.quickAnswers.items.3.question', 'What payment methods do you accept?')}
               </H2>
               <Text 
                                   data-cms-id="pages.help.quickAnswers.items.3.answer"

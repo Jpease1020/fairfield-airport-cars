@@ -28,7 +28,7 @@ function PrivacyPageContent() {
               data-cms-id="pages.privacy.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.privacy.title', '🔒 Privacy Policy')}
+              {getCMSField(cmsData, 'pages.privacy.title', 'Privacy Policy')}
             </H1>
             <Text 
               variant="lead" 
@@ -38,7 +38,7 @@ function PrivacyPageContent() {
               data-cms-id="pages.privacy.effectiveDate"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.privacy.effectiveDate', 'Effective Date: January 1, 2024 | Last Updated: January 1, 2024')}
+              {getCMSField(cmsData, 'pages.privacy.effectiveDate')}
             </Text>
           </Stack>
         </Stack>

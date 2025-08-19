@@ -19,7 +19,7 @@ export default function ContactPage() {
               data-cms-id="pages.contact.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.contact.title', 'Contact Us')}
+              {getCMSField(cmsData, 'pages.contact.title')}
             </H1>
             <Text 
               align="center" 
@@ -27,7 +27,7 @@ export default function ContactPage() {
               data-cms-id="pages.contact.subtitle"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.contact.subtitle', 'Get in touch with our team for any questions or assistance')}
+              {getCMSField(cmsData, 'pages.contact.subtitle')}
             </Text>
           </Stack>
         </Box>
@@ -40,7 +40,7 @@ export default function ContactPage() {
               data-cms-id="pages.contact.info.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.contact.info.title', 'Contact Information')}
+              {getCMSField(cmsData, 'pages.contact.info.title')}
             </H2>
             
             <Grid cols={2} gap="lg" responsive>
@@ -49,10 +49,10 @@ export default function ContactPage() {
                   <Box variant="outlined" padding="md">
                     <Stack spacing="sm">
                       <Text weight="bold" data-cms-id="pages.contact.phone.label" mode={mode}>
-                        {getCMSField(cmsData, 'pages.contact.phone.label', 'Phone')}
+                        {getCMSField(cmsData, 'pages.contact.phone.label')}
                       </Text>
                       <Text data-cms-id="pages.contact.phone.value" mode={mode}>
-                        {getCMSField(cmsData, 'pages.contact.phone.value', '(203) 555-0123')}
+                        {getCMSField(cmsData, 'pages.contact.phone.value')}
                       </Text>
                     </Stack>
                   </Box>
@@ -64,10 +64,10 @@ export default function ContactPage() {
                   <Box variant="outlined" padding="md">
                     <Stack spacing="sm">
                       <Text weight="bold" data-cms-id="pages.contact.email.label" mode={mode}>
-                        {getCMSField(cmsData, 'pages.contact.email.label', 'Email')}
+                        {getCMSField(cmsData, 'pages.contact.email.label')}
                       </Text>
                       <Text data-cms-id="pages.contact.email.value" mode={mode}>
-                        {getCMSField(cmsData, 'pages.contact.email.value', 'info@fairfieldairportcars.com')}
+                        {getCMSField(cmsData, 'pages.contact.email.value')}
                       </Text>
                     </Stack>
                   </Box>
@@ -85,33 +85,33 @@ export default function ContactPage() {
               data-cms-id="pages.contact.hours.title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.contact.hours.title', 'Business Hours')}
+              {getCMSField(cmsData, 'pages.contact.hours.title')}
             </H2>
             
             <Box variant="outlined" padding="md">
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between">
                   <Text data-cms-id="pages.contact.hours.monday" mode={mode}>
-                    {getCMSField(cmsData, 'pages.contact.hours.monday', 'Monday - Friday')}
+                    {getCMSField(cmsData, 'pages.contact.hours.monday')}
                   </Text>
                   <Text weight="medium" data-cms-id="pages.contact.hours.mondayTime" mode={mode}>
-                    {getCMSField(cmsData, 'pages.contact.hours.mondayTime', '6:00 AM - 11:00 PM')}
+                    {getCMSField(cmsData, 'pages.contact.hours.mondayTime')}
                   </Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
                   <Text data-cms-id="pages.contact.hours.saturday" mode={mode}>
-                    {getCMSField(cmsData, 'pages.contact.hours.saturday', 'Saturday')}
+                    {getCMSField(cmsData, 'pages.contact.hours.saturday')}
                   </Text>
                   <Text weight="medium" data-cms-id="pages.contact.hours.saturdayTime" mode={mode}>
-                    {getCMSField(cmsData, 'pages.contact.hours.saturdayTime', '7:00 AM - 10:00 PM')}
+                    {getCMSField(cmsData, 'pages.contact.hours.saturdayTime')}
                   </Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
                   <Text data-cms-id="pages.contact.hours.sunday" mode={mode}>
-                    {getCMSField(cmsData, 'pages.contact.hours.sunday', 'Sunday')}
+                    {getCMSField(cmsData, 'pages.contact.hours.sunday')}
                   </Text>
                   <Text weight="medium" data-cms-id="pages.contact.hours.sundayTime" mode={mode}>
-                    {getCMSField(cmsData, 'pages.contact.hours.sundayTime', '8:00 AM - 9:00 PM')}
+                    {getCMSField(cmsData, 'pages.contact.hours.sundayTime')}
                   </Text>
                 </Stack>
               </Stack>
