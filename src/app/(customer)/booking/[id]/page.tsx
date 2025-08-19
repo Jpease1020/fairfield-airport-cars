@@ -17,9 +17,6 @@ function BookingDetailsContent() {
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        // Small delay to ensure MSW is fully initialized
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
         const response = await fetch(`/api/booking/get-booking/${params.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch booking');

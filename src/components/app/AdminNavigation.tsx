@@ -11,7 +11,6 @@ import { auth } from '../../lib/utils/firebase';
 export const AdminNavigation: React.FC = () => {
   const pathname = usePathname();
   const { cmsData } = useCMSData();
-
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -61,6 +60,7 @@ export const AdminNavigation: React.FC = () => {
       🚪 Logout
     </Button>
   );
+
 
   return (
     <BaseNavigation

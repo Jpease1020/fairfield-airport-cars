@@ -7,6 +7,7 @@ import GlobalCommentModal from '@/components/business/GlobalCommentModal';
 import GlobalCommentIcons from '@/components/business/GlobalCommentIcons';
 import { useAdmin } from '@/design/providers/AdminProvider';
 import { useEditMode } from '@/design/providers/InteractionModeProvider';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AppContentProps {
   children: React.ReactNode;
@@ -14,7 +15,8 @@ interface AppContentProps {
 
 export function AppContent({ children }: AppContentProps) {
   const { isAdmin } = useAdmin();
-  const { editMode, commentMode } = useEditMode();
+  const { editMode, commentMode, toggleEditMode, toggleCommentMode } = useEditMode();
+  const { user } = useAuth();
 
   return (
     <>
@@ -31,7 +33,14 @@ export function AppContent({ children }: AppContentProps) {
       {/* Global Comment Icons (comment mode only) */}
       <GlobalCommentIcons isAdmin={isAdmin} commentMode={commentMode} />
 
-      <AdminHamburger />
+      <AdminHamburger
+        isAdmin={isAdmin}
+        isAuthenticated={!!user}
+        editMode={editMode}
+        commentMode={commentMode}
+        onToggleEditMode={toggleEditMode}
+        onToggleCommentMode={toggleCommentMode}
+      />
     </>
   );
 }
