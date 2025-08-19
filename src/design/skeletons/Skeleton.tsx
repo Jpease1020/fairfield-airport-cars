@@ -29,7 +29,9 @@ const StyledSkeleton = styled.div.withConfig({
   rounded: 'sm' | 'md' | 'lg' | 'xl';
 }>`
   background-color: ${colors.gray[200]};
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
   

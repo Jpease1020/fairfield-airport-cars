@@ -9,7 +9,7 @@ import { FlexboxMargin } from '../../system/shared-types';
 export interface ContainerProps {
   children: React.ReactNode;
   variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   margin?: FlexboxMargin;  // Limited margin for flexbox positioning
@@ -28,7 +28,7 @@ const StyledContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['variant', 'maxWidth', 'padding', 'spacing', 'margin', 'alignSelf', 'order'].includes(prop)
 })<{
   variant: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
-  maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
   padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   margin: FlexboxMargin;
@@ -64,6 +64,16 @@ const StyledContainer = styled.div.withConfig({
         return `max-width: 36rem;`;
       case '2xl':
         return `max-width: 42rem;`;
+      case '3xl':
+        return `max-width: 48rem;`;
+      case '4xl':
+        return `max-width: 56rem;`;
+      case '5xl':
+        return `max-width: 64rem;`;
+      case '6xl':
+        return `max-width: 72rem;`;
+      case '7xl':
+        return `max-width: 80rem;`;
       case 'full':
         return `max-width: 100%;`;
       default:
@@ -218,6 +228,7 @@ export const Container: React.FC<ContainerProps> = ({
       order={order}
       as={Component}
       id={id}
+
       {...rest}
     >
       {children}

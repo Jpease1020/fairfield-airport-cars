@@ -19,14 +19,15 @@ import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 const StyledLink = styled.a`
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 1.5rem;
   background-color: ${colors.primary[600]};
   color: white;
   text-decoration: none;
   border-radius: 0.375rem;
   font-weight: 500;
-  text-align: center;
   
   &:hover {
     background-color: ${colors.primary[700]};

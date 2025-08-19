@@ -66,7 +66,9 @@ const OrDivider = styled.div`
 `;
 
 const LinkText = styled(Text)`
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-top: ${spacing.md};
   
   a {

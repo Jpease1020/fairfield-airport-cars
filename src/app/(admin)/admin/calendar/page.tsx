@@ -23,7 +23,9 @@ const DayHeader = styled.div`
   background-color: ${colors.primary[600]};
   color: white;
   padding: 0.5rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
 `;
 
@@ -35,7 +37,9 @@ const CalendarGrid = styled.div`
 
 const CalendarDay = styled.div`
   padding: 0.5rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 function CalendarPageContent() {

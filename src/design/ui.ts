@@ -65,6 +65,7 @@ export { Input } from './components/base-components/forms/Input';
 export { Textarea } from './components/base-components/forms/Textarea';
 export { Select } from './components/base-components/forms/Select';
 export { Label } from './components/base-components/forms/Label';
+export { default as RadioButton } from './components/base-components/forms/RadioButton';
 
 // Notification Components
 export { Alert } from './components/base-components/notifications/Alert';

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import { ResponsiveValue } from '../../system/shared-types';
 
 // PositionedContainer component - for positioning needs
 export interface PositionedContainerProps {
@@ -18,6 +19,7 @@ export interface PositionedContainerProps {
   justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
   as?: 'div' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
   id?: string;
+  gap?: string | ResponsiveValue<string>;
 }
 
 const StyledPositionedContainer = styled.div.withConfig({
@@ -33,6 +35,7 @@ const StyledPositionedContainer = styled.div.withConfig({
   flexDirection: 'row' | 'column' | 'row-reverse' | 'column-reverse';
   alignItems: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
   justifyContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+  gap?: string | ResponsiveValue<string>;
 }>`
   position: ${({ position }) => position};
   ${({ top }) => top && `top: ${top};`}
@@ -48,6 +51,23 @@ const StyledPositionedContainer = styled.div.withConfig({
       justify-content: ${justifyContent};
     `
   }
+  ${({ gap }) => {
+    if (!gap) return '';
+    if (typeof gap === 'string') return `gap: ${gap};`;
+    
+    // Handle responsive gap values
+    const responsiveGap = gap as Record<string, string>;
+    let css = '';
+    
+    if (responsiveGap.xs) css += `gap: ${responsiveGap.xs};`;
+    if (responsiveGap.sm) css += `@media (min-width: 640px) { gap: ${responsiveGap.sm}; }`;
+    if (responsiveGap.md) css += `@media (min-width: 768px) { gap: ${responsiveGap.md}; }`;
+    if (responsiveGap.lg) css += `@media (min-width: 1024px) { gap: ${responsiveGap.lg}; }`;
+    if (responsiveGap.xl) css += `@media (min-width: 1280px) { gap: ${responsiveGap.xl}; }`;
+    if (responsiveGap['2xl']) css += `@media (min-width: 1536px) { gap: ${responsiveGap['2xl']}; }`;
+    
+    return css;
+  }}
 `;
 
 export const PositionedContainer: React.FC<PositionedContainerProps> = ({
@@ -64,6 +84,7 @@ export const PositionedContainer: React.FC<PositionedContainerProps> = ({
   justifyContent = 'flex-start',
   as: Component = 'div',
   id,
+  gap,
   ...rest
 }) => {
   return (
@@ -80,6 +101,7 @@ export const PositionedContainer: React.FC<PositionedContainerProps> = ({
       justifyContent={justifyContent}
       as={Component}
       id={id}
+      gap={gap}
       {...rest}
     >
       {children}
