@@ -76,7 +76,7 @@ function AddContentUtilityPage() {
           },
           {
             title: "Service Information",
-            content: "Learn about our vehicles, drivers, and service areas"
+            content: "Learn about our vehicle, driver, and service areas"
           },
           {
             title: "Airport Transportation",

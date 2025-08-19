@@ -223,15 +223,13 @@ pages: {
         icon: string;
       }>;
     };
-    fleet: {
+    vehicle: {
       title: string;
       subtitle: string;
-      vehicles: Array<{
-        name: string;
+      features: {
+        title: string;
         description: string;
-        capacity: string;
-        price: string;
-      }>;
+      };
     };
     testimonials: {
       title: string;

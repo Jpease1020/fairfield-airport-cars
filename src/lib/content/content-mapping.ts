@@ -8,7 +8,7 @@ export const CONTENT_MAPPING = {
   home: {
     hero: {
       title: "🎯 Ready to Experience Premium Transportation?",
-      subtitle: "Join thousands of satisfied customers who trust us for reliable airport transportation. Professional drivers, clean vehicles, and on-time service for all your airport travel needs.",
+      subtitle: "Join thousands of satisfied customers who trust us for reliable airport transportation. Professional driver, clean vehicle, and on-time service for all your airport travel needs.",
       ctaText: "Book Your Ride Now"
     },
     features: {
@@ -17,7 +17,7 @@ export const CONTENT_MAPPING = {
       items: [
         {
           title: "Professional Service",
-          description: "Experienced drivers with clean, well-maintained vehicles for your comfort and safety",
+          description: "Experienced driver with clean, well-maintained vehicle for your comfort and safety",
           icon: "👨‍💼"
         },
         {
