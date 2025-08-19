@@ -255,7 +255,15 @@ export const handlers = [
     });
   }),
 
-  http.get('/api/booking/:id', () => {
+  // Specific get-booking endpoint used by the app
+  http.get('/api/booking/get-booking/:id', ({ params }) => {
+    console.log('🎭 MSW handler called for get-booking with params:', params);
+    return HttpResponse.json(mockBookingData);
+  }),
+
+  // Also handle the generic booking endpoint
+  http.get('/api/booking/:id', ({ params }) => {
+    console.log('🎭 MSW handler called for generic booking with params:', params);
     return HttpResponse.json(mockBookingData);
   }),
 

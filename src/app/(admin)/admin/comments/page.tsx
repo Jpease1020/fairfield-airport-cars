@@ -28,6 +28,7 @@ export default function AdminCommentsPage() {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<any>(null);
   const { cmsData } = useCMSData();
+
   // Load comments on mount
   useEffect(() => {
     if (isAdmin) {
@@ -104,7 +105,7 @@ export default function AdminCommentsPage() {
   const handleDeleteComment = async (commentId: string) => {
     if (confirm(getCMSField(cmsData, 'admin.comments.confirmations.deleteComment', 'Are you sure you want to delete this comment?'))) {
       try {
-      await commentsService.deleteComment(commentId);
+        await commentsService.deleteComment(commentId);
         await loadComments();
       } catch (error) {
         console.error('Error deleting comment:', error);
@@ -188,24 +189,26 @@ export default function AdminCommentsPage() {
     <Container variant="elevated" padding="lg">
       <Stack spacing="lg">
         {/* Header */}
-        <Container variant="elevated" padding="md">
+        <Stack spacing="sm">
           <H2 data-cms-id="admin.comments.header.title" mode={mode}>
             {getCMSField(cmsData, 'admin.comments.header.title', 'Comment Management')}
           </H2>
           <Span variant="default" size="sm" color="muted" data-cms-id="admin.comments.header.description" mode={mode}>
             {getCMSField(cmsData, 'admin.comments.header.description', 'Manage all comments across the site')}
           </Span>
-        </Container>
+        </Stack>
 
         {/* Filters and Search */}
         <Container variant="elevated" padding="md">
-          <Stack spacing="md">
-            <Container variant="elevated" padding="sm">
+          <Stack spacing="lg">
+            {/* Search and Status Filters */}
+            <Stack spacing="md">
               <H4 data-cms-id="admin.comments.filters.title" mode={mode}>
                 {getCMSField(cmsData, 'admin.comments.filters.title', 'Filters')}
               </H4>
-              <Stack spacing="sm">
-                <Container variant="elevated" padding="xs">
+              
+              <Stack spacing="md">
+                <Stack spacing="xs">
                   <Span variant="default" size="sm" data-cms-id="admin.comments.filters.search.label" mode={mode}>
                     {getCMSField(cmsData, 'admin.comments.filters.search.label', 'Search:')}
                   </Span>
@@ -216,9 +219,9 @@ export default function AdminCommentsPage() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     icon={<Search size={16} />}
                   />
-                </Container>
+                </Stack>
                 
-                <Container variant="elevated" padding="xs">
+                <Stack spacing="xs">
                   <Span variant="default" size="sm" data-cms-id="admin.comments.filters.status.label" mode={mode}>
                     {getCMSField(cmsData, 'admin.comments.filters.status.label', 'Status:')}
                   </Span>
@@ -232,9 +235,9 @@ export default function AdminCommentsPage() {
                       { value: 'resolved', label: getCMSField(cmsData, 'admin.comments.filters.status.resolved', 'Resolved') }
                     ]}
                   />
-                </Container>
+                </Stack>
 
-                <Container variant="elevated" padding="xs">
+                <Stack spacing="xs">
                   <Span variant="default" size="sm" data-cms-id="admin.comments.filters.page.label" mode={mode}>
                     {getCMSField(cmsData, 'admin.comments.filters.page.label', 'Page:')}
                   </Span>
@@ -246,12 +249,13 @@ export default function AdminCommentsPage() {
                       ...getUniquePages()
                     ]}
                   />
-                </Container>
+                </Stack>
               </Stack>
-            </Container>
+            </Stack>
 
-            <Container variant="elevated" padding="sm">
-              <Container variant="elevated" padding="xs">
+            {/* Export Options */}
+            <Stack spacing="md">
+              <Stack spacing="xs">
                 <Span variant="default" size="sm" data-cms-id="admin.comments.export.format.label" mode={mode}>
                   {getCMSField(cmsData, 'admin.comments.export.format.label', 'Export Format:')}
                 </Span>
@@ -263,8 +267,9 @@ export default function AdminCommentsPage() {
                     { value: 'json', label: getCMSField(cmsData, 'admin.comments.export.format.json', 'JSON') }
                   ]}
                 />
-              </Container>
-              <Container variant="elevated" padding="xs">
+              </Stack>
+              
+              <Stack direction="horizontal" spacing="sm">
                 <Button onClick={exportComments} variant="secondary" data-cms-id="admin.comments.export.exportButton" interactionMode={mode}>
                   <Download size={16} />
                   {getCMSField(cmsData, 'admin.comments.export.exportButton', 'Export Comments')}
@@ -273,8 +278,8 @@ export default function AdminCommentsPage() {
                   <BarChart3 size={16} />
                   {getCMSField(cmsData, 'admin.comments.export.generateAnalytics', 'Generate Analytics')}
                 </Button>
-              </Container>
-            </Container>
+              </Stack>
+            </Stack>
           </Stack>
         </Container>
 
@@ -298,38 +303,35 @@ export default function AdminCommentsPage() {
                   variant="elevated"
                   padding="md"
                 >
-                  <Container variant="elevated" padding="sm">
-                    <Container variant="elevated" padding="xs">
+                  {/* Comment Header */}
+                  <Stack spacing="sm">
+                    <Stack direction="horizontal" spacing="sm" align="center">
                       <Span variant="default" size="sm" color="muted" data-cms-id="admin.comments.list.comment.pageTitle" mode={mode}>
                         {comment.pageTitle}
                       </Span>
                       <Span variant="default" size="sm" color="muted">
                         • {new Date(comment.createdAt).toLocaleDateString()}
                       </Span>
-                    </Container>
+                    </Stack>
                     
-                    <Container variant="elevated" padding="xs">
+                    <Stack direction="horizontal" spacing="sm" align="center">
                       <Span variant="default" size="sm" color="muted" data-cms-id="admin.comments.list.comment.element" mode={mode}>
                         {getCMSField(cmsData, 'admin.comments.list.comment.elementLabel', 'Element:')} {comment.elementText}
                       </Span>
-                    </Container>
-                  </Container>
-
-                  <Container variant="elevated" padding="sm">
-                    <Container variant="elevated" padding="xs">
                       <StatusBadge status={comment.status} />
-                    </Container>
-                  </Container>
+                    </Stack>
+                  </Stack>
 
-                  <Container variant="elevated" padding="sm">
+                  {/* Comment Content */}
+                  <Stack spacing="sm">
                     {editingComment === comment.id ? (
-                      <Container variant="elevated" padding="sm">
+                      <Stack spacing="sm">
                         <Textarea
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
                           rows={3}
                         />
-                        <Container variant="elevated" padding="sm">
+                        <Stack direction="horizontal" spacing="sm">
                           <Button
                             onClick={() => handleSaveEdit(comment.id)}
                             variant="primary"
@@ -344,16 +346,15 @@ export default function AdminCommentsPage() {
                           >
                             Cancel
                           </Button>
-                        </Container>
-                      </Container>
+                        </Stack>
+                      </Stack>
                     ) : (
-                      <Container variant="elevated" padding="sm">
-                        <Span>{comment.comment}</Span>
-                      </Container>
+                      <Span>{comment.comment}</Span>
                     )}
-                  </Container>
+                  </Stack>
 
-                  <Container variant="elevated" padding="sm">
+                  {/* Comment Actions */}
+                  <Stack direction="horizontal" spacing="sm" align="center">
                     <Button
                       onClick={() => handleNavigateToElement(comment)}
                       variant="secondary"
@@ -387,7 +388,7 @@ export default function AdminCommentsPage() {
                       <Trash2 size={16} />
                       Delete
                     </Button>
-                  </Container>
+                  </Stack>
                 </Container>
               ))}
             </Stack>
@@ -401,11 +402,11 @@ export default function AdminCommentsPage() {
               {getCMSField(cmsData, 'adminComments.analyticsTitle', 'Comment Analytics')}
             </H3>
             
-            <Stack spacing="md">
+            <Stack spacing="lg">
               {/* Summary Stats */}
-              <Container variant="elevated" padding="sm">
+              <Stack spacing="sm">
                 <H4>Summary</H4>
-                <Container variant="elevated" padding="xs">
+                <Stack spacing="xs">
                   <Span variant="default" size="sm">
                     Total Comments: {analyticsData.summary.total}
                   </Span>
@@ -423,15 +424,15 @@ export default function AdminCommentsPage() {
                       Avg Resolution Time: {analyticsData.summary.averageResolutionTime.toFixed(1)} days
                     </Span>
                   )}
-                </Container>
-              </Container>
+                </Stack>
+              </Stack>
 
               {/* Comments by Page */}
-              <Container variant="elevated" padding="sm">
+              <Stack spacing="sm">
                 <H4>Comments by Page</H4>
                 <Stack spacing="sm">
                   {analyticsData.pages.map((page: any) => (
-                    <Container key={page.page} variant="elevated" padding="xs">
+                    <Stack key={page.page} spacing="xs">
                       <Span variant="default" size="sm">
                         <FileText size={16} />
                         {page.page.split('/').pop() || page.page}
@@ -439,27 +440,27 @@ export default function AdminCommentsPage() {
                       <Span variant="default" size="sm" color="muted">
                         Total: {page.count} | Open: {page.open} | In Progress: {page.inProgress} | Resolved: {page.resolved}
                       </Span>
-                    </Container>
+                    </Stack>
                   ))}
                 </Stack>
-              </Container>
+              </Stack>
 
               {/* Comments by Author */}
-              <Container variant="elevated" padding="sm">
+              <Stack spacing="sm">
                 <H4>Comments by Author</H4>
                 <Stack spacing="sm">
                   {analyticsData.authors.map((author: any) => (
-                    <Container key={author.author} variant="elevated" padding="xs">
+                    <Stack key={author.author} spacing="xs">
                       <Span variant="default" size="sm">
                         {author.author}
                       </Span>
                       <Span variant="default" size="sm" color="muted">
                         Total: {author.count} | Open: {author.open} | In Progress: {author.inProgress} | Resolved: {author.resolved}
                       </Span>
-                    </Container>
+                    </Stack>
                   ))}
                 </Stack>
-              </Container>
+              </Stack>
             </Stack>
           </Container>
         )}
