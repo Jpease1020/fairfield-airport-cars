@@ -162,7 +162,14 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
         {/* Desktop Actions - Hidden on mobile */}
         {!isMobile && actions && (
           <Stack direction="horizontal" align="center" spacing="sm">
-            {actions}
+            {Array.isArray(actions) 
+              ? actions.map((action, index) => (
+                  <React.Fragment key={`action-${index}`}>
+                    {action}
+                  </React.Fragment>
+                ))
+              : actions
+            }
           </Stack>
         )}
 
@@ -209,6 +216,20 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                   </Button>
                 </Link>
               ))}
+              
+              {/* Mobile Actions */}
+              {mobileActions && (
+                <Stack spacing="xs">
+                  {Array.isArray(mobileActions) 
+                    ? mobileActions.map((action, index) => (
+                        <React.Fragment key={`mobile-action-${index}`}>
+                          {action}
+                        </React.Fragment>
+                      ))
+                    : mobileActions
+                  }
+                </Stack>
+              )}
             </Stack>
           </MobileMenuOverlay>
         )}
