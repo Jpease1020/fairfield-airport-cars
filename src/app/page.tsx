@@ -182,7 +182,7 @@ function HomePageContent() {
               data-cms-id="pages.home.vehicle.description" 
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.home.vehicle.description', 'You will ride in a meticulously maintained Chevrolet Suburban, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.')}
+              {getCMSField(cmsData, 'pages.home.vehicle.description', 'You will ride in a meticulously maintained luxury vehicle, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.')}
             </Text>
           </Stack>
           
@@ -195,7 +195,7 @@ function HomePageContent() {
                   data-cms-id="pages.home.vehicle.features.title" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.vehicle.features.title', 'Luxury SUV Service')}
+                  {getCMSField(cmsData, 'pages.home.vehicle.features.title', 'Luxury Vehicle Service')}
                 </Text>
                 <Text 
                   align="center" 
@@ -233,6 +233,7 @@ function HomePageContent() {
           
           <Stack direction="horizontal" spacing="xl" align="stretch">
             <Col grow align="center" padding="md">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md" align="center">
                 <Text 
                   align="center" 
@@ -265,19 +266,21 @@ function HomePageContent() {
                     mode={mode}
                   >
                     {getCMSField(cmsData, 'pages.home.testimonials.items.0.company', 'Tech Corp')}
-                  </Text>
+                  </Text>                  
                 </Stack>
               </Stack>
+            </Box>
             </Col>
             
             <Col grow align="center" padding="md">
+            <Box variant="elevated" padding="lg">
               <Stack spacing="md" align="center">
                 <Text 
                   align="center" 
                   data-cms-id="pages.home.testimonials.items.1.content" 
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'pages.home.testimonials.items.1.content', 'The best airport transportation service I\'ve used. Clean cars and friendly drivers.')}
+                  {getCMSField(cmsData, 'pages.home.testimonials.items.1.content', 'The best airport transportation service I\'ve used. Clean vehicle and friendly driver.')}
                 </Text>
                 <Stack spacing="xs" align="center">
                   <Text 
@@ -298,8 +301,10 @@ function HomePageContent() {
                   </Text>
                 </Stack>
               </Stack>
+              </Box>
             </Col>
             
+            <Box variant="elevated" padding="lg">
             <Col grow align="center" padding="md">
               <Stack spacing="md" align="center">
                 <Text 
@@ -328,7 +333,9 @@ function HomePageContent() {
                   </Text>
                 </Stack>
               </Stack>
+              
             </Col>
+            </Box>
           </Stack>
         </Stack>
       </Container>
@@ -354,6 +361,7 @@ function HomePageContent() {
             </Text>
           </Stack>
           
+          <Box variant="elevated" padding="lg">
           <Stack spacing="lg" align="stretch">
             <Stack spacing="md" align="stretch">
               <Text 
@@ -419,11 +427,13 @@ function HomePageContent() {
                                   data-cms-id="pages.home.faq.items.3.answer" 
                 mode={mode}
               >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.3.answer', 'You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers.')}
+                                  {getCMSField(cmsData, 'pages.home.faq.items.3.answer', 'You will be riding in a modern, clean, and comfortable luxury vehicle, equipped with complimentary water, Wi-Fi, and phone chargers.')}
               </Text>
             </Stack>
           </Stack>
+          </Box>
         </Stack>
+        
       </Container>
 
       {/* CTA Section */}

@@ -232,7 +232,7 @@ export const CONTENT_MAPPING = {
         },
         {
           question: "What kind of vehicle will I be riding in?",
-          answer: "You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers.",
+          answer: "You will be riding in a modern, clean, and comfortable luxury vehicle, equipped with complimentary water, Wi-Fi, and phone chargers.",
           category: "general"
         }
       ]
@@ -258,7 +258,7 @@ export const CONTENT_MAPPING = {
     subtitle: "Your trusted transportation partner",
     description: "Learn more about our commitment to excellence and customer satisfaction.",
     
-    content: "We provide reliable airport transportation services in the Fairfield area. Our professional drivers ensure you arrive at your destination safely and on time.",
+    content: "We provide reliable airport transportation services in the Fairfield area. Our professional driver ensures you arrive at your destination safely and on time.",
     
     sections: [
       {
@@ -270,8 +270,8 @@ export const CONTENT_MAPPING = {
         content: "We are committed to punctuality, safety, and customer satisfaction in every ride."
       },
       {
-        title: "Our Drivers",
-        content: "All our drivers are experienced, background-checked, and trained to provide the highest level of service."
+        title: "Our Driver",
+        content: "Our driver is experienced, background-checked, and trained to provide the highest level of service."
       }
     ]
   },

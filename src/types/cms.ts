@@ -937,7 +937,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
         items: [
           {
             title: "Reliable Service",
-            description: "On-time pickups and professional drivers",
+            description: "On-time pickups and professional driver",
             icon: "clock"
           },
           {
@@ -954,9 +954,9 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       },
           vehicle: {
       title: "Our Vehicle",
-      description: "You will ride in a meticulously maintained Chevrolet Suburban, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.",
+              description: "You will ride in a meticulously maintained luxury vehicle, offering ample space for passengers and luggage with premium amenities including complimentary water, Wi-Fi, and phone chargers.",
       features: {
-        title: "Luxury SUV Service",
+                  title: "Luxury Vehicle Service",
         description: "Professional driver with background checks, ensuring your safety and comfort throughout your journey."
       }
     },
@@ -978,7 +978,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
           },
           {
             question: "What kind of vehicle will I be riding in?",
-            answer: "You will be riding in a modern, clean, and comfortable black SUV, typically a Chevrolet Suburban or similar, equipped with complimentary water, Wi-Fi, and phone chargers."
+            answer: "You will be riding in a modern, clean, and comfortable luxury vehicle, equipped with complimentary water, Wi-Fi, and phone chargers."
           }
         ]
       },
@@ -989,7 +989,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
       },
       about: {
         title: "About Our Service",
-        content: "We provide reliable airport transportation services in the Fairfield area. Our professional drivers ensure you arrive at your destination safely and on time."
+        content: "We provide reliable airport transportation services in the Fairfield area. Our professional driver ensures you arrive at your destination safely and on time."
       },
       contact: {
         title: "Contact Us",
@@ -1039,7 +1039,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
     booking: {
       title: "Book Your Ride",
       subtitle: "Premium airport transportation service",
-      description: "Reserve your luxury airport transportation with our professional drivers. We serve all major airports in the NY and CT area.",
+      description: "Reserve your luxury airport transportation with our professional driver. We serve all major airports in the NY and CT area.",
       hero: {
         title: "Complete Your Booking",
         subtitle: "Fill in your details below"
@@ -1391,7 +1391,7 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
     'booking-form': {
       title: "Book Your Ride",
       subtitle: "Premium airport transportation service",
-      description: "Reserve your luxury airport transportation with our professional drivers. We serve all major airports in the NY and CT area.",
+      description: "Reserve your luxury airport transportation with our professional driver. We serve all major airports in the NY and CT area.",
       formLabels: {
         fullName: "Full Name",
         email: "Email Address",
