@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, borderRadius, shadows, transitions } from '../../system/tokens/tokens';
+import { FlexboxMargin } from '../../system/shared-types';
 
 // Core Container component - foundational layout component
 export interface ContainerProps {
@@ -10,10 +11,10 @@ export interface ContainerProps {
   variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin?: FlexboxMargin;  // Limited margin for flexbox positioning
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order?: number;
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
   id?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
@@ -24,17 +25,31 @@ export interface ContainerProps {
 }
 
 const StyledContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'maxWidth', 'padding', 'margin', 'marginTop', 'marginBottom', 'spacing'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'maxWidth', 'padding', 'spacing', 'margin', 'alignSelf', 'order'].includes(prop)
 })<{
   variant: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
   maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order: number;
 }>`
   transition: ${transitions.default};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self: ${({ alignSelf }) => alignSelf};
+  order: ${({ order }) => order};
+
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
 
   /* Max width styles */
   ${({ maxWidth }) => {
@@ -78,69 +93,25 @@ const StyledContainer = styled.div.withConfig({
     }
   }}
 
-  /* Margin styles */
-  ${({ margin }) => {
-    switch (margin) {
+  /* Internal spacing for content */
+  ${({ spacing: spacingProp }) => {
+    switch (spacingProp) {
       case 'none':
-        return `margin: 0 auto;`; // Center the container
+        return `gap: 0;`;
       case 'xs':
-        return `margin: ${spacing.xs} auto;`;
+        return `gap: ${spacing.xs};`;
       case 'sm':
-        return `margin: ${spacing.sm} auto;`;
+        return `gap: ${spacing.sm};`;
       case 'md':
-        return `margin: ${spacing.md} auto;`;
+        return `gap: ${spacing.md};`;
       case 'lg':
-        return `margin: ${spacing.lg} auto;`;
+        return `gap: ${spacing.lg};`;
       case 'xl':
-        return `margin: ${spacing.xl} auto;`;
+        return `gap: ${spacing.xl};`;
       case '2xl':
-        return `margin: ${spacing['2xl']} auto;`;
+        return `gap: ${spacing['2xl']};`;
       default:
-        return `margin: 0 auto;`; // Center the container
-    }
-  }}
-
-  /* Margin top styles */
-  ${({ marginTop }) => {
-    switch (marginTop) {
-      case 'none':
-        return `margin-top: 0;`;
-      case 'xs':
-        return `margin-top: ${spacing.xs};`;
-      case 'sm':
-        return `margin-top: ${spacing.sm};`;
-      case 'md':
-        return `margin-top: ${spacing.md};`;
-      case 'lg':
-        return `margin-top: ${spacing.lg};`;
-      case 'xl':
-        return `margin-top: ${spacing.xl};`;
-      case '2xl':
-        return `margin-top: ${spacing['2xl']};`;
-      default:
-        return `margin-top: 0;`;
-    }
-  }}
-
-  /* Margin bottom styles */
-  ${({ marginBottom }) => {
-    switch (marginBottom) {
-      case 'none':
-        return `margin-bottom: 0;`;
-      case 'xs':
-        return `margin-bottom: ${spacing.xs};`;
-      case 'sm':
-        return `margin-bottom: ${spacing.sm};`;
-      case 'md':
-        return `margin-bottom: ${spacing.md};`;
-      case 'lg':
-        return `margin-bottom: ${spacing.lg};`;
-      case 'xl':
-        return `margin-bottom: ${spacing.xl};`;
-      case '2xl':
-        return `margin-bottom: ${spacing['2xl']};`;
-      default:
-        return `margin-bottom: 0;`;
+        return `gap: 0;`;
     }
   }}
 
@@ -212,7 +183,6 @@ const StyledContainer = styled.div.withConfig({
           background-color: ${colors.primary[100]};
           border: none;
           box-shadow: none;
-          text-align: center;
         `;
       default:
         return `
@@ -229,10 +199,10 @@ export const Container: React.FC<ContainerProps> = ({
   variant = 'default',
   maxWidth = '2xl', 
   padding = 'md', 
-  margin = 'none',
-  marginTop = 'none',
-  marginBottom = 'none',
   spacing = 'none',
+  margin = 'none',
+  alignSelf = 'stretch',
+  order = 0,
   as: Component = 'div',
   id,
   ...rest
@@ -242,10 +212,10 @@ export const Container: React.FC<ContainerProps> = ({
       variant={variant}
       maxWidth={maxWidth}
       padding={padding}
-      margin={margin}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
       spacing={spacing}
+      margin={margin}
+      alignSelf={alignSelf}
+      order={order}
       as={Component}
       id={id}
       {...rest}

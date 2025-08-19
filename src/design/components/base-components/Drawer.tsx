@@ -70,7 +70,10 @@ const HeaderContainer = styled(Container)<HeaderContainerProps>`
   `}
   padding: ${({ $variant }) =>
     $variant === 'minimal' ? spacing.md : $variant === 'prominent' ? spacing.xl : spacing.lg};
-  margin: ${({ $margin }) => $margin === 'none' ? '0' : '0 auto'};
+  ${({ $margin }) => $margin === 'none' ? 'margin: 0;' : `
+    display: flex;
+    justify-content: center;
+  `};
   width: 100%;
 `;
 

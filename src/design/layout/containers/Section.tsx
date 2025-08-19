@@ -4,27 +4,44 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, transitions } from '../../system/tokens/tokens';
 import { Container } from './Container';
-import { BaseLayoutProps, SectionVariant, SpacingScale, MaxWidth } from '../../system/shared-types';
+import { BaseLayoutProps, SectionVariant, SpacingScale, MaxWidth, FlexboxMargin } from '../../system/shared-types';
 
 // Layout Section Props
-interface LayoutSectionProps extends BaseLayoutProps {
+interface LayoutSectionProps extends Omit<BaseLayoutProps, 'margin'> {
   variant?: SectionVariant;
   padding?: SpacingScale;
+  spacing?: SpacingScale;
+  margin?: FlexboxMargin;  // Limited margin for flexbox positioning
+  alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order?: number;
   container?: boolean;
   maxWidth?: MaxWidth;
   fullWidth?: boolean;
 }
 
 const StyledSection = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'padding', 'margin', 'marginTop', 'marginBottom'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'padding', 'spacing', 'margin', 'alignSelf', 'order'].includes(prop)
 })<{
   variant: 'default' | 'alternate' | 'brand' | 'muted' | 'hero' | 'cta';
   padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  margin: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginTop: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  marginBottom: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  margin: FlexboxMargin;
+  alignSelf: 'flex-start' | 'flex-end' | 'center' | 'stretch';
+  order: number;
 }>`
   transition: ${transitions.default};
+  display: flex;
+  flex-direction: column;
+  align-self: ${({ alignSelf }) => alignSelf};
+  order: ${({ order }) => order};
+
+  /* Limited margin for flexbox positioning */
+  ${({ margin }) => {
+    if (margin === 'auto') {
+      return `margin: auto;`;
+    }
+    return '';
+  }}
 
   /* Padding styles */
   ${({ padding }) => {
@@ -48,69 +65,25 @@ const StyledSection = styled.section.withConfig({
     }
   }}
 
-  /* Margin styles */
-  ${({ margin }) => {
-    switch (margin) {
+  /* Internal spacing for content */
+  ${({ spacing: spacingProp }) => {
+    switch (spacingProp) {
       case 'none':
-        return `margin: 0;`;
+        return `gap: 0;`;
       case 'xs':
-        return `margin: ${spacing.xs};`;
+        return `gap: ${spacing.xs};`;
       case 'sm':
-        return `margin: ${spacing.sm};`;
+        return `gap: ${spacing.sm};`;
       case 'md':
-        return `margin: ${spacing.md};`;
+        return `gap: ${spacing.md};`;
       case 'lg':
-        return `margin: ${spacing.lg};`;
+        return `gap: ${spacing.lg};`;
       case 'xl':
-        return `margin: ${spacing.xl};`;
+        return `gap: ${spacing.xl};`;
       case '2xl':
-        return `margin: ${spacing['2xl']};`;
+        return `gap: ${spacing['2xl']};`;
       default:
-        return `margin: 0;`;
-    }
-  }}
-
-  /* Margin top styles */
-  ${({ marginTop }) => {
-    switch (marginTop) {
-      case 'none':
-        return `margin-top: 0;`;
-      case 'xs':
-        return `margin-top: ${spacing.xs};`;
-      case 'sm':
-        return `margin-top: ${spacing.sm};`;
-      case 'md':
-        return `margin-top: ${spacing.md};`;
-      case 'lg':
-        return `margin-top: ${spacing.lg};`;
-      case 'xl':
-        return `margin-top: ${spacing.xl};`;
-      case '2xl':
-        return `margin-top: ${spacing['2xl']};`;
-      default:
-        return `margin-top: 0;`;
-    }
-  }}
-
-  /* Margin bottom styles */
-  ${({ marginBottom }) => {
-    switch (marginBottom) {
-      case 'none':
-        return `margin-bottom: 0;`;
-      case 'xs':
-        return `margin-bottom: ${spacing.xs};`;
-      case 'sm':
-        return `margin-bottom: ${spacing.sm};`;
-      case 'md':
-        return `margin-bottom: ${spacing.md};`;
-      case 'lg':
-        return `margin-bottom: ${spacing.lg};`;
-      case 'xl':
-        return `margin-bottom: ${spacing.xl};`;
-      case '2xl':
-        return `margin-bottom: ${spacing['2xl']};`;
-      default:
-        return `margin-bottom: 0;`;
+        return `gap: 0;`;
     }
   }}
 
@@ -152,11 +125,12 @@ const StyledSection = styled.section.withConfig({
 export const LayoutSection: React.FC<LayoutSectionProps> = ({ 
   variant = 'default', 
   padding = 'lg', 
+  spacing = 'none',
+  margin = 'none',
+  alignSelf = 'stretch',
+  order = 0,
   container = true, 
   maxWidth = '2xl',
-  margin = 'none',
-  marginTop = 'none',
-  marginBottom = 'none',
   fullWidth = false,
   as: Component = 'section',
   children,
@@ -168,9 +142,10 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({
       <StyledSection
         variant={variant}
         padding={padding}
+        spacing={spacing}
         margin={margin}
-        marginTop={marginTop}
-        marginBottom={marginBottom}
+        alignSelf={alignSelf}
+        order={order}
         as={Component}
         id={id}
         {...rest}
@@ -186,9 +161,10 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({
     <StyledSection
       variant={variant}
       padding={padding}
+      spacing={spacing}
       margin={margin}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
+      alignSelf={alignSelf}
+      order={order}
       as={Component}
       id={id}
       {...rest}

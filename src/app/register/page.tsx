@@ -24,7 +24,8 @@ import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 // Styled components for registration page
 const RegisterCard = styled(Box)`
   max-width: 500px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
   transition: transform 0.2s ease-in-out;
   width: 100%;
   

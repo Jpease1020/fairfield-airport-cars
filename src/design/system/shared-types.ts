@@ -9,6 +9,9 @@ import React from 'react';
 // Spacing Scale
 export type SpacingScale = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
+// Limited margin for flexbox positioning (only 'auto' and 'none')
+export type FlexboxMargin = 'auto' | 'none';
+
 // Color Variants
 export type ColorVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'muted' | 'default';
 
