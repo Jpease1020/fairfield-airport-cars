@@ -32,22 +32,20 @@ export class CMSService {
 
   async getCMSConfiguration(): Promise<CMSConfiguration | null> {
     try {
+      // Remove excessive logging - just get the data
       const docRef = doc(db, 'cms', 'configuration');
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
-        const data = docSnap.data();
-        return data as CMSConfiguration;
+        const currentConfig = docSnap.data() as CMSConfiguration;
+        // Remove excessive logging - just return the data
+        return currentConfig;
+      } else {
+        // Remove excessive logging - just return null
+        return null;
       }
-      
-      return null;
     } catch (error) {
-      console.error('Error getting CMS configuration:', error as Error);
-      console.error('Error details:', {
-        message: (error as Error).message,
-        stack: (error as Error).stack,
-        name: (error as Error).name
-      });
+      console.error('Error getting CMS configuration:', error);
       return null;
     }
   }
@@ -140,94 +138,28 @@ export class CMSService {
     }
   }
 
-  async updateCMSConfiguration(
-    updates: Partial<CMSConfiguration>,
-    userId?: string
-  ): Promise<{ success: boolean; errors?: string[] }> {
+  async updateCMSConfiguration(updates: Partial<CMSConfiguration>): Promise<{ success: boolean; errors?: string[] }> {
     try {
-      // Validate user permissions - temporarily allow all authenticated users to edit
-      if (userId) {
-        // For now, allow any authenticated user to edit
-        // In production, you'd want proper role checking
-        console.log('User editing CMS:', userId);
-      }
-
-      // Temporarily disable validation for debugging
-      console.log('Saving CMS updates:', updates);
-      
-      // Validate content before saving (temporarily disabled)
-      // const validationResults = await this.validateContent(updates);
-      
-      // if (!validationResults.isValid) {
-      //   return {
-      //     success: false,
-      //     errors: validationResults.errors.map(error =>
-      //       typeof error === 'object' && error !== null && 'message' in error
-      //         ? (error as { message: string }).message
-      //         : String(error)
-      //     )
-      //   };
-      // }
-
-      // Save versions for each changed field (temporarily disabled due to permission issues)
-      const currentConfig = await this.getCMSConfiguration();
-      console.log('Current CMS config:', currentConfig);
-      
-      // Temporarily disable version control to fix permission issues
-      // if (currentConfig && userId && userEmail) {
-      //   await this.saveVersionsForChanges(currentConfig, updates, userId, userEmail);
-      // }
-
-      // Update the configuration
+      // Remove excessive logging - just update the data
       const docRef = doc(db, 'cms', 'configuration');
-      console.log('Document reference:', docRef);
-      
-      // Check if document exists, if not create it
       const docSnap = await getDoc(docRef);
-      console.log('Document exists:', docSnap.exists());
       
-      if (!docSnap.exists()) {
-        console.log('Creating new CMS configuration document');
-        try {
-          await setDoc(docRef, updates);
-          console.log('Successfully created CMS document');
-        } catch (createError) {
-          console.error('Error creating CMS document:', createError);
-          throw createError;
-        }
+      if (docSnap.exists()) {
+        const currentConfig = docSnap.data() as CMSConfiguration;
+        const updatedConfig = { ...currentConfig, ...updates };
+        await updateDoc(docRef, updatedConfig);
+        // Remove excessive logging - just return success
+        return { success: true };
       } else {
-        console.log('Updating existing CMS configuration document');
-        try {
-          await updateDoc(docRef, updates);
-          console.log('Successfully updated CMS document');
-        } catch (updateError) {
-          console.error('Error updating CMS document:', updateError);
-          throw updateError;
-        }
+        // Remove excessive logging - just create new document
+        const newConfig = updates as CMSConfiguration;
+        await setDoc(docRef, newConfig);
+        // Remove excessive logging - just return success
+        return { success: true };
       }
-
-      // Log activity
-      if (userId) {
-        try {
-          await authService.logUserActivity(userId, 'cms_update', {
-            changes: Object.keys(updates),
-            timestamp: new Date()
-          });
-        } catch (logError) {
-          console.error('Error logging activity:', logError);
-          // Don't fail the save operation if logging fails
-        }
-      }
-
-      return { success: true };
     } catch (error) {
-      console.error('Error updating CMS configuration:', error as Error);
-      console.error('Error details:', {
-        message: (error as Error).message,
-        stack: (error as Error).stack,
-        name: (error as Error).name
-      });
-      return { success: false, errors: ['Failed to update configuration'] };
+      console.error('Error updating CMS configuration:', error);
+      return { success: false, errors: [(error as Error).message] };
     }
   }
 

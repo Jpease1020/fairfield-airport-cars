@@ -469,7 +469,7 @@ export async function GET(request: NextRequest) {
       }
     }
     
-    console.log('CMS configuration loaded:', cmsConfig);
+    // Remove excessive logging - just return the data
     return NextResponse.json(sliceConfigByPage(cmsConfig, page));
     
   } catch (error) {
