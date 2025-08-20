@@ -9,23 +9,6 @@ export const useAdminStatus = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      try {
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          const adminStatus = await authService.isAdmin(currentUser.uid);
-          setIsAdmin(adminStatus);
-        } else {
-          setIsAdmin(false);
-        }
-      } catch (error) {
-        console.error('Error checking admin status:', error);
-        setIsAdmin(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     // Listen for auth state changes
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {

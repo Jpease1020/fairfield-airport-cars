@@ -20,7 +20,6 @@ import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function AdminDashboardContent() {
   const { cmsData } = useCMSData();
-  const { isAdmin } = useAdmin();
   const { mode } = useInteractionMode();
   
   const [stats, setStats] = useState({

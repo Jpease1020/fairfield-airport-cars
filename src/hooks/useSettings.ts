@@ -3,14 +3,14 @@ import { useState, useCallback } from 'react';
 export interface UseSettingsOptions<T> {
   defaultSettings: T;
   persistKey?: string;
-  onSave?: (settings: T) => Promise<void>;
+  onSave?: (_settings: T) => Promise<void>;
   onLoad?: () => Promise<T>;
 }
 
 export interface UseSettingsReturn<T> {
   settings: T;
   updateSetting: <K extends keyof T>(key: K, value: T[K]) => void;
-  updateSettings: (updates: Partial<T>) => void;
+  updateSettings: (_updates: Partial<T>) => void;
   resetSettings: () => void;
   saveSettings: () => Promise<void>;
   loadSettings: () => Promise<void>;

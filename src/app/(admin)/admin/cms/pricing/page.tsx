@@ -108,21 +108,6 @@ function PricingSettingsContent() {
     });
   };
 
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-      await cmsService.updatePricingSettings(settings!);
-      addToast('success', 'Pricing settings saved successfully');
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch (error) {
-      console.error('Error saving pricing settings:', error);
-      addToast('error', 'Failed to save pricing settings');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
   if (loading) {
     return (
       <>

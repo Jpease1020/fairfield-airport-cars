@@ -20,8 +20,7 @@ import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 function CMSPageContent() {
   const { addToast } = useToast();
   const [config, setConfig] = useState<CMSConfiguration | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const { cmsData } = useCMSData();
   useEffect(() => {
@@ -30,8 +29,6 @@ function CMSPageContent() {
 
   const loadCMSConfig = async () => {
     try {
-      setError(null);
-      setLoading(true);      
       const cmsConfig = await cmsService.getCMSConfiguration();
       setConfig(cmsConfig);
       if (cmsConfig && cmsConfig.lastUpdated) {
@@ -39,17 +36,11 @@ function CMSPageContent() {
       }
     } catch (err) {
       console.error('❌ Error loading CMS config:', err);
-      setError('Failed to load CMS configuration. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
-
-
   const updateAdminCMSData = async () => {
     try {
-      setLoading(true);
       addToast('info', 'Updating admin CMS data...');
       
       const response = await fetch('/api/admin/cms/update-admin-cms', {
@@ -71,8 +62,6 @@ function CMSPageContent() {
     } catch (error) {
       console.error('Error updating admin CMS data:', error);
       addToast('error', 'Failed to update admin CMS data. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 

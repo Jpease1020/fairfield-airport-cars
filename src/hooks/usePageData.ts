@@ -6,7 +6,7 @@ interface UsePageDataReturn {
   data: any;
   loading: boolean;
   error: string | null;
-  updateField: (fieldPath: string, value: string) => Promise<void>;
+  updateField: (_fieldPath: string, _value: string) => Promise<void>;
 }
 
 export function usePageData(pageId: string): UsePageDataReturn {

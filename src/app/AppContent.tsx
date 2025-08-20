@@ -8,7 +8,6 @@ import GlobalCommentIcons from '@/components/business/GlobalCommentIcons';
 import { ModeToggleMenu } from '@/design/components/business/ModeToggleMenu';
 import { useAdmin } from '@/design/providers/AdminProvider';
 import { useEditMode } from '@/design/providers/InteractionModeProvider';
-import { useAuth } from '@/hooks/useAuth';
 
 interface AppContentProps {
   children: React.ReactNode;
@@ -16,8 +15,7 @@ interface AppContentProps {
 
 export function AppContent({ children }: AppContentProps) {
   const { isAdmin } = useAdmin();
-  const { editMode, commentMode, toggleEditMode, toggleCommentMode } = useEditMode();
-  const { user } = useAuth();
+  const { editMode, commentMode } = useEditMode();
 
   return (
     <>

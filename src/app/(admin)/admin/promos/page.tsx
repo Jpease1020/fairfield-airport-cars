@@ -24,7 +24,6 @@ import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function PromosPageContent() {
   const { cmsData } = useCMSData();
-  const { mode } = useInteractionMode();
   const { addToast } = useToast();
   const [promos, setPromos] = useState<PromoCode[]>([]);
   const [form, setForm] = useState({ 
@@ -134,26 +133,6 @@ function PromosPageContent() {
       </Span>
     );
   };
-
-  const headerActions = [
-    { 
-      label: getCMSField(cmsData, 'admin.promos.sections.header.refresh', 'Refresh'), 
-      onClick: fetchPromos, 
-      variant: 'outline' as const,
-      disabled: loading
-    },
-    { 
-      label: getCMSField(cmsData, 'admin.promos.sections.header.exportReport', 'Export Report'), 
-      onClick: () => alert('Export functionality coming soon'), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: getCMSField(cmsData, 'admin.promos.sections.header.analytics', 'Analytics'), 
-      onClick: () => alert('Promo analytics dashboard coming soon'), 
-      variant: 'primary' as const 
-    }
-  ];
-
   // Table columns
   const columns: DataTableColumn<PromoCode>[] = [
     {
