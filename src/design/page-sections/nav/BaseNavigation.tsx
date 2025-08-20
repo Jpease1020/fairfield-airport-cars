@@ -200,7 +200,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           </Stack>
           
           <Stack spacing="md">
-            {navigationItems.map((item, index) => (
+            {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}

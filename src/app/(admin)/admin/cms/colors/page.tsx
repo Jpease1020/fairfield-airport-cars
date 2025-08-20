@@ -31,11 +31,9 @@ function AdminColorsPageContent() {
   const { addToast } = useToast();
   const { cmsData } = useCMSData();
   const [colors, setColors] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const loadColors = useCallback(async () => {
-    setLoading(true);
     setError(null);
     
     try {
@@ -53,8 +51,6 @@ function AdminColorsPageContent() {
       const errorMsg = 'Failed to load color scheme';
       setError(errorMsg);
       addToast('error', errorMsg);
-    } finally {
-      setLoading(false);
     }
   }, [addToast]);
 

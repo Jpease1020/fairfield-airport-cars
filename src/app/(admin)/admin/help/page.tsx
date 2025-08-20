@@ -103,24 +103,6 @@ function AdminHelpPage() {
     }
   ];
 
-  const headerActions = [
-    { 
-      label: getCMSField(cmsData, 'admin.help.sections.header.printGuide', 'Print Guide'), 
-      onClick: () => window.print(), 
-      variant: 'outline' as const 
-    },
-    { 
-      label: getCMSField(cmsData, 'admin.help.sections.header.documentation', 'Documentation'), 
-      onClick: () => window.location.href = '/docs', 
-      variant: 'outline' as const 
-    },
-    { 
-      label: getCMSField(cmsData, 'admin.help.sections.header.contactSupport', 'Contact Support'), 
-      onClick: () => alert(getCMSField(cmsData, 'admin.help.messages.contactDeveloper', 'Contact your developer for technical support')), 
-      variant: 'primary' as const 
-    }
-  ];
-
   return (
     <>
       {/* Help Sections */}

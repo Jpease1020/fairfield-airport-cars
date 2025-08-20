@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -19,10 +20,6 @@
     "cleanup:audit": "./temp/check-unused-code.sh",
     "deploy": "npm run build && vercel --prod",
     "deploy:preview": "npm run build && vercel",
-
-    "migrate-content": "node scripts/migrate-content-to-cms.js",
-    "add-missing-content": "node scripts/add-missing-content.js",
-    "fix-cms": "node scripts/fix-cms-permissions.js",
     "test": "npm run test:integration && npm run test:unit && npm run test:e2e",
     "test:integration": "vitest run tests/integration --coverage",
     "test:unit": "NODE_OPTIONS=\"--max-old-space-size=8192\" vitest run tests/unit/page-loading-rtl.test.tsx tests/unit/business-flows.test.tsx tests/unit/msw-test.spec.ts --coverage",
@@ -41,14 +38,7 @@
     "firebase:rules:validate": "./scripts/firebase-rules-sync.sh validate",
     "firebase:rules:diff": "./scripts/firebase-rules-sync.sh diff",
     "firebase:rules:status": "./scripts/firebase-rules-sync.sh status",
-    "emulators:start": "firebase emulators:start",
-    "emulators:start:firestore": "firebase emulators:start --only firestore",
-    "emulators:start:auth": "firebase emulators:start --only auth",
-    "emulators:start:functions": "firebase emulators:start --only functions",
-    "emulators:start:storage": "firebase emulators:start --only storage",
-    "emulators:export": "firebase emulators:export temp/emulator-data",
-    "emulators:import": "firebase emulators:start --import temp/emulator-data",
-    "emulators:seed": "node scripts/seed-emulator-data.js",
+
     "test:user:setup": "node scripts/setup-test-user.js setup",
     "test:user:cleanup": "node scripts/setup-test-user.js cleanup",
     "test:e2e:with-auth": "npm run test:user:setup && npm run test:e2e:pages && npm run test:user:cleanup",
@@ -75,6 +65,7 @@
     "clsx": "^2.1.1",
     "critters": "^0.0.23",
     "dompurify": "^3.2.6",
+    "dotenv": "^17.2.1",
     "firebase": "^11.10.0",
     "firebase-admin": "^13.4.0",
     "ics": "^2.41.0",

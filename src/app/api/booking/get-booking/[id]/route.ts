@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getApps, initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 // Firebase client configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "fairfield-airport-car-service.firebaseapp.com",
-  projectId: "fairfield-airport-car-service",
-  storageBucket: "fairfield-airport-car-service.appspot.com",
-  messagingSenderId: "1036497512786",
-  appId: "1:1036497512786:web:546be81d9ba09e7118728b",
-  measurementId: "G-EGTW0BCMLN"
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase only if not already initialized
@@ -47,44 +47,7 @@ const safeToDate = (dateField: any): Date => {
 };
 
 // Function to create default test booking
-const createDefaultTestBooking = async () => {
-  const defaultTestBooking = {
-    id: 'test-booking-123',
-    name: 'John Smith (Test)',
-    email: 'test@fairfieldairportcars.com',
-    phone: '203-555-0123',
-    pickupLocation: 'Fairfield Station, Fairfield, CT',
-    dropoffLocation: 'JFK Airport, Queens, NY',
-    pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-    passengers: 2,
-    status: 'confirmed',
-    fare: 150.00,
-    dynamicFare: 150.00,
-    depositPaid: true,
-    balanceDue: 0,
-    flightNumber: 'AA123',
-    notes: 'This is a test booking for demo purposes',
-    driverId: '',
-    driverName: 'Gregg',
-    estimatedArrival: new Date(Date.now() + 23 * 60 * 60 * 1000 + 45 * 60 * 1000), // 45 min before pickup
-    depositAmount: 75.00,
-    tipAmount: 20.00,
-    totalFare: 170.00,
-    isTestBooking: true,
-    testCreatedAt: new Date().toISOString(),
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  };
 
-  try {
-    const docRef = await addDoc(collection(db, 'bookings'), defaultTestBooking);
-    console.log('✅ Default test booking created successfully:', docRef.id);
-    return docRef.id;
-  } catch (error) {
-    console.error('❌ Failed to create default test booking:', error);
-    throw error;
-  }
-};
 
 export async function GET(
   request: NextRequest,
@@ -93,59 +56,7 @@ export async function GET(
   try {
     const { id } = await params;
     
-    // Special handling for test-booking-123 - return demo data directly
-    if (id === 'test-booking-123') {
-      console.log('✅ Returning demo test booking for:', id);
-      
-      // Create a demo test booking object
-      const demoBooking = {
-        id: 'test-booking-123',
-        name: 'John Smith (Test)',
-        email: 'test@fairfieldairportcars.com',
-        phone: '203-555-0123',
-        pickupLocation: 'Fairfield Station, Fairfield, CT',
-        dropoffLocation: 'JFK Airport, Queens, NY',
-        pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-        passengers: 2,
-        status: 'confirmed',
-        fare: 150.00,
-        dynamicFare: 150.00,
-        depositPaid: true,
-        balanceDue: 0,
-        flightNumber: 'AA123',
-        notes: 'This is a test booking for demo purposes',
-        driverId: '',
-        driverName: 'Gregg',
-        estimatedArrival: new Date(Date.now() + 23 * 60 * 60 * 1000 + 45 * 60 * 1000), // 45 min before pickup
-        depositAmount: 75.00,
-        tipAmount: 20.00,
-        totalFare: 170.00,
-        isTestBooking: true,
-        testCreatedAt: new Date().toISOString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        driverLocation: {
-          lat: 41.1408,
-          lng: -73.2613,
-          timestamp: new Date(),
-          heading: 45,
-          speed: 35
-        },
-        flightInfo: {
-          airline: 'American Airlines',
-          flightNumber: 'AA123',
-          arrivalTime: '10:00 AM',
-          terminal: '8'
-        }
-      };
-      
-      // Also try to save it to Firebase in the background (don't wait for it)
-      createDefaultTestBooking().catch(error => {
-        console.log('Note: Could not save test booking to Firebase:', error.message);
-      });
-      
-      return NextResponse.json(demoBooking);
-    }
+
     
     // For all other IDs, try to find by Firestore document ID first
     let bookingDoc = await getDoc(doc(db, 'bookings', id));

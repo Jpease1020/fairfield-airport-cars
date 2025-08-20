@@ -19,6 +19,16 @@ interface CostItem {
   projectedCost?: number;
   lastBillingDate?: string;
   nextBillingDate?: string;
+  // Additional properties for backward compatibility
+  actualMonthlyCost?: number;
+  projectedMonthlyCost?: number;
+  usageMetrics?: {
+    apiCalls?: number;
+    bandwidth?: string;
+    storage?: string;
+    transactions?: number;
+  };
+  dataSource?: 'api' | 'manual' | 'estimated';
 }
 
 interface CostSummary {
