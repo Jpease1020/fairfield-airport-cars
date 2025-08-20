@@ -14,7 +14,7 @@ import {
   Button,
   Box,
   LoadingSpinner,
-  Alert,
+  Alert,  
   Input,
   Label,
   Form
@@ -33,8 +33,6 @@ function ManageBookingPageContent() {
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [actionMsg, setActionMsg] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [localContent, setLocalContent] = useState<any>(null);
 
@@ -42,9 +40,6 @@ function ManageBookingPageContent() {
     const checkAdminStatus = async () => {
       try {
         const response = await fetch('/api/admin/check-auth');
-        if (response.ok) {
-          setIsAdmin(true);
-        }
       } catch (error) {
         console.error('Error checking admin status:', error);
       }
@@ -220,17 +215,6 @@ function ManageBookingPageContent() {
           </Stack>
         </Container>
       </GridSection>
-
-      {/* Action Messages */}
-      {actionMsg && (
-        <GridSection variant="content" columns={1}>
-          <Container>
-            <Alert variant="info" data-cms-id="pages.manage.actionMessage">
-              {actionMsg}
-            </Alert>
-          </Container>
-        </GridSection>
-      )}
 
       {/* Booking Details */}
       <GridSection variant="content" columns={1}>

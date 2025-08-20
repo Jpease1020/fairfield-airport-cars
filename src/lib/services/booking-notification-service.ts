@@ -2,18 +2,6 @@ import { pushNotificationService } from './push-notification-service';
 import { getBooking } from './booking-service';
 import { cmsService } from './cms-service';
 
-interface BookingNotificationData {
-  bookingId: string;
-  userId: string;
-  type: 'confirmation' | 'reminder' | 'driver_assigned' | 'driver_en_route' | 'driver_arrived' | 'completed' | 'cancelled' | 'flight_delay';
-  data?: {
-    driverName?: string;
-    eta?: number;
-    flightNumber?: string;
-    delayMinutes?: number;
-  };
-}
-
 class BookingNotificationService {
   private static instance: BookingNotificationService;
 
@@ -29,7 +17,6 @@ class BookingNotificationService {
       const booking = await getBooking(bookingId);
       if (!booking) return;
 
-      const businessSettings = await cmsService.getBusinessSettings();
       const pickupTime = new Date(booking.pickupDateTime).toLocaleString();
 
       await pushNotificationService.sendToUser(userId, {

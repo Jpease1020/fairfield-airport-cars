@@ -114,24 +114,6 @@ function BalancePaymentPageContent() {
     return paymentAmount + tipAmount;
   };
 
-  // Helper function to get status variant for badge
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'success';
-      case 'in-progress':
-        return 'info';
-      case 'confirmed':
-        return 'warning';
-      case 'cancelled':
-        return 'error';
-      case 'pending':
-        return 'pending';
-      default:
-        return 'default';
-    }
-  };
-
   if (loading) {
     return (
       <Container variant="default" padding="none">

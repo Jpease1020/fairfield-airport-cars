@@ -14,9 +14,9 @@ interface UsePushNotificationsReturn {
   initialize: () => Promise<boolean>;
   requestPermission: () => Promise<boolean>;
   sendTestNotification: () => Promise<void>;
-  updateSettings: (settings: Partial<UserNotificationSettings>) => Promise<void>;
-  onNotificationReceived: (handler: (payload: MessagePayload) => void) => void;
-  removeNotificationHandler: (handler: (payload: MessagePayload) => void) => void;
+  updateSettings: (_settings: Partial<UserNotificationSettings>) => Promise<void>;
+  onNotificationReceived: (_handler: (payload: MessagePayload) => void) => void;
+  removeNotificationHandler: (_handler: (payload: MessagePayload) => void) => void;
 }
 
 export function usePushNotifications(): UsePushNotificationsReturn {

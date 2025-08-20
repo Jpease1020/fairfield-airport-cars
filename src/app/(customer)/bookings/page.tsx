@@ -107,14 +107,6 @@ function CustomerBookingsPage() {
     }
   };
 
-  const handleViewBooking = (bookingId: string) => {
-    router.push(`/booking/${bookingId}`);
-  };
-
-  const handleTrackBooking = (bookingId: string) => {
-    router.push(`/tracking/${bookingId}`);
-  };
-
   const handleBookNewRide = () => {
     router.push('/book');
   };

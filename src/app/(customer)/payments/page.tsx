@@ -108,16 +108,6 @@ function CustomerPaymentsPage() {
     }
   };
 
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'success';
-      case 'pending': return 'warning';
-      case 'failed': return 'error';
-      case 'refunded': return 'info';
-      default: return 'default';
-    }
-  };
-
   const handleAddPaymentMethod = () => {
     // TODO: Implement payment method addition
     router.push('/payments/add-method');
