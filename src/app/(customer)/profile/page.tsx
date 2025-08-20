@@ -349,7 +349,7 @@ function CustomerProfilePage() {
                       type="text"
                       value={formData.defaultPickupLocation}
                       onChange={(e) => handleInputChange('defaultPickupLocation', e.target.value)}
-                      placeholder={getCMSField(cmsData, 'pages.profile.default_pickup_placeholder', 'e.g., Fairfield Airport')}
+                      placeholder={getCMSField(cmsData, 'pages.profile.default_pickup_placeholder', 'e.g., Local Airport')}
                       data-cms-id="pages.profile.default_pickup_input"
                     />
                     <Text data-cms-id="pages.profile.default_pickup_value" mode={mode}>
@@ -366,7 +366,7 @@ function CustomerProfilePage() {
                       type="text"
                       value={formData.defaultDropoffLocation}
                       onChange={(e) => handleInputChange('defaultDropoffLocation', e.target.value)}
-                      placeholder={getCMSField(cmsData, 'pages.profile.default_dropoff_placeholder', 'e.g., Downtown Fairfield')}
+                      placeholder={getCMSField(cmsData, 'pages.profile.default_dropoff_placeholder', 'e.g., Downtown Area')}
                       data-cms-id="pages.profile.default_dropoff_input"
                     />
                     <Text data-cms-id="pages.profile.default_dropoff_value" mode={mode}>

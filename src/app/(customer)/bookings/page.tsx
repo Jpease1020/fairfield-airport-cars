@@ -77,48 +77,8 @@ function CustomerBookingsPage() {
 
   const loadCustomerBookings = async (uid: string) => {
     try {
-      // Mock data for now - replace with actual API call
-      const mockBookings: Booking[] = [
-        {
-          id: '1',
-          pickupLocation: 'Fairfield Airport',
-          dropoffLocation: 'Downtown Fairfield',
-          pickupDateTime: '2024-01-15T10:00:00Z',
-          status: 'completed',
-          fare: 45.00,
-          driverName: 'John Smith',
-          vehicleInfo: 'Black Sedan - ABC123',
-          createdAt: '2024-01-10T08:00:00Z',
-          balanceDue: 0,
-          passengers: 2,
-        },
-        {
-          id: '2',
-          pickupLocation: 'Downtown Fairfield',
-          dropoffLocation: 'Fairfield Airport',
-          pickupDateTime: '2024-01-20T14:00:00Z',
-          status: 'confirmed',
-          fare: 50.00,
-          driverName: 'Sarah Johnson',
-          vehicleInfo: 'Luxury Vehicle - XYZ789',
-          createdAt: '2024-01-12T09:00:00Z',
-          balanceDue: 10.00,
-          passengers: 1,
-        },
-        {
-          id: '3',
-          pickupLocation: 'Fairfield Airport',
-          dropoffLocation: 'Hotel Downtown',
-          pickupDateTime: '2024-01-25T16:00:00Z',
-          status: 'pending',
-          fare: 35.00,
-          createdAt: '2024-01-14T11:00:00Z',
-          balanceDue: 0,
-          passengers: 1,
-        }
-      ];
-      
-      setBookings(mockBookings);
+      // TODO: Replace with actual API call to get real bookings
+      setBookings([]);
     } catch (error) {
       console.error('Error loading bookings:', error);
       setError('Failed to load bookings');

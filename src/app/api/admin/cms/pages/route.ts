@@ -133,13 +133,7 @@ export async function GET(request: NextRequest) {
       };
       
       // Add specific content for known pages
-      if (page === 'test-edit-mode') {
-        defaultPageContent.title = 'Test Edit Mode Page';
-        defaultPageContent.description = 'This page has editable content. Try clicking the edit button (top-right) to open the editor.';
-        defaultPageContent.customText = 'This text should be editable in the CMS editor.';
-        defaultPageContent.instructions = 'Click the edit button to modify the content above. You can edit the title, description, custom text, and instructions.';
-        defaultPageContent.reloadButton = 'Reload Page';
-      } else if (page === 'home') {
+      if (page === 'home') {
         defaultPageContent.title = 'Fairfield Airport Cars';
         defaultPageContent.subtitle = 'Premium Airport Transportation';
         defaultPageContent.description = 'Reliable, professional, and luxurious transportation to and from all major airports in the NY and CT area.';

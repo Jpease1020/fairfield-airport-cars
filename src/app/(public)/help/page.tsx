@@ -179,7 +179,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
-            <Link href="tel:+12035550123">
+                            <Link href="tel:contactsupport">
               <Button
                 variant="primary"
                 data-cms-id="pages.help.contact.primaryButton"
@@ -188,7 +188,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               </Button>
             </Link>
             
-            <Link href="mailto:rides@fairfieldairportcars.com">
+                            <Link href="mailto:contactsupport">
               <Button
                 variant="secondary"
                 data-cms-id="pages.help.contact.secondaryButton"

@@ -23,8 +23,8 @@ export default function DriverTrackingPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 
-  // Mock driver ID - in production this would come from user profile
-  const driverId = user?.uid || 'demo-driver-123';
+  // Driver ID from user profile
+  const driverId = user?.uid;
 
   // Handle location updates
   const handleLocationUpdate = (location: DriverLocation) => {
@@ -45,6 +45,9 @@ export default function DriverTrackingPage() {
         setError(null);
 
         // Get current driver location
+        if (!driverId) {
+          throw new Error('Driver ID not available');
+        }
         const location = await driverLocationService.getDriverLocation(driverId);
         if (location) {
           setCurrentLocation(location);
@@ -58,7 +61,7 @@ export default function DriverTrackingPage() {
       }
     };
 
-    if (driverId) {
+    if (driverId && user?.uid) {
       loadDriverData();
     }
   }, [driverId]);
@@ -136,12 +139,14 @@ export default function DriverTrackingPage() {
         </Box>
 
         {/* Location Tracker */}
-        <DriverLocationTracker
-          driverId={driverId}
-          bookingId={driverStatus?.currentBookingId}
-          onLocationUpdate={handleLocationUpdate}
-          onStatusUpdate={handleStatusUpdate}
-        />
+        {driverId && (
+          <DriverLocationTracker
+            driverId={driverId}
+            bookingId={driverStatus?.currentBookingId}
+            onLocationUpdate={handleLocationUpdate}
+            onStatusUpdate={handleStatusUpdate}
+          />
+        )}
 
         {/* Current Location Display */}
         {currentLocation && (

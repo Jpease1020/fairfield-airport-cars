@@ -34,36 +34,7 @@ export default function VersionControlPage() {
     try {
       setLoading(true);
       // TODO: Implement version loading from Firebase
-      // For now, show mock data
-      const mockVersions: ContentVersion[] = [
-        {
-          id: '1',
-          pageType: 'homepage',
-          field: 'hero.title',
-          oldValue: 'Welcome to Fairfield Airport Cars',
-          newValue: 'Professional Airport Transportation',
-          author: 'Admin User',
-          authorEmail: 'admin@fairfieldairportcars.com',
-          timestamp: new Date(Date.now() - 86400000), // 1 day ago
-          changes: ['Updated hero title'],
-          approved: true,
-          comment: 'Updated to be more professional'
-        },
-        {
-          id: '2',
-          pageType: 'booking',
-          field: 'form.pickupLabel',
-          oldValue: 'Pickup Location',
-          newValue: 'Pickup Address',
-          author: 'Admin User',
-          authorEmail: 'admin@fairfieldairportcars.com',
-          timestamp: new Date(Date.now() - 172800000), // 2 days ago
-          changes: ['Updated pickup label'],
-          approved: false,
-          comment: 'More descriptive label'
-        }
-      ];
-      setVersions(mockVersions);
+      setVersions([]);
     } catch (error) {
       console.error('Failed to load versions:', error);
     } finally {

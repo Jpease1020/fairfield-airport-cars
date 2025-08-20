@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
                   data-cms-id="footer.phone"
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'footer.phone', '(203) 555-0123')}
+                  {getCMSField(cmsData, 'footer.phone', 'Contact support for phone number')}
                 </Text>
                 <Text 
                   size="sm" 

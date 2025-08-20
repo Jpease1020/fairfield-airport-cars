@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       rating,
       comment: comment || '',
       driverId: booking.driverId || '',
-      driverName: booking.driverName || 'Gregg',
+      driverName: booking.driverName || '',
       rideDate: booking.pickupDateTime,
     });
 

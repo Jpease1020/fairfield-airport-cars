@@ -4,12 +4,12 @@ import { initializeApp, getApps } from 'firebase/app';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "fairfield-airport-car-service.firebaseapp.com",
-  projectId: "fairfield-airport-car-service",
-  storageBucket: "fairfield-airport-car-service.firebasestorage.app",
-  messagingSenderId: "1036497512786",
-  appId: "1:1036497512786:web:546be81d9ba09e7118728b",
-  measurementId: "G-EGTW0BCMLN"
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 export const testFirebaseConnection = async () => {
@@ -39,4 +39,4 @@ export const testFirebaseConnection = async () => {
     console.error('Firebase connection test failed:', error);
     return false;
   }
-}; 
+};

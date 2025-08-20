@@ -17,16 +17,18 @@ if (isFirebaseAdminConfigured()) {
   try {
     const apps = getApps();
     if (apps.length === 0) {
+      const projectId = process.env.FIREBASE_PROJECT_ID;
+      
       initializeApp({
         credential: cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
+          projectId: projectId,
           privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
         }),
       });
     }
     
-    // Initialize services only if app is initialized
+    // Initialize services
     adminDb = getFirestore();
     adminAuth = getAuth();
   } catch (error) {

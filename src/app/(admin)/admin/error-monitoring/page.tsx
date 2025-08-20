@@ -33,35 +33,8 @@ export default function ErrorMonitoringPage() {
     try {
       setLoading(true);
       // TODO: Implement error loading from the error monitoring service
-      // For now, show mock data
-      const mockErrors: ErrorEvent[] = [
-        {
-          message: 'Failed to load booking data',
-          stack: 'Error: Failed to fetch\n    at loadBookings (booking-service.ts:45)\n    at useEffect (page.tsx:23)',
-          url: '/admin/bookings',
-          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-          timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-          context: { userId: 'user123', action: 'load_bookings' }
-        },
-        {
-          message: 'Payment processing failed',
-          stack: 'Error: Square API error\n    at processPayment (payment-service.ts:67)\n    at handlePayment (checkout.tsx:89)',
-          url: '/book/payment',
-          userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15',
-          timestamp: new Date(Date.now() - 7200000), // 2 hours ago
-          context: { bookingId: 'booking456', amount: 150.00 }
-        },
-        {
-          message: 'Google Maps API error',
-          stack: 'Error: Places API quota exceeded\n    at loadPlaces (maps-service.ts:23)\n    at autocomplete (booking-form.tsx:45)',
-          url: '/book',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          timestamp: new Date(Date.now() - 10800000), // 3 hours ago
-          context: { apiKey: 'gmaps_key_123', quota: 'exceeded' }
-        }
-      ];
-      setErrors(mockErrors);
-      setErrorCount(mockErrors.length);
+      setErrors([]);
+      setErrorCount(0);
     } catch (error) {
       console.error('Failed to load errors:', error);
     } finally {
