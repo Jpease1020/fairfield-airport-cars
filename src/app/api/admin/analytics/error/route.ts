@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
-      console.log('🚨 Error stored:', errorData);
+      console.error('🚨 Error stored:', errorData);
     }
 
     // In production, you could send notifications for critical errors
@@ -56,9 +56,6 @@ export async function POST(request: NextRequest) {
 // Send error notification (placeholder for production)
 async function sendErrorNotification(errorData: any) {
   try {
-    // This could send to Slack, email, or other notification service
-    console.log('🔔 Error notification:', errorData);
-    
     // Example: Send to webhook
     if (process.env.ERROR_WEBHOOK_URL) {
       await fetch(process.env.ERROR_WEBHOOK_URL, {

@@ -18,7 +18,7 @@ export async function GET(
     }
 
     // Get driver details
-    const driver = await getDriver(booking.driverId || 'gregg-main-driver');
+    const driver = await getDriver(booking.driverId || '');
     if (!driver) {
       return NextResponse.json({ 
         error: 'Driver not found' 

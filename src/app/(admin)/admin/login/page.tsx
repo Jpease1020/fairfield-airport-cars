@@ -85,10 +85,8 @@ export default function LoginPage() {
   };
 
   const handleGoogleSignIn = async () => {
-    console.log('handleGoogleSignIn');
     setLoading(true);
     setError(null);
-    console.log('Signing in with Google');
     try {
       await signInWithGoogle();
       router.push('/admin');

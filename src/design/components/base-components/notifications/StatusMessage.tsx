@@ -98,7 +98,7 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
             {icon || getDefaultIcon()}
           </Stack>
           
-          <Text variant="body" size={size}>
+          <Text as="span" variant="body" size={size}>
             {message}
           </Text>
         </Stack>

@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Container, AdminHamburger } from '@/ui';
+import { Container } from '@/ui';
 import InlineTextEditor from '@/components/business/InlineTextEditor';
 import GlobalCommentModal from '@/components/business/GlobalCommentModal';
 import GlobalCommentIcons from '@/components/business/GlobalCommentIcons';
+import { ModeToggleMenu } from '@/design/components/business/ModeToggleMenu';
 import { useAdmin } from '@/design/providers/AdminProvider';
 import { useEditMode } from '@/design/providers/InteractionModeProvider';
 import { useAuth } from '@/hooks/useAuth';
@@ -33,15 +34,8 @@ export function AppContent({ children }: AppContentProps) {
       {/* Global Comment Icons (comment mode only) */}
       {isAdmin && <GlobalCommentIcons commentMode={commentMode} />}
 
-      {/* Admin Hamburger - only for admin users */}
-      {isAdmin && (
-        <AdminHamburger
-          editMode={editMode}
-          commentMode={commentMode}
-          onToggleEditMode={toggleEditMode}
-          onToggleCommentMode={toggleCommentMode}
-        />
-      )}
+      {/* Admin Mode Toggle Menu (admin only) */}
+      {isAdmin && <ModeToggleMenu />}
     </>
   );
 }

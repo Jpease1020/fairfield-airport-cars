@@ -1,6 +1,5 @@
 // Feature flags configuration
 export const FEATURE_FLAGS = {
-  DEMO_MODE_ENABLED: process.env.DEMO_MODE_ENABLED === 'true' || process.env.NODE_ENV === 'development',
   AI_ASSISTANT_ENABLED: process.env.AI_ASSISTANT_ENABLED === 'true',
   ADVANCED_ANALYTICS_ENABLED: process.env.ADVANCED_ANALYTICS_ENABLED === 'true',
   FLIGHT_STATUS_INTEGRATION: process.env.FLIGHT_STATUS_INTEGRATION === 'true',
@@ -21,7 +20,4 @@ export function getEnabledFeatures(): string[] {
     .map(([key, _]) => key);
 }
 
-// Helper function to check if demo mode is enabled
-export function isDemoModeEnabled(): boolean {
-  return FEATURE_FLAGS.DEMO_MODE_ENABLED;
-}
+

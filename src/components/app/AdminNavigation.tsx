@@ -8,6 +8,7 @@ import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/BaseNavigation';
 import { auth } from '../../lib/utils/firebase';
 
+
 export const AdminNavigation: React.FC = () => {
   const pathname = usePathname();
   const { cmsData } = useCMSData();

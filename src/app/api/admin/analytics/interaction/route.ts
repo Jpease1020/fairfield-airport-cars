@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Interaction stored:', analyticsData);
+      console.error('📊 Interaction stored:', analyticsData);
     }
 
     return NextResponse.json({ success: true });

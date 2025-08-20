@@ -36,13 +36,13 @@ export async function GET(request: NextRequest) {
         pages: {},
         business: {
           company: {
-            name: 'Fairfield Airport Cars',
-            tagline: 'Premium Airport Transportation',
-            phone: '+1-203-555-0123',
-            email: 'info@fairfieldairportcar.com',
-            address: 'Fairfield, CT',
-            hours: '24/7 Service',
-            website: 'https://fairfieldairportcar.com'
+            name: '',
+            tagline: '',
+            phone: '',
+            email: '',
+            address: '',
+            hours: '',
+            website: ''
           },
           social: {
             facebook: '',
