@@ -209,44 +209,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setShowDropoffSuggestions(false);
   };
 
-  const handleFareCalculation = async () => {
-    if (!pickupLocation || !dropoffLocation || !pickupDateTime) {
-      setError('Please fill in pickup location, dropoff location, and pickup time');
-      return;
-    }
-
-    setIsCalculating(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/booking/estimate-fare', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          pickupLocation,
-          dropoffLocation,
-          pickupDateTime,
-          passengers: 1, // Default to 1, can be made configurable
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to calculate fare');
-      }
-
-      const data = await response.json();
-      setFare(data.fare);
-      setBaseFare(data.fare);
-    } catch (error) {
-      console.error('Error calculating fare:', error);
-      setError('Failed to calculate fare. Please try again.');
-    } finally {
-      setIsCalculating(false);
-    }
-  };
-
   // Handle phase transitions
   const handleBookNow = () => {
     if (fare) {
@@ -937,19 +899,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                             <Input
                               placeholder="Airline"
                               value={flightInfo.airline}
-                              onChange={(value: string) => setFlightInfo({
-                                ...flightInfo,
-                                airline: value
-                              })}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, airline: e.target.value }))}
                               data-cms-id="pages.booking.form.flightInfo.airline"
                             />
                             <Input
                               placeholder="Flight Number"
                               value={flightInfo.flightNumber}
-                              onChange={(value: string) => setFlightInfo({
-                                ...flightInfo,
-                                flightNumber: value
-                              })}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, flightNumber: e.target.value }))}
                               data-cms-id="pages.booking.form.flightInfo.flightNumber"
                             />
                           </Stack>
@@ -957,19 +913,13 @@ function BookingFormContent({ booking }: BookingFormProps) {
                             <Input
                               placeholder="Arrival Time"
                               value={flightInfo.arrivalTime}
-                              onChange={(value: string) => setFlightInfo({
-                                ...flightInfo,
-                                arrivalTime: value
-                              })}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, arrivalTime: e.target.value }))}
                               data-cms-id="pages.booking.form.flightInfo.arrivalTime"
                             />
                             <Input
                               placeholder="Terminal"
                               value={flightInfo.terminal}
-                              onChange={(value: string) => setFlightInfo({
-                                ...flightInfo,
-                                terminal: value
-                              })}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, terminal: e.target.value }))}
                               data-cms-id="pages.booking.form.flightInfo.terminal"
                             />
                           </Stack>
@@ -987,7 +937,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                             name="fareType"
                             value="personal"
                             checked={fareType === 'personal'}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFareType(e.target.value as 'personal' | 'business')}
+                            onChange={(value) => setFareType(value as 'personal' | 'business')}
                             label={getCMSField(cmsData, 'pages.booking.form.fareType.personal', 'Personal')}
                           />
                           <RadioButton
@@ -995,7 +945,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                             name="fareType"
                             value="business"
                             checked={fareType === 'business'}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFareType(e.target.value as 'personal' | 'business')}
+                            onChange={(value) => setFareType(value as 'personal' | 'business')}
                             label={getCMSField(cmsData, 'pages.booking.form.fareType.business', 'Business')}
                           />
                         </Stack>
@@ -1011,7 +961,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                           name="saveInfoForFuture"
                           value="true"
                           checked={saveInfoForFuture}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSaveInfoForFuture(e.target.checked)}
+                          onChange={(value) => setSaveInfoForFuture(value === 'true')}
                           label={getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.description', 'Save my information for future bookings')}
                         />
                       </Stack>
