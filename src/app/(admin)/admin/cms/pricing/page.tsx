@@ -268,14 +268,14 @@ function PricingSettingsContent() {
                   </Text>
                 </Stack>
                 <div>
-                  <strong>Fairfield, CT → JFK Airport:</strong>
+                  <strong>Local → Airport:</strong>
                   <ul>
                     <li>Competitor: ~$120-180 (estimated)</li>
                     <li>Your Current Rate: ${settings.baseFare + (65 * settings.perMile) + (65 * settings.perMinute)}</li>
                   </ul>
                 </div>
                 <div>
-                  <strong>Fairfield, CT → LaGuardia Airport:</strong>
+                  <strong>Local → LaGuardia Airport:</strong>
                   <ul>
                     <li>Competitor: ~$100-150 (estimated)</li>
                     <li>Your Current Rate: ${settings.baseFare + (55 * settings.perMile) + (55 * settings.perMinute)}</li>

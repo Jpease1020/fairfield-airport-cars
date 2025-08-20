@@ -86,8 +86,6 @@ export async function POST(request: Request) {
       success: true, 
       bookingId: bookingId,
       paymentLinkUrl,
-      driverName: 'Gregg',
-      driverPhone: '(203) 555-0123',
       message: 'Booking created successfully. Please complete your deposit payment to confirm your ride.'
     });
 

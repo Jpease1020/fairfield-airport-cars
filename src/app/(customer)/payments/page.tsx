@@ -90,55 +90,8 @@ function CustomerPaymentsPage() {
 
   const loadPaymentHistory = async (_uid: string) => {
     try {
-      // Mock payment history - replace with actual API call
-      const mockPayments: Payment[] = [
-        {
-          id: '1',
-          bookingId: '1',
-          type: 'deposit',
-          amount: 25.00,
-          status: 'completed',
-          date: '2024-01-15T10:00:00Z',
-          description: 'Deposit for Airport Transfer',
-          paymentMethod: 'Visa ending in 1234',
-          transactionId: 'txn_123456789'
-        },
-        {
-          id: '2',
-          bookingId: '1',
-          type: 'balance',
-          amount: 20.00,
-          status: 'completed',
-          date: '2024-01-15T14:30:00Z',
-          description: 'Remaining balance for Airport Transfer',
-          paymentMethod: 'Visa ending in 1234',
-          transactionId: 'txn_123456790'
-        },
-        {
-          id: '3',
-          bookingId: '1',
-          type: 'tip',
-          amount: 5.00,
-          status: 'completed',
-          date: '2024-01-15T15:00:00Z',
-          description: 'Tip for driver',
-          paymentMethod: 'Visa ending in 1234',
-          transactionId: 'txn_123456791'
-        },
-        {
-          id: '4',
-          bookingId: '2',
-          type: 'full',
-          amount: 50.00,
-          status: 'pending',
-          date: '2024-01-20T09:00:00Z',
-          description: 'Full payment for Airport Transfer',
-          paymentMethod: 'Visa ending in 1234',
-          transactionId: 'txn_123456792'
-        }
-      ];
-      
-      setPayments(mockPayments);
+      // TODO: Replace with actual API call to get real payment history
+      setPayments([]);
     } catch (error) {
       console.error('Error loading payment history:', error);
       setError('Failed to load payment history');
@@ -147,27 +100,8 @@ function CustomerPaymentsPage() {
 
   const loadPaymentMethods = async (_uid: string) => {
     try {
-      // Mock payment methods - replace with actual API call
-      const mockPaymentMethods: PaymentMethod[] = [
-        {
-          id: '1',
-          type: 'card',
-          last4: '1234',
-          brand: 'Visa',
-          isDefault: true,
-          expiryDate: '12/25'
-        },
-        {
-          id: '2',
-          type: 'card',
-          last4: '5678',
-          brand: 'Mastercard',
-          isDefault: false,
-          expiryDate: '08/26'
-        }
-      ];
-      
-      setPaymentMethods(mockPaymentMethods);
+      // TODO: Replace with actual API call to get real payment methods
+      setPaymentMethods([]);
     } catch (error) {
       console.error('Error loading payment methods:', error);
       setError('Failed to load payment methods');
@@ -184,27 +118,9 @@ function CustomerPaymentsPage() {
     }
   };
 
-  const getPaymentTypeIcon = (type: string) => {
-    switch (type) {
-      case 'deposit': return '💰';
-      case 'balance': return '💳';
-      case 'tip': return '💝';
-      case 'full': return '💵';
-      default: return '💳';
-    }
-  };
-
   const handleAddPaymentMethod = () => {
     // TODO: Implement payment method addition
     router.push('/payments/add-method');
-  };
-
-  const handleViewBooking = (bookingId: string) => {
-    router.push(`/booking/${bookingId}`);
-  };
-
-  const handlePayBalance = (payment: Payment) => {
-    router.push(`/payments/pay-balance/${payment.bookingId}`);
   };
 
   if (!isClient) {
@@ -253,12 +169,6 @@ function CustomerPaymentsPage() {
       
     );
   }
-
-  const totalSpent = payments
-    .filter(p => p.status === 'completed')
-    .reduce((sum, p) => sum + p.amount, 0);
-
-  const pendingPayments = payments.filter(p => p.status === 'pending');
 
   return (
     <>

@@ -17,7 +17,7 @@ import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 // Simple driver ID constant for single-driver setup
-const DRIVER_ID = 'gregg';
+const DRIVER_ID = ''; // Will be set dynamically based on logged-in user
 
 function DriverLocationContent() {
   const search = useSearchParams();

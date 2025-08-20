@@ -151,7 +151,7 @@ function AddContentUtilityPage() {
       pickupLocationPlaceholder: "Enter pickup address",
       dropoffLocationPlaceholder: "Enter destination address",
       notesPlaceholder: "Any special instructions or requests?",
-      flightNumberPlaceholder: "AA1234",
+              flightNumberPlaceholder: "Enter flight number",
 
       // Additional error messages
       errorLoadLocations: "Location autocomplete temporarily unavailable",

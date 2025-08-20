@@ -198,7 +198,7 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                   align="center" 
                   data-cms-id="pages.home.features.items.2.description" 
                 >
-                  {getCMSField(cmsData, 'pages.home.features.items.2.description', 'We pride ourselves on punctuality, ensuring you\'re never late.')}
+                  {getCMSField(cmsData, 'pages.home.features.items.2.description')}
                 </Text>
               </Stack>
             </Col>

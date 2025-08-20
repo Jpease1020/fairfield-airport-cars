@@ -68,62 +68,34 @@ class CommentsService {
       // We'll filter in JavaScript instead of using complex Firestore queries
       let q = query(base, orderBy('createdAt', 'desc'));
       
-      console.log('📡 Firebase query (simplified):', q);
-      console.log('📡 Query path:', base.path);
       const snap = await getDocs(q);
-      console.log('✅ Firebase query successful, got', snap.docs.length, 'comments');
-      console.log('📡 All document IDs returned:', snap.docs.map(d => d.id));
-      console.log('📡 All document paths returned:', snap.docs.map(d => d.ref.path));
       
       // Filter in JavaScript to avoid index requirements
       let comments = snap.docs.map(d => {
         const data = d.data() as CommentRecord;
-        console.log(`📄 Document ${d.id} at ${d.ref.path}:`, data);
-        console.log(`📄 Document ${d.id} createdAt:`, data.createdAt);
         return data;
       });
       
-      console.log('🔍 Raw comments before filtering:', comments.map(c => ({ 
-        id: c.id, 
-        pageUrl: c.pageUrl, 
-        scope: c.scope, 
-        elementId: c.elementId 
-      })));
-      console.log('🔍 Applied filters:', filters);
-      
       if (filters.status) {
         comments = comments.filter(c => c.status === filters.status);
-        console.log('🔍 After status filter:', comments.length, 'comments');
       }
       if (filters.pageUrl) {
-        console.log('🔍 Filtering by pageUrl:', filters.pageUrl);
-        console.log('🔍 Comment pageUrls:', comments.map(c => c.pageUrl));
         comments = comments.filter(c => {
           const matches = c.pageUrl === filters.pageUrl;
-          console.log(`🔍 Comment ${c.id}: ${c.pageUrl} === ${filters.pageUrl} = ${matches}`);
           return matches;
         });
-        console.log('🔍 After pageUrl filter:', comments.length, 'comments');
       }
       if (filters.elementId) {
         comments = comments.filter(c => c.elementId === filters.elementId);
-        console.log('🔍 After elementId filter:', comments.length, 'comments');
       }
       if (filters.scope) {
         comments = comments.filter(c => c.scope === filters.scope);
-        console.log('🔍 After scope filter:', comments.length, 'comments');
       }
       
-      console.log('🔍 After filtering:', comments.length, 'comments');
       return comments;
       
     } catch (error) {
       console.error('❌ Firebase getComments failed:', error);
-      console.error('Error details:', {
-        code: (error as any)?.code,
-        message: (error as any)?.message,
-        details: (error as any)?.details
-      });
       
       // Don't fall back to localStorage - let the error bubble up
       throw new Error(`Failed to get comments from Firebase: ${(error as any)?.message || 'Unknown error'}`);
@@ -145,9 +117,7 @@ class CommentsService {
     console.log('🗑️ CommentsService.deleteComment called with ID:', commentId);
     
     try {
-      const ref = doc(db, this.collectionName, commentId);
-      console.log('📡 Firestore document reference:', ref.path);
-      
+      const ref = doc(db, this.collectionName, commentId);      
       await deleteDoc(ref);
       console.log('✅ Comment deleted successfully from Firestore');
     } catch (error) {

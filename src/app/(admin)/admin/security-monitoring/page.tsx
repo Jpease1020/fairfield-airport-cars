@@ -41,71 +41,8 @@ export default function SecurityMonitoringPage() {
     try {
       setLoading(true);
       // TODO: Implement security event loading from the security monitoring service
-      // For now, show mock data
-      const mockEvents: SecurityEvent[] = [
-        {
-          type: 'authentication',
-          severity: 'medium',
-          timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
-          userId: 'user123',
-          sessionId: 'session456',
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-          action: 'login_attempt',
-          resource: '/admin/login',
-          details: { method: 'email', success: true },
-          success: true
-        },
-        {
-          type: 'threat',
-          severity: 'high',
-          timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-          userId: 'unknown',
-          sessionId: 'session789',
-          ipAddress: '203.0.113.45',
-          userAgent: 'Mozilla/5.0 (compatible; Bot/1.0)',
-          action: 'brute_force_attempt',
-          resource: '/admin/login',
-          details: { attempts: 15, blocked: true },
-          success: false,
-          errorMessage: 'Too many login attempts'
-        },
-        {
-          type: 'payment',
-          severity: 'high',
-          timestamp: new Date(Date.now() - 7200000), // 2 hours ago
-          userId: 'user456',
-          sessionId: 'session101',
-          ipAddress: '10.0.0.50',
-          userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15',
-          action: 'payment_processing',
-          resource: '/api/payment/process',
-          details: { amount: 150.00, method: 'square' },
-          success: true
-        },
-        {
-          type: 'data_access',
-          severity: 'low',
-          timestamp: new Date(Date.now() - 10800000), // 3 hours ago
-          userId: 'user789',
-          sessionId: 'session202',
-          ipAddress: '172.16.0.25',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          action: 'view_booking',
-          resource: '/admin/bookings/123',
-          details: { bookingId: '123', action: 'read' },
-          success: true
-        }
-      ];
-      setEvents(mockEvents);
-      
-      // Calculate stats
-      const total = mockEvents.length;
-      const threats = mockEvents.filter(e => e.type === 'threat').length;
-      const failures = mockEvents.filter(e => !e.success).length;
-      const successful = mockEvents.filter(e => e.success).length;
-      
-      setStats({ total, threats, failures, successful });
+      setEvents([]);
+      setStats({ total: 0, threats: 0, failures: 0, successful: 0 });
     } catch (error) {
       console.error('Failed to load security events:', error);
     } finally {
@@ -140,19 +77,6 @@ export default function SecurityMonitoringPage() {
         return <Eye size={16} />;
       default:
         return <Globe size={16} />;
-    }
-  };
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'critical':
-        return 'red';
-      case 'high':
-        return 'orange';
-      case 'medium':
-        return 'yellow';
-      default:
-        return 'gray';
     }
   };
 

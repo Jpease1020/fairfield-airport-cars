@@ -80,7 +80,7 @@ function OverviewContent() {
             {getCMSField(cmsData, 'admin.overview.title', 'Admin Overview')}
           </H1>
           <Text variant="muted" data-cms-id="admin.overview.subtitle" mode={mode}>
-            {getCMSField(cmsData, 'admin.overview.subtitle', 'Quick access for Gregg: customer vs admin pages.')}
+            {getCMSField(cmsData, 'admin.overview.subtitle', 'Quick access to customer vs admin pages.')}
           </Text>
         </Stack>
 

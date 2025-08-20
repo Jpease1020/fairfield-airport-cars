@@ -10,7 +10,7 @@ export interface PageComment {
   category: 'bug' | 'design' | 'copy' | 'feature' | 'general';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'open' | 'in-progress' | 'resolved' | 'closed';
-  createdBy: string; // Gregg's email
+  createdBy: string; // Admin's email
   createdAt: string;
   updatedAt: string;
   developerNotes?: string;

@@ -4,14 +4,14 @@ import { Page } from '@playwright/test';
 
 // Test data constants
 export const TEST_CUSTOMER = {
-  name: 'John Smith',
-  email: 'john.smith@example.com',
-  phone: '203-555-0123',
-  pickupLocation: 'Fairfield Station, Fairfield, CT',
-  dropoffLocation: 'JFK Airport, Queens, NY',
+  name: 'Test Customer',
+  email: 'test@example.com',
+  phone: '+1-555-000-0000',
+  pickupLocation: 'Test Pickup Location',
+  dropoffLocation: 'Test Dropoff Location',
   pickupDateTime: '2024-12-25T10:00',
   passengers: 2,
-  flightNumber: 'AA123',
+  flightNumber: 'TEST123',
   notes: 'Please pick up at the main entrance'
 };
 

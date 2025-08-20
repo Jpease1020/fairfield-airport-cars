@@ -10,7 +10,7 @@ import { Container } from '@/design/layout/containers/Container';
 
 export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',
-      description: 'Reliable, comfortable rides to and from Fairfield Airport with professional driver',
+  description: 'Reliable, comfortable rides to and from Fairfield Airport with professional driver',
   keywords: 'airport transportation, Fairfield, JFK, LGA, EWR, airport shuttle, luxury car service',
 };
 

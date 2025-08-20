@@ -13,8 +13,8 @@ const calculateFallbackFare = (origin: string, destination: string, settings: an
   
   // Simple keyword-based distance estimation
   if (destination.toLowerCase().includes('airport')) {
-    if (origin.toLowerCase().includes('fairfield') || origin.toLowerCase().includes('bridgeport')) {
-      estimatedDistance = 60; // Fairfield/Bridgeport to NYC airports
+    if (origin.toLowerCase().includes('local') || origin.toLowerCase().includes('airport')) {
+      estimatedDistance = 60; // Local area to NYC airports
     } else if (origin.toLowerCase().includes('stamford')) {
       estimatedDistance = 45; // Stamford to NYC airports
     } else if (origin.toLowerCase().includes('new haven')) {

@@ -237,13 +237,7 @@ export interface CMSConfiguration {
   pages: {
     home: HomePageContent;
     help: HelpPageContent;
-    'test-edit-mode'?: {
-      title: string;
-      description: string;
-      customText: string;
-      instructions: string;
-      reloadButton: string;
-    };
+
     booking: {
       title: string;
       subtitle: string;

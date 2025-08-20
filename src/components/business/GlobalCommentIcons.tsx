@@ -110,8 +110,6 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
       try {
         const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
         const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
-        console.log('📊 Loaded comments:', existing);
-        console.log('🆔 Comment IDs:', existing.map(c => ({ id: c.id, elementId: c.elementId, elementText: c.elementText })));
         setComments(existing);
       } catch {
         // Non-blocking; page still works without preloaded comments
