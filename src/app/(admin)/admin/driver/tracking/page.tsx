@@ -30,13 +30,11 @@ export default function DriverTrackingPage() {
   const handleLocationUpdate = (location: DriverLocation) => {
     setCurrentLocation(location);
     setLastUpdate(new Date());
-    console.log('📍 Location updated:', location);
   };
 
   // Handle status updates
   const handleStatusUpdate = (status: DriverStatus) => {
     setDriverStatus(status);
-    console.log('🔄 Status updated:', status);
   };
 
   // Load initial driver data

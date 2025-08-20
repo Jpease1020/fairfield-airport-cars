@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { NextPage } from 'next';
 import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
+import { getAvailableDrivers } from '@/lib/services/booking-service';
 import { 
   Container, 
   Stack, 
@@ -30,7 +31,6 @@ function AdminBookingsPageContent() {
     try {
       setError(null);
       setLoading(true);
-      console.log('🔄 Fetching bookings from database...');
       
       let fetchedBookings: Booking[];
       
@@ -40,11 +40,10 @@ function AdminBookingsPageContent() {
         fetchedBookings = await getBookingsByStatus(selectedStatus as Booking['status']);
       }
       
-      console.log('✅ Bookings fetched from database:', fetchedBookings.length, 'bookings');
       setBookings(fetchedBookings);
       
       if (fetchedBookings.length === 0) {
-        console.log('📝 No bookings found in database');
+        console.error('📝 No bookings found in database');
       }
     } catch (err) {
       console.error('❌ Error fetching bookings from database:', err);
@@ -60,7 +59,6 @@ function AdminBookingsPageContent() {
 
   const handleStatusUpdate = async (booking: Booking, newStatus: Booking['status']) => {
     try {
-      console.log(`🔄 Updating booking ${booking.id} status to ${newStatus}`);
       
       await updateDocument('bookings', booking.id!, { status: newStatus });
       
@@ -69,7 +67,6 @@ function AdminBookingsPageContent() {
         b.id === booking.id ? { ...b, status: newStatus } : b
       ));
       
-      console.log('✅ Booking status updated successfully');
     } catch (err) {
       console.error('❌ Error updating booking status:', err);
       setError(getCMSField(cmsData, 'admin.bookings.error.updateStatusFailed', 'Failed to update booking status'));
@@ -78,14 +75,12 @@ function AdminBookingsPageContent() {
 
   const handleDeleteBooking = async (booking: Booking) => {
     try {
-      console.log(`🗑️ Deleting booking ${booking.id}`);
       
       await deleteDocument('bookings', booking.id!);
       
       // Remove from local state
       setBookings(prev => prev.filter(b => b.id !== booking.id));
       
-      console.log('✅ Booking deleted successfully');
     } catch (err) {
       console.error('❌ Error deleting booking:', err);
       setError(getCMSField(cmsData, 'admin.bookings.error.deleteBookingFailed', 'Failed to delete booking'));
@@ -94,11 +89,16 @@ function AdminBookingsPageContent() {
 
   const handleDriverAssignment = async (booking: Booking) => {
     try {
-      console.log(`👨‍💼 Assigning driver to booking ${booking.id}`);
       
-      // For now, assign Gregg as the default driver
-      const driverId = 'gregg-main-driver';
-      const driverName = 'Gregg';
+      // Get available drivers from database
+      const availableDrivers = await getAvailableDrivers();
+      if (availableDrivers.length === 0) {
+        throw new Error('No available drivers');
+      }
+      
+      const driver = availableDrivers[0];
+      const driverId = driver.id;
+      const driverName = driver.name;
       
       await updateDocument('bookings', booking.id!, { 
         driverId,
@@ -116,7 +116,6 @@ function AdminBookingsPageContent() {
         } : b
       ));
       
-      console.log('✅ Driver assigned successfully');
     } catch (err) {
       console.error('❌ Error assigning driver:', err);
       setError(getCMSField(cmsData, 'admin.bookings.error.assignDriverFailed', 'Failed to assign driver'));

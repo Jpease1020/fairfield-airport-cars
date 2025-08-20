@@ -42,12 +42,10 @@ function PromosPageContent() {
     try {
       setError(null);
       setLoading(true);
-      console.log('🎟️ Loading promo codes...');
       
       const res = await fetch('/api/promos');
       if (res.ok) {
         const promoData = await res.json();
-        console.log('✅ Promos loaded:', promoData.length, 'codes');
         setPromos(promoData);
       } else {
         throw new Error('Failed to fetch promo codes');

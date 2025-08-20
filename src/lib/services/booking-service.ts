@@ -161,8 +161,9 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
     const bookingId = docRef.id;
 
-    // Assign driver (Gregg)
-    await assignDriverToBooking(bookingId, 'gregg-main-driver');
+    // Assign available driver
+    const driverId = await assignDriverToBooking(bookingId);
+    await updateDoc(docRef, { driverId, updatedAt: serverTimestamp() });
 
     // Create payment link for deposit
     try {
@@ -336,21 +337,15 @@ export const isTimeSlotAvailable = async (pickupDate: Date, bufferMinutes = 60):
 // Get available drivers for a specific time
 export const getAvailableDrivers = async (pickupTime?: Date): Promise<Driver[]> => {
   try {
-    // In a real app, this would query the database for available drivers
-    // For now, return Gregg as the main available driver
-    const greggDriver: Driver = {
-      id: 'gregg-main-driver',
-      name: 'Gregg',
-      phone: '(203) 555-0123',
-      vehicle: 'Toyota Highlander',
-      licensePlate: 'CT-ABC123',
-      status: 'available',
-      currentLocation: {
-        lat: 41.1792, // Fairfield, CT coordinates
-        lng: -73.1894
-      },
-      lastUpdated: new Date()
-    };
+    // Query database for available drivers
+    const driversQuery = query(collection(db, 'drivers'), where('status', '==', 'available'));
+    const driversSnapshot = await getDocs(driversQuery);
+    
+    if (driversSnapshot.empty) {
+      return [];
+    }
+    
+    const availableDrivers = driversSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Driver);
     
     // If a specific pickup time is provided, check availability
     if (pickupTime) {
@@ -360,7 +355,7 @@ export const getAvailableDrivers = async (pickupTime?: Date): Promise<Driver[]> 
       }
     }
     
-    return [greggDriver];
+    return availableDrivers;
   } catch (error) {
     console.error('Error getting available drivers:', error);
     return [];

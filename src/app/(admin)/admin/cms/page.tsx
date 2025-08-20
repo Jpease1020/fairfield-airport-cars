@@ -31,16 +31,12 @@ function CMSPageContent() {
   const loadCMSConfig = async () => {
     try {
       setError(null);
-      setLoading(true);
-      console.log('⚙️ Loading CMS configuration...');
-      
+      setLoading(true);      
       const cmsConfig = await cmsService.getCMSConfiguration();
       setConfig(cmsConfig);
       if (cmsConfig && cmsConfig.lastUpdated) {
         setLastUpdated(cmsConfig.lastUpdated);
       }
-      
-      console.log('✅ CMS configuration loaded');
     } catch (err) {
       console.error('❌ Error loading CMS config:', err);
       setError('Failed to load CMS configuration. Please try again.');

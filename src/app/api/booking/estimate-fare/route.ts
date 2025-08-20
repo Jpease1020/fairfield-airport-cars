@@ -5,48 +5,23 @@ import { getSettings } from '@/lib/business/settings-service';
 
 const mapsClient = new Client({});
 
-// Fallback fare calculation when Google Maps API is unavailable
+// Dynamic fare calculation when Google Maps API is unavailable
 const calculateFallbackFare = (origin: string, destination: string, settings: any, fareType?: string) => {
-  // Common airport routes with estimated distances
-  const airportRoutes: { [key: string]: { [key: string]: number } } = {
-    'Fairfield, CT': {
-      'JFK Airport': 65,
-      'LaGuardia Airport': 55,
-      'Newark Airport': 75,
-      'Bradley International Airport': 45,
-      'Tweed New Haven Airport': 25
-    },
-    'Bridgeport, CT': {
-      'JFK Airport': 60,
-      'LaGuardia Airport': 50,
-      'Newark Airport': 70,
-      'Bradley International Airport': 50,
-      'Tweed New Haven Airport': 20
-    },
-    'Stamford, CT': {
-      'JFK Airport': 50,
-      'LaGuardia Airport': 40,
-      'Newark Airport': 60,
-      'Bradley International Airport': 60,
-      'Tweed New Haven Airport': 35
-    }
-  };
-
-  // Try to find a matching route
-  for (const [originKey, destinations] of Object.entries(airportRoutes)) {
-    if (origin.toLowerCase().includes(originKey.toLowerCase()) || 
-        originKey.toLowerCase().includes(origin.toLowerCase())) {
-      for (const [destKey, distance] of Object.entries(destinations)) {
-        if (destination.toLowerCase().includes(destKey.toLowerCase()) ||
-            destKey.toLowerCase().includes(destination.toLowerCase())) {
-          return calculateFareFromDistance(distance, settings, fareType);
-        }
-      }
+  // Use a more generic approach instead of hardcoded routes
+  // Estimate distance based on location keywords
+  let estimatedDistance = 50; // Default 50 miles
+  
+  // Simple keyword-based distance estimation
+  if (destination.toLowerCase().includes('airport')) {
+    if (origin.toLowerCase().includes('fairfield') || origin.toLowerCase().includes('bridgeport')) {
+      estimatedDistance = 60; // Fairfield/Bridgeport to NYC airports
+    } else if (origin.toLowerCase().includes('stamford')) {
+      estimatedDistance = 45; // Stamford to NYC airports
+    } else if (origin.toLowerCase().includes('new haven')) {
+      estimatedDistance = 80; // New Haven to NYC airports
     }
   }
-
-  // Default calculation for unknown routes
-  const estimatedDistance = 50; // Default 50 miles
+  
   return calculateFareFromDistance(estimatedDistance, settings, fareType);
 };
 

@@ -28,11 +28,11 @@ export function useBusinessSettings() {
   }, []);
 
   // Helper functions for common contact info
-  const getPhoneNumber = () => businessSettings?.company?.phone || '+1-203-555-0123';
-  const getEmail = () => businessSettings?.company?.email || 'info@fairfieldairportcar.com';
-  const getCompanyName = () => businessSettings?.company?.name || 'Fairfield Airport Cars';
-  const getAddress = () => businessSettings?.company?.address || 'Fairfield, CT';
-  const getHours = () => businessSettings?.company?.hours || '24/7 Service';
+  const getPhoneNumber = () => businessSettings?.company?.phone || '';
+  const getEmail = () => businessSettings?.company?.email || '';
+  const getCompanyName = () => businessSettings?.company?.name || '';
+  const getAddress = () => businessSettings?.company?.address || '';
+  const getHours = () => businessSettings?.company?.hours || '';
 
   return {
     businessSettings,

@@ -44,7 +44,6 @@ function CostsPageContent() {
     try {
       setError(null);
       setLoading(true);
-      console.log('💰 Loading costs data...');
       
       const costsData = await realCostTrackingService.getCosts();
       setCosts(costsData);
@@ -52,7 +51,6 @@ function CostsPageContent() {
       const summaryData = await realCostTrackingService.getRealCostSummary();
       setSummary(summaryData);
       
-      console.log('✅ Costs loaded:', costsData.length, 'categories');
     } catch (err) {
       console.error('❌ Error loading costs:', err);
       setError('Failed to load costs data. Please try again.');

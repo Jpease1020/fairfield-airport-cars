@@ -4,8 +4,6 @@ import { CMSConfiguration } from '../../../../types/cms';
 
 export async function POST() {
   try {
-    console.log('🚀 Adding missing content to CMS via API...');
-    
     // Get current CMS configuration
     const currentConfig = await cmsService.getCMSConfiguration();
     
@@ -111,7 +109,6 @@ export async function POST() {
     const result = await cmsService.updateCMSConfiguration(missingContent as unknown as Partial<CMSConfiguration>);
     
     if (result.success) {
-      console.log('✅ Successfully added missing content to CMS!');
       return NextResponse.json({ 
         success: true, 
         message: 'Successfully added missing content to CMS',

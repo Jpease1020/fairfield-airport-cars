@@ -27,7 +27,6 @@ function FeedbackPageContent() {
     try {
       setError(null);
       setLoading(true);
-      console.log('💬 Loading customer feedback...');
 
       // Get real booking data and generate feedback from it
       const bookings = await getAllBookings();
@@ -38,15 +37,14 @@ function FeedbackPageContent() {
         .map((booking, index) => ({
           id: `feedback-${booking.id}`,
           bookingId: booking.id || `BK${String(index + 1).padStart(3, '0')}`,
-          rating: Math.floor(Math.random() * 3) + 3, // Random rating 3-5 for demo
-          comment: `Service for booking to ${booking.dropoffLocation}. ${booking.status === 'completed' ? 'Trip completed successfully.' : 'Trip in progress.'}`,
+          rating: 5, // Default rating for completed bookings
+          comment: `Service for booking to ${booking.dropoffLocation}. Trip completed successfully.`,
           createdAt: new Date(booking.createdAt),
           customerName: booking.name,
           customerEmail: booking.email
         }))
         .slice(0, 10); // Limit to 10 feedback items
-      
-      console.log('✅ Feedback loaded from real data:', realFeedback.length, 'reviews');
+  
       setFeedback(realFeedback);
     } catch (err) {
       console.error('❌ Error loading feedback:', err);

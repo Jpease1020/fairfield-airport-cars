@@ -44,7 +44,6 @@ function AdminDashboardContent() {
     try {
       setError(null);
       setLoading(true);
-      console.log('📊 Loading dashboard data...');
 
       // Fetch real data from database with individual error handling
       let bookings: any[] = [];
@@ -53,7 +52,6 @@ function AdminDashboardContent() {
 
       try {
         bookings = await getAllBookings();
-        console.log('✅ Bookings loaded:', bookings.length);
       } catch (err) {
         console.warn('⚠️ Could not load bookings:', err);
         bookings = [];
@@ -61,7 +59,6 @@ function AdminDashboardContent() {
 
       try {
         drivers = await getAllDrivers();
-        console.log('✅ Drivers loaded:', drivers.length);
       } catch (err) {
         console.warn('⚠️ Could not load drivers:', err);
         drivers = [];
@@ -69,7 +66,6 @@ function AdminDashboardContent() {
 
       try {
         payments = await getAllPayments();
-        console.log('✅ Payments loaded:', payments.length);
       } catch (err) {
         console.warn('⚠️ Could not load payments:', err);
         payments = [];

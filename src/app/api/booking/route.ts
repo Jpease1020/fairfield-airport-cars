@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createBooking, getBooking } from '@/lib/services/booking-service';
-import { createPaymentLink } from '@/lib/services/square-service';
+import { getPaymentService } from '@/lib/services/ServiceFactory';
 import { updateCustomerProfile } from '@/lib/services/auth-service';
 import { getAdminAuth } from '@/lib/utils/firebase-admin';
 
@@ -68,7 +68,8 @@ export async function POST(request: Request) {
     let paymentLinkUrl = null;
     try {
       const depositAmount = Math.round(bookingData.fare * 0.2 * 100) / 100;
-      const paymentLink = await createPaymentLink({
+      const paymentService = getPaymentService();
+      const paymentLink = await paymentService.createPaymentLink({
         bookingId,
         amount: Math.round(depositAmount * 100), // Convert to cents
         currency: 'USD',

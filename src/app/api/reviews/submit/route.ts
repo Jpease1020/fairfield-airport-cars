@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       customerEmail: booking.email,
       rating,
       comment: comment || '',
-      driverId: booking.driverId || 'gregg-main-driver',
+      driverId: booking.driverId || '',
       driverName: booking.driverName || 'Gregg',
       rideDate: booking.pickupDateTime,
     });
