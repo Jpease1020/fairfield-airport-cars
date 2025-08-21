@@ -1,27 +1,29 @@
+// Client-side Square service - credentials loaded lazily
 import { SquareClient, SquareEnvironment } from 'square';
 import { v4 as uuidv4 } from 'uuid';
 
-// Client-side Square service - credentials loaded lazily
+// Initialize Square client lazily for client-side usage
 let squareClient: SquareClient | null = null;
 let squareCredentials: any = null;
 
-// Initialize Square client lazily (only when needed)
-const initializeSquareClient = () => {
+const initializeSquareClient = (): SquareClient | null => {
   if (squareClient) return squareClient;
   
   try {
-    // Try to get credentials from environment config
-    const { getSquareCredentials } = require('@/lib/config/environment-config');
-    squareCredentials = getSquareCredentials();
+    // Get credentials from environment variables for client-side
+    const accessToken = process.env.NEXT_PUBLIC_SQUARE_ACCESS_TOKEN;
+    const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
     
-    if (!squareCredentials.accessToken || !squareCredentials.locationId) {
+    if (!accessToken || !locationId) {
       console.warn('Square credentials not available in client environment');
       return null;
     }
     
+    squareCredentials = { accessToken, locationId };
+    
     squareClient = new SquareClient({
-      environment: squareCredentials.environment === 'production' ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
-      token: squareCredentials.accessToken,
+      environment: process.env.NODE_ENV === 'production' ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
+      token: accessToken,
     });
     
     return squareClient;
