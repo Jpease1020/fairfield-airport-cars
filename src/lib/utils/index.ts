@@ -5,5 +5,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export { getAdminAuth, getAdminDb, adminServices } from './firebase-admin';
-export { db } from './firebase-client';
+export { db } from './firebase';
 export { testFirebaseConnection } from './firebase-test';
