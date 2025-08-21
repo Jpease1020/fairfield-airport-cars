@@ -5,7 +5,7 @@ export { BookingCard } from './BookingCard';
 export { ChatContainer } from './ChatContainer';
 export { ChatInput } from './ChatInput';
 export { ChatMessage } from './ChatMessage';
-export { CostOptimizationPanel } from './CostOptimizationPanel';
+
 export { CostTrackingDashboard } from './CostTrackingDashboard';
 export { DigitalWalletPayment } from './DigitalWalletPayment';
 export { DriverLocationTracker } from './DriverLocationTracker';

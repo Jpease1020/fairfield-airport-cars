@@ -1,6 +1,5 @@
 import { pushNotificationService } from './push-notification-service';
 import { getBooking } from './booking-service';
-import { cmsService } from './cms-service';
 
 class BookingNotificationService {
   private static instance: BookingNotificationService;

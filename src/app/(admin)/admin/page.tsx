@@ -15,7 +15,6 @@ import {
 } from '@/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { useAdmin } from '@/design/providers/AdminProvider';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function AdminDashboardContent() {
