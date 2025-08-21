@@ -17,6 +17,7 @@ export { LiveTrackingMap } from './LiveTrackingMap';
 export { NotificationManager } from './NotificationManager';
 export { PaymentSummary } from './PaymentSummary';
 export { ReviewShowcase } from './ReviewShowcase';
+export { SquarePaymentForm } from './SquarePaymentForm';
 export { TipCalculator } from './TipCalculator';
 export { TrackingETADisplay } from './TrackingETADisplay';
 export { TrackingMap } from './TrackingMap';

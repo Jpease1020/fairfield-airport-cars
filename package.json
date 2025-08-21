@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -38,10 +37,8 @@
     "firebase:rules:validate": "./scripts/firebase-rules-sync.sh validate",
     "firebase:rules:diff": "./scripts/firebase-rules-sync.sh diff",
     "firebase:rules:status": "./scripts/firebase-rules-sync.sh status",
-
     "seed:from:production": "node scripts/seed-from-production.js",
     "add:test-flow": "node scripts/add-test-user-flow.js",
-
     "test:user:setup": "node scripts/setup-test-user.js setup",
     "test:user:cleanup": "node scripts/setup-test-user.js cleanup",
     "test:e2e:with-auth": "npm run test:user:setup && npm run test:e2e:pages && npm run test:user:cleanup",
@@ -81,6 +78,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.59.0",
+    "react-square-web-payments-sdk": "^3.2.4-beta.1",
     "square": "^43.0.0",
     "stripe": "^18.3.0",
     "styled-components": "^6.1.19",

@@ -58,6 +58,7 @@ export interface Booking {
   tipAmount?: number;
   cancellationFee?: number;
   squareOrderId?: string;
+  squarePaymentId?: string;
   depositAmount?: number;
   reminderSent?: boolean;
   onMyWaySent?: boolean;
