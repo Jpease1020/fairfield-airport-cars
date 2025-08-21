@@ -38,9 +38,7 @@
     "firebase:rules:validate": "./scripts/firebase-rules-sync.sh validate",
     "firebase:rules:diff": "./scripts/firebase-rules-sync.sh diff",
     "firebase:rules:status": "./scripts/firebase-rules-sync.sh status",
-    "seed:emulator": "node scripts/seed-emulator.js",
-    "seed:cms": "node scripts/seed-cms-only.js",
-    "pull:cms": "node scripts/pull-cms-data.js",
+
     "seed:from:production": "node scripts/seed-from-production.js",
     "add:test-flow": "node scripts/add-test-user-flow.js",
 
