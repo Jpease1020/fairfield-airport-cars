@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Container, Stack, Text, Button, Box, Alert, LoadingSpinner } from '@/ui';
+import { getSquareCredentials } from '@/lib/config/environment-config';
 
 interface DigitalWalletPaymentProps {
   amount: number;
@@ -43,7 +44,7 @@ export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPa
     try {
       await loadSquareSdk();
       const appId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID as string;
-      const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID as string;
+      const locationId = getSquareCredentials().locationId;
       if (!appId || !locationId) {
         setError('Square is not configured.');
         return;

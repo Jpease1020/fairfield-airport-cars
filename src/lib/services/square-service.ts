@@ -1,17 +1,35 @@
 import { SquareClient, SquareEnvironment } from 'square';
 import { v4 as uuidv4 } from 'uuid';
 
-const {
-  SQUARE_ACCESS_TOKEN,
-  SQUARE_LOCATION_ID,
-  // SQUARE_WEBHOOK_SIGNATURE_KEY will be consumed in the webhook handler, not here
-} = process.env;
+// Client-side Square service - credentials loaded lazily
+let squareClient: SquareClient | null = null;
+let squareCredentials: any = null;
 
-// Initialize the Square client
-const squareClient = new SquareClient({
-  environment: process.env.NODE_ENV === 'production' ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
-  token: SQUARE_ACCESS_TOKEN,
-});
+// Initialize Square client lazily (only when needed)
+const initializeSquareClient = () => {
+  if (squareClient) return squareClient;
+  
+  try {
+    // Try to get credentials from environment config
+    const { getSquareCredentials } = require('@/lib/config/environment-config');
+    squareCredentials = getSquareCredentials();
+    
+    if (!squareCredentials.accessToken || !squareCredentials.locationId) {
+      console.warn('Square credentials not available in client environment');
+      return null;
+    }
+    
+    squareClient = new SquareClient({
+      environment: squareCredentials.environment === 'production' ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
+      token: squareCredentials.accessToken,
+    });
+    
+    return squareClient;
+  } catch (error) {
+    console.warn('Square service not available in client environment:', error);
+    return null;
+  }
+};
 
 interface PaymentLinkPayload {
   bookingId: string;
@@ -22,16 +40,16 @@ interface PaymentLinkPayload {
 }
 
 export const createPaymentLink = async ({ bookingId, amount, currency, description, buyerEmail }: PaymentLinkPayload) => {
-  if (!SQUARE_ACCESS_TOKEN || !SQUARE_LOCATION_ID) {
-    console.error('Square credentials are not configured in environment variables');
-    throw new Error('Square service is not configured.');
+  const client = initializeSquareClient();
+  if (!client || !squareCredentials?.accessToken || !squareCredentials?.locationId) {
+    throw new Error('Square service is not available in this environment. Please use the API route instead.');
   }
 
   try {
     // 1) Create an order that stores the bookingId in metadata.
-    const orderResponse = await squareClient.orders.create({
+    const orderResponse = await client.orders.create({
       order: {
-        locationId: SQUARE_LOCATION_ID,
+        locationId: squareCredentials.locationId,
         lineItems: [
           {
             name: description,
@@ -56,7 +74,7 @@ export const createPaymentLink = async ({ bookingId, amount, currency, descripti
 
     // 2) Generate a hosted checkout/payment link for that order.
     // Use checkoutApi; Type definitions in v43 may not include createPaymentLink, so we cast to any.
-    const paymentLinkResponse = await (squareClient as any).checkoutApi.createPaymentLink({
+    const paymentLinkResponse = await (client as any).checkoutApi.createPaymentLink({
       idempotencyKey: uuidv4(),
       orderId,
       checkoutOptions: {
@@ -90,9 +108,14 @@ export const createPaymentLink = async ({ bookingId, amount, currency, descripti
 };
 
 export async function refundPayment(orderId: string, amount: number, currency: string) {
+  const client = initializeSquareClient();
+  if (!client) {
+    throw new Error('Square service is not available in this environment. Please use the API route instead.');
+  }
+  
   try {
     // Fetch order to get paymentId (tender)
-    const orderResp = await (squareClient as any).ordersApi.retrieveOrder(orderId);
+    const orderResp = await (client as any).ordersApi.retrieveOrder(orderId);
     const paymentIds: string[] = (orderResp as any).order?.tenders?.map((t: any) => t.paymentId).filter(Boolean) || [];
     if (paymentIds.length === 0) {
       return;
@@ -100,7 +123,7 @@ export async function refundPayment(orderId: string, amount: number, currency: s
 
     // Process refund for each payment
     for (const paymentId of paymentIds) {
-      await (squareClient as any).refundsApi.refundPayment({
+      await (client as any).refundsApi.refundPayment({
         paymentId,
         idempotencyKey: uuidv4(),
         amountMoney: {
@@ -127,8 +150,13 @@ interface CreatePaymentPayload {
 }
 
 export async function createPayment(payload: CreatePaymentPayload) {
+  const client = initializeSquareClient();
+  if (!client) {
+    throw new Error('Square service is not available in this environment. Please use the API route instead.');
+  }
+  
   try {
-    const response = await (squareClient as any).paymentsApi.createPayment({
+    const response = await (client as any).paymentsApi.createPayment({
       sourceId: payload.sourceId,
       amountMoney: {
         amount: BigInt(payload.amountMoney.amount),
