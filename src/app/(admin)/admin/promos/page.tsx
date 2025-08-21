@@ -20,7 +20,6 @@ import {
   StatCard
 } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 function PromosPageContent() {
   const { cmsData } = useCMSData();
