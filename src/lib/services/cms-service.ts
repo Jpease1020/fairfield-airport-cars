@@ -1,4 +1,4 @@
-import { db } from '@/lib/utils/firebase';
+import { db } from '@/lib/utils/firebase-server';
 import { doc, getDoc, updateDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { CMSConfiguration } from '@/types/cms';
 import { BusinessSettings, PricingSettings, EmailTemplates, SMSTemplates } from '@/types/cms';
