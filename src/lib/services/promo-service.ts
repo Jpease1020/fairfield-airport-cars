@@ -1,5 +1,5 @@
 import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, increment, runTransaction } from 'firebase/firestore';
-import { db } from '@/lib/utils/firebase';
+import { db } from '@/lib/utils/firebase-server';
 import { PromoCode } from '@/types/promo';
 
 const promoCol = collection(db, 'promoCodes');

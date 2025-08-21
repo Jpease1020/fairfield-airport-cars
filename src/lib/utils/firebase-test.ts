@@ -29,10 +29,10 @@ export const testFirebaseConnection = async () => {
     const db = getFirestore(app);
     console.log('Firebase initialized successfully');
     
-    // Test a simple read operation
-    const testCollection = collection(db, 'test');
-    await getDocs(testCollection);
-    console.log('Firebase connection test successful');
+    // Test a simple read operation with an existing, accessible collection
+    const cmsCollection = collection(db, 'cms');
+    await getDocs(cmsCollection);
+    console.log('Firebase connection test successful - can read from CMS collection');
     
     return true;
   } catch (error) {
