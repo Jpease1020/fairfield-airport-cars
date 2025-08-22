@@ -6,7 +6,7 @@ import { getAuth, connectAuthEmulator, signInAnonymously } from 'firebase/auth';
 import dotenv from 'dotenv';
 
 // Load environment variables
-dotenv.config({ path: '.env.simulator' });
+dotenv.config({ path: '.env.local' });
 
 console.log('🚗 Adding test data for complete user flow...');
 
