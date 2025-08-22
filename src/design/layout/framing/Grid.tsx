@@ -45,7 +45,7 @@ const Grid = styled.div.withConfig({
   display: grid;
   grid-template-columns: ${({ cols, responsive }) => {
     if (responsive) {
-      return `repeat(auto-fit, minmax(300px, 1fr))`;
+      return `repeat(auto-fit, 1fr)`;
     }
     const resolvedCols = resolveResponsiveValue(cols);
     return `repeat(${resolvedCols}, 1fr)`;
@@ -75,7 +75,7 @@ const Grid = styled.div.withConfig({
   @media (max-width: 1024px) {
     grid-template-columns: ${({ responsive, cols }) => {
       if (responsive) {
-        return `repeat(auto-fit, minmax(280px, 1fr))`;
+        return `repeat(auto-fit, 1fr)`;
       }
       const resolvedCols = resolveResponsiveValue(cols, 'lg');
       return `repeat(${resolvedCols}, 1fr)`;
@@ -85,28 +85,28 @@ const Grid = styled.div.withConfig({
   @media (max-width: 768px) {
     grid-template-columns: ${({ responsive, cols }) => {
       if (responsive) {
-        return `repeat(auto-fit, minmax(250px, 1fr))`;
+        return `repeat(auto-fit, 1fr)`;
       }
       const resolvedCols = resolveResponsiveValue(cols, 'md');
       return `repeat(${resolvedCols}, 1fr)`;
     }};
     gap: ${({ gap }) => {
       const resolvedGap = resolveResponsiveValue(gap, 'md');
-      return resolvedGap === 'none' ? '0' : spacing.sm;
+      return resolvedGap === 'none' ? '0' : spacing[resolvedGap as keyof typeof spacing];
     }};
   }
   
   @media (max-width: 640px) {
     grid-template-columns: ${({ responsive, cols }) => {
       if (responsive) {
-        return `1fr`;
+        return `repeat(auto-fit, 1fr)`;
       }
       const resolvedCols = resolveResponsiveValue(cols, 'sm');
       return `repeat(${resolvedCols}, 1fr)`;
     }};
     gap: ${({ gap }) => {
       const resolvedGap = resolveResponsiveValue(gap, 'sm');
-      return resolvedGap === 'none' ? '0' : spacing.md;
+      return resolvedGap === 'none' ? '0' : spacing[resolvedGap as keyof typeof spacing];
     }};
   }
 `;

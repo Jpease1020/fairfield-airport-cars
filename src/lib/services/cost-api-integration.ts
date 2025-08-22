@@ -325,16 +325,16 @@ class CostAPIIntegrationService {
              service: apiData.service,
              category: apiData.category,
              description: `${apiData.service} service costs`,
-             projectedMonthlyCost: apiData.currentCost * 1.1, // 10% buffer
-             actualMonthlyCost: apiData.currentCost,
+             monthlyCost: apiData.currentCost * 1.1, // 10% buffer
+             usage: JSON.stringify(apiData.usageMetrics),
+             status: 'active',
              lastBillingDate: new Date().toISOString().split('T')[0],
              nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
              billingCycle: 'monthly',
              provider: apiData.service,
              accountId: 'default',
              plan: 'standard',
-             dataSource: 'api',
-             usageMetrics: apiData.usageMetrics
+             dataSource: 'api'
            });
          }
       }

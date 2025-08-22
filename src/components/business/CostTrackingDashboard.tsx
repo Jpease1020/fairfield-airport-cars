@@ -134,8 +134,8 @@ export function CostTrackingDashboard({
   };
 
   const getCostStatus = (cost: RealCostItem): 'on-track' | 'over-budget' | 'pending' => {
-    if (cost.actualMonthlyCost === 0) return 'pending';
-    if (cost.actualMonthlyCost > cost.projectedMonthlyCost * 1.1) return 'over-budget';
+    if ((cost.actualMonthlyCost ?? 0) === 0) return 'pending';
+    if ((cost.actualMonthlyCost ?? 0) > (cost.projectedMonthlyCost ?? 0) * 1.1) return 'over-budget';
     return 'on-track';
   };
 
@@ -262,7 +262,7 @@ export function CostTrackingDashboard({
             <Stack spacing="md">
               {costs.map((cost) => {
                 const status = getCostStatus(cost);
-                const variance = getVariance(cost.actualMonthlyCost, cost.projectedMonthlyCost);
+                const variance = getVariance(cost.actualMonthlyCost ?? 0, cost.projectedMonthlyCost ?? 0);
                 
                 return (
                   <CostCard key={cost.id} $status={status}>
@@ -287,14 +287,14 @@ export function CostTrackingDashboard({
                         <Stack spacing="xs">
                           <Text variant="muted" size="sm">Projected</Text>
                           <Text weight="bold">
-                            {formatCurrency(cost.projectedMonthlyCost)}
+                            {formatCurrency(cost.projectedMonthlyCost ?? 0)}
                           </Text>
                         </Stack>
 
                         <Stack spacing="xs">
                           <Text variant="muted" size="sm">Actual</Text>
                           <Text weight="bold">
-                            {cost.actualMonthlyCost === 0 ? 'Pending' : formatCurrency(cost.actualMonthlyCost)}
+                            {(cost.actualMonthlyCost ?? 0) === 0 ? 'Pending' : formatCurrency(cost.actualMonthlyCost ?? 0)}
                           </Text>
                         </Stack>
 
@@ -302,10 +302,10 @@ export function CostTrackingDashboard({
                           <Text variant="muted" size="sm">Variance</Text>
                           <VarianceIndicator $variance={variance}>
                             <Text weight="bold">
-                              {cost.actualMonthlyCost === 0 ? 'N/A' : 
+                              {(cost.actualMonthlyCost ?? 0) === 0 ? 'N/A' : 
                                `${variance > 0 ? '+' : ''}${variance.toFixed(1)}%`}
                             </Text>
-                            {cost.actualMonthlyCost > 0 && (
+                            {(cost.actualMonthlyCost ?? 0) > 0 && (
                               <Text size="sm">{getVarianceIcon(variance)}</Text>
                             )}
                           </VarianceIndicator>

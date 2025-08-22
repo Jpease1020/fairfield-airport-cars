@@ -168,7 +168,7 @@ export const Alert: React.FC<AlertProps> = ({
             {title}
           </Text>
         )}
-        <Text variant="body" size={size}>
+        <Text as="span" variant="body" size={size}>
           {children}
         </Text>
       </Stack>

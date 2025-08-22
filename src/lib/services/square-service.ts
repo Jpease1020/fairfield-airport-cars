@@ -10,12 +10,12 @@ const initializeSquareClient = (): SquareClient | null => {
   if (squareClient) return squareClient;
   
   try {
-    // Get credentials from environment variables for client-side
-    const accessToken = process.env.NEXT_PUBLIC_SQUARE_ACCESS_TOKEN;
-    const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
+    // Get credentials from environment variables for server-side
+    const accessToken = process.env.SQUARE_ACCESS_TOKEN || process.env.NEXT_PUBLIC_SQUARE_ACCESS_TOKEN;
+    const locationId = process.env.SQUARE_LOCATION_ID || process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
     
     if (!accessToken || !locationId) {
-      console.warn('Square credentials not available in client environment');
+      console.warn('Square credentials not available in server environment');
       return null;
     }
     
@@ -28,7 +28,7 @@ const initializeSquareClient = (): SquareClient | null => {
     
     return squareClient;
   } catch (error) {
-    console.warn('Square service not available in client environment:', error);
+    console.warn('Square service not available in server environment:', error);
     return null;
   }
 };
@@ -80,7 +80,7 @@ export const createPaymentLink = async ({ bookingId, amount, currency, descripti
       idempotencyKey: uuidv4(),
       orderId,
       checkoutOptions: {
-        redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/success?bookingId=${bookingId}`,
+        redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?source=square&bookingId=${bookingId}`,
         tipSettings: {
           allowTipping: true,
           separateTipScreen: false,
