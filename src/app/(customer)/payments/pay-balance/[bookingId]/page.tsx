@@ -185,8 +185,8 @@ function getCMSField(cmsData: any, path: string, fallback: string): string {
   return cmsData?.[path] || fallback;
 }
 
-export default function BalancePaymentPage({ params }: { params: { bookingId: string } }) {
-  const { bookingId } = params;
+export default async function BalancePaymentPage({ params }: { params: Promise<{ bookingId: string }> }) {
+  const { bookingId } = await params;
   
   return (
     <BalancePaymentPageContent bookingId={bookingId} />
