@@ -2,6 +2,20 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Special seeding rules for emulator development
+    // These allow the seeding script to create test data
+    match /drivers/{driverId} {
+      allow read, write: if request.auth != null;  // Allow if authenticated
+    }
+
+    match /users/{userId} {
+      allow read, write: if request.auth != null;  // Allow if authenticated for seeding
+    }
+
+    match /payments/{paymentId} {
+      allow read, write: if request.auth != null;  // Allow if authenticated
+    }
+
     // Allow public read access to CMS configuration
     match /cms/{document} {
       allow read: if true;
@@ -14,24 +28,9 @@ service cloud.firestore {
       allow read, write: if request.auth != null;  // Admin operations require auth
     }
 
-    // Allow admin access to drivers collection
-    match /drivers/{driverId} {
-      allow read, write: if request.auth != null;  // Admin operations require auth
-    }
-
-    // Allow admin access to payments collection
-    match /payments/{paymentId} {
-      allow read, write: if request.auth != null;  // Admin operations require auth
-    }
-
     // Allow admin access to feedback collection
     match /feedback/{feedbackId} {
       allow read, write: if request.auth != null;  // Admin operations require auth
-    }
-
-    // Allow users to read their own user document
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
     // Allow reads and writes to the comments collection

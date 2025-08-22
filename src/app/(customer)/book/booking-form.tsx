@@ -89,7 +89,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
   const { mode } = useInteractionMode();
   
   // Phase management (invisible to user)
-  const [currentPhase, setCurrentPhase] = useState<'trip-details' | 'payment' | 'contact-info' | 'payment-processing'>('trip-details');
+  const [currentPhase, setCurrentPhase] = useState<'trip-details' | 'contact-info' | 'payment' | 'payment-processing'>('trip-details');
   
   // Trip details phase
   const [pickupLocation, setPickupLocation] = useState(booking?.pickupLocation || '');
@@ -260,6 +260,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
   // Handle phase transitions
   const handleBookNow = () => {
     if (fare) {
+      setCurrentPhase('contact-info');
+    }
+  };
+
+  const handleContactInfoComplete = () => {
+    if (name && email && phone) {
       setCurrentPhase('payment');
     }
   };
@@ -272,75 +278,64 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setCurrentPhase('trip-details');
   };
 
-  const handleBackToPayment = () => {
-    setCurrentPhase('payment');
+  const handleBackToContactInfo = () => {
+    setCurrentPhase('contact-info');
   };
 
   // Process deposit payment
   const handleDepositPayment = async () => {
-    if (!depositAmount || !fare) {
-      setPaymentError('Invalid deposit amount');
-      return;
-    }
-
     setIsProcessingPayment(true);
     setPaymentError(null);
 
     try {
-      // Create a temporary booking ID for payment processing
-      const tempBookingId = `temp-${Date.now()}`;
-      
-      // Create payment link with Square for the deposit
-      const response = await fetch('/api/payment/create-checkout-session', {
+      // Create the booking first
+      const response = await fetch('/api/booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          bookingId: tempBookingId,
-          amount: Math.round(depositAmount * 100), // Convert to cents
-          currency: 'USD',
-          description: `Deposit for ride from ${pickupLocation} to ${dropoffLocation}`,
-          buyerEmail: email || 'temp@example.com',
+          name,
+          email,
+          phone,
+          pickupLocation,
+          dropoffLocation,
+          pickupDateTime,
+          notes,
+          fare,
+          tipAmount,
+          tipPercent,
+          totalAmount: getTotalWithTip(),
+          flightInfo,
+          fareType,
+          saveInfoForFuture,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create payment session');
+        throw new Error('Failed to create booking');
       }
 
       const data = await response.json();
       
-      if (data.paymentLinkUrl) {
-        // Store booking data in session storage for after payment
+      if (data.success && data.bookingId) {
+        setSuccess('Booking created successfully! Please complete payment to confirm your ride.');
+        
+        // Store booking ID in session storage for tracking
         if (typeof sessionStorage !== 'undefined') {
-          sessionStorage.setItem('pendingBooking', JSON.stringify({
-            name,
-            email,
-            phone,
-            pickupLocation,
-            dropoffLocation,
-            pickupDateTime,
-            notes,
-            fare: fare + tipAmount,
-            tipAmount,
-            tipPercent,
-            totalAmount: fare + tipAmount,
-            flightInfo,
-            fareType,
-            saveInfoForFuture,
-            tempBookingId,
-          }));
+          sessionStorage.setItem('lastBookingId', data.bookingId);
         }
         
-        // Redirect to Square's hosted checkout
-        window.location.href = data.paymentLinkUrl;
+        // Redirect to payment page instead of using payment link
+        if (typeof window !== 'undefined') {
+          window.location.href = `/payments/pay-balance/${data.bookingId}`;
+        }
       } else {
-        throw new Error('No payment link received');
+        throw new Error('Failed to create booking');
       }
     } catch (error) {
       console.error('Payment processing error:', error);
-      setPaymentError('Failed to create payment session. Please try again.');
+      setPaymentError('Failed to create booking. Please try again.');
     } finally {
       setIsProcessingPayment(false);
     }
@@ -725,7 +720,196 @@ function BookingFormContent({ booking }: BookingFormProps) {
             </>
           )}
 
-          {/* Phase 2: Payment */}
+          {/* Phase 2: Contact Info Collection */}
+          {currentPhase === 'contact-info' && (
+            <>
+              {/* Contact Information */}
+              <Box variant="elevated" padding="lg">
+                <Stack spacing="lg">
+                  <H2 
+                    align="center"
+                    data-cms-id="pages.booking.personalInfo.title"
+                    mode={mode}
+                  >
+                    {getCMSField(cmsData, 'pages.booking.personalInfo.title', 'Contact Information')}
+                  </H2>
+                  
+                  <Text align="center" color="secondary">
+                    {getCMSField(cmsData, 'pages.booking.personalInfo.description', 'Please provide your contact information to proceed with your booking.')}
+                  </Text>
+                  
+                  <Stack spacing="lg">
+                    <Stack spacing="sm">
+                        <Label htmlFor="name" data-cms-id="pages.booking.form.name.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.name.label', 'Full Name')} *
+                        </Label>
+                        <Input
+                          id="name"
+                          value={name}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                          placeholder={getCMSField(cmsData, 'pages.booking.form.name.placeholder', 'Enter your full name')}
+                          data-cms-id="pages.booking.form.name.input"
+                          fullWidth
+                          required
+                        />
+                      </Stack>
+
+                    
+                    <Stack spacing="sm">
+                        <Label htmlFor="email" data-cms-id="pages.booking.form.email.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.email.label', 'Email Address')} *
+                        </Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                          placeholder={getCMSField(cmsData, 'pages.booking.form.email.placeholder', 'Enter your email')}
+                          data-cms-id="pages.booking.form.email.input"
+                          fullWidth
+                          required
+                        />
+                      </Stack>
+
+                    
+                    <Stack spacing="sm">
+                        <Label htmlFor="phone" data-cms-id="pages.booking.form.phone.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.phone.label', 'Phone Number')} *
+                        </Label>
+                        <Input
+                          id="phone"
+                          value={phone}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+                          placeholder={getCMSField(cmsData, 'pages.booking.form.phone.placeholder', 'Enter your phone number')}
+                          data-cms-id="pages.booking.form.phone.input"
+                          fullWidth
+                          required
+                        />
+                      </Stack>
+
+                    
+                    <Stack spacing="sm">
+                        <Label htmlFor="notes" data-cms-id="pages.booking.form.notes.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.notes.label', 'Special Requests')}
+                        </Label>
+                        <Textarea
+                          id="notes"
+                          value={notes}
+                          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
+                          placeholder={getCMSField(cmsData, 'pages.booking.form.notes.placeholder', 'Any special requests or notes for your driver')}
+                          data-cms-id="pages.booking.form.notes.input"
+                          rows={3}
+                          fullWidth
+                        />
+                      </Stack>
+
+                    
+                    <Stack spacing="sm">
+                        <Label htmlFor="flightInfo" data-cms-id="pages.booking.form.flightInfo.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.flightInfo.label', 'Flight Information (Optional)')}
+                        </Label>
+                        <Stack spacing="sm">
+                          <Stack direction="horizontal" spacing="sm">
+                            <Input
+                              placeholder="Airline"
+                              value={flightInfo.airline}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, airline: e.target.value }))}
+                              data-cms-id="pages.booking.form.flightInfo.airline"
+                              fullWidth
+                            />
+                            <Input
+                              placeholder="Flight Number"
+                              value={flightInfo.flightNumber}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, flightNumber: e.target.value }))}
+                              data-cms-id="pages.booking.form.flightInfo.flightNumber"
+                              fullWidth
+                            />
+                          </Stack>
+                          <Stack direction="horizontal" spacing="sm">
+                            <Input
+                              placeholder="Arrival Time"
+                              value={flightInfo.arrivalTime}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, arrivalTime: e.target.value }))}
+                              data-cms-id="pages.booking.form.flightInfo.arrivalTime"
+                              fullWidth
+                            />
+                            <Input
+                              placeholder="Terminal"
+                              value={flightInfo.terminal}
+                              onChange={(e) => setFlightInfo(prev => ({ ...prev, terminal: e.target.value }))}
+                              data-cms-id="pages.booking.form.flightInfo.terminal"
+                              fullWidth
+                            />
+                          </Stack>
+                        </Stack>
+                      </Stack>
+
+                    
+                    <Stack spacing="sm">
+                        <Label htmlFor="saveInfoForFuture" data-cms-id="pages.booking.form.saveInfoForFuture.label" mode={mode}>
+                          {getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.label', 'Save Information for Future Bookings')}
+                        </Label>
+                        <RadioButton
+                          id="saveInfoForFuture"
+                          name="saveInfoForFuture"
+                          value="true"
+                          checked={saveInfoForFuture}
+                          onChange={() => setSaveInfoForFuture(true)}
+                          data-cms-id="pages.booking.form.saveInfoForFuture.yes"
+                          label={getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.yes', 'Yes, save my information')}
+                        />
+                        <RadioButton
+                          id="saveInfoForFuture"
+                          name="saveInfoForFuture"
+                          value="false"
+                          checked={!saveInfoForFuture}
+                          onChange={() => setSaveInfoForFuture(false)}
+                          data-cms-id="pages.booking.form.saveInfoForFuture.no"
+                          label={getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.no', 'No, don\'t save my information')}
+                        />
+                      </Stack>
+                  </Stack>
+                </Stack>
+              </Box>
+
+              {/* Navigation Buttons */}
+              <Stack direction="horizontal" spacing="md">
+                <Button
+                  onClick={handleBackToTripDetails}
+                  variant="outline"
+                  fullWidth
+                >
+                  {getCMSField(cmsData, 'pages.booking.steps.back', 'Back to Trip Details')}
+                </Button>
+                
+                <Button
+                  onClick={handleContactInfoComplete}
+                  variant="primary"
+                  fullWidth
+                  disabled={!name || !email || !phone}
+                >
+                  {getCMSField(cmsData, 'pages.booking.steps.continue', 'Continue to Payment')}
+                </Button>
+              </Stack>
+            </>
+          )}
+
+          {/* Phase 2.5: Payment Processing */}
+          {currentPhase === 'payment-processing' && (
+            <Box variant="elevated" padding="xl">
+              <Stack spacing="lg" align="center">
+                <LoadingSpinner size="lg" />
+                <H2 align="center">
+                  {getCMSField(cmsData, 'pages.booking.payment.processing.title', 'Processing Payment...')}
+                </H2>
+                <Text align="center" color="secondary">
+                  {getCMSField(cmsData, 'pages.booking.payment.processing.description', 'Please wait while we process your deposit payment. You will be redirected to the payment page shortly.')}
+                </Text>
+              </Stack>
+            </Box>
+          )}
+
+          {/* Phase 3: Payment */}
           {currentPhase === 'payment' && (
             <>
               {/* Trip Summary */}
@@ -820,15 +1004,15 @@ function BookingFormContent({ booking }: BookingFormProps) {
               {/* Navigation Buttons */}
               <Stack direction="horizontal" spacing="md">
                 <Button
-                  onClick={handleBackToTripDetails}
+                  onClick={handleBackToContactInfo}
                   variant="outline"
                   fullWidth
                 >
-                  {getCMSField(cmsData, 'pages.booking.steps.back', 'Back')}
+                  {getCMSField(cmsData, 'pages.booking.steps.back', 'Back to Contact Info')}
                 </Button>
                 
                 <Button
-                  onClick={handleDepositPayment}
+                  type="submit"
                   variant="primary"
                   fullWidth
                   disabled={!depositAmount || isProcessingPayment}
@@ -841,211 +1025,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   ) : (
                     `Pay Deposit $${depositAmount?.toFixed(2)}`
                   )}
-                </Button>
-              </Stack>
-            </>
-          )}
-
-          {/* Phase 2.5: Payment Processing */}
-          {currentPhase === 'payment-processing' && (
-            <Box variant="elevated" padding="xl">
-              <Stack spacing="lg" align="center">
-                <LoadingSpinner size="lg" />
-                <H2 align="center">
-                  {getCMSField(cmsData, 'pages.booking.payment.processing.title', 'Processing Payment...')}
-                </H2>
-                <Text align="center" color="secondary">
-                  {getCMSField(cmsData, 'pages.booking.payment.processing.description', 'Please wait while we process your deposit payment. You will be redirected to the payment page shortly.')}
-                </Text>
-              </Stack>
-            </Box>
-          )}
-
-          {/* Phase 3: Contact Info & Special Requests */}
-          {currentPhase === 'contact-info' && (
-            <>
-              {/* Payment Status */}
-              <Box variant="elevated" padding="lg">
-                <Stack spacing="lg" align="center">
-                  <Text size="lg" color="success" weight="bold">
-                    ✅ {getCMSField(cmsData, 'pages.booking.payment.completed', 'Deposit Payment Completed!')}
-                  </Text>
-                  <Text align="center" color="secondary">
-                    {getCMSField(cmsData, 'pages.booking.payment.completedNote', 'Your deposit has been processed. Please complete your contact information to finalize your booking.')}
-                  </Text>
-                </Stack>
-              </Box>
-
-              {/* Contact Information */}
-              <Box variant="elevated" padding="lg">
-                <Stack spacing="lg">
-                  <H2 
-                    align="center"
-                    data-cms-id="pages.booking.personalInfo.title"
-                    mode={mode}
-                  >
-                    {getCMSField(cmsData, 'pages.booking.personalInfo.title', 'Contact Information')}
-                  </H2>
-                  
-                  <Stack spacing="lg">
-                    <Stack spacing="sm">
-                        <Label htmlFor="name" data-cms-id="pages.booking.form.name.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.name.label', 'Full Name')}
-                        </Label>
-                        <Input
-                          id="name"
-                          value={name}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                          placeholder={getCMSField(cmsData, 'pages.booking.form.name.placeholder', 'Enter your full name')}
-                          data-cms-id="pages.booking.form.name.input"
-                          fullWidth
-                        />
-                      </Stack>
-
-                    
-                    <Stack spacing="sm">
-                        <Label htmlFor="email" data-cms-id="pages.booking.form.email.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.email.label', 'Email Address')}
-                        </Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                          placeholder={getCMSField(cmsData, 'pages.booking.form.email.placeholder', 'Enter your email')}
-                          data-cms-id="pages.booking.form.email.input"
-                          fullWidth
-                        />
-                      </Stack>
-
-                    
-                    <Stack spacing="sm">
-                        <Label htmlFor="phone" data-cms-id="pages.booking.form.phone.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.phone.label', 'Phone Number')}
-                        </Label>
-                        <Input
-                          id="phone"
-                          value={phone}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
-                          placeholder={getCMSField(cmsData, 'pages.booking.form.phone.placeholder', 'Enter your phone number')}
-                          data-cms-id="pages.booking.form.phone.input"
-                          fullWidth
-                        />
-                      </Stack>
-
-                    
-                    <Stack spacing="sm">
-                        <Label htmlFor="notes" data-cms-id="pages.booking.form.notes.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.notes.label', 'Special Requests')}
-                        </Label>
-                        <Textarea
-                          id="notes"
-                          value={notes}
-                          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
-                          placeholder={getCMSField(cmsData, 'pages.booking.form.notes.placeholder', 'Any special requests or notes for your driver')}
-                          data-cms-id="pages.booking.form.notes.input"
-                          rows={3}
-                          fullWidth
-                        />
-                      </Stack>
-
-                    
-                    <Stack spacing="sm">
-                        <Label htmlFor="flightInfo" data-cms-id="pages.booking.form.flightInfo.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.flightInfo.label', 'Flight Information (Optional)')}
-                        </Label>
-                        <Stack spacing="sm">
-                          <Stack direction="horizontal" spacing="sm">
-                            <Input
-                              placeholder="Airline"
-                              value={flightInfo.airline}
-                              onChange={(e) => setFlightInfo(prev => ({ ...prev, airline: e.target.value }))}
-                              data-cms-id="pages.booking.form.flightInfo.airline"
-                            />
-                            <Input
-                              placeholder="Flight Number"
-                              value={flightInfo.flightNumber}
-                              onChange={(e) => setFlightInfo(prev => ({ ...prev, flightNumber: e.target.value }))}
-                              data-cms-id="pages.booking.form.flightInfo.flightNumber"
-                            />
-                          </Stack>
-                          <Stack direction="horizontal" spacing="sm">
-                            <Input
-                              placeholder="Arrival Time"
-                              value={flightInfo.arrivalTime}
-                              onChange={(e) => setFlightInfo(prev => ({ ...prev, arrivalTime: e.target.value }))}
-                              data-cms-id="pages.booking.form.flightInfo.arrivalTime"
-                            />
-                            <Input
-                              placeholder="Terminal"
-                              value={flightInfo.terminal}
-                              onChange={(e) => setFlightInfo(prev => ({ ...prev, terminal: e.target.value }))}
-                              data-cms-id="pages.booking.form.flightInfo.terminal"
-                            />
-                          </Stack>
-                        </Stack>
-                      </Stack>
-
-                    
-                    <Stack spacing="sm">
-                        <Label htmlFor="fareType" data-cms-id="pages.booking.form.fareType.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.fareType.label', 'Fare Type')}
-                        </Label>
-                        <Stack direction="horizontal" spacing="md">
-                          <RadioButton
-                            id="personal"
-                            name="fareType"
-                            value="personal"
-                            checked={fareType === 'personal'}
-                            onChange={(value) => setFareType(value as 'personal' | 'business')}
-                            label={getCMSField(cmsData, 'pages.booking.form.fareType.personal', 'Personal')}
-                          />
-                          <RadioButton
-                            id="business"
-                            name="fareType"
-                            value="business"
-                            checked={fareType === 'business'}
-                            onChange={(value) => setFareType(value as 'personal' | 'business')}
-                            label={getCMSField(cmsData, 'pages.booking.form.fareType.business', 'Business')}
-                          />
-                        </Stack>
-                      </Stack>
-
-                    
-                    <Stack spacing="sm">
-                        <Label htmlFor="saveInfoForFuture" data-cms-id="pages.booking.form.saveInfoForFuture.label" mode={mode}>
-                          {getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.label', 'Save Information')}
-                        </Label>
-                        <RadioButton
-                          id="saveInfoForFuture"
-                          name="saveInfoForFuture"
-                          value="true"
-                          checked={saveInfoForFuture}
-                          onChange={(value) => setSaveInfoForFuture(value === 'true')}
-                          label={getCMSField(cmsData, 'pages.booking.form.saveInfoForFuture.description', 'Save my information for future bookings')}
-                        />
-                      </Stack>
-                  </Stack>
-                </Stack>
-              </Box>
-
-              {/* Navigation Buttons */}
-              <Stack direction="horizontal" spacing="md">
-                <Button
-                  onClick={handleBackToPayment}
-                  variant="outline"
-                  fullWidth
-                >
-                  {getCMSField(cmsData, 'pages.booking.steps.back', 'Back to Payment')}
-                </Button>
-                
-                <Button
-                  type="submit"
-                  variant="primary"
-                  fullWidth
-                  disabled={!name || !email || !phone}
-                >
-                  {getCMSField(cmsData, 'pages.booking.submit', 'Complete Booking')}
                 </Button>
               </Stack>
             </>

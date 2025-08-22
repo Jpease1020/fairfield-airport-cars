@@ -199,9 +199,7 @@ function AdminBookingsPageContent() {
         <Text variant="small">
           <Text variant="small" weight="medium">To:</Text> {booking.dropoffLocation}
         </Text>
-        <Text variant="small" color="secondary">
-          {booking.passengers} passenger{booking.passengers !== 1 ? 's' : ''}
-        </Text>
+
       </Stack>
     ),
     dateTime: formatDate(booking.pickupDateTime),

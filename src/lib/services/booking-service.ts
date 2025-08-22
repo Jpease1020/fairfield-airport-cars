@@ -1,7 +1,7 @@
 import { db } from '@/lib/utils/firebase-server';
 import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
 import { getDriver } from './driver-service';
-import { createPaymentLink } from './square-service';
+
 
 // Helper function to safely convert Firestore dates to JavaScript Date objects
 const safeToDate = (dateField: any): Date => {
@@ -33,7 +33,6 @@ export interface Booking {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: Date;
-  passengers: number;
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
   fare: number;
   dynamicFare?: number;
@@ -162,32 +161,12 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
     const bookingId = docRef.id;
 
-    // Assign available driver
-    const driverId = await assignDriverToBooking(bookingId, 'driverId');
-    await updateDoc(docRef, { driverId, updatedAt: serverTimestamp() });
+    // TODO: Implement proper driver assignment system
+    // For now, create booking without driver assignment
+    // const driverId = await assignDriverToBooking(bookingId, 'driverId');
+    // await updateDoc(docRef, { driverId, updatedAt: serverTimestamp() });
 
-    // Create payment link for deposit
-    try {
-      const paymentLink = await createPaymentLink({
-        bookingId,
-        amount: Math.round(depositAmount * 100), // Convert to cents
-        currency: 'USD',
-        description: `Deposit for ride from ${bookingData.pickupLocation} to ${bookingData.dropoffLocation}`,
-        buyerEmail: bookingData.email,
-      });
-
-      // Update booking with payment link
-      await updateDoc(docRef, {
-        squareOrderId: paymentLink.orderId,
-        updatedAt: serverTimestamp(),
-      });
-
-      console.log(`Payment link created for booking ${bookingId}:`, paymentLink.url);
-    } catch (paymentError) {
-      console.error('Failed to create payment link:', paymentError);
-      // Don't fail the booking creation if payment link fails
-    }
-
+    console.log(`Booking created successfully: ${bookingId}`);
     return bookingId;
   } catch (error) {
     console.error('Error creating booking:', error);

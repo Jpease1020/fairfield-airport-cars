@@ -31,6 +31,23 @@ if (isFirebaseAdminConfigured()) {
     // Initialize services
     adminDb = getFirestore();
     adminAuth = getAuth();
+    
+    // Connect to emulators in development mode using environment variables
+    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
+      console.log('🔌 Admin SDK: Using emulator environment variables...');
+      
+      // Set emulator host for Firestore (Admin SDK reads this automatically)
+      if (process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST) {
+        process.env.FIREBASE_EMULATOR_HOST = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST;
+        console.log(`  📊 Admin Firestore emulator: ${process.env.FIREBASE_EMULATOR_HOST}`);
+      }
+      
+      // Set emulator host for Auth (Admin SDK reads this automatically)
+      if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST) {
+        process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+        console.log(`  🔐 Admin Auth emulator: ${process.env.FIREBASE_AUTH_EMULATOR_HOST}`);
+      }
+    }
   } catch (error) {
     console.error('Failed to initialize Firebase Admin:', error);
   }
