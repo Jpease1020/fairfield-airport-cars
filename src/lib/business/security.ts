@@ -82,14 +82,6 @@ export class SecurityUtils {
       }
     }
 
-    // Passenger validation
-    if (data.passengers) {
-      const passengers = parseInt(data.passengers);
-      if (isNaN(passengers) || passengers < 1 || passengers > 10) {
-        errors.push('Passengers must be between 1 and 10');
-      }
-    }
-
     return {
       isValid: errors.length === 0,
       errors

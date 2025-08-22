@@ -43,7 +43,6 @@ export interface Booking {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: Date;
-  passengers: number;
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
   fare: number;
   dynamicFare?: number;

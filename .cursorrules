@@ -123,6 +123,20 @@ codebase_search "routing" - Find routing patterns
 - **Explicit user request** - User specifically asks for deletion
 - **Temporary files** - Clearly marked as temporary/test files
 
+## 🚨 CRITICAL RULE: NO ENV FILE MODIFICATIONS
+
+**NEVER MODIFY .env FILES - EVER**
+- ❌ **NEVER** write to .env files
+- ❌ **NEVER** copy to .env files  
+- ❌ **NEVER** modify .env.local, .env.emulator, or any .env* files
+- ❌ **NEVER** use cp, mv, or any commands that touch .env files
+- ❌ **NEVER** suggest scripts that modify .env files
+- ✅ **ONLY** read .env files for reference
+- ✅ **ONLY** suggest environment variable changes in code
+- ✅ **ONLY** ask user permission for any env-related changes
+
+**ENV FILE PROTECTION IS ABSOLUTE - NO EXCEPTIONS**
+
 ## Automated Daily Senior Developer Review
 - **Every 24 hours, run a comprehensive codebase review as if by a senior developer.**
 - The review must:

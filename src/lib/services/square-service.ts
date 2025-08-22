@@ -1,8 +1,8 @@
-// Client-side Square service - credentials loaded lazily
+// Modern Square service using Web Payments SDK + Payments API
 import { SquareClient, SquareEnvironment } from 'square';
 import { v4 as uuidv4 } from 'uuid';
 
-// Initialize Square client lazily for client-side usage
+// Initialize Square client for server-side usage
 let squareClient: SquareClient | null = null;
 let squareCredentials: any = null;
 
@@ -33,23 +33,55 @@ const initializeSquareClient = (): SquareClient | null => {
   }
 };
 
-interface PaymentLinkPayload {
-  bookingId: string;
-  amount: number; // Amount in cents (e.g., 1999 for $19.99)
-  currency: string; // ISO currency code, e.g., 'USD'
-  description: string;
-  buyerEmail?: string;
-}
-
-export const createPaymentLink = async ({ bookingId, amount, currency, description, buyerEmail }: PaymentLinkPayload) => {
+// Process payment using payment token from Web Payments SDK
+export const processPayment = async (paymentToken: string, amount: number, currency: string, bookingId: string) => {
   const client = initializeSquareClient();
   if (!client || !squareCredentials?.accessToken || !squareCredentials?.locationId) {
-    throw new Error('Square service is not available in this environment. Please use the API route instead.');
+    throw new Error('Square service is not available in this environment.');
   }
 
   try {
-    // 1) Create an order that stores the bookingId in metadata.
-    const orderResponse = await client.orders.create({
+    // Create payment using the payment token - using the correct v43 API
+    const paymentResponse = await (client as any).paymentsApi.createPayment({
+      sourceId: paymentToken,
+      amountMoney: {
+        amount: BigInt(amount),
+        currency: currency as 'USD' | 'EUR' | 'GBP' | 'CAD',
+      },
+      idempotencyKey: uuidv4(),
+      note: `Payment for booking ${bookingId}`,
+      referenceId: bookingId,
+      locationId: squareCredentials.locationId,
+    });
+
+    const payment = paymentResponse.payment;
+    if (!payment) {
+      throw new Error('Failed to create payment');
+    }
+
+    return {
+      success: true,
+      paymentId: payment.id,
+      status: payment.status,
+      amount: payment.amountMoney.amount,
+      currency: payment.amountMoney.currency,
+      orderId: payment.orderId,
+    };
+  } catch (error) {
+    console.error('Square payment error:', error);
+    throw new Error('Failed to process payment');
+  }
+};
+
+// Create order for tracking purposes
+export const createOrder = async (bookingId: string, amount: number, currency: string, description: string) => {
+  const client = initializeSquareClient();
+  if (!client || !squareCredentials?.accessToken || !squareCredentials?.locationId) {
+    throw new Error('Square service is not available in this environment.');
+  }
+
+  try {
+    const orderResponse = await (client as any).ordersApi.createOrder({
       order: {
         locationId: squareCredentials.locationId,
         lineItems: [
@@ -69,56 +101,43 @@ export const createPaymentLink = async ({ bookingId, amount, currency, descripti
       idempotencyKey: uuidv4(),
     });
 
-    const orderId = (orderResponse as any).order?.id;
-    if (!orderId) {
-      throw new Error('Unable to create Square order.');
-    }
-
-    // 2) Generate a hosted checkout/payment link for that order.
-    // Use checkoutApi; Type definitions in v43 may not include createPaymentLink, so we cast to any.
-    const paymentLinkResponse = await (client as any).checkoutApi.createPaymentLink({
-      idempotencyKey: uuidv4(),
-      orderId,
-      checkoutOptions: {
-        redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?source=square&bookingId=${bookingId}`,
-        tipSettings: {
-          allowTipping: true,
-          separateTipScreen: false,
-          defaultTipPercentage: 20,
-        },
-      },
-      prePopulatedData: buyerEmail ? { buyerEmail } : undefined,
-    });
-
-    const paymentLink = (paymentLinkResponse as any).paymentLink ?? (paymentLinkResponse as any).result?.paymentLink;
-
-    if (!paymentLink?.url) {
-      throw new Error('Failed to create payment link.');
+    const order = orderResponse.order;
+    if (!order?.id) {
+      throw new Error('Unable to create Square order');
     }
 
     return {
-      id: paymentLink.id,
-      url: paymentLink.url,
-      longUrl: paymentLink.longUrl ?? paymentLink.url,
-      orderId,
-      createdAt: paymentLink.createdAt ?? new Date().toISOString(),
+      orderId: order.id,
+      status: order.status,
     };
   } catch (error) {
-    console.error('Square SDK error:', error);
-    throw new Error('Failed to create payment link.');
+    console.error('Square order creation error:', error);
+    throw new Error('Failed to create order');
   }
+};
+
+// Legacy function for backward compatibility - now redirects to modern approach
+export const createPaymentLink = async ({ bookingId, amount, currency, description, buyerEmail }: {
+  bookingId: string;
+  amount: number;
+  currency: string;
+  description: string;
+  buyerEmail?: string;
+}) => {
+  // This function is deprecated - use the Web Payments SDK frontend + processPayment backend instead
+  throw new Error('createPaymentLink is deprecated. Use the Web Payments SDK frontend with processPayment backend instead.');
 };
 
 export async function refundPayment(orderId: string, amount: number, currency: string) {
   const client = initializeSquareClient();
   if (!client) {
-    throw new Error('Square service is not available in this environment. Please use the API route instead.');
+    throw new Error('Square service is not available in this environment.');
   }
   
   try {
     // Fetch order to get paymentId (tender)
     const orderResp = await (client as any).ordersApi.retrieveOrder(orderId);
-    const paymentIds: string[] = (orderResp as any).order?.tenders?.map((t: any) => t.paymentId).filter(Boolean) || [];
+    const paymentIds: string[] = orderResp.order?.tenders?.map((t: any) => t.paymentId).filter(Boolean) || [];
     if (paymentIds.length === 0) {
       return;
     }
@@ -136,7 +155,7 @@ export async function refundPayment(orderId: string, amount: number, currency: s
     }
   } catch (error) {
     console.error('Square refund error:', error);
-    throw new Error('Failed to process refund.');
+    throw new Error('Failed to process refund');
   }
 }
 
@@ -154,7 +173,7 @@ interface CreatePaymentPayload {
 export async function createPayment(payload: CreatePaymentPayload) {
   const client = initializeSquareClient();
   if (!client) {
-    throw new Error('Square service is not available in this environment. Please use the API route instead.');
+    throw new Error('Square service is not available in this environment.');
   }
   
   try {
@@ -167,6 +186,7 @@ export async function createPayment(payload: CreatePaymentPayload) {
       idempotencyKey: payload.idempotencyKey,
       note: payload.note,
       referenceId: payload.referenceId,
+      locationId: squareCredentials?.locationId,
     });
 
     const payment = response.payment;

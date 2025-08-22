@@ -5,7 +5,6 @@ export interface BookingData {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: string;
-  passengers: number;
 }
 
 export interface ValidationResult {
@@ -48,14 +47,6 @@ export function validateBookingData(booking: BookingData): ValidationResult {
     if (pickupDate <= now) {
       errors.push('Pickup date must be in the future');
     }
-  }
-
-  if (!booking.passengers || booking.passengers < 1) {
-    errors.push('At least 1 passenger is required');
-  }
-
-  if (booking.passengers > 10) {
-    errors.push('Maximum 10 passengers allowed');
   }
 
   return {
