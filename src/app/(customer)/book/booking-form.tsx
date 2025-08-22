@@ -137,6 +137,54 @@ function BookingFormContent({ booking }: BookingFormProps) {
     }
   }, [fare]);
 
+  // Calculate fare when pickup/dropoff locations or fare type change
+  useEffect(() => {
+    const calculateFare = async () => {
+      if (!pickupLocation || !dropoffLocation || !mapsLoaded) {
+        setFare(null);
+        setBaseFare(null);
+        setIsCalculating(false);
+        return;
+      }
+
+      setIsCalculating(true);
+      setError(null);
+
+      try {
+        const response = await fetch('/api/booking/estimate-fare', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            origin: pickupLocation,
+            destination: dropoffLocation,
+            fareType,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to calculate fare');
+        }
+
+        const data = await response.json();
+        setFare(data.fare);
+        setBaseFare(data.baseFare);
+      } catch (err) {
+        console.error('Error calculating fare:', err);
+        setError('Failed to calculate fare. Please try again.');
+        setFare(null);
+        setBaseFare(null);
+      } finally {
+        setIsCalculating(false);
+      }
+    };
+
+    // Debounce fare calculation to avoid too many API calls
+    const timeoutId = setTimeout(calculateFare, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [pickupLocation, dropoffLocation, fareType, mapsLoaded]);
+
   const getPlacePredictions = async (input: string, callback: (_predictions: google.maps.places.AutocompletePrediction[]) => void) => {
     if (!mapsLoaded || typeof window === 'undefined' || !window.google) {
       callback([]);
@@ -239,48 +287,60 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setPaymentError(null);
 
     try {
-      // Create a temporary booking for payment processing
-      const tempBookingData = {
-        name: name || 'Temporary',
-        email: email || 'temp@example.com',
-        phone: phone || '000-000-0000',
-        pickupLocation,
-        dropoffLocation,
-        pickupDateTime,
-        notes: notes || '',
-        fare: fare + tipAmount,
-        tipAmount,
-        tipPercent,
-        totalAmount: fare + tipAmount,
-        flightInfo,
-        fareType,
-        saveInfoForFuture,
-      };
-
-      const response = await fetch('/api/booking', {
+      // Create a temporary booking ID for payment processing
+      const tempBookingId = `temp-${Date.now()}`;
+      
+      // Create payment link with Square for the deposit
+      const response = await fetch('/api/payment/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(tempBookingData),
+        body: JSON.stringify({
+          bookingId: tempBookingId,
+          amount: Math.round(depositAmount * 100), // Convert to cents
+          currency: 'USD',
+          description: `Deposit for ride from ${pickupLocation} to ${dropoffLocation}`,
+          buyerEmail: email || 'temp@example.com',
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create booking for payment');
+        throw new Error('Failed to create payment session');
       }
 
       const data = await response.json();
       
       if (data.paymentLinkUrl) {
-        // Redirect to payment page
+        // Store booking data in session storage for after payment
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem('pendingBooking', JSON.stringify({
+            name,
+            email,
+            phone,
+            pickupLocation,
+            dropoffLocation,
+            pickupDateTime,
+            notes,
+            fare: fare + tipAmount,
+            tipAmount,
+            tipPercent,
+            totalAmount: fare + tipAmount,
+            flightInfo,
+            fareType,
+            saveInfoForFuture,
+            tempBookingId,
+          }));
+        }
+        
+        // Redirect to Square's hosted checkout
         window.location.href = data.paymentLinkUrl;
       } else {
-        // If no payment link, proceed to contact info (for demo/testing)
-        setCurrentPhase('contact-info');
+        throw new Error('No payment link received');
       }
     } catch (error) {
       console.error('Payment processing error:', error);
-      setPaymentError('Failed to process payment. Please try again.');
+      setPaymentError('Failed to create payment session. Please try again.');
     } finally {
       setIsProcessingPayment(false);
     }
@@ -371,7 +431,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
   }
 
   return (
-          <Container maxWidth="5xl" padding="xl" data-testid="booking-form-container">
+          <Container maxWidth="7xl" padding="xl" data-testid="booking-form-container">
       <Form onSubmit={handleSubmit} id="booking-form" data-testid="booking-form">
         <Stack spacing="xl" data-testid="booking-form-stack">
           

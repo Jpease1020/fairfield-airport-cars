@@ -163,7 +163,7 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     const bookingId = docRef.id;
 
     // Assign available driver
-    const driverId = await assignDriverToBooking(bookingId);
+    const driverId = await assignDriverToBooking(bookingId, 'driverId');
     await updateDoc(docRef, { driverId, updatedAt: serverTimestamp() });
 
     // Create payment link for deposit

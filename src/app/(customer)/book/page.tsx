@@ -11,7 +11,7 @@ function BookPageContent() {
   const { mode } = useInteractionMode();
 
   return (
-    <Container maxWidth="xl" padding="xl" data-testid="book-form-section">
+    <Container maxWidth="full" padding="xl" data-testid="book-form-section">
       <Stack spacing="xl" align="center">
         <Stack spacing="md" align="center">
           <H2 

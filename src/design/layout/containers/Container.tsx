@@ -207,7 +207,7 @@ const StyledContainer = styled.div.withConfig({
 export const Container: React.FC<ContainerProps> = ({ 
   children,
   variant = 'default',
-  maxWidth = '2xl', 
+  maxWidth = 'full', 
   padding = 'md', 
   spacing = 'none',
   margin = 'none',
