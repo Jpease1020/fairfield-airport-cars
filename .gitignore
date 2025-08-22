@@ -60,3 +60,29 @@ scripts/eslint-automation/automation-results.json
 firebase-data/  
 firestore-debug.log
 firebase-debug.log
+firebase-debug.*.log
+
+# Firebase emulator data
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# All log files in root directory
+*.log
+
+# Firebase emulator exports
+firebase-export-*/
+
+# Temporary test files
+temp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db

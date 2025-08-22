@@ -1,6 +1,12 @@
 # Scripts directory - contains utility scripts that don't need linting
 scripts/
 scripts/**/*
+scripts/*.js
+
+# Emulator seeding scripts (utility scripts)
+scripts/seed-*.js
+scripts/start-*.js
+scripts/add-test-*.js
 
 # Build outputs
 .next/
