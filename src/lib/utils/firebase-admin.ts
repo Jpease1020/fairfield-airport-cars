@@ -2,8 +2,18 @@ import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 
+// NOTE: Environment variables for emulators must be set BEFORE this module is imported
+// See: https://firebase.google.com/docs/emulator-suite/connect_firestore
+// The environment variables are set in the .env.local file and should be loaded by Next.js
+
 // Check if Firebase Admin is properly configured
 const isFirebaseAdminConfigured = () => {
+  // If using emulators, don't try to use production credentials
+  if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
+    console.log('🔌 Admin SDK: Using emulators, skipping production credentials');
+    return false;
+  }
+  
   return process.env.FIREBASE_PROJECT_ID && 
          process.env.FIREBASE_PRIVATE_KEY && 
          process.env.FIREBASE_CLIENT_EMAIL;
@@ -13,41 +23,39 @@ const isFirebaseAdminConfigured = () => {
 let adminDb: any = null;
 let adminAuth: any = null;
 
-if (isFirebaseAdminConfigured()) {
+// Check if we should initialize for emulators
+const shouldInitializeForEmulators = process.env.NODE_ENV === 'development' && 
+                                    process.env.NEXT_PUBLIC_USE_EMULATORS === 'true';
+
+if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
   try {
     const apps = getApps();
     if (apps.length === 0) {
-      const projectId = process.env.FIREBASE_PROJECT_ID;
-      
-      initializeApp({
-        credential: cert({
-          projectId: projectId,
-          privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        }),
-      });
+      if (shouldInitializeForEmulators) {
+        // For emulators, initialize without credentials
+        console.log('🚀 Initializing Firebase Admin for emulators...');
+        initializeApp({
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'demo-project',
+        });
+      } else {
+        // For production, use service account credentials
+        const projectId = process.env.FIREBASE_PROJECT_ID;
+        console.log('🚀 Initializing Firebase Admin for production...');
+        initializeApp({
+          credential: cert({
+            projectId: projectId,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          }),
+        });
+      }
     }
     
     // Initialize services
     adminDb = getFirestore();
     adminAuth = getAuth();
     
-    // Connect to emulators in development mode using environment variables
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
-      console.log('🔌 Admin SDK: Using emulator environment variables...');
-      
-      // Set emulator host for Firestore (Admin SDK reads this automatically)
-      if (process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST) {
-        process.env.FIREBASE_EMULATOR_HOST = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST;
-        console.log(`  📊 Admin Firestore emulator: ${process.env.FIREBASE_EMULATOR_HOST}`);
-      }
-      
-      // Set emulator host for Auth (Admin SDK reads this automatically)
-      if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST) {
-        process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
-        console.log(`  🔐 Admin Auth emulator: ${process.env.FIREBASE_AUTH_EMULATOR_HOST}`);
-      }
-    }
+    console.log('✅ Firebase Admin initialized successfully');
   } catch (error) {
     console.error('Failed to initialize Firebase Admin:', error);
   }
