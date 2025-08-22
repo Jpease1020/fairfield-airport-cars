@@ -31,4 +31,27 @@ try {
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+// Connect to emulators ONLY if explicitly enabled (for server-side operations)
+if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
+  console.log('🔌 Server connecting to Firebase emulators...');
+  
+  // Connect to Firestore emulator
+  if (process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST) {
+    const [host, port] = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST.split(':');
+    const { connectFirestoreEmulator } = await import('firebase/firestore');
+    connectFirestoreEmulator(db, host, parseInt(port));
+    console.log(`  📊 Firestore emulator: ${host}:${port}`);
+  }
+  
+  // Connect to Auth emulator
+  if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST) {
+    const [host, port] = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST.split(':');
+    const { connectAuthEmulator } = await import('firebase/auth');
+    connectAuthEmulator(auth, `http://${host}:${port}`);
+    console.log(`  🔐 Auth emulator: ${host}:${port}`);
+  }
+} else {
+  console.log('🚀 Server using production Firebase services');
+}
+
 export { app, db, auth };
