@@ -173,7 +173,6 @@ export async function GET(request: NextRequest) {
           dropoff: 'Dropoff Location',
           dropoff_placeholder: 'Enter dropoff address',
           pickup_time: 'Pickup Date & Time',
-          passengers: 'Number of Passengers',
           calculate_fare: 'Calculate Fare',
           calculating: 'Calculating...'
         };

@@ -17,7 +17,6 @@ export function createMockBooking(overrides: any = {}): any {
     pickupLocation: '123 Main St',
     dropoffLocation: '456 Oak Ave',
     pickupDateTime: new Date(),
-    passengers: 2,
     flightNumber: 'AA123',
     notes: 'Test booking',
     fare: 50.00,

@@ -56,7 +56,6 @@ function PaymentSuccessContent() {
             flightInfo: bookingData.flightInfo,
             fareType: bookingData.fareType,
             saveInfoForFuture: bookingData.saveInfoForFuture,
-            passengers: 1, // Default to 1 passenger
           }),
         });
 

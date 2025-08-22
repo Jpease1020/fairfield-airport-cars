@@ -31,7 +31,6 @@ interface Booking {
   vehicleInfo?: string;
   createdAt: string;
   balanceDue?: number;
-  passengers?: number;
 }
 
 function CustomerBookingsPage() {

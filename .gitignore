@@ -55,3 +55,8 @@ src/types/core.ts
 
 # ESLint automation artifacts
 scripts/eslint-automation/automation-results.json
+
+# Firebase data
+firebase-data/  
+firestore-debug.log
+firebase-debug.log

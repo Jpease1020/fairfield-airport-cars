@@ -10,7 +10,6 @@ export const TEST_CUSTOMER = {
   pickupLocation: 'Test Pickup Location',
   dropoffLocation: 'Test Dropoff Location',
   pickupDateTime: '2024-12-25T10:00',
-  passengers: 2,
   flightNumber: 'TEST123',
   notes: 'Please pick up at the main entrance'
 };
@@ -34,7 +33,6 @@ export const createMockBooking = (overrides = {}) => ({
   pickupLocation: 'Fairfield Station',
   dropoffLocation: 'JFK Airport',
   pickupDateTime: '2024-12-25T10:00:00Z',
-  passengers: 2,
   fare: 150,
   status: 'confirmed',
   ...overrides
@@ -48,7 +46,6 @@ export const expectPlaywrightBookingForm = async (page: Page) => {
   await page.locator('input[placeholder*="phone"]').waitFor();
   await page.locator('input[placeholder*="pickup"]').waitFor();
   await page.locator('input[placeholder*="dropoff"]').waitFor();
-  await page.locator('select[name="passengers"]').waitFor();
 };
 
 // RTL-specific helpers (for unit tests)

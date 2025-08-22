@@ -9,7 +9,6 @@ export const mockBookingData = {
   pickupLocation: 'Fairfield Station, Fairfield, CT',
   dropoffLocation: 'JFK Airport, Queens, NY',
   pickupDateTime: '2024-12-25T10:00:00.000Z',
-  passengers: 2,
   fare: 150,
   status: 'confirmed'
 };

@@ -310,10 +310,6 @@ export interface CMSConfiguration {
           label: string;
           input: string;
         };
-        passengers: {
-          label: string;
-          select: string;
-        };
         childSeat: {
           label: string;
           checkbox: string;
@@ -668,7 +664,6 @@ export interface CMSConfiguration {
         pickupLocation: string;
         dropoffLocation: string;
         pickupDateTime: string;
-        passengers: string;
         flightNumber: string;
         notes: string;
       };
@@ -1107,10 +1102,6 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
           label: "Pickup Date & Time",
           input: "datetime-input"
         },
-        passengers: {
-          label: "Number of Passengers",
-          select: "passengers-select"
-        },
         childSeat: {
           label: "Child Seat Required",
           checkbox: "child-seat-checkbox"
@@ -1403,7 +1394,6 @@ export const DEFAULT_CMS_CONFIG: CMSConfiguration = {
         pickupLocation: "Pickup Location",
         dropoffLocation: "Dropoff Location",
         pickupDateTime: "Pickup Date and Time",
-        passengers: "Passengers",
         flightNumber: "Flight Number (Optional)",
         notes: "Notes (Optional)"
       },
