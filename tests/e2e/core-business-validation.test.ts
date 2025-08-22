@@ -12,7 +12,6 @@ test.describe('Core Business Operations Validation', () => {
         pickupLocation: 'Fairfield Station, Fairfield, CT',
         dropoffLocation: 'JFK Airport, Queens, NY',
         pickupDateTime: '2024-12-25T10:00:00',
-        passengers: 1,
         fare: 150
       }
     });

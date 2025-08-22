@@ -196,7 +196,6 @@ test.describe('Core User Flows Validation', () => {
         pickupLocation: 'Fairfield Station',
         dropoffLocation: 'JFK Airport',
         pickupDateTime: '2024-12-25T10:00:00',
-        passengers: 1,
         fare: 150
       }
     });

@@ -20,7 +20,6 @@ interface BookingDetails {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: string;
-  passengers: number;
   fare: number;
   depositAmount: number;
   balanceDue: number;

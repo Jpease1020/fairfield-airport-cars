@@ -207,7 +207,6 @@ export function DriverProfileCard({
                 </Text>
                 <Text variant="small">🎨 Color: {profile.vehicleInfo.color}</Text>
                 <Text variant="small">🔢 Plate: {profile.vehicleInfo.licensePlate}</Text>
-                <Text variant="small">👥 Capacity: {profile.vehicleInfo.capacity} passengers</Text>
               </Stack>
             </Stack>
           )}

@@ -267,21 +267,6 @@ function ManageBookingPageContent() {
                     </div>
                     
                     <div>
-                      <Label htmlFor="passengers" data-cms-id="pages.manage.form.passengers.label" mode={mode}>
-                        {getCMSField(cmsData, 'pages.manage.form.passengers.label', 'Number of Passengers')}
-                      </Label>
-                      <Input
-                        id="passengers"
-                        type="number"
-                        min="1"
-                        max="6"
-                        value={localContent?.passengers || 1}
-                        onChange={(e) => handleFieldChange('passengers', e.target.value)}
-                        data-cms-id="pages.manage.form.passengers.input"
-                      />
-                    </div>
-                    
-                    <div>
                       <Label htmlFor="notes" data-cms-id="pages.manage.form.notes.label" mode={mode}>
                         {getCMSField(cmsData, 'pages.manage.form.notes.label', 'Special Notes')}
                       </Label>
@@ -306,9 +291,7 @@ function ManageBookingPageContent() {
                   <Text data-cms-id="pages.manage.bookingDetails.dateTime" mode={mode}>
                     <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.dateTimeLabel', 'Date & Time:')}</strong> {new Date(booking.pickupDateTime).toLocaleString()}
                   </Text>
-                  <Text data-cms-id="pages.manage.bookingDetails.passengers" mode={mode}>
-                    <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.passengersLabel', 'Passengers:')}</strong> {booking.passengers || 1}
-                  </Text>
+
                   {booking.notes && (
                     <Text data-cms-id="pages.manage.bookingDetails.notes" mode={mode}>
                       <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.notesLabel', 'Notes:')}</strong> {booking.notes}
