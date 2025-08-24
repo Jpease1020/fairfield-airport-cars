@@ -14,7 +14,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
+// Initialize Firebase - handle existing instances properly
 let app;
 try {
   app = initializeApp(firebaseConfig);
@@ -31,24 +31,53 @@ try {
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Connect to emulators ONLY if explicitly enabled (for server-side operations)
+// Connect to emulators ONLY if explicitly enabled AND not already connected
 if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
   console.log('🔌 Server connecting to Firebase emulators...');
   
-  // Connect to Firestore emulator
+  // Connect to Firestore emulator - check if already connected
   if (process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST) {
-    const [host, port] = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST.split(':');
-    const { connectFirestoreEmulator } = await import('firebase/firestore');
-    connectFirestoreEmulator(db, host, parseInt(port));
-    console.log(`  📊 Firestore emulator: ${host}:${port}`);
+    try {
+      const [host, port] = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST.split(':');
+      const { connectFirestoreEmulator } = await import('firebase/firestore');
+      
+      // Check if already connected to emulator by testing a simple operation
+      try {
+        // Try to connect - if it fails, we're probably already connected
+        connectFirestoreEmulator(db, host, parseInt(port));
+        console.log(`  📊 Firestore emulator: ${host}:${port}`);
+      } catch (emulatorError) {
+        if (emulatorError instanceof Error && emulatorError.message.includes('already been started')) {
+          console.log(`  📊 Firestore emulator: Already connected to ${host}:${port}`);
+        } else {
+          throw emulatorError;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to connect to Firestore emulator:', error);
+    }
   }
   
-  // Connect to Auth emulator
+  // Connect to Auth emulator - check if already connected
   if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST) {
-    const [host, port] = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST.split(':');
-    const { connectAuthEmulator } = await import('firebase/auth');
-    connectAuthEmulator(auth, `http://${host}:${port}`);
-    console.log(`  🔐 Auth emulator: ${host}:${port}`);
+    try {
+      const [host, port] = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST.split(':');
+      const { connectAuthEmulator } = await import('firebase/auth');
+      
+      try {
+        // Try to connect - if it fails, we're probably already connected
+        connectAuthEmulator(auth, `http://${host}:${port}`);
+        console.log(`  🔐 Auth emulator: ${host}:${port}`);
+      } catch (emulatorError) {
+        if (emulatorError instanceof Error && emulatorError.message.includes('already been started')) {
+          console.log(`  🔐 Auth emulator: Already connected to ${host}:${port}`);
+        } else {
+          throw emulatorError;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to connect to Auth emulator:', error);
+    }
   }
 } else {
   console.log('🚀 Server using production Firebase services');
