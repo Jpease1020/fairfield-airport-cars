@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export type BookingPhase = 'trip-details' | 'contact-info' | 'payment' | 'payment-processing';
 
