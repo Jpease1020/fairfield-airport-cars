@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       squareOrderId: paymentResult.orderId,
       depositPaid: true,
       depositAmount: amount / 100,
-      tipAmount: tipAmount > 0 ? tipAmount / 100 : undefined,
+      tipAmount: tipAmount > 0 ? tipAmount / 100 : 0,
       updatedAt: new Date(),
     });
 
@@ -45,8 +45,10 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Failed to process payment:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
     return NextResponse.json({ 
-      error: 'Payment processing failed' 
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? error : undefined
     }, { status: 500 });
   }
 }

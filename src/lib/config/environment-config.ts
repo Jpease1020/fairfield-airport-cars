@@ -13,25 +13,12 @@ export interface ConfigValidation {
 
 // Get Square credentials based on environment
 export const getSquareCredentials = (): SquareCredentials => {
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
-  if (isDevelopment) {
-    // Use sandbox credentials in development
-    return {
-      accessToken: process.env.SANDBOX_SQUARE_ACCESS_TOKEN || '',
-      locationId: process.env.SANDBOX_SQUARE_LOCATION_ID || '',
-      applicationId: process.env.SANDBOX_SQUARE_APPLICATION_ID || '',
-      environment: 'sandbox'
-    };
-  } else {
-    // Use production credentials in production
-    return {
-      accessToken: process.env.SQUARE_ACCESS_TOKEN || '',
-      locationId: process.env.SQUARE_LOCATION_ID || '',
-      applicationId: process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID || '',
-      environment: 'production'
-    };
-  }
+  return {
+    accessToken: process.env.SQUARE_ACCESS_TOKEN || '',
+    locationId: process.env.SQUARE_LOCATION_ID || '',
+    applicationId: process.env.SQUARE_APPLICATION_ID || '',
+    environment: process.env.NODE_ENV === 'development' ? 'sandbox' : 'production'
+  };
 };
 
 // Validate Square configuration

@@ -43,7 +43,7 @@ export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPa
   const initSquare = useCallback(async () => {
     try {
       await loadSquareSdk();
-      const appId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID as string;
+      const appId = process.env.NEXT_PUBLIC_SQUARE_APP_ID as string;
       const locationId = getSquareCredentials().locationId;
       if (!appId || !locationId) {
         setError('Square is not configured.');

@@ -17,7 +17,7 @@ function BookingDetailsContent() {
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const response = await fetch(`/api/booking/get-booking/${params.id}`);
+        const response = await fetch(`/api/booking/get-bookings-simple?id=${params.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch booking');
         }

@@ -24,7 +24,7 @@ function DriverTrackingPageContent() {
     const loadBookingDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/booking/get-booking/${bookingId}`);
+        const response = await fetch(`/api/booking/get-bookings-simple?id=${bookingId}`);
         if (response.ok) {
           const data = await response.json();
           setBookingDetails(data);
