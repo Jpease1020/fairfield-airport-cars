@@ -51,9 +51,9 @@ When you run `npm run dev`, check console for:
 ### **2.2 Environment Variables**
 ```bash
 # .env.local - Development
-SANDBOX_SQUARE_ACCESS_TOKEN=EAAAyour_sandbox_token_here
-SANDBOX_SQUARE_LOCATION_ID=your_sandbox_location_id
-SANDBOX_SQUARE_APPLICATION_ID=your_sandbox_app_id
+SQUARE_ACCESS_TOKEN=EAAAyour_sandbox_token_here
+SQUARE_LOCATION_ID=your_sandbox_location_id
+SQUARE_APPLICATION_ID=your_sandbox_app_id
 
 # .env.production - Production (when ready)
 SQUARE_ACCESS_TOKEN=your_real_production_token
