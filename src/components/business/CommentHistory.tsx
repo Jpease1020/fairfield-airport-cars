@@ -167,7 +167,7 @@ export default function CommentHistory({
         {/* Header */}
         <Container variant="elevated" padding="md">
           <H3>
-            {getCMSField(cmsData, 'commentHistory.title', 'Comment History')}
+            {getCMSField(cmsData, 'commentHistory-title', 'Comment History')}
           </H3>
           <Span variant="default" size="sm" color="muted">
             {filteredComments.length} comments found
@@ -178,7 +178,7 @@ export default function CommentHistory({
         {showFilters && (
           <Container variant="elevated" padding="md">
             <H4>
-              {getCMSField(cmsData, 'commentHistory.filters', 'Filters')}
+              {getCMSField(cmsData, 'commentHistory-filters', 'Filters')}
             </H4>
             <Stack spacing="md">
               <Container variant="elevated" padding="sm">
@@ -258,7 +258,7 @@ export default function CommentHistory({
           {Object.keys(groupedComments).length === 0 ? (
             <Container variant="elevated" padding="lg">
               <Span>
-                {getCMSField(cmsData, 'commentHistory.noComments', 'No comments found matching your filters.')}
+                {getCMSField(cmsData, 'commentHistory-noComments', 'No comments found matching your filters.')}
               </Span>
             </Container>
           ) : (

@@ -1,9 +1,9 @@
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { Settings, DEFAULT_SETTINGS } from '@/types/settings';
 
 export async function getSettings(): Promise<Settings> {
   try {
-    const cmsConfig = await cmsService.getCMSConfiguration();
+    const cmsConfig = await cmsFlattenedService.getAllCMSData();
     if (!cmsConfig || !cmsConfig.pricing) {
       console.error('CMS config or pricing is null, falling back to defaults');
       return DEFAULT_SETTINGS;
@@ -26,12 +26,12 @@ export async function getSettings(): Promise<Settings> {
 
 export async function updateSettings(partial: Partial<Settings>): Promise<void> {
   try {
-    const cmsConfig = await cmsService.getCMSConfiguration();
+    const cmsConfig = await cmsFlattenedService.getAllCMSData();
     if (!cmsConfig || !cmsConfig.pricing) {
       throw new Error('CMS config or pricing is null, cannot update settings');
     }
     // Update the pricing section of the CMS config
-    await cmsService.updatePricingSettings({
+    await cmsFlattenedService.updatePricingSettings({
       baseFare: partial.baseFare ?? cmsConfig.pricing.baseFare,
       perMile: partial.perMile ?? cmsConfig.pricing.perMile,
       perMinute: partial.perMinute ?? cmsConfig.pricing.perMinute,

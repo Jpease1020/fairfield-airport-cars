@@ -98,11 +98,11 @@ function PaymentSuccessContent() {
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <H1 align="center" data-cms-id="pages.paymentSuccess.processing.title">
-            {getCMSField(cmsData, 'pages.paymentSuccess.processing.title', 'Processing Your Payment...')}
+          <H1 align="center" data-cms-id="paymentSuccess-processing-title">
+            {getCMSField(cmsData, 'title', 'Processing Your Payment...')}
           </H1>
-          <Text align="center" data-cms-id="pages.paymentSuccess.processing.description">
-            {getCMSField(cmsData, 'pages.paymentSuccess.processing.description', 'Please wait while we confirm your payment and create your booking.')}
+          <Text align="center" data-cms-id="paymentSuccess-processing-description">
+            {getCMSField(cmsData, 'description', 'Please wait while we confirm your payment and create your booking.')}
           </Text>
         </Stack>
       </Container>
@@ -113,14 +113,14 @@ function PaymentSuccessContent() {
     return (
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
-          <H1 align="center" data-cms-id="pages.paymentSuccess.error.title">
-            {getCMSField(cmsData, 'pages.paymentSuccess.error.title', 'Payment Processing Error')}
+          <H1 align="center" data-cms-id="paymentSuccess-error-title">
+            {getCMSField(cmsData, 'title', 'Payment Processing Error')}
           </H1>
-          <Text align="center" data-cms-id="pages.paymentSuccess.error.description">
-            {error || getCMSField(cmsData, 'pages.paymentSuccess.error.description', 'There was an error processing your payment.')}
+          <Text align="center" data-cms-id="paymentSuccess-error-description">
+            {error || getCMSField(cmsData, 'description', 'There was an error processing your payment.')}
           </Text>
           <Button onClick={() => router.push('/book')} variant="primary">
-            {getCMSField(cmsData, 'pages.paymentSuccess.error.tryAgain', 'Try Again')}
+            {getCMSField(cmsData, 'tryAgain', 'Try Again')}
           </Button>
         </Stack>
       </Container>
@@ -134,19 +134,19 @@ function PaymentSuccessContent() {
           <Text size="xl">✅</Text>
         </Box>
         
-        <H1 align="center" data-cms-id="pages.paymentSuccess.success.title">
-          {getCMSField(cmsData, 'pages.paymentSuccess.success.title', 'Payment Successful!')}
+        <H1 align="center" data-cms-id="paymentSuccess-success-title">
+          {getCMSField(cmsData, 'title', 'Payment Successful!')}
         </H1>
         
-        <Text align="center" data-cms-id="pages.paymentSuccess.success.description">
-          {getCMSField(cmsData, 'pages.paymentSuccess.success.description', 'Your deposit has been processed and your booking is confirmed.')}
+        <Text align="center" data-cms-id="paymentSuccess-success-description">
+          {getCMSField(cmsData, 'description', 'Your deposit has been processed and your booking is confirmed.')}
         </Text>
 
         {bookingId && (
           <Box variant="outlined" padding="lg">
             <Stack spacing="sm">
-              <Text weight="bold" data-cms-id="pages.paymentSuccess.success.bookingId">
-                {getCMSField(cmsData, 'pages.paymentSuccess.success.bookingId', 'Booking ID:')}
+              <Text weight="bold" data-cms-id="paymentSuccess-success-bookingId">
+                {getCMSField(cmsData, 'bookingId', 'Booking ID:')}
               </Text>
               <Text size="lg" variant="body">{bookingId}</Text>
             </Stack>
@@ -155,11 +155,11 @@ function PaymentSuccessContent() {
 
         <Stack direction="horizontal" spacing="md">
           <Button onClick={() => router.push(`/tracking/${bookingId}`)} variant="primary">
-            {getCMSField(cmsData, 'pages.paymentSuccess.success.trackRide', 'Track My Ride')}
+            {getCMSField(cmsData, 'trackRide', 'Track My Ride')}
           </Button>
           
           <Button onClick={() => router.push('/bookings')} variant="secondary">
-            {getCMSField(cmsData, 'pages.paymentSuccess.success.viewBookings', 'View All Bookings')}
+            {getCMSField(cmsData, 'viewBookings', 'View All Bookings')}
           </Button>
         </Stack>
       </Stack>

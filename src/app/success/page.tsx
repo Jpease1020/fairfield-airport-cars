@@ -94,10 +94,10 @@ function SuccessPageContent() {
           <Container>
             <Stack spacing="lg"   align="center">
               <Text data-testid="success-loading-title" weight="bold">
-                {getCMSField(cmsData, 'success.loading.title', 'Loading...')}
+                {getCMSField(cmsData, 'success-loading-title', 'Loading...')}
               </Text>
               <Text data-testid="success-loading-description">
-                {getCMSField(cmsData, 'success.loading.description', 'Loading your booking details...')}
+                {getCMSField(cmsData, 'success-loading-description', 'Loading your booking details...')}
               </Text>
               <LoadingSpinner size="lg" />
             </Stack>
@@ -115,10 +115,10 @@ function SuccessPageContent() {
             <Stack spacing="lg"  >
                 <Stack spacing="md" align="center">
                   <Text data-testid="success-error-title" weight="bold">
-                    {getCMSField(cmsData, 'success.error.title', '⚠️ Error Loading Booking')}
+                    {getCMSField(cmsData, 'success-error-title', '⚠️ Error Loading Booking')}
                   </Text>
                   <Text data-testid="success-error-description">
-                    {getCMSField(cmsData, 'success.error.description', 'Please try refreshing the page or contact support if the problem persists.')}
+                    {getCMSField(cmsData, 'success-error-description', 'Please try refreshing the page or contact support if the problem persists.')}
                   </Text>
                 </Stack>
             </Stack>
@@ -133,14 +133,14 @@ function SuccessPageContent() {
             <Span data-testid="success-icon" size="xl">🎉</Span>
             <Stack spacing="md" align="center">
               <Text data-testid="success-booking-confirmed-title" weight="bold">
-                {getCMSField(cmsData, 'success.bookingConfirmed.title', 'Booking Confirmed!')}
+                {getCMSField(cmsData, 'success-bookingConfirmed-title', 'Booking Confirmed!')}
               </Text>
               <Text data-testid="success-booking-confirmed-message">
-                {getCMSField(cmsData, 'success.bookingConfirmed.message', 'Your ride has been successfully booked. Check your email for confirmation and details.')}
+                {getCMSField(cmsData, 'success-bookingConfirmed-message', 'Your ride has been successfully booked. Check your email for confirmation and details.')}
               </Text>
             </Stack>
             <Button data-testid="success-back-home-button" variant="primary" size="lg" onClick={() => window.location.href = '/'}>
-              {getCMSField(cmsData, 'success.actions.back_to_home', 'Back to Home')}
+              {getCMSField(cmsData, 'success-actions-back_to_home', 'Back to Home')}
             </Button>
           </Stack>
         </Container>
@@ -153,10 +153,10 @@ function SuccessPageContent() {
             <Stack spacing="lg"  >
               <Stack spacing="md" align="center">
                 <Text data-testid="success-trip-details-title" weight="bold">
-                  {getCMSField(cmsData, 'success.tripDetails.title', 'Trip Details')}
+                  {getCMSField(cmsData, 'success-tripDetails-title', 'Trip Details')}
                 </Text>
                 <Text data-testid="success-trip-details-description">
-                  {getCMSField(cmsData, 'success.tripDetails.description', 'Your journey information')}
+                  {getCMSField(cmsData, 'success-tripDetails-description', 'Your journey information')}
                 </Text>
               </Stack>
               <Stack data-testid="success-trip-details-list" spacing="sm">
@@ -171,10 +171,10 @@ function SuccessPageContent() {
             <Stack spacing="lg"  >
               <Stack spacing="md" align="center">
                 <Text data-testid="success-payment-status-title" weight="bold">
-                  {getCMSField(cmsData, 'success.paymentStatus.title', '💰 Payment Status')}
+                  {getCMSField(cmsData, 'success-paymentStatus-title', '💰 Payment Status')}
                 </Text>
                 <Text data-testid="success-payment-status-description">
-                  {getCMSField(cmsData, 'success.paymentStatus.description', 'Your payment information')}
+                  {getCMSField(cmsData, 'success-paymentStatus-description', 'Your payment information')}
                 </Text>
               </Stack>
               <Stack data-testid="success-payment-details" spacing="sm">
@@ -193,18 +193,18 @@ function SuccessPageContent() {
             <Stack spacing="lg"  >
               <Stack spacing="md" align="center">
                 <Text data-testid="success-next-steps-title" weight="bold">
-                  {getCMSField(cmsData, 'success.nextSteps.title', '📋 What Happens Next?')}
+                  {getCMSField(cmsData, 'success-nextSteps-title', '📋 What Happens Next?')}
                 </Text>
                 <Text data-testid="success-next-steps-description">
-                  {getCMSField(cmsData, 'success.nextSteps.description', "Here's what you can expect from us")}
+                  {getCMSField(cmsData, 'success-nextSteps-description', "Here's what you can expect from us")}
                 </Text>
               </Stack>
             
             <Stack data-testid="success-next-steps-list" spacing="md">
-              <Text data-testid="success-next-step-email">{getCMSField(cmsData, 'success.nextSteps.items.0', "📧 You'll receive a confirmation email with all booking details")}</Text>
-              <Text data-testid="success-next-step-sms">{getCMSField(cmsData, 'success.nextSteps.items.1', "📱 We'll send you SMS updates about your driver and pickup time")}</Text>
-              <Text data-testid="success-next-step-driver">{getCMSField(cmsData, 'success.nextSteps.items.2', '👨‍💼 Your driver will contact you 30 minutes before pickup')}</Text>
-              <Text data-testid="success-next-step-flight">{getCMSField(cmsData, 'success.nextSteps.items.3', '✈️ We monitor your flight for any delays or changes')}</Text>
+              <Text data-testid="success-next-step-email">{getCMSField(cmsData, 'success-nextSteps-items-0', "📧 You'll receive a confirmation email with all booking details")}</Text>
+              <Text data-testid="success-next-step-sms">{getCMSField(cmsData, 'success-nextSteps-items-1', "📱 We'll send you SMS updates about your driver and pickup time")}</Text>
+              <Text data-testid="success-next-step-driver">{getCMSField(cmsData, 'success-nextSteps-items-2', '👨‍💼 Your driver will contact you 30 minutes before pickup')}</Text>
+              <Text data-testid="success-next-step-flight">{getCMSField(cmsData, 'success-nextSteps-items-3', '✈️ We monitor your flight for any delays or changes')}</Text>
             </Stack>
 
             <Stack direction="horizontal" spacing="md" align="center" data-testid="success-actions">
@@ -228,16 +228,16 @@ function SuccessPageContent() {
           <Stack spacing="lg"  >
               <Stack spacing="md" align="center">
                 <Text data-testid="success-emergency-contact-title" weight="bold">
-                  {getCMSField(cmsData, 'success.emergencyContact.title', '🆘 Need Help?')}
+                  {getCMSField(cmsData, 'success-emergencyContact-title', '🆘 Need Help?')}
                 </Text>
                 <Text data-testid="success-emergency-contact-description">
-                  {getCMSField(cmsData, 'success.emergencyContact.description', 'Contact us anytime if you have questions or need to make changes')}
+                  {getCMSField(cmsData, 'success-emergencyContact-description', 'Contact us anytime if you have questions or need to make changes')}
                 </Text>
               </Stack>
             
               <Stack spacing="md" align="center">
-                <Text data-testid="success-emergency-phone">{getCMSField(cmsData, 'success.emergencyContact.phone', '📞 Contact support for phone number')}</Text>
-                <Text data-testid="success-emergency-message">{getCMSField(cmsData, 'success.emergencyContact.message', 'Save this number! Our driver is available to assist you.')}</Text>
+                <Text data-testid="success-emergency-phone">{getCMSField(cmsData, 'success-emergencyContact-phone', '📞 Contact support for phone number')}</Text>
+                <Text data-testid="success-emergency-message">{getCMSField(cmsData, 'success-emergencyContact-message', 'Save this number! Our driver is available to assist you.')}</Text>
               </Stack>
           </Stack>
         </Container>

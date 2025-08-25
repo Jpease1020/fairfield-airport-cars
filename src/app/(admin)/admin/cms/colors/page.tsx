@@ -107,7 +107,7 @@ function AdminColorsPageContent() {
                     </Span>
                   </Stack>
                   
-                  {getCMSField(cmsData, 'admin.cms.colors.description', description)}
+                  {getCMSField(cmsData, 'admin-cms-colors-description', description)}
                   
                   <Stack direction="horizontal" spacing="sm">
                     <Input
@@ -137,10 +137,10 @@ function AdminColorsPageContent() {
               data-foreground={colors['--foreground'] || 'var(--text-primary)'}
             >
               <Span weight="bold">
-                {getCMSField(cmsData, 'admin.cms.colors.primaryExample', 'Primary Color Example')}
+                {getCMSField(cmsData, 'admin-cms-colors-primaryExample', 'Primary Color Example')}
               </Span>
               
-              {getCMSField(cmsData, 'admin.cms.colors.previewDescription', 'This is a preview of your current color scheme. The colors you choose will be applied throughout your application.')}
+              {getCMSField(cmsData, 'admin-cms-colors-previewDescription', 'This is a preview of your current color scheme. The colors you choose will be applied throughout your application.')}
               
               <Stack direction="horizontal" spacing="sm">
                 <Button

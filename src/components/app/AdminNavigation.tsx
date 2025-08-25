@@ -32,14 +32,14 @@ export const AdminNavigation: React.FC = () => {
 
   const logo = (
     <Link href="/admin" data-testid="admin-nav-logo-link" id="admin-nav-logo-link">
-      {getCMSField(cmsData, 'adminNavigation.title', 'Admin Panel')}
+      {getCMSField(cmsData, 'adminNavigation-title', 'Admin Panel')}
     </Link>
   );
 
   const actions = (
     <Link href="/" data-testid="admin-nav-view-site-link" id="admin-nav-view-site-link">
       <Button variant="outline" size="sm" data-testid="admin-nav-view-site-button" id="admin-nav-view-site-button">
-        {getCMSField(cmsData, 'adminNavigation.viewSiteButton', 'View Site')}
+        {getCMSField(cmsData, 'adminNavigation-viewSiteButton', 'View Site')}
       </Button>
     </Link>
   );
@@ -47,7 +47,7 @@ export const AdminNavigation: React.FC = () => {
   const mobileActions = (
     <Link href="/" data-testid="admin-nav-mobile-view-site-link" id="admin-nav-mobile-view-site-link">
       <Button variant="outline" size="sm" data-testid="admin-nav-mobile-view-site-button" id="admin-nav-mobile-view-site-button">
-        {getCMSField(cmsData, 'adminNavigation.mobile.viewSiteButton', 'View Site')}
+        {getCMSField(cmsData, 'adminNavigation-mobile-viewSiteButton', 'View Site')}
       </Button>
     </Link>
   );

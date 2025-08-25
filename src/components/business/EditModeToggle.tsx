@@ -25,7 +25,7 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
     return (
       <Container>
         <Button onClick={onEdit}>
-          {getCMSField(cmsData, 'editModeToggle.editModeButton', 'Edit Mode')}
+          {getCMSField(cmsData, 'editModeToggle-editModeButton', 'Edit Mode')}
         </Button>
       </Container>
     );
@@ -34,10 +34,10 @@ export const EditModeToggle: React.FC<EditModeToggleProps> = ({
   return (
     <Container>
       <Button onClick={onSave} disabled={saving}>
-        {saving ? getCMSField(cmsData, 'editModeToggle.savingButton', 'Saving...') : getCMSField(cmsData, 'editModeToggle.saveButton', 'Save')}
+        {saving ? getCMSField(cmsData, 'editModeToggle-savingButton', 'Saving...') : getCMSField(cmsData, 'editModeToggle-saveButton', 'Save')}
       </Button>
       <Button onClick={onCancel} disabled={saving} variant="outline">
-        {getCMSField(cmsData, 'editModeToggle.cancelButton', 'Cancel')}
+        {getCMSField(cmsData, 'editModeToggle-cancelButton', 'Cancel')}
       </Button>
       {saveMsg && <Container>{saveMsg}</Container>}
     </Container>

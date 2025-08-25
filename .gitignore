@@ -89,3 +89,4 @@ Thumbs.db
 # Debug logs
 firebase-debug.log
 firestore-debug.log
+temp/

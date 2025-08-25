@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import { createEvent } from 'ics';
 import { Booking } from '@/types/booking';
-import { cmsService } from './cms-service';
+import { cmsFlattenedService } from './cms-service';
 
 const {
   EMAIL_HOST,
@@ -28,7 +28,7 @@ const transporter = nodemailer.createTransport({
 export async function sendConfirmationEmail(booking: Booking) {
   if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) return;
 
-  const businessSettings = await cmsService.getBusinessSettings();
+      const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
   // Generate iCalendar event
   const event = {

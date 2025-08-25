@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 function sliceConfigByPage(fullConfig: any, page: string | null) {
   if (!page) return fullConfig;
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     
   
     // Get real data from Firebase
-    let cmsConfig: any = await cmsService.getCMSConfiguration();
+    let cmsConfig: any = await cmsFlattenedService.getAllCMSData();
     
     // If no data exists in Firebase, create it with default data
     if (!cmsConfig) {
@@ -450,7 +450,7 @@ export async function GET(request: NextRequest) {
       
       // Save just the new page content to Firebase using the page-specific method
       try {
-        const result = await cmsService.updatePageContent(page, cmsConfig.pages[page]);
+        const result = await cmsFlattenedService.updatePageContent(page, cmsConfig.pages[page]);
         if (result.success) {
           console.log(`Default content for page '${page}' saved to Firebase`);
         } else {
@@ -494,7 +494,7 @@ export async function PUT(request: NextRequest) {
       const pageType = pathParts[1];
       
       // Get current page data
-      const currentData = await cmsService.getCMSConfiguration();
+              const currentData = await cmsFlattenedService.getAllCMSData();
       const currentPageData = currentData?.pages?.[pageType as keyof typeof currentData.pages] || {};
       
       // Handle nested field paths (e.g., "hero.title" -> currentPageData.hero.title = value)
@@ -514,7 +514,7 @@ export async function PUT(request: NextRequest) {
       cursor[lastFieldName] = value;
       
       // Use the page-specific update method
-      const result = await cmsService.updatePageContent(pageType, currentPageData);
+              const result = await cmsFlattenedService.updatePageContent(pageType, currentPageData);
       
       if (result.success) {
         console.log('CMS field updated successfully');
@@ -537,18 +537,13 @@ export async function PUT(request: NextRequest) {
       }
       cursor[pathParts[pathParts.length - 1]] = value;
       
-      const result = await cmsService.updateCMSConfiguration(nested);
-      
-      if (result.success) {
-        console.log('CMS field updated successfully');
-        return NextResponse.json({ success: true });
-      } else {
-        console.error('Failed to update CMS field:', result.errors);
-        return NextResponse.json(
-          { error: result.errors?.join(', ') || 'Failed to save' },
-          { status: 500 }
-        );
-      }
+      // For non-page fields, we need to determine which document to update
+      // This is a simplified approach - you may need to expand this based on your data structure
+      console.log('Non-page field update not yet implemented for flattened structure');
+      return NextResponse.json(
+        { error: 'Non-page field updates not yet implemented for flattened structure' },
+        { status: 501 }
+      );
     }
   } catch (error) {
     console.error('CMS update error:', error);

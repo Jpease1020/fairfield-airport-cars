@@ -50,7 +50,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-login-button" 
           id="nav-login-button"
         >
-          {getCMSField(cmsData, 'navigation.login', 'Login')}
+          {getCMSField(cmsData, 'navigation-login', 'Login')}
         </Button>
       ) : (
         <Button 
@@ -60,7 +60,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-logout-button" 
           id="nav-logout-button"
         >
-          {getCMSField(cmsData, 'navigation.logout', 'Logout')}
+          {getCMSField(cmsData, 'navigation-logout', 'Logout')}
         </Button>
       )}
       {pathname !== '/book' && (
@@ -71,7 +71,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-book-now-button" 
           id="nav-book-now-button"
         >
-          {getCMSField(cmsData, 'navigation.bookNow', 'Book Now')}
+          {getCMSField(cmsData, 'navigation-bookNow', 'Book Now')}
         </Button>
       )}
     </>
@@ -87,7 +87,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-mobile-login-button" 
           id="nav-mobile-login-button"
         >
-          {getCMSField(cmsData, 'navigation.mobile.login', 'Login')}
+          {getCMSField(cmsData, 'navigation-mobile-login', 'Login')}
         </Button>
       ) : (
         <Button 
@@ -97,7 +97,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-mobile-logout-button" 
           id="nav-mobile-logout-button"
         >
-          {getCMSField(cmsData, 'navigation.mobile.logout', 'Logout')}
+          {getCMSField(cmsData, 'navigation-mobile-logout', 'Logout')}
         </Button>
       )}
       {pathname !== '/book' && (
@@ -108,7 +108,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
           data-testid="nav-mobile-book-now-button" 
           id="nav-mobile-book-now-button"
         >
-          {getCMSField(cmsData, 'navigation.mobile.bookNow', 'Book Now')}
+          {getCMSField(cmsData, 'navigation-mobile-bookNow', 'Book Now')}
         </Button>
       )}
     </>

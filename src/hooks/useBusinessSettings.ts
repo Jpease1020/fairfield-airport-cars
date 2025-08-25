@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { BusinessSettings } from '@/types/cms';
 
 export function useBusinessSettings() {
@@ -14,7 +14,7 @@ export function useBusinessSettings() {
       try {
         setLoading(true);
         setError(null);
-        const settings = await cmsService.getBusinessSettings();
+        const settings = await cmsFlattenedService.getBusinessSettings();
         setBusinessSettings(settings);
       } catch (err) {
         console.error('Error loading business settings:', err);

@@ -44,7 +44,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       {title && (
         typeof title === 'string' ? (
           <H1>
-            {getCMSField(cmsData, 'page_header.title', title)}
+            {getCMSField(cmsData, 'page_header-title', title)}
           </H1>
         ) : (
           title
@@ -53,7 +53,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       {subtitle && (
         typeof subtitle === 'string' ? (
           <Text>
-            {getCMSField(cmsData, 'page_header.subtitle', subtitle)}
+            {getCMSField(cmsData, 'page_header-subtitle', subtitle)}
           </Text>
         ) : (
           subtitle

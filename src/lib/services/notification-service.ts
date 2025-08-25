@@ -1,6 +1,6 @@
 // Notification service for alerting administrators about issues
 // Supports multiple notification channels (email, SMS, webhook)
-import { cmsService } from './cms-service';
+import { cmsFlattenedService } from './cms-service';
 import { colors } from '@/design/system/tokens/tokens';
 
 interface NotificationConfig {
@@ -220,7 +220,7 @@ class NotificationService {
 
   // Send Slack notification
   private async sendSlack(notification: NotificationEvent) {
-    const businessSettings = await cmsService.getBusinessSettings();
+    const businessSettings = await cmsFlattenedService.getBusinessSettings();
     try {
       const color = this.getPriorityColor(notification.priority);
       const payload = {

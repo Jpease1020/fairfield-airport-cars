@@ -107,28 +107,28 @@ export default function LoginPage() {
         <Stack spacing="2xl" align="center">
           <Stack spacing="lg" align="center">
             <H1 align="center">
-              {getCMSField(cmsData, 'admin.login.title', '🔐 Admin Login')}
+              {getCMSField(cmsData, 'admin-login-title', '🔐 Admin Login')}
             </H1>
             <Text variant="lead" align="center">
-              {getCMSField(cmsData, 'admin.login.subtitle', 'Enter your credentials to access the admin dashboard')}
+              {getCMSField(cmsData, 'admin-login-subtitle', 'Enter your credentials to access the admin dashboard')}
             </Text>
           </Stack>
           
           <LoginCard variant="elevated" padding="xl" id="login-card">
             <Stack spacing="lg">
               <H2 align="center" id="login-title">
-                {getCMSField(cmsData, 'admin.login.authTitle', 'Admin Authentication')}
+                {getCMSField(cmsData, 'admin-login-authTitle', 'Admin Authentication')}
               </H2>
               
               <Text align="center" color="secondary">
-                {getCMSField(cmsData, 'admin.login.authDesc', 'Sign in to access the admin dashboard')}
+                {getCMSField(cmsData, 'admin-login-authDesc', 'Sign in to access the admin dashboard')}
               </Text>
               
               <LoginForm onSubmit={handleFormSubmit} id="login-form">
                 <Stack spacing="lg">
                   <Stack spacing="sm" align="center">
                     <Label htmlFor="email" id="email-label">
-                      {getCMSField(cmsData, 'admin.login.emailLabel', 'Email Address')}
+                      {getCMSField(cmsData, 'admin-login-emailLabel', 'Email Address')}
                     </Label>
                     <Input
                       id="email"
@@ -145,7 +145,7 @@ export default function LoginPage() {
                   
                   <Stack spacing="sm">
                     <Label htmlFor="password" id="password-label">
-                      {getCMSField(cmsData, 'admin.login.passwordLabel', 'Password')}
+                      {getCMSField(cmsData, 'admin-login-passwordLabel', 'Password')}
                     </Label>
                     <Input
                       id="password"
@@ -162,7 +162,7 @@ export default function LoginPage() {
                   
                   {error && (
                     <Stack direction="horizontal" spacing="sm" align="center">
-                      {getCMSField(cmsData, 'admin.login.errorIcon', '⚠️')}
+                      {getCMSField(cmsData, 'admin-login-errorIcon', '⚠️')}
                       <Text color="error" id="error-message">{error}</Text>
                     </Stack>
                   )}
@@ -176,12 +176,12 @@ export default function LoginPage() {
                     id="sign-in-button"
                     data-testid="sign-in-button"
                   >
-                    {getCMSField(cmsData, 'admin.login.sign_in_button', loading ? '🔄 Signing In...' : '🔐 Sign In')}
+                    {getCMSField(cmsData, 'admin-login-sign_in_button', loading ? '🔄 Signing In...' : '🔐 Sign In')}
                   </Button>
                   
                   <OrDivider id="or-divider">
                     <Text size="sm" color="secondary" id="or-text">
-                      {getCMSField(cmsData, 'admin.login.or_separator', 'or')}
+                      {getCMSField(cmsData, 'admin-login-or_separator', 'or')}
                     </Text>
                   </OrDivider>
                   
@@ -195,7 +195,7 @@ export default function LoginPage() {
                     id="google-sign-in-button"
                     data-testid="google-sign-in-button"
                   >
-                      {getCMSField(cmsData, 'admin.login.google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign In with Google')}
+                      {getCMSField(cmsData, 'admin-login-google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign In with Google')}
                                       </Button>
                 </Stack>
               </LoginForm>

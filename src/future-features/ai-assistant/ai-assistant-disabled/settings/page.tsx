@@ -45,7 +45,7 @@ const AIAssistantSettingsPage = () => {
     return (
       
         <Text>
-          {getCMSField(cmsData, 'aiAssistantSettings.loading', 'Loading...')}
+          {getCMSField(cmsData, 'aiAssistantSettings-loading', 'Loading...')}
         </Text>
       
     );
@@ -60,27 +60,27 @@ const AIAssistantSettingsPage = () => {
             <Text>Current status and available options</Text>
           <Container>
             <H3>
-              {getCMSField(cmsData, 'aiAssistantSettings.featureNotAvailable', '🚫 Feature Not Available')}
+              {getCMSField(cmsData, 'aiAssistantSettings-featureNotAvailable', '🚫 Feature Not Available')}
             </H3>
             <Text>
-              {getCMSField(cmsData, 'aiAssistantSettings.disabledDescription', 'The AI assistant feature is currently disabled for your account. This may be due to:')}
+              {getCMSField(cmsData, 'aiAssistantSettings-disabledDescription', 'The AI assistant feature is currently disabled for your account. This may be due to:')}
             </Text>
             <Stack spacing="sm">
               <Text>
-                {getCMSField(cmsData, 'aiAssistantSettings.subscriptionLimitations', '• Subscription plan limitations')}
+                {getCMSField(cmsData, 'aiAssistantSettings-subscriptionLimitations', '• Subscription plan limitations')}
               </Text>
               <Text>
-                {getCMSField(cmsData, 'aiAssistantSettings.regionalRestrictions', '• Regional availability restrictions')}
+                {getCMSField(cmsData, 'aiAssistantSettings-regionalRestrictions', '• Regional availability restrictions')}
               </Text>
               <Text>
-                {getCMSField(cmsData, 'aiAssistantSettings.systemMaintenance', '• System maintenance or updates')}
+                {getCMSField(cmsData, 'aiAssistantSettings-systemMaintenance', '• System maintenance or updates')}
               </Text>
               <Text>
-                {getCMSField(cmsData, 'aiAssistantSettings.accountConfiguration', '• Account configuration settings')}
+                {getCMSField(cmsData, 'aiAssistantSettings-accountConfiguration', '• Account configuration settings')}
               </Text>
             </Stack>
             <Text>
-              {getCMSField(cmsData, 'aiAssistantSettings.contactSupport', 'Contact support for information about enabling this feature.')}
+              {getCMSField(cmsData, 'aiAssistantSettings-contactSupport', 'Contact support for information about enabling this feature.')}
             </Text>
           </Container>
           </Stack>

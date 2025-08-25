@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { cmsService } from '@/lib/services/cms-service';
-import { CMSConfiguration } from '@/types/cms';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
+// Removed unused import
 
 import { 
   GridSection, 
@@ -19,7 +19,7 @@ import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 function CMSPageContent() {
   const { addToast } = useToast();
-  const [config, setConfig] = useState<CMSConfiguration | null>(null);
+  const [config, setConfig] = useState<any>(null);
 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const { cmsData } = useCMSData();
@@ -29,7 +29,7 @@ function CMSPageContent() {
 
   const loadCMSConfig = async () => {
     try {
-      const cmsConfig = await cmsService.getCMSConfiguration();
+      const cmsConfig = await cmsFlattenedService.getAllCMSData();
       setConfig(cmsConfig);
       if (cmsConfig && cmsConfig.lastUpdated) {
         setLastUpdated(cmsConfig.lastUpdated);
@@ -184,7 +184,7 @@ function CMSPageContent() {
               
               <Stack direction="horizontal" align="center" justify="space-between">
                 <Text>
-                  {getCMSField(cmsData, 'admin.cms.statusLabel', 'Status:')}
+                  {getCMSField(cmsData, 'admin-cms-statusLabel', 'Status:')}
                 </Text>
                 <Text>
                   {section.status}
@@ -235,7 +235,7 @@ function CMSPageContent() {
               <Stack spacing="md">
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Text>
-                    {getCMSField(cmsData, 'admin.cms.lastUpdatedLabel', 'Last Updated')}
+                    {getCMSField(cmsData, 'admin-cms-lastUpdatedLabel', 'Last Updated')}
                   </Text>
                   <Text>
                     {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
@@ -245,7 +245,7 @@ function CMSPageContent() {
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     <Text>
-                      {getCMSField(cmsData, 'admin.cms.configurationStatusLabel', 'Configuration Status')}
+                      {getCMSField(cmsData, 'admin-cms-configurationStatusLabel', 'Configuration Status')}
                     </Text>
                     <Text>
                       {config ? 'Fully Configured' : 'Needs Setup'}
@@ -256,7 +256,7 @@ function CMSPageContent() {
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     <Text>
-                      {getCMSField(cmsData, 'admin.cms.autoSaveLabel', 'Auto-Save')}
+                      {getCMSField(cmsData, 'admin-cms-autoSaveLabel', 'Auto-Save')}
                     </Text>
                     <Text>
                       Enabled

@@ -140,11 +140,11 @@ export default function CustomerLoginPage() {
           <Stack   align="center">
             <Stack    align="center">
               <H1 align="center">
-                {getCMSField(cmsData, 'customer.login.title', 'Welcome Back')}
+                {getCMSField(cmsData, 'customer-login-title', 'Welcome Back')}
               </H1>
               <Stack align="center">
                   <H2 align="center" id="login-title">
-                    {getCMSField(cmsData, 'login.authTitle', 'Sign in to your account to manage your bookings')}
+                    {getCMSField(cmsData, 'login-authTitle', 'Sign in to your account to manage your bookings')}
                   </H2>
                 </Stack>
             </Stack>
@@ -156,7 +156,7 @@ export default function CustomerLoginPage() {
                   <Stack align="center">
                     <Stack>
                       <Label htmlFor="email">
-                        {getCMSField(cmsData, 'customer.login.emailLabel', 'Email Address')}
+                        {getCMSField(cmsData, 'customer-login-emailLabel', 'Email Address')}
                       </Label>
                       <Input
                         id="email"
@@ -171,7 +171,7 @@ export default function CustomerLoginPage() {
 
                     <Stack   >
                       <Label htmlFor="password">
-                        {getCMSField(cmsData, 'customer.login.passwordLabel', 'Password')}
+                        {getCMSField(cmsData, 'customer-login-passwordLabel', 'Password')}
                       </Label>
                       <Input
                         id="password"
@@ -187,7 +187,7 @@ export default function CustomerLoginPage() {
                     {error && (
                       <Stack    align="center">
                         <Text variant="muted" align="center" color="error">
-                          {getCMSField(cmsData, 'customer.login.errorIcon', '⚠️')}
+                          {getCMSField(cmsData, 'customer-login-errorIcon', '⚠️')}
                           {' '}
                           {error}
                         </Text>
@@ -201,12 +201,12 @@ export default function CustomerLoginPage() {
                       disabled={loading}
                       data-testid="signin-button"
                     >
-                      {getCMSField(cmsData, 'customer.login.sign_in_button', loading ? '🔄 Signing In...' : '🔐 Sign In')}
+                      {getCMSField(cmsData, 'customer-login-sign_in_button', loading ? '🔄 Signing In...' : '🔐 Sign In')}
                     </Button>
 
                     <OrDivider>
                       <Text variant="muted">
-                        {getCMSField(cmsData, 'customer.login.or_separator', 'or')}
+                        {getCMSField(cmsData, 'customer-login-or_separator', 'or')}
                       </Text>
                     </OrDivider>
 
@@ -218,7 +218,7 @@ export default function CustomerLoginPage() {
                       disabled={loading}
                       data-testid="google-signin-button"
                     >
-                      {getCMSField(cmsData, 'customer.login.google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign In with Google')}
+                      {getCMSField(cmsData, 'customer-login-google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign In with Google')}
                     </Button>
                   </Stack>
                 </LoginForm>
@@ -226,15 +226,15 @@ export default function CustomerLoginPage() {
             </LoginCard>
 
             <LinkText variant="muted">
-              {getCMSField(cmsData, 'customer.login.no_account', "Don't have an account?")}
+              {getCMSField(cmsData, 'customer-login-no_account', "Don't have an account?")}
               <Link href="/register">
-                {getCMSField(cmsData, 'customer.login.signup_link', 'Sign up')}
+                {getCMSField(cmsData, 'customer-login-signup_link', 'Sign up')}
               </Link>
             </LinkText>
 
             <LinkText variant="muted">
               <Link href="/forgot-password">
-                {getCMSField(cmsData, 'customer.login.forgot_password', 'Forgot your password?')}
+                {getCMSField(cmsData, 'customer-login-forgot_password', 'Forgot your password?')}
               </Link>
             </LinkText>
           </Stack>
