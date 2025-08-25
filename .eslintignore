@@ -59,4 +59,4 @@ docs/
 public/
 
 # Generated files
-*.generated.* 
+*.generated.* temp/

@@ -3,7 +3,7 @@ import { sendSms } from '@/lib/services/twilio-service';
 import { getBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { bookingNotificationService } from '@/lib/services/booking-notification-service';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 export async function POST(request: Request) {
   const { bookingId } = await request.json();
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
 
-    const businessSettings = await cmsService.getBusinessSettings();
+    const businessSettings = await cmsFlattenedService.getBusinessSettings();
     const messageBody = `Thank you for booking with ${businessSettings?.company?.name || 'Fairfield Airport Car Service'}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${new Date(booking.pickupDateTime).toLocaleString()} is confirmed.`;
 
     // Send all notifications in parallel

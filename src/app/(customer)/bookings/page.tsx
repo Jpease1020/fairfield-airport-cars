@@ -115,7 +115,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'pages.bookings.loading.initializing', 'Initializing bookings...')}</Text>
+          <Text>{getCMSField(cmsData, 'initializing', 'Initializing bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -126,7 +126,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'pages.bookings.loading.loading_bookings', 'Loading your bookings...')}</Text>
+          <Text>{getCMSField(cmsData, 'loading_bookings', 'Loading your bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -136,9 +136,9 @@ function CustomerBookingsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">{getCMSField(cmsData, 'pages.bookings.login_required', 'Please log in to view your bookings.')}</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'login_required', 'Please log in to view your bookings.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'pages.bookings.go_to_login', 'Go to Login')}
+            {getCMSField(cmsData, 'go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -164,45 +164,45 @@ function CustomerBookingsPage() {
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1 
-              data-cms-id="pages.bookings.title"
+              data-cms-id="bookings-title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.bookings.title', 'My Bookings')}
+              {getCMSField(cmsData, 'title', 'My Bookings')}
             </H1>
             <Text 
               variant="muted"
-              data-cms-id="pages.bookings.subtitle"
+              data-cms-id="bookings-subtitle"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.bookings.subtitle', 'View and manage your airport rides')}
+              {getCMSField(cmsData, 'subtitle', 'View and manage your airport rides')}
             </Text>
           </Stack>
           <Button 
             onClick={handleBookNewRide} 
             variant="primary"
-            data-cms-id="pages.bookings.book_new_ride"
+            data-cms-id="bookings-book_new_ride"
             interactionMode={mode}
           >
-            {getCMSField(cmsData, 'pages.bookings.book_new_ride', 'Book New Ride')}
+            {getCMSField(cmsData, 'book_new_ride', 'Book New Ride')}
           </Button>
         </Stack>
 
         {/* Bookings List */}
         {bookings.length === 0 ? (
           <ContentCard
-            title={getCMSField(cmsData, 'pages.bookings.no_bookings_title', 'No Bookings Yet')}
+            title={getCMSField(cmsData, 'no_bookings_title', 'No Bookings Yet')}
             content={
               <Stack spacing="lg" align="center">
                 <Text variant="muted" align="center">
-                  {getCMSField(cmsData, 'pages.bookings.no_bookings', "You haven't made any bookings yet. Book your first ride!")}
+                  {getCMSField(cmsData, 'no_bookings', "You haven't made any bookings yet. Book your first ride!")}
                 </Text>
                                       <Button 
                       onClick={handleBookNewRide} 
                       variant="primary"
-                      data-cms-id="pages.bookings.book_first_ride"
+                      data-cms-id="bookings-book_first_ride"
                       interactionMode={mode}
                     >
-                      {getCMSField(cmsData, 'pages.bookings.book_first_ride', 'Book Your First Ride')}
+                      {getCMSField(cmsData, 'book_first_ride', 'Book Your First Ride')}
                     </Button>
               </Stack>
             }
@@ -229,7 +229,7 @@ function CustomerBookingsPage() {
                       size="sm"
                       data-cms-id={`pages.bookings.booking.${booking.id}.viewStatus`}
                     >
-                      {getCMSField(cmsData, 'pages.bookings.booking.viewStatus', 'View Status')}
+                      {getCMSField(cmsData, 'viewStatus', 'View Status')}
                     </Button>
                     <Button
                       onClick={() => router.push(`/manage/${booking.id}`)}
@@ -237,7 +237,7 @@ function CustomerBookingsPage() {
                       size="sm"
                       data-cms-id={`pages.bookings.booking.${booking.id}.manage`}
                     >
-                      {getCMSField(cmsData, 'pages.bookings.booking.manage', 'Manage')}
+                      {getCMSField(cmsData, 'manage', 'Manage')}
                     </Button>
                     {booking.status === 'completed' && (
                       <Button
@@ -246,7 +246,7 @@ function CustomerBookingsPage() {
                         size="sm"
                         data-cms-id={`pages.bookings.booking.${booking.id}.feedback`}
                       >
-                        {getCMSField(cmsData, 'pages.bookings.booking.feedback', 'Leave Feedback')}
+                        {getCMSField(cmsData, 'feedback', 'Leave Feedback')}
                       </Button>
                     )}
                     {booking.status === 'completed' && (booking.balanceDue || 0) > 0 && (
@@ -256,7 +256,7 @@ function CustomerBookingsPage() {
                         size="sm"
                         data-cms-id={`pages.bookings.booking.${booking.id}.payBalance`}
                       >
-                        {getCMSField(cmsData, 'pages.bookings.booking.payBalance', `Pay Balance ($${(booking.balanceDue || 0).toFixed(2)})`)}
+                        {getCMSField(cmsData, 'payBalance', `Pay Balance ($${(booking.balanceDue || 0).toFixed(2)})`)}
                       </Button>
                     )}
                   </Stack>

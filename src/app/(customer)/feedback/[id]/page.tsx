@@ -46,7 +46,7 @@ function FeedbackPageContent() {
         setRating(booking.rating || 0);
         setComment(booking.comment || '');
       } catch (err) {
-        setError(getCMSField(cmsData, 'pages.feedback.errors.loadFailed', 'Failed to load booking details.'));
+        setError(getCMSField(cmsData, 'loadFailed', 'Failed to load booking details.'));
         console.error('Error fetching booking details:', err);
       } finally {
         setLoading(false);
@@ -76,14 +76,14 @@ function FeedbackPageContent() {
 
       if (response.ok) {
         setSubmitted(true);
-        addToast('success', getCMSField(cmsData, 'pages.feedback.messages.success', 'Feedback submitted successfully!'));
+        addToast('success', getCMSField(cmsData, 'success', 'Feedback submitted successfully!'));
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.error || getCMSField(cmsData, 'pages.feedback.errors.submitFailed', 'Failed to submit feedback'));
+        throw new Error(errorData.error || getCMSField(cmsData, 'submitFailed', 'Failed to submit feedback'));
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      addToast('error', getCMSField(cmsData, 'pages.feedback.errors.submitFailed', 'Failed to submit feedback. Please try again.'));
+      addToast('error', getCMSField(cmsData, 'submitFailed', 'Failed to submit feedback. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -91,13 +91,13 @@ function FeedbackPageContent() {
 
   const homeActions = [
     {
-      label: getCMSField(cmsData, 'pages.feedback.actions.bookAnotherRide', 'Book Another Ride'),
+      label: getCMSField(cmsData, 'bookAnotherRide', 'Book Another Ride'),
       onClick: () => window.location.href = '/book',
       variant: 'primary' as const,
       icon: '📅'
     },
     {
-      label: getCMSField(cmsData, 'pages.feedback.actions.goHome', 'Go Home'),
+      label: getCMSField(cmsData, 'goHome', 'Go Home'),
       onClick: () => window.location.href = '/',
       variant: 'secondary' as const,
       icon: '🏠'
@@ -111,8 +111,8 @@ function FeedbackPageContent() {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" data-cms-id="pages.feedback.loading.message" mode={mode}>
-                {getCMSField(cmsData, 'pages.feedback.loading.message', 'Please wait while we fetch your booking details...')}
+              <Text align="center" data-cms-id="feedback-loading-message" mode={mode}>
+                {getCMSField(cmsData, 'message', 'Please wait while we fetch your booking details...')}
               </Text>
             </Stack>
           </Container>
@@ -127,18 +127,18 @@ function FeedbackPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="pages.feedback.error.title" mode={mode}>
-                {getCMSField(cmsData, 'pages.feedback.error.title', 'Unable to Load Booking')}
+              <H1 align="center" data-cms-id="feedback-error-title" mode={mode}>
+                {getCMSField(cmsData, 'title', 'Unable to Load Booking')}
               </H1>
-              <Text align="center" data-cms-id="pages.feedback.error.description" mode={mode}>
-                {getCMSField(cmsData, 'pages.feedback.error.description', 'We could not load your booking details. Please check your booking ID and try again.')}
+              <Text align="center" data-cms-id="feedback-error-description" mode={mode}>
+                {getCMSField(cmsData, 'description', 'We could not load your booking details. Please check your booking ID and try again.')}
               </Text>
               <Button
                 onClick={() => window.location.href = '/bookings'}
                 variant="primary"
-                data-cms-id="pages.feedback.error.viewBookings"
+                data-cms-id="feedback-error-viewBookings"
               >
-                {getCMSField(cmsData, 'pages.feedback.error.viewBookings', 'View My Bookings')}
+                {getCMSField(cmsData, 'viewBookings', 'View My Bookings')}
               </Button>
             </Stack>
           </Container>
@@ -153,11 +153,11 @@ function FeedbackPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="pages.feedback.success.title" mode={mode}>
-                {getCMSField(cmsData, 'pages.feedback.success.title', 'Thank You!')}
+              <H1 align="center" data-cms-id="feedback-success-title" mode={mode}>
+                {getCMSField(cmsData, 'title', 'Thank You!')}
               </H1>
-              <Text align="center" data-cms-id="pages.feedback.success.description" mode={mode}>
-                {getCMSField(cmsData, 'pages.feedback.success.description', 'Your feedback has been submitted successfully. We appreciate your input and will use it to improve our service.')}
+              <Text align="center" data-cms-id="feedback-success-description" mode={mode}>
+                {getCMSField(cmsData, 'description', 'Your feedback has been submitted successfully. We appreciate your input and will use it to improve our service.')}
               </Text>
               <Stack direction="horizontal" spacing="md" align="center">
                 {homeActions.map((action, index) => (
@@ -185,11 +185,11 @@ function FeedbackPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <H1 align="center" data-cms-id="pages.feedback.title" mode={mode}>
-              {getCMSField(cmsData, 'pages.feedback.title', 'Share Your Experience')}
+            <H1 align="center" data-cms-id="feedback-title" mode={mode}>
+              {getCMSField(cmsData, 'title', 'Share Your Experience')}
             </H1>
-            <Text align="center" data-cms-id="pages.feedback.subtitle" mode={mode}>
-              {getCMSField(cmsData, 'pages.feedback.subtitle', `We'd love to hear about your ride for booking #${bookingId}`)}
+            <Text align="center" data-cms-id="feedback-subtitle" mode={mode}>
+              {getCMSField(cmsData, 'subtitle', `We'd love to hear about your ride for booking #${bookingId}`)}
             </Text>
           </Stack>
         </Container>
@@ -205,7 +205,7 @@ function FeedbackPageContent() {
                 <ContentCard content={
                   <Stack spacing="md">
                     <Text variant="muted" size="sm">
-                      {getCMSField(cmsData, 'pages.feedback.rateExperienceDescription', 'How was your ride?')}
+                      {getCMSField(cmsData, 'rateExperienceDescription', 'How was your ride?')}
                     </Text>
                     <Stack direction="horizontal" spacing="sm" align="center">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -227,19 +227,19 @@ function FeedbackPageContent() {
 
                 {/* Comment Section */}
                 <Stack spacing="md">
-                  <Label htmlFor="comment" data-cms-id="pages.feedback.comment.label" mode={mode}>
-                    {getCMSField(cmsData, 'pages.feedback.comment.label', 'Additional Comments (Optional)')}
+                  <Label htmlFor="comment" data-cms-id="feedback-comment-label" mode={mode}>
+                    {getCMSField(cmsData, 'label', 'Additional Comments (Optional)')}
                   </Label>
-                  <Text data-cms-id="pages.feedback.comment.description" mode={mode}>
-                    {getCMSField(cmsData, 'pages.feedback.comment.description', 'Tell us more about your experience, any suggestions, or what we did well')}
+                  <Text data-cms-id="feedback-comment-description" mode={mode}>
+                    {getCMSField(cmsData, 'description', 'Tell us more about your experience, any suggestions, or what we did well')}
                   </Text>
                   <Textarea
                     id="comment"
                     value={comment}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
-                    placeholder={getCMSField(cmsData, 'pages.feedback.comment.placeholder', 'Share your thoughts about your ride experience...')}
+                    placeholder={getCMSField(cmsData, 'placeholder', 'Share your thoughts about your ride experience...')}
                     rows={4}
-                    data-cms-id="pages.feedback.comment.input"
+                    data-cms-id="feedback-comment-input"
                   />
                 </Stack>
 
@@ -250,16 +250,16 @@ function FeedbackPageContent() {
                     variant="primary"
                     size="lg"
                     disabled={rating === 0 || loading}
-                    data-cms-id="pages.feedback.submit.button"
+                    data-cms-id="feedback-submit-button"
                   >
                     {loading ? (
-                      getCMSField(cmsData, 'pages.feedback.submit.loading', 'Submitting...')
+                      getCMSField(cmsData, 'loading', 'Submitting...')
                     ) : (
-                      getCMSField(cmsData, 'pages.feedback.submit.text', 'Submit Feedback')
+                      getCMSField(cmsData, 'text', 'Submit Feedback')
                     )}
                   </Button>
-                  <Text size="sm" variant="muted" data-cms-id="pages.feedback.submit.note" mode={mode}>
-                    {getCMSField(cmsData, 'pages.feedback.submit.note', 'Your feedback helps us improve our service for all customers')}
+                  <Text size="sm" variant="muted" data-cms-id="feedback-submit-note" mode={mode}>
+                    {getCMSField(cmsData, 'note', 'Your feedback helps us improve our service for all customers')}
                   </Text>
                 </Stack>
               </Stack>
@@ -272,8 +272,8 @@ function FeedbackPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="md" align="center">
-            <Text align="center" data-cms-id="pages.feedback.alternatives.title" mode={mode}>
-              {getCMSField(cmsData, 'pages.feedback.alternatives.title', 'Need help with something else?')}
+            <Text align="center" data-cms-id="feedback-alternatives-title" mode={mode}>
+              {getCMSField(cmsData, 'title', 'Need help with something else?')}
             </Text>
             <Stack direction="horizontal" spacing="md" align="center">
               {homeActions.map((action, index) => (

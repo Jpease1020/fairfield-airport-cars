@@ -77,7 +77,7 @@ export default function CommentStatusManager({
         {/* Status Header */}
         <Container variant="elevated" padding="sm">
           <H4>
-            {getCMSField(cmsData, 'commentStatusManager.statusHeader', 'Comment Status')}
+            {getCMSField(cmsData, 'commentStatusManager-statusHeader', 'Comment Status')}
           </H4>
           <Container variant="elevated" padding="xs">
             <StatusBadge status={comment.status} />
@@ -91,7 +91,7 @@ export default function CommentStatusManager({
         <Container variant="elevated" padding="sm">
           <Container variant="elevated" padding="xs">
             <Span variant="default" size="sm">
-              {getCMSField(cmsData, 'commentStatusManager.changeStatus', 'Change Status:')}
+              {getCMSField(cmsData, 'commentStatusManager-changeStatus', 'Change Status:')}
             </Span>
             <Select
               value={comment.status}
@@ -109,7 +109,7 @@ export default function CommentStatusManager({
         {/* Quick Actions */}
         <Container variant="elevated" padding="sm">
           <H4>
-            {getCMSField(cmsData, 'commentStatusManager.quickActions', 'Quick Actions')}
+            {getCMSField(cmsData, 'commentStatusManager-quickActions', 'Quick Actions')}
           </H4>
           <Container variant="elevated" padding="sm">
             <Button
@@ -119,7 +119,7 @@ export default function CommentStatusManager({
               disabled={isEditing}
             >
               <Edit size={16} />
-              {getCMSField(cmsData, 'commentStatusManager.editButton', 'Edit')}
+              {getCMSField(cmsData, 'commentStatusManager-editButton', 'Edit')}
             </Button>
             <Button 
               onClick={handleDelete}
@@ -127,7 +127,7 @@ export default function CommentStatusManager({
               size="sm"
             >
               <Trash2 size={16} />
-              {getCMSField(cmsData, 'commentStatusManager.deleteButton', 'Delete')}
+              {getCMSField(cmsData, 'commentStatusManager-deleteButton', 'Delete')}
             </Button>
           </Container>
         </Container>
@@ -135,7 +135,7 @@ export default function CommentStatusManager({
         {/* Status History */}
         <Container variant="elevated" padding="sm">
           <H4>
-            {getCMSField(cmsData, 'commentStatusManager.history', 'Status History')}
+            {getCMSField(cmsData, 'commentStatusManager-history', 'Status History')}
           </H4>
           <Container variant="elevated" padding="xs">
             <Span variant="default" size="sm" color="muted">
@@ -155,19 +155,19 @@ export default function CommentStatusManager({
         {/* Element Information */}
         <Container variant="elevated" padding="sm">
           <H4>
-            {getCMSField(cmsData, 'commentStatusManager.elementInfo', 'Element Information')}
+            {getCMSField(cmsData, 'commentStatusManager-elementInfo', 'Element Information')}
           </H4>
           <Container variant="elevated" padding="xs">
             <Span variant="default" size="sm">
-              {getCMSField(cmsData, 'commentStatusManager.element', 'Element:')}
+              {getCMSField(cmsData, 'commentStatusManager-element', 'Element:')}
               {comment.elementText}
             </Span>
             <Span variant="default" size="sm">
-              {getCMSField(cmsData, 'commentStatusManager.page', 'Page:')}
+              {getCMSField(cmsData, 'commentStatusManager-page', 'Page:')}
               {comment.pageTitle}
             </Span>
             <Span variant="default" size="sm">
-              {getCMSField(cmsData, 'commentStatusManager.author', 'Author:')}
+              {getCMSField(cmsData, 'commentStatusManager-author', 'Author:')}
               {comment.createdBy}
             </Span>
           </Container>

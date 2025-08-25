@@ -307,8 +307,8 @@ export function SquarePaymentForm({
             data-cms-id="payment.form.submit"
           >
             {isLoading 
-              ? getCMSField(cmsData, 'payment.form.processing', 'Processing...')
-              : getCMSField(cmsData, 'payment.form.submit', `Pay $${(amount / 100).toFixed(2)}`)
+              ? getCMSField(cmsData, 'payment-form-processing', 'Processing...')
+              : getCMSField(cmsData, 'payment-form-submit', `Pay $${(amount / 100).toFixed(2)}`)
             }
           </Button>
         )}

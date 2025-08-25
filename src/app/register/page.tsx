@@ -187,10 +187,10 @@ export default function CustomerRegisterPage() {
           <Stack   align="center">
             <Stack    align="center">
               <H1 align="center">
-                {getCMSField(cmsData, 'customer.register.title', 'Create Your Account')}
+                {getCMSField(cmsData, 'customer-register-title', 'Create Your Account')}
               </H1>
               <Text align="center" variant="muted">
-                {getCMSField(cmsData, 'customer.register.subtitle', 'Sign up to start booking your airport rides')}
+                {getCMSField(cmsData, 'customer-register-subtitle', 'Sign up to start booking your airport rides')}
               </Text>
             </Stack>
 
@@ -198,10 +198,10 @@ export default function CustomerRegisterPage() {
               <Stack>
                 <Stack    align="center">
                   <H2 align="center" id="register-title">
-                    {getCMSField(cmsData, 'customer.register.authTitle', 'Customer Registration')}
+                    {getCMSField(cmsData, 'customer-register-authTitle', 'Customer Registration')}
                   </H2>
                   <Text align="center" variant="muted">
-                    {getCMSField(cmsData, 'customer.register.authDesc', 'Create your account to manage bookings')}
+                    {getCMSField(cmsData, 'customer-register-authDesc', 'Create your account to manage bookings')}
                   </Text>
                 </Stack>
 
@@ -209,7 +209,7 @@ export default function CustomerRegisterPage() {
                   <Stack>
                     <Stack   >
                       <Label htmlFor="name">
-                        {getCMSField(cmsData, 'customer.register.nameLabel', 'Full Name')}
+                        {getCMSField(cmsData, 'customer-register-nameLabel', 'Full Name')}
                       </Label>
                       <Input
                         id="name"
@@ -224,7 +224,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="email">
-                        {getCMSField(cmsData, 'customer.register.emailLabel', 'Email Address')}
+                        {getCMSField(cmsData, 'customer-register-emailLabel', 'Email Address')}
                       </Label>
                       <Input
                         id="email"
@@ -239,7 +239,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="phone">
-                        {getCMSField(cmsData, 'customer.register.phoneLabel', 'Phone Number')}
+                        {getCMSField(cmsData, 'customer-register-phoneLabel', 'Phone Number')}
                       </Label>
                       <Input
                         id="phone"
@@ -254,7 +254,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="password">
-                        {getCMSField(cmsData, 'customer.register.passwordLabel', 'Password')}
+                        {getCMSField(cmsData, 'customer-register-passwordLabel', 'Password')}
                       </Label>
                       <Input
                         id="password"
@@ -269,7 +269,7 @@ export default function CustomerRegisterPage() {
 
                     <Stack   >
                       <Label htmlFor="confirmPassword">
-                        {getCMSField(cmsData, 'customer.register.confirmPasswordLabel', 'Confirm Password')}
+                        {getCMSField(cmsData, 'customer-register-confirmPasswordLabel', 'Confirm Password')}
                       </Label>
                       <Input
                         id="confirmPassword"
@@ -285,7 +285,7 @@ export default function CustomerRegisterPage() {
                     {error && (
                       <Stack    align="center">
                         <Text variant="muted" align="center" color="error">
-                          {getCMSField(cmsData, 'customer.register.errorIcon', '⚠️')}
+                          {getCMSField(cmsData, 'customer-register-errorIcon', '⚠️')}
                           {' '}
                           {error}
                         </Text>
@@ -299,12 +299,12 @@ export default function CustomerRegisterPage() {
                       disabled={loading}
                       data-testid="register-button"
                     >
-                        {getCMSField(cmsData, 'customer.register.sign_up_button', loading ? '🔄 Creating Account...' : '📝 Create Account')}
+                        {getCMSField(cmsData, 'customer-register-sign_up_button', loading ? '🔄 Creating Account...' : '📝 Create Account')}
                     </Button>
 
                     <OrDivider>
                       <Text variant="muted">
-                        {getCMSField(cmsData, 'customer.register.or_separator', 'or')}
+                        {getCMSField(cmsData, 'customer-register-or_separator', 'or')}
                       </Text>
                     </OrDivider>
 
@@ -316,7 +316,7 @@ export default function CustomerRegisterPage() {
                       disabled={loading}
                       data-testid="google-signin-button"
                     >
-                      {getCMSField(cmsData, 'customer.register.google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign Up with Google')}
+                      {getCMSField(cmsData, 'customer-register-google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign Up with Google')}
                     </Button>
                   </Stack>
                 </RegisterForm>
@@ -324,9 +324,9 @@ export default function CustomerRegisterPage() {
             </RegisterCard>
 
             <LinkText variant="muted">
-              {getCMSField(cmsData, 'customer.register.have_account', 'Already have an account?')}
+              {getCMSField(cmsData, 'customer-register-have_account', 'Already have an account?')}
               <Link href="/login">
-                {getCMSField(cmsData, 'customer.register.signin_link', 'Sign in')}
+                {getCMSField(cmsData, 'customer-register-signin_link', 'Sign in')}
               </Link>
             </LinkText>
           </Stack>

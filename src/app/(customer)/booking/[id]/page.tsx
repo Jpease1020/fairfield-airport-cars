@@ -65,7 +65,7 @@ function BookingDetailsContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            {getCMSField(cmsData, 'booking.loading.message', 'Please wait while we fetch your booking details...')}
+            {getCMSField(cmsData, 'booking-loading-message', 'Please wait while we fetch your booking details...')}
           </Container>
         </GridSection>
       </Container>
@@ -77,7 +77,7 @@ function BookingDetailsContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            {getCMSField(cmsData, 'booking.error.description', 'This could be due to an invalid booking ID or a temporary system issue.')}
+            {getCMSField(cmsData, 'booking-error-description', 'This could be due to an invalid booking ID or a temporary system issue.')}
             <ActionButtonGroup buttons={[
               {
                 id: 'try-again',
@@ -105,7 +105,7 @@ function BookingDetailsContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            {getCMSField(cmsData, 'booking.not_found.description', 'The booking you are looking for could not be found.')}
+            {getCMSField(cmsData, 'booking-not_found-description', 'The booking you are looking for could not be found.')}
             <ActionButtonGroup buttons={[
               {
                 id: 'book-new-ride',
@@ -150,26 +150,26 @@ function BookingDetailsContent() {
       {/* Booking Status */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking.status.title', `${getStatusIcon(booking.status)} Booking Status`)}
-          {getCMSField(cmsData, 'booking.status.description', `Your booking is currently ${booking.status}`)}
+          {getCMSField(cmsData, 'booking-status-title', `${getStatusIcon(booking.status)} Booking Status`)}
+          {getCMSField(cmsData, 'booking-status-description', `Your booking is currently ${booking.status}`)}
         </Container>
       </GridSection>
 
       {/* Trip Details */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking.trip_details.title', '📍 Trip Details')}
-          {getCMSField(cmsData, 'booking.trip_details.description', 'Your pickup and dropoff information')}
+          {getCMSField(cmsData, 'booking-trip_details-title', '📍 Trip Details')}
+          {getCMSField(cmsData, 'booking-trip_details-description', 'Your pickup and dropoff information')}
           <Container>
-            {getCMSField(cmsData, 'booking.pickup_location.label', 'Pickup Location:')}
+            {getCMSField(cmsData, 'booking-pickup_location-label', 'Pickup Location:')}
             <Text>{booking.pickupLocation}</Text>
           </Container>
           <Container>
-            {getCMSField(cmsData, 'booking.dropoff_location.label', 'Dropoff Location:')}
+            {getCMSField(cmsData, 'booking-dropoff_location-label', 'Dropoff Location:')}
             <Text>{booking.dropoffLocation}</Text>
           </Container>
           <Container>
-            {getCMSField(cmsData, 'booking.pickup_datetime.label', 'Pickup Date & Time:')}
+            {getCMSField(cmsData, 'booking-pickup_datetime-label', 'Pickup Date & Time:')}
             <Text>{formatDateTime(booking.pickupDateTime)}</Text>
           </Container>
         </Container>
@@ -178,14 +178,14 @@ function BookingDetailsContent() {
       {/* Passenger Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-            {getCMSField(cmsData, 'booking.passenger_info.title', '👤 Passenger Information')}
-          {getCMSField(cmsData, 'booking.passenger_info.description', 'Your contact details for this booking')}
+            {getCMSField(cmsData, 'booking-passenger_info-title', '👤 Passenger Information')}
+          {getCMSField(cmsData, 'booking-passenger_info-description', 'Your contact details for this booking')}
           <Container spacing="lg">
-            {getCMSField(cmsData, 'booking.passenger_name.label', 'Passenger:')}
+            {getCMSField(cmsData, 'booking-passenger_name-label', 'Passenger:')}
             <Text>{booking.name}</Text>
-            {getCMSField(cmsData, 'booking.passenger_phone.label', 'Phone:')}
+            {getCMSField(cmsData, 'booking-passenger_phone-label', 'Phone:')}
             <Text>{booking.phone}</Text>
-            {getCMSField(cmsData, 'booking.passenger_email.label', 'Email:')}
+            {getCMSField(cmsData, 'booking-passenger_email-label', 'Email:')}
             <Text>{booking.email}</Text>
           </Container>
         </Container>
@@ -194,12 +194,12 @@ function BookingDetailsContent() {
       {/* Fare Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking.fare_info.title', '💰 Fare Information')}
-          {getCMSField(cmsData, 'booking.fare_info.description', 'Payment details for your trip')}
+          {getCMSField(cmsData, 'booking-fare_info-title', '💰 Fare Information')}
+          {getCMSField(cmsData, 'booking-fare_info-description', 'Payment details for your trip')}
           <Container spacing="md">
-            {getCMSField(cmsData, 'booking.total_fare.label', 'Total Fare:')}
+            {getCMSField(cmsData, 'booking-total_fare-label', 'Total Fare:')}
             <Text>
-              {getCMSField(cmsData, 'booking.fare_info.includes_fees', 'Includes all fees and taxes')}
+              {getCMSField(cmsData, 'booking-fare_info-includes_fees', 'Includes all fees and taxes')}
             </Text>
             <Text size="lg">
               ${booking.fare?.toFixed(2)}
@@ -211,8 +211,8 @@ function BookingDetailsContent() {
       {/* Actions */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking.quick_actions.title', '🎯 Quick Actions')}
-          {getCMSField(cmsData, 'booking.quick_actions.description', 'Manage your booking or book another ride')}
+          {getCMSField(cmsData, 'booking-quick_actions-title', '🎯 Quick Actions')}
+          {getCMSField(cmsData, 'booking-quick_actions-description', 'Manage your booking or book another ride')}
           <ActionButtonGroup buttons={actionButtons} />
         </Container>
       </GridSection>

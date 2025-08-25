@@ -47,7 +47,7 @@ function AdminBookingsPageContent() {
       }
     } catch (err) {
       console.error('❌ Error fetching bookings from database:', err);
-      setError(getCMSField(cmsData, 'admin.bookings.error.loadBookingsFailed', 'Failed to load bookings from database'));
+      setError(getCMSField(cmsData, 'admin-bookings-error-loadBookingsFailed', 'Failed to load bookings from database'));
     } finally {
       setLoading(false);
     }
@@ -69,7 +69,7 @@ function AdminBookingsPageContent() {
       
     } catch (err) {
       console.error('❌ Error updating booking status:', err);
-      setError(getCMSField(cmsData, 'admin.bookings.error.updateStatusFailed', 'Failed to update booking status'));
+      setError(getCMSField(cmsData, 'admin-bookings-error-updateStatusFailed', 'Failed to update booking status'));
     }
   };
 
@@ -83,7 +83,7 @@ function AdminBookingsPageContent() {
       
     } catch (err) {
       console.error('❌ Error deleting booking:', err);
-      setError(getCMSField(cmsData, 'admin.bookings.error.deleteBookingFailed', 'Failed to delete booking'));
+      setError(getCMSField(cmsData, 'admin-bookings-error-deleteBookingFailed', 'Failed to delete booking'));
     }
   };
 
@@ -118,7 +118,7 @@ function AdminBookingsPageContent() {
       
     } catch (err) {
       console.error('❌ Error assigning driver:', err);
-      setError(getCMSField(cmsData, 'admin.bookings.error.assignDriverFailed', 'Failed to assign driver'));
+      setError(getCMSField(cmsData, 'admin-bookings-error-assignDriverFailed', 'Failed to assign driver'));
     }
   };
 
@@ -230,7 +230,7 @@ function AdminBookingsPageContent() {
           data-cms-id="admin.bookings.sections.table.actions.confirm"
           interactionMode={mode}
         >
-          {getCMSField(cmsData, 'admin.bookings.sections.table.actions.confirm', 'Confirm')}
+          {getCMSField(cmsData, 'admin-bookings-sections-table-actions-confirm', 'Confirm')}
         </Button>
         <Button 
           size="sm" 
@@ -240,7 +240,7 @@ function AdminBookingsPageContent() {
           data-cms-id="admin.bookings.sections.table.actions.assignDriver"
           interactionMode={mode}
         >
-          {getCMSField(cmsData, 'admin.bookings.sections.table.actions.assignDriver', 'Assign Driver')}
+          {getCMSField(cmsData, 'admin-bookings-sections-table-actions-assignDriver', 'Assign Driver')}
         </Button>
         <Button 
           size="sm" 
@@ -249,7 +249,7 @@ function AdminBookingsPageContent() {
           data-cms-id="admin.bookings.sections.table.actions.delete"
           interactionMode={mode}
         >
-          {getCMSField(cmsData, 'admin.bookings.sections.table.actions.delete', 'Delete')}
+          {getCMSField(cmsData, 'admin-bookings-sections-table-actions-delete', 'Delete')}
         </Button>
       </Stack>
     )
@@ -261,7 +261,7 @@ function AdminBookingsPageContent() {
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
-            <Text>{getCMSField(cmsData, 'admin.bookings.loading.loadingBookings', 'Loading bookings from database...')}</Text>
+            <Text>{getCMSField(cmsData, 'admin-bookings-loading-loadingBookings', 'Loading bookings from database...')}</Text>
           </Stack>
         </Container>
      
@@ -286,17 +286,17 @@ function AdminBookingsPageContent() {
         {/* Status Filter */}
         <Stack spacing="sm">
           <Text variant="small" weight="medium" data-cms-id="admin.bookings.sections.filter.title" mode={mode}>
-            {getCMSField(cmsData, 'admin.bookings.sections.filter.title', 'Filter by Status')}
+            {getCMSField(cmsData, 'admin-bookings-sections-filter-title', 'Filter by Status')}
           </Text>
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="all">{getCMSField(cmsData, 'admin.bookings.sections.filter.allBookings', 'All Bookings')}</option>
-            <option value="pending">{getCMSField(cmsData, 'admin.bookings.sections.filter.pending', 'Pending')}</option>
-            <option value="confirmed">{getCMSField(cmsData, 'admin.bookings.sections.filter.confirmed', 'Confirmed')}</option>
-            <option value="completed">{getCMSField(cmsData, 'admin.bookings.sections.filter.completed', 'Completed')}</option>
-            <option value="cancelled">{getCMSField(cmsData, 'admin.bookings.sections.filter.cancelled', 'Cancelled')}</option>
+            <option value="all">{getCMSField(cmsData, 'admin-bookings-sections-filter-allBookings', 'All Bookings')}</option>
+            <option value="pending">{getCMSField(cmsData, 'admin-bookings-sections-filter-pending', 'Pending')}</option>
+            <option value="confirmed">{getCMSField(cmsData, 'admin-bookings-sections-filter-confirmed', 'Confirmed')}</option>
+            <option value="completed">{getCMSField(cmsData, 'admin-bookings-sections-filter-completed', 'Completed')}</option>
+            <option value="cancelled">{getCMSField(cmsData, 'admin-bookings-sections-filter-cancelled', 'Cancelled')}</option>
           </select>
         </Stack>
 
@@ -307,7 +307,7 @@ function AdminBookingsPageContent() {
               <Text size="xl">📋</Text>
               <Stack spacing="xs">
                 <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.totalBookings" mode={mode}>
-                  {getCMSField(cmsData, 'admin.bookings.sections.stats.totalBookings', 'Total Bookings')}
+                  {getCMSField(cmsData, 'admin-bookings-sections-stats-totalBookings', 'Total Bookings')}
                 </Text>
                 <Text size="xl" weight="bold">{stats.totalBookings}</Text>
               </Stack>
@@ -319,7 +319,7 @@ function AdminBookingsPageContent() {
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
                 <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.confirmed" mode={mode}>
-                  {getCMSField(cmsData, 'admin.bookings.sections.stats.confirmed', 'Confirmed')}
+                  {getCMSField(cmsData, 'admin-bookings-sections-stats-confirmed', 'Confirmed')}
                 </Text>
                 <Text size="xl" weight="bold">{stats.confirmedBookings}</Text>
               </Stack>
@@ -331,7 +331,7 @@ function AdminBookingsPageContent() {
               <Text size="xl">🚗</Text>
               <Stack spacing="xs">
                 <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.inProgress" mode={mode}>
-                  {getCMSField(cmsData, 'admin.bookings.sections.stats.inProgress', 'In Progress')}
+                  {getCMSField(cmsData, 'admin-bookings-sections-stats-inProgress', 'In Progress')}
                 </Text>
                 <Text size="xl" weight="bold">{stats.inProgressBookings}</Text>
               </Stack>
@@ -343,7 +343,7 @@ function AdminBookingsPageContent() {
               <Text size="xl">💰</Text>
               <Stack spacing="xs">
                 <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.totalRevenue" mode={mode}>
-                  {getCMSField(cmsData, 'admin.bookings.sections.stats.totalRevenue', 'Total Revenue')}
+                  {getCMSField(cmsData, 'admin-bookings-sections-stats-totalRevenue', 'Total Revenue')}
                 </Text>
                 <Text size="xl" weight="bold">{formatCurrency(stats.totalRevenue)}</Text>
               </Stack>
@@ -357,10 +357,10 @@ function AdminBookingsPageContent() {
             <Stack spacing="md" align="center">
               <Text size="xl">📭</Text>
               <Text size="lg" weight="medium" data-cms-id="admin.bookings.sections.table.noBookings.title" mode={mode}>
-                {getCMSField(cmsData, 'admin.bookings.sections.table.noBookings.title', 'No Bookings Found')}
+                {getCMSField(cmsData, 'admin-bookings-sections-table-noBookings-title', 'No Bookings Found')}
               </Text>
               <Text variant="body" color="secondary" data-cms-id="admin.bookings.sections.table.noBookings.description" mode={mode}>
-                {getCMSField(cmsData, 'admin.bookings.sections.table.noBookings.description', 'No bookings match your current filter criteria.')}
+                {getCMSField(cmsData, 'admin-bookings-sections-table-noBookings-description', 'No bookings match your current filter criteria.')}
               </Text>
             </Stack>
           </Box>
@@ -368,12 +368,12 @@ function AdminBookingsPageContent() {
           <DataTable
             data={tableData}
             columns={[
-              { key: 'customer', label: getCMSField(cmsData, 'admin.bookings.sections.table.columns.customer', 'Customer') },
-              { key: 'route', label: getCMSField(cmsData, 'admin.bookings.sections.table.columns.route', 'Route') },
-              { key: 'dateTime', label: getCMSField(cmsData, 'admin.bookings.sections.table.columns.dateTime', 'Date & Time') },
-              { key: 'status', label: getCMSField(cmsData, 'admin.bookings.sections.table.columns.status', 'Status') },
-              { key: 'fare', label: getCMSField(cmsData, 'admin.bookings.sections.table.columns.fare', 'Fare') },
-              { key: 'actions', label: getCMSField(cmsData, 'admin.bookings.sections.table.columns.actions', 'Actions') }
+              { key: 'customer', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-customer', 'Customer') },
+              { key: 'route', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-route', 'Route') },
+              { key: 'dateTime', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-dateTime', 'Date & Time') },
+              { key: 'status', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-status', 'Status') },
+              { key: 'fare', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-fare', 'Fare') },
+              { key: 'actions', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-actions', 'Actions') }
             ]}
           />
         )}

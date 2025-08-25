@@ -16,23 +16,23 @@ export const Footer: React.FC = () => {
 
   const footerLinks = [
     { 
-      label: getCMSField(cmsData, 'footer.links.about.label', 'About'), 
+      label: getCMSField(cmsData, 'footer-links-about-label', 'About'), 
       href: '/about' 
     },
     { 
-      label: getCMSField(cmsData, 'footer.links.help.label', 'Help'), 
+      label: getCMSField(cmsData, 'footer-links-help-label', 'Help'), 
       href: '/help' 
     },
     { 
-      label: getCMSField(cmsData, 'footer.links.privacy.label', 'Privacy'), 
+      label: getCMSField(cmsData, 'footer-links-privacy-label', 'Privacy'), 
       href: '/privacy' 
     },
     { 
-      label: getCMSField(cmsData, 'footer.links.terms.label', 'Terms'), 
+      label: getCMSField(cmsData, 'footer-links-terms-label', 'Terms'), 
       href: '/terms' 
     },
     { 
-      label: getCMSField(cmsData, 'footer.links.contact.label', 'Contact'), 
+      label: getCMSField(cmsData, 'footer-links-contact-label', 'Contact'), 
       href: '/contact' 
     },
   ];
@@ -55,7 +55,7 @@ export const Footer: React.FC = () => {
               data-cms-id="footer.companyName"
               mode={mode}
             >
-              {getCMSField(cmsData, 'footer.companyName', 'Fairfield Airport Cars')} {getCMSField(cmsData, 'footer.licensed', '✅ Licensed & Insured')}
+              {getCMSField(cmsData, 'footer-companyName', 'Fairfield Airport Cars')} {getCMSField(cmsData, 'footer-licensed', '✅ Licensed & Insured')}
             </Text>
           </Stack>
           <Stack 
@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
                   data-cms-id="footer.phone"
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'footer.phone', 'Contact support for phone number')}
+                  {getCMSField(cmsData, 'footer-phone', 'Contact support for phone number')}
                 </Text>
                 <Text 
                   size="sm" 
@@ -80,7 +80,7 @@ export const Footer: React.FC = () => {
                   data-cms-id="footer.email"
                   mode={mode}
                 >
-                  {getCMSField(cmsData, 'footer.email', '✉️ rides@fairfieldairportcars.com')}
+                  {getCMSField(cmsData, 'footer-email', '✉️ rides@fairfieldairportcars.com')}
                 </Text>
               </Stack>
 
@@ -109,7 +109,7 @@ export const Footer: React.FC = () => {
                 data-cms-id="footer.copyright"
                 mode={mode}
               >
-                {getCMSField(cmsData, 'footer.copyright', `© ${currentYear} Fairfield Airport Cars. All rights reserved.`)}
+                {getCMSField(cmsData, 'footer-copyright', `© ${currentYear} Fairfield Airport Cars. All rights reserved.`)}
               </Text>
             </Stack>
           </Stack>          

@@ -74,8 +74,8 @@ export function PaymentPhase({
         {/* Trip Summary */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="pages.booking.payment.tripSummary" mode={mode}>
-              {getCMSField(cmsData, 'pages.booking.payment.tripSummary', 'Trip Summary')}
+            <H2 align="center" data-cms-id="booking-payment-tripSummary" mode={mode}>
+              {getCMSField(cmsData, 'tripSummary', 'Trip Summary')}
             </H2>
             
             <Box variant="outlined" padding="md">
@@ -104,8 +104,8 @@ export function PaymentPhase({
         {/* Tip Calculator */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="pages.booking.payment.tip" mode={mode}>
-              {getCMSField(cmsData, 'pages.booking.payment.tip', 'Add a Tip')}
+            <H2 align="center" data-cms-id="booking-payment-tip" mode={mode}>
+              {getCMSField(cmsData, 'tip', 'Add a Tip')}
             </H2>
             
             <TipCalculator
@@ -123,8 +123,8 @@ export function PaymentPhase({
         {/* Deposit Information */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="pages.booking.payment.deposit" mode={mode}>
-              {getCMSField(cmsData, 'pages.booking.payment.deposit', 'Deposit Required')}
+            <H2 align="center" data-cms-id="booking-payment-deposit" mode={mode}>
+              {getCMSField(cmsData, 'deposit', 'Deposit Required')}
             </H2>
             
             <Box variant="outlined" padding="md">
@@ -145,7 +145,7 @@ export function PaymentPhase({
             </Box>
             
             <Text size="sm" color="secondary" align="center">
-              {getCMSField(cmsData, 'pages.booking.payment.depositNote', 'A 20% deposit is required to confirm your booking. The remaining balance will be due before your trip.')}
+              {getCMSField(cmsData, 'depositNote', 'A 20% deposit is required to confirm your booking. The remaining balance will be due before your trip.')}
             </Text>
           </Stack>
         </Box>
@@ -154,12 +154,12 @@ export function PaymentPhase({
         {showPaymentForm ? (
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center" data-cms-id="pages.booking.payment.form.title" mode={mode}>
-                {getCMSField(cmsData, 'pages.booking.payment.form.title', 'Payment Information')}
+              <H2 align="center" data-cms-id="booking-payment-form-title" mode={mode}>
+                {getCMSField(cmsData, 'title', 'Payment Information')}
               </H2>
               
               <Text size="sm" color="secondary" align="center">
-                {getCMSField(cmsData, 'pages.booking.payment.form.description', 'Enter your payment details to complete your deposit payment.')}
+                {getCMSField(cmsData, 'description', 'Enter your payment details to complete your deposit payment.')}
               </Text>
               
               <SquarePaymentForm
@@ -209,7 +209,7 @@ export function PaymentPhase({
             fullWidth
             data-testid="back-to-contact-info-button"
           >
-            {getCMSField(cmsData, 'pages.booking.steps.back', 'Back to Contact Info')}
+            {getCMSField(cmsData, 'back', 'Back to Contact Info')}
           </Button>
         </Stack>
       </Stack>

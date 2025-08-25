@@ -111,7 +111,7 @@ export function TripDetailsPhase({
   return (
     <Container maxWidth="4xl" padding="xl">
       <Stack spacing="xl">
-        <H2 align="center" data-cms-id="pages.booking.trip.title">
+        <H2 align="center" data-cms-id="booking-trip-title">
           {cmsData?.['pages.booking.trip.title'] || 'Trip Details'}
         </H2>
 

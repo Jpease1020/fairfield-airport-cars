@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { 
   Container,
   Button,
@@ -173,7 +173,7 @@ function AddContentUtilityPage() {
 
     try {
       // Get current CMS configuration
-      const currentConfig = await cmsService.getCMSConfiguration();
+      const currentConfig = await cmsFlattenedService.getAllCMSData();
       
       if (!currentConfig) {
         throw new Error('No CMS configuration found');
@@ -193,7 +193,7 @@ function AddContentUtilityPage() {
       };
 
       // Save to database
-      const result = await cmsService.updateCMSConfiguration(updatedConfig);
+              const result = await cmsFlattenedService.updatePageContent('utility', updatedConfig);
       
       if (result.success) {
         setSuccess('Successfully added missing content to the database!');
@@ -219,7 +219,7 @@ function AddContentUtilityPage() {
               <Stack spacing="md">
                 <Text size="lg" weight="bold">⚠️ Utility Tool</Text>
                 <Text variant="muted">This is a utility tool to add missing content. For regular content editing, use the main CMS interface.</Text>
-                  {getCMSField(cmsData, 'admin.addContent.utility.description', 'This tool will add missing content to the database, including:')}
+                  {getCMSField(cmsData, 'admin-addContent-utility-description', 'This tool will add missing content to the database, including:')}
                 <Stack spacing="sm">
                   <Container>• Success page messages and titles</Container>
                   <Container>• Help page sections and FAQ</Container>
@@ -251,7 +251,7 @@ function AddContentUtilityPage() {
             disabled={loading}
             variant="primary"
           >
-            {getCMSField(cmsData, 'admin.addContent.utility.button', loading ? 'Adding Content...' : 'Add Missing Content')}
+            {getCMSField(cmsData, 'admin-addContent-utility-button', loading ? 'Adding Content...' : 'Add Missing Content')}
           </Button>
         </Stack>
       </Container>

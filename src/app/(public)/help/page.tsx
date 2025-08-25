@@ -8,7 +8,7 @@ import {
   Button,
   Box
 } from '@/ui';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 import Link from 'next/link';
 
@@ -18,8 +18,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata() {
-  const cmsData = await cmsService.getCMSConfiguration();
-  const helpData = cmsData?.pages?.help;
+  const helpData = await cmsFlattenedService.getPageContent('help');
   
   return {
     title: helpData?.title || 'Help & FAQs - Fairfield Airport Cars',
@@ -29,9 +28,9 @@ export async function generateMetadata() {
 }
 
 // Get CMS data at build time
-async function getCMSData(): Promise<CMSConfiguration | null> {
+async function getCMSData(): Promise<any> {
   try {
-    return await cmsService.getCMSConfiguration();
+    return await cmsFlattenedService.getPageContent('help');
   } catch (error) {
     console.error('Failed to load CMS data at build time:', error);
     return null;
@@ -54,13 +53,9 @@ function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = '')
     return cur;
   };
 
-  const directParts = fieldPath.split('.');
-  let value = resolvePath(cmsData, directParts);
-
-  if (value === undefined && directParts[0] !== 'pages') {
-    const fallbackParts = ['pages', ...directParts];
-    value = resolvePath(cmsData, fallbackParts);
-  }
+  // Remove 'pages.' prefix since we're now getting page content directly
+  const cleanPath = fieldPath.replace(/^pages\./, '');
+  const value = resolvePath(cmsData, cleanPath.split('.'));
 
   return typeof value === 'string' ? (value as string) : defaultValue;
 }
@@ -75,17 +70,17 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <H1 
               align="center" 
               data-testid="help-title"
-              data-cms-id="pages.help.hero.title"
+              data-cms-id="help-hero-title"
             >
-              {getCMSField(cmsData, 'pages.help.hero.title', 'Help & FAQs')}
+              {getCMSField(cmsData, 'title', 'Help & FAQs')}
             </H1>
             <Text 
               variant="lead" 
               align="center" 
               size="lg"
-              data-cms-id="pages.help.hero.subtitle"
+              data-cms-id="help-hero-subtitle"
             >
-              {getCMSField(cmsData, 'pages.help.hero.subtitle', 'Find answers to common questions about our service')}
+              {getCMSField(cmsData, 'subtitle', 'Find answers to common questions about our service')}
             </Text>
           </Stack>
         </Stack>
@@ -94,9 +89,9 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
       <Container maxWidth="2xl" data-testid="help-content">
         <Stack spacing="lg" align="center">
           <H2 
-            data-cms-id="pages.help.quickAnswers.title"
+            data-cms-id="help-quickAnswers-title"
           >
-            {getCMSField(cmsData, 'pages.help.quickAnswers.title', 'Quick Answers')}
+            {getCMSField(cmsData, 'title', 'Quick Answers')}
           </H2>
         </Stack>
         
@@ -104,14 +99,14 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Box variant="elevated" padding="lg" data-testid="faq-item-0">
             <Stack spacing="md">
               <H2 
-                                  data-cms-id="pages.help.quickAnswers.items.0.question"
+                                  data-cms-id="help-quickAnswers-items-0-question"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.question', 'How far in advance should I book?')}
+                {getCMSField(cmsData, 'question', 'How far in advance should I book?')}
               </H2>
               <Text 
-                                  data-cms-id="pages.help.quickAnswers.items.0.answer"
+                                  data-cms-id="help-quickAnswers-items-0-answer"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.0.answer', 'We recommend booking at least 24 hours in advance for airport rides.')}
+                {getCMSField(cmsData, 'answer', 'We recommend booking at least 24 hours in advance for airport rides.')}
               </Text>
             </Stack>
           </Box>
@@ -119,14 +114,14 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Box variant="elevated" padding="lg" data-testid="faq-item-1">
             <Stack spacing="md">
               <H2 
-                                  data-cms-id="pages.help.quickAnswers.items.1.question"
+                                  data-cms-id="help-quickAnswers-items-1-question"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.question', 'What is your cancellation policy?')}
+                {getCMSField(cmsData, 'question', 'What is your cancellation policy?')}
               </H2>
               <Text 
-                                  data-cms-id="pages.help.quickAnswers.items.1.answer"
+                                  data-cms-id="help-quickAnswers-items-1-answer"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.1.answer', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations 3-24 hours before receive 50% refund.')}
+                {getCMSField(cmsData, 'answer', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations 3-24 hours before receive 50% refund.')}
               </Text>
             </Stack>
           </Box>
@@ -134,14 +129,14 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Box variant="elevated" padding="lg" data-testid="faq-item-2">
             <Stack spacing="md">
               <H2 
-                                  data-cms-id="pages.help.quickAnswers.items.2.question"
+                                  data-cms-id="help-quickAnswers-items-2-question"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.2.question', 'Do you track flights?')}
+                {getCMSField(cmsData, 'question', 'Do you track flights?')}
               </H2>
               <Text 
-                                  data-cms-id="pages.help.quickAnswers.items.2.answer"
+                                  data-cms-id="help-quickAnswers-items-2-answer"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.2.answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
+                {getCMSField(cmsData, 'answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
               </Text>
             </Stack>
           </Box>
@@ -149,14 +144,14 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Box variant="elevated" padding="lg" data-testid="faq-item-3">
             <Stack spacing="md">
               <H2 
-                                  data-cms-id="pages.help.quickAnswers.items.3.question"
+                                  data-cms-id="help-quickAnswers-items-3-question"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.3.question', 'What payment methods do you accept?')}
+                {getCMSField(cmsData, 'question', 'What payment methods do you accept?')}
               </H2>
               <Text 
-                                  data-cms-id="pages.help.quickAnswers.items.3.answer"
+                                  data-cms-id="help-quickAnswers-items-3-answer"
               >
-                {getCMSField(cmsData, 'pages.help.quickAnswers.items.3.answer', 'All major credit cards, debit cards, and cash payments.')}
+                {getCMSField(cmsData, 'answer', 'All major credit cards, debit cards, and cash payments.')}
               </Text>
             </Stack>
           </Box>
@@ -166,43 +161,43 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
       <Container maxWidth="2xl">
         <Stack spacing="lg" align="center">
           <H2 
-            data-cms-id="pages.help.contact.title"
+            data-cms-id="help-contact-title"
           >
-            {getCMSField(cmsData, 'pages.help.contact.title', 'Need More Help?')}
+            {getCMSField(cmsData, 'title', 'Need More Help?')}
           </H2>
           <Text 
             variant="lead" 
             align="center"
-            data-cms-id="pages.help.contact.subtitle"
+            data-cms-id="help-contact-subtitle"
           >
-            {getCMSField(cmsData, 'pages.help.contact.subtitle', 'Contact our support team')}
+            {getCMSField(cmsData, 'subtitle', 'Contact our support team')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
                             <Link href="tel:contactsupport">
               <Button
                 variant="primary"
-                data-cms-id="pages.help.contact.primaryButton"
+                data-cms-id="help-contact-primaryButton"
               >
-                {getCMSField(cmsData, 'pages.help.contact.primaryButton', 'Call Support')}
+                {getCMSField(cmsData, 'primaryButton', 'Call Support')}
               </Button>
             </Link>
             
                             <Link href="mailto:contactsupport">
               <Button
                 variant="secondary"
-                data-cms-id="pages.help.contact.secondaryButton"
+                data-cms-id="help-contact-secondaryButton"
               >
-                {getCMSField(cmsData, 'pages.help.contact.secondaryButton', 'Email Support')}
+                {getCMSField(cmsData, 'secondaryButton', 'Email Support')}
               </Button>
             </Link>
             
             <Link href="/book">
               <Button
                 variant="outline"
-                data-cms-id="pages.help.contact.tertiaryButton"
+                data-cms-id="help-contact-tertiaryButton"
               >
-                {getCMSField(cmsData, 'pages.help.contact.tertiaryButton', 'Book a Ride')}
+                {getCMSField(cmsData, 'tertiaryButton', 'Book a Ride')}
               </Button>
             </Link>
           </Stack>

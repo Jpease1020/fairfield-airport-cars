@@ -1,5 +1,5 @@
 import { Container, Stack, Box, H1, H2, Text, Grid, GridItem, Button, Input, Label, Textarea } from '@/ui';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 // Load CMS data at build time for instant page loads
 export async function generateStaticParams() {
@@ -7,8 +7,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata() {
-  const cmsData = await cmsService.getCMSConfiguration();
-  const contactData = (cmsData?.pages as any)?.contact;
+  const contactData = await cmsFlattenedService.getPageContent('contact');
   
   return {
     title: contactData?.title || 'Contact Us - Fairfield Airport Cars',
@@ -18,8 +17,7 @@ export async function generateMetadata() {
 }
 
 export default async function ContactPage() {
-  const cmsData = await cmsService.getCMSConfiguration();
-  const contactData = (cmsData?.pages as any)?.contact;
+  const contactData = await cmsFlattenedService.getPageContent('contact');
 
   return (
     <Container>

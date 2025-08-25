@@ -6,7 +6,7 @@ import {
   H4,
   Text
 } from '@/ui';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 
 // Load CMS data at build time for instant page loads
@@ -15,8 +15,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata() {
-  const cmsData = await cmsService.getCMSConfiguration();
-  const termsData = cmsData?.pages?.terms;
+  const termsData = await cmsFlattenedService.getPageContent('terms');
   
   return {
     title: termsData?.title || 'Terms of Service - Fairfield Airport Cars',
@@ -26,9 +25,9 @@ export async function generateMetadata() {
 }
 
 // Get CMS data at build time
-async function getCMSData(): Promise<CMSConfiguration | null> {
+async function getCMSData(): Promise<any> {
   try {
-    return await cmsService.getCMSConfiguration();
+    return await cmsFlattenedService.getPageContent('terms');
   } catch (error) {
     console.error('Failed to load CMS data at build time:', error);
     return null;
@@ -72,18 +71,18 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <H1 
               align="center" 
               data-testid="terms-title"
-              data-cms-id="pages.terms.title"
+              data-cms-id="terms-title"
             >
-              {getCMSField(cmsData, 'pages.terms.title', 'Terms of Service')}
+              {getCMSField(cmsData, 'title', 'Terms of Service')}
             </H1>
             <Text 
               variant="lead" 
               align="center" 
               size="lg" 
               data-testid="terms-last-updated"
-              data-cms-id="pages.terms.lastUpdated"
+              data-cms-id="terms-lastUpdated"
             >
-              {getCMSField(cmsData, 'pages.terms.lastUpdated', 'Last Updated: January 2025')}
+              {getCMSField(cmsData, 'lastUpdated', 'Last Updated: January 2025')}
             </Text>
           </Stack>
         </Stack>
@@ -94,70 +93,70 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
         <Stack spacing="lg">
           <Text 
             data-testid="terms-intro"
-            data-cms-id="pages.terms.intro"
+            data-cms-id="terms-intro"
           >
-            {getCMSField(cmsData, 'pages.terms.intro', 'By using our services, you agree to our terms of service. We reserve the right to modify these terms at any time. Please review them periodically.')}
+            {getCMSField(cmsData, 'intro', 'By using our services, you agree to our terms of service. We reserve the right to modify these terms at any time. Please review them periodically.')}
           </Text>
           
           <Text 
             data-testid="terms-service-description"
-            data-cms-id="pages.terms.serviceDescription"
+            data-cms-id="terms-serviceDescription"
           >
-            {getCMSField(cmsData, 'pages.terms.serviceDescription', 'Our airport transportation service is designed to provide reliable, comfortable rides to and from major airports in the New York and Connecticut area.')}
+            {getCMSField(cmsData, 'serviceDescription', 'Our airport transportation service is designed to provide reliable, comfortable rides to and from major airports in the New York and Connecticut area.')}
           </Text>
           
           <Stack data-testid="terms-sections-list" spacing="lg">
             <Box data-testid="terms-section-0">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-0" data-cms-id="pages.terms.sections.0.title">
-                  {getCMSField(cmsData, 'pages.terms.sections.0.title', 'Service Description')}
+                <H4 data-testid="terms-section-title-0" data-cms-id="terms-sections-0-title">
+                  {getCMSField(cmsData, 'title', 'Service Description')}
                 </H4>
-                <Text data-testid="terms-section-content-0" data-cms-id="pages.terms.sections.0.content">
-                                      {getCMSField(cmsData, 'pages.terms.sections.0.content', 'We provide professional airport transportation services with licensed drivers and well-maintained vehicles. Our service includes flight monitoring and flexible pickup times.')}
+                <Text data-testid="terms-section-content-0" data-cms-id="terms-sections-0-content">
+                                      {getCMSField(cmsData, 'content', 'We provide professional airport transportation services with licensed drivers and well-maintained vehicles. Our service includes flight monitoring and flexible pickup times.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-1">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-1" data-cms-id="pages.terms.sections.1.title">
-                  {getCMSField(cmsData, 'pages.terms.sections.1.title', 'Booking and Payment')}
+                <H4 data-testid="terms-section-title-1" data-cms-id="terms-sections-1-title">
+                  {getCMSField(cmsData, 'title', 'Booking and Payment')}
                 </H4>
-                <Text data-testid="terms-section-content-1" data-cms-id="pages.terms.sections.1.content">
-                                      {getCMSField(cmsData, 'pages.terms.sections.1.content', 'Bookings must be made in advance through our website or phone system. Payment is required at the time of booking. We accept all major credit cards and cash payments.')}
+                <Text data-testid="terms-section-content-1" data-cms-id="terms-sections-1-content">
+                                      {getCMSField(cmsData, 'content', 'Bookings must be made in advance through our website or phone system. Payment is required at the time of booking. We accept all major credit cards and cash payments.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-2">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-2" data-cms-id="pages.terms.sections.2.title">
-                  {getCMSField(cmsData, 'pages.terms.sections.2.title', 'Cancellation Policy')}
+                <H4 data-testid="terms-section-title-2" data-cms-id="terms-sections-2-title">
+                  {getCMSField(cmsData, 'title', 'Cancellation Policy')}
                 </H4>
-                <Text data-testid="terms-section-content-2" data-cms-id="pages.terms.sections.2.content">
-                  {getCMSField(cmsData, 'pages.terms.sections.2.content', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.')}
+                <Text data-testid="terms-section-content-2" data-cms-id="terms-sections-2-content">
+                  {getCMSField(cmsData, 'content', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-3">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-3" data-cms-id="pages.terms.sections.3.title">
-                  {getCMSField(cmsData, 'pages.terms.sections.3.title', 'Liability')}
+                <H4 data-testid="terms-section-title-3" data-cms-id="terms-sections-3-title">
+                  {getCMSField(cmsData, 'title', 'Liability')}
                 </H4>
-                <Text data-testid="terms-section-content-3" data-cms-id="pages.terms.sections.3.content">
-                  {getCMSField(cmsData, 'pages.terms.sections.3.content', 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.')}
+                <Text data-testid="terms-section-content-3" data-cms-id="terms-sections-3-content">
+                  {getCMSField(cmsData, 'content', 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.')}
                 </Text>
               </Stack>
             </Box>
 
             <Box data-testid="terms-section-4">
               <Stack spacing="md">
-                <H4 data-testid="terms-section-title-4" data-cms-id="pages.terms.sections.4.title">
-                  {getCMSField(cmsData, 'pages.terms.sections.4.title', 'Contact')}
+                <H4 data-testid="terms-section-title-4" data-cms-id="terms-sections-4-title">
+                  {getCMSField(cmsData, 'title', 'Contact')}
                 </H4>
-                <Text data-testid="terms-section-content-4" data-cms-id="pages.terms.sections.4.content">
-                  {getCMSField(cmsData, 'pages.terms.sections.4.content', 'For questions about these terms, please contact us at the information provided on our website.')}
+                <Text data-testid="terms-section-content-4" data-cms-id="terms-sections-4-content">
+                  {getCMSField(cmsData, 'content', 'For questions about these terms, please contact us at the information provided on our website.')}
                 </Text>
               </Stack>
             </Box>

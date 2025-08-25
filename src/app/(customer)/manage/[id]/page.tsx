@@ -51,11 +51,11 @@ function ManageBookingPageContent() {
           const data = await response.json();
           setBooking(data);
         } else {
-          setError(getCMSField(cmsData, 'pages.manage.errors.bookingNotFound', 'Booking not found'));
+          setError(getCMSField(cmsData, 'bookingNotFound', 'Booking not found'));
         }
       } catch (error) {
         console.error('Error fetching booking:', error);
-        setError(getCMSField(cmsData, 'pages.manage.errors.loadFailed', 'Failed to load booking'));
+        setError(getCMSField(cmsData, 'loadFailed', 'Failed to load booking'));
       } finally {
         setLoading(false);
       }
@@ -86,21 +86,21 @@ function ManageBookingPageContent() {
       });
 
       if (response.ok) {
-        addToast('success', getCMSField(cmsData, 'pages.manage.messages.saveSuccess', 'Content saved successfully'));
+        addToast('success', getCMSField(cmsData, 'saveSuccess', 'Content saved successfully'));
         setEditMode(false);
       } else {
-        addToast('error', getCMSField(cmsData, 'pages.manage.messages.saveFailed', 'Failed to save content'));
+        addToast('error', getCMSField(cmsData, 'saveFailed', 'Failed to save content'));
       }
     } catch (error) {
       console.error('Error updating booking:', error);
-      addToast('error', getCMSField(cmsData, 'pages.manage.messages.saveFailed', 'Failed to save content'));
+      addToast('error', getCMSField(cmsData, 'saveFailed', 'Failed to save content'));
     }
   };
 
   const handleCancel = () => {
     setEditMode(false);
     setLocalContent(null);
-    addToast('info', getCMSField(cmsData, 'pages.manage.messages.cancelled', 'Changes cancelled'));
+    addToast('info', getCMSField(cmsData, 'cancelled', 'Changes cancelled'));
   };
 
   const handleEdit = () => {
@@ -109,7 +109,7 @@ function ManageBookingPageContent() {
   };
 
   const handleDelete = async () => {
-    if (!confirm(getCMSField(cmsData, 'pages.manage.confirm.delete', 'Are you sure you want to delete this booking? This action cannot be undone.'))) {
+    if (!confirm(getCMSField(cmsData, 'delete', 'Are you sure you want to delete this booking? This action cannot be undone.'))) {
       return;
     }
 
@@ -119,14 +119,14 @@ function ManageBookingPageContent() {
       });
 
       if (response.ok) {
-        addToast('success', getCMSField(cmsData, 'pages.manage.messages.deleteSuccess', 'Booking deleted successfully'));
+        addToast('success', getCMSField(cmsData, 'deleteSuccess', 'Booking deleted successfully'));
         router.push('/bookings');
       } else {
-        addToast('error', getCMSField(cmsData, 'pages.manage.messages.deleteFailed', 'Failed to delete booking'));
+        addToast('error', getCMSField(cmsData, 'deleteFailed', 'Failed to delete booking'));
       }
     } catch (error) {
       console.error('Error deleting booking:', error);
-      addToast('error', getCMSField(cmsData, 'pages.manage.messages.deleteFailed', 'Failed to delete booking'));
+      addToast('error', getCMSField(cmsData, 'deleteFailed', 'Failed to delete booking'));
     }
   };
 
@@ -137,8 +137,8 @@ function ManageBookingPageContent() {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" data-cms-id="pages.manage.loading.message" mode={mode}>
-                {getCMSField(cmsData, 'pages.manage.loading.message', 'Loading booking details...')}
+              <Text align="center" data-cms-id="manage-loading-message" mode={mode}>
+                {getCMSField(cmsData, 'message', 'Loading booking details...')}
               </Text>
             </Stack>
           </Container>
@@ -153,18 +153,18 @@ function ManageBookingPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="pages.manage.error.title" mode={mode}>
-                {getCMSField(cmsData, 'pages.manage.error.title', 'Unable to Load Booking')}
+              <H1 align="center" data-cms-id="manage-error-title" mode={mode}>
+                {getCMSField(cmsData, 'title', 'Unable to Load Booking')}
               </H1>
-              <Text align="center" data-cms-id="pages.manage.error.description" mode={mode}>
-                {getCMSField(cmsData, 'pages.manage.error.description', 'We could not load the booking details. Please check your booking ID and try again.')}
+              <Text align="center" data-cms-id="manage-error-description" mode={mode}>
+                {getCMSField(cmsData, 'description', 'We could not load the booking details. Please check your booking ID and try again.')}
               </Text>
               <Button
                 onClick={() => router.push('/bookings')}
                 variant="primary"
-                data-cms-id="pages.manage.error.viewBookings"
+                data-cms-id="manage-error-viewBookings"
               >
-                {getCMSField(cmsData, 'pages.manage.error.viewBookings', 'View My Bookings')}
+                {getCMSField(cmsData, 'viewBookings', 'View My Bookings')}
               </Button>
             </Stack>
           </Container>
@@ -179,18 +179,18 @@ function ManageBookingPageContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="pages.manage.noBooking.title" mode={mode}>
-                {getCMSField(cmsData, 'pages.manage.noBooking.title', 'No Booking Found')}
+              <H1 align="center" data-cms-id="manage-noBooking-title" mode={mode}>
+                {getCMSField(cmsData, 'title', 'No Booking Found')}
               </H1>
-              <Text align="center" data-cms-id="pages.manage.noBooking.description" mode={mode}>
-                {getCMSField(cmsData, 'pages.manage.noBooking.description', 'The booking you are looking for could not be found.')}
+              <Text align="center" data-cms-id="manage-noBooking-description" mode={mode}>
+                {getCMSField(cmsData, 'description', 'The booking you are looking for could not be found.')}
               </Text>
               <Button
                 onClick={() => router.push('/bookings')}
                 variant="primary"
-                data-cms-id="pages.manage.noBooking.viewBookings"
+                data-cms-id="manage-noBooking-viewBookings"
               >
-                {getCMSField(cmsData, 'pages.manage.noBooking.viewBookings', 'View My Bookings')}
+                {getCMSField(cmsData, 'viewBookings', 'View My Bookings')}
               </Button>
             </Stack>
           </Container>
@@ -205,11 +205,11 @@ function ManageBookingPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <H1 align="center" data-cms-id="pages.manage.title" mode={mode}>
-              {getCMSField(cmsData, 'pages.manage.title', 'Manage Booking')}
+            <H1 align="center" data-cms-id="manage-title" mode={mode}>
+              {getCMSField(cmsData, 'title', 'Manage Booking')}
             </H1>
-            <Text align="center" data-cms-id="pages.manage.subtitle" mode={mode}>
-              {getCMSField(cmsData, 'pages.manage.subtitle', `Manage your booking #${bookingId}`)}
+            <Text align="center" data-cms-id="manage-subtitle" mode={mode}>
+              {getCMSField(cmsData, 'subtitle', `Manage your booking #${bookingId}`)}
             </Text>
           </Stack>
         </Container>
@@ -220,88 +220,88 @@ function ManageBookingPageContent() {
         <Container>
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 data-cms-id="pages.manage.bookingDetails.title" mode={mode}>
-                {getCMSField(cmsData, 'pages.manage.bookingDetails.title', 'Booking Information')}
+              <H2 data-cms-id="manage-bookingDetails-title" mode={mode}>
+                {getCMSField(cmsData, 'title', 'Booking Information')}
               </H2>
               
               {editMode ? (
                 <Form>
                   <Stack spacing="md">
                     <div>
-                      <Label htmlFor="pickupLocation" data-cms-id="pages.manage.form.pickupLocation.label" mode={mode}>
-                        {getCMSField(cmsData, 'pages.manage.form.pickupLocation.label', 'Pickup Location')}
+                      <Label htmlFor="pickupLocation" data-cms-id="manage-form-pickupLocation-label" mode={mode}>
+                        {getCMSField(cmsData, 'label', 'Pickup Location')}
                       </Label>
                       <Input
                         id="pickupLocation"
                         value={localContent?.pickupLocation || ''}
                         onChange={(e) => handleFieldChange('pickupLocation', e.target.value)}
-                        placeholder={getCMSField(cmsData, 'pages.manage.form.pickupLocation.placeholder', 'Enter pickup location')}
-                        data-cms-id="pages.manage.form.pickupLocation.input"
+                        placeholder={getCMSField(cmsData, 'placeholder', 'Enter pickup location')}
+                        data-cms-id="manage-form-pickupLocation-input"
                       />
                     </div>
                     
                     <div>
-                      <Label htmlFor="dropoffLocation" data-cms-id="pages.manage.form.dropoffLocation.label" mode={mode}>
-                        {getCMSField(cmsData, 'pages.manage.form.dropoffLocation.label', 'Dropoff Location')}
+                      <Label htmlFor="dropoffLocation" data-cms-id="manage-form-dropoffLocation-label" mode={mode}>
+                        {getCMSField(cmsData, 'label', 'Dropoff Location')}
                       </Label>
                       <Input
                         id="dropoffLocation"
                         value={localContent?.dropoffLocation || ''}
                         onChange={(e) => handleFieldChange('dropoffLocation', e.target.value)}
-                        placeholder={getCMSField(cmsData, 'pages.manage.form.dropoffLocation.placeholder', 'Enter dropoff location')}
-                        data-cms-id="pages.manage.form.dropoffLocation.input"
+                        placeholder={getCMSField(cmsData, 'placeholder', 'Enter dropoff location')}
+                        data-cms-id="manage-form-dropoffLocation-input"
                       />
                     </div>
                     
                     <div>
-                      <Label htmlFor="pickupDateTime" data-cms-id="pages.manage.form.pickupDateTime.label" mode={mode}>
-                        {getCMSField(cmsData, 'pages.manage.form.pickupDateTime.label', 'Pickup Date & Time')}
+                      <Label htmlFor="pickupDateTime" data-cms-id="manage-form-pickupDateTime-label" mode={mode}>
+                        {getCMSField(cmsData, 'label', 'Pickup Date & Time')}
                       </Label>
                       <Input
                         id="pickupDateTime"
                         type="datetime-local"
                         value={localContent?.pickupDateTime || ''}
                         onChange={(e) => handleFieldChange('pickupDateTime', e.target.value)}
-                        data-cms-id="pages.manage.form.pickupDateTime.input"
+                        data-cms-id="manage-form-pickupDateTime-input"
                       />
                     </div>
                     
                     <div>
-                      <Label htmlFor="notes" data-cms-id="pages.manage.form.notes.label" mode={mode}>
-                        {getCMSField(cmsData, 'pages.manage.form.notes.label', 'Special Notes')}
+                      <Label htmlFor="notes" data-cms-id="manage-form-notes-label" mode={mode}>
+                        {getCMSField(cmsData, 'label', 'Special Notes')}
                       </Label>
                       <Input
                         id="notes"
                         value={localContent?.notes || ''}
                         onChange={(e) => handleFieldChange('notes', e.target.value)}
-                        placeholder={getCMSField(cmsData, 'pages.manage.form.notes.placeholder', 'Any special requests or notes')}
-                        data-cms-id="pages.manage.form.notes.input"
+                        placeholder={getCMSField(cmsData, 'placeholder', 'Any special requests or notes')}
+                        data-cms-id="manage-form-notes-input"
                       />
                     </div>
                   </Stack>
                 </Form>
               ) : (
                 <Stack spacing="md">
-                  <Text data-cms-id="pages.manage.bookingDetails.pickup" mode={mode}>
-                    <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.pickupLabel', 'Pickup:')}</strong> {booking.pickupLocation}
+                  <Text data-cms-id="manage-bookingDetails-pickup" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'pickupLabel', 'Pickup:')}</strong> {booking.pickupLocation}
                   </Text>
-                  <Text data-cms-id="pages.manage.bookingDetails.dropoff" mode={mode}>
-                    <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.dropoffLabel', 'Dropoff:')}</strong> {booking.dropoffLocation}
+                  <Text data-cms-id="manage-bookingDetails-dropoff" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'dropoffLabel', 'Dropoff:')}</strong> {booking.dropoffLocation}
                   </Text>
-                  <Text data-cms-id="pages.manage.bookingDetails.dateTime" mode={mode}>
-                    <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.dateTimeLabel', 'Date & Time:')}</strong> {new Date(booking.pickupDateTime).toLocaleString()}
+                  <Text data-cms-id="manage-bookingDetails-dateTime" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'dateTimeLabel', 'Date & Time:')}</strong> {new Date(booking.pickupDateTime).toLocaleString()}
                   </Text>
 
                   {booking.notes && (
-                    <Text data-cms-id="pages.manage.bookingDetails.notes" mode={mode}>
-                      <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.notesLabel', 'Notes:')}</strong> {booking.notes}
+                    <Text data-cms-id="manage-bookingDetails-notes" mode={mode}>
+                      <strong>{getCMSField(cmsData, 'notesLabel', 'Notes:')}</strong> {booking.notes}
                     </Text>
                   )}
-                  <Text data-cms-id="pages.manage.bookingDetails.status" mode={mode}>
-                    <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.statusLabel', 'Status:')}</strong> {booking.status}
+                  <Text data-cms-id="manage-bookingDetails-status" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'statusLabel', 'Status:')}</strong> {booking.status}
                   </Text>
-                  <Text data-cms-id="pages.manage.bookingDetails.fare" mode={mode}>
-                    <strong>{getCMSField(cmsData, 'pages.manage.bookingDetails.fareLabel', 'Fare:')}</strong> ${booking.fare}
+                  <Text data-cms-id="manage-bookingDetails-fare" mode={mode}>
+                    <strong>{getCMSField(cmsData, 'fareLabel', 'Fare:')}</strong> ${booking.fare}
                   </Text>
                 </Stack>
               )}
@@ -319,16 +319,16 @@ function ManageBookingPageContent() {
                 <Button
                   onClick={handleSave}
                   variant="primary"
-                  data-cms-id="pages.manage.actions.save"
+                  data-cms-id="manage-actions-save"
                 >
-                  {getCMSField(cmsData, 'pages.manage.actions.save', 'Save Changes')}
+                  {getCMSField(cmsData, 'save', 'Save Changes')}
                 </Button>
                 <Button
                   onClick={handleCancel}
                   variant="secondary"
-                  data-cms-id="pages.manage.actions.cancel"
+                  data-cms-id="manage-actions-cancel"
                 >
-                  {getCMSField(cmsData, 'pages.manage.actions.cancel', 'Cancel')}
+                  {getCMSField(cmsData, 'cancel', 'Cancel')}
                 </Button>
               </Stack>
             ) : (
@@ -336,16 +336,16 @@ function ManageBookingPageContent() {
                 <Button
                   onClick={handleEdit}
                   variant="primary"
-                  data-cms-id="pages.manage.actions.edit"
+                  data-cms-id="manage-actions-edit"
                 >
-                  {getCMSField(cmsData, 'pages.manage.actions.edit', 'Edit Booking')}
+                  {getCMSField(cmsData, 'edit', 'Edit Booking')}
                 </Button>
                 <Button
                   onClick={handleDelete}
                   variant="danger"
-                  data-cms-id="pages.manage.actions.delete"
+                  data-cms-id="manage-actions-delete"
                 >
-                  {getCMSField(cmsData, 'pages.manage.actions.delete', 'Delete Booking')}
+                  {getCMSField(cmsData, 'delete', 'Delete Booking')}
                 </Button>
               </Stack>
             )}
@@ -353,9 +353,9 @@ function ManageBookingPageContent() {
             <Button
               onClick={() => router.push('/bookings')}
               variant="outline"
-              data-cms-id="pages.manage.actions.backToBookings"
+              data-cms-id="manage-actions-backToBookings"
             >
-              {getCMSField(cmsData, 'pages.manage.actions.backToBookings', 'Back to Bookings')}
+              {getCMSField(cmsData, 'backToBookings', 'Back to Bookings')}
             </Button>
           </Stack>
         </Container>

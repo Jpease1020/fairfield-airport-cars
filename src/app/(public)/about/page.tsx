@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Stack } from '@/ui';
 import { H1, Text, Button } from '@/design/components/base-components/Components';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 import Link from 'next/link';
 
@@ -11,8 +11,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata() {
-  const cmsData = await cmsService.getCMSConfiguration();
-  const aboutData = cmsData?.pages?.about;
+  const aboutData = await cmsFlattenedService.getPageContent('about');
   
   return {
     title: aboutData?.title || 'About Us - Fairfield Airport Cars',
@@ -22,9 +21,9 @@ export async function generateMetadata() {
 }
 
 // Get CMS data at build time
-async function getCMSData(): Promise<CMSConfiguration | null> {
+async function getCMSData(): Promise<any> {
   try {
-    return await cmsService.getCMSConfiguration();
+    return await cmsFlattenedService.getPageContent('about');
   } catch (error) {
     console.error('Failed to load CMS data at build time:', error);
     return null;
@@ -47,13 +46,9 @@ function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = '')
     return cur;
   };
 
-  const directParts = fieldPath.split('.');
-  let value = resolvePath(cmsData, directParts);
-
-  if (value === undefined && directParts[0] !== 'pages') {
-    const fallbackParts = ['pages', ...directParts];
-    value = resolvePath(cmsData, fallbackParts);
-  }
+  // Remove 'pages.' prefix since we're now getting page content directly
+  const cleanPath = fieldPath.replace(/^pages\./, '');
+  const value = resolvePath(cmsData, cleanPath.split('.'));
 
   return typeof value === 'string' ? (value as string) : defaultValue;
 }
@@ -67,17 +62,17 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Stack spacing="md" align="center">
             <H1 
               align="center" 
-              data-cms-id="pages.about.title" 
+              data-cms-id="about-title" 
             >
-              {getCMSField(cmsData, 'pages.about.title', 'About Us')}
+              {getCMSField(cmsData, 'title', 'About Us')}
             </H1>
             <Text 
               variant="lead" 
               align="center" 
               size="lg" 
-              data-cms-id="pages.about.subtitle" 
+              data-cms-id="about-subtitle" 
             >
-              {getCMSField(cmsData, 'pages.about.subtitle', 'Your Trusted Airport Transportation Partner')}
+              {getCMSField(cmsData, 'subtitle', 'Your Trusted Airport Transportation Partner')}
             </Text>
           </Stack>
         </Stack>
@@ -89,7 +84,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Text 
             align="center" 
             size="lg" 
-            data-cms-id="pages.about.description" 
+            data-cms-id="about-description" 
           >
             {getCMSField(
               cmsData,
@@ -105,27 +100,27 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
         <Stack spacing="lg" align="center">
           <Text 
             align="center" 
-            data-cms-id="pages.about.cta.subtitle" 
+            data-cms-id="about-cta-subtitle" 
           >
-            {getCMSField(cmsData, 'pages.about.cta.subtitle', 'Ready to experience premium airport transportation?')}
+            {getCMSField(cmsData, 'subtitle', 'Ready to experience premium airport transportation?')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
             <Link href="/book">
               <Button
                 variant="primary"
-                data-cms-id="pages.about.cta.primaryButton"
+                data-cms-id="about-cta-primaryButton"
               >
-                {getCMSField(cmsData, 'pages.about.cta.primaryButton', 'Book Your Ride')}
+                {getCMSField(cmsData, 'primaryButton', 'Book Your Ride')}
               </Button>
             </Link>
             
             <Link href="/help">
               <Button
                 variant="secondary"
-                data-cms-id="pages.about.cta.secondaryButton"
+                data-cms-id="about-cta-secondaryButton"
               >
-                {getCMSField(cmsData, 'pages.about.cta.secondaryButton', 'Get Help')}
+                {getCMSField(cmsData, 'secondaryButton', 'Get Help')}
               </Button>
             </Link>
           </Stack>

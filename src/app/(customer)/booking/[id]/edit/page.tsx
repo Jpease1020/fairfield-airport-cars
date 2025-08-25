@@ -41,7 +41,7 @@ export default function EditBookingPage() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            {getCMSField(cmsData, 'booking.edit.loading.message', 'Please wait while we fetch your booking details...')}
+            {getCMSField(cmsData, 'booking-edit-loading-message', 'Please wait while we fetch your booking details...')}
           </Container>
         </GridSection>
       </Container>
@@ -53,7 +53,7 @@ export default function EditBookingPage() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            {getCMSField(cmsData, 'booking.edit.error.description', 'This could be due to an invalid booking ID or a temporary system issue.')}
+            {getCMSField(cmsData, 'booking-edit-error-description', 'This could be due to an invalid booking ID or a temporary system issue.')}
             <ActionButtonGroup buttons={[
               {
                 id: 'try-again',
@@ -82,10 +82,10 @@ export default function EditBookingPage() {
         <GridSection variant="content" columns={1}>
           <Container>
             <Text>
-              {getCMSField(cmsData, 'booking.edit.not_found.title', '❌ Booking Not Found')}
+              {getCMSField(cmsData, 'booking-edit-not_found-title', '❌ Booking Not Found')}
             </Text>
             <Text>
-              {getCMSField(cmsData, 'booking.edit.not_found.description', 'No booking found with the provided ID')}
+              {getCMSField(cmsData, 'booking-edit-not_found-description', 'No booking found with the provided ID')}
             </Text>
             <ActionButtonGroup buttons={[
               {
@@ -114,7 +114,7 @@ export default function EditBookingPage() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Text>
-            {getCMSField(cmsData, 'booking.edit.title', 'Edit Booking')}
+            {getCMSField(cmsData, 'booking-edit-title', 'Edit Booking')}
           </Text>
           <BookingForm 
             booking={booking}

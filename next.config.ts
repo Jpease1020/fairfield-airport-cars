@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
   },
   // Advanced webpack optimization
   webpack: (config, { isServer, dev, webpack }) => {
+    // Exclude temp directory from build
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: /temp/,
+    };
+    
     // Prevent Firebase Admin SDK from being bundled for client-side
     if (!isServer) {
       config.resolve.alias = {

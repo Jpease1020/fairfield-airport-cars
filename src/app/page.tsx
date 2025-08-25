@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Stack, Col, Box } from '@/ui';
 import { H1, H2, Text, Button } from '@/design/components/base-components/Components';
-import { cmsService } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 import Link from 'next/link';
 
@@ -11,8 +11,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata() {
-  const cmsData = await cmsService.getCMSConfiguration();
-  const homeData = cmsData?.pages?.home;
+  const homeData = await cmsFlattenedService.getPageContent('home');
   
   return {
     title: homeData?.hero?.title || 'Fairfield Airport Cars - Premium Airport Transportation Service',
@@ -22,9 +21,9 @@ export async function generateMetadata() {
 }
 
 // Get CMS data at build time
-async function getCMSData(): Promise<CMSConfiguration | null> {
+async function getCMSData(): Promise<any> {
   try {
-    return await cmsService.getCMSConfiguration();
+    return await cmsFlattenedService.getPageContent('home');
   } catch (error) {
     console.error('Failed to load CMS data at build time:', error);
     return null;
@@ -47,13 +46,9 @@ function getCMSField(cmsData: any, fieldPath: string): string {
     return cur;
   };
 
-  const directParts = fieldPath.split('.');
-  let value = resolvePath(cmsData, directParts);
-
-  if (value === undefined && directParts[0] !== 'pages') {
-    const fallbackParts = ['pages', ...directParts];
-    value = resolvePath(cmsData, fallbackParts);
-  }
+  // Remove 'pages.' prefix since we're now getting page content directly
+  const cleanPath = fieldPath.replace(/^pages\./, '');
+  const value = resolvePath(cmsData, cleanPath.split('.'));
 
   return typeof value === 'string' ? (value as string) : '';
 }
@@ -68,24 +63,24 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Stack spacing="md" align="center">
               <H1 
                 align="center" 
-                data-cms-id="pages.home.hero.title" 
+                data-cms-id="home-hero-title" 
               >
-                {getCMSField(cmsData, 'pages.home.hero.title')}
+                {getCMSField(cmsData, 'hero-title')}
               </H1>
               <Text 
                 variant="lead" 
                 align="center" 
                 size="xl" 
-                data-cms-id="pages.home.hero.subtitle" 
+                data-cms-id="home-hero-subtitle" 
               >
-                {getCMSField(cmsData, 'pages.home.hero.subtitle')}
+                {getCMSField(cmsData, 'hero-subtitle')}
               </Text>
               <Text 
                 align="center" 
                 size="lg" 
-                data-cms-id="pages.home.hero.description" 
+                data-cms-id="home-hero-description" 
               >
-                {getCMSField(cmsData, 'pages.home.hero.description')}
+                {getCMSField(cmsData, 'hero-description')}
               </Text>
               
               <Stack 
@@ -98,9 +93,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                   <Button
                     variant="primary"
                     size="lg"
-                    data-cms-id="pages.home.hero.primaryButton"
+                    data-cms-id="home-hero-primaryButton"
                   >
-                    {getCMSField(cmsData, 'pages.home.hero.primaryButton')}
+                    {getCMSField(cmsData, 'hero-primaryButton')}
                   </Button>
                 </Link>
                 
@@ -108,9 +103,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                   <Button
                     variant="secondary"
                     size="lg"
-                    data-cms-id="pages.home.hero.secondaryButton"
+                    data-cms-id="home-hero-secondaryButton"
                   >
-                    {getCMSField(cmsData, 'pages.home.hero.secondaryButton')}
+                    {getCMSField(cmsData, 'hero-secondaryButton')}
                   </Button>
                 </Link>
               </Stack>
@@ -124,16 +119,16 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Stack spacing="md" align="center">
               <H2 
                 align="center" 
-                data-cms-id="pages.home.features.title" 
+                data-cms-id="home-features-title" 
               >
-                {getCMSField(cmsData, 'pages.home.features.title')}
+                {getCMSField(cmsData, 'features-title')}
               </H2>
               <Text 
                 align="center" 
                 size="lg" 
-                data-cms-id="pages.home.features.subtitle" 
+                data-cms-id="home-features-subtitle" 
               >
-                {getCMSField(cmsData, 'pages.home.features.subtitle')}
+                {getCMSField(cmsData, 'features-subtitle')}
               </Text>
             </Stack>
             
@@ -149,15 +144,15 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                   <Text 
                     align="center" 
                     variant="lead" 
-                    data-cms-id="pages.home.features.items.0.title" 
+                    data-cms-id="home-features-items-0-title" 
                   >
-                    {getCMSField(cmsData, 'pages.home.features.items.0.title')}
+                    {getCMSField(cmsData, 'features-items-0-title')}
                   </Text>
                   <Text 
                     align="center" 
-                    data-cms-id="pages.home.features.items.0.description" 
+                    data-cms-id="home-features-items-0-description" 
                   >
-                    {getCMSField(cmsData, 'pages.home.features.items.0.description')}
+                    {getCMSField(cmsData, 'features-items-0-description')}
                   </Text>
                 </Stack>
               </Col>
@@ -170,15 +165,15 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.features.items.1.title" 
+                  data-cms-id="home-features-items-1-title" 
                 >
-                  {getCMSField(cmsData, 'pages.home.features.items.1.title')}
+                  {getCMSField(cmsData, 'features-items-1-title')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.features.items.1.description" 
+                  data-cms-id="home-features-items-1-description" 
                 >
-                  {getCMSField(cmsData, 'pages.home.features.items.1.description')}
+                  {getCMSField(cmsData, 'features-items-1-description')}
                 </Text>
               </Stack>
             </Col>
@@ -190,15 +185,15 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="pages.home.features.items.2.title" 
+                  data-cms-id="home-features-items-2-title" 
                 >
-                  {getCMSField(cmsData, 'pages.home.features.items.2.title')}
+                  {getCMSField(cmsData, 'features-items-2-title')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="pages.home.features.items.2.description" 
+                  data-cms-id="home-features-items-2-description" 
                 >
-                  {getCMSField(cmsData, 'pages.home.features.items.2.description')}
+                  {getCMSField(cmsData, 'features-items-2-description')}
                 </Text>
               </Stack>
             </Col>
@@ -211,19 +206,19 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
       <Container maxWidth="6xl" padding="xl">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H2 
-              align="center" 
-              data-cms-id="pages.home.about.title" 
-            >
-              {getCMSField(cmsData, 'pages.home.about.title')}
-            </H2>
-            <Text 
-              align="center" 
-              size="lg" 
-              data-cms-id="pages.home.about.content" 
-            >
-              {getCMSField(cmsData, 'pages.home.about.content')}
-            </Text>
+                          <H2 
+                align="center" 
+                data-cms-id="home-about-title" 
+              >
+                {getCMSField(cmsData, 'about-title')}
+              </H2>
+              <Text 
+                align="center" 
+                size="lg" 
+                data-cms-id="home-about-content" 
+              >
+                {getCMSField(cmsData, 'about-content')}
+              </Text>
           </Stack>
         </Stack>
       </Container>
@@ -232,65 +227,50 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
         <Container maxWidth="6xl" padding="xl">
         <Stack spacing="xl" align="center">
           <Stack spacing="md" align="center">
-            <H2 
-              align="center" 
-              data-cms-id="pages.home.faq.title" 
-            >
-              {getCMSField(cmsData, 'pages.home.faq.title')}
-            </H2>
-            <Text 
-              align="center" 
-              size="lg" 
-              data-cms-id="pages.home.faq.subtitle" 
-            >
-              {getCMSField(cmsData, 'pages.home.faq.subtitle')}
-            </Text>
+                          <H2 
+                align="center" 
+                data-cms-id="home-faq-title" 
+              >
+                {getCMSField(cmsData, 'faq-title')}
+              </H2>
+              <Text 
+                align="center" 
+                size="lg" 
+                data-cms-id="home-faq-subtitle" 
+              >
+                {getCMSField(cmsData, 'faq-subtitle')}
+              </Text>
           </Stack>
           
           <Box variant="elevated" padding="lg">
           <Stack spacing="lg" align="stretch">
             <Stack spacing="md" align="stretch">
-              <Text 
+                            <Text 
                 variant="lead" 
                 weight="semibold"
-                                  data-cms-id="pages.home.faq.items.0.question" 
+                data-cms-id="home-faq-items-0-question" 
               >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.0.question')}
+                {getCMSField(cmsData, 'faq-items-0-question')}
               </Text>
               <Text 
-                                  data-cms-id="pages.home.faq.items.0.answer" 
+                data-cms-id="home-faq-items-0-answer" 
               >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.0.answer')}
+                {getCMSField(cmsData, 'faq-items-0-answer')}
               </Text>
             </Stack>
             
-            <Stack spacing="md" align="stretch">
+                        <Stack spacing="md" align="stretch">
               <Text 
                 variant="lead" 
                 weight="semibold"
-                                  data-cms-id="pages.home.faq.items.1.question" 
+                data-cms-id="home-faq-items-1-question" 
               >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.1.question')}
+                {getCMSField(cmsData, 'faq-items-1-question')}
               </Text>
               <Text 
-                                  data-cms-id="pages.home.faq.items.1.answer" 
+                data-cms-id="home-faq-items-1-answer" 
               >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.1.answer')}
-              </Text>
-            </Stack>
-            
-            <Stack spacing="md" align="center">
-              <Text 
-                variant="lead" 
-                weight="semibold"
-                                  data-cms-id="pages.home.faq.items.2.question" 
-              >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.2.question')}
-              </Text>
-              <Text 
-                                  data-cms-id="pages.home.faq.items.2.answer" 
-              >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.2.answer')}
+                {getCMSField(cmsData, 'faq-items-1-answer')}
               </Text>
             </Stack>
             
@@ -298,14 +278,29 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <Text 
                 variant="lead" 
                 weight="semibold"
-                                  data-cms-id="pages.home.faq.items.3.question" 
+                                  data-cms-id="home-faq-items-2-question" 
               >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.3.question')}
+                                  {getCMSField(cmsData, 'faq-items-2-question')}
               </Text>
               <Text 
-                                  data-cms-id="pages.home.faq.items.3.answer" 
+                                  data-cms-id="home-faq-items-2-answer" 
               >
-                                  {getCMSField(cmsData, 'pages.home.faq.items.3.answer')}
+                                  {getCMSField(cmsData, 'faq-items-2-answer')}
+              </Text>
+            </Stack>
+            
+            <Stack spacing="md" align="center">
+              <Text 
+                variant="lead" 
+                weight="semibold"
+                                  data-cms-id="home-faq-items-3-question" 
+              >
+                                  {getCMSField(cmsData, 'faq-items-3-question')}
+              </Text>
+              <Text 
+                                  data-cms-id="home-faq-items-3-answer" 
+              >
+                                  {getCMSField(cmsData, 'faq-items-3-answer')}
               </Text>
             </Stack>
           </Stack>
@@ -319,16 +314,16 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Stack spacing="lg" align="center">
             <H2 
               align="center" 
-              data-cms-id="pages.home.finalCta.title" 
+              data-cms-id="home-finalCta-title" 
             >
-              {getCMSField(cmsData, 'pages.home.finalCta.title')}
+              {getCMSField(cmsData, 'finalCta-title')}
             </H2>
             <Text 
               align="center" 
               size="lg" 
-              data-cms-id="pages.home.finalCta.description" 
+              data-cms-id="home-finalCta-description" 
             >
-              {getCMSField(cmsData, 'pages.home.finalCta.description')}
+              {getCMSField(cmsData, 'finalCta-description')}
             </Text>
             
             <Stack 
@@ -341,9 +336,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Button
                   variant="primary"
                   size="lg"
-                  data-cms-id="pages.home.finalCta.buttonText"
+                  data-cms-id="home-finalCta-buttonText"
                 >
-                  {getCMSField(cmsData, 'pages.home.finalCta.buttonText')}
+                  {getCMSField(cmsData, 'finalCta-buttonText')}
                 </Button>
               </Link>
               
@@ -351,9 +346,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Button
                   variant="secondary"
                   size="lg"
-                  data-cms-id="pages.home.finalCta.secondaryButton"
+                  data-cms-id="home-finalCta-secondaryButton"
                 >
-                  {getCMSField(cmsData, 'pages.home.finalCta.secondaryButton')}
+                  {getCMSField(cmsData, 'finalCta-secondaryButton')}
                 </Button>
               </Link>
             </Stack>

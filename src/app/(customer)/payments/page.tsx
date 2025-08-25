@@ -118,7 +118,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'pages.payments.loading.initializing', 'Initializing payments...')}</Text>
+          <Text>{getCMSField(cmsData, 'initializing', 'Initializing payments...')}</Text>
         </Stack>
       </Container>
     );
@@ -129,7 +129,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'pages.payments.loading.loading_info', 'Loading your payment information...')}</Text>
+          <Text>{getCMSField(cmsData, 'loading_info', 'Loading your payment information...')}</Text>
         </Stack>
       </Container>
     );
@@ -139,9 +139,9 @@ function CustomerPaymentsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">{getCMSField(cmsData, 'pages.payments.login_required', 'Please log in to view your payments.')}</Text>
+          <Text variant="muted">{getCMSField(cmsData, 'login_required', 'Please log in to view your payments.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'pages.payments.go_to_login', 'Go to Login')}
+            {getCMSField(cmsData, 'go_to_login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -167,26 +167,26 @@ function CustomerPaymentsPage() {
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1 
-              data-cms-id="pages.payments.title"
+              data-cms-id="payments-title"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.payments.title', 'My Payments')}
+              {getCMSField(cmsData, 'title', 'My Payments')}
             </H1>
             <Text 
               variant="muted"
-              data-cms-id="pages.payments.subtitle"
+              data-cms-id="payments-subtitle"
               mode={mode}
             >
-              {getCMSField(cmsData, 'pages.payments.subtitle', 'Manage your payment methods and view transaction history')}
+              {getCMSField(cmsData, 'subtitle', 'Manage your payment methods and view transaction history')}
             </Text>
           </Stack>
           <Button 
             onClick={handleAddPaymentMethod} 
             variant="primary"
-            data-cms-id="pages.payments.add_payment_method"
+            data-cms-id="payments-add_payment_method"
             interactionMode={mode}
           >
-            {getCMSField(cmsData, 'pages.payments.add_payment_method', 'Add Payment Method')}
+            {getCMSField(cmsData, 'add_payment_method', 'Add Payment Method')}
           </Button>
         </Stack>
 
@@ -203,13 +203,13 @@ function CustomerPaymentsPage() {
 
         {/* Payment Methods */}
         <ContentCard
-          title={getCMSField(cmsData, 'pages.payments.section_methods', 'Payment Methods')}
-          data-cms-id="pages.payments.section_methods"
+          title={getCMSField(cmsData, 'section_methods', 'Payment Methods')}
+          data-cms-id="payments-section_methods"
           content={
             <Stack spacing="md">
               {paymentMethods.length === 0 ? (
-                <Text variant="muted" align="center" data-cms-id="pages.payments.noMethods.message" mode={mode}>
-                  {getCMSField(cmsData, 'pages.payments.noMethods.message', 'No payment methods added yet')}
+                <Text variant="muted" align="center" data-cms-id="payments-noMethods-message" mode={mode}>
+                  {getCMSField(cmsData, 'message', 'No payment methods added yet')}
                 </Text>
               ) : (
                 paymentMethods.map((method) => (
@@ -241,13 +241,13 @@ function CustomerPaymentsPage() {
 
         {/* Payment History */}
         <ContentCard
-          title={getCMSField(cmsData, 'pages.payments.section_history', 'Payment History')}
-          data-cms-id="pages.payments.section_history"
+          title={getCMSField(cmsData, 'section_history', 'Payment History')}
+          data-cms-id="payments-section_history"
           content={
             <Stack spacing="md">
               {payments.length === 0 ? (
-                <Text variant="muted" align="center" data-cms-id="pages.payments.noHistory.message" mode={mode}>
-                  {getCMSField(cmsData, 'pages.payments.noHistory.message', 'No payment history available')}
+                <Text variant="muted" align="center" data-cms-id="payments-noHistory-message" mode={mode}>
+                  {getCMSField(cmsData, 'message', 'No payment history available')}
                 </Text>
               ) : (
                 payments.map((payment) => (

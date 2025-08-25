@@ -10,94 +10,94 @@ function AdminHelpPage() {
   const { mode } = useInteractionMode();
   const helpSections = [
     {
-      title: getCMSField(cmsData, 'admin.help.sections.booking.title', 'Booking Management'),
+      title: getCMSField(cmsData, 'admin-help-sections-booking-title', 'Booking Management'),
       icon: "📋",
-      description: getCMSField(cmsData, 'admin.help.sections.booking.description', 'How to manage bookings and customer requests'),
+      description: getCMSField(cmsData, 'admin-help-sections-booking-description', 'How to manage bookings and customer requests'),
       items: [
         {
-          question: getCMSField(cmsData, 'admin.help.sections.booking.q1.question', 'How do I view all bookings?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.booking.q1.answer', 'Go to Admin > Bookings to see all current and past bookings. You can filter by status, date, and customer.')
+          question: getCMSField(cmsData, 'admin-help-sections-booking-q1-question', 'How do I view all bookings?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-booking-q1-answer', 'Go to Admin > Bookings to see all current and past bookings. You can filter by status, date, and customer.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.booking.q2.question', 'How do I assign a driver to a booking?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.booking.q2.answer', 'In the Bookings page, click on a booking and use the "Assign Driver" option. You can select from available drivers.')
+          question: getCMSField(cmsData, 'admin-help-sections-booking-q2-question', 'How do I assign a driver to a booking?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-booking-q2-answer', 'In the Bookings page, click on a booking and use the "Assign Driver" option. You can select from available drivers.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.booking.q3.question', 'What if a customer wants to cancel?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.booking.q3.answer', 'Customers can cancel through their dashboard, or you can cancel manually in the Admin > Bookings section.')
+          question: getCMSField(cmsData, 'admin-help-sections-booking-q3-question', 'What if a customer wants to cancel?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-booking-q3-answer', 'Customers can cancel through their dashboard, or you can cancel manually in the Admin > Bookings section.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.booking.q4.question', 'How do I handle no-shows?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.booking.q4.answer', 'Mark the booking as "No Show" in the status field. This helps track patterns and adjust policies.')
+          question: getCMSField(cmsData, 'admin-help-sections-booking-q4-question', 'How do I handle no-shows?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-booking-q4-answer', 'Mark the booking as "No Show" in the status field. This helps track patterns and adjust policies.')
         }
       ]
     },
     {
-      title: getCMSField(cmsData, 'admin.help.sections.driver.title', 'Driver Management'),
+      title: getCMSField(cmsData, 'admin-help-sections-driver-title', 'Driver Management'),
       icon: "👨‍💼",
-      description: getCMSField(cmsData, 'admin.help.sections.driver.description', 'Managing your driver and availability'),
+      description: getCMSField(cmsData, 'admin-help-sections-driver-description', 'Managing your driver and availability'),
       items: [
         {
-                  question: getCMSField(cmsData, 'admin.help.sections.driver.q1.question', 'How do I update driver information?'),
-        answer: getCMSField(cmsData, 'admin.help.sections.driver.q1.answer', 'Go to Admin > Driver and update the driver details and vehicle information.')
+                  question: getCMSField(cmsData, 'admin-help-sections-driver-q1-question', 'How do I update driver information?'),
+        answer: getCMSField(cmsData, 'admin-help-sections-driver-q1-answer', 'Go to Admin > Driver and update the driver details and vehicle information.')
         },
         {
-                  question: getCMSField(cmsData, 'admin.help.sections.driver.q2.question', 'How do I update driver status?'),
-        answer: getCMSField(cmsData, 'admin.help.sections.driver.q2.answer', 'In the Driver page, use the status buttons to set driver as Available, Busy, or Offline.')
+                  question: getCMSField(cmsData, 'admin-help-sections-driver-q2-question', 'How do I update driver status?'),
+        answer: getCMSField(cmsData, 'admin-help-sections-driver-q2-answer', 'In the Driver page, use the status buttons to set driver as Available, Busy, or Offline.')
         },
         {
-                  question: getCMSField(cmsData, 'admin.help.sections.driver.q3.question', 'What if the driver is late?'),
-        answer: getCMSField(cmsData, 'admin.help.sections.driver.q3.answer', 'Update the driver status to "Busy" and contact them directly. You can also update the booking status to reflect delays.')
+                  question: getCMSField(cmsData, 'admin-help-sections-driver-q3-question', 'What if the driver is late?'),
+        answer: getCMSField(cmsData, 'admin-help-sections-driver-q3-answer', 'Update the driver status to "Busy" and contact them directly. You can also update the booking status to reflect delays.')
         },
         {
-                  question: getCMSField(cmsData, 'admin.help.sections.driver.q4.question', 'How do I track driver performance?'),
-        answer: getCMSField(cmsData, 'admin.help.sections.driver.q4.answer', 'View driver ratings and feedback in the Driver page. Monitor completion rates and customer satisfaction.')
+                  question: getCMSField(cmsData, 'admin-help-sections-driver-q4-question', 'How do I track driver performance?'),
+        answer: getCMSField(cmsData, 'admin-help-sections-driver-q4-answer', 'View driver ratings and feedback in the Driver page. Monitor completion rates and customer satisfaction.')
         }
       ]
     },
     {
-      title: getCMSField(cmsData, 'admin.help.sections.payments.title', 'Payment Processing'),
+      title: getCMSField(cmsData, 'admin-help-sections-payments-title', 'Payment Processing'),
       icon: "💳",
-      description: getCMSField(cmsData, 'admin.help.sections.payments.description', 'Managing payments and financial transactions'),
+      description: getCMSField(cmsData, 'admin-help-sections-payments-description', 'Managing payments and financial transactions'),
       items: [
         {
-          question: getCMSField(cmsData, 'admin.help.sections.payments.q1.question', 'How do I view payment history?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.payments.q1.answer', 'Go to Admin > Payments to see all payment transactions, including successful payments and refunds.')
+          question: getCMSField(cmsData, 'admin-help-sections-payments-q1-question', 'How do I view payment history?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-payments-q1-answer', 'Go to Admin > Payments to see all payment transactions, including successful payments and refunds.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.payments.q2.question', 'What if a payment fails?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.payments.q2.answer', 'Failed payments are marked in the system. Contact the customer to update their payment method and retry.')
+          question: getCMSField(cmsData, 'admin-help-sections-payments-q2-question', 'What if a payment fails?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-payments-q2-answer', 'Failed payments are marked in the system. Contact the customer to update their payment method and retry.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.payments.q3.question', 'How do I process refunds?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.payments.q3.answer', 'In the Payments page, find the transaction and use the refund option. Enter the amount and reason for the refund.')
+          question: getCMSField(cmsData, 'admin-help-sections-payments-q3-question', 'How do I process refunds?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-payments-q3-answer', 'In the Payments page, find the transaction and use the refund option. Enter the amount and reason for the refund.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.payments.q4.question', 'How do I track revenue?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.payments.q4.answer', 'Use the Analytics page to view revenue trends, payment success rates, and financial summaries.')
+          question: getCMSField(cmsData, 'admin-help-sections-payments-q4-question', 'How do I track revenue?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-payments-q4-answer', 'Use the Analytics page to view revenue trends, payment success rates, and financial summaries.')
         }
       ]
     },
     {
-      title: getCMSField(cmsData, 'admin.help.sections.technical.title', 'Technical Support'),
+      title: getCMSField(cmsData, 'admin-help-sections-technical-title', 'Technical Support'),
       icon: "❓",
-      description: getCMSField(cmsData, 'admin.help.sections.technical.description', 'Troubleshooting and technical assistance'),
+      description: getCMSField(cmsData, 'admin-help-sections-technical-description', 'Troubleshooting and technical assistance'),
       items: [
         {
-          question: getCMSField(cmsData, 'admin.help.sections.technical.q1.question', 'What if the booking form isn\'t working?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.technical.q1.answer', 'Check that your Google Maps API key is configured in the environment variables. Contact your developer if issues persist.')
+          question: getCMSField(cmsData, 'admin-help-sections-technical-q1-question', 'What if the booking form isn\'t working?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-technical-q1-answer', 'Check that your Google Maps API key is configured in the environment variables. Contact your developer if issues persist.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.technical.q2.question', 'How do I reset my admin password?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.technical.q2.answer', 'Contact your developer to reset your Firebase authentication credentials.')
+          question: getCMSField(cmsData, 'admin-help-sections-technical-q2-question', 'How do I reset my admin password?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-technical-q2-answer', 'Contact your developer to reset your Firebase authentication credentials.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.technical.q3.question', 'What if SMS/email isn\'t sending?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.technical.q3.answer', 'Check that Twilio and email credentials are configured in environment variables. Contact your developer for setup assistance.')
+          question: getCMSField(cmsData, 'admin-help-sections-technical-q3-question', 'What if SMS/email isn\'t sending?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-technical-q3-answer', 'Check that Twilio and email credentials are configured in environment variables. Contact your developer for setup assistance.')
         },
         {
-          question: getCMSField(cmsData, 'admin.help.sections.technical.q4.question', 'How do I backup my data?'),
-          answer: getCMSField(cmsData, 'admin.help.sections.technical.q4.answer', 'All data is stored in Firebase Firestore and automatically backed up. Contact your developer for data export if needed.')
+          question: getCMSField(cmsData, 'admin-help-sections-technical-q4-question', 'How do I backup my data?'),
+          answer: getCMSField(cmsData, 'admin-help-sections-technical-q4-answer', 'All data is stored in Firebase Firestore and automatically backed up. Contact your developer for data export if needed.')
         }
       ]
     }
@@ -150,34 +150,34 @@ function AdminHelpPage() {
           <Stack spacing="md">
             <Stack spacing="sm">
               <Text variant="lead" size="md" weight="semibold" data-cms-id="admin.help.sections.additionalResources.title" mode={mode}>
-                {getCMSField(cmsData, 'admin.help.sections.additionalResources.title', '📞 Need More Help?')}
+                {getCMSField(cmsData, 'admin-help-sections-additionalResources-title', '📞 Need More Help?')}
               </Text>
               <Text variant="muted" size="sm" data-cms-id="admin.help.sections.additionalResources.description" mode={mode}>
-                {getCMSField(cmsData, 'admin.help.sections.additionalResources.description', 'If you can\'t find the answer you\'re looking for, here are additional resources')}
+                {getCMSField(cmsData, 'admin-help-sections-additionalResources-description', 'If you can\'t find the answer you\'re looking for, here are additional resources')}
               </Text>
             </Stack>
           <Stack spacing="md">
             <Container>
               <Text data-cms-id="admin.help.sections.additionalResources.technicalSupport" mode={mode}>
-                {getCMSField(cmsData, 'admin.help.sections.additionalResources.technicalSupport', 'Contact your developer for technical support')}
+                {getCMSField(cmsData, 'admin-help-sections-additionalResources-technicalSupport', 'Contact your developer for technical support')}
               </Text>
             </Container>
             
             <Container>
               <Text data-cms-id="admin.help.sections.additionalResources.businessDocs" mode={mode}>
-                {getCMSField(cmsData, 'admin.help.sections.additionalResources.businessDocs', 'Check the business documentation in your project files')}
+                {getCMSField(cmsData, 'admin-help-sections-additionalResources-businessDocs', 'Check the business documentation in your project files')}
               </Text>
             </Container>
             
             <Container>
               <Text data-cms-id="admin.help.sections.additionalResources.cmsSettings" mode={mode}>
-                {getCMSField(cmsData, 'admin.help.sections.additionalResources.cmsSettings', 'Review your CMS settings for configuration options')}
+                {getCMSField(cmsData, 'admin-help-sections-additionalResources-cmsSettings', 'Review your CMS settings for configuration options')}
               </Text>
             </Container>
             
             <Container>
               <Text data-cms-id="admin.help.sections.additionalResources.adminDashboard" mode={mode}>
-                {getCMSField(cmsData, 'admin.help.sections.additionalResources.adminDashboard', 'Use the Admin Dashboard to monitor your business metrics')}
+                {getCMSField(cmsData, 'admin-help-sections-additionalResources-adminDashboard', 'Use the Admin Dashboard to monitor your business metrics')}
               </Text>
             </Container>
           </Stack>
