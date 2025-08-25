@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Stack, Box, Button, Text, StatusMessage, Form, ToastProvider } from '@/ui';
 import { useBookingForm } from '@/hooks/useBookingForm';
 import { usePaymentProcessing } from '@/hooks/usePaymentProcessing';
@@ -83,6 +83,10 @@ function BookingFormContent({ booking }: BookingFormProps) {
   // Store the payment processing function from SquarePaymentForm
   const [processPaymentFunction, setProcessPaymentFunction] = React.useState<(() => Promise<void>) | null>(null);
 
+  // State for successful booking
+  const [isBookingComplete, setIsBookingComplete] = useState(false);
+  const [completedBookingId, setCompletedBookingId] = useState<string | null>(null);
+
   // Handle booking creation
   const handleCreateBooking = async () => {
     try {
@@ -137,6 +141,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
       await processPaymentFunction();
       
       console.log('✅ Atomic booking + payment completed successfully');
+      
+      // Mark booking as complete
+      setIsBookingComplete(true);
       
     } catch (error) {
       console.error('Atomic booking + payment failed:', error);
@@ -230,7 +237,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
           )}
 
           {/* Phase 3: Payment */}
-          {currentPhase === 'payment' && (
+          {currentPhase === 'payment' && !isBookingComplete && (
             <PaymentPhase
               pickupLocation={pickupLocation}
               dropoffLocation={dropoffLocation}
@@ -248,6 +255,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 console.log('Payment successful:', result);
                 setSuccess('Payment processed successfully! Your booking is confirmed.');
                 setIsProcessingPayment(false);
+                setCompletedBookingId(result.bookingId || 'unknown');
               }}
               onPaymentError={(error: string) => {
                 console.error('Payment error:', error);
@@ -279,8 +287,76 @@ function BookingFormContent({ booking }: BookingFormProps) {
             />
           )}
 
-          {/* Confirm Booking Button - Only show in payment phase */}
-          {currentPhase === 'payment' && (
+          {/* Success Confirmation Page */}
+          {isBookingComplete && (
+            <Box variant="elevated" padding="xl">
+              <Stack spacing="xl" align="center">
+                <Text size="3xl" weight="bold" color="success">
+                  🎉 Booking Confirmed!
+                </Text>
+                
+                <Text size="lg" align="center">
+                  Your ride from {pickupLocation} to {dropoffLocation} is confirmed!
+                </Text>
+
+                <Box variant="outlined" padding="lg">
+                  <Stack spacing="md">
+                    <Stack direction="horizontal" justify="space-between">
+                      <Text weight="medium">Pickup Location:</Text>
+                      <Text>{pickupLocation}</Text>
+                    </Stack>
+                    <Stack direction="horizontal" justify="space-between">
+                      <Text weight="medium">Dropoff Location:</Text>
+                      <Text>{dropoffLocation}</Text>
+                    </Stack>
+                    <Stack direction="horizontal" justify="space-between">
+                      <Text weight="medium">Date & Time:</Text>
+                      <Text>{new Date(pickupDateTime).toLocaleString()}</Text>
+                    </Stack>
+                    <Stack direction="horizontal" justify="space-between">
+                      <Text weight="medium">Total Fare:</Text>
+                      <Text weight="bold" color="primary">${(fare || 0) + tipAmount}</Text>
+                    </Stack>
+                    <Stack direction="horizontal" justify="space-between">
+                      <Text weight="medium">Deposit Paid:</Text>
+                      <Text color="success">${depositAmount?.toFixed(2)}</Text>
+                    </Stack>
+                  </Stack>
+                </Box>
+
+                <Stack spacing="md" align="center">
+                  <Text size="lg" weight="medium" align="center">
+                    🚗 What's Next?
+                  </Text>
+                  <Text size="sm" color="secondary" align="center">
+                    • You'll receive a confirmation email shortly<br/>
+                    • Driver will contact you 15 minutes before pickup<br/>
+                    • Track your driver in real-time on the booking page
+                  </Text>
+                </Stack>
+
+                <Stack direction="horizontal" spacing="md">
+                  <Button
+                    onClick={() => window.location.href = `/booking/${completedBookingId || 'unknown'}`}
+                    variant="primary"
+                    size="lg"
+                  >
+                    View My Booking
+                  </Button>
+                  <Button
+                    onClick={() => window.location.href = '/bookings'}
+                    variant="outline"
+                    size="lg"
+                  >
+                    All My Bookings
+                  </Button>
+                </Stack>
+              </Stack>
+            </Box>
+          )}
+
+          {/* Confirm Booking Button - Only show in payment phase and when not complete */}
+          {currentPhase === 'payment' && !isBookingComplete && (
             <Box variant="elevated" padding="lg">
               <Stack spacing="md" align="center">
                 <Button

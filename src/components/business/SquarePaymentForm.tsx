@@ -84,6 +84,18 @@ export function SquarePaymentForm({
     setPaymentError(null);
 
     try {
+      // Add a small delay to ensure card component is fully ready
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Debug: Check if card component is ready
+      console.log('🔍 Card component status:', {
+        hasCardRef: !!cardRef.current,
+        cardRefKeys: cardRef.current ? Object.keys(cardRef.current) : 'No card ref',
+        isReady: isReady,
+        disabled: disabled,
+        isLoading: isLoading
+      });
+      
       // Step 1: Tokenize the card input
       const verificationDetails = {
         amount: (amount / 100).toFixed(2), // Convert cents to dollars
@@ -103,12 +115,21 @@ export function SquarePaymentForm({
         sellerKeyedIn: false,
       };
 
+      console.log('🔍 Sending verification details to Square:', verificationDetails);
+      
       const tokenResult = await cardRef.current.tokenize(verificationDetails);
       
       if (tokenResult.status !== 'OK') {
         console.error('Tokenization failed:', tokenResult);
         if (tokenResult.status === 'INVALID') {
-          throw new Error('Please enter valid card information. Make sure all fields are filled correctly.');
+          // Log the specific validation errors
+          if (tokenResult.errors && tokenResult.errors.length > 0) {
+            console.error('Square validation errors:', tokenResult.errors);
+            const errorMessages = tokenResult.errors.map((err: any) => err.message || err.code).join(', ');
+            throw new Error(`Card validation failed: ${errorMessages}`);
+          } else {
+            throw new Error('Please enter valid card information. Make sure all fields are filled correctly.');
+          }
         } else {
           throw new Error(`Payment processing failed: ${tokenResult.status}`);
         }

@@ -4,6 +4,7 @@ import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
+import net from 'net';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -17,7 +18,6 @@ console.log('🚀 Starting Firebase emulators with automatic seeding...');
 const waitForEmulator = (port, service) => {
   return new Promise((resolve) => {
     const checkPort = () => {
-      const net = require('net');
       const client = new net.Socket();
       
       client.connect(port, 'localhost', () => {
