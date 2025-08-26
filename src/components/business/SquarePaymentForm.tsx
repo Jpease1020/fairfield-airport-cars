@@ -100,13 +100,13 @@ export function SquarePaymentForm({
       const verificationDetails = {
         amount: (amount / 100).toFixed(2), // Convert cents to dollars
         billingContact: {
-          givenName: 'Customer',
-          familyName: 'Name',
-          email: 'customer@example.com',
-          phone: '555-555-5555',
-          addressLines: ['123 Main St'],
-          city: 'Fairfield',
-          state: 'CA',
+          givenName: bookingData?.name?.split(' ')[0] || 'Customer',
+          familyName: bookingData?.name?.split(' ').slice(1).join(' ') || 'Name',
+          email: bookingData?.email || 'customer@example.com',
+          phone: bookingData?.phone || '555-555-5555',
+          addressLines: ['Address'],
+          city: 'City',
+          state: 'State',
           countryCode: 'US',
         },
         currencyCode: 'USD',
@@ -152,9 +152,9 @@ export function SquarePaymentForm({
             name: bookingData?.name || 'Customer Name',
             email: bookingData?.email || 'customer@example.com',
             phone: bookingData?.phone || '555-555-5555',
-            pickupLocation: bookingData?.pickupLocation || 'SFO Airport',
-            dropoffLocation: bookingData?.dropoffLocation || 'Fairfield, CA',
-            pickupDateTime: bookingData?.pickupDateTime || new Date().toISOString(), // Convert string to Date
+            pickupLocation: bookingData?.pickupLocation || 'Pickup Location',
+            dropoffLocation: bookingData?.dropoffLocation || 'Dropoff Location',
+            pickupDateTime: bookingData?.pickupDateTime || new Date().toISOString(),
             fare: bookingData?.fare || (amount / 100),
             flightNumber: bookingData?.flightNumber || '',
             notes: bookingData?.notes || '',

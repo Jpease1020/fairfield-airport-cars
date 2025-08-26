@@ -24,7 +24,9 @@ function BookingFormContent({ booking }: BookingFormProps) {
     fareType,
     flightInfo,
     fare,
+    baseFare,
     tipAmount,
+    tipPercent,
     depositAmount,
     isProcessingPayment,
     paymentError,
@@ -44,9 +46,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setFareType,
     setFlightInfo,
     setFare,
+    setBaseFare,
     setTipAmount,
-    setPaymentError,
+    setTipPercent,
+    setDepositAmount,
     setIsProcessingPayment,
+    setPaymentError,
     setName,
     setEmail,
     setPhone,
@@ -58,12 +63,16 @@ function BookingFormContent({ booking }: BookingFormProps) {
     setShowPaymentForm,
     setBookingId,
 
+    // Computed values
+    getTotalFare,
+    calculateDeposit,
+
     // Actions
     handleTipChange,
     goToPhase,
     goToNextPhase,
     goToPreviousPhase,
-    fillTestData,
+    resetForm,
   } = useBookingForm();
 
   // Payment processing hook
@@ -159,17 +168,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
   return (
     <Container maxWidth="7xl" padding="xl" data-testid="booking-form-container">
-      {/* Test button for faster development */}
-      <Stack spacing="md">
-        <Button 
-          onClick={fillTestData} 
-          variant="outline"
-          data-testid="fill-test-data-button"
-        >
-          🚀 Fill Test Data (Dev Only)
-        </Button>
-      </Stack>
-      
       <Form onSubmit={(e) => e.preventDefault()} id="booking-form" data-testid="booking-form">
         <Stack spacing="xl" data-testid="booking-form-stack">
           
@@ -210,7 +208,6 @@ function BookingFormContent({ booking }: BookingFormProps) {
               setFare={setFare}
               setIsCalculating={setIsCalculating}
               goToNextPhase={goToNextPhase}
-              fillTestData={fillTestData}
               canProceed={canProceedFromTripDetails}
             />
           )}

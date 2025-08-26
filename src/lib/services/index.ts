@@ -7,5 +7,4 @@ export * from './twilio-service';
 // AI Assistant moved to future-features/ai-assistant
 export * from './promo-service';
 export * from './feedback-service';
-export * from './backup-service';
 export * from './notification-service';

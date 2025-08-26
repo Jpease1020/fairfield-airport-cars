@@ -44,7 +44,7 @@ export const useRealTimeTracking = (bookingId: string) => {
 
   // Load initial booking status
   const loadBookingStatus = useCallback(async () => {
-    // Don't load if no booking ID (e.g., in mock mode)
+    // Don't load if no booking ID
     if (!bookingId) {
       setLoading(false);
       return;
@@ -210,7 +210,7 @@ export const useRealTimeTracking = (bookingId: string) => {
 
   // Start polling for updates
   useEffect(() => {
-    // Don't start polling if no booking ID (e.g., in mock mode)
+    // Don't start polling if no booking ID
     if (!bookingId) return;
 
     // Initial poll after 2 seconds
