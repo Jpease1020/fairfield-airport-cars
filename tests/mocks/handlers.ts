@@ -258,29 +258,15 @@ export const handlers = [
     return HttpResponse.json(mockBookingData);
   }),
 
-  // Tracking API
-  http.get('/api/tracking/:bookingId', () => {
+  // Places Autocomplete API
+  http.post('/api/places-autocomplete', async ({ request }) => {
+    const body = await request.json() as any;
     return HttpResponse.json({
-      bookingId: 'test-booking-123',
-      status: 'in-progress',
-      driverName: 'Gregg',
-      driverPhone: '203-555-0123',
-      vehicleInfo: {
-        make: 'Toyota',
-        model: 'Camry',
-        year: 2022,
-        color: 'Silver',
-        licensePlate: 'ABC123'
-      },
-      currentLocation: {
-        latitude: 41.1408,
-        longitude: -73.2613,
-        timestamp: new Date().toISOString()
-      },
-      estimatedArrival: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-      pickupLocation: 'Fairfield Station, Fairfield, CT',
-      pickupDateTime: '2024-12-25T10:00:00Z',
-      lastUpdated: new Date().toISOString()
+      predictions: [
+        { description: 'Fairfield Station, Fairfield, CT' },
+        { description: 'JFK Airport, Queens, NY' },
+        { description: 'LaGuardia Airport, Queens, NY' }
+      ]
     });
   }),
 
