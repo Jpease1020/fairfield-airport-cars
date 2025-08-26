@@ -33,12 +33,11 @@ function PromosPageContent() {
     usageLimit: '' 
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
   const [submitting, setSubmitting] = useState(false);
 
   const fetchPromos = async () => {
     try {
-      setError(null);
       setLoading(true);
       
       const res = await fetch('/api/promos');
@@ -50,7 +49,6 @@ function PromosPageContent() {
       }
     } catch (err) {
       console.error('❌ Error loading promos:', err);
-      setError('Failed to load promo codes. Please try again.');
     } finally {
       setLoading(false);
     }
