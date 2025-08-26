@@ -44,6 +44,12 @@ export const useRealTimeTracking = (bookingId: string) => {
 
   // Load initial booking status
   const loadBookingStatus = useCallback(async () => {
+    // Don't load if no booking ID (e.g., in mock mode)
+    if (!bookingId) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       const booking = await getBooking(bookingId);
@@ -195,11 +201,18 @@ export const useRealTimeTracking = (bookingId: string) => {
 
   // Initialize on mount
   useEffect(() => {
-    loadBookingStatus();
-  }, [loadBookingStatus]);
+    if (bookingId) {
+      loadBookingStatus();
+    } else {
+      setLoading(false);
+    }
+  }, [loadBookingStatus, bookingId]);
 
   // Start polling for updates
   useEffect(() => {
+    // Don't start polling if no booking ID (e.g., in mock mode)
+    if (!bookingId) return;
+
     // Initial poll after 2 seconds
     const initialPoll = setTimeout(() => {
       pollForUpdates();
@@ -216,7 +229,7 @@ export const useRealTimeTracking = (bookingId: string) => {
         clearInterval(pollingIntervalRef.current);
       }
     };
-  }, [pollForUpdates]);
+  }, [pollForUpdates, bookingId]);
 
   // Stop polling when booking is completed or cancelled
   useEffect(() => {

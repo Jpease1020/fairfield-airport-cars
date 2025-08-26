@@ -1,7 +1,7 @@
 import js from '@eslint/js';
-import nextPlugin from '@next/eslint-plugin-next';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
+import nextPlugin from '@next/eslint-plugin-next';
 import fairfieldCustomRules from './scripts/eslint-rules/fairfield-custom-rules.js';
 import unusedImports from 'eslint-plugin-unused-imports';
 

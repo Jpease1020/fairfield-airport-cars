@@ -39,47 +39,6 @@ function CMSPageContent() {
     }
   };
 
-  const updateAdminCMSData = async () => {
-    try {
-      addToast('info', 'Updating admin CMS data...');
-      
-      const response = await fetch('/api/admin/cms/update-admin-cms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        addToast('success', `Admin CMS data updated successfully! ${result.updatedSections} sections updated.`);
-        // Reload the config to show updated data
-        await loadCMSConfig();
-      } else {
-        addToast('error', `Failed to update admin CMS data: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Error updating admin CMS data:', error);
-      addToast('error', 'Failed to update admin CMS data. Please try again.');
-    }
-  };
-
-  const headerActions = [
-    { 
-      label: 'Refresh',
-      onClick: loadCMSConfig,
-      variant: 'outline' as const,
-      icon: '🔄'
-    },
-    {
-      label: 'Update Admin CMS Data',
-      onClick: updateAdminCMSData,
-      variant: 'primary' as const,
-      icon: '⚡'
-    }
-  ];
-
   const cmsSections = [
     {
       id: 'pages',
