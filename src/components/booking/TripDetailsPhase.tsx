@@ -27,7 +27,6 @@ interface TripDetailsPhaseProps {
   
   // Actions
   goToNextPhase: () => void;
-  fillTestData: () => void;
   
   // Validation
   canProceed: boolean;
@@ -49,7 +48,6 @@ export function TripDetailsPhase({
   setFare,
   setIsCalculating,
   goToNextPhase,
-  fillTestData,
   canProceed
 }: TripDetailsPhaseProps) {
   const { cmsData } = useCMSData();
@@ -115,22 +113,9 @@ export function TripDetailsPhase({
           {cmsData?.['pages.booking.trip.title'] || 'Trip Details'}
         </H2>
 
-        <Text align="center" color="secondary">
-          {cmsData?.['pages.booking.trip.description'] || 
-           'Tell us about your trip so we can provide an accurate fare estimate'}
+        <Text variant="muted" size="sm">
+          Tell us about your trip so we can provide an accurate fare estimate
         </Text>
-
-        {/* Test Data Button (Dev Only) */}
-        <Box variant="outlined" padding="md">
-          <Button
-            onClick={fillTestData}
-            variant="outline"
-            size="sm"
-            fullWidth
-          >
-            🚀 Fill Test Data (Dev Only)
-          </Button>
-        </Box>
 
         {/* Trip Details Form */}
         <Box variant="elevated" padding="lg">

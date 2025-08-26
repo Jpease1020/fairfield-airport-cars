@@ -116,8 +116,7 @@ class CostTrackingService {
   // Fetch real-time usage from providers
   async fetchRealTimeUsage(): Promise<void> {
     try {
-      // This would integrate with actual billing APIs
-      // For now, we'll simulate with mock data
+      // TODO: Integrate with actual billing APIs
       console.log('Fetching real-time usage data...');
       
       // Example integrations:
@@ -159,8 +158,7 @@ class CostTrackingService {
 
   // Get cost trends
   getCostTrend(): 'increasing' | 'decreasing' | 'stable' {
-    // This would compare current costs with historical data
-    // For now, return stable
+    // TODO: Compare current costs with historical data for real trend analysis
     return 'stable';
   }
 

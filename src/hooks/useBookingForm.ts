@@ -132,35 +132,6 @@ export const useBookingForm = () => {
     }
   }, [currentPhase, goToPhase]);
 
-  // Test data function
-  const fillTestData = useCallback(() => {
-    setPickupLocation('SFO Airport, San Francisco, CA');
-    setDropoffLocation('123 Main St, Fairfield, CA');
-    setPickupDateTime('2024-12-25T10:00');
-    setFareType('personal');
-    setFlightInfo({
-      airline: 'United Airlines',
-      flightNumber: 'UA123',
-      arrivalTime: '09:30',
-      terminal: '1'
-    });
-    
-    setName('John Doe');
-    setEmail('john.doe@example.com');
-    setPhone('555-123-4567');
-    setNotes('Please be on time for my flight');
-    
-    setFare(189.00);
-    setBaseFare(189.00);
-    
-    // Calculate and set deposit amount (20% of fare)
-    const deposit = calculateDeposit(189.00);
-    setDepositAmount(deposit);
-    
-    goToPhase('contact-info');
-    console.log('🧪 Test data filled, moved to contact-info phase');
-  }, [goToPhase, calculateDeposit]);
-
   // Reset form
   const resetForm = useCallback(() => {
     setCurrentPhase('trip-details');
@@ -251,7 +222,6 @@ export const useBookingForm = () => {
     goToPhase,
     goToNextPhase,
     goToPreviousPhase,
-    fillTestData,
     resetForm,
   };
 };

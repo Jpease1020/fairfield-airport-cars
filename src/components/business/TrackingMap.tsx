@@ -59,15 +59,15 @@ export function TrackingMap({
   const [error, setError] = useState<string | null>(null);
   // Coordinates are computed locally for route drawing; no need to store in state
 
-  // Real-time tracking hook - only use when not in mock mode
+  // Real-time tracking hook
   const {
     bookingStatus,
     loading: trackingLoading,
     error: trackingError,
     // Unused here; updates are handled within the hook
-  } = useRealTimeTracking(bookingId); // Empty string prevents API calls in mock mode
+  } = useRealTimeTracking(bookingId);
 
-  // In mock mode, we don't need to wait for tracking to load
+  // Loading and error states
   const effectiveLoading = loading || trackingLoading;
   const effectiveError = error || trackingError;
 
