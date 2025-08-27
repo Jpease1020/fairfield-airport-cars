@@ -8,3 +8,4 @@ export * from './twilio-service';
 export * from './promo-service';
 export * from './feedback-service';
 export * from './notification-service';
+export * from './cost-api-integration';

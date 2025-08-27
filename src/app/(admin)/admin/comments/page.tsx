@@ -1,17 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAdminStatus } from '@/hooks/useAdminStatus';
+import React, { useState, useEffect } from 'react';
+import { Container, Stack, Button, H2, H3, H4, Span, Input, Select } from '@/ui';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
-import { commentExportService, type CommentExportOptions } from '@/lib/services/comment-export-service';
-import { Container, H2, H3, H4, Span } from '@/ui';
-import { Stack } from '@/ui';
-import { Button } from '@/ui';
-import { Textarea, Select, Input } from '@/ui';
+import { commentExportService, type CommentExportOptions } from '@/lib/business/comment-export-service';
+import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useAdminStatus } from '@/hooks/useAdminStatus';
+import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 import { CheckCircle, Clock, AlertCircle, Search, Download, Eye, Edit, Trash2, BarChart3, FileText } from 'lucide-react';
 import StatusBadge from '@/components/business/StatusBadge';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 export default function AdminCommentsPage() {
   const { isAdmin } = useAdminStatus();
@@ -326,7 +323,8 @@ export default function AdminCommentsPage() {
                   <Stack spacing="sm">
                     {editingComment === comment.id ? (
                       <Stack spacing="sm">
-                        <Textarea
+                        <Input
+                          type="text"
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
                           rows={3}

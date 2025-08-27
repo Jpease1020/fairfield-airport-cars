@@ -188,15 +188,36 @@ export function CostTrackingDashboard({
         {/* Header */}
         <Stack spacing="sm">
           <Stack direction="horizontal" justify="space-between" align="center">
-            <Text weight="bold" size="xl">Real-Time Cost Tracking</Text>
-            <Button 
-              variant="outline" 
-              onClick={refreshData}
-              disabled={refreshing}
-            >
-              {refreshing ? 'Refreshing...' : 'Refresh Data'}
-            </Button>
+            <Stack spacing="xs">
+              <Text weight="bold" size="xl">Real-Time Cost Tracking</Text>
+              <Text variant="muted" size="sm">
+                {costs.length} cost categories • {costs.filter(c => c.dataSource === 'api').length} from APIs
+              </Text>
+            </Stack>
+            
+            <Stack direction="horizontal" spacing="md" align="center">
+              {onRefresh && (
+                <Button
+                  onClick={onRefresh}
+                  variant="outline"
+                  size="sm"
+                  disabled={refreshing}
+                >
+                  {refreshing ? '🔄 Refreshing...' : '🔄 Refresh'}
+                </Button>
+              )}
+              
+              <Button
+                onClick={loadCostData}
+                variant="outline"
+                size="sm"
+                disabled={refreshing}
+              >
+                📊 Reload Data
+              </Button>
+            </Stack>
           </Stack>
+          
           {lastUpdate && (
             <Text variant="muted" size="sm">
               Last updated: {lastUpdate.toLocaleTimeString()}
