@@ -39,7 +39,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     // Skip auth check for login page
-    if (pathname === '/admin/login') {
+    if (pathname === '/login') {
       setLoading(false);
       return;
     }
@@ -53,12 +53,12 @@ export default function AdminLayout({
         
         if (!hasAdminRole) {
           // Redirect non-admin users to login
-          router.push('/admin/login');
+          router.push('/login');
         }
       } else {
         setUser(null);
         setIsAdmin(false);
-        router.push('/admin/login');
+        router.push('/login');
       }
       setLoading(false);
     });
@@ -80,7 +80,7 @@ export default function AdminLayout({
   }
 
   // Allow login page to render without auth check
-  if (pathname === '/admin/login') {
+  if (pathname === '/login') {
     return <div>{children}</div>;
   }
 

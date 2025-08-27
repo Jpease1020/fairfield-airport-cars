@@ -168,7 +168,7 @@ export default function CustomerLoginPage() {
                       />
                     </Stack>
 
-                    <Stack   >
+                    <Stack>
                       <Label htmlFor="password">
                         {getCMSField(cmsData, 'customer-login-passwordLabel', 'Password')}
                       </Label>
