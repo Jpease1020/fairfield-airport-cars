@@ -47,6 +47,32 @@ export default function InlineTextEditor({ editMode = false }: InlineTextEditorP
     setValue('');
   }, []);
 
+  // Global click handler for edit mode - only active when editMode is true
+  useEffect(() => {
+    if (!editMode) return;
+
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+
+      // Check if the clicked element has a data-cms-id
+      const cmsId = target.getAttribute('data-cms-id');
+      if (cmsId) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Dispatch custom event to open edit modal
+        const event = new (window as any).CustomEvent('openInlineEditor', {
+          detail: { cmsId, element: target, x: e.clientX, y: e.clientY }
+        });
+        document.dispatchEvent(event);
+      }
+    };
+
+    document.addEventListener('click', handleGlobalClick);
+    return () => document.removeEventListener('click', handleGlobalClick);
+  }, [editMode]);
+
   // Simple approach: let editable text elements handle their own clicks
   // Each element with data-cms-id should have its own onClick handler
   // that calls openEditorFor when edit mode is active
@@ -102,6 +128,8 @@ export default function InlineTextEditor({ editMode = false }: InlineTextEditorP
 
   // Listen for custom events to open the editor
   useEffect(() => {
+    if (!editMode) return;
+    
     const handleOpenEditor = (e: Event) => {
       const customEvent = e as any;
       const { cmsId, element, x, y } = customEvent.detail;
@@ -110,7 +138,7 @@ export default function InlineTextEditor({ editMode = false }: InlineTextEditorP
 
     document.addEventListener('openInlineEditor', handleOpenEditor);
     return () => document.removeEventListener('openInlineEditor', handleOpenEditor);
-  }, [openEditorFor]);
+  }, [openEditorFor, editMode]);
 
   const handleSave = useCallback(async () => {
     if (!activePath) {

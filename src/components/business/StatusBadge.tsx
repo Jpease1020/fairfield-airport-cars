@@ -1,16 +1,18 @@
 'use client';
 
-import styled from 'styled-components';
+import React from 'react';
+import { type CommentRecord } from '@/lib/business/comments-service';
+import { colors } from '@/design/foundation/tokens/tokens';
 import { CheckCircle, Clock, AlertCircle } from 'lucide-react';
-import { type ConfluenceComment } from '@/lib/business/confluence-comments';
-import { defaultColors } from '@/design/system/tokens/cms-integrated-colors';
+import styled from 'styled-components';
 
 interface StatusBadgeProps {
-  status: ConfluenceComment['status'];
+  status: CommentRecord['status'];
+  size?: 'sm' | 'md' | 'lg';
   children?: React.ReactNode;
 }
 
-const BadgeContainer = styled.div<{ status: ConfluenceComment['status'] }>`
+const BadgeContainer = styled.div<{ status: CommentRecord['status'] }>`
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -24,27 +26,27 @@ const BadgeContainer = styled.div<{ status: ConfluenceComment['status'] }>`
     switch (status) {
       case 'open':
         return `
-          background-color: ${defaultColors.background.error};
-          color: ${defaultColors.text.error};
-          border-color: ${defaultColors.border.error};
+          background-color: ${colors.danger[100]};
+          color: ${colors.danger[600]};
+          border-color: ${colors.danger[200]};
         `;
       case 'in-progress':
         return `
-          background-color: ${defaultColors.background.warning};
-          color: ${defaultColors.text.warning};
-          border-color: ${defaultColors.border.warning};
+          background-color: ${colors.warning[100]};
+          color: ${colors.warning[600]};
+          border-color: ${colors.warning[200]};
         `;
       case 'resolved':
         return `
-          background-color: ${defaultColors.background.success};
-          color: ${defaultColors.text.success};
-          border-color: ${defaultColors.border.success};
+          background-color: ${colors.success[100]};
+          color: ${colors.success[600]};
+          border-color: ${colors.success[200]};
         `;
       default:
         return `
-          background-color: ${defaultColors.background.muted};
-          color: ${defaultColors.text.primary};
-          border-color: ${defaultColors.border.secondary};
+          background-color: ${colors.gray[100]};
+          color: ${colors.gray[600]};
+          border-color: ${colors.gray[200]};
         `;
     }
   }}

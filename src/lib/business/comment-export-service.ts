@@ -1,4 +1,4 @@
-import { type ConfluenceComment } from '@/lib/business/confluence-comments';
+import { type CommentRecord } from '@/lib/business/comments-service';
 
 export interface CommentExportOptions {
   format: 'csv' | 'json' | 'xlsx';
@@ -15,7 +15,7 @@ export interface CommentExportOptions {
 }
 
 export interface CommentExportData {
-  comments: ConfluenceComment[];
+  comments: CommentRecord[];
   summary: {
     total: number;
     open: number;
@@ -35,7 +35,7 @@ class CommentExportService {
   /**
    * Export comments to CSV format
    */
-  async exportToCSV(comments: ConfluenceComment[], _options: CommentExportOptions): Promise<string> {
+  async exportToCSV(comments: CommentRecord[], _options: CommentExportOptions): Promise<string> {
     const headers = [
       'ID',
       'Element Text',
@@ -43,11 +43,10 @@ class CommentExportService {
       'Page URL',
       'Comment',
       'Status',
+      'Scope',
       'Created By',
       'Created Date',
-      'Updated Date',
-      'Resolved Date',
-      'Developer Notes'
+      'Updated Date'
     ];
 
     const rows = comments.map(comment => [
@@ -57,11 +56,10 @@ class CommentExportService {
       `"${comment.pageUrl.replace(/"/g, '""')}"`,
       `"${comment.comment.replace(/"/g, '""')}"`,
       comment.status,
+      comment.scope,
       `"${comment.createdBy.replace(/"/g, '""')}"`,
       comment.createdAt,
-      comment.updatedAt,
-      comment.resolvedAt || '',
-      comment.developerNotes ? `"${comment.developerNotes.replace(/"/g, '""')}"` : ''
+      comment.updatedAt
     ]);
 
     const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
@@ -71,7 +69,7 @@ class CommentExportService {
   /**
    * Export comments to JSON format
    */
-  async exportToJSON(comments: ConfluenceComment[], options: CommentExportOptions): Promise<string> {
+  async exportToJSON(comments: CommentRecord[], options: CommentExportOptions): Promise<string> {
     const exportData: CommentExportData = {
       comments,
       summary: this.generateSummary(comments),
@@ -91,7 +89,7 @@ class CommentExportService {
   /**
    * Generate summary statistics for comments
    */
-  private generateSummary(comments: ConfluenceComment[]) {
+  private generateSummary(comments: CommentRecord[]) {
     const total = comments.length;
     const open = comments.filter(c => c.status === 'open').length;
     const inProgress = comments.filter(c => c.status === 'in-progress').length;
@@ -99,13 +97,14 @@ class CommentExportService {
 
     // Calculate average resolution time for resolved comments
     let averageResolutionTime: number | undefined;
-    const resolvedComments = comments.filter(c => c.status === 'resolved' && c.resolvedAt);
-    if (resolvedComments.length > 0) {
+    if (resolved > 0) {
+      const resolvedComments = comments.filter(c => c.status === 'resolved');
       const totalTime = resolvedComments.reduce((sum, comment) => {
         const created = new Date(comment.createdAt).getTime();
-        const resolved = new Date(comment.resolvedAt!).getTime();
-        return sum + (resolved - created);
+        const updated = new Date(comment.updatedAt).getTime();
+        return sum + (updated - created);
       }, 0);
+      
       averageResolutionTime = totalTime / resolvedComments.length / (1000 * 60 * 60 * 24); // Convert to days
     }
 
@@ -121,14 +120,14 @@ class CommentExportService {
   /**
    * Get unique pages from comments
    */
-  private getUniquePages(comments: ConfluenceComment[]): string[] {
+  private getUniquePages(comments: CommentRecord[]): string[] {
     return [...new Set(comments.map(c => c.pageUrl))];
   }
 
   /**
    * Filter comments based on export options
    */
-  filterComments(comments: ConfluenceComment[], filters: CommentExportOptions['filters']): ConfluenceComment[] {
+  filterComments(comments: CommentRecord[], filters: CommentExportOptions['filters']): CommentRecord[] {
     let filtered = [...comments];
 
     if (filters?.status) {
@@ -172,7 +171,7 @@ class CommentExportService {
   /**
    * Export comments with specified options
    */
-  async exportComments(comments: ConfluenceComment[], options: CommentExportOptions): Promise<void> {
+  async exportComments(comments: CommentRecord[], options: CommentExportOptions): Promise<void> {
     // Apply filters
     const filteredComments = options.filters 
       ? this.filterComments(comments, options.filters)
@@ -208,7 +207,7 @@ class CommentExportService {
   /**
    * Generate analytics report
    */
-  async generateAnalyticsReport(comments: ConfluenceComment[]): Promise<string> {
+  async generateAnalyticsReport(comments: CommentRecord[]): Promise<string> {
     const summary = this.generateSummary(comments);
     const uniquePages = this.getUniquePages(comments);
     const uniqueAuthors = [...new Set(comments.map(c => c.createdBy))];
