@@ -116,7 +116,7 @@ export default function SetupPage() {
                 <Text data-cms-id="admin.setup.sections.notLoggedIn.message" mode={mode}>
                   {getCMSField(cmsData, 'admin-setup-sections-notLoggedIn-message', 'Please log in first to set up your admin account.')}
                 </Text>
-                <StyledLink href="/admin/login">
+                <StyledLink href="/login">
                   {getCMSField(cmsData, 'admin-setup-sections-notLoggedIn-goToLogin', 'Go to Login')}
                 </StyledLink>
               </Stack>
