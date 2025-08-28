@@ -16,18 +16,18 @@ function BookPageContent() {
         <Stack spacing="md" align="center">
           <H2 
             align="center" 
-            data-cms-id="booking-hero-title"
+            data-cms-id="hero-title"
             mode={mode}
           >
-            {getCMSField(cmsData, 'title', 'Complete Your Booking')}
+            {getCMSField(cmsData, 'hero-title', 'Complete Your Booking')}
           </H2>
           <Text 
             variant="lead" 
             align="center" 
-            data-cms-id="booking-hero-subtitle"
+            data-cms-id="hero-subtitle"
             mode={mode}
           >
-            {getCMSField(cmsData, 'subtitle', 'Fill in your details below')}
+            {getCMSField(cmsData, 'hero-subtitle', 'Fill in your details below')}
           </Text>
         </Stack>
         <BookingForm />

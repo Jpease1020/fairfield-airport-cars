@@ -2,9 +2,28 @@
 
 import React from 'react';
 import { Container, Stack, Text, Button, Box, Input, Label, Textarea, RadioButton, H2 } from '@/design/ui';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 import { FlightInfo } from '@/hooks/useBookingForm';
+
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
 
 interface ContactInfoPhaseProps {
   // State
@@ -29,6 +48,9 @@ interface ContactInfoPhaseProps {
   
   // Validation
   canContinue: boolean;
+  
+  // CMS Data
+  cmsData?: any;
 }
 
 export function ContactInfoPhase({
@@ -46,20 +68,20 @@ export function ContactInfoPhase({
   setFlightInfo,
   onBack,
   onContinue,
-  canContinue
+  canContinue,
+  cmsData
 }: ContactInfoPhaseProps) {
-  const { cmsData } = useCMSData();
   const { mode } = useInteractionMode();
 
   return (
     <Container maxWidth="4xl" padding="xl">
       <Stack spacing="xl">
-        <H2 align="center" data-cms-id="booking-personalInfo-title" mode={mode}>
-          {getCMSField(cmsData, 'title', 'Contact Information')}
+        <H2 align="center" data-cms-id="personal-info-title" mode={mode}>
+          {getCMSField(cmsData, 'contactInfoPhase-title', 'Contact Information')}
         </H2>
         
         <Text align="center" color="secondary">
-          {getCMSField(cmsData, 'description', 'Please provide your contact information to proceed with your booking.')}
+          {getCMSField(cmsData, 'contactInfoPhase-description', 'Please provide your contact information to proceed with your booking.')}
         </Text>
         
         {/* Contact Information Form */}
@@ -67,15 +89,15 @@ export function ContactInfoPhase({
           <Stack spacing="lg">
             {/* Name */}
             <Stack spacing="sm">
-              <Label htmlFor="name" data-cms-id="booking-form-name-label" mode={mode}>
-                {getCMSField(cmsData, 'label', 'Full Name')} *
+              <Label htmlFor="name" data-cms-id="form-name-label" mode={mode}>
+                {getCMSField(cmsData, 'contactInfoPhase-label', 'Full Name')} *
               </Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                placeholder={getCMSField(cmsData, 'placeholder', 'Enter your full name')}
-                data-cms-id="booking-form-name-input"
+                placeholder={getCMSField(cmsData, 'contactInfoPhase-placeholder', 'Enter your full name')}
+                data-cms-id="form-name-input"
                 fullWidth
                 required
                 data-testid="name-input"
@@ -84,16 +106,16 @@ export function ContactInfoPhase({
 
             {/* Email */}
             <Stack spacing="sm">
-              <Label htmlFor="email" data-cms-id="booking-form-email-label" mode={mode}>
-                {getCMSField(cmsData, 'label', 'Email Address')} *
+              <Label htmlFor="email" data-cms-id="form-email-label" mode={mode}>
+                {getCMSField(cmsData, 'contactInfoPhase-label', 'Email Address')} *
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                placeholder={getCMSField(cmsData, 'placeholder', 'Enter your email')}
-                data-cms-id="booking-form-email-input"
+                placeholder={getCMSField(cmsData, 'contactInfoPhase-placeholder', 'Enter your email')}
+                data-cms-id="form-email-input"
                 fullWidth
                 required
                 data-testid="email-input"
@@ -102,15 +124,15 @@ export function ContactInfoPhase({
 
             {/* Phone */}
             <Stack spacing="sm">
-              <Label htmlFor="phone" data-cms-id="booking-form-phone-label" mode={mode}>
-                {getCMSField(cmsData, 'label', 'Phone Number')} *
+              <Label htmlFor="phone" data-cms-id="form-phone-label" mode={mode}>
+                {getCMSField(cmsData, 'contactInfoPhase-label', 'Phone Number')} *
               </Label>
               <Input
                 id="phone"
                 value={phone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
-                placeholder={getCMSField(cmsData, 'placeholder', 'Enter your phone number')}
-                data-cms-id="booking-form-phone-input"
+                placeholder={getCMSField(cmsData, 'contactInfoPhase-placeholder', 'Enter your phone number')}
+                data-cms-id="form-phone-input"
                 fullWidth
                 required
                 data-testid="phone-input"
@@ -119,15 +141,15 @@ export function ContactInfoPhase({
 
             {/* Notes */}
             <Stack spacing="sm">
-              <Label htmlFor="notes" data-cms-id="booking-form-notes-label" mode={mode}>
-                {getCMSField(cmsData, 'label', 'Special Requests')}
+              <Label htmlFor="notes" data-cms-id="form-notes-label" mode={mode}>
+                {getCMSField(cmsData, 'contactInfoPhase-label', 'Special Requests')}
               </Label>
               <Textarea
                 id="notes"
                 value={notes}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
-                placeholder={getCMSField(cmsData, 'placeholder', 'Any special requests or notes for your driver')}
-                data-cms-id="booking-form-notes-input"
+                placeholder={getCMSField(cmsData, 'contactInfoPhase-placeholder', 'Any special requests or notes for your driver')}
+                data-cms-id="form-notes-input"
                 rows={3}
                 fullWidth
                 data-testid="notes-input"
@@ -136,8 +158,8 @@ export function ContactInfoPhase({
 
             {/* Flight Information */}
             <Stack spacing="sm">
-              <Label htmlFor="flightInfo" data-cms-id="booking-form-flightInfo-label" mode={mode}>
-                {getCMSField(cmsData, 'label', 'Flight Information (Optional)')}
+              <Label htmlFor="flightInfo" data-cms-id="form-flight-info-label" mode={mode}>
+                {getCMSField(cmsData, 'contactInfoPhase-label', 'Flight Information (Optional)')}
               </Label>
               <Stack spacing="sm">
                 <Stack direction="horizontal" spacing="sm">
@@ -145,7 +167,7 @@ export function ContactInfoPhase({
                     placeholder="Airline"
                     value={flightInfo.airline}
                     onChange={(e) => setFlightInfo({ ...flightInfo, airline: e.target.value })}
-                    data-cms-id="booking-form-flightInfo-airline"
+                    data-cms-id="form-flight-info-airline"
                     fullWidth
                     data-testid="airline-input"
                   />
@@ -153,7 +175,7 @@ export function ContactInfoPhase({
                     placeholder="Flight Number"
                     value={flightInfo.flightNumber}
                     onChange={(e) => setFlightInfo({ ...flightInfo, flightNumber: e.target.value })}
-                    data-cms-id="booking-form-flightInfo-flightNumber"
+                    data-cms-id="form-flight-info-flight-number"
                     fullWidth
                     data-testid="flight-number-input"
                   />
@@ -163,7 +185,7 @@ export function ContactInfoPhase({
                     placeholder="Arrival Time"
                     value={flightInfo.arrivalTime}
                     onChange={(e) => setFlightInfo({ ...flightInfo, arrivalTime: e.target.value })}
-                    data-cms-id="booking-form-flightInfo-arrivalTime"
+                    data-cms-id="form-flight-info-arrival-time"
                     fullWidth
                     data-testid="arrival-time-input"
                   />
@@ -171,7 +193,7 @@ export function ContactInfoPhase({
                     placeholder="Terminal"
                     value={flightInfo.terminal}
                     onChange={(e) => setFlightInfo({ ...flightInfo, terminal: e.target.value })}
-                    data-cms-id="booking-form-flightInfo-terminal"
+                    data-cms-id="form-flight-info-terminal"
                     fullWidth
                     data-testid="terminal-input"
                   />
@@ -181,8 +203,8 @@ export function ContactInfoPhase({
 
             {/* Save Info for Future */}
             <Stack spacing="sm">
-              <Label htmlFor="saveInfoForFuture" data-cms-id="booking-form-saveInfoForFuture-label" mode={mode}>
-                {getCMSField(cmsData, 'label', 'Save Information for Future Bookings')}
+              <Label htmlFor="saveInfoForFuture" data-cms-id="form-save-info-for-future-label" mode={mode}>
+                {getCMSField(cmsData, 'contactInfoPhase-label', 'Save Information for Future Bookings')}
               </Label>
               <Stack direction="horizontal" spacing="md">
                 <RadioButton
@@ -191,8 +213,8 @@ export function ContactInfoPhase({
                   value="true"
                   checked={saveInfoForFuture}
                   onChange={() => setSaveInfoForFuture(true)}
-                  data-cms-id="booking-form-saveInfoForFuture-yes"
-                  label={getCMSField(cmsData, 'yes', 'Yes, save my information')}
+                  data-cms-id="form-save-info-for-future-yes"
+                  label={getCMSField(cmsData, 'contactInfoPhase-yes', 'Yes, save my information')}
                   data-testid="save-info-yes"
                 />
                 <RadioButton
@@ -201,8 +223,8 @@ export function ContactInfoPhase({
                   value="false"
                   checked={!saveInfoForFuture}
                   onChange={() => setSaveInfoForFuture(false)}
-                  data-cms-id="booking-form-saveInfoForFuture-no"
-                  label={getCMSField(cmsData, 'no', 'No, don\'t save my information')}
+                  data-cms-id="form-save-info-for-future-no"
+                  label={getCMSField(cmsData, 'contactInfoPhase-no', 'No, don\'t save my information')}
                   data-testid="save-info-no"
                 />
               </Stack>
@@ -218,7 +240,7 @@ export function ContactInfoPhase({
             fullWidth
             data-testid="back-to-trip-details-button"
           >
-            {getCMSField(cmsData, 'back', 'Back to Trip Details')}
+            {getCMSField(cmsData, 'contactInfoPhase-back', 'Back to Trip Details')}
           </Button>
           
           <Button
@@ -228,7 +250,7 @@ export function ContactInfoPhase({
             disabled={!canContinue}
             data-testid="continue-to-payment-button"
           >
-            {getCMSField(cmsData, 'continue', 'Continue to Payment')}
+            {getCMSField(cmsData, 'contactInfoPhase-continue', 'Continue to Payment')}
           </Button>
         </Stack>
       </Stack>

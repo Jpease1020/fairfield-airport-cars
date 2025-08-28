@@ -3,10 +3,29 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Container } from '../layout/containers/Container';
-import { useCMSData, getCMSField } from '../hooks/useCMSData';
 import { H1 } from '../components/base-components/text/Headings';
 import { Text } from '../components/base-components/text/Text';
 import { FlexboxMargin } from '../system/shared-types';
+
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
 
 const ActionsContainer = styled.div`
   display: flex;
@@ -22,6 +41,7 @@ interface PageHeaderProps {
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   margin?: FlexboxMargin; // Limited margin for flexbox positioning
   spacing?: 'sm' | 'md' | 'lg';
+  cmsData?: any;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -31,9 +51,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   actions = [],
   padding = 'lg',
   margin = 'none',
-  spacing = 'md'
+  spacing = 'md',
+  cmsData
 }) => {
-  const { cmsData } = useCMSData();
   return (
     <Container 
       as="header" 

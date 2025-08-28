@@ -14,8 +14,8 @@
     "test:unit": "NODE_OPTIONS=\"--max-old-space-size=8192\" vitest run tests/unit/page-loading-rtl.test.tsx tests/unit/business-flows.test.tsx tests/unit/msw-test.spec.ts --coverage",
     "test:integration": "vitest run tests/integration --coverage",
     "test:e2e": "playwright test --config config/playwright.config.ts tests/e2e/critical-flows/streamlined-user-flows.spec.ts",
-    "firebase:emulators": "node scripts/start-and-seed.js",
-    "firebase:emulators:seed": "node scripts/start-emulators-with-seed.js",
+    "firebase:emulators": "firebase emulators:start",
+    "firebase:emulators:seed": "node scripts/seed-cms-to-emulators.js",
     "deploy": "npm run build && vercel --prod",
     "deploy:preview": "npm run build && vercel"
   },

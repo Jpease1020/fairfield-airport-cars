@@ -139,6 +139,15 @@ export default [
       'fairfield/no-circular-ui-imports': 'error',
       'fairfield/enforce-types-architecture': 'error',
       'fairfield/no-absolute-imports-in-design': 'error',
+      
+      // 🎯 CMS Field Consistency Rules
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'CallExpression[callee.name="getCMSField"] > Literal[value=/[a-z][A-Z]/]',
+          message: '❌ CMS field names must use kebab-case only (e.g., "admin-bookings-error-load-bookings-failed"). No camelCase patterns like "loadBookings" allowed.'
+        }
+      ],
     },
   },
   // 🛡️ DESIGN SYSTEM PROTECTION - Stricter rules for design directory

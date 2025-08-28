@@ -2,9 +2,28 @@
 
 import React from 'react';
 import { Container, Stack, Box, Button, Text, H2, Input, Select } from '@/ui';
-import { useCMSData } from '@/design/hooks/useCMSData';
 import { useGoogleMapsScript } from '@/hooks/useGoogleMapsScript';
 import { FlightInfo } from '@/hooks/useBookingForm';
+
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
 
 interface TripDetailsPhaseProps {
   // State
@@ -30,6 +49,9 @@ interface TripDetailsPhaseProps {
   
   // Validation
   canProceed: boolean;
+  
+  // CMS Data
+  cmsData?: any;
 }
 
 export function TripDetailsPhase({
@@ -48,9 +70,9 @@ export function TripDetailsPhase({
   setFare,
   setIsCalculating,
   goToNextPhase,
-  canProceed
+  canProceed,
+  cmsData
 }: TripDetailsPhaseProps) {
-  const { cmsData } = useCMSData();
   const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMapsScript(
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
   );
@@ -109,7 +131,7 @@ export function TripDetailsPhase({
   return (
     <Container maxWidth="4xl" padding="xl">
       <Stack spacing="xl">
-        <H2 align="center" data-cms-id="booking-trip-title">
+        <H2 align="center" data-cms-id="trip-title">
           {cmsData?.['pages.booking.trip.title'] || 'Trip Details'}
         </H2>
 

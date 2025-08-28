@@ -4,8 +4,27 @@ import React from 'react';
 import { Container, Stack, Box, Button, Text, H2, StatusMessage } from '@/ui';
 import { SquarePaymentForm } from '@/components/business/SquarePaymentForm';
 import { TipCalculator } from '@/components/business/TipCalculator';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
 
 interface PaymentPhaseProps {
   pickupLocation: string;
@@ -23,6 +42,7 @@ interface PaymentPhaseProps {
   onPaymentSuccess: (result: any) => void;
   onPaymentError: (error: string) => void;
   onPaymentReady: (processPayment: () => Promise<void>) => void;
+  cmsData?: any;
   
   // Add booking data for new bookings
   bookingData?: {
@@ -59,9 +79,9 @@ export function PaymentPhase({
   onPaymentSuccess,
   onPaymentError,
   onPaymentReady,
-  bookingData
+  bookingData,
+  cmsData
 }: PaymentPhaseProps) {
-  const { cmsData } = useCMSData();
   const { mode } = useInteractionMode();
 
   const getTotalWithTip = () => {
@@ -74,8 +94,8 @@ export function PaymentPhase({
         {/* Trip Summary */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="booking-payment-tripSummary" mode={mode}>
-              {getCMSField(cmsData, 'tripSummary', 'Trip Summary')}
+            <H2 align="center" data-cms-id="payment-trip-summary" mode={mode}>
+              {getCMSField(cmsData, 'paymentPhase-tripSummary', 'Trip Summary')}
             </H2>
             
             <Box variant="outlined" padding="md">
@@ -104,8 +124,8 @@ export function PaymentPhase({
         {/* Tip Calculator */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="booking-payment-tip" mode={mode}>
-              {getCMSField(cmsData, 'tip', 'Add a Tip')}
+            <H2 align="center" data-cms-id="payment-tip" mode={mode}>
+              {getCMSField(cmsData, 'paymentPhase-tip', 'Add a Tip')}
             </H2>
             
             <TipCalculator
@@ -123,8 +143,8 @@ export function PaymentPhase({
         {/* Deposit Information */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="booking-payment-deposit" mode={mode}>
-              {getCMSField(cmsData, 'deposit', 'Deposit Required')}
+            <H2 align="center" data-cms-id="payment-deposit" mode={mode}>
+              {getCMSField(cmsData, 'paymentPhase-deposit', 'Deposit Required')}
             </H2>
             
             <Box variant="outlined" padding="md">
@@ -145,7 +165,7 @@ export function PaymentPhase({
             </Box>
             
             <Text size="sm" color="secondary" align="center">
-              {getCMSField(cmsData, 'depositNote', 'A 20% deposit is required to confirm your booking. The remaining balance will be due before your trip.')}
+              {getCMSField(cmsData, 'paymentPhase-depositNote', 'A 20% deposit is required to confirm your booking. The remaining balance will be due before your trip.')}
             </Text>
           </Stack>
         </Box>
@@ -154,12 +174,12 @@ export function PaymentPhase({
         {showPaymentForm ? (
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center" data-cms-id="booking-payment-form-title" mode={mode}>
-                {getCMSField(cmsData, 'title', 'Payment Information')}
+              <H2 align="center" data-cms-id="payment-form-title" mode={mode}>
+                {getCMSField(cmsData, 'paymentPhase-title', 'Payment Information')}
               </H2>
               
               <Text size="sm" color="secondary" align="center">
-                {getCMSField(cmsData, 'description', 'Enter your payment details to complete your deposit payment.')}
+                {getCMSField(cmsData, 'paymentPhase-description', 'Enter your payment details to complete your deposit payment.')}
               </Text>
               
               <SquarePaymentForm
@@ -209,7 +229,7 @@ export function PaymentPhase({
             fullWidth
             data-testid="back-to-contact-info-button"
           >
-            {getCMSField(cmsData, 'back', 'Back to Contact Info')}
+            {getCMSField(cmsData, 'paymentPhase-back', 'Back to Contact Info')}
           </Button>
         </Stack>
       </Stack>

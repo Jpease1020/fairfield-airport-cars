@@ -62,7 +62,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Stack spacing="md" align="center">
             <H1 
               align="center" 
-              data-cms-id="about-title" 
+              data-cms-id="title" 
             >
               {getCMSField(cmsData, 'title', 'About Us')}
             </H1>
@@ -70,7 +70,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               variant="lead" 
               align="center" 
               size="lg" 
-              data-cms-id="about-subtitle" 
+              data-cms-id="subtitle" 
             >
               {getCMSField(cmsData, 'subtitle', 'Your Trusted Airport Transportation Partner')}
             </Text>
@@ -81,16 +81,16 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
       {/* Main Content Section */}
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="lg" align="center">
-          <Text 
-            align="center" 
-            size="lg" 
-            data-cms-id="about-description" 
-          >
-            {getCMSField(
-              cmsData,
-              'pages.about.description',
-              'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'
-            )}
+                      <Text 
+              align="center" 
+              size="lg" 
+              data-cms-id="description" 
+            >
+              {getCMSField(
+                cmsData,
+                'description',
+                'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'
+              )}
           </Text>
         </Stack>
       </Container>
@@ -98,29 +98,29 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
       {/* CTA Section */}
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="lg" align="center">
-          <Text 
-            align="center" 
-            data-cms-id="about-cta-subtitle" 
-          >
-            {getCMSField(cmsData, 'subtitle', 'Ready to experience premium airport transportation?')}
+                      <Text 
+              align="center" 
+              data-cms-id="cta-subtitle" 
+            >
+              {getCMSField(cmsData, 'cta-subtitle', 'Ready to experience premium airport transportation?')}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
             <Link href="/book">
               <Button
                 variant="primary"
-                data-cms-id="about-cta-primaryButton"
+                data-cms-id="cta-primary-button"
               >
-                {getCMSField(cmsData, 'primaryButton', 'Book Your Ride')}
+                {getCMSField(cmsData, 'cta-primary-button', 'Book Your Ride')}
               </Button>
             </Link>
             
             <Link href="/help">
               <Button
                 variant="secondary"
-                data-cms-id="about-cta-secondaryButton"
+                data-cms-id="cta-secondary-button"
               >
-                {getCMSField(cmsData, 'secondaryButton', 'Get Help')}
+                {getCMSField(cmsData, 'cta-secondary-button', 'Get Help')}
               </Button>
             </Link>
           </Stack>

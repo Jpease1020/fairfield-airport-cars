@@ -118,7 +118,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'initializing', 'Initializing payments...')}</Text>
+          <Text data-cms-id="initializing">{getCMSField(cmsData, 'initializing', 'Initializing payments...')}</Text>
         </Stack>
       </Container>
     );
@@ -129,7 +129,7 @@ function CustomerPaymentsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'loading_info', 'Loading your payment information...')}</Text>
+          <Text data-cms-id="loading_info">{getCMSField(cmsData, 'loading_info', 'Loading your payment information...')}</Text>
         </Stack>
       </Container>
     );
@@ -139,7 +139,7 @@ function CustomerPaymentsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">{getCMSField(cmsData, 'login_required', 'Please log in to view your payments.')}</Text>
+          <Text variant="muted" data-cms-id="login_required">{getCMSField(cmsData, 'login_required', 'Please log in to view your payments.')}</Text>
           <Button onClick={() => router.push('/login')}>
             {getCMSField(cmsData, 'go_to_login', 'Go to Login')}
           </Button>
@@ -167,14 +167,14 @@ function CustomerPaymentsPage() {
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1 
-              data-cms-id="payments-title"
+              data-cms-id="title"
               mode={mode}
             >
               {getCMSField(cmsData, 'title', 'My Payments')}
             </H1>
             <Text 
               variant="muted"
-              data-cms-id="payments-subtitle"
+              data-cms-id="subtitle"
               mode={mode}
             >
               {getCMSField(cmsData, 'subtitle', 'Manage your payment methods and view transaction history')}
@@ -183,10 +183,10 @@ function CustomerPaymentsPage() {
           <Button 
             onClick={handleAddPaymentMethod} 
             variant="primary"
-            data-cms-id="payments-add_payment_method"
+            data-cms-id="add-payment-method"
             interactionMode={mode}
           >
-            {getCMSField(cmsData, 'add_payment_method', 'Add Payment Method')}
+            {getCMSField(cmsData, 'add-payment-method', 'Add Payment Method')}
           </Button>
         </Stack>
 
@@ -203,32 +203,32 @@ function CustomerPaymentsPage() {
 
         {/* Payment Methods */}
         <ContentCard
-          title={getCMSField(cmsData, 'section_methods', 'Payment Methods')}
-          data-cms-id="payments-section_methods"
+          title={getCMSField(cmsData, 'section-methods', 'Payment Methods')}
+          data-cms-id="section-methods"
           content={
             <Stack spacing="md">
               {paymentMethods.length === 0 ? (
-                <Text variant="muted" align="center" data-cms-id="payments-noMethods-message" mode={mode}>
+                <Text variant="muted" align="center" data-cms-id="no-methods-message" mode={mode}>
                   {getCMSField(cmsData, 'message', 'No payment methods added yet')}
                 </Text>
               ) : (
                 paymentMethods.map((method) => (
-                  <Box key={method.id} variant="outlined" padding="md" data-cms-id={`pages.payments.method.${method.id}`}>
+                  <Box key={method.id} variant="outlined" padding="md">
                     <Stack direction="horizontal" justify="space-between" align="center">
                       <Stack spacing="sm">
-                        <Text weight="bold" data-cms-id={`pages.payments.method.${method.id}.type`} mode={mode}>
-                          {getCMSField(cmsData, `pages.payments.method.${method.id}.type`, method.type === 'card' ? 'Credit Card' : 'Bank Account')}
+                        <Text weight="bold">
+                          {method.type === 'card' ? 'Credit Card' : 'Bank Account'}
                         </Text>
-                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.method.${method.id}.details`} mode={mode}>
-                          {getCMSField(cmsData, `pages.payments.method.${method.id}.details`, method.type === 'card' ? `**** **** **** ${method.last4}` : `****${method.last4}`)}
+                        <Text variant="muted" size="sm">
+                          {method.type === 'card' ? `**** **** **** ${method.last4}` : `****${method.last4}`}
                         </Text>
                       </Stack>
                       <Stack spacing="sm" align="flex-end">
-                        <Text size="lg" data-cms-id={`pages.payments.method.${method.id}.icon`} mode={mode}>
+                        <Text size="lg">
                           {method.type === 'card' ? '💳' : '🏦'}
                         </Text>
-                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.method.${method.id}.status`} mode={mode}>
-                          {getCMSField(cmsData, `pages.payments.method.${method.id}.status`, method.isDefault ? 'Default' : '')}
+                        <Text variant="muted" size="sm">
+                          {method.isDefault ? 'Default' : ''}
                         </Text>
                       </Stack>
                     </Stack>
@@ -241,35 +241,35 @@ function CustomerPaymentsPage() {
 
         {/* Payment History */}
         <ContentCard
-          title={getCMSField(cmsData, 'section_history', 'Payment History')}
-          data-cms-id="payments-section_history"
-          content={
+          title={getCMSField(cmsData, 'section-history', 'Payment History')}
+          data-cms-id="section-history"
+              content={
             <Stack spacing="md">
               {payments.length === 0 ? (
-                <Text variant="muted" align="center" data-cms-id="payments-noHistory-message" mode={mode}>
+                <Text variant="muted" align="center" data-cms-id="no-history-message" mode={mode}>
                   {getCMSField(cmsData, 'message', 'No payment history available')}
                 </Text>
               ) : (
                 payments.map((payment) => (
-                  <Box key={payment.id} variant="outlined" padding="md" data-cms-id={`pages.payments.history.${payment.id}`}>
+                  <Box key={payment.id} variant="outlined" padding="md">
                     <Stack direction="horizontal" justify="space-between" align="center">
                       <Stack spacing="sm">
-                        <Text size="lg" data-cms-id={`pages.payments.history.${payment.id}.icon`} mode={mode}>
+                        <Text size="lg">
                           {payment.type === 'deposit' ? '💰' : payment.type === 'balance' ? '💳' : payment.type === 'tip' ? '💝' : '💵'}
                         </Text>
-                        <Text weight="bold" data-cms-id={`pages.payments.history.${payment.id}.description`} mode={mode}>
-                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.description`, payment.description)}
+                        <Text weight="bold">
+                          {payment.description}
                         </Text>
-                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.history.${payment.id}.date`} mode={mode}>
-                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.date`, new Date(payment.date).toLocaleDateString())}
+                        <Text variant="muted" size="sm">
+                          {new Date(payment.date).toLocaleDateString()}
                         </Text>
                       </Stack>
                       <Stack spacing="sm" align="flex-end">
-                        <Text weight="bold" size="lg" data-cms-id={`pages.payments.history.${payment.id}.amount`} mode={mode}>
-                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.amount`, `$${payment.amount.toFixed(2)}`)}
+                        <Text weight="bold" size="lg">
+                          ${payment.amount.toFixed(2)}
                         </Text>
-                        <Text variant="muted" size="sm" data-cms-id={`pages.payments.history.${payment.id}.status`} mode={mode}>
-                          {getCMSField(cmsData, `pages.payments.history.${payment.id}.status`, payment.status)}
+                        <Text variant="muted" size="sm">
+                          {payment.status}
                         </Text>
                       </Stack>
                     </Stack>

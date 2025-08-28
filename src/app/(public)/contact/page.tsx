@@ -25,10 +25,10 @@ export default async function ContactPage() {
         {/* Page Header */}
         <Box variant="elevated" padding="xl">
           <Stack spacing="lg" align="center">
-            <H1 align="center">
+            <H1 align="center" data-cms-id="page-title">
               {contactData?.title || 'Contact Us'}
             </H1>
-            <Text align="center" size="lg">
+            <Text align="center" size="lg" data-cms-id="page-subtitle">
               {contactData?.subtitle || 'Get in touch with our team for any questions or support'}
             </Text>
           </Stack>
@@ -37,7 +37,7 @@ export default async function ContactPage() {
         {/* Contact Information */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center">
+            <H2 align="center" data-cms-id="info-title">
               {contactData?.info?.title || 'Contact Information'}
             </H2>
             
@@ -46,10 +46,10 @@ export default async function ContactPage() {
                 <Stack spacing="md">
                   <Box variant="outlined" padding="md">
                     <Stack spacing="sm">
-                      <Text weight="bold">
+                      <Text weight="bold" data-cms-id="phone-label">
                         {contactData?.phone?.label || 'Phone'}
                       </Text>
-                      <Text>
+                      <Text data-cms-id="phone-value">
                         {contactData?.phone?.value || '(203) 555-0123'}
                       </Text>
                     </Stack>
@@ -61,10 +61,10 @@ export default async function ContactPage() {
                 <Stack spacing="md">
                   <Box variant="outlined" padding="md">
                     <Stack spacing="sm">
-                      <Text weight="bold">
+                      <Text weight="bold" data-cms-id="email-label">
                         {contactData?.email?.label || 'Email'}
                       </Text>
-                      <Text>
+                      <Text data-cms-id="email-value">
                         {contactData?.email?.value || 'rides@fairfieldairportcars.com'}
                       </Text>
                     </Stack>
@@ -78,33 +78,33 @@ export default async function ContactPage() {
         {/* Business Hours */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center">
+            <H2 align="center" data-cms-id="hours-title">
               {contactData?.hours?.title || 'Business Hours'}
             </H2>
             
             <Box variant="outlined" padding="md">
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>
+                  <Text data-cms-id="monday-label">
                     {contactData?.hours?.monday || 'Monday - Friday'}
                   </Text>
-                  <Text weight="medium">
+                  <Text weight="medium" data-cms-id="monday-time">
                     {contactData?.hours?.mondayTime || '6:00 AM - 10:00 PM'}
                   </Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>
+                  <Text data-cms-id="-saturday-label">
                     {contactData?.hours?.saturday || 'Saturday'}
                   </Text>
-                  <Text weight="medium">
+                  <Text weight="medium" data-cms-id="saturday-time">
                     {contactData?.hours?.saturdayTime || '7:00 AM - 9:00 PM'}
                   </Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>
+                  <Text data-cms-id="sunday-label">
                     {contactData?.hours?.sunday || 'Sunday'}
                   </Text>
-                  <Text weight="medium">
+                  <Text weight="medium" data-cms-id="sunday-time">
                     {contactData?.hours?.sundayTime || '8:00 AM - 8:00 PM'}
                   </Text>
                 </Stack>

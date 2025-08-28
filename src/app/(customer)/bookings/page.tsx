@@ -115,7 +115,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'initializing', 'Initializing bookings...')}</Text>
+          <Text data-cms-id="initializing">{getCMSField(cmsData, 'initializing', 'Initializing bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -126,7 +126,7 @@ function CustomerBookingsPage() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>{getCMSField(cmsData, 'loading_bookings', 'Loading your bookings...')}</Text>
+          <Text data-cms-id="loading-bookings">{getCMSField(cmsData, 'loading-bookings', 'Loading your bookings...')}</Text>
         </Stack>
       </Container>
     );
@@ -136,9 +136,9 @@ function CustomerBookingsPage() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted">{getCMSField(cmsData, 'login_required', 'Please log in to view your bookings.')}</Text>
+            <Text variant="muted" data-cms-id="login-required">{getCMSField(cmsData, 'login-required', 'Please log in to view your bookings.')}</Text>
           <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'go_to_login', 'Go to Login')}
+            {getCMSField(cmsData, 'go-to-login', 'Go to Login')}
           </Button>
         </Stack>
       </Container>
@@ -164,14 +164,14 @@ function CustomerBookingsPage() {
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1 
-              data-cms-id="bookings-title"
+              data-cms-id="title"
               mode={mode}
             >
               {getCMSField(cmsData, 'title', 'My Bookings')}
             </H1>
             <Text 
               variant="muted"
-              data-cms-id="bookings-subtitle"
+              data-cms-id="subtitle"
               mode={mode}
             >
               {getCMSField(cmsData, 'subtitle', 'View and manage your airport rides')}
@@ -180,29 +180,29 @@ function CustomerBookingsPage() {
           <Button 
             onClick={handleBookNewRide} 
             variant="primary"
-            data-cms-id="bookings-book_new_ride"
+            data-cms-id="book-new-ride"
             interactionMode={mode}
           >
-            {getCMSField(cmsData, 'book_new_ride', 'Book New Ride')}
+            {getCMSField(cmsData, 'book-new-ride', 'Book New Ride')}
           </Button>
         </Stack>
 
         {/* Bookings List */}
         {bookings.length === 0 ? (
           <ContentCard
-            title={getCMSField(cmsData, 'no_bookings_title', 'No Bookings Yet')}
+            title={getCMSField(cmsData, 'no-bookings-title', 'No Bookings Yet')}
             content={
               <Stack spacing="lg" align="center">
                 <Text variant="muted" align="center">
-                  {getCMSField(cmsData, 'no_bookings', "You haven't made any bookings yet. Book your first ride!")}
+                  {getCMSField(cmsData, 'no-bookings', "You haven't made any bookings yet. Book your first ride!")}
                 </Text>
                                       <Button 
                       onClick={handleBookNewRide} 
                       variant="primary"
-                      data-cms-id="bookings-book_first_ride"
+                      data-cms-id="book-first-ride" 
                       interactionMode={mode}
                     >
-                      {getCMSField(cmsData, 'book_first_ride', 'Book Your First Ride')}
+                      {getCMSField(cmsData, 'book-first-ride', 'Book Your First Ride')}
                     </Button>
               </Stack>
             }
@@ -211,14 +211,14 @@ function CustomerBookingsPage() {
         ) : (
           <Stack spacing="lg">
             {bookings.map((booking) => (
-              <Box key={booking.id} variant="elevated" padding="lg" data-cms-id={`pages.bookings.booking.${booking.id}`}>
+              <Box key={booking.id} variant="elevated" padding="lg">
                 <Stack spacing="md">
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text weight="bold" size="lg" data-cms-id={`pages.bookings.booking.${booking.id}.title`} mode={mode}>
-                      {getCMSField(cmsData, `pages.bookings.booking.${booking.id}.title`, `Booking #${booking.id}`)}
+                    <Text weight="bold" size="lg" data-cms-id='booking-title' mode={mode}>
+                      {getCMSField(cmsData, `booking-title`, `Booking #${booking.id}`)}
                     </Text>
-                    <Badge variant={getStatusVariant(booking.status)} data-cms-id={`pages.bookings.booking.${booking.id}.status`}>
-                      {getCMSField(cmsData, `pages.bookings.booking.${booking.id}.statusText`, getStatusText(booking.status))}
+                    <Badge variant={getStatusVariant(booking.status)} data-cms-id='booking-status'>
+                      {getCMSField(cmsData, `booking-status`, getStatusText(booking.status))}
                     </Badge>
                   </Stack>
                   
@@ -227,24 +227,24 @@ function CustomerBookingsPage() {
                       onClick={() => router.push(`/status/${booking.id}`)}
                       variant="outline"
                       size="sm"
-                      data-cms-id={`pages.bookings.booking.${booking.id}.viewStatus`}
+                      data-cms-id='view-status'
                     >
-                      {getCMSField(cmsData, 'viewStatus', 'View Status')}
+                      {getCMSField(cmsData, 'view-status', 'View Status')}
                     </Button>
                     <Button
                       onClick={() => router.push(`/manage/${booking.id}`)}
                       variant="outline"
                       size="sm"
-                      data-cms-id={`pages.bookings.booking.${booking.id}.manage`}
+                      data-cms-id='manage-booking'
                     >
-                      {getCMSField(cmsData, 'manage', 'Manage')}
+                      {getCMSField(cmsData, 'manage-booking', 'Manage')}
                     </Button>
                     {booking.status === 'completed' && (
                       <Button
                         onClick={() => router.push(`/feedback/${booking.id}`)}
                         variant="outline"
                         size="sm"
-                        data-cms-id={`pages.bookings.booking.${booking.id}.feedback`}
+                        data-cms-id='feedback'
                       >
                         {getCMSField(cmsData, 'feedback', 'Leave Feedback')}
                       </Button>
@@ -254,9 +254,9 @@ function CustomerBookingsPage() {
                         onClick={() => router.push(`/payments/pay-balance/${booking.id}`)}
                         variant="primary"
                         size="sm"
-                        data-cms-id={`pages.bookings.booking.${booking.id}.payBalance`}
+                        data-cms-id='pay-balance'
                       >
-                        {getCMSField(cmsData, 'payBalance', `Pay Balance ($${(booking.balanceDue || 0).toFixed(2)})`)}
+                        {getCMSField(cmsData, 'pay-balance', `Pay Balance ($${(booking.balanceDue || 0).toFixed(2)})`)}
                       </Button>
                     )}
                   </Stack>
