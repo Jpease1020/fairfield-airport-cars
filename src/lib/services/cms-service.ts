@@ -1,13 +1,40 @@
 import { db } from '@/lib/utils/firebase-server';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
-import { CMSConfiguration } from '@/types/cms';
-import { BusinessSettings, PricingSettings, EmailTemplates, SMSTemplates } from '@/types/cms';
-import { authService } from '@/lib/services/auth-service';
 
-// Updated CMS Service for Flattened Structure
+import { BusinessSettings, PricingSettings, EmailTemplates, SMSTemplates } from '@/types/cms';
+
+// Utility function to recursively convert Firebase objects to plain JavaScript objects
+function sanitizeFirebaseData(data: any): any {
+  if (data === null || data === undefined) {
+    return data;
+  }
+  
+  // Handle Firebase Timestamp objects
+  if (data && typeof data === 'object' && 'seconds' in data && 'nanoseconds' in data) {
+    return new Date(data.seconds * 1000).toISOString();
+  }
+  
+  // Handle arrays
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizeFirebaseData(item));
+  }
+  
+  // Handle objects
+  if (typeof data === 'object') {
+    const sanitized: any = {};
+    for (const [key, value] of Object.entries(data)) {
+      sanitized[key] = sanitizeFirebaseData(value);
+    }
+    return sanitized;
+  }
+  
+  // Return primitives as-is
+  return data;
+}
+
+// Simplified CMS Service that uses only the consolidated Firebase data route
 export class CMSFlattenedService {
   private static instance: CMSFlattenedService;
-  private currentUser: any = null;
 
   static getInstance(): CMSFlattenedService {
     if (!CMSFlattenedService.instance) {
@@ -16,7 +43,7 @@ export class CMSFlattenedService {
     return CMSFlattenedService.instance;
   }
 
-  // Get page content directly from flattened structure
+  // Get page content directly from Firebase
   async getPageContent(pageType: string): Promise<any | null> {
     try {
       const docRef = doc(db, 'cms', pageType);
@@ -24,9 +51,9 @@ export class CMSFlattenedService {
       
       if (docSnap.exists()) {
         const pageData = docSnap.data();
-        // Remove metadata if present
+        // Remove metadata if present and sanitize Firebase objects
         const { _metadata, ...cleanData } = pageData;
-        return cleanData;
+        return sanitizeFirebaseData(cleanData);
       }
       
       return null;
@@ -45,7 +72,7 @@ export class CMSFlattenedService {
       if (docSnap.exists()) {
         const businessData = docSnap.data();
         const { _metadata, ...cleanData } = businessData;
-        return cleanData as BusinessSettings;
+        return sanitizeFirebaseData(cleanData) as BusinessSettings;
       }
       
       return null;
@@ -64,7 +91,7 @@ export class CMSFlattenedService {
       if (docSnap.exists()) {
         const pricingData = docSnap.data();
         const { _metadata, ...cleanData } = pricingData;
-        return cleanData as PricingSettings;
+        return sanitizeFirebaseData(cleanData) as PricingSettings;
       }
       
       return null;
@@ -83,7 +110,7 @@ export class CMSFlattenedService {
       if (docSnap.exists()) {
         const commData = docSnap.data();
         const { _metadata, ...cleanData } = commData;
-        return cleanData?.email || null;
+        return sanitizeFirebaseData(cleanData?.email) || null;
       }
       
       return null;
@@ -102,7 +129,7 @@ export class CMSFlattenedService {
       if (docSnap.exists()) {
         const commData = docSnap.data();
         const { _metadata, ...cleanData } = commData;
-        return cleanData?.sms || null;
+        return sanitizeFirebaseData(cleanData?.sms) || null;
       }
       
       return null;
@@ -119,185 +146,47 @@ export class CMSFlattenedService {
     userId?: string
   ): Promise<{ success: boolean; errors?: string[] }> {
     try {
-      console.log(`Updating page content for: ${pageType}`);
-      
-      // Validate user permissions
-      if (userId) {
-        console.log('User editing CMS (page):', userId);
-      }
-
-      // Get current page content for merging
-      const currentContent = await this.getPageContent(pageType);
-      
-      // Merge new content with existing
-      const mergedContent = {
-        ...currentContent,
-        ...content,
-        lastUpdated: new Date()
+      // Prepare metadata
+      const metadata = {
+        _metadata: {
+          lastUpdated: new Date().toISOString(),
+          updatedBy: userId || 'unknown',
+          version: '1.0'
+        }
       };
 
-      // Update the page document directly
+      // Save to Firebase
       const docRef = doc(db, 'cms', pageType);
-      await setDoc(docRef, mergedContent, { merge: true });
-      
-      // Log activity
-      if (userId) {
-        try {
-          await authService.logUserActivity(userId, 'page_update', {
-            pageType,
-            changes: Object.keys(content),
-            timestamp: new Date()
-          });
-        } catch (logError) {
-          console.warn('Failed to log user activity:', logError);
-        }
-      }
+      await setDoc(docRef, { ...content, ...metadata }, { merge: true });
 
       return { success: true };
     } catch (error) {
-      console.error('Error updating page content:', error);
-      return { success: false, errors: [(error as Error).message] };
+      console.error(`Error updating page content for ${pageType}:`, error);
+      return { 
+        success: false, 
+        errors: [error instanceof Error ? error.message : 'Unknown error'] 
+      };
     }
   }
 
-  // Update business settings directly
-  async updateBusinessSettings(settings: Partial<BusinessSettings>): Promise<void> {
-    try {
-      const currentSettings = await this.getBusinessSettings();
-      const updatedSettings = {
-        ...currentSettings,
-        ...settings,
-        lastUpdated: new Date()
-      };
-
-      const docRef = doc(db, 'cms', 'business');
-      await setDoc(docRef, updatedSettings, { merge: true });
-    } catch (error) {
-      console.error('Error updating business settings:', error);
-      throw error;
-    }
-  }
-
-  // Update pricing settings directly
-  async updatePricingSettings(settings: Partial<PricingSettings>): Promise<void> {
-    try {
-      const currentSettings = await this.getPricingSettings();
-      const updatedSettings = {
-        ...currentSettings,
-        ...settings,
-        lastUpdated: new Date()
-      };
-
-      const docRef = doc(db, 'cms', 'pricing');
-      await setDoc(docRef, updatedSettings, { merge: true });
-    } catch (error) {
-      console.error('Error updating pricing settings:', error);
-      throw error;
-    }
-  }
-
-  // Update email templates directly
-  async updateEmailTemplates(templates: Partial<EmailTemplates>): Promise<void> {
-    try {
-      const currentComm = await this.getCommunicationSettings();
-      const currentEmail = currentComm?.email || {};
-      
-      const mergedEmail: EmailTemplates = {
-        bookingConfirmation: { subject: '', body: '', includeCalendarInvite: false },
-        bookingReminder: { subject: '', body: '', sendHoursBefore: 24 },
-        cancellation: { subject: '', body: '' },
-        feedback: { subject: '', body: '', sendDaysAfter: 7 },
-        ...currentEmail,
-        ...templates
-      };
-
-      const updatedComm = {
-        ...currentComm,
-        email: mergedEmail,
-        lastUpdated: new Date()
-      };
-
-      const docRef = doc(db, 'cms', 'communication');
-      await setDoc(docRef, updatedComm, { merge: true });
-    } catch (error) {
-      console.error('Error updating email templates:', error);
-      throw error;
-    }
-  }
-
-  // Update SMS templates directly
-  async updateSMSTemplates(templates: Partial<SMSTemplates>): Promise<void> {
-    try {
-      const currentComm = await this.getCommunicationSettings();
-      const currentSMS = currentComm?.sms || {};
-      
-      const mergedSMS: SMSTemplates = {
-        bookingConfirmation: '',
-        bookingReminder: '',
-        driverEnRoute: '',
-        driverArrived: '',
-        ...currentSMS,
-        ...templates
-      };
-
-      const updatedComm = {
-        ...currentComm,
-        sms: mergedSMS,
-        lastUpdated: new Date()
-      };
-
-      const docRef = doc(db, 'cms', 'communication');
-      await setDoc(docRef, updatedComm, { merge: true });
-    } catch (error) {
-      console.error('Error updating SMS templates:', error);
-      throw error;
-    }
-  }
-
-  // Get communication settings
-  async getCommunicationSettings(): Promise<any | null> {
-    try {
-      const docRef = doc(db, 'cms', 'communication');
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-        const commData = docSnap.data();
-        const { _metadata, ...cleanData } = commData;
-        return cleanData;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error getting communication settings:', error);
-      return null;
-    }
-  }
-
-  // Get all CMS data for admin purposes
+  // Get all CMS data directly from Firestore
   async getAllCMSData(): Promise<Record<string, any>> {
     try {
-      const pages = ['home', 'help', 'about', 'contact', 'privacy', 'terms'];
-      const settings = ['business', 'pricing', 'communication'];
+      // Get all documents from the cms collection directly
+      const { collection, getDocs } = await import('firebase/firestore');
+      const cmsCollection = collection(db, 'cms');
+      const querySnapshot = await getDocs(cmsCollection);
       
       const allData: Record<string, any> = {};
       
-      // Get page data
-      for (const page of pages) {
-        const pageData = await this.getPageContent(page);
-        if (pageData) {
-          allData[page] = pageData;
-        }
-      }
-      
-      // Get settings data
-      for (const setting of settings) {
-        const settingData = await this.getPageContent(setting);
-        if (settingData) {
-          allData[setting] = settingData;
-        }
-      }
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const { _metadata, ...cleanData } = data;
+        allData[doc.id] = sanitizeFirebaseData(cleanData);
+      });
       
       return allData;
+      
     } catch (error) {
       console.error('Error getting all CMS data:', error);
       return {};
@@ -312,7 +201,7 @@ export class CMSFlattenedService {
       if (doc.exists()) {
         const data = doc.data();
         const { _metadata, ...cleanData } = data;
-        callback(cleanData);
+        callback(sanitizeFirebaseData(cleanData));
       } else {
         callback(null);
       }
@@ -329,7 +218,7 @@ export class CMSFlattenedService {
       if (doc.exists()) {
         const data = doc.data();
         const { _metadata, ...cleanData } = data;
-        callback(cleanData);
+        callback(sanitizeFirebaseData(cleanData));
       } else {
         callback(null);
       }
@@ -357,25 +246,19 @@ export class CMSFlattenedService {
         return {
           needsMigration: true,
           currentStructure: 'nested',
-          details: 'Data exists in old nested structure but new flattened structure is empty'
+          details: 'Found old nested configuration structure, needs migration to flattened pages'
         };
-      } else if (homeSnap.exists() && oldConfigSnap.exists()) {
+      } else if (homeSnap.exists()) {
         return {
           needsMigration: false,
           currentStructure: 'flattened',
-          details: 'Both structures exist - migration completed but old structure not cleaned up'
-        };
-      } else if (homeSnap.exists() && !oldConfigSnap.exists()) {
-        return {
-          needsMigration: false,
-          currentStructure: 'flattened',
-          details: 'New flattened structure is active, old structure removed'
+          details: 'Found new flattened page structure, no migration needed'
         };
       } else {
         return {
           needsMigration: false,
           currentStructure: 'unknown',
-          details: 'No CMS data found in either structure'
+          details: 'No CMS structure found, starting fresh'
         };
       }
     } catch (error) {
@@ -383,38 +266,11 @@ export class CMSFlattenedService {
       return {
         needsMigration: false,
         currentStructure: 'unknown',
-        details: `Error checking status: ${error}`
+        details: 'Error checking migration status'
       };
     }
   }
 }
 
+// Export singleton instance
 export const cmsFlattenedService = CMSFlattenedService.getInstance();
-
-// Legacy compatibility functions (will be removed after migration)
-export async function getCMSConfig(): Promise<CMSConfiguration & { themeColors?: Record<string, string> }> {
-  const service = CMSFlattenedService.getInstance();
-  const allData = await service.getAllCMSData();
-  
-  // Reconstruct old structure for compatibility
-  const legacyConfig: any = {
-    pages: {},
-    business: allData.business,
-    pricing: allData.pricing,
-    communication: allData.communication
-  };
-  
-  // Add pages
-  ['home', 'help', 'about', 'contact', 'privacy', 'terms'].forEach(page => {
-    if (allData[page]) {
-      legacyConfig.pages[page] = allData[page];
-    }
-  });
-  
-  return legacyConfig;
-}
-
-export const getBusinessConfig = () => cmsFlattenedService.getBusinessSettings();
-export const getPricingConfig = () => cmsFlattenedService.getPricingSettings();
-export const getEmailTemplates = () => cmsFlattenedService.getEmailTemplates();
-export const getSMSTemplates = () => cmsFlattenedService.getSMSTemplates();

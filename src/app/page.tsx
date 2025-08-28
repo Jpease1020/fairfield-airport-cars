@@ -63,7 +63,7 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Stack spacing="md" align="center">
               <H1 
                 align="center" 
-                data-cms-id="home-hero-title" 
+                data-cms-id="hero-title" 
               >
                 {getCMSField(cmsData, 'hero-title')}
               </H1>
@@ -71,14 +71,14 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 variant="lead" 
                 align="center" 
                 size="xl" 
-                data-cms-id="home-hero-subtitle" 
+                data-cms-id="hero-subtitle" 
               >
                 {getCMSField(cmsData, 'hero-subtitle')}
               </Text>
               <Text 
                 align="center" 
                 size="lg" 
-                data-cms-id="home-hero-description" 
+                data-cms-id="hero-description" 
               >
                 {getCMSField(cmsData, 'hero-description')}
               </Text>
@@ -93,9 +93,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                   <Button
                     variant="primary"
                     size="lg"
-                    data-cms-id="home-hero-primaryButton"
+                    data-cms-id="hero-primary-button"
                   >
-                    {getCMSField(cmsData, 'hero-primaryButton')}
+                    {getCMSField(cmsData, 'hero-primary-button')}
                   </Button>
                 </Link>
                 
@@ -103,9 +103,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                   <Button
                     variant="secondary"
                     size="lg"
-                    data-cms-id="home-hero-secondaryButton"
+                    data-cms-id="hero-secondary-button"
                   >
-                    {getCMSField(cmsData, 'hero-secondaryButton')}
+                    {getCMSField(cmsData, 'hero-secondary-button')}
                   </Button>
                 </Link>
               </Stack>
@@ -119,14 +119,14 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Stack spacing="md" align="center">
               <H2 
                 align="center" 
-                data-cms-id="home-features-title" 
+                data-cms-id="features-title" 
               >
                 {getCMSField(cmsData, 'features-title')}
               </H2>
               <Text 
                 align="center" 
                 size="lg" 
-                data-cms-id="home-features-subtitle" 
+                data-cms-id="features-subtitle" 
               >
                 {getCMSField(cmsData, 'features-subtitle')}
               </Text>
@@ -144,13 +144,13 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                   <Text 
                     align="center" 
                     variant="lead" 
-                    data-cms-id="home-features-items-0-title" 
+                    data-cms-id="features-items-0-title" 
                   >
                     {getCMSField(cmsData, 'features-items-0-title')}
                   </Text>
                   <Text 
                     align="center" 
-                    data-cms-id="home-features-items-0-description" 
+                    data-cms-id="features-items-0-description" 
                   >
                     {getCMSField(cmsData, 'features-items-0-description')}
                   </Text>
@@ -165,13 +165,13 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="home-features-items-1-title" 
+                  data-cms-id="features-items-1-title" 
                 >
                   {getCMSField(cmsData, 'features-items-1-title')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="home-features-items-1-description" 
+                  data-cms-id="features-items-1-description" 
                 >
                   {getCMSField(cmsData, 'features-items-1-description')}
                 </Text>
@@ -185,13 +185,13 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Text 
                   align="center" 
                   variant="lead" 
-                  data-cms-id="home-features-items-2-title" 
+                  data-cms-id="features-items-2-title" 
                 >
                   {getCMSField(cmsData, 'features-items-2-title')}
                 </Text>
                 <Text 
                   align="center" 
-                  data-cms-id="home-features-items-2-description" 
+                  data-cms-id="features-items-2-description" 
                 >
                   {getCMSField(cmsData, 'features-items-2-description')}
                 </Text>
@@ -208,14 +208,14 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Stack spacing="md" align="center">
                           <H2 
                 align="center" 
-                data-cms-id="home-about-title" 
+                data-cms-id="about-title" 
               >
                 {getCMSField(cmsData, 'about-title')}
               </H2>
               <Text 
                 align="center" 
                 size="lg" 
-                data-cms-id="home-about-content" 
+                data-cms-id="about-content" 
               >
                 {getCMSField(cmsData, 'about-content')}
               </Text>
@@ -229,14 +229,14 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Stack spacing="md" align="center">
                           <H2 
                 align="center" 
-                data-cms-id="home-faq-title" 
+                data-cms-id="faq-title" 
               >
                 {getCMSField(cmsData, 'faq-title')}
               </H2>
               <Text 
                 align="center" 
                 size="lg" 
-                data-cms-id="home-faq-subtitle" 
+                data-cms-id="faq-subtitle" 
               >
                 {getCMSField(cmsData, 'faq-subtitle')}
               </Text>
@@ -248,12 +248,12 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                             <Text 
                 variant="lead" 
                 weight="semibold"
-                data-cms-id="home-faq-items-0-question" 
+                data-cms-id="faq-items-0-question" 
               >
                 {getCMSField(cmsData, 'faq-items-0-question')}
               </Text>
               <Text 
-                data-cms-id="home-faq-items-0-answer" 
+                data-cms-id="faq-items-0-answer" 
               >
                 {getCMSField(cmsData, 'faq-items-0-answer')}
               </Text>
@@ -263,12 +263,12 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <Text 
                 variant="lead" 
                 weight="semibold"
-                data-cms-id="home-faq-items-1-question" 
+                data-cms-id="faq-items-1-question" 
               >
                 {getCMSField(cmsData, 'faq-items-1-question')}
               </Text>
               <Text 
-                data-cms-id="home-faq-items-1-answer" 
+                data-cms-id="faq-items-1-answer" 
               >
                 {getCMSField(cmsData, 'faq-items-1-answer')}
               </Text>
@@ -278,12 +278,12 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <Text 
                 variant="lead" 
                 weight="semibold"
-                                  data-cms-id="home-faq-items-2-question" 
+                                  data-cms-id="faq-items-2-question" 
               >
                                   {getCMSField(cmsData, 'faq-items-2-question')}
               </Text>
               <Text 
-                                  data-cms-id="home-faq-items-2-answer" 
+                                  data-cms-id="faq-items-2-answer" 
               >
                                   {getCMSField(cmsData, 'faq-items-2-answer')}
               </Text>
@@ -293,12 +293,12 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <Text 
                 variant="lead" 
                 weight="semibold"
-                                  data-cms-id="home-faq-items-3-question" 
+                                  data-cms-id="faq-items-3-question" 
               >
                                   {getCMSField(cmsData, 'faq-items-3-question')}
               </Text>
               <Text 
-                                  data-cms-id="home-faq-items-3-answer" 
+                                  data-cms-id="faq-items-3-answer" 
               >
                                   {getCMSField(cmsData, 'faq-items-3-answer')}
               </Text>
@@ -314,16 +314,16 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <Stack spacing="lg" align="center">
             <H2 
               align="center" 
-              data-cms-id="home-finalCta-title" 
+              data-cms-id="final-cta-title" 
             >
-              {getCMSField(cmsData, 'finalCta-title')}
+              {getCMSField(cmsData, 'final-cta-title')}
             </H2>
             <Text 
               align="center" 
               size="lg" 
-              data-cms-id="home-finalCta-description" 
+              data-cms-id="final-cta-description" 
             >
-              {getCMSField(cmsData, 'finalCta-description')}
+              {getCMSField(cmsData, 'final-cta-description')}
             </Text>
             
             <Stack 
@@ -336,9 +336,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Button
                   variant="primary"
                   size="lg"
-                  data-cms-id="home-finalCta-buttonText"
+                  data-cms-id="final-cta-button-text"
                 >
-                  {getCMSField(cmsData, 'finalCta-buttonText')}
+                  {getCMSField(cmsData, 'final-cta-button-text')}
                 </Button>
               </Link>
               
@@ -346,9 +346,9 @@ function HomePageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 <Button
                   variant="secondary"
                   size="lg"
-                  data-cms-id="home-finalCta-secondaryButton"
+                  data-cms-id="final-cta-secondary-button"
                 >
-                  {getCMSField(cmsData, 'finalCta-secondaryButton')}
+                  {getCMSField(cmsData, 'final-cta-secondary-button')}
                 </Button>
               </Link>
             </Stack>

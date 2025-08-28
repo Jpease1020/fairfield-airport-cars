@@ -9,23 +9,46 @@ import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/B
 import { useAdminStatus } from '@/hooks/useAdminStatus';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/utils/firebase';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
 
 const LogoImage = styled.img`
   max-width: 300px;
 `;
 
-export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%' }) => {
+interface CustomerNavigationProps {
+  width?: string;
+  cmsData?: any;
+}
+
+export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width = '100%', cmsData }) => {
   const pathname = usePathname();
   const { isAdmin } = useAdminStatus();
   const { isLoggedIn } = useAuth();
-  const { cmsData } = useCMSData();
   const navigationItems: NavigationItem[] = [
     ...(pathname !== '/' ? [{ name: 'Home', href: '/', current: false }] : []),
     ...(pathname !== '/book' ? [{ name: 'Book a Ride', href: '/book', current: false }] : []),
     ...(pathname !== '/about' ? [{ name: 'About', href: '/about', current: false }] : []),
     ...(pathname !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
-    ...(pathname !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),
+    ...(isLoggedIn && pathname !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),
     ...(isAdmin && !pathname.startsWith('/admin') ? [{ name: 'Admin', href: '/admin', current: false }] : []),
   ];
 
@@ -123,6 +146,7 @@ export const CustomerNavigation: React.FC<{ width?: string }> = ({ width = '100%
       dataTestIdPrefix="nav"
       editableFieldPrefix="navigation"
       width={width}
+      cmsData={cmsData}
     />
   );
 }; 

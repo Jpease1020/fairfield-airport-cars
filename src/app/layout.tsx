@@ -2,6 +2,7 @@ import '@/design/globals.css';
 import { ErrorBoundary, StyledComponentsRegistry, AccessibilityEnhancer } from '@/ui';  
 import { AdminProvider } from '@/design/providers/AdminProvider';
 import { InteractionModeProvider } from '@/design/providers/InteractionModeProvider';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 import { AppContent } from './AppContent';
 import { SmartNavigation } from '@/components/app/SmartNavigation';
@@ -14,11 +15,23 @@ export const metadata = {
   keywords: 'airport transportation, Fairfield, JFK, LGA, EWR, airport shuttle, luxury car service',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Get CMS data for navigation - only in development with emulators
+  let cmsData = null;
+  try {
+    // Only try to get CMS data if we're in development with emulators
+    if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
+      cmsData = await cmsFlattenedService.getAllCMSData();
+    }
+  } catch (error) {
+    console.error('Failed to load CMS data for navigation:', error);
+    // Continue without CMS data
+  }
+
   return (
     <html lang="en">
       <head>
@@ -35,14 +48,14 @@ export default function RootLayout({
                 <InteractionModeProvider>
                   
                     <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
-                      <SmartNavigation />
+                      <SmartNavigation cmsData={cmsData} />
                     </Container>
                     
                     <Container as="main" maxWidth="full" data-testid="layout-main-content">
                       <AppContent>{children}</AppContent>
                     </Container>
                     
-                    <Footer data-testid="layout-footer"/>
+                    <Footer data-testid="layout-footer" cmsData={cmsData}/>
                   
                 </InteractionModeProvider>
               </AdminProvider>
