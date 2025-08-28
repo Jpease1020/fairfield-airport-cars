@@ -22,7 +22,7 @@ if (getApps().length === 0) {
 const db = getFirestore();
 
 // Read the finalized CMS data
-const cmsDataPath = path.join(__dirname, '..', 'temp', 'final-cms-data-final.json');
+const cmsDataPath = path.join(__dirname, '..', 'data', 'cms-data-backup.json');
 const cmsData = JSON.parse(fs.readFileSync(cmsDataPath, 'utf8'));
 
 // Function to seed a single page's data
