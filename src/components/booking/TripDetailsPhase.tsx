@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Container, Stack, Box, Button, Text, H2, Input, Select } from '@/ui';
-import { useGoogleMapsScript } from '@/hooks/useGoogleMapsScript';
+import { useGoogleMaps } from '@/providers/GoogleMapsProvider';
 import { FlightInfo } from '@/hooks/useBookingForm';
 
 // Helper function to get field value from CMS
@@ -73,9 +73,7 @@ export function TripDetailsPhase({
   canProceed,
   cmsData
 }: TripDetailsPhaseProps) {
-  const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMapsScript(
-    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
-  );
+  const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMaps();
 
   // Calculate fare when pickup/dropoff locations or fare type change
   React.useEffect(() => {

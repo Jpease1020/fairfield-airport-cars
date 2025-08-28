@@ -13,6 +13,7 @@ import {
 } from '@/ui';
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
+import { useGoogleMaps } from '@/providers/GoogleMapsProvider';
 
 const MapContainer = styled.div`
   width: 100%;
@@ -41,6 +42,9 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   const [directionsService, setDirectionsService] = useState<google.maps.DirectionsService | null>(null);
   const [directionsRenderer, setDirectionsRenderer] = useState<google.maps.DirectionsRenderer | null>(null);
 
+  // Get Google Maps loading state from provider
+  const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMaps();
+
   // Initialize real-time tracking
   const {
     bookingStatus,
@@ -50,8 +54,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
 
   // Initialize Google Maps
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.google) {
-      console.error('Google Maps not loaded');
+    if (!mapsLoaded || mapsError) {
       return;
     }
 

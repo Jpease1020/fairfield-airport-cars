@@ -86,8 +86,10 @@ export function TrackingMap({
           }
         }
 
-        // Load Google Maps API
-        await loadGoogleMapsAPI();
+        // Wait for Google Maps API to be loaded via provider
+        if (!window.google?.maps) {
+          throw new Error('Google Maps API not loaded');
+        }
 
         // Get coordinates for locations
         const pickup = await getCoordinates(pickupLocation);
@@ -156,35 +158,7 @@ export function TrackingMap({
     }
   }, [bookingStatus?.estimatedArrival]);
 
-  // Load Google Maps API
-  const loadGoogleMapsAPI = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      if (window.google && window.google.maps) {
-        resolve();
-        return;
-      }
 
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-      if (!apiKey) {
-        reject(new Error('Google Maps API key is not configured. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your environment variables.'));
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      
-      script.onload = () => {
-        resolve();
-      };
-      script.onerror = () => {
-        reject(new Error('Failed to load Google Maps API'));
-      };
-      
-      document.head.appendChild(script);
-    });
-  };
 
   // Get coordinates from address
   const getCoordinates = async (address: string): Promise<google.maps.LatLngLiteral | null> => {

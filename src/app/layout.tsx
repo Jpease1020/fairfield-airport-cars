@@ -2,6 +2,7 @@ import '@/design/globals.css';
 import { ErrorBoundary, StyledComponentsRegistry, AccessibilityEnhancer } from '@/ui';  
 import { AdminProvider } from '@/design/providers/AdminProvider';
 import { InteractionModeProvider } from '@/design/providers/InteractionModeProvider';
+import { GoogleMapsProvider } from '@/providers/GoogleMapsProvider';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 import { AppContent } from './AppContent';
@@ -46,7 +47,7 @@ export default async function RootLayout({
             <AccessibilityEnhancer>
               <AdminProvider>
                 <InteractionModeProvider>
-                  
+                  <GoogleMapsProvider>
                     <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
                       <SmartNavigation cmsData={cmsData} />
                     </Container>
@@ -56,7 +57,7 @@ export default async function RootLayout({
                     </Container>
                     
                     <Footer data-testid="layout-footer" cmsData={cmsData}/>
-                  
+                  </GoogleMapsProvider>
                 </InteractionModeProvider>
               </AdminProvider>
             </AccessibilityEnhancer>

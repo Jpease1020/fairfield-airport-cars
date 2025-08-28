@@ -38,7 +38,7 @@
       "@/ui/*": ["./src/design/components/core/layout/*"],
       "@/icons/*": ["./src/design/components/icons/*"],
       "@/business/*": ["./src/design/components/business/*"],
-      "@/providers/*": ["./src/design/providers/*"]
+      "@/providers/*": ["./src/providers/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
