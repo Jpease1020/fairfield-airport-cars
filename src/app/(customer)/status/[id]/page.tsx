@@ -149,7 +149,7 @@ function BookingStatusPageContent() {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <H1 align="center" data-cms-id="status-title" mode={mode}>
+            <H1 align="center" data-cms-id="status-main-title" mode={mode}>
               {getCMSField(cmsData, 'title', 'Booking Status')}
             </H1>
             <Text align="center" data-cms-id="status-subtitle" mode={mode}>
@@ -165,13 +165,13 @@ function BookingStatusPageContent() {
           <Box variant="elevated" padding="lg">
             <Stack spacing="md" align="center">
               <Text size="2xl" align="center">{getStatusIcon(status)}</Text>
-              <H2 align="center" data-cms-id="status-currentStatus-title" mode={mode}>
-                {getCMSField(cmsData, 'title', 'Current Status')}
+              <H2 align="center" data-cms-id="current-status-title" mode={mode}>
+                {getCMSField(cmsData, 'currentStatus-title', 'Current Status')}
               </H2>
-              <Text align="center" size="lg" data-cms-id="status-currentStatus-status" mode={mode}>
+              <Text align="center" size="lg" data-cms-id="current-status-status" mode={mode}>
                 {getStatusText(status)}
               </Text>
-              <Text align="center" data-cms-id="status-currentStatus-description" mode={mode}>
+              <Text align="center" data-cms-id="current-status-description" mode={mode}>
                 {getStatusText(status) === 'confirmed' && getCMSField(cmsData, 'confirmed', 'Your ride is confirmed and driver assigned')}
                 {getStatusText(status) === 'en-route' && getCMSField(cmsData, 'enRoute', 'Your driver is on the way to pick you up')}
                 {getStatusText(status) === 'arrived' && getCMSField(cmsData, 'arrived', 'Your driver has arrived at the pickup location')}
@@ -181,7 +181,7 @@ function BookingStatusPageContent() {
               </Text>
 
               {estimatedArrival && (
-                <Text align="center" data-cms-id="status-estimatedArrival-message" mode={mode}>
+                <Text align="center" data-cms-id="estimated-arrival-message" mode={mode}>
                   <strong>
                     {getCMSField(cmsData, 'label', '⏰ Estimated Arrival:')}
                   </strong> {estimatedArrival ? estimatedArrival.toString() : getCMSField(cmsData, 'calculating', 'Calculating...')}
@@ -197,7 +197,7 @@ function BookingStatusPageContent() {
         <Container>
           <Stack spacing="md" align="center">
             <H2 align="center" data-cms-id="status-actions-title" mode={mode}>
-              {getCMSField(cmsData, 'title', 'Quick Actions')}
+              {getCMSField(cmsData, 'actions-title', 'Quick Actions')}
             </H2>
             <ActionButtonGroup buttons={quickActions} />
           </Stack>
@@ -212,10 +212,10 @@ function BookingStatusPageContent() {
               onClick={() => setShowDetails(!showDetails)}
               variant="ghost"
               size="sm"
-              data-cms-id="status-showDetails-button"
+              data-cms-id="show-details-button"
             >
-              {getCMSField(cmsData, 'button', showDetails ? 'Hide' : 'Show')}
-              {getCMSField(cmsData, 'label', ' booking details')}
+              {getCMSField(cmsData, 'show-details-button', showDetails ? 'Hide' : 'Show')}
+              {getCMSField(cmsData, 'show-details-label', ' booking details')}
             </Button>
           </Stack>
         </Container>
@@ -227,39 +227,39 @@ function BookingStatusPageContent() {
           <Container>
             <Box variant="elevated" padding="lg">
               <Stack spacing="md">
-                <H2 data-cms-id="status-bookingDetails-title" mode={mode}>
-                  {getCMSField(cmsData, 'title', 'Booking Details')}
+                <H2 data-cms-id="booking-details-title" mode={mode}>
+                  {getCMSField(cmsData, 'booking-details-title', 'Booking Details')}
                 </H2>
                 <div>
-                  <Text data-cms-id="status-bookingDetails-bookingId" mode={mode}>
+                  <Text data-cms-id="booking-details-booking-id" mode={mode}>
                     <strong>
-                      {getCMSField(cmsData, 'bookingId', 'Booking ID:')}
+                      {getCMSField(cmsData, 'booking-details-booking-id', 'Booking ID:')}
                     </strong> {bookingId}
                   </Text>
-                  <Text data-cms-id="status-bookingDetails-pickup" mode={mode}>
+                  <Text data-cms-id="booking-details-pickup" mode={mode}>
                     <strong>
-                      {getCMSField(cmsData, 'pickup', 'Pickup:')}
-                    </strong> {booking?.pickupLocation || getCMSField(cmsData, 'notAvailable', 'N/A')}
+                      {getCMSField(cmsData, 'booking-details-pickup', 'Pickup:')}
+                    </strong> {booking?.pickupLocation || getCMSField(cmsData, 'pickup-notAvailable', 'N/A')}
                   </Text>
-                  <Text data-cms-id="status-bookingDetails-dropoff" mode={mode}>
+                  <Text data-cms-id="booking-details-dropoff" mode={mode}>
                     <strong>
-                      {getCMSField(cmsData, 'dropoff', 'Dropoff:')}
-                    </strong> {booking?.dropoffLocation || getCMSField(cmsData, 'notAvailable', 'N/A')}
+                      {getCMSField(cmsData, 'booking-details-dropoff', 'Dropoff:')}
+                    </strong> {booking?.dropoffLocation || getCMSField(cmsData, 'dropoff-notAvailable', 'N/A')}
                   </Text>
-                  <Text data-cms-id="status-bookingDetails-date" mode={mode}>
+                  <Text data-cms-id="booking-details-date" mode={mode}>
                     <strong>
-                      {getCMSField(cmsData, 'date', 'Date:')}
-                    </strong> {booking?.date ? new Date(booking.date).toLocaleDateString() : getCMSField(cmsData, 'notAvailable', 'N/A')}
+                      {getCMSField(cmsData, 'booking-details-date', 'Date:')}
+                    </strong> {booking?.date ? new Date(booking.date).toLocaleDateString() : getCMSField(cmsData, 'date-notAvailable', 'N/A')}
                   </Text>
-                  <Text data-cms-id="status-bookingDetails-time" mode={mode}>
+                    <Text data-cms-id="booking-details-time" mode={mode}>
                     <strong>
-                      {getCMSField(cmsData, 'time', 'Time:')}
-                    </strong> {booking?.time || getCMSField(cmsData, 'notAvailable', 'N/A')}
+                      {getCMSField(cmsData, 'booking-details-time', 'Time:')}
+                    </strong> {booking?.time || getCMSField(cmsData, 'time-notAvailable', 'N/A')}
                   </Text>
-                  <Text data-cms-id="status-bookingDetails-fare" mode={mode}>
+                  <Text data-cms-id="booking-details-fare" mode={mode}>
                     <strong>
-                      {getCMSField(cmsData, 'fare', 'Fare:')}
-                    </strong> ${booking?.fare || getCMSField(cmsData, 'notAvailable', 'N/A')}
+                      {getCMSField(cmsData, 'booking-details-fare', 'Fare:')}
+                    </strong> ${booking?.fare || getCMSField(cmsData, 'fare-notAvailable', 'N/A')}
                   </Text>
                 </div>
               </Stack>

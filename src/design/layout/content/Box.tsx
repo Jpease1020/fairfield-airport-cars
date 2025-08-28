@@ -17,6 +17,7 @@ interface BoxProps {
   order?: number;
   as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
   id?: string;
+  onClick?: () => void;
 }
 
 const StyledBox = styled.div.withConfig({
@@ -148,7 +149,9 @@ export const Box: React.FC<BoxProps> = ({
   alignSelf = 'stretch',
   order = 0,
   as: Component = 'div',
+  onClick,
   ...rest
+  
 }) => {
   return (
     <StyledBox
@@ -160,6 +163,7 @@ export const Box: React.FC<BoxProps> = ({
       alignSelf={alignSelf}
       order={order}
       as={Component}
+      onClick={onClick} 
       {...rest}
     >
       {children}

@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Button, Container, Stack, Textarea } from '@/ui';
-import { useCMSData } from '@/design/hooks/useCMSData';
 
 const FloatingEditorBox = styled.div<{ $top: number; $left: number }>`
   position: fixed;
@@ -15,10 +14,11 @@ const FloatingEditorBox = styled.div<{ $top: number; $left: number }>`
 
 interface InlineTextEditorProps {
   editMode?: boolean;
+  cmsData?: any;
+  updateField?: (path: string, value: string) => Promise<void>;
 }
 
-export default function InlineTextEditor({ editMode = false }: InlineTextEditorProps) {
-  const { cmsData, updateField } = useCMSData();
+export default function InlineTextEditor({ editMode = false, cmsData, updateField }: InlineTextEditorProps) {
 
   const [activePath, setActivePath] = useState<string | null>(null);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
@@ -141,7 +141,7 @@ export default function InlineTextEditor({ editMode = false }: InlineTextEditorP
   }, [openEditorFor, editMode]);
 
   const handleSave = useCallback(async () => {
-    if (!activePath) {
+    if (!activePath || !updateField) {
       return;
     }
     try {

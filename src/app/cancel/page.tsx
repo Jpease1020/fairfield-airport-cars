@@ -118,8 +118,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-form-title" weight="bold">{getCMSField(cmsData, 'cancel-form-title', '📝 Cancel Your Booking')}</Text>
-              <Text data-testid="cancel-form-description">{getCMSField(cmsData, 'cancel-form-description', 'Please provide your booking details to process the cancellation')}</Text>
+              <Text data-testid="cancel-form-title" weight="bold" data-cms-id="form-title">{getCMSField(cmsData, 'cancel-form-title', '📝 Cancel Your Booking')}</Text>
+              <Text data-testid="cancel-form-description" data-cms-id="form-description">{getCMSField(cmsData, 'cancel-form-description', 'Please provide your booking details to process the cancellation')}</Text>
             </Stack>
             
             <Stack data-testid="cancel-form-fields" spacing="md">
@@ -152,8 +152,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-policy-title" weight="bold">{getCMSField(cmsData, 'cancel-policy-title', '📋 Cancellation Policy')}</Text>
-              <Text data-testid="cancel-policy-description">{getCMSField(cmsData, 'cancel-policy-description', 'Important information about our cancellation terms')}</Text>
+              <Text data-testid="cancel-policy-title" weight="bold" data-cms-id="policy-title">{getCMSField(cmsData, 'cancel-policy-title', '📋 Cancellation Policy')}</Text>
+              <Text data-testid="cancel-policy-description" data-cms-id="policy-description">{getCMSField(cmsData, 'cancel-policy-description', 'Important information about our cancellation terms')}</Text>
             </Stack>
             
             <Stack data-testid="cancel-policy-list" spacing="md">
@@ -175,8 +175,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg"  >
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-alternatives-title" weight="bold">{getCMSField(cmsData, 'cancel-alternatives-title', '🔄 Alternative Options')}</Text>
-              <Text data-testid="cancel-alternatives-description">{getCMSField(cmsData, 'cancel-alternatives-description', 'Consider these alternatives before cancelling')}</Text>
+              <Text data-testid="cancel-alternatives-title" weight="bold" data-cms-id="alternatives-title">{getCMSField(cmsData, 'cancel-alternatives-title', '🔄 Alternative Options')}</Text>
+              <Text data-testid="cancel-alternatives-description" data-cms-id="alternatives-description">{getCMSField(cmsData, 'cancel-alternatives-description', 'Consider these alternatives before cancelling')}</Text>
             </Stack>
             
             <FeatureGrid data-testid="cancel-alternatives-grid" features={alternativeOptions} columns={3} />

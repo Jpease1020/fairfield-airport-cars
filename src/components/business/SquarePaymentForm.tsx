@@ -2,7 +2,26 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Container, Stack, Text, Alert } from '@/design/ui';
-import { useCMSData } from '@/design/hooks/useCMSData';
+
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
 
 interface SquarePaymentFormProps {
   amount: number; // Amount in cents
@@ -12,6 +31,7 @@ interface SquarePaymentFormProps {
   disabled?: boolean;
   hideSubmitButton?: boolean;
   onPaymentReady?: (processPayment: () => Promise<void>) => void;
+  cmsData?: any;
   
   // Booking data for new bookings
   bookingData?: {
@@ -46,9 +66,9 @@ export function SquarePaymentForm({
   disabled = false,
   hideSubmitButton = false,
   onPaymentReady,
-  bookingData
+  bookingData,
+  cmsData
 }: SquarePaymentFormProps) {
-  const { cmsData } = useCMSData();
   const [isLoading, setIsLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -289,7 +309,7 @@ export function SquarePaymentForm({
     <Container variant="default" padding="md">
       <Stack spacing="lg">
         <Container variant="default" padding="md">
-          <div id="card-container" ref={cardContainerRef} />
+          <div id="card-container" ref={cardContainerRef} data-cms-id="payment-form-card-container" />
         </Container>
 
         {paymentError && (
@@ -304,7 +324,7 @@ export function SquarePaymentForm({
             disabled={disabled || isLoading || !cardRef.current}
             variant="primary"
             size="lg"
-            data-cms-id="payment.form.submit"
+            data-cms-id="payment-form-submit"
           >
             {isLoading 
               ? getCMSField(cmsData, 'payment-form-processing', 'Processing...')
@@ -318,7 +338,4 @@ export function SquarePaymentForm({
   );
 }
 
-// Helper function to get CMS fields
-function getCMSField(cmsData: any, path: string, fallback: string): string {
-  return cmsData?.[path] || fallback;
-}
+

@@ -7,7 +7,6 @@ import { H3 } from '@/design/components/base-components/text/Headings';
 import { Text } from '@/design/components/base-components/text/Text';
 import { Stack } from '@/design/layout/framing/Stack';
 import { Box } from '@/design/layout/content/Box';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
 
 // Define Booking interface locally for this component
 interface Booking {
@@ -46,18 +45,39 @@ interface Booking {
   totalFare?: number;
 }
 
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
+}
+
 interface BookingCardProps {
   booking: Booking;
   showActions?: boolean;
   onAction?: (action: 'edit' | 'cancel' | 'view') => void;
+  cmsData?: any;
 }
 
 const BookingCard: React.FC<BookingCardProps> = ({
   booking,
   showActions = false,
-  onAction
+  onAction,
+  cmsData
 }) => {
-  const { cmsData } = useCMSData();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

@@ -5,7 +5,11 @@ import { usePathname } from 'next/navigation';
 import { CustomerNavigation } from './CustomerNavigation';
 import { AdminNavigation } from './AdminNavigation';
 
-export function SmartNavigation() {
+interface SmartNavigationProps {
+  cmsData?: any;
+}
+
+export function SmartNavigation({ cmsData }: SmartNavigationProps) {
   const pathname = usePathname();
   
   // Check if we're in admin context
@@ -13,9 +17,9 @@ export function SmartNavigation() {
   
   // Render appropriate navigation based on context
   if (isAdminRoute) {
-    return <AdminNavigation />;
+    return <AdminNavigation cmsData={cmsData} />;
   }
   
   // Default to customer navigation for all other routes
-  return <CustomerNavigation />;
+  return <CustomerNavigation cmsData={cmsData} />;
 }

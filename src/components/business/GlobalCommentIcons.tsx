@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Container, Stack, Button, Span, Text, Drawer, Select, Textarea, Modal } from '@/ui';
 import { ChevronRight, AlertTriangle, X, MessageSquare, Edit, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
-import { useCMSData } from '@/design/hooks/useCMSData';
 
 const FloatingCommentBox = styled.div<{ $top: number; $left: number }>`
   position: fixed;
@@ -84,12 +83,32 @@ const DebugText = styled(Span)`
   font-size: 10px;
 `;
 
-interface GlobalCommentIconsProps {
-  commentMode?: boolean;
+// Helper function to get field value from CMS
+function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
+  if (!cmsData) return defaultValue;
+  
+  const resolvePath = (obj: any, path: string[]): unknown => {
+    let cur: any = obj;
+    for (const seg of path) {
+      if (cur && typeof cur === 'object' && seg in cur) {
+        cur = cur[seg as keyof typeof cur];
+      } else {
+        return undefined;
+      }
+    }
+    return cur;
+  };
+
+  const value = resolvePath(cmsData, fieldPath.split('.'));
+  return typeof value === 'string' ? (value as string) : defaultValue;
 }
 
-export default function GlobalCommentIcons({ commentMode = false }: GlobalCommentIconsProps) {
-  const { cmsData } = useCMSData();
+interface GlobalCommentIconsProps {
+  commentMode?: boolean;
+  cmsData?: any;
+}
+
+export default function GlobalCommentIcons({ commentMode = false, cmsData }: GlobalCommentIconsProps) {
   const [comments, setComments] = useState<CommentRecord[]>([]);
   const [commentAnchors, setCommentAnchors] = useState<Record<string, { top: number; left: number }>>({});
   const [hoveredCommentId, setHoveredCommentId] = useState<string | null>(null);

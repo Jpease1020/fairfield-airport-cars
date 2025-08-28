@@ -98,10 +98,10 @@ function PaymentSuccessContent() {
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <H1 align="center" data-cms-id="paymentSuccess-processing-title">
+          <H1 align="center" data-cms-id="processing-title">
             {getCMSField(cmsData, 'title', 'Processing Your Payment...')}
           </H1>
-          <Text align="center" data-cms-id="paymentSuccess-processing-description">
+          <Text align="center" data-cms-id="processing-description">
             {getCMSField(cmsData, 'description', 'Please wait while we confirm your payment and create your booking.')}
           </Text>
         </Stack>
@@ -113,10 +113,10 @@ function PaymentSuccessContent() {
     return (
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
-          <H1 align="center" data-cms-id="paymentSuccess-error-title">
+          <H1 align="center" data-cms-id="error-title">
             {getCMSField(cmsData, 'title', 'Payment Processing Error')}
           </H1>
-          <Text align="center" data-cms-id="paymentSuccess-error-description">
+          <Text align="center" data-cms-id="error-description">
             {error || getCMSField(cmsData, 'description', 'There was an error processing your payment.')}
           </Text>
           <Button onClick={() => router.push('/book')} variant="primary">
@@ -134,18 +134,18 @@ function PaymentSuccessContent() {
           <Text size="xl">✅</Text>
         </Box>
         
-        <H1 align="center" data-cms-id="paymentSuccess-success-title">
+        <H1 align="center" data-cms-id="success-title">
           {getCMSField(cmsData, 'title', 'Payment Successful!')}
         </H1>
         
-        <Text align="center" data-cms-id="paymentSuccess-success-description">
+        <Text align="center" data-cms-id="success-description">
           {getCMSField(cmsData, 'description', 'Your deposit has been processed and your booking is confirmed.')}
         </Text>
 
         {bookingId && (
           <Box variant="outlined" padding="lg">
             <Stack spacing="sm">
-              <Text weight="bold" data-cms-id="paymentSuccess-success-bookingId">
+              <Text weight="bold" data-cms-id="success-booking-id">
                 {getCMSField(cmsData, 'bookingId', 'Booking ID:')}
               </Text>
               <Text size="lg" variant="body">{bookingId}</Text>

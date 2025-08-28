@@ -112,7 +112,7 @@ function PricingSettingsContent() {
     return (
       <>
         <Container>
-          {getCMSField(cmsData, 'admin-cms-pricing-loading', 'Loading pricing settings...')}
+          {getCMSField(cmsData, 'loading', 'Loading pricing settings...')}
         </Container>
       </>
     );
@@ -122,7 +122,7 @@ function PricingSettingsContent() {
     return (
       <>
         <Container>
-          {getCMSField(cmsData, 'admin-cms-pricing-error', 'Failed to load pricing settings. Please try refreshing the page.')}
+          {getCMSField(cmsData, 'error', 'Failed to load pricing settings. Please try refreshing the page.')}
         </Container>
       </>
     );
@@ -152,14 +152,14 @@ function PricingSettingsContent() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
-                    {getCMSField(cmsData, 'admin-cms-pricing-basePricingTitle', '💰 Base Pricing')}
+                    {getCMSField(cmsData, 'basePricingTitle', '💰 Base Pricing')}
                   </Text>
                   <Text variant="muted" size="sm">
-                    {getCMSField(cmsData, 'admin-cms-pricing-basePricingDesc', 'Configure your base fare structure and rates')}
+                    {getCMSField(cmsData, 'basePricingDesc', 'Configure your base fare structure and rates')}
                   </Text>
                 </Stack>
-                <div>
-                  <Label htmlFor="baseFare">{getCMSField(cmsData, 'admin-cms-pricing-baseFareLabel', 'Base Fare ($)')}</Label>
+                <div data-cms-id="baseFare-container">
+                  <Label htmlFor="baseFare" data-cms-id="baseFareLabel">{getCMSField(cmsData, 'baseFareLabel', 'Base Fare ($)')}</Label>
                   <Input
                     id="baseFare"
                     type="number"
@@ -171,8 +171,8 @@ function PricingSettingsContent() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="perMile">{getCMSField(cmsData, 'admin-cms-pricing-perMileLabel', 'Per Mile Rate ($)')}</Label>
+                <div data-cms-id="perMile-container">
+                  <Label htmlFor="perMile" data-cms-id="perMileLabel">{getCMSField(cmsData, 'perMileLabel', 'Per Mile Rate ($)')}</Label>
                   <Input
                     id="perMile"
                     type="number"
@@ -184,8 +184,8 @@ function PricingSettingsContent() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="perMinute">{getCMSField(cmsData, 'admin-cms-pricing-perMinuteLabel', 'Per Minute Rate ($)')}</Label>
+                <div data-cms-id="perMinute-container">
+                  <Label htmlFor="perMinute" data-cms-id="perMinuteLabel">{getCMSField(cmsData, 'perMinuteLabel', 'Per Minute Rate ($)')}</Label>
                   <Input
                     id="perMinute"
                     type="number"
@@ -197,8 +197,8 @@ function PricingSettingsContent() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="depositPercent">{getCMSField(cmsData, 'admin-cms-pricing-depositPercentLabel', 'Deposit Percentage (%)')}</Label>
+                <div data-cms-id="depositPercent-container">
+                  <Label htmlFor="depositPercent" data-cms-id="depositPercentLabel">{getCMSField(cmsData, 'depositPercentLabel', 'Deposit Percentage (%)')}</Label>
                   <Input
                     id="depositPercent"
                     type="number"
@@ -210,8 +210,8 @@ function PricingSettingsContent() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="bufferMinutes">{getCMSField(cmsData, 'admin-cms-pricing-bufferMinutesLabel', 'Buffer Minutes')}</Label>
+                <div data-cms-id="bufferMinutes-container">
+                  <Label htmlFor="bufferMinutes" data-cms-id="bufferMinutesLabel">{getCMSField(cmsData, 'bufferMinutesLabel', 'Buffer Minutes')}</Label>
                   <Input
                     id="bufferMinutes"
                     type="number"
@@ -251,7 +251,7 @@ function PricingSettingsContent() {
                     <li>Your Current Rate: ${settings.baseFare + (55 * settings.perMile) + (55 * settings.perMinute)}</li>
                   </ul>
                 </div>
-                <div>
+                <div data-cms-id="cancellationDesc">
                   <strong>Note:</strong> These are rough estimates for planning purposes. Actual competitor prices vary by time, demand, and other factors.
                 </div>
               </Stack>
@@ -264,14 +264,14 @@ function PricingSettingsContent() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
-                    {getCMSField(cmsData, 'admin-cms-pricing-cancellationTitle', '⏰ Cancellation Policy')}
+                    {getCMSField(cmsData, 'cancellationTitle', '⏰ Cancellation Policy')}
                   </Text>
                   <Text variant="muted" size="sm">
-                    {getCMSField(cmsData, 'admin-cms-pricing-cancellationDesc', 'Set refund percentages for different cancellation timeframes')}
+                    {getCMSField(cmsData, 'cancellationDesc', 'Set refund percentages for different cancellation timeframes')}
                   </Text>
                 </Stack>
-                <div>
-                  <Label htmlFor="over24hRefund">{getCMSField(cmsData, 'admin-cms-pricing-over24hRefundLabel', 'Over 24h Refund (%)')}</Label>
+                <div data-cms-id="over24hRefund-container">
+                  <Label htmlFor="over24hRefund" data-cms-id="over24hRefundLabel">{getCMSField(cmsData, 'over24hRefundLabel', 'Over 24h Refund (%)')}</Label>
                   <Input
                     id="over24hRefund"
                     type="number"
@@ -283,8 +283,8 @@ function PricingSettingsContent() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="between3And24hRefund">{getCMSField(cmsData, 'admin-cms-pricing-between3And24hRefundLabel', '3-24h Refund (%)')}</Label>
+                <div data-cms-id="between3And24hRefund-container">
+                  <Label htmlFor="between3And24hRefund" data-cms-id="between3And24hRefundLabel">{getCMSField(cmsData, 'between3And24hRefundLabel', '3-24h Refund (%)')}</Label>
                   <Input
                     id="between3And24hRefund"
                     type="number"
@@ -296,8 +296,8 @@ function PricingSettingsContent() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="under3hRefund">{getCMSField(cmsData, 'admin-cms-pricing-under3hRefundLabel', 'Under 3h Refund (%)')}</Label>
+                <div data-cms-id="noZones-message">
+                  <Label htmlFor="under3hRefund" data-cms-id="under3hRefundLabel">{getCMSField(cmsData, 'under3hRefundLabel', 'Under 3h Refund (%)')}</Label>
                   <Input
                     id="under3hRefund"
                     type="number"
@@ -318,10 +318,10 @@ function PricingSettingsContent() {
               <Stack spacing="md">
                 <Stack spacing="sm">
                   <Text variant="lead" size="md" weight="semibold">
-                    {getCMSField(cmsData, 'admin-cms-pricing-zonesTitle', '📍 Pricing Zones')}
+                    {getCMSField(cmsData, 'zonesTitle', '📍 Pricing Zones')}
                   </Text>
                   <Text variant="muted" size="sm">
-                    {getCMSField(cmsData, 'admin-cms-pricing-zonesDesc', 'Configure custom pricing for different geographic areas')}
+                    {getCMSField(cmsData, 'zonesDesc', 'Configure custom pricing for different geographic areas')}
                   </Text>
                 </Stack>
               <ActionButtonGroup
@@ -347,9 +347,9 @@ function PricingSettingsContent() {
                         Add zones for different areas with custom pricing
                       </Text>
                     </Stack>
-                    {getCMSField(cmsData, 'admin-cms-pricing-noZones-message', 'No pricing zones configured')}
-                    <br />
-                    {getCMSField(cmsData, 'admin-cms-pricing-noZones-description', 'Add zones for different areas with custom pricing')}
+                    {getCMSField(cmsData, 'noZones-message', 'No pricing zones configured')}
+                    <br data-cms-id="noZones-description" />
+                    {getCMSField(cmsData, 'noZones-description', 'Add zones for different areas with custom pricing')}
                   </Stack>
                 </Box>
               ) : (
@@ -367,8 +367,8 @@ function PricingSettingsContent() {
                         </Stack>
                       </Stack>
                       <Stack spacing="sm">
-                        <div>
-                          <Label htmlFor={`zone-name-${index}`}>{getCMSField(cmsData, 'admin-cms-pricing-zoneNameLabel', 'Zone Name')}</Label>
+                        <div data-cms-id="zoneName-container">
+                          <Label htmlFor={`zone-name-${index}`} data-cms-id="zoneNameLabel">{getCMSField(cmsData, 'zoneNameLabel', 'Zone Name')}</Label>
                           <Input
                             id={`zone-name-${index}`}
                             value={zone.name}
@@ -377,8 +377,8 @@ function PricingSettingsContent() {
                           />
                         </div>
 
-                        <div>
-                          <Label htmlFor={`zone-baseFare-${index}`}>{getCMSField(cmsData, 'admin-cms-pricing-zoneBaseFareLabel', 'Base Fare ($)')}</Label>
+                        <div data-cms-id="zoneBaseFare-container">
+                          <Label htmlFor={`zone-baseFare-${index}`} data-cms-id="zoneBaseFareLabel">{getCMSField(cmsData, 'zoneBaseFareLabel', 'Base Fare ($)')}</Label>
                           <Input
                             id={`zone-baseFare-${index}`}
                             type="number"
@@ -390,8 +390,8 @@ function PricingSettingsContent() {
                           />
                         </div>
 
-                        <div>
-                          <Label htmlFor={`zone-perMile-${index}`}>{getCMSField(cmsData, 'admin-cms-pricing-zonePerMileLabel', 'Per Mile ($)')}</Label>
+                        <div data-cms-id="zonePerMile-container">
+                          <Label htmlFor={`zone-perMile-${index}`} data-cms-id="zonePerMileLabel">{getCMSField(cmsData, 'zonePerMileLabel', 'Per Mile ($)')}</Label>
                           <Input
                             id={`zone-perMile-${index}`}
                             type="number"
@@ -403,8 +403,8 @@ function PricingSettingsContent() {
                           />
                         </div>
 
-                        <div>
-                          <Label htmlFor={`zone-perMinute-${index}`}>{getCMSField(cmsData, 'admin-cms-pricing-zonePerMinuteLabel', 'Per Minute ($)')}</Label>
+                        <div data-cms-id="zonePerMinute-container">
+                          <Label htmlFor={`zone-perMinute-${index}`} data-cms-id="zonePerMinuteLabel">{getCMSField(cmsData, 'zonePerMinuteLabel', 'Per Minute ($)')}</Label>
                           <Input
                             id={`zone-perMinute-${index}`}
                             type="number"

@@ -1,42 +1,24 @@
-# 🛠️ Scripts Directory
+# 🚀 Scripts Directory - Fairfield Airport Cars
 
-This directory contains utility scripts organized by category for the Fairfield Airport Cars application.
+This directory contains utility scripts for development, testing, and maintenance.
 
 ## 📁 Directory Structure
 
-### `/setup/` - Initialization & Setup Scripts
-Scripts for setting up the application and admin users.
+### `/` - Root Scripts
+Core scripts for development and maintenance.
 
-- **`setup-test-user.js`** - Creates test user accounts
-- **`setup-admin-user.js`** - Creates admin user accounts  
-- **`setup-admin.js`** - General admin setup utilities
+- **`fetch-all-cms-data.js`** - 🚀 **MAIN TOOL** - Fetches all CMS data from Firebase
+- **`FIREBASE_DATA_FETCHING.md`** - 📖 Documentation for Firebase data fetching
+- **`eslint-automation.js`** - ESLint automation and rule enforcement
+- **`firebase-rules-sync.sh`** - Syncs Firebase security rules
+- **`setup-push-notifications.sh`** - Sets up push notification configuration
 
+### `/eslint-rules/` - ESLint Configuration
+Custom ESLint rules and configurations.
 
-### `/cleanup/` - Maintenance & Cleanup Scripts
-Scripts for cleaning up code, files, and maintaining code quality.
-
-- **`add-missing-content.js`** - Adds missing content to CMS
-- **`add-use-client.js`** - Adds 'use client' directives where needed
-- **`cleanup-obsolete-files.js`** - Removes obsolete files
-- **`structural-cleanup.js`** - Cleans up file structure
-- **`reorganize-layout-design.js`** - Reorganizes layout and design files
-
-### `/testing/` - Testing & Quality Assurance Scripts
-Scripts for running tests, checking code quality, and validation.
-
-- **`run-tests.js`** - Runs the complete test suite
-- **`test-suite.js`** - Test suite utilities
-- **`cleanup-tests.js`** - Cleans up test files
-- **`test-analytics.js`** - Tests analytics functionality
-- **`test-square-payment-flow.js`** - Tests Square payment integration
-- **`check-component-rules.js`** - Validates component rules
-- **`check-css-size.js`** - Checks CSS bundle size
+- **`architecture-guardrails.js`** - Enforces architectural patterns
+- **`design-system-guard.sh`** - Protects design system integrity
 - **`enforce-styled-components.js`** - Enforces styled-components usage
-
-### `/deployment/` - Deployment Scripts
-Scripts for deploying the application to production.
-
-- **`deploy-production.sh`** - Production deployment script
 
 ### `/monitoring/` - Monitoring & Health Check Scripts
 Scripts for monitoring application health and performance.
@@ -51,43 +33,24 @@ Scripts for monitoring application health and performance.
 - **`dev-server.sh`** - Starts development server
 - **`check-dev-status.sh`** - Checks development environment status
 
-### `/archive/` - Completed or Obsolete Scripts
-Scripts that have been completed or are no longer needed.
-
-- **`remove-tailwind.js`** - ✅ Completed - Removed Tailwind CSS
-- **`migrate-to-unified-layout.js`** - ✅ Completed - Migrated to unified layout
-- **`standardize-all-pages.js`** - ✅ Completed - Standardized all pages
-- **`fix-cms-permissions.js`** - ✅ Completed - Fixed CMS permissions
-- **`migrate-content-to-cms.js`** - ✅ Completed - Migrated content to CMS
-- **`fix-ui-components.js`** - ✅ Completed - Fixed UI components
-
 ## 🚀 Quick Start
 
-### Setup Environment
+### Fetch All CMS Data (Main Use Case)
 ```bash
-# Initialize CMS with default content
+# Start dev server first
+npm run dev
 
-
-# Setup admin user
-node scripts/setup/setup-admin.js
+# Fetch ALL CMS data from Firebase
+node scripts/fetch-all-cms-data.js
 ```
 
 ### Run Tests
 ```bash
 # Run complete test suite
-node scripts/testing/run-tests.js
+npm test
 
 # Check component rules
-node scripts/testing/check-component-rules.js
-```
-
-### Cleanup & Maintenance
-```bash
-# Add missing content
-node scripts/cleanup/add-missing-content.js
-
-# Clean up obsolete files
-node scripts/cleanup/cleanup-obsolete-files.js
+node scripts/eslint-rules/check-component-rules.js
 ```
 
 ### Monitor Application
@@ -106,54 +69,30 @@ The daily analysis system provides comprehensive analysis of the application:
 ```bash
 # Run daily analysis
 node scripts/daily-analysis.js
-
-# Setup cron job for daily analysis
-bash scripts/setup-cron.sh
 ```
 
-## 🔧 Configuration
+## 🔧 Maintenance
 
-### ESLint Ignore
-Scripts are excluded from ESLint checking via `.eslintignore`:
+### ESLint Automation
+```bash
+# Run ESLint automation
+node scripts/eslint-automation.js
 ```
-scripts/
-scripts/**/*
+
+### Firebase Rules Sync
+```bash
+# Sync Firebase security rules
+bash scripts/firebase-rules-sync.sh
 ```
 
-### Script Categories
-- **Setup**: One-time initialization scripts
-- **Cleanup**: Maintenance and code quality scripts  
-- **Testing**: Quality assurance and validation scripts
-- **Deployment**: Production deployment scripts
-- **Monitoring**: Health check and monitoring scripts
-- **Archive**: Completed or obsolete scripts
+## 📝 Notes
 
-## 📈 Usage Guidelines
-
-### When to Use Each Category
-
-**Setup Scripts**: Use for initial project setup or when adding new environments
-**Cleanup Scripts**: Use regularly for code maintenance and quality assurance
-**Testing Scripts**: Use before deployments or when making significant changes
-**Deployment Scripts**: Use for production deployments
-**Monitoring Scripts**: Use for ongoing application health monitoring
-
-### Best Practices
-
-1. **Always backup** before running cleanup scripts
-2. **Test in development** before running in production
-3. **Review script output** for any errors or warnings
-4. **Document changes** made by scripts
-5. **Archive completed scripts** to keep the directory clean
-
-## 🚨 Important Notes
-
-- Scripts in `/archive/` are completed and should not be run again
-- Always review script contents before running
-- Some scripts may require specific environment variables
-- Monitor script output for any errors or warnings
+- **`fetch-all-cms-data.js`** is the primary tool for getting CMS data from Firebase
+- All scripts require the development server to be running (`npm run dev`)
+- The consolidated Firebase data route (`/api/admin/firebase-data`) handles all data fetching
+- Empty/unused directories have been cleaned up for simplicity
 
 ---
 
 *Last Updated: January 27, 2025*
-*Status: ✅ Organized and Documented* 
+*Status: ✅ Cleaned Up & Consolidated* 

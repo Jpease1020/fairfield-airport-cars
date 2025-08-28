@@ -73,8 +73,8 @@ function BalancePaymentPageContent({ bookingId }: { bookingId: string }) {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" data-cms-id="payBalance-loading-message">
-                {getCMSField(cmsData, 'message', 'Loading booking details...')}
+              <Text align="center" data-cms-id="loading-message">
+                {getCMSField(cmsData, 'payments-message', 'Loading booking details...')}
               </Text>
             </Stack>
           </Container>
@@ -89,18 +89,18 @@ function BalancePaymentPageContent({ bookingId }: { bookingId: string }) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="payBalance-error-title">
-                {getCMSField(cmsData, 'title', 'Unable to Load Booking')}
+              <H1 align="center" data-cms-id="error-title">
+                {getCMSField(cmsData, 'payments-title', 'Unable to Load Booking')}
               </H1>
-              <Text align="center" data-cms-id="payBalance-error-description">
-                {getCMSField(cmsData, 'description', 'We could not load the booking details. Please check your booking ID and try again.')}
+              <Text align="center" data-cms-id="error-description">
+                {getCMSField(cmsData, 'payments-description', 'We could not load the booking details. Please check your booking ID and try again.')}
               </Text>
               <Button
                 onClick={() => router.push('/bookings')}
                 variant="primary"
-                data-cms-id="payBalance-error-viewBookings"
+                data-cms-id="error-view-bookings"
               >
-                {getCMSField(cmsData, 'viewBookings', 'View My Bookings')}
+                {getCMSField(cmsData, 'payments-viewBookings', 'View My Bookings')}
               </Button>
             </Stack>
           </Container>
@@ -115,11 +115,11 @@ function BalancePaymentPageContent({ bookingId }: { bookingId: string }) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="payBalance-success-title">
-                {getCMSField(cmsData, 'title', 'Payment Successful!')}
+              <H1 align="center" data-cms-id="success-title">
+                {getCMSField(cmsData, 'payments-title', 'Payment Successful!')}
               </H1>
-              <Text align="center" data-cms-id="payBalance-success-description">
-                {getCMSField(cmsData, 'description', 'Your payment has been processed successfully. Redirecting to confirmation...')}
+              <Text align="center" data-cms-id="success-description">
+                {getCMSField(cmsData, 'payments-description', 'Your payment has been processed successfully. Redirecting to confirmation...')}
               </Text>
             </Stack>
           </Container>
@@ -150,19 +150,19 @@ function BalancePaymentPageContent({ bookingId }: { bookingId: string }) {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="sm" align="center">
-              <H1 align="center" data-cms-id="payBalance-title">
-                {getCMSField(cmsData, 'title', 'Complete Payment')}
+              <H1 align="center" data-cms-id="title">
+                {getCMSField(cmsData, 'payments-title', 'Complete Payment')}
               </H1>
-              <Text align="center" data-cms-id="payBalance-subtitle">
-                {getCMSField(cmsData, 'subtitle', `Complete payment for your booking from ${bookingDetails.pickupLocation} to ${bookingDetails.dropoffLocation}`)}
+              <Text align="center" data-cms-id="subtitle">
+                {getCMSField(cmsData, 'payments-subtitle', `Complete payment for your booking from ${bookingDetails.pickupLocation} to ${bookingDetails.dropoffLocation}`)}
               </Text>
             </Stack>
 
             <Stack spacing="md" align="center">
-              <Text variant="h3" data-cms-id="payBalance-amount-title">
-                {getCMSField(cmsData, 'title', 'Amount Due')}
+              <Text variant="h3" data-cms-id="amount-title">
+                {getCMSField(cmsData, 'payments-title', 'Amount Due')}
               </Text>
-              <Text variant="h2" data-cms-id="payBalance-amount-value">
+              <Text variant="h2" data-cms-id="amount-value">
                 ${bookingDetails.balanceDue.toFixed(2)}
               </Text>
             </Stack>

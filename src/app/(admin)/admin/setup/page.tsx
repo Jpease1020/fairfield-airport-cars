@@ -51,7 +51,7 @@ export default function SetupPage() {
 
   const setupAdminUser = async () => {
     if (!user) {
-      setMessage(getCMSField(cmsData, 'admin-setup-error-pleaseLogin', 'Please log in first'));
+      setMessage(getCMSField(cmsData, 'error-pleaseLogin', 'Please log in first'));
       return;
     }
 
@@ -67,10 +67,10 @@ export default function SetupPage() {
       };
 
       await setDoc(doc(db, 'users', user.uid), userRole);
-      setMessage(getCMSField(cmsData, 'admin-setup-success-adminCreated', '✅ Admin user created successfully! You can now access admin features.'));
+      setMessage(getCMSField(cmsData, 'success-adminCreated', '✅ Admin user created successfully! You can now access admin features.'));
     } catch (error) {
       console.error('Error creating admin user:', error);
-      setMessage(getCMSField(cmsData, 'admin-setup-error-creationFailed', '❌ Error creating admin user. Check console for details.'));
+      setMessage(getCMSField(cmsData, 'error-creationFailed', '❌ Error creating admin user. Check console for details.'));
     } finally {
       setLoading(false);
     }
@@ -81,17 +81,17 @@ export default function SetupPage() {
       <Stack spacing="xl" align="center">
         <Box variant="elevated" padding="xl">
           <Stack spacing="lg" align="center">
-            <H1 data-cms-id="admin.setup.title" mode={mode}>
-              {getCMSField(cmsData, 'admin-setup-title', 'Admin Setup')}
+            <H1 data-cms-id="title" mode={mode}>
+              {getCMSField(cmsData, 'title', 'Admin Setup')}
             </H1>
             
             {user ? (
               <Stack spacing="lg">
-                <Text data-cms-id="admin.setup.sections.loggedIn.email" mode={mode}>
-                  {getCMSField(cmsData, 'admin-setup-sections-loggedIn-email', 'Logged in as:')} <Text weight="bold">{user.email}</Text>
+                <Text data-cms-id="logged-in-email" mode={mode}>
+                  {getCMSField(cmsData, 'logged-in-email', 'Logged in as:')} <Text weight="bold">{user.email}</Text> {getCMSField(cmsData, 'logged-in-email', 'Logged in as:')} <Text weight="bold">{user.email}</Text>
                 </Text>
-                <Text data-cms-id="admin.setup.sections.loggedIn.description" mode={mode}>
-                  {getCMSField(cmsData, 'admin-setup-sections-loggedIn-description', 'Click the button below to create your admin user role in the database.')}
+                <Text data-cms-id="logged-in-description" mode={mode}>
+                  {getCMSField(cmsData, 'logged-in-description', 'Click the button below to create your admin user role in the database.')} {getCMSField(cmsData, 'logged-in-description', 'Click the button below to create your admin user role in the database.')} {getCMSField(cmsData, 'logged-in-description', 'Click the button below to create your admin user role in the database.')}
                 </Text>
                 
                 <Button 
@@ -99,10 +99,11 @@ export default function SetupPage() {
                   disabled={loading}
                   variant="primary"
                   size="lg"
-                  data-cms-id="admin.setup.sections.loggedIn.setupButton"
+                  data-cms-id="logged-in-setup-button"
                   interactionMode={mode}
                 >
-                  {loading ? getCMSField(cmsData, 'admin-setup-sections-loggedIn-settingUp', 'Setting up...') : getCMSField(cmsData, 'admin-setup-sections-loggedIn-setupButton', 'Setup Admin User')}
+                  {loading ? getCMSField(cmsData, 'logged-in-setting-up', 'Setting up...') : getCMSField(cmsData, 'logged-in-setup-button', 'Setup Admin User')}
+                  {loading ? getCMSField(cmsData, 'logged-in-setting-up', 'Setting up...') : getCMSField(cmsData, 'logged-in-setup-button', 'Setup Admin User')}
                 </Button>
                 
                 {message && (
@@ -113,11 +114,11 @@ export default function SetupPage() {
               </Stack>
             ) : (
               <Stack spacing="lg">
-                <Text data-cms-id="admin.setup.sections.notLoggedIn.message" mode={mode}>
-                  {getCMSField(cmsData, 'admin-setup-sections-notLoggedIn-message', 'Please log in first to set up your admin account.')}
+                <Text data-cms-id="not-logged-in-message" mode={mode}>
+                  {getCMSField(cmsData, 'not-logged-in-message', 'Please log in first to set up your admin account.')}
                 </Text>
-                <StyledLink href="/login">
-                  {getCMSField(cmsData, 'admin-setup-sections-notLoggedIn-goToLogin', 'Go to Login')}
+                <StyledLink href="/login" data-cms-id='not-logged-in-go-to-login'>
+                  {getCMSField(cmsData, 'not-logged-in-go-to-login', 'Go to Login')}
                 </StyledLink>
               </Stack>
             )}

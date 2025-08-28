@@ -47,7 +47,7 @@ function AdminBookingsPageContent() {
       }
     } catch (err) {
       console.error('❌ Error fetching bookings from database:', err);
-      setError(getCMSField(cmsData, 'admin-bookings-error-loadBookingsFailed', 'Failed to load bookings from database'));
+      setError(getCMSField(cmsData, 'error-load-bookings-failed', 'Failed to load bookings from database'));
     } finally {
       setLoading(false);
     }
@@ -69,7 +69,7 @@ function AdminBookingsPageContent() {
       
     } catch (err) {
       console.error('❌ Error updating booking status:', err);
-      setError(getCMSField(cmsData, 'admin-bookings-error-updateStatusFailed', 'Failed to update booking status'));
+      setError(getCMSField(cmsData, 'error-update-status-failed', 'Failed to update booking status'));
     }
   };
 
@@ -83,7 +83,7 @@ function AdminBookingsPageContent() {
       
     } catch (err) {
       console.error('❌ Error deleting booking:', err);
-      setError(getCMSField(cmsData, 'admin-bookings-error-deleteBookingFailed', 'Failed to delete booking'));
+      setError(getCMSField(cmsData, 'error-delete-booking-failed', 'Failed to delete booking'));
     }
   };
 
@@ -118,7 +118,7 @@ function AdminBookingsPageContent() {
       
     } catch (err) {
       console.error('❌ Error assigning driver:', err);
-      setError(getCMSField(cmsData, 'admin-bookings-error-assignDriverFailed', 'Failed to assign driver'));
+      setError(getCMSField(cmsData, 'error-assign-driver-failed', 'Failed to assign driver'));
     }
   };
 
@@ -227,29 +227,29 @@ function AdminBookingsPageContent() {
           variant="secondary" 
           onClick={() => handleStatusUpdate(booking, 'confirmed')}
           disabled={booking.status === 'confirmed'}
-          data-cms-id="admin.bookings.sections.table.actions.confirm"
+          data-cms-id="table-actions-confirm"
           interactionMode={mode}
         >
-          {getCMSField(cmsData, 'admin-bookings-sections-table-actions-confirm', 'Confirm')}
+          {getCMSField(cmsData, 'table-actions-confirm', 'Confirm')}
         </Button>
         <Button 
           size="sm" 
           variant="secondary" 
           onClick={() => handleDriverAssignment(booking)}
           disabled={!!booking.driverId}
-          data-cms-id="admin.bookings.sections.table.actions.assignDriver"
+          data-cms-id="table-actions-assign-driver"
           interactionMode={mode}
         >
-          {getCMSField(cmsData, 'admin-bookings-sections-table-actions-assignDriver', 'Assign Driver')}
+          {getCMSField(cmsData, 'table-actions-assign-driver', 'Assign Driver')}
         </Button>
         <Button 
           size="sm" 
           variant="danger" 
           onClick={() => handleDeleteBooking(booking)}
-          data-cms-id="admin.bookings.sections.table.actions.delete"
+          data-cms-id="table-actions-delete"
           interactionMode={mode}
         >
-          {getCMSField(cmsData, 'admin-bookings-sections-table-actions-delete', 'Delete')}
+          {getCMSField(cmsData, 'table-actions-delete', 'Delete')}
         </Button>
       </Stack>
     )
@@ -261,7 +261,7 @@ function AdminBookingsPageContent() {
         <Container>
           <Stack direction="horizontal" spacing="md" align="center">
             <LoadingSpinner />
-            <Text>{getCMSField(cmsData, 'admin-bookings-loading-loadingBookings', 'Loading bookings from database...')}</Text>
+            <Text data-cms-id="loading-loading-bookings">{getCMSField(cmsData, 'loading-loading-bookings', 'Loading bookings from database...')}</Text>
           </Stack>
         </Container>
      
@@ -285,18 +285,18 @@ function AdminBookingsPageContent() {
       <Stack spacing="xl">
         {/* Status Filter */}
         <Stack spacing="sm">
-          <Text variant="small" weight="medium" data-cms-id="admin.bookings.sections.filter.title" mode={mode}>
-            {getCMSField(cmsData, 'admin-bookings-sections-filter-title', 'Filter by Status')}
+          <Text variant="small" weight="medium" data-cms-id="filter-title" mode={mode}>
+            {getCMSField(cmsData, 'filter-title', 'Filter by Status')}
           </Text>
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="all">{getCMSField(cmsData, 'admin-bookings-sections-filter-allBookings', 'All Bookings')}</option>
-            <option value="pending">{getCMSField(cmsData, 'admin-bookings-sections-filter-pending', 'Pending')}</option>
-            <option value="confirmed">{getCMSField(cmsData, 'admin-bookings-sections-filter-confirmed', 'Confirmed')}</option>
-            <option value="completed">{getCMSField(cmsData, 'admin-bookings-sections-filter-completed', 'Completed')}</option>
-            <option value="cancelled">{getCMSField(cmsData, 'admin-bookings-sections-filter-cancelled', 'Cancelled')}</option>
+            <option value="all" data-cms-id="filter-all-bookings">{getCMSField(cmsData, 'filter-all-bookings', 'All Bookings')}</option>
+            <option value="pending" data-cms-id="filter-pending">{getCMSField(cmsData, 'filter-pending', 'Pending')}</option>
+            <option value="confirmed" data-cms-id="filter-confirmed">{getCMSField(cmsData, 'filter-confirmed', 'Confirmed')}</option>
+            <option value="completed" data-cms-id="filter-completed">{getCMSField(cmsData, 'filter-completed', 'Completed')}</option>
+            <option value="cancelled" data-cms-id="filter-cancelled">{getCMSField(cmsData, 'filter-cancelled', 'Cancelled')}</option>
           </select>
         </Stack>
 
@@ -306,8 +306,8 @@ function AdminBookingsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">📋</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.totalBookings" mode={mode}>
-                  {getCMSField(cmsData, 'admin-bookings-sections-stats-totalBookings', 'Total Bookings')}
+                <Text variant="small" color="secondary" data-cms-id="stats-total-bookings" mode={mode}>
+                  {getCMSField(cmsData, 'stats-total-bookings', 'Total Bookings')}
                 </Text>
                 <Text size="xl" weight="bold">{stats.totalBookings}</Text>
               </Stack>
@@ -318,8 +318,8 @@ function AdminBookingsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.confirmed" mode={mode}>
-                  {getCMSField(cmsData, 'admin-bookings-sections-stats-confirmed', 'Confirmed')}
+                <Text variant="small" color="secondary" data-cms-id="stats-confirmed" mode={mode}>
+                  {getCMSField(cmsData, 'stats-confirmed', 'Confirmed')}
                 </Text>
                 <Text size="xl" weight="bold">{stats.confirmedBookings}</Text>
               </Stack>
@@ -330,8 +330,8 @@ function AdminBookingsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🚗</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.inProgress" mode={mode}>
-                  {getCMSField(cmsData, 'admin-bookings-sections-stats-inProgress', 'In Progress')}
+                <Text variant="small" color="secondary" data-cms-id="stats-in-progress" mode={mode}>
+                  {getCMSField(cmsData, 'stats-in-progress', 'In Progress')}
                 </Text>
                 <Text size="xl" weight="bold">{stats.inProgressBookings}</Text>
               </Stack>
@@ -342,8 +342,8 @@ function AdminBookingsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">💰</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" data-cms-id="admin.bookings.sections.stats.totalRevenue" mode={mode}>
-                  {getCMSField(cmsData, 'admin-bookings-sections-stats-totalRevenue', 'Total Revenue')}
+                <Text variant="small" color="secondary" data-cms-id="stats-total-revenue" mode={mode}>
+                  {getCMSField(cmsData, 'stats-total-revenue', 'Total Revenue')}
                 </Text>
                 <Text size="xl" weight="bold">{formatCurrency(stats.totalRevenue)}</Text>
               </Stack>
@@ -356,11 +356,11 @@ function AdminBookingsPageContent() {
           <Box>
             <Stack spacing="md" align="center">
               <Text size="xl">📭</Text>
-              <Text size="lg" weight="medium" data-cms-id="admin.bookings.sections.table.noBookings.title" mode={mode}>
-                {getCMSField(cmsData, 'admin-bookings-sections-table-noBookings-title', 'No Bookings Found')}
+              <Text size="lg" weight="medium" data-cms-id="table-no-bookings-title" mode={mode}>
+                {getCMSField(cmsData, 'table-no-bookings-title', 'No Bookings Found')}
               </Text>
-              <Text variant="body" color="secondary" data-cms-id="admin.bookings.sections.table.noBookings.description" mode={mode}>
-                {getCMSField(cmsData, 'admin-bookings-sections-table-noBookings-description', 'No bookings match your current filter criteria.')}
+              <Text variant="body" color="secondary" data-cms-id="table-no-bookings-description" mode={mode}>
+                {getCMSField(cmsData, 'table-no-bookings-description', 'No bookings match your current filter criteria.')}
               </Text>
             </Stack>
           </Box>
@@ -368,12 +368,12 @@ function AdminBookingsPageContent() {
           <DataTable
             data={tableData}
             columns={[
-              { key: 'customer', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-customer', 'Customer') },
-              { key: 'route', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-route', 'Route') },
-              { key: 'dateTime', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-dateTime', 'Date & Time') },
-              { key: 'status', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-status', 'Status') },
-              { key: 'fare', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-fare', 'Fare') },
-              { key: 'actions', label: getCMSField(cmsData, 'admin-bookings-sections-table-columns-actions', 'Actions') }
+              { key: 'customer', label: getCMSField(cmsData, 'table-columns-customer', 'Customer') },
+              { key: 'route', label: getCMSField(cmsData, 'table-columns-route', 'Route') },
+              { key: 'dateTime', label: getCMSField(cmsData, 'table-columns-date-time', 'Date & Time') },
+              { key: 'status', label: getCMSField(cmsData, 'table-columns-status', 'Status') },
+              { key: 'fare', label: getCMSField(cmsData, 'table-columns-fare', 'Fare') },
+              { key: 'actions', label: getCMSField(cmsData, 'table-columns-actions', 'Actions') }
             ]}
           />
         )}
