@@ -19,6 +19,7 @@ import {
   spacing
 } from '@/ui';
 import styled from 'styled-components';
+import { getCMSField } from '../../design/hooks/useCMSData';
 
 // Styled components for login page
 const LoginCard = styled(Box)`
@@ -70,26 +71,6 @@ const LinkText = styled(Text)`
     }
   }
 `;
-
-// Helper function to get field value from CMS
-function getCMSField(cmsData: any, fieldPath: string): string {
-  if (!cmsData) return '';
-  
-  const resolvePath = (obj: any, path: string[]): unknown => {
-    let cur: any = obj;
-    for (const seg of path) {
-      if (cur && typeof cur === 'object' && seg in cur) {
-        cur = cur[seg as keyof typeof cur];
-      } else {
-        return undefined;
-      }
-    }
-    return cur;
-  };
-
-  const value = resolvePath(cmsData, fieldPath.split('.'));
-  return typeof value === 'string' ? (value as string) : '';
-}
 
 interface LoginFormClientProps {
   cmsData: any;

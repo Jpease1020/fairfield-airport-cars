@@ -11,6 +11,7 @@ import {
 import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { CMSConfiguration } from '@/types/cms';
 import Link from 'next/link';
+import { getCMSField } from '../../../design/hooks/useCMSData';
 
 // Load CMS data at build time for instant page loads
 export async function generateStaticParams() {
@@ -35,29 +36,6 @@ async function getCMSData(): Promise<any> {
     console.error('Failed to load CMS data at build time:', error);
     return null;
   }
-}
-
-// Helper function to get field value with fallback
-function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
-  if (!cmsData) return defaultValue;
-  
-  const resolvePath = (obj: any, path: string[]): unknown => {
-    let cur: any = obj;
-    for (const seg of path) {
-      if (cur && typeof cur === 'object' && seg in cur) {
-        cur = cur[seg as keyof typeof cur];
-      } else {
-        return undefined;
-      }
-    }
-    return cur;
-  };
-
-  // Remove 'pages.' prefix since we're now getting page content directly
-  const cleanPath = fieldPath.replace(/^pages\./, '');
-  const value = resolvePath(cmsData, cleanPath.split('.'));
-
-  return typeof value === 'string' ? (value as string) : defaultValue;
 }
 
 function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {

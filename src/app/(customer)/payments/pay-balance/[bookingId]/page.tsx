@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCMSData } from '@/design/hooks/useCMSData';
+import { getCMSField, useCMSData } from '@/design/hooks/useCMSData';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 import {
   Container,
@@ -178,11 +178,6 @@ function BalancePaymentPageContent({ bookingId }: { bookingId: string }) {
       </GridSection>
     </Container>
   );
-}
-
-// Helper function to get CMS fields
-function getCMSField(cmsData: any, path: string, fallback: string): string {
-  return cmsData?.[path] || fallback;
 }
 
 export default async function BalancePaymentPage({ params }: { params: Promise<{ bookingId: string }> }) {

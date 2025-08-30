@@ -4,26 +4,8 @@ import React from 'react';
 import { Container, Stack, Text, Button, Box, Input, Label, Textarea, RadioButton, H2 } from '@/design/ui';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 import { FlightInfo } from '@/hooks/useBookingForm';
+import { getCMSField } from '../../design/hooks/useCMSData';
 
-// Helper function to get field value from CMS
-function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
-  if (!cmsData) return defaultValue;
-  
-  const resolvePath = (obj: any, path: string[]): unknown => {
-    let cur: any = obj;
-    for (const seg of path) {
-      if (cur && typeof cur === 'object' && seg in cur) {
-        cur = cur[seg as keyof typeof cur];
-      } else {
-        return undefined;
-      }
-    }
-    return cur;
-  };
-
-  const value = resolvePath(cmsData, fieldPath.split('.'));
-  return typeof value === 'string' ? (value as string) : defaultValue;
-}
 
 interface ContactInfoPhaseProps {
   // State
