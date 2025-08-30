@@ -8,6 +8,9 @@ export async function generateStaticParams() {
   return [{ page: 'dashboard' }];
 }
 
+// Enable ISR for dynamic content updates
+export const revalidate = 1800; // Revalidate every 30 minutes (more frequent for dashboard)
+
 export async function generateMetadata() {
   const dashboardData = await cmsFlattenedService.getPageContent('dashboard');
   

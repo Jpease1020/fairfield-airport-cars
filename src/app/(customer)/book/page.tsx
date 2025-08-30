@@ -1,39 +1,36 @@
-'use client';
-
 import React from 'react';
-import { Container, Stack, H2, Text } from '@/design/ui';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
-import BookingForm from './booking-form';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
+import BookPageClient from './BookPageClient';
 
-function BookPageContent() {
-  const { cmsData } = useCMSData();
-  const { mode } = useInteractionMode();
-
-  return (
-    <Container maxWidth="full" padding="xl" data-testid="book-form-section">
-      <Stack spacing="xl" align="center">
-        <Stack spacing="md" align="center">
-          <H2 
-            align="center" 
-            data-cms-id="hero-title"
-            mode={mode}
-          >
-            {getCMSField(cmsData, 'hero-title', 'Complete Your Booking')}
-          </H2>
-          <Text 
-            variant="lead" 
-            align="center" 
-            data-cms-id="hero-subtitle"
-            mode={mode}
-          >
-            {getCMSField(cmsData, 'hero-subtitle', 'Fill in your details below')}
-          </Text>
-        </Stack>
-        <BookingForm />
-      </Stack>
-    </Container>
-  );
+// Load CMS data at build time for instant page loads
+export async function generateStaticParams() {
+  return [{ page: 'book' }];
 }
 
-export default BookPageContent;
+// Enable ISR for dynamic content updates
+export const revalidate = 1800; // Revalidate every 30 minutes (more frequent for booking)
+
+export async function generateMetadata() {
+  const bookData = await cmsFlattenedService.getPageContent('book');
+  
+  return {
+    title: bookData?.title || 'Book Your Ride - Fairfield Airport Cars',
+    description: bookData?.subtitle || 'Book your airport transportation with ease',
+  };
+}
+
+// Get CMS data at build time
+async function getCMSData(): Promise<any> {
+  try {
+    return await cmsFlattenedService.getPageContent('book');
+  } catch (error) {
+    console.error('Failed to load CMS data at build time:', error);
+    return null;
+  }
+}
+
+export default async function BookPage() {
+  const cmsData = await getCMSData();
+  
+  return <BookPageClient cmsData={cmsData} />;
+}

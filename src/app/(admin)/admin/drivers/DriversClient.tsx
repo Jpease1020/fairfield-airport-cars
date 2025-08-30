@@ -189,7 +189,6 @@ export default function DriversClient({ cmsData }: DriversClientProps) {
             {/* Basic Info */}
             <GridSection
               title={getCMSField(cmsData, 'info-title', 'Driver Information')}
-              description="Driver's personal and contact details"
             >
               <Stack spacing="md">
                 <div data-cms-id="info-name">
@@ -218,35 +217,34 @@ export default function DriversClient({ cmsData }: DriversClientProps) {
             {/* Vehicle Information */}
             <GridSection
               title={getCMSField(cmsData, 'vehicle-title', 'Vehicle Information')}
-              description="Driver's vehicle details"
             >
               <Stack spacing="md">
                 <div data-cms-id="vehicle-make-model">
                   <Text weight="bold">
                     {getCMSField(cmsData, 'vehicle-make-model', 'Vehicle')}:
                   </Text>
-                  <Text>{driver.vehicle?.make} {driver.vehicle?.model}</Text>
+                  <Text>{driver.vehicleInfo?.make} {driver.vehicleInfo?.model}</Text>
                 </div>
                 
                 <div data-cms-id="vehicle-year">
                   <Text weight="bold">
                     {getCMSField(cmsData, 'vehicle-year', 'Year')}:
                   </Text>
-                  <Text>{driver.vehicle?.year}</Text>
+                  <Text>{driver.vehicleInfo?.year}</Text>
                 </div>
                 
                 <div data-cms-id="vehicle-color">
                   <Text weight="bold">
                     {getCMSField(cmsData, 'vehicle-color', 'Color')}:
                   </Text>
-                  <Text>{driver.vehicle?.color}</Text>
+                  <Text>{driver.vehicleInfo?.color}</Text>
                 </div>
                 
                 <div data-cms-id="vehicle-plate">
                   <Text weight="bold">
                     {getCMSField(cmsData, 'vehicle-plate', 'License Plate')}:
                   </Text>
-                  <Text>{driver.vehicle?.licensePlate}</Text>
+                  <Text>{driver.vehicleInfo?.licensePlate}</Text>
                 </div>
               </Stack>
             </GridSection>
@@ -254,7 +252,6 @@ export default function DriversClient({ cmsData }: DriversClientProps) {
             {/* Current Status */}
             <GridSection
               title={getCMSField(cmsData, 'status-title', 'Current Status')}
-              description="Driver's current availability status"
             >
               <Stack spacing="md" align="center">
                 <Badge variant={getStatusVariant(driver.status)} size="lg">
@@ -271,8 +268,7 @@ export default function DriversClient({ cmsData }: DriversClientProps) {
 
             {/* Status Actions */}
             <GridSection
-              title={getCMSField(cmsData, 'actions-title', 'Change Status')}
-              description="Update driver's availability status"
+              title={getCMSField(cmsData, 'status-title', 'Change Status')}
             >
               <Stack direction={{ xs: 'vertical', md: 'horizontal' }} spacing="md" justify="center">
                 <Button
@@ -286,7 +282,7 @@ export default function DriversClient({ cmsData }: DriversClientProps) {
                 
                 <Button
                   onClick={() => handleStatusUpdate('busy')}
-                  variant="info"
+                  variant="warning"
                   disabled={driver.status === 'busy' || updating}
                   data-cms-id="actions-set-busy"
                 >
@@ -295,7 +291,7 @@ export default function DriversClient({ cmsData }: DriversClientProps) {
                 
                 <Button
                   onClick={() => handleStatusUpdate('offline')}
-                  variant="default"
+                  variant="secondary"
                   disabled={driver.status === 'offline' || updating}
                   data-cms-id="actions-set-offline"
                 >

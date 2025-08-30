@@ -15,6 +15,9 @@ export async function generateStaticParams() {
   return [{ page: 'terms' }];
 }
 
+// Enable ISR for dynamic content updates
+export const revalidate = 3600; // Revalidate every hour
+
 export async function generateMetadata() {
   const termsData = await cmsFlattenedService.getPageContent('terms');
   

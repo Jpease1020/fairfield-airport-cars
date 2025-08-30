@@ -119,13 +119,18 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
 
   return (
     <PositionedContainer
-      position="relative"
+      position="sticky"
+      top="0"
+      zIndex={zIndex.dropdown}
       display="flex"
       flexDirection="row"
       alignItems="center"
       justifyContent="space-between"
       data-testid={`${dataTestIdPrefix}-container`}
       gap={{ xs: spacing.md, md: spacing.xl }}
+      backgroundColor="white"
+      boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
+      padding={`${spacing.md} ${spacing.xl}`}
     >
       {/* Logo */}
       {logo}

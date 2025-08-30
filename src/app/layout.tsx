@@ -10,6 +10,7 @@ import { SmartNavigation } from '@/components/app/SmartNavigation';
 import { Footer } from '@/design/page-sections/Footer';
 import { Container } from '@/design/layout/containers/Container';
 
+
 export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',
   description: 'Reliable, comfortable rides to and from Fairfield Airport with professional driver',
@@ -55,7 +56,6 @@ export default async function RootLayout({
                       margin="none" 
                       data-testid="layout-navigation" 
                       padding="none"
-                      className="sticky-navigation"
                     >
                       <SmartNavigation cmsData={cmsData} />
                     </Container>

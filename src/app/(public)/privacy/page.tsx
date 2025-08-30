@@ -7,8 +7,8 @@ import {
   H4
 } from '@/ui';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
-import { CMSConfiguration } from '@/types/cms';
-import { getCMSField } from '../../../design/hooks/useCMSData';
+
+
 
 // Load CMS data at build time for instant page loads
 export async function generateStaticParams() {
@@ -35,7 +35,7 @@ async function getCMSData(): Promise<any> {
   }
 }
 
-function PrivacyPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
+function PrivacyPageContent({ cmsData }: { cmsData: any }) {
   return (
     <>
       {/* Hero Section */}
@@ -47,7 +47,7 @@ function PrivacyPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               data-testid="privacy-title"
               data-cms-id="title"
             >
-              {getCMSField(cmsData, 'privacy-title', 'Privacy Policy')}
+              {cmsData?.['privacy-title'] || 'Privacy Policy'}
             </H1>
             <Text 
               variant="lead" 
@@ -56,7 +56,7 @@ function PrivacyPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               data-testid="privacy-effective-date"
               data-cms-id="effective-date"
             >
-              {getCMSField(cmsData, 'privacy-effectiveDate', 'Effective Date: January 2025')}
+              {cmsData?.['privacy-effectiveDate'] || 'Effective Date: January 2025'}
             </Text>
           </Stack>
         </Stack>
@@ -69,29 +69,29 @@ function PrivacyPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Box data-testid="privacy-section-0">
               <Stack spacing="md">
                 <H4 data-testid="privacy-section-title-0" data-cms-id="sections-0-title">
-                  {getCMSField(cmsData, 'privacy-title', '1. Information We Collect')}
+                  {cmsData?.['sections-0-title'] || '1. Information We Collect'}
                 </H4>
                 <Text data-testid="privacy-section-content-0" data-cms-id="sections-0-content">
-                  {getCMSField(cmsData, 'privacy-content', 'We collect information you provide directly to us when you book our services, including:')}
+                  {cmsData?.['sections-0-content'] || 'We collect information you provide directly to us when you book our services, including:'}
                 </Text>
                 <Stack data-testid="privacy-section-items-0" spacing="sm">
                   <Text data-testid="privacy-section-item-0-0" data-cms-id="sections-0-items-0">
-                    {`• ${getCMSField(cmsData, 'privacy-0', 'Name and contact information (phone, email, address)')}`}
+                    {`• ${cmsData?.['sections-0-items-0'] || 'Name and contact information (phone, email, address)'}`}
                   </Text>
                   <Text data-testid="privacy-section-item-0-1" data-cms-id="sections-0-items-1">
-                    {`• ${getCMSField(cmsData, 'privacy-1', 'Pickup and destination locations')}`}
+                    {`• ${cmsData?.['sections-0-items-1'] || 'Pickup and destination locations'}`}
                   </Text>
                   <Text data-testid="privacy-section-item-0-2" data-cms-id="sections-0-items-2">
-                    {`• ${getCMSField(cmsData, 'privacy-2', 'Travel dates and times')}`}
-                  </Text>
-                  <Text data-testid="privacy-section-item-0-3" data-cms-id="sections-0-items-3">
-                    {`• ${getCMSField(cmsData, 'privacy-3', 'Flight information (when applicable)')}`}
-                  </Text>
-                  <Text data-testid="privacy-section-item-0-4" data-cms-id="sections-0-items-4">
-                    {`• ${getCMSField(cmsData, 'privacy-4', 'Payment information')}`}
-                  </Text>
-                  <Text data-testid="privacy-section-item-0-5" data-cms-id="sections-0-items-5">
-                    {`• ${getCMSField(cmsData, 'privacy-5', 'Special requests or preferences')}`}
+                                        {`• ${cmsData?.['sections-0-items-2'] || 'Travel dates and times'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-0-3" data-cms-id="sections-0-items-3">
+                      {`• ${cmsData?.['sections-0-items-3'] || 'Flight information (when applicable)'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-0-4" data-cms-id="sections-0-items-4">
+                      {`• ${cmsData?.['sections-0-items-4'] || 'Payment information'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-0-5" data-cms-id="sections-0-items-5">
+                      {`• ${cmsData?.['sections-0-items-5'] || 'Special requests or preferences'}`}
                   </Text>
                 </Stack>
               </Stack>
@@ -100,29 +100,29 @@ function PrivacyPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Box data-testid="privacy-section-1">
               <Stack spacing="md">
                 <H4 data-testid="privacy-section-title-1" data-cms-id="sections-1-title">
-                  {getCMSField(cmsData, 'privacy-title', '2. How We Use Information')}
-                </H4>
-                <Text data-testid="privacy-section-content-1" data-cms-id="sections-1-content">
-                  {getCMSField(cmsData, 'privacy-content', 'We use the information we collect to:')}
-                </Text>
-                <Stack data-testid="privacy-section-items-1" spacing="sm">
-                  <Text data-testid="privacy-section-item-1-0" data-cms-id="sections-1-items-0">
-                    {`• ${getCMSField(cmsData, 'privacy-0', 'Provide and coordinate transportation services')}`}
+                                    {cmsData?.['sections-1-title'] || '2. How We Use Information'}
+                  </H4>
+                  <Text data-testid="privacy-section-content-1" data-cms-id="sections-1-content">
+                    {cmsData?.['sections-1-content'] || 'We use the information we collect to:'}
                   </Text>
-                  <Text data-testid="privacy-section-item-1-1" data-cms-id="sections-1-items-1">
-                    {`• ${getCMSField(cmsData, 'privacy-1', 'Process payments and send confirmations')}`}
-                  </Text>
-                  <Text data-testid="privacy-section-item-1-2" data-cms-id="sections-1-items-2">
-                    {`• ${getCMSField(cmsData, 'privacy-2', 'Communicate with you about your bookings')}`}
-                  </Text>
-                  <Text data-testid="privacy-section-item-1-3" data-cms-id="sections-1-items-3">
-                    {`• ${getCMSField(cmsData, 'privacy-3', 'Send service updates and notifications')}`}
-                  </Text>
-                  <Text data-testid="privacy-section-item-1-4" data-cms-id="sections-1-items-4">
-                    {`• ${getCMSField(cmsData, 'privacy-4', 'Improve our services and customer experience')}`}
-                  </Text>
-                  <Text data-testid="privacy-section-item-1-5" data-cms-id="sections-1-items-5">
-                    {`• ${getCMSField(cmsData, 'privacy-5', 'Comply with legal obligations')}`}
+                  <Stack data-testid="privacy-section-items-1" spacing="sm">
+                    <Text data-testid="privacy-section-item-1-0" data-cms-id="sections-1-items-0">
+                      {`• ${cmsData?.['sections-1-items-0'] || 'Provide and coordinate transportation services'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-1-1" data-cms-id="sections-1-items-1">
+                      {`• ${cmsData?.['sections-1-items-1'] || 'Process payments and send confirmations'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-1-2" data-cms-id="sections-1-items-2">
+                      {`• ${cmsData?.['sections-1-items-2'] || 'Communicate with you about your bookings'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-1-3" data-cms-id="sections-1-items-3">
+                      {`• ${cmsData?.['sections-1-items-3'] || 'Send service updates and notifications'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-1-4" data-cms-id="sections-1-items-4">
+                      {`• ${cmsData?.['sections-1-items-4'] || 'Improve our services and customer experience'}`}
+                    </Text>
+                    <Text data-testid="privacy-section-item-1-5" data-cms-id="sections-1-items-5">
+                      {`• ${cmsData?.['sections-1-items-5'] || 'Comply with legal obligations'}`}
                   </Text>
                 </Stack>
               </Stack>

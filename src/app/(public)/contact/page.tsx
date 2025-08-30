@@ -6,6 +6,9 @@ export async function generateStaticParams() {
   return [{ page: 'contact' }];
 }
 
+// Enable ISR for dynamic content updates
+export const revalidate = 3600; // Revalidate every hour
+
 export async function generateMetadata() {
   const contactData = await cmsFlattenedService.getPageContent('contact');
   

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react'; 
-import { GridSection, Box, ActionGrid, Container, Text, Stack, H3 } from '@/ui';
+import { GridSection, Box, Container, Text, Stack, H3 } from '@/ui';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 // Helper function to get field value from CMS
@@ -104,12 +104,10 @@ export default function AdminHelpClient({ cmsData }: AdminHelpClientProps) {
             <GridSection
               key={index}
               title={section.title}
-              description={section.description}
-              icon={section.icon}
             >
-              <ActionGrid>
+              <Stack spacing="md">
                 {section.items.map((item, itemIndex) => (
-                  <Box key={itemIndex} variant="card" padding="lg">
+                  <Box key={itemIndex} variant="elevated" padding="lg">
                     <Stack spacing="md">
                       <Text weight="bold" size="lg">
                         {item.question}
@@ -120,7 +118,7 @@ export default function AdminHelpClient({ cmsData }: AdminHelpClientProps) {
                     </Stack>
                   </Box>
                 ))}
-              </ActionGrid>
+              </Stack>
             </GridSection>
           ))}
         </Stack>
