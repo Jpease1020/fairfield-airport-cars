@@ -7,7 +7,7 @@ import { ResponsiveValue } from '../../system/shared-types';
 // PositionedContainer component - for positioning needs
 export interface PositionedContainerProps {
   children: React.ReactNode;
-  position?: 'fixed' | 'absolute' | 'relative';
+  position?: 'fixed' | 'absolute' | 'relative' | 'sticky';
   top?: string;
   right?: string;
   bottom?: string;
@@ -20,12 +20,15 @@ export interface PositionedContainerProps {
   as?: 'div' | 'section' | 'article' | 'aside' | 'nav' | 'header' | 'footer';
   id?: string;
   gap?: string | ResponsiveValue<string>;
+  backgroundColor?: string;
+  boxShadow?: string;
+  padding?: string;
 }
 
 const StyledPositionedContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['position', 'top', 'right', 'bottom', 'left', 'zIndex', 'display', 'flexDirection', 'alignItems', 'justifyContent'].includes(prop)
+  shouldForwardProp: (prop) => !['position', 'top', 'right', 'bottom', 'left', 'zIndex', 'display', 'flexDirection', 'alignItems', 'justifyContent', 'gap', 'backgroundColor', 'boxShadow', 'padding'].includes(prop)
 })<{
-  position: 'fixed' | 'absolute' | 'relative';
+  position: 'fixed' | 'absolute' | 'relative' | 'sticky';
   top?: string;
   right?: string;
   bottom?: string;
@@ -36,6 +39,9 @@ const StyledPositionedContainer = styled.div.withConfig({
   alignItems: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
   justifyContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
   gap?: string | ResponsiveValue<string>;
+  backgroundColor?: string;
+  boxShadow?: string;
+  padding?: string;
 }>`
   position: ${({ position }) => position};
   ${({ top }) => top && `top: ${top};`}
@@ -68,6 +74,10 @@ const StyledPositionedContainer = styled.div.withConfig({
     
     return css;
   }}
+  
+  ${({ backgroundColor }) => backgroundColor && `background-color: ${backgroundColor};`}
+  ${({ boxShadow }) => boxShadow && `box-shadow: ${boxShadow};`}
+  ${({ padding }) => padding && `padding: ${padding};`}
 `;
 
 export const PositionedContainer: React.FC<PositionedContainerProps> = ({
@@ -85,6 +95,9 @@ export const PositionedContainer: React.FC<PositionedContainerProps> = ({
   as: Component = 'div',
   id,
   gap,
+  backgroundColor,
+  boxShadow,
+  padding,
   ...rest
 }) => {
   return (
@@ -102,6 +115,9 @@ export const PositionedContainer: React.FC<PositionedContainerProps> = ({
       as={Component}
       id={id}
       gap={gap}
+      backgroundColor={backgroundColor}
+      boxShadow={boxShadow}
+      padding={padding}
       {...rest}
     >
       {children}

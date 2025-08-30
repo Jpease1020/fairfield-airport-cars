@@ -31,14 +31,17 @@ export async function updateSettings(partial: Partial<Settings>): Promise<void> 
       throw new Error('CMS config or pricing is null, cannot update settings');
     }
     // Update the pricing section of the CMS config
-    await cmsFlattenedService.updatePricingSettings({
+    const updatedPricing = {
+      ...cmsConfig.pricing,
       baseFare: partial.baseFare ?? cmsConfig.pricing.baseFare,
       perMile: partial.perMile ?? cmsConfig.pricing.perMile,
       perMinute: partial.perMinute ?? cmsConfig.pricing.perMinute,
       depositPercent: partial.depositPercent ?? cmsConfig.pricing.depositPercent,
       bufferMinutes: partial.bufferMinutes ?? cmsConfig.pricing.bufferMinutes,
       cancellation: partial.cancellation ?? cmsConfig.pricing.cancellation,
-    });
+    };
+    
+    await cmsFlattenedService.updatePageContent('pricing', updatedPricing);
   } catch (err) {
     console.error('Failed to update settings in CMS', err);
     throw err;

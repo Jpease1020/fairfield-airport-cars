@@ -1,11 +1,14 @@
 import { cmsFlattenedService } from '@/lib/services/cms-service';
-import { CMSConfiguration } from '@/types/cms';
+
 import LoginFormClient from './LoginFormClient';
 
 // Load CMS data at build time for instant page loads
 export async function generateStaticParams() {
   return [{ page: 'login' }];
 }
+
+// Enable ISR for dynamic content updates
+export const revalidate = 3600; // Revalidate every hour
 
 export async function generateMetadata() {
   const loginData = await cmsFlattenedService.getPageContent('login');

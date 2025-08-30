@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Span, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/ui';
 import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { getCMSConfig } from '@/lib/services/cms-service';
+import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },
@@ -37,7 +37,7 @@ function AdminColorsPageContent() {
     setError(null);
     
     try {
-      const config = await getCMSConfig();
+      const config = await cmsFlattenedService.getPageContent('business');
       const saved = config?.themeColors || {};
       const initial: Record<string, string> = {};
       

@@ -7,6 +7,9 @@ export async function generateStaticParams() {
   return [{ page: 'admin-drivers' }];
 }
 
+// Enable ISR for dynamic content updates
+export const revalidate = 1800; // Revalidate every 30 minutes (more frequent for admin)
+
 export async function generateMetadata() {
   const driversData = await cmsFlattenedService.getPageContent('admin-drivers');
   

@@ -9,10 +9,10 @@ import { auth } from '../../lib/utils/firebase';
 import { getCMSField } from '../../design/hooks/useCMSData';
 
 interface AdminNavigationProps {
-  cmsData: any;
+  cmsData?: any;
 }
 
-export const AdminNavigation: React.FC<AdminNavigationProps> = ({ cmsData }) => {
+export const AdminNavigation: React.FC<AdminNavigationProps> = ({ cmsData = {} }) => {
   const pathname = usePathname();
   const handleLogout = async () => {
     try {
