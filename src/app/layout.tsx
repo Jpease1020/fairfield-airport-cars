@@ -48,7 +48,15 @@ export default async function RootLayout({
               <AdminProvider>
                 <InteractionModeProvider>
                   <GoogleMapsProvider>
-                    <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
+                    <Container 
+                      variant="navigation" 
+                      as="header" 
+                      maxWidth="full" 
+                      margin="none" 
+                      data-testid="layout-navigation" 
+                      padding="none"
+                      className="sticky-navigation"
+                    >
                       <SmartNavigation cmsData={cmsData} />
                     </Container>
                     

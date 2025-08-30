@@ -19,26 +19,7 @@ import {
   GridSection
 } from '@/ui';
 import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
-
-// Helper function to get field value from CMS
-function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
-  if (!cmsData) return defaultValue;
-  
-  const resolvePath = (obj: any, path: string[]): unknown => {
-    let cur: any = obj;
-    for (const seg of path) {
-      if (cur && typeof cur === 'object' && seg in cur) {
-        cur = cur[seg as keyof typeof cur];
-      } else {
-        return undefined;
-      }
-    }
-    return cur;
-  };
-
-  const value = resolvePath(cmsData, fieldPath.split('.'));
-  return typeof value === 'string' ? (value as string) : defaultValue;
-}
+import { getCMSField } from '../../../design/hooks/useCMSData';
 
 interface ProfileClientProps {
   cmsData: any;
@@ -122,7 +103,7 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
       setFormData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof typeof prev],
+          ...(prev[parent as keyof typeof prev] as object || {}),
           [child]: value
         }
       }));
@@ -248,7 +229,6 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
 
         {/* Profile Form */}
         <ContentCard 
-          maxWidth="2xl" 
           padding="xl"
           content={
             <Stack spacing="xl">
