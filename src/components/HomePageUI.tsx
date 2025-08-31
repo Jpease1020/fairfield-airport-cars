@@ -24,6 +24,7 @@ const FlexStack = styled(Stack)`
 
 const GreyBox = styled(Box)`
   background-color: var(--background-muted);
+  height: 100%;
 `;
 
 const GreyContainer = styled(Container)`
