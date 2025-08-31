@@ -7,8 +7,8 @@ import {
   Text
 } from '@/ui';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
-import { CMSConfiguration } from '@/types/cms';
-import { getCMSField } from '../../../design/hooks/useCMSData';
+
+
 
 // Load CMS data at build time for instant page loads
 export async function generateStaticParams() {
@@ -38,7 +38,7 @@ async function getCMSData(): Promise<any> {
   }
 }
 
-function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
+function TermsPageContent({ cmsData }: { cmsData: any }) {
   return (
     <>
       {/* Hero Section */}
@@ -50,7 +50,7 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               data-testid="terms-title"
               data-cms-id="title"
             >
-              {getCMSField(cmsData, 'terms-title', 'Terms of Service')}
+              {cmsData?.['terms-title'] || 'Terms of Service'}
             </H1>
             <Text 
               variant="lead" 
@@ -59,7 +59,7 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               data-testid="terms-last-updated"
               data-cms-id="last-updated"
             >
-              {getCMSField(cmsData, 'terms-last-updated', 'Last Updated: January 2025')}
+              {cmsData?.['terms-last-updated'] || 'Last Updated: January 2025'}
             </Text>
           </Stack>
         </Stack>
@@ -72,24 +72,24 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             data-testid="terms-intro"
             data-cms-id="intro"
           >
-            {getCMSField(cmsData, 'terms-intro', 'By using our services, you agree to our terms of service. We reserve the right to modify these terms at any time. Please review them periodically.')}
+            {cmsData?.['terms-intro'] || 'By using our services, you agree to our terms of service. We reserve the right to modify these terms at any time. Please review them periodically.'}
           </Text>
           
           <Text 
             data-testid="terms-service-description"
             data-cms-id="service-description"
           >
-            {getCMSField(cmsData, 'terms-service-description', 'Our airport transportation service is designed to provide reliable, comfortable rides to and from major airports in the New York and Connecticut area.')}
+            {cmsData?.['terms-service-description'] || 'Our airport transportation service is designed to provide reliable, comfortable rides to and from major airports in the New York and Connecticut area.'}
           </Text>
           
           <Stack data-testid="terms-sections-list" spacing="lg">
-            <Box data-testid="terms-section-0">
+                        <Box data-testid="terms-section-0">
               <Stack spacing="md">
                 <H4 data-testid="terms-section-title-0" data-cms-id="sections-0-title">
-                  {getCMSField(cmsData, 'terms-sections-0-title', 'Service Description')}
+                  {cmsData?.['sections-0-title'] || 'Service Description'}
                 </H4>
                 <Text data-testid="terms-section-content-0" data-cms-id="sections-0-content">
-                                      {getCMSField(cmsData, 'terms-sections-0-content', 'We provide professional airport transportation services with licensed drivers and well-maintained vehicles. Our service includes flight monitoring and flexible pickup times.')}
+                  {cmsData?.['sections-0-content'] || 'We provide professional airport transportation services with licensed drivers and well-maintained vehicles. Our service includes flight monitoring and flexible pickup times.'}
                 </Text>
               </Stack>
             </Box>
@@ -97,10 +97,10 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Box data-testid="terms-section-1">
               <Stack spacing="md">
                 <H4 data-testid="terms-section-title-1" data-cms-id="sections-1-title">
-                  {getCMSField(cmsData, 'terms-sections-1-title', 'Booking and Payment')}
+                  {cmsData?.['sections-1-title'] || 'Booking and Payment'}
                 </H4>
                 <Text data-testid="terms-section-content-1" data-cms-id="sections-1-content">
-                                      {getCMSField(cmsData, 'terms-sections-1-content', 'Bookings must be made in advance through our website or phone system. Payment is required at the time of booking. We accept all major credit cards and cash payments.')}
+                  {cmsData?.['sections-1-content'] || 'Bookings must be made in advance through our website or phone system. Payment is required at the time of booking. We accept all major credit cards and cash payments.'}
                 </Text>
               </Stack>
             </Box>
@@ -108,10 +108,10 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Box data-testid="terms-section-2">
               <Stack spacing="md">
                 <H4 data-testid="terms-section-title-2" data-cms-id="sections-2-title">
-                  {getCMSField(cmsData, 'terms-sections-2-title', 'Cancellation Policy')}
+                  {cmsData?.['sections-2-title'] || 'Cancellation Policy'}
                 </H4>
                 <Text data-testid="terms-section-content-2" data-cms-id="sections-2-content">
-                  {getCMSField(cmsData, 'terms-sections-2-content', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.')}
+                  {cmsData?.['sections-2-content'] || 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations within 24 hours receive a 50% refund. No refunds for cancellations within 3 hours of pickup.'}
                 </Text>
               </Stack>
             </Box>
@@ -119,10 +119,10 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Box data-testid="terms-section-3">
               <Stack spacing="md">
                 <H4 data-testid="terms-section-title-3" data-cms-id="sections-3-title">
-                  {getCMSField(cmsData, 'terms-sections-3-title', 'Liability')}
+                  {cmsData?.['sections-3-title'] || 'Liability'}
                 </H4>
                 <Text data-testid="terms-section-content-3" data-cms-id="sections-3-content">
-                  {getCMSField(cmsData, 'terms-sections-3-content', 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.')}
+                  {cmsData?.['sections-3-content'] || 'We are not responsible for delays due to weather, traffic, or other circumstances beyond our control. We recommend allowing extra time for airport arrivals.'}
                 </Text>
               </Stack>
             </Box>
@@ -130,10 +130,10 @@ function TermsPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
             <Box data-testid="terms-section-4">
               <Stack spacing="md">
                 <H4 data-testid="terms-section-title-4" data-cms-id="sections-4-title">
-                  {getCMSField(cmsData, 'terms-sections-4-title', 'Contact')}
+                  {cmsData?.['sections-4-title'] || 'Contact'}
                 </H4>
                 <Text data-testid="terms-section-content-4" data-cms-id="sections-4-content">
-                  {getCMSField(cmsData, 'terms-sections-4-content', 'For questions about these terms, please contact us at the information provided on our website.')}
+                  {cmsData?.['sections-4-content'] || 'For questions about these terms, please contact us at the information provided on our website.'}
                 </Text>
               </Stack>
             </Box>

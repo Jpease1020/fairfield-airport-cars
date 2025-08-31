@@ -9,9 +9,9 @@ import {
   Box
 } from '@/ui';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
-import { CMSConfiguration } from '@/types/cms';
+
 import Link from 'next/link';
-import { getCMSField } from '../../../design/hooks/useCMSData';
+
 
 // Load CMS data at build time for instant page loads
 export async function generateStaticParams() {
@@ -38,7 +38,7 @@ async function getCMSData(): Promise<any> {
   }
 }
 
-function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
+function HelpPageContent({ cmsData }: { cmsData: any }) {
   return (
     <>
       {/* Hero Section */}
@@ -50,7 +50,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               data-testid="title"
               data-cms-id="hero-title"
             >
-              {getCMSField(cmsData, 'hero-title', 'Help & FAQs')}
+              {cmsData?.['hero-title'] || 'Help & FAQs'}
             </H1>
             <Text 
               variant="lead" 
@@ -58,7 +58,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               size="lg"
               data-cms-id="hero-subtitle"
             >
-              {getCMSField(cmsData, 'hero-subtitle', 'Find answers to common questions about our service')}
+              {cmsData?.['hero-subtitle'] || 'Find answers to common questions about our service'}
             </Text>
           </Stack>
         </Stack>
@@ -69,7 +69,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <H2 
             data-cms-id="quick-answers-title"
           >
-            {getCMSField(cmsData, 'quick-answers-title', 'Quick Answers')}
+            {cmsData?.['quick-answers-title'] || 'Quick Answers'}
           </H2>
         </Stack>
         
@@ -79,12 +79,12 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <H2 
                                   data-cms-id="quick-answers-items-0-question"
               >
-                {getCMSField(cmsData, 'quick-answers-items-0-question', 'How far in advance should I book?')}
+                {cmsData?.['quick-answers-items-0-question'] || 'How far in advance should I book?'}
               </H2>
               <Text 
                                   data-cms-id="quick-answers-items-0-answer"
               >
-                {getCMSField(cmsData, 'quick-answers-items-0-answer', 'We recommend booking at least 24 hours in advance for airport rides.')}
+                {cmsData?.['quick-answers-items-0-answer'] || 'We recommend booking at least 24 hours in advance for airport rides.'}
               </Text>
             </Stack>
           </Box>
@@ -94,12 +94,12 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <H2 
                                   data-cms-id="quick-answers-items-1-question"
               >
-                {getCMSField(cmsData, 'quick-answers-items-1-question', 'What is your cancellation policy?')}
+                {cmsData?.['quick-answers-items-1-question'] || 'What is your cancellation policy?'}
               </H2>
               <Text 
                                   data-cms-id="quick-answers-items-1-answer"
               >
-                {getCMSField(cmsData, 'quick-answers-items-1-answer', 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations 3-24 hours before receive 50% refund.')}
+                {cmsData?.['quick-answers-items-1-answer'] || 'Cancellations made more than 24 hours before pickup receive a full refund. Cancellations 3-24 hours before receive 50% refund.'}
               </Text>
             </Stack>
           </Box>
@@ -109,12 +109,12 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <H2 
                                   data-cms-id="quick-answers-items-2-question"
               >
-                {getCMSField(cmsData, 'quick-answers-items-2-question', 'Do you track flights?')}
+                {cmsData?.['quick-answers-items-2-question'] || 'Do you track flights?'}
               </H2>
               <Text 
                                   data-cms-id="quick-answers-items-2-answer"
               >
-                {getCMSField(cmsData, 'quick-answers-items-2-answer', 'Yes, we monitor flight schedules and adjust pickup times accordingly.')}
+                {cmsData?.['quick-answers-items-2-answer'] || 'Yes, we monitor flight schedules and adjust pickup times accordingly.'}
               </Text>
             </Stack>
           </Box>
@@ -124,12 +124,12 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               <H2 
                                   data-cms-id="quick-answers-items-3-question"
               >
-                {getCMSField(cmsData, 'quick-answers-items-3-question', 'What payment methods do you accept?')}
+                {cmsData?.['quick-answers-items-3-question'] || 'What payment methods do you accept?'}
               </H2>
               <Text 
                                   data-cms-id="quick-answers-items-3-answer"
               >
-                {getCMSField(cmsData, 'quick-answers-items-3-answer', 'All major credit cards, debit cards, and cash payments.')}
+                {cmsData?.['quick-answers-items-3-answer'] || 'All major credit cards, debit cards, and cash payments.'}
               </Text>
             </Stack>
           </Box>
@@ -141,14 +141,14 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
           <H2 
             data-cms-id="contact-title"
           >
-            {getCMSField(cmsData, 'contact-title', 'Need More Help?')}
+            {cmsData?.['contact-title'] || 'Need More Help?'}
           </H2>
           <Text 
             variant="lead" 
             align="center"
             data-cms-id="contact-subtitle"
           >
-            {getCMSField(cmsData, 'contact-subtitle', 'Contact our support team')}
+            {cmsData?.['contact-subtitle'] || 'Contact our support team'}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
@@ -157,7 +157,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 variant="primary"
                 data-cms-id="contact-primary-button"
               >
-                {getCMSField(cmsData, 'contact-primary-button', 'Call Support')}
+                {cmsData?.['contact-primary-button'] || 'Call Support'}
               </Button>
             </Link>
             
@@ -166,7 +166,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 variant="secondary"
                 data-cms-id="contact-secondary-button"
               >
-                {getCMSField(cmsData, 'contact-secondary-button', 'Email Support')}
+                {cmsData?.['contact-secondary-button'] || 'Email Support'}
               </Button>
             </Link>
             
@@ -175,7 +175,7 @@ function HelpPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 variant="outline"
                 data-cms-id="contact-tertiary-button"
               >
-                {getCMSField(cmsData, 'contact-tertiary-button', 'Book a Ride')}
+                {cmsData?.['contact-tertiary-button'] || 'Book a Ride'}
               </Button>
             </Link>
           </Stack>
