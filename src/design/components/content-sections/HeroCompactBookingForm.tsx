@@ -6,6 +6,7 @@ import { Stack } from '../../layout/framing/Stack';
 import { Button } from '../../components/base-components/Button';
 import { Text } from '../../components/base-components/text/Text';
 import { Input } from '../../components/base-components/forms/Input';
+import { PlacesAutocomplete } from '../../components/base-components/forms/PlacesAutocomplete';
 
 interface HeroCompactBookingFormProps {
   'data-testid'?: string;
@@ -43,24 +44,27 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         </Text>
         
         <Stack spacing="md">
-          <Input
+          <PlacesAutocomplete
+            id="pickup-location"
             placeholder="From: Fairfield Station"
             value={pickupLocation}
-            onChange={(e) => setPickupLocation(e.target.value)}
+            onChange={setPickupLocation}
             size="md"
             fullWidth
           />
           
-          <Input
+          <PlacesAutocomplete
+            id="dropoff-location"
             placeholder="To: JFK Airport"
             value={dropoffLocation}
-            onChange={(e) => setDropoffLocation(e.target.value)}
+            onChange={setDropoffLocation}
             size="md"
             fullWidth
           />
           
           <Input
-            type="date"
+            type="date" 
+            id="pickup-date"
             value={pickupDate}
             onChange={(e) => setPickupDate(e.target.value)}
             size="md"
