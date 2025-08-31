@@ -2,9 +2,9 @@ import React from 'react';
 import { Container, Stack } from '@/ui';
 import { H1, Text, Button } from '@/design/components/base-components/Components';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
-import { CMSConfiguration } from '@/types/cms';
+
 import Link from 'next/link';
-import { getCMSField } from '../../../design/hooks/useCMSData';
+
 
 // Load CMS data at build time for instant page loads
 export async function generateStaticParams() {
@@ -31,7 +31,7 @@ async function getCMSData(): Promise<any> {
   }
 }
 
-function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
+function AboutPageContent({ cmsData }: { cmsData: any }) {
   return (
     <>
       {/* Hero Section */}
@@ -42,7 +42,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               align="center" 
               data-cms-id="title" 
             >
-              {getCMSField(cmsData, 'title', 'About Us')}
+              {cmsData?.['title'] || 'About Us'}
             </H1>
             <Text 
               variant="lead" 
@@ -50,7 +50,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               size="lg" 
               data-cms-id="subtitle" 
             >
-              {getCMSField(cmsData, 'subtitle', 'Your Trusted Airport Transportation Partner')}
+              {cmsData?.['subtitle'] || 'Your Trusted Airport Transportation Partner'}
             </Text>
           </Stack>
         </Stack>
@@ -64,11 +64,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               size="lg" 
               data-cms-id="description" 
             >
-              {getCMSField(
-                cmsData,
-                'description',
-                'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'
-              )}
+              {cmsData?.['description'] || 'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'}
           </Text>
         </Stack>
       </Container>
@@ -80,7 +76,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
               align="center" 
               data-cms-id="cta-subtitle" 
             >
-              {getCMSField(cmsData, 'cta-subtitle', 'Ready to experience premium airport transportation?')}
+              {cmsData?.['cta-subtitle'] || 'Ready to experience premium airport transportation?'}
           </Text>
           
           <Stack direction="horizontal" spacing="md" align="center">
@@ -89,7 +85,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 variant="primary"
                 data-cms-id="cta-primary-button"
               >
-                {getCMSField(cmsData, 'cta-primary-button', 'Book Your Ride')}
+                {cmsData?.['cta-primary-button'] || 'Book Your Ride'}
               </Button>
             </Link>
             
@@ -98,7 +94,7 @@ function AboutPageContent({ cmsData }: { cmsData: CMSConfiguration | null }) {
                 variant="secondary"
                 data-cms-id="cta-secondary-button"
               >
-                {getCMSField(cmsData, 'cta-secondary-button', 'Get Help')}
+                {cmsData?.['cta-secondary-button'] || 'Get Help'}
               </Button>
             </Link>
           </Stack>
