@@ -11,6 +11,34 @@ import { FlexboxContainer } from '../../components/base-components/FlexboxContai
 import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
 import { getCMSField } from '../../hooks/useCMSData';
 
+// Styled components for navigation layout
+const LogoContainer = styled.div`
+  flex-shrink: 0;
+`;
+
+const Spacer = styled.div`
+  flex: 1;
+`;
+
+const RightSideContainer = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xl};
+`;
+
+const NavigationContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xl};
+`;
+
+const ActionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.lg};
+`;
+
 // Mobile menu overlay with flexbox positioning
 const MobileMenuOverlay = styled(FlexboxContainer)`
   position: absolute;
@@ -119,56 +147,62 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
 
   return (
     <PositionedContainer
-      position="sticky"
-      top="0"
+      position="relative"
       zIndex={zIndex.dropdown}
       display="flex"
       flexDirection="row"
       alignItems="center"
-      justifyContent="space-between"
       data-testid={`${dataTestIdPrefix}-container`}
       gap={{ xs: spacing.md, md: spacing.xl }}
       backgroundColor="white"
-      boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
-      padding={`${spacing.md} ${spacing.xl}`}
+      padding={`0 ${spacing.xl}`}
+      width="100%"
     >
-      {/* Logo */}
-      {logo}
+      {/* Logo - Takes minimal space */}
+      <LogoContainer>
+        {logo}
+      </LogoContainer>
 
-      {/* Desktop Navigation */}
-      {!isMobile && (
-        <Stack direction="horizontal" spacing="xl" align="center">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
-            >
-              <Text
-                variant={item.current ? 'body' : 'body'}
-                weight={item.current ? 'semibold' : 'medium'}
-                size="md"
+      {/* Spacer to push everything to the right */}
+      <Spacer />
+
+      {/* Right side - Navigation and Actions grouped together */}
+      <RightSideContainer>
+        {/* Desktop Navigation */}
+        {!isMobile && (
+          <NavigationContainer>
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                data-testid={`${dataTestIdPrefix}-desktop-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
               >
-                {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`, item.name)}
-              </Text>
-            </Link>
-          ))}
-        </Stack>
-      )}
+                <Text
+                  variant={item.current ? 'body' : 'body'}
+                  weight={item.current ? 'semibold' : 'medium'}
+                  size="md"
+                >
+                  {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`, item.name)}
+                </Text>
+              </Link>
+            ))}
+          </NavigationContainer>
+        )}
 
-      {/* Desktop Actions */}
-      {!isMobile && actions && (
-        <Stack direction="horizontal" spacing="lg" align="center">
-          {Array.isArray(actions) 
-            ? actions.map((action, index) => (
-                <React.Fragment key={`action-${index}`}>
-                  {action}
-                </React.Fragment>
-              ))
-            : actions
-          }
-        </Stack>
-      )}
+        {/* Desktop Actions */}
+        {!isMobile && actions && (
+          <ActionsContainer>
+            {Array.isArray(actions) 
+              ? actions.map((action, index) => (
+                  <React.Fragment key={`action-${index}`}>
+                    {action}
+                  </React.Fragment>
+                ))
+              : actions
+            }
+          </ActionsContainer>
+        )}
+      </RightSideContainer>
 
       {/* Mobile Menu Button - Only visible on mobile */}
       {isMobile && (

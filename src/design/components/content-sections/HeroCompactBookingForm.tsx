@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Container, Stack, Box, Button, Text, Input, Select } from '@/ui';
-import Link from 'next/link';
+import { Container } from '../../layout/containers/Container';
+import { Stack } from '../../layout/framing/Stack';
+import { Button } from '../../components/base-components/Button';
+import { Text } from '../../components/base-components/text/Text';
+import { Input } from '../../components/base-components/forms/Input';
 
 interface HeroCompactBookingFormProps {
   'data-testid'?: string;
@@ -45,6 +48,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             value={pickupLocation}
             onChange={(e) => setPickupLocation(e.target.value)}
             size="md"
+            fullWidth
           />
           
           <Input
@@ -52,6 +56,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             value={dropoffLocation}
             onChange={(e) => setDropoffLocation(e.target.value)}
             size="md"
+            fullWidth
           />
           
           <Input
@@ -59,6 +64,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             value={pickupDate}
             onChange={(e) => setPickupDate(e.target.value)}
             size="md"
+            fullWidth
           />
         </Stack>
         

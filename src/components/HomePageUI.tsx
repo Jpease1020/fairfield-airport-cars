@@ -23,11 +23,23 @@ const FlexStack = styled(Stack)`
 `;
 
 const GreyBox = styled(Box)`
-  background-color: var(--color-bg-muted);
+  background-color: var(--background-muted);
 `;
 
 const GreyContainer = styled(Container)`
-  background-color: var(--color-bg-muted);
+  background-color: var(--background-muted);
+`;
+
+const StickyButtonContainer = styled.div`
+  position: fixed;
+  bottom: 2rem;
+  right: 1rem;
+  z-index: 1000;
+  
+  /* Hide on desktop */
+  @media (min-width: 768px) {
+    display: none;
+  }
 `;
 
 const HeroSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
@@ -102,17 +114,21 @@ const FeaturesSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
       >
         <GreyBox variant="elevated" padding="lg">
           <Col grow align="center">
-            <Stack spacing="md" align="center">
+            <Stack spacing="sm" align="center">
               <Text size="xl" align="center">⭐</Text>
               <Text
                 align="center"
                 variant="lead"
+                weight="semibold"
+                size="lg"
                 data-cms-id="features-items-0-title"
               >
                 {getCMSField(cmsData, 'features-items-0-title')}
               </Text>
               <Text
                 align="center"
+                size="md"
+                color="secondary"
                 data-cms-id="features-items-0-description"
               >
                 {getCMSField(cmsData, 'features-items-0-description')}
@@ -127,12 +143,16 @@ const FeaturesSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
               <Text
                 align="center"
                 variant="lead"
+                weight="semibold"
+                size="lg"
                 data-cms-id="features-items-1-title"
               >
                 {getCMSField(cmsData, 'features-items-1-title')}
               </Text>
               <Text
                 align="center"
+                size="md"
+                color="secondary"
                 data-cms-id="features-items-1-description"
               >
                 {getCMSField(cmsData, 'features-items-1-description')}
@@ -147,12 +167,16 @@ const FeaturesSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
               <Text
                 align="center"
                 variant="lead"
+                weight="semibold"
+                size="lg"
                 data-cms-id="features-items-2-title"
               >
                 {getCMSField(cmsData, 'features-items-2-title')}
               </Text>
               <Text
                 align="center"
+                size="md"
+                color="secondary"
                 data-cms-id="features-items-2-description"
               >
                 {getCMSField(cmsData, 'features-items-2-description')}
@@ -189,11 +213,15 @@ const FAQSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
           <Stack spacing="md">
             <Text
               variant="lead"
+              weight="semibold"
+              size="lg"
               data-cms-id="faq-items-0-question"
             >
               {getCMSField(cmsData, 'faq-items-0-question')}
             </Text>
             <Text
+              size="md"
+              color="secondary"
               data-cms-id="faq-items-0-answer"
             >
               {getCMSField(cmsData, 'faq-items-0-answer')}
@@ -203,11 +231,15 @@ const FAQSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
           <Stack spacing="md">
             <Text
               variant="lead"
+              weight="semibold"
+              size="lg"
               data-cms-id="faq-items-1-question"
             >
               {getCMSField(cmsData, 'faq-items-1-question')}
             </Text>
             <Text
+              size="md"
+              color="secondary"
               data-cms-id="faq-items-1-answer"
             >
               {getCMSField(cmsData, 'faq-items-1-answer')}
@@ -217,11 +249,15 @@ const FAQSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
           <Stack spacing="md">
             <Text
               variant="lead"
+              weight="semibold"
+              size="lg"
               data-cms-id="faq-items-2-question"
             >
               {getCMSField(cmsData, 'faq-items-2-question')}
             </Text>
             <Text
+              size="md"
+              color="secondary"
               data-cms-id="faq-items-2-answer"
             >
               {getCMSField(cmsData, 'faq-items-2-answer')}
@@ -232,6 +268,22 @@ const FAQSection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
     </Stack>
   );
 }
+
+const MobileStickyButton = () => {
+  return (
+    <StickyButtonContainer>
+      <Link href="/book">
+        <Button
+          variant="primary"
+          size="lg"
+          data-testid="mobile-sticky-book-now"
+        >
+          Book Now
+        </Button>
+      </Link>
+    </StickyButtonContainer>
+  );
+};
 
 const FinalCTASection = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
   return (
@@ -291,6 +343,9 @@ const HomePageContent = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
       </Container>
       
       <FinalCTASection cmsData={cmsData} data-testid="final-cta-section" />
+      
+      {/* Mobile Sticky Book Now Button */}
+      <MobileStickyButton />
     </>
   );
 }

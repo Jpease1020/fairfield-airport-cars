@@ -6,7 +6,11 @@ import { CustomerNavigation } from './CustomerNavigation';
 import { AdminNavigation } from './AdminNavigation';
 import { Container } from '@/ui';
 
-export function NavigationManager() {
+interface NavigationManagerProps {
+  cmsData?: any;
+}
+
+export function NavigationManager({ cmsData }: NavigationManagerProps) {
   const pathname = usePathname();
   
   // Check if we're in admin context
@@ -16,7 +20,7 @@ export function NavigationManager() {
   if (isAdminRoute) {
     return (
       <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
-        <AdminNavigation />
+        <AdminNavigation cmsData={cmsData} />
       </Container>
     );
   }
@@ -24,7 +28,7 @@ export function NavigationManager() {
   // Default to customer navigation for all other routes (home, public, customer)
   return (
     <Container variant="navigation" as="header" maxWidth="full" margin="none" data-testid="layout-navigation" padding="none">
-      <CustomerNavigation />
+      <CustomerNavigation cmsData={cmsData} />
     </Container>
   );
 }
