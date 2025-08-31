@@ -23,10 +23,11 @@ export interface PositionedContainerProps {
   backgroundColor?: string;
   boxShadow?: string;
   padding?: string;
+  width?: string;
 }
 
 const StyledPositionedContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['position', 'top', 'right', 'bottom', 'left', 'zIndex', 'display', 'flexDirection', 'alignItems', 'justifyContent', 'gap', 'backgroundColor', 'boxShadow', 'padding'].includes(prop)
+  shouldForwardProp: (prop) => !['position', 'top', 'right', 'bottom', 'left', 'zIndex', 'display', 'flexDirection', 'alignItems', 'justifyContent', 'gap', 'backgroundColor', 'boxShadow', 'padding', 'width'].includes(prop)
 })<{
   position: 'fixed' | 'absolute' | 'relative' | 'sticky';
   top?: string;
@@ -42,6 +43,7 @@ const StyledPositionedContainer = styled.div.withConfig({
   backgroundColor?: string;
   boxShadow?: string;
   padding?: string;
+  width?: string;
 }>`
   position: ${({ position }) => position};
   ${({ top }) => top && `top: ${top};`}
@@ -78,6 +80,7 @@ const StyledPositionedContainer = styled.div.withConfig({
   ${({ backgroundColor }) => backgroundColor && `background-color: ${backgroundColor};`}
   ${({ boxShadow }) => boxShadow && `box-shadow: ${boxShadow};`}
   ${({ padding }) => padding && `padding: ${padding};`}
+  ${({ width }) => width && `width: ${width};`}
 `;
 
 export const PositionedContainer: React.FC<PositionedContainerProps> = ({
@@ -98,6 +101,7 @@ export const PositionedContainer: React.FC<PositionedContainerProps> = ({
   backgroundColor,
   boxShadow,
   padding,
+  width,
   ...rest
 }) => {
   return (
@@ -118,6 +122,7 @@ export const PositionedContainer: React.FC<PositionedContainerProps> = ({
       backgroundColor={backgroundColor}
       boxShadow={boxShadow}
       padding={padding}
+      width={width}
       {...rest}
     >
       {children}

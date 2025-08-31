@@ -19,7 +19,7 @@ interface CustomerNavigationProps {
   cmsData?: any;
 }
 
-export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width = '100%', cmsData }) => {
+export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width, cmsData }) => {
   const pathname = usePathname();
   const { isAdmin } = useAdminStatus();
   const { isLoggedIn } = useAuth();
@@ -30,6 +30,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width = 
     ...(pathname !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
     ...(isLoggedIn && pathname !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),
     ...(isAdmin && !pathname.startsWith('/admin') ? [{ name: 'Admin', href: '/admin', current: false }] : []),
+    ...(!isLoggedIn ? [{ name: 'Login', href: '/login', current: false }] : []),
   ];
 
   const logo = (
@@ -45,17 +46,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width = 
 
   const actions = (
     <>
-      {!isLoggedIn ? (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          href="/login"
-          data-testid="nav-login-button" 
-          id="nav-login-button"
-        >
-          {getCMSField(cmsData, 'navigation-login', 'Login')}
-        </Button>
-      ) : (
+      {isLoggedIn && (
         <Button 
           variant="outline" 
           size="sm" 
@@ -82,17 +73,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width = 
 
   const mobileActions = (
     <>
-      {!isLoggedIn ? (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          href="/login"
-          data-testid="nav-mobile-login-button" 
-          id="nav-mobile-login-button"
-        >
-          {getCMSField(cmsData, 'navigation-mobile-login', 'Login')}
-        </Button>
-      ) : (
+      {isLoggedIn && (
         <Button 
           variant="outline" 
           size="sm" 

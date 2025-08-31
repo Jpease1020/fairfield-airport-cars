@@ -6,7 +6,7 @@ import { GoogleMapsProvider } from '@/providers/GoogleMapsProvider';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 import { AppContent } from './AppContent';
-import { SmartNavigation } from '@/components/app/SmartNavigation';
+import { NavigationWrapper } from '@/components/app/NavigationWrapper';
 import { Footer } from '@/design/page-sections/Footer';
 import { Container } from '@/design/layout/containers/Container';
 
@@ -49,16 +49,7 @@ export default async function RootLayout({
               <AdminProvider>
                 <InteractionModeProvider>
                   <GoogleMapsProvider>
-                    <Container 
-                      variant="navigation" 
-                      as="header" 
-                      maxWidth="full" 
-                      margin="none" 
-                      data-testid="layout-navigation" 
-                      padding="none"
-                    >
-                      <SmartNavigation cmsData={cmsData} />
-                    </Container>
+                    <NavigationWrapper cmsData={cmsData} />
                     
                     <Container as="main" maxWidth="full" data-testid="layout-main-content">
                       <AppContent>{children}</AppContent>
