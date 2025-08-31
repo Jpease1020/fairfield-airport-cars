@@ -12,7 +12,14 @@ export async function POST(request: Request) {
 
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+    console.error('GOOGLE_MAPS_API_KEY not configured');
+    return NextResponse.json({ 
+      error: 'Google Maps API key not configured. Please set GOOGLE_MAPS_API_KEY in your environment variables.',
+      debug: {
+        hasApiKey: !!apiKey,
+        envVars: Object.keys(process.env).filter(key => key.includes('GOOGLE'))
+      }
+    }, { status: 500 });
   }
 
   try {
@@ -33,7 +40,15 @@ export async function POST(request: Request) {
     }));
 
     return NextResponse.json({ predictions });
-  } catch {
-    return NextResponse.json({ error: 'Failed to get predictions' }, { status: 500 });
+  } catch (error) {
+    console.error('Places Autocomplete API error:', error);
+    return NextResponse.json({ 
+      error: 'Failed to get predictions from Google Places API',
+      debug: {
+        input,
+        hasApiKey: !!apiKey,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      }
+    }, { status: 500 });
   }
 } 
