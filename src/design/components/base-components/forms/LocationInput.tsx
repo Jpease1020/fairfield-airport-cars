@@ -51,9 +51,8 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     try {
       // Create autocomplete instance
       const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-        types: ['address'],
         componentRestrictions: { country: 'us' },
-        fields: ['formatted_address', 'geometry', 'name', 'place_id']
+        fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types']
       });
 
       // Store reference
@@ -64,7 +63,19 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         const place = autocomplete.getPlace();
         
         if (place.geometry?.location) {
-          const address = place.formatted_address || place.name || '';
+          // Prioritize the most descriptive name for airports and landmarks
+          let address = '';
+          if (place.types?.includes('airport')) {
+            // For airports, use the name (e.g., "Charlotte Douglas International Airport")
+            address = place.name || place.formatted_address || '';
+          } else if (place.types?.includes('establishment') || place.types?.includes('point_of_interest')) {
+            // For businesses/landmarks, prefer name over address
+            address = place.name || place.formatted_address || '';
+          } else {
+            // For regular addresses, use formatted address
+            address = place.formatted_address || place.name || '';
+          }
+          
           const coordinates = {
             lat: place.geometry.location.lat(),
             lng: place.geometry.location.lng()
@@ -86,7 +97,8 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         }
       };
     } catch (error) {
-      console.error('Failed to initialize Google Places Autocomplete:', error);
+      // Silently handle errors to avoid console pollution
+      
     }
   }, [isLoaded, onChange, onLocationSelect]);
 

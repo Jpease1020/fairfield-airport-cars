@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Container, Stack, Col, Box } from '@/ui';
-import { H1, H2, Text, Button } from '@/design/components/base-components/Components';
+import { H1, H2, Text, Button } from '@/ui';
 import { HeroCompactBookingForm } from '@/design/components/content-sections/HeroCompactBookingForm';
 import { CMSConfiguration } from '@/types/cms';
 import Link from 'next/link';
@@ -337,6 +337,12 @@ const HomePageContent = ({ cmsData }: { cmsData: CMSConfiguration | null }) => {
       <HeroSection cmsData={cmsData} data-testid="hero-section"/>
       
       <Container padding="xl" variant="section">
+        <H2
+          align="center"
+          data-cms-id="faq-title"
+        >
+          {getCMSField(cmsData, 'new-i-haven-tuploaded-subtitle', "No cancellations. No surprises. Just reliable, comfortable airport rides from Fairfield County.")}
+        </H2>
         <Stack direction={{ xs: 'vertical', lg: 'horizontal' }} spacing="xl">
           <FeaturesSection cmsData={cmsData} data-testid="features-section" />
           <FAQSection cmsData={cmsData} data-testid="faq-section" />
