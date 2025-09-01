@@ -169,6 +169,42 @@ export class CMSFlattenedService {
     }
   }
 
+  // Update a specific field in CMS data
+  async updateField(fieldPath: string, value: string): Promise<void> {
+    try {
+      // Parse the field path to determine which document to update
+      const pathParts = fieldPath.split('.');
+      const pageType = pathParts[0]; // e.g., 'home', 'about', etc.
+      
+      // Get the current document
+      const docRef = doc(db, 'cms', pageType);
+      const docSnap = await getDoc(docRef);
+      
+      if (!docSnap.exists()) {
+        throw new Error(`CMS page '${pageType}' not found`);
+      }
+      
+      const currentData = docSnap.data();
+      
+      // Update the nested field
+      let current = currentData;
+      for (let i = 1; i < pathParts.length - 1; i++) {
+        if (!current[pathParts[i]]) {
+          current[pathParts[i]] = {};
+        }
+        current = current[pathParts[i]];
+      }
+      current[pathParts[pathParts.length - 1]] = value;
+      
+      // Save the updated document
+      await setDoc(docRef, currentData, { merge: true });
+      
+    } catch (error) {
+      console.error(`Error updating field ${fieldPath}:`, error);
+      throw error;
+    }
+  }
+
   // Get all CMS data directly from Firestore
   async getAllCMSData(): Promise<Record<string, any>> {
     try {

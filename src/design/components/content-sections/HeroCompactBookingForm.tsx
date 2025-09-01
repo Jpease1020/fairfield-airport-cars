@@ -110,22 +110,13 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           
           <Stack direction="horizontal" spacing="md">
             <Input
-              type="date" 
-              id="pickup-date"
-              value={pickupDate}
-              onChange={(e) => setPickupDate(e.target.value)}
-              size="md"
-              fullWidth
-            />
-            
-            <Input
-              type="datetime-local"
+              type="datetime-local" 
               id="pickup-datetime"
               value={pickupDate && pickupTime ? `${pickupDate}T${pickupTime}` : ''}
               onChange={(e) => {
-                const dateTime = e.target.value;
-                if (dateTime) {
-                  const [date, time] = dateTime.split('T');
+                const datetime = e.target.value;
+                if (datetime) {
+                  const [date, time] = datetime.split('T');
                   setPickupDate(date);
                   setPickupTime(time);
                 }
