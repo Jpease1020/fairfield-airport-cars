@@ -1,0 +1,31 @@
+import { Container, Stack, Text, Button } from '@/ui';
+import Link from 'next/link';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
+
+// Force dynamic rendering to prevent server-side rendering issues
+export const dynamic = 'force-dynamic';
+
+export default function NotFound() {
+  const cmsData = useCMSData();
+  
+  return (
+    <Container>
+      <Stack spacing="xl" align="center" justify="center">
+        <Text variant="lead" size="xl" weight="bold" cmsId="not-found-title">
+          {(cmsData as any)?.['not-found-title'] || '404'}
+        </Text>
+        <Text variant="lead" size="lg" cmsId="not-found-subtitle">
+          {(cmsData as any)?.['not-found-subtitle'] || 'Page Not Found'}
+        </Text>
+        <Text variant="body" align="center" cmsId="not-found-message">
+          {(cmsData as any)?.['not-found-message'] || "The page you're looking for doesn't exist or has been moved."}
+        </Text>
+        <Link href="/">
+          <Button variant="primary" cmsId="not-found-cta">
+            {(cmsData as any)?.['not-found-cta'] || 'Go Home'}
+          </Button>
+        </Link>
+      </Stack>
+    </Container>
+  );
+}

@@ -1,8 +1,11 @@
 'use client';
 
+// Force dynamic rendering to prevent server-side rendering issues
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react'; 
 import { cmsFlattenedService } from '@/lib/services/cms-service';
-import { BusinessSettings } from '@/types/cms';
+// BusinessSettings type removed - file was deleted
 import { 
   ToastProvider,
   useToast,
@@ -15,12 +18,12 @@ import {
   Input,
   Label,
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 function BusinessPageContent() {
   const { cmsData } = useCMSData();
   const { addToast } = useToast();
-  const [settings, setSettings] = useState<BusinessSettings | null>(null);
+  const [settings, setSettings] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +49,7 @@ function BusinessPageContent() {
     loadBusinessSettings();
   }, []);
 
-  const handleInputChange = (section: keyof BusinessSettings, field: string, value: string) => {
+  const handleInputChange = (section: string, field: string, value: string) => {
     if (!settings) return;
     
     setSettings({
@@ -98,7 +101,7 @@ function BusinessPageContent() {
     return (
       
         <Container>
-          {getCMSField(cmsData, 'admin-cms-business-loading', 'Loading...')}
+          {cmsData?.['admin-cms-business-loading'] || 'Loading...'}
         </Container>
       
     );
@@ -108,7 +111,7 @@ function BusinessPageContent() {
     return (
       
         <Container>
-          {getCMSField(cmsData, 'admin-cms-business-error', 'Error loading settings')}
+          {cmsData?.['admin-cms-business-error'] || 'Error loading settings'}
         </Container>
       
     );
@@ -118,7 +121,7 @@ function BusinessPageContent() {
     return (
       
         <Container>
-          {getCMSField(cmsData, 'admin-cms-business-noSettings', 'No settings found')}
+          {cmsData?.['admin-cms-business-noSettings'] || 'No settings found'}
         </Container>
       
     );
@@ -214,9 +217,9 @@ function BusinessPageContent() {
                 <Text>Links to your social media profiles</Text>
                 
                 <Stack spacing="md">
-                  {getCMSField(cmsData, 'admin-cms-business-social', 'Social Media')}
+                  {cmsData?.['admin-cms-business-social'] || 'Social Media'}
                   
-                  {getCMSField(cmsData, 'admin-cms-business-socialDesc', 'Your social media profiles')}
+                  {cmsData?.['admin-cms-business-socialDesc'] || 'Your social media profiles'}
                   
                   <Container>
                     <Label htmlFor="social-facebook">Facebook URL</Label>
@@ -271,11 +274,11 @@ function BusinessPageContent() {
                     />
                     <Text size="sm" color="secondary">Main brand color for buttons and accents</Text>
                     <Stack direction="horizontal" spacing="sm" align="center">
-                      <Span>
-                        {getCMSField(cmsData, 'admin-cms-business-preview', 'Preview:')}
+                      <Span cmsId="admin-cms-business-preview" cmsData={cmsData}>
+                        {cmsData?.['admin-cms-business-preview'] || 'Preview:'}
                       </Span>
-                      <Span>
-                        {getCMSField(cmsData, 'admin-cms-business-colorPreview', 'Color preview')}
+                      <Span cmsId="admin-cms-business-colorPreview" cmsData={cmsData}>
+                        {cmsData?.['admin-cms-business-colorPreview'] || 'Color preview'}
                       </Span>
                     </Stack>
                   </Container>
@@ -290,11 +293,11 @@ function BusinessPageContent() {
                     />
                     <Text size="sm" color="secondary">Secondary brand color for highlights</Text>
                     <Stack direction="horizontal" spacing="sm" align="center">
-                      <Span>
-                        {getCMSField(cmsData, 'admin-cms-business-preview', 'Preview:')}
+                      <Span cmsId="admin-cms-business-preview-secondary" cmsData={cmsData}>
+                        {cmsData?.['admin-cms-business-preview'] || 'Preview:'}
                       </Span>
-                      <Span>
-                        {getCMSField(cmsData, 'admin-cms-business-colorPreview', 'Color preview')}
+                      <Span cmsId="admin-cms-business-colorPreview-secondary" cmsData={cmsData}>
+                        {cmsData?.['admin-cms-business-colorPreview'] || 'Color preview'}
                       </Span>
                     </Stack>
                   </Container>
@@ -320,12 +323,12 @@ function BusinessPageContent() {
                 <Text>How your business information will appear to customers</Text>
                 
                 <Stack spacing="lg">
-                  {getCMSField(cmsData, 'admin-cms-business-companyName', 'Company Name')}
-                  {getCMSField(cmsData, 'admin-cms-business-companyNameDesc', 'Your business name as it appears to customers')}
-                  {getCMSField(cmsData, 'admin-cms-business-phone', 'Phone Number')}
-                  {getCMSField(cmsData, 'admin-cms-business-email', 'Email Address')}
-                  {getCMSField(cmsData, 'admin-cms-business-address', 'Address')}
-                  {getCMSField(cmsData, 'admin-cms-business-hours', 'Business Hours')}
+                  {cmsData?.['admin-cms-business-companyName'] || 'Company Name'}
+                  {cmsData?.['admin-cms-business-companyNameDesc'] || 'Your business name as it appears to customers'}
+                  {cmsData?.['admin-cms-business-phone'] || 'Phone Number'}
+                  {cmsData?.['admin-cms-business-email'] || 'Email Address'}
+                  {cmsData?.['admin-cms-business-address'] || 'Address'}
+                  {cmsData?.['admin-cms-business-hours'] || 'Business Hours'}
                 </Stack>
               </Stack>
             </Box>

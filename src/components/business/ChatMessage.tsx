@@ -34,7 +34,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     <Container>
       <Container>
         <Container>
-          <Span>
+          <Span cmsId="ignore">
             {message.role === 'assistant' ? '🤖' : '👤'}
           </Span>
           <Container>
@@ -45,9 +45,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
               onClick={handleVoicePlay}
               variant="ghost"
               size="sm"
-            >
-              🔊
-            </Button>
+              cmsId="chat-message-voice-button"
+              text="🔊"
+            />
           )}
         </Container>
         <Container>

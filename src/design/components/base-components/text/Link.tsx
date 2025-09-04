@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
+import { BaseTextComponentProps, TextComponentChildren } from '../../../system/shared-types';
 
 // Styled link component
 const StyledLink = styled.a.withConfig({
@@ -99,19 +100,30 @@ const StyledLink = styled.a.withConfig({
   }
 `;
 
-export interface LinkProps {
-  // Core props
-  children: React.ReactNode;
-  href: string;
+export interface LinkProps extends Omit<BaseTextComponentProps, 'cmsId' | 'cmsData'> {
+  // Core props - now type-safe
+  children: TextComponentChildren;
   
   // Appearance
   variant?: 'primary' | 'secondary' | 'muted' | 'underline' | 'button';
   size?: 'sm' | 'base' | 'lg';
-  
-  // Behavior
-  target?: '_blank' | '_self' | '_parent' | '_top';
-  rel?: string;
   external?: boolean;
+  
+  // Navigation
+  href: string;
+  target?: string;
+  rel?: string;
+  
+  // Content editing (optional)
+  cmsId?: string;
+  cmsData?: any;
+  mode?: 'edit' | 'comment' | null;
+  // cmsId: string; - now mandatory
+  // cmsData: any; - optional
+  // mode?: 'edit' | 'comment' | null; - optional
+  
+  // Event handlers
+  onClick?: (e: React.MouseEvent) => void;
   
   // Rest props
   [key: string]: any;

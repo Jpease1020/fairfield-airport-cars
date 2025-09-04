@@ -14,6 +14,7 @@ import {
   GridItem
 } from '@/ui';
 import { Booking } from '@/types/booking';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 type DriverLocation = NonNullable<Booking['driverLocation']>;
 
@@ -23,6 +24,7 @@ interface DriverTrackingInterfaceProps {
   driverId: string;
   pickupLocation: string;
   dropoffLocation: string;
+  cmsData?: any; // Optional - component can fetch if not provided
 }
 
 export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = ({
@@ -31,7 +33,12 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
   driverId,
   pickupLocation,
   dropoffLocation,
+  cmsData: propCmsData,
 }) => { 
+  // Get CMS data from hook if not provided as prop
+  const { cmsData: hookCmsData } = useCMSData();
+  const cmsData = propCmsData || hookCmsData;
+  
   const [currentLocation, setCurrentLocation] = useState<DriverLocation | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isTrackingActive, setIsTrackingActive] = useState(false);
@@ -164,7 +171,7 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
     return (
       <Container>
         <Stack spacing="lg" align="center">
-          <Text>Loading driver interface...</Text>
+          <Text cmsId="driver-tracking-loading">{cmsData?.['driverTrackingInterfaceLoading'] || 'Loading driver interface...'}</Text>
         </Stack>
       </Container>
     );
@@ -185,8 +192,8 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
       <Stack spacing="lg">
         {/* Header */}
         <Stack spacing="sm">
-          <Text variant="h2">Driver Tracking Interface</Text>
-          <Text variant="lead">Driver: {driverName}</Text>
+          <Text variant="h2" cmsId="driver-tracking-title">{cmsData?.['driverTrackingInterfaceTitle'] || 'Driver Tracking Interface'}</Text>
+          <Text variant="lead" cmsId="ignore">Driver: {driverName}</Text>
           <Stack direction="horizontal" align="center" spacing="md">
             <Badge 
               variant={getStatusColor(bookingStatus?.status || 'confirmed')}
@@ -200,7 +207,7 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
         {/* Location Tracking Controls */}
         <Card>
           <Stack spacing="md">
-            <Text variant="h3">Location Tracking</Text>
+            <Text variant="h3" cmsId="driver-tracking-location-tracking">{cmsData?.['driverTrackingInterfaceLocationTracking'] || 'Location Tracking'}</Text>
             
             {locationError && (
               <Alert variant="error" title="Location Error">
@@ -214,25 +221,25 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
                   onClick={handleStartTracking}
                   variant="primary"
                   size="lg"
-                >
-                  Start Location Tracking
-                </Button>
+                  cmsId="driver-tracking-start-button"
+                  text={cmsData?.['driverTrackingInterfaceStartButton'] || 'Start Location Tracking'}
+                />
               ) : (
                 <Button 
                   onClick={handleStopTracking}
                   variant="outline"
                   size="lg"
-                >
-                  Stop Location Tracking
-                </Button>
+                  cmsId="driver-tracking-stop-button"
+                  text={cmsData?.['driverTrackingInterfaceStopButton'] || 'Stop Location Tracking'}
+                />
               )}
             </Stack>
 
             {currentLocation && (
               <Stack spacing="sm">
-                <Text variant="lead">Current Location:</Text>
-                <Text>{formatCoordinates(currentLocation)}</Text>
-                <Text>Speed: {formatSpeed(currentLocation.speed || 0)}</Text>
+                <Text variant="lead" cmsId="driver-tracking-current-location">{cmsData?.['driverTrackingInterfaceCurrentLocation'] || 'Current Location:'}</Text>
+                <Text cmsId="ignore">{formatCoordinates(currentLocation)}</Text>
+                <Text cmsId="ignore">Speed: {formatSpeed(currentLocation.speed || 0)}</Text>
               </Stack>
             )}
           </Stack>
@@ -241,7 +248,7 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
         {/* Status Update Controls */}
         <Card>
           <Stack spacing="md">
-            <Text variant="h3">Update Booking Status</Text>
+            <Text variant="h3" cmsId="driver-tracking-update-status">{cmsData?.['driverTrackingInterfaceUpdateStatus'] || 'Update Booking Status'}</Text>
             
             <Grid cols={2} gap="md">
               <GridItem>
@@ -250,9 +257,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
                   variant={bookingStatus?.status === 'confirmed' ? 'primary' : 'outline'}
                   fullWidth
                   disabled={bookingStatus?.status === 'confirmed'}
-                >
-                  Driver Assigned
-                </Button>
+                  cmsId="driver-tracking-assigned-button"
+                  text={cmsData?.['driverTrackingInterfaceAssignedButton'] || 'Driver Assigned'}
+                />
               </GridItem>
               
               <GridItem>
@@ -261,9 +268,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
                   variant={bookingStatus?.status === 'in-progress' ? 'primary' : 'outline'}
                   fullWidth
                   disabled={bookingStatus?.status === 'in-progress'}
-                >
-                  En Route
-                </Button>
+                  cmsId="driver-tracking-en-route-button"
+                  text={cmsData?.['driverTrackingInterfaceEnRouteButton'] || 'En Route'}
+                />
               </GridItem>
               
               <GridItem>
@@ -272,9 +279,9 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
                   variant={bookingStatus?.status === 'completed' ? 'primary' : 'outline'}
                   fullWidth
                   disabled={bookingStatus?.status === 'completed'}
-                >
-                  Completed
-                </Button>
+                  cmsId="driver-tracking-completed-button"
+                  text={cmsData?.['driverTrackingInterfaceCompletedButton'] || 'Completed'}
+                />
               </GridItem>
             </Grid>
           </Stack>
@@ -283,18 +290,18 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
         {/* Trip Information */}
         <Card>
           <Stack spacing="md">
-            <Text variant="h3">Trip Information</Text>
+            <Text variant="h3" cmsId="driver-tracking-trip-information">{cmsData?.['driverTrackingInterfaceTripInformation'] || 'Trip Information'}</Text>
             
             <Stack spacing="sm">
-              <Text>
-                <strong>Pickup:</strong> {pickupLocation}
+              <Text cmsId="ignore">
+                <strong>{cmsData?.['driverTrackingInterfacePickupLabel'] || 'Pickup:'}</strong> {pickupLocation}
               </Text>
-              <Text>
-                <strong>Dropoff:</strong> {dropoffLocation}
+              <Text cmsId="ignore">
+                <strong>{cmsData?.['driverTrackingInterfaceDropoffLabel'] || 'Dropoff:'}</strong> {dropoffLocation}
               </Text>
               {bookingStatus?.estimatedArrival && (
-                <Text>
-                  <strong>ETA:</strong> {bookingStatus.estimatedArrival.toLocaleTimeString()}
+                <Text cmsId="ignore">
+                  <strong>{cmsData?.['driverTrackingInterfaceETALabel'] || 'ETA:'}</strong> {bookingStatus.estimatedArrival.toLocaleTimeString()}
                 </Text>
               )}
             </Stack>
@@ -304,7 +311,7 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
         {/* Connection Status */}
         {loading && (
           <Alert variant="warning" title="Connection Issue">
-            Real-time updates may be delayed. Please check your connection.
+            {cmsData?.['driverTrackingInterfaceConnectionIssue'] || 'Real-time updates may be delayed. Please check your connection.'}
           </Alert>
         )}
       </Stack>

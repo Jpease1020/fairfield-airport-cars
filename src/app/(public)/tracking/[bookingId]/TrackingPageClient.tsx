@@ -19,16 +19,17 @@ import { TrafficETA } from '@/components/business/TrafficETA';
 import { getBooking } from '@/lib/services/booking-service';
 import { firebaseTrackingService, type ETACalculation, type DriverLocation } from '@/lib/services/firebase-tracking-service';
 import { Booking } from '@/types/booking';
-import { getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface TrackingPageClientProps {
-  cmsData: any;
   bookingId: string;
 }
 
-export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageClientProps) {
-  const { mode } = useInteractionMode();
+export default function TrackingPageClient({ bookingId }: TrackingPageClientProps) {
+  // Get CMS data from provider - extract only what this page needs
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.tracking || {};
+  
   
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
 
         const bookingData = await getBooking(bookingId);
         if (!bookingData) {
-          setError(getCMSField(cmsData, 'tracking-bookingNotFound', 'Booking not found'));
+          setError(cmsData?.['tracking-bookingNotFound'] || 'Booking not found');
           return;
         }
 
@@ -97,7 +98,7 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
 
       } catch (err) {
         console.error('Error loading booking:', err);
-        setError(getCMSField(cmsData, 'tracking-loadFailed', 'Failed to load booking information'));
+        setError(cmsData?.['tracking-loadFailed'] || 'Failed to load booking information');
       } finally {
         setLoading(false);
       }
@@ -155,11 +156,11 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text data-cms-id="loading-message" mode={mode}>
-            {getCMSField(cmsData, 'tracking-message', 'Loading enhanced tracking information...')}
+          <Text cmsId="loading-message" >
+            {cmsData?.['tracking-message'] || 'Loading enhanced tracking information...'}
           </Text>
-          <Text variant="muted" size="sm" data-cms-id="loading-subtitle" mode={mode}>
-            {getCMSField(cmsData, 'tracking-subtitle', 'Initializing real-time location tracking...')}
+          <Text variant="muted" size="sm" cmsId="loading-subtitle" >
+            {cmsData?.['tracking-subtitle'] || 'Initializing real-time location tracking...'}
           </Text>
         </Stack>
       </Container>
@@ -171,12 +172,12 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
       <Container>
         <Stack spacing="lg" align="center">
           <Alert variant="error">
-            <Text data-cms-id="error-message" mode={mode}>
-              {error || getCMSField(cmsData, 'tracking-bookingNotFound', 'Booking not found')}
+            <Text cmsId="error-message" >
+              {error || (cmsData?.['tracking-bookingNotFound'] || 'Booking not found')}
             </Text>
           </Alert>
-          <Button onClick={() => window.history.back()} data-cms-id="error-go-back">
-            {getCMSField(cmsData, 'tracking-goBack', 'Go Back')}
+          <Button onClick={() => window.history.back()} cmsId="error-go-back">
+            {cmsData?.['tracking-goBack'] || 'Go Back'}
           </Button>
         </Stack>
       </Container>
@@ -190,26 +191,26 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
         <Stack spacing="sm">
           <Stack direction="horizontal" justify="space-between" align="center">
             <Stack spacing="xs">
-              <H1 data-cms-id="title" mode={mode}>
-                {getCMSField(cmsData, 'tracking-title', 'Enhanced Live Tracking')}
+              <H1 cmsId="title" >
+                {cmsData?.['tracking-title'] || 'Enhanced Live Tracking'}
               </H1>
-              <Text variant="muted" data-cms-id="subtitle" mode={mode}>
-                {getCMSField(cmsData, 'tracking-subtitle', 'Real-time tracking with traffic-aware ETA calculations')}
+              <Text variant="muted" cmsId="subtitle" >
+                {cmsData?.['tracking-subtitle'] || 'Real-time tracking with traffic-aware ETA calculations'}
               </Text>
             </Stack>
             <Button 
               variant="outline" 
               onClick={refreshTracking}
               disabled={!trackingActive}
-              data-cms-id="refresh-eta"
+              cmsId="refresh-eta"
             >
-              {getCMSField(cmsData, 'tracking-refreshETA', 'Refresh ETA')}
+              {cmsData?.['tracking-refreshETA'] || 'Refresh ETA'}
             </Button>
           </Stack>
           {lastUpdate && (
-            <Text variant="muted" size="sm" data-cms-id="last-update" mode={mode}>
-              {getCMSField(cmsData, 'tracking-label', 'Last updated:')} {lastUpdate.toLocaleTimeString()}
-              {trackingActive && getCMSField(cmsData, 'tracking-live', ' • Live tracking active')}
+            <Text variant="muted" size="sm" cmsId="last-update" >
+              {cmsData?.['tracking-label'] || 'Last updated:'} {lastUpdate.toLocaleTimeString()}
+              {trackingActive && (cmsData?.['tracking-live'] || ' • Live tracking active')}
             </Text>
           )}
         </Stack>
@@ -220,17 +221,17 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
               <Stack direction="horizontal" justify="space-between" align="center">
-                <H2 data-cms-id="map-title" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-title', 'Live Map')}
+                <H2 cmsId="map-title" >
+                  {cmsData?.['tracking-title'] || 'Live Map'}
                 </H2>
                 <Badge 
                   variant={trackingActive ? 'success' : 'warning'}
                   size="sm"
-                  data-cms-id="map-status"
+                  cmsId="map-status"
                 >
                   {trackingActive ? 
-                    getCMSField(cmsData, 'tracking-live', 'Live') : 
-                    getCMSField(cmsData, 'tracking-offline', 'Offline')
+                    (cmsData?.['tracking-live'] || 'Live') : 
+                    (cmsData?.['tracking-offline'] || 'Offline')
                   }
                 </Badge>
               </Stack>
@@ -242,6 +243,7 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
                 estimatedArrival={booking.estimatedArrival}
                 status={booking.status}
                 onMapLoad={handleMapLoad}
+                cmsData={cmsData}
               />
             </Stack>
           </Box>
@@ -249,8 +251,8 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
           {/* Traffic-Aware ETA */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
-              <H2 data-cms-id="eta-title" mode={mode}>
-                {getCMSField(cmsData, 'tracking-title', 'Traffic-Aware ETA')}
+              <H2 cmsId="eta-title" >
+                {cmsData?.['tracking-title'] || 'Traffic-Aware ETA'}
               </H2>
               <TrafficETA
                 bookingId={booking.id!}
@@ -264,6 +266,7 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
                   speed: booking.driverLocation.speed || 0
                 } : undefined}
                 onETAUpdate={handleETAUpdate}
+                cmsData={cmsData}
               />
             </Stack>
           </Box>
@@ -272,28 +275,28 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
         {/* Booking Details */}
         <Box variant="outlined" padding="lg">
           <Stack spacing="md">
-            <H2 data-cms-id="booking-details-title" mode={mode}>
-              {getCMSField(cmsData, 'tracking-title', 'Booking Details')}
+            <H2 cmsId="booking-details-title" >
+              {cmsData?.['tracking-title'] || 'Booking Details'}
             </H2>
             
             <GridSection variant="content" columns={3}>
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="booking-details-booking-id" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-bookingId', 'Booking ID')}
+                <Text variant="muted" size="sm" cmsId="booking-details-booking-id" >
+                  {cmsData?.['tracking-bookingId'] || 'Booking ID'}
                 </Text>
                 <Text weight="bold">{booking.id}</Text>
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="booking-details-passenger" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-passenger', 'Passenger')}
+                <Text variant="muted" size="sm" cmsId="booking-details-passenger" >
+                  {cmsData?.['tracking-passenger'] || 'Passenger'}
                 </Text>
                 <Text weight="bold">{booking.name}</Text>
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="booking-details-status" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-status', 'Status')}
+                <Text variant="muted" size="sm" cmsId="booking-details-status" >
+                  {cmsData?.['tracking-status'] || 'Status'}
                 </Text>
                 <Badge 
                   variant={
@@ -304,17 +307,17 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
                     booking.status === 'pending' ? 'pending' :
                     'default'
                   }
-                  data-cms-id="booking-details-status-value"
+                  cmsId="booking-details-status-value"
                 >
-                  {getCMSField(cmsData, `pages.tracking.bookingDetails.status.${booking.status}`, booking.status)}
+                  {cmsData?.[`pages.tracking.bookingDetails.status.${booking.status}`] || booking.status}
                 </Badge>
               </Stack>
             </GridSection>
 
             <GridSection variant="content" columns={3}>
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="booking-details-pickup-time" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-pickupTime', 'Pickup Time')}
+                <Text variant="muted" size="sm" cmsId="booking-details-pickup-time" >
+                  {cmsData?.['tracking-pickupTime'] || 'Pickup Time'}
                 </Text>
                 <Text weight="bold">
                   {new Date(booking.pickupDateTime).toLocaleString()}
@@ -322,28 +325,28 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="booking-details-fare" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-fare', 'Fare')}
+                <Text variant="muted" size="sm" cmsId="booking-details-fare" >
+                  {cmsData?.['tracking-fare'] || 'Fare'}
                 </Text>
-                <Text weight="bold">${booking.fare.toFixed(2)}</Text>
+                <Text weight="bold" cmsId="ignore">${booking.fare.toFixed(2)}</Text>
               </Stack>
               
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="booking-details-driver" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-driver', 'Driver')}
+                <Text variant="muted" size="sm" cmsId="booking-details-driver" >
+                  {cmsData?.['tracking-driver'] || 'Driver'}
                 </Text>
                 <Text weight="bold">
-                  {booking.driverName || getCMSField(cmsData, 'tracking-driverNotAssigned', 'Not assigned yet')}
+                  {booking.driverName || (cmsData?.['tracking-driverNotAssigned'] || 'Not assigned yet')}
                 </Text>
               </Stack>
             </GridSection>
 
             {/* Route Information */}
             <Stack spacing="sm">
-              <Text variant="muted" size="sm" data-cms-id="booking-details-route" mode={mode}>
-                {getCMSField(cmsData, 'tracking-route', 'Route')}
+              <Text variant="muted" size="sm" cmsId="booking-details-route" >
+                {cmsData?.['tracking-route'] || 'Route'}
               </Text>
-              <Text weight="bold">
+              <Text weight="bold" cmsId="ignore">
                 {booking.pickupLocation} → {booking.dropoffLocation}
               </Text>
             </Stack>
@@ -351,15 +354,15 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
             {/* ETA Information */}
             {etaCalculation && (
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="eta-current" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-current', 'Current ETA')}
+                <Text variant="muted" size="sm" cmsId="eta-current" >
+                  {cmsData?.['tracking-current'] || 'Current ETA'}
                 </Text>
-                <Text weight="bold">
+                <Text weight="bold" cmsId="ignore">
                   {etaCalculation.estimatedArrival.toLocaleTimeString()} 
-                  ({etaCalculation.duration} {getCMSField(cmsData, 'tracking-minutes', 'min')}, {etaCalculation.distance.toFixed(1)} {getCMSField(cmsData, 'tracking-miles', 'miles')})
+                  ({etaCalculation.duration} {cmsData?.['tracking-minutes'] || 'min'}, {etaCalculation.distance.toFixed(1)} {cmsData?.['tracking-miles'] || 'miles'})
                 </Text>
-                <Text size="sm" variant="muted" data-cms-id="eta-details" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-traffic', 'Traffic:')} {etaCalculation.trafficConditions} • {getCMSField(cmsData, 'tracking-confidence', 'Confidence:')} {(etaCalculation.confidence * 100).toFixed(0)}%
+                <Text size="sm" variant="muted" cmsId="eta-details" >
+                  {cmsData?.['tracking-traffic'] || 'Traffic:'} {etaCalculation.trafficConditions} • {cmsData?.['tracking-confidence'] || 'Confidence:'} {(etaCalculation.confidence * 100).toFixed(0)}%
                 </Text>
               </Stack>
             )}
@@ -367,15 +370,15 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
             {/* Driver Location Info */}
             {booking.driverLocation && (
               <Stack spacing="sm">
-                <Text variant="muted" size="sm" data-cms-id="driver-location-title" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-title', 'Driver Location')}
+                <Text variant="muted" size="sm" cmsId="driver-location-title" >
+                  {cmsData?.['tracking-title'] || 'Driver Location'}
                 </Text>
-                <Text weight="bold">
+                <Text weight="bold" cmsId="ignore">
                   {booking.driverLocation.lat.toFixed(4)}, {booking.driverLocation.lng.toFixed(4)}
                 </Text>
-                <Text size="sm" variant="muted" data-cms-id="driver-location-details" mode={mode}>
-                  {getCMSField(cmsData, 'tracking-speed', 'Speed:')} {booking.driverLocation.speed || 0} {getCMSField(cmsData, 'tracking-mph', 'mph')} • 
-                  {getCMSField(cmsData, 'tracking-updated', 'Updated:')} {booking.driverLocation.timestamp.toLocaleTimeString()}
+                <Text size="sm" variant="muted" cmsId="driver-location-details" >
+                  {cmsData?.['tracking-speed'] || 'Speed:'} {booking.driverLocation.speed || 0} {cmsData?.['tracking-mph'] || 'mph'} • 
+                  {cmsData?.['tracking-updated'] || 'Updated:'} {booking.driverLocation.timestamp.toLocaleTimeString()}
                 </Text>
               </Stack>
             )}
@@ -388,18 +391,18 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
             variant="outline" 
             onClick={() => window.history.back()}
             fullWidth
-            data-cms-id="actions-back-to-bookings"
+            cmsId="actions-back-to-bookings"
           >
-            {getCMSField(cmsData, 'tracking-backToBookings', 'Back to Bookings')}
+            {cmsData?.['tracking-backToBookings'] || 'Back to Bookings'}
           </Button>
           
           <Button 
             variant="primary"
             onClick={() => window.location.href = `/booking/${booking.id}`}
             fullWidth
-            data-cms-id="actions-view-booking"
+            cmsId="actions-view-booking"
           >
-            {getCMSField(cmsData, 'tracking-viewBooking', 'View Booking Details')}
+            {cmsData?.['tracking-viewBooking'] || 'View Booking Details'}
           </Button>
         </Stack>
 
@@ -407,12 +410,12 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
         {booking.status === 'in-progress' && (
           <Alert variant="info">
             <Stack spacing="xs">
-              <Text weight="bold" data-cms-id="live-updates-title" mode={mode}>
-                {getCMSField(cmsData, 'tracking-title', 'Live Updates Active')}
+              <Text weight="bold" cmsId="live-updates-title" >
+                {cmsData?.['tracking-title'] || 'Live Updates Active'}
               </Text>
-              <Text size="sm" data-cms-id="live-updates-description" mode={mode}>
-                {getCMSField(cmsData, 'tracking-description', 'Your driver\'s location and ETA are being updated in real-time. The map will automatically refresh as your driver moves.')}
-                {trackingActive && getCMSField(cmsData, 'tracking-firebase', ' Firebase tracking is connected and active.')}
+              <Text size="sm" cmsId="live-updates-description" >
+                {cmsData?.['tracking-description'] || 'Your driver\'s location and ETA are being updated in real-time. The map will automatically refresh as your driver moves.'}
+                {trackingActive && (cmsData?.['tracking-firebase'] || ' Firebase tracking is connected and active.')}
               </Text>
             </Stack>
           </Alert>
@@ -422,11 +425,11 @@ export default function TrackingPageClient({ cmsData, bookingId }: TrackingPageC
         {!trackingActive && booking.status !== 'completed' && (
           <Alert variant="warning">
             <Stack spacing="xs">
-              <Text weight="bold" data-cms-id="offline-title" mode={mode}>
-                {getCMSField(cmsData, 'tracking-title', 'Tracking Offline')}
+              <Text weight="bold" cmsId="offline-title" >
+                {cmsData?.['tracking-title'] || 'Tracking Offline'}
               </Text>
-              <Text size="sm" data-cms-id="offline-description" mode={mode}>
-                {getCMSField(cmsData, 'tracking-description', 'Real-time tracking is currently offline. ETA calculations may not be accurate. Try refreshing the page to reconnect.')}
+              <Text size="sm" cmsId="offline-description" >
+                {cmsData?.['tracking-description'] || 'Real-time tracking is currently offline. ETA calculations may not be accurate. Try refreshing the page to reconnect.'}
               </Text>
             </Stack>
           </Alert>

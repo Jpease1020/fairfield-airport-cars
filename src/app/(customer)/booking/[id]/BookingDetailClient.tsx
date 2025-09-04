@@ -3,14 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/ui';
 import { Booking } from '@/types/booking';
-import { getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface BookingDetailClientProps {
-  cmsData: any;
   bookingId: string;
 }
 
-function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps) {
+function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.booking || {};
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,7 +68,7 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            {getCMSField(cmsData, 'booking-loading-message', 'Please wait while we fetch your booking details...')}
+            {cmsData?.['booking-loading-message'] || 'Please wait while we fetch your booking details...'}
           </Container>
         </GridSection>
       </Container>
@@ -79,7 +80,7 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            {getCMSField(cmsData, 'booking-error-description', 'This could be due to an invalid booking ID or a temporary system issue.')}
+            {cmsData?.['booking-error-description'] || 'This could be due to an invalid booking ID or a temporary system issue.'}
             <ActionButtonGroup buttons={[
               {
                 id: 'try-again',
@@ -107,7 +108,7 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            {getCMSField(cmsData, 'booking-not_found-description', 'The booking you are looking for could not be found.')}
+            {cmsData?.['booking-not_found-description'] || 'The booking you are looking for could not be found.'}
             <ActionButtonGroup buttons={[
               {
                 id: 'book-new-ride',
@@ -152,26 +153,26 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
       {/* Booking Status */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking-status-title', `${getStatusIcon(booking.status)} Booking Status`)}
-          {getCMSField(cmsData, 'booking-status-description', `Your booking is currently ${booking.status}`)}
+          <Text>{cmsData?.['booking-status-title'] || `${getStatusIcon(booking.status)} Booking Status`}</Text>
+          <Text>{cmsData?.['booking-status-description'] || `Your booking is currently ${booking.status}`}</Text>
         </Container>
       </GridSection>
 
       {/* Trip Details */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking-trip_details-title', '📍 Trip Details')}
-          {getCMSField(cmsData, 'booking-trip_details-description', 'Your pickup and dropoff information')}
+          {cmsData?.['booking-trip_details-title'] || '📍 Trip Details'}
+          {cmsData?.['booking-trip_details-description'] || 'Your pickup and dropoff information'}
           <Container>
-            {getCMSField(cmsData, 'booking-pickup_location-label', 'Pickup Location:')}
+            {cmsData?.['booking-pickup_location-label'] || 'Pickup Location:'}
             <Text>{booking.pickupLocation}</Text>
           </Container>
           <Container>
-            {getCMSField(cmsData, 'booking-dropoff_location-label', 'Dropoff Location:')}
+            {cmsData?.['booking-dropoff_location-label'] || 'Dropoff Location:'}
             <Text>{booking.dropoffLocation}</Text>
           </Container>
           <Container>
-            {getCMSField(cmsData, 'booking-pickup_datetime-label', 'Pickup Date & Time:')}
+            {cmsData?.['booking-pickup_datetime-label'] || 'Pickup Date & Time:'}
             <Text>{formatDateTime(booking.pickupDateTime)}</Text>
           </Container>
         </Container>
@@ -180,14 +181,14 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
       {/* Passenger Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking-passenger_info-title', '👤 Passenger Information')}
-          {getCMSField(cmsData, 'booking-passenger_info-description', 'Your contact details for this booking')}
+          {cmsData?.['booking-passenger_info-title'] || '👤 Passenger Information'}
+          {cmsData?.['booking-passenger_info-description'] || 'Your contact details for this booking'}
           <Container spacing="lg">
-            {getCMSField(cmsData, 'booking-passenger_name-label', 'Passenger:')}
+            {cmsData?.['booking-passenger_name-label'] || 'Passenger:'}
             <Text>{booking.name}</Text>
-            {getCMSField(cmsData, 'booking-passenger_phone-label', 'Phone:')}
+            {cmsData?.['booking-passenger_phone-label'] || 'Phone:'}
             <Text>{booking.phone}</Text>
-            {getCMSField(cmsData, 'booking-passenger_email-label', 'Email:')}
+            {cmsData?.['booking-passenger_email-label'] || 'Email:'}
             <Text>{booking.email}</Text>
           </Container>
         </Container>
@@ -196,14 +197,11 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
       {/* Fare Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking-fare_info-title', '💰 Fare Information')}
-          {getCMSField(cmsData, 'booking-fare_info-description', 'Payment details for your trip')}
           <Container spacing="md">
-            {getCMSField(cmsData, 'booking-total_fare-label', 'Total Fare:')}
-            <Text>
-              {getCMSField(cmsData, 'booking-fare_info-includes_fees', 'Includes all fees and taxes')}
+            <Text cmsId="booking-fare-info-includes-fees">
+              {cmsData?.['booking-fare-info-includes-fees'] || 'Includes all fees and taxes'}
             </Text>
-            <Text size="lg">
+            <Text size="lg" cmsId="ignore">
               ${booking.fare?.toFixed(2)}
             </Text>
           </Container>
@@ -213,8 +211,8 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
       {/* Actions */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {getCMSField(cmsData, 'booking-quick_actions-title', '🎯 Quick Actions')}
-          {getCMSField(cmsData, 'booking-quick_actions-description', 'Manage your booking or book another ride')}
+          <Text cmsId="booking-quick-actions-title">{cmsData?.['booking-quick-actions-title'] || '🎯 Quick Actions'}</Text>
+          <Text cmsId="booking-quick-actions-description">{cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}</Text>
           <ActionButtonGroup buttons={actionButtons} />
         </Container>
       </GridSection>
@@ -222,10 +220,10 @@ function BookingDetailsContent({ cmsData, bookingId }: BookingDetailClientProps)
   );
 }
 
-export default function BookingDetailClient({ cmsData, bookingId }: BookingDetailClientProps) {
+export default function BookingDetailClient({ bookingId }: BookingDetailClientProps) {
   return (
     <ToastProvider>
-      <BookingDetailsContent cmsData={cmsData} bookingId={bookingId} />
+      <BookingDetailsContent bookingId={bookingId} />
     </ToastProvider>
   );
 }

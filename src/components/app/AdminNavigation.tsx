@@ -6,13 +6,13 @@ import { usePathname } from 'next/navigation';
 import { Button } from '../../design/components/base-components/Button';
 import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/BaseNavigation';
 import { auth } from '../../lib/utils/firebase';
-import { getCMSField } from '../../design/hooks/useCMSData';
+import { useCMSData } from '../../design/providers/CMSDataProvider';
 
-interface AdminNavigationProps {
-  cmsData?: any;
-}
-
-export const AdminNavigation: React.FC<AdminNavigationProps> = ({ cmsData = {} }) => {
+export const AdminNavigation: React.FC = () => {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.admin || {};
+  
   const pathname = usePathname();
   const handleLogout = async () => {
     try {
@@ -35,23 +35,19 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({ cmsData = {} }
 
   const logo = (
     <Link href="/admin" data-testid="admin-nav-logo-link" id="admin-nav-logo-link">
-      {getCMSField(cmsData, 'adminNavigation-title', 'Admin Panel')}
-    </Link>
+      {cmsData?.['adminNavigation-title'] || 'Admin Panel'}
+    </Link> 
   );
 
   const actions = (
     <Link href="/" data-testid="admin-nav-view-site-link" id="admin-nav-view-site-link">
-      <Button variant="outline" size="sm" data-testid="admin-nav-view-site-button" id="admin-nav-view-site-button">
-        {getCMSField(cmsData, 'adminNavigation-viewSiteButton', 'View Site')}
-      </Button>
+      <Button variant="outline" size="sm" data-testid="admin-nav-view-site-button" id="admin-nav-view-site-button" cmsId="admin-nav-view-site-button"  text={cmsData?.['adminNavigation-viewSiteButton'] || 'View Site'} />
     </Link>
   );
 
   const mobileActions = (
     <Link href="/" data-testid="admin-nav-mobile-view-site-link" id="admin-nav-mobile-view-site-link">
-      <Button variant="outline" size="sm" data-testid="admin-nav-mobile-view-site-button" id="admin-nav-mobile-view-site-button">
-        {getCMSField(cmsData, 'adminNavigation-mobile-viewSiteButton', 'View Site')}
-      </Button>
+      <Button variant="outline" size="sm" data-testid="admin-nav-mobile-view-site-button" id="admin-nav-mobile-view-site-button" cmsId="admin-nav-mobile-view-site-button"  text={cmsData?.['adminNavigation-mobile-viewSiteButton'] || 'View Site'} />
     </Link>
   );
 
@@ -60,9 +56,10 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({ cmsData = {} }
       variant="outline"
       size="sm"
       onClick={handleLogout}
-    >
-      🚪 Logout
-    </Button>
+      cmsId="admin-logout-button"
+      
+      text="🚪 Logout"
+    />
   );
 
 
@@ -74,7 +71,6 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({ cmsData = {} }
       mobileActions={mobileActions}
       dataTestIdPrefix="admin-nav"
       editableFieldPrefix="adminNavigation"
-      cmsData={cmsData}
     />
   );
 }; 

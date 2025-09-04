@@ -4,7 +4,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, borderRadius, transitions, shadows, fontWeight } from '../../system/tokens/tokens';
 import { LoadingSpinner } from './notifications/LoadingSpinner';
-import { BaseComponentProps, ButtonVariant, ButtonSize } from '../../system/shared-types';
+import { ButtonVariant, ButtonSize } from '../../system/shared-types';
+import { BaseTextComponentProps, TextComponentChildren } from '../../system/shared-types';
+import { useInteractionMode } from '../../providers/InteractionModeProvider';
+import { useCMSData } from '../../providers/CMSDataProvider';
 
 // Styled button component with enhanced modern styling
 const StyledButton = styled.button.withConfig({
@@ -292,8 +295,9 @@ const StyledButton = styled.button.withConfig({
 `;
 
 // Button Component - Enhanced with better props and functionality
-export interface ButtonProps extends BaseComponentProps {
-  children: React.ReactNode;
+export interface ButtonProps extends Omit<BaseTextComponentProps, 'cmsId' | 'cmsData'> {
+  children?: TextComponentChildren; // Make optional since we can use text prop
+  text?: string; // New: direct text prop for button content
   variant?: ButtonVariant;
   size?: ButtonSize;
   disabled?: boolean;
@@ -308,13 +312,13 @@ export interface ButtonProps extends BaseComponentProps {
   href?: string;
   target?: string;
   rel?: string;
-  cmsKey?: string;
   disableInteractionOverride?: boolean;
-  interactionMode?: 'edit' | 'comment' | null;
+  cmsId?: string; // Make optional for Button
 }
 
 export const Button: React.FC<ButtonProps> = ({
   children,
+  text,
   variant = 'primary',
   size = 'md',
   disabled = false,
@@ -330,31 +334,51 @@ export const Button: React.FC<ButtonProps> = ({
   href,
   target,
   rel,
-  cmsKey,
+  cmsId,
   disableInteractionOverride,
-  interactionMode = null,
   ...rest
 }) => {
+  // Get CMS data from provider
+  const { cmsData } = useCMSData();
+  
+  // Get mode from provider
+  let mode: 'edit' | 'comment' | null = null;
+  try {
+    const context = useInteractionMode();
+    mode = context.mode;
+  } catch {
+    // Provider not available, use null as default
+    mode = null;
+  }
+
   // Determine the component to render
   const renderComponent = href ? 'a' : Component;
   const ref = React.useRef<any>(null);
   
+  // Don't add data-cms-id for decorative elements
+  const shouldIgnoreCMS = cmsId === 'ignore';
+  
+  // Determine button content - use CMS field if available
+  const buttonContent = cmsData && cmsId && !shouldIgnoreCMS && text
+    ? ((cmsData as any)?.[cmsId] || text)
+    : (text || children);
+  
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // If we're in edit/comment mode and this button doesn't have the override
-    if (interactionMode && !disableInteractionOverride) {
+    if (mode && !disableInteractionOverride) {
       e.preventDefault();
       e.stopPropagation();
       
-      // If we have a cmsKey, dispatch the appropriate edit event
-      if (cmsKey) {
-        if (interactionMode === 'edit') {
+      // If we have a cmsId, dispatch the appropriate edit event
+      if (cmsId) {
+        if (mode === 'edit') {
           const event = new (window as any).CustomEvent('openInlineEditor', {
-            detail: { cmsId: cmsKey, element: e.currentTarget, x: e.clientX, y: e.clientY }
+            detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
           });
           document.dispatchEvent(event);
-        } else if (interactionMode === 'comment') {
+        } else if (mode === 'comment') {
           const event = new (window as any).CustomEvent('openCommentModal', {
-            detail: { cmsId: cmsKey, element: e.currentTarget, x: e.clientX, y: e.clientY }
+            detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
           });
           document.dispatchEvent(event);
         }
@@ -382,11 +406,12 @@ export const Button: React.FC<ButtonProps> = ({
       target={target}
       rel={rel}
       ref={ref}
+      {...(!shouldIgnoreCMS && cmsId ? { 'data-cms-id': cmsId } : {})}
       {...rest}
     >
       {loading && <LoadingSpinner size="sm" />}
       {!loading && icon && iconPosition === 'left' && icon}
-      {children}
+      {buttonContent}
       {!loading && icon && iconPosition === 'right' && icon}
     </StyledButton>
   );

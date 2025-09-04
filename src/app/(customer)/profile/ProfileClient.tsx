@@ -18,15 +18,13 @@ import {
   ContentCard,
   GridSection
 } from '@/ui';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
-import { getCMSField } from '../../../design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
-interface ProfileClientProps {
-  cmsData: any;
-}
-
-export default function ProfileClient({ cmsData }: ProfileClientProps) {
-  const { mode } = useInteractionMode();
+export default function ProfileClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.profile || {};
+  
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -132,14 +130,14 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
         }
       });
       
-      setSuccess(getCMSField(cmsData, 'messages.profileUpdated', 'Profile updated successfully!'));
+      setSuccess(pageCmsData?.['messages.profileUpdated'] || 'Profile updated successfully!');
       setIsEditing(false);
       
       // Reload profile to get updated data
       await loadCustomerProfile(user.uid);
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError(getCMSField(cmsData, 'messages.updateFailed', 'Failed to update profile. Please try again.'));
+      setError(pageCmsData?.['messages.updateFailed'] || 'Failed to update profile. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -172,7 +170,7 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
       <Container maxWidth="full" padding="xl">
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading profile...</Text>
+          <Text cmsId="ignore">Loading profile...</Text>
         </Stack>
       </Container>
     );
@@ -183,11 +181,9 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
       <Container maxWidth="full" padding="xl">
         <Stack spacing="xl" align="center">
           <Alert variant="error">
-            <Text>{error}</Text>
+            <Text cmsId="ignore">{error}</Text>
           </Alert>
-          <Button onClick={() => router.push('/login')}>
-            Back to Login
-          </Button>
+          <Button onClick={() => router.push('/login')} cmsId="back-to-login"  text={pageCmsData?.['back-to-login'] || 'Back to Login'}/>          
         </Stack>
       </Container>
     );
@@ -200,30 +196,30 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
         <Stack spacing="md" align="center">
           <H1 
             align="center" 
-            data-cms-id="profile-title"
-            mode={mode}
+            cmsId="profile-title"
+            
           >
-            {getCMSField(cmsData, 'profile-title', 'Profile Settings')}
+            {pageCmsData?.['profile-title'] || 'Profile Settings'}
           </H1>
           <Text 
             variant="lead" 
             align="center" 
-            data-cms-id="profile-subtitle"
-            mode={mode}
+            cmsId="profile-subtitle"
+            
           >
-            {getCMSField(cmsData, 'profile-subtitle', 'Manage your account information and preferences')}
+            {pageCmsData?.['profile-subtitle'] || 'Manage your account information and preferences'}
           </Text>
         </Stack>
 
         {success && (
           <Alert variant="success">
-            <Text>{success}</Text>
+            <Text cmsId="ignore">{success}</Text>
           </Alert>
         )}
 
         {error && (
           <Alert variant="error">
-            <Text>{error}</Text>
+            <Text cmsId="ignore">{error}</Text>
           </Alert>
         )}
 
@@ -234,13 +230,12 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
             <Stack spacing="xl">
               {/* Personal Information */}
               <GridSection
-                title={getCMSField(cmsData, 'personal-info-title', 'Personal Information')}
-                data-cms-id="personal-info-title"
+                title={pageCmsData?.['personal-info-title'] || 'Personal Information'}
               >
                 <Stack spacing="md">
-                  <div data-cms-id="personal-info-name">
+                  <div>
                     <Label htmlFor="name">
-                      {getCMSField(cmsData, 'personalInfo.name', 'Full Name')}
+                      {pageCmsData?.['personalInfo.name'] || 'Full Name'}
                     </Label>
                     <Input
                       id="name"
@@ -251,9 +246,9 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
                     />
                   </div>
                   
-                  <div data-cms-id="personal-info-email">
+                  <div>
                     <Label htmlFor="email">
-                      {getCMSField(cmsData, 'personalInfo.email', 'Email Address')}
+                      {pageCmsData?.['personalInfo.email'] || 'Email Address'}
                     </Label>
                     <Input
                       id="email"
@@ -261,14 +256,14 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
                       disabled={true} // Email cannot be changed
                       placeholder="Your email address"
                     />
-                    <Text variant="small" color="muted">
-                      Email address cannot be changed. Contact support if needed.
+                    <Text variant="small" color="muted" cmsId="email-address-cannot-be-changed">
+                      {pageCmsData?.['email-address-cannot-be-changed'] || 'Email address cannot be changed. Contact support if needed.'}
                     </Text>
                   </div>
                   
-                  <div data-cms-id="locations-title">
+                  <div>
                     <Label htmlFor="phone">
-                      {getCMSField(cmsData, 'personalInfo.phone', 'Phone Number')}
+                      {pageCmsData?.['personalInfo.phone'] || 'Phone Number'}
                     </Label>
                     <Input
                       id="phone"
@@ -283,13 +278,12 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
 
               {/* Default Locations */}
               <GridSection
-                data-cms-id="locations-title"
-                title={getCMSField(cmsData, 'locations.title', 'Default Locations')}
+                title={pageCmsData?.['locations.title'] || 'Default Locations'}
               >
                 <Stack spacing="md">
-                  <div data-cms-id="locations-pickup">
+                  <div>
                     <Label htmlFor="pickup">
-                      {getCMSField(cmsData, 'locations.pickup', 'Default Pickup Location')}
+                      {pageCmsData?.['locations.pickup'] || 'Default Pickup Location'}
                     </Label>
                     <Input
                       id="pickup"
@@ -300,9 +294,9 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
                     />
                   </div>
                   
-                  <div data-cms-id="locations-dropoff">
+                  <div>
                     <Label htmlFor="dropoff">
-                      {getCMSField(cmsData, 'locations.dropoff', 'Default Dropoff Location')}
+                      {pageCmsData?.['locations.dropoff'] || 'Default Dropoff Location'}
                     </Label>
                     <Input
                       id="dropoff"
@@ -317,12 +311,11 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
 
               {/* Notification Preferences */}
               <GridSection
-                data-cms-id="notifications-title"
-                title={getCMSField(cmsData, 'notifications.title', 'Notification Preferences')}
+                title={pageCmsData?.['notifications.title'] || 'Notification Preferences'}
               >
                 <Stack spacing="md">
-                  <div data-cms-id="notifications-email">
-                    <Label>
+                  <div>
+                    <Label cmsId="notifications-email">
                       <input
                         type="checkbox"
                         checked={formData.notifications.email}
@@ -330,20 +323,20 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
                         disabled={!isEditing}
                       />
                       {' '}
-                      {getCMSField(cmsData, 'notifications.email', 'Email Notifications')}
+                      {pageCmsData?.['notifications.email'] || 'Email Notifications'}
                     </Label>
                   </div>
                   
-                  <div data-cms-id="notifications-sms">
-                    <Label>
+                  <div>
+                    <Label cmsId="notifications-sms">
                       <input
                         type="checkbox"
                         checked={formData.notifications.sms}
-                        onChange={(e) => handleInputChange('notifications-sms', e.target.checked)}
+                        onChange={(e) => handleInputChange('notifications.sms', e.target.checked)}
                         disabled={!isEditing}
                       />
                       {' '}
-                      {getCMSField(cmsData, 'notifications-sms', 'SMS Notifications')}
+                      {pageCmsData?.['notifications-sms'] || 'SMS Notifications'}
                     </Label>
                   </div>
                 </Stack>
@@ -355,9 +348,10 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
                   <Button
                     onClick={() => setIsEditing(true)}
                     variant="primary"
-                    data-cms-id="profile-buttons-edit"
+                    cmsId="profile-buttons-edit"
+                    
                   >
-                    {getCMSField(cmsData, 'profile-buttons-edit', 'Edit Profile')}
+                    {pageCmsData?.['profile-buttons-edit'] || 'Edit Profile'}
                   </Button>
                 ) : (
                   <>
@@ -365,16 +359,16 @@ export default function ProfileClient({ cmsData }: ProfileClientProps) {
                       onClick={handleSave}
                       variant="primary"
                       disabled={saving}
-                      data-cms-id="profile-buttons-save"
+                      cmsId="profile-buttons-save"
                     >
-                      {getCMSField(cmsData, saving ? 'buttons.saving' : 'buttons.save', saving ? 'Saving...' : 'Save Changes')}
+                      {pageCmsData?.[saving ? 'buttons.saving' : 'buttons.save'] || saving ? 'Saving...' : 'Save Changes'}
                     </Button>
                     <Button
                       onClick={handleCancel}
                       variant="outline"
-                      data-cms-id="profile-buttons-cancel"
+                      cmsId="profile-buttons-cancel"
                     >
-                      {getCMSField(cmsData, 'buttons.cancel', 'Cancel')}
+                      {pageCmsData?.['buttons.cancel'] || 'Cancel'}
                     </Button>
                   </>
                 )}

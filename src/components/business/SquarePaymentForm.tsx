@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Container, Stack, Text, Alert } from '@/design/ui';
-import { getCMSField } from '../../design/hooks/useCMSData';
 
 interface SquarePaymentFormProps {
   amount: number; // Amount in cents
@@ -12,7 +11,7 @@ interface SquarePaymentFormProps {
   disabled?: boolean;
   hideSubmitButton?: boolean;
   onPaymentReady?: (processPayment: () => Promise<void>) => void;
-  cmsData?: any;
+  cmsData: any;
   
   // Booking data for new bookings
   bookingData?: {
@@ -290,12 +289,12 @@ export function SquarePaymentForm({
     <Container variant="default" padding="md">
       <Stack spacing="lg">
         <Container variant="default" padding="md">
-          <div id="card-container" ref={cardContainerRef} data-cms-id="payment-form-card-container" />
+          <div id="card-container" ref={cardContainerRef} />
         </Container>
 
         {paymentError && (
           <Alert variant="error">
-            <Text size="sm">{paymentError}</Text>
+            <Text size="sm" cmsId="payment-error-message">{paymentError}</Text>
           </Alert>
         )}
 
@@ -305,12 +304,14 @@ export function SquarePaymentForm({
             disabled={disabled || isLoading || !cardRef.current}
             variant="primary"
             size="lg"
-            data-cms-id="payment-form-submit"
+            cmsId="payment-form-submit"
           >
-            {isLoading 
-              ? getCMSField(cmsData, 'payment-form-processing', 'Processing...')
-              : getCMSField(cmsData, 'payment-form-submit', `Pay $${(amount / 100).toFixed(2)}`)
-            }
+            <Text cmsId="payment-button-text">
+              {isLoading 
+                ? cmsData?.['payment-form-processing'] || 'Processing...'
+                : cmsData?.['payment-form-submit'] || `Pay $${(amount / 100).toFixed(2)}`
+              }
+            </Text>
           </Button>
         )}
 

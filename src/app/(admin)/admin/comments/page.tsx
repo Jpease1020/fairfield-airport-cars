@@ -1,18 +1,20 @@
 'use client';
 
+// Force dynamic rendering to prevent server-side rendering issues
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react';
 import { Container, Stack, Button, H2, H3, H4, Span, Input, Select } from '@/ui';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
 import { commentExportService, type CommentExportOptions } from '@/lib/business/comment-export-service';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
-import { CheckCircle, Clock, AlertCircle, Search, Download, Eye, Edit, Trash2, BarChart3, FileText } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, Search, Download, BarChart3 } from 'lucide-react';
 import StatusBadge from '@/components/business/StatusBadge';
 
 export default function AdminCommentsPage() {
   const { isAdmin } = useAdminStatus();
-  const { mode } = useInteractionMode();
+  
   const [comments, setComments] = useState<CommentRecord[]>([]);
   const [filteredComments, setFilteredComments] = useState<CommentRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,8 @@ export default function AdminCommentsPage() {
   const [exportFormat, setExportFormat] = useState<'csv' | 'json'>('csv');
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<any>(null);
-  const { cmsData } = useCMSData();
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.admin || {};
 
   // Load comments on mount
   useEffect(() => {
@@ -100,7 +103,7 @@ export default function AdminCommentsPage() {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (confirm(getCMSField(cmsData, 'confirmations-deleteComment', 'Are you sure you want to delete this comment?'))) {
+    if (confirm(cmsData?.['confirmations-deleteComment'] || 'Are you sure you want to delete this comment?')) {
       try {
         await commentsService.deleteComment(commentId);
         await loadComments();
@@ -162,11 +165,11 @@ export default function AdminCommentsPage() {
   if (!isAdmin) {
     return (
       <Container variant="elevated" padding="lg">
-        <H2 data-cms-id="access-access-denied" mode={mode}>
-          {getCMSField(cmsData, 'access-access-denied', 'Access Denied')}
+        <H2 cmsId="access-access-denied" >
+          {cmsData?.['access-access-denied'] || 'Access Denied'}
         </H2>
-        <Span data-cms-id="access-description" mode={mode}>
-          {getCMSField(cmsData, 'access-description', 'You must be an admin to view this page.')}
+        <Span cmsId="access-description" >
+          {cmsData?.['access-description'] || 'You must be an admin to view this page.'}
         </Span>
       </Container>
     );
@@ -175,8 +178,8 @@ export default function AdminCommentsPage() {
   if (loading) {
     return (
       <Container variant="elevated" padding="lg">
-          <H2 data-cms-id="loading-title" mode={mode}>
-          {getCMSField(cmsData, 'loading-title', 'Loading Comments...')}
+          <H2 cmsId="loading-title" >
+          {cmsData?.['loading-title'] || 'Loading Comments...'}
         </H2>
       </Container>
     );
@@ -187,11 +190,11 @@ export default function AdminCommentsPage() {
       <Stack spacing="lg">
         {/* Header */}
         <Stack spacing="sm">
-          <H2 data-cms-id="header-title" mode={mode}>
-            {getCMSField(cmsData, 'header-title', 'Comment Management')}
+          <H2 cmsId="header-title" >
+            {cmsData?.['header-title'] || 'Comment Management'}
           </H2>
-          <Span variant="default" size="sm" color="muted" data-cms-id="header-description" mode={mode}>
-            {getCMSField(cmsData, 'header-description', 'Manage all comments across the site')}
+          <Span variant="default" size="sm" color="muted" cmsId="header-description" >
+            {cmsData?.['header-description'] || 'Manage all comments across the site'}
           </Span>
         </Stack>
 
@@ -200,18 +203,18 @@ export default function AdminCommentsPage() {
           <Stack spacing="lg">
             {/* Search and Status Filters */}
             <Stack spacing="md">
-              <H4 data-cms-id="filters-title" mode={mode}>
-                {getCMSField(cmsData, 'filters-title', 'Filters')}
+              <H4 cmsId="filters-title" >
+                {cmsData?.['filters-title'] || 'Filters'}
               </H4>
               
               <Stack spacing="md">
                 <Stack spacing="xs">
-                  <Span variant="default" size="sm" data-cms-id="filters-search-label" mode={mode}>
-                    {getCMSField(cmsData, 'filters-search-label', 'Search:')}
+                  <Span variant="default" size="sm" cmsId="filters-search-label" >
+                    {cmsData?.['filters-search-label'] || 'Search:'}
                   </Span>
                   <Input
                     type="text"
-                    placeholder={getCMSField(cmsData, 'filters-search-placeholder', 'Search comments, elements, or pages...')}
+                    placeholder={cmsData?.['filters-search-placeholder'] || 'Search comments, elements, or pages...'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     icon={<Search size={16} />}
@@ -219,30 +222,30 @@ export default function AdminCommentsPage() {
                 </Stack>
                 
                 <Stack spacing="xs">
-                  <Span variant="default" size="sm" data-cms-id="filters-status-label" mode={mode}>
-                    {getCMSField(cmsData, 'filters-status-label', 'Status:')}
+                  <Span variant="default" size="sm" cmsId="filters-status-label" >
+                    {cmsData?.['filters-status-label'] || 'Status:'}
                   </Span>
                   <Select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     options={[
-                      { value: 'all', label: getCMSField(cmsData, 'filters-status-allStatuses', 'All Statuses') },
-                      { value: 'open', label: getCMSField(cmsData, 'filters-status-open', 'Open') },
-                      { value: 'in-progress', label: getCMSField(cmsData, 'filters-status-inProgress', 'In Progress') },
-                      { value: 'resolved', label: getCMSField(cmsData, 'filters-status-resolved', 'Resolved') }
+                      { value: 'all', label: cmsData?.['filters-status-allStatuses'] || 'All Statuses' },
+                      { value: 'open', label: cmsData?.['filters-status-open'] || 'Open' },
+                      { value: 'in-progress', label: cmsData?.['filters-status-inProgress'] || 'In Progress' },
+                      { value: 'resolved', label: cmsData?.['filters-status-resolved'] || 'Resolved' }
                     ]}
                   />
                 </Stack>
 
                 <Stack spacing="xs">
-                  <Span variant="default" size="sm" data-cms-id="filters-page-label" mode={mode}>
-                    {getCMSField(cmsData, 'filters-page-label', 'Page:')}
+                  <Span variant="default" size="sm" cmsId="filters-page-label" >
+                    {cmsData?.['filters-page-label'] || 'Page:'}
                   </Span>
                   <Select
                     value={pageFilter}
                     onChange={(e) => setPageFilter(e.target.value)}
                     options={[
-                      { value: 'all', label: getCMSField(cmsData, 'filters-page-allPages', 'All Pages') },
+                      { value: 'all', label: cmsData?.['filters-page-allPages'] || 'All Pages' },
                       ...getUniquePages()
                     ]}
                   />
@@ -253,27 +256,27 @@ export default function AdminCommentsPage() {
             {/* Export Options */}
             <Stack spacing="md">
               <Stack spacing="xs">
-                <Span variant="default" size="sm" data-cms-id="export-format-label" mode={mode}>
-                  {getCMSField(cmsData, 'export-format-label', 'Export Format:')}
+                <Span variant="default" size="sm" cmsId="export-format-label" >
+                    {cmsData?.['export-format-label'] || 'Export Format:'}
                 </Span>
                 <Select
                   value={exportFormat}
                   onChange={(e) => setExportFormat(e.target.value as 'csv' | 'json')}
                   options={[
-                    { value: 'csv', label: getCMSField(cmsData, 'export-format-csv', 'CSV') },
-                    { value: 'json', label: getCMSField(cmsData, 'export-format-json', 'JSON') }
+                    { value: 'csv', label: cmsData?.['export-format-csv'] || 'CSV' },
+                    { value: 'json', label: cmsData?.['export-format-json'] || 'JSON' }
                   ]}
                 />
               </Stack>
               
               <Stack direction="horizontal" spacing="sm">
-                <Button onClick={exportComments} variant="secondary" data-cms-id="export-export-button" interactionMode={mode}>
+                <Button onClick={exportComments} variant="secondary" cmsId="export-export-button" >
                   <Download size={16} />
-                  {getCMSField(cmsData, 'export-exportButton', 'Export Comments')}
+                  {cmsData?.['export-exportButton'] || 'Export Comments'}
                 </Button>
-                <Button onClick={generateAnalytics} variant="secondary" data-cms-id="export-generate-analytics" interactionMode={mode}>
+                <Button onClick={generateAnalytics} variant="secondary" cmsId="export-generate-analytics" >
                   <BarChart3 size={16} />
-                  {getCMSField(cmsData, 'export-generateAnalytics', 'Generate Analytics')}
+                  {cmsData?.['export-generateAnalytics'] || 'Generate Analytics'}
                 </Button>
               </Stack>
             </Stack>
@@ -282,14 +285,14 @@ export default function AdminCommentsPage() {
 
         {/* Comments List */}
         <Container variant="elevated" padding="md">
-          <H3 data-cms-id="list-title" mode={mode}>
-            {getCMSField(cmsData, 'list-title', 'Comments')} ({filteredComments.length})
+          <H3 cmsId="list-title" >
+            {cmsData?.['list-title'] || 'Comments'} ({filteredComments.length})
           </H3>
           
           {filteredComments.length === 0 ? (
             <Container variant="elevated" padding="lg">
-              <Span data-cms-id="list-no-comments" mode={mode}>
-                {getCMSField(cmsData, 'list-noComments', 'No comments found matching your filters.')}
+              <Span cmsId="list-no-comments" >
+                {cmsData?.['list-noComments'] || 'No comments found matching your filters.'}
               </Span>
             </Container>
           ) : (
@@ -303,17 +306,17 @@ export default function AdminCommentsPage() {
                   {/* Comment Header */}
                   <Stack spacing="sm">
                     <Stack direction="horizontal" spacing="sm" align="center">
-                      <Span variant="default" size="sm" color="muted" data-cms-id="list-comment-page-title" mode={mode}>
+                      <Span variant="default" size="sm" color="muted" cmsId="list-comment-page-title" >
                         {comment.pageTitle}
                       </Span>
-                      <Span variant="default" size="sm" color="muted">
+                      <Span variant="default" size="sm" color="muted" cmsId="list-comment-date" >
                         • {new Date(comment.createdAt).toLocaleDateString()}
                       </Span>
                     </Stack>
                     
                     <Stack direction="horizontal" spacing="sm" align="center">
-                      <Span variant="default" size="sm" color="muted" data-cms-id="list-comment-element" mode={mode}>
-                        {getCMSField(cmsData, 'list-comment-elementLabel', 'Element:')} {comment.elementText}
+                      <Span variant="default" size="sm" color="muted" cmsId="list-comment-element" >
+                        {cmsData?.['list-comment-elementLabel'] || 'Element:'} {comment.elementText}
                       </Span>
                       <StatusBadge status={comment.status} />
                     </Stack>
@@ -334,41 +337,45 @@ export default function AdminCommentsPage() {
                             onClick={() => handleSaveEdit(comment.id)}
                             variant="primary"
                             size="sm"
-                          >
-                            Save
-                          </Button>
+                            cmsId="list-comment-save-button"
+                            
+                            text={cmsData?.['list-comment-save-button'] || 'Save'}
+                          />
                           <Button
                             onClick={() => setEditingComment(null)}
-                            variant="secondary"
+                            variant="secondary" 
                             size="sm"
-                          >
-                            Cancel
-                          </Button>
+                            cmsId="list-comment-cancel-button"
+                            
+                            text={cmsData?.['list-comment-cancel-button'] || 'Cancel'}
+                          />
                         </Stack>
                       </Stack>
                     ) : (
-                      <Span>{comment.comment}</Span>
+                      <Span cmsId="list-comment-content" >
+                        {comment.comment}
+                      </Span>
                     )}
                   </Stack>
 
                   {/* Comment Actions */}
                   <Stack direction="horizontal" spacing="sm" align="center">
-                    <Button
+                    <Button 
                       onClick={() => handleNavigateToElement(comment)}
                       variant="secondary"
                       size="sm"
-                    >
-                      <Eye size={16} />
-                      View Element
-                    </Button>
+                      cmsId="list-comment-view-element-button"
+                      
+                      text={cmsData?.['list-comment-view-element-button'] || 'View Element'}
+                    />
                     <Button
                       onClick={() => handleEditComment(comment.id)}
                       variant="secondary"
                       size="sm"
-                    >
-                      <Edit size={16} />
-                      Edit
-                    </Button>
+                      cmsId="list-comment-edit-button"
+                      
+                      text={cmsData?.['list-comment-edit-button'] || 'Edit'}
+                    />
                     <Select
                       value={comment.status}
                       onChange={(e) => handleStatusChange(comment.id, e.target.value as CommentRecord['status'])}
@@ -382,10 +389,10 @@ export default function AdminCommentsPage() {
                       onClick={() => handleDeleteComment(comment.id)}
                       variant="danger"
                       size="sm"
-                    >
-                      <Trash2 size={16} />
-                      Delete
-                    </Button>
+                      cmsId="list-comment-delete-button"
+                      
+                      text={cmsData?.['list-comment-delete-button'] || 'Delete'}
+                    />
                   </Stack>
                 </Container>
               ))}
@@ -396,30 +403,32 @@ export default function AdminCommentsPage() {
         {/* Analytics Section */}
         {showAnalytics && analyticsData && (
           <Container variant="elevated" padding="md">
-            <H3 data-cms-id="analytics-title" mode={mode}>
-              {getCMSField(cmsData, 'analytics-title', 'Comment Analytics')}
+            <H3 cmsId="analytics-title" >
+              {cmsData?.['analytics-title'] || 'Comment Analytics'}
             </H3>
             
             <Stack spacing="lg">
               {/* Summary Stats */}
               <Stack spacing="sm">
-                <H4>Summary</H4>
+                <H4 cmsId="analytics-summary-title" >
+                  {cmsData?.['analytics-summary-title'] || 'Summary'}
+                </H4>
                 <Stack spacing="xs">
-                  <Span variant="default" size="sm">
-                    Total Comments: {analyticsData.summary.total}
+                  <Span variant="default" size="sm" cmsId="analytics-summary-total" >
+                    {cmsData?.['analytics-summary-total'] || 'Total Comments:'} {analyticsData.summary.total}
                   </Span>
-                  <Span variant="default" size="sm">
-                    Open: {analyticsData.summary.open}
+                  <Span variant="default" size="sm" cmsId="analytics-summary-open" >
+                    {cmsData?.['analytics-summary-open'] || 'Open:'} {analyticsData.summary.open}
                   </Span>
-                  <Span variant="default" size="sm">
-                    In Progress: {analyticsData.summary.inProgress}
+                  <Span variant="default" size="sm" cmsId="analytics-summary-inProgress" >
+                    {cmsData?.['analytics-summary-inProgress'] || 'In Progress:'} {analyticsData.summary.inProgress}
                   </Span>
-                  <Span variant="default" size="sm">
-                    Resolved: {analyticsData.summary.resolved}
+                  <Span variant="default" size="sm" cmsId="analytics-summary-resolved" >
+                    {cmsData?.['analytics-summary-resolved'] || 'Resolved:'} {analyticsData.summary.resolved}
                   </Span>
                   {analyticsData.summary.averageResolutionTime && (
-                    <Span variant="default" size="sm">
-                      Avg Resolution Time: {analyticsData.summary.averageResolutionTime.toFixed(1)} days
+                    <Span variant="default" size="sm" cmsId="analytics-summary-averageResolutionTime" >
+                      {cmsData?.['analytics-summary-averageResolutionTime'] || 'Avg Resolution Time:'} {analyticsData.summary.averageResolutionTime.toFixed(1)} days
                     </Span>
                   )}
                 </Stack>
@@ -427,16 +436,18 @@ export default function AdminCommentsPage() {
 
               {/* Comments by Page */}
               <Stack spacing="sm">
-                <H4>Comments by Page</H4>
+                <H4 cmsId="analytics-comments-by-page-title" >
+                  {cmsData?.['analytics-comments-by-page-title'] || 'Comments by Page'}
+                </H4>
                 <Stack spacing="sm">
                   {analyticsData.pages.map((page: any) => (
                     <Stack key={page.page} spacing="xs">
-                      <Span variant="default" size="sm">
-                        <FileText size={16} />
+                      <Span variant="default" size="sm" cmsId="analytics-comments-by-page-page" >
+                        {cmsData?.['analytics-comments-by-page-pageIcon'] || 'FileText'}
                         {page.page.split('/').pop() || page.page}
                       </Span>
-                      <Span variant="default" size="sm" color="muted">
-                        Total: {page.count} | Open: {page.open} | In Progress: {page.inProgress} | Resolved: {page.resolved}
+                      <Span variant="default" size="sm" color="muted" cmsId="analytics-comments-by-page-total" >
+                        {cmsData?.['analytics-comments-by-page-total'] || 'Total:'} {page.count} | {cmsData?.['analytics-comments-by-page-open'] || 'Open:'} {page.open} | {cmsData?.['analytics-comments-by-page-inProgress'] || 'In Progress:'} {page.inProgress} | {cmsData?.['analytics-comments-by-page-resolved'] || 'Resolved:'} {page.resolved}
                       </Span>
                     </Stack>
                   ))}
@@ -445,15 +456,17 @@ export default function AdminCommentsPage() {
 
               {/* Comments by Author */}
               <Stack spacing="sm">
-                <H4>Comments by Author</H4>
+                <H4 cmsId="analytics-comments-by-author-title" >
+                  {cmsData?.['analytics-comments-by-author-title'] || 'Comments by Author'}
+                </H4>
                 <Stack spacing="sm">
                   {analyticsData.authors.map((author: any) => (
                     <Stack key={author.author} spacing="xs">
-                      <Span variant="default" size="sm">
+                      <Span variant="default" size="sm" cmsId="analytics-comments-by-author-author" >
                         {author.author}
                       </Span>
-                      <Span variant="default" size="sm" color="muted">
-                        Total: {author.count} | Open: {author.open} | In Progress: {author.inProgress} | Resolved: {author.resolved}
+                      <Span variant="default" size="sm" color="muted" cmsId="analytics-comments-by-author-total" >
+                        {cmsData?.['analytics-comments-by-author-total'] || 'Total:'} {author.count} | {cmsData?.['analytics-comments-by-author-open'] || 'Open:'} {author.open} | {cmsData?.['analytics-comments-by-author-inProgress'] || 'In Progress:'} {author.inProgress} | {cmsData?.['analytics-comments-by-author-resolved'] || 'Resolved:'} {author.resolved}
                       </Span>
                     </Stack>
                   ))}

@@ -12,7 +12,7 @@ export interface ActionButton {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
-  icon?: string;
+  icon?: React.ReactNode;
 }
 
 export interface ActionButtonGroupProps {
@@ -48,8 +48,9 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
           onClick={button.onClick}
           disabled={button.disabled}
           href={button.href}
+          icon={button.icon}
+          cmsId="ignore"
         >
-          {button.icon && <span>{button.icon}</span>}
           {button.label}
         </Button>
       ))}

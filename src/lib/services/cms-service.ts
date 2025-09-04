@@ -1,7 +1,7 @@
 import { db } from '@/lib/utils/firebase-server';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 
-import { BusinessSettings, PricingSettings, EmailTemplates, SMSTemplates } from '@/types/cms';
+// Types removed - using any for flexibility
 
 // Utility function to recursively convert Firebase objects to plain JavaScript objects
 function sanitizeFirebaseData(data: any): any {
@@ -64,7 +64,7 @@ export class CMSFlattenedService {
   }
 
   // Get business settings directly
-  async getBusinessSettings(): Promise<BusinessSettings | null> {
+  async getBusinessSettings(): Promise<any | null> {
     try {
       const docRef = doc(db, 'cms', 'business');
       const docSnap = await getDoc(docRef);
@@ -72,7 +72,7 @@ export class CMSFlattenedService {
       if (docSnap.exists()) {
         const businessData = docSnap.data();
         const { _metadata, ...cleanData } = businessData;
-        return sanitizeFirebaseData(cleanData) as BusinessSettings;
+        return sanitizeFirebaseData(cleanData);
       }
       
       return null;
@@ -83,7 +83,7 @@ export class CMSFlattenedService {
   }
 
   // Get pricing settings directly
-  async getPricingSettings(): Promise<PricingSettings | null> {
+  async getPricingSettings(): Promise<any | null> {
     try {
       const docRef = doc(db, 'cms', 'pricing');
       const docSnap = await getDoc(docRef);
@@ -91,7 +91,7 @@ export class CMSFlattenedService {
       if (docSnap.exists()) {
         const pricingData = docSnap.data();
         const { _metadata, ...cleanData } = pricingData;
-        return sanitizeFirebaseData(cleanData) as PricingSettings;
+        return sanitizeFirebaseData(cleanData);
       }
       
       return null;
@@ -102,7 +102,7 @@ export class CMSFlattenedService {
   }
 
   // Get email templates directly
-  async getEmailTemplates(): Promise<EmailTemplates | null> {
+  async getEmailTemplates(): Promise<any | null> {
     try {
       const docRef = doc(db, 'cms', 'communication');
       const docSnap = await getDoc(docRef);
@@ -121,7 +121,7 @@ export class CMSFlattenedService {
   }
 
   // Get SMS templates directly
-  async getSMSTemplates(): Promise<SMSTemplates | null> {
+  async getSMSTemplates(): Promise<any | null> {
     try {
       const docRef = doc(db, 'cms', 'communication');
       const docSnap = await getDoc(docRef);

@@ -14,9 +14,12 @@ import {
 import { DriverLocationTracker } from '@/components/business/DriverLocationTracker';
 import { driverLocationService, type DriverLocation, type DriverStatus } from '@/lib/services/driver-location-service';
 import { useAuth } from '@/hooks/useAuth';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function DriverTrackingPage() {
   const { user } = useAuth();
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.admin || {};
   const [currentLocation, setCurrentLocation] = useState<DriverLocation | null>(null);
   const [driverStatus, setDriverStatus] = useState<DriverStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -145,6 +148,7 @@ export default function DriverTrackingPage() {
             bookingId={driverStatus?.currentBookingId}
             onLocationUpdate={handleLocationUpdate}
             onStatusUpdate={handleStatusUpdate}
+            cmsData={cmsData}
           />
         )}
 

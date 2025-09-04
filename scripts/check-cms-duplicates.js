@@ -3,7 +3,7 @@
 /**
  * 🎯 CMS Duplicate ID Checker Script
  * 
- * Scans your codebase for duplicate data-cms-id attributes
+ * Scans your codebase for duplicate cmsId attributes
  * Run this to find any duplicate IDs that could cause CMS issues
  */
 
@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 function findCMSIds(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
-    const regex = /data-cms-id="([^"]+)"/g;
+    const regex = /cmsId="([^"]+)"/g;
     const matches = [];
     let match;
     

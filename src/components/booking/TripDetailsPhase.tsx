@@ -4,7 +4,6 @@ import React from 'react';
 import { Container, Stack, Box, Button, Text, H2, Input, Select } from '@/ui';
 import { useGoogleMaps } from '@/providers/GoogleMapsProvider';
 import { FlightInfo } from '@/hooks/useBookingForm';
-import { getCMSField } from '../../design/hooks/useCMSData';
 
 interface TripDetailsPhaseProps {
   // State
@@ -32,7 +31,7 @@ interface TripDetailsPhaseProps {
   canProceed: boolean;
   
   // CMS Data
-  cmsData?: any;
+  cmsData: any;
 }
 
 export function TripDetailsPhase({
@@ -100,7 +99,7 @@ export function TripDetailsPhase({
   if (mapsError) {
     return (
       <Container maxWidth="4xl" padding="xl">
-        <Text color="error">
+        <Text color="error" cmsId='ignore'>
           Failed to load Google Maps. Please refresh the page and try again.
         </Text>
       </Container>
@@ -110,12 +109,12 @@ export function TripDetailsPhase({
   return (
     <Container maxWidth="4xl" padding="xl">
       <Stack spacing="xl">
-        <H2 align="center" data-cms-id="trip-title">
-          {cmsData?.['pages.booking.trip.title'] || 'Trip Details'}
+        <H2 align="center" cmsId="trip-title">
+          {cmsData?.['trip-title'] || 'Trip Details'}
         </H2>
 
-        <Text variant="muted" size="sm">
-          Tell us about your trip so we can provide an accurate fare estimate
+        <Text variant="muted" size="sm" cmsId="trip-description">
+          {cmsData?.['trip-description'] || 'Tell us about your trip so we can provide an accurate fare estimate'}
         </Text>
 
         {/* Trip Details Form */}
@@ -123,66 +122,72 @@ export function TripDetailsPhase({
           <Stack spacing="lg">
             {/* Pickup Location */}
             <Stack spacing="sm">
-              <Text weight="bold">Pickup Location *</Text>
+              <Text weight="bold" cmsId="pickup-location-label">{cmsData?.['pickup-location-label'] || 'Pickup Location'} *</Text>
               <Input
                 value={pickupLocation}
                 onChange={(e) => setPickupLocation(e.target.value)}
-                placeholder="Enter pickup address or landmark"
+                placeholder={cmsData?.['pickup-location-placeholder'] || 'Enter pickup address or landmark'}
                 data-testid="pickup-location-input"
+                cmsId="pickup-location-input"
               />
             </Stack>
 
             {/* Dropoff Location */}
             <Stack spacing="sm">
-              <Text weight="bold">Dropoff Location *</Text>
+              <Text weight="bold" cmsId="dropoff-location-label">{cmsData?.['dropoff-location-label'] || 'Dropoff Location'} *</Text>
               <Input
                 value={dropoffLocation}
                 onChange={(e) => setDropoffLocation(e.target.value)}
-                placeholder="Enter destination address or landmark"
+                placeholder={cmsData?.['dropoff-location-placeholder'] || 'Enter destination address or landmark'}
                 data-testid="dropoff-location-input"
+                cmsId="dropoff-location-input"
               />
             </Stack>
 
             {/* Pickup Date & Time */}
             <Stack spacing="sm">
-              <Text weight="bold">Pickup Date & Time *</Text>
+              <Text weight="bold" cmsId="pickup-datetime-label">{cmsData?.['pickup-datetime-label'] || 'Pickup Date & Time'} *</Text>
               <Input
                 type="datetime-local"
                 value={pickupDateTime}
                 onChange={(e) => setPickupDateTime(e.target.value)}
                 data-testid="pickup-datetime-input"
+                cmsId="pickup-datetime-input"
               />
             </Stack>
 
             {/* Fare Type */}
             <Stack spacing="sm">
-              <Text weight="bold">Fare Type</Text>
+              <Text weight="bold" cmsId="fare-type-label">{cmsData?.['fare-type-label'] || 'Fare Type'}</Text>
               <Select
                 value={fareType}
                 onChange={(e) => setFareType(e.target.value as 'personal' | 'business')}
                 data-testid="fare-type-select"
+                cmsId="fare-type-select"
                 options={[
-                  { value: 'personal', label: 'Personal' },
-                  { value: 'business', label: 'Business' }
+                  { value: 'personal', label: cmsData?.['fare-type-personal'] || 'Personal' },
+                  { value: 'business', label: cmsData?.['fare-type-business'] || 'Business' }
                 ]}
               />
             </Stack>
 
             {/* Flight Information */}
             <Stack spacing="sm">
-              <Text weight="bold">Flight Information (Optional)</Text>
+              <Text weight="bold" cmsId="flight-info-label">{cmsData?.['flight-info-label'] || 'Flight Information (Optional)'}</Text>
               <Stack direction="horizontal" spacing="md">
                 <Input
                   value={flightInfo.airline}
                   onChange={(e) => setFlightInfo({ ...flightInfo, airline: e.target.value })}
-                  placeholder="Airline"
+                  placeholder={cmsData?.['airline-placeholder'] || 'Airline'}
                   data-testid="airline-input"
+                  cmsId="airline-input"
                 />
                 <Input
                   value={flightInfo.flightNumber}
                   onChange={(e) => setFlightInfo({ ...flightInfo, flightNumber: e.target.value })}
-                  placeholder="Flight #"
+                  placeholder={cmsData?.['flight-number-placeholder'] || 'Flight #'}
                   data-testid="flight-number-input"
+                  cmsId="flight-number-input"
                 />
               </Stack>
               <Stack direction="horizontal" spacing="md">
@@ -190,14 +195,16 @@ export function TripDetailsPhase({
                   value={flightInfo.arrivalTime}
                   onChange={(e) => setFlightInfo({ ...flightInfo, arrivalTime: e.target.value })}
                   type="text"
-                  placeholder="Arrival Time (e.g., 09:30)"
+                  placeholder={cmsData?.['arrival-time-placeholder'] || 'Arrival Time (e.g., 09:30)'}
                   data-testid="arrival-time-input"
+                  cmsId="arrival-time-input"
                 />
                 <Input
                   value={flightInfo.terminal}
                   onChange={(e) => setFlightInfo({ ...flightInfo, terminal: e.target.value })}
-                  placeholder="Terminal"
+                  placeholder={cmsData?.['terminal-placeholder'] || 'Terminal'}
                   data-testid="terminal-input"
+                  cmsId="terminal-input"
                 />
               </Stack>
             </Stack>
@@ -206,8 +213,8 @@ export function TripDetailsPhase({
             {fare && (
               <Box variant="outlined" padding="md">
                 <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text weight="bold">Estimated Fare</Text>
-                  <Text weight="bold" size="lg">
+                  <Text weight="bold" cmsId="estimated-fare-label">{cmsData?.['estimated-fare-label'] || 'Estimated Fare'}</Text>
+                  <Text weight="bold" size="lg" cmsId="estimated-fare-value">
                     ${fare.toFixed(2)}
                   </Text>
                 </Stack>
@@ -216,8 +223,8 @@ export function TripDetailsPhase({
 
             {/* Loading State */}
             {isCalculating && (
-              <Text align="center" color="secondary">
-                Calculating fare...
+              <Text align="center" color="secondary" cmsId="calculating-fare">
+                {cmsData?.['calculating-fare'] || 'Calculating fare...'}
               </Text>
             )}
           </Stack>
@@ -231,8 +238,9 @@ export function TripDetailsPhase({
             fullWidth
             disabled={!canProceed || isCalculating}
             data-testid="continue-to-contact-button"
+            cmsId="continue-to-contact-button"
           >
-            {isCalculating ? 'Calculating...' : 'Continue to Contact Info'}
+            {isCalculating ? cmsData?.['calculating-button'] || 'Calculating...' : cmsData?.['continue-button'] || 'Continue to Contact Info'}
           </Button>
         </Stack>
       </Stack>

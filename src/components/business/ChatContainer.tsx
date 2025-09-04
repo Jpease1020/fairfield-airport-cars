@@ -13,6 +13,7 @@ export interface ChatContainerProps {
   onVoicePlay?: (content: string) => void;
   isVoiceSupported?: boolean;
   loadingMessage?: string;
+  cmsData: any;
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -20,7 +21,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   isLoading = false,
   onVoicePlay,
   isVoiceSupported = true,
-  loadingMessage = 'Thinking...'
+  loadingMessage = 'Thinking...',
+  cmsData
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -48,15 +50,14 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
           {isLoading && (
             <Container variant="default" padding="sm">
               <Stack direction="horizontal" spacing="sm" align="center">
-                <Span>🤖</Span>
+                <Span cmsId="chat-container-loading-message-robot">🤖</Span>
                 <Stack direction="horizontal" spacing="xs" align="center">
                   <Stack direction="horizontal" spacing="xs">
-                    <Span>•</Span>
-                    <Span>•</Span>
-                    <Span>•</Span>
+                    <Span cmsId="ignore">•</Span>
+                    <Span cmsId="ignore">•</Span>
                   </Stack>
-                  <Text size="sm">
-                    {loadingMessage}
+                  <Text size="sm" cmsId="chat-container-loading-message-text">
+                    {cmsData?.['chatContainerLoadingMessage'] || loadingMessage}
                   </Text>
                 </Stack>
               </Stack>

@@ -4,8 +4,7 @@ import React from 'react';
 import { Container, Stack, Box, Button, Text, H2, StatusMessage } from '@/ui';
 import { SquarePaymentForm } from '@/components/business/SquarePaymentForm';
 import { TipCalculator } from '@/components/business/TipCalculator';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
-import { getCMSField } from '../../design/hooks/useCMSData';
+import { useCMSData } from '../../design/providers/CMSDataProvider';
 
 interface PaymentPhaseProps {
   pickupLocation: string;
@@ -23,7 +22,7 @@ interface PaymentPhaseProps {
   onPaymentSuccess: (result: any) => void;
   onPaymentError: (error: string) => void;
   onPaymentReady: (processPayment: () => Promise<void>) => void;
-  cmsData?: any;
+  cmsData: any;
   
   // Add booking data for new bookings
   bookingData?: {
@@ -63,7 +62,10 @@ export function PaymentPhase({
   bookingData,
   cmsData
 }: PaymentPhaseProps) {
-  const { mode } = useInteractionMode();
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.booking || {};
+  
 
   const getTotalWithTip = () => {
     return (fare || 0) + tipAmount;
@@ -75,27 +77,27 @@ export function PaymentPhase({
         {/* Trip Summary */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="payment-trip-summary" mode={mode}>
-              {getCMSField(cmsData, 'paymentPhase-tripSummary', 'Trip Summary')}
+            <H2 align="center" cmsId="payment-trip-summary" >
+              {pageCmsData?.['paymentPhase-tripSummary'] || 'Trip Summary'}
             </H2>
             
             <Box variant="outlined" padding="md">
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>From:</Text>
+                  <Text cmsId="trip-summary-from">{pageCmsData?.['trip-summary-from'] || 'From:'}</Text>
                   <Text weight="medium">{pickupLocation}</Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>To:</Text>
+                  <Text cmsId="trip-summary-to">{pageCmsData?.['trip-summary-to'] || 'To:'}</Text>
                   <Text weight="medium">{dropoffLocation}</Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>When:</Text>
+                  <Text cmsId="trip-summary-when">{pageCmsData?.['trip-summary-when'] || 'When:'}</Text>
                   <Text weight="medium">{new Date(pickupDateTime).toLocaleString()}</Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
-                  <Text weight="bold">Base Fare:</Text>
-                  <Text weight="bold" size="lg">${fare?.toFixed(2)}</Text>
+                  <Text weight="bold" cmsId="trip-summary-base-fare">{pageCmsData?.['trip-summary-base-fare'] || 'Base Fare:'}</Text>
+                  <Text weight="bold" size="lg" cmsId="ignore">${fare?.toFixed(2)}</Text>
                 </Stack>
               </Stack>
             </Box>
@@ -105,113 +107,91 @@ export function PaymentPhase({
         {/* Tip Calculator */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="payment-tip" mode={mode}>
-              {getCMSField(cmsData, 'paymentPhase-tip', 'Add a Tip')}
+            <H2 align="center" cmsId="payment-tip-calculator" >
+              {pageCmsData?.['paymentPhase-tipCalculator'] || 'Tip Calculator'}
             </H2>
             
             <TipCalculator
               baseAmount={fare || 0}
               onTipChange={onTipChange}
+              cmsData={cmsData}
             />
-            
-            <Stack direction="horizontal" justify="space-between">
-              <Text weight="bold">Total Amount:</Text>
-              <Text weight="bold" size="lg">${getTotalWithTip().toFixed(2)}</Text>
-            </Stack>
           </Stack>
         </Box>
 
         {/* Deposit Information */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            <H2 align="center" data-cms-id="payment-deposit" mode={mode}>
-              {getCMSField(cmsData, 'paymentPhase-deposit', 'Deposit Required')}
+            <H2 align="center" cmsId="payment-deposit" >
+              {pageCmsData?.['paymentPhase-deposit'] || 'Deposit Required'}
             </H2>
             
             <Box variant="outlined" padding="md">
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>Total Trip Cost:</Text>
-                  <Text weight="medium">${getTotalWithTip().toFixed(2)}</Text>
+                  <Text cmsId="paymentPhaseTotalTripCost">{pageCmsData?.['paymentPhaseTotalTripCost'] || 'Total Trip Cost:'}</Text>
+                  <Text weight="medium" cmsId="ignore">${getTotalWithTip().toFixed(2)}</Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>Deposit (20%):</Text>
-                  <Text weight="bold" size="lg" color="primary">${depositAmount?.toFixed(2)}</Text>
+                  <Text cmsId="paymentPhaseDeposit20">{pageCmsData?.['paymentPhaseDeposit20'] || 'Deposit (20%):'}</Text>
+                  <Text weight="bold" size="lg" color="primary" cmsId="ignore">${depositAmount?.toFixed(2)}</Text>
                 </Stack>
                 <Stack direction="horizontal" justify="space-between">
-                  <Text>Balance Due:</Text>
-                  <Text weight="medium">${(getTotalWithTip() - (depositAmount || 0)).toFixed(2)}</Text>
+                  <Text cmsId="paymentPhaseBalanceDue">{pageCmsData?.['paymentPhaseBalanceDue'] || 'Balance Due:'}</Text>
+                  <Text weight="medium" cmsId="ignore">${(getTotalWithTip() - (depositAmount || 0)).toFixed(2)}</Text>
                 </Stack>
               </Stack>
             </Box>
             
-            <Text size="sm" color="secondary" align="center">
-              {getCMSField(cmsData, 'paymentPhase-depositNote', 'A 20% deposit is required to confirm your booking. The remaining balance will be due before your trip.')}
+            <Text size="sm" color="secondary" align="center" cmsId="payment-phase-deposit-note">
+              {pageCmsData?.['paymentPhase-depositNote'] || 'A 20% deposit is required to confirm your booking. The remaining balance will be due before your trip.'}
             </Text>
           </Stack>
         </Box>
 
         {/* Payment Form */}
-        {showPaymentForm ? (
+        {showPaymentForm && (
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 align="center" data-cms-id="payment-form-title" mode={mode}>
-                {getCMSField(cmsData, 'paymentPhase-title', 'Payment Information')}
+              <H2 align="center" cmsId="payment-form-title" >
+                {pageCmsData?.['paymentPhasePaymentForm'] || 'Payment Information'}
               </H2>
               
-              <Text size="sm" color="secondary" align="center">
-                {getCMSField(cmsData, 'paymentPhase-description', 'Enter your payment details to complete your deposit payment.')}
+              <Text align="center" color="secondary" cmsId="payment-form-description">
+                {pageCmsData?.['paymentPhase-paymentDescription'] || 'Complete your booking by providing payment information.'}
               </Text>
               
               <SquarePaymentForm
-                amount={Math.round((depositAmount || 0) * 100)} // Convert to cents
-                bookingId={bookingId || undefined} // Don't pass 'temp' - let it be undefined
+                amount={getTotalWithTip()}
                 onPaymentSuccess={onPaymentSuccess}
                 onPaymentError={onPaymentError}
-                disabled={isProcessingPayment}
-                hideSubmitButton={true} // Hide the Square "Pay" button
                 onPaymentReady={onPaymentReady}
                 bookingData={bookingData}
+                cmsData={cmsData}
               />
-              
-              <Text size="sm" color="secondary" align="center">
-                Please enter your credit card information above, then click "Confirm Booking" to complete your payment.
-              </Text>
-            </Stack>
-          </Box>
-        ) : (
-          <Box variant="outlined" padding="lg">
-            <Stack spacing="md" align="center">
-              <Text size="sm" color="secondary">
-                Payment form will appear after you click "Continue to Payment"
-              </Text>
-              <Text size="xs" color="muted">
-                Debug: showPaymentForm={showPaymentForm.toString()}, bookingId={bookingId || 'null'}
-              </Text>
             </Stack>
           </Box>
         )}
 
-        {/* Payment Error */}
+        {/* Error Display */}
         {paymentError && (
           <StatusMessage 
             type="error" 
             message={paymentError} 
-            id="payment-error-message" 
-            data-testid="payment-error-message" 
+            data-testid="payment-error-message"
+            cmsId="payment-error-message"
           />
         )}
 
-        {/* Navigation Buttons */}
+        {/* Navigation */}
         <Stack direction="horizontal" spacing="md">
           <Button
             onClick={onBack}
             variant="outline"
-            fullWidth
-            data-testid="back-to-contact-info-button"
-          >
-            {getCMSField(cmsData, 'paymentPhase-back', 'Back to Contact Info')}
-          </Button>
+            cmsId="payment-back-button"
+            data-testid="payment-back-button"
+            text={pageCmsData?.['payment-back-button'] || 'Back to Contact Info'}
+          />
         </Stack>
       </Stack>
     </Container>

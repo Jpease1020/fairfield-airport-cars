@@ -15,6 +15,7 @@ import {
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
 import { driverLocationService, type DriverLocation, type DriverStatus } from '@/lib/services/driver-location-service';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Styled components for driver tracking
 const TrackingCard = styled.div<{ $isActive: boolean }>`
@@ -37,14 +38,20 @@ interface DriverLocationTrackerProps {
   bookingId?: string;
   onLocationUpdate?: (location: DriverLocation) => void;
   onStatusUpdate?: (status: DriverStatus) => void;
+  cmsData: any;
 }
 
 export function DriverLocationTracker({
   driverId,
   bookingId,
   onLocationUpdate,
-  onStatusUpdate
+  onStatusUpdate,
+  cmsData
 }: DriverLocationTrackerProps) {
+
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.booking || {};
   const [isTracking, setIsTracking] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<DriverLocation | null>(null);
   const [driverStatus, setDriverStatus] = useState<DriverStatus | null>(null);
@@ -52,7 +59,7 @@ export function DriverLocationTracker({
   const [error, setError] = useState<string | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-
+  
   // Initialize driver tracking
   useEffect(() => {
     initializeTracking();
@@ -251,7 +258,7 @@ export function DriverLocationTracker({
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Initializing driver tracking...</Text>
+          <Text cmsId="driver-location-tracker-initializing">{pageCmsData?.['driverLocationTrackerInitializing'] || 'Initializing driver tracking...'}</Text>
         </Stack>
       </Container>
     );
@@ -262,14 +269,12 @@ export function DriverLocationTracker({
       <Stack spacing="lg">
         {/* Header */}
         <Stack spacing="sm">
-          <Text weight="bold" size="xl">Driver Location Tracker</Text>
-          <Text variant="muted">
-            Real-time GPS tracking for driver location updates
+          <Text weight="bold" size="xl" cmsId="driver-location-tracker-title">{pageCmsData?.['driverLocationTrackerTitle'] || 'Driver Location Tracker'}</Text>
+          <Text variant="muted" cmsId="driver-location-tracker-description">
+            {pageCmsData?.['driverLocationTrackerDescription'] || 'Real-time GPS tracking for driver location updates'}
           </Text>
           {lastUpdate && (
-            <Text variant="muted" size="sm">
-              Last updated: {lastUpdate.toLocaleTimeString()}
-            </Text>
+            <Text variant="muted" size="sm" cmsId="driver-location-tracker-last-updated">{pageCmsData?.['driverLocationTrackerLastUpdated'] || 'Last updated:'}</Text>
           )}
         </Stack>
 
@@ -277,11 +282,12 @@ export function DriverLocationTracker({
         <TrackingCard $isActive={isTracking}>
           <Stack spacing="md">
             <Stack direction="horizontal" justify="space-between" align="center">
-              <Text weight="bold">GPS Tracking Status</Text>
+              <Text weight="bold" cmsId="driver-location-tracker-gps-tracking-status">{pageCmsData?.['driverLocationTrackerGpsTrackingStatus'] || 'GPS Tracking Status'}</Text>
               <Badge 
                 variant={isTracking ? 'success' : 'default'}
+                cmsId="driver-location-tracker-gps-tracking-status-badge"
               >
-                {isTracking ? 'Active' : 'Inactive'}
+                {pageCmsData?.['driverLocationTrackerGpsTrackingStatusBadge'] || isTracking ? 'Active' : 'Inactive'}
               </Badge>
             </Stack>
 
@@ -311,17 +317,19 @@ export function DriverLocationTracker({
                   onClick={startGPSTracking}
                   disabled={loading}
                   fullWidth
-                >
-                  Start GPS Tracking
-                </Button>
+                  cmsId="driver-location-tracker-start-gps-tracking"
+                  
+                  text={pageCmsData?.['driverLocationTrackerStartGpsTracking'] || 'Start GPS Tracking'}
+                />
               ) : (
                 <Button 
                   variant="danger" 
                   onClick={stopTracking}
                   fullWidth
-                >
-                  Stop GPS Tracking
-                </Button>
+                  cmsId="driver-location-tracker-stop-gps-tracking"
+                  
+                  text={pageCmsData?.['driverLocationTrackerStopGpsTracking'] || 'Stop GPS Tracking'}
+                /> 
               )}
             </Stack>
           </Stack>
@@ -331,11 +339,11 @@ export function DriverLocationTracker({
         {driverStatus && (
           <Box variant="outlined" padding="lg">
             <Stack spacing="md">
-              <Text weight="bold" size="lg">Driver Status</Text>
+              <Text weight="bold" size="lg" cmsId="driver-location-tracker-driver-status">{pageCmsData?.['driverLocationTrackerDriverStatus'] || 'Driver Status'}</Text>
               
               <GridSection variant="content" columns={2}>
                 <Stack spacing="sm">
-                  <Text variant="muted" size="sm">Status</Text>
+                  <Text variant="muted" size="sm" cmsId="driver-location-tracker-status" >{pageCmsData?.['driverLocationTrackerStatus'] || 'Status'}</Text>
                   <Badge 
                     variant={
                       driverStatus.status === 'available' ? 'success' :
@@ -349,8 +357,8 @@ export function DriverLocationTracker({
                 </Stack>
 
                 <Stack spacing="sm">
-                  <Text variant="muted" size="sm">Current Booking</Text>
-                  <Text weight="bold">
+                  <Text variant="muted" size="sm" cmsId="driver-location-tracker-current-booking" >{pageCmsData?.['driverLocationTrackerCurrentBooking'] || 'Current Booking'}</Text>
+                  <Text weight="bold" cmsId="ignore">
                     {driverStatus.currentBookingId || 'None'}
                   </Text>
                 </Stack>
@@ -363,17 +371,19 @@ export function DriverLocationTracker({
                   onClick={() => updateDriverStatus('available')}
                   disabled={driverStatus.status === 'available'}
                   fullWidth
-                >
-                  Available
-                </Button>
+                  cmsId="driver-location-tracker-available"
+                   
+                  text={pageCmsData?.['driverLocationTrackerAvailable'] || 'Available'}
+                />
                 <Button 
                   variant="outline" 
                   onClick={() => updateDriverStatus('busy')}
                   disabled={driverStatus.status === 'busy'}
                   fullWidth
-                >
-                  Busy
-                </Button>
+                  cmsId="driver-location-tracker-busy"
+                  
+                  text={pageCmsData?.['driverLocationTrackerBusy'] || 'Busy'}
+                />
               </Stack>
             </Stack>
           </Box>
@@ -389,18 +399,18 @@ export function DriverLocationTracker({
         {/* Instructions */}
         <Box variant="outlined" padding="md">
           <Stack spacing="sm">
-            <Text weight="bold">Instructions</Text>
-            <Text size="sm" variant="muted">
-              1. Click "Start GPS Tracking" to begin location updates
+            <Text weight="bold" cmsId="driver-location-tracker-instructions">{pageCmsData?.['driverLocationTrackerInstructions'] || 'Instructions'}</Text>
+            <Text size="sm" variant="muted" cmsId="driver-location-tracker-instruction1">
+              {pageCmsData?.['driverLocationTrackerInstruction1'] || '1. Click "Start GPS Tracking" to begin location updates'}
             </Text>
-            <Text size="sm" variant="muted">
-              2. Your location will be updated in real-time
+            <Text size="sm" variant="muted" cmsId="driver-location-tracker-instruction2">
+              {pageCmsData?.['driverLocationTrackerInstruction2'] || '2. Your location will be updated in real-time'}
             </Text>
-            <Text size="sm" variant="muted">
-              3. Update your status when accepting bookings
+            <Text size="sm" variant="muted" cmsId="driver-location-tracker-instruction3">
+              {pageCmsData?.['driverLocationTrackerInstruction3'] || '3. Update your status when accepting bookings'}
             </Text>
-            <Text size="sm" variant="muted">
-              4. Location data is automatically sent to the tracking system
+            <Text size="sm" variant="muted" cmsId="driver-location-tracker-instruction4">
+              {pageCmsData?.['driverLocationTrackerInstruction4'] || '4. Location data is automatically sent to the tracking system'}
             </Text>
           </Stack>
         </Box>

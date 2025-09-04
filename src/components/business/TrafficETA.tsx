@@ -92,6 +92,7 @@ interface TrafficETAProps {
     speed: number;
   };
   onETAUpdate?: (eta: ETACalculation) => void;
+  cmsData: any;
 }
 
 export function TrafficETA({
@@ -99,7 +100,8 @@ export function TrafficETA({
   pickupLocation,
   dropoffLocation,
   currentLocation,
-  onETAUpdate
+  onETAUpdate,
+  cmsData
 }: TrafficETAProps) {
   const [etaCalculation, setETACalculation] = useState<ETACalculation | null>(null);
   const [loading, setLoading] = useState(false);
@@ -200,7 +202,7 @@ export function TrafficETA({
       <Container>
         <Stack spacing="md" align="center">
           <LoadingSpinner size="md" />
-          <Text variant="muted">Calculating ETA...</Text>
+          <Text variant="muted" cmsId="traffic-eta-calculating">{cmsData?.['traffic-etaCalculating'] || 'Calculating ETA...'}</Text>
         </Stack>
       </Container>
     );
@@ -210,7 +212,7 @@ export function TrafficETA({
     return (
       <Container>
         <Alert variant="error">
-          <Text>{error}</Text>
+          <Text cmsId="traffic-eta-error">{cmsData?.['traffic-etaError'] || 'Failed to calculate ETA'}</Text>
         </Alert>
       </Container>
     );
@@ -220,7 +222,7 @@ export function TrafficETA({
     return (
       <Container>
         <Alert variant="warning">
-          <Text>ETA not available</Text>
+          <Text cmsId="traffic-eta-not-available">{cmsData?.['traffic-etaNotAvailable'] || 'ETA not available'}</Text>
         </Alert>
       </Container>
     );
@@ -233,7 +235,7 @@ export function TrafficETA({
         <ETACard $trafficLevel={etaCalculation.trafficConditions}>
           <Stack spacing="md">
             <Stack direction="horizontal" justify="space-between" align="center">
-              <Text weight="bold" size="lg">Estimated Arrival</Text>
+              <Text weight="bold" size="lg" cmsId="traffic-eta-estimated-arrival">{cmsData?.['traffic-etaEstimatedArrival'] || 'Estimated Arrival'}</Text>
               <Badge variant="success">
                 {formatTime(etaCalculation.estimatedArrival)}
               </Badge>
@@ -241,13 +243,13 @@ export function TrafficETA({
 
             <Stack spacing="sm">
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text>Travel Time</Text>
-                <Text weight="bold">{formatDuration(etaCalculation.duration)}</Text>
+                <Text cmsId="traffic-eta-travel-time">{cmsData?.['traffic-etaTravelTime'] || 'Travel Time'}</Text>
+                <Text weight="bold" cmsId="traffic-eta-travel-time-value">{cmsData?.['traffic-etaTravelTimeValue'] || formatDuration(etaCalculation.duration)}</Text>
               </Stack>
 
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text>Distance</Text>
-                <Text weight="bold">{etaCalculation.distance.toFixed(1)} miles</Text>
+                <Text cmsId="traffic-eta-distance">{cmsData?.['traffic-etaDistance'] || 'Distance'}</Text>
+                <Text weight="bold" cmsId="traffic-eta-distance-value">{cmsData?.['traffic-etaDistanceValue'] || `${etaCalculation.distance.toFixed(1)} miles`}</Text>
               </Stack>
             </Stack>
           </Stack>
@@ -257,16 +259,16 @@ export function TrafficETA({
         <Box variant="outlined" padding="md">
           <Stack spacing="md">
             <Stack direction="horizontal" justify="space-between" align="center">
-              <Text weight="bold">Traffic Conditions</Text>
+              <Text weight="bold" cmsId="traffic-eta-traffic-conditions">{cmsData?.['traffic-etaTrafficConditions'] || 'Traffic Conditions'}</Text>
               <TrafficIndicator $level={etaCalculation.trafficConditions}>
-                <Text size="sm">{getTrafficText(etaCalculation.trafficConditions)}</Text>
+                <Text size="sm" cmsId="traffic-eta-traffic-conditions-value">{cmsData?.['traffic-etaTrafficConditionsValue'] || getTrafficText(etaCalculation.trafficConditions)}</Text>
               </TrafficIndicator>
             </Stack>
 
             <Stack direction="horizontal" justify="space-between" align="center">
-              <Text>Confidence Level</Text>
+              <Text cmsId="traffic-eta-confidence-level">{cmsData?.['traffic-etaConfidenceLevel'] || 'Confidence Level'}</Text>
               <Text size="sm" weight="bold">
-                {getConfidenceText(etaCalculation.confidence)}
+                {cmsData?.['traffic-etaConfidenceLevelValue'] || getConfidenceText(etaCalculation.confidence)}
               </Text>
             </Stack>
 
@@ -277,15 +279,15 @@ export function TrafficETA({
         {/* Additional Info */}
         <Stack spacing="sm">
           <Stack direction="horizontal" justify="space-between" align="center">
-            <Text variant="muted" size="sm">Route</Text>
-            <Text variant="muted" size="sm">
+            <Text variant="muted" size="sm" cmsId="traffic-eta-route">{cmsData?.['traffic-etaRoute'] || 'Route'}</Text>
+            <Text variant="muted" size="sm" cmsId="ignore">
               {pickupLocation} → {dropoffLocation}
             </Text>
           </Stack>
 
           {lastUpdate && (
             <Stack direction="horizontal" justify="space-between" align="center">
-              <Text variant="muted" size="sm">Last Updated</Text>
+              <Text variant="muted" size="sm" cmsId="traffic-eta-last-updated">{cmsData?.['traffic-etaLastUpdated'] || 'Last Updated'}</Text>
               <Text variant="muted" size="sm">
                 {lastUpdate.toLocaleTimeString()}
               </Text>
@@ -297,9 +299,9 @@ export function TrafficETA({
         {etaCalculation.trafficConditions === 'high' && (
           <Alert variant="warning">
             <Stack spacing="xs">
-              <Text weight="bold">Traffic Alert</Text>
+              <Text weight="bold" cmsId="traffic-eta-traffic-alert">{cmsData?.['traffic-etaTrafficAlert'] || 'Traffic Alert'}</Text>
               <Text size="sm">
-                Heavy traffic detected. Consider allowing extra time for your journey.
+                {cmsData?.['traffic-etaHighTraffic'] || 'Heavy traffic detected. Consider allowing extra time for your journey.'}
               </Text>
             </Stack>
           </Alert>

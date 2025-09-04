@@ -5,14 +5,15 @@ import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToa
 import { getBooking } from '@/lib/services/booking-service';
 import { Booking } from '@/types/booking';
 import BookingForm from '../../../book/booking-form';
-import { getCMSField } from '@/design/hooks/useCMSData';
 
 interface EditBookingClientProps {
-  cmsData: any;
   bookingId: string;
+  cmsData?: any;
 }
 
-export default function EditBookingClient({ cmsData, bookingId }: EditBookingClientProps) {
+export default function EditBookingClient({ bookingId, cmsData }: EditBookingClientProps) {
+  // Use CMS data passed from server component
+  const pageCmsData = cmsData || {};
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +45,7 @@ export default function EditBookingClient({ cmsData, bookingId }: EditBookingCli
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            {getCMSField(cmsData, 'booking-edit-loading-message', 'Please wait while we fetch your booking details...')}
+            {pageCmsData?.['booking-edit-loading-message'] || 'Please wait while we fetch your booking details...'}
           </Container>
         </GridSection>
       </Container>
@@ -56,7 +57,7 @@ export default function EditBookingClient({ cmsData, bookingId }: EditBookingCli
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            {getCMSField(cmsData, 'booking-edit-error-description', 'This could be due to an invalid booking ID or a temporary system issue.')}
+            {pageCmsData?.['booking-edit-error-description'] || 'This could be due to an invalid booking ID or a temporary system issue.'}
             <ActionButtonGroup buttons={[
               {
                 id: 'try-again',
@@ -85,10 +86,10 @@ export default function EditBookingClient({ cmsData, bookingId }: EditBookingCli
         <GridSection variant="content" columns={1}>
           <Container>
             <Text>
-              {getCMSField(cmsData, 'booking-edit-not_found-title', '❌ Booking Not Found')}
+              {pageCmsData?.['booking-edit-not_found-title'] || '❌ Booking Not Found'}
             </Text>
             <Text>
-              {getCMSField(cmsData, 'booking-edit-not_found-description', 'No booking found with the provided ID')}
+              {pageCmsData?.['booking-edit-not_found-description'] || 'No booking found with the provided ID'}
             </Text>
             <ActionButtonGroup buttons={[
               {
@@ -117,10 +118,11 @@ export default function EditBookingClient({ cmsData, bookingId }: EditBookingCli
       <GridSection variant="content" columns={1}>
         <Container>
           <Text>
-            {getCMSField(cmsData, 'booking-edit-title', 'Edit Booking')}
+            {pageCmsData?.['booking-edit-title'] || 'Edit Booking'}
           </Text>
           <BookingForm 
             booking={booking}
+            cmsData={cmsData}
           />
         </Container>
       </GridSection>

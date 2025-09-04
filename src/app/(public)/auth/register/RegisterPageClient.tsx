@@ -16,10 +16,10 @@ import {
   ToastProvider,
   Input,
   Label,
-  spacing
+  spacing,
 } from '@/ui';
 import styled from 'styled-components';
-import { getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Styled components for registration page
 const RegisterCard = styled(Box)`
@@ -81,11 +81,10 @@ const LinkText = styled(Text)`
   }
 `;
 
-interface RegisterPageClientProps {
-  cmsData: any;
-}
-
-export default function RegisterPageClient({ cmsData }: RegisterPageClientProps) {
+export default function RegisterPageClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.register || {};
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -189,10 +188,10 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
         <Stack align="center">
           <Stack align="center">
             <H1 align="center">
-              {getCMSField(cmsData, 'customer-register-title', 'Create Your Account')}
+              {pageCmsData?.['customer-register-title'] || 'Create Your Account'}
             </H1>
             <Text align="center" variant="muted">
-              {getCMSField(cmsData, 'customer-register-subtitle', 'Sign up to start booking your airport rides')}
+              {pageCmsData?.['customer-register-subtitle'] || 'Sign up to start booking your airport rides'}
             </Text>
           </Stack>
 
@@ -200,10 +199,10 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
             <Stack>
               <Stack align="center">
                 <H2 align="center" id="register-title">
-                  {getCMSField(cmsData, 'customer-register-authTitle', 'Customer Registration')}
+                  {pageCmsData?.['customer-register-authTitle'] || 'Customer Registration'}
                 </H2>
                 <Text align="center" variant="muted">
-                  {getCMSField(cmsData, 'customer-register-authDesc', 'Create your account to manage bookings')}
+                  {pageCmsData?.['customer-register-authDesc'] || 'Create your account to manage bookings'}
                 </Text>
               </Stack>
 
@@ -211,7 +210,7 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
                 <Stack>
                   <Stack>
                     <Label htmlFor="name">
-                      {getCMSField(cmsData, 'customer-register-nameLabel', 'Full Name')}
+                      {pageCmsData?.['customer-register-nameLabel'] || 'Full Name'}
                     </Label>
                     <Input
                       id="name"
@@ -226,7 +225,7 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
 
                   <Stack>
                     <Label htmlFor="email">
-                      {getCMSField(cmsData, 'customer-register-emailLabel', 'Email Address')}
+                      {pageCmsData?.['customer-register-emailLabel'] || 'Email Address'}
                     </Label>
                     <Input
                       id="email"
@@ -241,7 +240,7 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
 
                   <Stack>
                     <Label htmlFor="phone">
-                      {getCMSField(cmsData, 'customer-register-phoneLabel', 'Phone Number')}
+                      {pageCmsData?.['customer-register-phoneLabel'] || 'Phone Number'}
                     </Label>
                     <Input
                       id="phone"
@@ -256,7 +255,7 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
 
                   <Stack>
                     <Label htmlFor="password">
-                      {getCMSField(cmsData, 'customer-register-passwordLabel', 'Password')}
+                      {pageCmsData?.['customer-register-passwordLabel'] || 'Password'}
                     </Label>
                     <Input
                       id="password"
@@ -271,7 +270,7 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
 
                   <Stack>
                     <Label htmlFor="confirmPassword">
-                      {getCMSField(cmsData, 'customer-register-confirmPasswordLabel', 'Confirm Password')}
+                      {pageCmsData?.['customer-register-confirmPasswordLabel'] || 'Confirm Password'}
                     </Label>
                     <Input
                       id="confirmPassword"
@@ -287,7 +286,7 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
                   {error && (
                     <Stack align="center">
                       <Text variant="muted" align="center" color="error">
-                        {getCMSField(cmsData, 'customer-register-errorIcon', '⚠️')}
+                        {pageCmsData?.['customer-register-errorIcon'] || '⚠️'}
                         {' '}
                         {error}
                       </Text>
@@ -300,13 +299,14 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
                     size="lg"
                     disabled={loading}
                     data-testid="register-button"
-                  >
-                    {getCMSField(cmsData, 'customer-register-sign_up_button', loading ? '🔄 Creating Account...' : '📝 Create Account')}
-                  </Button>
+                    cmsId="register-button"
+                    
+                    text={pageCmsData?.['customer-register-sign_up_button'] || (loading ? '🔄 Creating Account...' : '📝 Create Account')}
+                  />
 
                   <OrDivider>
                     <Text variant="muted">
-                      {getCMSField(cmsData, 'customer-register-or_separator', 'or')}
+                      {pageCmsData?.['customer-register-or_separator'] || 'or'}
                     </Text>
                   </OrDivider>
 
@@ -317,18 +317,19 @@ export default function RegisterPageClient({ cmsData }: RegisterPageClientProps)
                     onClick={handleGoogleSignIn}
                     disabled={loading}
                     data-testid="google-signin-button"
-                  >
-                    {getCMSField(cmsData, 'customer-register-google_sign_in_button', loading ? '🔄 Connecting...' : 'Sign Up with Google')}
-                  </Button>
+                    cmsId="google-signin-button"
+                    
+                    text={pageCmsData?.['customer-register-google_sign_in_button'] || (loading ? '🔄 Connecting...' : 'Sign Up with Google')}
+                  />
                 </Stack>
               </RegisterForm>
             </Stack>
           </RegisterCard>
 
           <LinkText variant="muted">
-            {getCMSField(cmsData, 'customer-register-have_account', 'Already have an account?')}
+            {pageCmsData?.['customer-register-have_account'] || 'Already have an account?'}
             <Link href="/login">
-              {getCMSField(cmsData, 'customer-register-signin_link', 'Sign in')}
+              {pageCmsData?.['customer-register-signin_link'] || 'Sign in'}
             </Link>
           </LinkText>
         </Stack>

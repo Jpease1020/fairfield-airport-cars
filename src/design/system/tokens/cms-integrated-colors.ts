@@ -1,4 +1,4 @@
-// Define CMSConfiguration interface locally for this component
+
 interface CMSConfiguration {
   themeColors?: Record<string, string>;
   business?: {

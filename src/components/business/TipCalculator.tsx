@@ -17,6 +17,7 @@ interface TipCalculatorProps {
   onTipChange: (tipAmount: number, tipPercentage: number) => void;
   initialTipPercentage?: number;
   disabled?: boolean;
+  cmsData: any;
 }
 
 const TIP_PERCENTAGES = [15, 18, 20, 25];
@@ -25,7 +26,8 @@ export function TipCalculator({
   baseAmount,
   onTipChange,
   initialTipPercentage = 20,
-  disabled = false
+  disabled = false,
+  cmsData
 }: TipCalculatorProps) {
   const [selectedPercentage, setSelectedPercentage] = useState(initialTipPercentage);
   const [customPercentage, setCustomPercentage] = useState('');
@@ -70,23 +72,23 @@ export function TipCalculator({
       <Stack spacing="lg">
         {/* Header */}
         <Stack spacing="sm">
-          <Text weight="bold" size="lg">Add a Tip</Text>
-          <Text variant="muted">
-            Show your appreciation for excellent service
+          <Text weight="bold" size="lg" cmsId="tip-calculator-add-tip">{cmsData?.['tipCalculatorAddTip'] || 'Add a Tip'}</Text>
+          <Text variant="muted" cmsId="tip-calculator-appreciation">
+            {cmsData?.['tipCalculatorAppreciation'] || 'Show your appreciation for excellent service'}
           </Text>
         </Stack>
 
         {/* Base Amount Display */}
         <Box variant="outlined" padding="md">
           <Stack direction="horizontal" justify="space-between" align="center">
-            <Text>Base Fare</Text>
-            <Text weight="bold">{formatCurrency(baseAmount)}</Text>
+            <Text cmsId="tip-calculator-base-fare">{cmsData?.['tipCalculatorBaseFare'] || 'Base Fare'}</Text>
+            <Text weight="bold" cmsId="ignore">{formatCurrency(baseAmount)}</Text>
           </Stack>
         </Box>
 
         {/* Tip Percentage Options */}
         <Stack spacing="md">
-          <Text weight="bold">Select Tip Percentage</Text>
+          <Text weight="bold" cmsId="tip-calculator-select-tip-percentage">{cmsData?.['tipCalculatorSelectTipPercentage'] || 'Select Tip Percentage'}</Text>
           
           <Stack direction="horizontal" spacing="sm">
             {TIP_PERCENTAGES.map((percentage) => (
@@ -96,15 +98,15 @@ export function TipCalculator({
                 onClick={() => handlePercentageSelect(percentage)}
                 disabled={disabled}
                 size="sm"
-              >
-                {percentage}%
-              </Button>
+                cmsId="ignore"
+              text={`${percentage}%`}
+            />
             ))}
           </Stack>
 
           {/* Custom Percentage Input */}
           <Stack spacing="sm">
-            <Label htmlFor="customTip">Custom Percentage</Label>
+            <Label htmlFor="customTip" cmsId="tip-calculator-custom-percentage">{cmsData?.['tipCalculatorCustomPercentage'] || 'Custom Percentage'}</Label>
             <Input
               id="customTip"
               type="number"
@@ -116,6 +118,7 @@ export function TipCalculator({
               step="0.1"
               disabled={disabled}
               fullWidth
+              cmsId="ignore"
             />
           </Stack>
         </Stack>
@@ -123,16 +126,16 @@ export function TipCalculator({
         {/* Tip Amount Display */}
         <Box variant="outlined" padding="lg">
           <Stack spacing="md">
-            <Text weight="bold">Tip Breakdown</Text>
+            <Text weight="bold" cmsId="tip-calculator-tip-breakdown">{cmsData?.['tipCalculatorTipBreakdown'] || 'Tip Breakdown'}</Text>
             
             <Stack spacing="sm">
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text>Tip Amount</Text>
+                <Text cmsId="tip-calculator-tip-amount">{cmsData?.['tipCalculatorTipAmount'] || 'Tip Amount'}</Text>
                 <Text weight="bold">{formatCurrency(tipAmount)}</Text>
               </Stack>
               
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text>Tip Percentage</Text>
+                  <Text cmsId="tip-calculator-tip-percentage">{cmsData?.['tipCalculatorTipPercentage'] || 'Tip Percentage'}</Text>
                 <Text weight="bold">
                   {customPercentage ? `${customPercentage}%` : `${selectedPercentage}%`}
                 </Text>
@@ -144,17 +147,14 @@ export function TipCalculator({
         {/* Total Amount */}
         <Box variant="elevated" padding="lg">
           <Stack direction="horizontal" justify="space-between" align="center">
-            <Text weight="bold" size="lg">Total Amount</Text>
-            <Text weight="bold" size="xl">{formatCurrency(totalAmount)}</Text>
+            <Text weight="bold" size="lg" cmsId="tip-calculator-total-amount">{cmsData?.['tipCalculatorTotalAmount'] || 'Total Amount'}</Text>
+            <Text weight="bold" size="xl" cmsId="ignore">{formatCurrency(totalAmount)}</Text>
           </Stack>
         </Box>
 
         {/* Information */}
         <Alert variant="info">
-          <Text size="sm">
-            Tips help support our drivers and ensure excellent service. 
-            All tips go directly to your driver.
-          </Text>
+          <Text size="sm" cmsId="tip-calculator-information">{cmsData?.['tipCalculatorInformation'] || 'Tips help support our drivers and ensure excellent service. All tips go directly to your driver.'}</Text>
         </Alert>
       </Stack>
     </Container>

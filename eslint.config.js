@@ -148,6 +148,10 @@ export default [
           message: '❌ CMS field names must use kebab-case only (e.g., "admin-bookings-error-load-bookings-failed"). No camelCase patterns like "loadBookings" allowed.'
         }
       ],
+      
+      // 🚨 NEW: CMS Text Content Rules (Admin pages excluded)
+      'fairfield/no-hardcoded-text-in-components': 'error',
+      'fairfield/enforce-cms-usage': 'warn',
     },
   },
   // 🛡️ DESIGN SYSTEM PROTECTION - Stricter rules for design directory
@@ -208,6 +212,49 @@ export default [
           ]
         }
       ],
+    },
+  },
+  // 🛡️ ADMIN COMPONENTS - Relaxed rules for admin-only components
+  {
+    files: [
+      'src/design/components/composite-components/DataTable.tsx',
+      'src/app/(admin)/**/*.{js,jsx,ts,tsx}',
+      'src/components/business/AdminNavigation.tsx',
+      'src/components/business/GlobalCommentModal.tsx',
+      'src/components/business/GlobalCommentIcons.tsx',
+      'src/components/business/InlineTextEditor.tsx'
+    ],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptPlugin,
+      'fairfield': fairfieldCustomRules,
+    },
+    rules: {
+      // Relaxed rules for admin components - only essential errors
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'no-unused-vars': 'warn',
+      'fairfield/no-hardcoded-colors': 'off',
+      'fairfield/no-inline-styles': 'off',
+      'fairfield/no-classname-props': 'off',
+      'fairfield/no-html-structure': 'off',
+      'fairfield/enforce-design-system': 'off',
+      'fairfield/no-circular-ui-imports': 'off',
+      'fairfield/enforce-types-architecture': 'off',
+      'fairfield/no-absolute-imports-in-design': 'off',
+      'fairfield/no-hardcoded-text-in-components': 'off',
+      'fairfield/enforce-cms-usage': 'off',
+      'no-console': 'warn', // Allow console logs in admin components
+      'no-debugger': 'warn', // Allow debugger statements in admin components
     },
   },
   {

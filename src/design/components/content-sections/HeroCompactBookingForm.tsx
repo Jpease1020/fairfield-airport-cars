@@ -23,6 +23,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   'data-testid': dataTestId,
   ...rest
 }) => {
+  
   const [pickupLocation, setPickupLocation] = useState('');
   const [pickupCoords, setPickupCoords] = useState<Coordinates | null>(null);
   
@@ -142,10 +143,10 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           size="md"
           onClick={handleGetPrice}
           disabled={!pickupLocation || !dropoffLocation || !pickupDate || !pickupTime}
-        >
-          Get Price
-        </Button>
-        
+          cmsId="get-price-button"
+          
+          text="Get Price"
+        />
         <Text size="xs" align="center" variant="muted">
           Instant pricing • No hidden fees
         </Text>

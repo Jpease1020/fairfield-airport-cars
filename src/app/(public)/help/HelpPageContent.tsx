@@ -1,0 +1,166 @@
+'use client';
+
+import React from 'react';
+import { 
+  Container,
+  Stack,
+  Box,
+  H1,
+  H2,
+  Text,
+  Button
+} from '@/ui';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
+import Link from 'next/link';
+
+export default function HelpPageContent() {
+  // Get CMS data from provider - extract only what this page needs
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.help || {};
+  
+  return (
+    <>
+      {/* Hero Section */}
+      <Container maxWidth="full" padding="xl" variant="section">
+        <Stack spacing="xl" align="center">
+          <Stack spacing="md" align="center">
+            <H1 
+              align="center" 
+              cmsId="title" 
+            >
+              {cmsData?.['title'] || 'Help & Support'}
+            </H1>
+            <Text 
+              variant="lead" 
+              align="center" 
+              size="lg" 
+              cmsId="subtitle" 
+            >
+              {cmsData?.['subtitle'] || 'Find answers to common questions and get the help you need'}
+            </Text>
+          </Stack>
+        </Stack>
+      </Container>
+
+      {/* Main Content Section */}
+      <Container maxWidth="2xl" padding="xl">
+        <Stack spacing="lg">
+          {/* Quick Actions */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <H2 cmsId="quick-actions-title">
+                {cmsData?.['quick-actions-title'] || 'Quick Actions'}
+              </H2>
+              <Stack direction="horizontal" spacing="md">
+                <Link href="/book">
+                  <Button variant="primary" cmsId="book-ride-button">
+                    {cmsData?.['book-ride-button'] || 'Book a Ride'}
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button variant="secondary" cmsId="contact-support-button">
+                    {cmsData?.['contact-support-button'] || 'Contact Support'}
+                  </Button>
+                </Link>
+              </Stack>
+            </Stack>
+          </Box>
+
+          {/* FAQ Section */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <H2 cmsId="faq-title">
+                {cmsData?.['faq-title'] || 'Frequently Asked Questions'}
+              </H2>
+              
+              <Stack spacing="md">
+                <Box variant="outlined" padding="md">
+                  <Stack spacing="sm">
+                    <Text weight="bold" cmsId="faq-1-question">
+                      {cmsData?.['faq-1-question'] || 'How do I book a ride?'}
+                    </Text>
+                    <Text cmsId="faq-1-answer">
+                      {cmsData?.['faq-1-answer'] || 'You can book a ride by clicking the "Book a Ride" button above, or by calling us at (203) 555-0123. Simply provide your pickup location, destination, and preferred time.'}
+                    </Text>
+                  </Stack>
+                </Box>
+
+                <Box variant="outlined" padding="md">
+                  <Stack spacing="sm">
+                    <Text weight="bold" cmsId="faq-2-question">
+                      {cmsData?.['faq-2-question'] || 'What is your cancellation policy?'}
+                    </Text>
+                    <Text cmsId="faq-2-answer">
+                      {cmsData?.['faq-2-answer'] || 'We offer 100% refund for cancellations over 24 hours in advance, 50% refund for cancellations 3-24 hours in advance, and no refund for cancellations under 3 hours.'}
+                    </Text>
+                  </Stack>
+                </Box>
+
+                <Box variant="outlined" padding="md">
+                  <Stack spacing="sm">
+                    <Text weight="bold" cmsId="faq-3-question">
+                      {cmsData?.['faq-3-question'] || 'How far in advance should I book?'}
+                    </Text>
+                    <Text cmsId="faq-3-answer">
+                      {cmsData?.['faq-3-answer'] || 'We recommend booking at least 24 hours in advance for airport rides, especially during peak travel times. However, we can often accommodate same-day bookings based on availability.'}
+                    </Text>
+                  </Stack>
+                </Box>
+
+                <Box variant="outlined" padding="md">
+                  <Stack spacing="sm">
+                    <Text weight="bold" cmsId="faq-4-question">
+                      {cmsData?.['faq-4-question'] || 'What payment methods do you accept?'}
+                    </Text>
+                    <Text cmsId="faq-4-answer">
+                      {cmsData?.['faq-4-answer'] || 'We accept all major credit cards, debit cards, and digital payment methods. Payment is processed securely at the time of booking.'}
+                    </Text>
+                  </Stack>
+                </Box>
+
+                <Box variant="outlined" padding="md">
+                  <Stack spacing="sm">
+                    <Text weight="bold" cmsId="faq-5-question">
+                      {cmsData?.['faq-5-question'] || 'Do you provide child safety seats?'}
+                    </Text>
+                    <Text cmsId="faq-5-answer">
+                      {cmsData?.['faq-5-answer'] || 'Yes, we can provide child safety seats upon request. Please mention this when booking so we can ensure availability.'}
+                    </Text>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Stack>
+          </Box>
+
+          {/* Contact Information */}
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="md">
+              <H2 cmsId="contact-info-title">
+                {cmsData?.['contact-info-title'] || 'Still Need Help?'}
+              </H2>
+              <Text cmsId="contact-info-description">
+                {cmsData?.['contact-info-description'] || 'If you can\'t find the answer you\'re looking for, our customer service team is here to help.'}
+              </Text>
+              <Stack direction="horizontal" spacing="md">
+                <Text weight="bold" cmsId="phone-label">
+                  {cmsData?.['phone-label'] || 'Phone:'}
+                </Text>
+                <Text cmsId="phone-value">
+                  {cmsData?.['phone-value'] || '(203) 555-0123'}
+                </Text>
+              </Stack>
+              <Stack direction="horizontal" spacing="md">
+                <Text weight="bold" cmsId="email-label">
+                  {cmsData?.['email-label'] || 'Email:'}
+                </Text>
+                <Text cmsId="email-value">
+                  {cmsData?.['email-value'] || 'support@fairfieldairportcars.com'}
+                </Text>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+      </Container>
+    </>
+  );
+}

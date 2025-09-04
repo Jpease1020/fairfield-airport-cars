@@ -4,25 +4,14 @@ import {
   LoadingSpinner,
   Stack,
 } from '@/ui';
-import { cmsFlattenedService } from '@/lib/services/cms-service';
 import StatusClient from './StatusClient';
 
 // Enable ISR for dynamic content updates
 export const revalidate = 3600; // Revalidate every hour
 
-// Get CMS data at build time
-async function getCMSData(): Promise<any> {
-  try {
-    return await cmsFlattenedService.getPageContent('customer-status');
-  } catch (error) {
-    console.error('Failed to load CMS data at build time:', error);
-    return null;
-  }
-}
-
 // Main page component (Server Component)
-export default async function StatusPage({ params }: { params: { id: string } }) {
-  const cmsData = await getCMSData();
+export default async function StatusPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   
   return (
     <Suspense fallback={
@@ -34,7 +23,7 @@ export default async function StatusPage({ params }: { params: { id: string } })
         </Container>
       </>
     }>
-      <StatusClient cmsData={cmsData} bookingId={params.id} />
+      <StatusClient bookingId={id} />
     </Suspense>
   );
 }

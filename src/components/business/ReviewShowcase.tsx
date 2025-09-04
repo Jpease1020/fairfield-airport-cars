@@ -17,6 +17,7 @@ interface ReviewShowcaseProps {
   maxReviews?: number;
   showPlatformBreakdown?: boolean;
   variant?: 'compact' | 'detailed' | 'hero';
+  cmsData: any;
 }
 
 export function ReviewShowcase({ 
@@ -24,7 +25,8 @@ export function ReviewShowcase({
   subtitle = "Real reviews from satisfied customers across multiple platforms",
   maxReviews = 6,
   showPlatformBreakdown = true,
-  variant = 'detailed'
+  variant = 'detailed',
+  cmsData
 }: ReviewShowcaseProps) {
   const [reviews, setReviews] = useState<any[]>([]);
   const [aggregation, setAggregation] = useState<any>(null);
@@ -106,16 +108,16 @@ export function ReviewShowcase({
 
     return (
       <Stack direction="vertical" spacing="md">
-        <Text variant="lead" weight="bold">Platform Ratings</Text>
-        <Grid cols={2} gap="md">
+        <Text variant="lead" weight="bold" cmsId="review-showcase-platform-ratings">{cmsData?.['reviewShowcasePlatformRatings'] || 'Platform Ratings'}</Text>
+        <Grid cols={2} gap="md"> 
           {platforms.map((platform) => (
             <GridItem key={platform.name}>
               <Card variant="default" padding="sm">
                 <Stack direction="vertical" spacing="xs" align="center">
-                  <Text size="lg">{platform.icon}</Text>
-                  <Text weight="semibold" size="sm">{platform.name}</Text>
+                  <Text size="lg" cmsId="ignore">{platform.icon}</Text>
+                  <Text weight="semibold" size="sm" cmsId="review-showcase-platform-name">{cmsData?.['reviewShowcasePlatformName'] || platform.name}</Text>
                   <StarRating rating={platform.rating} size="sm" />
-                  <Text size="xs" variant="muted">{platform.reviews} reviews</Text>
+                  <Text size="xs" variant="muted" cmsId="review-showcase-platform-reviews">{cmsData?.['reviewShowcasePlatformReviews'] || `${platform.reviews} reviews`}</Text>
                 </Stack>
               </Card>
             </GridItem>
@@ -138,12 +140,8 @@ export function ReviewShowcase({
       <Stack direction="vertical" spacing="lg">
         {/* Header */}
         <Stack direction="vertical" spacing="sm" align="center">
-          <Text variant="lead" weight="bold" align="center">
-            {title}
-          </Text>
-          <Text variant="body" color="muted" align="center">
-            {subtitle}
-          </Text>
+          <Text variant="lead" weight="bold" align="center" cmsId="review-showcase-title">{cmsData?.['review-showcase-title'] || title}</Text>
+          <Text variant="body" color="muted" align="center" cmsId="review-showcase-subtitle">{cmsData?.['review-showcase-subtitle'] || subtitle}</Text>
         </Stack>
 
         {/* Platform Breakdown */}
@@ -160,20 +158,16 @@ export function ReviewShowcase({
           </Grid>
         ) : (
           <Stack direction="vertical" spacing="md" align="center">
-            <Text variant="body" color="muted">No reviews available yet</Text>
-            <Text variant="small" color="muted">Be the first to leave a review!</Text>
+            <Text variant="body" color="muted" cmsId="review-showcase-no-reviews">{cmsData?.['review-showcase-no-reviews'] || 'No reviews available yet'}</Text>
+            <Text variant="small" color="muted" cmsId="review-showcase-no-reviews-subtitle">{cmsData?.['review-showcase-no-reviews-subtitle'] || 'Be the first to leave a review!'}</Text>
           </Stack>
         )}
 
         {/* Call to Action */}
         {variant === 'hero' && (
           <Stack direction="vertical" spacing="md" align="center">
-            <Text variant="body" weight="semibold">
-              Ready to experience our service?
-            </Text>
-            <Text variant="small" color="muted">
-              Join thousands of satisfied customers
-            </Text>
+            <Text variant="body" weight="semibold" cmsId="review-showcase-cta-title">{cmsData?.['review-showcase-cta-title'] || 'Ready to experience our service?'}</Text>
+            <Text variant="small" color="muted" cmsId="review-showcase-cta-subtitle">{cmsData?.['review-showcase-cta-subtitle'] || 'Join thousands of satisfied customers'}</Text>
           </Stack>
         )}
       </Stack>

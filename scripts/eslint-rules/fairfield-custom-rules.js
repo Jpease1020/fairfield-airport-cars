@@ -332,6 +332,170 @@ export default {
           }
         };
       }
+    },
+
+    // Rule: No hardcoded text in styled text components (Admin pages excluded)
+    'no-hardcoded-text-in-components': {
+      meta: {
+        type: 'problem',
+        hasSuggestions: true,
+        docs: {
+          description: 'Disallow hardcoded text in styled text components. All text must use CMS or have cmsId.',
+          category: 'Best Practices',
+        },
+      },
+      create(context) {
+        const filename = context.getFilename();
+        
+        // Skip admin files - they don't need CMS integration
+        if (filename.includes('/admin/') || 
+            filename.includes('/(admin)/') ||
+            filename.includes('/src/app/(admin)/') ||
+            filename.includes('/src/components/admin/') ||
+            filename.includes('/src/lib/services/admin/') ||
+            filename.includes('/src/app/api/admin/')) {
+          return {};
+        }
+        
+        // Skip design system files - they're reusable components
+        if (filename.includes('src/design/')) {
+          return {};
+        }
+        
+        // Skip test files
+        if (filename.includes('.test.') || 
+            filename.includes('.spec.') ||
+            filename.includes('/tests/') ||
+            filename.includes('/test-results/')) {
+          return {};
+        }
+        
+        // Skip config and build files
+        if (filename.includes('config/') || 
+            filename.includes('scripts/') ||
+            filename.includes('temp/') ||
+            filename.includes('.config.')) {
+          return {};
+        }
+        
+        // Styled text components that require CMS integration
+        const styledTextComponents = [
+          'Text', 'Paragraph', 'Span', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 
+          'Link', 'Button', 'Label', 'Caption', 'Badge'
+        ];
+        
+        return {
+          JSXElement(node) {
+            const componentName = node.openingElement.name.name;
+            
+            // Only check styled text components
+            if (!styledTextComponents.includes(componentName)) {
+              return;
+            }
+            
+            // Check if component has cmsId prop
+            const hasCmsId = node.openingElement.attributes.some(attr => 
+              attr.name && attr.name.name === 'cmsId'
+            );
+            
+            // Check if component has data-cms-id prop
+            const hasDataCmsId = node.openingElement.attributes.some(attr => 
+              attr.name && attr.name.name === 'data-cms-id'
+            );
+            
+            // If no CMS identifier, check for hardcoded text
+            if (!hasCmsId && !hasDataCmsId) {
+              // Check children for hardcoded text
+              const hasHardcodedText = node.children.some(child => {
+                if (child.type === 'JSXText') {
+                  return child.value.trim().length > 0;
+                }
+                if (child.type === 'JSXExpressionContainer') {
+                  // Check if it's a string literal
+                  if (child.expression.type === 'Literal' && typeof child.expression.value === 'string') {
+                    return child.expression.value.trim().length > 0;
+                  }
+                  // Check if it's a template literal
+                  if (child.expression.type === 'TemplateLiteral') {
+                    return child.expression.quasis.some(quasi => quasi.value.raw.trim().length > 0);
+                  }
+                }
+                return false;
+              });
+              
+              if (hasHardcodedText) {
+                context.report({
+                  node,
+                  message: `❌ ${componentName} component contains hardcoded text. Add cmsId prop and use getCMSField() for all text content.`,
+                  suggest: [
+                    {
+                      desc: 'Add cmsId prop to component',
+                      fix: (fixer) => {
+                        const firstAttribute = node.openingElement.attributes[0];
+                        if (firstAttribute) {
+                          return fixer.insertTextAfter(firstAttribute, ' cmsId="your-cms-key"');
+                        } else {
+                          return fixer.insertTextAfter(node.openingElement.name, ' cmsId="your-cms-key"');
+                        }
+                      }
+                    }
+                  ]
+                });
+              }
+            }
+          }
+        };
+      }
+    },
+
+    // Rule: Enforce CMS usage for text content
+    'enforce-cms-usage': {
+      meta: {
+        type: 'suggestion',
+        hasSuggestions: true,
+        docs: {
+          description: 'Suggest using getCMSField() for text content in styled components.',
+          category: 'Best Practices',
+        },
+      },
+      create(context) {
+        const filename = context.getFilename();
+        
+        // Skip admin files
+        if (filename.includes('/admin/') || 
+            filename.includes('/(admin)/') ||
+            filename.includes('/src/app/(admin)/') ||
+            filename.includes('/src/components/admin/') ||
+            filename.includes('/src/lib/services/admin/') ||
+            filename.includes('/src/app/api/admin/')) {
+          return {};
+        }
+        
+        // Skip design system files
+        if (filename.includes('src/design/')) {
+          return {};
+        }
+        
+        return {
+          JSXText(node) {
+            const text = node.value.trim();
+            if (text.length > 0 && text.length < 100) { // Only suggest for short text
+              context.report({
+                node,
+                message: '💡 Consider using getCMSField() for this text to make it editable.',
+                suggest: [
+                  {
+                    desc: 'Wrap with getCMSField()',
+                    fix: (fixer) => {
+                      return fixer.replaceText(node, `{getCMSField(cmsData, 'your-cms-key', '${text}')}`);
+                    }
+                  }
+                ]
+              });
+            }
+          }
+        };
+      }
     }
   }
 }; 

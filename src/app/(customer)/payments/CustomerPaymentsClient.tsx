@@ -16,8 +16,8 @@ import {
   H1,
   ContentCard
 } from '@/ui';
-import { getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
+
 import { BalanceSummary } from '@/components/business/BalanceTracker';
 
 interface Payment {
@@ -41,12 +41,11 @@ interface PaymentMethod {
   expiryDate?: string;
 }
 
-interface CustomerPaymentsClientProps {
-  cmsData: any;
-}
-
-export default function CustomerPaymentsClient({ cmsData }: CustomerPaymentsClientProps) {
-  const { mode } = useInteractionMode();
+export default function CustomerPaymentsClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.['customer-payments'] || {};
+  
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -121,7 +120,7 @@ export default function CustomerPaymentsClient({ cmsData }: CustomerPaymentsClie
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text data-cms-id="initializing">{getCMSField(cmsData, 'initializing', 'Initializing payments...')}</Text>
+          <Text cmsId="initializing">{cmsData?.['initializing'] || 'Initializing payments...'}</Text>
         </Stack>
       </Container>
     );
@@ -132,7 +131,7 @@ export default function CustomerPaymentsClient({ cmsData }: CustomerPaymentsClie
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text data-cms-id="loading_info">{getCMSField(cmsData, 'loading_info', 'Loading your payment information...')}</Text>
+          <Text cmsId="loading_info">{cmsData?.['loading_info'] || 'Loading your payment information...'}</Text>
         </Stack>
       </Container>
     );
@@ -142,10 +141,8 @@ export default function CustomerPaymentsClient({ cmsData }: CustomerPaymentsClie
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted" data-cms-id="login_required">{getCMSField(cmsData, 'login_required', 'Please log in to view your payments.')}</Text>
-          <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'go_to_login', 'Go to Login')}
-          </Button>
+          <Text variant="muted" cmsId="login_required">{cmsData?.['login_required'] || 'Please log in to view your payments.'}</Text>
+          <Button onClick={() => router.push('/login')} cmsId="go-to-login"  text={cmsData?.['go_to_login'] || 'Go to Login'}/>          
         </Stack>
       </Container>
     );
@@ -168,26 +165,26 @@ export default function CustomerPaymentsClient({ cmsData }: CustomerPaymentsClie
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1 
-              data-cms-id="title"
-              mode={mode}
+              cmsId="title"
+              
             >
-              {getCMSField(cmsData, 'title', 'My Payments')}
+              {cmsData?.['title'] || 'My Payments'}
             </H1>
             <Text 
               variant="muted"
-              data-cms-id="subtitle"
-              mode={mode}
+              cmsId="subtitle"
+              
             >
-              {getCMSField(cmsData, 'subtitle', 'Manage your payment methods and view transaction history')}
+              {cmsData?.['subtitle'] || 'Manage your payment methods and view transaction history'}
             </Text>
           </Stack>
           <Button 
             onClick={handleAddPaymentMethod} 
             variant="primary"
-            data-cms-id="add-payment-method"
-            interactionMode={mode}
+            cmsId="add-payment-method"
+            
           >
-            {getCMSField(cmsData, 'add-payment-method', 'Add Payment Method')}
+            {cmsData?.['add-payment-method'] || 'Add Payment Method'}
           </Button>
         </Stack>
 
@@ -200,17 +197,17 @@ export default function CustomerPaymentsClient({ cmsData }: CustomerPaymentsClie
             balanceDue: payment.type === 'balance' ? payment.amount : 0,
             status: 'confirmed' // This would come from actual booking data
           }))}
+          cmsData={cmsData}
         />
 
         {/* Payment Methods */}
         <ContentCard
-          title={getCMSField(cmsData, 'section-methods', 'Payment Methods')}
-          data-cms-id="section-methods"
+          title={cmsData?.['section-methods'] || 'Payment Methods'} 
           content={
             <Stack spacing="md">
               {paymentMethods.length === 0 ? (
-                <Text variant="muted" align="center" data-cms-id="no-methods-message" mode={mode}>
-                  {getCMSField(cmsData, 'message', 'No payment methods added yet')}
+                <Text variant="muted" align="center" cmsId="no-methods-message" >
+                  {cmsData?.['message'] || 'No payment methods added yet'}
                 </Text>
               ) : (
                 paymentMethods.map((method) => (
@@ -242,34 +239,33 @@ export default function CustomerPaymentsClient({ cmsData }: CustomerPaymentsClie
 
         {/* Payment History */}
         <ContentCard
-          title={getCMSField(cmsData, 'section-history', 'Payment History')}
-          data-cms-id="section-history"
+          title={cmsData?.['section-history'] || 'Payment History'}
           content={
             <Stack spacing="md">
               {payments.length === 0 ? (
-                <Text variant="muted" align="center" data-cms-id="no-history-message" mode={mode}>
-                  {getCMSField(cmsData, 'message', 'No payment history available')}
+                <Text variant="muted" align="center" cmsId="no-history-message" >
+                  {cmsData?.['message'] || 'No payment history available'}
                 </Text>
               ) : (
                 payments.map((payment) => (
                   <Box key={payment.id} variant="outlined" padding="md">
                     <Stack direction="horizontal" justify="space-between" align="center">
                       <Stack spacing="sm">
-                        <Text size="lg">
+                        <Text size="lg" cmsId="ignore">
                           {payment.type === 'deposit' ? '💰' : payment.type === 'balance' ? '💳' : payment.type === 'tip' ? '💝' : '💵'}
                         </Text>
-                        <Text weight="bold">
+                        <Text weight="bold" cmsId="ignore">
                           {payment.description}
                         </Text>
-                        <Text variant="muted" size="sm">
+                        <Text variant="muted" size="sm" cmsId="ignore">
                           {new Date(payment.date).toLocaleDateString()}
                         </Text>
                       </Stack>
                       <Stack spacing="sm" align="flex-end">
-                        <Text weight="bold" size="lg">
+                        <Text weight="bold" size="lg" cmsId="ignore">
                           ${payment.amount.toFixed(2)}
                         </Text>
-                        <Text variant="muted" size="sm">
+                        <Text variant="muted" size="sm" cmsId="ignore">
                           {payment.status}
                         </Text>
                       </Stack>

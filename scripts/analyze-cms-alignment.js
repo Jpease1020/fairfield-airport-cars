@@ -11,8 +11,8 @@ console.log('🔍 ANALYZING CMS DATA ALIGNMENT WITH APP PAGES\n');
 // Read the reorganized CMS data
 const cmsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'final-cms-data-fixed.json'), 'utf8'));
 
-// Get all data-cms-id attributes from the app
-console.log('📱 Scanning app for data-cms-id attributes...');
+// Get all cmsId attributes from the app
+console.log('📱 Scanning app for cmsId attributes...');
 const appFields = new Set();
 
 // Scan public pages
@@ -20,10 +20,10 @@ const publicPages = execSync('find src/app/\\(public\\) -name "*.tsx"', { encodi
 publicPages.forEach(file => {
   try {
     const content = fs.readFileSync(file, 'utf8');
-    const matches = content.match(/data-cms-id="([^"]+)"/g);
+    const matches = content.match(/cmsId="([^"]+)"/g);
     if (matches) {
       matches.forEach(match => {
-        const fieldName = match.match(/data-cms-id="([^"]+)"/)[1];
+        const fieldName = match.match(/cmsId="([^"]+)"/)[1];
         appFields.add(fieldName);
       });
     }
@@ -37,10 +37,10 @@ const customerPages = execSync('find src/app/\\(customer\\) -name "*.tsx"', { en
 customerPages.forEach(file => {
   try {
     const content = fs.readFileSync(file, 'utf8');
-    const matches = content.match(/data-cms-id="([^"]+)"/g);
+    const matches = content.match(/cmsId="([^"]+)"/g);
     if (matches) {
       matches.forEach(match => {
-        const fieldName = match.match(/data-cms-id="([^"]+)"/)[1];
+        const fieldName = match.match(/cmsId="([^"]+)"/)[1];
         appFields.add(fieldName);
       });
     }
@@ -49,7 +49,7 @@ customerPages.forEach(file => {
   }
 });
 
-console.log(`📊 Found ${appFields.size} unique data-cms-id attributes in the app`);
+console.log(`📊 Found ${appFields.size} unique cmsId attributes in the app`);
 
 // Analyze alignment
 const appFieldsArray = Array.from(appFields);

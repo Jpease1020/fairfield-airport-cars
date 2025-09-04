@@ -42,6 +42,7 @@ interface TrackingMapProps {
   estimatedArrival?: Date;
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
   onMapLoad?: (map: google.maps.Map) => void;
+  cmsData: any;
 }
 
 export function TrackingMap({
@@ -50,6 +51,7 @@ export function TrackingMap({
   dropoffLocation,
   status,
   onMapLoad,
+  cmsData
 }: TrackingMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
@@ -323,7 +325,7 @@ export function TrackingMap({
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading map...</Text>
+          <Text cmsId="tracking-map-loading">{ cmsData?.['trackingMapLoading'] || 'Loading map...'}</Text>
         </Stack>
       </Container>
     );
@@ -335,13 +337,9 @@ export function TrackingMap({
       return (
         <Container>
           <Stack spacing="lg" align="center">
-            <Text variant="h3" color="secondary">🗺️ Google Maps Not Available</Text>
-            <Text color="secondary">
-              To use the tracking system, you need to configure a Google Maps API key.
-            </Text>
-            <Text variant="body" color="secondary" size="sm">
-              Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env.local file
-            </Text>
+            <Text variant="h3" color="secondary" cmsId="tracking-map-google-maps-not-available-title">{cmsData?.['trackingMapGoogleMapsNotAvailableTitle'] || '🗺️ Google Maps Not Available'}</Text>
+            <Text color="secondary" cmsId="tracking-map-google-maps-not-available">{cmsData?.['trackingMapGoogleMapsNotAvailable'] || 'To use the tracking system, you need to configure a Google Maps API key.'}</Text>
+            <Text variant="body" color="secondary" size="sm" cmsId="tracking-map-google-maps-not-available-set-api-key">{cmsData?.['trackingMapGoogleMapsNotAvailableSetApiKey'] || 'Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env.local file'}</Text>
           </Stack>
         </Container>
       );
@@ -350,7 +348,7 @@ export function TrackingMap({
     return (
       <Container>
         <Alert variant="error">
-          <Text>{error || trackingError}</Text>
+          <Text cmsId="tracking-map-error">{cmsData?.['trackingMapError'] || error || trackingError || 'Unknown error'}</Text>
         </Alert>
       </Container>
     );
@@ -362,11 +360,11 @@ export function TrackingMap({
         {/* Map Status */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="xs">
-            <Text weight="bold" size="lg">Live Tracking</Text>
+            <Text weight="bold" size="lg" cmsId="tracking-map-live-tracking">{cmsData?.['trackingMapLiveTracking'] || 'Live Tracking'}</Text>
             <Text variant="muted">
               {bookingStatus?.driverLocation 
-                ? 'Driver is on the way'
-                : 'Waiting for driver assignment'
+                ? cmsData?.['trackingMapDriverIsOnTheWay'] || 'Driver is on the way'
+                : cmsData?.['trackingMapWaitingForDriverAssignment'] || 'Waiting for driver assignment'
               }
             </Text>
           </Stack>
@@ -374,9 +372,9 @@ export function TrackingMap({
           {(bookingStatus?.estimatedArrival) && (
             <Box variant="outlined" padding="sm">
               <Text size="sm" weight="bold">
-                ETA: {bookingStatus?.estimatedArrival 
+                {cmsData?.['trackingMapEta'] || 'ETA:'} {bookingStatus?.estimatedArrival 
                   ? new Date(bookingStatus.estimatedArrival).toLocaleTimeString()
-                  : 'Calculating...'
+                  : cmsData?.['trackingMapCalculating'] || 'Calculating...'
                 }
               </Text>
             </Box>
@@ -390,15 +388,15 @@ export function TrackingMap({
         <Stack direction="horizontal" spacing="md" align="center">
           <Stack direction="horizontal" align="center" spacing="xs">
             <LegendItem $backgroundColor={colors.success[600]} />
-            <Text size="sm">Driver Location</Text>
+            <Text size="sm" cmsId="tracking-map-driver-location">{cmsData?.['trackingMapDriverLocation'] || 'Driver Location'}</Text>
           </Stack>
           <Stack direction="horizontal" align="center" spacing="xs">
             <LegendItem $backgroundColor={colors.primary[600]} />
-            <Text size="sm">Pickup Location</Text>
+            <Text size="sm" cmsId="tracking-map-pickup-location">{cmsData?.['trackingMapPickupLocation'] || 'Pickup Location'}</Text>
           </Stack>
           <Stack direction="horizontal" align="center" spacing="xs">
             <LegendItem $backgroundColor={colors.danger[600]} />
-            <Text size="sm">Dropoff Location</Text>
+            <Text size="sm" cmsId="tracking-map-dropoff-location">{cmsData?.['trackingMapDropoffLocation'] || 'Dropoff Location'}</Text>
           </Stack>
         </Stack>
       </Stack>

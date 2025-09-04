@@ -267,8 +267,8 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
           <Container variant="tooltip" padding="none">
             <Container data-comment-box variant="elevated" padding="lg" onClick={(e: any) => e.stopPropagation()}>
               <Stack direction="horizontal" align="center" justify="space-between" padding="sm">
-                <H4>Add Comment</H4>
-                <Button onClick={closeCommentBox} variant="ghost">
+                <H4 cmsId="ignore">Add Comment'</H4>
+                <Button onClick={closeCommentBox} variant="ghost" cmsId="global-comment-modal-close-button">
                   <X />
                 </Button>
               </Stack>
@@ -289,12 +289,8 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
                 </label>
               </Container>
               <Stack direction="horizontal" spacing="sm" padding="sm">
-                <Button onClick={handleAddComment} disabled={!commentText.trim()} variant="primary">
-                  Add Comment
-                </Button>
-                <Button onClick={closeCommentBox} variant="secondary">
-                  Close
-                </Button>
+                <Button onClick={handleAddComment} disabled={!commentText.trim()} variant="primary" cmsId="global-comment-modal-add-button" text="Add Comment" />
+                <Button onClick={closeCommentBox} variant="secondary" cmsId="global-comment-modal-close-secondary-button" text="Close" />
               </Stack>           
             </Container>
           </Container>

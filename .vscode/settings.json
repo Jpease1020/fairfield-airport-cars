@@ -1,46 +1,53 @@
 {
-  "typescript.preferences.includePackageJsonAutoImports": "off",
-  "typescript.suggest.autoImports": false,
-  "typescript.updateImportsOnFileMove.enabled": "never",
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.suggest.paths": false,
-  "typescript.preferences.quoteStyle": "single",
-  "files.watcherExclude": {
-    "**/node_modules/**": true,
-    "**/.next/**": true,
-    "**/dist/**": true,
-    "**/build/**": true,
-    "**/.git/**": true
-  },
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/bower_components": true,
-    "**/*.code-search": true,
-    "**/.next": true,
-    "**/dist": true,
-    "**/build": true
-  },
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true,
-    "**/.next": true,
-    "**/node_modules": true
-  },
-  "editor.formatOnSave": false,
-  "editor.formatOnPaste": false,
-  "editor.formatOnType": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "eslint.workingDirectories": ["."],
+  "eslint.enable": true,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
     "typescriptreact"
   ],
-} 
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "eslint.options": {
+    "configFile": "./eslint.config.js"
+  },
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.run": "onType",
+  "eslint.autoFixOnSave": true,
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.codeActionsOnSave.rules": [
+    "fairfield/no-hardcoded-colors",
+    "fairfield/no-inline-styles", 
+    "fairfield/no-classname-props",
+    "fairfield/no-html-structure",
+    "fairfield/enforce-design-system",
+    "fairfield/no-circular-ui-imports",
+    "fairfield/enforce-types-architecture",
+    "fairfield/no-absolute-imports-in-design",
+    "fairfield/no-hardcoded-text-in-components",
+    "fairfield/enforce-cms-usage",
+    "unused-imports/no-unused-imports"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "files.associations": {
+    "*.js": "javascript",
+    "*.jsx": "javascriptreact", 
+    "*.ts": "typescript",
+    "*.tsx": "typescriptreact"
+  },
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  }
+}
