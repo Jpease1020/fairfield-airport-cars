@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Container, Stack, Text, Button, Box, Alert, LoadingSpinner } from '@/ui';
 import { getSquareCredentials } from '@/lib/config/environment-config';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface DigitalWalletPaymentProps {
   amount: number;
@@ -10,6 +11,7 @@ interface DigitalWalletPaymentProps {
   onPaymentSuccess: (paymentData: any) => void;
   onPaymentError: (error: string) => void;
   disabled?: boolean;
+  cmsData: any;
 }
 
 type SquarePayments = any;
@@ -27,7 +29,11 @@ async function loadSquareSdk(): Promise<void> {
   });
 }
 
-export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPaymentError, disabled = false }: DigitalWalletPaymentProps) {
+export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPaymentError, disabled = false, cmsData }: DigitalWalletPaymentProps) {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.booking || {};
+  
   // Feature flag: hide wallets until Square setup is complete
   const walletsEnabled = process.env.NEXT_PUBLIC_WALLETS_ENABLED === 'true';
   if (!walletsEnabled) {
@@ -126,7 +132,7 @@ export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPa
     return (
       <Container>
         <Alert variant="warning">
-          <Text>Apple Pay / Google Pay not available on this device or domain is not verified.</Text>
+          <Text cmsId="digital-wallet-not-available">{pageCmsData?.['digitalWallet-notAvailable'] || 'Apple Pay / Google Pay not available on this device or domain is not verified.'}</Text>
         </Alert>
       </Container>
     );
@@ -136,44 +142,44 @@ export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPa
     <Container>
       <Stack spacing="lg">
         <Stack spacing="sm">
-          <Text weight="bold" size="lg">Digital Wallet Payment</Text>
-          <Text variant="muted">Pay securely with Apple Pay or Google Pay</Text>
+          <Text weight="bold" size="lg" cmsId="digital-wallet-title">{pageCmsData?.['digitalWallet-title'] || 'Digital Wallet Payment'}</Text>
+          <Text variant="muted" cmsId="digital-wallet-subtitle">{pageCmsData?.['digitalWallet-subtitle'] || 'Pay securely with Apple Pay or Google Pay'}</Text>
         </Stack>
 
         <Box variant="outlined" padding="lg">
           <Stack direction="horizontal" justify="space-between" align="center">
-            <Text weight="bold">Total Amount</Text>
-            <Text weight="bold" size="lg">${amount.toFixed(2)}</Text>
+            <Text weight="bold" cmsId="digital-wallet-total-label">{pageCmsData?.['digitalWallet-totalLabel'] || 'Total Amount'}</Text>
+            <Text weight="bold" size="lg" cmsId="digital-wallet-total-amount">${amount.toFixed(2)}</Text>
           </Stack>
         </Box>
 
         <Stack spacing="md">
           {appleSupported && (
-            <Button variant="primary" onClick={() => tokenizeAndPay('apple')} disabled={disabled || isLoading} fullWidth size="lg">
+            <Button variant="primary" onClick={() => tokenizeAndPay('apple')} disabled={disabled || isLoading} fullWidth size="lg" cmsId="digital-wallet-payment-apple" >
               {isLoading ? (
                 <Stack direction="horizontal" align="center" spacing="sm">
                   <LoadingSpinner size="sm" />
-                  <Text>Processing...</Text>
+                  <Text cmsId="digital-wallet-processing">{pageCmsData?.['digitalWallet-processing'] || 'Processing...'}</Text>
                 </Stack>
               ) : (
                 <Stack direction="horizontal" align="center" spacing="sm">
-                  <Text>🍎</Text>
-                  <Text>Pay with Apple Pay</Text>
+                  <Text cmsId="digital-wallet-apple-icon">🍎</Text>
+                  <Text cmsId="digital-wallet-apple-text">{pageCmsData?.['digitalWallet-applePay'] || 'Pay with Apple Pay'}</Text>
                 </Stack>
               )}
             </Button>
           )}
           {googleSupported && (
-            <Button variant="secondary" onClick={() => tokenizeAndPay('google')} disabled={disabled || isLoading} fullWidth size="lg">
+            <Button variant="secondary" onClick={() => tokenizeAndPay('google')} disabled={disabled || isLoading} fullWidth size="lg" cmsId="digital-wallet-payment-google" >
               {isLoading ? (
                 <Stack direction="horizontal" align="center" spacing="sm">
                   <LoadingSpinner size="sm" />
-                  <Text>Processing...</Text>
+                  <Text cmsId="digital-wallet-processing">{pageCmsData?.['digitalWallet-processing'] || 'Processing...'}</Text>
                 </Stack>
               ) : (
                 <Stack direction="horizontal" align="center" spacing="sm">
-                  <Text>GPay</Text>
-                  <Text>Pay with Google Pay</Text>
+                  <Text cmsId="digital-wallet-google-icon">GPay</Text>
+                  <Text cmsId="digital-wallet-google-text">{pageCmsData?.['digitalWallet-googlePay'] || 'Pay with Google Pay'}</Text>
                 </Stack>
               )}
             </Button>
@@ -182,12 +188,12 @@ export function DigitalWalletPayment({ amount, bookingId, onPaymentSuccess, onPa
 
         {error && (
           <Alert variant="error">
-            <Text>{error}</Text>
+            <Text cmsId="digital-wallet-error">{error}</Text>
           </Alert>
         )}
 
         <Alert variant="info">
-          <Text size="sm">Your payment information is encrypted and securely processed. We never store your payment details.</Text>
+          <Text size="sm" cmsId="digital-wallet-security">{pageCmsData?.['digitalWallet-security'] || 'Your payment information is encrypted and securely processed. We never store your payment details.'}</Text>
         </Alert>
       </Stack>
     </Container>

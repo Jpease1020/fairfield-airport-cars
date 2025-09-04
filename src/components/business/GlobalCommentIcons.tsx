@@ -85,10 +85,10 @@ const DebugText = styled(Span)`
 
 interface GlobalCommentIconsProps {
   commentMode?: boolean;
-  cmsData?: any;
 }
 
-export default function GlobalCommentIcons({ commentMode = false, cmsData }: GlobalCommentIconsProps) {
+export default function GlobalCommentIcons({ commentMode = false }: GlobalCommentIconsProps) {
+  
   const [comments, setComments] = useState<CommentRecord[]>([]);
   const [commentAnchors, setCommentAnchors] = useState<Record<string, { top: number; left: number }>>({});
   const [hoveredCommentId, setHoveredCommentId] = useState<string | null>(null);
@@ -185,8 +185,8 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
         
         // Additional fallback: try to find by CMS ID if elementSelector is a CMS path
         if (!el && comment.elementSelector && comment.elementSelector.includes('.')) {
-          // Look for elements with data-cms-id that matches the elementSelector
-          el = document.querySelector(`[data-cms-id="${comment.elementSelector}"]`) as HTMLElement;
+          // Look for elements with cmsId that matches the elementSelector
+          el = document.querySelector(`[cmsId="${comment.elementSelector}"]`) as HTMLElement;
         }
 
         if (el) {
@@ -343,19 +343,21 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
             <Button 
               variant="outline" 
               onClick={cancelDelete}
+              cmsId="ignore"
+              text="Cancel"
             >
               Cancel
             </Button>
             <Button 
-              variant="danger" 
+              variant="danger"  
               onClick={confirmDelete}
-            >
-              Delete
-            </Button>
+              cmsId="ignore"
+              text="Delete"
+            />
           </Stack>
         }
       >
-        <Text>
+        <Text cmsId="ignore">
           Are you sure you want to delete this comment? This action cannot be undone.
         </Text>
       </Modal>
@@ -373,8 +375,8 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
               size={16} 
               $isOpen={showCommentsDrawer}
             />
-            <Span size="xs" weight="semibold">
-              {comments.length + orphanedComments.length}
+            <Span size="xs" weight="semibold" cmsId="comments-count" >
+              {String(comments.length + orphanedComments.length)}
             </Span>
           </Stack>
         </CommentsDrawerHandle>
@@ -424,6 +426,8 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
                   variant="ghost" 
                   size="sm" 
                   data-comment-id={id}
+                  cmsId="comment-icon"
+                  
                 >
                   <MessageSquare size={14} />
                 </ClickableCommentButton>
@@ -434,13 +438,13 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
             <FloatingCommentBox $top={commentAnchors[id].top - 10} $left={commentAnchors[id].left + 30}>
               <StyledTooltip variant="tooltip" padding="md" role="tooltip">
                 <Stack spacing="sm" align="flex-start">
-                  <Span size="xs" color="muted" weight="medium">
+                  <Span size="xs" color="muted" weight="medium" cmsId="tooltip-element" >
                     {comments.find(c => c.id === id)?.elementText || 'Comment'}
                   </Span>
                   <Text size="sm" weight="medium">
                     {comments.find(c => c.id === id)?.comment || 'No comment text'}
                   </Text>
-                  <Span size="xs" color="muted">
+                  <Span size="xs" color="muted" cmsId="tooltip-status" >
                     Status: {comments.find(c => c.id === id)?.status || 'unknown'}
                   </Span>
                 </Stack>
@@ -456,28 +460,29 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
           onClose={() => {
             setShowCommentsDrawer(false);
             setSelectedCommentId(null); // Clear selection when drawer closes
-          }}
+          } }
           title="Page Comments"
           position="left"
           width={500}
           headerVariant="minimal"
           headerMargin="none"
-          actions={
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowCommentsDrawer(false)}
+
+          actions={<Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowCommentsDrawer(false)}
+            cmsId="ignore"
             >
               <X size={16} />
-            </Button>
-          }
+            </Button>} 
+          cmsData={undefined}
         >
                 <Stack spacing="lg" align="stretch">
           {/* Active Comments */}
           {comments.length > 0 && (
             <FullWidthContainer variant="elevated" padding="md">
               <Stack spacing="sm" align="flex-start">
-                <Span size="sm" weight="semibold">Active Comments ({comments.length})</Span>
+                <Span size="sm" weight="semibold" cmsId="active-comments-count" >Active Comments ({String(comments.length)})</Span>
                 {comments.map((comment) => (
                   <HighlightedCommentContainer 
                     key={comment.id} 
@@ -489,7 +494,7 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
                       <Stack direction="horizontal" align="center" justify="space-between" spacing="sm">
                         <Stack direction="horizontal" align="center" spacing="sm">
                           {getStatusIcon(comment.status)}
-                          <Span size="sm" weight="medium">{comment.elementText}</Span>
+                          <Span size="sm" weight="medium" cmsId="comment-element" >{comment.elementText}</Span>
                         </Stack>
                         <Stack direction="horizontal" spacing="xs">
                           <Button
@@ -497,6 +502,8 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
                             size="sm"
                             onClick={() => handleEditComment(comment.id)}
                             disabled={editingComment === comment.id}
+                            cmsId="edit-comment"
+                            
                           >
                             <Edit size={14} />
                           </Button>
@@ -504,6 +511,8 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteComment(comment.id)}
+                            cmsId="delete-comment"
+                            
                           >
                             <Trash2 size={14} />
                           </Button>
@@ -524,16 +533,18 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
                               size="sm"
                               onClick={() => handleSaveEdit(comment.id)}
                               disabled={!editText.trim()}
-                            >
-                              Save
-                            </Button>
+                              cmsId="save-edit"
+                              
+                              text="Save"
+                            />
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={handleCancelEdit}
-                            >
-                              Cancel
-                            </Button>
+                              cmsId="cancel-edit"
+                              
+                              text="Cancel"
+                            />
                           </Stack>
                         </Stack>
                       ) : (
@@ -542,24 +553,24 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
 
                       {/* Comment Metadata */}
                       <Stack spacing="xs" align="flex-start">
-                        <Span size="xs" color="muted">
+                        <Span size="xs" color="muted" cmsId="comment-created" >
                           Created: {new Date(comment.createdAt).toLocaleDateString()}
                         </Span>
-                        <Span size="xs" color="muted">
+                        <Span size="xs" color="muted" cmsId="comment-author" >
                           Author: {comment.createdBy}
                         </Span>
                         {/* Debug: Show actual IDs */}
-                        <DebugText color="secondary">
+                        <DebugText color="secondary" cmsId="debug-firebase-id" >
                           Firebase ID: {comment.id}
                         </DebugText>
-                        <DebugText color="secondary">
+                        <DebugText color="secondary" cmsId="debug-element-id" >
                           Element ID: {comment.elementId}
                         </DebugText>
                       </Stack>
 
                       {/* Status Management */}
                       <Stack spacing="sm" align="flex-start">
-                        <Span size="xs" weight="medium">Status:</Span>
+                        <Span size="xs" weight="medium" cmsId="status-label" >Status:</Span>
                         <Stack direction="horizontal" align="center" spacing="sm">
                           <Select
                             value={comment.status}
@@ -571,7 +582,7 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
                               { value: 'resolved', label: 'Resolved' }
                             ]}
                           />
-                          <Span size="xs" color="muted">
+                          <Span size="xs" color="muted" cmsId="status-description" >
                             {getStatusDescription(comment.status)}
                           </Span>
                         </Stack>
@@ -589,17 +600,17 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
               <Stack spacing="sm" align="flex-start">
                 <Stack direction="horizontal" align="flex-start" spacing="sm">
                   <AlertTriangle size={16} color="orange" />
-                  <Span size="sm" weight="semibold">Orphaned Comments ({orphanedComments.length})</Span>
+                  <Span size="sm" weight="semibold" cmsId="orphaned-comments-count" >Orphaned Comments ({String(orphanedComments.length)})</Span>
                 </Stack>
-                <Text size="xs" color="muted">
+                <Text size="xs" color="muted" cmsId="ignore">
                   These comments are for elements that can no longer be found on this page.
                 </Text>
                 {orphanedComments.map((comment) => (
                   <FullWidthContainer key={comment.id} variant="default" padding="sm">
                     <Stack spacing="xs" align="flex-start">
-                      <Span size="sm" weight="medium">{comment.elementText}</Span>
+                      <Span size="sm" weight="medium" cmsId="orphaned-element" >{comment.elementText}</Span>
                       <Text size="sm">{comment.comment}</Text>
-                      <Span size="xs" color="muted">
+                      <Span size="xs" color="muted" cmsId="orphaned-created" >
                         Created: {new Date(comment.createdAt).toLocaleDateString()}
                       </Span>
                       <Stack direction="horizontal" spacing="xs">
@@ -607,6 +618,8 @@ export default function GlobalCommentIcons({ commentMode = false, cmsData }: Glo
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteComment(comment.id)}
+                          cmsId="delete-orphaned"
+                          
                         >
                           <Trash2 size={14} />
                         </Button>

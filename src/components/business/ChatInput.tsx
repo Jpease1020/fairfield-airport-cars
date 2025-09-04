@@ -127,9 +127,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             disabled={disabled}
             variant={isListening ? 'primary' : 'outline'}
             size="sm"
-          >
-            {isListening ? '🛑' : '🎤'}
-          </Button>
+            cmsId="chat-input-voice-button"
+            text={isListening ? '🛑' : '🎤'}
+          />
         )}
         
         <Button
@@ -137,9 +137,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           disabled={!value.trim() || disabled}
           variant="primary"
           size="sm"
-        >
-          📤
-        </Button>
+          cmsId="chat-input-send-button"
+          text="📤"
+        />
       </Container>
     </Container>
   );

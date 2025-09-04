@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 
 // Function to find all CMS IDs in a file
 function findCMSIds(content) {
-  const regex = /data-cms-id="([^"]+)"/g;
+  const regex = /cmsId="([^"]+)"/g;
   const matches = [];
   let match;
   
@@ -56,7 +56,7 @@ function convertFile(filePath) {
     let newContent = content;
     cmsIds.forEach(({ id, fullMatch }) => {
       const newId = idMapping[id];
-      const newAttribute = `data-cms-id="${newId}"`;
+      const newAttribute = `cmsId="${newId}"`;
       newContent = newContent.replace(fullMatch, newAttribute);
     });
     

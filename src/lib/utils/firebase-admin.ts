@@ -55,6 +55,24 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
     adminDb = getFirestore();
     adminAuth = getAuth();
     
+    // Configure emulator settings if using emulators
+    if (shouldInitializeForEmulators) {
+      // Set emulator host for Firestore
+      if (process.env.FIREBASE_EMULATOR_HOST) {
+        adminDb.settings({
+          host: process.env.FIREBASE_EMULATOR_HOST,
+          ssl: false
+        });
+        console.log(`🔌 Admin Firestore connected to emulator: ${process.env.FIREBASE_EMULATOR_HOST}`);
+      }
+      
+      // Set emulator host for Auth
+      if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+        // Auth emulator host is already set in environment
+        console.log(`🔌 Admin Auth connected to emulator: ${process.env.FIREBASE_AUTH_EMULATOR_HOST}`);
+      }
+    }
+    
     console.log('✅ Firebase Admin initialized successfully');
   } catch (error) {
     console.error('Failed to initialize Firebase Admin:', error);

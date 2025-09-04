@@ -1,6 +1,9 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+// Force dynamic rendering to prevent server-side rendering issues
+export const dynamic = 'force-dynamic';
+
+import dynamicImport from 'next/dynamic';
 import { useEffect, useState, Suspense } from 'react';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
@@ -11,10 +14,10 @@ import {
   Container,
   Text,
   ActionButtonGroup,
-  useToast
+  useToast,
+  Span
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Simple driver ID constant for single-driver setup
 const DRIVER_ID = ''; // Will be set dynamically based on logged-in user
@@ -24,7 +27,7 @@ function DriverLocationContent() {
   const allowed = search.get('key') === process.env.NEXT_PUBLIC_DRIVER_SECRET;
   const { addToast } = useToast();
   const { cmsData } = useCMSData();
-  const { mode } = useInteractionMode();
+  
   const [status, setStatus] = useState('Requesting location permission…');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -68,8 +71,8 @@ function DriverLocationContent() {
         <GridSection variant="content" columns={1}>
           <Container>
             <LoadingSpinner />
-            <Text data-cms-id="loading-message" mode={mode}>
-              {getCMSField(cmsData, 'loading-message', 'Please wait while we initialize location services...')}
+            <Text cmsId="loading-message" >
+              {cmsData?.['loading-message'] || 'Please wait while we initialize location services...'}
             </Text>
           </Container>
         </GridSection>
@@ -82,23 +85,23 @@ function DriverLocationContent() {
       <Container variant="default" padding="none">
         <GridSection variant="content" columns={1}>
           <Container>
-            <Text data-cms-id="unauthorized-title" mode={mode}>
-              {getCMSField(cmsData, 'unauthorized-title', '❌ Unauthorized')}
+            <Text cmsId="unauthorized-title" >
+              {cmsData?.['unauthorized-title'] || '❌ Unauthorized'}
             </Text>
-            <Text data-cms-id="unauthorized-description" mode={mode}>
-              {getCMSField(cmsData, 'unauthorized-description', 'You are not authorized to access this page.')}
+            <Text cmsId="unauthorized-description" >
+              {cmsData?.['unauthorized-description'] || 'You are not authorized to access this page.'}
             </Text>
             <ActionButtonGroup buttons={[
               {
                 id: 'go-back',
-                label: getCMSField(cmsData, 'actions-goBack', 'Go Back'),
+                label: cmsData?.['actions-goBack'] || 'Go Back',
                 onClick: () => window.history.back(),
                 variant: 'primary',
                 icon: '⬅️'
               },
               {
                 id: 'contact-support',
-                label: getCMSField(cmsData, 'actions-contactSupport', 'Contact Support'),
+                label: cmsData?.['actions-contactSupport'] || 'Contact Support',
                 onClick: () => addToast('info', 'Support: (203) 555-0123'),
                 variant: 'outline',
                 icon: '📞'
@@ -114,25 +117,25 @@ function DriverLocationContent() {
     <Container variant="default" padding="none">
       <GridSection variant="content" columns={1}>
         <Container>
-          <Text data-cms-id="title" mode={mode}>
-            {getCMSField(cmsData, 'title', '📍 Location Status')}
+          <Text cmsId="title" >
+            {cmsData?.['title'] || '📍 Location Status'}
           </Text>
           
-          <div data-cms-id="status-container">
-            <Text data-cms-id="status-label" mode={mode}>
-              {getCMSField(cmsData, 'status-label', 'Status:')}
+          <div>
+            <Text cmsId="status-label" >
+              {cmsData?.['status-label'] || 'Status:'}
               {' '}{status}
             </Text>
             
             {coords && (
               <div>
-                <Text data-cms-id="coordinates-label" mode={mode}>
-                  <strong data-cms-id="actions-stop-sharing">
-                    {getCMSField(cmsData, 'coordinates-label', 'Current Coordinates:')}
-                  </strong>
+                <Text cmsId="coordinates-label" >
+                                  <Span cmsId="actions-stop-sharing" weight="bold">
+                  {cmsData?.['coordinates-label'] || 'Current Coordinates:'}
+                </Span>
                 </Text>
-                <Text data-cms-id="coords" mode={mode}>
-                  {getCMSField(cmsData, 'coords', `Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`)}
+                <Text cmsId="coords" >
+                  {cmsData?.['coords'] || `Lat: ${coords.lat.toFixed(5)}, Lng: ${coords.lng.toFixed(5)}`}
                 </Text>
               </div>
             )}
@@ -141,14 +144,14 @@ function DriverLocationContent() {
           <ActionButtonGroup buttons={[
             {
               id: 'refresh-location',
-              label: getCMSField(cmsData, 'actions-refreshLocation', 'Refresh Location'),
+              label: cmsData?.['actions-refreshLocation'] || 'Refresh Location',
               onClick: () => window.location.reload(),
               variant: 'primary',
               icon: '🔄'
             },
             {
               id: 'stop-sharing',
-              label: getCMSField(cmsData, 'actions-stopSharing', 'Stop Sharing'),
+              label: cmsData?.['actions-stopSharing'] || 'Stop Sharing',
               onClick: () => {
                 setStatus('Location sharing stopped');
                 addToast('info', 'Location sharing stopped');
@@ -163,7 +166,7 @@ function DriverLocationContent() {
   );
 }
 
-const DriverLocationPage = dynamic(() => Promise.resolve(() => {
+const DriverLocationPage = dynamicImport(() => Promise.resolve(() => {
   return (
     <Suspense fallback={
       <GridSection variant="content" columns={1}>

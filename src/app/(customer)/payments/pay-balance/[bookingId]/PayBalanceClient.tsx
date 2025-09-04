@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 import {
   Container,
   GridSection,
@@ -27,12 +26,13 @@ interface BookingDetails {
 }
 
 interface PayBalanceClientProps {
-  cmsData: any;
   bookingId: string;
 }
 
-export default function PayBalanceClient({ cmsData, bookingId }: PayBalanceClientProps) {
-  const { mode } = useInteractionMode();
+export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
+  // Get CMS data from provider - extract only what this page needs
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.['customer-pay-balance'] || {};
   const router = useRouter();
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,8 +77,8 @@ export default function PayBalanceClient({ cmsData, bookingId }: PayBalanceClien
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" data-cms-id="loading-message">
-                {getCMSField(cmsData, 'payments-message', 'Loading booking details...')}
+              <Text align="center" cmsId="loading-message">
+                {cmsData?.['payments-message'] || 'Loading booking details...'}
               </Text>
             </Stack>
           </Container>
@@ -93,18 +93,18 @@ export default function PayBalanceClient({ cmsData, bookingId }: PayBalanceClien
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="error-title">
-                {getCMSField(cmsData, 'payments-title', 'Unable to Load Booking')}
+              <H1 align="center" cmsId="error-title">
+                {cmsData?.['payments-title'] || 'Unable to Load Booking'}
               </H1>
-              <Text align="center" data-cms-id="error-description">
-                {getCMSField(cmsData, 'payments-description', 'We could not load the booking details. Please check your booking ID and try again.')}
+              <Text align="center" cmsId="error-description">
+                {cmsData?.['payments-description'] || 'We could not load the booking details. Please check your booking ID and try again.'}
               </Text>
               <Button
                 onClick={() => router.push('/bookings')}
                 variant="primary"
-                data-cms-id="error-view-bookings"
+                cmsId="error-view-bookings"
               >
-                {getCMSField(cmsData, 'payments-viewBookings', 'View My Bookings')}
+                {cmsData?.['payments-viewBookings'] || 'View My Bookings'}
               </Button>
             </Stack>
           </Container>
@@ -119,11 +119,11 @@ export default function PayBalanceClient({ cmsData, bookingId }: PayBalanceClien
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="success-title">
-                {getCMSField(cmsData, 'payments-title', 'Payment Successful!')}
+              <H1 align="center" cmsId="success-title">
+                {cmsData?.['payments-title'] || 'Payment Successful!'}
               </H1>
-              <Text align="center" data-cms-id="success-description">
-                {getCMSField(cmsData, 'payments-description', 'Your payment has been processed successfully. Redirecting to confirmation...')}
+              <Text align="center" cmsId="success-description">
+                {cmsData?.['payments-description'] || 'Your payment has been processed successfully. Redirecting to confirmation...'}
               </Text>
             </Stack>
           </Container>
@@ -138,7 +138,7 @@ export default function PayBalanceClient({ cmsData, bookingId }: PayBalanceClien
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <Text align="center">No booking details found.</Text>
+              <Text align="center" cmsId="ignore">No booking details found.</Text>
             </Stack>
           </Container>
         </GridSection>
@@ -154,19 +154,19 @@ export default function PayBalanceClient({ cmsData, bookingId }: PayBalanceClien
         <Container>
           <Stack spacing="lg">
             <Stack spacing="sm" align="center">
-              <H1 align="center" data-cms-id="title">
-                {getCMSField(cmsData, 'payments-title', 'Complete Payment')}
+              <H1 align="center" cmsId="title">
+                {cmsData?.['payments-title'] || 'Complete Payment'}
               </H1>
-              <Text align="center" data-cms-id="subtitle">
-                {getCMSField(cmsData, 'payments-subtitle', `Complete payment for your booking from ${bookingDetails.pickupLocation} to ${bookingDetails.dropoffLocation}`)}
+              <Text align="center" cmsId="subtitle">
+                {cmsData?.['payments-subtitle'] || `Complete payment for your booking from ${bookingDetails.pickupLocation} to ${bookingDetails.dropoffLocation}`}
               </Text>
             </Stack>
 
             <Stack spacing="md" align="center">
-              <Text variant="h3" data-cms-id="amount-title">
-                {getCMSField(cmsData, 'payments-title', 'Amount Due')}
+              <Text variant="h3" cmsId="amount-title">
+                {cmsData?.['payments-title'] || 'Amount Due'}
               </Text>
-              <Text variant="h2" data-cms-id="amount-value">
+              <Text variant="h2" cmsId="amount-value">
                 ${bookingDetails.balanceDue.toFixed(2)}
               </Text>
             </Stack>
@@ -176,6 +176,7 @@ export default function PayBalanceClient({ cmsData, bookingId }: PayBalanceClien
               bookingId={bookingDetails.id}
               onPaymentSuccess={handlePaymentSuccess}
               onPaymentError={handlePaymentError}
+              cmsData={cmsData}
             />
           </Stack>
         </Container>

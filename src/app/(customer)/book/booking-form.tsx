@@ -10,9 +10,10 @@ import { PaymentPhase } from '@/components/booking/PaymentPhase';
 
 interface BookingFormProps {
   booking?: any;
+  cmsData: any;
 }
 
-function BookingFormContent({ booking }: BookingFormProps) {
+function BookingFormContent({ booking, cmsData }: BookingFormProps) {
   const {
     // State
     currentPhase,
@@ -209,6 +210,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               setIsCalculating={setIsCalculating}
               goToNextPhase={goToNextPhase}
               canProceed={canProceedFromTripDetails}
+              cmsData={cmsData}
             />
           )}
 
@@ -230,6 +232,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
               onBack={goToPreviousPhase}
               onContinue={goToNextPhase}
               canContinue={canProceedFromContactInfo}
+              cmsData={cmsData}
             />
           )}
 
@@ -281,54 +284,53 @@ function BookingFormContent({ booking }: BookingFormProps) {
                 fareType,
                 saveInfoForFuture,
               }}
+              cmsData={cmsData}
             />
           )}
 
           {/* Success Confirmation Page */}
           {isBookingComplete && (
-            <Box variant="elevated" padding="xl">
+            <Box variant="elevated" padding="xl" data-testid="booking-success-confirmation">
               <Stack spacing="xl" align="center">
-                <Text size="3xl" weight="bold" color="success">
-                  🎉 Booking Confirmed!
+                <Text size="3xl" weight="bold" color="success" cmsId="booking-confirmed-title">
+                  {cmsData?.['booking-confirmed-title'] || 'Booking Confirmed!'}
                 </Text>
                 
-                <Text size="lg" align="center">
-                  Your ride from {pickupLocation} to {dropoffLocation} is confirmed!
+                                  <Text size="lg" align="center" cmsId="booking-confirmed-description">
+                  {cmsData?.['booking-confirmed-description'] || `Your ride from ${pickupLocation} to ${dropoffLocation} is confirmed!`}
                 </Text>
 
-                <Box variant="outlined" padding="lg">
+                <Box variant="outlined" padding="lg" data-testid="booking-details-summary">
                   <Stack spacing="md">
                     <Stack direction="horizontal" justify="space-between">
-                      <Text weight="medium">Pickup Location:</Text>
-                      <Text>{pickupLocation}</Text>
+                      <Text weight="medium" cmsId="booking-detail-pickup">{cmsData?.['booking-detail-pickup'] || 'Pickup Location:'}</Text>
+                      <Text cmsId="pickup-location-value">{pickupLocation}</Text>
                     </Stack>
                     <Stack direction="horizontal" justify="space-between">
-                      <Text weight="medium">Dropoff Location:</Text>
-                      <Text>{dropoffLocation}</Text>
+                      <Text weight="medium" cmsId="booking-detail-dropoff">{cmsData?.['booking-detail-dropoff'] || 'Dropoff Location:'}</Text>
+                      <Text cmsId="dropoff-location-value">{dropoffLocation}</Text>
                     </Stack>
                     <Stack direction="horizontal" justify="space-between">
-                      <Text weight="medium">Date & Time:</Text>
-                      <Text>{new Date(pickupDateTime).toLocaleString()}</Text>
+                      <Text weight="medium" cmsId="booking-detail-datetime">{cmsData?.['booking-detail-datetime'] || 'Date & Time:'}</Text>
+                      <Text cmsId="datetime-value">{new Date(pickupDateTime).toLocaleString()}</Text>
                     </Stack>
                     <Stack direction="horizontal" justify="space-between">
-                      <Text weight="medium">Total Fare:</Text>
-                      <Text weight="bold" color="primary">${(fare || 0) + tipAmount}</Text>
+                      <Text weight="medium" cmsId="booking-detail-total">{cmsData?.['booking-detail-total'] || 'Total Fare:'}</Text>
+                      <Text weight="bold" color="primary" cmsId="total-fare-value">${(fare || 0) + tipAmount}</Text>
                     </Stack>
                     <Stack direction="horizontal" justify="space-between">
-                      <Text weight="medium">Deposit Paid:</Text>
-                      <Text color="success">${depositAmount?.toFixed(2)}</Text>
+                      <Text weight="medium" cmsId="booking-detail-deposit">{cmsData?.['booking-detail-deposit'] || 'Deposit Paid:'}</Text>
+                      <Text color="success" cmsId="deposit-amount-value">${depositAmount?.toFixed(2)}</Text>
                     </Stack>
                   </Stack>
                 </Box>
 
                 <Stack spacing="md" align="center">
-                  <Text size="lg" weight="medium" align="center">
-                    🚗 What's Next?
+                  <Text size="lg" weight="medium" align="center" cmsId="whats-next-title">
+                    {cmsData?.['whats-next-title'] || "What's Next?"}
                   </Text>
-                  <Text size="sm" color="secondary" align="center">
-                    • You'll receive a confirmation email shortly<br/>
-                    • Driver will contact you 15 minutes before pickup<br/>
-                    • Track your driver in real-time on the booking page
+                  <Text size="sm" color="secondary" align="center" cmsId="whats-next-description">
+                    {cmsData?.['whats-next-description'] || '• You\'ll receive a confirmation email shortly<br/>• Driver will contact you 15 minutes before pickup<br/>• Track your driver in real-time on the booking page'}
                   </Text>
                 </Stack>
 
@@ -337,16 +339,18 @@ function BookingFormContent({ booking }: BookingFormProps) {
                     onClick={() => window.location.href = `/booking/${completedBookingId || 'unknown'}`}
                     variant="primary"
                     size="lg"
-                  >
-                    View My Booking
-                  </Button>
+                    data-testid="view-booking-button"
+                    cmsId="view-booking-button"
+                    text={cmsData?.['view-booking-button'] || 'View My Booking'}
+                  />
                   <Button
                     onClick={() => window.location.href = '/bookings'}
                     variant="outline"
                     size="lg"
-                  >
-                    All My Bookings
-                  </Button>
+                    data-testid="all-bookings-button"
+                    cmsId="all-bookings-button"
+                    text={cmsData?.['all-bookings-button'] || 'All My Bookings'}
+                  />
                 </Stack>
               </Stack>
             </Box>
@@ -354,7 +358,7 @@ function BookingFormContent({ booking }: BookingFormProps) {
 
           {/* Confirm Booking Button - Only show in payment phase and when not complete */}
           {currentPhase === 'payment' && !isBookingComplete && (
-            <Box variant="elevated" padding="lg">
+            <Box variant="elevated" padding="lg" data-testid="confirm-booking-section">
               <Stack spacing="md" align="center">
                 <Button
                   type="button"
@@ -363,12 +367,12 @@ function BookingFormContent({ booking }: BookingFormProps) {
                   disabled={!depositAmount || isProcessingPayment || !processPaymentFunction}
                   onClick={handleProcessPayment}
                   data-testid="confirm-booking-button"
-                >
-                  {isProcessingPayment ? 'Processing...' : 'Confirm Booking'}
-                </Button>
+                  cmsId="confirm-booking-button"
+                  text={isProcessingPayment ? cmsData?.['processing-payment'] || 'Processing...' : cmsData?.['confirm-booking'] || 'Confirm Booking'}
+                />
                 
-                <Text size="sm" color="secondary" align="center">
-                  Click to complete your deposit payment and confirm your booking
+                <Text size="sm" color="secondary" align="center" cmsId="confirm-booking-description">
+                  {cmsData?.['confirm-booking-description'] || 'Click to complete your deposit payment and confirm your booking'}
                 </Text>
               </Stack>
             </Box>

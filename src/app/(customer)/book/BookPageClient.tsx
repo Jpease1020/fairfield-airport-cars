@@ -2,16 +2,14 @@
 
 import React from 'react';
 import { Container, Stack, H2, Text } from '@/design/ui';
-import { getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
+
 import BookingForm from './booking-form';
 
-interface BookPageClientProps {
-  cmsData: any;
-}
-
-function BookPageClient({ cmsData }: BookPageClientProps) {
-  const { mode } = useInteractionMode();
+function BookPageClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.['customer-book'] || {};
 
   return (
     <Container maxWidth="full" padding="xl" data-testid="book-form-section">
@@ -19,21 +17,21 @@ function BookPageClient({ cmsData }: BookPageClientProps) {
         <Stack spacing="md" align="center">
           <H2 
             align="center" 
-            data-cms-id="hero-title"
-            mode={mode}
+            cmsId="hero-title"
+            
           >
-            {getCMSField(cmsData, 'hero-title', 'Complete Your Booking')}
+            {pageCmsData?.['hero-title'] || 'Complete Your Booking'}
           </H2>
           <Text 
             variant="lead" 
             align="center" 
-            data-cms-id="hero-subtitle"
-            mode={mode}
+            cmsId="hero-subtitle"
+            
           >
-            {getCMSField(cmsData, 'hero-subtitle', 'Fill in your details below')}
+            {pageCmsData?.['hero-subtitle'] || 'Fill in your details below'}
           </Text>
         </Stack>
-        <BookingForm />
+        <BookingForm cmsData={pageCmsData} />
       </Stack>
     </Container>
   );

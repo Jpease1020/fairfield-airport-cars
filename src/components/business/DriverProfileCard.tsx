@@ -11,6 +11,7 @@ import { Button } from '@/design/components/base-components/Button';
 import { StarRating } from '@/design/components/base-components/StarRating';
 import { LoadingSpinner } from '@/design/components/base-components/notifications/LoadingSpinner';
 import { ActionButtonGroup } from '@/design/components/base-components/ActionButtonGroup';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Styled component for profile image container
 const ProfileImageContainer = styled.div`
@@ -51,6 +52,11 @@ export function DriverProfileCard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.booking || {};
+
+  const { cmsData } = useCMSData();
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -80,9 +86,7 @@ export function DriverProfileCard({
     return (
       <Container variant="default" padding="md">
         <Stack direction="vertical" spacing="md">
-          <Text variant="body" color="error">
-            Unable to load driver information. Please try again.
-          </Text>
+          <Text variant="body" color="error" cmsId="driver-profile-card-error"  >Unable to load driver information. Please try again.</Text>
           <ActionButtonGroup buttons={[
             {
               id: 'retry',
@@ -157,12 +161,12 @@ export function DriverProfileCard({
               {profile.profileImage ? (
                 <ProfileImage src={profile.profileImage} alt={profile.name} />
               ) : (
-                <Text size="xl">👨‍💼</Text>
+                <Text size="xl" cmsId="ignore"  >👨‍💼</Text>
               )}
             </ProfileImageContainer>
             
             <Stack direction="vertical" spacing="xs">
-              <Text variant="lead" weight="bold">{profile.name}</Text>
+              <Text variant="lead" weight="bold" cmsId="driver-profile-card-name"  >{profile.name}</Text>
               <Stack direction="horizontal" spacing="sm" align="center">
                 <Badge variant={getStatusColor(profile.status)}>
                   {getStatusIcon(profile.status)} {profile.status}
@@ -177,22 +181,22 @@ export function DriverProfileCard({
           {/* Contact Info */}
           {showContactInfo && (
             <Stack direction="vertical" spacing="sm">
-              <Text variant="small" weight="semibold">Contact Information</Text>
+              <Text variant="small" weight="semibold" cmsId="driver-profile-card-contact-information"  >{pageCmsData?.['driverProfileCardContactInformation'] || 'Contact Information'}</Text>
               <Stack direction="vertical" spacing="xs">
-                <Text variant="small">📧 {profile.email}</Text>
-                <Text variant="small">📱 {profile.phone}</Text>
+                <Text variant="small" cmsId="ignore"  >📧 {profile.email}</Text>
+                <Text variant="small" cmsId="ignore"  >📱 {profile.phone}</Text>
               </Stack>
             </Stack>
           )}
 
           {/* Credentials */}
           {showCredentials && (
-            <Stack direction="vertical" spacing="sm">
-              <Text variant="small" weight="semibold">Credentials</Text>
+            <Stack direction="vertical" spacing="sm"> 
+              <Text variant="small" weight="semibold" cmsId="driver-profile-card-credentials"  >{pageCmsData?.['driverProfileCardCredentials'] || 'Credentials'}</Text>
               <Stack direction="vertical" spacing="xs">
-                <Text variant="small">🆔 License: {profile.licenseNumber}</Text>
-                <Text variant="small">📅 Expires: {formatDate(profile.licenseExpiry)}</Text>
-                <Text variant="small">🛡️ Insurance: {profile.insuranceProvider}</Text>
+                <Text variant="small" cmsId="ignore"  >🆔 License: {profile.licenseNumber}</Text>
+                <Text variant="small" cmsId="ignore"  >📅 Expires: {formatDate(profile.licenseExpiry)}</Text>
+                <Text variant="small" cmsId="ignore"  >🛡️ Insurance: {profile.insuranceProvider}</Text>
               </Stack>
             </Stack>
           )}
@@ -200,13 +204,13 @@ export function DriverProfileCard({
           {/* Vehicle Info */}
           {showVehicleInfo && (
             <Stack direction="vertical" spacing="sm">
-              <Text variant="small" weight="semibold">Vehicle Information</Text>
+              <Text variant="small" weight="semibold" cmsId="driver-profile-card-vehicle-information"  >{pageCmsData?.['driverProfileCardVehicleInformation'] || 'Vehicle Information'}</Text>
               <Stack direction="vertical" spacing="xs">
-                <Text variant="small">
+                <Text variant="small" cmsId="ignore" >
                   🚗 {profile.vehicleInfo.year} {profile.vehicleInfo.make} {profile.vehicleInfo.model}
                 </Text>
-                <Text variant="small">🎨 Color: {profile.vehicleInfo.color}</Text>
-                <Text variant="small">🔢 Plate: {profile.vehicleInfo.licensePlate}</Text>
+                <Text variant="small" cmsId="ignore"  >🎨 Color: {profile.vehicleInfo.color}</Text>
+                <Text variant="small" cmsId="ignore"  >🔢 Plate: {profile.vehicleInfo.licensePlate}</Text>
               </Stack>
             </Stack>
           )}
@@ -214,12 +218,12 @@ export function DriverProfileCard({
           {/* Trust Indicators */}
           {showTrustIndicators && (
             <Stack direction="vertical" spacing="sm">
-              <Text variant="small" weight="semibold">Trust Indicators</Text>
+              <Text variant="small" weight="semibold" cmsId="driver-profile-card-trust-indicators"  >{pageCmsData?.['driver-profile-card-trust-indicators'] || 'Trust Indicators'}</Text>
               <Stack direction="vertical" spacing="xs">
-                <Text variant="small">⭐ Rating: {profile.rating}/5.0 ({profile.totalReviews} reviews)</Text>
-                <Text variant="small">🚗 Rides: {profile.totalRides} completed</Text>
-                <Text variant="small">📅 Member since: {formatDate(profile.joinedDate)}</Text>
-                <Text variant="small">✅ Background check: Verified</Text>
+                <Text variant="small" cmsId="ignore"  >⭐ Rating: {profile.rating}/5.0 ({profile.totalReviews} reviews)</Text>
+                <Text variant="small" cmsId="ignore"  >🚗 Rides: {profile.totalRides} completed</Text>
+                <Text variant="small" cmsId="ignore"  >📅 Member since: {formatDate(profile.joinedDate)}</Text> 
+                <Text variant="small" cmsId="ignore"  >✅ Background check: Verified</Text>
               </Stack>
             </Stack>
           )}
@@ -227,7 +231,7 @@ export function DriverProfileCard({
           {/* Features */}
           {profile.features && profile.features.length > 0 && (
             <Stack direction="vertical" spacing="sm">
-              <Text variant="small" weight="semibold">Features</Text>
+              <Text variant="small" weight="semibold" cmsId="driver-profile-card-features"  >{pageCmsData?.['driverProfileCardFeatures'] || 'Features'}</Text>
               <Stack direction="horizontal" spacing="sm">
                 {profile.features.map((feature: string) => (
                   <Badge key={feature} variant="default" size="sm">
@@ -240,12 +244,8 @@ export function DriverProfileCard({
 
           {/* Actions */}
           <Stack direction="horizontal" spacing="sm">
-            <Button variant="primary" size="sm">
-              📞 Contact Driver
-            </Button>
-            <Button variant="outline" size="sm">
-              📍 Track Location
-            </Button>
+            <Button variant="primary" size="sm" cmsId="driver-profile-card-contact-driver"  text={pageCmsData?.['driverProfileCardContactDriver'] || 'Contact Driver'} />
+            <Button variant="outline" size="sm" cmsId="driver-profile-card-track-location"  text={pageCmsData?.['driverProfileCardTrackLocation'] || 'Track Location'} />
           </Stack>
         </Stack>
       </Card>

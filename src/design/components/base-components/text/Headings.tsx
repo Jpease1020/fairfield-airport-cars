@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
+import { useInteractionMode } from '../../../providers/InteractionModeProvider';
 
 const StyledHeading = styled.h1.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align'].includes(prop)
@@ -118,9 +119,6 @@ export interface HeadingProps {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span';
   cmsKey?: string; // optional explicit cms path
   
-  // Interaction mode
-  mode?: 'edit' | 'comment' | null;
-  
   // Rest props
   [key: string]: any;
 }
@@ -134,32 +132,42 @@ const Heading: React.FC<HeadingProps> = ({
   align = 'left',
   id, 
   as: Component = 'h1',
-  cmsKey,
-  mode,
+  cmsId,
   ...rest
 }) => {
+
+  // Get mode from provider
+  let mode: 'edit' | 'comment' | null = null;
+  try {
+    const context = useInteractionMode();
+    mode = context.mode;
+  } catch {
+    // Provider not available, use null as default
+    mode = null;
+  }
+  
   const ref = React.useRef<HTMLElement | null>(null);
   
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    // Get cmsId from either cmsKey prop or data-cms-id attribute
-    const cmsId = cmsKey || (e.currentTarget as HTMLElement).getAttribute('data-cms-id');
+    // Get cmsId from either cmsId prop or cmsId attribute
+    const cmsIdentifier = cmsId || (e.currentTarget as HTMLElement).getAttribute('cmsId');
     
-    if (mode === 'edit' && cmsId) {
+    if (mode === 'edit' && cmsIdentifier) {
       e.preventDefault();
       e.stopPropagation();
       
       // Dispatch custom event to open edit modal
       const event = new (window as any).CustomEvent('openInlineEditor', {
-        detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
+        detail: { cmsId: cmsIdentifier, element: e.currentTarget, x: e.clientX, y: e.clientY }
       });
       document.dispatchEvent(event);
-    } else if (mode === 'comment' && cmsId) {
+    } else if (mode === 'comment' && cmsIdentifier) {
       e.preventDefault();
       e.stopPropagation();
       
       // Dispatch custom event to open comment modal
       const event = new (window as any).CustomEvent('openCommentModal', {
-        detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
+        detail: { cmsId: cmsIdentifier, element: e.currentTarget, x: e.clientX, y: e.clientY }
       });
       document.dispatchEvent(event);
     }
@@ -203,7 +211,7 @@ export const H1: React.FC<HeadingProps> = ({
       weight={weight}
       align={align}
       id={id}
-      mode={mode}
+      
       {...rest}
     >
       {children}
@@ -230,7 +238,7 @@ export const H2: React.FC<HeadingProps> = ({
       weight={weight}
       align={align}
       id={id}
-      mode={mode}
+      
       {...rest}
     >
       {children}
@@ -257,7 +265,7 @@ export const H3: React.FC<HeadingProps> = ({
       weight={weight}
       align={align}
       id={id}
-      mode={mode}
+      
       {...rest}
     >
       {children}
@@ -284,7 +292,7 @@ export const H4: React.FC<HeadingProps> = ({
       weight={weight}
       align={align}
       id={id}
-      mode={mode}
+      
       {...rest}
     >
       {children}
@@ -311,7 +319,7 @@ export const H5: React.FC<HeadingProps> = ({
       weight={weight}
       align={align}
       id={id}
-      mode={mode}
+      
       {...rest}
     >
       {children}
@@ -338,7 +346,7 @@ export const H6: React.FC<HeadingProps> = ({
       weight={weight}
       align={align}
       id={id}
-      mode={mode}
+      
       {...rest}
     >
       {children}

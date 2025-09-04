@@ -1,8 +1,10 @@
-// ===== SHARED DESIGN SYSTEM TYPES =====
-// This file contains all shared types used across multiple components
-// Individual components should define their own specific interfaces
+/**
+ * Shared Type Definitions
+ * 
+ * Core types used across the design system
+ */
 
-import React from 'react';
+import type { ReactNode, ReactElement } from 'react';
 
 // ===== FOUNDATION TYPES =====
 
@@ -164,7 +166,7 @@ export type HTMLElement = 'div' | 'section' | 'article' | 'aside' | 'nav' | 'hea
 
 // Base component props that all components can extend
 export interface BaseComponentProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   id?: string;
   className?: string;
   'data-testid'?: string;
@@ -354,3 +356,37 @@ export type StatusType = 'success' | 'warning' | 'error' | 'info' | 'loading';
 
 // Loading state type
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error'; 
+
+// CMS-safe content types
+export type CMSSafeString = string & { __brand: 'CMS_SAFE' };
+export type CMSFallbackString = string & { __brand: 'CMS_FALLBACK' };
+
+// Union type for allowed children in text components
+export type TextComponentChildren = 
+  | string                          // Any string (simplified)
+  | ReactElement                    // Other React components
+  | (string | ReactElement)[];      // Arrays
+
+// Base interface for all text components (H1, H2, Text, Span, etc.)
+export interface BaseTextComponentProps extends BaseComponentProps {
+  // Mandatory CMS identifier
+  cmsId: string;
+  
+  // Optional CMS data for validation
+  cmsData: any;
+  
+  // Content editing mode
+  mode?: 'edit' | 'comment' | null;
+}
+
+// Admin-specific interface with optional cmsId for admin-only components
+export interface AdminTextComponentProps extends BaseComponentProps {
+  // Optional CMS identifier for admin components
+  cmsId?: string;
+  
+  // Optional CMS data for validation
+  cmsData?: any;
+  
+  // Content editing mode
+  mode?: 'edit' | 'comment' | null;
+} 

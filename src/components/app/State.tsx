@@ -5,7 +5,7 @@ import { H3 } from '../../design/components/base-components/text/Headings';
 import { Text } from '../../design/components/base-components/text/Text';
 import { PositionedContainer } from '../../design/layout/containers/PositionedContainer';
 import { LoadingSpinner } from '../../design/components/base-components/notifications/LoadingSpinner';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export interface StateProps {
   type: 'loading' | 'empty' | 'error';
@@ -44,6 +44,7 @@ export const State: React.FC<StateProps> = ({
     relaxed: 'lg'
   } as const;
 
+  
   const { cmsData } = useCMSData();
 
   const renderIcon = () => {
@@ -97,7 +98,7 @@ export const State: React.FC<StateProps> = ({
       <Stack direction="vertical" align="center" spacing="sm">
         {typeof finalTitle === 'string' ? (
           <H3 size={titleSize} weight="semibold" align="center">
-            {getCMSField(cmsData, `state.${type}.title`, finalTitle)}
+            {cmsData?.[`state.${type}.title`] || finalTitle}
           </H3>
         ) : (
           <H3 size={titleSize} weight="semibold" align="center">
@@ -122,9 +123,8 @@ export const State: React.FC<StateProps> = ({
               color="secondary" 
               align="center"
             >
-              {getCMSField(cmsData, `state.${type}.description`, description) || description  }
+              {cmsData?.[`state.${type}.description`] || description}
             </Text>
-
         ) : (
           <Text 
             variant="body" 
@@ -132,7 +132,7 @@ export const State: React.FC<StateProps> = ({
             color="secondary" 
             align="center"
           >
-            {getCMSField(cmsData, `state.${type}.description`, description) || description}
+            {description}
           </Text>
         )}
       </Stack>
@@ -143,9 +143,7 @@ export const State: React.FC<StateProps> = ({
     if (type === 'error' && retry) {
       return (
         <Stack direction="vertical" align="center" spacing="md">
-          <Button onClick={retry} variant="outline" size={size}>
-            🔄 {retryLabel}
-          </Button>
+          <Button onClick={retry} variant="outline" size={size} cmsId="state-retry-button" text={`🔄 ${retryLabel}`} />
         </Stack>
       );
     }

@@ -345,6 +345,7 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
           size={size}
           disabled
           aria-label="Voice recognition not supported"
+          cmsId="voice-input-not-supported-button"
         >
           <IconWrapper isListening={false} isProcessing={false} hasError={true} size={size}>
             <MicOff size={size === 'sm' ? 14 : size === 'lg' ? 20 : 16} />
@@ -371,6 +372,7 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
         disabled={isDisabled}
         aria-label={ariaLabel || (isListening ? 'Stop listening' : 'Start listening')}
         aria-describedby={ariaDescribedBy}
+        cmsId="voice-input-toggle-button"
         aria-live="polite"
         aria-atomic="true"
       >

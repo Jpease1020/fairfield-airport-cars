@@ -18,21 +18,20 @@ import {
 } from '@/ui';
 import { Star } from 'lucide-react';
 import { colors } from '@/ui';
-import { getCMSField } from '@/design/hooks/useCMSData';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
 
 interface FeedbackClientProps {
-  cmsData: any;
   bookingId: string;
+  cmsData?: any;
 }
 
-function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
+function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
+  const pageCmsData = cmsData || {};
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { mode } = useInteractionMode();
+  
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -47,7 +46,7 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
         setRating(booking.rating || 0);
         setComment(booking.comment || '');
       } catch (err) {
-        setError(getCMSField(cmsData, 'loadFailed', 'Failed to load booking details.'));
+        setError(pageCmsData?.['loadFailed'] || 'Failed to load booking details.');
         console.error('Error fetching booking details:', err);
       } finally {
         setLoading(false);
@@ -77,14 +76,14 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
 
       if (response.ok) {
         setSubmitted(true);
-        addToast('success', getCMSField(cmsData, 'success', 'Feedback submitted successfully!'));
+        addToast('success', pageCmsData?.['success'] || 'Feedback submitted successfully!');
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.error || getCMSField(cmsData, 'submitFailed', 'Failed to submit feedback'));
+        throw new Error(errorData.error || pageCmsData?.['submitFailed'] || 'Failed to submit feedback');
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      addToast('error', getCMSField(cmsData, 'submitFailed', 'Failed to submit feedback. Please try again.'));
+      addToast('error', pageCmsData?.['submitFailed'] || 'Failed to submit feedback. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -92,13 +91,13 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
 
   const homeActions = [
     {
-      label: getCMSField(cmsData, 'bookAnotherRide', 'Book Another Ride'),
+      label: pageCmsData?.['bookAnotherRide'] || 'Book Another Ride',
       onClick: () => window.location.href = '/book',
       variant: 'primary' as const,
       icon: '📅'
     },
     {
-      label: getCMSField(cmsData, 'goHome', 'Go Home'),
+      label: pageCmsData?.['goHome'] || 'Go Home',
       onClick: () => window.location.href = '/',
       variant: 'secondary' as const,
       icon: '🏠'
@@ -112,8 +111,8 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" data-cms-id="loading-message" mode={mode}>
-                {getCMSField(cmsData, 'loading-message', 'Please wait while we fetch your booking details...')}
+              <Text align="center" cmsId="loading-message" >
+                {pageCmsData?.['loading-message'] || 'Please wait while we fetch your booking details...'}
               </Text>
             </Stack>
           </Container>
@@ -128,19 +127,19 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="error-title" mode={mode}>
-                {getCMSField(cmsData, 'error-title', 'Unable to Load Booking')}
+              <H1 align="center" cmsId="error-title" >
+                {pageCmsData?.['error-title'] || 'Unable to Load Booking'}
               </H1>
-              <Text align="center" data-cms-id="error-description" mode={mode}>
-                {getCMSField(cmsData, 'error-description', 'We could not load your booking details. Please check your booking ID and try again.')}
+              <Text align="center" cmsId="error-description" >
+                {pageCmsData?.['error-description'] || 'We could not load your booking details. Please check your booking ID and try again.'}
               </Text>
               <Button
                 onClick={() => window.location.href = '/bookings'}
                 variant="primary"
-                data-cms-id="error-view-bookings"
-              >
-                {getCMSField(cmsData, 'error-view-bookings', 'View My Bookings')}
-              </Button>
+                cmsId="error-view-bookings"
+                
+                text={pageCmsData?.['error-view-bookings'] || 'View My Bookings'}
+              />
             </Stack>
           </Container>
         </GridSection>
@@ -154,11 +153,11 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" data-cms-id="success-title" mode={mode}>
-                {getCMSField(cmsData, 'success-title', 'Thank You!')}
+              <H1 align="center" cmsId="success-title" >
+                {pageCmsData?.['success-title'] || 'Thank You!'}
               </H1>
-              <Text align="center" data-cms-id="success-description" mode={mode}>
-                {getCMSField(cmsData, 'success-description', 'Your feedback has been submitted successfully. We appreciate your input and will use it to improve our service.')}
+              <Text align="center" cmsId="success-description" >
+                {pageCmsData?.['success-description'] || 'Your feedback has been submitted successfully. We appreciate your input and will use it to improve our service.'}
               </Text>
               <Stack direction="horizontal" spacing="md" align="center">
                 {homeActions.map((action, index) => (
@@ -167,9 +166,10 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
                     onClick={action.onClick}
                     variant={action.variant}
                     icon={action.icon}
-                  >
-                    {action.label}
-                  </Button>
+                    cmsId="feedback-alternative-action"
+                    
+                    text={action.label}
+                  />
                 ))}
               </Stack>
             </Stack>
@@ -185,11 +185,11 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <H1 align="center" data-cms-id="title" mode={mode}>
-              {getCMSField(cmsData, 'title', 'Share Your Experience')}
+            <H1 align="center" cmsId="title" >
+              {pageCmsData?.['title'] || 'Share Your Experience'}
             </H1>
-            <Text align="center" data-cms-id="subtitle" mode={mode}>
-              {getCMSField(cmsData, 'subtitle', `We'd love to hear about your ride for booking #${bookingId}`)}
+            <Text align="center" cmsId="subtitle" >
+              {pageCmsData?.['subtitle'] || `We'd love to hear about your ride for booking #${bookingId}`}
             </Text>
           </Stack>
         </Container>
@@ -199,13 +199,13 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Box variant="elevated" padding="lg">
-            <form onSubmit={handleSubmit} data-cms-id="rate-experience-description">
+            <form onSubmit={handleSubmit}>
               <Stack spacing="lg">
                 {/* Rating Display */}
                 <ContentCard content={
                   <Stack spacing="md">
                     <Text variant="muted" size="sm">
-                      {getCMSField(cmsData, 'rate-experience-description', 'How was your ride?')}
+                        {pageCmsData?.['rate-experience-description'] || 'How was your ride?'}
                     </Text>
                     <Stack direction="horizontal" spacing="sm" align="center">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -214,6 +214,8 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => setRating(star)}
+                          cmsId="rate-experience-star"
+                          
                         >
                           <Star size={24} fill={rating >= star ? colors.primary[500] : 'transparent'} />
                         </Button>
@@ -227,19 +229,19 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
 
                 {/* Comment Section */}
                 <Stack spacing="md">
-                  <Label htmlFor="comment" data-cms-id="comment-label" mode={mode}>
-                    {getCMSField(cmsData, 'comment-label', 'Additional Comments (Optional)')}
+                  <Label htmlFor="comment" cmsId="comment-label" >
+                    {pageCmsData?.['comment-label'] || 'Additional Comments (Optional)'}
                   </Label>
-                  <Text data-cms-id="comment-description" mode={mode}>
-                    {getCMSField(cmsData, 'comment-description', 'Tell us more about your experience, any suggestions, or what we did well')}
+                  <Text cmsId="comment-description" >
+                    {pageCmsData?.['comment-description'] || 'Tell us more about your experience, any suggestions, or what we did well'}
                   </Text>
                   <Textarea
                     id="comment"
                     value={comment}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
-                    placeholder={getCMSField(cmsData, 'comment-placeholder', 'Share your thoughts about your ride experience...')}
+                    placeholder={pageCmsData?.['comment-placeholder'] || 'Share your thoughts about your ride experience...'}
                     rows={4}
-                    data-cms-id="comment-input"
+                    cmsId="comment-input"
                   />
                 </Stack>
 
@@ -250,16 +252,16 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
                     variant="primary"
                     size="lg"
                     disabled={rating === 0 || loading}
-                    data-cms-id="submit-button"
+                    cmsId="submit-button"
                   >
                     {loading ? (
-                      getCMSField(cmsData, 'loading', 'Submitting...')
+                      pageCmsData?.['loading'] || 'Submitting...'
                     ) : (
-                      getCMSField(cmsData, 'text', 'Submit Feedback')
+                      pageCmsData?.['text'] || 'Submit Feedback'
                     )}
                   </Button>
-                  <Text size="sm" variant="muted" data-cms-id="submit-note" mode={mode}>
-                    {getCMSField(cmsData, 'note', 'Your feedback helps us improve our service for all customers')}
+                  <Text size="sm" variant="muted" cmsId="submit-note" >
+                    {pageCmsData?.['note'] || 'Your feedback helps us improve our service for all customers'}
                   </Text>
                 </Stack>
               </Stack>
@@ -272,8 +274,8 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="md" align="center">
-            <Text align="center" data-cms-id="alternatives-title" mode={mode}>
-              {getCMSField(cmsData, 'title', 'Need help with something else?')}
+            <Text align="center" cmsId="alternatives-title" >
+              {pageCmsData?.['title'] || 'Need help with something else?'}
             </Text>
             <Stack direction="horizontal" spacing="md" align="center">
               {homeActions.map((action, index) => (
@@ -282,7 +284,7 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
                   onClick={action.onClick}
                   variant={action.variant}
                   icon={action.icon}
-                  data-cms-id={`pages.feedback.alternatives.actions.${index}`}
+                  cmsId="feedback-alternative-action"
                 >
                   {action.label}
                 </Button>
@@ -295,10 +297,10 @@ function FeedbackPageContent({ cmsData, bookingId }: FeedbackClientProps) {
   );
 }
 
-export default function FeedbackClient({ cmsData, bookingId }: FeedbackClientProps) {
+export default function FeedbackClient({ bookingId }: FeedbackClientProps) {
   return (
     <ToastProvider>
-      <FeedbackPageContent cmsData={cmsData} bookingId={bookingId} />
+      <FeedbackPageContent bookingId={bookingId} />
     </ToastProvider>
   );
 }

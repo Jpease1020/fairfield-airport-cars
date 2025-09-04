@@ -29,6 +29,7 @@ export interface DrawerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   zIndex?: number;
   'aria-label'?: string;
   'aria-describedby'?: string;
+  cmsData: any;
 }
 
 interface DrawerPanelProps {
@@ -101,6 +102,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(({
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
   children,
+  cmsData,
   ...rest
 }, ref) => {
   const resolvedWidth = typeof width === 'number' ? `${Math.max(0, width)}px` : width;
@@ -144,9 +146,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(({
                 <Stack direction="horizontal" spacing="sm" align="center">
                   {actions}
                   {showCloseButton && (
-                    <Button variant="ghost" size="sm" aria-label="Close drawer" onClick={onClose}>
-                      Close
-                    </Button>
+                    <Button variant="ghost" size="sm" aria-label="Close drawer" onClick={onClose} cmsId="ignore" text={cmsData?.['close-drawer-button'] || 'Close'}/>
                   )}
                 </Stack>
               </Stack>

@@ -74,11 +74,13 @@ const ProgressBarFill = styled.div<{ $width: number; $isOverBudget: boolean }>`
 interface CostTrackingDashboardProps {
   onRefresh?: () => void;
   onCostUpdate?: (costId: string, updates: Partial<RealCostItem>) => void;
+  cmsData: any;
 }
 
 export function CostTrackingDashboard({
   onRefresh,
-  onCostUpdate
+  onCostUpdate,
+  cmsData
 }: CostTrackingDashboardProps) {
   const [costs, setCosts] = useState<RealCostItem[]>([]);
   const [summary, setSummary] = useState<any>(null);
@@ -166,10 +168,10 @@ export function CostTrackingDashboard({
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading real-time cost data...</Text>
+          <Text cmsId="cost-tracking-loading">{cmsData?.['costTrackingLoading'] || 'Loading real-time cost data...'}</Text>
         </Stack>
       </Container>
-    );
+    );  
   }
 
   if (error) {
@@ -189,8 +191,8 @@ export function CostTrackingDashboard({
         <Stack spacing="sm">
           <Stack direction="horizontal" justify="space-between" align="center">
             <Stack spacing="xs">
-              <Text weight="bold" size="xl">Real-Time Cost Tracking</Text>
-              <Text variant="muted" size="sm">
+              <Text weight="bold" size="xl" cmsId="cost-tracking-title">{cmsData?.['costTrackingTitle'] || 'Real-Time Cost Tracking'}</Text>
+              <Text variant="muted" size="sm" cmsId="ignore">
                 {costs.length} cost categories • {costs.filter(c => c.dataSource === 'api').length} from APIs
               </Text>
             </Stack>
@@ -202,9 +204,9 @@ export function CostTrackingDashboard({
                   variant="outline"
                   size="sm"
                   disabled={refreshing}
-                >
-                  {refreshing ? '🔄 Refreshing...' : '🔄 Refresh'}
-                </Button>
+                  cmsId="cost-tracking-refresh-button"
+                  text={refreshing ? '🔄 Refreshing...' : '🔄 Refresh'}
+                />
               )}
               
               <Button
@@ -212,15 +214,15 @@ export function CostTrackingDashboard({
                 variant="outline"
                 size="sm"
                 disabled={refreshing}
-              >
-                📊 Reload Data
-              </Button>
+                cmsId="cost-tracking-reload-button"
+                text="📊 Reload Data"
+              />
             </Stack>
           </Stack>
           
           {lastUpdate && (
-            <Text variant="muted" size="sm">
-              Last updated: {lastUpdate.toLocaleTimeString()}
+            <Text variant="muted" size="sm" cmsId="cost-tracking-dashboard-last-updated">
+              {cmsData?.['costTrackingDashboardLastUpdated'] || `Last updated: ${lastUpdate.toLocaleTimeString()}`}
             </Text>
           )}
         </Stack>
@@ -229,11 +231,11 @@ export function CostTrackingDashboard({
         <GridSection variant="stats" columns={4}>
           <CostCard $status="on-track">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">Total Monthly Cost</Text>
-              <Text size="xl" weight="bold">
+              <Text variant="lead" size="md" weight="semibold" cmsId="cost-tracking-dashboard-total-monthly-cost">{cmsData?.['costTrackingDashboardTotalMonthlyCost'] || 'Total Monthly Cost'}</Text>
+              <Text size="xl" weight="bold" cmsId="ignore">
                 {summary ? formatCurrency(summary.totalActualMonthly) : '$0'}
               </Text>
-              <Text variant="muted" size="sm">
+              <Text variant="muted" size="sm" cmsId="ignore">
                 {summary && summary.totalProjectedMonthly > 0 
                   ? `${((summary.totalActualMonthly / summary.totalProjectedMonthly - 1) * 100).toFixed(1)}% vs projected`
                   : 'No projection'
@@ -244,31 +246,31 @@ export function CostTrackingDashboard({
 
           <CostCard $status="on-track">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">Projected Monthly</Text>
+              <Text variant="lead" size="md" weight="semibold" cmsId="cost-tracking-dashboard-projected-monthly">{cmsData?.['costTrackingDashboardProjectedMonthly'] || 'Projected Monthly'}</Text>
               <Text size="xl" weight="bold">
                 {summary ? formatCurrency(summary.totalProjectedMonthly) : '$0'}
               </Text>
-              <Text variant="muted" size="sm">{costs.length} cost categories</Text>
+              <Text variant="muted" size="sm" cmsId="ignore">{costs.length} cost categories</Text>
             </Stack>
           </CostCard>
 
           <CostCard $status="on-track">
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">Annual Projection</Text>
+              <Text variant="lead" size="md" weight="semibold" cmsId="cost-tracking-dashboard-annual-projection">{cmsData?.['costTrackingDashboardAnnualProjection'] || 'Annual Projection'}</Text>
               <Text size="xl" weight="bold">
                 {summary ? formatCurrency(summary.totalYearly) : '$0'}
               </Text>
-              <Text variant="muted" size="sm">Yearly estimate</Text>
+              <Text variant="muted" size="sm" cmsId="cost-tracking-dashboard-yearly-estimate">{cmsData?.['costTrackingDashboardYearlyEstimate'] || 'Yearly estimate'}</Text>
             </Stack>
           </CostCard>
 
           <SavingsCard>
             <Stack spacing="sm">
-              <Text variant="lead" size="md" weight="semibold">Potential Savings</Text>
-                              <Text size="xl" weight="bold">
+              <Text variant="lead" size="md" weight="semibold" cmsId="cost-tracking-dashboard-potential-savings">{cmsData?.['costTrackingDashboardPotentialSavings'] || 'Potential Savings'}</Text>
+              <Text size="xl" weight="bold" cmsId="ignore">
                 {formatCurrency(getTotalSavings())}
               </Text>
-              <Text variant="muted" size="sm">
+              <Text variant="muted" size="sm" cmsId="ignore">
                 {getSavingsOpportunities().length} opportunities
               </Text>
             </Stack>
@@ -278,7 +280,7 @@ export function CostTrackingDashboard({
         {/* Cost Breakdown */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="md">
-            <Text weight="bold" size="lg">Cost Breakdown by Category</Text>
+            <Text weight="bold" size="lg" cmsId="cost-tracking-dashboard-cost-breakdown-by-category">{cmsData?.['costTrackingDashboardCostBreakdownByCategory'] || 'Cost Breakdown by Category'}</Text>
             
             <Stack spacing="md">
               {costs.map((cost) => {
@@ -290,8 +292,8 @@ export function CostTrackingDashboard({
                     <Stack spacing="sm">
                       <Stack direction="horizontal" justify="space-between" align="center">
                         <Stack spacing="xs">
-                          <Text weight="bold">{cost.service}</Text>
-                          <Text variant="muted" size="sm">{cost.category}</Text>
+                          <Text weight="bold" cmsId="ignore">{cost.service}</Text>
+                          <Text variant="muted" size="sm" cmsId="ignore">{cost.category}</Text>
                         </Stack>
                         <Badge 
                           variant={
@@ -306,28 +308,28 @@ export function CostTrackingDashboard({
 
                       <GridSection variant="content" columns={3}>
                         <Stack spacing="xs">
-                          <Text variant="muted" size="sm">Projected</Text>
-                          <Text weight="bold">
+                          <Text variant="muted" size="sm" cmsId="cost-tracking-dashboard-projected">{cmsData?.['costTrackingDashboardProjected'] || 'Projected'} </Text>
+                          <Text weight="bold" cmsId="ignore">
                             {formatCurrency(cost.projectedMonthlyCost ?? 0)}
                           </Text>
                         </Stack>
 
                         <Stack spacing="xs">
-                          <Text variant="muted" size="sm">Actual</Text>
+                          <Text variant="muted" size="sm" cmsId="cost-tracking-dashboard-actual">{cmsData?.['costTrackingDashboardActual'] || 'Actual'} </Text>
                           <Text weight="bold">
                             {(cost.actualMonthlyCost ?? 0) === 0 ? 'Pending' : formatCurrency(cost.actualMonthlyCost ?? 0)}
                           </Text>
                         </Stack>
 
                         <Stack spacing="xs">
-                          <Text variant="muted" size="sm">Variance</Text>
+                          <Text variant="muted" size="sm" cmsId="cost-tracking-dashboard-variance">{cmsData?.['costTrackingDashboardVariance'] || 'Variance'}</Text>
                           <VarianceIndicator $variance={variance}>
                             <Text weight="bold">
                               {(cost.actualMonthlyCost ?? 0) === 0 ? 'N/A' : 
                                `${variance > 0 ? '+' : ''}${variance.toFixed(1)}%`}
                             </Text>
                             {(cost.actualMonthlyCost ?? 0) > 0 && (
-                              <Text size="sm">{getVarianceIcon(variance)}</Text>
+                              <Text size="sm" cmsId="ignore">{getVarianceIcon(variance)}</Text>
                             )}
                           </VarianceIndicator>
                         </Stack>
@@ -336,19 +338,19 @@ export function CostTrackingDashboard({
                       {/* Usage Metrics */}
                       {cost.usageMetrics && Object.keys(cost.usageMetrics).length > 0 && (
                         <Stack spacing="xs">
-                          <Text variant="muted" size="sm">Usage Metrics</Text>
+                          <Text variant="muted" size="sm" cmsId="cost-tracking-dashboard-usage-metrics">{cmsData?.['costTrackingDashboardUsageMetrics'] || 'Usage Metrics'}</Text>
                           <Stack direction="horizontal" spacing="md">
                             {cost.usageMetrics.apiCalls && (
-                              <Text size="sm">API Calls: {cost.usageMetrics.apiCalls}</Text>
+                              <Text size="sm" cmsId="ignore">API Calls: {cost.usageMetrics.apiCalls}</Text>
                             )}
                             {cost.usageMetrics.bandwidth && (
-                              <Text size="sm">Bandwidth: {cost.usageMetrics.bandwidth}</Text>
+                              <Text size="sm" cmsId="ignore">Bandwidth: {cost.usageMetrics.bandwidth}</Text>
                             )}
                             {cost.usageMetrics.storage && (
-                              <Text size="sm">Storage: {cost.usageMetrics.storage}</Text>
+                              <Text size="sm" cmsId="ignore">Storage: {cost.usageMetrics.storage}</Text>
                             )}
                             {cost.usageMetrics.transactions && (
-                              <Text size="sm">Transactions: {cost.usageMetrics.transactions}</Text>
+                              <Text size="sm" cmsId="ignore">Transactions: {cost.usageMetrics.transactions}</Text>
                             )}
                           </Stack>
                         </Stack>
@@ -356,7 +358,7 @@ export function CostTrackingDashboard({
 
                       {/* Data Source */}
                       <Stack direction="horizontal" justify="space-between" align="center">
-                        <Text variant="muted" size="sm">Data Source</Text>
+                        <Text variant="muted" size="sm" cmsId="cost-tracking-dashboard-data-source">{cmsData?.['costTrackingDashboardDataSource'] || 'Data Source'}</Text>
                         <Badge variant="default" size="sm">
                           {cost.dataSource === 'api' ? 'API' :
                            cost.dataSource === 'manual' ? 'Manual' : 'Estimated'}
@@ -374,16 +376,16 @@ export function CostTrackingDashboard({
         {getSavingsOpportunities().length > 0 && (
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
-              <Text weight="bold" size="lg">💡 Cost Optimization Opportunities</Text>
+              <Text weight="bold" size="lg" cmsId="cost-tracking-dashboard-optimization-opportunities">{cmsData?.['costTrackingDashboardOptimizationOpportunities'] || '💡 Cost Optimization Opportunities'}</Text>
               
               <Stack spacing="md">
                 {getSavingsOpportunities().map((opportunity: string, index: number) => (
                   <Box key={index} variant="outlined" padding="md">
                     <Stack spacing="sm">
-                      <Text weight="bold">💡 {opportunity}</Text>
-                      <Text size="sm" variant="muted">
-                        Estimated savings: ~$50/month
-                      </Text>
+                      <Text weight="bold" cmsId="ignore">💡 {opportunity}</Text>
+                                              <Text size="sm" variant="muted" cmsId="ignore">
+                          Estimated savings: ~$50/month
+                        </Text>
                     </Stack>
                   </Box>
                 ))}
@@ -396,11 +398,11 @@ export function CostTrackingDashboard({
         {summary?.costTrend && (
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
-              <Text weight="bold" size="lg">📊 Cost Trend Analysis</Text>
+              <Text weight="bold" size="lg" cmsId="cost-tracking-dashboard-cost-trend-analysis">{cmsData?.['costTrackingDashboardCostTrendAnalysis'] || '📊 Cost Trend Analysis'}</Text>
               
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text>Cost Trend</Text>
+                  <Text cmsId="cost-tracking-dashboard-cost-trend">{cmsData?.['costTrackingDashboardCostTrend'] || 'Cost Trend'}</Text>
                   <Badge 
                     variant={
                       summary.costTrend === 'increasing' ? 'error' :

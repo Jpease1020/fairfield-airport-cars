@@ -16,10 +16,10 @@ import {
   ToastProvider,
   Input,
   Label,
-  spacing
+  spacing,
 } from '@/ui';
 import styled from 'styled-components';
-import { getCMSField } from '../../design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Styled components for login page
 const LoginCard = styled(Box)`
@@ -72,11 +72,11 @@ const LinkText = styled(Text)`
   }
 `;
 
-interface LoginFormClientProps {
-  cmsData: any;
-}
-
-export default function LoginFormClient({ cmsData }: LoginFormClientProps) {
+export default function LoginFormClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.login || {};
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -130,24 +130,24 @@ export default function LoginFormClient({ cmsData }: LoginFormClientProps) {
             <Stack spacing="md" align="center">
               <H1 
                 align="center" 
-                data-cms-id="title"
+                cmsId="title"
               >
-                {getCMSField(cmsData, 'login-title')}
+                {pageCmsData?.['login-title'] || 'Welcome Back'}
               </H1>
               <H2 
                 align="center" 
                 variant="default"
-                data-cms-id="subtitle"
+                cmsId="subtitle"
               >
-                {getCMSField(cmsData, 'login-subtitle')}
+                {pageCmsData?.['login-subtitle'] || 'Sign in to your account'}
               </H2>
             </Stack>
             
             <form onSubmit={handleLogin} id="login-form">
               <Stack spacing="md">
-                <div data-cms-id="form-email-label">
+                <div>
                   <Label htmlFor="email">
-                    {getCMSField(cmsData, 'login-form-email-label')}
+                    {pageCmsData?.['login-form-email-label']}
                   </Label>
                   <Input
                     id="email"
@@ -159,9 +159,9 @@ export default function LoginFormClient({ cmsData }: LoginFormClientProps) {
                   />
                 </div>
                 
-                <div data-cms-id="form-forgot-password">
+                <div>
                   <Label htmlFor="password">
-                    {getCMSField(cmsData, 'login-form-password-label')}
+                    {pageCmsData?.['login-form-password-label']}
                   </Label>
                   <Input
                     id="password"
@@ -176,7 +176,7 @@ export default function LoginFormClient({ cmsData }: LoginFormClientProps) {
                 {error && (
                   <Box variant="elevated" padding="sm">
                     <Text>
-                      {getCMSField(cmsData, 'login-error-icon')} {error}
+                      {pageCmsData?.['login-error-icon'] || '❌'} {error}
                     </Text>
                   </Box>
                 )}
@@ -186,16 +186,16 @@ export default function LoginFormClient({ cmsData }: LoginFormClientProps) {
                   variant="primary"
                   size="lg"
                   disabled={loading}
-                  data-cms-id="sign-in-button"
+                  cmsId="sign-in-button"
                 >
-                  {getCMSField(cmsData, loading ? 'form.signInButtonLoading' : 'form.signInButton')}
+                  {pageCmsData?.[loading ? 'form.signInButtonLoading' : 'form.signInButton'] || (loading ? 'Signing In...' : 'Sign In')}
                 </Button>
               </Stack>
             </form>
             
             <OrDivider>
               <Text variant="small" color="muted">
-                {getCMSField(cmsData, 'login-form-or-separator')}
+                {pageCmsData?.['login-form-or-separator'] || 'or'}
               </Text>
             </OrDivider>
             
@@ -204,21 +204,21 @@ export default function LoginFormClient({ cmsData }: LoginFormClientProps) {
               variant="outline"
               size="lg"
               disabled={loading}
-              data-cms-id="google-sign-in-button"
+              cmsId="google-sign-in-button"
             >
-              {getCMSField(cmsData, loading ? 'form.googleSignInButtonLoading' : 'form.googleSignInButton')}
+              {pageCmsData?.[loading ? 'form.googleSignInButtonLoading' : 'form.googleSignInButton'] || (loading ? 'Signing In...' : 'Continue with Google')}
             </Button>
             
             <LinkText variant="small" color="muted">
-              {getCMSField(cmsData, 'login-form-no-account')}{' '}
+              {pageCmsData?.['login-form-no-account'] || "Don't have an account?"}{' '}
               <Link href="/register">
-                                  {getCMSField(cmsData, 'login-form-signup-link')}
+                {pageCmsData?.['login-form-signup-link'] || 'Sign up'}
               </Link>
             </LinkText>
             
             <LinkText variant="small" color="muted">
               <Link href="/forgot-password">
-                {getCMSField(cmsData, 'login-form-forgot-password')}
+                {pageCmsData?.['login-form-forgot-password'] || 'Forgot your password?'}
               </Link>
             </LinkText>
           </Stack>

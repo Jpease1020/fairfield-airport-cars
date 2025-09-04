@@ -21,13 +21,13 @@ import {
   Select,
   GridSection
 } from '@/ui';  
-import { getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
-interface AddPaymentMethodClientProps {
-  cmsData: any;
-}
-
-export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClientProps) {
+export default function AddPaymentMethodClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.['customer-add-payment-method'] || {};
+  
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -136,7 +136,7 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text data-cms-id="method-initializing">{getCMSField(cmsData, 'method-initializing', 'Initializing...')}</Text>
+          <Text cmsId="method-initializing">Initializing...</Text>
         </Stack>
       </Container>
     );
@@ -147,7 +147,7 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text data-cms-id="method-loading">{getCMSField(cmsData, 'method-loading', 'Loading...')}</Text>
+          <Text cmsId="method-loading">Loading...</Text>
         </Stack>
       </Container>
     );
@@ -157,10 +157,8 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted" data-cms-id="method-login-required">{getCMSField(cmsData, 'method-login-required', 'Please log in to add payment methods.')}</Text>
-          <Button onClick={() => router.push('/login')}>
-            {getCMSField(cmsData, 'method-go-to-login', 'Go to Login')}
-          </Button>
+          <Text variant="muted" cmsId="method-login-required">Please log in to add payment methods.</Text>
+          <Button onClick={() => router.push('/login')} cmsId="method-go-to-login" text="Go to Login"/>          
         </Stack>
       </Container>
     );
@@ -172,10 +170,10 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
         {/* Header */}
         <Stack spacing="sm">
           <H1>
-            {getCMSField(cmsData, 'method-title', 'Add Payment Method')}
+            {pageCmsData?.['method-title'] || 'Add Payment Method'}
           </H1>
           <Text variant="muted">
-            {getCMSField(cmsData, 'method-subtitle', 'Securely add a new payment method to your account')}
+            {pageCmsData?.['method-subtitle'] || 'Securely add a new payment method to your account'}
           </Text>
         </Stack>
 
@@ -196,24 +194,23 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
         <GridSection variant="content" columns={1}>
           <Container>
             <ContentCard
-              title={getCMSField(cmsData, 'payments-title', 'Add Payment Method')}
-              data-cms-id="add-payment-method-form-title"
+              title={pageCmsData?.['payments-title'] || 'Add Payment Method'}
               content={
-                <form onSubmit={handleSubmit} data-cms-id="method-ssl-notice">
+                <form onSubmit={handleSubmit}>
                   <Stack spacing="lg">
                     {/* Credit Card Fields */}
                     <Stack spacing="md">
                       <Stack spacing="md">
-                        <Label htmlFor="cardNumber" data-cms-id="add-payment-method-form-card-number-label">
-                          {getCMSField(cmsData, 'payments-label', 'Card Number')}
+                        <Label htmlFor="cardNumber" cmsId="add-payment-method-form-card-number-label">
+                          {pageCmsData?.['payments-label'] || 'Card Number'}
                         </Label>
                         <Input
                           id="cardNumber"
                           type="text"
                           value={formData.cardNumber}
                           onChange={(e) => handleInputChange('cardNumber', e.target.value)}
-                          placeholder={getCMSField(cmsData, 'payments-placeholder', '1234 5678 9012 3456')}
-                          data-cms-id="add-payment-method-form-card-number-input"
+                          placeholder={pageCmsData?.['payments-placeholder'] || '1234 5678 9012 3456'}
+                          cmsId="add-payment-method-form-card-number-input"
                           required
                         />
                       </Stack>
@@ -221,14 +218,14 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
                       <Grid cols={2} gap="md" responsive>
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="expiryMonth" data-cms-id="add-payment-method-form-card-expiry-month-label">
-                              {getCMSField(cmsData, 'payments-label', 'Expiry Month')}
+                            <Label htmlFor="expiryMonth" cmsId="add-payment-method-form-card-expiry-month-label">
+                              {pageCmsData?.['payments-label'] || 'Expiry Month'}
                             </Label>
                             <Select
                               id="expiryMonth"
                               value={formData.expiryMonth}
                               onChange={(e) => handleInputChange('expiryMonth', e.target.value)}
-                              data-cms-id="add-payment-method-form-card-expiry-month-select"
+                              cmsId="add-payment-method-form-card-expiry-month-select"
                               required
                               options={Array.from({ length: 12 }, (_, i) => i + 1).map(month => ({
                                 value: month.toString().padStart(2, '0'),
@@ -240,14 +237,14 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
                         
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="expiryYear" data-cms-id="add-payment-method-form-card-expiry-year-label">
-                              {getCMSField(cmsData, 'payments-label', 'Expiry Year')}
+                            <Label htmlFor="expiryYear" cmsId="add-payment-method-form-card-expiry-year-label">
+                              {pageCmsData?.['payments-label'] || 'Expiry Year'}
                             </Label>
                             <Select
                               id="expiryYear"
                               value={formData.expiryYear}
                               onChange={(e) => handleInputChange('expiryYear', e.target.value)}
-                              data-cms-id="add-payment-method-form-card-expiry-year-select"
+                              cmsId="add-payment-method-form-card-expiry-year-select"
                               required
                               options={Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => ({
                                 value: year.toString(),
@@ -261,16 +258,16 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
                       <Grid cols={2} gap="md" responsive>
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="cvv" data-cms-id="add-payment-method-form-card-cvv-label">
-                              {getCMSField(cmsData, 'payments-label', 'CVV')}
+                            <Label htmlFor="cvv" cmsId="add-payment-method-form-card-cvv-label">
+                              {pageCmsData?.['payments-label'] || 'CVV'}
                             </Label>
                             <Input
                               id="cvv"
                               type="text"
                               value={formData.cvv}
                               onChange={(e) => handleInputChange('cvv', e.target.value)}
-                              placeholder={getCMSField(cmsData, 'payments-placeholder', '123')}
-                              data-cms-id="add-payment-method-form-card-cvv-input"
+                              placeholder={pageCmsData?.['payments-placeholder'] || '123'}
+                              cmsId="add-payment-method-form-card-cvv-input"
                               required
                             />
                           </Stack>
@@ -278,16 +275,16 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
                         
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="cardholderName" data-cms-id="add-payment-method-form-card-name-label">
-                              {getCMSField(cmsData, 'payments-label', 'Cardholder Name')}
+                            <Label htmlFor="cardholderName" cmsId="add-payment-method-form-card-name-label">
+                              {pageCmsData?.['payments-label'] || 'Cardholder Name'}
                             </Label>
                             <Input
                               id="cardholderName"
                               type="text"
                               value={formData.cardholderName}
                               onChange={(e) => handleInputChange('cardholderName', e.target.value)}
-                              placeholder={getCMSField(cmsData, 'payments-placeholder', 'John Doe')}
-                              data-cms-id="add-payment-method-form-card-name-input"
+                              placeholder={pageCmsData?.['payments-placeholder'] || 'John Doe'}
+                              cmsId="add-payment-method-form-card-name-input"
                               required
                             />
                           </Stack>
@@ -297,15 +294,14 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
 
                     {/* Default Payment Method */}
                     <Stack spacing="md">
-                      <Label htmlFor="isDefault" data-cms-id="add-payment-method-form-default-label">
+                      <Label htmlFor="isDefault" cmsId="add-payment-method-form-default-label">
                         <input
                           type="checkbox"
                           id="isDefault"
                           checked={formData.isDefault}
                           onChange={(e) => handleInputChange('isDefault', e.target.checked)}
-                          data-cms-id="add-payment-method-form-default-checkbox"
                         />
-                        {getCMSField(cmsData, 'payments-text', 'Set as default payment method')}
+                        {pageCmsData?.['payments-text'] || 'Set as default payment method'}
                       </Label>
                     </Stack>
 
@@ -316,17 +312,17 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
                         variant="primary"
                         size="lg"
                         disabled={saving}
-                        data-cms-id="add-payment-method-form-submit-button"
+                        cmsId="add-payment-method-form-submit-button"
                       >
                         {saving ? (
-                          getCMSField(cmsData, 'payments-loading', 'Adding Payment Method...')
+                          pageCmsData?.['payments-loading'] || 'Adding Payment Method...'
                         ) : (
-                          getCMSField(cmsData, 'payments-text', 'Add Payment Method')
-                        )}
+                          pageCmsData?.['payments-text'] || 'Add Payment Method')
+                        }
                       </Button>
                       
-                      <Text size="sm" variant="muted" data-cms-id="add-payment-method-form-submit-note">
-                        {getCMSField(cmsData, 'payments-note', '🔒 Your payment information is secure and encrypted')}
+                      <Text size="sm" variant="muted" cmsId="add-payment-method-form-submit-note">
+                          {pageCmsData?.['payments-note'] || '🔒 Your payment information is secure and encrypted'}
                       </Text>
                     </Stack>
                   </Stack>
@@ -341,13 +337,13 @@ export default function AddPaymentMethodClient({ cmsData }: AddPaymentMethodClie
           title="Security"
           content={
             <Stack spacing="md">
-              <Text variant="muted">
-                 {getCMSField(cmsData, 'method-security-notice', 'Your payment information is encrypted and securely processed by Square. We do not store your full card details on our servers.')}
+              <Text variant="muted" cmsId="ignore">
+                 {pageCmsData?.['method-security-notice'] || 'Your payment information is encrypted and securely processed by Square. We do not store your full card details on our servers.'}
               </Text>
               <Stack direction="horizontal" align="center" spacing="sm">
-           <Text variant="muted" size="sm">🔒</Text>
-                <Text variant="muted" size="sm">
-                  {getCMSField(cmsData, 'method-ssl-notice', '256-bit SSL encryption')}
+                <Text variant="muted" size="sm" cmsId="ignore">🔒</Text>
+                <Text variant="muted" size="sm" cmsId="ignore">
+                  {pageCmsData?.['method-ssl-notice'] || '256-bit SSL encryption'}
                 </Text>
               </Stack>
             </Stack>

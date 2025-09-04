@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to prevent server-side rendering issues
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
 // Removed unused import
@@ -15,14 +18,15 @@ import {
   Text,
   Stack
 } from '@/ui';
-import { useCMSData, getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 function CMSPageContent() {
   const { addToast } = useToast();
   const [config, setConfig] = useState<any>(null);
 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const { cmsData } = useCMSData();
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.admin || {};
   useEffect(() => {
     loadCMSConfig();
   }, []);
@@ -143,7 +147,7 @@ function CMSPageContent() {
               
               <Stack direction="horizontal" align="center" justify="space-between">
                 <Text>
-                  {getCMSField(cmsData, 'admin-cms-statusLabel', 'Status:')}
+                  {cmsData?.['admin-cms-statusLabel'] || 'Status:'}
                 </Text>
                 <Text>
                   {section.status}
@@ -194,7 +198,7 @@ function CMSPageContent() {
               <Stack spacing="md">
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Text>
-                    {getCMSField(cmsData, 'admin-cms-lastUpdatedLabel', 'Last Updated')}
+                    {cmsData?.['admin-cms-lastUpdatedLabel'] || 'Last Updated'}
                   </Text>
                   <Text>
                     {new Date(lastUpdated).toLocaleDateString()} at {new Date(lastUpdated).toLocaleTimeString()}
@@ -204,7 +208,7 @@ function CMSPageContent() {
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     <Text>
-                      {getCMSField(cmsData, 'admin-cms-configurationStatusLabel', 'Configuration Status')}
+                      {cmsData?.['admin-cms-configurationStatusLabel'] || 'Configuration Status'}
                     </Text>
                     <Text>
                       {config ? 'Fully Configured' : 'Needs Setup'}
@@ -215,7 +219,7 @@ function CMSPageContent() {
                 <Stack direction="horizontal" align="center" justify="space-between">
                   <Container>
                     <Text>
-                      {getCMSField(cmsData, 'admin-cms-autoSaveLabel', 'Auto-Save')}
+                      {cmsData?.['admin-cms-autoSaveLabel'] || 'Auto-Save'}
                     </Text>
                     <Text>
                       Enabled

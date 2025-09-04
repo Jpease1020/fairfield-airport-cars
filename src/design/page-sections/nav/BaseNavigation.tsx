@@ -9,7 +9,7 @@ import { PositionedContainer } from '../../layout/containers/PositionedContainer
 import { Text } from '../../components/base-components/text/Text';
 import { FlexboxContainer } from '../../components/base-components/FlexboxContainer';
 import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
-import { getCMSField } from '../../hooks/useCMSData';
+import { useCMSData } from '../../providers/CMSDataProvider';
 
 // Styled components for navigation layout
 const LogoContainer = styled.div`
@@ -103,7 +103,6 @@ export interface BaseNavigationProps {
   dataTestIdPrefix?: string;
   editableFieldPrefix?: string;
   width?: string;
-  cmsData?: any;
 }
 
 export const BaseNavigation: React.FC<BaseNavigationProps> = ({
@@ -113,8 +112,11 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   mobileActions,
   dataTestIdPrefix = 'nav',
   editableFieldPrefix = 'navigation',
-  cmsData,
 }) => {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.navigation || {};
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { width: containerWidth } = useWindowSize();
   const [isMobile, setIsMobile] = useState(false);
@@ -182,7 +184,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                   weight={item.current ? 'semibold' : 'medium'}
                   size="md"
                 >
-                  {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`, item.name)}
+                  {cmsData?.[`${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`] || item.name}
                 </Text>
               </Link>
             ))}
@@ -214,6 +216,9 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           id="navigation-mobile-menu-button"
           aria-label="Toggle mobile menu"
           aria-expanded={mobileMenuOpen}
+          cmsId="mobile-menu-button"
+          
+          text="Menu"
         >
           <MobileMenuButton />
         </Button>
@@ -234,9 +239,10 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
               size="sm"
               aria-label="Close mobile menu"
               data-testid={`${dataTestIdPrefix}-mobile-close-button`}
-            >
-              ✕
-            </Button>
+              cmsId="mobile-close-button"
+              
+              text="✕"
+            />
           </Stack>
           
           <Stack spacing="md">
@@ -252,7 +258,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
                   weight={item.current ? 'semibold' : 'medium'}
                   size="md"
                 >
-                  {getCMSField(cmsData, `${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`, item.name)}
+                  {cmsData?.[`${editableFieldPrefix}.${item.name.toLowerCase().replace(/\s+/g, '-')}`] || item.name}
                 </Text>
               </Link>
             ))}

@@ -11,6 +11,7 @@ import { useEditMode } from '@/design/providers/InteractionModeProvider';
 
 interface AppContentProps {
   children: React.ReactNode;
+  cmsData?: any;
 }
 
 export function AppContent({ children }: AppContentProps) {

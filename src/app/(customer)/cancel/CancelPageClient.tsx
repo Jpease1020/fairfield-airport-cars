@@ -13,13 +13,12 @@ import {
   Box,
   Button
 } from '@/ui';
-import { getCMSField } from '@/design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
-interface CancelPageClientProps {
-  cmsData: any;
-}
-
-function CancelPageContent({ cmsData }: CancelPageClientProps) {
+function CancelPageContent() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.cancel || {};
   const { addToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -121,15 +120,15 @@ function CancelPageContent({ cmsData }: CancelPageClientProps) {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-form-title" weight="bold" data-cms-id="form-title">{getCMSField(cmsData, 'cancel-form-title', '📝 Cancel Your Booking')}</Text>
-              <Text data-testid="cancel-form-description" data-cms-id="form-description">{getCMSField(cmsData, 'cancel-form-description', 'Please provide your booking details to process the cancellation')}</Text>
+              <Text data-testid="cancel-form-title" weight="bold" cmsId="cancel-form-title">{cmsData?.['cancel-form-title'] || '📝 Cancel Your Booking'}</Text>
+              <Text data-testid="cancel-form-description" cmsId="cancel-form-description">{cmsData?.['cancel-form-description'] || 'Please provide your booking details to process the cancellation'}</Text>
             </Stack>
             
             <Stack data-testid="cancel-form-fields" spacing="md">
-              <Text data-testid="cancel-booking-id-field">
+              <Text data-testid="cancel-booking-id-field" cmsId="ignore">
                 <strong>Booking ID:</strong> Enter your booking reference number
               </Text>
-              <Text data-testid="cancel-reason-field">
+              <Text data-testid="cancel-reason-field" cmsId="ignore">
                 <strong>Reason:</strong> Select a reason for cancellation (optional)
               </Text>
             </Stack>
@@ -141,9 +140,10 @@ function CancelPageContent({ cmsData }: CancelPageClientProps) {
                   variant={action.variant}
                   onClick={action.onClick}
                   disabled={action.disabled}
-                >
-                  {action.label}
-                </Button>
+                  cmsId="cancel-form-action"
+                  
+                  text={action.label}
+                />
               ))}
             </Stack>
           </Stack>
@@ -155,8 +155,8 @@ function CancelPageContent({ cmsData }: CancelPageClientProps) {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-policy-title" weight="bold" data-cms-id="policy-title">{getCMSField(cmsData, 'cancel-policy-title', '📋 Cancellation Policy')}</Text>
-              <Text data-testid="cancel-policy-description" data-cms-id="policy-description">{getCMSField(cmsData, 'cancel-policy-description', 'Important information about our cancellation terms')}</Text>
+              <Text data-testid="cancel-policy-title" weight="bold" cmsId="cancel-policy-title">{cmsData?.['cancel-policy-title'] || '📋 Cancellation Policy'}</Text>
+              <Text data-testid="cancel-policy-description" cmsId="cancel-policy-description">{cmsData?.['cancel-policy-description'] || 'Important information about our cancellation terms'}</Text>
             </Stack>
             
             <Stack data-testid="cancel-policy-list" spacing="md">
@@ -178,8 +178,8 @@ function CancelPageContent({ cmsData }: CancelPageClientProps) {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-alternatives-title" weight="bold" data-cms-id="alternatives-title">{getCMSField(cmsData, 'cancel-alternatives-title', '🔄 Alternative Options')}</Text>
-              <Text data-testid="cancel-alternatives-description" data-cms-id="alternatives-description">{getCMSField(cmsData, 'cancel-alternatives-description', 'Consider these alternatives before cancelling')}</Text>
+              <Text data-testid="cancel-alternatives-title" weight="bold" cmsId="alternatives-title">{cmsData?.['cancel-alternatives-title'] || '🔄 Alternative Options'}</Text>
+              <Text data-testid="cancel-alternatives-description" cmsId="cancel-alternatives-description">{cmsData?.['cancel-alternatives-description'] || 'Consider these alternatives before cancelling'}</Text>
             </Stack>
             
             <FeatureGrid data-testid="cancel-alternatives-grid" features={alternativeOptions} columns={3} />
@@ -190,10 +190,10 @@ function CancelPageContent({ cmsData }: CancelPageClientProps) {
   );
 }
 
-export default function CancelPageClient({ cmsData }: CancelPageClientProps) {
+export default function CancelPageClient() {
   return (
     <ToastProvider>
-      <CancelPageContent cmsData={cmsData} />
+      <CancelPageContent />
     </ToastProvider>
   );
 }

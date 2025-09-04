@@ -9,17 +9,20 @@ import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/B
 import { useAdminStatus } from '@/hooks/useAdminStatus';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/utils/firebase';
-import { getCMSField } from '../../design/hooks/useCMSData';
+import { useCMSData } from '../../design/providers/CMSDataProvider';
 const LogoImage = styled.img`
   max-width: 300px;
 `;
 
 interface CustomerNavigationProps {
   width?: string;
-  cmsData?: any;
 }
 
-export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width, cmsData }) => {
+export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width }) => {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.navigation || {};
+  
   const pathname = usePathname();
   const { isAdmin } = useAdminStatus();
   const { isLoggedIn } = useAuth();
@@ -53,9 +56,10 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width, c
           onClick={() => auth.signOut()}
           data-testid="nav-logout-button" 
           id="nav-logout-button"
-        >
-          {getCMSField(cmsData, 'navigation-logout', 'Logout')}
-        </Button>
+          cmsId="nav-logout-button"
+          
+          text={cmsData?.['navigation-logout'] || 'Logout'}
+        />
       )}
       {pathname !== '/book' && (
         <Button 
@@ -64,9 +68,10 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width, c
           href="/book"
           data-testid="nav-book-now-button" 
           id="nav-book-now-button"
-        >
-          {getCMSField(cmsData, 'navigation-bookNow', 'Book Now')}
-        </Button>
+          cmsId="nav-book-now-button"
+          
+          text={cmsData?.['navigation-bookNow'] || 'Book Now'}
+        />
       )}
     </>
   );
@@ -80,9 +85,10 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width, c
           onClick={() => auth.signOut()}
           data-testid="nav-mobile-logout-button" 
           id="nav-mobile-logout-button"
-        >
-          {getCMSField(cmsData, 'navigation-mobile-logout', 'Logout')}
-        </Button>
+          cmsId="nav-mobile-logout-button"
+          
+          text={cmsData?.['navigation-mobile-logout'] || 'Logout'}
+        />
       )}
       {pathname !== '/book' && (
         <Button 
@@ -91,9 +97,10 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width, c
           href="/book"
           data-testid="nav-mobile-book-now-button" 
           id="nav-mobile-book-now-button"
-        >
-          {getCMSField(cmsData, 'navigation-mobile-bookNow', 'Book Now')}
-        </Button>
+          cmsId="nav-mobile-book-now-button"
+          
+          text={cmsData?.['navigation-mobile-bookNow'] || 'Book Now'}
+        />
       )}
     </>
   );
@@ -107,7 +114,6 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width, c
       dataTestIdPrefix="nav"
       editableFieldPrefix="navigation"
       width={width}
-      cmsData={cmsData}
     />
   );
 }; 

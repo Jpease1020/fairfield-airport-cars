@@ -6,7 +6,6 @@ import { Container } from '../layout/containers/Container';
 import { H1 } from '../components/base-components/text/Headings';
 import { Text } from '../components/base-components/text/Text';
 import { FlexboxMargin } from '../system/shared-types';
-import { getCMSField } from '../hooks/useCMSData';
 
 const ActionsContainer = styled.div`
   display: flex;
@@ -22,7 +21,7 @@ interface PageHeaderProps {
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   margin?: FlexboxMargin; // Limited margin for flexbox positioning
   spacing?: 'sm' | 'md' | 'lg';
-  cmsData?: any;
+  cmsData: any;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -45,7 +44,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       {title && (
         typeof title === 'string' ? (
           <H1>
-            {getCMSField(cmsData, 'page_header-title', title)}
+            {cmsData?.['page_header-title'] || title}
           </H1>
         ) : (
           title
@@ -54,7 +53,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       {subtitle && (
         typeof subtitle === 'string' ? (
           <Text>
-            {getCMSField(cmsData, 'page_header-subtitle', subtitle)}
+            {cmsData?.['page_header-subtitle'] || subtitle}
           </Text>
         ) : (
           subtitle

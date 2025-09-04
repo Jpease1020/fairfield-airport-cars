@@ -39,24 +39,24 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <Container>
           <Stack spacing="lg" align="center">
-            <Text variant="lead" color="error">
+            <Text variant="lead" color="error" cmsId="error-boundary-title">
               Something went wrong
             </Text>
-            <Text>
+            <Text cmsId="error-boundary-message">
               We&apos;re sorry, but something unexpected happened. Please try refreshing the page.
             </Text>
             <Button
               onClick={() => window.location.reload()}
               variant="primary"
-            >
-              Refresh Page
-            </Button>
+              cmsId="error-boundary-refresh-button"
+              text="Refresh Page"
+            />
             <Button
               onClick={() => window.location.href = '/'}
               variant="outline"
-            >
-              Go Home
-            </Button>
+              cmsId="error-boundary-home-button"
+              text="Go Home"
+            />
           </Stack>
         </Container>
       );

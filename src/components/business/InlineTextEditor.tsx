@@ -14,11 +14,10 @@ const FloatingEditorBox = styled.div<{ $top: number; $left: number }>`
 
 interface InlineTextEditorProps {
   editMode?: boolean;
-  cmsData?: any;
   updateField?: (path: string, value: string) => Promise<void>;
 }
 
-export default function InlineTextEditor({ editMode = false, cmsData, updateField }: InlineTextEditorProps) {
+export default function InlineTextEditor({ editMode = false, updateField }: InlineTextEditorProps) {
 
   const [activePath, setActivePath] = useState<string | null>(null);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
@@ -31,7 +30,6 @@ export default function InlineTextEditor({ editMode = false, cmsData, updateFiel
     setSelectedElement(element);
     setActivePath(path);
     
-    // Get the current text content from the DOM element instead of cmsData
     // This ensures the modal shows the actual text, not empty
     const currentText = element.textContent || element.innerText || '';
     setValue(currentText);
@@ -55,8 +53,8 @@ export default function InlineTextEditor({ editMode = false, cmsData, updateFiel
       const target = e.target as HTMLElement;
       if (!target) return;
 
-      // Check if the clicked element has a data-cms-id
-      const cmsId = target.getAttribute('data-cms-id');
+      // Check if the clicked element has a cmsId
+      const cmsId = target.getAttribute('cmsId');
       if (cmsId) {
         e.preventDefault();
         e.stopPropagation();
@@ -74,7 +72,7 @@ export default function InlineTextEditor({ editMode = false, cmsData, updateFiel
   }, [editMode]);
 
   // Simple approach: let editable text elements handle their own clicks
-  // Each element with data-cms-id should have its own onClick handler
+  // Each element with cmsId should have its own onClick handler
   // that calls openEditorFor when edit mode is active
   
   // Compute floating box position for the inline editor
@@ -177,12 +175,10 @@ export default function InlineTextEditor({ editMode = false, cmsData, updateFiel
                       }} 
                       disabled={!value.trim()}
                       data-testid="save-button"
-                    >
-                      Save
-                    </Button>
-                    <Button variant="secondary" onClick={closeEditor}>
-                      Cancel
-                    </Button>
+                      cmsId="inline-text-editor-save-button"
+                      text="Save"
+                    />
+                    <Button variant="secondary" onClick={closeEditor} cmsId="inline-text-editor-cancel-button" text="Cancel" />
                   </Stack>
                 </Stack>
               </Container>

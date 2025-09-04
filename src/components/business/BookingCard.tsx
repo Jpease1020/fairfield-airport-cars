@@ -7,7 +7,7 @@ import { H3 } from '@/design/components/base-components/text/Headings';
 import { Text } from '@/design/components/base-components/text/Text';
 import { Stack } from '@/design/layout/framing/Stack';
 import { Box } from '@/design/layout/content/Box';
-import { getCMSField } from '../../design/hooks/useCMSData';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Define Booking interface locally for this component
 interface Booking {
@@ -50,7 +50,7 @@ interface BookingCardProps {
   booking: Booking;
   showActions?: boolean;
   onAction?: (action: 'edit' | 'cancel' | 'view') => void;
-  cmsData?: any;
+  cmsData: any;
 }
 
 const BookingCard: React.FC<BookingCardProps> = ({
@@ -59,6 +59,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
   onAction,
   cmsData
 }) => {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.booking || {};
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -81,13 +84,13 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {/* Header */}
       <Stack direction="horizontal" align="center" justify="space-between" spacing="md">
         <H3>
-          {getCMSField(cmsData, 'bookingCard-customerName', booking.name)}
+          {pageCmsData?.['bookingCard-customerName'] || booking.name}
         </H3>
         <Text>
-          {getCMSField(cmsData, 'bookingCard-bookingNumber', `Booking #${booking.id}`)}
+          {pageCmsData?.['bookingCard-bookingNumber'] || `Booking #${booking.id}`}
         </Text>
         <Badge>
-          {getCMSField(cmsData, 'bookingCard-status', booking.status.charAt(0).toUpperCase() + booking.status.slice(1))}
+          {pageCmsData?.['bookingCard-status'] || booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
         </Badge>
       </Stack>
 
@@ -97,7 +100,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <Stack direction="horizontal" align="center" spacing="sm">
             <Calendar />
             <Text size="sm">
-              {getCMSField(cmsData, 'bookingCard-date', formatDate(booking.pickupDateTime.toString()))}
+              {pageCmsData?.['bookingCard-date'] || formatDate(booking.pickupDateTime.toString())}
             </Text>
           </Stack>
         </Container>
@@ -105,7 +108,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <Stack direction="horizontal" align="center" spacing="sm">
             <Clock />
             <Text size="sm">
-              {getCMSField(cmsData, 'bookingCard-time', formatTime(booking.pickupDateTime.toString()))}
+              {pageCmsData?.['bookingCard-time'] || formatTime(booking.pickupDateTime.toString())}
             </Text>
           </Stack>
         </Container>
@@ -118,10 +121,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
             <MapPin />
             <Stack direction="vertical" spacing="xs">
               <Text size="xs">
-                {getCMSField(cmsData, 'bookingCard-pickupLabel', 'Pickup:')}
+                {pageCmsData?.['bookingCard-pickupLabel'] || 'Pickup:'}
               </Text>
               <Text size="sm">
-                {getCMSField(cmsData, 'bookingCard-pickupLocation', booking.pickupLocation)}
+                {pageCmsData?.['bookingCard-pickupLocation'] || booking.pickupLocation}
               </Text>
             </Stack>
           </Stack>
@@ -131,10 +134,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
             <MapPin />
             <Stack direction="vertical" spacing="xs">
               <Text size="xs">
-                {getCMSField(cmsData, 'bookingCard-dropoffLabel', 'Drop-off:')}
+                {pageCmsData?.['bookingCard-dropoffLabel'] || 'Drop-off:'}
               </Text>
               <Text size="sm">
-                {getCMSField(cmsData, 'bookingCard-dropoffLocation', booking.dropoffLocation)}
+                {pageCmsData?.['bookingCard-dropoffLocation'] || booking.dropoffLocation}
               </Text>
             </Stack>
           </Stack>
@@ -145,10 +148,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
       {booking.notes && (
         <Container>
           <Text size="xs">
-              {getCMSField(cmsData, 'bookingCard-notesLabel', 'Notes:')}
+              {pageCmsData?.['bookingCard-notesLabel'] || 'Notes:'}
           </Text>
           <Text size="sm">
-            {getCMSField(cmsData, 'bookingCard-notes', booking.notes)}
+            {pageCmsData?.['bookingCard-notes'] || booking.notes}
           </Text>
         </Container>
       )}
@@ -157,10 +160,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
       <Stack direction="horizontal" align="center" spacing="sm">
         <DollarSign />
         <Text size="sm">
-          {getCMSField(cmsData, 'bookingCard-totalFareLabel', 'Total Fare:')}
+          {pageCmsData?.['bookingCard-totalFareLabel'] || 'Total Fare:'}
         </Text>
         <Text size="lg">
-          {getCMSField(cmsData, 'bookingCard-fare', `$${booking.fare}`)}
+          {pageCmsData?.['bookingCard-fare'] || `$${booking.fare}`}
         </Text>
       </Stack>
 
@@ -171,25 +174,28 @@ const BookingCard: React.FC<BookingCardProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => onAction('view')}
-          >
-            {getCMSField(cmsData, 'bookingCard-viewDetailsButton', 'View Details')}
-          </Button>
+            cmsId="booking-card-view-button"
+            
+            text={pageCmsData?.['bookingCard-viewDetailsButton'] || 'View Details'}
+          />
           {booking.status === 'pending' && (
             <>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('edit')}
-              >
-                {getCMSField(cmsData, 'bookingCard-editButton', 'Edit')}
-              </Button>
+                cmsId="booking-card-edit-button"
+                
+                text={pageCmsData?.['bookingCard-editButton'] || 'Edit'}
+              />
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => onAction('cancel')}
-              >
-                {getCMSField(cmsData, 'bookingCard-cancelButton', 'Cancel')}
-              </Button>
+                cmsId="booking-card-cancel-button"
+                
+                text={pageCmsData?.['bookingCard-cancelButton'] || 'Cancel'}
+              />
             </>
           )}
         </Stack>

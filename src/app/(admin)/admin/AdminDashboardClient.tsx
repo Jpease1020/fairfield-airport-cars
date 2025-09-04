@@ -14,34 +14,12 @@ import {
   H2,
 } from '@/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { useCMSData } from '@/design/providers/CMSDataProvider';      
 
-// Helper function to get field value from CMS
-function getCMSField(cmsData: any, fieldPath: string, defaultValue: string = ''): string {
-  if (!cmsData) return defaultValue;
-  
-  const resolvePath = (obj: any, path: string[]): unknown => {
-    let cur: any = obj;
-    for (const seg of path) {
-      if (cur && typeof cur === 'object' && seg in cur) {
-        cur = cur[seg as keyof typeof cur];
-      } else {
-        return undefined;
-      }
-    }
-    return cur;
-  };
-
-  const value = resolvePath(cmsData, fieldPath.split('.'));
-  return typeof value === 'string' ? (value as string) : defaultValue;
-}
-
-interface AdminDashboardClientProps {
-  cmsData: any;
-}
-
-export default function AdminDashboardClient({ cmsData }: AdminDashboardClientProps) {
-  const { mode } = useInteractionMode();
+export default function AdminDashboardClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const cmsData = allCmsData?.admin || {};
   
   const [stats, setStats] = useState({
     totalBookings: 0,
@@ -195,8 +173,10 @@ export default function AdminDashboardClient({ cmsData }: AdminDashboardClientPr
           <Alert variant="error">
             <Text>{error}</Text>
           </Alert>
-          <Button onClick={fetchDashboardData}>
-            Retry
+          <Button onClick={fetchDashboardData} cmsId="retry-button">
+            <Text cmsId="retry-button">
+              Retry
+            </Text>
           </Button>
         </Stack>
       </Container>
@@ -210,18 +190,18 @@ export default function AdminDashboardClient({ cmsData }: AdminDashboardClientPr
         <Stack spacing="md" align="center">
           <H2 
             align="center" 
-            data-cms-id="title"
-            mode={mode}
+            cmsId="title"
+            
           >
-            {getCMSField(cmsData, 'title', 'Admin Dashboard')}
+            {cmsData?.['title'] || 'Admin Dashboard'}
           </H2>
           <Text 
             variant="lead" 
             align="center" 
-            data-cms-id="subtitle"
-            mode={mode}
+            cmsId="subtitle"
+            
           >
-            {getCMSField(cmsData, 'subtitle', 'Manage your airport transportation business')}
+            {cmsData?.['subtitle'] || 'Manage your airport transportation business'}
           </Text>
         </Stack>
 
@@ -232,8 +212,8 @@ export default function AdminDashboardClient({ cmsData }: AdminDashboardClientPr
               <Stack spacing="sm" align="center">
                 <Text size="3xl">📋</Text>
                 <H2>{stats.totalBookings}</H2>
-                <Text align="center" color="muted" data-cms-id="stats-total-bookings" >
-                  {getCMSField(cmsData, 'stats-total-bookings', 'Total Bookings')}
+                <Text align="center" color="muted" cmsId="stats-total-bookings" >
+                  {cmsData?.['stats-total-bookings'] || 'Total Bookings'}
                 </Text>
               </Stack>
             </Box>
@@ -244,8 +224,8 @@ export default function AdminDashboardClient({ cmsData }: AdminDashboardClientPr
               <Stack spacing="sm" align="center">
                 <Text size="3xl">🚗</Text>
                 <H2>{stats.activeDrivers}</H2>
-                <Text align="center" color="muted" data-cms-id="stats-active-drivers">
-                  {getCMSField(cmsData, 'stats-active-drivers', 'Active Drivers')}
+                <Text align="center" color="muted" cmsId="stats-active-drivers">
+                  {cmsData?.['stats-active-drivers'] || 'Active Drivers'}
                 </Text>
               </Stack>
             </Box>
@@ -256,8 +236,8 @@ export default function AdminDashboardClient({ cmsData }: AdminDashboardClientPr
               <Stack spacing="sm" align="center">
                 <Text size="3xl">💰</Text>
                 <H2>{formatCurrency(stats.revenueThisMonth)}</H2>
-                <Text align="center" color="muted" data-cms-id="stats-revenue-this-month">
-                  {getCMSField(cmsData, 'stats-revenue-this-month', 'Revenue This Month')}
+                <Text align="center" color="muted" cmsId="stats-revenue-this-month">
+                  {cmsData?.['stats-revenue-this-month'] || 'Revenue This Month'}
                 </Text>
               </Stack>
             </Box>
@@ -268,8 +248,8 @@ export default function AdminDashboardClient({ cmsData }: AdminDashboardClientPr
               <Stack spacing="sm" align="center">
                 <Text size="3xl">⭐</Text>
                 <H2>{stats.customerRating}</H2>
-                <Text align="center" color="muted" data-cms-id="stats-customer-rating">
-                  {getCMSField(cmsData, 'stats-customer-rating', 'Customer Rating')}
+                <Text align="center" color="muted" cmsId="stats-customer-rating">
+                  {cmsData?.['stats-customer-rating'] || 'Customer Rating'}
                 </Text>
               </Stack>
             </Box>
@@ -302,9 +282,7 @@ export default function AdminDashboardClient({ cmsData }: AdminDashboardClientPr
 
         {/* Quick Actions */}
         <Stack spacing="md" align="center">
-          <Button onClick={fetchDashboardData} variant="outline">
-            Refresh Data
-          </Button>
+          <Button onClick={fetchDashboardData} variant="outline" cmsId="refresh-data-button"  text="Refresh Data" />
         </Stack>
       </Stack>
     </Container>

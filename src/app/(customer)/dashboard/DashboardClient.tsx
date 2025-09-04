@@ -12,61 +12,57 @@ import {
   H4,
   Box
 } from '@/ui';
-import { useInteractionMode } from '@/design/providers/InteractionModeProvider';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
-// Helper function to get field value from CMS
-import { getCMSField } from '@/design/hooks/useCMSData';
-
-interface DashboardClientProps {
-  cmsData: any;
-}
-
-export default function DashboardClient({ cmsData }: DashboardClientProps) {
+export default function DashboardClient() {
+  // Get CMS data from provider
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.dashboard || {};
   const { addToast } = useToast();
-  const { mode } = useInteractionMode();
+  
 
   const dashboardActions = [
     {
       id: 1,
       icon: "📋",
-      label: getCMSField(cmsData, 'actions.bookings.label', 'My Bookings'),
-      description: getCMSField(cmsData, 'actions.bookings.description', 'View and manage your current and past bookings'),
+      label: pageCmsData?.['actions.bookings.label'] || 'My Bookings',
+      description: pageCmsData?.['actions.bookings.description'] || 'View and manage your current and past bookings',
       href: "/manage"
     },
     {
       id: 2,
       icon: "📅",
-      label: getCMSField(cmsData, 'actions.status.label', 'Booking Status'),
-      description: getCMSField(cmsData, 'actions.status.description', 'Check the status of your upcoming rides'),
+      label: pageCmsData?.['actions.status.label'] || 'Booking Status',
+      description: pageCmsData?.['actions.status.description'] || 'Check the status of your upcoming rides',
       href: "/status"
     },
     {
       id: 3,
       icon: "⚙️",
-      label: getCMSField(cmsData, 'actions.settings.label', 'Account Settings'),
-      description: getCMSField(cmsData, 'actions.settings.description', 'Update your profile and preferences'),
+      label: pageCmsData?.['actions.settings.label'] || 'Account Settings',
+      description: pageCmsData?.['actions.settings.description'] || 'Update your profile and preferences',
       href: "/profile"
     },
     {
       id: 4,
       icon: "💬",
-      label: getCMSField(cmsData, 'actions.support.label', 'Support'),
-      description: getCMSField(cmsData, 'actions.support.description', 'Get help with your bookings'),
+      label: pageCmsData?.['actions.support.label'] || 'Support',
+      description: pageCmsData?.['actions.support.description'] || 'Get help with your bookings',
       href: "/help"
     },
     {
       id: 5,
       icon: "📅",
-      label: getCMSField(cmsData, 'actions.book.label', 'Book New Ride'),
-      description: getCMSField(cmsData, 'actions.book.description', 'Schedule your next airport transportation'),
+      label: pageCmsData?.['actions.book.label'] || 'Book New Ride',
+      description: pageCmsData?.['actions.book.description'] || 'Schedule your next airport transportation',
       href: "/book"
     },
     {
       id: 6,
       icon: "📞",
-      label: getCMSField(cmsData, 'actions.contact.label', 'Contact Us'),
-      description: getCMSField(cmsData, 'actions.contact.description', 'Reach out for immediate assistance'),
-      onClick: () => addToast('info', getCMSField(cmsData, 'contactInfo', 'Contact information: (203) 555-0123')),
+      label: pageCmsData?.['actions.contact.label'] || 'Contact Us',
+      description: pageCmsData?.['actions.contact.description'] || 'Reach out for immediate assistance',
+      onClick: () => addToast('info', pageCmsData?.['contactInfo'] || 'Contact information: (203) 555-0123'),
       href: "#"
     }
   ];
@@ -74,18 +70,18 @@ export default function DashboardClient({ cmsData }: DashboardClientProps) {
   const accountStats = [
     {
       icon: "🎯",
-      title: getCMSField(cmsData, 'stats.totalRides', 'Total Rides'),
-      description: getCMSField(cmsData, 'stats.totalRides', 'Feature coming soon')
+      title: pageCmsData?.['stats.totalRides'] || 'Total Rides',
+      description: pageCmsData?.['stats.totalRides'] || 'Feature coming soon'
     },
     {
       icon: "⭐",
-      title: getCMSField(cmsData, 'stats.completedRides', 'Completed Rides'),
-      description: getCMSField(cmsData, 'stats.completedRides', 'Valued Customer')
+        title: pageCmsData?.['stats.completedRides'] || 'Completed Rides',
+      description: pageCmsData?.['stats.completedRides'] || 'Valued Customer'
     },
     {
       icon: "📱",
-      title: getCMSField(cmsData, 'stats.upcomingRides', 'Upcoming Rides'),
-      description: getCMSField(cmsData, 'stats.upcomingRides', 'SMS & Email')
+      title: pageCmsData?.['stats.upcomingRides'] || 'Upcoming Rides',
+      description: pageCmsData?.['stats.upcomingRides'] || 'SMS & Email'
     }
   ];
 
@@ -98,18 +94,18 @@ export default function DashboardClient({ cmsData }: DashboardClientProps) {
             <H1 
               align="center" 
               data-testid="welcome-title"
-              data-cms-id="welcome-title"
-              mode={mode}
+              cmsId="welcome-title"
+              
             >
-              {getCMSField(cmsData, 'welcome-title', '👋 Welcome to Your Dashboard')}
+              {pageCmsData?.['welcome-title'] || '👋 Welcome to Your Dashboard'}
             </H1>
             <Text 
               variant="lead" 
               align="center" 
-              data-cms-id="welcome-subtitle"
-              mode={mode}
+              cmsId="welcome-subtitle"
+              
             >
-              {getCMSField(cmsData, 'welcome-subtitle', 'Manage your airport transportation from one central hub')}
+              {pageCmsData?.['welcome-subtitle'] || 'Manage your airport transportation from one central hub'}
             </Text>
           </Stack>
 
@@ -137,8 +133,8 @@ export default function DashboardClient({ cmsData }: DashboardClientProps) {
 
           {/* Account Stats */}
           <Stack spacing="lg" align="center">
-            <H4 align="center" data-cms-id="stats-title">
-              {getCMSField(cmsData, 'stats-title', 'Account Overview')}
+            <H4 align="center" cmsId="stats-title">
+              {pageCmsData?.['stats-title'] || 'Account Overview'}
             </H4>
             <Grid cols={{ xs: 1, md: 3 }} gap="md">
               {accountStats.map((stat, index) => (

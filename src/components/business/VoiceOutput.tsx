@@ -336,6 +336,7 @@ export const VoiceOutput: React.FC<VoiceOutputProps> = ({
           size={size}
           disabled
           aria-label="Speech synthesis not supported"
+          cmsId="voice-output-not-supported-button"
         >
           <IconWrapper isSpeaking={false} hasError={true} size={size}>
             <VolumeX size={size === 'sm' ? 14 : size === 'lg' ? 20 : 16} />
@@ -361,6 +362,7 @@ export const VoiceOutput: React.FC<VoiceOutputProps> = ({
         onClick={handleToggle}
         disabled={isDisabled}
         aria-label={ariaLabel || (isSpeaking ? 'Stop speaking' : 'Start speaking')}
+        cmsId="voice-output-toggle-button"
         aria-describedby={ariaDescribedBy}
         aria-live="polite"
         aria-atomic="true"

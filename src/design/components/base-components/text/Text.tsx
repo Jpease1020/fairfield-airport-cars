@@ -4,6 +4,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
 import { BaseComponentProps, TextVariant, TextSize, FontWeight, TextAlign, ColorVariant, SpacingScale } from '../../../system/shared-types';
+import { useCMSData } from '../../../providers/CMSDataProvider';
+import { useInteractionMode } from '../../../providers/InteractionModeProvider';
 
 // Styled text component
 const StyledText = styled.p.withConfig({
@@ -144,15 +146,13 @@ export interface TextProps extends BaseComponentProps {
   contentEditable?: boolean;
   suppressContentEditableWarning?: boolean;
   cmsKey?: string;
+  cmsId?: string; // Add cmsId property
   
   // Event handlers
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
-  
-  // Interaction mode
-  mode?: 'edit' | 'comment' | null;
   
   // Styling
   style?: React.CSSProperties;
@@ -166,32 +166,43 @@ export const Text: React.FC<TextProps> = ({
   align = 'left',
   color = 'default',
   as: Component = 'p',
-  cmsKey,
-  mode,
+  cmsId,
   ...rest
 }) => {
+  // Get CMS data from provider
+  const { cmsData } = useCMSData();
+  
+  // Get mode from provider
+  let mode: 'edit' | 'comment' | null = null;
+  try {
+    const context = useInteractionMode();
+    mode = context.mode;
+  } catch {
+    // Provider not available, use null as default
+    mode = null;
+  }
   const ref = React.useRef<HTMLElement | null>(null);
   
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Get cmsId from either cmsKey prop or data-cms-id attribute
-    const cmsId = cmsKey || (e.currentTarget as HTMLElement).getAttribute('data-cms-id');
+    // Get cmsId from either cmsId prop or cmsId attribute
+    const cmsIdentifier = cmsId || (e.currentTarget as HTMLElement).getAttribute('cmsId');
     
-    if (mode === 'edit' && cmsId) {
+    if (mode === 'edit' && cmsIdentifier) {
       e.preventDefault();
       e.stopPropagation();
       
       // Dispatch custom event to open edit modal
       const event = new (window as any).CustomEvent('openInlineEditor', {
-        detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
+        detail: { cmsId: cmsIdentifier, element: e.currentTarget, x: e.clientX, y: e.clientY }
       });
       document.dispatchEvent(event);
-    } else if (mode === 'comment' && cmsId) {
+    } else if (mode === 'comment' && cmsIdentifier) {
       e.preventDefault();
       e.stopPropagation();
       
       // Dispatch custom event to open comment modal
       const event = new (window as any).CustomEvent('openCommentModal', {
-        detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
+        detail: { cmsId: cmsIdentifier, element: e.currentTarget, x: e.clientX, y: e.clientY }
       });
       document.dispatchEvent(event);
     }
@@ -199,6 +210,14 @@ export const Text: React.FC<TextProps> = ({
     rest.onClick?.(e);
   };
   
+  // Don't add data-cms-id for decorative elements
+  const shouldIgnoreCMS = cmsId === 'ignore';
+  
+  // If we have CMS data and cmsId, try to get the field value
+  const displayContent = cmsData && cmsId && !shouldIgnoreCMS 
+    ? ((cmsData as any)?.[cmsId] || children)
+    : children;
+
   return (
     <StyledText
       as={Component}
@@ -210,9 +229,10 @@ export const Text: React.FC<TextProps> = ({
       ref={ref as any}
       onClick={mode ? handleClick : rest.onClick}
       isInteractive={!!mode}
+      {...(!shouldIgnoreCMS && cmsId ? { 'data-cms-id': cmsId } : {})}
       {...rest}
     >
-      {children}
+      {displayContent}
     </StyledText>
   );
 };

@@ -26,12 +26,14 @@ interface LiveTrackingMapProps {
   bookingId: string;
   pickupLocation: string;
   dropoffLocation: string;
+  cmsData?: any;
 }
 
 export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   bookingId,
   pickupLocation,
   dropoffLocation,
+  cmsData,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
@@ -240,7 +242,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Connecting to real-time tracking...</Text>
+          <Text cmsId="live-tracking-map-connecting">{cmsData?.['live-tracking-map-connecting'] || 'Connecting to real-time tracking...'}</Text>
         </Stack>
       </Container>
     );
@@ -249,7 +251,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   if (error) {
     return (
       <Container>
-        <Alert variant="error" title="Tracking Error">
+        <Alert variant="error" title="Tracking Error" cmsId="ignore">
           {error}
         </Alert>
       </Container>
@@ -271,7 +273,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
           </Stack>
           
           {bookingStatus?.estimatedArrival && (
-            <Text>
+            <Text cmsId="ignore">
               Estimated arrival: {formatETA(bookingStatus.estimatedArrival)}
             </Text>
           )}
