@@ -1,9 +1,8 @@
+'use client';
+
 import { Container, Stack, Text, Button } from '@/ui';
 import Link from 'next/link';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
-
-// Force dynamic rendering to prevent server-side rendering issues
-export const dynamic = 'force-dynamic';
 
 export default function NotFound() {
   const cmsData = useCMSData();
