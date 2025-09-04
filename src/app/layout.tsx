@@ -5,14 +5,12 @@ import { InteractionModeProvider } from '@/design/providers/InteractionModeProvi
 
 import { GoogleMapsProvider } from '@/providers/GoogleMapsProvider';
 import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
-import { cmsFlattenedService } from '@/lib/services/cms-service';
+import { getAllCMSDataCached } from '@/lib/services/cms-cache';
 
 import { AppContent } from './AppContent';
 import { NavigationWrapper } from '@/components/app/NavigationWrapper';
 import { Footer } from '@/design/page-sections/Footer';
 import { Container } from '@/design/layout/containers/Container';
-
-
 
 export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',
@@ -25,17 +23,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get all CMS data for the entire application
-  let allCmsData = null;
-  try {
-    // Only try to get CMS data if we're in development with emulators
-    if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
-      allCmsData = await cmsFlattenedService.getAllCMSData();
-    }
-  } catch (error) {
-    console.error('Failed to load CMS data:', error);
-    // Continue without CMS data
-  }
+  // Fetch CMS data once at build time or per serverless function call
+  const allCmsData = await getAllCMSDataCached();
 
   return (
     <html lang="en">
@@ -47,7 +36,7 @@ export default async function RootLayout({
       </head>
       <body>
         <StyledComponentsRegistry>
-          <CMSDataProvider cmsData={allCmsData as any}>
+          <CMSDataProvider initialCmsData={allCmsData}>
             <ErrorBoundary>
               <AccessibilityEnhancer>
                 <AdminProvider>

@@ -24,6 +24,8 @@ import {
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function AddPaymentMethodClient() {
+  const [isClient, setIsClient] = useState(false);
+  
   // Get CMS data from provider
   const { cmsData: allCmsData } = useCMSData();
   const pageCmsData = allCmsData?.['customer-add-payment-method'] || {};
@@ -34,7 +36,6 @@ export default function AddPaymentMethodClient() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
   // Form state
@@ -159,6 +160,17 @@ export default function AddPaymentMethodClient() {
         <Stack spacing="xl" align="center">
           <Text variant="muted" cmsId="method-login-required">Please log in to add payment methods.</Text>
           <Button onClick={() => router.push('/login')} cmsId="method-go-to-login" text="Go to Login"/>          
+        </Stack>
+      </Container>
+    );
+  }
+
+  // Prevent server-side rendering
+  if (!isClient) {
+    return (
+      <Container>
+        <Stack spacing="lg" align="center">
+          <LoadingSpinner size="lg" />
         </Stack>
       </Container>
     );
