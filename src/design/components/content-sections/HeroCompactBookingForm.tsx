@@ -232,7 +232,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                 <Text size="lg" weight="bold" color="primary" cmsId="promo-limited-time">
                   🎉 Limited Time Offer!
                 </Text>
-                <StrikethroughText size="lg" color="secondary" cmsId="promo-deposit-strikethrough">
+                <StrikethroughText size="md" color="secondary" cmsId="promo-deposit-strikethrough">
                   Deposit: ${(estimatedFare * 0.3).toFixed(2)}
                 </StrikethroughText>
                 <Text size="lg" weight="bold" color="success" cmsId="promo-no-deposit">

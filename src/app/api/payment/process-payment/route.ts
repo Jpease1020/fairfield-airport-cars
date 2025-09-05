@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { processPayment } from '@/lib/services/square-service';
-import { createBooking } from '@/lib/services/booking-service';
+import { createBookingAtomic } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { sendSms } from '@/lib/services/twilio-service';
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     
     if (!bookingId && bookingData) {
       // Create new booking with payment information
-      const bookingResult = await createBooking({
+      const bookingResult = await createBookingAtomic({
         ...bookingData,
         squareOrderId: paymentResult.orderId,
         depositPaid: true,

@@ -1,5 +1,5 @@
 import { db } from '@/lib/utils/firebase-server';
-import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { getDriver } from './driver-service';
 import { driverSchedulingService } from './driver-scheduling-service';
 
@@ -143,7 +143,80 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
   }
 };
 
-// Create booking with payment integration and driver scheduling
+// ATOMIC BOOKING: Prevents double booking with Firestore transactions
+export const createBookingAtomic = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ bookingId: string }> => {
+  const pickupDate = bookingData.pickupDateTime;
+  const dateStr = pickupDate.toISOString().split('T')[0]; // YYYY-MM-DD
+  const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
+  const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
+
+  return await runTransaction(db, async (transaction) => {
+    // 1. Check for conflicts atomically
+    const conflictCheck = await driverSchedulingService.checkBookingConflicts(
+      dateStr,
+      startTime,
+      endTime
+    );
+
+    if (conflictCheck.hasConflict) {
+      throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
+    }
+
+    // 2. Get available drivers atomically
+    const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
+      dateStr,
+      startTime,
+      endTime
+    );
+
+    if (availableDrivers.length === 0) {
+      throw new Error('Gregg is not available for the requested time slot. Please try a different time.');
+    }
+
+    // 3. Select Gregg as the driver (single driver setup)
+    const selectedDriver = availableDrivers[0];
+    
+    if (!selectedDriver) {
+      throw new Error('Gregg is not available for the requested time slot');
+    }
+
+    // 4. Calculate deposit (30% of total fare)
+    const depositAmount = Math.round(bookingData.fare * 0.3 * 100) / 100;
+    const balanceDue = bookingData.fare - depositAmount;
+
+    // 5. Create booking document atomically
+    const bookingDoc = {
+      ...bookingData,
+      driverId: selectedDriver.driverId,
+      driverName: selectedDriver.driverName,
+      depositAmount,
+      balanceDue,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
+    const bookingId = docRef.id;
+
+    // 6. Book the time slot atomically (within transaction)
+    await driverSchedulingService.bookTimeSlot(
+      selectedDriver.driverId,
+      selectedDriver.driverName,
+      dateStr,
+      startTime,
+      endTime,
+      bookingId,
+      bookingData.name,
+      bookingData.pickupLocation,
+      bookingData.dropoffLocation
+    );
+
+    console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
+    return { bookingId };
+  });
+};
+
+// Create booking with payment integration and driver scheduling (LEGACY - use createBookingAtomic)
 export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ bookingId: string }> => {
   try {
     // Check for booking conflicts before creating
