@@ -117,6 +117,39 @@ function PricingSettingsContent() {
     });
   };
 
+  const handleSave = async () => {
+    if (!settings) return;
+    
+    try {
+      setLoading(true);
+      
+      // Update pricing settings in CMS
+      const response = await fetch('/api/admin/cms/pricing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save pricing settings');
+      }
+
+      setSaved(true);
+      addToast('success', 'Pricing settings saved successfully!');
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => setSaved(false), 3000);
+      
+    } catch (error) {
+      console.error('Error saving pricing settings:', error);
+      addToast('error', 'Failed to save pricing settings. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -443,6 +476,30 @@ function PricingSettingsContent() {
               )}
             </Stack>
           </Box>
+          </GridSection>
+
+          {/* Save Button */}
+          <GridSection>
+            <Box variant="elevated" padding="lg">
+              <Stack spacing="md" align="center">
+                <Text variant="lead" size="md" weight="semibold" cmsId="saveSectionTitle">
+                  {cmsData?.['saveSectionTitle'] || '💾 Save Settings'}
+                </Text>
+                <Text variant="muted" size="sm" cmsId="saveSectionDesc">
+                  {cmsData?.['saveSectionDesc'] || 'Click save to update pricing across the entire application'}
+                </Text>
+                <ActionButtonGroup
+                  buttons={[
+                    {
+                      id: 'save',
+                      label: cmsData?.['saveButtonText'] || 'Save Pricing Settings',
+                      onClick: handleSave,
+                      disabled: !settings || loading
+                    }
+                  ]}
+                />
+              </Stack>
+            </Box>
           </GridSection>
         </Stack>
       </Container>

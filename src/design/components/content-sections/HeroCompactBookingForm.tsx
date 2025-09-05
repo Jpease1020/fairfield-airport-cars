@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Container } from '../../layout/containers/Container';
 import { Stack } from '../../layout/framing/Stack';
 import { Box } from '../../layout/content/Box';
@@ -15,6 +16,11 @@ interface Coordinates {
   lat: number;
   lng: number;
 }
+
+const StrikethroughText = styled(Text)`
+  text-decoration: line-through;
+  opacity: 0.7;
+`;
 
 interface HeroCompactBookingFormProps {
   'data-testid'?: string;
@@ -219,11 +225,6 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                 *Price will be updated with exact route details
               </Text>
             )}
-            {fareCalculationMethod === 'route' && (
-              <Text size="sm" color="success">
-                ✓ Based on exact route calculation
-              </Text>
-            )}
             
             {/* Promotional Message */}
             <Box variant="filled" padding="sm">
@@ -231,9 +232,9 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                 <Text size="xs" weight="bold" color="primary" cmsId="promo-limited-time">
                   🎉 Limited Time Offer!
                 </Text>
-                <Text size="xs" color="secondary" cmsId="promo-deposit-strikethrough">
+                <StrikethroughText size="xs" color="secondary" cmsId="promo-deposit-strikethrough">
                   Deposit: ${(estimatedFare * 0.3).toFixed(2)}
-                </Text>
+                </StrikethroughText>
                 <Text size="xs" weight="bold" color="success" cmsId="promo-no-deposit">
                   No Deposit Required - Book Now!
                 </Text>
