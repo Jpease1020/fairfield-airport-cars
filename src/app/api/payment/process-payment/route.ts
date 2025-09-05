@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { processPayment } from '@/lib/services/square-service';
 import { createBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
+import { sendSms } from '@/lib/services/twilio-service';
 
 export async function POST(request: Request) {
   try {
@@ -47,10 +48,10 @@ export async function POST(request: Request) {
       
       bookingId = bookingResult.bookingId;
       
-      // Send confirmation email after successful booking creation
+      // Send confirmation notifications after successful booking creation
       if (bookingData) {
         try {
-          await sendConfirmationEmail({
+          const booking = {
             ...bookingData,
             id: bookingId,
             pickupDateTime: new Date(bookingData.pickupDateTime), // Convert string to Date
@@ -62,10 +63,23 @@ export async function POST(request: Request) {
             balanceDue: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
-          });
-        } catch (emailError) {
-          console.error('Failed to send confirmation email:', emailError);
-          // Don't fail the payment if email fails
+          };
+
+          // Send both email and SMS notifications
+          const smsMessage = `Thank you for booking with Fairfield Airport Car Service! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${booking.pickupDateTime.toLocaleString()} is confirmed. Booking ID: ${bookingId}`;
+          
+          await Promise.all([
+            sendConfirmationEmail(booking),
+            sendSms({
+              to: booking.phone,
+              body: smsMessage
+            })
+          ]);
+          
+          console.log('✅ Confirmation email and SMS sent successfully');
+        } catch (notificationError) {
+          console.error('Failed to send confirmation notifications:', notificationError);
+          // Don't fail the payment if notifications fail
         }
       }
     }

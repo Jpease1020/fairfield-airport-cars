@@ -1,6 +1,7 @@
 import { db } from '@/lib/utils/firebase-server';
 import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
 import { getDriver } from './driver-service';
+import { driverSchedulingService } from './driver-scheduling-service';
 
 
 // Helper function to safely convert Firestore dates to JavaScript Date objects
@@ -142,9 +143,44 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
   }
 };
 
-// Create booking with payment integration
+// Create booking with payment integration and driver scheduling
 export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ bookingId: string }> => {
   try {
+    // Check for booking conflicts before creating
+    const pickupDate = bookingData.pickupDateTime;
+    const dateStr = pickupDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
+    const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
+
+    // Check for conflicts
+    const conflictCheck = await driverSchedulingService.checkBookingConflicts(
+      dateStr,
+      startTime,
+      endTime
+    );
+
+    if (conflictCheck.hasConflict) {
+      throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
+    }
+
+    // Get available drivers for the time slot
+    const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
+      dateStr,
+      startTime,
+      endTime
+    );
+
+    if (availableDrivers.length === 0) {
+      throw new Error('Gregg is not available for the requested time slot. Please try a different time.');
+    }
+
+    // Select Gregg as the driver (single driver setup)
+    const selectedDriver = availableDrivers[0];
+    
+    if (!selectedDriver) {
+      throw new Error('Gregg is not available for the requested time slot');
+    }
+
     // Calculate deposit (20% of total fare)
     const depositAmount = Math.round(bookingData.fare * 0.2 * 100) / 100; // Round to 2 decimal places
     const balanceDue = bookingData.fare - depositAmount;
@@ -152,6 +188,8 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     // Create booking document
     const bookingDoc = {
       ...bookingData,
+      driverId: selectedDriver.driverId,
+      driverName: selectedDriver.driverName,
       depositAmount,
       balanceDue,
       createdAt: serverTimestamp(),
@@ -161,12 +199,20 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
     const bookingId = docRef.id;
 
-    // TODO: Implement proper driver assignment system
-    // For now, create booking without driver assignment
-    // const driverId = await assignDriverToBooking(bookingId, 'driverId');
-    // await updateDoc(docRef, { driverId, updatedAt: serverTimestamp() });
+    // Book the time slot in the driver's schedule
+    await driverSchedulingService.bookTimeSlot(
+      selectedDriver.driverId,
+      selectedDriver.driverName,
+      dateStr,
+      startTime,
+      endTime,
+      bookingId,
+      bookingData.name,
+      bookingData.pickupLocation,
+      bookingData.dropoffLocation
+    );
 
-    console.log(`Booking created successfully: ${bookingId}`);
+    console.log(`Booking created successfully: ${bookingId} with driver: ${selectedDriver.driverName}`);
     return { bookingId };
   } catch (error) {
     console.error('Error creating booking:', error);
@@ -235,7 +281,7 @@ export const deleteBooking = async (id: string): Promise<void> => {
   await updateDoc(docRef, { status: 'cancelled', updatedAt: serverTimestamp() });
 };
 
-// Cancel booking with refund logic
+// Cancel booking with refund logic and schedule cleanup
 export const cancelBooking = async (bookingId: string, reason?: string): Promise<void> => {
   const bookingRef = doc(db, 'bookings', bookingId);
   
@@ -244,6 +290,9 @@ export const cancelBooking = async (bookingId: string, reason?: string): Promise
     updatedAt: serverTimestamp(),
     cancellationReason: reason,
   });
+  
+  // Free up the time slot in the driver's schedule
+  await driverSchedulingService.cancelBooking(bookingId);
   
   // TODO: Implement refund logic with Square API
   // await processRefund(bookingId);

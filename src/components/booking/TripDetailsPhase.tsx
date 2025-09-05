@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Box, Button, Text, H2, Input, Select } from '@/ui';
+import { Container, Stack, Box, Button, Text, H2, Input, Select, StatusMessage } from '@/ui';
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { FlightInfo } from '@/hooks/useBookingForm';
+import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 
 interface Coordinates {
   lat: number;
@@ -69,6 +70,9 @@ export function TripDetailsPhase({
 }: TripDetailsPhaseProps) {
   const routes = useMapsLibrary('routes');
   const mapsLoaded = !!routes;
+  
+  // Availability checking
+  const { data: availability, isLoading: isCheckingAvailability, error: availabilityError, checkAvailability } = useBookingAvailability();
 
   // Handle location selection with coordinates
   const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
@@ -123,6 +127,18 @@ export function TripDetailsPhase({
 
     calculateFare();
   }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType, mapsLoaded, setFare, setIsCalculating]);
+
+  // Check availability when pickup date/time changes
+  React.useEffect(() => {
+    if (pickupDateTime && pickupLocation && dropoffLocation) {
+      const pickupDate = new Date(pickupDateTime);
+      const dateStr = pickupDate.toISOString().split('T')[0];
+      const startTime = pickupDate.toTimeString().slice(0, 5);
+      const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
+      
+      checkAvailability(dateStr, startTime, endTime);
+    }
+  }, [pickupDateTime, pickupLocation, dropoffLocation, checkAvailability]);
 
   // Note: Error handling for Google Maps loading is handled by the parent component
 
@@ -229,6 +245,54 @@ export function TripDetailsPhase({
               </Stack>
             </Stack>
 
+            {/* Availability Status */}
+            {pickupDateTime && pickupLocation && dropoffLocation && (
+              <Box variant="outlined" padding="md">
+                <Stack spacing="sm">
+                  <Text weight="bold" cmsId="availability-status-label">
+                    {cmsData?.['availability-status-label'] || 'Driver Availability'}
+                  </Text>
+                  
+                  {isCheckingAvailability ? (
+                    <Text color="secondary" cmsId="checking-availability">
+                      {cmsData?.['checking-availability'] || 'Checking driver availability...'}
+                    </Text>
+                  ) : availability ? (
+                    <Stack spacing="sm">
+                      {availability.isAvailable ? (
+                        <StatusMessage
+                          type="success"
+                          message={cmsData?.['driver-available'] || `✅ Gregg is available! Ready for your trip.`}
+                        />
+                      ) : (
+                        <Stack spacing="sm">
+                          <StatusMessage
+                            type="error"
+                            message={cmsData?.['driver-unavailable'] || '❌ Gregg is not available for this time slot.'}
+                          />
+                          {availability.suggestedTimeSlots.length > 0 && (
+                            <Box>
+                              <Text weight="medium" cmsId="suggested-times-label">
+                                {cmsData?.['suggested-times-label'] || 'Suggested times:'}
+                              </Text>
+                              <Text size="sm" color="secondary">
+                                {availability.suggestedTimeSlots.join(', ')}
+                              </Text>
+                            </Box>
+                          )}
+                        </Stack>
+                      )}
+                    </Stack>
+                  ) : availabilityError ? (
+                    <StatusMessage
+                      type="error"
+                      message={cmsData?.['availability-check-error'] || 'Failed to check availability. Please try again.'}
+                    />
+                  ) : null}
+                </Stack>
+              </Box>
+            )}
+
             {/* Fare Display */}
             {fare && (
               <Box variant="outlined" padding="md">
@@ -256,11 +320,14 @@ export function TripDetailsPhase({
             onClick={goToNextPhase}
             variant="primary"
             fullWidth
-            disabled={!canProceed || isCalculating}
+            disabled={!canProceed || isCalculating || isCheckingAvailability || (availability ? !availability.isAvailable : false)}
             data-testid="continue-to-contact-button"
             cmsId="continue-to-contact-button"
           >
-            {isCalculating ? cmsData?.['calculating-button'] || 'Calculating...' : cmsData?.['continue-button'] || 'Continue to Contact Info'}
+            {isCalculating ? cmsData?.['calculating-button'] || 'Calculating...' : 
+             isCheckingAvailability ? cmsData?.['checking-availability-button'] || 'Checking Availability...' :
+             availability && !availability.isAvailable ? cmsData?.['no-drivers-button'] || 'No Drivers Available' :
+             cmsData?.['continue-button'] || 'Continue to Contact Info'}
           </Button>
         </Stack>
       </Stack>
