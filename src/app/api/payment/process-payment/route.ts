@@ -1,23 +1,25 @@
 import { NextResponse } from 'next/server';
 import { processPayment } from '@/lib/services/square-service';
-import { updateBooking } from '@/lib/services/booking-service';
+import { createBooking } from '@/lib/services/booking-service';
+import { sendConfirmationEmail } from '@/lib/services/email-service';
 
 export async function POST(request: Request) {
   try {
-    const { paymentToken, amount, currency, bookingId, tipAmount = 0 } = await request.json();
+    const { paymentToken, amount, currency, bookingData, existingBookingId, tipAmount = 0 } = await request.json();
 
-    if (!paymentToken || !amount || !currency || !bookingId) {
+    if (!paymentToken || !amount || !currency) {
       return NextResponse.json({ 
         error: 'Missing required payment information' 
       }, { status: 400 });
     }
 
-    // Process the payment using the payment token
+    // SECURITY: Process payment FIRST, then create booking
+    // Amount is in cents, so we pass it directly to Square
     const paymentResult = await processPayment(
       paymentToken, 
-      amount + tipAmount, // Include tip in total amount
+      amount + tipAmount, // Include tip in total amount (both in cents)
       currency, 
-      bookingId
+      existingBookingId || 'temp-booking-id' // Use existing ID or temp for new bookings
     );
 
     if (!paymentResult.success) {
@@ -26,17 +28,50 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    // Update booking with payment information
-    await updateBooking(bookingId, {
-      squareOrderId: paymentResult.orderId,
-      depositPaid: true,
-      depositAmount: amount / 100,
-      tipAmount: tipAmount > 0 ? tipAmount / 100 : 0,
-      updatedAt: new Date(),
-    });
+    // Only create booking AFTER successful payment
+    let bookingId = existingBookingId;
+    
+    if (!bookingId && bookingData) {
+      // Create new booking with payment information
+      const bookingResult = await createBooking({
+        ...bookingData,
+        squareOrderId: paymentResult.orderId,
+        depositPaid: true,
+        depositAmount: amount / 100, // Convert cents to dollars
+        tipAmount: tipAmount > 0 ? tipAmount / 100 : 0, // Convert cents to dollars
+        status: 'confirmed', // Mark as confirmed since payment succeeded
+        balanceDue: 0, // No balance due since deposit is paid
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      
+      bookingId = bookingResult.bookingId;
+      
+      // Send confirmation email after successful booking creation
+      if (bookingData) {
+        try {
+          await sendConfirmationEmail({
+            ...bookingData,
+            id: bookingId,
+            squareOrderId: paymentResult.orderId,
+            depositPaid: true,
+            depositAmount: amount / 100,
+            tipAmount: tipAmount > 0 ? tipAmount / 100 : 0,
+            status: 'confirmed',
+            balanceDue: 0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        } catch (emailError) {
+          console.error('Failed to send confirmation email:', emailError);
+          // Don't fail the payment if email fails
+        }
+      }
+    }
 
     return NextResponse.json({
       success: true,
+      bookingId,
       paymentId: paymentResult.paymentId,
       status: paymentResult.status,
       amount: paymentResult.amount,

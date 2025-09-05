@@ -2,13 +2,21 @@
 
 import React from 'react';
 import { Container, Stack, Box, Button, Text, H2, Input, Select } from '@/ui';
-import { useGoogleMaps } from '@/providers/GoogleMapsProvider';
+import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { FlightInfo } from '@/hooks/useBookingForm';
+
+interface Coordinates {
+  lat: number;
+  lng: number;
+}
 
 interface TripDetailsPhaseProps {
   // State
   pickupLocation: string;
   dropoffLocation: string;
+  pickupCoords: Coordinates | null;
+  dropoffCoords: Coordinates | null;
   pickupDateTime: string;
   fareType: 'personal' | 'business';
   flightInfo: FlightInfo;
@@ -18,6 +26,8 @@ interface TripDetailsPhaseProps {
   // Setters
   setPickupLocation: (location: string) => void;
   setDropoffLocation: (location: string) => void;
+  setPickupCoords: (coords: Coordinates | null) => void;
+  setDropoffCoords: (coords: Coordinates | null) => void;
   setPickupDateTime: (dateTime: string) => void;
   setFareType: (type: 'personal' | 'business') => void;
   setFlightInfo: (info: FlightInfo) => void;
@@ -37,6 +47,8 @@ interface TripDetailsPhaseProps {
 export function TripDetailsPhase({
   pickupLocation,
   dropoffLocation,
+  pickupCoords,
+  dropoffCoords,
   pickupDateTime,
   fareType,
   flightInfo,
@@ -44,6 +56,8 @@ export function TripDetailsPhase({
   isCalculating,
   setPickupLocation,
   setDropoffLocation,
+  setPickupCoords,
+  setDropoffCoords,
   setPickupDateTime,
   setFareType,
   setFlightInfo,
@@ -53,7 +67,19 @@ export function TripDetailsPhase({
   canProceed,
   cmsData
 }: TripDetailsPhaseProps) {
-  const { isLoaded: mapsLoaded, isError: mapsError } = useGoogleMaps();
+  const routes = useMapsLibrary('routes');
+  const mapsLoaded = !!routes;
+
+  // Handle location selection with coordinates
+  const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
+    setPickupLocation(address);
+    setPickupCoords(coordinates);
+  };
+
+  const handleDropoffLocationSelect = (address: string, coordinates: Coordinates) => {
+    setDropoffLocation(address);
+    setDropoffCoords(coordinates);
+  };
 
   // Calculate fare when pickup/dropoff locations or fare type change
   React.useEffect(() => {
@@ -75,6 +101,8 @@ export function TripDetailsPhase({
           body: JSON.stringify({
             origin: pickupLocation,
             destination: dropoffLocation,
+            pickupCoords,
+            dropoffCoords,
             fareType,
           }),
         });
@@ -94,17 +122,9 @@ export function TripDetailsPhase({
     };
 
     calculateFare();
-  }, [pickupLocation, dropoffLocation, fareType, mapsLoaded, setFare, setIsCalculating]);
+  }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType, mapsLoaded, setFare, setIsCalculating]);
 
-  if (mapsError) {
-    return (
-      <Container maxWidth="4xl" padding="xl">
-        <Text color="error" cmsId='ignore'>
-          Failed to load Google Maps. Please refresh the page and try again.
-        </Text>
-      </Container>
-    );
-  }
+  // Note: Error handling for Google Maps loading is handled by the parent component
 
   return (
     <Container maxWidth="4xl" padding="xl">
@@ -123,24 +143,24 @@ export function TripDetailsPhase({
             {/* Pickup Location */}
             <Stack spacing="sm">
               <Text weight="bold" cmsId="pickup-location-label">{cmsData?.['pickup-location-label'] || 'Pickup Location'} *</Text>
-              <Input
+              <LocationInput
                 value={pickupLocation}
-                onChange={(e) => setPickupLocation(e.target.value)}
+                onChange={setPickupLocation}
+                onLocationSelect={handlePickupLocationSelect}
                 placeholder={cmsData?.['pickup-location-placeholder'] || 'Enter pickup address or landmark'}
                 data-testid="pickup-location-input"
-                cmsId="pickup-location-input"
               />
             </Stack>
 
             {/* Dropoff Location */}
             <Stack spacing="sm">
               <Text weight="bold" cmsId="dropoff-location-label">{cmsData?.['dropoff-location-label'] || 'Dropoff Location'} *</Text>
-              <Input
+              <LocationInput
                 value={dropoffLocation}
-                onChange={(e) => setDropoffLocation(e.target.value)}
+                onChange={setDropoffLocation}
+                onLocationSelect={handleDropoffLocationSelect}
                 placeholder={cmsData?.['dropoff-location-placeholder'] || 'Enter destination address or landmark'}
                 data-testid="dropoff-location-input"
-                cmsId="dropoff-location-input"
               />
             </Stack>
 

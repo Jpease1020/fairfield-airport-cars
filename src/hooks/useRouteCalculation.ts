@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useGoogleMaps } from '../providers/GoogleMapsProvider';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
 
 interface Coordinates {
   lat: number;
@@ -29,13 +29,13 @@ export const useRouteCalculation = (
   dropoffCoords: Coordinates | null,
   departureTime: string | null
 ): RouteCalculationResult => {
-  const { isLoaded } = useGoogleMaps();
+  const directions = useMapsLibrary('routes');
   const [route, setRoute] = useState<RouteInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isLoaded || !pickupCoords || !dropoffCoords) {
+    if (!directions || !pickupCoords || !dropoffCoords) {
       setRoute(null);
       setLoading(false);
       setError(null);
@@ -45,34 +45,42 @@ export const useRouteCalculation = (
     setLoading(true);
     setError(null);
 
-    try {
-      const directionsService = new google.maps.DirectionsService();
-      
-      // Prepare departure time for traffic calculation
-      let departureTimeObj: Date | undefined;
-      if (departureTime) {
-        departureTimeObj = new Date(departureTime);
-        // If departure time is in the past, use current time
-        if (departureTimeObj < new Date()) {
-          departureTimeObj = new Date();
-        }
-      }
-
-      const request: google.maps.DirectionsRequest = {
-        origin: pickupCoords,
-        destination: dropoffCoords,
-        travelMode: google.maps.TravelMode.DRIVING,
-        unitSystem: google.maps.UnitSystem.IMPERIAL,
-        drivingOptions: departureTimeObj ? {
-          departureTime: departureTimeObj,
-          trafficModel: google.maps.TrafficModel.BEST_GUESS
-        } : undefined
-      };
-
-      directionsService.route(request, (result, status) => {
-        setLoading(false);
+    const calculateRoute = async () => {
+      try {
+        const directionsService = new directions.DirectionsService();
         
-        if (status === google.maps.DirectionsStatus.OK && result && result.routes.length > 0) {
+        // Prepare departure time for traffic calculation
+        let departureTimeObj: Date | undefined;
+        if (departureTime) {
+          departureTimeObj = new Date(departureTime);
+          // If departure time is in the past, use current time
+          if (departureTimeObj < new Date()) {
+            departureTimeObj = new Date();
+          }
+        }
+
+        const request: google.maps.DirectionsRequest = {
+          origin: pickupCoords,
+          destination: dropoffCoords,
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: google.maps.UnitSystem.IMPERIAL,
+          drivingOptions: departureTimeObj ? {
+            departureTime: departureTimeObj,
+            trafficModel: google.maps.TrafficModel.BEST_GUESS
+          } : undefined
+        };
+
+        const result = await new Promise<google.maps.DirectionsResult>((resolve, reject) => {
+          directionsService.route(request, (result, status) => {
+            if (status === google.maps.DirectionsStatus.OK && result) {
+              resolve(result);
+            } else {
+              reject(new Error(`Failed to calculate route: ${status}`));
+            }
+          });
+        });
+
+        if (result.routes.length > 0) {
           const route = result.routes[0];
           const leg = route.legs[0];
           
@@ -97,16 +105,19 @@ export const useRouteCalculation = (
 
           setRoute(routeInfo);
         } else {
-          setError(`Failed to calculate route: ${status}`);
+          setError('No routes found');
           setRoute(null);
         }
-      });
-    } catch (err) {
-      setLoading(false);
-      setError(err instanceof Error ? err.message : 'Failed to calculate route');
-      setRoute(null);
-    }
-  }, [isLoaded, pickupCoords, dropoffCoords, departureTime]);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to calculate route');
+        setRoute(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    calculateRoute();
+  }, [directions, pickupCoords, dropoffCoords, departureTime]);
 
   return {
     route,

@@ -6,7 +6,7 @@ import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../
 import { useInteractionMode } from '../../../providers/InteractionModeProvider';
 
 const StyledHeading = styled.h1.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'cmsId'].includes(prop)
 })<{
   variant: 'default' | 'primary' | 'secondary' | 'muted' | 'accent';
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl';

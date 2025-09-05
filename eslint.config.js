@@ -268,7 +268,8 @@ export default [
       'tests/**/*',
       'vitest.config.ts',
       'scripts/**/*',
-      'temp-design-library/**/*'
+      'temp-design-library/**/*',
+      'src/lib/services/email-service.ts' // Email templates need hardcoded HTML/CSS
     ]
   }
 ];

@@ -7,7 +7,7 @@ import { BaseTextComponentProps, TextComponentChildren } from '../../../system/s
 
 // Styled link component
 const StyledLink = styled.a.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'external'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'external', 'cmsId'].includes(prop)
 })<{
   variant: 'primary' | 'secondary' | 'muted' | 'underline' | 'button';
   size: 'sm' | 'base' | 'lg';

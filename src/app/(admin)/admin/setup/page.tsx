@@ -98,7 +98,7 @@ export default function SetupPage() {
                 <Text cmsId="not-logged-in-message" >
                   Please log in first to set up your admin account.
                 </Text>
-                <Link href="/login" cmsId='not-logged-in-go-to-login' >
+                <Link href="/auth/login" cmsId='not-logged-in-go-to-login' >
                   Go to Login
                 </Link>
               </Stack>

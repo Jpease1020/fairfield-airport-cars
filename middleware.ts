@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
     
     if (!isAuthenticatedUser) {
       // Redirect unauthenticated users to login
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/auth/login', request.url));
     }
     
     // Allow authenticated users to proceed

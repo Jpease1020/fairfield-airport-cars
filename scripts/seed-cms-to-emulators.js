@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import { cleanCMSData } from '../src/lib/utils/cms-cleanup.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +24,11 @@ const db = getFirestore();
 
 // Read the finalized CMS data
 const cmsDataPath = path.join(__dirname, '..', 'data', 'cms-data-backup.json');
-const cmsData = JSON.parse(fs.readFileSync(cmsDataPath, 'utf8'));
+const rawCmsData = JSON.parse(fs.readFileSync(cmsDataPath, 'utf8'));
+
+// Clean the CMS data to remove malformed strings
+console.log('🧹 Cleaning CMS data to remove malformed strings...');
+const cmsData = cleanCMSData(rawCmsData);
 
 // Function to seed a single page's data
 async function seedPageData(pageName, pageData) {

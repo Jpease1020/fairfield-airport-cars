@@ -8,7 +8,7 @@ import { useCMSData } from '../../../providers/CMSDataProvider';
 
 // Styled span component
 const StyledSpan = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'color', 'weight'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'color', 'weight', 'cmsId'].includes(prop)
 })<{
   variant: 'default' | 'bold' | 'italic' | 'code' | 'mark' | 'link' | 'badge';
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';

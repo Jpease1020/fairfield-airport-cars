@@ -59,7 +59,7 @@ export const processPayment = async (paymentToken: string, amount: number, curre
   });
 
   try {
-    // Create payment using the payment token - using the correct Square SDK API
+    // Amount is already in cents (integer)
     const paymentResponse = await client.payments.create({
       sourceId: paymentToken,
       amountMoney: {

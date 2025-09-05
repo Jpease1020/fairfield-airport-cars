@@ -111,9 +111,9 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
     );
   }
 
-  return (
-    <>
-      {error && (
+  if (error) {
+    return (
+      <>
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg">
@@ -124,12 +124,21 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
                 <Text data-testid="success-error-description">
                   {pageCmsData?.['success-error-description'] || 'Please try refreshing the page or contact support if the problem persists.'}
                 </Text>
+                <Button 
+                  variant="primary" 
+                  onClick={() => window.location.reload()}
+                  text="Try Again"
+                />
               </Stack>
             </Stack>
           </Container>
         </GridSection>
-      )}
+      </>
+    );
+  }
 
+  return (
+    <>
       {/* Success Message */}
       <GridSection variant="content" columns={1}>
         <Container>

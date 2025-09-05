@@ -4,18 +4,24 @@ import { Settings, DEFAULT_SETTINGS } from '@/types/settings';
 export async function getSettings(): Promise<Settings> {
   try {
     const cmsConfig = await cmsFlattenedService.getAllCMSData();
+    console.log('CMS config keys:', Object.keys(cmsConfig));
+    console.log('Pricing data:', cmsConfig.pricing);
     if (!cmsConfig || !cmsConfig.pricing) {
       console.error('CMS config or pricing is null, falling back to defaults');
       return DEFAULT_SETTINGS;
     }
     // Convert CMS pricing settings to the old settings format for backward compatibility
     const settings: Settings = {
-      baseFare: cmsConfig.pricing.baseFare,
-      perMile: cmsConfig.pricing.perMile,
-      perMinute: cmsConfig.pricing.perMinute,
-      depositPercent: cmsConfig.pricing.depositPercent,
-      bufferMinutes: cmsConfig.pricing.bufferMinutes,
-      cancellation: cmsConfig.pricing.cancellation,
+      baseFare: cmsConfig.pricing['base-fare'],
+      perMile: cmsConfig.pricing['per-mile'],
+      perMinute: cmsConfig.pricing['per-minute'],
+      depositPercent: cmsConfig.pricing['deposit-percent'],
+      bufferMinutes: cmsConfig.pricing['buffer-minutes'],
+      cancellation: {
+        over24hRefundPercent: cmsConfig.pricing['cancellation-over24h-refund-percent'],
+        between3And24hRefundPercent: cmsConfig.pricing['cancellation-between3and24h-refund-percent'],
+        under3hRefundPercent: cmsConfig.pricing['cancellation-under3h-refund-percent'],
+      },
     };
     return settings;
   } catch (err) {

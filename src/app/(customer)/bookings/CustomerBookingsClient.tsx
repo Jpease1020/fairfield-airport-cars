@@ -52,7 +52,7 @@ export default function CustomerBookingsClient() {
         await loadCustomerProfile(firebaseUser.uid);
         await loadCustomerBookings(firebaseUser.uid);
       } else {
-        router.push('/login');
+        router.push('/auth/login');
       }
       setLoading(false);
     });
@@ -137,7 +137,7 @@ export default function CustomerBookingsClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <Text variant="muted" cmsId="login-required">{pageCmsData?.['login-required'] || 'Please log in to view your bookings.'}</Text>
-          <Button onClick={() => router.push('/login')} cmsId="go-to-login" >
+          <Button onClick={() => router.push('/auth/login')} cmsId="go-to-login" >
             {pageCmsData?.['go-to-login'] || 'Go to Login'}
           </Button>
         </Stack>

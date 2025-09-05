@@ -25,7 +25,11 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
           throw new Error('Failed to fetch booking');
         }
         const data = await response.json();
-        setBooking(data);
+        if (data.success && data.booking) {
+          setBooking(data.booking);
+        } else {
+          throw new Error(data.error || 'Failed to fetch booking');
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -51,8 +55,18 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
     }
   };
 
-  const formatDateTime = (dateTime: Date) => {
-    return dateTime.toLocaleString('en-US', {
+  const formatDateTime = (dateTime: Date | string | undefined) => {
+    if (!dateTime) {
+      return 'Not specified';
+    }
+    
+    const date = typeof dateTime === 'string' ? new Date(dateTime) : dateTime;
+    
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    
+    return date.toLocaleString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',

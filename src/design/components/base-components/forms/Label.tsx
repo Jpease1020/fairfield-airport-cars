@@ -6,7 +6,7 @@ import { colors, spacing, fontSize, fontWeight, transitions } from '../../../sys
 
 // Styled label component with flexbox and proper prop filtering
 const StyledLabel = styled.label.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'required', 'disabled'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'required', 'disabled', 'cmsId'].includes(prop)
 })<{
   variant: 'default' | 'primary' | 'secondary' | 'muted' | 'error';
   size: 'xs' | 'sm' | 'md' | 'lg';

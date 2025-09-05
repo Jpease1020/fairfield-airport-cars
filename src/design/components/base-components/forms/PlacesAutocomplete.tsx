@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Input } from './Input';
-import { useGoogleMaps } from '../../../../providers/GoogleMapsProvider';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
 
 // Styled components
 const AutocompleteContainer = styled.div<{ $fullWidth: boolean }>`
@@ -101,7 +101,8 @@ export const PlacesAutocomplete: React.FC<PlacesAutocompleteProps> = ({
   'data-testid': dataTestId,
   ...rest
 }) => {
-  const { isLoaded: mapsLoaded } = useGoogleMaps();
+  const places = useMapsLibrary('places');
+  const mapsLoaded = !!places;
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [showPredictions, setShowPredictions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

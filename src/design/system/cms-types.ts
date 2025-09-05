@@ -8,14 +8,30 @@ import { CMSSafeString, CMSFallbackString } from './shared-types';
 
 // Type guards for CMS content
 export function isCMSSafeString(value: any): value is CMSSafeString {
-  return typeof value === 'string' && (
+  if (typeof value !== 'string') return false;
+  
+  // Reject malformed fallback strings that shouldn't be saved
+  const malformedPatterns = [
+    /^\[LABEL\]/,                    // "[LABEL] form name label *"
+    /^\[.*\]/,                       // Any string starting with [brackets]
+    /^[A-Z\s]+\*$/,                  // "FORM NAME LABEL *"
+    /^[A-Z\s]+label\s*\*$/,          // "FORM NAME LABEL *"
+    /^[A-Z\s]+label$/,               // "FORM NAME LABEL"
+    /^[A-Z\s]+\s+\*$/,               // "FORM NAME *"
+  ];
+  
+  if (malformedPatterns.some(pattern => pattern.test(value))) {
+    return false;
+  }
+  
+  // Only accept strings that look like real content
+  return value.length > 0 && value.length < 200 && (
     value.includes('cms') || 
     value.includes('CMS') || 
     value.includes('content') ||
     value.includes('text') ||
     value.includes('title') ||
     value.includes('description') ||
-    value.includes('label') ||
     value.includes('message')
   );
 }

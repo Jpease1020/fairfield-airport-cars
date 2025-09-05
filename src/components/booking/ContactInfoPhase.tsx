@@ -71,7 +71,7 @@ export function ContactInfoPhase({
           <Stack spacing="lg">
             {/* Name */}
             <Stack spacing="sm">
-              <Label htmlFor="name" cmsId="form-name-label" >
+              <Label htmlFor="name" cmsId="booking-form-name-label" >
                 {pageCmsData?.['form-name-label'] || 'Full Name'} *
               </Label>
               <Input
@@ -88,7 +88,7 @@ export function ContactInfoPhase({
 
             {/* Email */}
             <Stack spacing="sm">
-              <Label htmlFor="email" cmsId="form-email-label" >
+              <Label htmlFor="email" cmsId="booking-form-email-label" >
                 {pageCmsData?.['form-email-label'] || 'Email Address'} *
               </Label>
               <Input
@@ -106,7 +106,7 @@ export function ContactInfoPhase({
 
             {/* Phone */}
             <Stack spacing="sm">
-              <Label htmlFor="phone" cmsId="form-phone-label" >
+              <Label htmlFor="phone" cmsId="booking-form-phone-label" >
                 {pageCmsData?.['form-phone-label'] || 'Phone Number'} *
               </Label>
               <Input
@@ -124,7 +124,7 @@ export function ContactInfoPhase({
 
             {/* Notes */}
             <Stack spacing="sm">
-              <Label htmlFor="notes" cmsId="form-notes-label" >
+              <Label htmlFor="notes" cmsId="booking-form-notes-label" >
                 {pageCmsData?.['form-notes-label'] || 'Special Instructions'}
               </Label>
               <Textarea

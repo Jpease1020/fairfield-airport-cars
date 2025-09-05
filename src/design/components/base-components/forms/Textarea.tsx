@@ -6,7 +6,7 @@ import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '.
 
 // Styled Textarea component with flexbox
 const StyledTextarea = styled.textarea.withConfig({
-  shouldForwardProp: (prop) => !['size', 'error', 'disabled', 'fullWidth'].includes(prop)
+  shouldForwardProp: (prop) => !['size', 'error', 'disabled', 'fullWidth', 'cmsId'].includes(prop)
 })<{
   size: 'sm' | 'md' | 'lg';
   error: boolean;
