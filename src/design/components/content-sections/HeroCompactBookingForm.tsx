@@ -37,54 +37,67 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
   const [fareCalculationMethod, setFareCalculationMethod] = useState<'route' | 'simple' | null>(null);
 
-  // Calculate estimated fare based on route
-  const calculateEstimatedFareFromRoute = (routeInfo: any) => {
+  // Calculate estimated fare based on route using real-time API
+  const calculateEstimatedFareFromRoute = async (routeInfo: any) => {
     // Extract distance in miles from route info
     const distanceText = routeInfo.distance;
     const distanceMatch = distanceText.match(/(\d+(?:\.\d+)?)/);
     const distanceInMiles = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
     
-    // Base fare calculation (you can adjust these values)
-    const baseFare = 25; // Base fare
-    const perMileRate = 2.5; // Per mile rate
-    const estimatedFare = baseFare + (distanceInMiles * perMileRate);
+    // Use the real-time fare calculation API
+    try {
+      const response = await fetch('/api/booking/estimate-fare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          origin: pickupLocation,
+          destination: dropoffLocation,
+          fareType: 'business'
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.fare;
+      }
+    } catch (error) {
+      // Silently handle API errors and use fallback
+    }
+    
+    // Fallback to simple calculation if API fails
+    const baseFare = 2.50; // Use current CMS pricing
+    const perMileRate = 1.60;
+    const perMinuteRate = 0.20;
+    const estimatedMinutes = distanceInMiles; // Rough estimate
+    const estimatedFare = baseFare + (distanceInMiles * perMileRate) + (estimatedMinutes * perMinuteRate);
     
     return Math.round(estimatedFare);
   };
 
-  // Simple distance-based fare calculation for when coordinates aren't available
+  // Simple distance-based fare calculation using current CMS pricing
   const calculateSimpleEstimatedFare = (pickup: string, dropoff: string) => {
-    // Simple heuristic based on common airport routes
-    const airportRoutes = {
-      'JFK': { base: 35, perMile: 2.8 },
-      'LGA': { base: 30, perMile: 2.6 },
-      'EWR': { base: 40, perMile: 3.0 },
-      'BDL': { base: 25, perMile: 2.4 }
-    };
+    // Use current CMS pricing for consistency
+    const baseFare = 2.50;
+    const perMileRate = 1.60;
+    const perMinuteRate = 0.20;
     
-    // Check if dropoff is an airport
-    const airportMatch = Object.keys(airportRoutes).find(airport => 
-      dropoff.toUpperCase().includes(airport)
-    );
+    // Estimate distance based on pickup location to airports
+    let estimatedDistance = 45; // Default for Fairfield to NYC airports
+    let estimatedMinutes = 60; // Default time estimate
     
-    if (airportMatch) {
-      const config = airportRoutes[airportMatch as keyof typeof airportRoutes];
-      // Estimate distance based on pickup location
-      let estimatedDistance = 45; // Default for Fairfield to NYC airports
-      
-      if (pickup.toLowerCase().includes('fairfield')) {
-        estimatedDistance = 45;
-      } else if (pickup.toLowerCase().includes('stamford')) {
-        estimatedDistance = 35;
-      } else if (pickup.toLowerCase().includes('norwalk')) {
-        estimatedDistance = 40;
-      }
-      
-      return Math.round(config.base + (estimatedDistance * config.perMile));
+    if (pickup.toLowerCase().includes('fairfield')) {
+      estimatedDistance = 45;
+      estimatedMinutes = 60;
+    } else if (pickup.toLowerCase().includes('stamford')) {
+      estimatedDistance = 35;
+      estimatedMinutes = 50;
+    } else if (pickup.toLowerCase().includes('norwalk')) {
+      estimatedDistance = 40;
+      estimatedMinutes = 55;
     }
     
-    // Default calculation for non-airport routes
-    return 50; // Default estimated fare
+    const estimatedFare = baseFare + (estimatedDistance * perMileRate) + (estimatedMinutes * perMinuteRate);
+    return Math.round(estimatedFare);
   };
 
   // Calculate route in real-time when both locations are set
@@ -96,20 +109,24 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
 
   // Update estimated fare whenever form data changes
   useEffect(() => {
-    if (route) {
-      // Use precise route calculation when available
-      const fare = calculateEstimatedFareFromRoute(route);
-      setEstimatedFare(fare);
-      setFareCalculationMethod('route');
-    } else if (pickupLocation && dropoffLocation) {
-      // Use simple calculation when locations are filled but coordinates aren't available yet
-      const fare = calculateSimpleEstimatedFare(pickupLocation, dropoffLocation);
-      setEstimatedFare(fare);
-      setFareCalculationMethod('simple');
-    } else {
-      setEstimatedFare(null);
-      setFareCalculationMethod(null);
-    }
+    const updateFare = async () => {
+      if (route) {
+        // Use precise route calculation when available
+        const fare = await calculateEstimatedFareFromRoute(route);
+        setEstimatedFare(fare);
+        setFareCalculationMethod('route');
+      } else if (pickupLocation && dropoffLocation) {
+        // Use simple calculation when locations are filled but coordinates aren't available yet
+        const fare = calculateSimpleEstimatedFare(pickupLocation, dropoffLocation);
+        setEstimatedFare(fare);
+        setFareCalculationMethod('simple');
+      } else {
+        setEstimatedFare(null);
+        setFareCalculationMethod(null);
+      }
+    };
+    
+    updateFare();
   }, [route, pickupLocation, dropoffLocation, pickupCoords, dropoffCoords]);
 
   // Separate effect to handle autocomplete selections without affecting fare calculation
@@ -144,7 +161,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     >
       <Stack spacing="md">
         <Text variant="lead" weight="semibold" align="center" data-testid="quick-book-title">
-          Quick Book
+          Get Estimate
         </Text>
         
         <Stack spacing="md">
@@ -220,20 +237,18 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           />
         )}
         
-        <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
-          <Button
-            variant="primary"
-            size="md"
-            onClick={handleGetPrice}
-            disabled={!pickupLocation || !dropoffLocation || !pickupDate || !pickupTime}
-            cmsId="get-price-button"
-            data-testid="quick-book-get-price-button"
-            text="Get Estimate"
-          />
-          <Text size="lg" variant="muted" data-testid="quick-book-disclaimer">
-            Book with confidence →
-          </Text>
-        </Stack>
+        {estimatedFare && (
+          <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleGetPrice}
+              cmsId="get-price-button"
+              data-testid="quick-book-get-price-button"
+              text="Book Now to Secure Rate →"
+            />
+          </Stack>
+        )}
         <Text size="xs" align="center" variant="muted" data-testid="quick-book-disclaimer">
           Instant pricing • No hidden fees
         </Text>

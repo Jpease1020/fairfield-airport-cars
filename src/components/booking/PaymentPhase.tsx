@@ -144,7 +144,7 @@ export function PaymentPhase({
             </Box>
             
             <Text size="sm" color="secondary" align="center" cmsId="payment-phase-deposit-note">
-              {pageCmsData?.['paymentPhase-depositNote'] || 'A 20% deposit is required to confirm your booking. The remaining balance will be due before your trip.'}
+              {pageCmsData?.['paymentPhase-depositNote'] || 'A 50% deposit is required to confirm your booking. The remaining balance will be due before your trip.'}
             </Text>
           </Stack>
         </Box>

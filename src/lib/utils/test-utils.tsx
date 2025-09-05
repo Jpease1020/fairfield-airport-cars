@@ -35,7 +35,7 @@ export function createMockSettings(overrides: any = {}): any {
     baseFare: 10.00,
     perMile: 2.50,
     perMinute: 0.50,
-    depositPercent: 20,
+    depositPercent: 50,
     bufferMinutes: 15,
     cancellation: 24,
     ...overrides,

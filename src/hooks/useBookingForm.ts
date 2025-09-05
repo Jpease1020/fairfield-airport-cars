@@ -105,7 +105,7 @@ export const useBookingForm = () => {
 
   // Calculate deposit amount when fare changes
   const calculateDeposit = useCallback((fareAmount: number) => {
-    return Math.round(fareAmount * 0.2 * 100) / 100; // 20% deposit
+    return Math.round(fareAmount * 0.5 * 100) / 100; // 50% deposit
   }, []);
 
   // Calculate total fare with tip
