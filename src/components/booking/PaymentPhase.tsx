@@ -144,8 +144,23 @@ export function PaymentPhase({
             </Box>
             
             <Text size="sm" color="secondary" align="center" cmsId="payment-phase-deposit-note">
-              {pageCmsData?.['paymentPhase-depositNote'] || 'A 50% deposit is required to confirm your booking. The remaining balance will be due before your trip.'}
+              {pageCmsData?.['paymentPhase-depositNote'] || 'A 30% deposit is required to confirm your booking. The remaining balance will be due before your trip.'}
             </Text>
+            
+            {/* Promotional Message */}
+            <Box variant="filled" padding="md">
+              <Stack spacing="sm" align="center">
+                <Text size="sm" weight="bold" color="primary" cmsId="promo-limited-time-main">
+                  🎉 Limited Time Offer! 
+                </Text>
+                <Text size="sm" color="secondary" cmsId="promo-deposit-strikethrough-main">
+                  Deposit: ${depositAmount?.toFixed(2)}
+                </Text>
+                <Text size="sm" weight="bold" color="success" cmsId="promo-no-deposit-main">
+                  No Deposit Required - Book Now!
+                </Text>
+              </Stack>
+            </Box>
           </Stack>
         </Box>
 

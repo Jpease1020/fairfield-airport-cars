@@ -181,8 +181,8 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
       throw new Error('Gregg is not available for the requested time slot');
     }
 
-    // Calculate deposit (50% of total fare)
-    const depositAmount = Math.round(bookingData.fare * 0.5 * 100) / 100; // Round to 2 decimal places
+    // Calculate deposit (30% of total fare)
+    const depositAmount = Math.round(bookingData.fare * 0.3 * 100) / 100; // Round to 2 decimal places
     const balanceDue = bookingData.fare - depositAmount;
 
     // Create booking document

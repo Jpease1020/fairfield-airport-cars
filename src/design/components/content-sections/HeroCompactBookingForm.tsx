@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from '../../layout/containers/Container';
 import { Stack } from '../../layout/framing/Stack';
+import { Box } from '../../layout/content/Box';
 import { Button } from '../../components/base-components/Button';
 import { Text } from '../../components/base-components/text/Text';
 import { Input } from '../../components/base-components/forms/Input';
@@ -223,6 +224,21 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                 ✓ Based on exact route calculation
               </Text>
             )}
+            
+            {/* Promotional Message */}
+            <Box variant="filled" padding="sm">
+              <Stack spacing="xs" align="center">
+                <Text size="xs" weight="bold" color="primary" cmsId="promo-limited-time">
+                  🎉 Limited Time Offer!
+                </Text>
+                <Text size="xs" color="secondary" cmsId="promo-deposit-strikethrough">
+                  Deposit: ${(estimatedFare * 0.3).toFixed(2)}
+                </Text>
+                <Text size="xs" weight="bold" color="success" cmsId="promo-no-deposit">
+                  No Deposit Required - Book Now!
+                </Text>
+              </Stack>
+            </Box>
           </Stack>
         )}
         
