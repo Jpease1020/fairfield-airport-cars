@@ -339,27 +339,6 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
             </Box>
           )}
 
-          {/* Confirm Booking Button - Only show in payment phase and when not complete */}
-          {currentPhase === 'payment' && !isBookingComplete && (
-            <Box variant="elevated" padding="lg" data-testid="confirm-booking-section">
-              <Stack spacing="md" align="center">
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="lg"
-                  disabled={!depositAmount || isProcessingPayment || !processPaymentFunction}
-                  onClick={handleProcessPayment}
-                  data-testid="confirm-booking-button"
-                  cmsId="confirm-booking-button"
-                  text={isProcessingPayment ? cmsData?.['processing-payment'] || 'Processing...' : cmsData?.['confirm-booking'] || 'Confirm Booking'}
-                />
-                
-                <Text size="sm" color="secondary" align="center" cmsId="confirm-booking-description">
-                  {cmsData?.['confirm-booking-description'] || 'Click to complete your deposit payment and confirm your booking'}
-                </Text>
-              </Stack>
-            </Box>
-          )}
         </Stack>
       </Form>
     </Container>

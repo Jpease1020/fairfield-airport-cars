@@ -53,6 +53,7 @@ export async function POST(request: Request) {
           await sendConfirmationEmail({
             ...bookingData,
             id: bookingId,
+            pickupDateTime: new Date(bookingData.pickupDateTime), // Convert string to Date
             squareOrderId: paymentResult.orderId,
             depositPaid: true,
             depositAmount: amount / 100,

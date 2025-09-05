@@ -181,7 +181,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
 
     directionsService.route(request, (result, status) => {
       if (status === window.google.maps.DirectionsStatus.OK && result) {
-        directionsRenderer.setDirections(result);
+       directionsRenderer.setDirections(result);
       } else {
         console.error('Error getting directions:', status);
       }

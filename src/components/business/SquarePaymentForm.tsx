@@ -279,7 +279,7 @@ export function SquarePaymentForm({
             cmsId="payment-form-submit"
             text={isLoading 
               ? cmsData?.['payment-form-processing'] || 'Processing...'
-              : cmsData?.['payment-form-submit'] || `Pay $${(amount / 100).toFixed(2)}`
+              : cmsData?.['payment-form-submit'] || `Pay $${(amount / 100).toFixed(2)} & Confirm Booking`
             }
           />
         )}
