@@ -41,13 +41,14 @@ export async function sendConfirmationEmail(booking: Booking) {
       const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
   // Generate iCalendar event
+  const pickupDate = new Date(booking.pickupDateTime);
   const event = {
     start: [
-      booking.pickupDateTime.getFullYear(),
-      booking.pickupDateTime.getMonth() + 1,
-      booking.pickupDateTime.getDate(),
-      booking.pickupDateTime.getHours(),
-      booking.pickupDateTime.getMinutes(),
+      pickupDate.getFullYear(),
+      pickupDate.getMonth() + 1,
+      pickupDate.getDate(),
+      pickupDate.getHours(),
+      pickupDate.getMinutes(),
     ],
     duration: { hours: 2, minutes: 0 }, // rough default
     title: 'Airport Car Service',
@@ -75,7 +76,7 @@ Your ride has been confirmed! Here are your booking details:
 📋 BOOKING DETAILS
 ==================
 Booking ID: ${booking.id}
-Date & Time: ${booking.pickupDateTime.toLocaleString()}
+Date & Time: ${pickupDate.toLocaleString()}
 Pickup Location: ${booking.pickupLocation}
 Drop-off Location: ${booking.dropoffLocation}
 ${booking.flightInfo?.airline ? `Airline: ${booking.flightInfo.airline}` : ''}
@@ -118,7 +119,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
           <p><strong>Booking ID:</strong> ${booking.id}</p>
-          <p><strong>Date & Time:</strong> ${booking.pickupDateTime.toLocaleString()}</p>
+          <p><strong>Date & Time:</strong> ${pickupDate.toLocaleString()}</p>
           <p><strong>Pickup Location:</strong> ${booking.pickupLocation}</p>
           <p><strong>Drop-off Location:</strong> ${booking.dropoffLocation}</p>
           ${booking.flightInfo?.airline ? `<p><strong>Airline:</strong> ${booking.flightInfo.airline}</p>` : ''}
