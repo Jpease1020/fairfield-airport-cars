@@ -85,7 +85,7 @@ const FeaturesSection = ({ cmsData }: { cmsData: any | null }) => {
   return (
     <Stack spacing="xl" align="center" data-testid="features-section">
       <StyledImage
-        src="/images/istockphoto-2197504029-1024x1024.jpg"
+        src="/images/bram-van-oost-eaPkue76Ip4-unsplash.jpg"
         alt="Premium airport transportation service"
         width={1024}
         height={1024}
