@@ -59,39 +59,66 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Try Google Maps API first
+    // Try Google Maps API with traffic data
     const response = await mapsClient.distancematrix({
       params: {
         origins: [origin],
         destinations: [destination],
         key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        departure_time: new Date(),
+        traffic_model: 'best_guess' as any
       },
     });
 
     if (response.data.rows[0].elements[0].status === 'OK') {
-      const distanceInMeters = response.data.rows[0].elements[0].distance.value;
-      const durationInSeconds = response.data.rows[0].elements[0].duration.value;
+      const element = response.data.rows[0].elements[0];
+      const distanceInMeters = element.distance.value;
+      const durationInSeconds = element.duration.value;
+      const durationInTrafficSeconds = element.duration_in_traffic?.value || durationInSeconds;
 
       const distanceInMiles = distanceInMeters / 1609.34;
       const durationInMinutes = durationInSeconds / 60;
+      const durationInTrafficMinutes = durationInTrafficSeconds / 60;
 
-      const baseFare = BASE_FARE + distanceInMiles * PER_MILE_RATE + durationInMinutes * PER_MINUTE_RATE;
+      // Calculate traffic multiplier
+      const trafficMultiplier = durationInTrafficMinutes / durationInMinutes;
+      let trafficLevel: 'low' | 'medium' | 'high' = 'low';
+      
+      if (trafficMultiplier > 1.5) {
+        trafficLevel = 'high';
+      } else if (trafficMultiplier > 1.2) {
+        trafficLevel = 'medium';
+      }
+
+      // Calculate base fare using traffic-adjusted time
+      const baseFare = BASE_FARE + distanceInMiles * PER_MILE_RATE + durationInTrafficMinutes * PER_MINUTE_RATE;
       let finalFare = Math.ceil(baseFare);
+      
+      // Apply traffic-based pricing adjustments
+      if (trafficLevel === 'high') {
+        finalFare = Math.ceil(finalFare * 1.2); // 20% increase for heavy traffic
+        console.log(`Heavy traffic detected (${trafficMultiplier.toFixed(2)}x), applying 20% increase`);
+      } else if (trafficLevel === 'medium') {
+        finalFare = Math.ceil(finalFare * 1.1); // 10% increase for moderate traffic
+        console.log(`Moderate traffic detected (${trafficMultiplier.toFixed(2)}x), applying 10% increase`);
+      }
       
       // Apply 10% discount for personal rides
       if (fareType === 'personal') {
-        finalFare = Math.ceil(baseFare * 0.9); // 10% discount
-        console.log(`Personal ride discount applied: Base fare $${baseFare} -> Final fare $${finalFare}`);
+        finalFare = Math.ceil(finalFare * 0.9); // 10% discount
+        console.log(`Personal ride discount applied: Final fare $${finalFare}`);
       } else {
         console.log(`Business ride: No discount applied. Fare: $${finalFare}`);
       }
 
       return NextResponse.json({ 
         fare: finalFare,
-        baseFare: Math.ceil(baseFare), // Original fare before discount
+        baseFare: Math.ceil(baseFare), // Original fare before traffic adjustments
         distance: Math.round(distanceInMiles * 10) / 10,
-        duration: Math.round(durationInMinutes),
-        method: 'google-maps'
+        duration: Math.round(durationInTrafficMinutes), // Use traffic-adjusted duration
+        trafficLevel,
+        trafficMultiplier: Math.round(trafficMultiplier * 100) / 100,
+        method: 'google-maps-traffic'
       });
     } else {
       throw new Error('Google Maps API returned error');

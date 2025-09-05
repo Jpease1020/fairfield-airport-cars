@@ -10,8 +10,9 @@ import { colors, spacing } from '../../foundation/tokens/tokens';
 const RouteCard = styled(Box)`
   background-color: var(--background-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  padding: ${spacing.lg};
+  border-radius: 0.75rem;
+  padding: ${spacing.xxl};
+  margin: ${spacing.lg} 0;
 `;
 
 const RouteItem = styled.div`
@@ -125,7 +126,7 @@ export const RouteSummary: React.FC<RouteSummaryProps> = ({
 
   return (
     <RouteCard>
-      <Stack spacing="md">
+      <Stack spacing="lg" padding="md">
         <Text size="lg" weight="bold">Route Summary</Text>
         
         <RouteItem>
