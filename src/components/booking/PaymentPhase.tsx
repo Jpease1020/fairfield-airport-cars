@@ -1,10 +1,16 @@
 'use client';
 
 import React from 'react';
+import styled from 'styled-components';
 import { Container, Stack, Box, Button, Text, H2, StatusMessage } from '@/ui';
 import { SquarePaymentForm } from '@/components/business/SquarePaymentForm';
 import { TipCalculator } from '@/components/business/TipCalculator';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
+
+const StrikethroughText = styled(Text)`
+  text-decoration: line-through;
+  opacity: 0.7;
+`;
 
 interface PaymentPhaseProps {
   pickupLocation: string;
@@ -148,15 +154,15 @@ export function PaymentPhase({
             </Text>
             
             {/* Promotional Message */}
-            <Box variant="filled" padding="md">
-              <Stack spacing="sm" align="center">
-                <Text size="sm" weight="bold" color="primary" cmsId="promo-limited-time-main">
+            <Box variant="filled" padding="lg">
+              <Stack spacing="md" align="center">
+                <Text size="md" weight="bold" color="primary" cmsId="promo-limited-time-main">
                   🎉 Limited Time Offer! 
                 </Text>
-                <Text size="sm" color="secondary" cmsId="promo-deposit-strikethrough-main">
+                <StrikethroughText size="md" color="secondary" cmsId="promo-deposit-strikethrough-main">
                   Deposit: ${depositAmount?.toFixed(2)}
-                </Text>
-                <Text size="sm" weight="bold" color="success" cmsId="promo-no-deposit-main">
+                </StrikethroughText>
+                <Text size="md" weight="bold" color="success" cmsId="promo-no-deposit-main">
                   No Deposit Required - Book Now!
                 </Text>
               </Stack>

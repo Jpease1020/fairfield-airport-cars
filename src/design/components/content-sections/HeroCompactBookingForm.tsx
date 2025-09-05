@@ -227,15 +227,15 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             )}
             
             {/* Promotional Message */}
-            <Box variant="filled" padding="sm">
-              <Stack spacing="xs" align="center">
-                <Text size="xs" weight="bold" color="primary" cmsId="promo-limited-time">
+            <Box variant="filled" padding="md">
+              <Stack spacing="sm" align="center">
+                <Text size="sm" weight="bold" color="primary" cmsId="promo-limited-time">
                   🎉 Limited Time Offer!
                 </Text>
-                <StrikethroughText size="xs" color="secondary" cmsId="promo-deposit-strikethrough">
+                <StrikethroughText size="sm" color="secondary" cmsId="promo-deposit-strikethrough">
                   Deposit: ${(estimatedFare * 0.3).toFixed(2)}
                 </StrikethroughText>
-                <Text size="xs" weight="bold" color="success" cmsId="promo-no-deposit">
+                <Text size="sm" weight="bold" color="success" cmsId="promo-no-deposit">
                   No Deposit Required - Book Now!
                 </Text>
               </Stack>
