@@ -48,7 +48,7 @@ export default function ContactPageContent() {
                   {contactData?.['phone-label'] || 'Phone'}
                 </Text>
                 <Text cmsId="phone-value">
-                  {contactData?.['phone-value'] || '(203) 555-0123'}
+                  {contactData?.['phone-value'] || '(646) 221-6370'}
                 </Text>
               </Stack>
             </Box>
@@ -59,7 +59,7 @@ export default function ContactPageContent() {
                   {contactData?.['email-label'] || 'Email'}
                 </Text>
                 <Text cmsId="email-value">
-                  {contactData?.['email-value'] || 'info@fairfieldairportcars.com'}
+                  {contactData?.['email-value'] || 'rides@fairfieldairportcars.com'}
                 </Text>
               </Stack>
             </Box>
@@ -124,7 +124,7 @@ export default function ContactPageContent() {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder={contactData?.['form-phone-placeholder'] || '(203) 555-0123'}
+                    placeholder={contactData?.['form-phone-placeholder'] || '(646) 221-6370'}
                   />
                 </div>
 

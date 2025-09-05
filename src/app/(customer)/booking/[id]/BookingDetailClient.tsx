@@ -106,7 +106,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
               {
                 id: 'contact-support',
                 label: 'Contact Support',
-                onClick: () => addToast('info', 'Support: (203) 555-0123'),
+                onClick: () => addToast('info', 'Support: (646) 221-6370'),
                 variant: 'outline',
                 icon: '📞'
               }

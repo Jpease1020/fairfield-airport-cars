@@ -97,8 +97,8 @@ Track your driver in real-time: ${trackingUrl}
 📞 CONTACT INFORMATION
 ======================
 If you have any questions or need to make changes, please contact us:
-Phone: ${businessSettings?.company?.phone || '(203) 555-0123'}
-Email: ${businessSettings?.company?.email || 'info@fairfieldairportcars.com'}
+Phone: ${businessSettings?.company?.phone || '(646) 221-6370'}
+Email: ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}
 
 Thank you for choosing ${businessSettings?.company?.name || 'Fairfield Airport Cars'}!
 
@@ -144,8 +144,8 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #a16207; margin-top: 0;">📞 CONTACT INFORMATION</h3>
           <p>If you have any questions or need to make changes, please contact us:</p>
-          <p><strong>Phone:</strong> ${businessSettings?.company?.phone || '(203) 555-0123'}</p>
-          <p><strong>Email:</strong> ${businessSettings?.company?.email || 'info@fairfieldairportcars.com'}</p>
+          <p><strong>Phone:</strong> ${businessSettings?.company?.phone || '(646) 221-6370'}</p>
+          <p><strong>Email:</strong> ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}</p>
         </div>
         
         <p>Thank you for choosing <strong>${businessSettings?.company?.name || 'Fairfield Airport Cars'}</strong>!</p>
@@ -221,8 +221,8 @@ Track your driver in real-time: ${trackingUrl}
 📞 CONTACT INFORMATION
 ======================
 If you have any questions or need to make changes, please contact us:
-Phone: (203) 555-0123
-Email: info@fairfieldairportcars.com
+Phone: (646) 221-6370
+Email: rides@fairfieldairportcars.com
 
 Thank you for choosing Fairfield Airport Cars!
 
@@ -264,8 +264,8 @@ The Fairfield Airport Cars Team`;
         <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #a16207; margin-top: 0;">📞 CONTACT INFORMATION</h3>
           <p>If you have any questions or need to make changes, please contact us:</p>
-          <p><strong>Phone:</strong> (203) 555-0123</p>
-          <p><strong>Email:</strong> info@fairfieldairportcars.com</p>
+          <p><strong>Phone:</strong> (646) 221-6370</p>
+          <p><strong>Email:</strong> rides@fairfieldairportcars.com</p>
         </div>
         
         <p>Thank you for choosing <strong>Fairfield Airport Cars</strong>!</p>

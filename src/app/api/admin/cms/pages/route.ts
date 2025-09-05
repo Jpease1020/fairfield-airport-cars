@@ -24,6 +24,26 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// POST - Seed/Update entire page data
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { page, data } = body;
+
+    if (!page || !data) {
+      return NextResponse.json({ error: 'page and data required' }, { status: 400 });
+    }
+
+    // Update the entire page data in Firebase
+    await cmsFlattenedService.updatePageContent(page, data);
+
+    return NextResponse.json({ success: true, message: `Page ${page} updated successfully` });
+  } catch (error) {
+    console.error('CMS Seeding Error:', error);
+    return NextResponse.json({ error: 'Failed to seed page data' }, { status: 500 });
+  }
+}
+
 // PUT - Update a CMS field
 export async function PUT(request: NextRequest) {
   try {
