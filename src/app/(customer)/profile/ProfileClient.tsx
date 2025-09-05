@@ -55,7 +55,7 @@ export default function ProfileClient() {
         setUser(firebaseUser);
         await loadCustomerProfile(firebaseUser.uid);
       } else {
-        router.push('/login');
+        router.push('/auth/login');
       }
       setLoading(false);
     });
@@ -183,7 +183,7 @@ export default function ProfileClient() {
           <Alert variant="error">
             <Text cmsId="ignore">{error}</Text>
           </Alert>
-          <Button onClick={() => router.push('/login')} cmsId="back-to-login"  text={pageCmsData?.['back-to-login'] || 'Back to Login'}/>          
+          <Button onClick={() => router.push('/auth/login')} cmsId="back-to-login"  text={pageCmsData?.['back-to-login'] || 'Back to Login'}/>          
         </Stack>
       </Container>
     );

@@ -33,7 +33,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
     ...(pathname !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
     ...(isLoggedIn && pathname !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),
     ...(isAdmin && !pathname.startsWith('/admin') ? [{ name: 'Admin', href: '/admin', current: false }] : []),
-    ...(!isLoggedIn ? [{ name: 'Login', href: '/login', current: false }] : []),
+    ...(!isLoggedIn ? [{ name: 'Login', href: '/auth/login', current: false }] : []),
   ];
 
   const logo = (

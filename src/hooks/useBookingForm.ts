@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export type BookingPhase = 'trip-details' | 'contact-info' | 'payment' | 'payment-processing';
 
@@ -9,10 +10,17 @@ export interface FlightInfo {
   terminal: string;
 }
 
+export interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
 export interface BookingFormData {
   // Trip details
   pickupLocation: string;
   dropoffLocation: string;
+  pickupCoords: Coordinates | null;
+  dropoffCoords: Coordinates | null;
   pickupDateTime: string;
   fareType: 'personal' | 'business';
   flightInfo: FlightInfo;
@@ -32,6 +40,9 @@ export interface BookingFormData {
 }
 
 export const useBookingForm = () => {
+  // Get URL search parameters
+  const searchParams = useSearchParams();
+  
   // Phase management
   const [currentPhase, setCurrentPhase] = useState<BookingPhase>('trip-details');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
@@ -40,6 +51,8 @@ export const useBookingForm = () => {
   // Trip details
   const [pickupLocation, setPickupLocation] = useState('');
   const [dropoffLocation, setDropoffLocation] = useState('');
+  const [pickupCoords, setPickupCoords] = useState<Coordinates | null>(null);
+  const [dropoffCoords, setDropoffCoords] = useState<Coordinates | null>(null);
   const [pickupDateTime, setPickupDateTime] = useState('');
   const [fareType, setFareType] = useState<'personal' | 'business'>('personal');
   const [flightInfo, setFlightInfo] = useState<FlightInfo>({
@@ -48,6 +61,26 @@ export const useBookingForm = () => {
     arrivalTime: '',
     terminal: ''
   });
+
+  // Initialize form with URL parameters
+  useEffect(() => {
+    const pickup = searchParams.get('pickup');
+    const dropoff = searchParams.get('dropoff');
+    const date = searchParams.get('date');
+    const time = searchParams.get('time');
+    
+    if (pickup) {
+      setPickupLocation(pickup);
+    }
+    if (dropoff) {
+      setDropoffLocation(dropoff);
+    }
+    if (date && time) {
+      // Combine date and time into ISO format
+      const dateTime = `${date}T${time}`;
+      setPickupDateTime(dateTime);
+    }
+  }, [searchParams]);
 
   // Payment
   const [fare, setFare] = useState<number | null>(null);
@@ -139,6 +172,8 @@ export const useBookingForm = () => {
     setBookingId(null);
     setPickupLocation('');
     setDropoffLocation('');
+    setPickupCoords(null);
+    setDropoffCoords(null);
     setPickupDateTime('');
     setFareType('personal');
     setFlightInfo({
@@ -170,6 +205,8 @@ export const useBookingForm = () => {
     bookingId,
     pickupLocation,
     dropoffLocation,
+    pickupCoords,
+    dropoffCoords,
     pickupDateTime,
     fareType,
     flightInfo,
@@ -192,6 +229,8 @@ export const useBookingForm = () => {
     // Setters
     setPickupLocation,
     setDropoffLocation,
+    setPickupCoords,
+    setDropoffCoords,
     setPickupDateTime,
     setFareType,
     setFlightInfo,

@@ -11,7 +11,7 @@ import { useCMSData } from '../../providers/CMSDataProvider';
 
 // Styled button component with enhanced modern styling
 const StyledButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'shape', 'fullWidth', 'loading', 'icon', 'iconPosition'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'shape', 'fullWidth', 'loading', 'icon', 'iconPosition', 'cmsId'].includes(prop)
 })<{
   variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning';
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';

@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { Input } from './Input';
-import { useGoogleMaps } from '../../../../providers/GoogleMapsProvider';
 
 const LocationInputContainer = styled.div`
   position: relative;
@@ -41,73 +41,66 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   'data-testid': dataTestId,
   ...rest
 }) => {
-  const { isLoaded } = useGoogleMaps();
   const inputRef = useRef<HTMLInputElement>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const [placeAutocomplete, setPlaceAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const places = useMapsLibrary('places');
 
+  // Initialize autocomplete when places library is loaded
   useEffect(() => {
-    if (!isLoaded || !inputRef.current || autocompleteRef.current) return;
+    if (!places || !inputRef.current) return;
 
-    try {
-      // Create autocomplete instance
-      const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-        componentRestrictions: { country: 'us' },
-        fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types']
-      });
+    const options = {
+      fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types'],
+      componentRestrictions: { country: 'us' }
+    };
 
-      // Store reference
-      autocompleteRef.current = autocomplete;
+    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
+  }, [places]);
 
-      // Add place changed listener
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        
-        if (place.geometry?.location) {
-          // Prioritize the most descriptive name for airports and landmarks
-          let address = '';
-          if (place.types?.includes('airport')) {
-            // For airports, use the name (e.g., "Charlotte Douglas International Airport")
-            address = place.name || place.formatted_address || '';
-          } else if (place.types?.includes('establishment') || place.types?.includes('point_of_interest')) {
-            // For businesses/landmarks, prefer name over address
-            address = place.name || place.formatted_address || '';
-          } else {
-            // For regular addresses, use formatted address
-            address = place.formatted_address || place.name || '';
-          }
-          
-          const coordinates = {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng()
-          };
-          
-          // Update the input value
-          onChange(address);
-          
-          // Notify parent component with both address and coordinates
-          onLocationSelect(address, coordinates);
-        }
-      });
-
-      // Cleanup function
-      return () => {
-        if (autocompleteRef.current) {
-          google.maps.event.clearInstanceListeners(autocompleteRef.current);
-          autocompleteRef.current = null;
-        }
-      };
-    } catch (error) {
-      // Silently handle errors to avoid console pollution
+  // Handle place selection from autocomplete
+  const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
+    if (place.geometry?.location) {
+      // Get the best address representation
+      let address = '';
+      if (place.types?.includes('airport')) {
+        address = place.name || place.formatted_address || '';
+      } else if (place.types?.includes('establishment') || place.types?.includes('point_of_interest')) {
+        address = place.name || place.formatted_address || '';
+      } else {
+        address = place.formatted_address || place.name || '';
+      }
       
+      const coordinates = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      };
+      
+      // Update both the input value and notify about selection
+      onChange(address);
+      onLocationSelect(address, coordinates);
     }
-  }, [isLoaded, onChange, onLocationSelect]);
+  }, [onChange, onLocationSelect]);
+
+  // Add place_changed listener
+  useEffect(() => {
+    if (!placeAutocomplete) return;
+
+    placeAutocomplete.addListener('place_changed', () => {
+      handlePlaceSelect(placeAutocomplete.getPlace());
+    });
+  }, [placeAutocomplete, handlePlaceSelect]);
+
+  // Handle manual input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
+  };
 
   return (
     <LocationInputContainer>
       <Input
         ref={inputRef}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={handleInputChange}
         placeholder={placeholder}
         disabled={disabled}
         error={error}

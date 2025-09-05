@@ -135,19 +135,19 @@ export function SquarePaymentForm({
         }
       }
 
-      console.log('✅ Card tokenized successfully, creating booking...');
+      console.log('✅ Card tokenized successfully, processing payment...');
 
-      // Step 2: Create the booking first (only for new bookings)
-      let realBookingId = bookingId; // Use existing ID if provided
-      
-      if (!realBookingId) {
-        // This is a new booking - create it first
-        const bookingResponse = await fetch('/api/booking', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+      // Step 2: Process payment FIRST (security requirement)
+      const paymentResponse = await fetch('/api/payment/process-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentToken: tokenResult.token,
+          amount, // Amount is already in cents
+          currency: 'USD',
+          bookingData: {
             // Use real booking data from props
             name: bookingData?.name || 'Customer Name',
             email: bookingData?.email || 'customer@example.com',
@@ -163,36 +163,8 @@ export function SquarePaymentForm({
             flightInfo: bookingData?.flightInfo || {},
             fareType: bookingData?.fareType || 'standard',
             saveInfoForFuture: bookingData?.saveInfoForFuture || false,
-            status: 'pending',
-            depositPaid: false,
-            balanceDue: (bookingData?.fare || (amount / 100)),
-          }),
-        });
-
-        if (!bookingResponse.ok) {
-          const errorData = await bookingResponse.json();
-          throw new Error(errorData.error || 'Failed to create booking');
-        }
-
-        const bookingResult = await bookingResponse.json();
-        realBookingId = bookingResult.bookingId;
-        
-        console.log('✅ Booking created successfully:', realBookingId);
-      } else {
-        console.log('✅ Using existing booking ID:', realBookingId);
-      }
-
-      // Step 3: Now process the payment using the real booking ID
-      const paymentResponse = await fetch('/api/payment/process-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          paymentToken: tokenResult.token,
-          amount,
-          currency: 'USD',
-          bookingId: realBookingId, // Use the real booking ID
+          },
+          existingBookingId: bookingId, // Use existing ID if provided
         }),
       });
 
@@ -202,7 +174,7 @@ export function SquarePaymentForm({
       }
 
       const result = await paymentResponse.json();
-      console.log('✅ Payment processed successfully');
+      console.log('✅ Payment processed successfully, booking created:', result.bookingId);
       onPaymentSuccess(result);
       
     } catch (error) {
@@ -305,14 +277,11 @@ export function SquarePaymentForm({
             variant="primary"
             size="lg"
             cmsId="payment-form-submit"
-          >
-            <Text cmsId="payment-button-text">
-              {isLoading 
-                ? cmsData?.['payment-form-processing'] || 'Processing...'
-                : cmsData?.['payment-form-submit'] || `Pay $${(amount / 100).toFixed(2)}`
-              }
-            </Text>
-          </Button>
+            text={isLoading 
+              ? cmsData?.['payment-form-processing'] || 'Processing...'
+              : cmsData?.['payment-form-submit'] || `Pay $${(amount / 100).toFixed(2)}`
+            }
+          />
         )}
 
       </Stack>

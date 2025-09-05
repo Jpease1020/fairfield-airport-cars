@@ -9,7 +9,7 @@ import { useInteractionMode } from '../../../providers/InteractionModeProvider';
 
 // Styled text component
 const StyledText = styled.p.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'color', 'isInteractive'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'color', 'isInteractive', 'cmsId'].includes(prop)
 })<{
   variant: TextVariant;
   size: TextSize;

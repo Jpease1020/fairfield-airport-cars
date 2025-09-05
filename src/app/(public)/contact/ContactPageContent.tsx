@@ -96,7 +96,7 @@ export default function ContactPageContent() {
             <Box variant="elevated" padding="lg">
               <Stack spacing="md">
                 <div>
-                  <Label htmlFor="name" cmsId="form-name-label">
+                  <Label htmlFor="name" cmsId="contact-form-name-label">
                     {contactData?.['form-name-label'] || 'Name'}
                   </Label>
                   <Input
@@ -107,7 +107,7 @@ export default function ContactPageContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="email" cmsId="form-email-label">
+                  <Label htmlFor="email" cmsId="contact-form-email-label">
                     {contactData?.['form-email-label'] || 'Email'}
                   </Label>
                   <Input
@@ -118,7 +118,7 @@ export default function ContactPageContent() {
                 </div>
 
                 <div>
-                  <Label htmlFor="phone" cmsId="form-phone-label">
+                  <Label htmlFor="phone" cmsId="contact-form-phone-label">
                     {contactData?.['form-phone-label'] || 'Phone'}
                   </Label>
                   <Input

@@ -49,6 +49,7 @@ export async function POST(request: Request) {
   const { origin, destination, fareType = 'business' } = await request.json();
 
   const settings = await getSettings();
+  console.log('Settings loaded:', settings);
   const BASE_FARE = settings.baseFare;
   const PER_MILE_RATE = settings.perMile;
   const PER_MINUTE_RATE = settings.perMinute;

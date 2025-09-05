@@ -143,7 +143,7 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
 };
 
 // Create booking with payment integration
-export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ bookingId: string }> => {
   try {
     // Calculate deposit (20% of total fare)
     const depositAmount = Math.round(bookingData.fare * 0.2 * 100) / 100; // Round to 2 decimal places
@@ -167,7 +167,7 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     // await updateDoc(docRef, { driverId, updatedAt: serverTimestamp() });
 
     console.log(`Booking created successfully: ${bookingId}`);
-    return bookingId;
+    return { bookingId };
   } catch (error) {
     console.error('Error creating booking:', error);
     throw new Error('Failed to create booking');

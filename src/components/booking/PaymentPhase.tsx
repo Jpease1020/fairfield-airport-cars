@@ -162,7 +162,7 @@ export function PaymentPhase({
               </Text>
               
               <SquarePaymentForm
-                amount={getTotalWithTip()}
+                amount={Math.round(getTotalWithTip() * 100)} // Convert dollars to cents
                 onPaymentSuccess={onPaymentSuccess}
                 onPaymentError={onPaymentError}
                 onPaymentReady={onPaymentReady}

@@ -21,6 +21,8 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
     bookingId,
     pickupLocation,
     dropoffLocation,
+    pickupCoords,
+    dropoffCoords,
     pickupDateTime,
     fareType,
     flightInfo,
@@ -43,6 +45,8 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
     // Setters
     setPickupLocation,
     setDropoffLocation,
+    setPickupCoords,
+    setDropoffCoords,
     setPickupDateTime,
     setFareType,
     setFlightInfo,
@@ -97,41 +101,11 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
   const [isBookingComplete, setIsBookingComplete] = useState(false);
   const [completedBookingId, setCompletedBookingId] = useState<string | null>(null);
 
-  // Handle booking creation
+  // Handle booking creation - REMOVED: This was creating bookings before payment!
+  // Bookings should only be created AFTER successful payment processing
   const handleCreateBooking = async () => {
-    try {
-      const result = await createBooking({
-        name,
-        email,
-        phone,
-        pickupLocation,
-        dropoffLocation,
-        pickupDateTime,
-        notes,
-        fare,
-        tipAmount,
-        totalAmount: (fare || 0) + tipAmount,
-        flightInfo,
-        fareType,
-        saveInfoForFuture,
-      });
-
-      if (result.success && result.bookingId) {
-        setSuccess(result.message);
-        setBookingId(result.bookingId);
-        
-        // Move to payment phase
-        goToPhase('payment');
-        
-        // Delay showing payment form
-        setTimeout(() => {
-          setShowPaymentForm(true);
-        }, 100);
-      }
-    } catch (error) {
-      console.error('Booking creation error:', error);
-      setError('Failed to create booking. Please try again.');
-    }
+    // This function is no longer used - bookings are created in the payment API
+    console.log('⚠️ handleCreateBooking called but should not be used - bookings created in payment API');
   };
 
   // Handle payment processing
@@ -196,6 +170,8 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
             <TripDetailsPhase
               pickupLocation={pickupLocation}
               dropoffLocation={dropoffLocation}
+              pickupCoords={pickupCoords}
+              dropoffCoords={dropoffCoords}
               pickupDateTime={pickupDateTime}
               fareType={fareType}
               flightInfo={flightInfo}
@@ -203,6 +179,8 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
               isCalculating={isCalculating}
               setPickupLocation={setPickupLocation}
               setDropoffLocation={setDropoffLocation}
+              setPickupCoords={setPickupCoords}
+              setDropoffCoords={setDropoffCoords}
               setPickupDateTime={setPickupDateTime}
               setFareType={setFareType}
               setFlightInfo={setFlightInfo}
@@ -256,6 +234,11 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
                 setSuccess('Payment processed successfully! Your booking is confirmed.');
                 setIsProcessingPayment(false);
                 setCompletedBookingId(result.bookingId || 'unknown');
+                
+                // Redirect to success page after a short delay
+                setTimeout(() => {
+                  window.location.href = `/success?bookingId=${result.bookingId || 'unknown'}`;
+                }, 1000);
               }}
               onPaymentError={(error: string) => {
                 console.error('Payment error:', error);

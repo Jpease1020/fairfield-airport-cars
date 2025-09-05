@@ -64,7 +64,7 @@ export default function CustomerPaymentsClient() {
         await loadPaymentHistory(firebaseUser.uid);
         await loadPaymentMethods(firebaseUser.uid);
       } else {
-        router.push('/login');
+        router.push('/auth/login');
       }
       setLoading(false);
     });
@@ -142,7 +142,7 @@ export default function CustomerPaymentsClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <Text variant="muted" cmsId="login_required">{cmsData?.['login_required'] || 'Please log in to view your payments.'}</Text>
-          <Button onClick={() => router.push('/login')} cmsId="go-to-login"  text={cmsData?.['go_to_login'] || 'Go to Login'}/>          
+          <Button onClick={() => router.push('/auth/login')} cmsId="go-to-login"  text={cmsData?.['go_to_login'] || 'Go to Login'}/>          
         </Stack>
       </Container>
     );

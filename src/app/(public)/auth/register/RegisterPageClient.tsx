@@ -328,7 +328,7 @@ export default function RegisterPageClient() {
 
           <LinkText variant="muted">
             {pageCmsData?.['customer-register-have_account'] || 'Already have an account?'}
-            <Link href="/login">
+            <Link href="/auth/login">
               {pageCmsData?.['customer-register-signin_link'] || 'Sign in'}
             </Link>
           </LinkText>

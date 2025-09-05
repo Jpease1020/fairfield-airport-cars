@@ -55,7 +55,7 @@ export default function AddPaymentMethodClient() {
         setUser(firebaseUser);
         await loadCustomerProfile(firebaseUser.uid);
       } else {
-        router.push('/login');
+        router.push('/auth/login');
       }
       setLoading(false);
     });
@@ -159,7 +159,7 @@ export default function AddPaymentMethodClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <Text variant="muted" cmsId="method-login-required">Please log in to add payment methods.</Text>
-          <Button onClick={() => router.push('/login')} cmsId="method-go-to-login" text="Go to Login"/>          
+          <Button onClick={() => router.push('/auth/login')} cmsId="method-go-to-login" text="Go to Login"/>          
         </Stack>
       </Container>
     );

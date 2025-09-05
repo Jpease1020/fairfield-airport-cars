@@ -63,7 +63,7 @@ export default function ForgotPasswordClient() {
                 </Text>
                 
                 <Text variant="muted" align="center" marginTop="md">
-                  <Link href="/login">
+                  <Link href="/auth/login">
                     {cmsData?.['customer-forgot_password-back_to_login'] || 'Back to Login'}
                   </Link>
                 </Text>
@@ -142,7 +142,7 @@ export default function ForgotPasswordClient() {
           </Box>
 
           <Text variant="muted" align="center" marginTop="md">
-            <Link href="/login">
+            <Link href="/auth/login">
               {cmsData?.['customer-forgot_password-back_to_login'] || 'Back to Login'}
             </Link>
           </Text>
