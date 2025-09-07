@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Container, H4, Stack, Button, Textarea } from '@/ui';
 import { X } from 'lucide-react';
@@ -86,7 +86,7 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
   }, [user, commentMode]);
 
   // Global click event listener
-  React.useEffect(() => {
+  useEffect(() => {
     if (!user || !commentMode) return;
 
     document.addEventListener('click', handleClick);
@@ -94,7 +94,7 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
   }, [user, commentMode, handleClick]);
 
   // Event listener for openCommentModal events
-  React.useEffect(() => {
+  useEffect(() => {
     if (!user) return;
 
     const handleOpenCommentModal = (e: Event) => {
@@ -165,7 +165,7 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
   }, [clickPosition, activeCommentBox]);
 
   // Close on Escape
-  React.useEffect(() => {
+  useEffect(() => {
     if (!activeCommentBox) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeCommentBox();
@@ -184,7 +184,7 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (activeCommentBox) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);

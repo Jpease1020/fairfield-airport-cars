@@ -26,7 +26,7 @@ export function useBusinessSettings() {
 
     loadBusinessSettings();
   }, []);
-
+  
   // Helper functions for common contact info
   const getPhoneNumber = () => businessSettings?.company?.phone || '';
   const getEmail = () => businessSettings?.company?.email || '';

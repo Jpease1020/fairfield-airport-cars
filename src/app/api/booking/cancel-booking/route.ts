@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getBooking, updateBooking } from '@/lib/services/booking-service';
 import { sendSms } from '@/lib/services/twilio-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
+import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { bookingNotificationService } from '@/lib/services/booking-notification-service';
 import { refundPayment } from '@/lib/services/square-service';
 
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
       // Existing SMS notification
       sendSms({ to: booking.phone, body: messageBody }),
       // Existing email notification
-      sendConfirmationEmail({ ...booking, status: 'cancelled', updatedAt: new Date(), cancellationFee }),
+      sendConfirmationEmail(adaptOldBookingToNew({ ...booking, status: 'cancelled', updatedAt: new Date(), cancellationFee })),
       // New push notification (using email as userId for now)
       bookingNotificationService.sendBookingCancelled(bookingId, booking.email, refundAmount)
     ]);

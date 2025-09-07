@@ -1,0 +1,93 @@
+'use client';
+
+import React from 'react';
+import { Box, Stack, Text, Button } from '@/ui';
+
+interface BookingSuccessConfirmationProps {
+  pickupLocation: string;
+  dropoffLocation: string;
+  pickupDateTime: string;
+  fare: number | null;
+  tipAmount: number;
+  depositAmount: number | null;
+  completedBookingId: string | null;
+  cmsData: any;
+}
+
+export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProps> = ({
+  pickupLocation,
+  dropoffLocation,
+  pickupDateTime,
+  fare,
+  tipAmount,
+  depositAmount,
+  completedBookingId,
+  cmsData,
+}) => {
+  return (
+    <Box variant="elevated" padding="xl" data-testid="booking-success-confirmation">
+      <Stack spacing="xl" align="center">
+        <Text size="3xl" weight="bold" color="success" cmsId="booking-confirmed-title">
+          {cmsData?.['booking-confirmed-title'] || 'Booking Confirmed!'}
+        </Text>
+        
+        <Text size="lg" align="center" cmsId="booking-confirmed-description">
+          {cmsData?.['booking-confirmed-description'] || `Your ride from ${pickupLocation} to ${dropoffLocation} is confirmed!`}
+        </Text>
+
+        <Box variant="outlined" padding="lg" data-testid="booking-details-summary">
+          <Stack spacing="md">
+            <Stack direction="horizontal" justify="space-between">
+              <Text weight="medium" cmsId="booking-detail-pickup">{cmsData?.['booking-detail-pickup'] || 'Pickup Location:'}</Text>
+              <Text cmsId="pickup-location-value">{pickupLocation}</Text>
+            </Stack>
+            <Stack direction="horizontal" justify="space-between">
+              <Text weight="medium" cmsId="booking-detail-dropoff">{cmsData?.['booking-detail-dropoff'] || 'Dropoff Location:'}</Text>
+              <Text cmsId="dropoff-location-value">{dropoffLocation}</Text>
+            </Stack>
+            <Stack direction="horizontal" justify="space-between">
+              <Text weight="medium" cmsId="booking-detail-datetime">{cmsData?.['booking-detail-datetime'] || 'Date & Time:'}</Text>
+              <Text cmsId="datetime-value">{new Date(pickupDateTime).toLocaleString()}</Text>
+            </Stack>
+            <Stack direction="horizontal" justify="space-between">
+              <Text weight="medium" cmsId="booking-detail-total">{cmsData?.['booking-detail-total'] || 'Total Fare:'}</Text>
+              <Text weight="bold" color="primary" cmsId="total-fare-value">${(fare || 0) + tipAmount}</Text>
+            </Stack>
+            <Stack direction="horizontal" justify="space-between">
+              <Text weight="medium" cmsId="booking-detail-deposit">{cmsData?.['booking-detail-deposit'] || 'Deposit Paid:'}</Text>
+              <Text color="success" cmsId="deposit-amount-value">${depositAmount?.toFixed(2)}</Text>
+            </Stack>
+          </Stack>
+        </Box>
+
+        <Stack spacing="md" align="center">
+          <Text size="lg" weight="medium" align="center" cmsId="whats-next-title">
+            {cmsData?.['whats-next-title'] || "What's Next?"}
+          </Text>
+          <Text size="sm" color="secondary" align="center" cmsId="whats-next-description">
+            {cmsData?.['whats-next-description'] || '• You\'ll receive a confirmation email shortly<br/>• Driver will contact you 15 minutes before pickup<br/>• Track your driver in real-time on the booking page'}
+          </Text>
+        </Stack>
+
+        <Stack direction="horizontal" spacing="md">
+          <Button
+            onClick={() => window.location.href = `/booking/${completedBookingId || 'unknown'}`}
+            variant="primary"
+            size="lg"
+            data-testid="view-booking-button"
+            cmsId="view-booking-button"
+            text={cmsData?.['view-booking-button'] || 'View My Booking'}
+          />
+          <Button
+            onClick={() => window.location.href = '/bookings'}
+            variant="outline"
+            size="lg"
+            data-testid="all-bookings-button"
+            cmsId="all-bookings-button"
+            text={cmsData?.['all-bookings-button'] || 'All My Bookings'}
+          />
+        </Stack>
+      </Stack>
+    </Box>
+  );
+};

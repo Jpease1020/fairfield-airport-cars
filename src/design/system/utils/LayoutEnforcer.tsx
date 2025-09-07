@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /**
  * LayoutEnforcer - Ensures all pages follow design system rules
@@ -12,7 +12,7 @@ interface LayoutValidationProps {
 }
 
 export const LayoutEnforcer: React.FC<LayoutValidationProps> = ({ children }) => {
-  React.useEffect(() => {
+  useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       // Check for common design system violations
       const violations: string[] = [];

@@ -6,6 +6,8 @@ import { InteractionModeProvider } from '@/design/providers/InteractionModeProvi
 import { GoogleMapsClientProvider } from '@/providers/GoogleMapsClientProvider';
 import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
 import { getAllCMSDataCached } from '@/lib/services/cms-cache';
+import { LocationProvider } from '@/contexts/LocationContext';
+import { BookingProvider } from '@/contexts/BookingProvider';
 
 import { AppContent } from './AppContent';
 import { NavigationWrapper } from '@/components/app/NavigationWrapper';
@@ -37,23 +39,27 @@ export default async function RootLayout({
       <body>
         <StyledComponentsRegistry>
           <CMSDataProvider initialCmsData={allCmsData}>
-            <ErrorBoundary>
-              <AccessibilityEnhancer>
-                <AdminProvider>
-                  <InteractionModeProvider>
-                    <GoogleMapsClientProvider>
-                      <NavigationWrapper />
-                      
-                      <Container as="main" maxWidth="full" data-testid="layout-main-content">
-                        <AppContent>{children}</AppContent>
-                      </Container>
-                      
-                      <Footer data-testid="layout-footer" />
-                    </GoogleMapsClientProvider>
-                  </InteractionModeProvider>
-                </AdminProvider>
-              </AccessibilityEnhancer>
-            </ErrorBoundary>
+            <LocationProvider>
+              <BookingProvider>
+                <ErrorBoundary>
+                  <AccessibilityEnhancer>
+                    <AdminProvider>
+                      <InteractionModeProvider>
+                        <GoogleMapsClientProvider>
+                          <NavigationWrapper />
+                          
+                          <Container as="main" maxWidth="full" data-testid="layout-main-content">
+                            <AppContent>{children}</AppContent>
+                          </Container>
+                          
+                          <Footer data-testid="layout-footer" />
+                        </GoogleMapsClientProvider>
+                      </InteractionModeProvider>
+                    </AdminProvider>
+                  </AccessibilityEnhancer>
+                </ErrorBoundary>
+              </BookingProvider>
+            </LocationProvider>
           </CMSDataProvider>
         </StyledComponentsRegistry>
       </body>

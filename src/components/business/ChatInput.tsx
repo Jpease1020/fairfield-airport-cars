@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/design/components/base-components/Button';
 import { Container } from '@/design/layout/containers/Container';
 import { Textarea } from '@/design/components/base-components/forms/Textarea'; 
@@ -102,7 +102,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     adjustHeight();
   }, [value]);
 

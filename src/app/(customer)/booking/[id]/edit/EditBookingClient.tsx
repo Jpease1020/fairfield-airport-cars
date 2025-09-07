@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast } from '@/ui';
 import { getBooking } from '@/lib/services/booking-service';
+import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { Booking } from '@/types/booking';
 import BookingForm from '../../../book/booking-form';
 
@@ -25,7 +26,7 @@ export default function EditBookingClient({ bookingId, cmsData }: EditBookingCli
         try {
           const bookingData = await getBooking(bookingId);
           if (bookingData) {
-            setBooking(bookingData);
+            setBooking(adaptOldBookingToNew(bookingData));
           } else {
             setError('Booking not found.');
           }

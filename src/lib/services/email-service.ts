@@ -41,7 +41,7 @@ export async function sendConfirmationEmail(booking: Booking) {
       const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
   // Generate iCalendar event
-  const pickupDate = new Date(booking.pickupDateTime);
+  const pickupDate = new Date(booking.trip.pickupDateTime);
   const event = {
     start: [
       pickupDate.getFullYear(),
@@ -69,7 +69,7 @@ export async function sendConfirmationEmail(booking: Booking) {
   const trackingUrl = `${baseUrl}/tracking/${booking.id}`;
 
   // Enhanced email content
-  const emailText = `Hi ${booking.name},
+  const emailText = `Hi ${booking.customer.name},
 
 Your ride has been confirmed! Here are your booking details:
 
@@ -107,12 +107,12 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
 
   const mailOptions = {
     from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
-    to: booking.email,
+    to: booking.customer.email,
     subject: `Your Ride Confirmation - ${booking.id}`,
     text: emailText,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: var(--color-primary-600);">Hi ${booking.name},</h2>
+        <h2 style="color: var(--color-primary-600);">Hi ${booking.customer.name},</h2>
         
         <p>Your ride has been confirmed! Here are your booking details:</p>
         

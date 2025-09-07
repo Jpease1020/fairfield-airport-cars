@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';   
 // Animations
@@ -110,7 +110,7 @@ export const Overlay: React.FC<OverlayProps> = ({
   const overlayZIndex = customZIndex || zIndex.modal;
 
   // Handle escape key
-  React.useEffect(() => {
+  useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen && closeOnEscape && onClose) {
         onClose();

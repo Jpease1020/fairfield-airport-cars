@@ -17,6 +17,7 @@ import {
 import { TrackingMap } from '@/components/business/TrackingMap';
 import { TrafficETA } from '@/components/business/TrafficETA';
 import { getBooking } from '@/lib/services/booking-service';
+import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { firebaseTrackingService, type ETACalculation, type DriverLocation } from '@/lib/services/firebase-tracking-service';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
@@ -51,7 +52,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
           return;
         }
 
-        setBooking(bookingData);
+        setBooking(adaptOldBookingToNew(bookingData));
 
         // Initialize Firebase tracking
         await firebaseTrackingService.initializeTracking(bookingId);
@@ -134,8 +135,8 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
     try {
       const updatedETA = await firebaseTrackingService.calculateAdvancedETA(
         bookingId,
-        booking.pickupLocation,
-        booking.dropoffLocation,
+        booking.trip.pickup.address,
+        booking.trip.dropoff.address,
         booking.driverLocation ? {
           lat: booking.driverLocation.lat,
           lng: booking.driverLocation.lng,
@@ -237,8 +238,8 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
               </Stack>
               <TrackingMap
                 bookingId={booking.id!}
-                pickupLocation={booking.pickupLocation}
-                dropoffLocation={booking.dropoffLocation}
+                pickupLocation={booking.trip.pickup.address}
+                dropoffLocation={booking.trip.dropoff.address}
                 driverLocation={booking.driverLocation}
                 estimatedArrival={booking.estimatedArrival}
                 status={booking.status}
@@ -256,8 +257,8 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
               </H2>
               <TrafficETA
                 bookingId={booking.id!}
-                pickupLocation={booking.pickupLocation}
-                dropoffLocation={booking.dropoffLocation}
+                pickupLocation={booking.trip.pickup.address}
+                dropoffLocation={booking.trip.dropoff.address}
                 currentLocation={booking.driverLocation ? {
                   lat: booking.driverLocation.lat,
                   lng: booking.driverLocation.lng,
@@ -291,7 +292,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                 <Text variant="muted" size="sm" cmsId="booking-details-passenger" >
                   {cmsData?.['tracking-passenger'] || 'Passenger'}
                 </Text>
-                <Text weight="bold">{booking.name}</Text>
+                <Text weight="bold">{booking.customer.name}</Text>
               </Stack>
               
               <Stack spacing="sm">
@@ -320,7 +321,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                   {cmsData?.['tracking-pickupTime'] || 'Pickup Time'}
                 </Text>
                 <Text weight="bold">
-                  {new Date(booking.pickupDateTime).toLocaleString()}
+                  {new Date(booking.trip.pickupDateTime).toLocaleString()}
                 </Text>
               </Stack>
               
@@ -328,7 +329,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                 <Text variant="muted" size="sm" cmsId="booking-details-fare" >
                   {cmsData?.['tracking-fare'] || 'Fare'}
                 </Text>
-                <Text weight="bold" cmsId="ignore">${booking.fare.toFixed(2)}</Text>
+                <Text weight="bold" cmsId="ignore">${booking.trip.fare?.toFixed(2)}</Text>
               </Stack>
               
               <Stack spacing="sm">
@@ -347,7 +348,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                 {cmsData?.['tracking-route'] || 'Route'}
               </Text>
               <Text weight="bold" cmsId="ignore">
-                {booking.pickupLocation} → {booking.dropoffLocation}
+                {booking.trip.pickup.address} → {booking.trip.dropoff.address}
               </Text>
             </Stack>
 
