@@ -1,104 +1,148 @@
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useErrorHandler } from './useErrorHandler';
+
+export interface PaymentData {
+  amount: number;
+  bookingId?: string;
+  customerInfo?: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  paymentMethod?: string;
+  metadata?: Record<string, any>;
+}
 
 export interface PaymentResult {
   success: boolean;
-  paymentId?: string;
-  status?: string;
-  amount?: number;
-  currency?: string;
+  transactionId?: string;
+  bookingId?: string;
   error?: string;
+  metadata?: Record<string, any>;
 }
 
-export const usePaymentProcessing = (
-  bookingId: string | null,
-  amount: number,
-  onSuccess: (result: PaymentResult) => void,
-  onError: (error: string) => void
-) => {
-  // Create booking first, then show payment form
-  const createBooking = useCallback(async (bookingData: any) => {
+export interface PaymentProcessingOptions {
+  onSuccess?: (result: PaymentResult) => void;
+  onError?: (error: string) => void;
+  onProcessingStart?: () => void;
+  onProcessingEnd?: () => void;
+}
+
+export interface PaymentProcessingReturn {
+  isProcessing: boolean;
+  error: string | null;
+  success: boolean;
+  processPayment: (data: PaymentData) => Promise<PaymentResult>;
+  reset: () => void;
+  clearError: () => void;
+}
+
+export const usePaymentProcessing = (options: PaymentProcessingOptions = {}): PaymentProcessingReturn => {
+  const { onSuccess, onError, onProcessingStart, onProcessingEnd } = options;
+  
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const { handleAsync } = useErrorHandler({
+    onError: (error) => {
+      setError(error);
+      setSuccess(false);
+      if (onError) {
+        onError(error);
+      }
+    }
+  });
+
+  const processPayment = useCallback(async (data: PaymentData): Promise<PaymentResult> => {
+    setIsProcessing(true);
+    setError(null);
+    setSuccess(false);
+    
+    if (onProcessingStart) {
+      onProcessingStart();
+    }
+
     try {
-      const response = await fetch('/api/booking', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookingData),
+      const result = await handleAsync(async () => {
+        // Validate payment data
+        if (!data.amount || data.amount <= 0) {
+          throw new Error('Invalid payment amount');
+        }
+
+        if (!data.bookingId && !data.customerInfo) {
+          throw new Error('Booking ID or customer information is required');
+        }
+
+        // Call payment API
+        const response = await fetch('/api/payment/process-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Payment processing failed');
+        }
+
+        const result: PaymentResult = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Payment processing failed');
+        }
+
+        return result;
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create booking');
+      if (result) {
+        setSuccess(true);
+        if (onSuccess) {
+          onSuccess(result);
+        }
+        return result;
       }
 
-      const data = await response.json();
+      throw new Error('Payment processing failed');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Payment processing failed';
+      setError(errorMessage);
+      setSuccess(false);
       
-      if (data.success && data.bookingId) {
-        return {
-          success: true,
-          bookingId: data.bookingId,
-          message: 'Booking created successfully! Please complete payment to confirm your ride.'
-        };
-      } else {
-        throw new Error('Failed to create booking');
+      if (onError) {
+        onError(errorMessage);
       }
-    } catch (error) {
-      console.error('Booking creation error:', error);
-      throw new Error('Failed to create booking. Please try again.');
+
+      return {
+        success: false,
+        error: errorMessage
+      };
+    } finally {
+      setIsProcessing(false);
+      if (onProcessingEnd) {
+        onProcessingEnd();
+      }
     }
+  }, [handleAsync, onSuccess, onError, onProcessingStart, onProcessingEnd]);
+
+  const reset = useCallback(() => {
+    setIsProcessing(false);
+    setError(null);
+    setSuccess(false);
   }, []);
 
-  // Process payment through Square
-  const processPayment = useCallback(async (paymentToken: string) => {
-    if (!bookingId) {
-      throw new Error('No booking ID available');
-    }
-
-    try {
-      const response = await fetch('/api/payment/process-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          paymentToken,
-          amount: Math.round(amount * 100), // Convert to cents
-          currency: 'USD',
-          bookingId,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Payment failed');
-      }
-
-      const result = await response.json();
-      onSuccess(result);
-      return result;
-      
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Payment failed';
-      onError(errorMessage);
-      throw error;
-    }
-  }, [bookingId, amount, onSuccess, onError]);
-
-  // Handle payment success
-  const handlePaymentSuccess = useCallback((result: PaymentResult) => {
-    console.log('Payment successful:', result);
-    onSuccess(result);
-  }, [onSuccess]);
-
-  // Handle payment error
-  const handlePaymentError = useCallback((error: string) => {
-    console.error('Payment error:', error);
-    onError(error);
-  }, [onError]);
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
 
   return {
-    createBooking,
+    isProcessing,
+    error,
+    success,
     processPayment,
-    handlePaymentSuccess,
-    handlePaymentError,
+    reset,
+    clearError
   };
 };

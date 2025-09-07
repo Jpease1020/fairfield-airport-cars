@@ -2,53 +2,24 @@
 
 import React from 'react';
 import { Container, Stack, Text, Button, Box, Input, Label, Textarea, RadioButton, H2 } from '@/design/ui';
-import { FlightInfo } from '@/hooks/useBookingForm';
+import { CustomerInfo, ValidationResult } from '@/types/booking';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
 
 interface ContactInfoPhaseProps {
-  // State
-  name: string;
-  email: string;
-  phone: string;
-  notes: string;
-  saveInfoForFuture: boolean;
-  flightInfo: FlightInfo;
-  
-  // Setters
-  setName: (name: string) => void;
-  setEmail: (email: string) => void;
-  setPhone: (phone: string) => void;
-  setNotes: (notes: string) => void;
-  setSaveInfoForFuture: (save: boolean) => void;
-  setFlightInfo: (info: FlightInfo) => void;
-  
-  // Actions
+  customerData: CustomerInfo;
+  onCustomerUpdate: (data: Partial<CustomerInfo>) => void;
   onBack: () => void;
   onContinue: () => void;
-  
-  // Validation
-  canContinue: boolean;
-  
-  // CMS Data
+  validation: ValidationResult;
   cmsData: any;
 }
 
 export function ContactInfoPhase({
-  name,
-  email,
-  phone,
-  notes,
-  saveInfoForFuture,
-  flightInfo,
-  setName,
-  setEmail,
-  setPhone,
-  setNotes,
-  setSaveInfoForFuture,
-  setFlightInfo,
+  customerData,
+  onCustomerUpdate,
   onBack,
   onContinue,
-  canContinue,
+  validation,
   cmsData
 }: ContactInfoPhaseProps) {
   // Get CMS data from provider
@@ -76,8 +47,8 @@ export function ContactInfoPhase({
               </Label>
               <Input
                 id="name"
-                value={name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                value={customerData.name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ name: e.target.value })}
                 placeholder={pageCmsData?.['form-name-placeholder'] || 'Enter your full name'}
                 cmsId="form-name-input"
                 fullWidth
@@ -94,8 +65,8 @@ export function ContactInfoPhase({
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                value={customerData.email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ email: e.target.value })}
                 placeholder={pageCmsData?.['form-email-placeholder'] || 'Enter your email'}
                 cmsId="form-email-input"
                 fullWidth
@@ -112,8 +83,8 @@ export function ContactInfoPhase({
               <Input
                 id="phone"
                 type="tel"
-                value={phone}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+                value={customerData.phone}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ phone: e.target.value })}
                 placeholder={pageCmsData?.['form-phone-placeholder'] || 'Enter your phone number'}
                 cmsId="form-phone-input"
                 fullWidth
@@ -129,8 +100,8 @@ export function ContactInfoPhase({
               </Label>
               <Textarea
                 id="notes"
-                value={notes}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
+                value={customerData.notes}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onCustomerUpdate({ notes: e.target.value })}
                 placeholder={pageCmsData?.['form-notes-placeholder'] || 'Any special instructions for your driver?'}
                 cmsId="form-notes-input"
                 fullWidth
@@ -145,8 +116,8 @@ export function ContactInfoPhase({
                 id="save-info"
                 name="save-info"
                 value="save-info"
-                checked={saveInfoForFuture}
-                onChange={() => setSaveInfoForFuture(!saveInfoForFuture)}
+                checked={customerData.saveInfoForFuture}
+                onChange={() => onCustomerUpdate({ saveInfoForFuture: !customerData.saveInfoForFuture })}
                 data-testid="save-info-checkbox"
                 label={pageCmsData?.['save-info-label'] || 'Save my information for future bookings'}
               />
@@ -167,7 +138,7 @@ export function ContactInfoPhase({
           <Button
             onClick={onContinue}
             variant="primary"
-            disabled={!canContinue}
+            disabled={!validation.isValid}
             cmsId="continue-button"
             data-testid="continue-button"
             

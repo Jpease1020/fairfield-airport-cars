@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useInteractionMode } from '../../providers/InteractionModeProvider';
 import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
@@ -107,7 +107,7 @@ export function ModeToggleMenu() {
   };
 
   // Close menu when clicking outside
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (!target.closest('[data-mode-menu]')) {
@@ -179,7 +179,7 @@ export function ModeToggleMenuStandalone() {
   };
 
   // Close menu when clicking outside
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (!target.closest('[data-mode-menu]')) {

@@ -171,9 +171,9 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
                 </Text>
               </Stack>
               <Stack data-testid="success-trip-details-list" spacing="sm">
-                <Text data-testid="success-pickup-location"><strong>From:</strong> {booking.pickupLocation}</Text>
-                <Text data-testid="success-dropoff-location"><strong>To:</strong> {booking.dropoffLocation}</Text>
-                <Text data-testid="success-pickup-time"><strong>When:</strong> {new Date(booking.pickupDateTime).toLocaleString()}</Text>
+                <Text data-testid="success-pickup-location"><strong>From:</strong> {booking.trip.pickup.address}</Text>
+                <Text data-testid="success-dropoff-location"><strong>To:</strong> {booking.trip.dropoff.address}</Text>
+                <Text data-testid="success-pickup-time"><strong>When:</strong> {new Date(booking.trip.pickupDateTime).toLocaleString()}</Text>
               </Stack>
             </Stack>
           </Container>
@@ -189,9 +189,9 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
                 </Text>
               </Stack>
               <Stack data-testid="success-payment-details" spacing="sm">
-                <Text data-testid="success-total-fare" cmsId="ignore"><strong>Total Fare:</strong> ${booking.fare}</Text>
-                <Text data-testid="success-deposit" cmsId="ignore"><strong>Deposit:</strong> ${booking.depositAmount} {booking.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
-                <Text data-testid="success-balance-due" cmsId="ignore"><strong>Balance Due:</strong> ${booking.balanceDue || 0}</Text>
+                <Text data-testid="success-total-fare" cmsId="ignore"><strong>Total Fare:</strong> ${booking.trip.fare}</Text>
+                <Text data-testid="success-deposit" cmsId="ignore"><strong>Deposit:</strong> ${booking.payment.depositAmount} {booking.payment.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
+                <Text data-testid="success-balance-due" cmsId="ignore"><strong>Balance Due:</strong> ${booking.payment.balanceDue || 0}</Text>
               </Stack>
             </Stack>
           </Container>

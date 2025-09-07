@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { sendSms } from '@/lib/services/twilio-service';
 import { getBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
+import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { bookingNotificationService } from '@/lib/services/booking-notification-service';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
 
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
         body: messageBody,
       }),
       // Existing email notification
-      sendConfirmationEmail(booking),
+      sendConfirmationEmail(adaptOldBookingToNew(booking)),
       // New push notification (using email as user identifier)
       bookingNotificationService.sendBookingConfirmation(bookingId, booking.email)
     ]);

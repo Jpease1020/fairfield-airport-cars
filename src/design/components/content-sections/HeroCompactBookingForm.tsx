@@ -11,6 +11,7 @@ import { Input } from '../../components/base-components/forms/Input';
 import { LocationInput } from '../base-components/forms/LocationInput';
 import { RouteSummary } from './RouteSummary';
 import { useRouteCalculation } from '../../../hooks/useRouteCalculation';
+import { useLocation } from '../../../contexts/LocationContext';
 
 interface Coordinates {
   lat: number;
@@ -30,13 +31,14 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   'data-testid': dataTestId,
   ...rest
 }) => {
-  
-  const [pickupLocation, setPickupLocation] = useState('');
-  const [pickupCoords, setPickupCoords] = useState<Coordinates | null>(null);
-  
-  const [dropoffLocation, setDropoffLocation] = useState('');
-  const [dropoffCoords, setDropoffCoords] = useState<Coordinates | null>(null);
-
+  // Use global location context instead of local state
+  const { 
+    locationData, 
+    setPickupLocation, 
+    setDropoffLocation, 
+    isLocationValid,
+    locationErrors 
+  } = useLocation();
   
   const [pickupDate, setPickupDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
@@ -57,8 +59,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          origin: pickupLocation,
-          destination: dropoffLocation,
+          origin: locationData.pickup.address,
+          destination: locationData.dropoff.address,
           fareType: 'business'
         })
       });
@@ -109,8 +111,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
 
   // Calculate route in real-time when both locations are set
   const { route, loading, error } = useRouteCalculation(
-    pickupCoords,
-    dropoffCoords,
+    locationData.pickup.coordinates,
+    locationData.dropoff.coordinates,
     pickupDate && pickupTime ? `${pickupDate}T${pickupTime}` : null
   );
 
@@ -122,9 +124,9 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         const fare = await calculateEstimatedFareFromRoute(route);
         setEstimatedFare(fare);
         setFareCalculationMethod('route');
-      } else if (pickupLocation && dropoffLocation) {
+      } else if (locationData.pickup.address && locationData.dropoff.address) {
         // Use simple calculation when locations are filled but coordinates aren't available yet
-        const fare = calculateSimpleEstimatedFare(pickupLocation, dropoffLocation);
+        const fare = calculateSimpleEstimatedFare(locationData.pickup.address, locationData.dropoff.address);
         setEstimatedFare(fare);
         setFareCalculationMethod('simple');
       } else {
@@ -134,24 +136,22 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     };
     
     updateFare();
-  }, [route, pickupLocation, dropoffLocation, pickupCoords, dropoffCoords]);
+  }, [route, locationData.pickup.address, locationData.dropoff.address, locationData.pickup.coordinates, locationData.dropoff.coordinates]);
 
-  // Separate effect to handle autocomplete selections without affecting fare calculation
+  // Handle location selection using global context
   const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
-    setPickupLocation(address);
-    setPickupCoords(coordinates);
+    setPickupLocation(address, coordinates);
   };
 
   const handleDropoffLocationSelect = (address: string, coordinates: Coordinates) => {
-    setDropoffLocation(address);
-    setDropoffCoords(coordinates);
+    setDropoffLocation(address, coordinates);
   };
 
   const handleGetPrice = () => {
-    // Navigate to booking page with pre-filled values
+    // Navigate to booking page - location data is already in global context!
     const params = new URLSearchParams({
-      pickup: pickupLocation,
-      dropoff: dropoffLocation,
+      pickup: locationData.pickup.address,
+      dropoff: locationData.dropoff.address,
       date: pickupDate,
       time: pickupTime,
     });
@@ -175,8 +175,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           <LocationInput
             id="pickup-location"
             placeholder="From: Fairfield Station"
-            value={pickupLocation}
-            onChange={setPickupLocation}
+            value={locationData.pickup.address}
+            onChange={(address) => setPickupLocation(address)}
             onLocationSelect={handlePickupLocationSelect}
             size="md"
             fullWidth
@@ -186,8 +186,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           <LocationInput
             id="dropoff-location"
             placeholder="To: JFK Airport"
-            value={dropoffLocation}
-            onChange={setDropoffLocation}
+            value={locationData.dropoff.address}
+            onChange={(address) => setDropoffLocation(address)}
             onLocationSelect={handleDropoffLocationSelect}
             size="md"
             fullWidth
@@ -244,7 +244,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         )}
         
         {/* Show route summary when both coordinates are available */}
-        {(pickupCoords && dropoffCoords) && (
+        {(locationData.pickup.coordinates && locationData.dropoff.coordinates) && (
           <RouteSummary
             route={route}
             loading={loading}
@@ -254,17 +254,22 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           />
         )}
         
-        {estimatedFare && (
-          <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={handleGetPrice}
-              cmsId="get-price-button"
-              data-testid="quick-book-get-price-button"
-              text="Book Now to Secure Rate →"
-            />
-          </Stack>
+        <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
+          <Button
+            variant="primary"
+            size="md"
+            onClick={handleGetPrice}
+            disabled={!isLocationValid}
+            cmsId="get-price-button"
+            data-testid="quick-book-get-price-button"
+            text="Book Now to Secure Rate →"
+          />
+        </Stack>
+        
+        {!isLocationValid && locationErrors.length > 0 && (
+          <Text size="sm" color="error" align="center">
+            {locationErrors[0]}
+          </Text>
         )}
         <Text size="xs" align="center" variant="muted" data-testid="quick-book-disclaimer">
           Instant pricing • No hidden fees

@@ -179,15 +179,15 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
           {cmsData?.['booking-trip_details-description'] || 'Your pickup and dropoff information'}
           <Container>
             {cmsData?.['booking-pickup_location-label'] || 'Pickup Location:'}
-            <Text>{booking.pickupLocation}</Text>
+            <Text>{booking.trip.pickup.address}</Text>
           </Container>
           <Container>
             {cmsData?.['booking-dropoff_location-label'] || 'Dropoff Location:'}
-            <Text>{booking.dropoffLocation}</Text>
+            <Text>{booking.trip.dropoff.address}</Text>
           </Container>
           <Container>
             {cmsData?.['booking-pickup_datetime-label'] || 'Pickup Date & Time:'}
-            <Text>{formatDateTime(booking.pickupDateTime)}</Text>
+            <Text>{formatDateTime(booking.trip.pickupDateTime)}</Text>
           </Container>
         </Container>
       </GridSection>
@@ -199,11 +199,11 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
           {cmsData?.['booking-passenger_info-description'] || 'Your contact details for this booking'}
           <Container spacing="lg">
             {cmsData?.['booking-passenger_name-label'] || 'Passenger:'}
-            <Text>{booking.name}</Text>
+            <Text>{booking.customer.name}</Text>
             {cmsData?.['booking-passenger_phone-label'] || 'Phone:'}
-            <Text>{booking.phone}</Text>
+            <Text>{booking.customer.phone}</Text>
             {cmsData?.['booking-passenger_email-label'] || 'Email:'}
-            <Text>{booking.email}</Text>
+            <Text>{booking.customer.email}</Text>
           </Container>
         </Container>
       </GridSection>
@@ -216,7 +216,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
               {cmsData?.['booking-fare-info-includes-fees'] || 'Includes all fees and taxes'}
             </Text>
             <Text size="lg" cmsId="ignore">
-              ${booking.fare?.toFixed(2)}
+              ${booking.trip.fare?.toFixed(2)}
             </Text>
           </Container>
         </Container>

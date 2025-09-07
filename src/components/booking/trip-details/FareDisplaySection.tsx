@@ -1,0 +1,78 @@
+'use client';
+
+import React from 'react';
+import { Stack, Box, Text, H3, StatusMessage } from '@/ui';
+
+interface FareDisplaySectionProps {
+  fare: number | null;
+  isCalculating: boolean;
+  fareType: 'personal' | 'business';
+  cmsData: any;
+}
+
+export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
+  fare,
+  isCalculating,
+  fareType,
+  cmsData
+}) => {
+  const formatFare = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
+
+  const getFareTypeLabel = () => {
+    return fareType === 'personal' 
+      ? (cmsData?.['tripDetailsPhase-personalFare'] || 'Personal')
+      : (cmsData?.['tripDetailsPhase-businessFare'] || 'Business');
+  };
+
+  if (isCalculating) {
+    return (
+      <Box variant="elevated" padding="lg" data-testid="fare-calculating">
+        <Stack spacing="sm" align="center">
+          <Text color="secondary">
+            {cmsData?.['tripDetailsPhase-calculatingFare'] || 'Calculating fare...'}
+          </Text>
+        </Stack>
+      </Box>
+    );
+  }
+
+  if (fare === null) {
+    return (
+      <Box variant="elevated" padding="lg" data-testid="fare-error">
+        <StatusMessage
+          type="error"
+          message={cmsData?.['tripDetailsPhase-fareError'] || 'Unable to calculate fare. Please check your locations.'}
+          id="fare-error-message"
+        />
+      </Box>
+    );
+  }
+
+  return (
+    <Box variant="elevated" padding="lg" data-testid="fare-display">
+      <Stack spacing="sm">
+        <H3 cmsId="trip-details-fare-title">
+          {cmsData?.['tripDetailsPhase-fareTitle'] || 'Estimated Fare'}
+        </H3>
+        
+        <Stack direction="horizontal" justify="space-between" align="center">
+          <Text color="secondary">
+            {getFareTypeLabel()} {cmsData?.['tripDetailsPhase-fareType'] || 'Fare'}
+          </Text>
+          <Text size="lg" weight="bold" color="primary">
+            {formatFare(fare)}
+          </Text>
+        </Stack>
+        
+        <Text size="sm" color="secondary">
+          {cmsData?.['tripDetailsPhase-fareNote'] || 'Final fare may vary based on traffic and route conditions.'}
+        </Text>
+      </Stack>
+    </Box>
+  );
+};
