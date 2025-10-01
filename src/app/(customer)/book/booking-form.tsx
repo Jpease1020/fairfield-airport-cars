@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { StatusMessage, ToastProvider } from '@/ui';
-import { BookingFormProvider as NewBookingFormProvider } from '@/contexts/BookingFormProvider';
+import { BookingProvider } from '@/providers/BookingProvider';
 import { BookingFormContainer } from '@/components/booking/BookingFormContainer';
 import { BookingFormPhases } from '@/components/booking/BookingFormPhases';
-import { useBookingForm } from '@/contexts/BookingFormProvider';
+import { useBooking } from '@/providers/BookingProvider';
 
 interface BookingFormProps {
   booking?: any;
@@ -13,7 +13,7 @@ interface BookingFormProps {
 }
 
 function BookingFormContent({ booking, cmsData }: BookingFormProps) {
-  const { error, success } = useBookingForm();
+  const { error, success } = useBooking();
 
   return (
     <BookingFormContainer>
@@ -44,9 +44,9 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
 export default function BookingForm(props: BookingFormProps) {
   return (
     <ToastProvider>
-      <NewBookingFormProvider existingBooking={props.booking}>
+      <BookingProvider existingBooking={props.booking}>
         <BookingFormContent {...props} />
-      </NewBookingFormProvider>
+      </BookingProvider>
     </ToastProvider>
   );
 }

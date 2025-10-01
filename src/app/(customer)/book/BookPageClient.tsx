@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Container, Stack, H2, Text } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
-import { useLocation } from '@/contexts/LocationContext';
 
 import BookingForm from './booking-form';
 
@@ -15,21 +14,11 @@ function BookPageClient() {
   
   // Get URL parameters
   const searchParams = useSearchParams();
-  const { setPickupLocation, setDropoffLocation } = useLocation();
   
   // Initialize form data from URL parameters
   useEffect(() => {
-    const pickup = searchParams.get('pickup');
-    const dropoff = searchParams.get('dropoff');
     const date = searchParams.get('date');
     const time = searchParams.get('time');
-    
-    if (pickup) {
-      setPickupLocation(pickup);
-    }
-    if (dropoff) {
-      setDropoffLocation(dropoff);
-    }
     
     // Store date and time in sessionStorage for the booking form to use
     if (date) {
@@ -38,7 +27,7 @@ function BookPageClient() {
     if (time) {
       sessionStorage.setItem('booking-pickup-time', time);
     }
-  }, [searchParams, setPickupLocation, setDropoffLocation]);
+  }, [searchParams]);
 
   return (
     <Container maxWidth="full" padding="xl" data-testid="book-form-section">

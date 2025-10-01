@@ -3,7 +3,7 @@
 // Force dynamic rendering to prevent server-side rendering issues
 export const dynamic = 'force-dynamic';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { NextPage } from 'next';
 import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
 import { getAvailableDrivers } from '@/lib/services/booking-service';
@@ -382,7 +382,18 @@ function AdminBookingsPageContent() {
 }
 
 const AdminBookingsPage: NextPage = () => {
-  return <AdminBookingsPageContent />;
+  return (
+    <Suspense fallback={
+      <Container>
+        <Stack direction="horizontal" spacing="md" align="center">
+          <LoadingSpinner />
+          <Text>Loading admin bookings...</Text>
+        </Stack>
+      </Container>
+    }>
+      <AdminBookingsPageContent />
+    </Suspense>
+  );
 };
 
 export default AdminBookingsPage;
