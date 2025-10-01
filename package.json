@@ -17,7 +17,7 @@
     "test:page-level": "playwright test --config tests/page-level/playwright.config.ts",
     "test:page-level:ui": "playwright test --config tests/page-level/playwright.config.ts --ui",
     "firebase:emulators": "firebase emulators:start",
-    "firebase:emulators:seed": "node scripts/seed-cms-to-emulators.js",
+    "firebase:emulators:seed": "node scripts/update-emulator-with-cleaned-data.cjs",
     "deploy": "npm run build && vercel --prod",
     "deploy:preview": "npm run build && vercel"
   },

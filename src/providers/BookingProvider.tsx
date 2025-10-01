@@ -1,15 +1,18 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useLocation } from './LocationContext';
-import { useBooking } from './BookingProvider';
-import { BookingFormData, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo, Booking } from '@/types/booking';
+import { useSearchParams } from 'next/navigation';
+import { Booking, BookingFormData, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo } from '@/types/booking';
 
-interface BookingFormProviderType {
-  // Form state
+interface BookingProviderType {
+  // Current booking
+  currentBooking: Booking | null;
+  
+  // Form state (replaces BookingFormProvider)
   formData: BookingFormData;
   currentPhase: BookingPhase;
   validation: ValidationResult;
+  hasAttemptedValidation: boolean;
   
   // Form actions
   updateFormData: (_data: Partial<BookingFormData>) => void;
@@ -30,48 +33,43 @@ interface BookingFormProviderType {
   submitForm: () => Promise<void>;
   resetForm: () => void;
   
+  // Booking actions (existing)
+  createBooking: (_data: Partial<Booking>) => Promise<Booking>;
+  updateBooking: (_id: string, _data: Partial<Booking>) => Promise<Booking>;
+  getBooking: (_id: string) => Promise<Booking | null>;
+  deleteBooking: (_id: string) => Promise<void>;
+  
+  // Real-time updates
+  subscribeToBooking: (_id: string) => void;
+  unsubscribeFromBooking: (_id: string) => void;
+  
   // Loading states
+  isLoading: boolean;
   isSubmitting: boolean;
   error: string | null;
   success: string | null;
+  
+  // Helper functions
+  setCurrentBooking: (booking: Booking | null) => void;
+  clearError: () => void;
 }
 
-const BookingFormContext = createContext<BookingFormProviderType | undefined>(undefined);
+const BookingContext = createContext<BookingProviderType | undefined>(undefined);
 
-interface BookingFormProviderProps {
+interface BookingProviderProps {
   children: ReactNode;
   existingBooking?: Booking; // For editing existing bookings
 }
 
-export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({ 
-  children, 
-  existingBooking 
-}) => {
-  const { locationData, isLocationValid, locationErrors } = useLocation();
-  const { createBooking, updateBooking } = useBooking();
+export const BookingProvider: React.FC<BookingProviderProps> = ({ children, existingBooking }) => {
+  const searchParams = useSearchParams();
   
-  // Initialize form data from URL parameters (stored in sessionStorage)
-  useEffect(() => {
-    const storedDate = sessionStorage.getItem('booking-pickup-date');
-    const storedTime = sessionStorage.getItem('booking-pickup-time');
-    
-    if (storedDate && storedTime) {
-      const pickupDateTime = `${storedDate}T${storedTime}`;
-      setFormData(prev => ({
-        ...prev,
-        trip: {
-          ...prev.trip,
-          pickupDateTime
-        }
-      }));
-      
-      // Clear the stored values after using them
-      sessionStorage.removeItem('booking-pickup-date');
-      sessionStorage.removeItem('booking-pickup-time');
-    }
-  }, []);
+  // Existing booking state
+  const [currentBooking, setCurrentBooking] = useState<Booking | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  // Form state
+  // Form state (replaces BookingFormProvider)
   const [formData, setFormData] = useState<BookingFormData>({
     trip: {
       pickup: { address: '', coordinates: null },
@@ -110,13 +108,55 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
   
   const [currentPhase, setCurrentPhase] = useState<BookingPhase>('trip-details');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [hasAttemptedValidation, setHasAttemptedValidation] = useState(false);
+
+  // Initialize form data from URL parameters (replaces LocationContext functionality)
+  useEffect(() => {
+    const pickup = searchParams.get('pickup');
+    const dropoff = searchParams.get('dropoff');
+    const storedDate = sessionStorage.getItem('booking-pickup-date');
+    const storedTime = sessionStorage.getItem('booking-pickup-time');
+    
+    if (pickup) {
+      setFormData(prev => ({
+        ...prev,
+        trip: {
+          ...prev.trip,
+          pickup: { ...prev.trip.pickup, address: pickup }
+        }
+      }));
+    }
+    
+    if (dropoff) {
+      setFormData(prev => ({
+        ...prev,
+        trip: {
+          ...prev.trip,
+          dropoff: { ...prev.trip.dropoff, address: dropoff }
+        }
+      }));
+    }
+    
+    if (storedDate && storedTime) {
+      const pickupDateTime = `${storedDate}T${storedTime}`;
+      setFormData(prev => ({
+        ...prev,
+        trip: {
+          ...prev.trip,
+          pickupDateTime
+        }
+      }));
+      
+      // Clear the stored values after using them
+      sessionStorage.removeItem('booking-pickup-date');
+      sessionStorage.removeItem('booking-pickup-time');
+    }
+  }, [searchParams]);
 
   // Initialize form with existing booking
   useEffect(() => {
     if (existingBooking) {
-      // Load existing booking data
       setFormData({
         trip: {
           pickup: {
@@ -161,19 +201,7 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
     }
   }, [existingBooking]);
 
-  // Sync with location context
-  useEffect(() => {
-    setFormData(prev => ({
-      ...prev,
-      trip: {
-        ...prev.trip,
-        pickup: locationData.pickup,
-        dropoff: locationData.dropoff
-      }
-    }));
-  }, [locationData]);
-
-  // Update form data
+  // Form data update functions
   const updateFormData = (data: Partial<BookingFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
   };
@@ -183,6 +211,7 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
       ...prev,
       trip: { ...prev.trip, ...data }
     }));
+    setHasAttemptedValidation(true);
   };
 
   const updateCustomerInfo = (data: Partial<CustomerInfo>) => {
@@ -190,6 +219,7 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
       ...prev,
       customer: { ...prev.customer, ...data }
     }));
+    setHasAttemptedValidation(true);
   };
 
   const updatePaymentInfo = (data: Partial<PaymentInfo>) => {
@@ -197,6 +227,7 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
       ...prev,
       payment: { ...prev.payment, ...data }
     }));
+    setHasAttemptedValidation(true);
   };
 
   // Phase management
@@ -205,6 +236,8 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
   };
 
   const goToNextPhase = () => {
+    setHasAttemptedValidation(true);
+    
     const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing'];
     const currentIndex = phases.indexOf(currentPhase);
     if (currentIndex < phases.length - 1) {
@@ -220,10 +253,19 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
     }
   };
 
-  // Validation
+  // Validation logic (with hasAttemptedValidation check)
   const validateCurrentPhase = (): ValidationResult => {
     const errors: string[] = [];
     const warnings: string[] = [];
+
+    // Only show validation errors if user has attempted validation
+    if (!hasAttemptedValidation) {
+      return {
+        isValid: true,
+        errors: [],
+        warnings: []
+      };
+    }
 
     switch (currentPhase) {
       case 'trip-details':
@@ -236,8 +278,12 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
         if (!formData.trip.pickupDateTime) {
           errors.push('Pickup date and time is required');
         }
-        if (!isLocationValid) {
-          errors.push(...locationErrors);
+        // Location validation
+        if (formData.trip.pickup.address.trim() !== '' && formData.trip.pickup.coordinates === null) {
+          errors.push('Please select pickup location from suggestions');
+        }
+        if (formData.trip.dropoff.address.trim() !== '' && formData.trip.dropoff.coordinates === null) {
+          errors.push('Please select dropoff location from suggestions');
         }
         break;
         
@@ -268,22 +314,8 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
   };
 
   const validateForm = (): ValidationResult => {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    // Validate all phases
-    const tripValidation = validateCurrentPhase();
-    if (currentPhase === 'trip-details') {
-      errors.push(...tripValidation.errors);
-      warnings.push(...tripValidation.warnings);
-    }
-
-    // Add other phase validations as needed
-    return {
-      isValid: errors.length === 0,
-      errors,
-      warnings
-    };
+    setHasAttemptedValidation(true);
+    return validateCurrentPhase();
   };
 
   // Form submission
@@ -354,14 +386,164 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
     setCurrentPhase('trip-details');
     setError(null);
     setSuccess(null);
+    setHasAttemptedValidation(false);
   };
 
   const validation = validateCurrentPhase();
 
-  const value: BookingFormProviderType = {
+  // Create a new booking
+  const createBooking = async (data: Partial<Booking>): Promise<Booking> => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create booking');
+      }
+
+      const booking = await response.json();
+      setCurrentBooking(booking);
+      return booking;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create booking';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Update an existing booking
+  const updateBooking = async (id: string, data: Partial<Booking>): Promise<Booking> => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/booking/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update booking');
+      }
+
+      const booking = await response.json();
+      setCurrentBooking(booking);
+      return booking;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update booking';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Get a booking by ID
+  const getBooking = async (id: string): Promise<Booking | null> => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/booking/${id}`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null;
+        }
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch booking');
+      }
+
+      const booking = await response.json();
+      setCurrentBooking(booking);
+      return booking;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch booking';
+      setError(errorMessage);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Delete a booking
+  const deleteBooking = async (id: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/booking/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete booking');
+      }
+
+      if (currentBooking?.id === id) {
+        setCurrentBooking(null);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete booking';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Subscribe to real-time booking updates
+  const subscribeToBooking = (id: string) => {
+    // TODO: Implement real-time subscription
+    console.log(`Subscribing to booking ${id}`);
+  };
+
+  // Unsubscribe from booking updates
+  const unsubscribeFromBooking = (id: string) => {
+    // TODO: Implement real-time unsubscription
+    console.log(`Unsubscribing from booking ${id}`);
+  };
+
+  // Clear error
+  const clearError = () => {
+    setError(null);
+  };
+
+  const value: BookingProviderType = {
+    // Existing booking properties
+    currentBooking,
+    createBooking,
+    updateBooking,
+    getBooking,
+    deleteBooking,
+    subscribeToBooking,
+    unsubscribeFromBooking,
+    isLoading,
+    error,
+    setCurrentBooking,
+    clearError,
+    
+    // New form properties
     formData,
     currentPhase,
     validation,
+    hasAttemptedValidation,
     updateFormData,
     updateTripDetails,
     updateCustomerInfo,
@@ -374,21 +556,20 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
     submitForm,
     resetForm,
     isSubmitting,
-    error,
     success,
   };
 
   return (
-    <BookingFormContext.Provider value={value}>
+    <BookingContext.Provider value={value}>
       {children}
-    </BookingFormContext.Provider>
+    </BookingContext.Provider>
   );
 };
 
-export const useBookingForm = (): BookingFormProviderType => {
-  const context = useContext(BookingFormContext);
+export const useBooking = (): BookingProviderType => {
+  const context = useContext(BookingContext);
   if (context === undefined) {
-    throw new Error('useBookingForm must be used within a BookingFormProvider');
+    throw new Error('useBooking must be used within a BookingProvider');
   }
   return context;
 };

@@ -3,8 +3,12 @@
 import React from 'react';
 import { Stack, Text, Button } from '@/ui';
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
-import { useLocation } from '@/contexts/LocationContext';
-import { Coordinates } from '@/contexts/LocationContext';
+import { useBooking } from '@/providers/BookingProvider';
+
+interface Coordinates {
+  lat: number;
+  lng: number;
+}
 
 interface UnifiedLocationInputProps {
   type: 'pickup' | 'dropoff';
@@ -26,27 +30,37 @@ export const UnifiedLocationInput: React.FC<UnifiedLocationInputProps> = ({
   'data-testid': dataTestId
 }) => {
   const {
-    locationData,
-    setPickupLocation,
-    setDropoffLocation,
-    setPickupCoordinates,
-    setDropoffCoordinates,
-    clearLocations,
-    swapLocations,
-    locationErrors
-  } = useLocation();
+    formData,
+    updateTripDetails,
+    validation
+  } = useBooking();
 
   const isPickup = type === 'pickup';
-  const location = isPickup ? locationData.pickup : locationData.dropoff;
-  const setLocation = isPickup ? setPickupLocation : setDropoffLocation;
-  const setCoordinates = isPickup ? setPickupCoordinates : setDropoffCoordinates;
+  const location = isPickup ? formData.trip.pickup : formData.trip.dropoff;
+  
+  const setLocation = (address: string) => {
+    if (isPickup) {
+      updateTripDetails({ pickup: { ...formData.trip.pickup, address } });
+    } else {
+      updateTripDetails({ dropoff: { ...formData.trip.dropoff, address } });
+    }
+  };
+  
+  const setCoordinates = (coordinates: Coordinates | null) => {
+    if (isPickup) {
+      updateTripDetails({ pickup: { ...formData.trip.pickup, coordinates } });
+    } else {
+      updateTripDetails({ dropoff: { ...formData.trip.dropoff, coordinates } });
+    }
+  };
 
   const handleLocationChange = (address: string) => {
     setLocation(address);
   };
 
   const handleLocationSelect = (address: string, coordinates: Coordinates) => {
-    setLocation(address, coordinates);
+    setLocation(address);
+    setCoordinates(coordinates);
   };
 
   const handleCoordinatesChange = (coordinates: Coordinates | null) => {
@@ -55,13 +69,29 @@ export const UnifiedLocationInput: React.FC<UnifiedLocationInputProps> = ({
 
   const getError = () => {
     if (isPickup) {
-      return locationErrors.find(error => error.includes('pickup'));
+      return validation.errors.find(error => error.includes('pickup'));
     } else {
-      return locationErrors.find(error => error.includes('dropoff'));
+      return validation.errors.find(error => error.includes('dropoff'));
     }
   };
 
   const error = getError();
+
+  const swapLocations = () => {
+    const pickup = formData.trip.pickup;
+    const dropoff = formData.trip.dropoff;
+    updateTripDetails({
+      pickup: dropoff,
+      dropoff: pickup
+    });
+  };
+
+  const clearLocations = () => {
+    updateTripDetails({
+      pickup: { address: '', coordinates: null },
+      dropoff: { address: '', coordinates: null }
+    });
+  };
 
   return (
     <Stack spacing="sm" data-testid={dataTestId}>

@@ -9,7 +9,7 @@ import { Button } from '../../components/base-components/Button';
 import { Text } from '../../components/base-components/text/Text';
 import { Input } from '../../components/base-components/forms/Input';
 import { LocationInput } from '../base-components/forms/LocationInput';
-import { useLocation } from '../../../contexts/LocationContext';
+import { useBooking } from '../../../providers/BookingProvider';
 
 interface Coordinates {
   lat: number;
@@ -29,14 +29,28 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   'data-testid': dataTestId,
   ...rest
 }) => {
-  // Use global location context instead of local state
+  // Use booking provider for location management
   const { 
-    locationData, 
-    setPickupLocation, 
-    setDropoffLocation, 
-    isLocationValid,
-    locationErrors 
-  } = useLocation();
+    formData,
+    updateTripDetails,
+    validation
+  } = useBooking();
+  
+  const locationData = {
+    pickup: formData.trip.pickup,
+    dropoff: formData.trip.dropoff
+  };
+  
+  const setPickupLocation = (address: string, coordinates?: Coordinates) => {
+    updateTripDetails({ pickup: { ...formData.trip.pickup, address, coordinates: coordinates || null } });
+  };
+  
+  const setDropoffLocation = (address: string, coordinates?: Coordinates) => {
+    updateTripDetails({ dropoff: { ...formData.trip.dropoff, address, coordinates: coordinates || null } });
+  };
+  
+  const isLocationValid = validation.isValid;
+  const locationErrors = validation.errors;
   
   const [pickupDate, setPickupDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');

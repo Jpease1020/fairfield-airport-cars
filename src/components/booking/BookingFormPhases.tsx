@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useBookingForm } from '@/contexts/BookingFormProvider';
-import { useLocation } from '@/contexts/LocationContext';
+import { useBooking } from '@/providers/BookingProvider';
 import { TripDetailsPhase } from './TripDetailsPhase';
 import { ContactInfoPhase } from './ContactInfoPhase';
 import { PaymentPhase } from './PaymentPhase';
@@ -25,9 +24,7 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
     isSubmitting,
     error,
     success
-  } = useBookingForm();
-  
-  const { locationData } = useLocation();
+  } = useBooking();
 
   // Extract data from formData for easier access
   const { trip, customer, payment } = formData;

@@ -1,7 +1,7 @@
 'use client';
 
 import '@/design/globals.css';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -91,9 +91,13 @@ export default function AdminLayout({
 
   // Render admin pages with admin navigation for authenticated admin users
   return (
-    <>
+    <Suspense fallback={
+      <Container>
+        Loading admin interface...
+      </Container>
+    }>
       {/* Admin Page Content */}
       {children}
-    </>
+    </Suspense>
   );
 } 
