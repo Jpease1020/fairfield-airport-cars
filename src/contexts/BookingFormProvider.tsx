@@ -50,6 +50,27 @@ export const BookingFormProvider: React.FC<BookingFormProviderProps> = ({
   const { locationData, isLocationValid, locationErrors } = useLocation();
   const { createBooking, updateBooking } = useBooking();
   
+  // Initialize form data from URL parameters (stored in sessionStorage)
+  useEffect(() => {
+    const storedDate = sessionStorage.getItem('booking-pickup-date');
+    const storedTime = sessionStorage.getItem('booking-pickup-time');
+    
+    if (storedDate && storedTime) {
+      const pickupDateTime = `${storedDate}T${storedTime}`;
+      setFormData(prev => ({
+        ...prev,
+        trip: {
+          ...prev.trip,
+          pickupDateTime
+        }
+      }));
+      
+      // Clear the stored values after using them
+      sessionStorage.removeItem('booking-pickup-date');
+      sessionStorage.removeItem('booking-pickup-time');
+    }
+  }, []);
+  
   // Form state
   const [formData, setFormData] = useState<BookingFormData>({
     trip: {

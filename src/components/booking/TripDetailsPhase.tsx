@@ -70,6 +70,7 @@ export function TripDetailsPhase({
           onDropoffLocationChange={(address) => onTripUpdate({ dropoff: { ...tripData.dropoff, address } })}
           onPickupCoordsChange={(coords) => onTripUpdate({ pickup: { ...tripData.pickup, coordinates: coords } })}
           onDropoffCoordsChange={(coords) => onTripUpdate({ dropoff: { ...tripData.dropoff, coordinates: coords } })}
+          departureTime={tripData.pickupDateTime}
           cmsData={cmsData}
         />
 
