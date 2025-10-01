@@ -322,7 +322,7 @@ export function TrackingMap({
 
   if (effectiveLoading) {
     return (
-      <Container>
+      <Container data-testid="tracking-map-loading">
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
           <Text cmsId="tracking-map-loading">{ cmsData?.['trackingMapLoading'] || 'Loading map...'}</Text>
@@ -335,7 +335,7 @@ export function TrackingMap({
     // Special handling for missing Google Maps API key
     if (error?.includes('Google Maps API key is not configured')) {
       return (
-        <Container>
+        <Container data-testid="tracking-map-error">
           <Stack spacing="lg" align="center">
             <Text variant="h3" color="secondary" cmsId="tracking-map-google-maps-not-available-title">{cmsData?.['trackingMapGoogleMapsNotAvailableTitle'] || '🗺️ Google Maps Not Available'}</Text>
             <Text color="secondary" cmsId="tracking-map-google-maps-not-available">{cmsData?.['trackingMapGoogleMapsNotAvailable'] || 'To use the tracking system, you need to configure a Google Maps API key.'}</Text>
@@ -346,7 +346,7 @@ export function TrackingMap({
     }
     
     return (
-      <Container>
+      <Container data-testid="tracking-map-error">
         <Alert variant="error">
           <Text cmsId="tracking-map-error">{cmsData?.['trackingMapError'] || error || trackingError || 'Unknown error'}</Text>
         </Alert>
@@ -355,7 +355,7 @@ export function TrackingMap({
   }
 
   return (
-    <Container>
+    <Container data-testid="tracking-map">
       <Stack spacing="lg">
         {/* Map Status */}
         <Stack direction="horizontal" justify="space-between" align="center">
@@ -382,7 +382,10 @@ export function TrackingMap({
         </Stack>
 
         {/* Map Container */}
-        <MapContainer ref={mapRef} />
+        <MapContainer
+          ref={mapRef}
+          data-testid="tracking-map-canvas"
+        />
         
         {/* Map Legend */}
         <Stack direction="horizontal" spacing="md" align="center">

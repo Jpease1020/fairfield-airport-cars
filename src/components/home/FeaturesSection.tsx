@@ -25,7 +25,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
   return (
     <Stack spacing="xl" align="center" data-testid="features-section">
       <StyledImage
-        src="/images/bram-van-oost-eaPkue76Ip4-unsplash.jpg"
+        src="/images/Gemini_Generated_Image_60233k60233k6023.png"
         alt="Premium airport transportation service"
         width={1024}
         height={1024}
