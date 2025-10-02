@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import styled from 'styled-components';
 import { Container, Stack, StatusMessage, Button } from '@/ui';
 import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
@@ -10,6 +11,13 @@ import { EstimatedRideTime } from './trip-details/EstimatedRideTime';
 import { FlightInfoSection } from './trip-details/FlightInfoSection';
 import { FareDisplaySection } from './trip-details/FareDisplaySection';
 import { TripDetails, ValidationResult } from '@/types/booking';
+
+// Styled container that removes padding on mobile
+const TripDetailsContainer = styled(Container)`
+  @media (max-width: 768px) {
+    padding: 0 !important;
+  }
+`;
 
 interface TripDetailsPhaseProps {
   tripData: TripDetails;
@@ -58,7 +66,7 @@ export function TripDetailsPhase({
   }, [calculatedFare, tripData.fare, onTripUpdate]);
 
   return (
-    <Container maxWidth="7xl" padding="xl" data-testid="trip-details-phase-container">
+    <TripDetailsContainer maxWidth="7xl" padding="xl" data-testid="trip-details-phase-container">
       <Stack spacing="2xl" data-testid="trip-details-phase-stack">
         {/* Location Input Section */}
         <LocationInputSection
@@ -142,7 +150,7 @@ export function TripDetailsPhase({
             text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}
           />
         </Stack>
-      </Stack>
-    </Container>
+        </Stack>
+      </TripDetailsContainer>
   );
 }
