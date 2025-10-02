@@ -99,8 +99,6 @@ export function CostTrackingDashboard({
       setLoading(true);
       setError(null);
 
-      console.log('💰 Loading real-time cost data...');
-      
       const [costsData, summaryData] = await Promise.all([
         realCostTrackingService.getCosts(),
         realCostTrackingService.getRealCostSummary()
@@ -110,7 +108,6 @@ export function CostTrackingDashboard({
       setSummary(summaryData);
       setLastUpdate(new Date());
       
-      console.log('✅ Cost data loaded:', costsData.length, 'categories');
     } catch (err) {
       console.error('❌ Error loading cost data:', err);
       setError('Failed to load cost data. Please try again.');

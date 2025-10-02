@@ -8,13 +8,15 @@ interface FareDisplaySectionProps {
   isCalculating: boolean;
   fareType: 'personal' | 'business';
   cmsData: any;
+  error?: string | null;
 }
 
 export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
   fare,
   isCalculating,
   fareType,
-  cmsData
+  cmsData,
+  error
 }) => {
   const formatFare = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -41,16 +43,20 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
     );
   }
 
-  if (fare === null) {
+  if (fare === null && error) {
     return (
       <Box variant="elevated" padding="lg" data-testid="fare-error">
         <StatusMessage
           type="error"
-          message={cmsData?.['tripDetailsPhase-fareError'] || 'Unable to calculate fare. Please check your locations.'}
+          message={error}
           id="fare-error-message"
         />
       </Box>
     );
+  }
+
+  if (fare === null && !isCalculating) {
+    return null; // Don't show anything if no fare and no error
   }
 
   return (
@@ -65,7 +71,7 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
             {getFareTypeLabel()} {cmsData?.['tripDetailsPhase-fareType'] || 'Fare'}
           </Text>
           <Text size="lg" weight="bold" color="primary">
-            {formatFare(fare)}
+            {fare !== null ? formatFare(fare) : '--'}
           </Text>
         </Stack>
         

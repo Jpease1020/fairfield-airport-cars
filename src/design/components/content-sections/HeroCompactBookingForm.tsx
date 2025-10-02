@@ -33,7 +33,11 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   const { 
     formData,
     updateTripDetails,
-    validation
+    validation,
+    validateQuickBookingForm,
+    isQuickBookingFormValid,
+    submitQuickBookingForm,
+    error,
   } = useBooking();
   
   const locationData = {
@@ -52,8 +56,10 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   const isLocationValid = validation.isValid;
   const locationErrors = validation.errors;
   
-  const [pickupDate, setPickupDate] = useState('');
-  const [pickupTime, setPickupTime] = useState('');
+  // Get datetime from provider instead of local state
+  const pickupDateTime = formData.trip.pickupDateTime;
+  const pickupDate = pickupDateTime ? pickupDateTime.split('T')[0] : '';
+  const pickupTime = pickupDateTime ? pickupDateTime.split('T')[1] : '';
   
   const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
   const [fareCalculationMethod, setFareCalculationMethod] = useState<'route' | 'simple' | null>(null);
@@ -92,7 +98,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   // Update estimated fare whenever form data changes
   useEffect(() => {
     const updateFare = async () => {
-      if (locationData.pickup.address && locationData.dropoff.address && pickupDate && pickupTime) {
+      if (locationData.pickup.address && locationData.dropoff.address && pickupDateTime) {
         // Use simple calculation for hero form
         const fare = calculateSimpleEstimatedFare(locationData.pickup.address, locationData.dropoff.address);
         setEstimatedFare(fare);
@@ -104,7 +110,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     };
     
     updateFare();
-  }, [locationData.pickup.address, locationData.dropoff.address, locationData.pickup.coordinates, locationData.dropoff.coordinates, pickupDate, pickupTime]);
+  }, [locationData.pickup.address, locationData.dropoff.address, locationData.pickup.coordinates, locationData.dropoff.coordinates, pickupDateTime]);
 
   // Handle location selection using global context
   const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
@@ -116,14 +122,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   };
 
   const handleGetPrice = () => {
-    // Navigate to booking page - location data is already in global context!
-    const params = new URLSearchParams({
-      pickup: locationData.pickup.address,
-      dropoff: locationData.dropoff.address,
-      date: pickupDate,
-      time: pickupTime,
-    });
-    window.location.href = `/book?${params.toString()}`;
+    // Use the new validation and submission logic
+    submitQuickBookingForm();
   };
 
   return (
@@ -166,13 +166,11 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             <Input
               type="datetime-local" 
               id="pickup-datetime"
-              value={pickupDate && pickupTime ? `${pickupDate}T${pickupTime}` : ''}
+              value={pickupDateTime || ''}
               onChange={(e) => {
                 const datetime = e.target.value;
                 if (datetime) {
-                  const [date, time] = datetime.split('T');
-                  setPickupDate(date);
-                  setPickupTime(time);
+                  updateTripDetails({ pickupDateTime: datetime });
                 }
               }}
               size="md"
@@ -218,16 +216,16 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             variant="primary"
             size="md"
             onClick={handleGetPrice}
-            disabled={!isLocationValid}
+            disabled={!isQuickBookingFormValid()}
             cmsId="get-price-button"
             data-testid="quick-book-get-price-button"
             text="Book Now to Secure Rate →"
           />
         </Stack>
         
-        {!isLocationValid && locationErrors.length > 0 && (
+        {error && (
           <Text size="sm" color="error" align="center">
-            {locationErrors[0]}
+            {error}
           </Text>
         )}
         <Text size="xs" align="center" variant="muted" data-testid="quick-book-disclaimer">

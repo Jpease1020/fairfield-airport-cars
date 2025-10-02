@@ -31,8 +31,6 @@ class CommentsService {
   private readonly collectionName = 'comments';
 
   async addComment(commentData: Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
-    console.log('📝 Adding comment to Firebase:', commentData);
-    console.log('📝 Collection name:', this.collectionName);
     
     try {
       // Add timestamps automatically
@@ -42,11 +40,7 @@ class CommentsService {
         updatedAt: new Date().toISOString()
       };
       
-      console.log('📝 Comment with timestamps:', commentWithTimestamps);
-      
       const docRef = await addDoc(collection(db, this.collectionName), commentWithTimestamps);
-      console.log('✅ Comment added successfully to Firebase with ID:', docRef.id);
-      console.log('✅ Document path:', docRef.path);
       return docRef.id;
     } catch (error) {
       console.error('❌ Firebase addComment failed:', error);
@@ -61,7 +55,6 @@ class CommentsService {
     scope?: CommentScope;
   } = {}): Promise<CommentRecord[]> {
     try {
-      console.log('🔥 Attempting to get comments from Firebase...');
       const base = collection(db, this.collectionName);
       
       // Simplified query to avoid index requirement
@@ -106,7 +99,6 @@ class CommentsService {
     try {
       const ref = doc(db, this.collectionName, commentId);
       await updateDoc(ref, { ...updates, updatedAt: new Date().toISOString() });
-      console.log('✅ Comment updated successfully in Firebase');
     } catch (error) {
       console.error('❌ Firebase updateComment failed:', error);
       throw new Error(`Failed to update comment in Firebase: ${(error as any)?.message || 'Unknown error'}`);
@@ -114,19 +106,12 @@ class CommentsService {
   }
 
   async deleteComment(commentId: string): Promise<void> {
-    console.log('🗑️ CommentsService.deleteComment called with ID:', commentId);
     
     try {
       const ref = doc(db, this.collectionName, commentId);      
       await deleteDoc(ref);
-      console.log('✅ Comment deleted successfully from Firestore');
     } catch (error) {
       console.error('❌ Firestore delete failed:', error);
-      console.error('Error details:', {
-        code: (error as any)?.code,
-        message: (error as any)?.message,
-        details: (error as any)?.details
-      });
       
       // Don't fall back to localStorage - let the error bubble up
       throw new Error(`Failed to delete comment from Firebase: ${(error as any)?.message || 'Unknown error'}`);

@@ -123,7 +123,6 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
     try {
       await pushNotificationService.sendToUser(user.uid, testNotification);
-      console.log('✅ Test notification sent');
     } catch (error) {
       console.error('Failed to send test notification:', error);
     }

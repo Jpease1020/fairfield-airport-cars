@@ -5,10 +5,14 @@ import { Stack, Col, Box, Text, H2 } from '@/ui';
 import Image from 'next/image';
 import styled from 'styled-components';
 
+const FeaturesSectionContainer = styled(Stack)`
+  margin-top: 1rem;
+`;
+
 const StyledImage = styled(Image)`
   width: 100%;
   height: auto;
-  max-width: 600px;
+  max-width: 750px;
   border-radius: 8px;
 `;
 
@@ -23,7 +27,7 @@ interface FeaturesSectionProps {
 
 export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => {
   return (
-    <Stack spacing="xl" align="center" data-testid="features-section">
+    <FeaturesSectionContainer spacing="xl" align="center" data-testid="features-section">
       <StyledImage
         src="/images/Gemini_Generated_Image_60233k60233k6023.png"
         alt="Premium airport transportation service"
@@ -132,6 +136,6 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
           </Col>
         </GreyBox>
       </Stack>
-    </Stack>
+    </FeaturesSectionContainer>
   );
 };

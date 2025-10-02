@@ -60,7 +60,6 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
         
         // Set up location update callback
         firebaseTrackingService.onLocationUpdate(bookingId, (location: DriverLocation) => {
-          console.log('📍 Driver location update received:', location);
           setBooking(prev => prev ? {
             ...prev,
             driverLocation: location,
@@ -71,7 +70,6 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
 
         // Set up ETA update callback
         firebaseTrackingService.onETAUpdate(bookingId, (eta: ETACalculation) => {
-          console.log('🕐 ETA update received:', eta);
           setETACalculation(eta);
           setLastUpdate(new Date());
         });
@@ -125,7 +123,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
 
   // Handle map load
   const handleMapLoad = (map: google.maps.Map) => {
-    console.log('🗺️ Enhanced map loaded successfully');
+    // console.log('🗺️ Enhanced map loaded successfully');
   };
 
   // Refresh tracking data

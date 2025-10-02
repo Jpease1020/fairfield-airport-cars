@@ -101,7 +101,6 @@ export const useRealTimeTracking = (bookingId: string) => {
 
       // Process updates
       if (data.updates && data.updates.length > 0) {
-        console.log('Real-time updates received:', data.updates);
         
         // Handle each update
         data.updates.forEach(update => {

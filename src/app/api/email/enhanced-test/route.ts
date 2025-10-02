@@ -8,14 +8,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing "to" address or "bookingId"' }, { status: 400 });
     }
     
-    // Debug environment variables
-    console.log('🔧 API Route Environment Check:');
-    console.log(`   EMAIL_HOST: ${process.env.EMAIL_HOST ? '✅ Set' : '❌ Missing'}`);
-    console.log(`   EMAIL_PORT: ${process.env.EMAIL_PORT ? '✅ Set' : '❌ Missing'}`);
-    console.log(`   EMAIL_USER: ${process.env.EMAIL_USER ? '✅ Set' : '❌ Missing'}`);
-    console.log(`   EMAIL_PASS: ${process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing'}`);
-    console.log(`   EMAIL_FROM: ${process.env.EMAIL_FROM}`);
-    
     const ok = await sendEnhancedTestEmail(to, bookingId).catch((e: unknown) => {
       const msg = e instanceof Error ? e.message : 'Unknown SMTP error';
       return { ok: false, msg };

@@ -100,6 +100,7 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
       
       <Stack spacing="md">
         <LocationInput
+          id="pickup-location-input"
           label={cmsData?.['tripDetailsPhase-pickupLabel'] || 'Pickup Location'}
           placeholder={cmsData?.['tripDetailsPhase-pickupPlaceholder'] || 'Enter pickup address'}
           value={pickupLocation}
@@ -110,10 +111,12 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
           }}
           onCoordsChange={onPickupCoordsChange}
           coords={pickupCoords}
+          fullWidth={true}
           data-testid="pickup-location-input"
         />
         
         <LocationInput
+          id="dropoff-location-input"
           label={cmsData?.['tripDetailsPhase-dropoffLabel'] || 'Dropoff Location'}
           placeholder={cmsData?.['tripDetailsPhase-dropoffPlaceholder'] || 'Enter dropoff address'}
           value={dropoffLocation}
@@ -124,6 +127,7 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
           }}
           onCoordsChange={onDropoffCoordsChange}
           coords={dropoffCoords}
+          fullWidth={true}
           data-testid="dropoff-location-input"
         />
       </Stack>

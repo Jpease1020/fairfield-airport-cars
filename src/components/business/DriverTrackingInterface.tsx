@@ -94,8 +94,6 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
       // Start continuous tracking
       // startLocationTracking(); // This line is removed
       setIsTrackingActive(true);
-      
-      console.log('Driver location tracking started');
     } catch (error) {
       console.error('Error starting location tracking:', error);
       setLocationError(error instanceof Error ? error.message : 'Failed to start tracking');
@@ -106,14 +104,12 @@ export const DriverTrackingInterface: React.FC<DriverTrackingInterfaceProps> = (
   const handleStopTracking = () => {
     // stopLocationTracking(); // This line is removed
     setIsTrackingActive(false);
-    console.log('Driver location tracking stopped');
   };
 
   // Update booking status
   const handleStatusUpdate = async (status: 'confirmed' | 'in-progress' | 'completed') => {
     try {
       await updateStatus(status);
-      console.log(`Booking status updated to: ${status}`);
     } catch (error) {
       console.error('Error updating booking status:', error);
     }

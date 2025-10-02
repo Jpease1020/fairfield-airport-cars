@@ -51,7 +51,6 @@ export const useBookingStatus = (bookingId: string) => {
     };
     
     ws.onclose = () => {
-      console.log('WebSocket disconnected');
       // Attempt to reconnect after 5 seconds
       setTimeout(() => {
         initializeWebSocket();

@@ -30,7 +30,7 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
   return (
     <Stack spacing="lg" data-testid="flight-info-section">
       <H2 cmsId="trip-details-flight-title">
-        {cmsData?.['tripDetailsPhase-flightTitle'] || 'Flight Information (Optional)'}
+        {cmsData?.['tripDetailsPhase-flightTitle'] || 'Flight Information'}
       </H2>
       
       <Text color="secondary" cmsId="trip-details-flight-description">
@@ -60,6 +60,7 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
               placeholder={cmsData?.['tripDetailsPhase-flightNumberPlaceholder'] || 'e.g., AA1234'}
               value={flightInfo.flightNumber}
               onChange={(e) => handleFlightNumberChange(e.target.value)}
+              fullWidth={true}
               data-testid="flight-number-input"
             />
             
@@ -68,6 +69,7 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
               placeholder={cmsData?.['tripDetailsPhase-airlinePlaceholder'] || 'e.g., American Airlines'}
               value={flightInfo.airline}
               onChange={(e) => handleAirlineChange(e.target.value)}
+              fullWidth={true}
               data-testid="airline-input"
             />
           </Stack>

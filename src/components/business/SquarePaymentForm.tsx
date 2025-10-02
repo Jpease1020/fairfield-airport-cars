@@ -60,25 +60,9 @@ export function SquarePaymentForm({
 
   // Define handlePayment function first
   const handlePayment = React.useCallback(async () => {
-    if (!cardRef.current || disabled || isLoading) {
-      console.log('Payment blocked:', { hasCardRef: !!cardRef.current, disabled, isLoading });
+    if (!cardRef.current || disabled || isLoading || onPaymentReadyCalledRef.current === false) {
       return;
     }
-
-    // Prevent multiple simultaneous payment attempts
-    if (isLoading) {
-      console.log('Payment already in progress, ignoring duplicate call');
-      return;
-    }
-
-    // Additional guard to prevent multiple calls
-    if (onPaymentReadyCalledRef.current === false) {
-      console.log('Payment system not ready, ignoring call');
-      return;
-    }
-
-    // Let Square handle the validation - it will fail gracefully if card data is missing
-    console.log('Proceeding with atomic booking + payment processing...');
 
     setIsLoading(true);
     setPaymentError(null);
@@ -86,16 +70,7 @@ export function SquarePaymentForm({
     try {
       // Add a small delay to ensure card component is fully ready
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Debug: Check if card component is ready
-      console.log('🔍 Card component status:', {
-        hasCardRef: !!cardRef.current,
-        cardRefKeys: cardRef.current ? Object.keys(cardRef.current) : 'No card ref',
-        isReady: isReady,
-        disabled: disabled,
-        isLoading: isLoading
-      });
-      
+    
       // Step 1: Tokenize the card input
       const verificationDetails = {
         amount: (amount / 100).toFixed(2), // Convert cents to dollars
@@ -115,14 +90,12 @@ export function SquarePaymentForm({
         sellerKeyedIn: false,
       };
 
-      console.log('🔍 Sending verification details to Square:', verificationDetails);
       
       const tokenResult = await cardRef.current.tokenize(verificationDetails);
       
       if (tokenResult.status !== 'OK') {
         console.error('Tokenization failed:', tokenResult);
         if (tokenResult.status === 'INVALID') {
-          // Log the specific validation errors
           if (tokenResult.errors && tokenResult.errors.length > 0) {
             console.error('Square validation errors:', tokenResult.errors);
             const errorMessages = tokenResult.errors.map((err: any) => err.message || err.code).join(', ');
@@ -134,8 +107,6 @@ export function SquarePaymentForm({
           throw new Error(`Payment processing failed: ${tokenResult.status}`);
         }
       }
-
-      console.log('✅ Card tokenized successfully, processing payment...');
 
       // Step 2: Process payment FIRST (security requirement)
       const paymentResponse = await fetch('/api/payment/process-payment', {
@@ -174,7 +145,6 @@ export function SquarePaymentForm({
       }
 
       const result = await paymentResponse.json();
-      console.log('✅ Payment processed successfully, booking created:', result.bookingId);
       onPaymentSuccess(result);
       
     } catch (error) {
@@ -190,7 +160,6 @@ export function SquarePaymentForm({
   const initializeSquare = async () => {
     // Prevent double initialization in React 18+ development mode
     if (initializationRef.current) {
-      console.log('Square already initialized, skipping duplicate call');
       return;
     }
     initializationRef.current = true;
@@ -216,7 +185,6 @@ export function SquarePaymentForm({
       
       // Mark as ready - parent can check isReady status
       setIsReady(true);
-      console.log('Square initialized successfully');
       
     } catch (error) {
       console.error('Failed to initialize Square:', error);
@@ -241,10 +209,8 @@ export function SquarePaymentForm({
 
   useEffect(() => {
     if (isReady && onPaymentReady && !onPaymentReadyCalledRef.current) {
-      console.log('🔧 Square ready, calling onPaymentReady with handlePayment function');
       onPaymentReadyCalledRef.current = true;
       
-      // Use a callback to prevent render cycle issues
       const safePaymentFunction = async () => {
         try {
           await handlePayment();

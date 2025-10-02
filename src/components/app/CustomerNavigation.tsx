@@ -14,6 +14,10 @@ const LogoImage = styled.img`
   max-width: 300px;
 `;
 
+const MobileBookNowButton = styled(Button)`
+  margin-top: 8px;
+`;
+
 interface CustomerNavigationProps {
   width?: string;
 }
@@ -91,7 +95,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
         />
       )}
       {pathname !== '/book' && (
-        <Button 
+        <MobileBookNowButton 
           variant="primary" 
           size="sm" 
           href="/book"

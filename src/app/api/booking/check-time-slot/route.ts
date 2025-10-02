@@ -21,13 +21,6 @@ export async function POST(request: NextRequest) {
     const isAvailable = true;
     const conflictingBookings = 0;
     
-    console.log('✅ Time slot check completed (simple):', { 
-      pickupDateTime, 
-      bufferMinutes, 
-      isAvailable, 
-      conflictingBookings
-    });
-    
     return NextResponse.json({
       success: true,
       isAvailable,

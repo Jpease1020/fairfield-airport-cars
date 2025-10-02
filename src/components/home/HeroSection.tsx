@@ -12,6 +12,7 @@ const FlexStack = styled(Stack)`
 
 const GreyContainer = styled(Container)`
   background-color: var(--background-muted);
+  border-radius: 16px;
 `;
 
 interface HeroSectionProps {

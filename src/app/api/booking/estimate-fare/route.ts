@@ -37,9 +37,6 @@ const calculateFareFromDistance = (distanceInMiles: number, settings: any, fareT
   // Apply 10% discount for personal rides
   if (fareType === 'personal') {
     finalFare = Math.ceil(originalFare * 0.9); // 10% discount
-    console.log(`Fallback: Personal ride discount applied: Base fare $${Math.ceil(originalFare)} -> Final fare $${finalFare}`);
-  } else {
-    console.log(`Fallback: Business ride: No discount applied. Fare: $${finalFare}`);
   }
   
   return { finalFare, baseFare: Math.ceil(originalFare) };
@@ -49,7 +46,6 @@ export async function POST(request: Request) {
   const { origin, destination, fareType = 'business' } = await request.json();
 
   const settings = await getSettings();
-  console.log('Settings loaded:', settings);
   const BASE_FARE = settings.baseFare;
   const PER_MILE_RATE = settings.perMile;
   const PER_MINUTE_RATE = settings.perMinute;
@@ -97,18 +93,13 @@ export async function POST(request: Request) {
       // Apply traffic-based pricing adjustments
       if (trafficLevel === 'high') {
         finalFare = Math.ceil(finalFare * 1.2); // 20% increase for heavy traffic
-        console.log(`Heavy traffic detected (${trafficMultiplier.toFixed(2)}x), applying 20% increase`);
       } else if (trafficLevel === 'medium') {
         finalFare = Math.ceil(finalFare * 1.1); // 10% increase for moderate traffic
-        console.log(`Moderate traffic detected (${trafficMultiplier.toFixed(2)}x), applying 10% increase`);
       }
       
       // Apply 10% discount for personal rides
       if (fareType === 'personal') {
         finalFare = Math.ceil(finalFare * 0.9); // 10% discount
-        console.log(`Personal ride discount applied: Final fare $${finalFare}`);
-      } else {
-        console.log(`Business ride: No discount applied. Fare: $${finalFare}`);
       }
 
       return NextResponse.json({ 
@@ -124,8 +115,6 @@ export async function POST(request: Request) {
       throw new Error('Google Maps API returned error');
     }
   } catch (err) {
-    console.log('Google Maps API failed, using fallback calculation');
-    
     // Use fallback calculation
     const fareData = calculateFallbackFare(origin, destination, settings, fareType);
     
