@@ -34,6 +34,16 @@ export function TripDetailsPhase({
   validation,
   cmsData
 }: TripDetailsPhaseProps) {
+  // Check if trip details are complete for button state
+  const isTripDetailsComplete = () => {
+    return (
+      tripData.pickup.address.trim() !== '' &&
+      tripData.dropoff.address.trim() !== '' &&
+      tripData.pickupDateTime !== '' &&
+      tripData.pickup.coordinates !== null &&
+      tripData.dropoff.coordinates !== null
+    );
+  };
   // Availability checking
   const { error: availabilityError, checkAvailability } = useBookingAvailability();
 
@@ -144,7 +154,7 @@ export function TripDetailsPhase({
             variant="primary"
             size="lg"
             onClick={onNext}
-            disabled={!validation.isValid}
+            disabled={!isTripDetailsComplete()}
             data-testid="trip-details-next-button"
             cmsId="trip-details-next-button"
             text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}
