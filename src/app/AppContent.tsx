@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Container } from '@/ui';
 import InlineTextEditor from '@/components/business/InlineTextEditor';
 import GlobalCommentModal from '@/components/business/GlobalCommentModal';
 import GlobalCommentIcons from '@/components/business/GlobalCommentIcons';
@@ -20,9 +19,7 @@ export function AppContent({ children }: AppContentProps) {
 
   return (
     <>
-      <Container as="main" maxWidth="full" data-testid="layout-main-content" padding="none"> 
-        {children}
-      </Container>
+      {children}
       
       {/* Inline CMS Text Editor (edit mode only) */}
       {isAdmin && <InlineTextEditor editMode={editMode} />}

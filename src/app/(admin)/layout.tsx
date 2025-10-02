@@ -38,8 +38,8 @@ export default function AdminLayout({
   };
 
   useEffect(() => {
-    // Skip auth check for login page
-    if (pathname === '/login') {
+    // Skip auth check for auth pages (login, register, forgot-password)
+    if (pathname.startsWith('/auth/')) {
       setLoading(false);
       return;
     }
@@ -79,8 +79,8 @@ export default function AdminLayout({
     );
   }
 
-  // Allow login page to render without auth check
-  if (pathname === '/login') {
+  // Allow auth pages to render without auth check
+  if (pathname.startsWith('/auth/')) {
     return <div>{children}</div>;
   }
 

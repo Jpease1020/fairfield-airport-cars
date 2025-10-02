@@ -1,10 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack } from '@/ui';
+import styled from 'styled-components';
+import { Container, Stack, Box } from '@/ui';
 import { H1, Text, Button } from '@/design/components/base-components/Components';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import Link from 'next/link';
+import { colors } from '@/design/system/tokens/tokens';
+
+// Custom styled component for darker grey background
+const DarkerGreyBox = styled(Box)`
+  background-color: ${colors.gray[100]};
+`;
 
 export default function AboutPageContent() {
   // Get CMS data from provider - extract only what this page needs
@@ -37,15 +44,17 @@ export default function AboutPageContent() {
 
       {/* Main Content Section */}
       <Container maxWidth="2xl" padding="xl">
-        <Stack spacing="lg" align="center">
-          <Text 
-            align="center" 
-            size="lg" 
-            cmsId="description" 
-          >
-            {cmsData?.['description'] || 'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'}
-          </Text>
-        </Stack>
+        <DarkerGreyBox padding="lg" rounded="md">
+          <Stack spacing="lg" align="center">
+            <Text 
+              align="center" 
+              size="lg" 
+              cmsId="description" 
+            >
+              {cmsData?.['description'] || 'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'}
+            </Text>
+          </Stack>
+        </DarkerGreyBox>
       </Container>
 
       {/* CTA Section */}
@@ -58,25 +67,15 @@ export default function AboutPageContent() {
             {cmsData?.['cta-subtitle'] || 'Ready to experience premium airport transportation?'}
           </Text>
           
-          <Stack direction="horizontal" spacing="md" align="center">
+          
             <Link href="/book">
-              <Button
-                variant="primary"
-                cmsId="cta-primary-button"
-              >
-                {cmsData?.['cta-primary-button'] || 'Book Your Ride'}
-              </Button>
-            </Link>
-            
-            <Link href="/help">
-              <Button
-                variant="secondary"
-                cmsId="cta-secondary-button"
-              >
-                {cmsData?.['cta-secondary-button'] || 'Get Help'}
-              </Button>
-            </Link>
-          </Stack>
+            <Button
+              variant="primary"
+              cmsId="cta-primary-button"
+            >
+              {cmsData?.['cta-primary-button'] || 'Book Your Ride'}
+            </Button>
+          </Link>
         </Stack>
       </Container>
     </>

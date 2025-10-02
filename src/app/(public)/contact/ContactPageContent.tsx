@@ -40,43 +40,46 @@ export default function ContactPageContent() {
           
             
             <Box variant="elevated" padding="lg">
-            <Stack spacing="lg">
-              {/* <Stack spacing="md"> */}
-                  <Label htmlFor="name" cmsId="contact-form-name-label">
-                    {contactData?.['form-name-label'] || 'Name'}
-                  </Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder={contactData?.['form-name-placeholder'] || 'Your full name'}
-                  />
-                
-                  <Label htmlFor="email" cmsId="contact-form-email-label">
-                    {contactData?.['form-email-label'] || 'Email'}
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={contactData?.['form-email-placeholder'] || 'your.email@example.com'}
-                  />
-                
-                  <Label htmlFor="phone" cmsId="contact-form-phone-label">
-                    {contactData?.['form-phone-label'] || 'Phone'}
-                  </Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder={contactData?.['form-phone-placeholder'] || '(646) 221-6370'}
-                  />
-                
-                  <Label htmlFor="subject" cmsId="form-subject-label">
-                    {contactData?.['form-subject-label'] || 'Subject'}
-                  </Label>
-                  <Textarea
-                    id="subject"
-                    type="text"
-                    placeholder={contactData?.['form-subject-placeholder'] || 'How can we help you?'}
-                  />
+              <Stack spacing="lg">
+                <Label htmlFor="name" cmsId="contact-form-name-label">
+                  {contactData?.['form-name-label'] || 'Name'}
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder={contactData?.['form-name-placeholder'] || 'Your full name'}
+                  fullWidth
+                />
+              
+                <Label htmlFor="email" cmsId="contact-form-email-label">
+                  {contactData?.['form-email-label'] || 'Email'}
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={contactData?.['form-email-placeholder'] || 'your.email@example.com'}
+                  fullWidth
+                />
+              
+                <Label htmlFor="phone" cmsId="contact-form-phone-label">
+                  {contactData?.['form-phone-label'] || 'Phone'}
+                </Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder={contactData?.['form-phone-placeholder'] || '(646) 221-6370'}
+                  fullWidth
+                />
+              
+                <Label htmlFor="subject" cmsId="form-subject-label">
+                  {contactData?.['form-subject-label'] || 'Subject'}
+                </Label>
+                <Textarea
+                  id="subject"
+                  type="text"
+                  placeholder={contactData?.['form-subject-placeholder'] || 'How can we help you?'}
+                  fullWidth
+                />
 
                 <Button
                   variant="primary"
@@ -84,9 +87,7 @@ export default function ContactPageContent() {
                 >
                   {contactData?.['form-submit-button'] || 'Send Message'}
                 </Button>
-              {/* </Stack> */}
-            
-          </Stack>
+            </Stack>
           </Box>
       </Container>
     </>
