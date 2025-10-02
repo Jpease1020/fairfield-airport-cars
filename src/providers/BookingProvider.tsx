@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Booking, BookingFormData, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo } from '@/types/booking';
 
 interface BookingProviderType {
@@ -28,9 +28,15 @@ interface BookingProviderType {
   // Validation
   validateForm: () => ValidationResult;
   validateCurrentPhase: () => ValidationResult;
+  validateQuickBookingForm: () => ValidationResult;
+  isQuickBookingFormValid: () => boolean;
+  hasFormData: () => boolean;
+  clearAllErrors: () => void;
+  clearStoredFormData: () => void;
   
   // Form submission
   submitForm: () => Promise<void>;
+  submitQuickBookingForm: () => Promise<void>;
   resetForm: () => void;
   
   // Booking actions (existing)
@@ -62,7 +68,7 @@ interface BookingProviderProps {
 }
 
 export const BookingProvider: React.FC<BookingProviderProps> = ({ children, existingBooking }) => {
-  const searchParams = useSearchParams();
+  const router = useRouter();
   
   // Existing booking state
   const [currentBooking, setCurrentBooking] = useState<Booking | null>(null);
@@ -105,54 +111,32 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
       totalAmount: 0
     }
   });
+
+  console.log('BookingProvider----------------------------------: formData:', formData);
   
   const [currentPhase, setCurrentPhase] = useState<BookingPhase>('trip-details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [hasAttemptedValidation, setHasAttemptedValidation] = useState(false);
 
-  // Initialize form data from URL parameters (replaces LocationContext functionality)
+  // Initialize form data from session storage (for page refresh persistence)
   useEffect(() => {
-    const pickup = searchParams.get('pickup');
-    const dropoff = searchParams.get('dropoff');
-    const storedDate = sessionStorage.getItem('booking-pickup-date');
-    const storedTime = sessionStorage.getItem('booking-pickup-time');
+    const storedFormData = sessionStorage.getItem('booking-form-data');
     
-    if (pickup) {
-      setFormData(prev => ({
-        ...prev,
-        trip: {
-          ...prev.trip,
-          pickup: { ...prev.trip.pickup, address: pickup }
-        }
-      }));
+    if (storedFormData) {
+      try {
+        const parsedData = JSON.parse(storedFormData);
+        setFormData(parsedData);
+      } catch (error) {
+        console.error('Failed to parse stored booking form data:', error);
+      }
     }
-    
-    if (dropoff) {
-      setFormData(prev => ({
-        ...prev,
-        trip: {
-          ...prev.trip,
-          dropoff: { ...prev.trip.dropoff, address: dropoff }
-        }
-      }));
-    }
-    
-    if (storedDate && storedTime) {
-      const pickupDateTime = `${storedDate}T${storedTime}`;
-      setFormData(prev => ({
-        ...prev,
-        trip: {
-          ...prev.trip,
-          pickupDateTime
-        }
-      }));
-      
-      // Clear the stored values after using them
-      sessionStorage.removeItem('booking-pickup-date');
-      sessionStorage.removeItem('booking-pickup-time');
-    }
-  }, [searchParams]);
+  }, []); // Only run once on mount
+
+  // Save form data to session storage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem('booking-form-data', JSON.stringify(formData));
+  }, [formData]);
 
   // Initialize form with existing booking
   useEffect(() => {
@@ -206,36 +190,45 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     setFormData(prev => ({ ...prev, ...data }));
   };
 
-  const updateTripDetails = (data: Partial<TripDetails>) => {
+  const updateTripDetails = useCallback((data: Partial<TripDetails>) => {
     setFormData(prev => ({
       ...prev,
       trip: { ...prev.trip, ...data }
     }));
-    setHasAttemptedValidation(true);
-  };
+    // Clear any existing errors when user starts interacting
+    setError(null);
+    setHasAttemptedValidation(false); // Reset validation state so errors don't show
+    // Don't set hasAttemptedValidation here - only when user tries to proceed
+  }, []);
 
-  const updateCustomerInfo = (data: Partial<CustomerInfo>) => {
+  const updateCustomerInfo = useCallback((data: Partial<CustomerInfo>) => {
     setFormData(prev => ({
       ...prev,
       customer: { ...prev.customer, ...data }
     }));
-    setHasAttemptedValidation(true);
-  };
+    // Clear any existing errors when user starts interacting
+    setError(null);
+    setHasAttemptedValidation(false); // Reset validation state so errors don't show
+    // Don't set hasAttemptedValidation here - only when user tries to proceed
+  }, []);
 
-  const updatePaymentInfo = (data: Partial<PaymentInfo>) => {
+  const updatePaymentInfo = useCallback((data: Partial<PaymentInfo>) => {
     setFormData(prev => ({
       ...prev,
       payment: { ...prev.payment, ...data }
     }));
-    setHasAttemptedValidation(true);
-  };
+    // Clear any existing errors when user starts interacting
+    setError(null);
+    setHasAttemptedValidation(false); // Reset validation state so errors don't show
+    // Don't set hasAttemptedValidation here - only when user tries to proceed
+  }, []);
 
   // Phase management
-  const goToPhase = (phase: BookingPhase) => {
+  const goToPhase = useCallback((phase: BookingPhase) => {
     setCurrentPhase(phase);
-  };
+  }, []);
 
-  const goToNextPhase = () => {
+  const goToNextPhase = useCallback(() => {
     setHasAttemptedValidation(true);
     
     const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing'];
@@ -243,14 +236,84 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     if (currentIndex < phases.length - 1) {
       setCurrentPhase(phases[currentIndex + 1]);
     }
-  };
+  }, [currentPhase]);
 
-  const goToPreviousPhase = () => {
+  const goToPreviousPhase = useCallback(() => {
     const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing'];
     const currentIndex = phases.indexOf(currentPhase);
     if (currentIndex > 0) {
       setCurrentPhase(phases[currentIndex - 1]);
     }
+  }, [currentPhase]);
+
+  // Quick booking form validation
+  const validateQuickBookingForm = (): ValidationResult => {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Only show validation errors if user has attempted validation
+    if (!hasAttemptedValidation) {
+      return {
+        isValid: true,
+        errors: [],
+        warnings: []
+      };
+    }
+
+    // Validate required fields
+    if (!formData.trip.pickup.address.trim()) {
+      errors.push('Pickup location is required');
+    }
+    if (!formData.trip.dropoff.address.trim()) {
+      errors.push('Dropoff location is required');
+    }
+    if (!formData.trip.pickupDateTime) {
+      errors.push('Pickup date and time is required');
+    }
+
+    // Location validation
+    if (formData.trip.pickup.address.trim() !== '' && formData.trip.pickup.coordinates === null) {
+      errors.push('Please select pickup location from suggestions');
+    }
+    if (formData.trip.dropoff.address.trim() !== '' && formData.trip.dropoff.coordinates === null) {
+      errors.push('Please select dropoff location from suggestions');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings
+    };
+  };
+
+  // Check if quick booking form is valid (for button state)
+  const isQuickBookingFormValid = (): boolean => {
+    return formData.trip.pickup.address.trim() !== '' &&
+           formData.trip.dropoff.address.trim() !== '' &&
+           formData.trip.pickupDateTime !== '' &&
+           formData.trip.pickup.coordinates !== null &&
+           formData.trip.dropoff.coordinates !== null;
+  };
+
+  // Check if form has any data (for unsaved changes warning)
+  const hasFormData = (): boolean => {
+    return formData.trip.pickup.address.trim() !== '' ||
+           formData.trip.dropoff.address.trim() !== '' ||
+           formData.trip.pickupDateTime !== '' ||
+           formData.customer.name.trim() !== '' ||
+           formData.customer.email.trim() !== '' ||
+           formData.customer.phone.trim() !== '';
+  };
+
+  // Clear all form errors
+  const clearAllErrors = () => {
+    setError(null);
+    setHasAttemptedValidation(false);
+  };
+
+  // Clear stored form data
+  const clearStoredFormData = () => {
+    sessionStorage.removeItem('booking-form-data');
   };
 
   // Validation logic (with hasAttemptedValidation check)
@@ -387,6 +450,21 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     setError(null);
     setSuccess(null);
     setHasAttemptedValidation(false);
+    clearStoredFormData(); // Also clear stored data
+  };
+
+  // Submit quick booking form (for hero form)
+  const submitQuickBookingForm = async () => {
+    setHasAttemptedValidation(true);
+    const validation = validateQuickBookingForm();
+    
+    if (validation.isValid) {
+      // Navigate to booking page with form data
+      // The form data is already in the provider, so we just need to navigate
+      router.push('/book');
+    } else {
+      setError(validation.errors.join(', '));
+    }
   };
 
   const validation = validateCurrentPhase();
@@ -553,7 +631,13 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     goToPreviousPhase,
     validateForm,
     validateCurrentPhase,
+    validateQuickBookingForm,
+    isQuickBookingFormValid,
+    hasFormData,
+    clearAllErrors,
+    clearStoredFormData,
     submitForm,
+    submitQuickBookingForm,
     resetForm,
     isSubmitting,
     success,

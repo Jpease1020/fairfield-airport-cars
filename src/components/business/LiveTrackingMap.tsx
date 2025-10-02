@@ -92,7 +92,6 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
       setDirectionsRenderer(directionsRenderer);
       setMapLoaded(true);
 
-      console.log('Google Maps initialized for tracking');
     } catch (error) {
       console.error('Error initializing Google Maps:', error);
     }

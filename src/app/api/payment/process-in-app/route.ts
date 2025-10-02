@@ -5,7 +5,6 @@ import { updateBooking } from '@/lib/services/booking-service';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log('📥 Received payment request:', body);
 
     const { sourceId, amount, bookingId, buyerEmail } = body;
 
@@ -16,8 +15,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    console.log('✅ Parameters validated, processing payment...');
 
     // Process payment with Square using the tokenized source
     const paymentResult = await createPayment({
@@ -31,7 +28,6 @@ export async function POST(request: Request) {
       referenceId: bookingId
     });
 
-    console.log('💳 Square payment result:', paymentResult);
 
     if (!paymentResult.success) {
       console.error('❌ Square payment failed:', paymentResult.error);
@@ -41,7 +37,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('✅ Square payment successful, updating booking...');
 
     try {
       // Update booking status
@@ -53,7 +48,6 @@ export async function POST(request: Request) {
         updatedAt: new Date()
       });
 
-      console.log('✅ Booking updated successfully');
     } catch (bookingError) {
       console.error('❌ Failed to update booking:', bookingError);
       // Payment succeeded but booking update failed - this is a partial success

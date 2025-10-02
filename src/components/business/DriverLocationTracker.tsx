@@ -93,7 +93,6 @@ export function DriverLocationTracker({
         }
       });
 
-      console.log('✅ Driver tracking initialized');
     } catch (err) {
       console.error('Error initializing tracking:', err);
       setError('Failed to initialize tracking');
@@ -156,7 +155,6 @@ export function DriverLocationTracker({
       );
 
       setWatchId(watchId);
-      console.log('📍 GPS tracking started');
     } catch (err) {
       console.error('Error starting GPS tracking:', err);
       setError('Failed to start GPS tracking');
@@ -174,13 +172,11 @@ export function DriverLocationTracker({
     setIsTracking(false);
     driverLocationService.stopDriverTracking(driverId);
     
-    console.log('🛑 GPS tracking stopped');
   }, [watchId, driverId]);
 
   const updateDriverStatus = async (status: DriverStatus['status']) => {
     try {
       await driverLocationService.updateDriverStatus(driverId, status, bookingId);
-      console.log('🔄 Driver status updated:', status);
     } catch (err) {
       console.error('Error updating driver status:', err);
       setError('Failed to update driver status');

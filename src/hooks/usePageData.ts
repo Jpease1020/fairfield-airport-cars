@@ -21,14 +21,12 @@ export function usePageData(pageId: string): UsePageDataReturn {
         setLoading(true);
         setError(null);
         
-        console.log(`[usePageData] Fetching data for page: ${pageId}`);
         const response = await fetch(`/api/admin/cms/pages?page=${pageId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const pageData = await response.json();
-        console.log(`[usePageData] Data received for ${pageId}:`, pageData);
         setData(pageData);
       } catch (err) {
         console.error('Failed to load page data:', err);
@@ -44,7 +42,6 @@ export function usePageData(pageId: string): UsePageDataReturn {
   // Update field function
   const updateField = async (fieldPath: string, value: string) => {
     try {
-      console.log('Updating field:', fieldPath, '=', value);
       
       const response = await fetch('/api/admin/cms/pages', {
         method: 'PUT',
@@ -58,7 +55,6 @@ export function usePageData(pageId: string): UsePageDataReturn {
         throw new Error(`Failed to update field: ${response.status}`);
       }
 
-      console.log('Field updated successfully, reloading data...');
       
       // Reload the data to get fresh content
       const refreshResponse = await fetch(`/api/admin/cms/pages?page=${pageId}`);

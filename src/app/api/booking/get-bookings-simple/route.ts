@@ -23,8 +23,6 @@ export async function GET(request: NextRequest) {
         id: docSnap.id,
         ...docSnap.data()
       };
-
-      console.log('✅ Simple booking retrieved successfully:', bookingId);
       
       return NextResponse.json({
         success: true,
@@ -44,8 +42,6 @@ export async function GET(request: NextRequest) {
         id: doc.id,
         ...doc.data()
       }));
-
-      console.log('✅ Simple bookings retrieved successfully:', bookings.length);
       
       return NextResponse.json({
         success: true,

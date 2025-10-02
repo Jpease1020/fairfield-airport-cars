@@ -75,8 +75,6 @@ export async function POST(request: Request) {
               body: smsMessage
             })
           ]);
-          
-          console.log('✅ Confirmation email and SMS sent successfully');
         } catch (notificationError) {
           console.error('Failed to send confirmation notifications:', notificationError);
           // Don't fail the payment if notifications fail

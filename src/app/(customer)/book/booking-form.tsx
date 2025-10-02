@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { StatusMessage, ToastProvider } from '@/ui';
-import { BookingProvider } from '@/providers/BookingProvider';
 import { BookingFormContainer } from '@/components/booking/BookingFormContainer';
 import { BookingFormPhases } from '@/components/booking/BookingFormPhases';
 import { useBooking } from '@/providers/BookingProvider';
@@ -44,9 +43,7 @@ function BookingFormContent({ booking, cmsData }: BookingFormProps) {
 export default function BookingForm(props: BookingFormProps) {
   return (
     <ToastProvider>
-      <BookingProvider existingBooking={props.booking}>
-        <BookingFormContent {...props} />
-      </BookingProvider>
+      <BookingFormContent {...props} />
     </ToastProvider>
   );
 }

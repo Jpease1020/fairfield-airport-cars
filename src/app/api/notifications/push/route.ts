@@ -67,9 +67,7 @@ export async function POST(request: NextRequest) {
 
     // Send the message
     const response = await getMessaging().send(message);
-    
-    console.log('✅ Push notification sent successfully:', response);
-    
+
     return NextResponse.json({ 
       success: true, 
       messageId: response 

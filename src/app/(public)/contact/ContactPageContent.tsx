@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Box, H1, H2, Text, GridSection, Button, Input, Label, Textarea } from '@/ui';
+import { Container, Stack, Box, H1, Text, Button, Input, Label, Textarea } from '@/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function ContactPageContent() {
@@ -35,67 +35,13 @@ export default function ContactPageContent() {
 
       {/* Main Content Section */}
       <Container maxWidth="2xl" padding="xl">
-        <GridSection variant="content" columns={2}>
-          {/* Contact Information */}
-          <Stack spacing="lg">
-            <H2 cmsId="contact-info-title">
-              {contactData?.['contact-info-title'] || 'Contact Information'}
-            </H2>
-            
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="md">
-                <Text weight="bold" cmsId="phone-label">
-                  {contactData?.['phone-label'] || 'Phone'}
-                </Text>
-                <Text cmsId="phone-value">
-                  {contactData?.['phone-value'] || '(646) 221-6370'}
-                </Text>
-              </Stack>
-            </Box>
-
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="md">
-                <Text weight="bold" cmsId="email-label">
-                  {contactData?.['email-label'] || 'Email'}
-                </Text>
-                <Text cmsId="email-value">
-                  {contactData?.['email-value'] || 'rides@fairfieldairportcars.com'}
-                </Text>
-              </Stack>
-            </Box>
-
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="md">
-                <Text weight="bold" cmsId="address-label">
-                  {contactData?.['address-label'] || 'Address'}
-                </Text>
-                <Text cmsId="address-value">
-                  {contactData?.['address-value'] || '123 Main Street, Fairfield, CT 06824'}
-                </Text>
-              </Stack>
-            </Box>
-
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="md">
-                <Text weight="bold" cmsId="hours-label">
-                  {contactData?.['hours-label'] || 'Business Hours'}
-                </Text>
-                <Text cmsId="hours-value">
-                  {contactData?.['hours-value'] || '24/7 - We are always available for your transportation needs'}
-                </Text>
-              </Stack>
-            </Box>
-          </Stack>
-
+        
           {/* Contact Form */}
-          <Stack spacing="lg">
-            <H2 cmsId="contact-form-title">
-              {contactData?.['contact-form-title'] || 'Send us a Message'}
-            </H2>
+          
             
             <Box variant="elevated" padding="lg">
-              <Stack spacing="md">
-                <div>
+            <Stack spacing="lg">
+              {/* <Stack spacing="md"> */}
                   <Label htmlFor="name" cmsId="contact-form-name-label">
                     {contactData?.['form-name-label'] || 'Name'}
                   </Label>
@@ -104,9 +50,7 @@ export default function ContactPageContent() {
                     type="text"
                     placeholder={contactData?.['form-name-placeholder'] || 'Your full name'}
                   />
-                </div>
-
-                <div>
+                
                   <Label htmlFor="email" cmsId="contact-form-email-label">
                     {contactData?.['form-email-label'] || 'Email'}
                   </Label>
@@ -115,9 +59,7 @@ export default function ContactPageContent() {
                     type="email"
                     placeholder={contactData?.['form-email-placeholder'] || 'your.email@example.com'}
                   />
-                </div>
-
-                <div>
+                
                   <Label htmlFor="phone" cmsId="contact-form-phone-label">
                     {contactData?.['form-phone-label'] || 'Phone'}
                   </Label>
@@ -126,29 +68,15 @@ export default function ContactPageContent() {
                     type="tel"
                     placeholder={contactData?.['form-phone-placeholder'] || '(646) 221-6370'}
                   />
-                </div>
-
-                <div>
+                
                   <Label htmlFor="subject" cmsId="form-subject-label">
                     {contactData?.['form-subject-label'] || 'Subject'}
                   </Label>
-                  <Input
+                  <Textarea
                     id="subject"
                     type="text"
                     placeholder={contactData?.['form-subject-placeholder'] || 'How can we help you?'}
                   />
-                </div>
-
-                <div>
-                  <Label htmlFor="message" cmsId="form-message-label">
-                    {contactData?.['form-message-label'] || 'Message'}
-                  </Label>
-                  <Textarea
-                    id="message"
-                    rows={4}
-                    placeholder={contactData?.['form-message-placeholder'] || 'Tell us more about your needs...'}
-                  />
-                </div>
 
                 <Button
                   variant="primary"
@@ -156,31 +84,10 @@ export default function ContactPageContent() {
                 >
                   {contactData?.['form-submit-button'] || 'Send Message'}
                 </Button>
-              </Stack>
-            </Box>
+              {/* </Stack> */}
+            
           </Stack>
-        </GridSection>
-      </Container>
-
-      {/* Emergency Contact Section */}
-      <Container maxWidth="2xl" padding="xl">
-        <Box variant="elevated" padding="lg">
-          <Stack spacing="md" align="center">
-            <H2 cmsId="emergency-title">
-              {contactData?.['emergency-title'] || 'Emergency Contact'}
-            </H2>
-            <Text align="center" cmsId="emergency-description">
-              {contactData?.['emergency-description'] || 'For urgent transportation needs or immediate assistance, please call our emergency line.'}
-            </Text>
-            <Button
-              variant="primary"
-              size="lg"
-              cmsId="emergency-button"
-            >
-              {contactData?.['emergency-button'] || 'Call Emergency Line: (203) 555-0123'}
-            </Button>
-          </Stack>
-        </Box>
+          </Box>
       </Container>
     </>
   );

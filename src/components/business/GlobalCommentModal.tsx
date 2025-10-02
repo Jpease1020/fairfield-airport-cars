@@ -237,13 +237,8 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
         scope,
       } as Omit<CommentRecord, 'id' | 'createdAt' | 'updatedAt'>;
       
-      // Debug: Log the comment data being sent
-      console.log('Saving comment with data:', commentData);
-      
-      // Save comment with CMS ID when available
       await commentsService.addComment(commentData);
 
-      // Dispatch custom event to notify other components about new comment
       const event = new (window as any).CustomEvent('commentAdded', {
         detail: { elementId, comment: commentText.trim() }
       });
@@ -256,12 +251,10 @@ export default function GlobalCommentModal({ commentMode = false }: GlobalCommen
     }
   }, [commentText, selectedElement, user, scope, closeCommentBox]);
 
-  // Don't render if not admin
   if (!user) return null;
 
   return (
     <>
-      {/* Comment Box */}
       {activeCommentBox && computedPosition && (
         <FloatingCommentBox $top={computedPosition.top} $left={computedPosition.left}>
           <Container variant="tooltip" padding="none">

@@ -43,8 +43,6 @@ class InteractionTracker {
     this.setupErrorHandling();
     this.setupPerformanceMonitoring();
     this.isInitialized = true;
-    
-    console.log('🔍 Interaction tracking initialized');
   }
 
   // Track a user interaction
@@ -74,7 +72,7 @@ class InteractionTracker {
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Interaction tracked:', interaction);
+      console.log('📊 Interaction tracked:', interaction); // eslint-disable-line no-console
     }
   }
 

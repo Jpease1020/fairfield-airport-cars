@@ -24,7 +24,7 @@ const RadioButtonContainer = styled.div<{
   $checked: boolean;
 }>`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: ${({ $size }) => spacing[$size === 'lg' ? 'md' : $size === 'md' ? 'sm' : 'xs']};
   padding: ${({ $size }) => spacing[$size === 'lg' ? 'md' : $size === 'md' ? 'sm' : 'xs']};
   border-radius: ${borderRadius.md};
@@ -76,18 +76,19 @@ const RadioButtonContainer = styled.div<{
       switch ($variant) {
         case 'outlined':
           return `
-            border-color: ${colors.primary[500]};
-            background-color: ${colors.primary[50]};
+            border-color: ${colors.primary[600]};
+            background-color: ${colors.primary[100]};
           `;
         case 'elevated':
           return `
-            border-color: ${colors.primary[500]};
-            background-color: ${colors.primary[50]};
-            box-shadow: ${shadows.md};
+            border-color: ${colors.primary[600]};
+            background-color: ${colors.primary[100]};
+            box-shadow: ${shadows.lg};
           `;
         default:
           return `
-            background-color: ${colors.primary[50]};
+            background-color: ${colors.primary[100]};
+            border: 1px solid ${colors.primary[200]};
           `;
       }
     }
@@ -96,20 +97,20 @@ const RadioButtonContainer = styled.div<{
 
 const RadioInput = styled.input`
   appearance: none;
-  width: ${spacing.md};
-  height: ${spacing.md};
-  border: 2px solid ${colors.border.default};
+  width: ${spacing.lg};
+  height: ${spacing.lg};
+  border: 2px solid ${colors.gray[400]};
   border-radius: 50%;
   margin: 0;
   flex-shrink: 0;
-  margin-top: 2px;
   position: relative;
   cursor: pointer;
   transition: all 0.2s ease;
+  background-color: ${colors.background.primary};
   
   &:checked {
-    border-color: ${colors.primary[500]};
-    background-color: ${colors.primary[500]};
+    border-color: ${colors.primary[600]};
+    background-color: ${colors.primary[600]};
     
     &::after {
       content: '';
@@ -117,15 +118,16 @@ const RadioInput = styled.input`
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: ${spacing.xs};
-      height: ${spacing.xs};
+      width: ${spacing.sm};
+      height: ${spacing.sm};
       background-color: white;
       border-radius: 50%;
     }
   }
   
   &:hover:not(:disabled) {
-    border-color: ${colors.primary[400]};
+    border-color: ${colors.primary[500]};
+    background-color: ${colors.primary[50]};
   }
   
   &:focus {
@@ -136,6 +138,7 @@ const RadioInput = styled.input`
   &:disabled {
     cursor: not-allowed;
     opacity: 0.6;
+    border-color: ${colors.gray[300]};
   }
 `;
 
@@ -149,7 +152,7 @@ const Label = styled.label<{ $size: 'sm' | 'md' | 'lg'; $disabled: boolean }>`
   font-weight: 600;
   color: ${({ $disabled }) => $disabled ? colors.text.disabled : colors.text.primary};
   font-size: ${({ $size }) => $size === 'lg' ? '1.125rem' : $size === 'md' ? '1rem' : '0.875rem'};
-  margin-bottom: ${spacing.xs};
+  margin: 0;
   cursor: ${({ $disabled }) => $disabled ? 'not-allowed' : 'pointer'};
 `;
 

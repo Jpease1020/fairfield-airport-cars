@@ -247,9 +247,6 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    console.log('🗑️ Delete comment called for ID:', commentId);
-    
-    // Show custom confirmation modal instead of browser confirm
     setShowDeleteConfirm({ show: true, commentId });
   };
 
@@ -257,35 +254,21 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
     const commentId = showDeleteConfirm.commentId;
     if (!commentId) return;
     
-    console.log('✅ User confirmed deletion, proceeding...');
-    
     try {
-      console.log('📡 Calling commentsService.deleteComment...');
       await commentsService.deleteComment(commentId);
-      console.log('✅ Comment deleted successfully from database');
       
       // Refresh comments
       const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
-      console.log('🔄 Refreshing comments for page:', pageUrl);
       const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
-      console.log('📊 Refreshed comments count:', existing.length);
-      setComments(existing);
-      
-      // Success feedback via console instead of alert
-      console.log('🎉 Comment deleted successfully!');
-      
+      setComments(existing);      
     } catch (error) {
       console.error('❌ Error deleting comment:', error);
-      // Error feedback via console instead of alert
-      console.error('💥 Failed to delete comment. Check console for details.');
     } finally {
-      // Close the confirmation modal
       setShowDeleteConfirm({ show: false, commentId: null });
     }
   };
 
   const cancelDelete = () => {
-    console.log('❌ User cancelled deletion');
     setShowDeleteConfirm({ show: false, commentId: null });
   };
 
@@ -293,7 +276,6 @@ export default function GlobalCommentIcons({ commentMode = false }: GlobalCommen
     setUpdatingStatus(commentId);
     try {
       await commentsService.updateComment(commentId, { status: newStatus });
-      // Refresh comments
       const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
       const existing = await commentsService.getComments({ pageUrl }); // Removed scope filter
       setComments(existing);

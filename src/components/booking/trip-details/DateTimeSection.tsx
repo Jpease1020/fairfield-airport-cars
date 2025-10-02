@@ -36,15 +36,18 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
       
       <Stack spacing="md">
         <Input
+          id="pickup-datetime-input"
           type="datetime-local"
           label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'Pickup Date & Time'}
           value={pickupDateTime}
           onChange={(e) => onDateTimeChange(e.target.value)}
           min={getMinDateTime()}
+          fullWidth={true}
           data-testid="pickup-datetime-input"
         />
         
         <Select
+          id="fare-type-select"
           label={cmsData?.['tripDetailsPhase-fareTypeLabel'] || 'Fare Type'}
           value={fareType}
           onChange={(e) => onFareTypeChange(e.target.value as 'personal' | 'business')}
@@ -52,6 +55,7 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
             { value: 'personal', label: cmsData?.['tripDetailsPhase-personalFare'] || 'Personal' },
             { value: 'business', label: cmsData?.['tripDetailsPhase-businessFare'] || 'Business' }
           ]}
+          fullWidth={true}
           data-testid="fare-type-select"
         />
       </Stack>

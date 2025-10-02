@@ -14,6 +14,8 @@ interface LocationInputProps {
   value: string;
   onChange: (value: string) => void;
   onLocationSelect: (address: string, coordinates: { lat: number; lng: number }) => void;
+  onCoordsChange?: (coordinates: { lat: number; lng: number } | null) => void;
+  coords?: { lat: number; lng: number } | null;
   placeholder?: string;
   disabled?: boolean;
   error?: boolean;
@@ -30,6 +32,8 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   value,
   onChange,
   onLocationSelect,
+  onCoordsChange,
+  coords,
   placeholder,
   disabled = false,
   error = false,
@@ -78,8 +82,13 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       // Update both the input value and notify about selection
       onChange(address);
       onLocationSelect(address, coordinates);
+      
+      // Also notify about coordinate changes if callback provided
+      if (onCoordsChange) {
+        onCoordsChange(coordinates);
+      }
     }
-  }, [onChange, onLocationSelect]);
+  }, [onChange, onLocationSelect, onCoordsChange]);
 
   // Add place_changed listener
   useEffect(() => {

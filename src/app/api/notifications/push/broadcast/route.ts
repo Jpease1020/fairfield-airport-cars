@@ -83,7 +83,6 @@ export async function POST(request: NextRequest) {
         ...message,
         topic
       });
-      console.log(`✅ Broadcast notification sent to topic: ${topic}`);
     } else {
       // Send to all users (get all tokens from Firestore)
       const tokensSnapshot = await adminServices.firestore
@@ -119,8 +118,6 @@ export async function POST(request: NextRequest) {
 
       const successCount = responses.reduce((total: number, response: any) => total + response.successCount, 0);
       const failureCount = responses.reduce((total: number, response: any) => total + response.failureCount, 0);
-
-      console.log(`✅ Broadcast notification sent to ${successCount} devices, ${failureCount} failed`);
 
       response = {
         successCount,

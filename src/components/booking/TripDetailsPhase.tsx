@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Container, Stack, StatusMessage } from '@/ui';
+import { Container, Stack, StatusMessage, Button } from '@/ui';
 import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
 import { LocationInputSection } from './trip-details/LocationInputSection';
 import { DateTimeSection } from './trip-details/DateTimeSection';
+import { EstimatedRideTime } from './trip-details/EstimatedRideTime';
 import { FlightInfoSection } from './trip-details/FlightInfoSection';
 import { FareDisplaySection } from './trip-details/FareDisplaySection';
-import { TripDetailsNavigation } from './trip-details/TripDetailsNavigation';
 import { TripDetails, ValidationResult } from '@/types/booking';
 
 interface TripDetailsPhaseProps {
@@ -83,6 +83,9 @@ export function TripDetailsPhase({
           cmsData={cmsData}
         />
 
+        {/* Estimated Ride Time */}
+        <EstimatedRideTime cmsData={cmsData} />
+
         {/* Flight Information Section */}
         <FlightInfoSection
           flightInfo={tripData.flightInfo}
@@ -96,6 +99,7 @@ export function TripDetailsPhase({
           isCalculating={isCalculatingFare}
           fareType={tripData.fareType}
           cmsData={cmsData}
+          error={fareError}
         />
 
         {/* Error States */}
@@ -127,11 +131,17 @@ export function TripDetailsPhase({
         )}
 
         {/* Navigation */}
-        <TripDetailsNavigation
-          canProceed={validation.isValid}
-          onNext={onNext}
-          cmsData={cmsData}
-        />
+        <Stack direction="horizontal" justify="flex-start" data-testid="trip-details-navigation">
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={onNext}
+            disabled={!validation.isValid}
+            data-testid="trip-details-next-button"
+            cmsId="trip-details-next-button"
+            text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}
+          />
+        </Stack>
       </Stack>
     </Container>
   );

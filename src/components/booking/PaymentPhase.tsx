@@ -99,7 +99,6 @@ export function PaymentPhase({
           isProcessingPayment={isProcessing}
           paymentError={error}
           onPaymentSuccess={(result: any) => {
-            console.log('Payment successful:', result);
             // Handle success - this would be managed by the parent component
           }}
           onPaymentError={(error: string) => {
@@ -116,7 +115,6 @@ export function PaymentPhase({
           onBack={onBack}
           onProcessPayment={() => {
             // This will be handled by the parent component
-            console.log('Process payment clicked');
           }}
           isProcessingPayment={isProcessing}
           canProcessPayment={canProcessPayment}

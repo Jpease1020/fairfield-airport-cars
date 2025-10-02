@@ -82,10 +82,6 @@ export default function PaymentSuccessClient() {
     const urlBookingId = searchParams.get('bookingId');
     
     if (source === 'square') {
-      // If we have a bookingId from URL, we can use that for reference
-      if (urlBookingId) {
-        console.log('Payment completed for booking:', urlBookingId);
-      }
       processPaymentSuccess();
     } else {
       // If not from Square, redirect to booking page
@@ -154,7 +150,6 @@ export default function PaymentSuccessClient() {
         <Stack direction="horizontal" spacing="md">
           <Button 
             onClick={() => {
-              console.log('Track ride button clicked, bookingId:', bookingId);
               if (bookingId) {
                 router.push(`/tracking/${bookingId}`);
               } else {
@@ -169,7 +164,6 @@ export default function PaymentSuccessClient() {
           
           <Button 
             onClick={() => {
-              console.log('View bookings button clicked');
               router.push('/bookings');
             }} 
             variant="secondary" 
