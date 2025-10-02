@@ -22,15 +22,8 @@ import styled from 'styled-components';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Styled components for login page
-const LoginCard = styled(Box)`
-  display: flex;
-  justify-content: center;
-  transition: transform 0.2s ease-in-out;
+const StyledForm = styled.form`
   width: 100%;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
 `;
 
 const OrDivider = styled.div`
@@ -124,13 +117,13 @@ export default function LoginFormClient() {
 
   return (
     <ToastProvider>
-      <Container maxWidth="sm" padding="xl">
-        <LoginCard variant="elevated" padding="xl">
-          <Stack spacing="xl" align="center">
-            <Stack spacing="md" align="center">
+      <Container maxWidth="lg" padding="xl" data-testid="login-page-container">
+          <Stack spacing="xl" align="center" data-testid="login-form-stack">
+            <Stack spacing="md" align="center" data-testid="login-header-stack">
               <H1 
                 align="center" 
                 cmsId="title"
+                data-testid="login-title"
               >
                 {pageCmsData?.['login-title'] || 'Welcome Back'}
               </H1>
@@ -138,15 +131,16 @@ export default function LoginFormClient() {
                 align="center" 
                 variant="default"
                 cmsId="subtitle"
+                data-testid="login-subtitle"
               >
                 {pageCmsData?.['login-subtitle'] || 'Sign in to your account'}
               </H2>
             </Stack>
             
-            <form onSubmit={handleLogin} id="login-form">
-              <Stack spacing="md">
-                <div>
-                  <Label htmlFor="email">
+            <StyledForm onSubmit={handleLogin} id="login-form" data-testid="login-form">
+              <Stack spacing="md" align="center">
+                
+                  <Label htmlFor="email" data-testid="email-label">
                     {pageCmsData?.['login-form-email-label']}
                   </Label>
                   <Input
@@ -156,11 +150,12 @@ export default function LoginFormClient() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="Enter your email"
+                    data-testid="email-input"
+                    fullWidth={true}
                   />
-                </div>
                 
-                <div>
-                  <Label htmlFor="password">
+                
+                  <Label htmlFor="password" data-testid="password-label">
                     {pageCmsData?.['login-form-password-label']}
                   </Label>
                   <Input
@@ -170,11 +165,13 @@ export default function LoginFormClient() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     placeholder="Enter your password"
+                    data-testid="password-input"
+                    fullWidth={true}
                   />
-                </div>
+                
                 
                 {error && (
-                  <Box variant="elevated" padding="sm">
+                  <Box variant="elevated" padding="sm" data-testid="login-error-message">
                     <Text>
                       {pageCmsData?.['login-error-icon'] || '❌'} {error}
                     </Text>
@@ -185,15 +182,17 @@ export default function LoginFormClient() {
                   type="submit"
                   variant="primary"
                   size="lg"
+                  fullWidth={true}  
                   disabled={loading}
                   cmsId="sign-in-button"
+                  data-testid="sign-in-button"
                 >
                   {pageCmsData?.[loading ? 'form.signInButtonLoading' : 'form.signInButton'] || (loading ? 'Signing In...' : 'Sign In')}
                 </Button>
               </Stack>
-            </form>
+            </StyledForm>
             
-            <OrDivider>
+            <OrDivider data-testid="login-or-divider">
               <Text variant="small" color="muted">
                 {pageCmsData?.['login-form-or-separator'] || 'or'}
               </Text>
@@ -205,24 +204,25 @@ export default function LoginFormClient() {
               size="lg"
               disabled={loading}
               cmsId="google-sign-in-button"
+              data-testid="google-sign-in-button"
+              fullWidth={true}
             >
               {pageCmsData?.[loading ? 'form.googleSignInButtonLoading' : 'form.googleSignInButton'] || (loading ? 'Signing In...' : 'Continue with Google')}
             </Button>
             
-            <LinkText variant="small" color="muted">
+            <LinkText variant="small" color="muted" data-testid="signup-link-container">
               {pageCmsData?.['login-form-no-account'] || "Don't have an account?"}{' '}
-              <Link href="/register">
+              <Link href="/register" data-testid="signup-link">
                 {pageCmsData?.['login-form-signup-link'] || 'Sign up'}
               </Link>
             </LinkText>
             
-            <LinkText variant="small" color="muted">
-              <Link href="/forgot-password">
+            <LinkText variant="small" color="muted" data-testid="forgot-password-link-container">
+              <Link href="/forgot-password" data-testid="forgot-password-link">
                 {pageCmsData?.['login-form-forgot-password'] || 'Forgot your password?'}
               </Link>
             </LinkText>
           </Stack>
-        </LoginCard>
       </Container>
     </ToastProvider>
   );

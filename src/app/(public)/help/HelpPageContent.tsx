@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import styled from 'styled-components';
 import { 
   Container,
   Stack,
@@ -12,6 +13,12 @@ import {
 } from '@/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import Link from 'next/link';
+import { colors } from '@/design/system/tokens/tokens';
+
+// Custom styled component for darker grey background
+const DarkerGreyBox = styled(Box)`
+  background-color: ${colors.gray[100]};
+`;
 
 export default function HelpPageContent() {
   // Get CMS data from provider - extract only what this page needs
@@ -46,7 +53,7 @@ export default function HelpPageContent() {
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="lg">
           {/* Quick Actions */}
-          <Box variant="elevated" padding="lg">
+          <DarkerGreyBox padding="lg">
             <Stack spacing="md">
               <H2 cmsId="quick-actions-title">
                 {cmsData?.['quick-actions-title'] || 'Quick Actions'}
@@ -64,7 +71,7 @@ export default function HelpPageContent() {
                 </Link>
               </Stack>
             </Stack>
-          </Box>
+          </DarkerGreyBox>
 
           {/* FAQ Section */}
           <Box variant="elevated" padding="lg">
@@ -133,7 +140,7 @@ export default function HelpPageContent() {
           </Box>
 
           {/* Contact Information */}
-          <Box variant="elevated" padding="lg">
+          <DarkerGreyBox padding="lg">
             <Stack spacing="md">
               <H2 cmsId="contact-info-title">
                 {cmsData?.['contact-info-title'] || 'Still Need Help?'}
@@ -158,7 +165,7 @@ export default function HelpPageContent() {
                 </Text>
               </Stack>
             </Stack>
-          </Box>
+          </DarkerGreyBox>
         </Stack>
       </Container>
     </>

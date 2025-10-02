@@ -9,9 +9,7 @@ export default function CustomerLayout({
 }) {
   return (
     <div>
-      <main data-testid="layout-main-content">
-        {children}
-      </main>
+      {children}
     </div>
   );
 }

@@ -59,7 +59,7 @@ export function TripDetailsPhase({
 
   return (
     <Container maxWidth="7xl" padding="xl" data-testid="trip-details-phase-container">
-      <Stack spacing="xl" data-testid="trip-details-phase-stack">
+      <Stack spacing="2xl" data-testid="trip-details-phase-stack">
         {/* Location Input Section */}
         <LocationInputSection
           pickupLocation={tripData.pickup.address}
