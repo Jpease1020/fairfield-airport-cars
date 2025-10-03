@@ -7,6 +7,8 @@ import { PaymentForm } from './payment/PaymentForm';
 import { PaymentNavigation } from './payment/PaymentNavigation';
 import { TipCalculator } from '@/components/business/TipCalculator';
 import { TripDetails, CustomerInfo, PaymentInfo } from '@/types/booking';
+import { useBooking } from '@/providers/BookingProvider';
+import { Button, Text } from '@/ui';
 
 interface PaymentPhaseProps {
   tripData: TripDetails;
@@ -31,8 +33,10 @@ export function PaymentPhase({
   success,
   cmsData
 }: PaymentPhaseProps) {
+  const { submitBookingWithQuote, currentQuote, isQuoteValid, setQuote } = useBooking();
+  const [isRefreshingQuote, setIsRefreshingQuote] = React.useState(false);
   const getTotalWithTip = () => (tripData.fare || 0) + paymentData.tipAmount;
-  const canProcessPayment = !isProcessing;
+  const canProcessPayment = !isProcessing && isQuoteValid();
 
   return (
     <Container maxWidth="7xl" padding="xl" data-testid="payment-phase-container">
@@ -111,10 +115,51 @@ export function PaymentPhase({
           cmsData={cmsData}
         />
 
+        {!isQuoteValid() && (
+          <Stack spacing="md" align="center">
+            <Text color="warning" cmsId="paymentPhase-expiredQuote">Price quote expired. Please refresh to continue.</Text>
+            <Button
+              variant="outline"
+              size="md"
+              onClick={async () => {
+                if (isRefreshingQuote) return; // Prevent multiple clicks
+                setIsRefreshingQuote(true);
+                try {
+                  const res = await fetch('/api/booking/quote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      origin: tripData.pickup.address,
+                      destination: tripData.dropoff.address,
+                      pickupCoords: tripData.pickup.coordinates,
+                      dropoffCoords: tripData.dropoff.coordinates,
+                      fareType: tripData.fareType,
+                      pickupTime: tripData.pickupDateTime || undefined,
+                    })
+                  });
+                  if (res.ok) {
+                    const data = await res.json();
+                    setQuote(data);
+                  }
+                } catch (error) {
+                  console.error('Quote refresh error:', error);
+                } finally {
+                  setIsRefreshingQuote(false);
+                }
+              }}
+              disabled={isRefreshingQuote}
+              loading={isRefreshingQuote}
+              data-testid="refresh-quote-button"
+              cmsId="refresh-quote-button"
+              text={cmsData?.['paymentPhase-refreshQuote'] || 'Refresh Quote'}
+            />
+          </Stack>
+        )}
+
         <PaymentNavigation
           onBack={onBack}
-          onProcessPayment={() => {
-            // This will be handled by the parent component
+          onProcessPayment={async () => {
+            await submitBookingWithQuote();
           }}
           isProcessingPayment={isProcessing}
           canProcessPayment={canProcessPayment}

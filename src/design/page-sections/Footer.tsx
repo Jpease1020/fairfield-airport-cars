@@ -1,12 +1,28 @@
 'use client';
 
 import React from 'react';
+import styled from 'styled-components';
 import Link from 'next/link';
 import { Container } from '../layout/containers/Container';
 import { Box } from '../layout/content/Box';
 import { Stack } from '../layout/framing/Stack';
 import { Text } from '../components/base-components/text/Text';
 import { useCMSData } from '../providers/CMSDataProvider';
+
+// Styled components for responsive company info
+const MobileCompanyInfo = styled(Stack)`
+  @media (min-width: 1024px) {
+    display: none;
+  }
+`;
+
+const DesktopCompanyInfo = styled(Stack)`
+  display: none;
+  
+  @media (min-width: 1024px) {
+    display: flex;
+  }
+`;
 
 export const Footer: React.FC = () => {
   // Get CMS data from provider
@@ -46,18 +62,20 @@ export const Footer: React.FC = () => {
       as="footer"
     >
       <Stack justify="center" align="center" fullWidth>
-        <Container maxWidth="6xl" margin="none" spacing="xl">
-          {/* Company Info */}
-          <Stack spacing="sm" align="center">
+        <Container margin="none" spacing={{ xs: 'md', md: 'xl' }}>
+          
+          {/* Company Info - Mobile/Tablet: Top, Desktop: Hidden */}
+          <MobileCompanyInfo spacing="sm" align="center">
             <Text 
               variant="lead" 
               weight="semibold" 
               color="primary"
-              cmsId="company-name"
+              cmsId="licensed"
             >
-              {cmsData?.['companyName'] || 'Fairfield Airport Cars'} {cmsData?.['licensed'] || '✅ Licensed & Insured'}
+              {cmsData?.['licensed'] || '✅  Licensed & Insured'}
             </Text>
-          </Stack>
+          </MobileCompanyInfo>
+          
           <Stack 
             direction={{ xs: 'vertical', md: 'horizontal' }} 
             justify={{ xs: 'center', md: 'space-between' }} 
@@ -83,6 +101,18 @@ export const Footer: React.FC = () => {
                   {cmsData?.['email'] || '✉️ rides@fairfieldairportcars.com'}
                 </Text>
               </Stack>
+
+            {/* Company Info - Desktop: Between contact and Quick Links */}
+            <DesktopCompanyInfo spacing="sm" align="center">
+              <Text 
+                variant="lead" 
+                weight="semibold" 
+                color="primary"
+                cmsId="licensed-desktop"
+              >
+                {cmsData?.['licensed'] || '✅  Licensed & Insured'}
+              </Text>
+            </DesktopCompanyInfo>
 
             {/* Quick Links */}
             <Stack spacing="sm" align="center">

@@ -70,10 +70,10 @@ export function TripDetailsPhase({
 
   // Update parent state when calculated fare changes
   useEffect(() => {
-    if (calculatedFare !== tripData.fare) {
+    if (calculatedFare !== null && calculatedFare !== tripData.fare) {
       onTripUpdate({ fare: calculatedFare });
     }
-  }, [calculatedFare, tripData.fare, onTripUpdate]);
+  }, [calculatedFare]);
 
   return (
     <TripDetailsContainer maxWidth="7xl" padding="xl" data-testid="trip-details-phase-container">
@@ -149,7 +149,7 @@ export function TripDetailsPhase({
         )}
 
         {/* Navigation */}
-        <Stack direction="horizontal" justify="flex-start" data-testid="trip-details-navigation">
+        {/* <Stack direction="horizontal" justify="flex-start" data-testid="trip-details-navigation"> */}
           <Button
             variant="primary"
             size="lg"
@@ -158,9 +158,10 @@ export function TripDetailsPhase({
             data-testid="trip-details-next-button"
             cmsId="trip-details-next-button"
             text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}
+            fullWidth
           />
-        </Stack>
-        </Stack>
-      </TripDetailsContainer>
+        {/* </Stack> */}
+      </Stack>
+    </TripDetailsContainer>
   );
 }

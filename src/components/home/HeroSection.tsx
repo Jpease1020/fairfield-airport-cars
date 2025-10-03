@@ -29,7 +29,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ cmsData }) => {
       >
         {/* Left Side: Trust Messaging */}
         <FlexStack spacing="xl" justify="flex-start" data-testid="hero-trust-messaging">
-          <Stack spacing="md">
+          <Stack spacing="md" padding={{ lg: '2xl' }}>
             <H1
               align="center"
               cmsId="hero-title"

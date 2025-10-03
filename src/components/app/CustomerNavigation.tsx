@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import styled from 'styled-components';
 import { usePathname } from 'next/navigation';
 import { Button } from '../../design/components/base-components/Button';
@@ -41,14 +40,14 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
   ];
 
   const logo = (
-    <Link href="/" data-testid="nav-logo-link" id="nav-logo-link">
-      <LogoImage 
-        src="/logos/NewLogoNoBackground.png" 
-        alt="Fairfield Airport Cars"
-        height="120"
-        width="auto"
-      />
-    </Link>
+    <LogoImage 
+      src="/logos/NewLogoNoBackground.png" 
+      alt="Fairfield Airport Cars"
+      height="120"
+      width="auto"
+      data-testid="nav-logo"
+      id="nav-logo"
+    />
   );
 
   const actions = (

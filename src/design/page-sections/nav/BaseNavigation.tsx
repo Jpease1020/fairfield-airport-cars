@@ -38,6 +38,12 @@ const ActionsContainer = styled.div`
   align-items: center;
   gap: ${spacing.lg};
 `;
+// Mobile-only max-height for nav container
+const NavContainer = styled(PositionedContainer)`
+  @media (max-width: 767px) {
+    max-height: 6rem;
+  }
+`;
 
 // Mobile menu overlay with flexbox positioning
 const MobileMenuOverlay = styled(FlexboxContainer)`
@@ -148,7 +154,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
   };
 
   return (
-    <PositionedContainer
+    <NavContainer
       position="relative"
       zIndex={zIndex.dropdown}
       display="flex"
@@ -279,6 +285,6 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           )}
         </MobileMenuOverlay>
       )}
-    </PositionedContainer>
+    </NavContainer>
   );
 }; 

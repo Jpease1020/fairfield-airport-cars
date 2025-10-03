@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Container } from '../../layout/containers/Container';
 import { Stack } from '../../layout/framing/Stack';
@@ -10,6 +10,7 @@ import { Text } from '../../components/base-components/text/Text';
 import { Input } from '../../components/base-components/forms/Input';
 import { LocationInput } from '../base-components/forms/LocationInput';
 import { useBooking } from '../../../providers/BookingProvider';
+import { useFareCalculation } from '@/hooks/useFareCalculation';
 
 interface Coordinates {
   lat: number;
@@ -38,6 +39,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     isQuickBookingFormValid,
     submitQuickBookingForm,
     error,
+    setQuote,
+    submitBookingWithQuote,
   } = useBooking();
   
   const locationData = {
@@ -61,56 +64,14 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   const pickupDate = pickupDateTime ? pickupDateTime.split('T')[0] : '';
   const pickupTime = pickupDateTime ? pickupDateTime.split('T')[1] : '';
   
-  const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
-  const [fareCalculationMethod, setFareCalculationMethod] = useState<'route' | 'simple' | null>(null);
+  const { fare: estimatedFare, isCalculating, error: fareError } = useFareCalculation({
+    pickupLocation: locationData.pickup.address,
+    dropoffLocation: locationData.dropoff.address,
+    pickupCoords: locationData.pickup.coordinates,
+    dropoffCoords: locationData.dropoff.coordinates,
+    fareType: formData.trip.fareType,
+  });
 
-  // Route calculation removed - using simple fare estimation
-
-  // Simple distance-based fare calculation using current CMS pricing
-  const calculateSimpleEstimatedFare = (pickup: string, dropoff: string) => {
-    // Use current CMS pricing for consistency
-    const baseFare = 2.50;
-    const perMileRate = 1.60;
-    const perMinuteRate = 0.20;
-    
-    // Estimate distance based on pickup location to airports
-    let estimatedDistance = 45; // Default for Fairfield to NYC airports
-    let estimatedMinutes = 60; // Default time estimate
-    
-    if (pickup.toLowerCase().includes('fairfield')) {
-      estimatedDistance = 45;
-      estimatedMinutes = 60;
-    } else if (pickup.toLowerCase().includes('stamford')) {
-      estimatedDistance = 35;
-      estimatedMinutes = 50;
-    } else if (pickup.toLowerCase().includes('norwalk')) {
-      estimatedDistance = 40;
-      estimatedMinutes = 55;
-    }
-    
-    const estimatedFare = baseFare + (estimatedDistance * perMileRate) + (estimatedMinutes * perMinuteRate);
-    return Math.round(estimatedFare);
-  };
-
-  // Note: Route calculation is handled in the main booking form
-  // This hero form uses simple fare estimation
-
-  // Update estimated fare whenever form data changes
-  useEffect(() => {
-    const updateFare = async () => {
-      if (locationData.pickup.address && locationData.dropoff.address && pickupDateTime) {
-        // Use simple calculation for hero form
-        const fare = calculateSimpleEstimatedFare(locationData.pickup.address, locationData.dropoff.address);
-        setEstimatedFare(fare);
-        setFareCalculationMethod('simple');
-      } else {
-        setEstimatedFare(null);
-        setFareCalculationMethod(null);
-      }
-    };
-    
-    updateFare();
-  }, [locationData.pickup.address, locationData.dropoff.address, locationData.pickup.coordinates, locationData.dropoff.coordinates, pickupDateTime]);
 
   // Handle location selection using global context
   const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
@@ -162,7 +123,10 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             data-testid="quick-book-dropoff-input"
           />
           
-          <Stack direction="horizontal" spacing="md">
+          <Stack spacing="md">
+            <Text weight="semibold" cmsId="quickBook-dateOfTravelLabel">
+              Date of travel
+            </Text>
             <Input
               type="datetime-local" 
               id="pickup-datetime"
@@ -180,16 +144,14 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           </Stack>
         </Stack>
         
-        {/* Show estimated price in real-time */}
+        {/* Show estimated price in real-time from shared hook */}
         {estimatedFare && (
           <Stack spacing="sm" align="center" data-testid="quick-book-price-display">
             <Text size="lg" weight="bold" color="primary">
               Estimated Fare: ${estimatedFare}
             </Text>
-            {fareCalculationMethod === 'simple' && (
-              <Text size="sm" color="secondary">
-                *Price will be updated with exact route details
-              </Text>
+            {isCalculating && (
+              <Text size="sm" color="secondary">Calculating...</Text>
             )}
             
             {/* Promotional Message */}
@@ -207,6 +169,9 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               </Stack>
             </Box>
           </Stack>
+        )}
+        {fareError && (
+          <Text size="sm" color="error" align="center">{fareError}</Text>
         )}
         
         {/* Route summary removed - using simple fare estimation */}

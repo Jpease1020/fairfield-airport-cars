@@ -132,7 +132,7 @@ export function SquarePaymentForm({
             tipAmount: bookingData?.tipAmount || 0,
             totalAmount: bookingData?.totalAmount || (amount / 100),
             flightInfo: bookingData?.flightInfo || {},
-            fareType: bookingData?.fareType || 'standard',
+            fareType: bookingData?.fareType || 'business',
             saveInfoForFuture: bookingData?.saveInfoForFuture || false,
           },
           existingBookingId: bookingId, // Use existing ID if provided

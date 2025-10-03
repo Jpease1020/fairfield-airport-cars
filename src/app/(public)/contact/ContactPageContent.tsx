@@ -67,7 +67,7 @@ export default function ContactPageContent() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder={contactData?.['form-phone-placeholder'] || '(646) 221-6370'}
+                  placeholder={contactData?.['form-phone-placeholder'] || '(000) 000-0000'}
                   fullWidth
                 />
               
