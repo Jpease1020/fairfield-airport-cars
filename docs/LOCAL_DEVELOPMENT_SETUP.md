@@ -88,8 +88,8 @@ CVV: Any 3 digits
 ### **3.3 Environment Variables**
 ```bash
 # .env.local
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_restricted_development_key
-GOOGLE_MAPS_API_KEY=your_server_side_key
+NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY=your_restricted_development_key
+GOOGLE_MAPS_SERVER_API_KEY=your_server_side_key
 ```
 
 ## 📧 **Step 4: Email Service (SendGrid)**

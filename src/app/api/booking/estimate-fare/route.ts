@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       params: {
         origins: [origin],
         destinations: [destination],
-        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
         departure_time: new Date(),
         traffic_model: 'best_guess' as any
       },

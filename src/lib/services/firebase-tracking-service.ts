@@ -81,7 +81,7 @@ class FirebaseTrackingService {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
             
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,geometry`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY}&libraries=places,geometry`;
             script.async = true;
             script.defer = true;
             

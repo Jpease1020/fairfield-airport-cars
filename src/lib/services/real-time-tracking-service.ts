@@ -187,7 +187,7 @@ class RealTimeTrackingService {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           address
-        )}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+        )}&key=${process.env.GOOGLE_MAPS_SERVER_API_KEY}`
       );
 
       const data = await response.json();
@@ -213,7 +213,7 @@ class RealTimeTrackingService {
   } | null> {
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${process.env.GOOGLE_MAPS_SERVER_API_KEY}`
       );
 
       const data = await response.json();
