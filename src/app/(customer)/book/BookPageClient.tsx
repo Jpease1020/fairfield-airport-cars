@@ -13,7 +13,7 @@ function BookPageClient() {
 
   return (
     <Container maxWidth="full" padding="xl" data-testid="book-form-section">
-      <Stack spacing="xl" align="center">
+      <Stack align="center">
         <Stack spacing="md" align="center">
           <H2 
             align="center" 

@@ -6,12 +6,21 @@ import { colors, spacing, borderRadius, shadows, transitions } from '../../syste
 import { FlexboxMargin } from '../../system/shared-types';
 
 // Core Container component - foundational layout component
+type ResponsiveValue<T> = T | {
+  xs?: T;
+  sm?: T;
+  md?: T;
+  lg?: T;
+  xl?: T;
+  '2xl'?: T;
+};
+
 export interface ContainerProps {
   children: React.ReactNode;
   variant?: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
-  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
+  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | ResponsiveValue<'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'>;
   margin?: FlexboxMargin;  // Limited margin for flexbox positioning
   alignSelf?: 'flex-start' | 'flex-end' | 'center' | 'stretch';
   order?: number;
@@ -29,8 +38,8 @@ const StyledContainer = styled.div.withConfig({
 })<{
   variant: 'default' | 'card' | 'section' | 'main' | 'content' | 'navigation' | 'tooltip' | 'elevated' | 'feature' | 'hero';
   maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
-  padding: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  spacing: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  padding: any;
+  spacing: any;
   margin: FlexboxMargin;
   alignSelf: 'flex-start' | 'flex-end' | 'center' | 'stretch';
   order: number;
@@ -81,48 +90,37 @@ const StyledContainer = styled.div.withConfig({
     }
   }}
 
-  /* Padding styles */
+  /* Padding styles (responsive) */
   ${({ padding }) => {
-    switch (padding) {
-      case 'none':
-        return `padding: 0;`;
-      case 'xs':
-        return `padding: ${spacing.xs};`;
-      case 'sm':
-        return `padding: ${spacing.sm};`;
-      case 'md':
-        return `padding: ${spacing.md};`;
-      case 'lg':
-        return `padding: ${spacing.lg};`;
-      case 'xl':
-        return `padding: ${spacing.xl};`;
-      case '2xl':
-        return `padding: ${spacing['2xl']};`;
-      default:
-        return `padding: ${spacing.md};`;
+    const getPad = (p: string) => p === 'none' ? '0' : spacing[p as keyof typeof spacing];
+    if (typeof padding === 'string') {
+      return `padding: ${getPad(padding)};`;
     }
+    const padXs = padding?.xs ?? 'none';
+    let css = `padding: ${getPad(padXs)};`;
+    const map: Record<string, string> = { sm: '640px', md: '768px', lg: '1024px', xl: '1280px', '2xl': '1536px' };
+    (['sm','md','lg','xl','2xl'] as const).forEach(bp => {
+      const val = padding?.[bp as keyof typeof padding];
+      if (val) css += `@media (min-width: ${map[bp]}) { padding: ${getPad(val as string)}; }`;
+    });
+    return css;
   }}
 
-  /* Internal spacing for content */
+  /* Internal spacing for content (responsive) */
   ${({ spacing: spacingProp }) => {
-    switch (spacingProp) {
-      case 'none':
-        return `gap: 0;`;
-      case 'xs':
-        return `gap: ${spacing.xs};`;
-      case 'sm':
-        return `gap: ${spacing.sm};`;
-      case 'md':
-        return `gap: ${spacing.md};`;
-      case 'lg':
-        return `gap: ${spacing.lg};`;
-      case 'xl':
-        return `gap: ${spacing.xl};`;
-      case '2xl':
-        return `gap: ${spacing['2xl']};`;
-      default:
-        return `gap: 0;`;
+    const getGap = (g: string) => g === 'none' ? '0' : spacing[g as keyof typeof spacing];
+    if (typeof spacingProp === 'string' || spacingProp === undefined) {
+      const base = (spacingProp ?? 'none') as string;
+      return `gap: ${getGap(base)};`;
     }
+    const gapXs = spacingProp?.xs ?? 'none';
+    let css = `gap: ${getGap(gapXs)};`;
+    const map: Record<string, string> = { sm: '640px', md: '768px', lg: '1024px', xl: '1280px', '2xl': '1536px' };
+    (['sm','md','lg','xl','2xl'] as const).forEach(bp => {
+      const val = spacingProp?.[bp as keyof typeof spacingProp];
+      if (val) css += `@media (min-width: ${map[bp]}) { gap: ${getGap(val as string)}; }`;
+    });
+    return css;
   }}
 
   /* Variant styles */

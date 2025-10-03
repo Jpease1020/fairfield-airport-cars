@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Text, Button, Box, Input, Label, Textarea, RadioButton, H2 } from '@/design/ui';
+import styled from 'styled-components';
+import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2 } from '@/design/ui';
 import { CustomerInfo, ValidationResult } from '@/types/booking';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
 
@@ -22,6 +23,10 @@ export function ContactInfoPhase({
   validation,
   cmsData
 }: ContactInfoPhaseProps) {
+  const Half = styled.div`
+    flex: 1;
+    display: flex;
+  `;
   // Get CMS data from provider
   const { cmsData: allCmsData } = useCMSData();
   const pageCmsData = allCmsData?.booking || {};
@@ -40,11 +45,8 @@ export function ContactInfoPhase({
         {/* Contact Information Form */}
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            {/* Name */}
+
             <Stack spacing="sm">
-              <Label htmlFor="name" cmsId="booking-form-name-label" >
-                {pageCmsData?.['form-name-label'] || 'Full Name'} *
-              </Label>
               <Input
                 id="name"
                 value={customerData.name}
@@ -57,11 +59,7 @@ export function ContactInfoPhase({
               />
             </Stack>
 
-            {/* Email */}
             <Stack spacing="sm">
-              <Label htmlFor="email" cmsId="booking-form-email-label" >
-                {pageCmsData?.['form-email-label'] || 'Email Address'} *
-              </Label>
               <Input
                 id="email"
                 type="email"
@@ -75,17 +73,18 @@ export function ContactInfoPhase({
               />
             </Stack>
 
-            {/* Phone */}
             <Stack spacing="sm">
-              <Label htmlFor="phone" cmsId="booking-form-phone-label" >
-                {pageCmsData?.['form-phone-label'] || 'Phone Number'} *
-              </Label>
               <Input
                 id="phone"
                 type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                pattern="^\+?1?[-\.\s]?\(?\d{3}\)?[-\.\s]?\d{3}[-\.\s]?\d{4}$"
+                maxLength={17}
+                aria-label="Phone number"
                 value={customerData.phone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ phone: e.target.value })}
-                placeholder={pageCmsData?.['form-phone-placeholder'] || 'Enter your phone number'}
+                placeholder={'Enter your phone number'}
                 cmsId="form-phone-input"
                 fullWidth
                 required
@@ -93,11 +92,7 @@ export function ContactInfoPhase({
               />
             </Stack>
 
-            {/* Notes */}
             <Stack spacing="sm">
-              <Label htmlFor="notes" cmsId="booking-form-notes-label" >
-                {pageCmsData?.['form-notes-label'] || 'Special Instructions'}
-              </Label>
               <Textarea
                 id="notes"
                 value={customerData.notes}
@@ -110,7 +105,6 @@ export function ContactInfoPhase({
               />
             </Stack>
 
-            {/* Save Info for Future */}
             <Stack spacing="sm">
               <RadioButton
                 id="save-info"
@@ -126,24 +120,28 @@ export function ContactInfoPhase({
         </Box>
 
         {/* Navigation */}
-        <Stack direction="horizontal" spacing="md">
-          <Button
-            onClick={onBack}
-            variant="outline"
-            cmsId="back-button"
-            data-testid="back-button" 
-            
-            text={pageCmsData?.['back-button'] || 'Back'}
-          />
-          <Button
-            onClick={onContinue}
-            variant="primary"
-            disabled={!validation.isValid}
-            cmsId="continue-button"
-            data-testid="continue-button"
-            
-            text={pageCmsData?.['continue-button'] || 'Continue to Payment'}
-          />
+        <Stack direction="horizontal" spacing="md" fullWidth>
+          <Half>
+            <Button
+              onClick={onBack}
+              variant="outline"
+              fullWidth
+              cmsId="back-button"
+              data-testid="contact-info-back-button"            
+              text={pageCmsData?.['back-button'] || 'Back'}
+            />
+          </Half>
+          <Half>
+            <Button
+              onClick={onContinue}
+              variant="primary"
+              fullWidth
+              disabled={!validation.isValid}
+              cmsId="continue-button"
+              data-testid="contact-info-continue-button"
+              text={pageCmsData?.['continue-button'] || 'Continue to Payment'}
+            />
+          </Half>
         </Stack>
       </Stack>
     </Container>

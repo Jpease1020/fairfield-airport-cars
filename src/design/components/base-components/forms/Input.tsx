@@ -57,8 +57,8 @@ const StyledInput = styled.input.withConfig({
         return `
           padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
-          height: 2.5rem;
-          min-height: 2.5rem;
+          height: 3rem;
+          min-height: 3rem;
         `;
     }
   }}
@@ -82,8 +82,8 @@ const StyledInput = styled.input.withConfig({
         return `
           padding: ${spacing.md} ${spacing.lg};
           font-size: ${fontSize.md};
-          height: 2.5rem;
-          min-height: 2.5rem;
+          height: 3rem;
+          min-height: 3rem;
         `;
       }
       return '';
@@ -96,8 +96,8 @@ const StyledInput = styled.input.withConfig({
         return `
           padding: ${spacing.sm} ${spacing.md};
           font-size: ${fontSize.sm};
-          height: 2rem;
-          min-height: 2rem;
+          height: 3rem;
+          min-height: 3rem;
         `;
       }
       return '';

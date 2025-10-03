@@ -54,6 +54,11 @@ interface BookingProviderType {
   isSubmitting: boolean;
   error: string | null;
   success: string | null;
+  // Quote state for secure pricing
+  currentQuote: any | null;
+  setQuote: (q: any | null) => void;
+  submitBookingWithQuote: () => Promise<{ success: boolean; newTotal?: number }>;
+  isQuoteValid: () => boolean;
   
   // Helper functions
   setCurrentBooking: (booking: Booking | null) => void;
@@ -112,12 +117,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     }
   });
 
-  console.log('BookingProvider----------------------------------: formData:', formData);
-  
   const [currentPhase, setCurrentPhase] = useState<BookingPhase>('trip-details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [hasAttemptedValidation, setHasAttemptedValidation] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState<any | null>(null);
 
   // Initialize form data from session storage (for page refresh persistence)
   useEffect(() => {
@@ -363,6 +367,9 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
         break;
         
       case 'payment':
+        if (!currentQuote || !isQuoteValid()) {
+          errors.push('Price quote is missing or expired. Please refresh the quote.');
+        }
         if (!formData.payment.depositAmount) {
           errors.push('Deposit amount is required');
         }
@@ -407,6 +414,58 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Submit booking using current signed quote (secure pricing)
+  const submitBookingWithQuote = async (): Promise<{ success: boolean; newTotal?: number }> => {
+    setIsSubmitting(true);
+    setError(null);
+    setSuccess(null);
+
+    if (!currentQuote) {
+      setIsSubmitting(false);
+      setError('No price quote available. Please get an estimate first.');
+      return { success: false };
+    }
+
+    try {
+      const res = await fetch('/api/booking/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          quote: currentQuote,
+          signature: currentQuote.signature,
+          customer: formData.customer,
+          payment: formData.payment
+        })
+      });
+
+      if (res.status === 409) {
+        const data = await res.json();
+        setError('Price changed. Please review the updated fare.');
+        return { success: false, newTotal: data.newTotal };
+      }
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: 'Failed to submit booking' }));
+        setError(data.error || 'Failed to submit booking');
+        return { success: false };
+      }
+
+      setSuccess('Booking submitted successfully!');
+      return { success: true };
+    } catch (e) {
+      setError('Network error while submitting booking');
+      return { success: false };
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+
+  const isQuoteValid = () => {
+    if (!currentQuote?.expiresAt) return false;
+    return new Date(currentQuote.expiresAt).getTime() > Date.now();
   };
 
   // Reset form
@@ -641,6 +700,10 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     resetForm,
     isSubmitting,
     success,
+    currentQuote,
+    setQuote: setCurrentQuote,
+    submitBookingWithQuote,
+    isQuoteValid,
   };
 
   return (
