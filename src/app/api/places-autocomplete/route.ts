@@ -10,11 +10,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Input is required' }, { status: 400 });
   }
 
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.GOOGLE_MAPS_SERVER_API_KEY;
   if (!apiKey) {
-    console.error('GOOGLE_MAPS_API_KEY not configured');
+    console.error('GOOGLE_MAPS_SERVER_API_KEY not configured');
     return NextResponse.json({ 
-      error: 'Google Maps API key not configured. Please set GOOGLE_MAPS_API_KEY in your environment variables.',
+      error: 'Google Maps API key not configured. Please set GOOGLE_MAPS_SERVER_API_KEY in your environment variables.',
       debug: {
         hasApiKey: !!apiKey,
         envVars: Object.keys(process.env).filter(key => key.includes('GOOGLE'))

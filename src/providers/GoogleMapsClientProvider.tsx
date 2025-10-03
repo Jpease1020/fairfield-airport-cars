@@ -9,7 +9,7 @@ interface GoogleMapsClientProviderProps {
 
 export function GoogleMapsClientProvider({ children }: GoogleMapsClientProviderProps) {
   const [isClient, setIsClient] = useState(false);
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY;
   
   useEffect(() => {
     setIsClient(true);

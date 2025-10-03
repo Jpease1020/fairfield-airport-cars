@@ -16,7 +16,7 @@ export function GoogleMapsProvider({ children }: { children: React.ReactNode }) 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY;
     if (!apiKey) {
       setError('Google Maps API key not configured');
       setIsError(true);

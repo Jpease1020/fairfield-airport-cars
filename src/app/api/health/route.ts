@@ -12,7 +12,7 @@ export async function GET() {
       services: {
         database: 'operational', // Would check actual DB in real implementation
         payments: process.env.SQUARE_ACCESS_TOKEN ? 'configured' : 'not_configured',
-        maps: process.env.NEXT_PUBLIC_GOOGLE_API_KEY ? 'configured' : 'not_configured',
+        maps: process.env.NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY ? 'configured' : 'not_configured',
         sms: process.env.TWILIO_ACCOUNT_SID ? 'configured' : 'not_configured'
       },
       critical_paths: {
