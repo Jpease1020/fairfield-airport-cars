@@ -14,7 +14,7 @@ import {
   Alert,
   LoadingSpinner,
   H1
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface Payment {

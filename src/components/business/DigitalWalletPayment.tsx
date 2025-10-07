@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Container, Stack, Text, Button, Box, Alert, LoadingSpinner } from '@/ui';
+import { Container, Stack, Text, Button, Box, Alert, LoadingSpinner } from '@/design/ui';
 import { getSquareCredentials } from '@/lib/config/environment-config';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { Container, Stack, StatusMessage, Button } from '@/ui';
+import { Container, Stack, StatusMessage, Button } from '@/design/ui';
 import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
 import { LocationInputSection } from './trip-details/LocationInputSection';
@@ -10,7 +10,8 @@ import { DateTimeSection } from './trip-details/DateTimeSection';
 import { EstimatedRideTime } from './trip-details/EstimatedRideTime';
 import { FlightInfoSection } from './trip-details/FlightInfoSection';
 import { FareDisplaySection } from './trip-details/FareDisplaySection';
-import { TripDetails, ValidationResult } from '@/types/booking';
+// Types imported from booking provider context
+import { useBooking } from '@/providers/BookingProvider';
 
 // Styled container that removes padding on mobile
 const TripDetailsContainer = styled(Container)`
@@ -20,20 +21,22 @@ const TripDetailsContainer = styled(Container)`
 `;
 
 interface TripDetailsPhaseProps {
-  tripData: TripDetails;
-  onTripUpdate: (data: Partial<TripDetails>) => void;
-  onNext: () => void;
-  validation: ValidationResult;
   cmsData: any;
 }
 
 export function TripDetailsPhase({
-  tripData,
-  onTripUpdate,
-  onNext,
-  validation,
   cmsData
 }: TripDetailsPhaseProps) {
+  // Get all data from provider - single source of truth
+  const {
+    formData,
+    validation,
+    goToNextPhase,
+    updateTripDetails
+  } = useBooking();
+  
+  // Extract trip data from formData
+  const tripData = formData.trip;
   // Check if trip details are complete for button state
   const isTripDetailsComplete = () => {
     return (
@@ -68,12 +71,8 @@ export function TripDetailsPhase({
     }
   }, [tripData.pickupDateTime, tripData.pickup.address, tripData.dropoff.address, checkAvailability]);
 
-  // Update parent state when calculated fare changes
-  useEffect(() => {
-    if (calculatedFare !== null && calculatedFare !== tripData.fare) {
-      onTripUpdate({ fare: calculatedFare });
-    }
-  }, [calculatedFare]);
+  // No need to update provider - useFareCalculation already calls setFare directly
+  // This eliminates the circular dependency between formData.trip.fare and currentFare
 
   return (
     <TripDetailsContainer maxWidth="7xl" padding="xl" data-testid="trip-details-phase-container">
@@ -84,10 +83,10 @@ export function TripDetailsPhase({
           dropoffLocation={tripData.dropoff.address}
           pickupCoords={tripData.pickup.coordinates}
           dropoffCoords={tripData.dropoff.coordinates}
-          onPickupLocationChange={(address) => onTripUpdate({ pickup: { ...tripData.pickup, address } })}
-          onDropoffLocationChange={(address) => onTripUpdate({ dropoff: { ...tripData.dropoff, address } })}
-          onPickupCoordsChange={(coords) => onTripUpdate({ pickup: { ...tripData.pickup, coordinates: coords } })}
-          onDropoffCoordsChange={(coords) => onTripUpdate({ dropoff: { ...tripData.dropoff, coordinates: coords } })}
+          onPickupLocationChange={(address) => updateTripDetails({ pickup: { ...tripData.pickup, address } })}
+          onDropoffLocationChange={(address) => updateTripDetails({ dropoff: { ...tripData.dropoff, address } })}
+          onPickupCoordsChange={(coords) => updateTripDetails({ pickup: { ...tripData.pickup, coordinates: coords } })}
+          onDropoffCoordsChange={(coords) => updateTripDetails({ dropoff: { ...tripData.dropoff, coordinates: coords } })}
           departureTime={tripData.pickupDateTime}
           cmsData={cmsData}
         />
@@ -96,8 +95,8 @@ export function TripDetailsPhase({
         <DateTimeSection
           pickupDateTime={tripData.pickupDateTime}
           fareType={tripData.fareType}
-          onDateTimeChange={(dateTime) => onTripUpdate({ pickupDateTime: dateTime })}
-          onFareTypeChange={(type) => onTripUpdate({ fareType: type })}
+          onDateTimeChange={(dateTime) => updateTripDetails({ pickupDateTime: dateTime })}
+          onFareTypeChange={(type) => updateTripDetails({ fareType: type })}
           cmsData={cmsData}
         />
 
@@ -107,7 +106,7 @@ export function TripDetailsPhase({
         {/* Flight Information Section */}
         <FlightInfoSection
           flightInfo={tripData.flightInfo}
-          onFlightInfoChange={(info) => onTripUpdate({ flightInfo: info })}
+          onFlightInfoChange={(info) => updateTripDetails({ flightInfo: info })}
           cmsData={cmsData}
         />
 
@@ -153,7 +152,7 @@ export function TripDetailsPhase({
           <Button
             variant="primary"
             size="lg"
-            onClick={onNext}
+            onClick={goToNextPhase}
             disabled={!isTripDetailsComplete()}
             data-testid="trip-details-next-button"
             cmsId="trip-details-next-button"

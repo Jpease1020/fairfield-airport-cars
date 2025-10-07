@@ -12,7 +12,7 @@ import {
   Stack,
   Box,
   Button
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 function CancelPageContent() {

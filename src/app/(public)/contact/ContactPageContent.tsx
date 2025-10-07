@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, Box, H1, Text, Button, Input, Label, Textarea } from '@/ui';
+import { Container, Stack, Box, H1, Text, Button, Input, Label, Textarea } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function ContactPageContent() {

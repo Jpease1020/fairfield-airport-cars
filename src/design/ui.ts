@@ -104,11 +104,6 @@ export { PageHeader } from './page-sections/PageHeader';
 export { BaseNavigation } from './page-sections/nav/BaseNavigation';
 export type { NavigationItem } from './page-sections/nav/BaseNavigation';
 
-// Layer 7: App-Specific Components (depends on base components)
-export { ErrorBoundary } from '../components/business/ErrorBoundary';
-export { LiveTrackingMap } from '../components/business/LiveTrackingMap';
-export { DriverTrackingInterface } from '../components/business/DriverTrackingInterface';
-
 // Layer 7: Providers (depends on base components)
 export { AccessibilityEnhancer } from './providers/AccessibilityEnhancer';
 export { InteractionModeProvider, useInteractionMode, useEditMode } from './providers/InteractionModeProvider';

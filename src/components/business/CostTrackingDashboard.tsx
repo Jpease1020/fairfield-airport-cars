@@ -11,7 +11,7 @@ import {
   Alert,
   GridSection,
   Button
-} from '@/ui';
+} from '@/design/ui';
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
 import { realCostTrackingService, type RealCostItem } from '@/lib/business/real-cost-tracking';

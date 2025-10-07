@@ -12,7 +12,7 @@ import {
   LoadingSpinner,
   Alert,
   H2,
-} from '@/ui';
+} from '@/design/ui';
 import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
 import { useCMSData } from '@/design/providers/CMSDataProvider';      
 

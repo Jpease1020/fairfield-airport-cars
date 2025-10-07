@@ -5,7 +5,7 @@ import { onAuthChange } from '@/lib/services/auth-service';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { User } from 'firebase/auth';
-import { Container } from '@/ui';
+import { Container } from '@/design/ui';
 
 const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
   const WithAuthComponent = (props: P) => {

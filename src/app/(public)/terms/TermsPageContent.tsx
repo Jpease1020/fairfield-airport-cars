@@ -8,7 +8,7 @@ import {
   H1,
   H4,
   Text
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function TermsPageContent() {

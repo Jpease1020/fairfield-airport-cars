@@ -11,8 +11,8 @@ import {
   Badge,
   Grid,
   GridItem
-} from '@/ui';
-import { Link } from '@/ui';
+} from '@/design/ui';
+import { Link } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface BalanceTrackerProps {

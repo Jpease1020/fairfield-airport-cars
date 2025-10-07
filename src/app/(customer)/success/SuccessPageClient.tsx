@@ -11,7 +11,7 @@ import {
   Button,
   Stack,
   // TextComponentChildren,
-} from '@/ui';
+} from '@/design/ui';
 import { Booking } from '@/types/booking';
 
 interface SuccessPageClientProps {

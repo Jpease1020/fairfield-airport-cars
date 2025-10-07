@@ -8,7 +8,7 @@ import {
   Box,
   H1,
   H4
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function PrivacyPageContent() {

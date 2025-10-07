@@ -1,223 +1,182 @@
-// Test setup file for Vitest
-import { vi, expect } from 'vitest';
-import React from 'react';
+/**
+ * Clean Test Setup for RTL-Heavy Testing
+ * 
+ * Optimized for React Testing Library with realistic mocks
+ * and proper provider setup for integration testing.
+ */
 
-// TypeScript declarations for custom matchers
-declare module 'vitest' {
-  interface Assertion<T = any> {
-    toBeInTheDocument(): T;
-    toHaveTextContent(text: string): T;
-    toHaveValue(value: string): T;
-    toHaveAttribute(attribute: string, value?: string): T;
-  }
-}
+import '@testing-library/jest-dom/vitest';
+import { beforeAll, afterEach, afterAll, vi } from 'vitest';
+import { server } from './mocks/server';
 
-// Add DOM matchers for Vitest (replacing jest-dom)
-expect.extend({
-  toBeInTheDocument(received) {
-    const pass = received !== null && received !== undefined;
-    return {
-      pass,
-      message: () => `expected element ${pass ? 'not ' : ''}to be in the document`,
-    };
-  },
-  toHaveTextContent(received, expectedText) {
-    const textContent = received?.textContent || '';
-    const pass = textContent.includes(expectedText);
-    return {
-      pass,
-      message: () => `expected element to have text content "${expectedText}", but got "${textContent}"`,
-    };
-  },
-  toHaveValue(received, expectedValue) {
-    const value = (received as HTMLInputElement)?.value || '';
-    const pass = value === expectedValue;
-    return {
-      pass,
-      message: () => `expected element to have value "${expectedValue}", but got "${value}"`,
-    };
-  },
-  toHaveAttribute(received, attribute, expectedValue) {
-    const element = received as HTMLElement;
-    const hasAttribute = element.hasAttribute(attribute);
-    const actualValue = element.getAttribute(attribute);
-    const pass = hasAttribute && (expectedValue === undefined || actualValue === expectedValue);
-    return {
-      pass,
-      message: () => `expected element to have attribute "${attribute}"${expectedValue ? ` with value "${expectedValue}"` : ''}, but got "${actualValue}"`,
-    };
-  },
-});
-
-// Mock Firebase
-vi.mock('firebase/app', () => ({
-  initializeApp: vi.fn(() => ({})),
-  getApps: vi.fn(() => []),
-}));
-
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  signInWithEmailAndPassword: vi.fn(),
-  signInWithPopup: vi.fn(),
-  signOut: vi.fn(),
-  onAuthStateChanged: vi.fn((auth, callback) => {
-    callback({ user: { email: 'test@example.com' } });
-    return () => {};
-  }),
-  GoogleAuthProvider: vi.fn(() => ({})),
-  // Add missing exports that might be used
-  createUserWithEmailAndPassword: vi.fn(),
-  sendPasswordResetEmail: vi.fn(),
-  updateProfile: vi.fn(),
-  updateEmail: vi.fn(),
-  updatePassword: vi.fn(),
-  deleteUser: vi.fn(),
-  reauthenticateWithCredential: vi.fn(),
-  EmailAuthProvider: vi.fn(() => ({})),
-  PhoneAuthProvider: vi.fn(() => ({})),
-  RecaptchaVerifier: vi.fn(() => ({})),
-}));
-
-vi.mock('firebase/firestore', () => ({
-  getFirestore: vi.fn(() => ({})),
-  collection: vi.fn(),
-  doc: vi.fn(),
-  getDoc: vi.fn(),
-  getDocs: vi.fn(),
-  addDoc: vi.fn(),
-  setDoc: vi.fn(),
-  updateDoc: vi.fn(),
-  deleteDoc: vi.fn(),
-  query: vi.fn(),
-  where: vi.fn(),
-  orderBy: vi.fn(),
-  limit: vi.fn(),
-}));
+// Import test utilities
+import './utils/test-providers';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
+    prefetch: vi.fn(),
     back: vi.fn(),
     forward: vi.fn(),
-    refresh: vi.fn(),
-    prefetch: vi.fn(),
+    refresh: vi.fn()
   }),
   useSearchParams: () => new URLSearchParams(),
-  usePathname: () => '/',
-  useParams: () => ({}),
+  usePathname: () => '/'
 }));
 
-// Prevent Firebase Messaging from initializing in jsdom environment
-vi.mock('firebase/messaging', () => ({
-  getMessaging: vi.fn(() => ({})),
+// Mock Next.js image
+vi.mock('next/image', () => ({
+  default: ({ src, alt, ...props }: any) => {
+    const React = require('react');
+    return React.createElement('img', { src, alt, ...props });
+  }
 }));
 
-// Mock Google Maps
-global.window.google = {
-  maps: {
-    places: {
-      Autocomplete: vi.fn(),
-      AutocompletePrediction: vi.fn(),
-    },
-    DistanceMatrixService: vi.fn(),
-  },
-} as any;
+// Mock Google Maps with realistic behavior
+vi.mock('@vis.gl/react-google-maps', () => ({
+  useMapsLibrary: vi.fn(() => ({
+    Autocomplete: vi.fn().mockImplementation(() => ({
+      addListener: vi.fn(),
+      getPlace: vi.fn(() => ({
+        formatted_address: 'JFK Airport, Queens, NY',
+        geometry: {
+          location: {
+            lat: () => 40.6413,
+            lng: () => -73.7781
+          }
+        }
+      }))
+    }))
+  })),
+  useMap: vi.fn(() => null),
+  APIProvider: ({ children }: { children: React.ReactNode }) => children
+}));
 
-// Mock sessionStorage
-const mockSessionStorage = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
+// Mock Firebase
+vi.mock('firebase/app', () => ({
+  initializeApp: vi.fn(),
+  getApps: vi.fn(() => []),
+  getApp: vi.fn()
+}));
+
+vi.mock('firebase/firestore', () => ({
+  getFirestore: vi.fn(),
+  doc: vi.fn((db, collection, id) => ({ id, collection })),
+  getDoc: vi.fn(() => Promise.resolve({
+    exists: () => true,
+    data: () => ({ id: 'test-quote-id', fare: 95.50 }),
+    id: 'test-quote-id'
+  })),
+  setDoc: vi.fn(() => Promise.resolve()),
+  updateDoc: vi.fn(() => Promise.resolve()),
+  deleteDoc: vi.fn(() => Promise.resolve()),
+  collection: vi.fn((db, name) => ({ id: name, path: name })),
+  query: vi.fn(() => ({})),
+  where: vi.fn(() => ({})),
+  orderBy: vi.fn(() => ({})),
+  limit: vi.fn(() => ({})),
+  getDocs: vi.fn(() => Promise.resolve({
+    docs: [],
+    empty: true,
+    size: 0
+  })),
+  addDoc: vi.fn(() => Promise.resolve({ id: 'new-doc-id' })),
+  serverTimestamp: vi.fn(() => new Date())
+}));
+
+vi.mock('firebase/auth', () => ({
+  getAuth: vi.fn(),
+  onAuthStateChanged: vi.fn((auth, callback) => {
+    // Call callback immediately with null user
+    if (callback) {
+      callback(null);
+    }
+    // Return unsubscribe function
+    return vi.fn();
+  }),
+  signInWithEmailAndPassword: vi.fn(),
+  signOut: vi.fn(),
+  createUserWithEmailAndPassword: vi.fn()
+}));
+
+// Mock storage with realistic behavior
 Object.defineProperty(window, 'sessionStorage', {
-  value: mockSessionStorage,
+  value: {
+    getItem: vi.fn((key: string) => {
+      const store = (global as any).__sessionStorage || {};
+      return store[key] || null;
+    }),
+    setItem: vi.fn((key: string, value: string) => {
+      if (!(global as any).__sessionStorage) {
+        (global as any).__sessionStorage = {};
+      }
+      (global as any).__sessionStorage[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      const store = (global as any).__sessionStorage || {};
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      (global as any).__sessionStorage = {};
+    })
+  },
+  writable: true
 });
 
-// Mock localStorage
-const mockLocalStorage = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
 Object.defineProperty(window, 'localStorage', {
-  value: mockLocalStorage,
+  value: {
+    getItem: vi.fn((key: string) => {
+      const store = (global as any).__localStorage || {};
+      return store[key] || null;
+    }),
+    setItem: vi.fn((key: string, value: string) => {
+      if (!(global as any).__localStorage) {
+        (global as any).__localStorage = {};
+      }
+      (global as any).__localStorage[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      const store = (global as any).__localStorage || {};
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      (global as any).__localStorage = {};
+    })
+  },
+  writable: true
 });
 
-// Mock fetch globally
-global.fetch = vi.fn();
-
-// Mock window.location
-const mockLocation = {
-  href: '',
-  pathname: '/',
-  search: '',
-  hash: '',
-  assign: vi.fn(),
-  replace: vi.fn(),
-  reload: vi.fn(),
-};
-Object.defineProperty(window, 'location', {
-  value: mockLocation,
-  writable: true,
+// Setup MSW for realistic API mocking
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: 'error' });
 });
 
-// Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+afterEach(() => {
+  server.resetHandlers();
+  vi.clearAllMocks();
+  // Clear storage between tests
+  (global as any).__sessionStorage = {};
+  (global as any).__localStorage = {};
+});
 
-// Mock ResizeObserver
+afterAll(() => {
+  server.close();
+});
+
+// Global test utilities
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
-  disconnect: vi.fn(),
+  disconnect: vi.fn()
 }));
 
-// Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
-
-// Mock Next.js Image component
-vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: any) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return React.createElement('img', { src, alt, ...props });
-  },
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn()
 }));
 
-// Mock Next.js Link component
-vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => {
-    return React.createElement('a', { href, ...props }, children);
-  },
-})); 
-
-// Mock our Firebase utils module so hooks can call auth.onAuthStateChanged safely
-vi.mock('@/lib/utils/firebase', () => ({
-  auth: {
-    onAuthStateChanged: (callback: any) => {
-      // Simulate unauthenticated by default
-      callback(null);
-      return () => {};
-    },
-    signOut: vi.fn(),
-  },
-  db: {},
-}));
+// Mock fetch for realistic API testing - REMOVED to let MSW handle it
+// global.fetch = vi.fn();

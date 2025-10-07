@@ -3,7 +3,7 @@ import {
   Container,
   LoadingSpinner,
   Stack,
-} from '@/ui';
+} from '@/design/ui';
 import ForgotPasswordClient from './ForgotPasswordClient';
 
 // Force dynamic rendering to prevent server-side rendering issues

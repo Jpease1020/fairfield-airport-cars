@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Stack, H2, Text, Box } from '@/ui';
+import { Stack, H2, Text, Box } from '@/design/ui';
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
 import { useRouteCalculation } from '@/hooks/useRouteCalculation';
 import { Coordinates } from '@/types/booking';

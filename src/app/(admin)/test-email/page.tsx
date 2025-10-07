@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Container, Stack, Box, Button, Text, H2, StatusMessage, Input } from '@/ui';
+import { Container, Stack, Box, Button, Text, H2, StatusMessage, Input } from '@/design/ui';
 
 export default function TestEmailPage() {
   const [isLoading, setIsLoading] = useState(false);

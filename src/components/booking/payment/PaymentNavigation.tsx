@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack, Button } from '@/ui';
+import { Stack, Button } from '@/design/ui';
 
 interface PaymentNavigationProps {
   onBack: () => void;
@@ -38,7 +38,7 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
         loading={isProcessingPayment}
         data-testid="payment-process-button"
         cmsId="payment-process-button"
-        text={cmsData?.['paymentPhase-processButton'] || 'Process Payment'}
+        text={cmsData?.['paymentPhase-processButton'] || 'Confirm Booking'}
       />
     </Stack>
   );

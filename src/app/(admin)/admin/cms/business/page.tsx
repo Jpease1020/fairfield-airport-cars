@@ -17,7 +17,7 @@ import {
   Box,
   Input,
   Label,
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 function BusinessPageContent() {

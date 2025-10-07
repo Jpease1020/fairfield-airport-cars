@@ -13,9 +13,9 @@ import {
   Form,
   Button,
   ToastProvider
-} from '@/ui';
-import { Input } from '@/ui';
-import { Label } from '@/ui';
+} from '@/design/ui';
+import { Input } from '@/design/ui';
+import { Label } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function ForgotPasswordClient() {

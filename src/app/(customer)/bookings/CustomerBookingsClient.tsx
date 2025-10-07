@@ -16,7 +16,7 @@ import {
   Box,
   H1,
   ContentCard
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface Booking {

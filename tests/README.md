@@ -1,96 +1,103 @@
-# 🧪 Test Suite Guide
+# 🧪 Clean Test Suite Guide
 
 ## **Overview**
 
-This test suite provides comprehensive coverage for the Fairfield Airport Cars application using **Vitest** for unit/integration tests and **Playwright** for E2E tests.
+This test suite provides comprehensive coverage for the Fairfield Airport Cars application using **React Testing Library** for unit/integration tests and **Playwright** for E2E tests.
 
 ## **Test Structure**
 
 ```
 tests/
-├── unit/                          # RTL Unit Tests
-│   ├── page-loading-rtl.test.tsx  # Page loading & user flows
-│   ├── business-flows.test.tsx     # Business logic & API testing
-│   └── msw-test.spec.ts           # API mocking tests
-├── e2e/                           # Playwright E2E Tests
-│   ├── comprehensive-page-loading.test.ts  # All pages + API testing
-│   ├── complete-booking-flow.test.ts       # Booking flow E2E
-│   ├── admin-dashboard.test.ts             # Admin flow E2E
-│   └── payment-flow-critical.spec.ts       # Payment flow E2E
-├── setup.ts                       # Global test setup
-├── msw-setup.ts                   # API mocking setup
-└── README.md                      # This guide
+├── setup.ts                    # Global test setup
+├── mocks/
+│   └── server.ts              # MSW API mocking
+├── unit/                      # Unit tests (RTL + Vitest)
+│   ├── useFareCalculation.test.tsx
+│   ├── booking-provider.test.ts
+│   ├── business-logic.test.ts
+│   └── fare-display-section.test.ts
+├── integration/               # Integration tests (RTL-heavy)
+│   ├── booking-form-flow.test.tsx
+│   └── health/
+│       └── endpoint-health.test.ts
+├── e2e/                      # E2E tests (Playwright)
+│   ├── booking-flows.test.ts
+│   ├── core-business-validation.test.ts
+│   ├── core-user-flows-validation.test.ts
+│   └── hero-quick-booking-form.test.ts
+├── api/                      # API contract tests
+│   └── booking-api-contracts.test.ts
+└── archive/                  # Archived old tests
+    ├── page-level/
+    ├── utils/
+    └── *.test.ts
 ```
 
 ## **Test Philosophy**
 
-### **🎯 Test ID Based**
+### **🎯 RTL-Heavy Approach**
+- **Real Components**: Test with real React components and providers
+- **Real User Behavior**: Test what users actually do
+- **Real State**: Test real state management and data flow
+- **Realistic Mocks**: MSW provides realistic API responses
+
+### **📱 Test ID Based**
 - **No text matching** - All tests use `data-testid` attributes
 - **Stable selectors** - Tests won't break when copy changes
 - **Clear intent** - Test IDs describe what elements do
 
-### **🔧 Vitest Only**
-- **No Jest dependencies** - Pure Vitest framework
-- **Native matchers** - `toBeDefined()`, `toBe(true)`, etc.
-- **Fast execution** - Optimized for speed
-
-### **📱 Real User Flows**
-- **Page loading** - Every page loads correctly
-- **API handling** - Graceful error handling
-- **User journeys** - Complete booking/admin flows
-
 ## **Running Tests**
+
+### **All Tests**
+```bash
+npm test
+```
 
 ### **Unit Tests (RTL)**
 ```bash
-# Run all unit tests
 npm run test:unit
-
-# Run specific test file
-npm run test:rtl
-
-# Run with coverage
 npm run test:unit -- --coverage
+```
+
+### **Integration Tests (RTL)**
+```bash
+npm run test:integration
+npm run test:integration -- --coverage
 ```
 
 ### **E2E Tests (Playwright)**
 ```bash
-# Run all E2E tests
 npm run test:e2e
-
-# Run page loading tests
-npm run test:e2e:pages
-
-# Run specific test file
-npx playwright test tests/e2e/comprehensive-page-loading.test.ts
 ```
 
-### **API Mocking Tests**
+### **API Tests**
 ```bash
-# Run MSW tests
-npm run test:msw
+npm run test:api
 ```
 
 ## **Test Coverage**
 
 ### **✅ Unit Tests (RTL)**
-- **Page Loading**: All pages render correctly
-- **User Flows**: Booking, admin, help pages
-- **API Handling**: Error states, loading states
-- **Accessibility**: Alt text, heading structure
-- **Form Validation**: Input validation, disabled states
+- **Hooks**: `useFareCalculation`, `useBooking` with RTL
+- **Components**: Individual components with RTL
+- **Business Logic**: Pure functions with Vitest
+- **Provider State**: Real state management testing
+
+### **✅ Integration Tests (RTL)**
+- **Form Flows**: Full forms with providers
+- **Provider Integration**: Context + components
+- **User Journeys**: Multi-step flows
+- **State Management**: Real state transitions
 
 ### **✅ E2E Tests (Playwright)**
-- **Page Coverage**: Every route loads
-- **API Integration**: Real API calls work
-- **User Journeys**: Complete booking flow
-- **Error Handling**: Network failures, API errors
-- **Mobile Testing**: Responsive design
+- **Complete Flows**: Homepage → Booking → Confirmation
+- **Cross-browser**: Real browser testing
+- **Performance**: Real network conditions
 
 ### **✅ API Tests**
-- **MSW Mocking**: API response simulation
-- **Error Scenarios**: 500 errors, timeouts
-- **Success Cases**: Normal API responses
+- **Contract Testing**: API endpoints with real data
+- **Business Logic**: Pricing, validation, calculations
+- **Error Handling**: API failures and edge cases
 
 ## **Adding New Tests**
 
@@ -99,10 +106,32 @@ npm run test:msw
 import { render, screen } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 
-describe('New Feature', () => {
+describe('New Component', () => {
   test('should work correctly', () => {
     render(<NewComponent />);
-    expect(screen.getByTestId('new-element')).toBeDefined();
+    expect(screen.getByTestId('new-element')).toBeInTheDocument();
+  });
+});
+```
+
+### **Integration Test Example**
+```typescript
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BookingProvider } from '@/providers/BookingProvider';
+
+test('user can complete booking flow', async () => {
+  render(
+    <BookingProvider>
+      <BookingForm />
+    </BookingProvider>
+  );
+  
+  fireEvent.change(screen.getByLabelText('Pickup Location'), {
+    target: { value: 'Fairfield Station' }
+  });
+  
+  await waitFor(() => {
+    expect(screen.getByText(/\$\d+/)).toBeInTheDocument();
   });
 });
 ```
@@ -111,32 +140,11 @@ describe('New Feature', () => {
 ```typescript
 import { test, expect } from '@playwright/test';
 
-test('new feature works end-to-end', async ({ page }) => {
-  await page.goto('/new-feature');
-  await expect(page.getByTestId('new-element')).toBeVisible();
+test('booking flow works end-to-end', async ({ page }) => {
+  await page.goto('/');
+  await page.fill('[data-testid="pickup-location"]', 'Fairfield Station');
+  await expect(page.getByTestId('fare-display')).toBeVisible();
 });
-```
-
-## **Test Data**
-
-### **Test IDs Required**
-All interactive elements must have `data-testid` attributes:
-
-```tsx
-<button data-testid="submit-button">Submit</button>
-<form data-testid="booking-form">...</form>
-<div data-testid="main-content">...</div>
-```
-
-### **API Mocking**
-Use MSW for API mocking:
-
-```typescript
-server.use(
-  http.get('/api/endpoint', () => {
-    return HttpResponse.json({ data: 'test' });
-  })
-);
 ```
 
 ## **Best Practices**
@@ -144,9 +152,9 @@ server.use(
 ### **✅ Do**
 - Use `data-testid` for element selection
 - Test user behavior, not implementation
-- Mock external dependencies
-- Test error scenarios
-- Keep tests focused and fast
+- Use RTL for component and integration tests
+- Test real user scenarios
+- Mock external dependencies appropriately
 
 ### **❌ Don't**
 - Use text matching for element selection
@@ -157,13 +165,13 @@ server.use(
 
 ## **Debugging Tests**
 
-### **Unit Tests**
+### **Unit/Integration Tests**
 ```bash
 # Run with verbose output
 npm run test:unit -- --reporter=verbose
 
-# Run single test
-npm run test:unit -- --run tests/unit/page-loading-rtl.test.tsx
+# Run single test file
+npm run test:unit -- tests/unit/useFareCalculation.test.tsx
 ```
 
 ### **E2E Tests**
@@ -175,34 +183,8 @@ npx playwright test --headed
 npx playwright test --debug
 ```
 
-## **Performance**
-
-### **Unit Tests**
-- **Memory**: 8GB heap limit
-- **Speed**: ~30 seconds for full suite
-- **Parallel**: Fork-based execution
-
-### **E2E Tests**
-- **Browsers**: Chromium, Firefox, WebKit
-- **Mobile**: Mobile Chrome, Mobile Safari
-- **Speed**: ~2 minutes for full suite
-
-## **Maintenance**
-
-### **Regular Tasks**
-- Update test IDs when UI changes
-- Refresh API mocks for new endpoints
-- Review test coverage quarterly
-- Update dependencies monthly
-
-### **Monitoring**
-- Test execution time
-- Coverage percentages
-- Flaky test detection
-- Performance regression
-
 ---
 
-**Last Updated**: January 2025
-**Test Framework**: Vitest + Playwright
-**Coverage Target**: 100% page + flow coverage 
+**Last Updated**: January 2025  
+**Test Framework**: Vitest + React Testing Library + Playwright  
+**Coverage Target**: 80% critical path coverage

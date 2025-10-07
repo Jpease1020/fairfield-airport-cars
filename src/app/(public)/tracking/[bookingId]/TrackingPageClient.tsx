@@ -13,7 +13,7 @@ import {
   GridSection,
   H1,
   H2
-} from '@/ui';
+} from '@/design/ui';
 import { TrackingMap } from '@/components/business/TrackingMap';
 import { TrafficETA } from '@/components/business/TrafficETA';
 import { getBooking } from '@/lib/services/booking-service';

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Text, Box, Button, LoadingSpinner, Alert } from '@/ui';
+import { Container, Stack, Text, Box, Button, LoadingSpinner, Alert } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 

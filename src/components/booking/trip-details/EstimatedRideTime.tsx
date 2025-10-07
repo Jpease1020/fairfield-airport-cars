@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack, Text, Box } from '@/ui';
+import { Stack, Text, Box } from '@/design/ui';
 import { useBooking } from '@/providers/BookingProvider';
 
 interface EstimatedRideTimeProps {

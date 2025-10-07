@@ -16,7 +16,7 @@ import {
   ActionButtonGroup,
   useToast,
   Span
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 // Simple driver ID constant for single-driver setup

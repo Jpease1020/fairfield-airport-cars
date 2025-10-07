@@ -10,7 +10,7 @@ import {
   LoadingSpinner,
   Alert,
   Link
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 function DriverTrackingPageContent() {

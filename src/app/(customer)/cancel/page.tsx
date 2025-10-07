@@ -4,7 +4,7 @@ import {
   LoadingSpinner,
   Container,
   Stack,
-} from '@/ui';
+} from '@/design/ui';
 import CancelPageClient from './CancelPageClient';
 
 // Enable ISR for dynamic content updates

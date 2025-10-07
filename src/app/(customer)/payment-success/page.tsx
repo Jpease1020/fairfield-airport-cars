@@ -3,7 +3,7 @@ import {
   Container,
   LoadingSpinner,
   Stack,
-} from '@/ui';
+} from '@/design/ui';
 import PaymentSuccessClient from './PaymentSuccessClient';
 
 // Enable ISR for dynamic content updates

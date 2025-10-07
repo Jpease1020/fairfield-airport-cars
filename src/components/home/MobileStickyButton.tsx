@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Button } from '@/ui';
+import { Button } from '@/design/ui';
 import styled from 'styled-components';
 
 const StickyButtonContainer = styled.div`

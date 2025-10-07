@@ -10,7 +10,7 @@ import {
   Badge,
   LoadingSpinner,
   GridSection
-} from '@/ui';
+} from '@/design/ui';
 import { DriverLocationTracker } from '@/components/business/DriverLocationTracker';
 import { driverLocationService, type DriverLocation, type DriverStatus } from '@/lib/services/driver-location-service';
 import { useAuth } from '@/hooks/useAuth';

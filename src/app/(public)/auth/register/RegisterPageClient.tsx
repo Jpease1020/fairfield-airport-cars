@@ -17,7 +17,7 @@ import {
   Input,
   Label,
   spacing,
-} from '@/ui';
+} from '@/design/ui';
 import styled from 'styled-components';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 

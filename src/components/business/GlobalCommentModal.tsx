@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Container, H4, Stack, Button, Textarea } from '@/ui';
+import { Container, H4, Stack, Button, Textarea } from '@/design/ui';
 import { X } from 'lucide-react';
 import { commentsService, type CommentRecord, type CommentScope } from '@/lib/business/comments-service';
 import { useAuth } from '@/hooks/useAuth';

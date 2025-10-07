@@ -10,7 +10,7 @@ import {
   H1, 
   Button, 
   LoadingSpinner,
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function PaymentSuccessClient() {  

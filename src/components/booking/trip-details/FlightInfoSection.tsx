@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Stack, H2, Text, Input, Box } from '@/ui';
+import { Stack, H2, Text, Input, Box } from '@/design/ui';
 import { FlightInfo } from '@/types/booking';
 import { colors } from '@/design/system/tokens/tokens';
 

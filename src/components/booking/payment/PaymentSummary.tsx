@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack, Box, Text, H2 } from '@/ui';
+import { Stack, Box, Text, H2 } from '@/design/ui';
 import styled from 'styled-components';
 
 const StrikethroughText = styled(Text)`

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { StatusMessage, ToastProvider, Container, Stack, Form } from '@/ui';
+import { StatusMessage, ToastProvider, Container, Stack, Form } from '@/design/ui';
 import { BookingFormPhases } from '@/components/booking/BookingFormPhases';
 import { useBooking } from '@/providers/BookingProvider';
 

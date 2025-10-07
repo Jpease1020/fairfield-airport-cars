@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
-import { Container, Stack, Button, Text, Badge } from '@/ui';
+import { Container, Stack, Button, Text, Badge } from '@/design/ui';
 
 interface NotificationManagerProps {
   showSettings?: boolean;

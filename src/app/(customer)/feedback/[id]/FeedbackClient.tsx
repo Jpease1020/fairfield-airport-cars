@@ -15,9 +15,9 @@ import {
   Label,
   Textarea,
   Box
-} from '@/ui';
+} from '@/design/ui';
 import { Star } from 'lucide-react';
-import { colors } from '@/ui';
+import { colors } from '@/design/ui';
 
 interface FeedbackClientProps {
   bookingId: string;

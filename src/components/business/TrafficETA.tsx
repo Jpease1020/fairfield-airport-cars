@@ -9,7 +9,7 @@ import {
   Badge,
   LoadingSpinner,
   Alert
-} from '@/ui';
+} from '@/design/ui';
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
 import { firebaseTrackingService, type ETACalculation } from '@/lib/services/firebase-tracking-service';

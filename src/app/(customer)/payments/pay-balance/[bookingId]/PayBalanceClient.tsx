@@ -11,7 +11,7 @@ import {
   Text,
   Button,
   LoadingSpinner
-} from '@/ui';
+} from '@/design/ui';
 import { SquarePaymentForm } from '@/components/business/SquarePaymentForm';
 
 interface BookingDetails {

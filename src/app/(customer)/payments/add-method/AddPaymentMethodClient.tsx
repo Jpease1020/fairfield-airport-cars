@@ -20,7 +20,7 @@ import {
   GridItem,
   Select,
   GridSection
-} from '@/ui';  
+} from '@/design/ui';  
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function AddPaymentMethodClient() {

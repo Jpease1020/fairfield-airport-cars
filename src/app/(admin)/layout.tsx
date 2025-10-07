@@ -9,7 +9,7 @@ import { onAuthChange } from '@/lib/services/auth-service';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/utils/firebase';
 import { User } from 'firebase/auth';
-import { Container } from '@/ui';
+import { Container } from '@/design/ui';
 
 export default function AdminLayout({
   children,
