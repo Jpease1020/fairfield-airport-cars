@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack } from '@/ui';
-import { H1, Text } from '@/ui';
+import { Container, Stack } from '@/design/ui';
+import { H1, Text } from '@/design/ui';
 import { HeroCompactBookingForm } from '@/design/components/content-sections/HeroCompactBookingForm';
 import styled from 'styled-components';
 

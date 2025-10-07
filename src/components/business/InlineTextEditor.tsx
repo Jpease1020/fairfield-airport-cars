@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Container, Stack, Textarea } from '@/ui';
+import { Button, Container, Stack, Textarea } from '@/design/ui';
 
 const FloatingEditorBox = styled.div<{ $top: number; $left: number }>`
   position: fixed;

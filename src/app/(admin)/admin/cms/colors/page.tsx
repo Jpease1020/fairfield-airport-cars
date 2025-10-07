@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Span, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/ui';
+import { Container, Span, GridSection, Stack, Button, Input, ToastProvider, useToast, StatusMessage } from '@/design/ui';
 
 const COLOR_VARIABLES = [
   { key: '--primary', label: 'Primary', description: 'Main brand color for buttons and links' },

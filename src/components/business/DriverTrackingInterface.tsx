@@ -12,7 +12,7 @@ import {
   Card,
   Grid,
   GridItem
-} from '@/ui';
+} from '@/design/ui';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 

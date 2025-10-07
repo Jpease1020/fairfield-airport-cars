@@ -4,7 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { CustomerNavigation } from './CustomerNavigation';
 import { AdminNavigation } from './AdminNavigation';
-import { Container } from '@/ui';
+import { Container } from '@/design/ui';
 
 export function NavigationManager() {
   const pathname = usePathname();

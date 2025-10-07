@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Box } from '@/ui';
+import { Container, Stack, Box } from '@/design/ui';
 import { H1, Text, Button } from '@/design/components/base-components/Components';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import Link from 'next/link';

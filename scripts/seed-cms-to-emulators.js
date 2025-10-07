@@ -3,12 +3,51 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { cleanCMSData } from '../src/lib/utils/cms-cleanup.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 console.log('🌱 SEEDING CMS DATA TO FIREBASE EMULATORS\n');
+
+// CMS Data Cleanup Utilities (inlined to avoid TypeScript dependency)
+const MALFORMED_PATTERNS = [
+  /^\[LABEL\]/,                    // "[LABEL] form name label *"
+  /^\[.*\]/,                       // Any string starting with [brackets]
+  /^[A-Z\s]+\*$/,                  // "FORM NAME LABEL *"
+  /^[A-Z\s]+label\s*\*$/,          // "FORM NAME LABEL *"
+  /^[A-Z\s]+label$/,               // "FORM NAME LABEL"
+  /^[A-Z\s]+\s+\*$/,               // "FORM NAME *"
+  /^[A-Z\s]+[A-Z]+\s+\*$/,         // "FORM NAME LABEL *"
+  /^[A-Z\s]+[a-z]+\s+\*$/,         // "FORM NAME label *"
+];
+
+function isMalformedCMSString(value) {
+  if (typeof value !== 'string') return false;
+  return MALFORMED_PATTERNS.some(pattern => pattern.test(value));
+}
+
+function cleanCMSData(data) {
+  if (!data || typeof data !== 'object') return data;
+  
+  const cleaned = {};
+  
+  for (const [key, value] of Object.entries(data)) {
+    if (isMalformedCMSString(value)) {
+      // Skip malformed strings - they shouldn't be in the database
+      console.warn(`Removing malformed CMS string for key "${key}":`, value);
+      continue;
+    }
+    
+    if (typeof value === 'object' && value !== null) {
+      // Recursively clean nested objects
+      cleaned[key] = cleanCMSData(value);
+    } else {
+      cleaned[key] = value;
+    }
+  }
+  
+  return cleaned;
+}
 
 // Set emulator host to match firebase.json configuration
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8081';

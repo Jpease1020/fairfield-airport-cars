@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react'; 
-import { GridSection, Box, Container, Text, Stack, H3 } from '@/ui';
+import { GridSection, Box, Container, Text, Stack, H3 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function AdminHelpClient() {

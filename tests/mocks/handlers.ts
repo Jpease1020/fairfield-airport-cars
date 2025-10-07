@@ -103,10 +103,66 @@ export const handlers = [
 
   http.post('/api/booking/estimate-fare', async ({ request }) => {
     const body = await request.json() as any;
+    
+    // Calculate fare based on fare type and route
+    let baseFare = 95.50; // Default fare
+    
+    // Route-specific fares
+    if (body?.dropoffLocation?.includes('LaGuardia') || body?.dropoffLocation?.includes('LGA')) {
+      baseFare = 78.25; // Stamford to LGA
+    } else if (body?.pickupLocation?.includes('Fairfield') && body?.dropoffLocation?.includes('JFK')) {
+      baseFare = 95.50; // Fairfield to JFK
+    }
+    
+    // Apply business multiplier (35% increase)
+    const fare = body?.fareType === 'business' ? baseFare * 1.35 : baseFare;
+    
     return HttpResponse.json({
-      fare: 150,
+      quoteId: `quote_${Date.now()}`,
+      fare: Math.round(fare * 100) / 100,
+      distanceMiles: 42.3,
+      durationMinutes: 58,
+      fareType: body?.fareType || 'personal',
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      expiresInMinutes: 15,
       distance: '45 miles',
       duration: '1 hour 15 minutes'
+    });
+  }),
+
+  // Quote endpoint (same logic as estimate-fare)
+  http.post('/api/booking/quote', async ({ request }) => {
+    const body = await request.json() as any;
+    
+    // Calculate fare based on fare type and route
+    let baseFare = 95.50; // Default fare
+    
+    // Route-specific fares - check destination
+    const destination = body?.destination || body?.dropoffLocation || '';
+    const origin = body?.origin || body?.pickupLocation || '';
+    const fareType = body?.fareType || 'personal';
+    
+    console.log('MSW Quote Handler:', { origin, destination, fareType });
+    
+    if (destination.includes('LaGuardia') || destination.includes('LGA')) {
+      baseFare = 78.25; // Stamford to LGA
+    } else if (origin.includes('Fairfield') && destination.includes('JFK')) {
+      baseFare = 95.50; // Fairfield to JFK
+    }
+    
+    // Apply business multiplier (35% increase)
+    const fare = fareType === 'business' ? baseFare * 1.35 : baseFare;
+    
+    console.log('MSW Quote Result:', { baseFare, fareType, fare });
+    
+    return HttpResponse.json({
+      quoteId: `quote_${Date.now()}`,
+      fare: Math.round(fare * 100) / 100,
+      distanceMiles: 42.3,
+      durationMinutes: 58,
+      fareType,
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      expiresInMinutes: 15
     });
   }),
 

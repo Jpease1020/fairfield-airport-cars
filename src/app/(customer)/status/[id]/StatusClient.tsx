@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider, H1, H2, Stack, Box } from '@/ui';
+import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider, H1, H2, Stack, Box } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface StatusClientProps {

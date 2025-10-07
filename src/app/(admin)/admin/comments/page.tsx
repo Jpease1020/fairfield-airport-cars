@@ -4,7 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Stack, Button, H2, H3, H4, Span, Input, Select } from '@/ui';
+import { Container, Stack, Button, H2, H3, H4, Span, Input, Select } from '@/design/ui';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
 import { commentExportService, type CommentExportOptions } from '@/lib/business/comment-export-service';
 import { useCMSData } from '@/design/providers/CMSDataProvider';

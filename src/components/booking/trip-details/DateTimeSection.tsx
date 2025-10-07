@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Stack, H2, Text, Input, Select, Box } from '@/ui';
+import { Stack, H2, Text, Input, Select, Box } from '@/design/ui';
 import { colors } from '@/design/system/tokens/tokens';
 
 // Custom styled component for darker grey background

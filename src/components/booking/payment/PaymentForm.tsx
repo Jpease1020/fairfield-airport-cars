@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Stack, H2, Text, StatusMessage } from '@/ui';
+import { Box, Stack, H2, Text, StatusMessage } from '@/design/ui';
 import { SquarePaymentForm } from '@/components/business/SquarePaymentForm';
 
 interface PaymentFormProps {

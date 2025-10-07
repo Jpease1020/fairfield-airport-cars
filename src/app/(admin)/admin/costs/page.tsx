@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Stack, Text, Button, Box, Alert, LoadingSpinner } from '@/ui';
+import { Container, Stack, Text, Button, Box, Alert, LoadingSpinner } from '@/design/ui';
 import { CostTrackingDashboard } from '@/components/business/CostTrackingDashboard';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
 

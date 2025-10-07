@@ -1,5 +1,6 @@
 import '@/design/globals.css';
-import { ErrorBoundary, StyledComponentsRegistry, AccessibilityEnhancer } from '@/ui';  
+import { StyledComponentsRegistry, AccessibilityEnhancer } from '@/design/ui';
+import { ErrorBoundary } from '@/components/business/ErrorBoundary';  
 import { AdminProvider } from '@/design/providers/AdminProvider';
 import { InteractionModeProvider } from '@/design/providers/InteractionModeProvider';
 import { Suspense } from 'react';

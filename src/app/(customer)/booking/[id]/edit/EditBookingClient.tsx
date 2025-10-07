@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast } from '@/ui';
+import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast } from '@/design/ui';
 import { getBooking } from '@/lib/services/booking-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { Booking } from '@/types/booking';

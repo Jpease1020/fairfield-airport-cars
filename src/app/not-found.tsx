@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Stack, Text, Button } from '@/ui';
+import { Container, Stack, Text, Button } from '@/design/ui';
 import Link from 'next/link';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 

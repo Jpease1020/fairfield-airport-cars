@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack, Col, Box, Text, H2 } from '@/ui';
+import { Stack, Col, Box, Text, H2 } from '@/design/ui';
 import Image from 'next/image';
 import styled from 'styled-components';
 

@@ -10,7 +10,7 @@ import {
   H2,
   Text,
   Button
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import Link from 'next/link';
 import { colors } from '@/design/system/tokens/tokens';

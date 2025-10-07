@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack } from '@/ui';
+import { Container, Stack } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { HeroSection } from '@/components/home/HeroSection';
 import { FeaturesSection } from '@/components/home/FeaturesSection';

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Stack, Box, Text, H3, StatusMessage } from '@/ui';
+import { Stack, Box, Text, H3, StatusMessage } from '@/design/ui';
 
 interface FareDisplaySectionProps {
   fare: number | null;
@@ -75,10 +75,16 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
           </Text>
         </Stack>
         
-        <Text size="sm" color="secondary">
-          {cmsData?.['tripDetailsPhase-fareNote'] || 'Final fare may vary based on traffic and route conditions.'}
-        </Text>
+        {/* Countdown for quote validity if available */}
+        <CountdownRow />
       </Stack>
     </Box>
   );
+};
+
+// Local component to access provider without altering main props
+const CountdownRow: React.FC = () => {
+  // Note: Quote countdown removed since we simplified to currentFare only
+  // If you want countdown functionality, we'd need to add it back to the API response
+  return null;
 };

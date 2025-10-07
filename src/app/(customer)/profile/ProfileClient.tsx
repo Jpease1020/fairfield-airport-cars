@@ -17,7 +17,7 @@ import {
   H1,
   ContentCard,
   GridSection
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 export default function ProfileClient() {

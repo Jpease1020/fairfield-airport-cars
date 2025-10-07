@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Stack, Text, Button } from '@/ui';
+import { Box, Stack, Text, Button } from '@/design/ui';
 
 interface BookingSuccessConfirmationProps {
   pickupLocation: string;

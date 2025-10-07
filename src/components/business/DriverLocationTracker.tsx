@@ -11,7 +11,7 @@ import {
   Badge,
   LoadingSpinner,
   GridSection
-} from '@/ui';
+} from '@/design/ui';
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
 import { driverLocationService, type DriverLocation, type DriverStatus } from '@/lib/services/driver-location-service';

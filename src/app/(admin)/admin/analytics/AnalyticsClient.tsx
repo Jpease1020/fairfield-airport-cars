@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, H2, Text, Span } from '@/ui';
+import { Container, H2, Text, Span } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
-import { Stack } from '@/ui';
-import { Button } from '@/ui';
-import { Box } from '@/ui';
+import { Stack } from '@/design/ui';
+import { Button } from '@/design/ui';
+import { Box } from '@/design/ui';
 
 interface AnalyticsData {
   totalInteractions: number;

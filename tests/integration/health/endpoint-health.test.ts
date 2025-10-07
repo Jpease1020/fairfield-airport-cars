@@ -2,9 +2,6 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { server } from '../../mocks/server';
 import { handlers } from '../../mocks/handlers';
 
-// Import MSW setup
-import '../../msw-setup';
-
 describe('API Endpoint Health Check', () => {
   beforeEach(() => {
     // Reset handlers to default state

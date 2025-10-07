@@ -3,7 +3,7 @@ import {
   Container,
   LoadingSpinner,
   Stack,
-} from '@/ui';
+} from '@/design/ui';
 import AddPaymentMethodClient from './AddPaymentMethodClient';
 
 // Main page component (Server Component)

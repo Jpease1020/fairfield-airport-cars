@@ -1,42 +1,50 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, StatusMessage } from '@/ui';
+import { Container, Stack, StatusMessage, Box } from '@/design/ui';
 import { PaymentSummary } from './payment/PaymentSummary';
 import { PaymentForm } from './payment/PaymentForm';
 import { PaymentNavigation } from './payment/PaymentNavigation';
 import { TipCalculator } from '@/components/business/TipCalculator';
-import { TripDetails, CustomerInfo, PaymentInfo } from '@/types/booking';
+// Types imported from booking provider context
 import { useBooking } from '@/providers/BookingProvider';
-import { Button, Text } from '@/ui';
+import { Button, Text } from '@/design/ui';
+import styled from 'styled-components';
+
+const DisabledFormWrapper = styled(Box)`
+  opacity: 0.5;
+  pointer-events: none;
+`;
 
 interface PaymentPhaseProps {
-  tripData: TripDetails;
-  customerData: CustomerInfo;
-  paymentData: PaymentInfo;
-  onPaymentUpdate: (data: Partial<PaymentInfo>) => void;
-  onBack: () => void;
-  isProcessing: boolean;
-  error: string | null;
-  success: string | null;
   cmsData: any;
 }
 
 export function PaymentPhase({
-  tripData,
-  customerData,
-  paymentData,
-  onPaymentUpdate,
-  onBack,
-  isProcessing,
-  error,
-  success,
   cmsData
 }: PaymentPhaseProps) {
-  const { submitBookingWithQuote, currentQuote, isQuoteValid, setQuote } = useBooking();
+  // Get all data from provider - single source of truth
+  const { 
+    formData,
+    isSubmitting,
+    error,
+    success,
+    submitBooking, 
+    currentFare, 
+    setFare,
+    goToPreviousPhase,
+    updatePaymentInfo,
+    currentQuote
+  } = useBooking();
+  
+  // Extract data from formData
+  const tripData = formData.trip;
+  const customerData = formData.customer;
+  const paymentData = formData.payment;
   const [isRefreshingQuote, setIsRefreshingQuote] = React.useState(false);
   const getTotalWithTip = () => (tripData.fare || 0) + paymentData.tipAmount;
-  const canProcessPayment = !isProcessing && isQuoteValid();
+  const isQuoteValid = currentQuote && currentQuote.expiresAt > new Date();
+  const canProcessPayment = !isSubmitting && currentFare !== null && !!isQuoteValid;
 
   return (
     <Container maxWidth="7xl" padding="xl" data-testid="payment-phase-container">
@@ -76,46 +84,57 @@ export function PaymentPhase({
           baseAmount={tripData.fare || 0}
           initialTipPercentage={paymentData.tipPercent}
           onTipChange={(amount, percent) => {
-            onPaymentUpdate({ tipAmount: amount, tipPercent: percent });
+            updatePaymentInfo({ tipAmount: amount, tipPercent: percent });
           }}
           cmsData={cmsData}
         />
 
-        <PaymentForm
-          showPaymentForm={true}
-          totalAmount={getTotalWithTip()}
-          bookingData={{
-            name: customerData.name,
-            email: customerData.email,
-            phone: customerData.phone,
-            pickupLocation: tripData.pickup.address,
-            dropoffLocation: tripData.dropoff.address,
-            pickupDateTime: tripData.pickupDateTime,
-            fare: tripData.fare,
-            flightNumber: tripData.flightInfo?.flightNumber || '',
-            notes: customerData.notes,
-            tipAmount: paymentData.tipAmount,
-            totalAmount: getTotalWithTip(),
-            flightInfo: tripData.flightInfo,
-            fareType: tripData.fareType,
-            saveInfoForFuture: customerData.saveInfoForFuture,
-          }}
-          isProcessingPayment={isProcessing}
-          paymentError={error}
-          onPaymentSuccess={(result: any) => {
-            // Handle success - this would be managed by the parent component
-          }}
-          onPaymentError={(error: string) => {
-            console.error('Payment error:', error);
-            // Handle error - this would be managed by the parent component
-          }}
-          onPaymentReady={(processPayment: () => Promise<void>) => {
-            // Handle payment ready - this would be managed by the parent component
-          }}
-          cmsData={cmsData}
-        />
+        {/* No Deposit Required Promo - Above Payment Form */}
+        <Container variant="card" padding="xl" data-testid="no-deposit-promo">
+          <Stack spacing="lg" align="center">
+            <Text size="xl" weight="bold" color="primary" cmsId="no-deposit-title">
+              🎉 Limited Time Offer!
+            </Text>
+            <Text size="lg" weight="bold" color="success" cmsId="no-deposit-message">
+              No Deposit Required - Book Now!
+            </Text>
+            <Text size="md" color="secondary" align="center" cmsId="no-deposit-description">
+              Complete your booking without any upfront payment. Payment will be collected after your ride.
+            </Text>
+          </Stack>
+        </Container>
 
-        {!isQuoteValid() && (
+        {/* Payment Form - Greyed Out (for visual context) */}
+        <DisabledFormWrapper>
+          <PaymentForm
+            showPaymentForm={true}
+            totalAmount={getTotalWithTip()}
+            bookingData={{
+              name: customerData.name,
+              email: customerData.email,
+              phone: customerData.phone,
+              pickupLocation: tripData.pickup.address,
+              dropoffLocation: tripData.dropoff.address,
+              pickupDateTime: tripData.pickupDateTime,
+              fare: tripData.fare,
+              flightNumber: tripData.flightInfo?.flightNumber || '',
+              notes: customerData.notes,
+              tipAmount: paymentData.tipAmount,
+              totalAmount: getTotalWithTip(),
+              flightInfo: tripData.flightInfo,
+              fareType: tripData.fareType,
+              saveInfoForFuture: customerData.saveInfoForFuture,
+            }}
+            isProcessingPayment={false}
+            paymentError={null}
+            onPaymentSuccess={() => {}}
+            onPaymentError={() => {}}
+            onPaymentReady={() => {}}
+            cmsData={cmsData}
+          />
+        </DisabledFormWrapper>
+
+        {!currentFare && (
           <Stack spacing="md" align="center">
             <Text color="warning" cmsId="paymentPhase-expiredQuote">Price quote expired. Please refresh to continue.</Text>
             <Button
@@ -139,7 +158,7 @@ export function PaymentPhase({
                   });
                   if (res.ok) {
                     const data = await res.json();
-                    setQuote(data);
+                    setFare(data.fare);
                   }
                 } catch (error) {
                   console.error('Quote refresh error:', error);
@@ -157,11 +176,11 @@ export function PaymentPhase({
         )}
 
         <PaymentNavigation
-          onBack={onBack}
+          onBack={goToPreviousPhase}
           onProcessPayment={async () => {
-            await submitBookingWithQuote();
+            await submitBooking();
           }}
-          isProcessingPayment={isProcessing}
+          isProcessingPayment={isSubmitting}
           canProcessPayment={canProcessPayment}
           cmsData={cmsData}
         />

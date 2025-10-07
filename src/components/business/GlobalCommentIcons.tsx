@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Button, Span, Text, Drawer, Select, Textarea, Modal } from '@/ui';
+import { Container, Stack, Button, Span, Text, Drawer, Select, Textarea, Modal } from '@/design/ui';
 import { ChevronRight, AlertTriangle, X, MessageSquare, Edit, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { commentsService, type CommentRecord } from '@/lib/business/comments-service';
 

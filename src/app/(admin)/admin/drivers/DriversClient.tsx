@@ -12,7 +12,7 @@ import {
   Alert,
   LoadingSpinner,
   GridSection
-} from '@/ui';
+} from '@/design/ui';
 import { useAdmin } from '@/design/providers/AdminProvider';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 

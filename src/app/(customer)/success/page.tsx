@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import SuccessPageClient from './SuccessPageClient';
-import { LoadingSpinner, Container, Stack, Text } from '@/ui';
+import { LoadingSpinner, Container, Stack, Text } from '@/design/ui';
 
 // Main page component
 export default function SuccessPage() {

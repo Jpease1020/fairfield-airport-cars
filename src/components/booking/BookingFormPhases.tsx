@@ -34,10 +34,6 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
       {/* Phase 1: Trip Details */}
       {currentPhase === 'trip-details' && (
         <TripDetailsPhase
-          tripData={trip}
-          onTripUpdate={updateTripDetails}
-          onNext={goToNextPhase}
-          validation={validation}
           cmsData={cmsData}
         />
       )}
@@ -57,14 +53,6 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
       {/* Phase 3: Payment */}
       {currentPhase === 'payment' && (
         <PaymentPhase
-          tripData={trip}
-          customerData={customer}
-          paymentData={payment}
-          onPaymentUpdate={updatePaymentInfo}
-          onBack={goToPreviousPhase}
-          isProcessing={isSubmitting}
-          error={error}
-          success={success}
           cmsData={cmsData}
         />
       )}

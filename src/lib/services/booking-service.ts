@@ -79,35 +79,7 @@ export interface Driver {
   lastUpdated: Date;
 }
 
-// Dynamic pricing calculation based on time, demand, and distance
-export const calculateDynamicFare = (baseFare: number, pickupTime: Date, distance: number): number => {
-  const hour = pickupTime.getHours();
-  const dayOfWeek = pickupTime.getDay();
-  
-  // Base multipliers
-  let multiplier = 1.0;
-  
-  // Peak time pricing (6-9 AM and 4-7 PM)
-  const isPeakTime = (hour >= 6 && hour <= 9) || (hour >= 16 && hour <= 19);
-  if (isPeakTime) multiplier *= 1.3;
-  
-  // Weekend pricing
-  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-  if (isWeekend) multiplier *= 1.2;
-  
-  // Holiday pricing (simplified - could be enhanced with holiday API)
-  const isHoliday = false; // TODO: Integrate with holiday API
-  if (isHoliday) multiplier *= 1.25;
-  
-  // Distance-based pricing
-  if (distance > 50) multiplier *= 1.1; // Long distance premium
-  if (distance > 100) multiplier *= 1.2; // Very long distance premium
-  
-  // Weather conditions (could be enhanced with weather API)
-  // For now, using a simple time-based approximation
-  
-  return Math.round(baseFare * multiplier);
-};
+// Note: Dynamic pricing moved to /api/booking/quote for centralized fare calculation
 
 // Real-time booking status management
 export const updateBookingStatus = async (bookingId: string, status: Booking['status']): Promise<void> => {

@@ -21,7 +21,7 @@ import {
   Select,
   Stack,
   StatCard
-} from '@/ui';
+} from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 function PromosPageContent() {

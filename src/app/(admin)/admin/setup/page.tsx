@@ -16,7 +16,7 @@ import {
   H1,
   Alert,
   Link
-} from '@/ui';
+} from '@/design/ui';
 
 export default function SetupPage() {
 

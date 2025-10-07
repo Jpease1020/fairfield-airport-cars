@@ -1,93 +1,119 @@
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
-import { Client } from '@googlemaps/google-maps-services-js';
-import { getSettings } from '@/lib/business/settings-service';
 import { z } from 'zod';
-
-const mapsClient = new Client({});
-
-function hmacSign(payload: unknown, secret: string): string {
-  const data = typeof payload === 'string' ? payload : JSON.stringify(payload);
-  return crypto.createHmac('sha256', secret).update(data).digest('hex');
-}
+import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
+import { createHash } from 'crypto';
 
 export async function POST(request: Request) {
-  const secret = process.env.BOOKING_QUOTE_SECRET;
-  if (!secret) return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
-
   const schema = z.object({
-    quote: z.object({
-      origin: z.string(),
-      destination: z.string(),
-      pickupCoords: z.any().nullable().optional(),
-      dropoffCoords: z.any().nullable().optional(),
-      fareType: z.enum(['personal', 'business']),
-      pickupTime: z.string().nullable().optional(),
-      distanceMeters: z.number(),
-      durationSeconds: z.number(),
-      durationTrafficSeconds: z.number().optional(),
-      pricing: z.object({ baseFare: z.number(), perMile: z.number(), perMinute: z.number() }),
-      breakdown: z.any(),
-      total: z.number(),
-      expiresAt: z.string(),
+    quoteId: z.string().optional(), // Quote ID for validation
+    fare: z.number().min(1),
+    customer: z.object({
+      name: z.string().min(1),
+      email: z.string().email(),
+      phone: z.string().min(1),
+      notes: z.string().optional().nullable(),
     }),
-    signature: z.string().min(16),
-    customer: z.any().optional(),
-    payment: z.any().optional(),
+    trip: z.object({
+      pickup: z.object({
+        address: z.string().min(1),
+        coordinates: z.object({ lat: z.number(), lng: z.number() }).nullable(),
+      }),
+      dropoff: z.object({
+        address: z.string().min(1),
+        coordinates: z.object({ lat: z.number(), lng: z.number() }).nullable(),
+      }),
+      pickupDateTime: z.date(),
+      fareType: z.enum(['personal', 'business']),
+    }),
   });
+
   const raw = await request.json().catch(() => ({}));
   const parsed = schema.safeParse(raw);
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
-  const { quote, signature, customer, payment } = parsed.data;
 
-  // Verify signature
-  const expected = hmacSign(quote, secret);
-  if (expected !== signature) return NextResponse.json({ error: 'Invalid quote signature' }, { status: 400 });
+  const { quoteId, fare, customer, trip } = parsed.data;
 
-  // Verify expiry
-  if (!quote.expiresAt || new Date(quote.expiresAt).getTime() < Date.now()) {
-    return NextResponse.json({ error: 'Quote expired' }, { status: 400 });
+  // Validate quote if provided
+  if (quoteId) {
+    const quote = await getQuote(quoteId);
+    if (!quote) {
+      return NextResponse.json({ 
+        error: 'Quote not found. Please request a new quote.',
+        code: 'QUOTE_NOT_FOUND'
+      }, { status: 404 });
+    }
+    
+    if (!isQuoteValid(quote)) {
+      return NextResponse.json({ 
+        error: 'Quote has expired. Please request a new quote.',
+        code: 'QUOTE_EXPIRED'
+      }, { status: 410 });
+    }
+    
+    // Validate route hasn't changed (prevent tampering)
+    const currentRouteHash = createHash('sha256')
+      .update(`${trip.pickup.address}|${trip.dropoff.address}|${trip.pickupDateTime}|${trip.fareType}`)
+      .digest('hex');
+    
+    const storedRouteHash = createHash('sha256')
+      .update(`${quote.pickupAddress}|${quote.dropoffAddress}|${quote.fareType}`)
+      .digest('hex');
+    
+    if (currentRouteHash !== storedRouteHash) {
+      return NextResponse.json({ 
+        error: 'Trip details have changed. Please request a new quote.',
+        code: 'ROUTE_CHANGED'
+      }, { status: 409 });
+    }
+    
+    // Validate fare matches quote (within 5% tolerance)
+    const fareDifference = Math.abs(fare - quote.price);
+    const fareTolerance = quote.price * 0.05; // 5% tolerance
+    
+    if (fareDifference > fareTolerance) {
+      return NextResponse.json({ 
+        error: 'Fare has changed. Please request a new quote.',
+        code: 'FARE_MISMATCH',
+        expectedFare: quote.price,
+        providedFare: fare
+      }, { status: 409 });
+    }
   }
 
-  // Recompute on server to prevent tampering
   try {
-    const settings = await getSettings();
-    const { baseFare: BASE_FARE, perMile: PER_MILE_RATE, perMinute: PER_MINUTE_RATE } = settings;
+    // Create booking without payment (no deposit required)
+    const bookingData = {
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+      pickupLocation: trip.pickup.address,
+      pickupCoords: trip.pickup.coordinates,
+      dropoffLocation: trip.dropoff.address,
+      dropoffCoords: trip.dropoff.coordinates,
+      pickupDateTime: trip.pickupDateTime,
+      fare: fare,
+      fareType: trip.fareType,
+      depositPaid: false,
+      depositAmount: 0,
+      balanceDue: fare,
+      tipAmount: 0,
+      status: 'confirmed' as const,
+      notes: customer.notes || ''
+    };
 
-    const dm = await mapsClient.distancematrix({
-      params: {
-        origins: [quote.pickupCoords ? `${quote.pickupCoords.lat},${quote.pickupCoords.lng}` : quote.origin],
-        destinations: [quote.dropoffCoords ? `${quote.dropoffCoords.lat},${quote.dropoffCoords.lng}` : quote.destination],
-        key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
-        departure_time: quote.pickupTime ? new Date(quote.pickupTime) : new Date(),
-        traffic_model: 'best_guess' as any
-      }
+    // Import booking service
+    const { createBookingAtomic } = await import('@/lib/services/booking-service');
+    const bookingResult = await createBookingAtomic(bookingData);
+
+    return NextResponse.json({ 
+      success: true, 
+      bookingId: bookingResult.bookingId,
+      totalFare: fare,
+      message: 'Booking created successfully - no deposit required'
     });
 
-    if (dm.data.rows[0].elements[0].status !== 'OK') {
-      return NextResponse.json({ error: 'Unable to calculate route' }, { status: 400 });
-    }
-
-    const el = dm.data.rows[0].elements[0];
-    const distanceMiles = el.distance.value / 1609.34;
-    const durationMinutes = (el.duration_in_traffic?.value ?? el.duration.value) / 60;
-    let recomputed = Math.ceil(BASE_FARE + distanceMiles * PER_MILE_RATE + durationMinutes * PER_MINUTE_RATE);
-    if (quote.fareType === 'personal') recomputed = Math.ceil(recomputed * 0.9);
-
-    // Small tolerance (e.g., ±$3) for route fluctuations
-    const tolerance = 3;
-    if (Math.abs(recomputed - quote.total) > tolerance) {
-      return NextResponse.json({ error: 'Price changed', newTotal: recomputed }, { status: 409 });
-    }
-
-    // TODO: process payment here securely
-    // ... charge ...
-
-    return NextResponse.json({ success: true, chargedTotal: recomputed });
   } catch (err) {
-    console.error('submit error', err);
-    return NextResponse.json({ error: 'Failed to submit booking' }, { status: 500 });
+    console.error('Booking creation error:', err);
+    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
   }
 }
-
-

@@ -39,8 +39,6 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     isQuickBookingFormValid,
     submitQuickBookingForm,
     error,
-    setQuote,
-    submitBookingWithQuote,
   } = useBooking();
   
   const locationData = {
@@ -71,6 +69,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     dropoffCoords: locationData.dropoff.coordinates,
     fareType: formData.trip.fareType,
   });
+
+  // Note: Removed currentQuote since we simplified to currentFare only
 
 
   // Handle location selection using global context
@@ -150,6 +150,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             <Text size="lg" weight="bold" color="primary">
               Estimated Fare: ${estimatedFare}
             </Text>
+            {/* Quote countdown removed - using simplified fare system */}
             {isCalculating && (
               <Text size="sm" color="secondary">Calculating...</Text>
             )}

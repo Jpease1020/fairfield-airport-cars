@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Stack, Box, Button, Text, H2, StatusMessage, Select, Input } from '@/ui';
+import { Container, Stack, Box, Button, Text, H2, StatusMessage, Select, Input } from '@/design/ui';
 import { driverSchedulingService, DriverSchedule, TimeSlot } from '@/lib/services/driver-scheduling-service';
 
 export default function AdminSchedulesPage() {

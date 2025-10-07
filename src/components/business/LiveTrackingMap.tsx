@@ -10,7 +10,7 @@ import {
   Badge, 
   LoadingSpinner,
   Alert,
-} from '@/ui';
+} from '@/design/ui';
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
 import { useGoogleMaps } from '@/providers/GoogleMapsProvider';

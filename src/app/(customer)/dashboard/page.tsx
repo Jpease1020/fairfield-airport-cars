@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToastProvider } from '@/ui';
+import { ToastProvider } from '@/design/ui';
 import DashboardClient from './DashboardClient';
 
 // Force dynamic rendering to prevent server-side rendering issues

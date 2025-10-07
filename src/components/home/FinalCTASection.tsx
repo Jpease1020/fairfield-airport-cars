@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Container, Stack, H2, Text, Button } from '@/ui';
+import { Container, Stack, H2, Text, Button } from '@/design/ui';
 
 interface FinalCTASectionProps {
   cmsData: any | null;

@@ -18,7 +18,7 @@ import {
   Label,
   Form,
   Span
-} from '@/ui';
+} from '@/design/ui';
 
 interface ManageBookingClientProps {
   bookingId: string;

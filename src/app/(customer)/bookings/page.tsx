@@ -3,7 +3,7 @@ import {
   Container,
   LoadingSpinner,
   Stack,
-} from '@/ui';
+} from '@/design/ui';
 import CustomerBookingsClient from './CustomerBookingsClient';
 
 // Main page component (Server Component)

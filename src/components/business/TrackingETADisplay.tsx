@@ -9,7 +9,7 @@ import {
   Badge,
   LoadingSpinner,
   Alert
-} from '@/ui';
+} from '@/design/ui';
 
 
 interface TrackingETADisplayProps {

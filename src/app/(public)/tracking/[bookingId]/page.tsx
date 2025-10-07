@@ -4,7 +4,7 @@ import {
   Stack, 
   LoadingSpinner,
   GridSection,
-} from '@/ui';
+} from '@/design/ui';
 import TrackingPageClient from './TrackingPageClient';
 
 // Enable ISR for dynamic content updates

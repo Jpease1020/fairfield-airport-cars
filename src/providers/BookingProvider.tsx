@@ -54,11 +54,11 @@ interface BookingProviderType {
   isSubmitting: boolean;
   error: string | null;
   success: string | null;
-  // Quote state for secure pricing
-  currentQuote: any | null;
-  setQuote: (q: any | null) => void;
-  submitBookingWithQuote: () => Promise<{ success: boolean; newTotal?: number }>;
-  isQuoteValid: () => boolean;
+  
+  // Fare management (simplified)
+  currentFare: number | null;
+  setFare: (fare: number | null) => void;
+  submitBooking: () => Promise<{ success: boolean; newTotal?: number }>;
   
   // Helper functions
   setCurrentBooking: (booking: Booking | null) => void;
@@ -121,7 +121,8 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [hasAttemptedValidation, setHasAttemptedValidation] = useState(false);
-  const [currentQuote, setCurrentQuote] = useState<any | null>(null);
+  const [currentFare, setCurrentFare] = useState<number | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize form data from session storage (for page refresh persistence)
   useEffect(() => {
@@ -135,12 +136,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
         console.error('Failed to parse stored booking form data:', error);
       }
     }
+    setIsInitialized(true);
   }, []); // Only run once on mount
 
-  // Save form data to session storage whenever it changes
-  useEffect(() => {
-    sessionStorage.setItem('booking-form-data', JSON.stringify(formData));
-  }, [formData]);
+  // Save form data to session storage only on manual save (to avoid infinite loops)
+  // Removed automatic session storage save to prevent circular updates
 
   // Initialize form with existing booking
   useEffect(() => {
@@ -367,12 +367,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
         break;
         
       case 'payment':
-        if (!currentQuote || !isQuoteValid()) {
-          errors.push('Price quote is missing or expired. Please refresh the quote.');
-        }
-        if (!formData.payment.depositAmount) {
-          errors.push('Deposit amount is required');
-        }
+        // No deposit required and no fare validation needed - just basic form validation
         break;
     }
 
@@ -416,15 +411,15 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     }
   };
 
-  // Submit booking using current signed quote (secure pricing)
-  const submitBookingWithQuote = async (): Promise<{ success: boolean; newTotal?: number }> => {
+  // Submit booking using current quote (secure pricing)
+  const submitBooking = async (): Promise<{ success: boolean; newTotal?: number }> => {
     setIsSubmitting(true);
     setError(null);
     setSuccess(null);
 
-    if (!currentQuote) {
+    if (!currentFare) {
       setIsSubmitting(false);
-      setError('No price quote available. Please get an estimate first.');
+      setError('Please calculate fare before submitting booking.');
       return { success: false };
     }
 
@@ -433,21 +428,31 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          quote: currentQuote,
-          signature: currentQuote.signature,
+          fare: currentFare,
           customer: formData.customer,
-          payment: formData.payment
+          trip: formData.trip
         })
       });
 
-      if (res.status === 409) {
-        const data = await res.json();
-        setError('Price changed. Please review the updated fare.');
-        return { success: false, newTotal: data.newTotal };
-      }
-
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: 'Failed to submit booking' }));
+        
+        // Handle specific errors
+        if (data.code === 'QUOTE_EXPIRED' || data.code === 'QUOTE_NOT_FOUND') {
+          setError('Your fare has expired. Please request a new quote.');
+          return { success: false };
+        }
+        
+        if (data.code === 'FARE_MISMATCH') {
+          setError('Fare has changed. Please request a new quote.');
+          return { success: false };
+        }
+        
+        if (data.code === 'ROUTE_CHANGED') {
+          setError('Trip details have changed. Please request a new quote.');
+          return { success: false };
+        }
+        
         setError(data.error || 'Failed to submit booking');
         return { success: false };
       }
@@ -463,10 +468,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   };
   
 
-  const isQuoteValid = () => {
-    if (!currentQuote?.expiresAt) return false;
-    return new Date(currentQuote.expiresAt).getTime() > Date.now();
-  };
+  // No need for quote validation - fare is always valid when current
 
   // Reset form
   const resetForm = () => {
@@ -700,10 +702,9 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     resetForm,
     isSubmitting,
     success,
-    currentQuote,
-    setQuote: setCurrentQuote,
-    submitBookingWithQuote,
-    isQuoteValid,
+    currentFare,
+    setFare: setCurrentFare,
+    submitBooking,
   };
 
   return (

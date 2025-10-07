@@ -10,7 +10,7 @@ import {
   Input,
   Label,
   Alert
-} from '@/ui';
+} from '@/design/ui';
 
 interface TipCalculatorProps {
   baseAmount: number;
