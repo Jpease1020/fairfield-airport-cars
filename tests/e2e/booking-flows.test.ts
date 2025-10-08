@@ -380,15 +380,18 @@ test.describe('Quote Lifecycle Management', () => {
     await page.evaluate(() => {
       // Simulate time passing
       const originalDate = Date;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       global.Date = class extends originalDate {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         constructor(...args: any[]) {
           if (args.length === 0) {
             super(Date.now() + 16 * 60 * 1000); // 16 minutes later
           } else {
+            // @ts-expect-error - Dynamic constructor spreading
             super(...args);
           }
         }
-      } as any;
+      } as typeof Date;
     });
     
     // Try to submit booking

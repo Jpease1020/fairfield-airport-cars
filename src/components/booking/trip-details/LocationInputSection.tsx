@@ -13,6 +13,23 @@ const DarkerGreyBox = styled(Box)`
   background-color: ${colors.gray[100]};
 `;
 
+// Styled components for icon and label
+const IconEmoji = styled.span`
+  font-size: 1.5rem;
+`;
+
+const LabelRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+`;
+
+const HintText = styled(Text)`
+  margin-top: 0.25rem;
+`;
+
 // Swap button container - positions button between inputs
 const SwapButtonContainer = styled.div`
   position: relative;
@@ -32,7 +49,7 @@ const SwapButton = styled.button`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: ${colors.background.primary};
   border: 2px solid ${colors.primary[600]};
   cursor: pointer;
   transition: all 0.2s ease;
@@ -43,7 +60,7 @@ const SwapButton = styled.button`
     transform: rotate(180deg);
     
     svg {
-      color: #ffffff;
+      color: ${colors.text.white};
     }
   }
 
@@ -191,17 +208,17 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
         
         <Stack spacing="none" id="location-input-section-inner">
           <Box>
-            <Stack direction="horizontal" align="center" style={{ marginBottom: '0.5rem', }}>
-              <span style={{ fontSize: '1.5rem' }}>
+            <LabelRow>
+              <IconEmoji>
                 {pickupIsAirport ? '✈️' : '📍'}
-              </span>
+              </IconEmoji>
               <Text weight="bold" size="md">
                 {pickupIsAirport 
                   ? (cmsData?.['tripDetailsPhase-airportPickupLabel'] || 'Airport Pickup')
                   : (cmsData?.['tripDetailsPhase-yourLocationLabel'] || 'Your Location')
                 }
               </Text>
-            </Stack>
+            </LabelRow>
             <LocationInput
               id="pickup-location-input"
               label=""
@@ -218,12 +235,12 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
               fullWidth={true}
               data-testid="pickup-location-input"
             />
-            <Text size="xs" color="secondary" style={{ marginTop: '0.25rem'}}>
+            <HintText size="xs" color="secondary">
               {pickupIsAirport 
                 ? (cmsData?.['tripDetailsPhase-airportHint'] || 'Search for any airport')
                 : (cmsData?.['tripDetailsPhase-homeHint'] || 'Your home, hotel, or any address')
               }
-            </Text>
+            </HintText>
           </Box>
           
           {/* Swap Button */}
@@ -251,17 +268,17 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
           </SwapButtonContainer>
           
           <Box>
-            <Stack direction="horizontal" align="center" style={{ marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>
+            <LabelRow>
+              <IconEmoji>
                 {dropoffIsAirport ? '✈️' : '📍'}
-              </span>
+              </IconEmoji>
               <Text weight="bold" size="md">
                 {dropoffIsAirport 
                   ? (cmsData?.['tripDetailsPhase-airportDestinationLabel'] || 'Airport Destination')
                   : (cmsData?.['tripDetailsPhase-yourDestinationLabel'] || 'Your Destination')
                 }
               </Text>
-            </Stack>
+            </LabelRow>
             <LocationInput
               id="dropoff-location-input"
               label=""
@@ -278,12 +295,12 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
               fullWidth={true}
               data-testid="dropoff-location-input"
             />
-            <Text size="xs" color="secondary" style={{ marginTop: '0.25rem' }}>
+            <HintText size="xs" color="secondary">
               {dropoffIsAirport 
                 ? (cmsData?.['tripDetailsPhase-airportHint'] || 'Search for any airport')
                 : (cmsData?.['tripDetailsPhase-homeHint'] || 'Your home, hotel, or any address')
               }
-            </Text>
+            </HintText>
           </Box>
         </Stack>
       </Stack>

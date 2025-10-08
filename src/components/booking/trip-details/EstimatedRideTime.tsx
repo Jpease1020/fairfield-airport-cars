@@ -56,10 +56,11 @@ export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData })
         </Text>
       </Stack>
       
-      <Stack spacing="sm" style={{ marginTop: '1rem' }}>
-        <Text weight="medium" cmsId="route-info-title" size="sm">
-          {cmsData?.['tripDetailsPhase-routeInfo'] || 'Trip Information'}
-        </Text>
+      <Box padding="md">
+        <Stack spacing="sm">
+          <Text weight="medium" cmsId="route-info-title" size="sm">
+            {cmsData?.['tripDetailsPhase-routeInfo'] || 'Trip Information'}
+          </Text>
         <Text cmsId="route-distance" size="sm">
           {cmsData?.['tripDetailsPhase-distance'] || 'Distance'}: {route.distance}
         </Text>
@@ -73,7 +74,8 @@ export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData })
             {cmsData?.['tripDetailsPhase-trafficLevel'] || 'Traffic'}: {route.trafficLevel}
           </Text>
         )}
-      </Stack>
+        </Stack>
+      </Box>
     </Box>
   );
 };
