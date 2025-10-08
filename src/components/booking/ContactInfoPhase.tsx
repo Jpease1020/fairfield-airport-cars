@@ -15,6 +15,12 @@ interface ContactInfoPhaseProps {
   cmsData: any;
 }
 
+// Styled component defined outside to prevent dynamic creation
+const Half = styled.div`
+  flex: 1;
+  display: flex;
+`;
+
 export function ContactInfoPhase({
   customerData,
   onCustomerUpdate,
@@ -23,10 +29,6 @@ export function ContactInfoPhase({
   validation,
   cmsData
 }: ContactInfoPhaseProps) {
-  const Half = styled.div`
-    flex: 1;
-    display: flex;
-  `;
   // Get CMS data from provider
   const { cmsData: allCmsData } = useCMSData();
   const pageCmsData = allCmsData?.booking || {};
@@ -79,7 +81,7 @@ export function ContactInfoPhase({
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
-                pattern="^\+?1?[-\.\s]?\(?\d{3}\)?[-\.\s]?\d{3}[-\.\s]?\d{4}$"
+                pattern="^\+?1?[\-\.\s]?\(?\d{3}\)?[\-\.\s]?\d{3}[\-\.\s]?\d{4}$"
                 maxLength={17}
                 aria-label="Phone number"
                 value={customerData.phone}
@@ -136,7 +138,7 @@ export function ContactInfoPhase({
               onClick={onContinue}
               variant="primary"
               fullWidth
-              disabled={!validation.isValid}
+              disabled={!customerData.name.trim() || !customerData.email.trim() || !customerData.phone.trim()}
               cmsId="continue-button"
               data-testid="contact-info-continue-button"
               text={pageCmsData?.['continue-button'] || 'Continue to Payment'}

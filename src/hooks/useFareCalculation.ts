@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { Coordinates } from '@/types/booking';
+import { Coordinates, QuoteData } from '@/types/booking';
 import { useBooking } from '@/providers/BookingProvider';
 import { getOrCreateAnonymousSession } from '@/lib/utils/anonymous-session';
 
@@ -11,16 +11,7 @@ interface UseFareCalculationProps {
   pickupCoords: Coordinates | null;
   dropoffCoords: Coordinates | null;
   fareType: 'personal' | 'business';
-}
-
-interface QuoteData {
-  quoteId?: string;
-  fare: number;
-  distanceMiles: number;
-  durationMinutes: number;
-  fareType: string;
-  expiresAt: string;
-  expiresInMinutes: number;
+  pickupDateTime?: string; // For traffic-aware pricing
 }
 
 export const useFareCalculation = ({
@@ -28,11 +19,12 @@ export const useFareCalculation = ({
   dropoffLocation,
   pickupCoords,
   dropoffCoords,
-  fareType
+  fareType,
+  pickupDateTime
 }: UseFareCalculationProps) => {
-  const { setFare: setProviderFare } = useBooking();
-  const setFareRef = useRef(setProviderFare);
-  setFareRef.current = setProviderFare; // Keep ref updated
+  const { setQuote: setProviderQuote } = useBooking();
+  const setQuoteRef = useRef(setProviderQuote);
+  setQuoteRef.current = setProviderQuote; // Keep ref updated
   
   const [fare, setFare] = useState<number | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -70,6 +62,12 @@ export const useFareCalculation = ({
       // Get or create anonymous session for quote storage
       const sessionId = getOrCreateAnonymousSession();
       
+      // Convert datetime-local format (YYYY-MM-DDTHH:mm) to ISO string
+      let pickupTimeISO: string | undefined = undefined;
+      if (pickupDateTime) {
+        pickupTimeISO = new Date(pickupDateTime).toISOString();
+      }
+      
       const response = await fetch('/api/booking/quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -79,14 +77,14 @@ export const useFareCalculation = ({
           pickupCoords,
           dropoffCoords,
           fareType,
-          pickupTime: undefined,
+          pickupTime: pickupTimeISO, // Send as ISO string for API validation
           sessionId, // Include session for anonymous users
         })
       });
 
       if (response.ok) {
         const data: QuoteData = await response.json();
-        setFareRef.current(data.fare); // Set fare in BookingProvider
+        setQuoteRef.current(data); // Set FULL quote in BookingProvider
         setFare(data.fare);
         setQuoteData(data);
       } else {
@@ -103,7 +101,7 @@ export const useFareCalculation = ({
       setIsCalculating(false);
       calculatingRef.current = false;
     }
-  }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType]);
+  }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType, pickupDateTime]);
 
   // Smart calculation: only when we have complete data
   const shouldCalculate = useMemo(() => {
@@ -115,6 +113,8 @@ export const useFareCalculation = ({
       fareType !== null
     );
   }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType]);
+  
+  // Note: pickupDateTime is optional - quote API will use current time if not provided
 
   // Debounced calculation: wait 500ms after user stops changing inputs
   useEffect(() => {

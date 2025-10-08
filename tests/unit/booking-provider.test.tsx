@@ -60,7 +60,7 @@ describe('BookingProvider', () => {
     expect(result.current.isSubmitting).toBe(false);
     expect(result.current.error).toBeNull();
     expect(result.current.success).toBeNull();
-    expect(result.current.currentFare).toBeNull();
+    expect(result.current.currentQuote).toBeNull();
   });
 
   it('should update trip details', () => {
@@ -132,16 +132,26 @@ describe('BookingProvider', () => {
     expect(result.current.currentPhase).toBe('trip-details');
   });
 
-  it('should set fare when provided', () => {
+  it('should set quote when provided', () => {
     const { result } = renderHook(() => useBooking(), {
       wrapper: TestWrapper
     });
 
+    const mockQuote = {
+      quoteId: 'quote_456',
+      fare: 85,
+      distanceMiles: 20.0,
+      durationMinutes: 30,
+      fareType: 'personal' as const,
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      expiresInMinutes: 15
+    };
+
     act(() => {
-      result.current.setFare(85);
+      result.current.setQuote(mockQuote);
     });
 
-    expect(result.current.currentFare).toBe(85);
+    expect(result.current.currentQuote?.fare).toBe(85);
   });
 
   it('should clear error when requested', () => {
@@ -195,11 +205,19 @@ describe('BookingProvider', () => {
       result.current.updateTripDetails({
         pickup: { address: '123 Main St', coordinates: { lat: 41.1408, lng: -73.2613 } }
       });
-      result.current.setFare(85);
+      result.current.setQuote({
+        quoteId: 'quote_789',
+        fare: 85,
+        distanceMiles: 20.0,
+        durationMinutes: 30,
+        fareType: 'personal',
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+        expiresInMinutes: 15
+      });
     });
 
     expect(result.current.formData.trip.pickup.address).toBe('123 Main St');
-    expect(result.current.currentFare).toBe(85);
+    expect(result.current.currentQuote?.fare).toBe(85);
 
     // Reset form
     act(() => {
@@ -208,7 +226,6 @@ describe('BookingProvider', () => {
 
     expect(result.current.formData.trip.pickup.address).toBe('');
     expect(result.current.currentPhase).toBe('trip-details');
-    // Note: resetForm() doesn't clear currentFare - that's intentional
-    // Fare persists until explicitly cleared or new calculation
+    expect(result.current.currentQuote).toBeNull(); // Quote should be cleared on reset
   });
 });

@@ -31,7 +31,6 @@ export function validateBookingData(booking: BookingData): ValidationResult {
   }
 
   if (!booking.pickupLocation?.trim()) {
-    console.log('Pickup location is required ----------- ');
     errors.push('Pickup location is required');
   }
 

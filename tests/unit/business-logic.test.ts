@@ -33,11 +33,11 @@ const USER_SCENARIOS = {
 };
 
 // Mock only what we need to mock
-const mockSetFare = vi.fn();
+const mockSetQuote = vi.fn();
 
 vi.mock('@/providers/BookingProvider', () => ({
   useBooking: () => ({
-    setFare: mockSetFare,
+    setQuote: mockSetQuote,
     currentFare: null
   })
 }));
@@ -49,7 +49,7 @@ vi.mock('@/lib/utils/anonymous-session', () => ({
 describe('Core Business Logic - User Value Focused', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockSetFare.mockClear();
+    mockSetQuote.mockClear();
   });
 
   describe('Fare Calculation - What Users Care About', () => {
@@ -65,7 +65,9 @@ describe('Core Business Logic - User Value Focused', () => {
       
       expect(result.current.isCalculating).toBe(false);
       expect(result.current.error).toBeNull();
-      expect(mockSetFare).toHaveBeenCalledWith(95.50);
+      expect(mockSetQuote).toHaveBeenCalledWith(expect.objectContaining({
+        fare: 95.50
+      }));
     });
 
     it('should handle service outages gracefully', async () => {
@@ -113,7 +115,7 @@ describe('Core Business Logic - User Value Focused', () => {
       });
       
       // Verify only one calculation occurred
-      expect(mockSetFare).toHaveBeenCalledTimes(1);
+      expect(mockSetQuote).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -138,7 +140,7 @@ describe('Core Business Logic - User Value Focused', () => {
       // NOTE: Business fare multiplier is tested in API/integration tests
       // where MSW mocking works more reliably. This unit test focuses on
       // verifying the hook successfully calculates fares with different fareTypes.
-      expect(mockSetFare).toHaveBeenCalled();
+      expect(mockSetQuote).toHaveBeenCalled();
     });
   });
 

@@ -38,7 +38,7 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
         loading={isProcessingPayment}
         data-testid="payment-process-button"
         cmsId="payment-process-button"
-        text={cmsData?.['paymentPhase-processButton'] || 'Confirm Booking'}
+        text={cmsData?.['paymentPhase-processButton'] || 'Confirm Booking - No Payment Required'}
       />
     </Stack>
   );

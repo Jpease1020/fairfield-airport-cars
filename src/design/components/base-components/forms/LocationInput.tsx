@@ -24,6 +24,7 @@ interface LocationInputProps {
   name?: string;
   id?: string;
   required?: boolean;
+  restrictToAirports?: boolean; // Restrict autocomplete to airports only
   'data-testid'?: string;
   [key: string]: unknown;
 }
@@ -42,6 +43,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   name,
   id,
   required = false,
+  restrictToAirports = false,
   'data-testid': dataTestId,
   ...rest
 }) => {
@@ -53,13 +55,14 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   useEffect(() => {
     if (!places || !inputRef.current) return;
 
-    const options = {
+    const options: google.maps.places.AutocompleteOptions = {
       fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types'],
-      componentRestrictions: { country: 'us' }
+      componentRestrictions: { country: 'us' },
+      ...(restrictToAirports && { types: ['airport'] }) // Restrict to airports if specified
     };
 
     setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-  }, [places]);
+  }, [places, restrictToAirports]);
 
   // Handle place selection from autocomplete
   const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {

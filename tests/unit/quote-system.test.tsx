@@ -17,8 +17,8 @@ import { renderWithProviders } from '../utils/test-providers';
 // Mock dependencies
 vi.mock('@/providers/BookingProvider', () => ({
   useBooking: () => ({
-    setFare: vi.fn(),
-    currentFare: null
+    setQuote: vi.fn(),
+    currentQuote: null
   })
 }));
 

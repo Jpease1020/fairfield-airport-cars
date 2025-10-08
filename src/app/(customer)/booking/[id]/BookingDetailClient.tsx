@@ -138,6 +138,15 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
     );
   }
 
+  // Direct access to clean nested structure - no legacy fallbacks
+  const pickupAddress = booking.trip.pickup.address || 'Not specified';
+  const dropoffAddress = booking.trip.dropoff.address || 'Not specified';
+  const pickupDateTime = booking.trip.pickupDateTime;
+  const customerName = booking.customer.name || 'Not specified';
+  const customerPhone = booking.customer.phone || 'Not specified';
+  const customerEmail = booking.customer.email || 'Not specified';
+  const fare = booking.trip.fare || 0;
+
   const actionButtons = [
     {
       id: 'manage-booking',
@@ -179,15 +188,15 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
           {cmsData?.['booking-trip_details-description'] || 'Your pickup and dropoff information'}
           <Container>
             {cmsData?.['booking-pickup_location-label'] || 'Pickup Location:'}
-            <Text>{booking.trip.pickup.address}</Text>
+            <Text>{pickupAddress}</Text>
           </Container>
           <Container>
             {cmsData?.['booking-dropoff_location-label'] || 'Dropoff Location:'}
-            <Text>{booking.trip.dropoff.address}</Text>
+            <Text>{dropoffAddress}</Text>
           </Container>
           <Container>
             {cmsData?.['booking-pickup_datetime-label'] || 'Pickup Date & Time:'}
-            <Text>{formatDateTime(booking.trip.pickupDateTime)}</Text>
+            <Text>{formatDateTime(pickupDateTime)}</Text>
           </Container>
         </Container>
       </GridSection>
@@ -199,11 +208,11 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
           {cmsData?.['booking-passenger_info-description'] || 'Your contact details for this booking'}
           <Container spacing="lg">
             {cmsData?.['booking-passenger_name-label'] || 'Passenger:'}
-            <Text>{booking.customer.name}</Text>
+            <Text>{customerName}</Text>
             {cmsData?.['booking-passenger_phone-label'] || 'Phone:'}
-            <Text>{booking.customer.phone}</Text>
+            <Text>{customerPhone}</Text>
             {cmsData?.['booking-passenger_email-label'] || 'Email:'}
-            <Text>{booking.customer.email}</Text>
+            <Text>{customerEmail}</Text>
           </Container>
         </Container>
       </GridSection>
@@ -216,7 +225,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
               {cmsData?.['booking-fare-info-includes-fees'] || 'Includes all fees and taxes'}
             </Text>
             <Text size="lg" cmsId="ignore">
-              ${booking.trip.fare?.toFixed(2)}
+              ${fare.toFixed(2)}
             </Text>
           </Container>
         </Container>

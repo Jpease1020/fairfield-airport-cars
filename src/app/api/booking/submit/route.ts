@@ -22,8 +22,15 @@ export async function POST(request: Request) {
         address: z.string().min(1),
         coordinates: z.object({ lat: z.number(), lng: z.number() }).nullable(),
       }),
-      pickupDateTime: z.date(),
+      pickupDateTime: z.string().transform((val) => new Date(val)), // Accept ISO string, convert to Date
       fareType: z.enum(['personal', 'business']),
+      flightInfo: z.object({
+        hasFlight: z.boolean(),
+        airline: z.string(),
+        flightNumber: z.string(),
+        arrivalTime: z.string(),
+        terminal: z.string(),
+      }).optional(),
     }),
   });
 
@@ -81,24 +88,42 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Create booking without payment (no deposit required)
+    // Create booking with clean nested structure
     const bookingData = {
-      name: customer.name,
-      email: customer.email,
-      phone: customer.phone,
-      pickupLocation: trip.pickup.address,
-      pickupCoords: trip.pickup.coordinates,
-      dropoffLocation: trip.dropoff.address,
-      dropoffCoords: trip.dropoff.coordinates,
-      pickupDateTime: trip.pickupDateTime,
-      fare: fare,
-      fareType: trip.fareType,
-      depositPaid: false,
-      depositAmount: 0,
-      balanceDue: fare,
-      tipAmount: 0,
-      status: 'confirmed' as const,
-      notes: customer.notes || ''
+      trip: {
+        pickup: trip.pickup,
+        dropoff: trip.dropoff,
+        pickupDateTime: trip.pickupDateTime,
+        fareType: trip.fareType,
+        flightInfo: trip.flightInfo || {
+          hasFlight: false,
+          airline: '',
+          flightNumber: '',
+          arrivalTime: '',
+          terminal: ''
+        },
+        fare: fare,
+        baseFare: fare,
+        tipAmount: 0,
+        tipPercent: 0,
+        totalFare: fare
+      },
+      customer: {
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        notes: customer.notes || '',
+        saveInfoForFuture: false
+      },
+      payment: {
+        depositAmount: 0,
+        balanceDue: fare,
+        depositPaid: false,
+        tipAmount: 0,
+        tipPercent: 0,
+        totalAmount: fare
+      },
+      status: 'confirmed' as const
     };
 
     // Import booking service
@@ -114,6 +139,10 @@ export async function POST(request: Request) {
 
   } catch (err) {
     console.error('Booking creation error:', err);
-    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : 'Failed to create booking';
+    return NextResponse.json({ 
+      error: 'Failed to create booking',
+      details: errorMessage 
+    }, { status: 500 });
   }
 }

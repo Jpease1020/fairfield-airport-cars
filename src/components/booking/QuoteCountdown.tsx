@@ -46,7 +46,7 @@ export const QuoteCountdown: React.FC<QuoteCountdownProps> = ({
 
   return (
     <Text 
-      variant="sm" 
+      size="sm" 
       weight={isExpired ? "semibold" : "medium"}
       color={isExpired ? "error" : isLowTime ? "warning" : "muted"}
     >
