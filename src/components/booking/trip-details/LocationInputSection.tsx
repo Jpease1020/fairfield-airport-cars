@@ -4,7 +4,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Stack, H2, Text, Box } from '@/design/ui';
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
-import { useRouteCalculation } from '@/hooks/useRouteCalculation';
 import { Coordinates } from '@/types/booking';
 import { useBooking } from '@/providers/BookingProvider';
 import { colors } from '@/design/system/tokens/tokens';
@@ -12,6 +11,52 @@ import { colors } from '@/design/system/tokens/tokens';
 // Custom styled component for darker grey background
 const DarkerGreyBox = styled(Box)`
   background-color: ${colors.gray[100]};
+`;
+
+// Swap button container - positions button between inputs
+const SwapButtonContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  width: 100%;
+  padding: 0 2rem;
+`;
+
+// Swap button with circular background
+const SwapButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid ${colors.primary[600]};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: ${colors.primary[600]};
+    transform: rotate(180deg);
+    
+    svg {
+      color: #ffffff;
+    }
+  }
+
+  &:active {
+    transform: rotate(180deg) scale(0.95);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: ${colors.primary[600]};
+    transition: color 0.2s ease;
+  }
 `;
 
 interface LocationInputSectionProps {
@@ -29,20 +74,20 @@ interface LocationInputSectionProps {
 }
 
 export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
-  pickupLocation,
-  dropoffLocation,
-  pickupCoords,
-  dropoffCoords,
-  onPickupLocationChange,
-  onDropoffLocationChange,
-  onPickupCoordsChange,
-  onDropoffCoordsChange,
   onRouteCalculated,
-  departureTime,
   cmsData
 }) => {
   // Use booking provider directly like the quick booking form
   const { formData, updateTripDetails } = useBooking();
+  
+  // Track if locations are swapped (default: home on top, airport on bottom = going TO airport)
+  const [isSwapped, setIsSwapped] = React.useState(false);
+  
+  // Determine which input is which based on swap state
+  // Default (not swapped): pickup = home, dropoff = airport (going TO airport)
+  // Swapped: pickup = airport, dropoff = home (coming FROM airport)
+  const pickupIsAirport = isSwapped;
+  const dropoffIsAirport = !isSwapped;
   
   // Create helper functions like the quick booking form
   const setPickupLocation = (address: string, coordinates?: Coordinates) => {
@@ -65,12 +110,25 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
     console.log('LocationInputSection handleDropoffLocationSelect:', address, coordinates);
     setDropoffLocation(address, coordinates);
   };
-  // Calculate route when both coordinates are available
-  const { route, loading: routeLoading, error: routeError } = useRouteCalculation(
-    formData.trip.pickup.coordinates,
-    formData.trip.dropoff.coordinates,
-    departureTime || null
-  );
+
+  // Swap pickup and dropoff locations
+  const handleSwapLocations = () => {
+    console.log('Swapping locations');
+    const tempPickup = { ...formData.trip.pickup };
+    const tempDropoff = { ...formData.trip.dropoff };
+    
+    // Swap the locations
+    updateTripDetails({
+      pickup: tempDropoff,
+      dropoff: tempPickup
+    });
+    
+    // Toggle swap state
+    setIsSwapped(!isSwapped);
+  };
+
+  // Get route calculation from provider (for traffic-aware pricing)
+  const { route, routeLoading, routeError } = useBooking();
 
   // Notify parent when route is calculated
   React.useEffect(() => {
@@ -94,8 +152,8 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
           {cmsData?.['tripDetailsPhase-locationDescription'] || 'Enter your pickup and dropoff locations to get started.'}
         </Text>
         
-        {/* Route Information Display */}
-        {route && (
+      {/* Route Information Display */}
+        {/* {route && (
           <Stack spacing="sm" padding="md">
             <Text weight="medium" cmsId="route-info-title">
               {cmsData?.['tripDetailsPhase-routeInfo'] || 'Trip Information'}
@@ -106,9 +164,9 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
             <Text cmsId="route-duration">
               {cmsData?.['tripDetailsPhase-duration'] || 'Duration'}: {route.durationInTraffic || route.duration}
               {route.durationInTraffic && route.durationInTraffic !== route.duration && (
-                <Text color="secondary" size="sm" cmsId="tripDetailsPhase-trafficAdjusted">
+                <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }} data-cms-id="tripDetailsPhase-trafficAdjusted">
                   {' '}({cmsData?.['tripDetailsPhase-trafficAdjusted'] || 'traffic adjusted'})
-                </Text>
+                </span>
               )}
             </Text>
             {route.trafficLevel !== 'unknown' && (
@@ -117,7 +175,7 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
               </Text>
             )}
           </Stack>
-        )}
+        )} */}
         
         {routeLoading && (
           <Text color="secondary" cmsId="route-calculating">
@@ -131,30 +189,102 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
           </Text>
         )}
         
-        <Stack spacing="md">
-          <LocationInput
-            id="pickup-location-input"
-            label={cmsData?.['tripDetailsPhase-pickupLabel'] || 'Pickup Location'}
-            placeholder={cmsData?.['tripDetailsPhase-pickupPlaceholder'] || 'Enter pickup address'}
-            value={formData.trip.pickup.address}
-            onChange={(address) => setPickupLocation(address)}
-            onLocationSelect={handlePickupLocationSelect}
-            coords={formData.trip.pickup.coordinates}
-            fullWidth={true}
-            data-testid="pickup-location-input"
-          />
+        <Stack spacing="none" id="location-input-section-inner">
+          <Box>
+            <Stack direction="horizontal" align="center" style={{ marginBottom: '0.5rem', }}>
+              <span style={{ fontSize: '1.5rem' }}>
+                {pickupIsAirport ? '✈️' : '📍'}
+              </span>
+              <Text weight="bold" size="md">
+                {pickupIsAirport 
+                  ? (cmsData?.['tripDetailsPhase-airportPickupLabel'] || 'Airport Pickup')
+                  : (cmsData?.['tripDetailsPhase-yourLocationLabel'] || 'Your Location')
+                }
+              </Text>
+            </Stack>
+            <LocationInput
+              id="pickup-location-input"
+              label=""
+              placeholder={
+                pickupIsAirport 
+                  ? (cmsData?.['tripDetailsPhase-airportPlaceholder'] || 'JFK, LGA, Newark, etc.')
+                  : (cmsData?.['tripDetailsPhase-homePlaceholder'] || 'Enter your address')
+              }
+              value={formData.trip.pickup.address}
+              onChange={(address) => setPickupLocation(address)}
+              onLocationSelect={handlePickupLocationSelect}
+              coords={formData.trip.pickup.coordinates}
+              restrictToAirports={pickupIsAirport}
+              fullWidth={true}
+              data-testid="pickup-location-input"
+            />
+            <Text size="xs" color="secondary" style={{ marginTop: '0.25rem'}}>
+              {pickupIsAirport 
+                ? (cmsData?.['tripDetailsPhase-airportHint'] || 'Search for any airport')
+                : (cmsData?.['tripDetailsPhase-homeHint'] || 'Your home, hotel, or any address')
+              }
+            </Text>
+          </Box>
           
-          <LocationInput
-            id="dropoff-location-input"
-            label={cmsData?.['tripDetailsPhase-dropoffLabel'] || 'Dropoff Location'}
-            placeholder={cmsData?.['tripDetailsPhase-dropoffPlaceholder'] || 'Enter dropoff address'}
-            value={formData.trip.dropoff.address}
-            onChange={(address) => setDropoffLocation(address)}
-            onLocationSelect={handleDropoffLocationSelect}
-            coords={formData.trip.dropoff.coordinates}
-            fullWidth={true}
-            data-testid="dropoff-location-input"
-          />
+          {/* Swap Button */}
+          <SwapButtonContainer>
+            <SwapButton
+              onClick={handleSwapLocations}
+              type="button"
+              aria-label="Swap pickup and dropoff locations"
+              data-testid="swap-locations-button"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                />
+              </svg>
+            </SwapButton>
+          </SwapButtonContainer>
+          
+          <Box>
+            <Stack direction="horizontal" align="center" style={{ marginBottom: '0.5rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>
+                {dropoffIsAirport ? '✈️' : '📍'}
+              </span>
+              <Text weight="bold" size="md">
+                {dropoffIsAirport 
+                  ? (cmsData?.['tripDetailsPhase-airportDestinationLabel'] || 'Airport Destination')
+                  : (cmsData?.['tripDetailsPhase-yourDestinationLabel'] || 'Your Destination')
+                }
+              </Text>
+            </Stack>
+            <LocationInput
+              id="dropoff-location-input"
+              label=""
+              placeholder={
+                dropoffIsAirport 
+                  ? (cmsData?.['tripDetailsPhase-airportPlaceholder'] || 'JFK, LGA, Newark, etc.')
+                  : (cmsData?.['tripDetailsPhase-homePlaceholder'] || 'Enter destination address')
+              }
+              value={formData.trip.dropoff.address}
+              onChange={(address) => setDropoffLocation(address)}
+              onLocationSelect={handleDropoffLocationSelect}
+              coords={formData.trip.dropoff.coordinates}
+              restrictToAirports={dropoffIsAirport}
+              fullWidth={true}
+              data-testid="dropoff-location-input"
+            />
+            <Text size="xs" color="secondary" style={{ marginTop: '0.25rem' }}>
+              {dropoffIsAirport 
+                ? (cmsData?.['tripDetailsPhase-airportHint'] || 'Search for any airport')
+                : (cmsData?.['tripDetailsPhase-homeHint'] || 'Your home, hotel, or any address')
+              }
+            </Text>
+          </Box>
         </Stack>
       </Stack>
     </DarkerGreyBox>

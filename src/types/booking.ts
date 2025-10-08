@@ -15,11 +15,13 @@ export interface TripDetails {
   pickupDateTime: string;
   fareType: 'personal' | 'business';
   flightInfo: FlightInfo;
-  fare: number | null;
-  baseFare: number | null;
-  tipAmount: number;
-  tipPercent: number;
-  totalFare: number;
+  // Note: fare is managed via currentQuote during booking, not stored in formData
+  // These fields exist only in the database after booking is created
+  fare?: number | null;
+  baseFare?: number | null;
+  tipAmount?: number;
+  tipPercent?: number;
+  totalFare?: number;
 }
 
 export interface FlightInfo {
@@ -96,6 +98,9 @@ export interface Booking {
   balanceDue?: number;
   flightNumber?: string;
   notes?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
   driverId?: string;
   driverName?: string;
   estimatedArrival?: Date;
@@ -130,10 +135,32 @@ export interface BookingFormData {
   payment: PaymentInfo;
 }
 
+// Clean booking creation data (nested structure only)
+// Note: pickupDateTime is Date (from API Zod validation), not string
+export interface BookingCreateData {
+  trip: Omit<TripDetails, 'pickupDateTime'> & { pickupDateTime: Date };
+  customer: CustomerInfo;
+  payment: PaymentInfo;
+  status: BookingStatus;
+  driver?: DriverInfo;
+  tracking?: TrackingInfo;
+}
+
 export type BookingPhase = 'trip-details' | 'contact-info' | 'payment' | 'payment-processing';
 
 export interface ValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
+}
+
+// Quote data with expiration (15-minute temporary offer)
+export interface QuoteData {
+  quoteId: string;
+  fare: number;
+  distanceMiles: number;
+  durationMinutes: number;
+  fareType: 'personal' | 'business';
+  expiresAt: string;  // ISO datetime string
+  expiresInMinutes: number;
 }

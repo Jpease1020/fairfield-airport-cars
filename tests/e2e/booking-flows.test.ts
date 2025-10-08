@@ -599,3 +599,144 @@ test.describe('Performance and Load Testing', () => {
     await expectValidQuote(page);
   });
 });
+
+// Test Suite 5: Data Structure Validation
+test.describe('Booking Data Structure Validation', () => {
+  test('should create booking with clean nested structure only (no legacy flat fields)', async ({ page, request }) => {
+    // Complete full booking flow
+    await page.goto('/book');
+    await page.waitForLoadState('networkidle');
+    
+    // Fill trip details
+    await fillLocationInput(page, '[data-testid="pickup-location"]', TEST_DATA.pickup);
+    await fillLocationInput(page, '[data-testid="dropoff-location"]', TEST_DATA.dropoff);
+    await page.fill('[data-testid="pickup-date"]', '2025-12-25');
+    await page.fill('[data-testid="pickup-time"]', '10:00');
+    await waitForQuote(page);
+    
+    // Add flight info
+    const hasFlightCheckbox = page.locator('[data-testid="has-flight-checkbox"]');
+    if (await hasFlightCheckbox.count() > 0) {
+      await hasFlightCheckbox.check();
+      await page.fill('[data-testid="airline-input"]', 'Test Airways');
+      await page.fill('[data-testid="flight-number-input"]', 'TA123');
+    }
+    
+    // Continue to contact info
+    await page.click('[data-testid="continue-to-contact"]');
+    await page.fill('[data-testid="customer-name"]', TEST_DATA.customer.name);
+    await page.fill('[data-testid="customer-email"]', TEST_DATA.customer.email);
+    await page.fill('[data-testid="customer-phone"]', TEST_DATA.customer.phone);
+    if (await page.locator('[data-testid="customer-notes"]').count() > 0) {
+      await page.fill('[data-testid="customer-notes"]', TEST_DATA.customer.notes);
+    }
+    await page.click('[data-testid="continue-to-payment"]');
+    
+    // Intercept booking creation to capture booking ID
+    let bookingId: string | null = null;
+    page.on('response', async (response) => {
+      if (response.url().includes('/api/booking/submit') && response.status() === 200) {
+        const data = await response.json();
+        bookingId = data.bookingId;
+      }
+    });
+    
+    // Complete booking
+    await page.click('[data-testid="confirm-booking-button"]');
+    await page.waitForTimeout(2000); // Wait for booking creation
+    
+    // Verify booking ID was captured
+    expect(bookingId).toBeTruthy();
+    
+    // Fetch booking data via API to validate structure
+    const bookingResponse = await request.get(`http://localhost:3000/api/booking/get-bookings-simple?id=${bookingId}`);
+    expect(bookingResponse.status()).toBe(200);
+    
+    const bookingData = await bookingResponse.json();
+    const booking = bookingData.booking;
+    
+    // ✅ VERIFY CLEAN NESTED STRUCTURE EXISTS
+    expect(booking.trip).toBeDefined();
+    expect(booking.customer).toBeDefined();
+    expect(booking.payment).toBeDefined();
+    
+    // ✅ VERIFY NESTED TRIP DATA
+    expect(booking.trip.pickup).toBeDefined();
+    expect(booking.trip.pickup.address).toContain('Fairfield');
+    expect(booking.trip.pickup.coordinates).toBeDefined();
+    expect(booking.trip.pickup.coordinates.lat).toBeCloseTo(TEST_DATA.pickupCoords.lat, 1);
+    
+    expect(booking.trip.dropoff).toBeDefined();
+    expect(booking.trip.dropoff.address).toContain('JFK');
+    expect(booking.trip.dropoff.coordinates).toBeDefined();
+    expect(booking.trip.dropoff.coordinates.lat).toBeCloseTo(TEST_DATA.dropoffCoords.lat, 1);
+    
+    expect(booking.trip.fareType).toBe('business');
+    expect(booking.trip.fare).toBeGreaterThan(0);
+    
+    // ✅ VERIFY NESTED CUSTOMER DATA
+    expect(booking.customer.name).toBe(TEST_DATA.customer.name);
+    expect(booking.customer.email).toBe(TEST_DATA.customer.email);
+    expect(booking.customer.phone).toBe(TEST_DATA.customer.phone);
+    
+    // ✅ VERIFY FLIGHT INFO WAS SAVED (if flight checkbox was present)
+    if (await page.locator('[data-testid="has-flight-checkbox"]').count() > 0) {
+      expect(booking.trip.flightInfo).toBeDefined();
+      expect(booking.trip.flightInfo.hasFlight).toBe(true);
+      expect(booking.trip.flightInfo.airline).toBe('Test Airways');
+      expect(booking.trip.flightInfo.flightNumber).toBe('TA123');
+    }
+    
+    // ✅ VERIFY NO LEGACY FLAT FIELDS EXIST
+    expect(booking.pickupLocation).toBeUndefined();
+    expect(booking.dropoffLocation).toBeUndefined();
+    expect(booking.name).toBeUndefined();
+    expect(booking.email).toBeUndefined();
+    expect(booking.phone).toBeUndefined();
+    expect(booking.fare).toBeUndefined(); // Only booking.trip.fare should exist
+  });
+  
+  test('should handle booking without flight info correctly', async ({ page, request }) => {
+    // Complete booking WITHOUT flight info
+    await page.goto('/book');
+    await page.waitForLoadState('networkidle');
+    
+    await fillLocationInput(page, '[data-testid="pickup-location"]', TEST_DATA.pickup);
+    await fillLocationInput(page, '[data-testid="dropoff-location"]', TEST_DATA.dropoff);
+    await page.fill('[data-testid="pickup-date"]', '2025-12-25');
+    await page.fill('[data-testid="pickup-time"]', '10:00');
+    await waitForQuote(page);
+    
+    // Do NOT check flight info checkbox (if it exists)
+    
+    await page.click('[data-testid="continue-to-contact"]');
+    await page.fill('[data-testid="customer-name"]', 'Test User No Flight');
+    await page.fill('[data-testid="customer-email"]', 'noflight@test.com');
+    await page.fill('[data-testid="customer-phone"]', '555-999-0000');
+    await page.click('[data-testid="continue-to-payment"]');
+    
+    let bookingId: string | null = null;
+    page.on('response', async (response) => {
+      if (response.url().includes('/api/booking/submit') && response.status() === 200) {
+        const data = await response.json();
+        bookingId = data.bookingId;
+      }
+    });
+    
+    await page.click('[data-testid="confirm-booking-button"]');
+    await page.waitForTimeout(2000);
+    
+    expect(bookingId).toBeTruthy();
+    
+    // Fetch booking and verify flight info
+    const bookingResponse = await request.get(`http://localhost:3000/api/booking/get-bookings-simple?id=${bookingId}`);
+    const bookingData = await bookingResponse.json();
+    const booking = bookingData.booking;
+    
+    // ✅ VERIFY FLIGHT INFO EXISTS WITH hasFlight = false
+    expect(booking.trip.flightInfo).toBeDefined();
+    expect(booking.trip.flightInfo.hasFlight).toBe(false);
+    expect(booking.trip.flightInfo.airline).toBe('');
+    expect(booking.trip.flightInfo.flightNumber).toBe('');
+  });
+});

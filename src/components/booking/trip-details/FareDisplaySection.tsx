@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { Stack, Box, Text, H3, StatusMessage } from '@/design/ui';
+import { useBooking } from '@/providers/BookingProvider';
+import { QuoteCountdown } from '@/components/booking/QuoteCountdown';
 
 interface FareDisplaySectionProps {
   fare: number | null;
@@ -43,7 +45,8 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
     );
   }
 
-  if (fare === null && error) {
+  // Only show error if there's actually an error and it's not just initial state
+  if (error && error.trim() !== '') {
     return (
       <Box variant="elevated" padding="lg" data-testid="fare-error">
         <StatusMessage
@@ -56,7 +59,7 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
   }
 
   if (fare === null && !isCalculating) {
-    return null; // Don't show anything if no fare and no error
+    return null; // Don't show anything if no fare yet (initial state)
   }
 
   return (
@@ -84,7 +87,9 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
 
 // Local component to access provider without altering main props
 const CountdownRow: React.FC = () => {
-  // Note: Quote countdown removed since we simplified to currentFare only
-  // If you want countdown functionality, we'd need to add it back to the API response
-  return null;
+  const { currentQuote } = useBooking();
+  
+  if (!currentQuote) return null;
+  
+  return <QuoteCountdown expiresAt={currentQuote.expiresAt} />;
 };

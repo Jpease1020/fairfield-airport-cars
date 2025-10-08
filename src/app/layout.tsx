@@ -41,12 +41,12 @@ export default async function RootLayout({
         <StyledComponentsRegistry>
           <CMSDataProvider initialCmsData={allCmsData}>
             <Suspense fallback={<div>Loading...</div>}>
-              <BookingProvider>
-                  <ErrorBoundary>
-                    <AccessibilityEnhancer>
-                      <AdminProvider>
-                        <InteractionModeProvider>
-                          <GoogleMapsClientProvider>
+              <GoogleMapsClientProvider>
+                <BookingProvider>
+                    <ErrorBoundary>
+                      <AccessibilityEnhancer>
+                        <AdminProvider>
+                          <InteractionModeProvider>
                             <NavigationWrapper />
                             
                             <Container as="main" maxWidth="full" data-testid="layout-main-content">
@@ -54,12 +54,12 @@ export default async function RootLayout({
                             </Container>
                             
                             <Footer data-testid="layout-footer" />
-                          </GoogleMapsClientProvider>
-                        </InteractionModeProvider>
-                      </AdminProvider>
-                    </AccessibilityEnhancer>
-                  </ErrorBoundary>
-              </BookingProvider>
+                          </InteractionModeProvider>
+                        </AdminProvider>
+                      </AccessibilityEnhancer>
+                    </ErrorBoundary>
+                </BookingProvider>
+              </GoogleMapsClientProvider>
             </Suspense>
           </CMSDataProvider>
         </StyledComponentsRegistry>

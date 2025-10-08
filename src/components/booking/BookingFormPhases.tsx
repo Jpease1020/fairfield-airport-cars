@@ -18,12 +18,10 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
     validation,
     goToNextPhase,
     goToPreviousPhase,
-    updateTripDetails,
     updateCustomerInfo,
-    updatePaymentInfo,
-    isSubmitting,
-    error,
-    success
+    success,
+    completedBookingId,
+    currentQuote
   } = useBooking();
 
   // Extract data from formData for easier access
@@ -63,10 +61,10 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
           pickupLocation={trip.pickup.address}
           dropoffLocation={trip.dropoff.address}
           pickupDateTime={trip.pickupDateTime}
-          fare={trip.fare}
+          fare={currentQuote?.fare || null}
           tipAmount={payment.tipAmount}
           depositAmount={payment.depositAmount}
-          completedBookingId={null}
+          completedBookingId={completedBookingId}
           cmsData={cmsData}
         />
       )}

@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Booking, BookingFormData, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo } from '@/types/booking';
+import { Booking, BookingFormData, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo, QuoteData } from '@/types/booking';
+import { useRouteCalculation } from '@/hooks/useRouteCalculation';
 
 interface BookingProviderType {
   // Current booking
@@ -30,6 +31,7 @@ interface BookingProviderType {
   validateCurrentPhase: () => ValidationResult;
   validateQuickBookingForm: () => ValidationResult;
   isQuickBookingFormValid: () => boolean;
+  isContactInfoComplete: () => boolean;
   hasFormData: () => boolean;
   clearAllErrors: () => void;
   clearStoredFormData: () => void;
@@ -54,11 +56,17 @@ interface BookingProviderType {
   isSubmitting: boolean;
   error: string | null;
   success: string | null;
+  completedBookingId: string | null;
   
-  // Fare management (simplified)
-  currentFare: number | null;
-  setFare: (fare: number | null) => void;
+  // Quote management (15-minute expiration)
+  currentQuote: QuoteData | null;
+  setQuote: (quote: QuoteData | null) => void;
   submitBooking: () => Promise<{ success: boolean; newTotal?: number }>;
+  
+  // Route calculation (for traffic-aware pricing)
+  route: any;
+  routeLoading: boolean;
+  routeError: string | null;
   
   // Helper functions
   setCurrentBooking: (booking: Booking | null) => void;
@@ -93,12 +101,8 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
         flightNumber: '',
         arrivalTime: '',
         terminal: ''
-      },
-      fare: null,
-      baseFare: null,
-      tipAmount: 0,
-      tipPercent: 15,
-      totalFare: 0
+      }
+      // Note: fare is managed via currentQuote, not formData
     },
     customer: {
       name: '',
@@ -120,9 +124,23 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   const [currentPhase, setCurrentPhase] = useState<BookingPhase>('trip-details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
+  const [completedBookingId, setCompletedBookingId] = useState<string | null>(null);
   const [hasAttemptedValidation, setHasAttemptedValidation] = useState(false);
-  const [currentFare, setCurrentFare] = useState<number | null>(null);
+  const [currentQuote, setCurrentQuote] = useState<QuoteData | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Calculate route with traffic data (for traffic-aware pricing)
+  const { route, loading: routeLoading, error: routeError } = useRouteCalculation(
+    formData.trip.pickup.coordinates,
+    formData.trip.dropoff.coordinates,
+    formData.trip.pickupDateTime
+  );
+
+  // Set full quote data (replaces setFare)
+  const setQuote = useCallback((quote: QuoteData | null) => {
+    setCurrentQuote(quote);
+    // Note: fare is now managed via currentQuote only, not duplicated in formData
+  }, []);
 
   // Initialize form data from session storage (for page refresh persistence)
   useEffect(() => {
@@ -299,6 +317,13 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
            formData.trip.dropoff.coordinates !== null;
   };
 
+  // Check if contact info is complete (for button state)
+  const isContactInfoComplete = (): boolean => {
+    return formData.customer.name.trim() !== '' &&
+           formData.customer.email.trim() !== '' &&
+           formData.customer.phone.trim() !== '';
+  };
+
   // Check if form has any data (for unsaved changes warning)
   const hasFormData = (): boolean => {
     return formData.trip.pickup.address.trim() !== '' ||
@@ -417,20 +442,41 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     setError(null);
     setSuccess(null);
 
-    if (!currentFare) {
+    if (!currentQuote) {
       setIsSubmitting(false);
-      setError('Please calculate fare before submitting booking.');
+      setError('Please get a quote before submitting booking.');
+      return { success: false };
+    }
+    
+    // Check if quote has expired
+    const now = new Date();
+    const expiryDate = new Date(currentQuote.expiresAt);
+    if (now > expiryDate) {
+      setIsSubmitting(false);
+      setError('Your quote has expired. Please get a new quote.');
+      setCurrentQuote(null); // Clear expired quote
       return { success: false };
     }
 
     try {
+      // Ensure pickupDateTime is a full ISO string
+      let pickupDateTime = formData.trip.pickupDateTime;
+      if (pickupDateTime && !pickupDateTime.includes(':00.')) {
+        // Convert from datetime-local format (YYYY-MM-DDTHH:mm) to full ISO
+        pickupDateTime = new Date(pickupDateTime).toISOString();
+      }
+
       const res = await fetch('/api/booking/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fare: currentFare,
+          quoteId: currentQuote.quoteId,  // Send quote ID for validation
+          fare: currentQuote.fare,
           customer: formData.customer,
-          trip: formData.trip
+          trip: {
+            ...formData.trip,
+            pickupDateTime
+          }
         })
       });
 
@@ -453,11 +499,15 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
           return { success: false };
         }
         
-        setError(data.error || 'Failed to submit booking');
+        // Show detailed error if available
+        const errorMsg = data.details ? `${data.error}: ${data.details}` : (data.error || 'Failed to submit booking');
+        setError(errorMsg);
         return { success: false };
       }
 
+      const responseData = await res.json();
       setSuccess('Booking submitted successfully!');
+      setCompletedBookingId(responseData.bookingId || null);
       return { success: true };
     } catch (e) {
       setError('Network error while submitting booking');
@@ -484,12 +534,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
           flightNumber: '',
           arrivalTime: '',
           terminal: ''
-        },
-        fare: null,
-        baseFare: null,
-        tipAmount: 0,
-        tipPercent: 15,
-        totalFare: 0
+        }
       },
       customer: {
         name: '',
@@ -507,6 +552,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
         totalAmount: 0
       }
     });
+    setCurrentQuote(null); // Clear quote on reset
     setCurrentPhase('trip-details');
     setError(null);
     setSuccess(null);
@@ -694,6 +740,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     validateCurrentPhase,
     validateQuickBookingForm,
     isQuickBookingFormValid,
+    isContactInfoComplete,
     hasFormData,
     clearAllErrors,
     clearStoredFormData,
@@ -702,9 +749,13 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     resetForm,
     isSubmitting,
     success,
-    currentFare,
-    setFare: setCurrentFare,
+    completedBookingId,
+    currentQuote,
+    setQuote,
     submitBooking,
+    route,
+    routeLoading,
+    routeError,
   };
 
   return (

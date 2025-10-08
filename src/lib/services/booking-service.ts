@@ -1,5 +1,6 @@
 import { db } from '@/lib/utils/firebase-server';
 import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp, runTransaction } from 'firebase/firestore';
+import { BookingCreateData } from '@/types/booking';
 import { getDriver } from './driver-service';
 import { driverSchedulingService } from './driver-scheduling-service';
 
@@ -116,8 +117,8 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
 };
 
 // ATOMIC BOOKING: Prevents double booking with Firestore transactions
-export const createBookingAtomic = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ bookingId: string }> => {
-  const pickupDate = bookingData.pickupDateTime;
+export const createBookingAtomic = async (bookingData: BookingCreateData): Promise<{ bookingId: string }> => {
+  const pickupDate = bookingData.trip.pickupDateTime as unknown as Date;
   const dateStr = pickupDate.toISOString().split('T')[0]; // YYYY-MM-DD
   const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
   const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
@@ -141,28 +142,26 @@ export const createBookingAtomic = async (bookingData: Omit<Booking, 'id' | 'cre
       endTime
     );
 
-    if (availableDrivers.length === 0) {
-      throw new Error('Gregg is not available for the requested time slot. Please try a different time.');
+    // For promotional no-payment bookings, allow booking without immediate driver assignment
+    let selectedDriver = null;
+    if (availableDrivers.length > 0) {
+      // 3. Select Gregg as the driver if available (single driver setup)
+      selectedDriver = availableDrivers[0];
     }
+    // If no driver available, booking status will be 'pending' and driver assigned later
 
-    // 3. Select Gregg as the driver (single driver setup)
-    const selectedDriver = availableDrivers[0];
-    
-    if (!selectedDriver) {
-      throw new Error('Gregg is not available for the requested time slot');
-    }
-
-    // 4. Calculate deposit (30% of total fare)
-    const depositAmount = Math.round(bookingData.fare * 0.3 * 100) / 100;
-    const balanceDue = bookingData.fare - depositAmount;
+    // 4. Calculate deposit (30% of total fare) - currently $0 for promotion
+    const depositAmount = bookingData.payment.depositAmount || 0;
+    const balanceDue = bookingData.trip.fare! - depositAmount;
 
     // 5. Create booking document atomically
     const bookingDoc = {
       ...bookingData,
-      driverId: selectedDriver.driverId,
-      driverName: selectedDriver.driverName,
+      driverId: selectedDriver?.driverId || null,
+      driverName: selectedDriver?.driverName || 'To be assigned',
       depositAmount,
       balanceDue,
+      status: selectedDriver ? 'confirmed' : 'pending', // Pending if no driver yet
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -170,20 +169,24 @@ export const createBookingAtomic = async (bookingData: Omit<Booking, 'id' | 'cre
     const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
     const bookingId = docRef.id;
 
-    // 6. Book the time slot atomically (within transaction)
-    await driverSchedulingService.bookTimeSlot(
-      selectedDriver.driverId,
-      selectedDriver.driverName,
-      dateStr,
-      startTime,
-      endTime,
-      bookingId,
-      bookingData.name,
-      bookingData.pickupLocation,
-      bookingData.dropoffLocation
-    );
+    // 6. Book the time slot atomically (only if driver available)
+    if (selectedDriver) {
+      await driverSchedulingService.bookTimeSlot(
+        selectedDriver.driverId,
+        selectedDriver.driverName,
+        dateStr,
+        startTime,
+        endTime,
+        bookingId,
+        bookingData.customer.name,
+        bookingData.trip.pickup.address,
+        bookingData.trip.dropoff.address
+      );
+      console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
+    } else {
+      console.log(`✅ BOOKING PENDING: ${bookingId} - driver will be assigned later`);
+    }
 
-    console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
     return { bookingId };
   });
 };

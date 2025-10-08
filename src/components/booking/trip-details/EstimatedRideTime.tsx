@@ -9,40 +9,31 @@ interface EstimatedRideTimeProps {
 }
 
 export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData }) => {
-  const { formData } = useBooking();
+  const { route, routeLoading, routeError } = useBooking();
   
-  // Check if we have both pickup and dropoff coordinates
-  const hasCoordinates = formData.trip.pickup.coordinates && formData.trip.dropoff.coordinates;
-  
-  // For now, we'll show a simple estimated time based on distance
-  // In a real implementation, this would use Google Maps API to get actual travel time
-  const getEstimatedTime = () => {
-    if (!hasCoordinates) return null;
-    
-    // Simple estimation based on coordinates
-    const pickup = formData.trip.pickup.coordinates!;
-    const dropoff = formData.trip.dropoff.coordinates!;
-    
-    // Calculate approximate distance (simplified)
-    const latDiff = Math.abs(pickup.lat - dropoff.lat);
-    const lngDiff = Math.abs(pickup.lng - dropoff.lng);
-    const distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69; // Rough miles
-    
-    // Estimate time based on distance (assuming average speed of 30 mph in traffic)
-    const estimatedMinutes = Math.round(distance * 2); // 2 minutes per mile average
-    
-    if (estimatedMinutes < 60) {
-      return `${estimatedMinutes} minutes`;
-    } else {
-      const hours = Math.floor(estimatedMinutes / 60);
-      const minutes = estimatedMinutes % 60;
-      return minutes > 0 ? `${hours}h ${minutes}m` : `${hours} hour${hours > 1 ? 's' : ''}`;
-    }
-  };
+  // Show loading state
+  if (routeLoading) {
+    return (
+      <Box 
+        padding="md" 
+        variant="filled"
+        rounded="md"
+        data-testid="estimated-ride-time-loading"
+      >
+        <Text size="sm" color="secondary">
+          {cmsData?.['tripDetailsPhase-calculatingRoute'] || '⏱️ Calculating route...'}
+        </Text>
+      </Box>
+    );
+  }
 
-  const estimatedTime = getEstimatedTime();
+  // Show error state
+  if (routeError) {
+    return null; // Silently fail - route info is optional
+  }
 
-  if (!estimatedTime) {
+  // Don't show if no route data yet
+  if (!route) {
     return null;
   }
 
@@ -58,11 +49,30 @@ export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData })
           {cmsData?.['tripDetailsPhase-estimatedTimeTitle'] || '⏱️ Estimated Ride Time'}
         </Text>
         <Text size="lg" weight="bold" color="success">
-          {estimatedTime}
+          {route.durationInTraffic || route.duration}
         </Text>
         <Text size="xs" color="secondary">
           {cmsData?.['tripDetailsPhase-estimatedTimeNote'] || 'Based on current traffic conditions'}
         </Text>
+      </Stack>
+      
+      <Stack spacing="sm" style={{ marginTop: '1rem' }}>
+        <Text weight="medium" cmsId="route-info-title" size="sm">
+          {cmsData?.['tripDetailsPhase-routeInfo'] || 'Trip Information'}
+        </Text>
+        <Text cmsId="route-distance" size="sm">
+          {cmsData?.['tripDetailsPhase-distance'] || 'Distance'}: {route.distance}
+        </Text>
+        {route.durationInTraffic && route.durationInTraffic !== route.duration && (
+          <Text size="xs" color="secondary" cmsId="tripDetailsPhase-trafficAdjusted">
+            {cmsData?.['tripDetailsPhase-trafficAdjusted'] || '(traffic adjusted)'}
+          </Text>
+        )}
+        {route.trafficLevel && route.trafficLevel !== 'unknown' && (
+          <Text cmsId="route-traffic" size="sm" color={route.trafficLevel === 'high' ? 'error' : route.trafficLevel === 'medium' ? 'warning' : 'success'}>
+            {cmsData?.['tripDetailsPhase-trafficLevel'] || 'Traffic'}: {route.trafficLevel}
+          </Text>
+        )}
       </Stack>
     </Box>
   );

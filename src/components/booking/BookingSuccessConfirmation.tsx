@@ -54,8 +54,8 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
               <Text weight="bold" color="primary" cmsId="total-fare-value">${(fare || 0) + tipAmount}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="booking-detail-deposit">{cmsData?.['booking-detail-deposit'] || 'Deposit Paid:'}</Text>
-              <Text color="success" cmsId="deposit-amount-value">${depositAmount?.toFixed(2)}</Text>
+              <Text weight="medium" cmsId="booking-detail-payment">{cmsData?.['booking-detail-payment'] || 'Payment:'}</Text>
+              <Text color="success" cmsId="payment-status-value">{depositAmount && depositAmount > 0 ? `$${depositAmount.toFixed(2)} Paid` : 'Due After Ride'}</Text>
             </Stack>
           </Stack>
         </Box>
@@ -64,9 +64,20 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
           <Text size="lg" weight="medium" align="center" cmsId="whats-next-title">
             {cmsData?.['whats-next-title'] || "What's Next?"}
           </Text>
-          <Text size="sm" color="secondary" align="center" cmsId="whats-next-description">
-            {cmsData?.['whats-next-description'] || '• You\'ll receive a confirmation email shortly<br/>• Driver will contact you 15 minutes before pickup<br/>• Track your driver in real-time on the booking page'}
-          </Text>
+          <Stack spacing="sm" align="flex-start">
+            <Text size="sm" color="secondary" cmsId="whats-next-email">
+              ✉️ You'll receive a confirmation email shortly
+            </Text>
+            <Text size="sm" color="secondary" cmsId="whats-next-driver">
+              👤 A driver will be assigned and contact you soon
+            </Text>
+            <Text size="sm" color="secondary" cmsId="whats-next-pickup">
+              📞 Driver will confirm details 15 minutes before pickup
+            </Text>
+            <Text size="sm" color="secondary" cmsId="whats-next-track">
+              🗺️ Track your driver in real-time on the booking page
+            </Text>
+          </Stack>
         </Stack>
 
         <Stack direction="horizontal" spacing="md">

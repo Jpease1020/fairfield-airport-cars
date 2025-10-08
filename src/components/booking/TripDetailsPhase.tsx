@@ -50,13 +50,14 @@ export function TripDetailsPhase({
   // Availability checking
   const { error: availabilityError, checkAvailability } = useBookingAvailability();
 
-  // Use custom hooks for business logic
+  // Use custom hooks for business logic (with traffic-aware pricing)
   const { fare: calculatedFare, isCalculating: isCalculatingFare, error: fareError } = useFareCalculation({
     pickupLocation: tripData.pickup.address,
     dropoffLocation: tripData.dropoff.address,
     pickupCoords: tripData.pickup.coordinates,
     dropoffCoords: tripData.dropoff.coordinates,
-    fareType: tripData.fareType
+    fareType: tripData.fareType,
+    pickupDateTime: tripData.pickupDateTime // For traffic-aware pricing
   });
 
   // Check availability when pickup date/time changes

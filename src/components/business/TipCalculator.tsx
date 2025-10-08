@@ -43,7 +43,8 @@ export function TipCalculator({
     setTipAmount(calculatedTip);
     setTotalAmount(calculatedTotal);
     onTipChange(calculatedTip, percentage);
-  }, [baseAmount, selectedPercentage, customPercentage, onTipChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseAmount, selectedPercentage, customPercentage]);
 
   // Handle percentage selection
   const handlePercentageSelect = (percentage: number) => {

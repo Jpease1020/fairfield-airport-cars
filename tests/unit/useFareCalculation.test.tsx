@@ -10,11 +10,11 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
 
 // Mock the provider
-const mockSetFare = vi.fn();
+const mockSetQuote = vi.fn();
 
 vi.mock('@/providers/BookingProvider', () => ({
   useBooking: () => ({
-    setFare: mockSetFare
+    setQuote: mockSetQuote
   })
 }));
 
@@ -59,7 +59,9 @@ describe('useFareCalculation Hook - RTL Style', () => {
 
     expect(result.current.isCalculating).toBe(false);
     expect(result.current.error).toBeNull();
-    expect(mockSetFare).toHaveBeenCalledWith(95.50);
+    expect(mockSetQuote).toHaveBeenCalledWith(expect.objectContaining({
+      fare: 95.50
+    }));
   });
 
   it('should not calculate fare when required data is missing', () => {

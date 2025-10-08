@@ -30,11 +30,10 @@ export function PaymentPhase({
     error,
     success,
     submitBooking, 
-    currentFare, 
-    setFare,
+    currentQuote,
+    setQuote,
     goToPreviousPhase,
-    updatePaymentInfo,
-    currentQuote
+    updatePaymentInfo
   } = useBooking();
   
   // Extract data from formData
@@ -42,9 +41,8 @@ export function PaymentPhase({
   const customerData = formData.customer;
   const paymentData = formData.payment;
   const [isRefreshingQuote, setIsRefreshingQuote] = React.useState(false);
-  const getTotalWithTip = () => (tripData.fare || 0) + paymentData.tipAmount;
-  const isQuoteValid = currentQuote && currentQuote.expiresAt > new Date();
-  const canProcessPayment = !isSubmitting && currentFare !== null && !!isQuoteValid;
+  const getTotalWithTip = () => (currentQuote?.fare || 0) + paymentData.tipAmount;
+  const canProcessPayment = !isSubmitting && currentQuote !== null;
 
   return (
     <Container maxWidth="7xl" padding="xl" data-testid="payment-phase-container">
@@ -73,7 +71,7 @@ export function PaymentPhase({
           pickupLocation={tripData.pickup.address}
           dropoffLocation={tripData.dropoff.address}
           pickupDateTime={tripData.pickupDateTime}
-          fare={tripData.fare}
+          fare={currentQuote?.fare || null}
           tipAmount={paymentData.tipAmount}
           depositAmount={paymentData.depositAmount}
           cmsData={cmsData}
@@ -81,7 +79,7 @@ export function PaymentPhase({
 
         {/* Tip Calculator */}
         <TipCalculator
-          baseAmount={tripData.fare || 0}
+          baseAmount={currentQuote?.fare || 0}
           initialTipPercentage={paymentData.tipPercent}
           onTipChange={(amount, percent) => {
             updatePaymentInfo({ tipAmount: amount, tipPercent: percent });
@@ -96,10 +94,10 @@ export function PaymentPhase({
               🎉 Limited Time Offer!
             </Text>
             <Text size="lg" weight="bold" color="success" cmsId="no-deposit-message">
-              No Deposit Required - Book Now!
+              No Payment Required - Book Now!
             </Text>
             <Text size="md" color="secondary" align="center" cmsId="no-deposit-description">
-              Complete your booking without any upfront payment. Payment will be collected after your ride.
+              Complete your booking without any payment. Simply confirm your details and we'll see you at pickup! Payment will be collected after your ride.
             </Text>
           </Stack>
         </Container>
@@ -116,7 +114,7 @@ export function PaymentPhase({
               pickupLocation: tripData.pickup.address,
               dropoffLocation: tripData.dropoff.address,
               pickupDateTime: tripData.pickupDateTime,
-              fare: tripData.fare,
+              fare: currentQuote?.fare || null,
               flightNumber: tripData.flightInfo?.flightNumber || '',
               notes: customerData.notes,
               tipAmount: paymentData.tipAmount,
@@ -134,7 +132,7 @@ export function PaymentPhase({
           />
         </DisabledFormWrapper>
 
-        {!currentFare && (
+        {!currentQuote && (
           <Stack spacing="md" align="center">
             <Text color="warning" cmsId="paymentPhase-expiredQuote">Price quote expired. Please refresh to continue.</Text>
             <Button
@@ -158,7 +156,7 @@ export function PaymentPhase({
                   });
                   if (res.ok) {
                     const data = await res.json();
-                    setFare(data.fare);
+                    setQuote(data); // Set full quote
                   }
                 } catch (error) {
                   console.error('Quote refresh error:', error);
