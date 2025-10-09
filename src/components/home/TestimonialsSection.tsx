@@ -48,7 +48,7 @@ const CarouselTrack = styled.div`
   
   /* Mobile: Show partial next card + smooth scrolling */
   @media (max-width: 768px) {
-    padding: 1rem 1rem 2rem 1rem;
+    padding: 1rem;
     scrollbar-width: none;
     gap: 1rem;
     
@@ -87,48 +87,6 @@ const ScrollHintText = styled(Text)`
     margin-top: 0.5rem;
     opacity: 0.6;
     font-size: 0.875rem;
-  }
-`;
-
-const MobileLeftArrow = styled.div`
-  display: none;
-  
-  @media (max-width: 768px) {
-    display: block;
-    position: absolute;
-    left: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    pointer-events: none;
-    
-    svg {
-      width: 32px;
-      height: 32px;
-      color: ${colors.primary[600]};
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    }
-  }
-`;
-
-const MobileRightArrow = styled.div`
-  display: none;
-  
-  @media (max-width: 768px) {
-    display: block;
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    pointer-events: none;
-    
-    svg {
-      width: 32px;
-      height: 32px;
-      color: ${colors.primary[600]};
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    }
   }
 `;
 
@@ -357,6 +315,13 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
       review: "Outstanding Service from Start to Finish! I had an excellent experience with Fairfield Airport Car Service, thanks to Gregg. From the moment I booked, Gregg was professional, punctual, and incredibly accommodating. The vehicle was spotless, comfortable, and on time — which made my trip to the airport completely stress-free. If you want the assurance of knowing what you're getting, do yourself a favor and book Gregg - the peace of mind is worth it alone!",
       name: "Andy K.",
       location: "Connecticut"
+    },
+    {
+      id: 'testimonial-6',
+      rating: 5,
+      review: "I'm so grateful to have discovered this service! I was having so many drivers cancel on me, and could no longer rely on traditional platforms to get me to the airport when needed. Gregg is highly communicative, punctual and incredibly friendly - not to mention the vehicle itself is a treat to ride in. I can't recommend Fairfield Airport Car Service enough.",
+      name: "Brodie",
+      location: "Old Greenwich"
     }
   ];
 
@@ -429,29 +394,16 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
           
           {/* Mobile: Fade overlay to hint at more content */}
           <FadeOverlay />
-          
-          {/* Mobile: Simple arrow indicators */}
-          <MobileLeftArrow>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </MobileLeftArrow>
-          <MobileRightArrow>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </MobileRightArrow>
+            {/* Mobile: Swipe hint text */}
+            <ScrollHintText 
+            color="primary" 
+            cmsId="testimonials-swipe-hint"
+            >
+            {cmsData?.['testimonials-swipe-hint'] || '← Swipe to see more reviews →'}
+            </ScrollHintText>      
         </CarouselContainer>
-        
-        {/* Mobile: Swipe hint text */}
-        <ScrollHintText 
-          color="secondary" 
-          cmsId="testimonials-swipe-hint"
-        >
-          {cmsData?.['testimonials-swipe-hint'] || '← Swipe to see more reviews →'}
-        </ScrollHintText>
+    
       </Stack>
     </Container>
   );
 };
-
