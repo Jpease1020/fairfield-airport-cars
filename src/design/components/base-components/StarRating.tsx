@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Star } from 'lucide-react';
-import { colors, spacing, fontSize, transitions } from '../../system/tokens/tokens';
+import { colors, fontSize, transitions } from '../../system/tokens/tokens';
 
 // Styled star button with proper prop filtering
 const StyledStarButton = styled.button.withConfig({
@@ -33,13 +33,13 @@ const StyledStarButton = styled.button.withConfig({
         `;
       case 'md':
         return `
-          width: 1.25rem;
-          height: 1.25rem;
+          width: 1.5rem;
+          height: 1.5rem;
         `;
       case 'lg':
         return `
-          width: 1.5rem;
-          height: 1.5rem;
+          width: 2.5rem;
+          height: 2.5rem;
         `;
       default:
         return `
@@ -78,7 +78,6 @@ const StyledStarButton = styled.button.withConfig({
 const StarRatingContainer = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: ${spacing.sm};
 `;
 
 // Styled rating value text
