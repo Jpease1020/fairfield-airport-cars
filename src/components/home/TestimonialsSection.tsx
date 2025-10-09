@@ -14,6 +14,7 @@ const CarouselContainer = styled.div`
   
   @media (max-width: 768px) {
     padding: 0;
+    overflow: hidden;
   }
 `;
 
@@ -44,6 +45,91 @@ const CarouselTrack = styled.div`
   &::-webkit-scrollbar-thumb:hover {
     background: ${colors.primary[700]};
   }
+  
+  /* Mobile: Show partial next card + smooth scrolling */
+  @media (max-width: 768px) {
+    padding: 1rem 1rem 2rem 1rem;
+    scrollbar-width: none;
+    gap: 1rem;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Snap scrolling for better mobile UX */
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 1rem;
+  }
+`;
+
+const FadeOverlay = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 2rem;
+    width: 80px;
+    background: linear-gradient(to right, transparent, ${colors.background.secondary});
+    pointer-events: none;
+    z-index: 5;
+  }
+`;
+
+const ScrollHintText = styled(Text)`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    text-align: center;
+    margin-top: 0.5rem;
+    opacity: 0.6;
+    font-size: 0.875rem;
+  }
+`;
+
+const MobileLeftArrow = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none;
+    
+    svg {
+      width: 32px;
+      height: 32px;
+      color: ${colors.primary[600]};
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+  }
+`;
+
+const MobileRightArrow = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none;
+    
+    svg {
+      width: 32px;
+      height: 32px;
+      color: ${colors.primary[600]};
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+  }
 `;
 
 const TestimonialCard = styled(Box)`
@@ -60,6 +146,7 @@ const TestimonialCard = styled(Box)`
     min-width: 280px;
     max-width: 320px;
     min-height: 280px;
+    scroll-snap-align: start;
   }
   
   &:hover {
@@ -289,7 +376,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
 
   return (
     <Container padding="xl" variant="section" data-testid="testimonials-section">
-      <Stack spacing="xl" align="center">
+      <Stack spacing="sm" align="center">
         {/* Section Header */}
         <Stack spacing="md" align="center">
           <H2
@@ -339,7 +426,30 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
           >
             <ChevronRight size={24} />
           </RightButton>
+          
+          {/* Mobile: Fade overlay to hint at more content */}
+          <FadeOverlay />
+          
+          {/* Mobile: Simple arrow indicators */}
+          <MobileLeftArrow>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </MobileLeftArrow>
+          <MobileRightArrow>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </MobileRightArrow>
         </CarouselContainer>
+        
+        {/* Mobile: Swipe hint text */}
+        <ScrollHintText 
+          color="secondary" 
+          cmsId="testimonials-swipe-hint"
+        >
+          {cmsData?.['testimonials-swipe-hint'] || '← Swipe to see more reviews →'}
+        </ScrollHintText>
       </Stack>
     </Container>
   );
