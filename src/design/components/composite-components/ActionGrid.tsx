@@ -36,7 +36,7 @@ interface ActionGridProps {
  * ```tsx
  * const actions = [
  *   { id: 1, icon: "🚗", label: "Book Ride", onClick: () => {} },
- *   { id: 2, icon: "📞", label: "Call Us", href: "tel:+1234567890" }
+ *   { id: 2, icon: "💬", label: "Text Us", href: "sms:+1234567890" }
  * ];
  * 
  * <ActionGrid actions={actions} columns={3} />

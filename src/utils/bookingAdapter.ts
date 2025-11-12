@@ -71,6 +71,25 @@ export function adaptOldBookingToNew(oldBooking: OldBooking): NewBooking {
       status: oldBooking.status,
       lastUpdated: new Date()
     } : undefined,
+  
+  confirmation: oldBooking.confirmation
+    ? {
+        status: oldBooking.confirmation.status,
+        token: oldBooking.confirmation.token,
+        sentAt: oldBooking.confirmation.sentAt
+          ? (oldBooking.confirmation.sentAt instanceof Date
+              ? oldBooking.confirmation.sentAt.toISOString()
+              : String(oldBooking.confirmation.sentAt))
+          : undefined,
+        confirmedAt: oldBooking.confirmation.confirmedAt
+          ? (oldBooking.confirmation.confirmedAt instanceof Date
+              ? oldBooking.confirmation.confirmedAt.toISOString()
+              : String(oldBooking.confirmation.confirmedAt))
+          : undefined
+      }
+    : {
+        status: oldBooking.status === 'confirmed' ? 'confirmed' : 'pending'
+      },
     
     // Legacy fields for backward compatibility
     pickupLocation: oldBooking.pickupLocation,

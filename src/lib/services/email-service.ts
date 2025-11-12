@@ -15,11 +15,11 @@ const {
 const VERIFIED_EMAIL_FROM = 'no-reply@fairfieldairportcar.com';
 
 console.log('🔧 Email service environment check:');
-console.log(`   EMAIL_HOST: ${EMAIL_HOST ? '✅ Set' : '❌ Missing'}`);
-console.log(`   EMAIL_PORT: ${EMAIL_PORT ? '✅ Set' : '❌ Missing'}`);
-console.log(`   EMAIL_USER: ${EMAIL_USER ? '✅ Set' : '❌ Missing'}`);
-console.log(`   EMAIL_PASS: ${EMAIL_PASS ? '✅ Set' : '❌ Missing'}`);
-console.log(`   EMAIL_FROM: ${EMAIL_FROM}`);
+  console.log(`   EMAIL_HOST: ${EMAIL_HOST ? '✅ Set' : '❌ Missing'}`);
+  console.log(`   EMAIL_PORT: ${EMAIL_PORT ? '✅ Set' : '❌ Missing'}`);
+  console.log(`   EMAIL_USER: ${EMAIL_USER ? '✅ Set' : '❌ Missing'}`);
+  console.log(`   EMAIL_PASS: ${EMAIL_PASS ? '✅ Set' : '❌ Missing'}`);
+  console.log(`   EMAIL_FROM: ${EMAIL_FROM}`);
 
 if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
   console.warn('Email environment variables are not fully configured. Confirmation emails will not be sent.');
@@ -94,10 +94,10 @@ Total Amount: $${((booking.fare || 0) + (booking.tipAmount || 0)).toFixed(2)}
 ==================
 Track your driver in real-time: ${trackingUrl}
 
-📞 CONTACT INFORMATION
+💬 CONTACT INFORMATION
 ======================
 If you have any questions or need to make changes, please contact us:
-Phone: ${businessSettings?.company?.phone || '(646) 221-6370'}
+Text: ${businessSettings?.company?.phone || '(646) 221-6370'}
 Email: ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}
 
 Thank you for choosing ${businessSettings?.company?.name || 'Fairfield Airport Cars'}!
@@ -108,6 +108,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
   const mailOptions = {
     from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
     to: booking.customer.email,
+    bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
     subject: `Your Ride Confirmation - ${booking.id}`,
     text: emailText,
     html: `
@@ -142,9 +143,9 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         </div>
         
         <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #a16207; margin-top: 0;">📞 CONTACT INFORMATION</h3>
-          <p>If you have any questions or need to make changes, please contact us:</p>
-          <p><strong>Phone:</strong> ${businessSettings?.company?.phone || '(646) 221-6370'}</p>
+          <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
+        <p>If you have any questions or need to make changes, please contact us:</p>
+        <p><strong>Text:</strong> ${businessSettings?.company?.phone || '(646) 221-6370'}</p>
           <p><strong>Email:</strong> ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}</p>
         </div>
         
@@ -178,6 +179,71 @@ export async function sendTestEmail(to: string, subject = 'Test Email', text = '
   };
   await transporter.sendMail(mailOptions);
   return true;
+}
+
+export async function sendBookingVerificationEmail(booking: Booking, confirmationUrl: string) {
+  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) return;
+
+  const businessSettings = await cmsFlattenedService.getBusinessSettings();
+
+  const pickupDate = new Date(booking.trip.pickupDateTime);
+
+  const emailText = `Hi ${booking.customer.name},
+
+One more step to secure your ride from ${booking.trip.pickup.address} to ${booking.trip.dropoff.address}.
+
+Please confirm your booking by opening the link below:
+${confirmationUrl}
+
+Once you confirm, we’ll finalize your driver assignment and send you the full itinerary.
+
+Booking summary:
+- Booking ID: ${booking.id}
+- Date & Time: ${pickupDate.toLocaleString()}
+- Pickup: ${booking.trip.pickup.address}
+- Dropoff: ${booking.trip.dropoff.address}
+
+Need help? Text ${businessSettings?.company?.phone || '(646) 221-6370'}.
+
+Thank you,
+${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: var(--color-primary-600);">Hi ${booking.customer.name},</h2>
+      <p>One more step to secure your ride from <strong>${booking.trip.pickup.address}</strong> to <strong>${booking.trip.dropoff.address}</strong>.</p>
+      <p style="margin: 24px 0;">
+        <a href="${confirmationUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+          Confirm My Booking
+        </a>
+      </p>
+      <p>Once you confirm, we’ll finalize your driver assignment and send you the full itinerary.</p>
+
+      <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 Booking Summary</h3>
+        <p><strong>Booking ID:</strong> ${booking.id}</p>
+        <p><strong>Date & Time:</strong> ${pickupDate.toLocaleString()}</p>
+        <p><strong>Pickup:</strong> ${booking.trip.pickup.address}</p>
+        <p><strong>Dropoff:</strong> ${booking.trip.dropoff.address}</p>
+      </div>
+
+      <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="color: #a16207; margin-top: 0;">💬 Need help?</h3>
+        <p>Text us at ${businessSettings?.company?.phone || '(646) 221-6370'} or email ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}.</p>
+      </div>
+
+      <p>Thank you for choosing <strong>${businessSettings?.company?.name || 'Fairfield Airport Cars'}</strong>!</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
+    to: booking.customer.email,
+    bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
+    subject: `Action Required: Confirm your booking (${booking.id})`,
+    text: emailText,
+    html
+  });
 }
 
 export async function sendEnhancedTestEmail(to: string, bookingId: string) {
@@ -218,10 +284,10 @@ Total Amount: $150.00
 ==================
 Track your driver in real-time: ${trackingUrl}
 
-📞 CONTACT INFORMATION
+💬 CONTACT INFORMATION
 ======================
 If you have any questions or need to make changes, please contact us:
-Phone: (646) 221-6370
+Text: (646) 221-6370
 Email: rides@fairfieldairportcars.com
 
 Thank you for choosing Fairfield Airport Cars!
@@ -262,9 +328,9 @@ The Fairfield Airport Cars Team`;
         </div>
         
         <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #a16207; margin-top: 0;">📞 CONTACT INFORMATION</h3>
+          <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
           <p>If you have any questions or need to make changes, please contact us:</p>
-          <p><strong>Phone:</strong> (646) 221-6370</p>
+          <p><strong>Text:</strong> (646) 221-6370</p>
           <p><strong>Email:</strong> rides@fairfieldairportcars.com</p>
         </div>
         

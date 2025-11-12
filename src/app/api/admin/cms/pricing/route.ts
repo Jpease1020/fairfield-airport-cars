@@ -6,9 +6,22 @@ export async function POST(request: NextRequest) {
     const pricingData = await request.json();
     
     // Validate required fields
-    if (!pricingData.baseFare || !pricingData.perMile || !pricingData.perMinute) {
+    const requiredNumericFields = ['baseFare', 'perMile', 'perMinute', 'airportReturnMultiplier'] as const;
+    const missingFields = requiredNumericFields.filter((field) => {
+      const value = pricingData[field];
+      return typeof value !== 'number' || Number.isNaN(value);
+    });
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: 'Missing required pricing fields' },
+        { error: `Missing required pricing fields: ${missingFields.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    if (pricingData.airportReturnMultiplier < 1) {
+      return NextResponse.json(
+        { error: 'Airport return multiplier must be at least 1.0' },
         { status: 400 }
       );
     }

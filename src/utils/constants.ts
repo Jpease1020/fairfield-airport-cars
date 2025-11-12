@@ -136,3 +136,42 @@ export const SUCCESS_MESSAGES = {
   passwordChanged: 'Password changed successfully!',
   bookingCancelled: 'Booking cancelled successfully!',
 } as const;
+
+export const KNOWN_AIRPORTS = [
+  {
+    code: 'JFK',
+    name: 'John F. Kennedy International Airport',
+    coordinates: { lat: 40.6413111, lng: -73.7781391 },
+    radiusMiles: 5,
+  },
+  {
+    code: 'LGA',
+    name: 'LaGuardia Airport',
+    coordinates: { lat: 40.7769271, lng: -73.8739659 },
+    radiusMiles: 4,
+  },
+  {
+    code: 'EWR',
+    name: 'Newark Liberty International Airport',
+    coordinates: { lat: 40.6895314, lng: -74.1744624 },
+    radiusMiles: 5,
+  },
+  {
+    code: 'HPN',
+    name: 'Westchester County Airport',
+    coordinates: { lat: 41.067005, lng: -73.707574 },
+    radiusMiles: 3,
+  },
+  {
+    code: 'BDR',
+    name: 'Igor I. Sikorsky Memorial Airport',
+    coordinates: { lat: 41.163467, lng: -73.126168 },
+    radiusMiles: 2,
+  },
+  {
+    code: 'ISP',
+    name: 'Long Island MacArthur Airport',
+    coordinates: { lat: 40.789319, lng: -73.100211 },
+    radiusMiles: 3,
+  },
+] as const;

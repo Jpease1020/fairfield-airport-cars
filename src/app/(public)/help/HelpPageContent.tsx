@@ -87,7 +87,7 @@ export default function HelpPageContent() {
                       {cmsData?.['faq-1-question'] || 'How do I book a ride?'}
                     </Text>
                     <Text cmsId="faq-1-answer">
-                      {cmsData?.['faq-1-answer'] || 'You can book a ride by clicking the "Book a Ride" button above, or by calling us at (203) 555-0123. Simply provide your pickup location, destination, and preferred time.'}
+                      {cmsData?.['faq-1-answer'] || 'You can book a ride by clicking the "Book a Ride" button above, or by texting us at (203) 555-0123. Simply provide your pickup location, destination, and preferred time.'}
                     </Text>
                   </Stack>
                 </Box>
@@ -153,7 +153,7 @@ export default function HelpPageContent() {
                   {cmsData?.['phone-label'] || 'Phone:'}
                 </Text>
                 <Text cmsId="phone-value">
-                  {cmsData?.['phone-value'] || '(203) 555-0123'}
+                  {cmsData?.['phone-value'] || 'Text: (203) 555-0123'}
                 </Text>
               </Stack>
               <Stack direction="horizontal" spacing="md">

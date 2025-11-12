@@ -59,10 +59,10 @@ function CancelPageContent() {
       icon: '❌'
     },
     {
-      label: 'Contact Support',
-      onClick: () => addToast('info', 'Support: (203) 555-0123'),
+      label: 'Text Support',
+      onClick: () => addToast('info', 'Text Support: (203) 555-0123'),
       variant: 'outline' as const,
-      icon: '📞'
+      icon: '💬'
     },
     {
       label: 'Back to Home',

@@ -90,7 +90,7 @@ export const Footer: React.FC = () => {
                   cmsId="phone"
                   
                 >
-                  {cmsData?.['phone'] || '(646) 221-6370'}
+                  {cmsData?.['phone'] || '📱 Text us: (646) 221-6370'}
                 </Text>
                 <Text 
                   size="sm" 

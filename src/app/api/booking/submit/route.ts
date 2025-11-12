@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
 import { createHash } from 'crypto';
+import { randomBytes } from 'crypto';
+import { db } from '@/lib/utils/firebase-server';
+import { doc, updateDoc } from 'firebase/firestore';
+import { getBooking } from '@/lib/services/booking-service';
+import { sendBookingVerificationEmail } from '@/lib/services/email-service';
+import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
+import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -123,23 +130,61 @@ export async function POST(request: Request) {
         tipPercent: 0,
         totalAmount: fare
       },
-      status: 'confirmed' as const
+      status: 'pending' as const
     };
 
     // Import booking service
     const { createBookingAtomic } = await import('@/lib/services/booking-service');
     const bookingResult = await createBookingAtomic(bookingData);
 
+    const confirmationToken = randomBytes(32).toString('hex');
+
+    const bookingRef = doc(db, 'bookings', bookingResult.bookingId);
+    await updateDoc(bookingRef, {
+      confirmation: {
+        status: 'pending',
+        token: confirmationToken,
+        sentAt: new Date().toISOString()
+      }
+    });
+
+    let emailWarning: string | null = null;
+    const bookingRecord = await getBooking(bookingResult.bookingId);
+    if (bookingRecord) {
+      const confirmationUrlBase =
+        process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
+      const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${confirmationToken}`;
+      try {
+        await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError);
+        emailWarning =
+          'Your ride request is saved, but we could not send the confirmation email. Please text Gregg at (646) 221-6370 so we can finalize it.';
+        await recordBookingAttempt({
+          stage: 'submit',
+          status: 'warning',
+          bookingId: bookingResult.bookingId,
+          reason: emailWarning,
+        });
+      }
+    }
+
     return NextResponse.json({ 
       success: true, 
       bookingId: bookingResult.bookingId,
       totalFare: fare,
-      message: 'Booking created successfully - no deposit required'
+      message: 'Booking created successfully — pending email confirmation',
+      emailWarning
     });
 
   } catch (err) {
     console.error('Booking creation error:', err);
     const errorMessage = err instanceof Error ? err.message : 'Failed to create booking';
+    await recordBookingAttempt({
+      stage: 'submit',
+      status: 'failed',
+      reason: errorMessage,
+    });
     return NextResponse.json({ 
       error: 'Failed to create booking',
       details: errorMessage 

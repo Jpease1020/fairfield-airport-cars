@@ -10,6 +10,7 @@ export interface Settings {
   perMinute: number;        // dollars per minute
   depositPercent: number;   // % of fare charged upfront
   bufferMinutes: number;    // gap required between rides
+  airportReturnMultiplier: number; // multiplier for airport-to-home rides
   cancellation: CancellationRules;
 }
 
@@ -19,6 +20,7 @@ export const DEFAULT_SETTINGS: Settings = {
   perMinute: 0.5,
   depositPercent: 50,
   bufferMinutes: 60,
+  airportReturnMultiplier: 1.8,
   cancellation: {
     over24hRefundPercent: 100,
     between3And24hRefundPercent: 50,

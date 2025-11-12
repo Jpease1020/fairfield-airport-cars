@@ -75,6 +75,78 @@ const StyledInput = styled.input.withConfig({
     box-shadow: ${shadows.error};
   `}
 
+  /* Mobile-specific datetime-local styling */
+  &[type="datetime-local"] {
+    /* Keep native appearance but ensure it works on mobile */
+    cursor: pointer;
+    
+    /* iOS Safari specific fixes */
+    @media (max-width: 768px) {
+      font-size: 16px; /* Prevent zoom on iOS */
+      cursor: pointer;
+      
+      /* Ensure the input is tappable and shows picker */
+      &:focus {
+        cursor: pointer;
+      }
+      
+      &::-webkit-datetime-edit {
+        padding: 0;
+        cursor: pointer;
+      }
+      
+      &::-webkit-datetime-edit-fields-wrapper {
+        padding: 0;
+        cursor: pointer;
+      }
+      
+      &::-webkit-datetime-edit-text {
+        color: ${colors.text.primary};
+        cursor: pointer;
+      }
+      
+      &::-webkit-datetime-edit-month-field,
+      &::-webkit-datetime-edit-day-field,
+      &::-webkit-datetime-edit-year-field,
+      &::-webkit-datetime-edit-hour-field,
+      &::-webkit-datetime-edit-minute-field {
+        color: ${colors.text.primary};
+        cursor: pointer;
+      }
+      
+      &::-webkit-inner-spin-button {
+        opacity: 1;
+        color: ${colors.primary[600]};
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      /* Calendar picker indicator - ensure it's visible */
+      &::-webkit-calendar-picker-indicator {
+        opacity: 1;
+        cursor: pointer;
+        
+        /* Ensure proper sizing and visibility */
+        width: auto;
+        height: auto;
+        padding: 4px;
+        margin: 0;
+        
+        /* Make sure it's visible on all screen sizes */
+        display: block;
+        visibility: visible;
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 640px) {
+          padding: 2px;
+        }
+      }
+    }
+  }
+
   /* Responsive behavior */
   @media (max-width: 768px) {
     ${({ size }) => {
@@ -107,7 +179,7 @@ const StyledInput = styled.input.withConfig({
 
 // Input Component
 export interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'checkbox' | 'color' | 'datetime-local' | 'date';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'checkbox' | 'color' | 'datetime-local' | 'date' | 'time';
   placeholder?: string;
   value?: string;
   checked?: boolean;

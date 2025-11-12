@@ -5,6 +5,7 @@ import { useBooking } from '@/providers/BookingProvider';
 import { TripDetailsPhase } from './TripDetailsPhase';
 import { ContactInfoPhase } from './ContactInfoPhase';
 import { PaymentPhase } from './PaymentPhase';
+import { FlightInfoPhase } from './FlightInfoPhase';
 import { BookingSuccessConfirmation } from './BookingSuccessConfirmation';
 
 interface BookingFormPhasesProps {
@@ -21,7 +22,8 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
     updateCustomerInfo,
     success,
     completedBookingId,
-    currentQuote
+    currentQuote,
+    warning
   } = useBooking();
 
   // Extract data from formData for easier access
@@ -55,6 +57,13 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
         />
       )}
 
+      {/* Phase 4: Flight Info Collection (after booking is submitted) */}
+      {currentPhase === 'flight-info' && (
+        <FlightInfoPhase
+          cmsData={cmsData}
+        />
+      )}
+
       {/* Success Confirmation Page */}
       {success && (
         <BookingSuccessConfirmation
@@ -66,6 +75,7 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
           depositAmount={payment.depositAmount}
           completedBookingId={completedBookingId}
           cmsData={cmsData}
+          warning={warning}
         />
       )}
     </>

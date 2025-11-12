@@ -7,7 +7,6 @@ interface PaymentNavigationProps {
   onBack: () => void;
   onProcessPayment: () => void;
   isProcessingPayment: boolean;
-  canProcessPayment: boolean;
   cmsData: any;
 }
 
@@ -15,7 +14,6 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
   onBack,
   onProcessPayment,
   isProcessingPayment,
-  canProcessPayment,
   cmsData
 }) => {
   return (
@@ -34,7 +32,7 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
         variant="primary"
         size="lg"
         onClick={onProcessPayment}
-        disabled={!canProcessPayment || isProcessingPayment}
+        disabled={isProcessingPayment}
         loading={isProcessingPayment}
         data-testid="payment-process-button"
         cmsId="payment-process-button"

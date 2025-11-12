@@ -8,6 +8,7 @@ import { Box } from '../../layout/content/Box';
 import { Button } from '../../components/base-components/Button';
 import { Text } from '../../components/base-components/text/Text';
 import { Input } from '../../components/base-components/forms/Input';
+import { DateTimePicker } from '../../components/base-components/forms/DateTimePicker';
 import { LocationInput } from '../base-components/forms/LocationInput';
 import { useBooking } from '../../../providers/BookingProvider';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
@@ -127,25 +128,26 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             <Text weight="semibold" cmsId="quickBook-dateOfTravelLabel">
               Date of travel
             </Text>
-            <Input
-              type="datetime-local" 
+            <DateTimePicker
               id="pickup-datetime"
+              placeholder="mm/dd/yyyy, --:-- --"
               value={pickupDateTime || ''}
-              onChange={(e) => {
-                const datetime = e.target.value;
+              onChange={(datetime) => {
                 if (datetime) {
                   updateTripDetails({ pickupDateTime: datetime });
                 }
               }}
+              minDate={new Date()}
               size="md"
               fullWidth
-              data-testid="quick-book-datetime-input"
+              cmsId="quick-book-datetime-input"
             />
           </Stack>
         </Stack>
         
         {/* Show estimated price in real-time from shared hook */}
         {estimatedFare && (
+          <>
           <Stack spacing="sm" align="center" data-testid="quick-book-price-display">
             <Text size="lg" weight="bold" color="primary">
               Estimated Fare: ${estimatedFare}
@@ -170,14 +172,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               </Stack>
             </Box>
           </Stack>
-        )}
-        {fareError && (
-          <Text size="sm" color="error" align="center">{fareError}</Text>
-        )}
-        
-        {/* Route summary removed - using simple fare estimation */}
-        
-        <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
+          <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
           <Button
             variant="primary"
             size="md"
@@ -188,6 +183,12 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             text="Book Now to Secure Rate →"
           />
         </Stack>
+          </>
+        )}
+
+        {fareError && (
+          <Text size="sm" color="error" align="center">{fareError}</Text>
+        )}
         
         {error && (
           <Text size="sm" color="error" align="center">

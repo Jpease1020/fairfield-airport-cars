@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Stack, H2, Text, Input, Select, Box } from '@/design/ui';
+import { Stack, H2, Text, Select, Box, DateTimePicker } from '@/design/ui';
 import { colors } from '@/design/system/tokens/tokens';
 
 // Custom styled component for darker grey background
@@ -25,11 +25,6 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
   onFareTypeChange,
   cmsData
 }) => {
-  const getMinDateTime = () => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    return now.toISOString().slice(0, 16);
-  };
 
   return (
     <DarkerGreyBox padding="lg" rounded="md" data-testid="datetime-section">
@@ -43,15 +38,15 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
         </Text>
         
         <Stack spacing="md">
-          <Input
+          <DateTimePicker
             id="pickup-datetime-input"
-            type="datetime-local"
             label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'Pickup Date & Time'}
+            placeholder="mm/dd/yyyy, --:-- --"
             value={pickupDateTime}
-            onChange={(e) => onDateTimeChange(e.target.value)}
-            min={getMinDateTime()}
+            onChange={onDateTimeChange}
+            minDate={new Date()}
             fullWidth={true}
-            data-testid="pickup-datetime-input"
+            cmsId="pickup-datetime-input"
           />
           
           <Select

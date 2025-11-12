@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { processPayment } from '@/lib/services/square-service';
-import { createBookingAtomic } from '@/lib/services/booking-service';
-import { sendConfirmationEmail } from '@/lib/services/email-service';
+import { createBookingAtomic, getBooking } from '@/lib/services/booking-service';
+import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { sendSms } from '@/lib/services/twilio-service';
+import { randomBytes } from 'crypto';
+import { db } from '@/lib/utils/firebase-server';
+import { doc, updateDoc } from 'firebase/firestore';
+import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
+import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 
 export async function POST(request: Request) {
   try {
@@ -31,6 +36,7 @@ export async function POST(request: Request) {
 
     // Only create booking AFTER successful payment
     let bookingId = existingBookingId;
+    let emailWarning: string | null = null;
     
     if (!bookingId && bookingData) {
       // Create new booking with payment information
@@ -40,7 +46,7 @@ export async function POST(request: Request) {
         depositPaid: true,
         depositAmount: amount / 100, // Convert cents to dollars
         tipAmount: tipAmount > 0 ? tipAmount / 100 : 0, // Convert cents to dollars
-        status: 'confirmed', // Mark as confirmed since payment succeeded
+        status: 'pending',
         balanceDue: 0, // No balance due since deposit is paid
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -48,35 +54,44 @@ export async function POST(request: Request) {
       
       bookingId = bookingResult.bookingId;
       
-      // Send confirmation notifications after successful booking creation
-      if (bookingData) {
+      // Send verification email after successful booking creation
+      if (bookingId) {
         try {
-          const booking = {
-            ...bookingData,
-            id: bookingId,
-            pickupDateTime: new Date(bookingData.pickupDateTime), // Convert string to Date
-            squareOrderId: paymentResult.orderId,
-            depositPaid: true,
-            depositAmount: amount / 100,
-            tipAmount: tipAmount > 0 ? tipAmount / 100 : 0,
-            status: 'confirmed',
-            balanceDue: 0,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
+          const confirmationToken = randomBytes(32).toString('hex');
+          const bookingRef = doc(db, 'bookings', bookingId);
+          await updateDoc(bookingRef, {
+            confirmation: {
+              status: 'pending',
+              token: confirmationToken,
+              sentAt: new Date().toISOString()
+            }
+          });
 
-          // Send both email and SMS notifications
-          const smsMessage = `Thank you for booking with Fairfield Airport Car Service! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${booking.pickupDateTime.toLocaleString()} is confirmed. Booking ID: ${bookingId}`;
-          
-          await Promise.all([
-            sendConfirmationEmail(booking),
-            sendSms({
-              to: booking.phone,
+          const bookingRecord = await getBooking(bookingId);
+          if (bookingRecord) {
+            const confirmationUrlBase = process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
+            const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingId}&token=${confirmationToken}`;
+            await sendBookingVerificationEmail(
+              adaptOldBookingToNew(bookingRecord),
+              confirmationUrl
+            );
+
+            const smsMessage = `We received your booking request for ${new Date(bookingData.pickupDateTime).toLocaleString()}. Please check your email to confirm the ride. Booking ID: ${bookingId}`;
+            await sendSms({
+              to: bookingData.customer.phone,
               body: smsMessage
-            })
-          ]);
+            });
+          }
         } catch (notificationError) {
-          console.error('Failed to send confirmation notifications:', notificationError);
+          console.error('Failed to send verification notifications:', notificationError);
+          emailWarning =
+            'Your booking is saved, but we could not send the confirmation email. Please text Gregg at (646) 221-6370 to finish confirming.';
+          await recordBookingAttempt({
+            stage: 'payment',
+            status: 'warning',
+            bookingId,
+            reason: emailWarning,
+          });
           // Don't fail the payment if notifications fail
         }
       }
@@ -89,11 +104,17 @@ export async function POST(request: Request) {
       status: paymentResult.status,
       amount: paymentResult.amount,
       currency: paymentResult.currency,
+      emailWarning
     });
 
   } catch (error) {
     console.error('Failed to process payment:', error);
     const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
+    await recordBookingAttempt({
+      stage: 'payment',
+      status: 'failed',
+      reason: errorMessage,
+    });
     return NextResponse.json({ 
       error: errorMessage,
       details: process.env.NODE_ENV === 'development' ? error : undefined

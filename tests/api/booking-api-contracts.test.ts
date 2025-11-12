@@ -19,6 +19,14 @@ const REAL_API_SCENARIOS = {
     fareType: 'personal' as const,
     expectedFareRange: { min: 80, max: 150 }
   },
+  jfkToFairfield: {
+    origin: 'JFK Airport, Queens, NY',
+    destination: 'Fairfield Station, Fairfield, CT',
+    pickupCoords: { lat: 40.6413, lng: -73.7781 },
+    dropoffCoords: { lat: 41.1408, lng: -73.2613 },
+    fareType: 'personal' as const,
+    expectedFareRange: { min: 140, max: 260 }
+  },
   businessTrip: {
     origin: '123 Main St, Fairfield, CT',
     destination: 'JFK Airport, Queens, NY',
@@ -129,7 +137,39 @@ test('Business fares are higher than personal fares for same route', async ({ re
   expect(difference).toBeGreaterThanOrEqual(0.1);
 });
 
-// Test 3: Short vs Long Distance Pricing
+// Test 3: Airport Return Multiplier
+test('Airport return rides apply airport multiplier', async ({ request }) => {
+  const toAirportScenario = REAL_API_SCENARIOS.fairfieldToJFK;
+  const fromAirportScenario = REAL_API_SCENARIOS.jfkToFairfield;
+
+  const toAirportResponse = await request.post('/api/booking/quote', {
+    data: {
+      ...toAirportScenario,
+      sessionId: 'test_to_airport_multiplier'
+    }
+  });
+
+  const fromAirportResponse = await request.post('/api/booking/quote', {
+    data: {
+      ...fromAirportScenario,
+      sessionId: 'test_from_airport_multiplier'
+    }
+  });
+
+  expect(toAirportResponse.status()).toBe(200);
+  expect(fromAirportResponse.status()).toBe(200);
+
+  const toAirportData = await toAirportResponse.json();
+  const fromAirportData = await fromAirportResponse.json();
+
+  expect(fromAirportData.fare).toBeGreaterThan(toAirportData.fare);
+
+  const ratio = fromAirportData.fare / toAirportData.fare;
+  expect(ratio).toBeGreaterThanOrEqual(1.7);
+  expect(ratio).toBeLessThanOrEqual(2.1);
+});
+
+// Test 4: Short vs Long Distance Pricing
 test('Longer routes cost more than shorter routes', async ({ request }) => {
   const longRoute = REAL_API_SCENARIOS.fairfieldToJFK;
   const shortRoute = REAL_API_SCENARIOS.shortTrip;
@@ -166,7 +206,7 @@ test('Longer routes cost more than shorter routes', async ({ request }) => {
   expect(longData.durationMinutes).toBeGreaterThan(shortData.durationMinutes);
 });
 
-// Test 4: Quote Validation on Booking Submission
+// Test 5: Quote Validation on Booking Submission
 test('Valid quote allows booking submission', async ({ request }) => {
   const scenario = REAL_API_SCENARIOS.fairfieldToJFK;
   
@@ -214,7 +254,7 @@ test('Valid quote allows booking submission', async ({ request }) => {
   expect(typeof bookingData.bookingId).toBe('string');
 });
 
-// Test 5: Invalid Input Handling
+// Test 6: Invalid Input Handling
 test('API handles invalid inputs gracefully', async ({ request }) => {
   // Test missing required fields
   const missingFieldsResponse = await request.post('/api/booking/quote', {
@@ -257,7 +297,7 @@ test('API handles invalid inputs gracefully', async ({ request }) => {
   expect([200, 400, 503]).toContain(invalidCoordsResponse.status());
 });
 
-// Test 6: Rate Limiting and Performance
+// Test 7: Rate Limiting and Performance
 test('API responds within acceptable time limits', async ({ request }) => {
   const scenario = REAL_API_SCENARIOS.fairfieldToJFK;
   
@@ -282,7 +322,7 @@ test('API responds within acceptable time limits', async ({ request }) => {
   expect(duration).toBeLessThan(2000);
 });
 
-// Test 7: Concurrent Requests
+// Test 8: Concurrent Requests
 test('API handles multiple concurrent requests', async ({ request }) => {
   const scenario = REAL_API_SCENARIOS.fairfieldToJFK;
   

@@ -3,11 +3,65 @@ import { Client } from '@googlemaps/google-maps-services-js';
 import { getSettings } from '@/lib/business/settings-service';
 import { createQuote } from '@/lib/services/quote-service';
 import { z } from 'zod';
+import { KNOWN_AIRPORTS } from '@/utils/constants';
 
 const mapsClient = new Client({});
 
 function metersToMiles(m: number): number { return m / 1609.34; }
 function secondsToMinutes(s: number): number { return s / 60; }
+
+const AIRPORT_KEYWORDS = ['airport', 'terminal', 'intl', 'international'];
+
+const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
+
+function distanceMilesBetweenCoordinates(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const EARTH_RADIUS_MILES = 3958.8;
+  const dLat = toRadians(lat2 - lat1);
+  const dLng = toRadians(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return EARTH_RADIUS_MILES * c;
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function isAirportLocation(address?: string | null, coords?: { lat: number; lng: number } | null): boolean {
+  const normalizedAddress = address?.toLowerCase() ?? '';
+
+  if (normalizedAddress.length > 0) {
+    if (AIRPORT_KEYWORDS.some(keyword => normalizedAddress.includes(keyword))) {
+      return true;
+    }
+
+    for (const airport of KNOWN_AIRPORTS) {
+      if (
+        normalizedAddress.includes(airport.code.toLowerCase()) ||
+        normalizedAddress.includes(airport.name.toLowerCase())
+      ) {
+        return true;
+      }
+    }
+  }
+
+  if (coords && isFiniteNumber(coords.lat) && isFiniteNumber(coords.lng)) {
+    return KNOWN_AIRPORTS.some(airport => {
+      const distance = distanceMilesBetweenCoordinates(
+        coords.lat,
+        coords.lng,
+        airport.coordinates.lat,
+        airport.coordinates.lng
+      );
+      return distance <= airport.radiusMiles;
+    });
+  }
+
+  return false;
+}
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -32,7 +86,12 @@ export async function POST(request: Request) {
   const { origin, destination, pickupCoords, dropoffCoords, fareType, pickupTime, sessionId, userId } = parsed.data;
 
   const settings = await getSettings();
-  const { baseFare: BASE_FARE, perMile: PER_MILE_RATE, perMinute: PER_MINUTE_RATE } = settings;
+  const {
+    baseFare: BASE_FARE,
+    perMile: PER_MILE_RATE,
+    perMinute: PER_MINUTE_RATE,
+    airportReturnMultiplier,
+  } = settings;
 
   // Clamp pickup time to avoid past dates
   const departureClamped = pickupTime && new Date(pickupTime) > new Date() ? new Date(pickupTime) : new Date();
@@ -77,6 +136,14 @@ export async function POST(request: Request) {
   // Apply 10% discount for personal rides
   if (fareType === 'personal') {
     fare = Math.ceil(fare * 0.9);
+  }
+
+  const isAirportPickup = isAirportLocation(origin, pickupCoords ?? null);
+  const isAirportDropoff = isAirportLocation(destination, dropoffCoords ?? null);
+
+  if (isAirportPickup && !isAirportDropoff) {
+    const multiplier = Number.isFinite(airportReturnMultiplier) ? airportReturnMultiplier : 1.8;
+    fare = Math.ceil(fare * multiplier);
   }
 
   // Create a quote with 15-minute expiration

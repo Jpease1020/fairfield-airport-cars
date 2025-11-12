@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Core Business Operations Validation', () => {
+test.describe.skip('Legacy Core Business Operations Validation (migrated to API/Vitest)', () => {
   test('Booking creation API works', async ({ page }) => {
     // Test the core booking creation endpoint
     const response = await page.request.post('/api/booking', {

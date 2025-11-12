@@ -82,12 +82,12 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
       label: cmsData?.['contactDriver'] || 'Contact Driver',
       onClick: () => addToast('info', cmsData?.['driverContactComingSoon'] || 'Driver contact feature coming soon'),
       variant: 'outline' as const,
-      icon: '📞'
+      icon: '💬'
     },
     {
       id: 'get-support',
       label: cmsData?.['getSupport'] || 'Get Support',
-      onClick: () => addToast('info', cmsData?.['supportContact'] || 'Support: (203) 555-0123'),
+      onClick: () => addToast('info', cmsData?.['supportContact'] || 'Text Support: (203) 555-0123'),
       variant: 'outline' as const,
       icon: '🆘'
     }
@@ -133,9 +133,9 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
                 {
                   id: 'contact-support',
                   label: cmsData?.['contactSupport'] || 'Contact Support',
-                  onClick: () => addToast('info', cmsData?.['supportContact'] || 'Support: (203) 555-0123'),
+                  onClick: () => addToast('info', cmsData?.['supportContact'] || 'Text Support: (203) 555-0123'),
                   variant: 'outline',
-                  icon: '📞'
+                  icon: '💬'
                 }
               ]} />
             </Stack>

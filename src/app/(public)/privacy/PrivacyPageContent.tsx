@@ -228,7 +228,7 @@ export default function PrivacyPageContent() {
                   {cmsData?.['sections-8-title'] || '9. Contact Us'}
                 </H4>
                 <Text data-testid="privacy-section-content-8" cmsId="sections-8-content">
-                  {cmsData?.['sections-8-content'] || 'If you have questions about this Privacy Policy or how we handle your information, please contact us: Fairfield Airport Cars, Phone: (203) 555-0123, Email: privacy@fairfieldairportcars.com'}
+                  {cmsData?.['sections-8-content'] || 'If you have questions about this Privacy Policy or how we handle your information, please contact us: Fairfield Airport Cars, Text: (203) 555-0123, Email: privacy@fairfieldairportcars.com'}
                 </Text>
               </Stack>
             </Box>

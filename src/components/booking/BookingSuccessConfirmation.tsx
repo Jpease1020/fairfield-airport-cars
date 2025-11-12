@@ -12,6 +12,7 @@ interface BookingSuccessConfirmationProps {
   depositAmount: number | null;
   completedBookingId: string | null;
   cmsData: any;
+  warning?: string | null;
 }
 
 export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProps> = ({
@@ -23,16 +24,36 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
   depositAmount,
   completedBookingId,
   cmsData,
+  warning,
 }) => {
   return (
     <Box variant="elevated" padding="xl" data-testid="booking-success-confirmation">
       <Stack spacing="xl" align="center">
-        <Text size="3xl" weight="bold" color="success" cmsId="booking-confirmed-title">
-          {cmsData?.['booking-confirmed-title'] || 'Booking Confirmed!'}
+        <Text size="3xl" weight="bold" color="primary" cmsId="booking-confirmed-title">
+          {cmsData?.['booking-confirmed-title'] || 'Confirm Your Booking'}
         </Text>
-        
+
+        <Text
+          size="md"
+          weight="medium"
+          align="center"
+          color="warning"
+          cmsId="booking-confirmed-warning"
+          data-testid="booking-confirmation-warning"
+        >
+          {cmsData?.['booking-confirmed-warning'] ||
+            'Booking is not fully confirmed until you click the link in the confirmation email we just sent.'}
+        </Text>
+
+        {warning && (
+          <Text size="md" align="center" color="warning" data-testid="booking-success-warning">
+            {warning}
+          </Text>
+        )}
+
         <Text size="lg" align="center" cmsId="booking-confirmed-description">
-          {cmsData?.['booking-confirmed-description'] || `Your ride from ${pickupLocation} to ${dropoffLocation} is confirmed!`}
+          {cmsData?.['booking-confirmed-description'] ||
+            `We’re holding your ride from ${pickupLocation} to ${dropoffLocation}. Finish confirmation via the email in your inbox.`}
         </Text>
 
         <Box variant="outlined" padding="lg" data-testid="booking-details-summary">
@@ -72,7 +93,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
               👤 A driver will be assigned and contact you soon
             </Text>
             <Text size="sm" color="secondary" cmsId="whats-next-pickup">
-              📞 Driver will confirm details 15 minutes before pickup
+              💬 Driver will text to confirm details 15 minutes before pickup
             </Text>
             <Text size="sm" color="secondary" cmsId="whats-next-track">
               🗺️ Track your driver in real-time on the booking page
