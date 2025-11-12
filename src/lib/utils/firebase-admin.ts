@@ -40,12 +40,34 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
       } else {
         // For production, use service account credentials
         const projectId = process.env.FIREBASE_PROJECT_ID;
+        const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+        const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+        
+        // Better error messages for missing credentials
+        if (!projectId) {
+          console.error('❌ FIREBASE_PROJECT_ID is missing');
+        }
+        if (!privateKey) {
+          console.error('❌ FIREBASE_PRIVATE_KEY is missing');
+        }
+        if (!clientEmail) {
+          console.error('❌ FIREBASE_CLIENT_EMAIL is missing');
+        }
+        
+        if (!projectId || !privateKey || !clientEmail) {
+          throw new Error('Missing required Firebase Admin environment variables. Check FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, and FIREBASE_CLIENT_EMAIL');
+        }
+        
         console.log('🚀 Initializing Firebase Admin for production...');
+        console.log(`   Project ID: ${projectId}`);
+        console.log(`   Client Email: ${clientEmail}`);
+        console.log(`   Private Key: ${privateKey.substring(0, 20)}...`);
+        
         initializeApp({
           credential: cert({
             projectId: projectId,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: privateKey,
+            clientEmail: clientEmail,
           }),
         });
       }
@@ -75,8 +97,14 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
     
     console.log('✅ Firebase Admin initialized successfully');
   } catch (error) {
-    console.error('Failed to initialize Firebase Admin:', error);
+    console.error('❌ Failed to initialize Firebase Admin:', error);
+    console.error('   Error details:', error instanceof Error ? error.message : String(error));
+    // Don't set adminDb/adminAuth to null - let getAdminDb() throw a clear error
   }
+} else {
+  console.warn('⚠️ Firebase Admin not configured. Missing environment variables.');
+  console.warn('   Required: FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL');
+  console.warn('   Or set NEXT_PUBLIC_USE_EMULATORS=true for development');
 }
 
 // Export Firestore instance with fallback
