@@ -1,17 +1,33 @@
 /**
  * Production Booking Health Check
  * 
- * Run this test against production to verify booking functionality is working.
+ * ⚠️ IMPORTANT: This test runs against PRODUCTION database by default!
+ * 
+ * It makes HTTP requests to the API endpoints, which will:
+ * - Use PRODUCTION database if BASE_URL points to production
+ * - Use EMULATORS if BASE_URL points to localhost:3000 (with emulators running)
  * 
  * Usage:
- *   BASE_URL=https://your-production-domain.com npm run test:e2e -- tests/e2e/production-booking-health.spec.ts
+ *   # Test PRODUCTION (default):
+ *   BASE_URL=https://fairfield-airport-cars.vercel.app npm run test:e2e -- tests/e2e/production-booking-health.spec.ts
  * 
- * Or set BASE_URL in .env.local for default production URL
+ *   # Test LOCAL with emulators:
+ *   BASE_URL=http://localhost:3000 npm run test:e2e -- tests/e2e/production-booking-health.spec.ts
+ * 
+ * The test uses smoke test mode (x-smoke-test header) to avoid real payments,
+ * but it WILL create real bookings in the database you're pointing to!
  */
 
 import { test, expect } from '@playwright/test';
 
 const BASE_URL = process.env.BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://fairfield-airport-cars.vercel.app';
+
+// Warn if testing production
+if (BASE_URL.includes('vercel.app') || BASE_URL.includes('production')) {
+  console.warn('\n⚠️  WARNING: Testing against PRODUCTION database!');
+  console.warn('   Bookings created will be marked with _smokeTest flag');
+  console.warn('   Use BASE_URL=http://localhost:3000 to test against emulators\n');
+}
 
 test.describe('Production Booking Health Check', () => {
   test('Health check endpoint is accessible', async ({ request }) => {
@@ -114,7 +130,9 @@ test.describe('Production Booking Health Check', () => {
   });
 
   test('Full booking API test - create and verify booking', async ({ request }) => {
-    console.log(`\n🔍 Testing full booking API at: ${BASE_URL}\n`);
+    const isProduction = BASE_URL.includes('vercel.app') || BASE_URL.includes('production');
+    console.log(`\n🔍 Testing full booking API at: ${BASE_URL}`);
+    console.log(`   Database: ${isProduction ? '⚠️  PRODUCTION' : '✅ LOCAL (emulators)'}\n`);
     
     // Step 1: Get a quote
     const quoteData = {
