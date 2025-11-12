@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBooking, updateBooking } from '@/lib/services/booking-service';
+import { getBooking, cancelBooking } from '@/lib/services/booking-service';
 import { sendSms } from '@/lib/services/twilio-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
@@ -8,7 +8,7 @@ import { refundPayment } from '@/lib/services/square-service';
 
 export async function POST(req: NextRequest) {
   try {
-    const { bookingId } = await req.json();
+    const { bookingId, reason } = await req.json();
 
     if (!bookingId) {
       return NextResponse.json({ error: 'Booking ID is required' }, { status: 400 });
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     // Calculate refund amount based on cancellation policy
     const now = new Date();
-    const pickupTime = new Date(booking.pickupDateTime);
+    const pickupTime = new Date(booking.trip?.pickupDateTime || booking.pickupDateTime || new Date());
     const hoursUntilPickup = (pickupTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     let refundPercent = 0;
@@ -36,34 +36,41 @@ export async function POST(req: NextRequest) {
       refundPercent = 50;
     }
 
-    const depositAmount = booking.depositAmount || booking.fare / 2;
+    const depositAmount = booking.payment?.depositAmount || booking.depositAmount || (booking.trip?.fare || booking.fare || 0) / 2;
     const refundAmount = (depositAmount * refundPercent) / 100;
     const cancellationFee = depositAmount - refundAmount;
 
-    // Update booking status
+    // Cancel booking (this handles calendar event deletion and schedule cleanup)
+    await cancelBooking(bookingId, reason);
+    
+    // Update booking with refund details
+    const { updateBooking } = await import('@/lib/services/booking-service');
     await updateBooking(bookingId, {
-      status: 'cancelled',
-      updatedAt: new Date(),
       cancellationFee,
       balanceDue: 0
     });
 
     // Process refund if applicable
-    if (refundAmount > 0 && booking.squareOrderId) {
-      await refundPayment(booking.squareOrderId, refundAmount * 100, 'USD');
+    const squareOrderId = booking.payment?.squareOrderId || booking.squareOrderId;
+    if (refundAmount > 0 && squareOrderId) {
+      await refundPayment(squareOrderId, refundAmount * 100, 'USD');
     }
 
-    const messageBody = `Your ride scheduled for ${new Date(booking.pickupDateTime).toLocaleString()} has been cancelled. ${
+    const pickupDateTime = booking.trip?.pickupDateTime || booking.pickupDateTime;
+    const phone = booking.customer?.phone || booking.phone;
+    const email = booking.customer?.email || booking.email;
+    
+    const messageBody = `Your ride scheduled for ${pickupDateTime ? new Date(pickupDateTime).toLocaleString() : 'your scheduled time'} has been cancelled. ${
       refundAmount === 0 ? 'Your deposit is non-refundable at this time.' : `We have refunded $${refundAmount.toFixed(2)} of your deposit.`}`;
 
     // Send all cancellation notifications in parallel
     await Promise.all([
       // Existing SMS notification
-      sendSms({ to: booking.phone, body: messageBody }),
+      phone ? sendSms({ to: phone, body: messageBody }) : Promise.resolve(),
       // Existing email notification
-      sendConfirmationEmail(adaptOldBookingToNew({ ...booking, status: 'cancelled', updatedAt: new Date(), cancellationFee })),
+      email ? sendConfirmationEmail(adaptOldBookingToNew({ ...booking, status: 'cancelled', updatedAt: new Date(), cancellationFee })) : Promise.resolve(),
       // New push notification (using email as userId for now)
-      bookingNotificationService.sendBookingCancelled(bookingId, booking.email, refundAmount)
+      email ? bookingNotificationService.sendBookingCancelled(bookingId, email, refundAmount) : Promise.resolve()
     ]);
 
     return NextResponse.json({ 

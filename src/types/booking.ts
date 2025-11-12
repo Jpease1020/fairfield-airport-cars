@@ -95,6 +95,7 @@ export interface Booking {
   driver?: DriverInfo;
   tracking?: TrackingInfo;
   confirmation?: BookingConfirmation;
+  calendarEventId?: string; // Google Calendar event ID for rides@fairfieldairportcars.com
   
   // Legacy fields for backward compatibility
   pickupLocation?: string;

@@ -13,6 +13,10 @@ export async function POST(request: Request) {
   try {
     const { paymentToken, amount, currency, bookingData, existingBookingId, tipAmount = 0 } = await request.json();
 
+    // Check for smoke test mode
+    const smokeTestHeader = request.headers.get('x-smoke-test');
+    const isSmokeTest = smokeTestHeader === 'true' || process.env.SMOKE_TEST_MODE === 'true';
+
     if (!paymentToken || !amount || !currency) {
       return NextResponse.json({ 
         error: 'Missing required payment information' 
@@ -20,13 +24,29 @@ export async function POST(request: Request) {
     }
 
     // SECURITY: Process payment FIRST, then create booking
-    // Amount is in cents, so we pass it directly to Square
-    const paymentResult = await processPayment(
-      paymentToken, 
-      amount + tipAmount, // Include tip in total amount (both in cents)
-      currency, 
-      existingBookingId || 'temp-booking-id' // Use existing ID or temp for new bookings
-    );
+    let paymentResult;
+    
+    if (isSmokeTest) {
+      // Mock payment for smoke tests - no real charge
+      console.log('🧪 Smoke test mode - mocking payment processing');
+      paymentResult = {
+        success: true,
+        paymentId: `smoke-test-payment-${Date.now()}`,
+        status: 'COMPLETED',
+        amount: 0, // No charge in smoke test
+        currency: currency,
+        orderId: `smoke-test-order-${Date.now()}`,
+      };
+    } else {
+      // Real payment processing
+      // Amount is in cents, so we pass it directly to Square
+      paymentResult = await processPayment(
+        paymentToken, 
+        amount + tipAmount, // Include tip in total amount (both in cents)
+        currency, 
+        existingBookingId || 'temp-booking-id' // Use existing ID or temp for new bookings
+      );
+    }
 
     if (!paymentResult.success) {
       return NextResponse.json({ 
@@ -53,6 +73,15 @@ export async function POST(request: Request) {
       });
       
       bookingId = bookingResult.bookingId;
+      
+      // Mark as smoke test booking if in smoke test mode
+      if (isSmokeTest && bookingId) {
+        const bookingRef = doc(db, 'bookings', bookingId);
+        await updateDoc(bookingRef, {
+          _smokeTest: true,
+          _smokeTestTimestamp: new Date().toISOString(),
+        });
+      }
       
       // Send verification email after successful booking creation
       if (bookingId) {

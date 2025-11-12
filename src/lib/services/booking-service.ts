@@ -29,17 +29,17 @@ const safeToDate = (dateField: any): Date => {
 
 export interface Booking {
   id?: string;
-  name: string;
-  email: string;
-  phone: string;
-  pickupLocation: string;
-  dropoffLocation: string;
-  pickupDateTime: Date;
+  name?: string;
+  email?: string;
+  phone?: string;
+  pickupLocation?: string;
+  dropoffLocation?: string;
+  pickupDateTime?: Date;
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
-  fare: number;
+  fare?: number;
   dynamicFare?: number;
-  depositPaid: boolean;
-  balanceDue: number;
+  depositPaid?: boolean;
+  balanceDue?: number;
   flightNumber?: string;
   notes?: string;
   driverId?: string;
@@ -60,6 +60,40 @@ export interface Booking {
     token?: string;
     sentAt?: Date;
     confirmedAt?: Date;
+  };
+  calendarEventId?: string; // Google Calendar event ID
+  
+  // Nested structure (new format)
+  trip?: {
+    pickup: { address: string; coordinates?: { lat: number; lng: number } | null };
+    dropoff: { address: string; coordinates?: { lat: number; lng: number } | null };
+    pickupDateTime: Date | string;
+    fare?: number;
+    fareType?: 'personal' | 'business';
+    flightInfo?: {
+      hasFlight: boolean;
+      airline: string;
+      flightNumber: string;
+      arrivalTime: string;
+      terminal: string;
+    };
+  };
+  customer?: {
+    name: string;
+    email: string;
+    phone: string;
+    notes?: string;
+    saveInfoForFuture?: boolean;
+  };
+  payment?: {
+    depositAmount: number | null;
+    balanceDue: number;
+    depositPaid: boolean;
+    squareOrderId?: string;
+    squarePaymentId?: string;
+    tipAmount: number;
+    tipPercent: number;
+    totalAmount: number;
   };
   
   // Real-time tracking fields
@@ -349,12 +383,61 @@ export const deleteBooking = async (id: string): Promise<void> => {
 
 // Cancel booking with refund logic and schedule cleanup
 export const cancelBooking = async (bookingId: string, reason?: string): Promise<void> => {
+  // Get booking first to check for calendar event
+  const booking = await getBooking(bookingId);
+  
   const bookingRef = doc(db, 'bookings', bookingId);
+  
+  // Delete calendar event if it exists
+  if (booking?.calendarEventId) {
+    try {
+      // Skip calendar operations in smoke test mode
+      const isSmokeTest = process.env.SMOKE_TEST_MODE === 'true';
+      if (isSmokeTest) {
+        console.log(`🧪 Smoke test mode - skipping calendar event deletion for booking ${bookingId}`);
+      } else {
+        // Try to get calendar tokens from environment or stored location
+        // For now, we'll attempt deletion if calendar integration is enabled
+        const calendarIntegrationEnabled = process.env.ENABLE_GOOGLE_CALENDAR === 'true';
+        
+        if (calendarIntegrationEnabled) {
+        // Import calendar service
+        const { 
+          createOAuth2Client, 
+          setCredentials, 
+          initializeCalendarAPI, 
+          deleteBookingEvent 
+        } = await import('./google-calendar');
+        
+        // Try to get stored tokens (TODO: implement secure token storage)
+        // For now, check if we have tokens in environment or need to fetch from DB
+        const storedTokens = process.env.GOOGLE_CALENDAR_TOKENS 
+          ? JSON.parse(process.env.GOOGLE_CALENDAR_TOKENS) 
+          : null;
+        
+        if (storedTokens) {
+          const oauth2Client = createOAuth2Client();
+          setCredentials(oauth2Client, storedTokens);
+          const calendar = initializeCalendarAPI(oauth2Client);
+          
+          await deleteBookingEvent(calendar, booking.calendarEventId);
+          console.log(`✅ Deleted calendar event ${booking.calendarEventId} for booking ${bookingId}`);
+        } else {
+          console.warn(`⚠️ Calendar tokens not available - cannot delete event ${booking.calendarEventId} for booking ${bookingId}`);
+        }
+        }
+      }
+    } catch (error) {
+      // Don't fail cancellation if calendar deletion fails
+      console.error(`Failed to delete calendar event for booking ${bookingId}:`, error);
+    }
+  }
   
   await updateDoc(bookingRef, {
     status: 'cancelled',
     updatedAt: serverTimestamp(),
     cancellationReason: reason,
+    calendarEventId: null, // Clear the calendar event ID
   });
   
   // Free up the time slot in the driver's schedule

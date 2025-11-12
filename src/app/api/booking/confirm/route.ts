@@ -9,6 +9,10 @@ export async function POST(request: NextRequest) {
   try {
     const { bookingId, token } = await request.json();
 
+    // Check for smoke test mode
+    const smokeTestHeader = request.headers.get('x-smoke-test');
+    const isSmokeTest = smokeTestHeader === 'true' || process.env.SMOKE_TEST_MODE === 'true';
+
     if (!bookingId || !token) {
       return NextResponse.json(
         { error: 'bookingId and token are required' },
@@ -61,6 +65,37 @@ export async function POST(request: NextRequest) {
 
     const bookingRecord = await getBooking(bookingId);
     if (bookingRecord) {
+      // Create calendar event for confirmed booking
+      try {
+        const { createBookingCalendarEvent } = await import('@/lib/services/google-calendar');
+        const pickupDateTime = bookingRecord.trip?.pickupDateTime || bookingRecord.pickupDateTime || new Date();
+        const tripData = bookingRecord.trip || {
+          pickup: { address: bookingRecord.pickupLocation || '' },
+          dropoff: { address: bookingRecord.dropoffLocation || '' },
+          pickupDateTime: pickupDateTime as Date | string,
+        };
+        const customerData = bookingRecord.customer || {
+          name: bookingRecord.name || '',
+          email: bookingRecord.email || '',
+        };
+        const calendarEventId = await createBookingCalendarEvent({
+          id: bookingId,
+          trip: tripData,
+          customer: customerData,
+        }, { smokeTest: isSmokeTest });
+
+        // Store calendar event ID in booking
+        if (calendarEventId) {
+          await updateDoc(doc(db, 'bookings', bookingId), {
+            calendarEventId: calendarEventId,
+            updatedAt: serverTimestamp()
+          });
+        }
+      } catch (calendarError) {
+        console.error('Failed to create calendar event (non-blocking):', calendarError);
+        // Don't fail confirmation if calendar event creation fails
+      }
+
       await sendConfirmationEmail(adaptOldBookingToNew(bookingRecord));
     }
 
