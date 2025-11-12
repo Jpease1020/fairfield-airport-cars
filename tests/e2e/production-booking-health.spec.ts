@@ -113,6 +113,119 @@ test.describe('Production Booking Health Check', () => {
     console.log('✅ Firebase Admin is initialized - Booking endpoint responding correctly');
   });
 
+  test('Full booking API test - create and verify booking', async ({ request }) => {
+    console.log(`\n🔍 Testing full booking API at: ${BASE_URL}\n`);
+    
+    // Step 1: Get a quote
+    const quoteData = {
+      origin: 'Fairfield Station, Fairfield, CT',
+      destination: 'JFK Airport, Queens, NY',
+      pickupCoords: { lat: 41.1408, lng: -73.2613 },
+      dropoffCoords: { lat: 40.6413, lng: -73.7781 },
+      fareType: 'personal',
+      pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // Tomorrow
+    };
+
+    console.log('1️⃣ Getting quote...');
+    const quoteResponse = await request.post(`${BASE_URL}/api/booking/quote`, {
+      data: quoteData
+    });
+
+    if (quoteResponse.status() !== 200) {
+      const error = await quoteResponse.json();
+      throw new Error(`Quote API failed: ${error.error || 'Unknown error'}`);
+    }
+
+    const quote = await quoteResponse.json();
+    console.log(`   ✅ Quote received: $${quote.fare}`);
+    expect(quote.fare).toBeGreaterThan(0);
+
+    // Step 2: Submit booking (using smoke test mode to avoid real payment)
+    console.log('2️⃣ Submitting booking (smoke test mode)...');
+    const bookingData = {
+      fare: quote.fare,
+      trip: {
+        pickup: {
+          address: quoteData.origin,
+          coordinates: quoteData.pickupCoords
+        },
+        dropoff: {
+          address: quoteData.destination,
+          coordinates: quoteData.dropoffCoords
+        },
+        pickupDateTime: quoteData.pickupDateTime,
+        fare: quote.fare,
+        fareType: 'personal'
+      },
+      customer: {
+        name: 'Test User',
+        email: 'test@example.com',
+        phone: '+12035550123'
+      },
+      payment: {
+        depositAmount: Math.round(quote.fare * 0.3),
+        tipAmount: 0
+      }
+    };
+
+    const submitResponse = await request.post(`${BASE_URL}/api/booking/submit`, {
+      headers: {
+        'x-smoke-test': 'true'
+      },
+      data: bookingData
+    });
+
+    if (submitResponse.status() !== 200) {
+      const error = await submitResponse.json();
+      console.error('   ❌ Booking submission failed:', error);
+      throw new Error(`Booking submission failed: ${error.error || JSON.stringify(error)}`);
+    }
+
+    const submitResult = await submitResponse.json();
+    console.log(`   ✅ Booking submitted: ${submitResult.bookingId}`);
+    expect(submitResult).toHaveProperty('bookingId');
+    expect(submitResult.bookingId).toBeTruthy();
+
+    const bookingId = submitResult.bookingId;
+
+    // Step 3: Verify booking was created
+    console.log('3️⃣ Verifying booking exists...');
+    const getBookingResponse = await request.get(`${BASE_URL}/api/booking/${bookingId}`);
+
+    if (getBookingResponse.status() !== 200) {
+      const error = await getBookingResponse.json();
+      throw new Error(`Failed to retrieve booking: ${error.error || 'Unknown error'}`);
+    }
+
+    const booking = await getBookingResponse.json();
+    console.log(`   ✅ Booking retrieved: ${booking.id}`);
+    expect(booking.id).toBe(bookingId);
+    expect(booking.status).toBeDefined();
+    expect(booking.trip || booking.pickupLocation).toBeDefined();
+
+    // Step 4: Verify booking can be cancelled (cleanup)
+    console.log('4️⃣ Cleaning up test booking...');
+    const cancelResponse = await request.post(`${BASE_URL}/api/booking/cancel-booking`, {
+      headers: {
+        'x-smoke-test': 'true'
+      },
+      data: {
+        bookingId: bookingId,
+        cancellationReason: 'Production API test cleanup'
+      }
+    });
+
+    if (cancelResponse.status() === 200) {
+      console.log('   ✅ Test booking cancelled');
+    } else {
+      console.log('   ⚠️  Could not cancel test booking (may need manual cleanup)');
+    }
+
+    console.log('\n✅ Full booking API test passed!');
+    console.log(`   Booking ID: ${bookingId}`);
+    console.log(`   Status: ${booking.status}`);
+  });
+
   test('Complete booking flow health check', async ({ request }) => {
     console.log(`\n🔍 Testing production booking flow at: ${BASE_URL}\n`);
     
