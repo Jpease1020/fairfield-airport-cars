@@ -458,3 +458,90 @@ export const getTokens = async (
     throw new Error('Failed to get access tokens');
   }
 };
+
+// Get stored calendar tokens (from environment or database)
+// TODO: Implement secure token storage in database
+export const getStoredCalendarTokens = async (): Promise<any | null> => {
+  try {
+    // Check environment variable first (for server-side operations)
+    if (process.env.GOOGLE_CALENDAR_TOKENS) {
+      return JSON.parse(process.env.GOOGLE_CALENDAR_TOKENS);
+    }
+    
+    // TODO: Fetch from secure database storage
+    // For now, return null if not in environment
+    return null;
+  } catch (error) {
+    console.error('Error getting stored calendar tokens:', error);
+    return null;
+  }
+};
+
+// Create calendar event for a booking and return event ID
+// This is used server-side when bookings are confirmed
+export const createBookingCalendarEvent = async (
+  booking: {
+    id: string;
+    trip: {
+      pickup: { address: string };
+      dropoff: { address: string };
+      pickupDateTime: Date | string;
+    };
+    customer: {
+      name: string;
+      email: string;
+    };
+  },
+  options?: { smokeTest?: boolean }
+): Promise<string | null> => {
+  try {
+    // Skip calendar operations in smoke test mode
+    const isSmokeTest = options?.smokeTest || process.env.SMOKE_TEST_MODE === 'true';
+    if (isSmokeTest) {
+      console.log(`🧪 Smoke test mode - skipping calendar event creation for booking ${booking.id}`);
+      return `smoke-test-event-${booking.id}`; // Return fake event ID for smoke tests
+    }
+
+    const calendarIntegrationEnabled = process.env.ENABLE_GOOGLE_CALENDAR === 'true';
+    if (!calendarIntegrationEnabled) {
+      console.log('Calendar integration disabled - skipping event creation');
+      return null;
+    }
+
+    const tokens = await getStoredCalendarTokens();
+    if (!tokens) {
+      console.warn('Calendar tokens not available - cannot create event for booking', booking.id);
+      return null;
+    }
+
+    const oauth2Client = createOAuth2Client();
+    setCredentials(oauth2Client, tokens);
+    const calendar = initializeCalendarAPI(oauth2Client);
+
+    const pickupTime = new Date(booking.trip.pickupDateTime);
+    const endTime = new Date(pickupTime);
+    endTime.setHours(endTime.getHours() + 2); // Assume 2 hour duration
+
+    const event = await createBookingEvent(calendar, {
+      summary: `Ride: ${booking.customer.name}`,
+      description: `Booking ID: ${booking.id}\nPickup: ${booking.trip.pickup.address}\nDropoff: ${booking.trip.dropoff.address}`,
+      startTime: pickupTime,
+      endTime: endTime,
+      customerEmail: booking.customer.email,
+      customerName: booking.customer.name,
+      pickupLocation: booking.trip.pickup.address,
+      dropoffLocation: booking.trip.dropoff.address,
+    });
+
+    if (event.id) {
+      console.log(`✅ Created calendar event ${event.id} for booking ${booking.id}`);
+      return event.id;
+    }
+
+    return null;
+  } catch (error) {
+    console.error(`Failed to create calendar event for booking ${booking.id}:`, error);
+    // Don't throw - calendar event creation failure shouldn't break booking
+    return null;
+  }
+};
