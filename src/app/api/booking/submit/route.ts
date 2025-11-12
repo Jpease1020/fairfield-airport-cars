@@ -3,8 +3,7 @@ import { z } from 'zod';
 import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
 import { createHash } from 'crypto';
 import { randomBytes } from 'crypto';
-import { db } from '@/lib/utils/firebase-server';
-import { doc, updateDoc } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getBooking } from '@/lib/services/booking-service';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
@@ -139,8 +138,8 @@ export async function POST(request: Request) {
 
     const confirmationToken = randomBytes(32).toString('hex');
 
-    const bookingRef = doc(db, 'bookings', bookingResult.bookingId);
-    await updateDoc(bookingRef, {
+    const db = getAdminDb();
+    await db.collection('bookings').doc(bookingResult.bookingId).update({
       confirmation: {
         status: 'pending',
         token: confirmationToken,

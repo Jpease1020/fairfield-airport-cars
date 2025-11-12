@@ -1,8 +1,9 @@
-import { db } from '@/lib/utils/firebase-server';
-import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, orderBy, serverTimestamp, runTransaction } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { BookingCreateData } from '@/types/booking';
 import { getDriver } from './driver-service';
 import { driverSchedulingService } from './driver-scheduling-service';
+import { generateShortBookingId } from '@/utils/booking-id-generator';
 
 
 // Helper function to safely convert Firestore dates to JavaScript Date objects
@@ -125,10 +126,10 @@ export interface Driver {
 // Real-time booking status management
 export const updateBookingStatus = async (bookingId: string, status: Booking['status']): Promise<void> => {
   try {
-    const bookingRef = doc(db, 'bookings', bookingId);
-    await updateDoc(bookingRef, {
+    const db = getAdminDb();
+    await db.collection('bookings').doc(bookingId).update({
       status,
-      updatedAt: serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
     console.error('Error updating booking status:', error);
@@ -139,16 +140,16 @@ export const updateBookingStatus = async (bookingId: string, status: Booking['st
 // Driver assignment with real driver system
 export const assignDriverToBooking = async (bookingId: string, driverId: string): Promise<void> => {
   try {
+    const db = getAdminDb();
     const driver = await getDriver(driverId);
     if (!driver) {
       throw new Error('Driver not found');
     }
 
-    const bookingRef = doc(db, 'bookings', bookingId);
-    await updateDoc(bookingRef, {
+    await db.collection('bookings').doc(bookingId).update({
       driverId: driver.id,
       driverName: driver.name,
-      updatedAt: serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
     console.error('Error assigning driver to booking:', error);
@@ -158,12 +159,13 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
 
 // ATOMIC BOOKING: Prevents double booking with Firestore transactions
 export const createBookingAtomic = async (bookingData: BookingCreateData): Promise<{ bookingId: string }> => {
+  const db = getAdminDb();
   const pickupDate = bookingData.trip.pickupDateTime as unknown as Date;
   const dateStr = pickupDate.toISOString().split('T')[0]; // YYYY-MM-DD
   const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
   const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
 
-  return await runTransaction(db, async (transaction) => {
+  return await db.runTransaction(async (transaction: any) => {
     // 1. Check for conflicts atomically
     const conflictCheck = await driverSchedulingService.checkBookingConflicts(
       dateStr,
@@ -194,7 +196,27 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
     const depositAmount = bookingData.payment.depositAmount || 0;
     const balanceDue = bookingData.trip.fare! - depositAmount;
 
-    // 5. Create booking document atomically
+    // 5. Generate short booking ID and check for collisions (inside transaction)
+    let bookingId = generateShortBookingId();
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    // Check if ID already exists (very unlikely but handle it)
+    while (attempts < maxAttempts) {
+      const existingDocRef = db.collection('bookings').doc(bookingId);
+      const existingDoc = await transaction.get(existingDocRef);
+      if (!existingDoc.exists) {
+        break; // ID is available
+      }
+      bookingId = generateShortBookingId();
+      attempts++;
+    }
+    
+    if (attempts >= maxAttempts) {
+      throw new Error('Failed to generate unique booking ID. Please try again.');
+    }
+
+    // 6. Create booking document atomically with custom ID
     const bookingDoc = {
       ...bookingData,
       driverId: selectedDriver?.driverId || null,
@@ -202,14 +224,14 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
       depositAmount,
       balanceDue,
       status: 'pending',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
     };
 
-    const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
-    const bookingId = docRef.id;
+    const docRef = db.collection('bookings').doc(bookingId);
+    transaction.set(docRef, bookingDoc);
 
-    // 6. Book the time slot atomically (only if driver available)
+    // 7. Book the time slot atomically (only if driver available)
     if (selectedDriver) {
       await driverSchedulingService.bookTimeSlot(
         selectedDriver.driverId,
@@ -273,6 +295,7 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     const depositAmount = Math.round(bookingData.fare * 0.3 * 100) / 100; // Round to 2 decimal places
     const balanceDue = bookingData.fare - depositAmount;
 
+    const db = getAdminDb();
     // Create booking document
     const bookingDoc = {
       ...bookingData,
@@ -280,11 +303,11 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
       driverName: selectedDriver.driverName,
       depositAmount,
       balanceDue,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
     };
 
-    const docRef = await addDoc(collection(db, 'bookings'), bookingDoc);
+    const docRef = await db.collection('bookings').add(bookingDoc);
     const bookingId = docRef.id;
 
     // Book the time slot in the driver's schedule
@@ -310,9 +333,10 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
 
 // Get booking with real-time status
 export const getBooking = async (bookingId: string): Promise<Booking | null> => {
-  const bookingDoc = await getDoc(doc(db, 'bookings', bookingId));
+  const db = getAdminDb();
+  const bookingDoc = await db.collection('bookings').doc(bookingId).get();
   
-  if (!bookingDoc.exists()) {
+  if (!bookingDoc.exists) {
     return null;
   }
   
@@ -321,10 +345,10 @@ export const getBooking = async (bookingId: string): Promise<Booking | null> => 
   return {
     id: bookingDoc.id,
     ...data,
-    pickupDateTime: safeToDate(data.pickupDateTime),
-    createdAt: safeToDate(data.createdAt),
-    updatedAt: safeToDate(data.updatedAt),
-    confirmation: data.confirmation
+    pickupDateTime: safeToDate(data?.pickupDateTime),
+    createdAt: safeToDate(data?.createdAt),
+    updatedAt: safeToDate(data?.updatedAt),
+    confirmation: data?.confirmation
       ? {
           status: data.confirmation.status ?? 'pending',
           token: data.confirmation.token,
@@ -344,17 +368,18 @@ export const getBookings = async (
   status?: Booking['status'],
   limit?: number
 ): Promise<Booking[]> => {
-  let q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
+  const db = getAdminDb();
+  let query = db.collection('bookings').orderBy('createdAt', 'desc');
   
   if (status) {
-    q = query(q, where('status', '==', status));
+    query = query.where('status', '==', status);
   }
   
   if (limit) {
-    q = query(q, orderBy('createdAt', 'desc'));
+    query = query.limit(limit);
   }
   
-  const snapshot = await getDocs(q);
+  const snapshot = await query.get();
   
   return snapshot.docs.map(doc => {
     const data = doc.data();
@@ -362,9 +387,9 @@ export const getBookings = async (
     return {
       id: doc.id,
       ...data,
-      pickupDateTime: safeToDate(data.pickupDateTime),
-      createdAt: safeToDate(data.createdAt),
-      updatedAt: safeToDate(data.updatedAt),
+      pickupDateTime: safeToDate(data?.pickupDateTime),
+      createdAt: safeToDate(data?.createdAt),
+      updatedAt: safeToDate(data?.updatedAt),
     };
   }) as Booking[];
 };
@@ -372,21 +397,26 @@ export const getBookings = async (
 // Legacy exports for backward compatibility
 export const listBookings = getBookings;
 export const updateBooking = async (id: string, updates: Partial<Booking>): Promise<void> => {
-  const docRef = doc(db, 'bookings', id);
-  await updateDoc(docRef, { ...updates, updatedAt: serverTimestamp() });
+  const db = getAdminDb();
+  await db.collection('bookings').doc(id).update({ 
+    ...updates, 
+    updatedAt: FieldValue.serverTimestamp() 
+  });
 };
 
 export const deleteBooking = async (id: string): Promise<void> => {
-  const docRef = doc(db, 'bookings', id);
-  await updateDoc(docRef, { status: 'cancelled', updatedAt: serverTimestamp() });
+  const db = getAdminDb();
+  await db.collection('bookings').doc(id).update({ 
+    status: 'cancelled', 
+    updatedAt: FieldValue.serverTimestamp() 
+  });
 };
 
 // Cancel booking with refund logic and schedule cleanup
 export const cancelBooking = async (bookingId: string, reason?: string): Promise<void> => {
+  const db = getAdminDb();
   // Get booking first to check for calendar event
   const booking = await getBooking(bookingId);
-  
-  const bookingRef = doc(db, 'bookings', bookingId);
   
   // Delete calendar event if it exists
   if (booking?.calendarEventId) {
@@ -433,9 +463,9 @@ export const cancelBooking = async (bookingId: string, reason?: string): Promise
     }
   }
   
-  await updateDoc(bookingRef, {
+  await db.collection('bookings').doc(bookingId).update({
     status: 'cancelled',
-    updatedAt: serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
     cancellationReason: reason,
     calendarEventId: null, // Clear the calendar event ID
   });
@@ -449,21 +479,21 @@ export const cancelBooking = async (bookingId: string, reason?: string): Promise
 
 // Update driver location for real-time tracking
 export const updateDriverLocation = async (driverId: string, location: { lat: number; lng: number }): Promise<void> => {
-  const driverRef = doc(db, 'drivers', driverId);
-  
-  await updateDoc(driverRef, {
+  const db = getAdminDb();
+  await db.collection('drivers').doc(driverId).update({
     currentLocation: location,
-    lastUpdated: serverTimestamp(),
+    lastUpdated: FieldValue.serverTimestamp(),
   });
 };
 
 // Get estimated arrival time based on driver location and traffic
 export const getEstimatedArrival = async (bookingId: string): Promise<Date | null> => {
+  const db = getAdminDb();
   const booking = await getBooking(bookingId);
   if (!booking || !booking.driverId) return null;
   
-  const driverDoc = await getDoc(doc(db, 'drivers', booking.driverId));
-  if (!driverDoc.exists()) return null;
+  const driverDoc = await db.collection('drivers').doc(booking.driverId).get();
+  if (!driverDoc.exists) return null;
   
   // const driverData = driverDoc.data() as Driver; // Unused for now
   
@@ -515,9 +545,9 @@ export const isTimeSlotAvailable = async (pickupDate: Date, bufferMinutes = 60):
 // Get available drivers for a specific time
 export const getAvailableDrivers = async (pickupTime?: Date): Promise<Driver[]> => {
   try {
+    const db = getAdminDb();
     // Query database for available drivers
-    const driversQuery = query(collection(db, 'drivers'), where('status', '==', 'available'));
-    const driversSnapshot = await getDocs(driversQuery);
+    const driversSnapshot = await db.collection('drivers').where('status', '==', 'available').get();
     
     if (driversSnapshot.empty) {
       return [];
