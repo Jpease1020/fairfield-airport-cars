@@ -1,40 +1,39 @@
 import { NextResponse } from 'next/server';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
 
+/**
+ * Basic health check endpoint
+ * Lightweight check for uptime monitoring services
+ * For comprehensive checks, use /api/health/booking-flow
+ */
 export async function GET() {
   try {
-    // Basic health checks
+    const startTime = Date.now();
+    
+    // Test Firebase connection (critical)
+    let databaseStatus = 'operational';
+    try {
+      const db = getAdminDb();
+      await db.collection('bookings').limit(1).get();
+    } catch (error) {
+      databaseStatus = 'failed';
+    }
+
     const healthData = {
-      status: 'healthy',
+      status: databaseStatus === 'operational' ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
       version: process.env.npm_package_version || '1.0.0',
       uptime: process.uptime(),
+      responseTime: Date.now() - startTime,
       services: {
-        database: 'operational', // Would check actual DB in real implementation
+        database: databaseStatus,
         payments: process.env.SQUARE_ACCESS_TOKEN ? 'configured' : 'not_configured',
         maps: process.env.NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY ? 'configured' : 'not_configured',
-        sms: process.env.TWILIO_ACCOUNT_SID ? 'configured' : 'not_configured'
-      },
-      critical_paths: {
-        booking_api: 'operational',
-        payment_api: 'operational',
-        admin_api: 'operational'
+        sms: process.env.TWILIO_ACCOUNT_SID ? 'configured' : 'not_configured',
+        calendar: process.env.GOOGLE_CALENDAR_TOKENS ? 'configured' : 'not_configured'
       }
     };
-
-    // Quick API endpoint checks (in a real implementation, you'd test actual endpoints)
-    const apiStatus = await Promise.allSettled([
-      // These would be actual health checks in production
-      Promise.resolve('booking-api-ok'),
-      Promise.resolve('payment-api-ok'),
-      Promise.resolve('admin-api-ok')
-    ]);
-
-    const failedServices = apiStatus.filter(result => result.status === 'rejected').length;
-    
-    if (failedServices > 0) {
-      healthData.status = 'degraded';
-    }
 
     return NextResponse.json(healthData, {
       status: healthData.status === 'healthy' ? 200 : 503,

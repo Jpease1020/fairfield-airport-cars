@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic';
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { NextPage } from 'next';
 import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
-import { getAvailableDrivers } from '@/lib/services/booking-service';
 import { 
   Stack, 
   Text, 
@@ -92,8 +91,13 @@ function AdminBookingsPageContent() {
   const handleDriverAssignment = async (booking: Booking) => {
     try {
       
-      // Get available drivers from database
-      const availableDrivers = await getAvailableDrivers();
+      // Get available drivers from API (server-side)
+      const response = await fetch('/api/admin/drivers/available');
+      if (!response.ok) {
+        throw new Error('Failed to fetch available drivers');
+      }
+      const { drivers: availableDrivers } = await response.json();
+      
       if (availableDrivers.length === 0) {
         throw new Error('No available drivers');
       }

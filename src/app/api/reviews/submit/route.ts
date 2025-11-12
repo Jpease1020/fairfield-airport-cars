@@ -39,13 +39,13 @@ export async function POST(request: Request) {
     // Create the review
     const reviewId = await createReview({
       bookingId,
-      customerName: booking.name,
-      customerEmail: booking.email,
+      customerName: booking.name || 'Anonymous',
+      customerEmail: booking.email || '',
       rating,
       comment: comment || '',
       driverId: booking.driverId || '',
       driverName: booking.driverName || '',
-      rideDate: booking.pickupDateTime,
+      rideDate: booking.pickupDateTime || new Date(),
     });
 
     return NextResponse.json({ 

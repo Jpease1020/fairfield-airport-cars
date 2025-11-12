@@ -21,19 +21,20 @@ export async function POST(request: Request) {
     }
 
     const businessSettings = await cmsFlattenedService.getBusinessSettings();
-    const messageBody = `Thank you for booking with ${businessSettings?.company?.name || 'Fairfield Airport Car Service'}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${new Date(booking.pickupDateTime).toLocaleString()} is confirmed.`;
+    const pickupDate = booking.pickupDateTime ? new Date(booking.pickupDateTime) : new Date();
+    const messageBody = `Thank you for booking with ${businessSettings?.company?.name || 'Fairfield Airport Car Service'}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${pickupDate.toLocaleString()} is confirmed.`;
 
     // Send all notifications in parallel
     await Promise.all([
       // Existing SMS notification
-      sendSms({
+      booking.phone ? sendSms({
         to: booking.phone,
         body: messageBody,
-      }),
+      }) : Promise.resolve(),
       // Existing email notification
       sendConfirmationEmail(adaptOldBookingToNew(booking)),
       // New push notification (using email as user identifier)
-      bookingNotificationService.sendBookingConfirmation(bookingId, booking.email)
+      booking.email ? bookingNotificationService.sendBookingConfirmation(bookingId, booking.email) : Promise.resolve()
     ]);
 
     return NextResponse.json({ 

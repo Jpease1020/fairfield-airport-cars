@@ -2,7 +2,7 @@
 // Provides real-time tracking functionality for React components
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { getBooking } from '@/lib/services/booking-service';
+// Use API route instead of direct import (booking-service uses Admin SDK)
 
 interface DriverLocation {
   lat: number;
@@ -52,7 +52,11 @@ export const useRealTimeTracking = (bookingId: string) => {
 
     try {
       setLoading(true);
-      const booking = await getBooking(bookingId);
+      const response = await fetch(`/api/booking/${bookingId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch booking');
+      }
+      const booking = await response.json();
       
       if (booking) {
         setBookingStatus({
