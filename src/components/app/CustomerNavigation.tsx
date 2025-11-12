@@ -27,15 +27,16 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
   const cmsData = allCmsData?.navigation || {};
   
   const pathname = usePathname();
+  const currentPath = pathname ?? '';
   const { isAdmin } = useAdminStatus();
   const { isLoggedIn } = useAuth();
   const navigationItems: NavigationItem[] = [
-    ...(pathname !== '/' ? [{ name: 'Home', href: '/', current: false }] : []),
-    ...(pathname !== '/book' ? [{ name: 'Book a Ride', href: '/book', current: false }] : []),
-    ...(pathname !== '/about' ? [{ name: 'About', href: '/about', current: false }] : []),
-    ...(pathname !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
-    ...(isLoggedIn && pathname !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),
-    ...(isAdmin && !pathname.startsWith('/admin') ? [{ name: 'Admin', href: '/admin', current: false }] : []),
+    ...(currentPath !== '/' ? [{ name: 'Home', href: '/', current: false }] : []),
+    ...(currentPath !== '/book' ? [{ name: 'Book a Ride', href: '/book', current: false }] : []),
+    ...(currentPath !== '/about' ? [{ name: 'About', href: '/about', current: false }] : []),
+    ...(currentPath !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
+    ...(isLoggedIn && currentPath !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),
+    ...(isAdmin && !currentPath.startsWith('/admin') ? [{ name: 'Admin', href: '/admin', current: false }] : []),
     ...(!isLoggedIn ? [{ name: 'Login', href: '/auth/login', current: false }] : []),
   ];
 
@@ -64,7 +65,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
           text={cmsData?.['navigation-logout'] || 'Logout'}
         />
       )}
-      {pathname !== '/book' && (
+      {currentPath !== '/book' && (
         <Button 
           variant="primary" 
           size="lg" 
@@ -93,7 +94,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
           text={cmsData?.['navigation-mobile-logout'] || 'Logout'}
         />
       )}
-      {pathname !== '/book' && (
+      {currentPath !== '/book' && (
         <MobileBookNowButton 
           variant="primary" 
           size="sm" 
