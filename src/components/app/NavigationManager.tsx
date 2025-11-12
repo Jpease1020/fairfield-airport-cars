@@ -8,9 +8,8 @@ import { Container } from '@/design/ui';
 
 export function NavigationManager() {
   const pathname = usePathname();
-  
-  // Check if we're in admin context
-  const isAdminRoute = pathname?.startsWith('/admin');
+  const currentPath = pathname ?? '';
+  const isAdminRoute = currentPath.startsWith('/admin');
   
   // Render appropriate navigation based on route
   if (isAdminRoute) {

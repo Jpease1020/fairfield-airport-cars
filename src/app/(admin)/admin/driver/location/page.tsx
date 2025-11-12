@@ -24,7 +24,8 @@ const DRIVER_ID = ''; // Will be set dynamically based on logged-in user
 
 function DriverLocationContent() {
   const search = useSearchParams();
-  const allowed = search.get('key') === process.env.NEXT_PUBLIC_DRIVER_SECRET;
+  const allowed =
+    (search ? search.get('key') : null) === process.env.NEXT_PUBLIC_DRIVER_SECRET;
   const { addToast } = useToast();
   const { cmsData } = useCMSData();
   
@@ -101,10 +102,10 @@ function DriverLocationContent() {
               },
               {
                 id: 'contact-support',
-                label: cmsData?.['actions-contactSupport'] || 'Contact Support',
-                onClick: () => addToast('info', 'Support: (203) 555-0123'),
+                label: cmsData?.['actions-contactSupport'] || 'Text Support',
+                onClick: () => addToast('info', 'Text Support: (203) 555-0123'),
                 variant: 'outline',
-                icon: '📞'
+                icon: '💬'
               }
             ]} />
           </Container>

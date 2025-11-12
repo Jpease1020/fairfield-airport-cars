@@ -17,7 +17,7 @@ function DriverTrackingPageContent() {
   const { cmsData: allCmsData } = useCMSData();
   const cmsData = allCmsData?.admin || {};
   const params = useParams();
-  const bookingId = params.bookingId as string;
+  const bookingId = (params?.bookingId as string | undefined) ?? '';
   
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);

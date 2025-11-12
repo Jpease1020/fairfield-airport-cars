@@ -14,6 +14,7 @@ export const AdminNavigation: React.FC = () => {
   const cmsData = allCmsData?.admin || {};
   
   const pathname = usePathname();
+  const currentPath = pathname ?? '';
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -24,13 +25,13 @@ export const AdminNavigation: React.FC = () => {
   };
 
   const navigationItems: NavigationItem[] = [
-    { name: 'Dashboard', href: '/admin', current: pathname === '/admin' },
-    { name: 'Bookings', href: '/admin/bookings', current: pathname === '/admin/bookings' },
-    { name: 'Calendar', href: '/admin/calendar', current: pathname === '/admin/calendar' },
-    { name: 'Drivers', href: '/admin/drivers', current: pathname === '/admin/drivers' },
-    { name: 'Comments', href: '/admin/comments', current: pathname === '/admin/comments' },
-    { name: 'CMS', href: '/admin/cms', current: pathname.startsWith('/admin/cms') },
-    { name: 'Costs', href: '/admin/costs', current: pathname === '/admin/costs' },
+    { name: 'Dashboard', href: '/admin', current: currentPath === '/admin' },
+    { name: 'Bookings', href: '/admin/bookings', current: currentPath === '/admin/bookings' },
+    { name: 'Calendar', href: '/admin/calendar', current: currentPath === '/admin/calendar' },
+    { name: 'Drivers', href: '/admin/drivers', current: currentPath === '/admin/drivers' },
+    { name: 'Comments', href: '/admin/comments', current: currentPath === '/admin/comments' },
+    { name: 'CMS', href: '/admin/cms', current: currentPath.startsWith('/admin/cms') },
+    { name: 'Costs', href: '/admin/costs', current: currentPath === '/admin/costs' },
   ];
 
   const logo = (

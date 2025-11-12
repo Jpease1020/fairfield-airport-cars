@@ -23,7 +23,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
   const pageCmsData = cmsData || {};
   
   const searchParams = useSearchParams();
-  const bookingId = searchParams.get('bookingId');
+  const bookingId = searchParams?.get('bookingId') ?? '';
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -248,7 +248,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
             </Stack>
           
             <Stack spacing="md" align="center">
-              <Text data-testid="success-emergency-phone" cmsId="success-emergencyContact-phone">{pageCmsData?.['success-emergencyContact-phone'] || '📞 Contact support for phone number'}</Text>
+              <Text data-testid="success-emergency-phone" cmsId="success-emergencyContact-phone">{pageCmsData?.['success-emergencyContact-phone'] || '💬 Text support for phone number'}</Text>
               <Text data-testid="success-emergency-message" cmsId="success-emergencyContact-message">{pageCmsData?.['success-emergencyContact-message'] || 'Save this number! Our driver is available to assist you.'}</Text>
             </Stack>
           </Stack>
