@@ -49,9 +49,37 @@ export const useBookingAvailability = (): AvailabilityCheckResult => {
 
       const result = await response.json();
       setData(result);
+      if (!result.isAvailable) {
+        if (result.hasConflict) {
+          const firstConflict = result.conflictingBookings[0];
+          const suggested = result.suggestedTimeSlots.length > 0 ? ` Try ${result.suggestedTimeSlots.join(', ')} instead.` : '';
+          setError(
+            firstConflict
+              ? `That time overlaps with an existing ride (${firstConflict.timeSlot}).${suggested}`
+              : `That time conflicts with another booking.${suggested}`
+          );
+        } else {
+          setError('No drivers are available at that time. Please choose a different time.');
+        }
+        return;
+      }
+
+      setError(null);
     } catch (err) {
       console.error('Error checking availability:', err);
-      setError(err instanceof Error ? err.message : 'Failed to check availability');
+      const isNetworkFailure =
+        err instanceof Error &&
+        (err.message.includes('Failed to fetch') ||
+          err.message.includes('NetworkError') ||
+          err.message.includes('offline'));
+
+      if (isNetworkFailure) {
+        setError(
+          'We can’t reach our scheduling calendar right now. Your ride isn’t confirmed yet—we’ll finalize it as soon as we reconnect.'
+        );
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to check availability');
+      }
       setData(null);
     } finally {
       setIsLoading(false);

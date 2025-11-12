@@ -100,8 +100,8 @@ export default function ForgotPasswordClient() {
               </Stack>
 
               <Form onSubmit={handleSubmit} id="forgot-password-form" fullWidth>
-                <Stack>
-                  <Stack>
+                <Stack align="center">
+                  <Stack align="center">
                     <Label htmlFor="email">
                       {cmsData?.['customer-forgot_password-emailLabel'] || 'Email Address'}
                     </Label>

@@ -55,6 +55,7 @@ interface BookingProviderType {
   isLoading: boolean;
   isSubmitting: boolean;
   error: string | null;
+  warning: string | null;
   success: string | null;
   completedBookingId: string | null;
   
@@ -62,6 +63,7 @@ interface BookingProviderType {
   currentQuote: QuoteData | null;
   setQuote: (quote: QuoteData | null) => void;
   submitBooking: () => Promise<{ success: boolean; newTotal?: number }>;
+  completeFlightInfo: () => void;
   
   // Route calculation (for traffic-aware pricing)
   route: any;
@@ -71,6 +73,7 @@ interface BookingProviderType {
   // Helper functions
   setCurrentBooking: (booking: Booking | null) => void;
   clearError: () => void;
+  clearWarning: () => void;
 }
 
 const BookingContext = createContext<BookingProviderType | undefined>(undefined);
@@ -122,8 +125,9 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   });
 
   const [currentPhase, setCurrentPhase] = useState<BookingPhase>('trip-details');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [success, setSuccess] = useState<string | null>(null);
+const [warning, setWarning] = useState<string | null>(null);
   const [completedBookingId, setCompletedBookingId] = useState<string | null>(null);
   const [hasAttemptedValidation, setHasAttemptedValidation] = useState(false);
   const [currentQuote, setCurrentQuote] = useState<QuoteData | null>(null);
@@ -253,7 +257,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   const goToNextPhase = useCallback(() => {
     setHasAttemptedValidation(true);
     
-    const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing'];
+    const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing', 'flight-info'];
     const currentIndex = phases.indexOf(currentPhase);
     if (currentIndex < phases.length - 1) {
       setCurrentPhase(phases[currentIndex + 1]);
@@ -261,7 +265,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   }, [currentPhase]);
 
   const goToPreviousPhase = useCallback(() => {
-    const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing'];
+    const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing', 'flight-info'];
     const currentIndex = phases.indexOf(currentPhase);
     if (currentIndex > 0) {
       setCurrentPhase(phases[currentIndex - 1]);
@@ -338,6 +342,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   const clearAllErrors = () => {
     setError(null);
     setHasAttemptedValidation(false);
+    setWarning(null);
   };
 
   // Clear stored form data
@@ -440,6 +445,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
   const submitBooking = async (): Promise<{ success: boolean; newTotal?: number }> => {
     setIsSubmitting(true);
     setError(null);
+    setWarning(null);
     setSuccess(null);
 
     if (!currentQuote) {
@@ -506,16 +512,34 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
       }
 
       const responseData = await res.json();
-      setSuccess('Booking submitted successfully!');
       setCompletedBookingId(responseData.bookingId || null);
+      if (responseData.emailWarning) {
+        setWarning(responseData.emailWarning);
+      }
+      // Go to flight-info phase instead of showing success immediately
+      setCurrentPhase('flight-info');
       return { success: true };
     } catch (e) {
-      setError('Network error while submitting booking');
+      const offlineMessage =
+        'We can’t confirm your booking right now because we’re offline. Please check your connection and try again—your details are still in the form.';
+      const connectivityMessage =
+        'We couldn’t reach our scheduling system, so your booking is not yet confirmed. Please try again shortly or text us so we can lock in your ride.';
+
+      if (typeof navigator !== 'undefined' && navigator?.onLine === false) {
+        setError(offlineMessage);
+      } else {
+        setError(connectivityMessage);
+      }
       return { success: false };
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const completeFlightInfo = useCallback(() => {
+    setSuccess('Booking submitted — confirm via email.');
+    // Stay in flight-info phase but show success state
+  }, []);
   
 
   // No need for quote validation - fare is always valid when current
@@ -554,6 +578,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     });
     setCurrentQuote(null); // Clear quote on reset
     setCurrentPhase('trip-details');
+    setWarning(null);
     setError(null);
     setSuccess(null);
     setHasAttemptedValidation(false);
@@ -710,6 +735,10 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     setError(null);
   };
 
+const clearWarning = () => {
+  setWarning(null);
+};
+
   const value: BookingProviderType = {
     // Existing booking properties
     currentBooking,
@@ -721,8 +750,10 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     unsubscribeFromBooking,
     isLoading,
     error,
+    warning,
     setCurrentBooking,
     clearError,
+    clearWarning,
     
     // New form properties
     formData,
@@ -753,6 +784,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
     currentQuote,
     setQuote,
     submitBooking,
+    completeFlightInfo,
     route,
     routeLoading,
     routeError,

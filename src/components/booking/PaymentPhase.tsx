@@ -5,7 +5,6 @@ import { Container, Stack, StatusMessage, Box } from '@/design/ui';
 import { PaymentSummary } from './payment/PaymentSummary';
 import { PaymentForm } from './payment/PaymentForm';
 import { PaymentNavigation } from './payment/PaymentNavigation';
-import { TipCalculator } from '@/components/business/TipCalculator';
 // Types imported from booking provider context
 import { useBooking } from '@/providers/BookingProvider';
 import { Button, Text } from '@/design/ui';
@@ -72,18 +71,6 @@ export function PaymentPhase({
           dropoffLocation={tripData.dropoff.address}
           pickupDateTime={tripData.pickupDateTime}
           fare={currentQuote?.fare || null}
-          tipAmount={paymentData.tipAmount}
-          depositAmount={paymentData.depositAmount}
-          cmsData={cmsData}
-        />
-
-        {/* Tip Calculator */}
-        <TipCalculator
-          baseAmount={currentQuote?.fare || 0}
-          initialTipPercentage={paymentData.tipPercent}
-          onTipChange={(amount, percent) => {
-            updatePaymentInfo({ tipAmount: amount, tipPercent: percent });
-          }}
           cmsData={cmsData}
         />
 
@@ -179,7 +166,6 @@ export function PaymentPhase({
             await submitBooking();
           }}
           isProcessingPayment={isSubmitting}
-          canProcessPayment={canProcessPayment}
           cmsData={cmsData}
         />
       </Stack>

@@ -73,6 +73,13 @@ export interface TrackingInfo {
 
 export type BookingStatus = 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
 
+export interface BookingConfirmation {
+  status: 'pending' | 'confirmed';
+  token?: string;
+  sentAt?: string;
+  confirmedAt?: string;
+}
+
 export interface Booking {
   id?: string;
   status: BookingStatus;
@@ -87,6 +94,7 @@ export interface Booking {
   // Optional data
   driver?: DriverInfo;
   tracking?: TrackingInfo;
+  confirmation?: BookingConfirmation;
   
   // Legacy fields for backward compatibility
   pickupLocation?: string;
@@ -144,9 +152,10 @@ export interface BookingCreateData {
   status: BookingStatus;
   driver?: DriverInfo;
   tracking?: TrackingInfo;
+  confirmation?: BookingConfirmation;
 }
 
-export type BookingPhase = 'trip-details' | 'contact-info' | 'payment' | 'payment-processing';
+export type BookingPhase = 'trip-details' | 'contact-info' | 'payment' | 'payment-processing' | 'flight-info';
 
 export interface ValidationResult {
   isValid: boolean;

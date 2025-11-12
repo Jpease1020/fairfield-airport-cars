@@ -47,7 +47,7 @@ export class DriverSchedulingService {
   /**
    * Generate time slots for a driver on a specific date
    */
-  generateTimeSlots(startHour: number = 6, endHour: number = 22, slotDurationMinutes: number = 30): TimeSlot[] {
+  generateTimeSlots(startHour: number = 0, endHour: number = 24, slotDurationMinutes: number = 30): TimeSlot[] {
     const slots: TimeSlot[] = [];
     const totalSlots = ((endHour - startHour) * 60) / slotDurationMinutes;
     
@@ -209,12 +209,6 @@ export class DriverSchedulingService {
     try {
       if (!db) throw new Error('Database not initialized');
 
-      // Check availability first
-      const isAvailable = await this.checkDriverAvailability(driverId, date, startTime, endTime);
-      if (!isAvailable) {
-        throw new Error('Driver is not available for the requested time slot');
-      }
-
       // Get or create driver schedule for the date
       let schedule = await this.getDriverSchedule(driverId, date);
       
@@ -235,18 +229,28 @@ export class DriverSchedulingService {
       const slotIndex = schedule.timeSlots.findIndex(slot => slot.id === slotId);
       
       if (slotIndex === -1) {
-        throw new Error('Invalid time slot');
+        schedule.timeSlots.push({
+          id: slotId,
+          startTime,
+          endTime,
+          isAvailable: false,
+          status: 'booked',
+          bookingId,
+          customerName,
+          pickupLocation,
+          dropoffLocation
+        });
+      } else {
+        schedule.timeSlots[slotIndex] = {
+          ...schedule.timeSlots[slotIndex],
+          isAvailable: false,
+          status: 'booked',
+          bookingId,
+          customerName,
+          pickupLocation,
+          dropoffLocation
+        };
       }
-
-      schedule.timeSlots[slotIndex] = {
-        ...schedule.timeSlots[slotIndex],
-        isAvailable: false,
-        status: 'booked',
-        bookingId,
-        customerName,
-        pickupLocation,
-        dropoffLocation
-      };
 
       schedule.updatedAt = new Date();
 

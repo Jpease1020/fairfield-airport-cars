@@ -19,9 +19,17 @@ export async function GET(request: NextRequest) {
         );
       }
 
+      const rawData = docSnap.data();
       const booking = {
         id: docSnap.id,
-        ...docSnap.data()
+        ...rawData,
+        confirmation: rawData.confirmation
+          ? {
+              status: rawData.confirmation.status ?? 'pending',
+              sentAt: rawData.confirmation.sentAt ?? null,
+              confirmedAt: rawData.confirmation.confirmedAt ?? null
+            }
+          : undefined
       };
       
       return NextResponse.json({
@@ -38,10 +46,20 @@ export async function GET(request: NextRequest) {
       
       const snapshot = await getDocs(q);
 
-      const bookings = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const bookings = snapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          ...data,
+          confirmation: data.confirmation
+            ? {
+                status: data.confirmation.status ?? 'pending',
+                sentAt: data.confirmation.sentAt ?? null,
+                confirmedAt: data.confirmation.confirmedAt ?? null
+              }
+            : undefined
+        };
+      });
       
       return NextResponse.json({
         success: true,

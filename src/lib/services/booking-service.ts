@@ -55,6 +55,12 @@ export interface Booking {
   onMyWaySent?: boolean;
   createdAt: Date;
   updatedAt: Date;
+  confirmation?: {
+    status: 'pending' | 'confirmed';
+    token?: string;
+    sentAt?: Date;
+    confirmedAt?: Date;
+  };
   
   // Real-time tracking fields
   driverLocation?: {
@@ -161,7 +167,7 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
       driverName: selectedDriver?.driverName || 'To be assigned',
       depositAmount,
       balanceDue,
-      status: selectedDriver ? 'confirmed' : 'pending', // Pending if no driver yet
+      status: 'pending',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -284,6 +290,18 @@ export const getBooking = async (bookingId: string): Promise<Booking | null> => 
     pickupDateTime: safeToDate(data.pickupDateTime),
     createdAt: safeToDate(data.createdAt),
     updatedAt: safeToDate(data.updatedAt),
+    confirmation: data.confirmation
+      ? {
+          status: data.confirmation.status ?? 'pending',
+          token: data.confirmation.token,
+          sentAt: data.confirmation.sentAt
+            ? safeToDate(data.confirmation.sentAt).toISOString()
+            : undefined,
+          confirmedAt: data.confirmation.confirmedAt
+            ? safeToDate(data.confirmation.confirmedAt).toISOString()
+            : undefined,
+        }
+      : undefined,
   } as Booking;
 };
 

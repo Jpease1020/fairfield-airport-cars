@@ -59,10 +59,10 @@ export default function DashboardClient() {
     },
     {
       id: 6,
-      icon: "📞",
+      icon: "💬",
       label: pageCmsData?.['actions.contact.label'] || 'Contact Us',
       description: pageCmsData?.['actions.contact.description'] || 'Reach out for immediate assistance',
-      onClick: () => addToast('info', pageCmsData?.['contactInfo'] || 'Contact information: (203) 555-0123'),
+      onClick: () => addToast('info', pageCmsData?.['contactInfo'] || 'Text us: (203) 555-0123'),
       href: "#"
     }
   ];

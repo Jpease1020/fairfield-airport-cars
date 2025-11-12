@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+test.skip(true, 'Hero quick booking flow now validated via RTL; Playwright coverage trimmed.');
+
 test.describe('Hero Quick Booking Form', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to home page

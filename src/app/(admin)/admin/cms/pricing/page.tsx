@@ -36,7 +36,17 @@ function PricingSettingsContent() {
       setLoading(true);
       // Use pricing settings from CMS data if available
       if (cmsData && Object.keys(cmsData).length > 0) {
-        setSettings(cmsData as any);
+        const nextSettings = {
+          ...cmsData,
+          airportReturnMultiplier:
+            typeof cmsData.airportReturnMultiplier === 'number'
+              ? cmsData.airportReturnMultiplier
+              : typeof cmsData['airport-return-multiplier'] === 'number'
+                ? cmsData['airport-return-multiplier']
+                : 1.8,
+          zones: Array.isArray(cmsData.zones) ? cmsData.zones : [],
+        };
+        setSettings(nextSettings as any);
         addToast('success', 'Pricing settings loaded successfully');
       } else {
         addToast('error', 'No pricing settings found');
@@ -236,6 +246,23 @@ function PricingSettingsContent() {
                     placeholder="0.50"
                     min="0"
                     step="0.01"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="airportReturnMultiplier" cmsId="airportReturnMultiplierLabel">
+                    {cmsData?.['airportReturnMultiplierLabel'] || 'Airport Return Multiplier'}
+                  </Label>
+                  <Input
+                    id="airportReturnMultiplier"
+                    type="number"
+                    value={settings.airportReturnMultiplier?.toString() ?? '1.8'}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleBasePricingChange('airportReturnMultiplier', parseFloat(e.target.value) || 1)
+                    }
+                    placeholder="1.8"
+                    min="1"
+                    step="0.1"
                   />
                 </div>
 

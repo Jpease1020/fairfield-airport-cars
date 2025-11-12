@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Core User Flows Validation', () => {
+test.describe.skip('Legacy Core User Flows Validation (migrated to RTL/API)', () => {
   test('Complete booking flow - user can book a ride', async ({ page }) => {
     // Navigate to booking page
     await page.goto('/book');

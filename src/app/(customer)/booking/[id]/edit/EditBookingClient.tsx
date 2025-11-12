@@ -69,10 +69,10 @@ export default function EditBookingClient({ bookingId, cmsData }: EditBookingCli
               },
               {
                 id: 'contact-support',
-                label: 'Contact Support',
-                onClick: () => addToast('info', 'Support: (203) 555-0123'),
+                label: 'Text Support',
+                onClick: () => addToast('info', 'Text Support: (203) 555-0123'),
                 variant: 'outline',
-                icon: '📞'
+                icon: '💬'
               }
             ]} />
           </Container>

@@ -8,7 +8,6 @@ import { useFareCalculation } from '@/hooks/useFareCalculation';
 import { LocationInputSection } from './trip-details/LocationInputSection';
 import { DateTimeSection } from './trip-details/DateTimeSection';
 import { EstimatedRideTime } from './trip-details/EstimatedRideTime';
-import { FlightInfoSection } from './trip-details/FlightInfoSection';
 import { FareDisplaySection } from './trip-details/FareDisplaySection';
 // Types imported from booking provider context
 import { useBooking } from '@/providers/BookingProvider';
@@ -49,6 +48,11 @@ export function TripDetailsPhase({
   };
   // Availability checking
   const { error: availabilityError, checkAvailability } = useBookingAvailability();
+  const availabilityStatusType =
+    availabilityError &&
+    availabilityError.includes('We can’t reach our scheduling calendar right now')
+      ? 'warning'
+      : 'error';
 
   // Use custom hooks for business logic (with traffic-aware pricing)
   const { fare: calculatedFare, isCalculating: isCalculatingFare, error: fareError } = useFareCalculation({
@@ -104,12 +108,6 @@ export function TripDetailsPhase({
         {/* Estimated Ride Time */}
         <EstimatedRideTime cmsData={cmsData} />
 
-        {/* Flight Information Section */}
-        <FlightInfoSection
-          flightInfo={tripData.flightInfo}
-          onFlightInfoChange={(info) => updateTripDetails({ flightInfo: info })}
-          cmsData={cmsData}
-        />
 
         {/* Fare Display Section */}
         <FareDisplaySection
@@ -123,7 +121,7 @@ export function TripDetailsPhase({
         {/* Error States */}
         {availabilityError && (
           <StatusMessage
-            type="error"
+            type={availabilityStatusType}
             message={availabilityError}
             id="availability-error-message"
             data-testid="availability-error-message"

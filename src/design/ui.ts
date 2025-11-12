@@ -64,6 +64,7 @@ export { FormField } from './components/base-components/forms/FormField';
 export { Input } from './components/base-components/forms/Input';
 export { Textarea } from './components/base-components/forms/Textarea';
 export { Select } from './components/base-components/forms/Select';
+export { DateTimePicker } from './components/base-components/forms/DateTimePicker';
 export { Label } from './components/base-components/forms/Label';
 export { default as RadioButton } from './components/base-components/forms/RadioButton';
 
