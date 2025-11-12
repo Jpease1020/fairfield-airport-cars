@@ -16,7 +16,7 @@ import {
 } from '@/design/ui';
 import { TrackingMap } from '@/components/business/TrackingMap';
 import { TrafficETA } from '@/components/business/TrafficETA';
-import { getBooking } from '@/lib/services/booking-service';
+// Use API route instead of direct import (booking-service uses Admin SDK)
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { firebaseTrackingService, type ETACalculation, type DriverLocation } from '@/lib/services/firebase-tracking-service';
 import { Booking } from '@/types/booking';
@@ -46,7 +46,11 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
         setLoading(true);
         setError(null);
 
-        const bookingData = await getBooking(bookingId);
+        const response = await fetch(`/api/booking/${bookingId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch booking');
+        }
+        const bookingData = await response.json();
         if (!bookingData) {
           setError(cmsData?.['tracking-bookingNotFound'] || 'Booking not found');
           return;

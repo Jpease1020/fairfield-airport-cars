@@ -21,10 +21,12 @@ export async function POST(request: Request) {
 
     const messageBody = `Thank you for riding with Fairfield Airport Car Service! We'd love to hear your feedback. Please take a moment to leave a review: ${feedbackUrl}`;
 
-    await sendSms({
-      to: booking.phone,
-      body: messageBody,
-    });
+    if (booking.phone) {
+      await sendSms({
+        to: booking.phone,
+        body: messageBody,
+      });
+    }
 
     return NextResponse.json({ message: 'Feedback request sent successfully' });
   } catch (error) {

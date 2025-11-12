@@ -155,7 +155,9 @@ class RealTimeTrackingService {
       if (!booking) return null;
 
       // Get destination coordinates (pickup location)
-      const destinationCoords = await this.getCoordinates(booking.pickupLocation);
+      const pickupLocation = booking.pickupLocation || booking.trip?.pickup?.address;
+      if (!pickupLocation) return null;
+      const destinationCoords = await this.getCoordinates(pickupLocation);
       if (!destinationCoords) return null;
 
       // Calculate distance and time using Google Maps API

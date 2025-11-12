@@ -4,6 +4,7 @@ import React from 'react';
 import { Container, Stack } from '@/design/ui';
 import { H1, Text } from '@/design/ui';
 import { HeroCompactBookingForm } from '@/design/components/content-sections/HeroCompactBookingForm';
+import { PriceGuarantee } from '@/components/business/PriceGuarantee';
 import styled from 'styled-components';
 
 const FlexStack = styled(Stack)`
@@ -46,6 +47,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ cmsData }) => {
             >
               {cmsData?.['hero-description'] || "No cancellations. No surprises. Just reliable, comfortable airport rides from Fairfield County."}
             </Text>
+            
+            {/* Price Guarantee */}
+            <PriceGuarantee variant="compact" cmsData={cmsData} />
           </Stack>
         </FlexStack>
 

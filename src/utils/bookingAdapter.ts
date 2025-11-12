@@ -15,14 +15,14 @@ export function adaptOldBookingToNew(oldBooking: OldBooking): NewBooking {
     // Core data - map from old structure to new structure
     trip: {
       pickup: {
-        address: oldBooking.pickupLocation,
+        address: oldBooking.pickupLocation || '',
         coordinates: null // Old booking doesn't have coordinates
       },
       dropoff: {
-        address: oldBooking.dropoffLocation,
+        address: oldBooking.dropoffLocation || '',
         coordinates: null // Old booking doesn't have coordinates
       },
-      pickupDateTime: oldBooking.pickupDateTime.toISOString(),
+      pickupDateTime: oldBooking.pickupDateTime ? oldBooking.pickupDateTime.toISOString() : new Date().toISOString(),
       fareType: 'personal', // Default to personal for old bookings
       flightInfo: {
         hasFlight: !!oldBooking.flightNumber,
@@ -31,30 +31,30 @@ export function adaptOldBookingToNew(oldBooking: OldBooking): NewBooking {
         arrivalTime: '',
         terminal: ''
       },
-      fare: oldBooking.fare,
-      baseFare: oldBooking.fare,
+      fare: oldBooking.fare || 0,
+      baseFare: oldBooking.fare || 0,
       tipAmount: oldBooking.tipAmount || 0,
       tipPercent: 0,
-      totalFare: oldBooking.fare + (oldBooking.tipAmount || 0)
+      totalFare: (oldBooking.fare || 0) + (oldBooking.tipAmount || 0)
     },
     
     customer: {
-      name: oldBooking.name,
-      email: oldBooking.email,
-      phone: oldBooking.phone,
+      name: oldBooking.name || '',
+      email: oldBooking.email || '',
+      phone: oldBooking.phone || '',
       notes: oldBooking.notes || '',
       saveInfoForFuture: false
     },
     
     payment: {
       depositAmount: oldBooking.depositAmount || null,
-      balanceDue: oldBooking.balanceDue,
-      depositPaid: oldBooking.depositPaid,
+      balanceDue: oldBooking.balanceDue || 0,
+      depositPaid: oldBooking.depositPaid || false,
       squareOrderId: oldBooking.squareOrderId,
       squarePaymentId: oldBooking.squarePaymentId,
       tipAmount: oldBooking.tipAmount || 0,
       tipPercent: 0,
-      totalAmount: oldBooking.fare + (oldBooking.tipAmount || 0)
+      totalAmount: (oldBooking.fare || 0) + (oldBooking.tipAmount || 0)
     },
     
     // Optional data

@@ -1,3 +1,6 @@
+// Server-only module - uses Firebase Admin SDK
+// Note: This module should only be imported in API routes or server components
+
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { BookingCreateData } from '@/types/booking';
@@ -257,7 +260,11 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
 export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ bookingId: string }> => {
   try {
     // Check for booking conflicts before creating
-    const pickupDate = bookingData.pickupDateTime;
+    const pickupDateRaw = bookingData.pickupDateTime || bookingData.trip?.pickupDateTime;
+    if (!pickupDateRaw) {
+      throw new Error('Pickup date/time is required');
+    }
+    const pickupDate = pickupDateRaw instanceof Date ? pickupDateRaw : new Date(pickupDateRaw);
     const dateStr = pickupDate.toISOString().split('T')[0]; // YYYY-MM-DD
     const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
     const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
@@ -292,8 +299,9 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     }
 
     // Calculate deposit (30% of total fare)
-    const depositAmount = Math.round(bookingData.fare * 0.3 * 100) / 100; // Round to 2 decimal places
-    const balanceDue = bookingData.fare - depositAmount;
+    const fare = bookingData.fare || bookingData.trip?.fare || 0;
+    const depositAmount = Math.round(fare * 0.3 * 100) / 100; // Round to 2 decimal places
+    const balanceDue = fare - depositAmount;
 
     const db = getAdminDb();
     // Create booking document
@@ -318,9 +326,9 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
       startTime,
       endTime,
       bookingId,
-      bookingData.name,
-      bookingData.pickupLocation,
-      bookingData.dropoffLocation
+      bookingData.name || bookingData.customer?.name || 'Customer',
+      bookingData.pickupLocation || bookingData.trip?.pickup?.address || '',
+      bookingData.dropoffLocation || bookingData.trip?.dropoff?.address || ''
     );
 
     console.log(`Booking created successfully: ${bookingId} with driver: ${selectedDriver.driverName}`);
@@ -381,7 +389,7 @@ export const getBookings = async (
   
   const snapshot = await query.get();
   
-  return snapshot.docs.map(doc => {
+  return snapshot.docs.map((doc: any) => {
     const data = doc.data();
     
     return {
@@ -553,7 +561,7 @@ export const getAvailableDrivers = async (pickupTime?: Date): Promise<Driver[]> 
       return [];
     }
     
-    const availableDrivers = driversSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Driver);
+    const availableDrivers = driversSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }) as Driver);
     
     // If a specific pickup time is provided, check availability
     if (pickupTime) {

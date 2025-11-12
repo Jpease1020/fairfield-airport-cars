@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getBooking, updateBookingStatus, assignDriverToBooking } from '@/lib/services/booking-service';
+// Use API routes instead of direct import (booking-service uses Admin SDK)
 
 export interface BookingStatus {
   id: string;
@@ -66,7 +66,11 @@ export const useBookingStatus = (bookingId: string) => {
   const loadBookingStatus = useCallback(async () => {
     try {
       setLoading(true);
-      const booking = await getBooking(bookingId);
+      const response = await fetch(`/api/booking/${bookingId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch booking');
+      }
+      const booking = await response.json();
       
       if (booking) {
         setStatus({
@@ -92,11 +96,25 @@ export const useBookingStatus = (bookingId: string) => {
   // Update booking status
   const updateStatus = useCallback(async (newStatus: BookingStatus['status'], driverId?: string) => {
     try {
-      await updateBookingStatus(bookingId, newStatus);
+      const updateResponse = await fetch(`/api/booking/${bookingId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!updateResponse.ok) {
+        throw new Error('Failed to update booking status');
+      }
       
       // If driverId is provided, assign driver separately
       if (driverId) {
-        await assignDriverToBooking(bookingId, driverId); 
+        const assignResponse = await fetch(`/api/booking/${bookingId}/assign-driver`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ driverId }),
+        });
+        if (!assignResponse.ok) {
+          throw new Error('Failed to assign driver');
+        } 
       }
       
       // Update local state

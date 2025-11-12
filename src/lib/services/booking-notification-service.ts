@@ -16,7 +16,7 @@ class BookingNotificationService {
       const booking = await getBooking(bookingId);
       if (!booking) return;
 
-      const pickupTime = new Date(booking.pickupDateTime).toLocaleString();
+      const pickupTime = booking.pickupDateTime ? new Date(booking.pickupDateTime).toLocaleString() : 'TBD';
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Booking Confirmed! 🚗',
@@ -40,7 +40,7 @@ class BookingNotificationService {
       const booking = await getBooking(bookingId);
       if (!booking) return;
 
-      const pickupTime = new Date(booking.pickupDateTime).toLocaleString();
+      const pickupTime = booking.pickupDateTime ? new Date(booking.pickupDateTime).toLocaleString() : 'TBD';
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Reminder: Your Ride Tomorrow 🚗',
@@ -162,7 +162,7 @@ class BookingNotificationService {
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Booking Cancelled 🚗',
-        body: `Your ride scheduled for ${new Date(booking.pickupDateTime).toLocaleString()} has been cancelled.${refundMessage}`,
+        body: `Your ride scheduled for ${booking.pickupDateTime ? new Date(booking.pickupDateTime).toLocaleString() : 'TBD'} has been cancelled.${refundMessage}`,
         icon: '/favicon.ico',
         data: {
           bookingId,

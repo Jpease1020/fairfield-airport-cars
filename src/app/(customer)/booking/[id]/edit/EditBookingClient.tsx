@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast } from '@/design/ui';
-import { getBooking } from '@/lib/services/booking-service';
+// Use API route instead of direct import (booking-service uses Admin SDK)
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { Booking } from '@/types/booking';
 import BookingForm from '../../../book/booking-form';
@@ -24,7 +24,11 @@ export default function EditBookingClient({ bookingId, cmsData }: EditBookingCli
     if (bookingId) {
       const fetchBooking = async () => {
         try {
-          const bookingData = await getBooking(bookingId);
+          const response = await fetch(`/api/booking/${bookingId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch booking');
+          }
+          const bookingData = await response.json();
           if (bookingData) {
             setBooking(adaptOldBookingToNew(bookingData));
           } else {
