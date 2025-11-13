@@ -1,5 +1,21 @@
 import { collection, doc, getDocs, query, where, addDoc, updateDoc, serverTimestamp, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/utils/firebase-server';
+import { db as clientDb } from '@/lib/utils/firebase-server';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+
+// Use Admin SDK for server-side operations (API routes), client SDK for client-side
+const getDb = () => {
+  // If we're in a server context (API route), use Admin SDK
+  if (typeof window === 'undefined') {
+    try {
+      return getAdminDb();
+    } catch {
+      // Fallback to client SDK if Admin not initialized
+      return clientDb;
+    }
+  }
+  // Client-side: use client SDK
+  return clientDb;
+};
 
 export interface DriverSchedule {
   id?: string;
@@ -80,23 +96,34 @@ export class DriverSchedulingService {
     endTime: string
   ): Promise<boolean> {
     try {
+      const db = getDb();
       if (!db) throw new Error('Database not initialized');
 
-      // Get driver's schedule for the date
-      const scheduleQuery = query(
-        collection(db, 'driverSchedules'),
-        where('driverId', '==', driverId),
-        where('date', '==', date)
-      );
+      // Use Admin SDK if available (server-side), otherwise client SDK
+      let scheduleSnapshot;
+      if (typeof window === 'undefined' && db.collection) {
+        // Admin SDK (server-side)
+        scheduleSnapshot = await db.collection('driverSchedules')
+          .where('driverId', '==', driverId)
+          .where('date', '==', date)
+          .get();
+      } else {
+        // Client SDK
+        const scheduleQuery = query(
+          collection(db, 'driverSchedules'),
+          where('driverId', '==', driverId),
+          where('date', '==', date)
+        );
+        scheduleSnapshot = await getDocs(scheduleQuery);
+      }
       
-      const scheduleSnapshot = await getDocs(scheduleQuery);
-      
-      if (scheduleSnapshot.empty) {
+      if (!scheduleSnapshot.docs || scheduleSnapshot.docs.length === 0) {
         // No schedule exists, driver is available
         return true;
       }
 
-      const schedule = scheduleSnapshot.docs[0].data() as DriverSchedule;
+      const scheduleDoc = scheduleSnapshot.docs[0];
+      const schedule = (scheduleDoc.data ? scheduleDoc.data() : scheduleDoc) as DriverSchedule;
       
       // Check if the requested time slot conflicts with existing bookings
       const requestedStart = this.timeToMinutes(startTime);
@@ -131,6 +158,7 @@ export class DriverSchedulingService {
     excludeBookingId?: string
   ): Promise<BookingConflict> {
     try {
+      const db = getDb();
       if (!db) throw new Error('Database not initialized');
 
       const conflicts: Array<{
@@ -140,19 +168,30 @@ export class DriverSchedulingService {
         driverName: string;
       }> = [];
 
-      // Get all driver schedules for the date
-      const scheduleQuery = query(
-        collection(db, 'driverSchedules'),
-        where('date', '==', date)
-      );
-      
-      const scheduleSnapshot = await getDocs(scheduleQuery);
+      // Use Admin SDK if available (server-side), otherwise client SDK
+      let scheduleSnapshot;
+      if (typeof window === 'undefined' && db.collection) {
+        // Admin SDK (server-side)
+        scheduleSnapshot = await db.collection('driverSchedules')
+          .where('date', '==', date)
+          .get();
+      } else {
+        // Client SDK
+        const scheduleQuery = query(
+          collection(db, 'driverSchedules'),
+          where('date', '==', date)
+        );
+        scheduleSnapshot = await getDocs(scheduleQuery);
+      }
       
       const requestedStart = this.timeToMinutes(startTime);
       const requestedEnd = this.timeToMinutes(endTime);
       
-      for (const scheduleDoc of scheduleSnapshot.docs) {
-        const schedule = scheduleDoc.data() as DriverSchedule;
+      // Handle both Admin SDK (docs array) and Client SDK (docs array) formats
+      const docs = scheduleSnapshot.docs || [];
+      for (const scheduleDoc of docs) {
+        const scheduleData = scheduleDoc.data ? scheduleDoc.data() : scheduleDoc;
+        const schedule = scheduleData as DriverSchedule;
         
         for (const slot of schedule.timeSlots) {
           if (slot.status === 'booked' && slot.bookingId !== excludeBookingId) {
@@ -207,6 +246,7 @@ export class DriverSchedulingService {
     dropoffLocation: string
   ): Promise<void> {
     try {
+      const db = getDb();
       if (!db) throw new Error('Database not initialized');
 
       // Get or create driver schedule for the date
@@ -254,19 +294,38 @@ export class DriverSchedulingService {
 
       schedule.updatedAt = new Date();
 
-      // Save to database
-      if (schedule.id) {
-        await updateDoc(doc(db, 'driverSchedules', schedule.id), {
-          timeSlots: schedule.timeSlots,
-          updatedAt: serverTimestamp()
-        });
+      // Save to database - use Admin SDK if available, otherwise client SDK
+      if (typeof window === 'undefined' && db.collection) {
+        // Admin SDK (server-side)
+        const FieldValue = (await import('firebase-admin/firestore')).FieldValue;
+        if (schedule.id) {
+          await db.collection('driverSchedules').doc(schedule.id).update({
+            timeSlots: schedule.timeSlots,
+            updatedAt: FieldValue.serverTimestamp()
+          });
+        } else {
+          const docRef = await db.collection('driverSchedules').add({
+            ...schedule,
+            createdAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp()
+          });
+          schedule.id = docRef.id;
+        }
       } else {
-        const docRef = await addDoc(collection(db, 'driverSchedules'), {
-          ...schedule,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
-        schedule.id = docRef.id;
+        // Client SDK
+        if (schedule.id) {
+          await updateDoc(doc(db, 'driverSchedules', schedule.id), {
+            timeSlots: schedule.timeSlots,
+            updatedAt: serverTimestamp()
+          });
+        } else {
+          const docRef = await addDoc(collection(db, 'driverSchedules'), {
+            ...schedule,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          schedule.id = docRef.id;
+        }
       }
     } catch (error) {
       console.error('Error booking time slot:', error);
@@ -279,14 +338,24 @@ export class DriverSchedulingService {
    */
   async cancelBooking(bookingId: string): Promise<void> {
     try {
+      const db = getDb();
       if (!db) throw new Error('Database not initialized');
 
-      // Find the booking in all driver schedules
-      const scheduleQuery = query(collection(db, 'driverSchedules'));
-      const scheduleSnapshot = await getDocs(scheduleQuery);
+      // Find the booking in all driver schedules - use Admin SDK if available
+      let scheduleSnapshot;
+      if (typeof window === 'undefined' && db.collection) {
+        // Admin SDK (server-side)
+        scheduleSnapshot = await db.collection('driverSchedules').get();
+      } else {
+        // Client SDK
+        const scheduleQuery = query(collection(db, 'driverSchedules'));
+        scheduleSnapshot = await getDocs(scheduleQuery);
+      }
       
-      for (const scheduleDoc of scheduleSnapshot.docs) {
-        const schedule = scheduleDoc.data() as DriverSchedule;
+      const docs = scheduleSnapshot.docs || [];
+      for (const scheduleDoc of docs) {
+        const scheduleData = scheduleDoc.data ? scheduleDoc.data() : scheduleDoc;
+        const schedule = scheduleData as DriverSchedule;
         const updatedSlots = schedule.timeSlots.map(slot => {
           if (slot.bookingId === bookingId) {
             return {
@@ -308,10 +377,21 @@ export class DriverSchedulingService {
         );
 
         if (hasChanges) {
-          await updateDoc(doc(db, 'driverSchedules', scheduleDoc.id), {
-            timeSlots: updatedSlots,
-            updatedAt: serverTimestamp()
-          });
+          const docId = scheduleDoc.id || schedule.id;
+          if (typeof window === 'undefined' && db.collection) {
+            // Admin SDK
+            const FieldValue = (await import('firebase-admin/firestore')).FieldValue;
+            await db.collection('driverSchedules').doc(docId).update({
+              timeSlots: updatedSlots,
+              updatedAt: FieldValue.serverTimestamp()
+            });
+          } else {
+            // Client SDK
+            await updateDoc(doc(db, 'driverSchedules', docId), {
+              timeSlots: updatedSlots,
+              updatedAt: serverTimestamp()
+            });
+          }
         }
       }
     } catch (error) {
@@ -325,24 +405,35 @@ export class DriverSchedulingService {
    */
   async getDriverSchedule(driverId: string, date: string): Promise<DriverSchedule | null> {
     try {
+      const db = getDb();
       if (!db) throw new Error('Database not initialized');
 
-      const scheduleQuery = query(
-        collection(db, 'driverSchedules'),
-        where('driverId', '==', driverId),
-        where('date', '==', date)
-      );
+      // Use Admin SDK if available (server-side), otherwise client SDK
+      let scheduleSnapshot;
+      if (typeof window === 'undefined' && db.collection) {
+        // Admin SDK (server-side)
+        scheduleSnapshot = await db.collection('driverSchedules')
+          .where('driverId', '==', driverId)
+          .where('date', '==', date)
+          .get();
+      } else {
+        // Client SDK
+        const scheduleQuery = query(
+          collection(db, 'driverSchedules'),
+          where('driverId', '==', driverId),
+          where('date', '==', date)
+        );
+        scheduleSnapshot = await getDocs(scheduleQuery);
+      }
       
-      const scheduleSnapshot = await getDocs(scheduleQuery);
-      
-      if (scheduleSnapshot.empty) {
+      if (!scheduleSnapshot.docs || scheduleSnapshot.docs.length === 0) {
         return null;
       }
 
       const doc = scheduleSnapshot.docs[0];
       return {
         id: doc.id,
-        ...doc.data()
+        ...(doc.data ? doc.data() : doc)
       } as DriverSchedule;
     } catch (error) {
       console.error('Error getting driver schedule:', error);
@@ -358,21 +449,34 @@ export class DriverSchedulingService {
     endDate: string
   ): Promise<DriverSchedule[]> {
     try {
+      const db = getDb();
       if (!db) throw new Error('Database not initialized');
 
-      const scheduleQuery = query(
-        collection(db, 'driverSchedules'),
-        where('date', '>=', startDate),
-        where('date', '<=', endDate),
-        orderBy('date'),
-        orderBy('driverName')
-      );
+      // Use Admin SDK if available (server-side), otherwise client SDK
+      let scheduleSnapshot;
+      if (typeof window === 'undefined' && db.collection) {
+        // Admin SDK (server-side) - note: Admin SDK doesn't support multiple orderBy easily
+        scheduleSnapshot = await db.collection('driverSchedules')
+          .where('date', '>=', startDate)
+          .where('date', '<=', endDate)
+          .orderBy('date')
+          .get();
+      } else {
+        // Client SDK
+        const scheduleQuery = query(
+          collection(db, 'driverSchedules'),
+          where('date', '>=', startDate),
+          where('date', '<=', endDate),
+          orderBy('date'),
+          orderBy('driverName')
+        );
+        scheduleSnapshot = await getDocs(scheduleQuery);
+      }
       
-      const scheduleSnapshot = await getDocs(scheduleQuery);
-      
-      return scheduleSnapshot.docs.map(doc => ({
+      const docs = scheduleSnapshot.docs || [];
+      return docs.map((doc: any) => ({
         id: doc.id,
-        ...doc.data()
+        ...(doc.data ? doc.data() : doc)
       })) as DriverSchedule[];
     } catch (error) {
       console.error('Error getting driver schedules:', error);
@@ -390,7 +494,8 @@ export class DriverSchedulingService {
     endTime: string
   ): Promise<Array<{ driverId: string; driverName: string }>> {
     try {
-      if (!db) throw new Error('Database not initialized');
+      // This method calls checkDriverAvailability which already uses getDb()
+      // No need to check db here
 
       // For single driver setup, always return Gregg if available
       const greggId = 'gregg-driver-001';
