@@ -514,7 +514,7 @@ export class DriverSchedulingService {
 
   /**
    * Get available drivers for a specific time slot
-   * Simplified for single driver (Gregg) setup
+   * Simplified for single driver setup
    */
   async getAvailableDriversForTimeSlot(
     date: string,
@@ -525,12 +525,12 @@ export class DriverSchedulingService {
       // This method calls checkDriverAvailability which already uses getDb()
       // No need to check db here
 
-      // For single driver setup, always return Gregg if available
-      const greggId = 'gregg-driver-001';
-      const greggName = 'Gregg';
+      // For single driver setup, always return driver if available
+      const driverId = 'driver-001';
+      const driverName = 'Your Driver';
       
       const isAvailable = await this.checkDriverAvailability(
-        greggId, 
+        driverId, 
         date, 
         startTime, 
         endTime
@@ -538,8 +538,8 @@ export class DriverSchedulingService {
       
       if (isAvailable) {
         return [{
-          driverId: greggId,
-          driverName: greggName
+          driverId: driverId,
+          driverName: driverName
         }];
       }
       

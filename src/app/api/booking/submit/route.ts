@@ -176,7 +176,7 @@ export async function POST(request: Request) {
       } catch (emailError) {
         console.error('Failed to send verification email:', emailError);
         emailWarning =
-          'Your ride request is saved, but we could not send the confirmation email. Please text Gregg at (646) 221-6370 so we can finalize it.';
+          'Your ride request is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 so we can finalize it.';
         await recordBookingAttempt({
           stage: 'submit',
           status: 'warning',

@@ -190,7 +190,7 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
     // For promotional no-payment bookings, allow booking without immediate driver assignment
     let selectedDriver = null;
     if (availableDrivers.length > 0) {
-      // 3. Select Gregg as the driver if available (single driver setup)
+      // 3. Select driver if available (single driver setup)
       selectedDriver = availableDrivers[0];
     }
     // If no driver available, booking status will be 'pending' and driver assigned later
@@ -288,14 +288,14 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
     );
 
     if (availableDrivers.length === 0) {
-      throw new Error('Gregg is not available for the requested time slot. Please try a different time.');
+      throw new Error('No driver is available for the requested time slot. Please try a different time.');
     }
 
-    // Select Gregg as the driver (single driver setup)
+    // Select driver (single driver setup)
     const selectedDriver = availableDrivers[0];
     
     if (!selectedDriver) {
-      throw new Error('Gregg is not available for the requested time slot');
+      throw new Error('No driver is available for the requested time slot');
     }
 
     // Calculate deposit (30% of total fare)
