@@ -85,6 +85,14 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
   const { origin, destination, pickupCoords, dropoffCoords, fareType, pickupTime, sessionId, userId } = parsed.data;
 
+  // Require pickup time for quote generation
+  if (!pickupTime) {
+    return NextResponse.json({ 
+      error: 'Pickup time is required to generate a quote',
+      code: 'MISSING_PICKUP_TIME'
+    }, { status: 400 });
+  }
+
   const settings = await getSettings();
   const {
     baseFare: BASE_FARE,
@@ -93,8 +101,14 @@ export async function POST(request: Request) {
     airportReturnMultiplier,
   } = settings;
 
-  // Clamp pickup time to avoid past dates
-  const departureClamped = pickupTime && new Date(pickupTime) > new Date() ? new Date(pickupTime) : new Date();
+  // Validate pickup time is in the future
+  const pickupDateTime = new Date(pickupTime);
+  if (pickupDateTime <= new Date()) {
+    return NextResponse.json({ 
+      error: 'Pickup time must be in the future',
+      code: 'INVALID_PICKUP_TIME'
+    }, { status: 400 });
+  }
 
   let element: any;
 
@@ -105,7 +119,7 @@ export async function POST(request: Request) {
         origins: [pickupCoords ? `${pickupCoords.lat},${pickupCoords.lng}` : origin],
         destinations: [dropoffCoords ? `${dropoffCoords.lat},${dropoffCoords.lng}` : destination],
         key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
-        departure_time: new Date(departureClamped),
+        departure_time: pickupDateTime,
         traffic_model: 'best_guess' as any
       }
     });
@@ -148,7 +162,6 @@ export async function POST(request: Request) {
 
   // Create a quote with 15-minute expiration
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
-  const pickupDateTime = pickupTime ? new Date(pickupTime) : departureClamped;
   
   try {
     const quoteResult = await createQuote({
@@ -162,7 +175,7 @@ export async function POST(request: Request) {
       estimatedMinutes: Math.round(durationMinutes),
       price: fare,
       fareType,
-      pickupDateTime,
+      pickupDateTime, // Required - validated above
       expiresAt,
     });
 

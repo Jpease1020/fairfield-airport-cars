@@ -15,7 +15,7 @@ export const QuoteSchema = z.object({
   estimatedMinutes: z.number().min(0),
   price: z.number().min(0),
   fareType: z.enum(['personal', 'business']),
-  pickupDateTime: z.date().optional(), // When the ride is scheduled
+  pickupDateTime: z.date(), // When the ride is scheduled (required)
   expiresAt: z.date(), // When the quote expires
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
