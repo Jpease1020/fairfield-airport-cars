@@ -11,9 +11,9 @@ export default function AdminSchedulesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Single driver setup
+  // Single driver setup - keep ID consistent with database
   const drivers = [
-    { id: 'driver-001', name: 'Driver' }
+    { id: 'gregg-driver-001', name: 'Driver' }
   ];
 
   const fetchSchedules = async () => {

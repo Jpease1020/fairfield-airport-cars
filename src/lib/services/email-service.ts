@@ -185,14 +185,16 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
   console.log('📧 [EMAIL SERVICE] Attempting to send booking verification email...');
   console.log(`   To: ${booking.customer.email}`);
   console.log(`   Booking ID: ${booking.id}`);
+  console.log(`   Environment: ${process.env.NODE_ENV || 'unknown'}`);
   
   if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
     console.error('❌ [EMAIL SERVICE] Email credentials not configured');
-    console.error(`   EMAIL_HOST: ${EMAIL_HOST ? '✅' : '❌'}`);
-    console.error(`   EMAIL_PORT: ${EMAIL_PORT ? '✅' : '❌'}`);
-    console.error(`   EMAIL_USER: ${EMAIL_USER ? '✅' : '❌'}`);
-    console.error(`   EMAIL_PASS: ${EMAIL_PASS ? '✅' : '❌'}`);
-    return;
+    console.error(`   EMAIL_HOST: ${EMAIL_HOST ? '✅ Set' : '❌ Missing'}`);
+    console.error(`   EMAIL_PORT: ${EMAIL_PORT ? '✅ Set' : '❌ Missing'}`);
+    console.error(`   EMAIL_USER: ${EMAIL_USER ? '✅ Set' : '❌ Missing'}`);
+    console.error(`   EMAIL_PASS: ${EMAIL_PASS ? '✅ Set' : '❌ Missing'}`);
+    console.error('   ⚠️ Email will not be sent. Check Vercel environment variables.');
+    throw new Error('Email service not configured. Missing required environment variables.');
   }
 
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
