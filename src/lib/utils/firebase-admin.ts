@@ -110,23 +110,19 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
     }
     
     // Initialize services
+    // Note: Firebase Admin SDK automatically connects to emulators via environment variables
+    // FIRESTORE_EMULATOR_HOST and FIREBASE_AUTH_EMULATOR_HOST must be set BEFORE this point
     adminDb = getFirestore();
     adminAuth = getAuth();
     
-    // Configure emulator settings if using emulators
+    // Log emulator connection status
     if (shouldInitializeForEmulators) {
-      // Set emulator host for Firestore
-      if (process.env.FIREBASE_EMULATOR_HOST) {
-        adminDb.settings({
-          host: process.env.FIREBASE_EMULATOR_HOST,
-          ssl: false
-        });
-        console.log(`🔌 Admin Firestore connected to emulator: ${process.env.FIREBASE_EMULATOR_HOST}`);
+      if (process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_EMULATOR_HOST) {
+        const emulatorHost = process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_EMULATOR_HOST;
+        console.log(`🔌 Admin Firestore connected to emulator: ${emulatorHost}`);
       }
       
-      // Set emulator host for Auth
       if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
-        // Auth emulator host is already set in environment
         console.log(`🔌 Admin Auth connected to emulator: ${process.env.FIREBASE_AUTH_EMULATOR_HOST}`);
       }
     }
