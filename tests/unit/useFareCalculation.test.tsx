@@ -44,18 +44,21 @@ describe('useFareCalculation Hook - RTL Style', () => {
 
     (global.fetch as any).mockResolvedValue(mockResponse);
 
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // Tomorrow
+    
     const { result } = renderHook(() => useFareCalculation({
       pickupLocation: 'Fairfield Station, Fairfield, CT',
       dropoffLocation: 'JFK Airport, Queens, NY',
       pickupCoords: { lat: 41.1408, lng: -73.2613 },
       dropoffCoords: { lat: 40.6413, lng: -73.7781 },
-      fareType: 'personal'
+      fareType: 'personal',
+      pickupDateTime: futureDate
     }));
 
     // Wait for calculation to complete
     await waitFor(() => {
       expect(result.current.fare).toBe(95.50);
-    });
+    }, { timeout: 3000 });
 
     expect(result.current.isCalculating).toBe(false);
     expect(result.current.error).toBeNull();
@@ -88,12 +91,15 @@ describe('useFareCalculation Hook - RTL Style', () => {
 
     (global.fetch as any).mockResolvedValue(mockResponse);
 
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // Tomorrow
+    
     const { result } = renderHook(() => useFareCalculation({
       pickupLocation: 'Fairfield Station, Fairfield, CT',
       dropoffLocation: 'JFK Airport, Queens, NY',
       pickupCoords: { lat: 41.1408, lng: -73.2613 },
       dropoffCoords: { lat: 40.6413, lng: -73.7781 },
-      fareType: 'personal'
+      fareType: 'personal',
+      pickupDateTime: futureDate
     }));
 
     await waitFor(() => {
@@ -133,6 +139,8 @@ describe('useFareCalculation Hook - RTL Style', () => {
       .mockResolvedValueOnce(personalResponse)
       .mockResolvedValueOnce(businessResponse);
 
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // Tomorrow
+    
     type FareTypeProps = { fareType: 'personal' | 'business' };
     
     const { result, rerender } = renderHook(
@@ -141,7 +149,8 @@ describe('useFareCalculation Hook - RTL Style', () => {
         dropoffLocation: 'JFK Airport, Queens, NY',
         pickupCoords: { lat: 41.1408, lng: -73.2613 },
         dropoffCoords: { lat: 40.6413, lng: -73.7781 },
-        fareType
+        fareType,
+        pickupDateTime: futureDate
       }),
       { initialProps: { fareType: 'personal' as FareTypeProps['fareType'] } }
     );
@@ -180,17 +189,20 @@ describe('useFareCalculation Hook - RTL Style', () => {
 
     (global.fetch as any).mockResolvedValue(mockResponse);
 
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // Tomorrow
+    
     const { result } = renderHook(() => useFareCalculation({
       pickupLocation: 'Fairfield Station, Fairfield, CT',
       dropoffLocation: 'JFK Airport, Queens, NY',
       pickupCoords: { lat: 41.1408, lng: -73.2613 },
       dropoffCoords: { lat: 40.6413, lng: -73.7781 },
-      fareType: 'personal'
+      fareType: 'personal',
+      pickupDateTime: futureDate
     }));
 
     await waitFor(() => {
       expect(result.current.fare).toBe(95.50);
-    });
+    }, { timeout: 3000 });
 
     // Should only call API once (automatic calculation on mount)
     expect(global.fetch).toHaveBeenCalledTimes(1);

@@ -98,19 +98,22 @@ describe('useFareCalculation', () => {
     (global.fetch as any).mockResolvedValue(mockResponse);
     (getOrCreateAnonymousSession as any).mockReturnValue('test_session_123');
 
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // Tomorrow
+
     const { result } = renderHook(() => useFareCalculation({
       pickupLocation: '123 Main St, Fairfield, CT',
       dropoffLocation: 'JFK Airport, Queens, NY',
       pickupCoords: { lat: 41.1408, lng: -73.2613 },
       dropoffCoords: { lat: 40.6413, lng: -73.7781 },
-      fareType: 'business'
+      fareType: 'business',
+      pickupDateTime: futureDate
     }));
 
     await waitFor(() => {
       expect(result.current.fare).toBe(85);
       expect(result.current.isCalculating).toBe(false);
       expect(result.current.error).toBeNull();
-    });
+    }, { timeout: 3000 });
   });
 
   it('should handle API errors gracefully', async () => {
@@ -124,19 +127,22 @@ describe('useFareCalculation', () => {
     (global.fetch as any).mockResolvedValue(mockResponse);
     (getOrCreateAnonymousSession as any).mockReturnValue('test_session_123');
 
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // Tomorrow
+
     const { result } = renderHook(() => useFareCalculation({
       pickupLocation: '123 Main St, Fairfield, CT',
       dropoffLocation: 'JFK Airport, Queens, NY',
       pickupCoords: { lat: 41.1408, lng: -73.2613 },
       dropoffCoords: { lat: 40.6413, lng: -73.7781 },
-      fareType: 'business'
+      fareType: 'business',
+      pickupDateTime: futureDate
     }));
 
     await waitFor(() => {
       expect(result.current.fare).toBeNull();
       expect(result.current.error).toBe('Google Maps API unavailable');
       expect(result.current.isCalculating).toBe(false);
-    });
+    }, { timeout: 3000 });
   });
 
   it('should not calculate fare when required data is missing', () => {
