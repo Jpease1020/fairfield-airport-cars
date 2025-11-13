@@ -15,27 +15,36 @@ const DisabledFormWrapper = styled(Box)`
   pointer-events: none;
 `;
 
-// Component to handle error message scrolling
+const ErrorWrapper = styled.div`
+  width: 100%;
+`;
+
+// Component to handle error message scrolling and prominence
 const ErrorMessageWithScroll: React.FC<{ message: string }> = ({ message }) => {
   const errorRef = React.useRef<HTMLDivElement>(null);
   
   React.useEffect(() => {
     if (errorRef.current && message) {
+      // Scroll immediately and again after a short delay to ensure visibility
+      errorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
       setTimeout(() => {
         errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
+      }, 300);
     }
   }, [message]);
   
+  if (!message) return null;
+  
   return (
-    <div ref={errorRef}>
+    <ErrorWrapper ref={errorRef}>
       <StatusMessage
         type="error"
         message={message}
         id="payment-error-message"
         data-testid="payment-error-message"
+        size="lg"
       />
-    </div>
+    </ErrorWrapper>
   );
 };
 
@@ -55,9 +64,15 @@ export function PaymentPhase({
     submitBooking, 
     currentQuote,
     setQuote,
-    goToPreviousPhase,
-    updatePaymentInfo
+    goToPreviousPhase
   } = useBooking();
+  
+  // Debug: Log error state changes
+  React.useEffect(() => {
+    if (error) {
+      console.error('🚨 [PAYMENT PHASE] Error displayed:', error);
+    }
+  }, [error]);
   
   // Extract data from formData
   const tripData = formData.trip;
@@ -65,11 +80,15 @@ export function PaymentPhase({
   const paymentData = formData.payment;
   const [isRefreshingQuote, setIsRefreshingQuote] = React.useState(false);
   const getTotalWithTip = () => (currentQuote?.fare || 0) + paymentData.tipAmount;
-  const canProcessPayment = !isSubmitting && currentQuote !== null;
 
   return (
     <Container maxWidth="7xl" padding="xl" data-testid="payment-phase-container">
       <Stack spacing="xl" data-testid="payment-phase-stack">
+        {/* Error Message - Show FIRST and prominently */}
+        {error && (
+          <ErrorMessageWithScroll message={error} />
+        )}
+
         {/* Success Message */}
         {success && (
           <StatusMessage
@@ -78,11 +97,6 @@ export function PaymentPhase({
             id="payment-success-message"
             data-testid="payment-success-message"
           />
-        )}
-
-        {/* Error Message */}
-        {error && (
-          <ErrorMessageWithScroll message={error} />
         )}
 
         <PaymentSummary
