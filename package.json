@@ -20,7 +20,8 @@
     "firebase:emulators": "firebase emulators:start",
     "firebase:emulators:seed": "node scripts/seed-cms-to-emulators.js",
     "deploy": "npm run build && vercel --prod",
-    "deploy:preview": "npm run build && vercel"
+    "deploy:preview": "npm run build && vercel",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",
@@ -74,6 +75,7 @@
     "eslint-config-next": "15.3.4",
     "eslint-plugin-unused-imports": "^4.1.4",
     "glob": "^11.0.3",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "msw": "^2.10.4",
     "ts-prune": "^0.10.3",

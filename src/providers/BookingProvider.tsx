@@ -507,20 +507,44 @@ const [warning, setWarning] = useState<string | null>(null);
         
         // Handle booking conflict/time slot errors
         const errorText = (data.details || data.error || '').toString();
-        if (errorText.includes('Time slot conflicts') || errorText.includes('not available') || errorText.includes('conflicts with existing')) {
-          // Extract suggested times - handle both comma-separated and dash-separated formats
-          const suggestedMatch = errorText.match(/Suggested times?:?\s*([^\n]+)/i);
+        const fullErrorText = `${data.error || ''} ${errorText}`.trim();
+        
+        // Check for conflict errors (case-insensitive, check both error and details)
+        if (fullErrorText.match(/time slot conflicts|not available|conflicts with existing|already booked/i)) {
+          // Extract suggested times - handle multiple formats:
+          // "Suggested times: 05:15-07:15"
+          // "Suggested times: 05:15-07:15, 08:00-10:00"
+          // "05:15-07:15"
+          const suggestedMatch = fullErrorText.match(/[Ss]uggested times?:?\s*([^\n.,]+)/i) || 
+                                 fullErrorText.match(/(\d{1,2}:\d{2}-\d{1,2}:\d{2}(?:\s*,\s*\d{1,2}:\d{2}-\d{1,2}:\d{2})*)/);
           const suggestedTimes = suggestedMatch ? suggestedMatch[1].trim() : '';
+          
           const conflictMessage = suggestedTimes 
             ? `⚠️ This time slot is already booked. Suggested available times: ${suggestedTimes}. Please go back and select a different time.`
             : '⚠️ This time slot is already booked. Please go back and select a different time.';
+          
+          console.error('❌ [BOOKING] Time slot conflict detected:', {
+            error: data.error,
+            details: data.details,
+            suggestedTimes,
+            conflictMessage
+          });
+          
           setError(conflictMessage);
+          setIsSubmitting(false);
           return { success: false };
         }
         
         // Show detailed error if available
         const errorMsg = data.details ? `${data.error}: ${data.details}` : (data.error || 'Failed to submit booking');
+        console.error('❌ [BOOKING] Submission failed:', {
+          error: data.error,
+          details: data.details,
+          fullErrorText,
+          errorMsg
+        });
         setError(errorMsg);
+        setIsSubmitting(false);
         return { success: false };
       }
 
@@ -532,11 +556,11 @@ const [warning, setWarning] = useState<string | null>(null);
       // Go to flight-info phase instead of showing success immediately
       setCurrentPhase('flight-info');
       return { success: true };
-    } catch (e) {
+    } catch (_e) {
       const offlineMessage =
-        'We can’t confirm your booking right now because we’re offline. Please check your connection and try again—your details are still in the form.';
+        'We can\'t confirm your booking right now because we\'re offline. Please check your connection and try again—your details are still in the form.';
       const connectivityMessage =
-        'We couldn’t reach our scheduling system, so your booking is not yet confirmed. Please try again shortly or text us so we can lock in your ride.';
+        'We couldn\'t reach our scheduling system, so your booking is not yet confirmed. Please try again shortly or text us so we can lock in your ride.';
 
       if (typeof navigator !== 'undefined' && navigator?.onLine === false) {
         setError(offlineMessage);
