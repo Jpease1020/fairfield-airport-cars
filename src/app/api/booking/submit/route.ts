@@ -94,6 +94,17 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Verify Firebase Admin is initialized before proceeding
+    try {
+      getAdminDb();
+    } catch (adminError) {
+      console.error('Firebase Admin not initialized:', adminError);
+      return NextResponse.json({ 
+        error: 'Server configuration error. Please contact support.',
+        details: 'Firebase Admin not initialized. Check environment variables.'
+      }, { status: 500 });
+    }
+
     // Create booking with clean nested structure
     const bookingData = {
       trip: {
@@ -134,7 +145,14 @@ export async function POST(request: Request) {
 
     // Import booking service
     const { createBookingAtomic } = await import('@/lib/services/booking-service');
-    const bookingResult = await createBookingAtomic(bookingData);
+    
+    // Add timeout wrapper for booking creation
+    const bookingPromise = createBookingAtomic(bookingData);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Booking creation timed out after 50 seconds')), 50000)
+    );
+    
+    const bookingResult = await Promise.race([bookingPromise, timeoutPromise]) as { bookingId: string };
 
     const confirmationToken = randomBytes(32).toString('hex');
 
