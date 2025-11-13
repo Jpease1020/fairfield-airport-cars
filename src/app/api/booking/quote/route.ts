@@ -148,6 +148,7 @@ export async function POST(request: Request) {
 
   // Create a quote with 15-minute expiration
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
+  const pickupDateTime = pickupTime ? new Date(pickupTime) : departureClamped;
   
   try {
     const quoteResult = await createQuote({
@@ -161,6 +162,7 @@ export async function POST(request: Request) {
       estimatedMinutes: Math.round(durationMinutes),
       price: fare,
       fareType,
+      pickupDateTime,
       expiresAt,
     });
 

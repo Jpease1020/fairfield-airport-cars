@@ -64,12 +64,27 @@ export async function POST(request: Request) {
     }
     
     // Validate route hasn't changed (prevent tampering)
+    // Normalize pickupDateTime to ISO string for comparison
+    const currentPickupDateTime = trip.pickupDateTime instanceof Date 
+      ? trip.pickupDateTime.toISOString() 
+      : new Date(trip.pickupDateTime).toISOString();
+    
+    // Handle backward compatibility: old quotes may not have pickupDateTime stored
+    let storedPickupDateTime = '';
+    if (quote.pickupDateTime) {
+      storedPickupDateTime = quote.pickupDateTime instanceof Date
+        ? quote.pickupDateTime.toISOString()
+        : new Date(quote.pickupDateTime).toISOString();
+    }
+    
+    // For old quotes without pickupDateTime, only validate address and fareType
+    // For new quotes with pickupDateTime, validate everything including pickup time
     const currentRouteHash = createHash('sha256')
-      .update(`${trip.pickup.address}|${trip.dropoff.address}|${trip.pickupDateTime}|${trip.fareType}`)
+      .update(`${trip.pickup.address}|${trip.dropoff.address}|${storedPickupDateTime ? currentPickupDateTime : ''}|${trip.fareType}`)
       .digest('hex');
     
     const storedRouteHash = createHash('sha256')
-      .update(`${quote.pickupAddress}|${quote.dropoffAddress}|${quote.fareType}`)
+      .update(`${quote.pickupAddress}|${quote.dropoffAddress}|${storedPickupDateTime}|${quote.fareType}`)
       .digest('hex');
     
     if (currentRouteHash !== storedRouteHash) {

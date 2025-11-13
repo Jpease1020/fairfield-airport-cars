@@ -50,6 +50,13 @@ const getTransporter = () => {
         rejectUnauthorized: false, // Gmail sometimes has cert issues
       },
     }),
+    // For SendGrid specifically, ensure TLS is enabled
+    ...(EMAIL_HOST === 'smtp.sendgrid.net' && {
+      requireTLS: true,
+      tls: {
+        ciphers: 'SSLv3',
+      },
+    }),
   });
 };
 

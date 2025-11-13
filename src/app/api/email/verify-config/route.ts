@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     } = process.env;
 
     const config = {
-      EMAIL_HOST: EMAIL_HOST ? '✅ Set' : '❌ Missing',
+      EMAIL_HOST: EMAIL_HOST ? `✅ Set (${EMAIL_HOST})` : '❌ Missing',
       EMAIL_PORT: EMAIL_PORT ? `✅ Set (${EMAIL_PORT})` : '❌ Missing',
       EMAIL_USER: EMAIL_USER ? `✅ Set (${EMAIL_USER.substring(0, 3)}***)` : '❌ Missing',
       EMAIL_PASS: EMAIL_PASS ? `✅ Set (${EMAIL_PASS.length} chars)` : '❌ Missing',
@@ -81,11 +81,19 @@ export async function GET(request: NextRequest) {
         : connectionTest?.status === 'failed'
         ? [
             'SMTP connection failed - check credentials',
-            'If using Gmail, ensure you\'re using an App Password (not regular password)',
-            'Check Google Account security for blocked access attempts',
+            EMAIL_HOST === 'smtp.gmail.com' 
+              ? 'If using Gmail, ensure you\'re using an App Password (not regular password)'
+              : EMAIL_HOST === 'smtp.sendgrid.net'
+              ? 'If using SendGrid, ensure EMAIL_USER is "apikey" and EMAIL_PASS is your SendGrid API key'
+              : 'Verify EMAIL_HOST and EMAIL_PORT are correct for your email provider',
+            EMAIL_HOST === 'smtp.gmail.com' 
+              ? 'Check Google Account security for blocked access attempts'
+              : null,
             'Verify EMAIL_HOST and EMAIL_PORT are correct for your email provider',
-            'If it worked yesterday, Google may have temporarily blocked access - wait 15-30 minutes and try again'
-          ]
+            EMAIL_HOST === 'smtp.gmail.com'
+              ? 'If it worked yesterday, Google may have temporarily blocked access - wait 15-30 minutes and try again'
+              : null
+          ].filter(Boolean)
         : ['Email service configuration looks good']
     });
   } catch (error) {
