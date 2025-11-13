@@ -40,11 +40,34 @@ TWILIO_AUTH_TOKEN=your_twilio_auth_token
 TWILIO_PHONE_NUMBER=+1234567890
 ```
 
-## 🟢 OPTIONAL - Email Service
+## 🟡 IMPORTANT - Email Service (SendGrid)
 
+**For SendGrid SMTP (Recommended):**
 ```
-SENDGRID_API_KEY=your_sendgrid_api_key
+EMAIL_HOST=smtp.sendgrid.net
+EMAIL_PORT=587
+EMAIL_USER=apikey
+EMAIL_PASS=your_sendgrid_api_key_here
 ```
+
+**How to get your SendGrid API key:**
+1. Go to [SendGrid Dashboard](https://app.sendgrid.com/settings/api_keys)
+2. Click "Create API Key"
+3. Name it "Production Email Service"
+4. Give it "Full Access" or "Mail Send" permissions
+5. Copy the API key (you'll only see it once!)
+6. Paste it as `EMAIL_PASS` in Vercel
+
+**Note:** `EMAIL_USER` must be exactly `apikey` (lowercase, no quotes) for SendGrid SMTP to work.
+
+**Alternative - Gmail SMTP:**
+```
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your_app_password_here
+```
+(Requires Gmail App Password - see Google Account Security settings)
 
 ## 🟢 OPTIONAL - Google Calendar Integration
 

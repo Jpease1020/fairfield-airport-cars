@@ -15,7 +15,8 @@ export const QuoteSchema = z.object({
   estimatedMinutes: z.number().min(0),
   price: z.number().min(0),
   fareType: z.enum(['personal', 'business']),
-  expiresAt: z.date(),
+  pickupDateTime: z.date().optional(), // When the ride is scheduled
+  expiresAt: z.date(), // When the quote expires
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
@@ -57,6 +58,11 @@ export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'u
     // Only include userId if it's defined
     if (quoteData.userId) {
       cleanData.userId = quoteData.userId;
+    }
+    
+    // Only include pickupDateTime if it's defined
+    if (quoteData.pickupDateTime) {
+      cleanData.pickupDateTime = quoteData.pickupDateTime;
     }
 
     let quoteId: string;
@@ -124,6 +130,7 @@ export const getQuote = async (quoteId: string): Promise<Quote | null> => {
       return {
         id: quoteId_final,
         ...quoteData,
+        pickupDateTime: quoteData.pickupDateTime?.toDate ? quoteData.pickupDateTime.toDate() : (quoteData.pickupDateTime instanceof Date ? quoteData.pickupDateTime : (quoteData.pickupDateTime ? new Date(quoteData.pickupDateTime) : undefined)),
         expiresAt: quoteData.expiresAt?.toDate ? quoteData.expiresAt.toDate() : (quoteData.expiresAt instanceof Date ? quoteData.expiresAt : new Date(quoteData.expiresAt)),
         createdAt: quoteData.createdAt?.toDate ? quoteData.createdAt.toDate() : (quoteData.createdAt instanceof Date ? quoteData.createdAt : new Date(quoteData.createdAt)),
         updatedAt: quoteData.updatedAt?.toDate ? quoteData.updatedAt.toDate() : (quoteData.updatedAt instanceof Date ? quoteData.updatedAt : new Date(quoteData.updatedAt)),
