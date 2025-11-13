@@ -172,9 +172,16 @@ export async function POST(request: Request) {
         process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
       const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${confirmationToken}`;
       try {
+        console.log('📧 [BOOKING SUBMIT] Attempting to send verification email...');
+        console.log(`   Booking ID: ${bookingResult.bookingId}`);
+        console.log(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
         await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
+        console.log('✅ [BOOKING SUBMIT] Verification email sent successfully');
       } catch (emailError) {
-        console.error('Failed to send verification email:', emailError);
+        console.error('❌ [BOOKING SUBMIT] Failed to send verification email:', emailError);
+        console.error(`   Error details: ${emailError instanceof Error ? emailError.message : String(emailError)}`);
+        console.error(`   Booking ID: ${bookingResult.bookingId}`);
+        console.error(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
         emailWarning =
           'Your ride request is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 so we can finalize it.';
         await recordBookingAttempt({

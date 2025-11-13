@@ -33,9 +33,9 @@ export default function DriverCalendarPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Driver ID (hardcoded for single driver setup)
-  const DRIVER_ID = 'driver-001';
-  const DRIVER_NAME = 'Driver';
+  // Driver ID (hardcoded for single driver setup) - keep ID consistent with database
+  const DRIVER_ID = 'gregg-driver-001';
+  const DRIVER_NAME = 'Driver'; // User-facing name is generic
 
   const loadSchedule = async (date: Date) => {
     try {

@@ -526,8 +526,9 @@ export class DriverSchedulingService {
       // No need to check db here
 
       // For single driver setup, always return driver if available
-      const driverId = 'driver-001';
-      const driverName = 'Your Driver';
+      // Keep driver ID as gregg-driver-001 for database consistency
+      const driverId = 'gregg-driver-001';
+      const driverName = 'Your Driver'; // User-facing name is generic
       
       const isAvailable = await this.checkDriverAvailability(
         driverId, 
