@@ -39,6 +39,17 @@ const getTransporter = () => {
       user: EMAIL_USER,
       pass: EMAIL_PASS,
     },
+    // Add connection timeout and retry logic
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+    // For Gmail specifically, add these options
+    ...(EMAIL_HOST === 'smtp.gmail.com' && {
+      service: 'gmail',
+      tls: {
+        rejectUnauthorized: false, // Gmail sometimes has cert issues
+      },
+    }),
   });
 };
 

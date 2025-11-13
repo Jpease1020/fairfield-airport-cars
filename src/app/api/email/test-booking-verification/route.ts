@@ -46,9 +46,37 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('❌ [TEST EMAIL] Failed to send booking verification email:', error);
+    
+    // Provide more detailed error information
+    let errorDetails = error instanceof Error ? error.message : String(error);
+    let errorCode = 'UNKNOWN_ERROR';
+    
+    if (errorDetails.includes('535') || errorDetails.includes('BadCredentials')) {
+      errorCode = 'AUTH_FAILED';
+      errorDetails = 'Email authentication failed. This could be due to:\n' +
+        '1. Google temporarily blocking access (check Google Account security alerts)\n' +
+        '2. App password expired or revoked\n' +
+        '3. Account security settings changed\n' +
+        '4. Rate limiting from too many requests\n\n' +
+        'Check Vercel function logs for more details.';
+    } else if (errorDetails.includes('ETIMEDOUT') || errorDetails.includes('timeout')) {
+      errorCode = 'CONNECTION_TIMEOUT';
+      errorDetails = 'Connection to email server timed out. The email service may be temporarily unavailable.';
+    } else if (errorDetails.includes('ECONNREFUSED')) {
+      errorCode = 'CONNECTION_REFUSED';
+      errorDetails = 'Email server refused connection. Check EMAIL_HOST and EMAIL_PORT settings.';
+    }
+    
     return NextResponse.json({ 
       error: 'Failed to send booking verification email',
-      details: error instanceof Error ? error.message : String(error)
+      errorCode,
+      details: errorDetails,
+      troubleshooting: {
+        checkVercelLogs: 'Check Vercel function logs for detailed SMTP error messages',
+        verifyEnvVars: 'Verify EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS are set correctly in Vercel',
+        checkGoogleAccount: 'If using Gmail, check Google Account security for blocked access attempts',
+        tryAgainLater: 'Wait a few minutes and try again - Google may have temporarily blocked access'
+      }
     }, { status: 500 });
   }
 }
