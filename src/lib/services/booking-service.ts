@@ -161,9 +161,6 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
 };
 
 // ATOMIC BOOKING: Prevents double booking with Firestore transactions
-// CRITICAL: Client SDK calls (checkBookingConflicts, getAvailableDriversForTimeSlot, bookTimeSlot)
-// MUST be outside the transaction. Firestore transactions can only use transaction.get/set/update
-// and cannot make separate Firestore queries. Doing so causes FUNCTION_INVOCATION_TIMEOUT.
 export const createBookingAtomic = async (bookingData: BookingCreateData): Promise<{ bookingId: string }> => {
   const db = getAdminDb();
   const pickupDate = bookingData.trip.pickupDateTime as unknown as Date;
@@ -171,39 +168,38 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
   const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
   const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
 
-  // STEP 1: Check for conflicts BEFORE transaction (uses client SDK - cannot be inside transaction)
-  const conflictCheck = await driverSchedulingService.checkBookingConflicts(
-    dateStr,
-    startTime,
-    endTime
-  );
+  return await db.runTransaction(async (transaction: any) => {
+    // 1. Check for conflicts atomically
+    const conflictCheck = await driverSchedulingService.checkBookingConflicts(
+      dateStr,
+      startTime,
+      endTime
+    );
 
-  if (conflictCheck.hasConflict) {
-    throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
-  }
+    if (conflictCheck.hasConflict) {
+      throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
+    }
 
-  // STEP 2: Get available drivers BEFORE transaction (uses client SDK - cannot be inside transaction)
-  const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
-    dateStr,
-    startTime,
-    endTime
-  );
+    // 2. Get available drivers atomically
+    const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
+      dateStr,
+      startTime,
+      endTime
+    );
 
-  // For promotional no-payment bookings, allow booking without immediate driver assignment
-  let selectedDriver = null;
-  if (availableDrivers.length > 0) {
-    selectedDriver = availableDrivers[0];
-  }
-  // If no driver available, booking status will be 'pending' and driver assigned later
+    // For promotional no-payment bookings, allow booking without immediate driver assignment
+    let selectedDriver = null;
+    if (availableDrivers.length > 0) {
+      // 3. Select Gregg as the driver if available (single driver setup)
+      selectedDriver = availableDrivers[0];
+    }
+    // If no driver available, booking status will be 'pending' and driver assigned later
 
-  // Calculate deposit (30% of total fare) - currently $0 for promotion
-  const depositAmount = bookingData.payment.depositAmount || 0;
-  const balanceDue = bookingData.trip.fare! - depositAmount;
+    // 4. Calculate deposit (30% of total fare) - currently $0 for promotion
+    const depositAmount = bookingData.payment.depositAmount || 0;
+    const balanceDue = bookingData.trip.fare! - depositAmount;
 
-  // STEP 3: Transaction ONLY handles booking creation and ID collision check
-  // Transaction can ONLY use transaction.get/set/update - no separate Firestore queries
-  const result = await db.runTransaction(async (transaction: any) => {
-    // Generate short booking ID and check for collisions (inside transaction)
+    // 5. Generate short booking ID and check for collisions (inside transaction)
     let bookingId = generateShortBookingId();
     let attempts = 0;
     const maxAttempts = 10;
@@ -223,7 +219,7 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
       throw new Error('Failed to generate unique booking ID. Please try again.');
     }
 
-    // Create booking document atomically with custom ID
+    // 6. Create booking document atomically with custom ID
     const bookingDoc = {
       ...bookingData,
       driverId: selectedDriver?.driverId || null,
@@ -238,35 +234,26 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
     const docRef = db.collection('bookings').doc(bookingId);
     transaction.set(docRef, bookingDoc);
 
-    return { bookingId };
-  });
-
-  // STEP 4: Book the time slot AFTER transaction completes (uses client SDK - must be outside transaction)
-  // This is non-critical - booking is already created, so if this fails, we log but don't fail
-  if (selectedDriver) {
-    try {
+    // 7. Book the time slot atomically (only if driver available)
+    if (selectedDriver) {
       await driverSchedulingService.bookTimeSlot(
         selectedDriver.driverId,
         selectedDriver.driverName,
         dateStr,
         startTime,
         endTime,
-        result.bookingId,
+        bookingId,
         bookingData.customer.name,
         bookingData.trip.pickup.address,
         bookingData.trip.dropoff.address
       );
-      console.log(`✅ ATOMIC BOOKING SUCCESS: ${result.bookingId} with driver: ${selectedDriver.driverName}`);
-    } catch (slotError) {
-      // Booking is already created - don't fail the entire operation
-      console.error(`⚠️ Booking ${result.bookingId} created but time slot booking failed:`, slotError);
-      // TODO: Consider adding retry logic or background job to retry time slot booking
+      console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
+    } else {
+      console.log(`✅ BOOKING PENDING: ${bookingId} - driver will be assigned later`);
     }
-  } else {
-    console.log(`✅ BOOKING PENDING: ${result.bookingId} - driver will be assigned later`);
-  }
 
-  return result;
+    return { bookingId };
+  });
 };
 
 // Create booking with payment integration and driver scheduling (LEGACY - use createBookingAtomic)
