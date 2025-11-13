@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/utils/firebase-server';
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { getBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
@@ -20,17 +20,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const bookingSnapshot = await getDoc(doc(db, 'bookings', bookingId));
+    // Verify Firebase Admin is initialized
+    let db;
+    try {
+      db = getAdminDb();
+    } catch (adminError) {
+      console.error('Firebase Admin not initialized:', adminError);
+      return NextResponse.json(
+        { error: 'Server configuration error. Please contact support.' },
+        { status: 500 }
+      );
+    }
 
-    if (!bookingSnapshot.exists()) {
+    const bookingDoc = await db.collection('bookings').doc(bookingId).get();
+
+    if (!bookingDoc.exists) {
       return NextResponse.json(
         { error: 'Booking not found' },
         { status: 404 }
       );
     }
 
-    const bookingData = bookingSnapshot.data();
-    const confirmation = bookingData.confirmation;
+    const bookingData = bookingDoc.data();
+    const confirmation = bookingData?.confirmation;
 
     if (!confirmation || !confirmation.token) {
       return NextResponse.json(
@@ -52,7 +64,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await updateDoc(doc(db, 'bookings', bookingId), {
+    await db.collection('bookings').doc(bookingId).update({
       status: 'confirmed',
       confirmation: {
         status: 'confirmed',
@@ -60,7 +72,7 @@ export async function POST(request: NextRequest) {
         sentAt: confirmation.sentAt ?? null,
         confirmedAt: new Date().toISOString()
       },
-      updatedAt: serverTimestamp()
+      updatedAt: FieldValue.serverTimestamp()
     });
 
     const bookingRecord = await getBooking(bookingId);
@@ -86,9 +98,9 @@ export async function POST(request: NextRequest) {
 
         // Store calendar event ID in booking
         if (calendarEventId) {
-          await updateDoc(doc(db, 'bookings', bookingId), {
+          await db.collection('bookings').doc(bookingId).update({
             calendarEventId: calendarEventId,
-            updatedAt: serverTimestamp()
+            updatedAt: FieldValue.serverTimestamp()
           });
         }
       } catch (calendarError) {
