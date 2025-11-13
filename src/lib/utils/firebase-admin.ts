@@ -14,9 +14,23 @@ const isFirebaseAdminConfigured = () => {
     return false;
   }
   
-  return process.env.FIREBASE_PROJECT_ID && 
-         process.env.FIREBASE_PRIVATE_KEY && 
-         process.env.FIREBASE_CLIENT_EMAIL;
+  // Check all three required variables
+  const hasProjectId = !!process.env.FIREBASE_PROJECT_ID;
+  const hasPrivateKey = !!process.env.FIREBASE_PRIVATE_KEY;
+  const hasClientEmail = !!process.env.FIREBASE_CLIENT_EMAIL;
+  
+  if (!hasProjectId || !hasPrivateKey || !hasClientEmail) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('❌ Firebase Admin configuration incomplete:');
+      if (!hasProjectId) console.error('   Missing: FIREBASE_PROJECT_ID');
+      if (!hasPrivateKey) console.error('   Missing: FIREBASE_PRIVATE_KEY');
+      if (!hasClientEmail) console.error('   Missing: FIREBASE_CLIENT_EMAIL');
+      console.error('   See QUICK_VERCEL_SETUP.md for setup instructions');
+    }
+    return false;
+  }
+  
+  return true;
 };
 
 // Initialize Firebase Admin if credentials are available
@@ -39,37 +53,43 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
         });
       } else {
         // For production, use service account credentials
-        const projectId = process.env.FIREBASE_PROJECT_ID;
-        const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-        const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+        const projectId = process.env.FIREBASE_PROJECT_ID!.trim();
+        let privateKey = process.env.FIREBASE_PRIVATE_KEY!.trim();
+        const clientEmail = process.env.FIREBASE_CLIENT_EMAIL!.trim();
         
-        // Better error messages for missing credentials
-        if (!projectId) {
-          console.error('❌ FIREBASE_PROJECT_ID is missing');
-        }
-        if (!privateKey) {
-          console.error('❌ FIREBASE_PRIVATE_KEY is missing');
-        }
-        if (!clientEmail) {
-          console.error('❌ FIREBASE_CLIENT_EMAIL is missing');
+        // Handle private key formatting - multiple formats
+        // Replace \\n with actual newlines (Vercel format)
+        privateKey = privateKey.replace(/\\n/g, '\n');
+        // Also handle if it's already escaped differently
+        if (privateKey.includes('\\n') && !privateKey.includes('\n')) {
+          privateKey = privateKey.replace(/\\n/g, '\n');
         }
         
-        if (!projectId || !privateKey || !clientEmail) {
-          throw new Error('Missing required Firebase Admin environment variables. Check FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, and FIREBASE_CLIENT_EMAIL');
+        // Validate private key format
+        if (!privateKey.includes('BEGIN PRIVATE KEY') || !privateKey.includes('END PRIVATE KEY')) {
+          throw new Error('FIREBASE_PRIVATE_KEY is malformed. Must include -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY-----. See QUICK_VERCEL_SETUP.md');
         }
         
         console.log('🚀 Initializing Firebase Admin for production...');
         console.log(`   Project ID: ${projectId}`);
         console.log(`   Client Email: ${clientEmail}`);
-        console.log(`   Private Key: ${privateKey.substring(0, 20)}...`);
+        console.log(`   Private Key: ${privateKey.length} chars, starts with: ${privateKey.substring(0, 30)}...`);
         
-        initializeApp({
-          credential: cert({
-            projectId: projectId,
-            privateKey: privateKey,
-            clientEmail: clientEmail,
-          }),
-        });
+        try {
+          initializeApp({
+            credential: cert({
+              projectId: projectId,
+              privateKey: privateKey,
+              clientEmail: clientEmail,
+            }),
+          });
+        } catch (certError) {
+          const errorMsg = certError instanceof Error ? certError.message : String(certError);
+          if (errorMsg.includes('private key') || errorMsg.includes('PRIVATE_KEY')) {
+            throw new Error(`Invalid FIREBASE_PRIVATE_KEY format: ${errorMsg}. Ensure the key includes -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY----- with \\n for newlines. See QUICK_VERCEL_SETUP.md`);
+          }
+          throw certError;
+        }
       }
     }
     
