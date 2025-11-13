@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/utils/firebase-server';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,12 +25,12 @@ export async function POST(request: NextRequest) {
       timestamp: new Date(error.timestamp),
       userId: error.userId,
       context: error.context,
-      createdAt: serverTimestamp()
+      createdAt: FieldValue.serverTimestamp()
     };
 
     // Store in Firestore
-    const analyticsCollection = collection(db, 'analytics');
-    await addDoc(analyticsCollection, errorData);
+    const db = getAdminDb();
+    await db.collection('analytics').add(errorData);
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
