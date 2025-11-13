@@ -25,18 +25,30 @@ if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
   console.warn('Email environment variables are not fully configured. Confirmation emails will not be sent.');
 }
 
-const transporter = nodemailer.createTransport({
-  host: EMAIL_HOST,
-  port: Number(EMAIL_PORT),
-  secure: Number(EMAIL_PORT) === 465, // true for 465, false for others
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS,
-  },
-});
+// Create transporter lazily - only when email credentials are available
+const getTransporter = () => {
+  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
+    throw new Error('Email service not configured. Missing required environment variables.');
+  }
+  
+  return nodemailer.createTransport({
+    host: EMAIL_HOST,
+    port: Number(EMAIL_PORT),
+    secure: Number(EMAIL_PORT) === 465, // true for 465, false for others
+    auth: {
+      user: EMAIL_USER,
+      pass: EMAIL_PASS,
+    },
+  });
+};
 
 export async function sendConfirmationEmail(booking: Booking) {
-  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) return;
+  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
+    console.warn('❌ [EMAIL SERVICE] Cannot send confirmation email - credentials not configured');
+    return;
+  }
+  
+  const transporter = getTransporter();
 
       const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
@@ -171,6 +183,7 @@ export async function sendTestEmail(to: string, subject = 'Test Email', text = '
   if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
     return false;
   }
+  const transporter = getTransporter();
   const mailOptions = {
     from: VERIFIED_EMAIL_FROM,
     to,
@@ -197,6 +210,9 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
     throw new Error('Email service not configured. Missing required environment variables.');
   }
 
+  // Get transporter (will throw if not configured)
+  const transporter = getTransporter();
+  
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
   const pickupDate = new Date(booking.trip.pickupDateTime);
@@ -369,6 +385,7 @@ The Fairfield Airport Cars Team`;
   };
   
   try {
+    const transporter = getTransporter();
     await transporter.sendMail(mailOptions);
     console.log(`📧 Enhanced test email sent successfully to ${to}`);
     return true;
