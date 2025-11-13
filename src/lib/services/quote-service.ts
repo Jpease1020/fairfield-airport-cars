@@ -86,17 +86,47 @@ export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'u
 // Get a quote by ID
 export const getQuote = async (quoteId: string): Promise<Quote | null> => {
   try {
-    const docRef = doc(db, 'quotes', quoteId);
-    const docSnap = await getDoc(docRef);
+    // Use Admin SDK for server-side operations (when called from API routes)
+    // Fall back to client SDK for client-side operations
+    let adminDb: any = null;
+    try {
+      const { getAdminDb } = await import('@/lib/utils/firebase-admin');
+      adminDb = getAdminDb();
+    } catch {
+      // Admin SDK not available (client-side), use client SDK
+      adminDb = null;
+    }
+
+    let quoteData: any = null;
+    let quoteId_final: string = quoteId;
+
+    if (adminDb) {
+      // Use Admin SDK (server-side)
+      const docRef = adminDb.collection('quotes').doc(quoteId);
+      const docSnap = await docRef.get();
+      
+      if (docSnap.exists) {
+        quoteData = docSnap.data();
+        quoteId_final = docSnap.id;
+      }
+    } else {
+      // Use client SDK (client-side)
+      const docRef = doc(db, 'quotes', quoteId);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        quoteData = docSnap.data();
+        quoteId_final = docSnap.id;
+      }
+    }
     
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+    if (quoteData) {
       return {
-        id: docSnap.id,
-        ...data,
-        expiresAt: data.expiresAt?.toDate() || new Date(),
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date(),
+        id: quoteId_final,
+        ...quoteData,
+        expiresAt: quoteData.expiresAt?.toDate ? quoteData.expiresAt.toDate() : (quoteData.expiresAt instanceof Date ? quoteData.expiresAt : new Date(quoteData.expiresAt)),
+        createdAt: quoteData.createdAt?.toDate ? quoteData.createdAt.toDate() : (quoteData.createdAt instanceof Date ? quoteData.createdAt : new Date(quoteData.createdAt)),
+        updatedAt: quoteData.updatedAt?.toDate ? quoteData.updatedAt.toDate() : (quoteData.updatedAt instanceof Date ? quoteData.updatedAt : new Date(quoteData.updatedAt)),
       } as Quote;
     }
     
