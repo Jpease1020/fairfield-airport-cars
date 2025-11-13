@@ -56,7 +56,7 @@ export const PriceGuarantee: React.FC<PriceGuaranteeProps> = ({
   
   const title = cmsData?.['price-guarantee-title'] || '💰 Price Match Guarantee';
   const description = cmsData?.['price-guarantee-description'] || 
-    'We\'ll match or beat any Uber Black price. Screenshot your quote and text it to Gregg at (203) 555-0123.';
+    'We\'ll match or beat any Uber Black price. Screenshot your quote and text it to us at (646) 221-6370.';
   const ctaText = cmsData?.['price-guarantee-cta'] || 'Learn More';
 
   if (isCompact) {

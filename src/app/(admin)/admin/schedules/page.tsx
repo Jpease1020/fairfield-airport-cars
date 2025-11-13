@@ -11,9 +11,9 @@ export default function AdminSchedulesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Single driver setup - Gregg
+  // Single driver setup
   const drivers = [
-    { id: 'gregg-driver-001', name: 'Gregg' }
+    { id: 'driver-001', name: 'Driver' }
   ];
 
   const fetchSchedules = async () => {
@@ -70,9 +70,9 @@ export default function AdminSchedulesPage() {
     <Container maxWidth="7xl" padding="xl">
       <Stack spacing="lg">
         <Box variant="elevated" padding="lg">
-          <H2>Gregg's Schedule</H2>
+          <H2>Driver Schedule</H2>
           <Text color="secondary">
-            Manage Gregg's schedule and prevent double bookings
+            Manage driver schedule and prevent double bookings
           </Text>
         </Box>
 

@@ -114,7 +114,7 @@ export async function POST(request: Request) {
         } catch (notificationError) {
           console.error('Failed to send verification notifications:', notificationError);
           emailWarning =
-            'Your booking is saved, but we could not send the confirmation email. Please text Gregg at (646) 221-6370 to finish confirming.';
+            'Your booking is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 to finish confirming.';
           await recordBookingAttempt({
             stage: 'payment',
             status: 'warning',

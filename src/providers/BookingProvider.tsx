@@ -505,6 +505,17 @@ const [warning, setWarning] = useState<string | null>(null);
           return { success: false };
         }
         
+        // Handle booking conflict/time slot errors
+        const errorText = data.details || data.error || '';
+        if (errorText.includes('Time slot conflicts') || errorText.includes('not available')) {
+          const suggestedTimes = errorText.match(/Suggested times: (.+)/)?.[1] || '';
+          const conflictMessage = suggestedTimes 
+            ? `This time slot is already booked. Suggested available times: ${suggestedTimes}. Please select a different time.`
+            : 'This time slot is already booked. Please select a different time.';
+          setError(conflictMessage);
+          return { success: false };
+        }
+        
         // Show detailed error if available
         const errorMsg = data.details ? `${data.error}: ${data.details}` : (data.error || 'Failed to submit booking');
         setError(errorMsg);

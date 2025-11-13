@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       suggestedTimeSlots: conflictCheck.suggestedTimeSlots,
       availableDrivers: availableDrivers.length,
       drivers: availableDrivers,
-      driverName: availableDrivers.length > 0 ? 'Gregg' : null
+      driverName: availableDrivers.length > 0 ? 'Your Driver' : null
     });
   } catch (error) {
     console.error('Error checking availability:', error);

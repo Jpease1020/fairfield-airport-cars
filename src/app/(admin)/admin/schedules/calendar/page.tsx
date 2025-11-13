@@ -33,9 +33,9 @@ export default function DriverCalendarPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Gregg's driver ID (hardcoded for single driver setup)
-  const DRIVER_ID = 'gregg-driver-id';
-  const DRIVER_NAME = 'Gregg';
+  // Driver ID (hardcoded for single driver setup)
+  const DRIVER_ID = 'driver-001';
+  const DRIVER_NAME = 'Driver';
 
   const loadSchedule = async (date: Date) => {
     try {
@@ -95,7 +95,7 @@ export default function DriverCalendarPage() {
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text>Loading Gregg's schedule...</Text>
+          <Text>Loading driver schedule...</Text>
         </Stack>
       </Container>
     );
@@ -117,7 +117,7 @@ export default function DriverCalendarPage() {
         {/* Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Text size="xl" weight="bold">
-            📅 Gregg's Schedule - {formatDate(currentDate)}
+            📅 Driver Schedule - {formatDate(currentDate)}
           </Text>
           <Stack direction="horizontal" spacing="md">
             <Button 
