@@ -1,7 +1,7 @@
 'use server';
 
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/utils/firebase-server';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export type BookingAttemptStatus = 'success' | 'failed' | 'warning';
 
@@ -17,12 +17,15 @@ const ATTEMPTS_COLLECTION = 'booking_attempts';
 
 export const recordBookingAttempt = async (entry: BookingAttemptEntry): Promise<void> => {
   try {
-    await addDoc(collection(db, ATTEMPTS_COLLECTION), {
+    // Use Admin SDK for server-side operations
+    const db = getAdminDb();
+    await db.collection(ATTEMPTS_COLLECTION).add({
       ...entry,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
     console.error('Failed to record booking attempt:', error);
+    // Don't throw - this is non-critical logging
   }
 };
 

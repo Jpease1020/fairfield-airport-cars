@@ -25,6 +25,17 @@ export type Quote = z.infer<typeof QuoteSchema>;
 // Create a new quote
 export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ quoteId: string }> => {
   try {
+    // Use Admin SDK for server-side operations (when called from API routes)
+    // Fall back to client SDK for client-side operations
+    let adminDb: any = null;
+    try {
+      const { getAdminDb } = await import('@/lib/utils/firebase-admin');
+      adminDb = getAdminDb();
+    } catch {
+      // Admin SDK not available (client-side), use client SDK
+      adminDb = null;
+    }
+
     // Remove undefined values - Firestore doesn't allow undefined fields
     const cleanData: Record<string, any> = {
       pickupAddress: quoteData.pickupAddress,
@@ -36,8 +47,6 @@ export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'u
       price: quoteData.price,
       fareType: quoteData.fareType,
       expiresAt: quoteData.expiresAt,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
     };
     
     // Only include sessionId if it's defined
@@ -49,10 +58,25 @@ export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'u
     if (quoteData.userId) {
       cleanData.userId = quoteData.userId;
     }
+
+    let quoteId: string;
     
-    const docRef = await addDoc(collection(db, 'quotes'), cleanData);
+    if (adminDb) {
+      // Use Admin SDK (server-side)
+      const { FieldValue } = await import('firebase-admin/firestore');
+      cleanData.createdAt = FieldValue.serverTimestamp();
+      cleanData.updatedAt = FieldValue.serverTimestamp();
+      const docRef = await adminDb.collection('quotes').add(cleanData);
+      quoteId = docRef.id;
+    } else {
+      // Use client SDK (client-side)
+      cleanData.createdAt = serverTimestamp();
+      cleanData.updatedAt = serverTimestamp();
+      const docRef = await addDoc(collection(db, 'quotes'), cleanData);
+      quoteId = docRef.id;
+    }
     
-    return { quoteId: docRef.id };
+    return { quoteId };
   } catch (error) {
     console.error('Error creating quote:', error);
     throw new Error('Failed to create quote');
