@@ -42,7 +42,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
           data-testid="booking-confirmation-warning"
         >
           {cmsData?.['booking-confirmed-warning'] ||
-            'Booking is not fully confirmed until you click the link in the confirmation email we just sent.'}
+            'Check your email and click the confirmation link to finalize your booking.'}
         </Text>
 
         {warning && (

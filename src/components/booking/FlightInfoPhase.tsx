@@ -49,7 +49,7 @@ export function FlightInfoPhase({
             data-testid="flight-info-phase-warning"
           >
             {cmsData?.['flight-info-phase-warning'] ||
-              'Booking is not fully confirmed until you click the confirmation link in the email we just sent.'}
+              'Check your email and click the confirmation link to finalize your booking.'}
           </Text>
         </Stack>
 
@@ -74,7 +74,7 @@ export function FlightInfoPhase({
             onClick={completeFlightInfo}
             data-testid="flight-info-complete-button"
             cmsId="flight-info-complete-button"
-            text={cmsData?.['flight-info-complete-button'] || 'Complete'}
+            text={cmsData?.['flight-info-complete-button'] || 'Save Flight Info'}
             fullWidth
           />
         </Stack>
