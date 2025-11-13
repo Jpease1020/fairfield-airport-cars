@@ -34,6 +34,13 @@ const GuaranteeSubtext = styled(Text)`
   line-height: 1.5;
 `;
 
+const FootnoteText = styled(Text)`
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin-top: ${spacing.xs};
+  color: ${colors.text.secondary};
+`;
+
 interface PriceGuaranteeProps {
   variant?: 'compact' | 'full';
   cmsData?: any;
@@ -54,10 +61,10 @@ export const PriceGuarantee: React.FC<PriceGuaranteeProps> = ({
 
   if (isCompact) {
     return (
-      <Box variant="filled" padding="sm" data-testid="price-guarantee-compact">
+      <Box variant="filled" padding="md" data-testid="price-guarantee-compact">
         <Stack spacing="xs" align="center">
-          <Text size="sm" weight="bold" color="primary" cmsId="price-guarantee-compact-text">
-            {cmsData?.['price-guarantee-compact'] || '💰 Match or beat Uber Black prices'}
+          <Text size="md" weight="bold" color="primary" cmsId="price-guarantee-compact-text">
+            {cmsData?.['price-guarantee-compact'] || '💰 We promise to match or beat Uber Black prices*'}
           </Text>
         </Stack>
       </Box>
@@ -67,12 +74,15 @@ export const PriceGuarantee: React.FC<PriceGuaranteeProps> = ({
   return (
     <GuaranteeBox data-testid="price-guarantee-full">
       <Stack spacing="sm">
-        <GuaranteeText size="md" weight="bold" color="primary" cmsId="price-guarantee-title">
+        <GuaranteeText size="lg" weight="bold" color="primary" cmsId="price-guarantee-title">
           {title}
         </GuaranteeText>
-        <GuaranteeSubtext color="secondary" cmsId="price-guarantee-description">
+        <GuaranteeSubtext color="secondary" cmsId="price-guarantee-description" size="md">
           {description}
         </GuaranteeSubtext>
+        <FootnoteText cmsId="price-guarantee-footnote">
+          * Screenshot must be taken within 10 minutes of booking or 20 minutes of driver arrival
+        </FootnoteText>
         {onScreenshotClick && (
           <Button
             variant="outline"

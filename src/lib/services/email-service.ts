@@ -182,7 +182,18 @@ export async function sendTestEmail(to: string, subject = 'Test Email', text = '
 }
 
 export async function sendBookingVerificationEmail(booking: Booking, confirmationUrl: string) {
-  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) return;
+  console.log('📧 [EMAIL SERVICE] Attempting to send booking verification email...');
+  console.log(`   To: ${booking.customer.email}`);
+  console.log(`   Booking ID: ${booking.id}`);
+  
+  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
+    console.error('❌ [EMAIL SERVICE] Email credentials not configured');
+    console.error(`   EMAIL_HOST: ${EMAIL_HOST ? '✅' : '❌'}`);
+    console.error(`   EMAIL_PORT: ${EMAIL_PORT ? '✅' : '❌'}`);
+    console.error(`   EMAIL_USER: ${EMAIL_USER ? '✅' : '❌'}`);
+    console.error(`   EMAIL_PASS: ${EMAIL_PASS ? '✅' : '❌'}`);
+    return;
+  }
 
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
@@ -236,14 +247,27 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
     </div>
   `;
 
-  await transporter.sendMail({
-    from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
-    to: booking.customer.email,
-    bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
-    subject: `Action Required: Confirm your booking (${booking.id})`,
-    text: emailText,
-    html
-  });
+  try {
+    const result = await transporter.sendMail({
+      from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
+      to: booking.customer.email,
+      bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
+      subject: `Action Required: Confirm your booking (${booking.id})`,
+      text: emailText,
+      html
+    });
+    
+    console.log('✅ [EMAIL SERVICE] Booking verification email sent successfully');
+    console.log(`   Message ID: ${result.messageId}`);
+    console.log(`   To: ${booking.customer.email}`);
+    console.log(`   Response: ${result.response}`);
+  } catch (error) {
+    console.error('❌ [EMAIL SERVICE] Failed to send booking verification email');
+    console.error(`   Error: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(`   To: ${booking.customer.email}`);
+    console.error(`   Booking ID: ${booking.id}`);
+    throw error; // Re-throw so caller knows email failed
+  }
 }
 
 export async function sendEnhancedTestEmail(to: string, bookingId: string) {
