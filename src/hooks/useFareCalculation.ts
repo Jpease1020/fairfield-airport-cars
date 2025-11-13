@@ -36,13 +36,14 @@ export const useFareCalculation = ({
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const calculateFare = useCallback(async () => {
-    // Only calculate if we have both locations and coordinates
-    if (!pickupLocation || !dropoffLocation || !pickupCoords || !dropoffCoords) {
+    // Only calculate if we have both locations, coordinates, AND pickup date/time
+    if (!pickupLocation || !dropoffLocation || !pickupCoords || !dropoffCoords || !pickupDateTime) {
       console.log('useFareCalculation: Missing required data', {
         pickupLocation,
         dropoffLocation,
         pickupCoords,
-        dropoffCoords
+        dropoffCoords,
+        pickupDateTime
       });
       setFare(null);
       setQuoteData(null);
@@ -63,10 +64,8 @@ export const useFareCalculation = ({
       const sessionId = getOrCreateAnonymousSession();
       
       // Convert datetime-local format (YYYY-MM-DDTHH:mm) to ISO string
-      let pickupTimeISO: string | undefined = undefined;
-      if (pickupDateTime) {
-        pickupTimeISO = new Date(pickupDateTime).toISOString();
-      }
+      // pickupDateTime is guaranteed to exist due to check above
+      const pickupTimeISO = new Date(pickupDateTime).toISOString();
       
       const response = await fetch('/api/booking/quote', {
         method: 'POST',
@@ -77,7 +76,7 @@ export const useFareCalculation = ({
           pickupCoords,
           dropoffCoords,
           fareType,
-          pickupTime: pickupTimeISO, // Send as ISO string for API validation
+          pickupTime: pickupTimeISO, // Required - validated above
           sessionId, // Include session for anonymous users
         })
       });
