@@ -143,8 +143,8 @@ export async function POST(request: Request) {
       status: 'pending' as const
     };
 
-    // Import booking service
-    const { createBookingAtomic } = await import('@/lib/services/booking-service');
+    // Import booking service - use admin version which has conflict checks OUTSIDE transaction
+    const { createBookingAtomic } = await import('@/lib/services/booking-service-admin');
     
     // Add timeout wrapper for booking creation
     const bookingPromise = createBookingAtomic(bookingData);

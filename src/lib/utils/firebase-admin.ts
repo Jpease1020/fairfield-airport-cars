@@ -58,8 +58,12 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
         const clientEmail = process.env.FIREBASE_CLIENT_EMAIL!.trim();
         
         // Handle private key formatting - multiple formats
+        // First, remove any surrounding quotes
+        privateKey = privateKey.replace(/^["']|["']$/g, '');
+        
         // Replace \\n with actual newlines (Vercel format)
         privateKey = privateKey.replace(/\\n/g, '\n');
+        
         // Also handle if it's already escaped differently
         if (privateKey.includes('\\n') && !privateKey.includes('\n')) {
           privateKey = privateKey.replace(/\\n/g, '\n');
@@ -70,10 +74,16 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
           throw new Error('FIREBASE_PRIVATE_KEY is malformed. Must include -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY-----. See QUICK_VERCEL_SETUP.md');
         }
         
+        // Ensure proper line breaks - private key must have actual newlines
+        if (!privateKey.includes('\n')) {
+          throw new Error('FIREBASE_PRIVATE_KEY must contain actual newline characters (\\n). The key should be formatted with line breaks.');
+        }
+        
         console.log('🚀 Initializing Firebase Admin for production...');
         console.log(`   Project ID: ${projectId}`);
         console.log(`   Client Email: ${clientEmail}`);
         console.log(`   Private Key: ${privateKey.length} chars, starts with: ${privateKey.substring(0, 30)}...`);
+        console.log(`   Private Key has newlines: ${privateKey.includes('\n')}`);
         
         try {
           initializeApp({
@@ -85,6 +95,12 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
           });
         } catch (certError) {
           const errorMsg = certError instanceof Error ? certError.message : String(certError);
+          console.error('❌ Firebase Admin initialization failed:', errorMsg);
+          
+          // Provide specific guidance based on error type
+          if (errorMsg.includes('DECODER') || errorMsg.includes('unsupported') || errorMsg.includes('PEM')) {
+            throw new Error(`FIREBASE_PRIVATE_KEY format error: ${errorMsg}. The private key may be corrupted or improperly formatted. Ensure it's copied exactly from Firebase Console, including all newlines. See QUICK_VERCEL_SETUP.md`);
+          }
           if (errorMsg.includes('private key') || errorMsg.includes('PRIVATE_KEY')) {
             throw new Error(`Invalid FIREBASE_PRIVATE_KEY format: ${errorMsg}. Ensure the key includes -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY----- with \\n for newlines. See QUICK_VERCEL_SETUP.md`);
           }

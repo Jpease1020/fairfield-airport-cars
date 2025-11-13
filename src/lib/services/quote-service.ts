@@ -25,11 +25,32 @@ export type Quote = z.infer<typeof QuoteSchema>;
 // Create a new quote
 export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ quoteId: string }> => {
   try {
-    const docRef = await addDoc(collection(db, 'quotes'), {
-      ...quoteData,
+    // Remove undefined values - Firestore doesn't allow undefined fields
+    const cleanData: Record<string, any> = {
+      pickupAddress: quoteData.pickupAddress,
+      dropoffAddress: quoteData.dropoffAddress,
+      pickupCoords: quoteData.pickupCoords,
+      dropoffCoords: quoteData.dropoffCoords,
+      estimatedMiles: quoteData.estimatedMiles,
+      estimatedMinutes: quoteData.estimatedMinutes,
+      price: quoteData.price,
+      fareType: quoteData.fareType,
+      expiresAt: quoteData.expiresAt,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-    });
+    };
+    
+    // Only include sessionId if it's defined
+    if (quoteData.sessionId) {
+      cleanData.sessionId = quoteData.sessionId;
+    }
+    
+    // Only include userId if it's defined
+    if (quoteData.userId) {
+      cleanData.userId = quoteData.userId;
+    }
+    
+    const docRef = await addDoc(collection(db, 'quotes'), cleanData);
     
     return { quoteId: docRef.id };
   } catch (error) {

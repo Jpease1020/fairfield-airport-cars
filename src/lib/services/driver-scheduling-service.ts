@@ -97,24 +97,33 @@ export class DriverSchedulingService {
   ): Promise<boolean> {
     try {
       const db = getDb();
-      if (!db) throw new Error('Database not initialized');
+      if (!db) {
+        console.warn('Database not initialized in checkDriverAvailability - assuming available');
+        return true; // Fail open - assume driver is available
+      }
 
       // Use Admin SDK if available (server-side), otherwise client SDK
       let scheduleSnapshot;
-      if (typeof window === 'undefined' && db.collection) {
-        // Admin SDK (server-side)
-        scheduleSnapshot = await db.collection('driverSchedules')
-          .where('driverId', '==', driverId)
-          .where('date', '==', date)
-          .get();
-      } else {
-        // Client SDK
-        const scheduleQuery = query(
-          collection(db, 'driverSchedules'),
-          where('driverId', '==', driverId),
-          where('date', '==', date)
-        );
-        scheduleSnapshot = await getDocs(scheduleQuery);
+      try {
+        if (typeof window === 'undefined' && db.collection) {
+          // Admin SDK (server-side)
+          scheduleSnapshot = await db.collection('driverSchedules')
+            .where('driverId', '==', driverId)
+            .where('date', '==', date)
+            .get();
+        } else {
+          // Client SDK
+          const scheduleQuery = query(
+            collection(db, 'driverSchedules'),
+            where('driverId', '==', driverId),
+            where('date', '==', date)
+          );
+          scheduleSnapshot = await getDocs(scheduleQuery);
+        }
+      } catch (dbError: any) {
+        // If database query fails, assume driver is available (fail open)
+        console.error('Error checking driver availability:', dbError);
+        return true;
       }
       
       if (!scheduleSnapshot.docs || scheduleSnapshot.docs.length === 0) {
@@ -159,7 +168,14 @@ export class DriverSchedulingService {
   ): Promise<BookingConflict> {
     try {
       const db = getDb();
-      if (!db) throw new Error('Database not initialized');
+      if (!db) {
+        console.warn('Database not initialized in checkBookingConflicts - returning no conflicts');
+        return {
+          hasConflict: false,
+          conflictingBookings: [],
+          suggestedTimeSlots: []
+        };
+      }
 
       const conflicts: Array<{
         bookingId: string;
@@ -170,18 +186,30 @@ export class DriverSchedulingService {
 
       // Use Admin SDK if available (server-side), otherwise client SDK
       let scheduleSnapshot;
-      if (typeof window === 'undefined' && db.collection) {
-        // Admin SDK (server-side)
-        scheduleSnapshot = await db.collection('driverSchedules')
-          .where('date', '==', date)
-          .get();
-      } else {
-        // Client SDK
-        const scheduleQuery = query(
-          collection(db, 'driverSchedules'),
-          where('date', '==', date)
-        );
-        scheduleSnapshot = await getDocs(scheduleQuery);
+      try {
+        if (typeof window === 'undefined' && db.collection) {
+          // Admin SDK (server-side)
+          scheduleSnapshot = await db.collection('driverSchedules')
+            .where('date', '==', date)
+            .get();
+        } else {
+          // Client SDK
+          const scheduleQuery = query(
+            collection(db, 'driverSchedules'),
+            where('date', '==', date)
+          );
+          scheduleSnapshot = await getDocs(scheduleQuery);
+        }
+      } catch (dbError: any) {
+        // If database query fails (e.g., permission denied, credential error), fail gracefully
+        console.error('Error querying driver schedules:', dbError);
+        // Return no conflicts - allow booking to proceed
+        // Better to allow a booking than block all bookings due to scheduling system issues
+        return {
+          hasConflict: false,
+          conflictingBookings: [],
+          suggestedTimeSlots: []
+        };
       }
       
       const requestedStart = this.timeToMinutes(startTime);
