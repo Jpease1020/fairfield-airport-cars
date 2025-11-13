@@ -31,35 +31,36 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
   const startTime = pickupDate.toTimeString().slice(0, 5);
   const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
 
+  // Check for conflicts BEFORE transaction (can't use client SDK inside transaction)
+  const conflictCheck = await driverSchedulingService.checkBookingConflicts(
+    dateStr,
+    startTime,
+    endTime
+  );
+
+  if (conflictCheck.hasConflict) {
+    throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
+  }
+
+  // Get available drivers BEFORE transaction
+  const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
+    dateStr,
+    startTime,
+    endTime
+  );
+
+  let selectedDriver = null;
+  if (availableDrivers.length > 0) {
+    selectedDriver = availableDrivers[0];
+  }
+
+  // Calculate deposit
+  const depositAmount = bookingData.payment.depositAmount || 0;
+  const balanceDue = bookingData.trip.fare! - depositAmount;
+
+  // Transaction only handles booking creation and ID collision check
   return await db.runTransaction(async (transaction: any) => {
-    // 1. Check for conflicts atomically
-    const conflictCheck = await driverSchedulingService.checkBookingConflicts(
-      dateStr,
-      startTime,
-      endTime
-    );
-
-    if (conflictCheck.hasConflict) {
-      throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
-    }
-
-    // 2. Get available drivers atomically
-    const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
-      dateStr,
-      startTime,
-      endTime
-    );
-
-    let selectedDriver = null;
-    if (availableDrivers.length > 0) {
-      selectedDriver = availableDrivers[0];
-    }
-
-    // 4. Calculate deposit
-    const depositAmount = bookingData.payment.depositAmount || 0;
-    const balanceDue = bookingData.trip.fare! - depositAmount;
-
-    // 5. Generate short booking ID and check for collisions (inside transaction)
+    // Generate short booking ID and check for collisions (inside transaction)
     let bookingId = generateShortBookingId();
     let attempts = 0;
     const maxAttempts = 10;
@@ -78,7 +79,7 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
       throw new Error('Failed to generate unique booking ID. Please try again.');
     }
 
-    // 6. Create booking document atomically with custom ID
+    // Create booking document atomically with custom ID
     const bookingDoc = {
       ...bookingData,
       driverId: selectedDriver?.driverId || null,
@@ -93,20 +94,27 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
     const docRef = db.collection('bookings').doc(bookingId);
     transaction.set(docRef, bookingDoc);
 
-    // 7. Book the time slot atomically (only if driver available)
+    return { bookingId };
+  }).then(async ({ bookingId }: { bookingId: string }) => {
+    // Book the time slot AFTER transaction completes (outside transaction)
     if (selectedDriver) {
-      await driverSchedulingService.bookTimeSlot(
-        selectedDriver.driverId,
-        selectedDriver.driverName,
-        dateStr,
-        startTime,
-        endTime,
-        bookingId,
-        bookingData.customer.name,
-        bookingData.trip.pickup.address,
-        bookingData.trip.dropoff.address
-      );
-      console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
+      try {
+        await driverSchedulingService.bookTimeSlot(
+          selectedDriver.driverId,
+          selectedDriver.driverName,
+          dateStr,
+          startTime,
+          endTime,
+          bookingId,
+          bookingData.customer.name,
+          bookingData.trip.pickup.address,
+          bookingData.trip.dropoff.address
+        );
+        console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
+      } catch (slotError) {
+        console.error(`⚠️ Booking ${bookingId} created but time slot booking failed:`, slotError);
+        // Don't fail the booking - it's created, just log the error
+      }
     } else {
       console.log(`✅ BOOKING PENDING: ${bookingId} - driver will be assigned later`);
     }

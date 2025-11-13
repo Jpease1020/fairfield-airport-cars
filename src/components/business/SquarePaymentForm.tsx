@@ -169,11 +169,13 @@ export function SquarePaymentForm({
         throw new Error('Square.js failed to load properly');
       }
 
-      const appId = process.env.NEXT_PUBLIC_SQUARE_APP_ID;
+      const appId = process.env.NEXT_PUBLIC_SQUARE_APP_ID || process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID;
       const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
 
       if (!appId || !locationId) {
-        throw new Error('Square credentials not configured');
+        console.warn('Square credentials not configured - payment form will be disabled');
+        setPaymentError('Payment system not available');
+        return;
       }
 
       // Initialize Square payments
@@ -188,7 +190,8 @@ export function SquarePaymentForm({
       
     } catch (error) {
       console.error('Failed to initialize Square:', error);
-      setPaymentError('Failed to initialize payment system');
+      // Don't throw - just disable payment form gracefully
+      setPaymentError('Payment system temporarily unavailable');
     }
   };
 

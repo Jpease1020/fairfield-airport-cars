@@ -17,11 +17,20 @@ FIREBASE_CLIENT_EMAIL=demo@demo-project.iam.gserviceaccount.com
 
 ## 🟡 IMPORTANT - Payment Processing
 
+**Server-side (for API routes):**
 ```
 SQUARE_ACCESS_TOKEN=your_square_access_token
 SQUARE_APPLICATION_ID=your_square_app_id
 SQUARE_LOCATION_ID=your_square_location_id
 ```
+
+**Client-side (for payment forms - REQUIRED for payments to work):**
+```
+NEXT_PUBLIC_SQUARE_APP_ID=your_square_app_id (same as SQUARE_APPLICATION_ID)
+NEXT_PUBLIC_SQUARE_LOCATION_ID=your_square_location_id (same as SQUARE_LOCATION_ID)
+```
+
+**Note:** The `NEXT_PUBLIC_` prefix makes these accessible in the browser. Use the same values as the server-side variables.
 
 ## 🟡 IMPORTANT - Notifications
 
