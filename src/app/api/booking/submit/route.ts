@@ -158,54 +158,94 @@ export async function POST(request: Request) {
       status: 'pending' as const
     };
 
+    // Generate confirmation token BEFORE booking creation (atomic)
+    let confirmationToken = randomBytes(32).toString('hex');
+    const confirmationSentAt = new Date().toISOString();
+    
+    // Include confirmation token in booking data for atomic creation
+    const bookingDataWithConfirmation = {
+      ...bookingData,
+      confirmation: {
+        status: 'pending' as const,
+        token: confirmationToken,
+        sentAt: confirmationSentAt
+      }
+    };
+
     // Import booking service - use admin version which has conflict checks OUTSIDE transaction
     const { createBookingAtomic } = await import('@/lib/services/booking-service-admin');
     
     // Add timeout wrapper for booking creation
-    const bookingPromise = createBookingAtomic(bookingData);
+    const bookingPromise = createBookingAtomic(bookingDataWithConfirmation);
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Booking creation timed out after 50 seconds')), 50000)
     );
     
     const bookingResult = await Promise.race([bookingPromise, timeoutPromise]) as { bookingId: string };
+    
+    console.log(`✅ [BOOKING SUBMIT] Booking ${bookingResult.bookingId} created atomically with confirmation token`);
 
-    const confirmationToken = randomBytes(32).toString('hex');
+    // Verify confirmation token was saved (safety check)
+    const bookingRecord = await getBooking(bookingResult.bookingId);
+    if (!bookingRecord) {
+      throw new Error('Booking was created but could not be retrieved');
+    }
 
-    const db = getAdminDb();
-    await db.collection('bookings').doc(bookingResult.bookingId).update({
-      confirmation: {
-        status: 'pending',
-        token: confirmationToken,
-        sentAt: new Date().toISOString()
+    // Validate confirmation token exists before sending email
+    const savedConfirmation = bookingRecord.confirmation;
+    if (!savedConfirmation?.token) {
+      console.error(`❌ [BOOKING SUBMIT] CRITICAL: Booking ${bookingResult.bookingId} created but confirmation token is missing!`);
+      console.error(`   Expected token: ${confirmationToken}`);
+      console.error(`   Saved confirmation:`, savedConfirmation);
+      
+      // Fallback: Try to save token again (retry mechanism)
+      const db = getAdminDb();
+      try {
+        await db.collection('bookings').doc(bookingResult.bookingId).update({
+          confirmation: {
+            status: 'pending',
+            token: confirmationToken,
+            sentAt: confirmationSentAt
+          }
+        });
+        console.log(`✅ [BOOKING SUBMIT] Confirmation token saved via fallback retry for booking ${bookingResult.bookingId}`);
+      } catch (retryError) {
+        console.error(`❌ [BOOKING SUBMIT] Fallback token save also failed:`, retryError);
+        throw new Error('Failed to save confirmation token. Booking created but cannot be confirmed.');
       }
-    });
+    } else if (savedConfirmation.token !== confirmationToken) {
+      console.warn(`⚠️ [BOOKING SUBMIT] Token mismatch for booking ${bookingResult.bookingId}`);
+      console.warn(`   Expected: ${confirmationToken}`);
+      console.warn(`   Saved: ${savedConfirmation.token}`);
+      // Use the saved token instead
+      confirmationToken = savedConfirmation.token;
+    }
 
     let emailWarning: string | null = null;
-    const bookingRecord = await getBooking(bookingResult.bookingId);
-    if (bookingRecord) {
-      const confirmationUrlBase =
-        process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
-      const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${confirmationToken}`;
-      try {
-        console.log('📧 [BOOKING SUBMIT] Attempting to send verification email...');
-        console.log(`   Booking ID: ${bookingResult.bookingId}`);
-        console.log(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
-        await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
-        console.log('✅ [BOOKING SUBMIT] Verification email sent successfully');
-      } catch (emailError) {
-        console.error('❌ [BOOKING SUBMIT] Failed to send verification email:', emailError);
-        console.error(`   Error details: ${emailError instanceof Error ? emailError.message : String(emailError)}`);
-        console.error(`   Booking ID: ${bookingResult.bookingId}`);
-        console.error(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
-        emailWarning =
-          'Your ride request is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 so we can finalize it.';
-        await recordBookingAttempt({
-          stage: 'submit',
-          status: 'warning',
-          bookingId: bookingResult.bookingId,
-          reason: emailWarning,
-        });
-      }
+    const confirmationUrlBase =
+      process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
+    const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${confirmationToken}`;
+    
+    try {
+      console.log('📧 [BOOKING SUBMIT] Attempting to send verification email...');
+      console.log(`   Booking ID: ${bookingResult.bookingId}`);
+      console.log(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
+      console.log(`   Confirmation Token: ${confirmationToken.substring(0, 8)}...`);
+      await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
+      console.log('✅ [BOOKING SUBMIT] Verification email sent successfully');
+    } catch (emailError) {
+      console.error('❌ [BOOKING SUBMIT] Failed to send verification email:', emailError);
+      console.error(`   Error details: ${emailError instanceof Error ? emailError.message : String(emailError)}`);
+      console.error(`   Booking ID: ${bookingResult.bookingId}`);
+      console.error(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
+      emailWarning =
+        'Your ride request is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 so we can finalize it.';
+      await recordBookingAttempt({
+        stage: 'submit',
+        status: 'warning',
+        bookingId: bookingResult.bookingId,
+        reason: emailWarning,
+      });
     }
 
     return NextResponse.json({ 

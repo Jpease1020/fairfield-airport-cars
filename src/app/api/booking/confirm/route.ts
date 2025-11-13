@@ -44,9 +44,31 @@ export async function POST(request: NextRequest) {
     const bookingData = bookingDoc.data();
     const confirmation = bookingData?.confirmation;
 
+    // Log diagnostic info for debugging
+    console.log(`[BOOKING CONFIRM] Booking ${bookingId} confirmation check:`, {
+      hasConfirmation: !!confirmation,
+      hasToken: !!confirmation?.token,
+      confirmationStatus: confirmation?.status,
+      bookingStatus: bookingData?.status
+    });
+
     if (!confirmation || !confirmation.token) {
+      // If booking is already confirmed, allow it
+      if (bookingData?.status === 'confirmed') {
+        return NextResponse.json({
+          message: 'Booking already confirmed.'
+        });
+      }
+      
+      // If booking exists but token is missing, provide helpful error
+      console.warn(`[BOOKING CONFIRM] Booking ${bookingId} exists but confirmation token is missing`);
       return NextResponse.json(
-        { error: 'Confirmation token missing. Please contact support.' },
+        { 
+          error: 'Confirmation token missing. Please contact support.',
+          details: 'This booking may have been created before the confirmation system was implemented, or there was an error saving the token. Please contact support to confirm your booking.',
+          bookingId,
+          bookingStatus: bookingData?.status
+        },
         { status: 409 }
       );
     }
