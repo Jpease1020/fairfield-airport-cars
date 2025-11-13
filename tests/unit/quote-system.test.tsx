@@ -224,6 +224,7 @@ describe('Quote Service Functions', () => {
       estimatedMinutes: 58,
       price: 85,
       fareType: 'business' as const,
+      pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
       expiresAt: new Date(Date.now() + 15 * 60 * 1000)
     };
 
@@ -244,6 +245,7 @@ describe('Quote Service Functions', () => {
       estimatedMinutes: 58,
       price: 85,
       fareType: 'business' as const,
+      pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
       expiresAt: new Date(Date.now() + 15 * 60 * 1000), // Future date
       createdAt: new Date(),
       updatedAt: new Date()
@@ -268,6 +270,7 @@ describe('Quote Service Functions', () => {
       pickupAddress: '123 Main St, Fairfield, CT',
       dropoffAddress: 'JFK Airport, Queens, NY',
       price: 85,
+      pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
       expiresAt: new Date(Date.now() + 15 * 60 * 1000)
     };
 
