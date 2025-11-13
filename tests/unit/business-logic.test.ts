@@ -15,20 +15,24 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
 
 // Real user scenarios that matter to the business
+const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // Tomorrow
+
 const USER_SCENARIOS = {
   fairfieldToJFK: {
     pickupLocation: 'Fairfield Station, Fairfield, CT',
     dropoffLocation: 'JFK Airport, Queens, NY',
     pickupCoords: { lat: 41.1408, lng: -73.2613 },
     dropoffCoords: { lat: 40.6413, lng: -73.7781 },
-    fareType: 'personal' as const
+    fareType: 'personal' as const,
+    pickupDateTime: futureDate
   },
   stamfordToLGA: {
     pickupLocation: '123 Main St, Stamford, CT',
     dropoffLocation: 'LGA Airport, Queens, NY',
     pickupCoords: { lat: 41.0534, lng: -73.5387 },
     dropoffCoords: { lat: 40.7769, lng: -73.8740 },
-    fareType: 'personal' as const
+    fareType: 'personal' as const,
+    pickupDateTime: futureDate
   }
 };
 
