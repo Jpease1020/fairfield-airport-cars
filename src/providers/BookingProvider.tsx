@@ -506,12 +506,14 @@ const [warning, setWarning] = useState<string | null>(null);
         }
         
         // Handle booking conflict/time slot errors
-        const errorText = data.details || data.error || '';
-        if (errorText.includes('Time slot conflicts') || errorText.includes('not available')) {
-          const suggestedTimes = errorText.match(/Suggested times: (.+)/)?.[1] || '';
+        const errorText = (data.details || data.error || '').toString();
+        if (errorText.includes('Time slot conflicts') || errorText.includes('not available') || errorText.includes('conflicts with existing')) {
+          // Extract suggested times - handle both comma-separated and dash-separated formats
+          const suggestedMatch = errorText.match(/Suggested times?:?\s*([^\n]+)/i);
+          const suggestedTimes = suggestedMatch ? suggestedMatch[1].trim() : '';
           const conflictMessage = suggestedTimes 
-            ? `This time slot is already booked. Suggested available times: ${suggestedTimes}. Please select a different time.`
-            : 'This time slot is already booked. Please select a different time.';
+            ? `⚠️ This time slot is already booked. Suggested available times: ${suggestedTimes}. Please go back and select a different time.`
+            : '⚠️ This time slot is already booked. Please go back and select a different time.';
           setError(conflictMessage);
           return { success: false };
         }

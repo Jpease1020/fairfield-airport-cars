@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { Client } from '@googlemaps/google-maps-services-js';
 import { getSettings } from '@/lib/business/settings-service';
 import { createQuote } from '@/lib/services/quote-service';
+import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { z } from 'zod';
 import { KNOWN_AIRPORTS } from '@/utils/constants';
 
@@ -160,6 +161,32 @@ export async function POST(request: Request) {
     fare = Math.ceil(fare * multiplier);
   }
 
+  // Check availability for the requested time slot
+  let availabilityWarning: string | null = null;
+  let suggestedTimes: string[] = [];
+  try {
+    const dateStr = pickupDateTime.toISOString().split('T')[0];
+    const startTime = pickupDateTime.toTimeString().slice(0, 5);
+    // Estimate end time: pickup time + 2 hours for the ride
+    const endTime = new Date(pickupDateTime.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
+    
+    const conflictCheck = await driverSchedulingService.checkBookingConflicts(
+      dateStr,
+      startTime,
+      endTime
+    );
+    
+    if (conflictCheck.hasConflict) {
+      suggestedTimes = conflictCheck.suggestedTimeSlots;
+      availabilityWarning = suggestedTimes.length > 0
+        ? `This time slot may be unavailable. Suggested times: ${suggestedTimes.join(', ')}`
+        : 'This time slot may be unavailable. Please select a different time.';
+    }
+  } catch (availabilityError) {
+    // Don't fail the quote if availability check fails - just log it
+    console.warn('Availability check failed during quote generation:', availabilityError);
+  }
+
   // Create a quote with 15-minute expiration
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
   
@@ -179,7 +206,7 @@ export async function POST(request: Request) {
       expiresAt,
     });
 
-    // Return simple quote data
+    // Return simple quote data with availability warning if applicable
     return NextResponse.json({ 
       quoteId: quoteResult.quoteId,
       fare,
@@ -187,7 +214,9 @@ export async function POST(request: Request) {
       durationMinutes: Math.round(durationMinutes),
       fareType,
       expiresAt: expiresAt.toISOString(),
-      expiresInMinutes: 15
+      expiresInMinutes: 15,
+      availabilityWarning,
+      suggestedTimes
     });
   } catch (error) {
     // Return fare without quote ID if storage fails
@@ -197,7 +226,9 @@ export async function POST(request: Request) {
       durationMinutes: Math.round(durationMinutes),
       fareType,
       expiresAt: expiresAt.toISOString(),
-      expiresInMinutes: 15
+      expiresInMinutes: 15,
+      availabilityWarning,
+      suggestedTimes
     });
   }
 }

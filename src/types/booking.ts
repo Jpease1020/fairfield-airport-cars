@@ -166,6 +166,8 @@ export interface ValidationResult {
 
 // Quote data with expiration (15-minute temporary offer)
 export interface QuoteData {
+  availabilityWarning?: string | null;
+  suggestedTimes?: string[];
   quoteId: string;
   fare: number;
   distanceMiles: number;

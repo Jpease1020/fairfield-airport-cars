@@ -31,7 +31,8 @@ export function TripDetailsPhase({
     formData,
     validation,
     goToNextPhase,
-    updateTripDetails
+    updateTripDetails,
+    currentQuote
   } = useBooking();
   
   // Extract trip data from formData
@@ -119,6 +120,16 @@ export function TripDetailsPhase({
         />
 
         {/* Error States */}
+        {/* Show availability warning from quote if present */}
+        {currentQuote?.availabilityWarning && (
+          <StatusMessage
+            type="warning"
+            message={currentQuote.availabilityWarning}
+            id="quote-availability-warning"
+            data-testid="quote-availability-warning"
+          />
+        )}
+        
         {availabilityError && (
           <StatusMessage
             type={availabilityStatusType}

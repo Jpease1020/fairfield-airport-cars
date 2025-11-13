@@ -86,6 +86,8 @@ export const useFareCalculation = ({
         setQuoteRef.current(data); // Set FULL quote in BookingProvider
         setFare(data.fare);
         setQuoteData(data);
+        // Clear any previous errors when quote succeeds
+        setError(null);
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Failed to generate quote');

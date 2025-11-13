@@ -72,6 +72,19 @@ export async function sendConfirmationEmail(booking: Booking) {
 
   // Generate iCalendar event
   const pickupDate = new Date(booking.trip.pickupDateTime);
+  
+  // Format date without seconds
+  const formatDateTime = (date: Date): string => {
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+  
   const event = {
     start: [
       pickupDate.getFullYear(),
@@ -106,7 +119,7 @@ Your ride has been confirmed! Here are your booking details:
 📋 BOOKING DETAILS
 ==================
 Booking ID: ${booking.id}
-Date & Time: ${pickupDate.toLocaleString()}
+Date & Time: ${formatDateTime(pickupDate)}
 Pickup Location: ${booking.pickupLocation}
 Drop-off Location: ${booking.dropoffLocation}
 ${booking.flightInfo?.airline ? `Airline: ${booking.flightInfo.airline}` : ''}
@@ -116,9 +129,7 @@ ${booking.notes ? `Special Instructions: ${booking.notes}` : ''}
 
 💰 FARE INFORMATION
 ===================
-Base Fare: $${booking.fare?.toFixed(2) || '0.00'}
-${booking.tipAmount && booking.tipAmount > 0 ? `Tip: $${booking.tipAmount?.toFixed(2)}` : ''}
-Total Amount: $${((booking.fare || 0) + (booking.tipAmount || 0)).toFixed(2)}
+${booking.tipAmount && booking.tipAmount > 0 ? `Tip: $${booking.tipAmount?.toFixed(2)}\n` : ''}Total Amount: $${((booking.fare || 0) + (booking.tipAmount || 0)).toFixed(2)}
 
 🔗 TRACK YOUR RIDE
 ==================
@@ -127,7 +138,7 @@ Track your driver in real-time: ${trackingUrl}
 💬 CONTACT INFORMATION
 ======================
 If you have any questions or need to make changes, please contact us:
-Text: ${businessSettings?.company?.phone || '(646) 221-6370'}
+Text or call: ${businessSettings?.company?.phone || '(646) 221-6370'}
 Email: ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}
 
 Thank you for choosing ${businessSettings?.company?.name || 'Fairfield Airport Cars'}!
@@ -150,7 +161,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
           <p><strong>Booking ID:</strong> ${booking.id}</p>
-          <p><strong>Date & Time:</strong> ${pickupDate.toLocaleString()}</p>
+          <p><strong>Date & Time:</strong> ${formatDateTime(pickupDate)}</p>
           <p><strong>Pickup Location:</strong> ${booking.pickupLocation}</p>
           <p><strong>Drop-off Location:</strong> ${booking.dropoffLocation}</p>
           ${booking.flightInfo?.airline ? `<p><strong>Airline:</strong> ${booking.flightInfo.airline}</p>` : ''}
@@ -161,7 +172,6 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         
         <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #166534; margin-top: 0;">💰 FARE INFORMATION</h3>
-          <p><strong>Base Fare:</strong> $${booking.fare?.toFixed(2) || '0.00'}</p>
           ${booking.tipAmount && booking.tipAmount > 0 ? `<p><strong>Tip:</strong> $${booking.tipAmount?.toFixed(2)}</p>` : ''}
           <p><strong>Total Amount:</strong> $${((booking.fare || 0) + (booking.tipAmount || 0)).toFixed(2)}</p>
         </div>
@@ -175,7 +185,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
         <p>If you have any questions or need to make changes, please contact us:</p>
-        <p><strong>Text:</strong> ${businessSettings?.company?.phone || '(646) 221-6370'}</p>
+        <p><strong>Text or call:</strong> ${businessSettings?.company?.phone || '(646) 221-6370'}</p>
           <p><strong>Email:</strong> ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}</p>
         </div>
         
@@ -234,6 +244,18 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
   const pickupDate = new Date(booking.trip.pickupDateTime);
+  
+  // Format date without seconds
+  const formatDateTime = (date: Date): string => {
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
 
   const emailText = `Hi ${booking.customer.name},
 
@@ -242,15 +264,15 @@ One more step to secure your ride from ${booking.trip.pickup.address} to ${booki
 Please confirm your booking by opening the link below:
 ${confirmationUrl}
 
-Once you confirm, we’ll finalize your driver assignment and send you the full itinerary.
+Once you confirm, we'll finalize your driver assignment and send you the full itinerary.
 
 Booking summary:
 - Booking ID: ${booking.id}
-- Date & Time: ${pickupDate.toLocaleString()}
+- Date & Time: ${formatDateTime(pickupDate)}
 - Pickup: ${booking.trip.pickup.address}
 - Dropoff: ${booking.trip.dropoff.address}
 
-Need help? Text ${businessSettings?.company?.phone || '(646) 221-6370'}.
+Need help? Text or call us at ${businessSettings?.company?.phone || '(646) 221-6370'}.
 
 Thank you,
 ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
@@ -269,14 +291,14 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
       <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 Booking Summary</h3>
         <p><strong>Booking ID:</strong> ${booking.id}</p>
-        <p><strong>Date & Time:</strong> ${pickupDate.toLocaleString()}</p>
+        <p><strong>Date & Time:</strong> ${formatDateTime(pickupDate)}</p>
         <p><strong>Pickup:</strong> ${booking.trip.pickup.address}</p>
         <p><strong>Dropoff:</strong> ${booking.trip.dropoff.address}</p>
       </div>
 
       <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: #a16207; margin-top: 0;">💬 Need help?</h3>
-        <p>Text us at ${businessSettings?.company?.phone || '(646) 221-6370'} or email ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}.</p>
+        <p>Text or call us at ${businessSettings?.company?.phone || '(646) 221-6370'} or email ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}.</p>
       </div>
 
       <p>Thank you for choosing <strong>${businessSettings?.company?.name || 'Fairfield Airport Cars'}</strong>!</p>

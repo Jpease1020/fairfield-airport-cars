@@ -15,6 +15,30 @@ const DisabledFormWrapper = styled(Box)`
   pointer-events: none;
 `;
 
+// Component to handle error message scrolling
+const ErrorMessageWithScroll: React.FC<{ message: string }> = ({ message }) => {
+  const errorRef = React.useRef<HTMLDivElement>(null);
+  
+  React.useEffect(() => {
+    if (errorRef.current && message) {
+      setTimeout(() => {
+        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  }, [message]);
+  
+  return (
+    <div ref={errorRef}>
+      <StatusMessage
+        type="error"
+        message={message}
+        id="payment-error-message"
+        data-testid="payment-error-message"
+      />
+    </div>
+  );
+};
+
 interface PaymentPhaseProps {
   cmsData: any;
 }
@@ -58,12 +82,7 @@ export function PaymentPhase({
 
         {/* Error Message */}
         {error && (
-          <StatusMessage
-            type="error"
-            message={error}
-            id="payment-error-message"
-            data-testid="payment-error-message"
-          />
+          <ErrorMessageWithScroll message={error} />
         )}
 
         <PaymentSummary
