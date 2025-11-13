@@ -26,7 +26,55 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
         }
         const data = await response.json();
         if (data.success && data.booking) {
-          setBooking(data.booking);
+          // Normalize dates: convert ISO strings to Date objects
+          const rawBooking = data.booking;
+          const normalizedBooking: Booking = {
+            ...rawBooking,
+            createdAt: rawBooking.createdAt ? new Date(rawBooking.createdAt) : new Date(),
+            updatedAt: rawBooking.updatedAt ? new Date(rawBooking.updatedAt) : new Date(),
+            trip: {
+              ...rawBooking.trip,
+              pickupDateTime: rawBooking.trip?.pickupDateTime || rawBooking.pickupDateTime || ''
+            },
+            // Normalize optional driver date fields
+            ...(rawBooking.driver && {
+              driver: {
+                ...rawBooking.driver,
+                ...(rawBooking.driver.estimatedArrival && {
+                  estimatedArrival: typeof rawBooking.driver.estimatedArrival === 'string' 
+                    ? new Date(rawBooking.driver.estimatedArrival)
+                    : rawBooking.driver.estimatedArrival
+                }),
+                ...(rawBooking.driver.actualArrival && {
+                  actualArrival: typeof rawBooking.driver.actualArrival === 'string'
+                    ? new Date(rawBooking.driver.actualArrival)
+                    : rawBooking.driver.actualArrival
+                })
+              }
+            }),
+            // Normalize optional tracking date fields
+            ...(rawBooking.tracking && {
+              tracking: {
+                ...rawBooking.tracking,
+                ...(rawBooking.tracking.lastUpdated && {
+                  lastUpdated: typeof rawBooking.tracking.lastUpdated === 'string'
+                    ? new Date(rawBooking.tracking.lastUpdated)
+                    : rawBooking.tracking.lastUpdated
+                }),
+                ...(rawBooking.tracking.driverLocation && {
+                  driverLocation: {
+                    ...rawBooking.tracking.driverLocation,
+                    ...(rawBooking.tracking.driverLocation.timestamp && {
+                      timestamp: typeof rawBooking.tracking.driverLocation.timestamp === 'string'
+                        ? new Date(rawBooking.tracking.driverLocation.timestamp)
+                        : rawBooking.tracking.driverLocation.timestamp
+                    })
+                  }
+                })
+              }
+            })
+          };
+          setBooking(normalizedBooking);
         } else {
           throw new Error(data.error || 'Failed to fetch booking');
         }
