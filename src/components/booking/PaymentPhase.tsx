@@ -127,6 +127,13 @@ export function PaymentPhase({
               size="md"
               onClick={async () => {
                 if (isRefreshingQuote) return; // Prevent multiple clicks
+                
+                // Validate pickup time is present before requesting quote
+                if (!tripData.pickupDateTime) {
+                  console.error('Cannot refresh quote: pickup date/time is required');
+                  return;
+                }
+                
                 setIsRefreshingQuote(true);
                 try {
                   const res = await fetch('/api/booking/quote', {
@@ -138,7 +145,7 @@ export function PaymentPhase({
                       pickupCoords: tripData.pickup.coordinates,
                       dropoffCoords: tripData.dropoff.coordinates,
                       fareType: tripData.fareType,
-                      pickupTime: tripData.pickupDateTime || undefined,
+                      pickupTime: new Date(tripData.pickupDateTime).toISOString(), // Required
                     })
                   });
                   if (res.ok) {
