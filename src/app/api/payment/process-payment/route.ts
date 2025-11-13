@@ -4,8 +4,7 @@ import { createBookingAtomic, getBooking } from '@/lib/services/booking-service'
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { sendSms } from '@/lib/services/twilio-service';
 import { randomBytes } from 'crypto';
-import { db } from '@/lib/utils/firebase-server';
-import { doc, updateDoc } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 
@@ -76,8 +75,8 @@ export async function POST(request: Request) {
       
       // Mark as smoke test booking if in smoke test mode
       if (isSmokeTest && bookingId) {
-        const bookingRef = doc(db, 'bookings', bookingId);
-        await updateDoc(bookingRef, {
+        const db = getAdminDb();
+        await db.collection('bookings').doc(bookingId).update({
           _smokeTest: true,
           _smokeTestTimestamp: new Date().toISOString(),
         });
@@ -87,8 +86,8 @@ export async function POST(request: Request) {
       if (bookingId) {
         try {
           const confirmationToken = randomBytes(32).toString('hex');
-          const bookingRef = doc(db, 'bookings', bookingId);
-          await updateDoc(bookingRef, {
+          const db = getAdminDb();
+          await db.collection('bookings').doc(bookingId).update({
             confirmation: {
               status: 'pending',
               token: confirmationToken,

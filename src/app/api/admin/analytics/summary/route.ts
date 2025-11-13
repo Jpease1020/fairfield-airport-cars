@@ -1,38 +1,31 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/utils/firebase-server';
-import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 
 export async function GET() {
   try {
-    const analyticsCollection = collection(db, 'analytics');
+    const db = getAdminDb();
     
     // Get recent interactions (last 1000)
-    const interactionsQuery = query(
-      analyticsCollection,
-      where('type', '==', 'interaction'),
-      orderBy('timestamp', 'desc'),
-      limit(1000)
-    );
+    const interactionsSnapshot = await db.collection('analytics')
+      .where('type', '==', 'interaction')
+      .orderBy('timestamp', 'desc')
+      .limit(1000)
+      .get();
     
     // Get recent errors (last 1000)
-    const errorsQuery = query(
-      analyticsCollection,
-      where('type', '==', 'error'),
-      orderBy('timestamp', 'desc'),
-      limit(1000)
-    );
+    const errorsSnapshot = await db.collection('analytics')
+      .where('type', '==', 'error')
+      .orderBy('timestamp', 'desc')
+      .limit(1000)
+      .get();
 
-    const [interactionsSnapshot, errorsSnapshot] = await Promise.all([
-      getDocs(interactionsQuery),
-      getDocs(errorsQuery)
-    ]);
-
-    const interactions = interactionsSnapshot.docs.map(doc => ({
+    const interactions = interactionsSnapshot.docs.map((doc: QueryDocumentSnapshot) => ({
       id: doc.id,
       ...doc.data()
     })) as any[];
 
-    const errors = errorsSnapshot.docs.map(doc => ({
+    const errors = errorsSnapshot.docs.map((doc: QueryDocumentSnapshot) => ({
       id: doc.id,
       ...doc.data()
     })) as any[];

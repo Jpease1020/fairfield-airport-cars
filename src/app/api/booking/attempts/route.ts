@@ -1,8 +1,8 @@
 'use server';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { collection, getDocs, orderBy, query, limit } from 'firebase/firestore';
-import { db } from '@/lib/utils/firebase-server';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 
 const ATTEMPTS_COLLECTION = 'booking_attempts';
 
@@ -12,14 +12,13 @@ export async function GET(request: NextRequest) {
     const limitParam = searchParams.get('limit');
     const limitValue = limitParam ? parseInt(limitParam, 10) : 50;
 
-    const attemptsQuery = query(
-      collection(db, ATTEMPTS_COLLECTION),
-      orderBy('createdAt', 'desc'),
-      limit(limitValue)
-    );
+    const db = getAdminDb();
+    const snapshot = await db.collection(ATTEMPTS_COLLECTION)
+      .orderBy('createdAt', 'desc')
+      .limit(limitValue)
+      .get();
 
-    const snapshot = await getDocs(attemptsQuery);
-    const attempts = snapshot.docs.map((doc) => ({
+    const attempts = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
       id: doc.id,
       ...doc.data(),
     }));

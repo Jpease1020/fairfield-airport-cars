@@ -1,7 +1,6 @@
 // src/app/api/admin/cleanup-smoke-test/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/utils/firebase-server';
-import { doc, deleteDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -16,21 +15,23 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const bookingId = searchParams.get('bookingId');
     
+    const db = getAdminDb();
+    
     if (bookingId) {
       // Delete specific booking
-      const bookingRef = doc(db, 'bookings', bookingId);
-      const bookingDoc = await getDoc(bookingRef);
+      const bookingRef = db.collection('bookings').doc(bookingId);
+      const bookingDoc = await bookingRef.get();
       
-      if (!bookingDoc.exists()) {
+      if (!bookingDoc.exists) {
         return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
       }
       
       const bookingData = bookingDoc.data();
-      if (!bookingData._smokeTest) {
+      if (!bookingData?._smokeTest) {
         return NextResponse.json({ error: 'Not a smoke test booking' }, { status: 403 });
       }
       
-      await deleteDoc(bookingRef);
+      await bookingRef.delete();
       return NextResponse.json({ 
         success: true,
         message: `Deleted smoke test booking ${bookingId}`
@@ -40,12 +41,10 @@ export async function DELETE(request: NextRequest) {
       const oneHourAgo = new Date();
       oneHourAgo.setHours(oneHourAgo.getHours() - 1);
       
-      const smokeTestQuery = query(
-        collection(db, 'bookings'),
-        where('_smokeTest', '==', true)
-      );
+      const snapshot = await db.collection('bookings')
+        .where('_smokeTest', '==', true)
+        .get();
       
-      const snapshot = await getDocs(smokeTestQuery);
       const deleted: string[] = [];
       
       for (const docSnapshot of snapshot.docs) {
@@ -56,7 +55,7 @@ export async function DELETE(request: NextRequest) {
         
         // Delete if older than 1 hour or no timestamp
         if (!timestamp || timestamp < oneHourAgo) {
-          await deleteDoc(docSnapshot.ref);
+          await docSnapshot.ref.delete();
           deleted.push(docSnapshot.id);
         }
       }
