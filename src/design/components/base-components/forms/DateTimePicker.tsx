@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { colors, spacing, fontSize, borderRadius } from '../../../system/tokens/tokens';
+import { colors, spacing, fontSize } from '../../../system/tokens/tokens';
 import { Stack } from '../../../layout/framing/Stack';
 import { Input } from './Input';
 
@@ -200,7 +200,8 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     if (!isMobileDevice) return;
     
     // Use requestAnimationFrame to ensure DOM is ready, then scroll
-    requestAnimationFrame(() => {
+    if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+      window.requestAnimationFrame(() => {
       const inputRect = input.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       
@@ -246,7 +247,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     const timeInput = timeInputWrapperRef.current.querySelector('input[type="time"]') as HTMLInputElement;
     if (!timeInput) return;
 
-    const handleFocus = (e: FocusEvent) => {
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       // Only prevent focus if it's not explicitly allowed
       if (!allowTimeFocus) {
         e.preventDefault();
@@ -287,19 +288,10 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       data-testid={cmsId}
     >
       {label && (
-        <label 
-          htmlFor={id}
-          style={{
-            display: 'block',
-            marginBottom: spacing.sm,
-            fontSize: fontSize.sm,
-            fontWeight: 500,
-            color: colors.text.primary,
-          }}
-        >
+        <LabelWrapper htmlFor={id}>
           {label}
-          {required && <span style={{ color: colors.border.error }}> *</span>}
-        </label>
+          {required && <RequiredAsterisk> *</RequiredAsterisk>}
+        </LabelWrapper>
       )}
       
       <InputGroup direction="horizontal" spacing="md">

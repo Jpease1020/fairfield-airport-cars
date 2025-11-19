@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Container, Stack, StatusMessage, Button } from '@/design/ui';
+import { FareCalculationOverlay } from '@/design/components/base-components/forms/FareCalculationOverlay';
 import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
 import { LocationInputSection } from './trip-details/LocationInputSection';
@@ -14,6 +15,7 @@ import { useBooking } from '@/providers/BookingProvider';
 
 // Styled container that removes padding on mobile
 const TripDetailsContainer = styled(Container)`
+  position: relative;
   @media (max-width: 768px) {
     padding: 0 !important;
   }
@@ -82,6 +84,7 @@ export function TripDetailsPhase({
 
   return (
     <TripDetailsContainer maxWidth="7xl" padding="xl" data-testid="trip-details-phase-container">
+      <FareCalculationOverlay isCalculating={isCalculatingFare} />
       <Stack spacing="2xl" data-testid="trip-details-phase-stack">
         {/* Location Input Section */}
         <LocationInputSection
@@ -104,6 +107,8 @@ export function TripDetailsPhase({
           onDateTimeChange={(dateTime) => updateTripDetails({ pickupDateTime: dateTime })}
           onFareTypeChange={(type) => updateTripDetails({ fareType: type })}
           cmsData={cmsData}
+          error={!!validation?.fieldErrors?.['pickup-datetime-input']}
+          validation={validation}
         />
 
         {/* Estimated Ride Time */}
@@ -163,7 +168,6 @@ export function TripDetailsPhase({
             variant="primary"
             size="lg"
             onClick={goToNextPhase}
-            disabled={!isTripDetailsComplete()}
             data-testid="trip-details-next-button"
             cmsId="trip-details-next-button"
             text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}

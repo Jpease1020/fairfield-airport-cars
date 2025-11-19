@@ -2,7 +2,8 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2 } from '@/design/ui';
+import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label } from '@/design/ui';
+import { FieldValidationStatus } from '@/design/components/base-components/forms/FieldValidationStatus';
 import { CustomerInfo, ValidationResult } from '@/types/booking';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
 
@@ -49,21 +50,32 @@ export function ContactInfoPhase({
           <Stack spacing="lg">
 
             <Stack spacing="sm">
+              <Label htmlFor="name-input" required>
+                {pageCmsData?.['form-name-label'] || 'Full Name'}
+              </Label>
               <Input
-                id="name"
+                id="name-input"
                 value={customerData.name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ name: e.target.value })}
                 placeholder={pageCmsData?.['form-name-placeholder'] || 'Enter your full name'}
                 cmsId="form-name-input"
                 fullWidth
                 required
+                error={!!validation?.fieldErrors?.['name-input']}
                 data-testid="name-input"
+              />
+              <FieldValidationStatus
+                isValid={!!customerData.name.trim() && !validation?.fieldErrors?.['name-input']}
+                show={!!customerData.name.trim() || !!validation?.fieldErrors?.['name-input']}
               />
             </Stack>
 
             <Stack spacing="sm">
+              <Label htmlFor="email-input" required>
+                {pageCmsData?.['form-email-label'] || 'Email'}
+              </Label>
               <Input
-                id="email"
+                id="email-input"
                 type="email"
                 value={customerData.email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ email: e.target.value })}
@@ -71,13 +83,21 @@ export function ContactInfoPhase({
                 cmsId="form-email-input"
                 fullWidth
                 required
+                error={!!validation?.fieldErrors?.['email-input']}
                 data-testid="email-input"
+              />
+              <FieldValidationStatus
+                isValid={!!customerData.email.trim() && !validation?.fieldErrors?.['email-input']}
+                show={!!customerData.email.trim() || !!validation?.fieldErrors?.['email-input']}
               />
             </Stack>
 
             <Stack spacing="sm">
+              <Label htmlFor="phone-input" required>
+                {pageCmsData?.['form-phone-label'] || 'Phone Number'}
+              </Label>
               <Input
-                id="phone"
+                id="phone-input"
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
@@ -90,7 +110,12 @@ export function ContactInfoPhase({
                 cmsId="form-phone-input"
                 fullWidth
                 required
+                error={!!validation?.fieldErrors?.['phone-input']}
                 data-testid="phone-input"
+              />
+              <FieldValidationStatus
+                isValid={!!customerData.phone.trim() && !validation?.fieldErrors?.['phone-input']}
+                show={!!customerData.phone.trim() || !!validation?.fieldErrors?.['phone-input']}
               />
             </Stack>
 
@@ -138,7 +163,6 @@ export function ContactInfoPhase({
               onClick={onContinue}
               variant="primary"
               fullWidth
-              disabled={!customerData.name.trim() || !customerData.email.trim() || !customerData.phone.trim()}
               cmsId="continue-button"
               data-testid="contact-info-continue-button"
               text={pageCmsData?.['continue-button'] || 'Continue to Payment'}

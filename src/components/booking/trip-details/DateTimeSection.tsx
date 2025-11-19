@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Stack, H2, Text, Select, Box, DateTimePicker } from '@/design/ui';
+import { FieldValidationStatus } from '@/design/components/base-components/forms/FieldValidationStatus';
 import { colors } from '@/design/system/tokens/tokens';
 
 // Custom styled component for darker grey background
@@ -16,6 +17,8 @@ interface DateTimeSectionProps {
   onDateTimeChange: (dateTime: string) => void;
   onFareTypeChange: (type: 'personal' | 'business') => void;
   cmsData: any;
+  error?: boolean;
+  validation?: { fieldErrors?: Record<string, string> };
 }
 
 export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
@@ -23,7 +26,9 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
   fareType,
   onDateTimeChange,
   onFareTypeChange,
-  cmsData
+  cmsData,
+  error = false,
+  validation
 }) => {
 
   return (
@@ -38,16 +43,24 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
         </Text>
         
         <Stack spacing="md">
-          <DateTimePicker
-            id="pickup-datetime-input"
-            label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'Pickup Date & Time'}
-            placeholder="mm/dd/yyyy, --:-- --"
-            value={pickupDateTime}
-            onChange={onDateTimeChange}
-            minDate={new Date()}
-            fullWidth={true}
-            cmsId="pickup-datetime-input"
-          />
+          <div>
+            <DateTimePicker
+              id="pickup-datetime-input"
+              label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'Pickup Date & Time'}
+              placeholder="mm/dd/yyyy, --:-- --"
+              value={pickupDateTime}
+              onChange={onDateTimeChange}
+              minDate={new Date()}
+              fullWidth={true}
+              error={error}
+              required
+              cmsId="pickup-datetime-input"
+            />
+            <FieldValidationStatus
+              isValid={!!pickupDateTime && !error && !validation?.fieldErrors?.['pickup-datetime-input']}
+              show={!!pickupDateTime || error || !!validation?.fieldErrors?.['pickup-datetime-input']}
+            />
+          </div>
           
           <Select
             id="fare-type-select"
