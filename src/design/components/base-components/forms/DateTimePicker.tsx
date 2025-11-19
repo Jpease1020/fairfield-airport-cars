@@ -11,6 +11,15 @@ const DatePickerWrapper = styled.div.withConfig({
 })<{ fullWidth: boolean; error: boolean; size: 'sm' | 'md' | 'lg' }>`
   position: relative;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  
+  /* Ensure inputs are positioned correctly for native pickers on mobile */
+  @media (max-width: 768px) {
+    /* Prevent inputs from being too far down the page */
+    scroll-margin-top: 100px;
+    
+    /* Ensure proper stacking context */
+    z-index: 1;
+  }
 `;
 
 const InputGroup = styled(Stack)`
@@ -176,6 +185,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   // Simple approach: Remove from tab order and prevent focus unless explicitly clicked
   const [allowTimeFocus, setAllowTimeFocus] = useState(!isMobileDevice);
   const timeInputWrapperRef = React.useRef<HTMLDivElement>(null);
+  const dateInputWrapperRef = React.useRef<HTMLDivElement>(null);
 
   // Reset allowFocus when time value changes (user has selected a time)
   useEffect(() => {
@@ -183,6 +193,50 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       setAllowTimeFocus(true); // Allow focus after time is selected
     }
   }, [timeValue, isMobileDevice]);
+
+  // Scroll input into view when focused (ensures native picker appears on screen)
+  // This function is defined with useCallback to ensure it has access to the latest isMobileDevice value
+  const scrollInputIntoView = React.useCallback((input: HTMLInputElement) => {
+    if (!isMobileDevice) return;
+    
+    // Use requestAnimationFrame to ensure DOM is ready, then scroll
+    requestAnimationFrame(() => {
+      const inputRect = input.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      
+      // Target position: 120px from top of viewport (leaves room for header/navigation)
+      const targetTop = 120;
+      const currentTop = inputRect.top;
+      
+      // Only scroll if input is not already well-positioned
+      // Check if input is too high (above target) or too low (below middle of viewport)
+      if (currentTop < 50 || currentTop > viewportHeight / 2) {
+        const scrollAmount = currentTop - targetTop;
+        window.scrollTo({
+          top: window.scrollY + scrollAmount,
+          behavior: 'smooth'
+        });
+      }
+    });
+  }, [isMobileDevice]);
+
+  // Handle date input focus - scroll into view
+  useEffect(() => {
+    if (!dateInputWrapperRef.current || !isMobileDevice) return;
+
+    const dateInput = dateInputWrapperRef.current.querySelector('input[type="date"]') as HTMLInputElement;
+    if (!dateInput) return;
+
+    const handleDateFocus = () => {
+      scrollInputIntoView(dateInput);
+    };
+
+    dateInput.addEventListener('focus', handleDateFocus);
+
+    return () => {
+      dateInput.removeEventListener('focus', handleDateFocus);
+    };
+  }, [isMobileDevice, scrollInputIntoView]);
 
   // Prevent focus on time input unless explicitly allowed
   // Only attach listeners to the time input itself, don't interfere with other inputs
@@ -199,6 +253,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
         e.stopPropagation();
         timeInput.blur();
         // Don't try to restore focus - let the browser handle it naturally
+      } else {
+        // If focus is allowed, scroll into view
+        scrollInputIntoView(timeInput);
       }
     };
 
@@ -220,7 +277,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       timeInput.removeEventListener('mousedown', handlePointerDown);
       timeInput.removeEventListener('touchstart', handlePointerDown);
     };
-  }, [isMobileDevice, allowTimeFocus]);
+  }, [isMobileDevice, allowTimeFocus, scrollInputIntoView]);
 
   return (
     <DatePickerWrapper 
@@ -247,7 +304,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       
       <InputGroup direction="horizontal" spacing="md">
         {/* Date Input - Native HTML5 */}
-        <InputWrapper>
+        <InputWrapper ref={dateInputWrapperRef}>
           <Input
             id={`${id}-date`}
             type="date"
