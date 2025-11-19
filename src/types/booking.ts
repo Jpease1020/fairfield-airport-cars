@@ -162,6 +162,7 @@ export interface ValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
+  fieldErrors?: Record<string, string>; // Field-level errors mapped to field IDs
 }
 
 // Quote data with expiration (15-minute temporary offer)

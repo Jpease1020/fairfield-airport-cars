@@ -62,6 +62,8 @@ export { Span } from './components/base-components/text/Span';
 export { Form } from './components/base-components/forms/Form';
 export { FormField } from './components/base-components/forms/FormField';
 export { Input } from './components/base-components/forms/Input';
+export { FieldValidationStatus } from './components/base-components/forms/FieldValidationStatus';
+export { FareCalculationOverlay } from './components/base-components/forms/FareCalculationOverlay';
 export { Textarea } from './components/base-components/forms/Textarea';
 export { Select } from './components/base-components/forms/Select';
 export { DateTimePicker } from './components/base-components/forms/DateTimePicker';

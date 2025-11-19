@@ -7,11 +7,13 @@ import { Stack } from '../../layout/framing/Stack';
 import { Box } from '../../layout/content/Box';
 import { Button } from '../../components/base-components/Button';
 import { Text } from '../../components/base-components/text/Text';
-import { Input } from '../../components/base-components/forms/Input';
 import { DateTimePicker } from '../../components/base-components/forms/DateTimePicker';
 import { LocationInput } from '../base-components/forms/LocationInput';
+import { FieldValidationStatus } from '../base-components/forms/FieldValidationStatus';
+import { FareCalculationOverlay } from '../base-components/forms/FareCalculationOverlay';
 import { useBooking } from '../../../providers/BookingProvider';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
+import { colors } from '../../system/tokens/tokens';
 
 interface Coordinates {
   lat: number;
@@ -21,6 +23,20 @@ interface Coordinates {
 const StrikethroughText = styled(Text)`
   text-decoration: line-through;
   opacity: 0.7;
+`;
+
+const FieldWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const FormContainer = styled(Container)`
+  position: relative;
+`;
+
+const RequiredAsterisk = styled.span`
+  color: ${colors.danger[600]};
 `;
 
 interface HeroCompactBookingFormProps {
@@ -35,12 +51,14 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   const { 
     formData,
     updateTripDetails,
-    validation,
     validateQuickBookingForm,
     isQuickBookingFormValid,
     submitQuickBookingForm,
     error,
   } = useBooking();
+  
+  // Get validation for quick booking form
+  const validation = validateQuickBookingForm();
   
   const locationData = {
     pickup: formData.trip.pickup,
@@ -90,44 +108,73 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   };
 
   return (
-    <Container 
+    <FormContainer 
       variant="elevated" 
       padding="lg" 
       maxWidth="full"
       data-testid={dataTestId}
       {...rest}
     >
+      <FareCalculationOverlay isCalculating={isCalculating} />
       <Stack spacing="md">
         <Text variant="lead" weight="semibold" align="center" data-testid="quick-book-title">
           Get Estimate
         </Text>
         
         <Stack spacing="md">
-          <LocationInput
-            id="pickup-location"
-            placeholder="From: Fairfield Station"
-            value={locationData.pickup.address}
-            onChange={(address) => setPickupLocation(address)}
-            onLocationSelect={handlePickupLocationSelect}
-            size="md"
-            fullWidth
-            data-testid="quick-book-pickup-input"
-          />
+          <FieldWrapper>
+            <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>
+              From <RequiredAsterisk>*</RequiredAsterisk>
+            </Text>
+            <LocationInput
+              id="pickup-location"
+              placeholder="From: Fairfield Station"
+              value={locationData.pickup.address}
+              onChange={(address) => setPickupLocation(address)}
+              onLocationSelect={handlePickupLocationSelect}
+              size="md"
+              fullWidth
+              error={!!validation?.fieldErrors?.['pickup-location-input']}
+              data-testid="quick-book-pickup-input"
+            />
+            <FieldValidationStatus
+              isValid={
+                !!locationData.pickup.address.trim() &&
+                locationData.pickup.coordinates !== null &&
+                !validation?.fieldErrors?.['pickup-location-input']
+              }
+              show={!!locationData.pickup.address.trim() || !!validation?.fieldErrors?.['pickup-location-input']}
+            />
+          </FieldWrapper>
           
-          <LocationInput
-            id="dropoff-location"
-            placeholder="To: JFK Airport"
-            value={locationData.dropoff.address}
-            onChange={(address) => setDropoffLocation(address)}
-            onLocationSelect={handleDropoffLocationSelect}
-            size="md"
-            fullWidth
-            data-testid="quick-book-dropoff-input"
-          />
+          <FieldWrapper>
+            <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>
+              To <RequiredAsterisk>*</RequiredAsterisk>
+            </Text>
+            <LocationInput
+              id="dropoff-location"
+              placeholder="To: JFK Airport"
+              value={locationData.dropoff.address}
+              onChange={(address) => setDropoffLocation(address)}
+              onLocationSelect={handleDropoffLocationSelect}
+              size="md"
+              fullWidth
+              error={!!validation?.fieldErrors?.['dropoff-location-input']}
+              data-testid="quick-book-dropoff-input"
+            />
+            <FieldValidationStatus
+              isValid={
+                !!locationData.dropoff.address.trim() &&
+                locationData.dropoff.coordinates !== null &&
+                !validation?.fieldErrors?.['dropoff-location-input']
+              }
+              show={!!locationData.dropoff.address.trim() || !!validation?.fieldErrors?.['dropoff-location-input']}
+            />
+          </FieldWrapper>
           
-          <Stack spacing="md">
-            <Text weight="semibold" cmsId="quickBook-dateOfTravelLabel">
-              Date of travel
+          <FieldWrapper>
+            <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }} cmsId="quickBook-dateOfTravelLabel">
+              Date of travel <RequiredAsterisk>*</RequiredAsterisk>
             </Text>
             <DateTimePicker
               id="pickup-datetime"
@@ -141,9 +188,15 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               minDate={new Date()}
               size="md"
               fullWidth
+              required
+              error={!!validation?.fieldErrors?.['pickup-datetime-input']}
               cmsId="quick-book-datetime-input"
             />
-          </Stack>
+            <FieldValidationStatus
+              isValid={!!pickupDateTime && !validation?.fieldErrors?.['pickup-datetime-input']}
+              show={!!pickupDateTime || !!validation?.fieldErrors?.['pickup-datetime-input']}
+            />
+          </FieldWrapper>
         </Stack>
         
         {/* Show estimated price in real-time from shared hook */}
@@ -201,6 +254,6 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           Instant pricing • No hidden fees
         </Text>
       </Stack>
-    </Container>
+    </FormContainer>
   );
 };

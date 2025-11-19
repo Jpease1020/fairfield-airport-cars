@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Stack, H2, Text, Box } from '@/design/ui';
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
+import { FieldValidationStatus } from '@/design/components/base-components/forms/FieldValidationStatus';
 import { Coordinates } from '@/types/booking';
 import { useBooking } from '@/providers/BookingProvider';
 import { colors } from '@/design/system/tokens/tokens';
@@ -28,6 +29,11 @@ const LabelRow = styled.div`
 
 const HintText = styled(Text)`
   margin-top: 0.25rem;
+`;
+
+const RequiredAsterisk = styled.span`
+  color: ${colors.danger[600]};
+  margin-left: 2px;
 `;
 
 // Swap button container - positions button between inputs
@@ -95,7 +101,7 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
   cmsData
 }) => {
   // Use booking provider directly like the quick booking form
-  const { formData, updateTripDetails } = useBooking();
+  const { formData, updateTripDetails, validation } = useBooking();
   
   // Track if locations are swapped (default: home on top, airport on bottom = going TO airport)
   const [isSwapped, setIsSwapped] = React.useState(false);
@@ -217,6 +223,7 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
                   ? (cmsData?.['tripDetailsPhase-airportPickupLabel'] || 'Airport Pickup')
                   : (cmsData?.['tripDetailsPhase-yourLocationLabel'] || 'Your Location')
                 }
+                <RequiredAsterisk>*</RequiredAsterisk>
               </Text>
             </LabelRow>
             <LocationInput
@@ -233,7 +240,16 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
               coords={formData.trip.pickup.coordinates}
               restrictToAirports={pickupIsAirport}
               fullWidth={true}
+              error={!!validation?.fieldErrors?.['pickup-location-input']}
               data-testid="pickup-location-input"
+            />
+            <FieldValidationStatus
+              isValid={
+                !!formData.trip.pickup.address.trim() &&
+                formData.trip.pickup.coordinates !== null &&
+                !validation?.fieldErrors?.['pickup-location-input']
+              }
+              show={!!formData.trip.pickup.address.trim() || !!validation?.fieldErrors?.['pickup-location-input']}
             />
             <HintText size="xs" color="secondary">
               {pickupIsAirport 
@@ -277,6 +293,7 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
                   ? (cmsData?.['tripDetailsPhase-airportDestinationLabel'] || 'Airport Destination')
                   : (cmsData?.['tripDetailsPhase-yourDestinationLabel'] || 'Your Destination')
                 }
+                <RequiredAsterisk>*</RequiredAsterisk>
               </Text>
             </LabelRow>
             <LocationInput
@@ -293,7 +310,16 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
               coords={formData.trip.dropoff.coordinates}
               restrictToAirports={dropoffIsAirport}
               fullWidth={true}
+              error={!!validation?.fieldErrors?.['dropoff-location-input']}
               data-testid="dropoff-location-input"
+            />
+            <FieldValidationStatus
+              isValid={
+                !!formData.trip.dropoff.address.trim() &&
+                formData.trip.dropoff.coordinates !== null &&
+                !validation?.fieldErrors?.['dropoff-location-input']
+              }
+              show={!!formData.trip.dropoff.address.trim() || !!validation?.fieldErrors?.['dropoff-location-input']}
             />
             <HintText size="xs" color="secondary">
               {dropoffIsAirport 

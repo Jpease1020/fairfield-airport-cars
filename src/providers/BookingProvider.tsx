@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Booking, BookingFormData, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo, QuoteData } from '@/types/booking';
 import { useRouteCalculation } from '@/hooks/useRouteCalculation';
@@ -267,6 +267,94 @@ const [warning, setWarning] = useState<string | null>(null);
     // Don't set hasAttemptedValidation here - only when user tries to proceed
   }, []);
 
+  // Validation logic (with hasAttemptedValidation check) - defined before goToNextPhase
+  const validateCurrentPhase = useCallback((): ValidationResult => {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    const fieldErrors: Record<string, string> = {};
+
+    // Only show validation errors if user has attempted validation
+    if (!hasAttemptedValidation) {
+      return {
+        isValid: true,
+        errors: [],
+        warnings: [],
+        fieldErrors: {}
+      };
+    }
+
+    switch (currentPhase) {
+      case 'trip-details':
+        if (!formData.trip.pickup.address.trim()) {
+          const errorMsg = 'Pickup location is required';
+          errors.push(errorMsg);
+          fieldErrors['pickup-location-input'] = errorMsg;
+        } else if (formData.trip.pickup.coordinates === null) {
+          const errorMsg = 'Please select pickup location from suggestions';
+          errors.push(errorMsg);
+          fieldErrors['pickup-location-input'] = errorMsg;
+        }
+        
+        if (!formData.trip.dropoff.address.trim()) {
+          const errorMsg = 'Dropoff location is required';
+          errors.push(errorMsg);
+          fieldErrors['dropoff-location-input'] = errorMsg;
+        } else if (formData.trip.dropoff.coordinates === null) {
+          const errorMsg = 'Please select dropoff location from suggestions';
+          errors.push(errorMsg);
+          fieldErrors['dropoff-location-input'] = errorMsg;
+        }
+        
+        if (!formData.trip.pickupDateTime) {
+          const errorMsg = 'Pickup date and time is required';
+          errors.push(errorMsg);
+          fieldErrors['pickup-datetime-input'] = errorMsg;
+        }
+        
+        // Check for quote
+        if (!currentQuote) {
+          const errorMsg = 'Please wait for fare calculation to complete';
+          errors.push(errorMsg);
+          warnings.push(errorMsg);
+        }
+        break;
+        
+      case 'contact-info':
+        if (!formData.customer.name.trim()) {
+          const errorMsg = 'Name is required';
+          errors.push(errorMsg);
+          fieldErrors['name-input'] = errorMsg;
+        }
+        if (!formData.customer.email.trim()) {
+          const errorMsg = 'Email is required';
+          errors.push(errorMsg);
+          fieldErrors['email-input'] = errorMsg;
+        }
+        if (!formData.customer.phone.trim()) {
+          const errorMsg = 'Phone number is required';
+          errors.push(errorMsg);
+          fieldErrors['phone-input'] = errorMsg;
+        }
+        break;
+        
+      case 'payment':
+        // Check for quote before allowing submission
+        if (!currentQuote) {
+          const errorMsg = 'Please wait for fare calculation to complete';
+          errors.push(errorMsg);
+          warnings.push(errorMsg);
+        }
+        break;
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+      fieldErrors
+    };
+  }, [hasAttemptedValidation, currentPhase, formData, currentQuote]);
+
   // Phase management
   const goToPhase = useCallback((phase: BookingPhase) => {
     setCurrentPhase(phase);
@@ -274,13 +362,44 @@ const [warning, setWarning] = useState<string | null>(null);
 
   const goToNextPhase = useCallback(() => {
     setHasAttemptedValidation(true);
+    const validation = validateCurrentPhase();
     
-    const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing', 'flight-info'];
-    const currentIndex = phases.indexOf(currentPhase);
-    if (currentIndex < phases.length - 1) {
-      setCurrentPhase(phases[currentIndex + 1]);
+    if (validation.isValid) {
+      // Move to next phase
+      const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing', 'flight-info'];
+      const currentIndex = phases.indexOf(currentPhase);
+      if (currentIndex < phases.length - 1) {
+        setCurrentPhase(phases[currentIndex + 1]);
+      }
+    } else {
+      // Show errors and scroll to first error field
+      setError(validation.errors.join(', '));
+      
+      // Scroll to first error field if fieldErrors exist
+      if (validation.fieldErrors && Object.keys(validation.fieldErrors).length > 0) {
+        const firstErrorFieldId = Object.keys(validation.fieldErrors)[0];
+        setTimeout(() => {
+          const errorElement = document.getElementById(firstErrorFieldId) || 
+                             document.querySelector(`[data-testid="${firstErrorFieldId}"]`) ||
+                             document.querySelector(`[id="${firstErrorFieldId}"]`);
+          
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Try to focus the input if it's focusable
+            if (errorElement instanceof HTMLInputElement || errorElement instanceof HTMLTextAreaElement) {
+              errorElement.focus();
+            } else {
+              // Try to find input inside the element
+              const input = errorElement.querySelector('input, textarea, select');
+              if (input && (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement)) {
+                input.focus();
+              }
+            }
+          }
+        }, 100);
+      }
     }
-  }, [currentPhase]);
+  }, [currentPhase, validateCurrentPhase]);
 
   const goToPreviousPhase = useCallback(() => {
     const phases: BookingPhase[] = ['trip-details', 'contact-info', 'payment', 'payment-processing', 'flight-info'];
@@ -294,39 +413,50 @@ const [warning, setWarning] = useState<string | null>(null);
   const validateQuickBookingForm = (): ValidationResult => {
     const errors: string[] = [];
     const warnings: string[] = [];
+    const fieldErrors: Record<string, string> = {};
 
     // Only show validation errors if user has attempted validation
     if (!hasAttemptedValidation) {
       return {
         isValid: true,
         errors: [],
-        warnings: []
+        warnings: [],
+        fieldErrors: {}
       };
     }
 
     // Validate required fields
     if (!formData.trip.pickup.address.trim()) {
-      errors.push('Pickup location is required');
+      const errorMsg = 'Pickup location is required';
+      errors.push(errorMsg);
+      fieldErrors['pickup-location-input'] = errorMsg;
+    } else if (formData.trip.pickup.coordinates === null) {
+      const errorMsg = 'Please select pickup location from suggestions';
+      errors.push(errorMsg);
+      fieldErrors['pickup-location-input'] = errorMsg;
     }
+    
     if (!formData.trip.dropoff.address.trim()) {
-      errors.push('Dropoff location is required');
+      const errorMsg = 'Dropoff location is required';
+      errors.push(errorMsg);
+      fieldErrors['dropoff-location-input'] = errorMsg;
+    } else if (formData.trip.dropoff.coordinates === null) {
+      const errorMsg = 'Please select dropoff location from suggestions';
+      errors.push(errorMsg);
+      fieldErrors['dropoff-location-input'] = errorMsg;
     }
+    
     if (!formData.trip.pickupDateTime) {
-      errors.push('Pickup date and time is required');
-    }
-
-    // Location validation
-    if (formData.trip.pickup.address.trim() !== '' && formData.trip.pickup.coordinates === null) {
-      errors.push('Please select pickup location from suggestions');
-    }
-    if (formData.trip.dropoff.address.trim() !== '' && formData.trip.dropoff.coordinates === null) {
-      errors.push('Please select dropoff location from suggestions');
+      const errorMsg = 'Pickup date and time is required';
+      errors.push(errorMsg);
+      fieldErrors['pickup-datetime-input'] = errorMsg;
     }
 
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
+      fieldErrors
     };
   };
 
@@ -366,64 +496,6 @@ const [warning, setWarning] = useState<string | null>(null);
   // Clear stored form data
   const clearStoredFormData = () => {
     sessionStorage.removeItem('booking-form-data');
-  };
-
-  // Validation logic (with hasAttemptedValidation check)
-  const validateCurrentPhase = (): ValidationResult => {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    // Only show validation errors if user has attempted validation
-    if (!hasAttemptedValidation) {
-      return {
-        isValid: true,
-        errors: [],
-        warnings: []
-      };
-    }
-
-    switch (currentPhase) {
-      case 'trip-details':
-        if (!formData.trip.pickup.address.trim()) {
-          errors.push('Pickup location is required');
-        }
-        if (!formData.trip.dropoff.address.trim()) {
-          errors.push('Dropoff location is required');
-        }
-        if (!formData.trip.pickupDateTime) {
-          errors.push('Pickup date and time is required');
-        }
-        // Location validation
-        if (formData.trip.pickup.address.trim() !== '' && formData.trip.pickup.coordinates === null) {
-          errors.push('Please select pickup location from suggestions');
-        }
-        if (formData.trip.dropoff.address.trim() !== '' && formData.trip.dropoff.coordinates === null) {
-          errors.push('Please select dropoff location from suggestions');
-        }
-        break;
-        
-      case 'contact-info':
-        if (!formData.customer.name.trim()) {
-          errors.push('Name is required');
-        }
-        if (!formData.customer.email.trim()) {
-          errors.push('Email is required');
-        }
-        if (!formData.customer.phone.trim()) {
-          errors.push('Phone number is required');
-        }
-        break;
-        
-      case 'payment':
-        // No deposit required and no fare validation needed - just basic form validation
-        break;
-    }
-
-    return {
-      isValid: errors.length === 0,
-      errors,
-      warnings
-    };
   };
 
   const validateForm = (): ValidationResult => {
@@ -654,7 +726,8 @@ const [warning, setWarning] = useState<string | null>(null);
     }
   };
 
-  const validation = validateCurrentPhase();
+  // Compute validation reactively
+  const validation = useMemo(() => validateCurrentPhase(), [validateCurrentPhase]);
 
   // Create a new booking
   const createBooking = async (data: Partial<Booking>): Promise<Booking> => {
