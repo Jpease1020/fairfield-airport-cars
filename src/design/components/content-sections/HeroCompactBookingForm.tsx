@@ -69,6 +69,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     pickupCoords: locationData.pickup.coordinates,
     dropoffCoords: locationData.dropoff.coordinates,
     fareType: formData.trip.fareType,
+    pickupDateTime: pickupDateTime, // Required for fare calculation
   });
 
   // Note: Removed currentQuote since we simplified to currentFare only
@@ -179,7 +180,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             onClick={handleGetPrice}
             disabled={!isQuickBookingFormValid()}
             cmsId="get-price-button"
-            data-testid="quick-book-get-price-button"
+            data-testid="quick-book-secure-rate-button"
             text="Book Now to Secure Rate →"
           />
         </Stack>
@@ -195,6 +196,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             {error}
           </Text>
         )}
+        
         <Text size="xs" align="center" variant="muted" data-testid="quick-book-disclaimer">
           Instant pricing • No hidden fees
         </Text>

@@ -48,6 +48,7 @@
     "openai": "^5.9.0",
     "react": "^19.0.0",
     "react-datepicker": "^8.7.0",
+    "react-datetime-picker": "^7.0.1",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.59.0",
     "square": "^43.0.0",

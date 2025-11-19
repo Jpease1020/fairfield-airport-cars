@@ -51,19 +51,6 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   const [placeAutocomplete, setPlaceAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   const places = useMapsLibrary('places');
 
-  // Initialize autocomplete when places library is loaded
-  useEffect(() => {
-    if (!places || !inputRef.current) return;
-
-    const options: google.maps.places.AutocompleteOptions = {
-      fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types'],
-      componentRestrictions: { country: 'us' },
-      ...(restrictToAirports && { types: ['airport'] }) // Restrict to airports if specified
-    };
-
-    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-  }, [places, restrictToAirports]);
-
   // Handle place selection from autocomplete
   const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
     if (place.geometry?.location) {
@@ -93,14 +80,34 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     }
   }, [onChange, onLocationSelect, onCoordsChange]);
 
-  // Add place_changed listener
+  // Initialize autocomplete when places library is loaded
   useEffect(() => {
-    if (!placeAutocomplete) return;
+    if (!places || !inputRef.current) {
+      setPlaceAutocomplete(null);
+      return;
+    }
 
-    placeAutocomplete.addListener('place_changed', () => {
-      handlePlaceSelect(placeAutocomplete.getPlace());
+    const options: google.maps.places.AutocompleteOptions = {
+      fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types'],
+      componentRestrictions: { country: 'us' },
+      ...(restrictToAirports && { types: ['airport'] }) // Restrict to airports if specified
+    };
+
+    const autocomplete = new places.Autocomplete(inputRef.current, options);
+    setPlaceAutocomplete(autocomplete);
+
+    // Add place_changed listener
+    const listener = autocomplete.addListener('place_changed', () => {
+      handlePlaceSelect(autocomplete.getPlace());
     });
-  }, [placeAutocomplete, handlePlaceSelect]);
+
+    // Cleanup: remove listener when component unmounts or dependencies change
+    return () => {
+      if (listener && google.maps && google.maps.event) {
+        google.maps.event.removeListener(listener);
+      }
+    };
+  }, [places, restrictToAirports, handlePlaceSelect]);
 
   // Handle manual input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

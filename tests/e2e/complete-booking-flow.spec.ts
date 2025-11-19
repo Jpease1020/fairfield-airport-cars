@@ -185,17 +185,18 @@ test.describe('Complete Booking Flow - End to End', () => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(14, 0, 0, 0);
     
-    const dateInput = page.locator('[data-testid="pickup-datetime-input"] input').first();
-    await dateInput.click();
-    await dateInput.fill(tomorrow.toLocaleString('en-US', {
-      month: '2-digit',
-      day: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    }).replace(',', ''));
-    await dateInput.press('Enter');
+    // Format date as YYYY-MM-DD for native date input
+    const dateString = tomorrow.toISOString().split('T')[0];
+    // Format time as HH:mm for native time input
+    const timeString = `${String(tomorrow.getHours()).padStart(2, '0')}:${String(tomorrow.getMinutes()).padStart(2, '0')}`;
+    
+    // Fill date input
+    const dateInput = page.locator('[data-testid="pickup-datetime-input-date"]');
+    await dateInput.fill(dateString);
+    
+    // Fill time input
+    const timeInput = page.locator('[data-testid="pickup-datetime-input-time"]');
+    await timeInput.fill(timeString);
     
     // Select fare type (personal)
     const fareTypePersonal = page.locator('[data-testid="fare-type-personal"]').first();

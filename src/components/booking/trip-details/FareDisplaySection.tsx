@@ -82,8 +82,8 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
         {/* Countdown for quote validity if available */}
         <CountdownRow />
         
-        {/* Price Guarantee - Full size for visibility */}
-        <PriceGuarantee variant="full" cmsData={cmsData} />
+        {/* Price Guarantee - Temporarily hidden */}
+        {/* <PriceGuarantee variant="full" cmsData={cmsData} /> */}
       </Stack>
     </Box>
   );

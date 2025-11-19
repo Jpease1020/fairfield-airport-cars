@@ -63,15 +63,43 @@ vi.mock('@/design/components/base-components/forms/DateTimePicker', () => ({
     minDate: _minDate,
     fullWidth: _fullWidth,
     ...rest
-  }: DateTimePickerMockProps) => (
-    <input
-      type="datetime-local"
-      data-testid={dataTestId ?? cmsId ?? 'date-time-picker'}
-      value={value}
-      onChange={(event) => onChange?.(event.target.value)}
-      {...rest}
-    />
-  ),
+  }: DateTimePickerMockProps) => {
+    // Parse ISO string into date and time parts
+    const datePart = value ? value.split('T')[0] : '';
+    const timePart = value ? value.split('T')[1]?.slice(0, 5) : '';
+    const testId = dataTestId ?? cmsId ?? 'date-time-picker';
+    
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newDate = e.target.value;
+      const combined = newDate && timePart ? `${newDate}T${timePart}` : newDate ? `${newDate}T00:00` : '';
+      onChange?.(combined);
+    };
+    
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newTime = e.target.value;
+      const combined = datePart && newTime ? `${datePart}T${newTime}` : newTime ? `${new Date().toISOString().split('T')[0]}T${newTime}` : '';
+      onChange?.(combined);
+    };
+    
+    return (
+      <div data-testid={testId}>
+        <input
+          type="date"
+          data-testid={`${testId}-date`}
+          value={datePart}
+          onChange={handleDateChange}
+          {...rest}
+        />
+        <input
+          type="time"
+          data-testid={`${testId}-time`}
+          value={timePart}
+          onChange={handleTimeChange}
+          {...rest}
+        />
+      </div>
+    );
+  },
 }));
 
 vi.mock('@/hooks/useFareCalculation', () => ({
@@ -143,20 +171,23 @@ describe('Hero quick booking bridge', () => {
     const dropoffValue = 'John F. Kennedy International Airport';
     const pickupInput = screen.getByTestId('quick-book-pickup-input');
     const dropoffInput = screen.getByTestId('quick-book-dropoff-input');
-    const datetimeInput = screen.getByTestId('quick-book-datetime-input') as HTMLInputElement;
+    const dateInput = screen.getByTestId('quick-book-datetime-input-date') as HTMLInputElement;
+    const timeInput = screen.getByTestId('quick-book-datetime-input-time') as HTMLInputElement;
 
     await user.type(pickupInput, pickupValue);
     await user.type(dropoffInput, dropoffValue);
-    fireEvent.change(datetimeInput, { target: { value: '2025-12-31T10:30' } });
+    fireEvent.change(dateInput, { target: { value: '2025-12-31' } });
+    fireEvent.change(timeInput, { target: { value: '10:30' } });
 
-    const submitButton = await screen.findByTestId('quick-book-get-price-button');
+    const submitButton = await screen.findByTestId('quick-book-secure-rate-button');
     await waitFor(() => expect(submitButton).toBeEnabled());
     await user.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByTestId('pickup-location-input')).toHaveValue(pickupValue);
       expect(screen.getByTestId('dropoff-location-input')).toHaveValue(dropoffValue);
-      expect(screen.getByTestId('pickup-datetime-input')).toHaveValue('2025-12-31T10:30');
+      expect(screen.getByTestId('pickup-datetime-input-date')).toHaveValue('2025-12-31');
+      expect(screen.getByTestId('pickup-datetime-input-time')).toHaveValue('10:30');
     });
 
     const observer = screen.getByTestId('booking-observer');

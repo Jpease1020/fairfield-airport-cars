@@ -75,34 +75,41 @@ const StyledInput = styled.input.withConfig({
     box-shadow: ${shadows.error};
   `}
 
-  /* Mobile-specific datetime-local styling */
+  /* Mobile-specific date and time input styling */
+  &[type="date"],
+  &[type="time"],
   &[type="datetime-local"] {
-    /* Keep native appearance but ensure it works on mobile */
     cursor: pointer;
     
-    /* iOS Safari specific fixes */
+    /* iOS Safari specific fixes - preserve native appearance */
     @media (max-width: 768px) {
       font-size: 16px; /* Prevent zoom on iOS */
-      cursor: pointer;
+      /* Don't remove appearance - let native pickers show */
+      -webkit-appearance: menulist-button;
+      appearance: menulist-button;
+      
+      /* Ensure proper padding for native pickers */
+      padding-right: ${spacing.lg};
       
       /* Ensure the input is tappable and shows picker */
       &:focus {
-        cursor: pointer;
+        outline: none;
+        border-color: ${colors.primary[600]};
       }
       
+      /* Style the native picker text */
       &::-webkit-datetime-edit {
         padding: 0;
-        cursor: pointer;
+        color: ${colors.text.primary};
       }
       
       &::-webkit-datetime-edit-fields-wrapper {
         padding: 0;
-        cursor: pointer;
       }
       
       &::-webkit-datetime-edit-text {
         color: ${colors.text.primary};
-        cursor: pointer;
+        padding: 0 2px;
       }
       
       &::-webkit-datetime-edit-month-field,
@@ -111,38 +118,54 @@ const StyledInput = styled.input.withConfig({
       &::-webkit-datetime-edit-hour-field,
       &::-webkit-datetime-edit-minute-field {
         color: ${colors.text.primary};
-        cursor: pointer;
+        padding: 0 2px;
       }
       
-      &::-webkit-inner-spin-button {
-        opacity: 1;
-        color: ${colors.primary[600]};
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-        margin: 0;
-      }
-      
-      /* Calendar picker indicator - ensure it's visible */
+      /* Calendar/time picker indicator - make it more visible on mobile */
       &::-webkit-calendar-picker-indicator {
-        opacity: 1;
+        opacity: 1 !important;
         cursor: pointer;
-        
-        /* Ensure proper sizing and visibility */
-        width: auto;
-        height: auto;
+        width: 28px !important;
+        height: 28px !important;
+        padding: 6px !important;
+        margin-left: 4px;
+        display: inline-block !important;
+        visibility: visible !important;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        /* Force visibility on iOS */
+        -webkit-appearance: menulist-button;
+        appearance: menulist-button;
+      }
+      
+      /* For time inputs, show the clock icon */
+      &[type="time"]::-webkit-calendar-picker-indicator {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      
+      /* For date inputs, ensure calendar icon is visible */
+      &[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+    }
+    
+    /* Desktop styling - cleaner appearance */
+    @media (min-width: 769px) {
+      &::-webkit-calendar-picker-indicator {
+        opacity: 0.7;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
         padding: 4px;
-        margin: 0;
-        
-        /* Make sure it's visible on all screen sizes */
-        display: block;
-        visibility: visible;
-        
-        /* Mobile-specific adjustments */
-        @media (max-width: 640px) {
-          padding: 2px;
-        }
+        margin-left: 8px;
+      }
+      
+      &:hover::-webkit-calendar-picker-indicator {
+        opacity: 1;
       }
     }
   }

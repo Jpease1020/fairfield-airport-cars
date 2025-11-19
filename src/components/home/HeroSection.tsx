@@ -48,8 +48,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ cmsData }) => {
               {cmsData?.['hero-description'] || "No cancellations. No surprises. Just reliable, comfortable airport rides from Fairfield County."}
             </Text>
             
-            {/* Price Guarantee */}
-            <PriceGuarantee variant="compact" cmsData={cmsData} />
+            {/* Price Guarantee - Temporarily hidden */}
+            {/* <PriceGuarantee variant="compact" cmsData={cmsData} /> */}
           </Stack>
         </FlexStack>
 

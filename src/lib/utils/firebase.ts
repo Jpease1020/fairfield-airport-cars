@@ -59,10 +59,26 @@ let messaging: any = null;
 if (typeof window !== 'undefined') {
   (async () => {
     try {
-      const { getMessaging } = await import('firebase/messaging');
+      // Check if browser supports required APIs
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        console.log('📱 Firebase Messaging: Browser does not support required APIs');
+        return;
+      }
+      
+      const { getMessaging, isSupported } = await import('firebase/messaging');
+      
+      // Check if messaging is supported before initializing
+      const messagingSupported = await isSupported();
+      if (!messagingSupported) {
+        console.log('📱 Firebase Messaging: Not supported in this browser');
+        return;
+      }
+      
       messaging = getMessaging(app);
+      console.log('✅ Firebase Messaging initialized');
     } catch (error) {
       // Messaging is optional; continue without it
+      console.log('📱 Firebase Messaging: Initialization skipped', error instanceof Error ? error.message : String(error));
     }
   })();
 }

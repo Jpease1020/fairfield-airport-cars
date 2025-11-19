@@ -17,18 +17,28 @@ interface PWAProviderProps {
 }
 
 export const PWAProvider: React.FC<PWAProviderProps> = ({ children }) => {
+  const [isMounted, setIsMounted] = React.useState(false);
   const { canInstall, promptInstall } = usePWAInstallPrompt();
 
   useEffect(() => {
-    registerServiceWorker();
+    setIsMounted(true);
+    // Only register service worker on client side after mount
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      registerServiceWorker().catch((error) => {
+        console.warn('📱 PWA: Service Worker registration failed:', error);
+      });
+    }
   }, []);
 
   const requestPushPermission = async () => {
+    if (!isMounted || typeof window === 'undefined') {
+      return 'default' as NotificationPermission;
+    }
     return await requestNotificationPermission();
   };
 
   const value: PWAContextType = {
-    canInstall,
+    canInstall: isMounted ? canInstall : false,
     promptInstall,
     requestPushPermission,
   };

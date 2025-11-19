@@ -104,18 +104,19 @@ export const useFareCalculation = ({
     }
   }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType, pickupDateTime]);
 
-  // Smart calculation: only when we have complete data
+  // Smart calculation: only when we have complete data (including pickupDateTime)
   const shouldCalculate = useMemo(() => {
     return (
       pickupLocation.trim() !== '' &&
       dropoffLocation.trim() !== '' &&
       pickupCoords !== null &&
       dropoffCoords !== null &&
-      fareType !== null
+      fareType !== null &&
+      pickupDateTime !== undefined &&
+      pickupDateTime !== null &&
+      pickupDateTime.trim() !== ''
     );
-  }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType]);
-  
-  // Note: pickupDateTime is optional - quote API will use current time if not provided
+  }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType, pickupDateTime]);
 
   // Debounced calculation: wait 500ms after user stops changing inputs
   useEffect(() => {

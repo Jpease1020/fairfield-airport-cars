@@ -161,8 +161,21 @@ const [warning, setWarning] = useState<string | null>(null);
     setIsInitialized(true);
   }, []); // Only run once on mount
 
-  // Save form data to session storage only on manual save (to avoid infinite loops)
-  // Removed automatic session storage save to prevent circular updates
+  // Debounced save to session storage (separate from quote expiration)
+  // Form data persists until tab closes, independent of 15-minute quote expiration
+  useEffect(() => {
+    if (!isInitialized) return; // Don't save during initial load
+    
+    const timeoutId = setTimeout(() => {
+      try {
+        sessionStorage.setItem('booking-form-data', JSON.stringify(formData));
+      } catch (error) {
+        console.error('Failed to save booking form data to session storage:', error);
+      }
+    }, 500); // 500ms debounce to avoid excessive writes
+    
+    return () => clearTimeout(timeoutId);
+  }, [formData, isInitialized]);
 
   // Initialize form with existing booking
   useEffect(() => {
@@ -221,6 +234,11 @@ const [warning, setWarning] = useState<string | null>(null);
       ...prev,
       trip: { ...prev.trip, ...data }
     }));
+    
+    // Clear quote when trip details change (quote is tied to specific trip details)
+    // This ensures users get a fresh quote when they change pickup/dropoff/date/time/fareType
+    setCurrentQuote(null);
+    
     // Clear any existing errors when user starts interacting
     setError(null);
     setHasAttemptedValidation(false); // Reset validation state so errors don't show

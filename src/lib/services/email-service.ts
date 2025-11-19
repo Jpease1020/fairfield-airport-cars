@@ -107,8 +107,8 @@ export async function sendConfirmationEmail(booking: Booking) {
     });
   });
 
-  // Create tracking URL
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  // Create tracking URL and base URL for PWA install link
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
   const trackingUrl = `${baseUrl}/tracking/${booking.id}`;
 
   // Enhanced email content

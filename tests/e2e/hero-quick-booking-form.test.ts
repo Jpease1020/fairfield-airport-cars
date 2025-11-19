@@ -18,7 +18,8 @@ test.describe('Hero Quick Booking Form', () => {
     // Check that the quick booking form is present
     await expect(page.locator('[data-testid="quick-book-pickup-input"]')).toBeVisible();
     await expect(page.locator('[data-testid="quick-book-dropoff-input"]')).toBeVisible();
-    await expect(page.locator('[data-testid="quick-book-datetime-input"]')).toBeVisible();
+    await expect(page.locator('[data-testid="quick-book-datetime-input-date"]')).toBeVisible();
+    await expect(page.locator('[data-testid="quick-book-datetime-input-time"]')).toBeVisible();
     await expect(page.locator('[data-testid="quick-book-get-price-button"]')).toBeVisible();
   });
 
@@ -83,12 +84,16 @@ test.describe('Hero Quick Booking Form', () => {
     await dropoffInput.fill('JFK Airport, Queens, NY');
     
     // Fill date and time
-    const datetimeInput = page.locator('[data-testid="quick-book-datetime-input"]');
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateString = tomorrow.toISOString().split('T')[0];
     const timeString = '10:00';
-    await datetimeInput.fill(`${dateString}T${timeString}`);
+    
+    const dateInput = page.locator('[data-testid="quick-book-datetime-input-date"]');
+    await dateInput.fill(dateString);
+    
+    const timeInput = page.locator('[data-testid="quick-book-datetime-input-time"]');
+    await timeInput.fill(timeString);
     
     // Wait for fare calculation
     await page.waitForTimeout(2000);
@@ -136,11 +141,15 @@ test.describe('Hero Quick Booking Form', () => {
     await expect(submitButton).toBeDisabled();
     
     // Fill datetime
-    const datetimeInput = page.locator('[data-testid="quick-book-datetime-input"]');
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateString = tomorrow.toISOString().split('T')[0];
-    await datetimeInput.fill(`${dateString}T10:00`);
+    
+    const dateInput = page.locator('[data-testid="quick-book-datetime-input-date"]');
+    await dateInput.fill(dateString);
+    
+    const timeInput = page.locator('[data-testid="quick-book-datetime-input-time"]');
+    await timeInput.fill('10:00');
     
     // Wait a moment for validation
     await page.waitForTimeout(500);
@@ -204,7 +213,6 @@ test.describe('Hero Quick Booking Form', () => {
   test('should clear errors when user interacts with any form field', async ({ page }) => {
     const submitButton = page.locator('[data-testid="quick-book-get-price-button"]');
     const dropoffInput = page.locator('[data-testid="quick-book-dropoff-input"]');
-    const datetimeInput = page.locator('[data-testid="quick-book-datetime-input"]');
     
     // Try to submit with empty form to trigger errors
     await submitButton.click();
@@ -225,7 +233,12 @@ test.describe('Hero Quick Booking Form', () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const dateString = tomorrow.toISOString().split('T')[0];
-      await datetimeInput.fill(`${dateString}T10:00`);
+      
+      const dateInput = page.locator('[data-testid="quick-book-datetime-input-date"]');
+      await dateInput.fill(dateString);
+      
+      const timeInput = page.locator('[data-testid="quick-book-datetime-input-time"]');
+      await timeInput.fill('10:00');
       await page.waitForTimeout(500);
       
       // Check if errors are cleared
@@ -246,11 +259,15 @@ test.describe('Hero Quick Booking Form', () => {
     const dropoffInput = page.locator('[data-testid="quick-book-dropoff-input"]');
     await dropoffInput.fill('JFK Airport, Queens, NY');
     
-    const datetimeInput = page.locator('[data-testid="quick-book-datetime-input"]');
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateString = tomorrow.toISOString().split('T')[0];
-    await datetimeInput.fill(`${dateString}T10:00`);
+    
+    const dateInput = page.locator('[data-testid="quick-book-datetime-input-date"]');
+    await dateInput.fill(dateString);
+    
+    const timeInput = page.locator('[data-testid="quick-book-datetime-input-time"]');
+    await timeInput.fill('10:00');
     
     // Wait for validation
     await page.waitForTimeout(1000);
@@ -270,11 +287,15 @@ test.describe('Hero Quick Booking Form', () => {
     const dropoffInput = page.locator('[data-testid="quick-book-dropoff-input"]');
     await dropoffInput.fill('JFK Airport, Queens, NY');
     
-    const datetimeInput = page.locator('[data-testid="quick-book-datetime-input"]');
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateString = tomorrow.toISOString().split('T')[0];
-    await datetimeInput.fill(`${dateString}T10:00`);
+    
+    const dateInput = page.locator('[data-testid="quick-book-datetime-input-date"]');
+    await dateInput.fill(dateString);
+    
+    const timeInput = page.locator('[data-testid="quick-book-datetime-input-time"]');
+    await timeInput.fill('10:00');
     
     // Wait for validation
     await page.waitForTimeout(1000);
@@ -298,11 +319,15 @@ test.describe('Hero Quick Booking Form', () => {
     const dropoffInput = page.locator('[data-testid="quick-book-dropoff-input"]');
     await dropoffInput.fill('JFK Airport, Queens, NY');
     
-    const datetimeInput = page.locator('[data-testid="quick-book-datetime-input"]');
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateString = tomorrow.toISOString().split('T')[0];
-    await datetimeInput.fill(`${dateString}T10:00`);
+    
+    const dateInput = page.locator('[data-testid="quick-book-datetime-input-date"]');
+    await dateInput.fill(dateString);
+    
+    const timeInput = page.locator('[data-testid="quick-book-datetime-input-time"]');
+    await timeInput.fill('10:00');
     
     // Submit form
     const submitButton = page.locator('[data-testid="quick-book-get-price-button"]');
