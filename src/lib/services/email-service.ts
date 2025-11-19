@@ -85,6 +85,11 @@ export async function sendConfirmationEmail(booking: Booking) {
     });
   };
   
+  // Get pickup and dropoff addresses from new structure (trip.pickup.address) or legacy fields
+  const pickupAddress = booking.trip?.pickup?.address || booking.pickupLocation || 'Pickup location not specified';
+  const dropoffAddress = booking.trip?.dropoff?.address || booking.dropoffLocation || 'Dropoff location not specified';
+  const customerName = booking.customer?.name || booking.name || 'Valued Customer';
+
   const event = {
     start: [
       pickupDate.getFullYear(),
@@ -95,8 +100,8 @@ export async function sendConfirmationEmail(booking: Booking) {
     ],
     duration: { hours: 2, minutes: 0 }, // rough default
     title: 'Airport Car Service',
-    description: `Ride from ${booking.pickupLocation} to ${booking.dropoffLocation}`,
-    location: booking.pickupLocation,
+    description: `Ride from ${pickupAddress} to ${dropoffAddress}`,
+    location: pickupAddress,
     organizer: { name: businessSettings?.company?.name || 'Fairfield Airport Cars', email: EMAIL_FROM },
   };
 
@@ -112,7 +117,7 @@ export async function sendConfirmationEmail(booking: Booking) {
   const trackingUrl = `${baseUrl}/tracking/${booking.id}`;
 
   // Enhanced email content
-  const emailText = `Hi ${booking.customer.name},
+  const emailText = `Hi ${customerName},
 
 Your ride has been confirmed! Here are your booking details:
 
@@ -120,8 +125,8 @@ Your ride has been confirmed! Here are your booking details:
 ==================
 Booking ID: ${booking.id}
 Date & Time: ${formatDateTime(pickupDate)}
-Pickup Location: ${booking.pickupLocation}
-Drop-off Location: ${booking.dropoffLocation}
+Pickup Location: ${pickupAddress}
+Drop-off Location: ${dropoffAddress}
 ${booking.flightInfo?.airline ? `Airline: ${booking.flightInfo.airline}` : ''}
 ${booking.flightInfo?.flightNumber ? `Flight Number: ${booking.flightInfo.flightNumber}` : ''}
 ${booking.flightInfo?.terminal ? `Terminal: ${booking.flightInfo.terminal}` : ''}
@@ -146,15 +151,18 @@ Thank you for choosing ${businessSettings?.company?.name || 'Fairfield Airport C
 Best regards,
 The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
 
+  // Get customer email with fallback
+  const customerEmail = booking.customer?.email || booking.email || '';
+
   const mailOptions = {
     from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
-    to: booking.customer.email,
+    to: customerEmail,
     bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
     subject: `Your Ride Confirmation - ${booking.id}`,
     text: emailText,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: var(--color-primary-600);">Hi ${booking.customer.name},</h2>
+        <h2 style="color: var(--color-primary-600);">Hi ${customerName},</h2>
         
         <p>Your ride has been confirmed! Here are your booking details:</p>
         
@@ -162,8 +170,8 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
           <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
           <p><strong>Booking ID:</strong> ${booking.id}</p>
           <p><strong>Date & Time:</strong> ${formatDateTime(pickupDate)}</p>
-          <p><strong>Pickup Location:</strong> ${booking.pickupLocation}</p>
-          <p><strong>Drop-off Location:</strong> ${booking.dropoffLocation}</p>
+          <p><strong>Pickup Location:</strong> ${pickupAddress}</p>
+          <p><strong>Drop-off Location:</strong> ${dropoffAddress}</p>
           ${booking.flightInfo?.airline ? `<p><strong>Airline:</strong> ${booking.flightInfo.airline}</p>` : ''}
           ${booking.flightInfo?.flightNumber ? `<p><strong>Flight Number:</strong> ${booking.flightInfo.flightNumber}</p>` : ''}
           ${booking.flightInfo?.terminal ? `<p><strong>Terminal:</strong> ${booking.flightInfo.terminal}</p>` : ''}
@@ -223,8 +231,14 @@ export async function sendTestEmail(to: string, subject = 'Test Email', text = '
 }
 
 export async function sendBookingVerificationEmail(booking: Booking, confirmationUrl: string) {
+  // Get customer name, email, and addresses with fallbacks (early for logging)
+  const customerName = booking.customer?.name || booking.name || 'Valued Customer';
+  const customerEmail = booking.customer?.email || booking.email || '';
+  const pickupAddress = booking.trip?.pickup?.address || booking.pickupLocation || 'Pickup location not specified';
+  const dropoffAddress = booking.trip?.dropoff?.address || booking.dropoffLocation || 'Dropoff location not specified';
+
   console.log('📧 [EMAIL SERVICE] Attempting to send booking verification email...');
-  console.log(`   To: ${booking.customer.email}`);
+  console.log(`   To: ${customerEmail}`);
   console.log(`   Booking ID: ${booking.id}`);
   console.log(`   Environment: ${process.env.NODE_ENV || 'unknown'}`);
   
@@ -257,9 +271,15 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
     });
   };
 
-  const emailText = `Hi ${booking.customer.name},
 
-One more step to secure your ride from ${booking.trip.pickup.address} to ${booking.trip.dropoff.address}.
+  if (!customerEmail) {
+    console.error('❌ [EMAIL SERVICE] Cannot send verification email - customer email is missing');
+    throw new Error('Customer email is required to send verification email');
+  }
+
+  const emailText = `Hi ${customerName},
+
+One more step to secure your ride from ${pickupAddress} to ${dropoffAddress}.
 
 Please confirm your booking by opening the link below:
 ${confirmationUrl}
@@ -269,8 +289,8 @@ Once you confirm, we'll finalize your driver assignment and send you the full it
 Booking summary:
 - Booking ID: ${booking.id}
 - Date & Time: ${formatDateTime(pickupDate)}
-- Pickup: ${booking.trip.pickup.address}
-- Dropoff: ${booking.trip.dropoff.address}
+- Pickup: ${pickupAddress}
+- Dropoff: ${dropoffAddress}
 
 Need help? Text or call us at ${businessSettings?.company?.phone || '(646) 221-6370'}.
 
@@ -279,8 +299,8 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: var(--color-primary-600);">Hi ${booking.customer.name},</h2>
-      <p>One more step to secure your ride from <strong>${booking.trip.pickup.address}</strong> to <strong>${booking.trip.dropoff.address}</strong>.</p>
+      <h2 style="color: var(--color-primary-600);">Hi ${customerName},</h2>
+      <p>One more step to secure your ride from <strong>${pickupAddress}</strong> to <strong>${dropoffAddress}</strong>.</p>
       <p style="margin: 24px 0;">
         <a href="${confirmationUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
           Confirm My Booking
@@ -292,8 +312,8 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 Booking Summary</h3>
         <p><strong>Booking ID:</strong> ${booking.id}</p>
         <p><strong>Date & Time:</strong> ${formatDateTime(pickupDate)}</p>
-        <p><strong>Pickup:</strong> ${booking.trip.pickup.address}</p>
-        <p><strong>Dropoff:</strong> ${booking.trip.dropoff.address}</p>
+        <p><strong>Pickup:</strong> ${pickupAddress}</p>
+        <p><strong>Dropoff:</strong> ${dropoffAddress}</p>
       </div>
 
       <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -308,7 +328,7 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
   try {
     const result = await transporter.sendMail({
       from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
-      to: booking.customer.email,
+      to: customerEmail,
       bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
       subject: `Action Required: Confirm your booking (${booking.id})`,
       text: emailText,
@@ -317,12 +337,12 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
     
     console.log('✅ [EMAIL SERVICE] Booking verification email sent successfully');
     console.log(`   Message ID: ${result.messageId}`);
-    console.log(`   To: ${booking.customer.email}`);
+    console.log(`   To: ${customerEmail}`);
     console.log(`   Response: ${result.response}`);
   } catch (error) {
     console.error('❌ [EMAIL SERVICE] Failed to send booking verification email');
     console.error(`   Error: ${error instanceof Error ? error.message : String(error)}`);
-    console.error(`   To: ${booking.customer.email}`);
+    console.error(`   To: ${customerEmail}`);
     console.error(`   Booking ID: ${booking.id}`);
     throw error; // Re-throw so caller knows email failed
   }

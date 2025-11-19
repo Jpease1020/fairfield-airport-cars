@@ -2,7 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import styled from 'styled-components';
 import { Container, Stack, H2, Text, Button, LoadingSpinner } from '@/design/ui';
+
+const ButtonWrapper = styled.div`
+  flex: 1 1 0;
+  min-width: 0;
+`;
+
+const ButtonContainer = styled(Stack)`
+  width: 100%;
+  max-width: 500px;
+`;
 
 type ConfirmationState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -71,22 +82,28 @@ export default function BookingConfirmationPage() {
           <Text align="center" color="secondary" cmsId="booking-confirm-success-description">
             We've notified the Fairfield Airport Cars team. You'll receive your final itinerary shortly.
           </Text>
-          <Stack direction="horizontal" spacing="md" align="center" justify="center">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={() => window.location.href = `/booking/${bookingId}`}
-              cmsId="booking-confirm-view-booking-button"
-              text="View Booking"
-            />
-            <Button
-              variant="outline"
-              size="md"
-              onClick={() => window.location.href = '/'}
-              cmsId="booking-confirm-return-home-button"
-              text="Return Home"
-            />
-          </Stack>
+          <ButtonContainer direction="horizontal" spacing="md" align="stretch" justify="center">
+            <ButtonWrapper>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => window.location.href = `/booking/${bookingId}`}
+                cmsId="booking-confirm-view-booking-button"
+                text="View Booking"
+                fullWidth
+              />
+            </ButtonWrapper>
+            <ButtonWrapper>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => window.location.href = '/'}
+                cmsId="booking-confirm-return-home-button"
+                text="Return Home"
+                fullWidth
+              />
+            </ButtonWrapper>
+          </ButtonContainer>
         </Stack>
       );
     }
