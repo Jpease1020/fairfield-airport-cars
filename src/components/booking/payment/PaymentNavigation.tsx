@@ -4,20 +4,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { Stack, Button } from '@/design/ui';
 
-const BackButtonWrapper = styled.div`
-  flex: 0 0 auto;
-  min-width: 100px;
-`;
-
-const ConfirmButtonWrapper = styled.div`
-  flex: 1 1 auto;
+const ButtonWrapper = styled.div`
+  flex: 1 1 0;
+  min-width: 0;
 `;
 
 interface PaymentNavigationProps {
   onBack: () => void;
   onProcessPayment: () => void;
   isProcessingPayment: boolean;
-  cmsData: any;
+  cmsData: Record<string, string> | undefined;
 }
 
 export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
@@ -28,7 +24,7 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
 }) => {
   return (
     <Stack direction="horizontal" spacing="md" justify="space-between" align="stretch" data-testid="payment-navigation">
-      <BackButtonWrapper>
+      <ButtonWrapper>
         <Button
           variant="outline"
           size="md"
@@ -39,9 +35,9 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
           text={cmsData?.['paymentPhase-backButton'] || 'Back'}
           fullWidth
         />
-      </BackButtonWrapper>
+      </ButtonWrapper>
       
-      <ConfirmButtonWrapper>
+      <ButtonWrapper>
         <Button
           variant="primary"
           size="md"
@@ -53,7 +49,7 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
           text={cmsData?.['paymentPhase-processButton'] || 'Confirm Booking - No Payment Required'}
           fullWidth
         />
-      </ConfirmButtonWrapper>
+      </ButtonWrapper>
     </Stack>
   );
 };
