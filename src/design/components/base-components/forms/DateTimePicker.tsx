@@ -46,6 +46,18 @@ const InputWrapper = styled.div`
   }
 `;
 
+const LabelWrapper = styled.label`
+  display: block;
+  margin-bottom: ${spacing.sm};
+  font-size: ${fontSize.sm};
+  font-weight: 500;
+  color: ${colors.text.primary};
+`;
+
+const RequiredAsterisk = styled.span`
+  color: ${colors.danger[600]};
+`;
+
 export interface DateTimePickerProps {
   id?: string;
   label?: string;
@@ -202,23 +214,24 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     // Use requestAnimationFrame to ensure DOM is ready, then scroll
     if (typeof window !== 'undefined' && window.requestAnimationFrame) {
       window.requestAnimationFrame(() => {
-      const inputRect = input.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      
-      // Target position: 120px from top of viewport (leaves room for header/navigation)
-      const targetTop = 120;
-      const currentTop = inputRect.top;
-      
-      // Only scroll if input is not already well-positioned
-      // Check if input is too high (above target) or too low (below middle of viewport)
-      if (currentTop < 50 || currentTop > viewportHeight / 2) {
-        const scrollAmount = currentTop - targetTop;
-        window.scrollTo({
-          top: window.scrollY + scrollAmount,
-          behavior: 'smooth'
-        });
-      }
-    });
+        const inputRect = input.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // Target position: 120px from top of viewport (leaves room for header/navigation)
+        const targetTop = 120;
+        const currentTop = inputRect.top;
+        
+        // Only scroll if input is not already well-positioned
+        // Check if input is too high (above target) or too low (below middle of viewport)
+        if (currentTop < 50 || currentTop > viewportHeight / 2) {
+          const scrollAmount = currentTop - targetTop;
+          window.scrollTo({
+            top: window.scrollY + scrollAmount,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
   }, [isMobileDevice]);
 
   // Handle date input focus - scroll into view
@@ -247,7 +260,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     const timeInput = timeInputWrapperRef.current.querySelector('input[type="time"]') as HTMLInputElement;
     if (!timeInput) return;
 
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleFocus = (e: FocusEvent) => {
       // Only prevent focus if it's not explicitly allowed
       if (!allowTimeFocus) {
         e.preventDefault();
