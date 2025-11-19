@@ -8,6 +8,7 @@ import { getBooking } from '@/lib/services/booking-service';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
+import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -246,6 +247,25 @@ export async function POST(request: Request) {
         bookingId: bookingResult.bookingId,
         reason: emailWarning,
       });
+    }
+
+    // Send push notification to driver (Gregg) about new booking
+    try {
+      console.log('🔔 [BOOKING SUBMIT] Sending push notification to driver...');
+      await notifyDriverOfNewBooking({
+        bookingId: bookingResult.bookingId,
+        customerName: customer.name,
+        pickupAddress: trip.pickup.address,
+        dropoffAddress: trip.dropoff.address,
+        pickupDateTime: trip.pickupDateTime.toISOString(),
+        fare: fare
+      });
+      console.log('✅ [BOOKING SUBMIT] Driver notification sent successfully');
+    } catch (notificationError) {
+      // Don't fail booking creation if notification fails
+      console.error('❌ [BOOKING SUBMIT] Failed to send driver notification:', notificationError);
+      console.error(`   Error details: ${notificationError instanceof Error ? notificationError.message : String(notificationError)}`);
+      console.warn('⚠️ [BOOKING SUBMIT] Booking created but driver was not notified');
     }
 
     return NextResponse.json({ 

@@ -144,6 +144,24 @@ class PushNotificationService {
       }, { merge: true });
 
       console.log('✅ User token saved for:', userId);
+
+      // If this is Gregg (driver), also save token with driver ID
+      // This allows driver notifications to work even if Firebase Auth UID differs
+      const DRIVER_ID = 'gregg-driver-001';
+      if (userId === DRIVER_ID || userId.includes('gregg') || userId.includes('driver')) {
+        try {
+          await setDoc(doc(db, 'user_tokens', DRIVER_ID), {
+            token: this.currentToken,
+            userId: DRIVER_ID,
+            driverId: DRIVER_ID,
+            createdAt: new Date(),
+            lastUpdated: new Date()
+          }, { merge: true });
+          console.log('✅ Driver token also saved for:', DRIVER_ID);
+        } catch (driverError) {
+          console.warn('Failed to save driver token:', driverError);
+        }
+      }
     } catch (error) {
       console.error('Failed to save user token:', error);
     }

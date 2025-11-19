@@ -10,6 +10,12 @@
   "scope": "/",
   "lang": "en-US",
   "categories": ["travel", "transportation"],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://www.fairfieldairportcar.com/manifest.json"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",

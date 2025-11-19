@@ -57,6 +57,24 @@ export const handleInstallPrompt = (): Promise<boolean> => {
   });
 };
 
+// Check if app is installed using getInstalledRelatedApps() API (Chrome)
+export const checkInstalledRelatedApps = async (): Promise<boolean> => {
+  if (typeof window === 'undefined') return false;
+  
+  // Check if API is available (Chrome/Edge)
+  if ('getInstalledRelatedApps' in navigator) {
+    try {
+      const relatedApps = await (navigator as any).getInstalledRelatedApps();
+      return relatedApps && relatedApps.length > 0;
+    } catch (error) {
+      console.warn('📱 PWA: Error checking installed related apps:', error);
+      return false;
+    }
+  }
+  
+  return false;
+};
+
 // Check if app is running as PWA
 export const isRunningAsPWA = (): boolean => {
   if (typeof window === 'undefined') return false;
@@ -66,6 +84,18 @@ export const isRunningAsPWA = (): boolean => {
     (window.navigator as any).standalone === true ||
     document.referrer.includes('android-app://')
   );
+};
+
+// Comprehensive check: Is PWA installed or running as PWA?
+export const isPWAInstalled = async (): Promise<boolean> => {
+  // First check display mode (fast, synchronous)
+  if (isRunningAsPWA()) {
+    return true;
+  }
+  
+  // Then check getInstalledRelatedApps() (async, Chrome-specific)
+  const installedViaAPI = await checkInstalledRelatedApps();
+  return installedViaAPI;
 };
 
 // Request notification permission
@@ -118,8 +148,14 @@ export const addConnectionListener = (callback: (isOnline: boolean) => void): vo
 // PWA Install Prompt Hook
 export const usePWAInstallPrompt = () => {
   const [canInstall, setCanInstall] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
+    // Only add event listener on client side
+    if (typeof window === 'undefined') return;
+    
     const handler = (event: Event) => {
       event.preventDefault();
       deferredPrompt = event as InstallPromptEvent;
@@ -135,14 +171,19 @@ export const usePWAInstallPrompt = () => {
   }, []);
 
   const promptInstall = async () => {
-    if (deferredPrompt) {
+    if (typeof window === 'undefined' || !deferredPrompt) return;
+    
+    try {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       console.log(`📱 PWA: User response to the install prompt: ${outcome}`);
       deferredPrompt = null;
       setCanInstall(false);
+    } catch (error) {
+      console.warn('📱 PWA: Error showing install prompt:', error);
     }
   };
 
-  return { canInstall, promptInstall };
+  // Return false until mounted to prevent hydration mismatch
+  return { canInstall: isMounted ? canInstall : false, promptInstall };
 };

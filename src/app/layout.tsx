@@ -10,8 +10,8 @@ import { GoogleMapsClientProvider } from '@/providers/GoogleMapsClientProvider';
 import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
 import { getAllCMSDataCached } from '@/lib/services/cms-cache';
 import { BookingProvider } from '@/providers/BookingProvider';
-// import { PWAProvider } from '@/components/pwa/PWAProvider';
-// import { ConnectionStatus } from '@/components/pwa/ConnectionStatus';
+import { PWAProvider } from '@/components/pwa/PWAProvider';
+import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
 
 import { AppContent } from './AppContent';
 import { NavigationWrapper } from '@/components/app/NavigationWrapper';
@@ -45,7 +45,7 @@ export default async function RootLayout({
       </head>
       <body>
         <StyledComponentsRegistry>
-          {/* <PWAProvider> */}
+          <PWAProvider>
             <CMSDataProvider initialCmsData={allCmsData}>
               <Suspense fallback={<div>Loading...</div>}>
                 <GoogleMapsClientProvider>
@@ -54,7 +54,6 @@ export default async function RootLayout({
                       <AccessibilityEnhancer>
                         <AdminProvider>
                           <InteractionModeProvider>
-                            {/* <ConnectionStatus /> */}
                             <NavigationWrapper />
                             
                             <Container as="main" maxWidth="full" data-testid="layout-main-content">
@@ -62,6 +61,8 @@ export default async function RootLayout({
                             </Container>
                             
                             <Footer data-testid="layout-footer" />
+                            {/* PWA Install Banner - Hidden until functionality is verified */}
+                            {/* <PWAInstallBanner /> */}
                           </InteractionModeProvider>
                         </AdminProvider>
                       </AccessibilityEnhancer>
@@ -70,7 +71,7 @@ export default async function RootLayout({
               </GoogleMapsClientProvider>
               </Suspense>
             </CMSDataProvider>
-          {/* </PWAProvider> */}
+          </PWAProvider>
         </StyledComponentsRegistry>
       </body>
     </html>

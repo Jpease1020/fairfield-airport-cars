@@ -91,15 +91,14 @@ const stubSubmitEndpoint = async (
   });
 };
 
-const formatDateTimeForInput = (date: Date) => {
-  return date.toLocaleString('en-US', {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
+// Helper to format date for native date input (YYYY-MM-DD)
+const formatDateForInput = (date: Date): string => {
+  return date.toISOString().split('T')[0];
+};
+
+// Helper to format time for native time input (HH:mm)
+const formatTimeForInput = (date: Date): string => {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 };
 
 /**
@@ -124,9 +123,13 @@ test.describe('Customer Booking Smoke Flow', () => {
     await expect(page.locator('[data-testid="fare-display"]')).toBeVisible({ timeout: 10000 });
 
     // Trip details already seeded; verify and continue
-    const dateInput = page.locator('[data-testid="pickup-datetime-input"] input:not([aria-hidden="true"])').first();
-    await dateInput.fill(formatDateTimeForInput(pickupDate));
-    await dateInput.press('Enter');
+    // Fill date input
+    const dateInput = page.locator('[data-testid="pickup-datetime-input-date"]');
+    await dateInput.fill(formatDateForInput(pickupDate));
+    
+    // Fill time input
+    const timeInput = page.locator('[data-testid="pickup-datetime-input-time"]');
+    await timeInput.fill(formatTimeForInput(pickupDate));
 
     await page.locator('[data-testid="trip-details-next-button"]').click();
 
@@ -168,9 +171,13 @@ test.describe('Customer Booking Smoke Flow', () => {
     await page.goto('/book');
     await page.waitForLoadState('networkidle');
 
-    const dateInput = page.locator('[data-testid="pickup-datetime-input"] input:not([aria-hidden="true"])').first();
-    await dateInput.fill(formatDateTimeForInput(pickupDate));
-    await dateInput.press('Enter');
+    // Fill date input
+    const dateInput = page.locator('[data-testid="pickup-datetime-input-date"]');
+    await dateInput.fill(formatDateForInput(pickupDate));
+    
+    // Fill time input
+    const timeInput = page.locator('[data-testid="pickup-datetime-input-time"]');
+    await timeInput.fill(formatTimeForInput(pickupDate));
 
     await page.locator('[data-testid="trip-details-next-button"]').click();
 

@@ -36,7 +36,8 @@ export interface TimeSlot {
   customerName?: string;
   pickupLocation?: string;
   dropoffLocation?: string;
-  status: 'available' | 'booked' | 'blocked' | 'break';
+  notes?: string;
+  status: 'available' | 'booked' | 'blocked' | 'break' | 'prep';
 }
 
 export interface BookingConflict {
@@ -215,6 +216,11 @@ export class DriverSchedulingService {
       const requestedStart = this.timeToMinutes(startTime);
       const requestedEnd = this.timeToMinutes(endTime);
       
+      // Also check prep time (1 hour before pickup) for conflicts
+      const prepStartTime = this.subtractHours(startTime, 1);
+      const prepStart = this.timeToMinutes(prepStartTime);
+      const prepEnd = requestedStart;
+      
       // Handle both Admin SDK (docs array) and Client SDK (docs array) formats
       const docs = scheduleSnapshot.docs || [];
       for (const scheduleDoc of docs) {
@@ -222,12 +228,23 @@ export class DriverSchedulingService {
         const schedule = scheduleData as DriverSchedule;
         
         for (const slot of schedule.timeSlots) {
-          if (slot.status === 'booked' && slot.bookingId !== excludeBookingId) {
+          // Check both booked and prep slots for conflicts
+          if ((slot.status === 'booked' || slot.status === 'prep') && slot.bookingId !== excludeBookingId) {
             const slotStart = this.timeToMinutes(slot.startTime);
             const slotEnd = this.timeToMinutes(slot.endTime);
             
-            // Check for overlap
+            // Check for overlap with actual ride time
             if (requestedStart < slotEnd && requestedEnd > slotStart) {
+              conflicts.push({
+                bookingId: slot.bookingId!,
+                customerName: slot.customerName!,
+                timeSlot: `${slot.startTime}-${slot.endTime}`,
+                driverName: schedule.driverName
+              });
+            }
+            
+            // Check for overlap with prep time
+            if (prepStart < slotEnd && prepEnd > slotStart) {
               conflicts.push({
                 bookingId: slot.bookingId!,
                 customerName: slot.customerName!,
@@ -260,7 +277,21 @@ export class DriverSchedulingService {
   }
 
   /**
+   * Helper function to subtract hours from a time string (HH:MM format)
+   */
+  private subtractHours(timeStr: string, hours: number): string {
+    const [hoursStr, minutesStr] = timeStr.split(':');
+    const totalMinutes = parseInt(hoursStr) * 60 + parseInt(minutesStr) - (hours * 60);
+    const newHours = Math.floor(totalMinutes / 60);
+    const newMinutes = totalMinutes % 60;
+    // Handle negative hours (previous day)
+    const finalHours = newHours < 0 ? 24 + newHours : newHours;
+    return `${String(finalHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+  }
+
+  /**
    * Book a time slot for a driver
+   * Also blocks 1 hour before pickup time for driver prep
    */
   async bookTimeSlot(
     driverId: string,
@@ -292,7 +323,40 @@ export class DriverSchedulingService {
         };
       }
 
-      // Update the specific time slot
+      // Block 1 hour before pickup for driver prep
+      const prepStartTime = this.subtractHours(startTime, 1);
+      const prepEndTime = startTime;
+      const prepSlotId = `${prepStartTime}-${prepEndTime}`;
+      
+      // Block prep time slot
+      const prepSlotIndex = schedule.timeSlots.findIndex(slot => slot.id === prepSlotId);
+      if (prepSlotIndex === -1) {
+        schedule.timeSlots.push({
+          id: prepSlotId,
+          startTime: prepStartTime,
+          endTime: prepEndTime,
+          isAvailable: false,
+          status: 'prep',
+          bookingId,
+          customerName,
+          pickupLocation,
+          dropoffLocation,
+          notes: 'Driver prep time'
+        });
+      } else {
+        schedule.timeSlots[prepSlotIndex] = {
+          ...schedule.timeSlots[prepSlotIndex],
+          isAvailable: false,
+          status: 'prep',
+          bookingId,
+          customerName,
+          pickupLocation,
+          dropoffLocation,
+          notes: 'Driver prep time'
+        };
+      }
+
+      // Update the actual ride time slot
       const slotId = `${startTime}-${endTime}`;
       const slotIndex = schedule.timeSlots.findIndex(slot => slot.id === slotId);
       
