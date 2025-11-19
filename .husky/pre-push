@@ -50,6 +50,21 @@ else
     exit 1
 fi
 
-echo "${GREEN}🎉 All tests passed! Proceeding with push...${NC}"
+# Run build to ensure code compiles
+echo "${YELLOW}🏗️  Running build...${NC}"
+BUILD_OUTPUT=$(npm run build 2>&1)
+BUILD_EXIT_CODE=$?
+
+if [ $BUILD_EXIT_CODE -eq 0 ]; then
+    echo "${GREEN}✅ Build passed!${NC}"
+else
+    echo "${RED}❌ Build failed!${NC}"
+    echo "$BUILD_OUTPUT"
+    echo ""
+    echo "${YELLOW}💡 Please fix build errors before pushing.${NC}"
+    exit 1
+fi
+
+echo "${GREEN}🎉 All tests and build passed! Proceeding with push...${NC}"
 exit 0
 

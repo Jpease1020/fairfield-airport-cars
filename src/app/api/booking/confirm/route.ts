@@ -52,14 +52,16 @@ export async function POST(request: NextRequest) {
       bookingStatus: bookingData?.status
     });
 
+    // Check if already confirmed FIRST (before checking token)
+    // Only consider it confirmed if confirmation.status is explicitly 'confirmed'
+    // Don't rely on booking.status alone, as that can be set by other processes (e.g., payment webhook)
+    if (confirmation?.status === 'confirmed') {
+      return NextResponse.json({
+        message: 'Booking already confirmed.'
+      });
+    }
+
     if (!confirmation || !confirmation.token) {
-      // If booking is already confirmed, allow it
-      if (bookingData?.status === 'confirmed') {
-        return NextResponse.json({
-          message: 'Booking already confirmed.'
-        });
-      }
-      
       // If booking exists but token is missing, provide helpful error
       console.warn(`[BOOKING CONFIRM] Booking ${bookingId} exists but confirmation token is missing`);
       return NextResponse.json(
@@ -71,12 +73,6 @@ export async function POST(request: NextRequest) {
         },
         { status: 409 }
       );
-    }
-
-    if (confirmation.status === 'confirmed') {
-      return NextResponse.json({
-        message: 'Booking already confirmed.'
-      });
     }
 
     if (confirmation.token !== token) {

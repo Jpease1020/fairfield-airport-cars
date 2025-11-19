@@ -103,12 +103,28 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
     }
   };
 
-  const formatDateTime = (dateTime: Date | string | undefined) => {
+  const formatDateTime = (dateTime: Date | string | undefined | any) => {
     if (!dateTime) {
       return 'Not specified';
     }
     
-    const date = typeof dateTime === 'string' ? new Date(dateTime) : dateTime;
+    // Handle Firestore Timestamp objects
+    let date: Date;
+    if (dateTime && typeof dateTime.toDate === 'function') {
+      // Firestore Timestamp
+      date = dateTime.toDate();
+    } else if (dateTime && typeof dateTime.getTime === 'function') {
+      // Already a Date object
+      date = dateTime;
+    } else if (typeof dateTime === 'string') {
+      // ISO string
+      date = new Date(dateTime);
+    } else if (typeof dateTime === 'number') {
+      // Timestamp number
+      date = new Date(dateTime);
+    } else {
+      return 'Invalid date';
+    }
     
     if (isNaN(date.getTime())) {
       return 'Invalid date';
