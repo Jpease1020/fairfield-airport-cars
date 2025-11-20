@@ -88,8 +88,8 @@ const StyledInput = styled.input.withConfig({
       -webkit-appearance: menulist-button;
       appearance: menulist-button;
       
-      /* Ensure proper padding for native pickers */
-      padding-right: ${spacing.lg};
+      /* Ensure proper padding for native pickers - extra space for indicator */
+      padding-right: 50px !important;
       
       /* Ensure the input is tappable and shows picker */
       &:focus {
@@ -101,6 +101,7 @@ const StyledInput = styled.input.withConfig({
       &::-webkit-datetime-edit {
         padding: 0;
         color: ${colors.text.primary};
+        padding-right: 8px; /* Add space between text and indicator */
       }
       
       &::-webkit-datetime-edit-fields-wrapper {
@@ -121,19 +122,22 @@ const StyledInput = styled.input.withConfig({
         padding: 0 2px;
       }
       
-      /* Calendar/time picker indicator - make it more visible on mobile */
+      /* Calendar/time picker indicator - position to the right with proper spacing */
       &::-webkit-calendar-picker-indicator {
         opacity: 1 !important;
         cursor: pointer;
-        width: 28px !important;
-        height: 28px !important;
-        padding: 6px !important;
-        margin-left: 4px;
+        width: 24px !important;
+        height: 24px !important;
+        padding: 4px !important;
+        margin-left: 8px !important;
+        margin-right: 8px !important;
         display: inline-block !important;
         visibility: visible !important;
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+        position: absolute;
+        right: 8px;
         /* Force visibility on iOS */
         -webkit-appearance: menulist-button;
         appearance: menulist-button;

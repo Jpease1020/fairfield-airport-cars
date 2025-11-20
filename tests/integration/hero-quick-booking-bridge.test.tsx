@@ -180,7 +180,8 @@ describe('Hero quick booking bridge', () => {
     fireEvent.change(timeInput, { target: { value: '10:30' } });
 
     const submitButton = await screen.findByTestId('quick-book-secure-rate-button');
-    await waitFor(() => expect(submitButton).toBeEnabled());
+    // Button is always enabled now (validation happens on click)
+    expect(submitButton).toBeEnabled();
     await user.click(submitButton);
 
     await waitFor(() => {

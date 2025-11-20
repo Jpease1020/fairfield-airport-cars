@@ -32,8 +32,16 @@ export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'u
     try {
       const { getAdminDb } = await import('@/lib/utils/firebase-admin');
       adminDb = getAdminDb();
-    } catch {
-      // Admin SDK not available (client-side), use client SDK
+    } catch (error) {
+      // Admin SDK not available - log error for debugging
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.warn('⚠️ Firebase Admin not available, falling back to client SDK:', errorMsg);
+      // In server context (API routes), this is a problem - we should use Admin SDK
+      if (typeof window === 'undefined') {
+        console.error('❌ Firebase Admin required for server-side quote creation but not initialized');
+        throw new Error(`Firebase Admin not initialized: ${errorMsg}. Check environment variables or emulator configuration.`);
+      }
+      // Client-side: use client SDK
       adminDb = null;
     }
 

@@ -7,8 +7,8 @@ import { Stack } from '../../../layout/framing/Stack';
 import { Input } from './Input';
 
 const DatePickerWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['fullWidth', 'error', 'size'].includes(prop)
-})<{ fullWidth: boolean; error: boolean; size: 'sm' | 'md' | 'lg' }>`
+  shouldForwardProp: (prop) => !['fullWidth', 'error', 'size', 'isValid'].includes(prop)
+})<{ fullWidth: boolean; error: boolean; size: 'sm' | 'md' | 'lg'; isValid?: boolean }>`
   position: relative;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
   
@@ -38,7 +38,8 @@ const InputWrapper = styled.div`
   position: relative;
   min-width: 0; /* Allow flexbox to shrink properly */
   display: flex;
-  
+  align-items: center;
+
   /* Ensure equal width on mobile */
   @media (max-width: 768px) {
     flex: 1 1 0; /* Equal flex basis for equal widths */
@@ -54,8 +55,20 @@ const LabelWrapper = styled.label`
   color: ${colors.text.primary};
 `;
 
-const RequiredAsterisk = styled.span`
-  color: ${colors.danger[600]};
+const ValidationIndicator = styled.span<{ $isValid: boolean }>`
+  color: ${({ $isValid }) => ($isValid ? colors.success[600] : colors.danger[600])};
+  margin-left: 2px;
+`;
+
+const IconWrapper = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: ${colors.text.secondary};
+  margin-left: ${spacing.sm};
+  flex-shrink: 0;
+  pointer-events: none; /* Prevent icon from blocking clicks */
 `;
 
 export interface DateTimePickerProps {
@@ -71,6 +84,7 @@ export interface DateTimePickerProps {
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   required?: boolean;
+  isValid?: boolean; // Whether the field has a valid value
   cmsId?: string;
   [key: string]: any;
 }
@@ -88,6 +102,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   size = 'md',
   fullWidth = false,
   required = false,
+  isValid,
   cmsId,
   ...rest
 }) => {
@@ -303,7 +318,11 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       {label && (
         <LabelWrapper htmlFor={id}>
           {label}
-          {required && <RequiredAsterisk> *</RequiredAsterisk>}
+          {required && (
+            <ValidationIndicator $isValid={isValid ?? (!!value && !error)}>
+              {isValid ?? (!!value && !error) ? ' ✓' : ' *'}
+            </ValidationIndicator>
+          )}
         </LabelWrapper>
       )}
       
@@ -326,24 +345,6 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             aria-label="Select date"
             data-testid={cmsId ? `${cmsId}-date` : `${id}-date`}
           />
-          {/* Custom calendar icon for iOS - ONLY show on mobile devices when empty */}
-          {isMobileDevice && !dateValue && (
-            <span
-              style={{
-                position: 'absolute',
-                right: '40px', // Leave room for native picker indicator
-                top: '50%',
-                transform: 'translateY(-50%)',
-                pointerEvents: 'none',
-                fontSize: '16px',
-                color: colors.text.secondary,
-                zIndex: 1,
-              }}
-              aria-hidden="true"
-            >
-              📅
-            </span>
-          )}
         </InputWrapper>
 
         {/* Time Input - Native HTML5 */}
@@ -364,24 +365,6 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             aria-label="Select time"
             data-testid={cmsId ? `${cmsId}-time` : `${id}-time`}
           />
-          {/* Custom clock icon for iOS - ONLY show on mobile devices when empty */}
-          {isMobileDevice && !timeValue && (
-            <span
-              style={{
-                position: 'absolute',
-                right: '40px', // Leave room for native picker indicator
-                top: '50%',
-                transform: 'translateY(-50%)',
-                pointerEvents: 'none',
-                fontSize: '16px',
-                color: colors.text.secondary,
-                zIndex: 1,
-              }}
-              aria-hidden="true"
-            >
-              🕐
-            </span>
-          )}
         </InputWrapper>
       </InputGroup>
     </DatePickerWrapper>

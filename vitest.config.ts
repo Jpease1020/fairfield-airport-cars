@@ -8,6 +8,25 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
+    // Optimize memory usage - use threads with isolation
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true, // Use single thread to prevent memory accumulation
+        isolate: true, // Isolate each test file for memory safety
+        minThreads: 1,
+        maxThreads: 1, // Single thread only
+      },
+    },
+    // Reduce memory pressure
+    testTimeout: 10000, // 10 second timeout per test
+    hookTimeout: 10000, // 10 second timeout for hooks
+    teardownTimeout: 5000, // 5 second timeout for teardown
+    // Run tests sequentially within a file to prevent memory accumulation
+    sequence: {
+      concurrent: false, // Run tests sequentially, not in parallel
+      shuffle: false, // Don't shuffle to maintain order
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

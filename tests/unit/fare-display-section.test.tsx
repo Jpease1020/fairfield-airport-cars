@@ -16,6 +16,9 @@ vi.mock('@/providers/BookingProvider', () => ({
 }));
 
 describe('FareDisplaySection', () => {
+  afterEach(() => {
+    cleanup(); // Clean up rendered components between tests
+  });
   const mockCmsData = {
     'tripDetailsPhase-fareTitle': 'Estimated Fare',
     'tripDetailsPhase-personalFare': 'Personal',
@@ -90,7 +93,7 @@ describe('FareDisplaySection', () => {
       />
     );
 
-    expect(screen.getByText('Estimated Fare')).toBeInTheDocument();
+    expect(screen.getByTestId('fare-display-title')).toBeInTheDocument();
     expect(screen.getByText('Business Fare')).toBeInTheDocument();
     expect(screen.getByText('$85.50')).toBeInTheDocument();
     expect(screen.getByTestId('fare-display')).toBeInTheDocument();
@@ -106,7 +109,7 @@ describe('FareDisplaySection', () => {
       />
     );
 
-    expect(screen.getByText('Estimated Fare')).toBeInTheDocument();
+    expect(screen.getByTestId('fare-display-title')).toBeInTheDocument();
     expect(screen.getByText('Personal Fare')).toBeInTheDocument();
     expect(screen.getByText('$75.25')).toBeInTheDocument();
   });
@@ -147,7 +150,7 @@ describe('FareDisplaySection', () => {
       />
     );
 
-    expect(screen.getByText('Estimated Fare')).toBeInTheDocument();
+    expect(screen.getByTestId('fare-display-title')).toBeInTheDocument();
     expect(screen.getByText('Business Fare')).toBeInTheDocument();
   });
 

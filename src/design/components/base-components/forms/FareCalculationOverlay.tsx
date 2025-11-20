@@ -6,7 +6,7 @@ import { LoadingSpinner } from '../notifications/LoadingSpinner';
 import { Text } from '../text/Text';
 import { colors, spacing } from '../../../system/tokens/tokens';
 
-const OverlayContainer = styled.div<{ isVisible: boolean }>`
+const OverlayContainer = styled.div<{ $isVisible: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -14,7 +14,7 @@ const OverlayContainer = styled.div<{ isVisible: boolean }>`
   bottom: 0;
   background-color: ${colors.background.overlay};
   backdrop-filter: blur(2px);
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+  display: ${({ $isVisible }) => ($isVisible ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
   z-index: 999;
@@ -47,7 +47,7 @@ export const FareCalculationOverlay: React.FC<FareCalculationOverlayProps> = ({
   }
 
   return (
-    <OverlayContainer isVisible={isCalculating} role="status" aria-live="polite">
+        <OverlayContainer $isVisible={isCalculating} role="status" aria-live="polite">
       <LoadingContent>
         <LoadingSpinner size="lg" variant="spinner" />
         <Text size="md" weight="semibold" color="primary">

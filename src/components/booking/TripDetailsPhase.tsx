@@ -138,7 +138,11 @@ export function TripDetailsPhase({
         {availabilityError && (
           <StatusMessage
             type={availabilityStatusType}
-            message={availabilityError}
+            message={
+              availabilityError.includes('No drivers are available') 
+                ? 'No available drivers, try modifying the pickup time'
+                : availabilityError
+            }
             id="availability-error-message"
             data-testid="availability-error-message"
           />

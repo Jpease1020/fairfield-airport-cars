@@ -446,10 +446,31 @@ const [warning, setWarning] = useState<string | null>(null);
       fieldErrors['dropoff-location-input'] = errorMsg;
     }
     
+    // Validate pickup date and time - must have both date and time components
     if (!formData.trip.pickupDateTime) {
       const errorMsg = 'Pickup date and time is required';
       errors.push(errorMsg);
       fieldErrors['pickup-datetime-input'] = errorMsg;
+    } else {
+      // Check that pickupDateTime contains both date and time (format: YYYY-MM-DDTHH:mm)
+      const dateTimeParts = formData.trip.pickupDateTime.split('T');
+      if (dateTimeParts.length !== 2) {
+        const errorMsg = 'Both date and time are required';
+        errors.push(errorMsg);
+        fieldErrors['pickup-datetime-input'] = errorMsg;
+      } else {
+        const [datePart, timePart] = dateTimeParts;
+        if (!datePart || datePart.trim() === '') {
+          const errorMsg = 'Pickup date is required';
+          errors.push(errorMsg);
+          fieldErrors['pickup-datetime-input'] = errorMsg;
+        }
+        if (!timePart || timePart.trim() === '') {
+          const errorMsg = 'Pickup time is required';
+          errors.push(errorMsg);
+          fieldErrors['pickup-datetime-input'] = errorMsg;
+        }
+      }
     }
 
     return {
@@ -723,6 +744,41 @@ const [warning, setWarning] = useState<string | null>(null);
       router.push('/book');
     } else {
       setError(validation.errors.join(', '));
+      
+      // Scroll to the first error field
+      const firstErrorFieldId = validation.fieldErrors ? Object.keys(validation.fieldErrors)[0] : undefined;
+      if (firstErrorFieldId) {
+        // Map validation field IDs to actual DOM element IDs/data-testids
+        const fieldIdMap: Record<string, string[]> = {
+          'pickup-location-input': ['pickup-location', 'quick-book-pickup-input'],
+          'dropoff-location-input': ['dropoff-location', 'quick-book-dropoff-input'],
+          'pickup-datetime-input': ['pickup-datetime-date', 'pickup-datetime-time', 'quick-book-datetime-input'],
+        };
+        
+        const possibleIds = fieldIdMap[firstErrorFieldId] || [firstErrorFieldId];
+        let errorElement: HTMLElement | null = null;
+        
+        // Try to find the element by ID or data-testid
+        for (const id of possibleIds) {
+          errorElement = document.getElementById(id) || 
+                        document.querySelector(`[data-testid="${id}"]`) as HTMLElement;
+          if (errorElement) break;
+        }
+        
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Focus the input if it's focusable
+          if (errorElement instanceof HTMLInputElement) {
+            errorElement.focus();
+          } else {
+            // Try to find an input within the element
+            const input = errorElement.querySelector('input');
+            if (input) {
+              input.focus();
+            }
+          }
+        }
+      }
     }
   };
 

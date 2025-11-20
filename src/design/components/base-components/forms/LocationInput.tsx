@@ -53,6 +53,18 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   const isProcessingPlaceSelection = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const places = useMapsLibrary('places');
+  
+  // Use refs for callbacks to prevent recreating autocomplete
+  const onChangeRef = useRef(onChange);
+  const onLocationSelectRef = useRef(onLocationSelect);
+  const onCoordsChangeRef = useRef(onCoordsChange);
+  
+  // Update refs when callbacks change
+  useEffect(() => {
+    onChangeRef.current = onChange;
+    onLocationSelectRef.current = onLocationSelect;
+    onCoordsChangeRef.current = onCoordsChange;
+  }, [onChange, onLocationSelect, onCoordsChange]);
 
   // Extract address from place result
   const getAddressFromPlace = useCallback((place: google.maps.places.PlaceResult): string => {
@@ -66,8 +78,11 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   }, []);
 
   // Handle place selection from autocomplete
+  // This is the ONLY place where we update React state from Google Maps events
+  // We avoid direct DOM manipulation - let React control the value through state
+  // Using a stable callback that doesn't change to prevent autocomplete recreation
   const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
-    if (!place.geometry?.location || !inputRef.current) {
+    if (!place.geometry?.location) {
       return;
     }
 
@@ -84,54 +99,43 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     // Mark that we're processing a place selection to prevent input change conflicts
     isProcessingPlaceSelection.current = true;
 
-    // Force immediate React state update using flushSync
-    // This ensures React state syncs synchronously before Google Maps blur event fires
-    // Critical for mobile Chrome where blur happens immediately after selection
+    // Update React state ONLY - React will update the DOM through the controlled component
+    // Use flushSync to ensure state updates synchronously before blur events fire on mobile
     flushSync(() => {
-      onChange(address);
+      onChangeRef.current(address);
     });
 
     // Notify callbacks about location selection
-    onLocationSelect(address, coordinates);
-    if (onCoordsChange) {
-      onCoordsChange(coordinates);
+    onLocationSelectRef.current(address, coordinates);
+    if (onCoordsChangeRef.current) {
+      onCoordsChangeRef.current(coordinates);
     }
 
     // Keep input in view on mobile after selection
     // Use requestAnimationFrame to ensure this happens after React re-render
-    if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    if (typeof window !== 'undefined' && window.requestAnimationFrame && isMobile) {
       window.requestAnimationFrame(() => {
-        if (!inputRef.current) {
-          isProcessingPlaceSelection.current = false;
-          return;
-        }
-
-        // Scroll input into view to ensure user sees the filled value
-        // Only on mobile devices (screen width <= 768px)
-        const isMobile = window.innerWidth <= 768;
-        if (isMobile) {
+        if (inputRef.current) {
           inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-
-        // Clear the processing flag after a short delay
-        // This ensures any blur events that fire can check the flag
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-        timeoutRef.current = setTimeout(() => {
-          isProcessingPlaceSelection.current = false;
-          timeoutRef.current = null;
-        }, 200);
       });
-    } else {
-      // Fallback if requestAnimationFrame is not available
-      setTimeout(() => {
-        isProcessingPlaceSelection.current = false;
-      }, 200);
     }
-  }, [onChange, onLocationSelect, onCoordsChange, getAddressFromPlace]);
+
+    // Clear the processing flag after a delay
+    // This ensures any blur events that fire can check the flag
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      isProcessingPlaceSelection.current = false;
+      timeoutRef.current = null;
+    }, 200);
+  }, [getAddressFromPlace]);
 
   // Initialize autocomplete when places library is loaded
+  // This effect should ONLY run when places library loads or restrictToAirports changes
+  // NOT when value or handlePlaceSelect changes (to prevent recreating autocomplete)
   useEffect(() => {
     if (!places || !inputRef.current) {
       setPlaceAutocomplete(null);
@@ -147,50 +151,76 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     const autocomplete = new places.Autocomplete(inputRef.current, options);
     setPlaceAutocomplete(autocomplete);
 
-    // Add place_changed listener
-    const listener = autocomplete.addListener('place_changed', () => {
+    // Add place_changed listener - this is the PRIMARY way Google Maps notifies us
+    const placeChangedListener = autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
-      if (place && place.place_id) {
+      
+      // Check if place has geometry (required for coordinates)
+      if (place && place.geometry?.location) {
         handlePlaceSelect(place);
+      } else {
+        // Even without geometry, update the address if we have one
+        if (place.formatted_address || place.name) {
+          const address = place.formatted_address || place.name || '';
+          flushSync(() => {
+            onChangeRef.current(address);
+          });
+        }
       }
     });
 
-    // Cleanup: remove listener and clear timeout
+    // Cleanup: remove listener
     return () => {
-      if (listener && google.maps && google.maps.event) {
-        google.maps.event.removeListener(listener);
+      if (placeChangedListener && google.maps && google.maps.event) {
+        google.maps.event.removeListener(placeChangedListener);
       }
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
     };
-  }, [places, restrictToAirports, handlePlaceSelect]);
+    // Only recreate autocomplete when places library or restrictToAirports changes
+    // handlePlaceSelect is stable (doesn't change), so it's safe to include
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [places, restrictToAirports]);
 
   // Handle manual input changes
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     // Only update if we're not processing a place selection
     // This prevents conflicts when Google Maps autocomplete sets the value
     if (!isProcessingPlaceSelection.current) {
-      onChange(e.target.value);
+      onChangeRef.current(e.target.value);
     }
-  }, [onChange]);
+  }, []);
 
-  // Handle blur - ensure value persists during place selection
+  // Handle blur - sync DOM value to React state if they differ
+  // This handles cases where Google Maps sets a value but React state didn't update
   const handleBlur = useCallback(() => {
-    // If we're processing a place selection, the value should already be set via flushSync
-    // But we check the DOM value as a safety net in case something went wrong
-    if (isProcessingPlaceSelection.current && inputRef.current) {
+    // If we're processing a place selection, the value should already be synced via flushSync
+    // But we check as a safety net in case something went wrong
+    if (isProcessingPlaceSelection.current) {
+      // The value should already be set, but verify DOM matches React state
+      if (inputRef.current && inputRef.current.value !== value) {
+        // If DOM has a value but React state doesn't match, sync it
+        const domValue = inputRef.current.value;
+        if (domValue) {
+          flushSync(() => {
+            onChangeRef.current(domValue);
+          });
+        }
+      }
+      return;
+    }
+    
+    // Normal blur: sync DOM value to React state if they differ
+    // This handles edge cases where Google Maps might have set a value
+    if (inputRef.current && inputRef.current.value !== value) {
       const domValue = inputRef.current.value;
-      // If DOM has a value but React state doesn't match, sync it
-      // This handles edge cases where Google Maps sets a value but React state didn't update
-      if (domValue && domValue !== value) {
-        flushSync(() => {
-          onChange(domValue);
-        });
+      if (domValue) {
+        onChangeRef.current(domValue);
       }
     }
-  }, [value, onChange]);
+  }, [value]);
 
   return (
     <LocationInputContainer>

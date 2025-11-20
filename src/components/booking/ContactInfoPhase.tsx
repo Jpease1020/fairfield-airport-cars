@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label } from '@/design/ui';
-import { FieldValidationStatus } from '@/design/components/base-components/forms/FieldValidationStatus';
 import { CustomerInfo, ValidationResult } from '@/types/booking';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
+import { colors, spacing } from '@/design/system/tokens/tokens';
 
 interface ContactInfoPhaseProps {
   customerData: CustomerInfo;
@@ -20,6 +20,25 @@ interface ContactInfoPhaseProps {
 const Half = styled.div`
   flex: 1;
   display: flex;
+  min-width: 0; /* Allow flexbox to shrink */
+`;
+
+const ButtonContainer = styled(Stack)`
+  @media (max-width: 768px) {
+    flex-direction: row;
+    gap: ${spacing.md};
+    
+    /* Ensure buttons are equal width on mobile */
+    > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
+`;
+
+const ValidationIndicator = styled.span<{ $isValid: boolean }>`
+  color: ${({ $isValid }) => ($isValid ? colors.success[600] : colors.danger[600])};
+  margin-left: 2px;
 `;
 
 export function ContactInfoPhase({
@@ -33,6 +52,19 @@ export function ContactInfoPhase({
   // Get CMS data from provider
   const { cmsData: allCmsData } = useCMSData();
   const pageCmsData = allCmsData?.booking || {};
+  
+  // Detect mobile screen size
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <Container maxWidth="4xl" padding="xl">
@@ -50,8 +82,13 @@ export function ContactInfoPhase({
           <Stack spacing="lg">
 
             <Stack spacing="sm">
-              <Label htmlFor="name-input" required>
+              <Label htmlFor="name-input">
                 {pageCmsData?.['form-name-label'] || 'Full Name'}
+                <ValidationIndicator 
+                  $isValid={!!customerData.name.trim() && !validation?.fieldErrors?.['name-input']}
+                >
+                  {!!customerData.name.trim() && !validation?.fieldErrors?.['name-input'] ? ' ✓' : ' *'}
+                </ValidationIndicator>
               </Label>
               <Input
                 id="name-input"
@@ -64,15 +101,16 @@ export function ContactInfoPhase({
                 error={!!validation?.fieldErrors?.['name-input']}
                 data-testid="name-input"
               />
-              <FieldValidationStatus
-                isValid={!!customerData.name.trim() && !validation?.fieldErrors?.['name-input']}
-                show={!!customerData.name.trim() || !!validation?.fieldErrors?.['name-input']}
-              />
             </Stack>
 
             <Stack spacing="sm">
-              <Label htmlFor="email-input" required>
+              <Label htmlFor="email-input">
                 {pageCmsData?.['form-email-label'] || 'Email'}
+                <ValidationIndicator 
+                  $isValid={!!customerData.email.trim() && !validation?.fieldErrors?.['email-input']}
+                >
+                  {!!customerData.email.trim() && !validation?.fieldErrors?.['email-input'] ? ' ✓' : ' *'}
+                </ValidationIndicator>
               </Label>
               <Input
                 id="email-input"
@@ -86,15 +124,16 @@ export function ContactInfoPhase({
                 error={!!validation?.fieldErrors?.['email-input']}
                 data-testid="email-input"
               />
-              <FieldValidationStatus
-                isValid={!!customerData.email.trim() && !validation?.fieldErrors?.['email-input']}
-                show={!!customerData.email.trim() || !!validation?.fieldErrors?.['email-input']}
-              />
             </Stack>
 
             <Stack spacing="sm">
-              <Label htmlFor="phone-input" required>
+              <Label htmlFor="phone-input">
                 {pageCmsData?.['form-phone-label'] || 'Phone Number'}
+                <ValidationIndicator 
+                  $isValid={!!customerData.phone.trim() && !validation?.fieldErrors?.['phone-input']}
+                >
+                  {!!customerData.phone.trim() && !validation?.fieldErrors?.['phone-input'] ? ' ✓' : ' *'}
+                </ValidationIndicator>
               </Label>
               <Input
                 id="phone-input"
@@ -112,10 +151,6 @@ export function ContactInfoPhase({
                 required
                 error={!!validation?.fieldErrors?.['phone-input']}
                 data-testid="phone-input"
-              />
-              <FieldValidationStatus
-                isValid={!!customerData.phone.trim() && !validation?.fieldErrors?.['phone-input']}
-                show={!!customerData.phone.trim() || !!validation?.fieldErrors?.['phone-input']}
               />
             </Stack>
 
@@ -147,12 +182,13 @@ export function ContactInfoPhase({
         </Box>
 
         {/* Navigation */}
-        <Stack direction="horizontal" spacing="md" fullWidth>
+        <ButtonContainer direction="horizontal" spacing="md" fullWidth>
           <Half>
             <Button
               onClick={onBack}
               variant="outline"
               fullWidth
+              size="md"
               cmsId="back-button"
               data-testid="contact-info-back-button"            
               text={pageCmsData?.['back-button'] || 'Back'}
@@ -163,12 +199,17 @@ export function ContactInfoPhase({
               onClick={onContinue}
               variant="primary"
               fullWidth
+              size="md"
               cmsId="continue-button"
               data-testid="contact-info-continue-button"
-              text={pageCmsData?.['continue-button'] || 'Continue to Payment'}
+              text={
+                isMobile
+                  ? (pageCmsData?.['continue-button-mobile'] || 'Continue')
+                  : (pageCmsData?.['continue-button'] || 'Continue to Payment')
+              }
             />
           </Half>
-        </Stack>
+        </ButtonContainer>
       </Stack>
     </Container>
   );

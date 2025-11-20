@@ -31,12 +31,22 @@ function sanitizeFirebaseData(data: any): any {
 }
 
 export async function getAllCMSDataCached() {
-  if (cmsDataCache) return cmsDataCache;
+  // Disable caching in development for hot reloading
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  if (!isDevelopment && cmsDataCache) {
+    return cmsDataCache;
+  }
 
   try {
     const data = await cmsFlattenedService.getAllCMSData();
     const sanitizedData = sanitizeFirebaseData(data);
-    cmsDataCache = sanitizedData;
+    
+    // Only cache in production
+    if (!isDevelopment) {
+      cmsDataCache = sanitizedData;
+    }
+    
     return sanitizedData;
   } catch (error) {
     console.error('Error fetching CMS data:', error);
@@ -55,7 +65,12 @@ export async function getAllCMSDataCached() {
         'contact-subtitle': 'Get in touch with our team'
       }
     };
-    cmsDataCache = fallbackData;
+    
+    // Only cache fallback in production
+    if (!isDevelopment) {
+      cmsDataCache = fallbackData;
+    }
+    
     return fallbackData;
   }
 }

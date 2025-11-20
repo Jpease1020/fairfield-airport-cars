@@ -41,13 +41,36 @@ let adminAuth: any = null;
 const shouldInitializeForEmulators = process.env.NODE_ENV === 'development' && 
                                     process.env.NEXT_PUBLIC_USE_EMULATORS === 'true';
 
+// CRITICAL: Set FIRESTORE_EMULATOR_HOST BEFORE any Firebase Admin SDK calls
+// Firebase Admin SDK checks this env var when getFirestore() is called
+if (shouldInitializeForEmulators) {
+  // Set from explicit env var, NEXT_PUBLIC_ version, or default
+  if (!process.env.FIRESTORE_EMULATOR_HOST) {
+    const emulatorHost = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST || 'localhost:8081';
+    process.env.FIRESTORE_EMULATOR_HOST = emulatorHost;
+    console.log(`🔧 Setting FIRESTORE_EMULATOR_HOST=${emulatorHost}`);
+  }
+  
+  // Also set FIREBASE_AUTH_EMULATOR_HOST if not set
+  if (!process.env.FIREBASE_AUTH_EMULATOR_HOST && process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST) {
+    process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+  }
+  
+  console.log(`🔌 Emulator configuration:`);
+  console.log(`   FIRESTORE_EMULATOR_HOST: ${process.env.FIRESTORE_EMULATOR_HOST}`);
+  console.log(`   FIREBASE_AUTH_EMULATOR_HOST: ${process.env.FIREBASE_AUTH_EMULATOR_HOST || 'not set'}`);
+}
+
 if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
   try {
     const apps = getApps();
     if (apps.length === 0) {
       if (shouldInitializeForEmulators) {
         // For emulators, initialize without credentials
+        // FIRESTORE_EMULATOR_HOST must be set BEFORE initializeApp()
         console.log('🚀 Initializing Firebase Admin for emulators...');
+        console.log(`   Project ID: ${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'demo-project'}`);
+        console.log(`   FIRESTORE_EMULATOR_HOST: ${process.env.FIRESTORE_EMULATOR_HOST}`);
         initializeApp({
           projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'demo-project',
         });
@@ -111,19 +134,23 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
     
     // Initialize services
     // Note: Firebase Admin SDK automatically connects to emulators via environment variables
-    // FIRESTORE_EMULATOR_HOST and FIREBASE_AUTH_EMULATOR_HOST must be set BEFORE this point
+    // FIRESTORE_EMULATOR_HOST must be set BEFORE getFirestore() is called
+    // It should be set in .env.local and loaded by Next.js
+    
     adminDb = getFirestore();
     adminAuth = getAuth();
     
     // Log emulator connection status
     if (shouldInitializeForEmulators) {
-      if (process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_EMULATOR_HOST) {
-        const emulatorHost = process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_EMULATOR_HOST;
-        console.log(`🔌 Admin Firestore connected to emulator: ${emulatorHost}`);
+      const emulatorHost = process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_EMULATOR_HOST;
+      if (emulatorHost) {
+        console.log(`✅ Admin Firestore connected to emulator: ${emulatorHost}`);
+      } else {
+        console.warn('⚠️ WARNING: FIRESTORE_EMULATOR_HOST not detected. Admin SDK may try to use production credentials.');
       }
       
       if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
-        console.log(`🔌 Admin Auth connected to emulator: ${process.env.FIREBASE_AUTH_EMULATOR_HOST}`);
+        console.log(`✅ Admin Auth connected to emulator: ${process.env.FIREBASE_AUTH_EMULATOR_HOST}`);
       }
     }
     
