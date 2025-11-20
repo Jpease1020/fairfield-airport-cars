@@ -1,28 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-
-const SkipLink = styled.a`
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--color-background-primary);
-  color: var(--color-text-primary);
-  padding: 8px;
-  text-decoration: none;
-  border-radius: 4px;
-  z-index: 1000;
-  font-size: 14px;
-  
-  &:focus {
-    top: 6px;
-  }
-  
-  &:not(:focus) {
-    top: -40px;
-  }
-`;
 
 interface AccessibilitySettings {
   highContrast: boolean;
@@ -142,11 +120,6 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({ ch
   return (
     <>
       {children}
-
-      {/* Skip to main content link */}
-      <SkipLink href="#main-content">
-        Skip to main content
-      </SkipLink>
     </>
   );
 };
