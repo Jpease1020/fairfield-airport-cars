@@ -35,8 +35,8 @@ export const viewport = {
 };
 
 // Disable ISR caching in development for hot reloading
-export const revalidate = process.env.NODE_ENV === 'development' ? 0 : undefined;
-export const dynamic = process.env.NODE_ENV === 'development' ? 'force-dynamic' : undefined;
+// In production, use default Next.js behavior (static generation with ISR)
+// Only export dynamic in development - in production Next.js will use defaults
 
 export default async function RootLayout({
   children,
