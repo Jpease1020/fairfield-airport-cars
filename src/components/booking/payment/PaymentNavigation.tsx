@@ -1,12 +1,24 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Stack, Button } from '@/design/ui';
+import { Stack, Button, Text } from '@/design/ui';
+import { colors, spacing } from '@/design/system/tokens/tokens';
 
 const ButtonWrapper = styled.div`
   flex: 1 1 0;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${spacing.xs};
+`;
+
+const PaymentNote = styled(Text)`
+  font-size: 0.75rem;
+  color: ${colors.text.secondary};
+  text-align: center;
+  font-style: italic;
 `;
 
 interface PaymentNavigationProps {
@@ -22,6 +34,19 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
   isProcessingPayment,
   cmsData
 }) => {
+  // Detect mobile screen size
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <Stack direction="horizontal" spacing="md" justify="space-between" align="stretch" data-testid="payment-navigation">
       <ButtonWrapper>
@@ -46,9 +71,16 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
           loading={isProcessingPayment}
           data-testid="payment-process-button"
           cmsId="payment-process-button"
-          text={cmsData?.['paymentPhase-processButton'] || 'Confirm Booking - No Payment Required'}
+          text={
+            isMobile
+              ? (cmsData?.['paymentPhase-processButton-mobile'] || 'Confirm Booking')
+              : (cmsData?.['paymentPhase-processButton'] || 'Confirm Booking')
+          }
           fullWidth
         />
+        <PaymentNote>
+          {cmsData?.['paymentPhase-noPaymentNote'] || 'No Payment Required'}
+        </PaymentNote>
       </ButtonWrapper>
     </Stack>
   );

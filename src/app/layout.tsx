@@ -22,10 +22,21 @@ export const metadata = {
   title: 'Fairfield Airport Cars - Premium Airport Transportation Service',
   description: 'Reliable, comfortable rides to and from Fairfield Airport with professional driver',
   manifest: '/manifest.json',
-  themeColor: '#2563eb',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
   keywords: 'airport transportation, Fairfield, JFK, LGA, EWR, airport shuttle, luxury car service',
 };
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#2563eb',
+};
+
+// Disable ISR caching in development for hot reloading
+export const revalidate = process.env.NODE_ENV === 'development' ? 0 : undefined;
+export const dynamic = process.env.NODE_ENV === 'development' ? 'force-dynamic' : undefined;
 
 export default async function RootLayout({
   children,
@@ -41,7 +52,6 @@ export default async function RootLayout({
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
         <meta name="keywords" content={metadata.keywords} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
         <StyledComponentsRegistry>
@@ -77,3 +87,4 @@ export default async function RootLayout({
     </html>
   );
 }
+

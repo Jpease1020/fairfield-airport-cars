@@ -9,11 +9,12 @@ import { Button } from '../../components/base-components/Button';
 import { Text } from '../../components/base-components/text/Text';
 import { DateTimePicker } from '../../components/base-components/forms/DateTimePicker';
 import { LocationInput } from '../base-components/forms/LocationInput';
-import { FieldValidationStatus } from '../base-components/forms/FieldValidationStatus';
 import { FareCalculationOverlay } from '../base-components/forms/FareCalculationOverlay';
 import { useBooking } from '../../../providers/BookingProvider';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
+import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { colors } from '../../system/tokens/tokens';
+import { useEffect } from 'react';
 
 interface Coordinates {
   lat: number;
@@ -35,8 +36,9 @@ const FormContainer = styled(Container)`
   position: relative;
 `;
 
-const RequiredAsterisk = styled.span`
-  color: ${colors.danger[600]};
+const ValidationIndicator = styled.span<{ $isValid: boolean }>`
+  color: ${({ $isValid }) => ($isValid ? colors.success[600] : colors.danger[600])};
+  margin-left: 2px;
 `;
 
 interface HeroCompactBookingFormProps {
@@ -90,6 +92,20 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     pickupDateTime: pickupDateTime, // Required for fare calculation
   });
 
+  // Check driver availability when date/time changes
+  const { error: availabilityError, checkAvailability, isLoading: isCheckingAvailability } = useBookingAvailability();
+
+  useEffect(() => {
+    if (pickupDateTime && pickupDate && pickupTime) {
+      // Calculate end time (2 hours after pickup, standard ride duration)
+      const pickupDateObj = new Date(pickupDateTime);
+      const endTimeObj = new Date(pickupDateObj.getTime() + 2 * 60 * 60 * 1000);
+      const endTime = endTimeObj.toTimeString().slice(0, 5); // HH:MM format
+      
+      checkAvailability(pickupDate, pickupTime, endTime);
+    }
+  }, [pickupDateTime, pickupDate, pickupTime, checkAvailability]);
+
   // Note: Removed currentQuote since we simplified to currentFare only
 
 
@@ -103,7 +119,24 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   };
 
   const handleGetPrice = () => {
-    // Use the new validation and submission logic
+    // Explicitly validate all required fields before proceeding
+    const hasPickupAddress = locationData.pickup.address.trim() !== '';
+    const hasPickupCoords = locationData.pickup.coordinates !== null;
+    const hasDropoffAddress = locationData.dropoff.address.trim() !== '';
+    const hasDropoffCoords = locationData.dropoff.coordinates !== null;
+    const hasDateTime = pickupDateTime && pickupDateTime.includes('T') && pickupDateTime.split('T').length === 2;
+    const [datePart, timePart] = pickupDateTime ? pickupDateTime.split('T') : ['', ''];
+    const hasDate = datePart && datePart.trim() !== '';
+    const hasTime = timePart && timePart.trim() !== '';
+    
+    // If any field is missing or invalid, trigger validation display and prevent navigation
+    if (!hasPickupAddress || !hasPickupCoords || !hasDropoffAddress || !hasDropoffCoords || !hasDateTime || !hasDate || !hasTime) {
+      // Call submitQuickBookingForm which will validate and show errors, but won't navigate if invalid
+      submitQuickBookingForm();
+      return; // Explicitly return to prevent any further execution
+    }
+    
+    // All fields are valid, proceed with submission
     submitQuickBookingForm();
   };
 
@@ -124,7 +157,20 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         <Stack spacing="md">
           <FieldWrapper>
             <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>
-              From <RequiredAsterisk>*</RequiredAsterisk>
+              From{' '}
+              <ValidationIndicator
+                $isValid={
+                  !!locationData.pickup.address.trim() &&
+                  locationData.pickup.coordinates !== null &&
+                  !validation?.fieldErrors?.['pickup-location-input']
+                }
+              >
+                {!!locationData.pickup.address.trim() &&
+                 locationData.pickup.coordinates !== null &&
+                 !validation?.fieldErrors?.['pickup-location-input']
+                  ? '✓'
+                  : '*'}
+              </ValidationIndicator>
             </Text>
             <LocationInput
               id="pickup-location"
@@ -137,19 +183,24 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               error={!!validation?.fieldErrors?.['pickup-location-input']}
               data-testid="quick-book-pickup-input"
             />
-            <FieldValidationStatus
-              isValid={
-                !!locationData.pickup.address.trim() &&
-                locationData.pickup.coordinates !== null &&
-                !validation?.fieldErrors?.['pickup-location-input']
-              }
-              show={!!locationData.pickup.address.trim() || !!validation?.fieldErrors?.['pickup-location-input']}
-            />
           </FieldWrapper>
           
           <FieldWrapper>
             <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>
-              To <RequiredAsterisk>*</RequiredAsterisk>
+              To{' '}
+              <ValidationIndicator
+                $isValid={
+                  !!locationData.dropoff.address.trim() &&
+                  locationData.dropoff.coordinates !== null &&
+                  !validation?.fieldErrors?.['dropoff-location-input']
+                }
+              >
+                {!!locationData.dropoff.address.trim() &&
+                 locationData.dropoff.coordinates !== null &&
+                 !validation?.fieldErrors?.['dropoff-location-input']
+                  ? '✓'
+                  : '*'}
+              </ValidationIndicator>
             </Text>
             <LocationInput
               id="dropoff-location"
@@ -162,22 +213,12 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               error={!!validation?.fieldErrors?.['dropoff-location-input']}
               data-testid="quick-book-dropoff-input"
             />
-            <FieldValidationStatus
-              isValid={
-                !!locationData.dropoff.address.trim() &&
-                locationData.dropoff.coordinates !== null &&
-                !validation?.fieldErrors?.['dropoff-location-input']
-              }
-              show={!!locationData.dropoff.address.trim() || !!validation?.fieldErrors?.['dropoff-location-input']}
-            />
           </FieldWrapper>
           
           <FieldWrapper>
-            <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }} cmsId="quickBook-dateOfTravelLabel">
-              Date of travel <RequiredAsterisk>*</RequiredAsterisk>
-            </Text>
             <DateTimePicker
               id="pickup-datetime"
+              label="Date of travel"
               placeholder="mm/dd/yyyy, --:-- --"
               value={pickupDateTime || ''}
               onChange={(datetime) => {
@@ -190,62 +231,66 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               fullWidth
               required
               error={!!validation?.fieldErrors?.['pickup-datetime-input']}
-              cmsId="quick-book-datetime-input"
-            />
-            <FieldValidationStatus
               isValid={!!pickupDateTime && !validation?.fieldErrors?.['pickup-datetime-input']}
-              show={!!pickupDateTime || !!validation?.fieldErrors?.['pickup-datetime-input']}
+              cmsId="quick-book-datetime-input"
             />
           </FieldWrapper>
         </Stack>
         
         {/* Show estimated price in real-time from shared hook */}
         {estimatedFare && (
-          <>
           <Stack spacing="sm" align="center" data-testid="quick-book-price-display">
-            <Text size="lg" weight="bold" color="primary">
+            <Text size="lg" weight="bold" color="primary" data-testid="quick-book-fare-amount">
               Estimated Fare: ${estimatedFare}
             </Text>
             {/* Quote countdown removed - using simplified fare system */}
             {isCalculating && (
-              <Text size="sm" color="secondary">Calculating...</Text>
+              <Text size="sm" color="secondary" data-testid="quick-book-calculating">Calculating...</Text>
             )}
             
             {/* Promotional Message */}
-            <Box variant="filled" padding="md">
+            <Box variant="filled" padding="md" data-testid="quick-book-promo-section">
               <Stack spacing="sm" align="center">
-                <Text size="lg" weight="bold" color="primary" cmsId="promo-limited-time">
+                <Text size="lg" weight="bold" color="primary" cmsId="promo-limited-time" data-testid="quick-book-promo-title">
                   🎉 Limited Time Offer!
                 </Text>
-                <StrikethroughText size="md" color="secondary" cmsId="promo-deposit-strikethrough">
+                <StrikethroughText size="md" color="secondary" cmsId="promo-deposit-strikethrough" data-testid="quick-book-deposit-strikethrough">
                   Deposit: ${(estimatedFare * 0.3).toFixed(2)}
                 </StrikethroughText>
-                <Text size="lg" weight="bold" color="success" cmsId="promo-no-deposit">
+                <Text size="lg" weight="bold" color="success" cmsId="promo-no-deposit" data-testid="quick-book-no-deposit">
                   No Deposit Required - Book Now!
                 </Text>
               </Stack>
             </Box>
           </Stack>
-          <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
+        )}
+        
+        {/* Always show the button - validation happens in handler */}
+        <Stack direction="horizontal" spacing="md" align="center" justify="flex-start">
           <Button
             variant="primary"
             size="md"
             onClick={handleGetPrice}
-            disabled={!isQuickBookingFormValid()}
             cmsId="get-price-button"
             data-testid="quick-book-secure-rate-button"
             text="Book Now to Secure Rate →"
           />
         </Stack>
-          </>
-        )}
 
         {fareError && (
-          <Text size="sm" color="error" align="center">{fareError}</Text>
+          <Text size="sm" color="error" align="center" data-testid="quick-book-fare-error">{fareError}</Text>
+        )}
+        
+        {availabilityError && (
+          <Text size="sm" color="error" align="center" style={{ fontStyle: 'italic' }} data-testid="quick-book-availability-error">
+            {availabilityError.includes('No drivers are available') 
+              ? 'No available drivers, try modifying the pickup time'
+              : availabilityError}
+          </Text>
         )}
         
         {error && (
-          <Text size="sm" color="error" align="center">
+          <Text size="sm" color="error" align="center" data-testid="quick-book-error">
             {error}
           </Text>
         )}

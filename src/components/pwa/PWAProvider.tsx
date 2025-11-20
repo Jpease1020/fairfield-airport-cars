@@ -22,8 +22,21 @@ export const PWAProvider: React.FC<PWAProviderProps> = ({ children }) => {
 
   useEffect(() => {
     setIsMounted(true);
-    // Only register service worker on client side after mount
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    // Disable service worker in development to prevent caching issues
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment && typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      // Unregister any existing service workers in development
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const registration of registrations) {
+          registration.unregister().then(() => {
+            console.log('🔧 Development mode: Unregistered service worker for hot reloading');
+          });
+        }
+      });
+      console.log('🔧 Development mode: Service Worker disabled for hot reloading');
+    } else if (!isDevelopment && typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      // Only register service worker in production
       registerServiceWorker().catch((error) => {
         console.warn('📱 PWA: Service Worker registration failed:', error);
       });

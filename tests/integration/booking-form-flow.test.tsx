@@ -24,14 +24,14 @@ vi.mock('@/components/booking/trip-details/TripDetailsPhase', () => ({
 }));
 
 // Mock ContactInfoPhase component
-vi.mock('@/components/booking/contact-info/ContactInfoPhase', () => ({
+vi.mock('@/components/booking/ContactInfoPhase', () => ({
   ContactInfoPhase: ({ onContinue, onBack }: any) => (
     <div data-testid="contact-info-phase">
       <input data-testid="name-input" />
       <input data-testid="email-input" />
       <input data-testid="phone-input" />
       <button data-testid="contact-info-back-button" onClick={onBack}>Back</button>
-      <button data-testid="contact-info-continue-button" onClick={onContinue}>Continue</button>
+      <button data-testid="contact-info-continue-button" onClick={onContinue}>Continue to Payment</button>
     </div>
   ),
 }));

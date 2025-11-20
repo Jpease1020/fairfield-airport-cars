@@ -3,7 +3,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Stack, H2, Text, Select, Box, DateTimePicker } from '@/design/ui';
-import { FieldValidationStatus } from '@/design/components/base-components/forms/FieldValidationStatus';
 import { colors } from '@/design/system/tokens/tokens';
 
 // Custom styled component for darker grey background
@@ -43,24 +42,19 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
         </Text>
         
         <Stack spacing="md">
-          <div>
-            <DateTimePicker
-              id="pickup-datetime-input"
-              label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'Pickup Date & Time'}
-              placeholder="mm/dd/yyyy, --:-- --"
-              value={pickupDateTime}
-              onChange={onDateTimeChange}
-              minDate={new Date()}
-              fullWidth={true}
-              error={error}
-              required
-              cmsId="pickup-datetime-input"
-            />
-            <FieldValidationStatus
-              isValid={!!pickupDateTime && !error && !validation?.fieldErrors?.['pickup-datetime-input']}
-              show={!!pickupDateTime || error || !!validation?.fieldErrors?.['pickup-datetime-input']}
-            />
-          </div>
+          <DateTimePicker
+            id="pickup-datetime-input"
+            label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'Pickup Date & Time'}
+            placeholder="mm/dd/yyyy, --:-- --"
+            value={pickupDateTime}
+            onChange={onDateTimeChange}
+            minDate={new Date()}
+            fullWidth={true}
+            error={error}
+            required
+            isValid={!!pickupDateTime && !error && !validation?.fieldErrors?.['pickup-datetime-input']}
+            cmsId="pickup-datetime-input"
+          />
           
           <Select
             id="fare-type-select"

@@ -20,6 +20,14 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   response.headers.set('x-pathname', pathname);
   
+  // Disable all caching in development for hot reloading
+  if (process.env.NODE_ENV === 'development') {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('Surrogate-Control', 'no-store');
+  }
+  
   // Admin routes - STRICT protection
   if (pathname.startsWith('/admin') || pathname.startsWith('/(admin)')) {
     const isAdminUser = await isAdmin(request);

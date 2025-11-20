@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor, renderHook, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, renderHook, act, cleanup } from '@testing-library/react';
 import { createHash } from 'crypto';
 import { QuoteCountdown } from '@/components/booking/QuoteCountdown';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
@@ -38,6 +38,7 @@ describe('QuoteCountdown', () => {
   });
 
   afterEach(() => {
+    cleanup(); // Clean up rendered components
     vi.useRealTimers();
   });
 
@@ -46,32 +47,41 @@ describe('QuoteCountdown', () => {
     
     renderWithProviders(<QuoteCountdown expiresAt={expiresAt} />);
     
-    expect(screen.getByText(/Valid for/)).toBeInTheDocument();
-    expect(screen.getByText(/15:/)).toBeInTheDocument();
+    const countdown = screen.getByTestId('quote-countdown');
+    expect(countdown).toBeInTheDocument();
+    expect(countdown).toHaveTextContent(/Valid for/);
+    expect(countdown).toHaveTextContent(/15:/);
   });
 
   it('should show expired state when time runs out', () => {
     const expiresAt = new Date(Date.now() + 1000).toISOString();
     const onExpired = vi.fn();
     
-    renderWithProviders(<QuoteCountdown expiresAt={expiresAt} onExpired={onExpired} />);
+    const { unmount } = renderWithProviders(<QuoteCountdown expiresAt={expiresAt} onExpired={onExpired} />);
     
     // Timer should show valid countdown first
-    expect(screen.getByText(/Valid for/)).toBeInTheDocument();
+    const countdown = screen.getByTestId('quote-countdown');
+    expect(countdown).toBeInTheDocument();
+    expect(countdown).toHaveTextContent(/Valid for/);
     
     // Test passes if component renders without errors
     expect(onExpired).not.toHaveBeenCalled();
+    
+    unmount();
   });
 
   it('should show warning color when less than 1 minute', () => {
     const expiresAt = new Date(Date.now() + 30 * 1000).toISOString();
     
-    renderWithProviders(<QuoteCountdown expiresAt={expiresAt} />);
+    const { unmount } = renderWithProviders(<QuoteCountdown expiresAt={expiresAt} />);
     
     // Check that countdown is visible and showing low time (format is "0:30" not "00:30")
-    const countdownElement = screen.getByText(/Valid for/);
-    expect(countdownElement).toBeInTheDocument();
-    expect(screen.getByText(/0:3/)).toBeInTheDocument(); // Shows 0:30 format
+    const countdown = screen.getByTestId('quote-countdown');
+    expect(countdown).toBeInTheDocument();
+    expect(countdown).toHaveTextContent(/Valid for/);
+    expect(countdown).toHaveTextContent(/0:3/); // Shows 0:30 format
+    
+    unmount();
   });
 });
 
