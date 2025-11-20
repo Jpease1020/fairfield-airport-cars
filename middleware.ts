@@ -26,6 +26,23 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
     response.headers.set('Surrogate-Control', 'no-store');
+  } else {
+    // In production, add cache-busting with short cache times for HTML pages
+    // This ensures users get updates quickly while still benefiting from caching
+    if (!pathname.startsWith('/api/') && !pathname.match(/\.(jpg|jpeg|png|gif|webp|svg|ico|css|js|woff|woff2)$/)) {
+      // HTML pages: 1 minute cache with revalidation
+      // This allows fast updates while still providing performance benefits
+      response.headers.set('Cache-Control', 'public, max-age=60, must-revalidate, stale-while-revalidate=120');
+      
+      // Add version header for cache-busting
+      const buildId = process.env.NEXT_PUBLIC_BUILD_ID || process.env.VERCEL_GIT_COMMIT_SHA?.substring(0, 7) || 'latest';
+      response.headers.set('X-Build-Version', buildId);
+    }
+    
+    // API routes: no cache
+    if (pathname.startsWith('/api/')) {
+      response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    }
   }
   
   // Admin routes - STRICT protection

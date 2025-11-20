@@ -16,7 +16,8 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Disable image caching in development for hot reloading
-    minimumCacheTTL: process.env.NODE_ENV === 'development' ? 0 : 60,
+    // In production, use shorter cache (30 seconds) for faster updates
+    minimumCacheTTL: process.env.NODE_ENV === 'development' ? 0 : 30,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
