@@ -76,9 +76,9 @@ export const BookingFormPhases: React.FC<BookingFormPhasesProps> = ({ cmsData })
           completedBookingId={completedBookingId}
           cmsData={cmsData}
           warning={warning}
-          customerName={customer.name}
-          customerEmail={customer.email}
-          customerPhone={customer.phone}
+          customerName={customer.name || ''}
+          customerEmail={customer.email || ''}
+          customerPhone={customer.phone || ''}
         />
       )}
     </>

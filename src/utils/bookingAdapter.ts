@@ -13,37 +13,47 @@ export function adaptOldBookingToNew(oldBooking: OldBooking): NewBooking {
     updatedAt: oldBooking.updatedAt,
     
     // Core data - map from old structure to new structure
+    // Check nested structure first (new format), then fall back to flat fields (old format)
     trip: {
       pickup: {
-        address: oldBooking.pickupLocation || '',
-        coordinates: null // Old booking doesn't have coordinates
+        address: oldBooking.trip?.pickup?.address || oldBooking.pickupLocation || '',
+        coordinates: oldBooking.trip?.pickup?.coordinates || null
       },
       dropoff: {
-        address: oldBooking.dropoffLocation || '',
-        coordinates: null // Old booking doesn't have coordinates
+        address: oldBooking.trip?.dropoff?.address || oldBooking.dropoffLocation || '',
+        coordinates: oldBooking.trip?.dropoff?.coordinates || null
       },
-      pickupDateTime: oldBooking.pickupDateTime ? oldBooking.pickupDateTime.toISOString() : new Date().toISOString(),
-      fareType: 'personal', // Default to personal for old bookings
-      flightInfo: {
+      pickupDateTime: oldBooking.trip?.pickupDateTime 
+        ? (oldBooking.trip.pickupDateTime instanceof Date 
+            ? oldBooking.trip.pickupDateTime.toISOString() 
+            : String(oldBooking.trip.pickupDateTime))
+        : (oldBooking.pickupDateTime 
+            ? (oldBooking.pickupDateTime instanceof Date 
+                ? oldBooking.pickupDateTime.toISOString() 
+                : new Date(oldBooking.pickupDateTime).toISOString())
+            : new Date().toISOString()),
+      fareType: oldBooking.trip?.fareType || 'personal',
+      flightInfo: oldBooking.trip?.flightInfo || {
         hasFlight: !!oldBooking.flightNumber,
         airline: '',
         flightNumber: oldBooking.flightNumber || '',
         arrivalTime: '',
         terminal: ''
       },
-      fare: oldBooking.fare || 0,
-      baseFare: oldBooking.fare || 0,
-      tipAmount: oldBooking.tipAmount || 0,
-      tipPercent: 0,
-      totalFare: (oldBooking.fare || 0) + (oldBooking.tipAmount || 0)
+      fare: oldBooking.trip?.fare || oldBooking.fare || 0,
+      baseFare: (oldBooking.trip as any)?.baseFare || oldBooking.fare || 0,
+      tipAmount: (oldBooking.trip as any)?.tipAmount || oldBooking.tipAmount || 0,
+      tipPercent: (oldBooking.trip as any)?.tipPercent || 0,
+      totalFare: (oldBooking.trip as any)?.totalFare || ((oldBooking.fare || 0) + (oldBooking.tipAmount || 0))
     },
     
     customer: {
-      name: oldBooking.name || '',
-      email: oldBooking.email || '',
-      phone: oldBooking.phone || '',
-      notes: oldBooking.notes || '',
-      saveInfoForFuture: false
+      // Check nested structure first (new format), then fall back to flat fields (old format)
+      name: oldBooking.customer?.name || oldBooking.name || '',
+      email: oldBooking.customer?.email || oldBooking.email || '',
+      phone: oldBooking.customer?.phone || oldBooking.phone || '',
+      notes: oldBooking.customer?.notes || oldBooking.notes || '',
+      saveInfoForFuture: oldBooking.customer?.saveInfoForFuture || false
     },
     
     payment: {

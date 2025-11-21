@@ -6,7 +6,6 @@ import { randomBytes } from 'crypto';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getBooking } from '@/lib/services/booking-service';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
-import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
 
@@ -232,7 +231,8 @@ export async function POST(request: Request) {
       console.log(`   Booking ID: ${bookingResult.bookingId}`);
       console.log(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
       console.log(`   Confirmation Token: ${confirmationToken.substring(0, 8)}...`);
-      await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
+      // Use booking directly - we always save with nested structure, so no adapter needed
+      await sendBookingVerificationEmail(bookingRecord as any, confirmationUrl);
       console.log('✅ [BOOKING SUBMIT] Verification email sent successfully');
     } catch (emailError) {
       console.error('❌ [BOOKING SUBMIT] Failed to send verification email:', emailError);

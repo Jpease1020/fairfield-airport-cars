@@ -4,7 +4,6 @@ import React from 'react';
 import { Container, Stack } from '@/design/ui';
 import { H1, Text } from '@/design/ui';
 import { HeroCompactBookingForm } from '@/design/components/content-sections/HeroCompactBookingForm';
-import { PriceGuarantee } from '@/components/business/PriceGuarantee';
 import styled from 'styled-components';
 
 const FlexStack = styled(Stack)`

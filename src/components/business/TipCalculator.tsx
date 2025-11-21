@@ -1,16 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { 
-  Container,
-  Stack,
-  Text,
-  Button,
-  Box,
-  Input,
-  Label,
-  Alert
-} from '@/design/ui';
+
+
 
 interface TipCalculatorProps {
   baseAmount: number;

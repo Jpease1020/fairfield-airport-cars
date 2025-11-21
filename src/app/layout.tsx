@@ -11,7 +11,6 @@ import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
 import { getAllCMSDataCached } from '@/lib/services/cms-cache';
 import { BookingProvider } from '@/providers/BookingProvider';
 import { PWAProvider } from '@/components/pwa/PWAProvider';
-import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
 
 import { AppContent } from './AppContent';
 import { NavigationWrapper } from '@/components/app/NavigationWrapper';

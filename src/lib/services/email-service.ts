@@ -54,7 +54,9 @@ const getTransporter = () => {
     ...(EMAIL_HOST === 'smtp.sendgrid.net' && {
       requireTLS: true,
       tls: {
-        ciphers: 'SSLv3',
+        // Use modern TLS settings for SendGrid
+        minVersion: 'TLSv1.2',
+        rejectUnauthorized: true,
       },
     }),
   });
@@ -68,13 +70,39 @@ export async function sendConfirmationEmail(booking: Booking) {
   
   const transporter = getTransporter();
 
-      const businessSettings = await cmsFlattenedService.getBusinessSettings();
+  const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
-  // Generate iCalendar event
-  const pickupDate = new Date(booking.trip.pickupDateTime);
+  // Safely parse pickupDateTime - handle Date objects, ISO strings, Firestore Timestamps, etc.
+  let pickupDate: Date;
+  const pickupDateTimeRaw: any = booking.trip.pickupDateTime;
   
+  if (pickupDateTimeRaw instanceof Date) {
+    pickupDate = pickupDateTimeRaw;
+  } else if (typeof pickupDateTimeRaw === 'string') {
+    pickupDate = new Date(pickupDateTimeRaw);
+  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw) {
+    // Firestore Timestamp
+    pickupDate = pickupDateTimeRaw.toDate();
+  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw) {
+    // Firestore Timestamp with seconds property
+    pickupDate = new Date(pickupDateTimeRaw.seconds * 1000);
+  } else {
+    // Fallback: try to parse as date or use current date
+    pickupDate = pickupDateTimeRaw ? new Date(pickupDateTimeRaw) : new Date();
+  }
+  
+  // Validate the date is valid
+  if (isNaN(pickupDate.getTime())) {
+    console.error('❌ [EMAIL SERVICE] Invalid pickupDateTime:', pickupDateTimeRaw);
+    // Fallback to a default date if parsing failed
+    pickupDate = new Date();
+  }
+
   // Format date without seconds
   const formatDateTime = (date: Date): string => {
+    if (isNaN(date.getTime())) {
+      return 'Date not available';
+    }
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'numeric',
@@ -257,10 +285,48 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
   
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
-  const pickupDate = new Date(booking.trip.pickupDateTime);
+  // Safely parse pickupDateTime - handle Date objects, ISO strings, Firestore Timestamps, etc.
+  let pickupDate: Date;
+  const pickupDateTimeRaw: any = booking.trip.pickupDateTime;
+  
+  console.log('📅 [EMAIL SERVICE] Parsing pickupDateTime:', {
+    raw: pickupDateTimeRaw,
+    type: typeof pickupDateTimeRaw,
+    isDate: pickupDateTimeRaw instanceof Date,
+    hasToDate: pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw,
+    hasSeconds: pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw
+  });
+  
+  if (pickupDateTimeRaw instanceof Date) {
+    pickupDate = pickupDateTimeRaw;
+  } else if (typeof pickupDateTimeRaw === 'string') {
+    pickupDate = new Date(pickupDateTimeRaw);
+  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw) {
+    // Firestore Timestamp
+    pickupDate = pickupDateTimeRaw.toDate();
+  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw) {
+    // Firestore Timestamp with seconds property
+    pickupDate = new Date(pickupDateTimeRaw.seconds * 1000);
+  } else {
+    // Fallback: try to parse as date or use current date
+    pickupDate = pickupDateTimeRaw ? new Date(pickupDateTimeRaw) : new Date();
+  }
+  
+  // Validate the date is valid
+  if (isNaN(pickupDate.getTime())) {
+    console.error('❌ [EMAIL SERVICE] Invalid pickupDateTime:', pickupDateTimeRaw);
+    console.error('   Attempted to parse as:', pickupDate);
+    // Fallback to a default date if parsing failed
+    pickupDate = new Date();
+  } else {
+    console.log('✅ [EMAIL SERVICE] Successfully parsed pickupDateTime:', pickupDate.toISOString());
+  }
   
   // Format date without seconds
   const formatDateTime = (date: Date): string => {
+    if (isNaN(date.getTime())) {
+      return 'Date not available';
+    }
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'numeric',
