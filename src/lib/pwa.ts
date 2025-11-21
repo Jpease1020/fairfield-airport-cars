@@ -13,35 +13,33 @@ let deferredPrompt: InstallPromptEvent | null = null;
 export const registerServiceWorker = async (): Promise<void> => {
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     try {
-      // Add cache-busting query param to force update
-      const cacheBuster = `?v=${Date.now()}`;
-      const registration = await navigator.serviceWorker.register(`/sw.js${cacheBuster}`, {
+      // Register service worker WITHOUT cache-busting to prevent reload loops
+      // The browser will check for updates automatically
+      const registration = await navigator.serviceWorker.register('/sw.js', {
         scope: '/',
         updateViaCache: 'none' // Force browser to always check for updates
       });
       
       console.log('📱 PWA: Service Worker registered successfully:', registration);
       
-      // Check for updates immediately and periodically
-      registration.update();
-      
-      // Check for updates every 60 seconds
+      // Check for updates periodically (but not too aggressively)
+      // Only check every 5 minutes to avoid reload loops
       setInterval(() => {
         registration.update();
-      }, 60000);
+      }, 300000); // 5 minutes
       
-      // Handle updates
+      // Handle updates - but don't auto-reload immediately
+      // Let the user control when to reload
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed') {
               if (navigator.serviceWorker.controller) {
-                // New service worker available - notify user
+                // New service worker available - notify user but don't auto-reload
                 window.dispatchEvent(new Event('pwa:updateavailable'));
-                // Force reload to activate new service worker
-                console.log('📱 PWA: New service worker installed, reloading...');
-                window.location.reload();
+                console.log('📱 PWA: New service worker installed. Reload page to activate.');
+                // Don't auto-reload - let user decide when to reload
               } else {
                 // First time installation
                 console.log('📱 PWA: Service Worker installed for the first time');

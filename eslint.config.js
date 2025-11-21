@@ -81,6 +81,11 @@ export default [
         // Google Maps API globals
         google: 'readonly',
         
+        // Service Worker globals
+        caches: 'readonly',
+        ServiceWorkerRegistration: 'readonly',
+        NotificationPermission: 'readonly',
+        
         // React globals
         React: 'readonly',
       },
@@ -269,7 +274,8 @@ export default [
       'vitest.config.ts',
       'scripts/**/*',
       'temp-design-library/**/*',
-      'src/lib/services/email-service.ts' // Email templates need hardcoded HTML/CSS
+      'src/lib/services/email-service.ts', // Email templates need hardcoded HTML/CSS
+      'public/sw.js' // Service worker runs in different context with its own globals
     ]
   }
 ];
