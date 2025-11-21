@@ -72,7 +72,7 @@ class InteractionTracker {
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Interaction tracked:', interaction); // eslint-disable-line no-console
+      console.log('📊 Interaction tracked:', interaction);  
     }
   }
 

@@ -4,7 +4,6 @@ import React from 'react';
 import { Stack, Box, Text, H3, StatusMessage } from '@/design/ui';
 import { useBooking } from '@/providers/BookingProvider';
 import { QuoteCountdown } from '@/components/booking/QuoteCountdown';
-import { PriceGuarantee } from '@/components/business/PriceGuarantee';
 
 interface FareDisplaySectionProps {
   fare: number | null;
