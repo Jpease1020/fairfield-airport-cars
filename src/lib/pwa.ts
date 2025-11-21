@@ -13,19 +13,39 @@ let deferredPrompt: InstallPromptEvent | null = null;
 export const registerServiceWorker = async (): Promise<void> => {
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js', {
-        scope: '/'
+      // Add cache-busting query param to force update
+      const cacheBuster = `?v=${Date.now()}`;
+      const registration = await navigator.serviceWorker.register(`/sw.js${cacheBuster}`, {
+        scope: '/',
+        updateViaCache: 'none' // Force browser to always check for updates
       });
       
       console.log('📱 PWA: Service Worker registered successfully:', registration);
+      
+      // Check for updates immediately and periodically
+      registration.update();
+      
+      // Check for updates every 60 seconds
+      setInterval(() => {
+        registration.update();
+      }, 60000);
       
       // Handle updates
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              window.dispatchEvent(new Event('pwa:updateavailable'));
+            if (newWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                // New service worker available - notify user
+                window.dispatchEvent(new Event('pwa:updateavailable'));
+                // Force reload to activate new service worker
+                console.log('📱 PWA: New service worker installed, reloading...');
+                window.location.reload();
+              } else {
+                // First time installation
+                console.log('📱 PWA: Service Worker installed for the first time');
+              }
             }
           });
         }
@@ -33,6 +53,34 @@ export const registerServiceWorker = async (): Promise<void> => {
       
     } catch (error) {
       console.error('📱 PWA: Service Worker registration failed:', error);
+    }
+  }
+};
+
+// Force unregister all service workers (useful for debugging)
+export const unregisterServiceWorkers = async (): Promise<void> => {
+  if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations.map((registration) => {
+          console.log('📱 PWA: Unregistering service worker:', registration);
+          return registration.unregister();
+        })
+      );
+      // Clear all caches
+      const cacheNames = await caches.keys();
+      await Promise.all(
+        cacheNames.map((cacheName) => {
+          console.log('📱 PWA: Deleting cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+      console.log('📱 PWA: All service workers unregistered and caches cleared');
+      // Reload to ensure clean state
+      window.location.reload();
+    } catch (error) {
+      console.error('📱 PWA: Error unregistering service workers:', error);
     }
   }
 };
