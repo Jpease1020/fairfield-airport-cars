@@ -309,6 +309,27 @@ const [warning, setWarning] = useState<string | null>(null);
           const errorMsg = 'Pickup date and time is required';
           errors.push(errorMsg);
           fieldErrors['pickup-datetime-input'] = errorMsg;
+        } else {
+          // Validate that pickup date/time is at least 24 hours in the future
+          try {
+            const pickupDate = new Date(formData.trip.pickupDateTime);
+            const now = new Date();
+            const minDateTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+            
+            if (isNaN(pickupDate.getTime())) {
+              const errorMsg = 'Invalid date/time format';
+              errors.push(errorMsg);
+              fieldErrors['pickup-datetime-input'] = errorMsg;
+            } else if (pickupDate < minDateTime) {
+              const errorMsg = 'Please book at least 24 hours in advance';
+              errors.push(errorMsg);
+              fieldErrors['pickup-datetime-input'] = errorMsg;
+            }
+          } catch (dateError) {
+            const errorMsg = 'Invalid date/time format';
+            errors.push(errorMsg);
+            fieldErrors['pickup-datetime-input'] = errorMsg;
+          }
         }
         
         // Check for quote
