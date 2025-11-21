@@ -48,7 +48,7 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
             placeholder="mm/dd/yyyy, --:-- --"
             value={pickupDateTime}
             onChange={onDateTimeChange}
-            minDate={new Date()}
+            minDate={undefined} // DateTimePicker will default to 24 hours from now
             fullWidth={true}
             error={error}
             required

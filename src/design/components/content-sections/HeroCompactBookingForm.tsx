@@ -41,6 +41,14 @@ const ValidationIndicator = styled.span<{ $isValid: boolean }>`
   margin-left: 2px;
 `;
 
+const FieldLabel = styled(Text)`
+  margin-bottom: 0.5rem;
+`;
+
+const ErrorText = styled(Text)`
+  font-style: italic;
+`;
+
 interface HeroCompactBookingFormProps {
   'data-testid'?: string;
 }
@@ -156,7 +164,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         
         <Stack spacing="md">
           <FieldWrapper>
-            <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>
+            <FieldLabel weight="semibold" size="sm">
               From{' '}
               <ValidationIndicator
                 $isValid={
@@ -171,7 +179,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                   ? '✓'
                   : '*'}
               </ValidationIndicator>
-            </Text>
+            </FieldLabel>
             <LocationInput
               id="pickup-location"
               placeholder="From: Fairfield Station"
@@ -186,7 +194,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           </FieldWrapper>
           
           <FieldWrapper>
-            <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>
+            <FieldLabel weight="semibold" size="sm">
               To{' '}
               <ValidationIndicator
                 $isValid={
@@ -201,7 +209,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                   ? '✓'
                   : '*'}
               </ValidationIndicator>
-            </Text>
+            </FieldLabel>
             <LocationInput
               id="dropoff-location"
               placeholder="To: JFK Airport"
@@ -226,7 +234,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                   updateTripDetails({ pickupDateTime: datetime });
                 }
               }}
-              minDate={new Date()}
+              minDate={undefined} // DateTimePicker will default to 24 hours from now
               size="md"
               fullWidth
               required
@@ -282,11 +290,11 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         )}
         
         {availabilityError && (
-          <Text size="sm" color="error" align="center" style={{ fontStyle: 'italic' }} data-testid="quick-book-availability-error">
+          <ErrorText size="sm" color="error" align="center" data-testid="quick-book-availability-error">
             {availabilityError.includes('No drivers are available') 
               ? 'No available drivers, try modifying the pickup time'
               : availabilityError}
-          </Text>
+          </ErrorText>
         )}
         
         {error && (

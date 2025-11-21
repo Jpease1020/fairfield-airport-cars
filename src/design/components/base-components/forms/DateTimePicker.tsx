@@ -47,6 +47,7 @@ const InputWrapper = styled.div`
   }
 `;
 
+
 const LabelWrapper = styled.label`
   display: block;
   margin-bottom: ${spacing.sm};
@@ -58,6 +59,12 @@ const LabelWrapper = styled.label`
 const ValidationIndicator = styled.span<{ $isValid: boolean }>`
   color: ${({ $isValid }) => ($isValid ? colors.success[600] : colors.danger[600])};
   margin-left: 2px;
+`;
+
+const HelperText = styled.div`
+  margin-top: ${spacing.xs};
+  font-size: ${fontSize.xs};
+  color: ${colors.text.secondary};
 `;
 
 const IconWrapper = styled.span`
@@ -157,14 +164,38 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Calculate minimum date/time (24 hours from now)
+  const minDateTime = useMemo(() => {
+    const now = new Date();
+    const minDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+    return minDate;
+  }, []);
+
   // Format min/max dates for native inputs
-  const minDateString = minDate
-    ? `${minDate.getFullYear()}-${String(minDate.getMonth() + 1).padStart(2, '0')}-${String(minDate.getDate()).padStart(2, '0')}`
-    : undefined;
+  // Use provided minDate or default to 24 hours from now
+  const effectiveMinDate = minDate || minDateTime;
+  const minDateString = `${effectiveMinDate.getFullYear()}-${String(effectiveMinDate.getMonth() + 1).padStart(2, '0')}-${String(effectiveMinDate.getDate()).padStart(2, '0')}`;
+  
+  // Calculate minimum time for today (if today is the minimum date)
+  const today = new Date().toISOString().slice(0, 10);
+  const minDateOnly = effectiveMinDate.toISOString().slice(0, 10);
+  const isMinDateToday = minDateOnly === today;
+  const minTimeString = isMinDateToday ? minDateTime.toTimeString().slice(0, 5) : undefined;
   
   const maxDateString = maxDate
     ? `${maxDate.getFullYear()}-${String(maxDate.getMonth() + 1).padStart(2, '0')}-${String(maxDate.getDate()).padStart(2, '0')}`
     : undefined;
+
+  // Validate that selected date/time is at least 24 hours in the future
+  const validateDateTime = (dateStr: string, timeStr: string): boolean => {
+    if (!dateStr || !timeStr) return false;
+    
+    const selectedDateTime = new Date(`${dateStr}T${timeStr}`);
+    const now = new Date();
+    const minDateTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+    
+    return selectedDateTime >= minDateTime;
+  };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value; // YYYY-MM-DD format
@@ -177,13 +208,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       return;
     }
     
-    // Combine with existing time or use current time
-    const timeToUse = timeValue || new Date().toTimeString().slice(0, 5); // HH:mm format
+    // Combine with existing time or use minimum time (24 hours from now)
+    const timeToUse = timeValue || minDateTime.toTimeString().slice(0, 5); // HH:mm format
+    
+    // Validate the combined date/time
+    const isValid = validateDateTime(newDate, timeToUse);
     
     // Combine date + time into ISO format
     const combined = `${newDate}T${timeToUse}`;
     if (onChange) {
       onChange(combined);
+    }
+    
+    // Set error state if validation fails
+    if (!isValid && error !== undefined) {
+      // Error will be handled by parent component
     }
   };
 
@@ -191,20 +230,29 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     const newTime = e.target.value; // HH:mm format
     
     if (!newTime) {
-      // If time is cleared but date exists, keep date with empty time
+      // If time is cleared but date exists, keep date with minimum time
       if (dateValue && onChange) {
-        onChange(`${dateValue}T00:00`);
+        const minTime = minDateTime.toTimeString().slice(0, 5);
+        onChange(`${dateValue}T${minTime}`);
       }
       return;
     }
     
-    // Combine with existing date or use today
-    const dateToUse = dateValue || new Date().toISOString().slice(0, 10); // YYYY-MM-DD format
+    // Combine with existing date or use minimum date (24 hours from now)
+    const dateToUse = dateValue || minDateTime.toISOString().slice(0, 10); // YYYY-MM-DD format
+    
+    // Validate the combined date/time
+    const isValid = validateDateTime(dateToUse, newTime);
     
     // Combine date + time into ISO format
     const combined = `${dateToUse}T${newTime}`;
     if (onChange) {
       onChange(combined);
+    }
+    
+    // Set error state if validation fails
+    if (!isValid && error !== undefined) {
+      // Error will be handled by parent component
     }
   };
 
@@ -275,7 +323,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     const timeInput = timeInputWrapperRef.current.querySelector('input[type="time"]') as HTMLInputElement;
     if (!timeInput) return;
 
-    const handleFocus = (e: FocusEvent) => {
+    const handleFocus = (e: Event) => {
       // Only prevent focus if it's not explicitly allowed
       if (!allowTimeFocus) {
         e.preventDefault();
@@ -341,7 +389,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             error={error}
             size={size}
             fullWidth={true}
-            placeholder="mm/dd/yyyy"
+            placeholder="Date"
             aria-label="Select date"
             data-testid={cmsId ? `${cmsId}-date` : `${id}-date`}
           />
@@ -355,18 +403,26 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             value={timeValue}
             onChange={handleTimeChange}
             disabled={disabled}
+            min={isMinDateToday && dateValue === minDateOnly ? minTimeString : undefined}
             tabIndex={isMobileDevice && !allowTimeFocus ? -1 : 0} // Remove from tab order on mobile until allowed
             required={required}
             error={error}
             size={size}
             fullWidth={true}
             step={900} // 15 minute intervals
-            placeholder="--:--"
+            placeholder="Time"
             aria-label="Select time"
             data-testid={cmsId ? `${cmsId}-time` : `${id}-time`}
           />
         </InputWrapper>
       </InputGroup>
+      
+      {/* Helper text showing 24-hour notice requirement */}
+      {required && (
+        <HelperText>
+          Please book at least 24 hours in advance
+        </HelperText>
+      )}
     </DatePickerWrapper>
   );
 };
