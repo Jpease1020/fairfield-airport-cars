@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:ip": "next dev -H 0.0.0.0",
+    "tunnel": "./scripts/tunnel.sh",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

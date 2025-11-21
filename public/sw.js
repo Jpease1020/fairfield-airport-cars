@@ -23,9 +23,7 @@ self.addEventListener('install', (event) => {
         return cache.addAll(STATIC_FILES);
       })
       .then(() => {
-        console.log('📱 Service Worker: Installation complete - forcing activation');
-        // Force all clients to use this new service worker immediately
-        return self.clients.claim();
+        console.log('📱 Service Worker: Installation complete');
       })
       .catch((error) => {
         console.error('📱 Service Worker: Installation error:', error);
@@ -54,8 +52,11 @@ self.addEventListener('activate', (event) => {
         );
       })
       .then(() => {
-        console.log('📱 Service Worker: Activation complete - forcing clients to reload');
-        return self.clients.claim();
+        console.log('📱 Service Worker: Activation complete');
+        // Claim clients after activation completes
+        return self.clients.claim().then(() => {
+          console.log('📱 Service Worker: Clients claimed successfully');
+        });
       })
   );
 });
