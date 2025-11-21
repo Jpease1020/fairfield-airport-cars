@@ -12,7 +12,10 @@ const STATIC_FILES = [
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('📱 Service Worker: Installing...');
+  console.log('📱 Service Worker: Installing v2...');
+  // Force immediate activation, don't wait for all tabs to close
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
@@ -20,8 +23,12 @@ self.addEventListener('install', (event) => {
         return cache.addAll(STATIC_FILES);
       })
       .then(() => {
-        console.log('📱 Service Worker: Installation complete');
-        return self.skipWaiting();
+        console.log('📱 Service Worker: Installation complete - forcing activation');
+        // Force all clients to use this new service worker immediately
+        return self.clients.claim();
+      })
+      .catch((error) => {
+        console.error('📱 Service Worker: Installation error:', error);
       })
   );
 });

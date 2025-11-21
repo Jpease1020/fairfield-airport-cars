@@ -20,6 +20,18 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   response.headers.set('x-pathname', pathname);
   
+  // NEVER cache service worker file - always fetch fresh version
+  if (pathname === '/sw.js' || pathname.startsWith('/sw.js')) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('Surrogate-Control', 'no-store');
+    // Add version header for tracking
+    const buildId = process.env.NEXT_PUBLIC_BUILD_ID || process.env.VERCEL_GIT_COMMIT_SHA?.substring(0, 7) || Date.now().toString();
+    response.headers.set('X-SW-Version', buildId);
+    return response;
+  }
+  
   // Disable all caching in development for hot reloading
   if (process.env.NODE_ENV === 'development') {
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
