@@ -165,22 +165,25 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   }, []);
 
   // Calculate minimum date/time (24 hours from now)
+  // Recalculate on every render to ensure it's always 24 hours from current time
   const minDateTime = useMemo(() => {
     const now = new Date();
     const minDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
     return minDate;
-  }, []);
+  }, [dateValue, timeValue]); // Recalculate when date/time changes to keep it current
 
   // Format min/max dates for native inputs
   // Use provided minDate or default to 24 hours from now
   const effectiveMinDate = minDate || minDateTime;
   const minDateString = `${effectiveMinDate.getFullYear()}-${String(effectiveMinDate.getMonth() + 1).padStart(2, '0')}-${String(effectiveMinDate.getDate()).padStart(2, '0')}`;
   
-  // Calculate minimum time for today (if today is the minimum date)
-  const today = new Date().toISOString().slice(0, 10);
+  // Calculate minimum time dynamically based on selected date
+  // If the selected date is the minimum date (tomorrow), restrict time to 24 hours from now
+  // If the selected date is later, allow any time
   const minDateOnly = effectiveMinDate.toISOString().slice(0, 10);
-  const isMinDateToday = minDateOnly === today;
-  const minTimeString = isMinDateToday ? minDateTime.toTimeString().slice(0, 5) : undefined;
+  const selectedDateOnly = dateValue || '';
+  const isSelectedDateMinDate = selectedDateOnly === minDateOnly;
+  const minTimeString = isSelectedDateMinDate ? minDateTime.toTimeString().slice(0, 5) : undefined;
   
   const maxDateString = maxDate
     ? `${maxDate.getFullYear()}-${String(maxDate.getMonth() + 1).padStart(2, '0')}-${String(maxDate.getDate()).padStart(2, '0')}`
@@ -208,8 +211,19 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       return;
     }
     
-    // Combine with existing time or use minimum time (24 hours from now)
-    const timeToUse = timeValue || minDateTime.toTimeString().slice(0, 5); // HH:mm format
+    // Check if the new date is the minimum date
+    const minDateOnly = effectiveMinDate.toISOString().slice(0, 10);
+    const isNewDateMinDate = newDate === minDateOnly;
+    
+    // If the new date is the minimum date, ensure time is at least the minimum time
+    let timeToUse = timeValue || minDateTime.toTimeString().slice(0, 5); // HH:mm format
+    if (isNewDateMinDate && timeToUse) {
+      const minTime = minDateTime.toTimeString().slice(0, 5);
+      // If current time is before minimum time, use minimum time
+      if (timeToUse < minTime) {
+        timeToUse = minTime;
+      }
+    }
     
     // Validate the combined date/time
     const isValid = validateDateTime(newDate, timeToUse);
@@ -241,11 +255,25 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     // Combine with existing date or use minimum date (24 hours from now)
     const dateToUse = dateValue || minDateTime.toISOString().slice(0, 10); // YYYY-MM-DD format
     
+    // Check if the selected date is the minimum date
+    const minDateOnly = effectiveMinDate.toISOString().slice(0, 10);
+    const isSelectedDateMinDate = dateToUse === minDateOnly;
+    
+    // If the selected date is the minimum date, enforce minimum time
+    let timeToUse = newTime;
+    if (isSelectedDateMinDate) {
+      const minTime = minDateTime.toTimeString().slice(0, 5); // HH:mm format
+      // If the selected time is before the minimum time, use the minimum time
+      if (newTime < minTime) {
+        timeToUse = minTime;
+      }
+    }
+    
     // Validate the combined date/time
-    const isValid = validateDateTime(dateToUse, newTime);
+    const isValid = validateDateTime(dateToUse, timeToUse);
     
     // Combine date + time into ISO format
-    const combined = `${dateToUse}T${newTime}`;
+    const combined = `${dateToUse}T${timeToUse}`;
     if (onChange) {
       onChange(combined);
     }
@@ -403,7 +431,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             value={timeValue}
             onChange={handleTimeChange}
             disabled={disabled}
-            min={isMinDateToday && dateValue === minDateOnly ? minTimeString : undefined}
+            min={isSelectedDateMinDate ? minTimeString : undefined}
             tabIndex={isMobileDevice && !allowTimeFocus ? -1 : 0} // Remove from tab order on mobile until allowed
             required={required}
             error={error}
