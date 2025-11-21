@@ -109,7 +109,7 @@ export const PlacesAutocomplete: React.FC<PlacesAutocompleteProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const predictionsRef = useRef<HTMLDivElement>(null);
 
-  // Fetch predictions from Google Places API
+  // Fetch predictions using Google Places AutocompleteService directly from frontend
   const fetchPredictions = async (input: string) => {
     if (!input.trim() || input.length < 3) {
       setPredictions([]);
@@ -117,29 +117,47 @@ export const PlacesAutocomplete: React.FC<PlacesAutocompleteProps> = ({
       return;
     }
 
+    // Wait for Google Maps to be available
+    if (typeof window === 'undefined' || !window.google?.maps?.places) {
+      setPredictions([]);
+      setShowPredictions(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const response = await fetch('/api/places-autocomplete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ input }),
-      });
+      const autocompleteService = new window.google.maps.places.AutocompleteService();
 
-      if (response.ok) {
-        const data = await response.json();
-        setPredictions(data.predictions || []);
-        setShowPredictions(data.predictions?.length > 0);
-      } else {
-        setPredictions([]);
-        setShowPredictions(false);
-      }
+      autocompleteService.getPlacePredictions(
+        {
+          input: input,
+          componentRestrictions: { country: 'us' },
+        },
+        (predictions, status) => {
+          if (
+            status === window.google.maps.places.PlacesServiceStatus.OK &&
+            predictions
+          ) {
+            const mappedPredictions = predictions.map((p) => ({
+              place_id: p.place_id,
+              description: p.description,
+              structured_formatting: p.structured_formatting,
+              types: p.types || [],
+            }));
+
+            setPredictions(mappedPredictions);
+            setShowPredictions(mappedPredictions.length > 0);
+          } else {
+            setPredictions([]);
+            setShowPredictions(false);
+          }
+          setIsLoading(false);
+        }
+      );
     } catch (_error) {
       // Silently handle errors to avoid console pollution
       setPredictions([]);
       setShowPredictions(false);
-    } finally {
       setIsLoading(false);
     }
   };

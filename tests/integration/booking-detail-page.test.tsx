@@ -8,8 +8,8 @@
  * - Data display
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import BookingDetailClient from '@/app/(customer)/booking/[id]/BookingDetailClient';
 
 // Mock the CMS provider
@@ -32,6 +32,9 @@ vi.mock('@/design/ui', async () => {
 });
 
 describe('Booking Detail Page - Critical Flow', () => {
+  afterEach(() => {
+    cleanup();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     global.fetch = vi.fn();
@@ -292,7 +295,10 @@ describe('Booking Detail Page - Critical Flow', () => {
 
     // Should still render booking even with invalid dates (uses fallback)
     await waitFor(() => {
-      expect(screen.getByText(/Test User/i)).toBeInTheDocument();
+      // Use getAllByText since there might be multiple instances, then check first one
+      const testUserElements = screen.getAllByText(/Test User/i);
+      expect(testUserElements.length).toBeGreaterThan(0);
+      expect(testUserElements[0]).toBeInTheDocument();
     });
   });
 });
