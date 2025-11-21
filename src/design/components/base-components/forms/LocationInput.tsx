@@ -10,23 +10,12 @@ const LocationInputContainer = styled.div<{ $fullWidth: boolean }>`
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
 `;
 
-// Mobile: fixed positioning to appear above keyboard
-// Desktop: absolute positioning relative to container
+// Always use absolute positioning - tied to bottom of input field
 const PredictionsDropdown = styled.div<{ $isMobile: boolean; $top: number; $left: number; $width: number }>`
-  position: ${({ $isMobile }) => ($isMobile ? 'fixed' : 'absolute')};
-  ${({ $isMobile, $top, $left, $width }) =>
-    $isMobile
-      ? `
-    top: ${$top}px;
-    left: ${$left}px;
-    width: ${$width}px;
-    max-width: calc(100vw - ${spacing.md} * 2);
-  `
-      : `
-    top: 100%;
-    left: 0;
-    right: 0;
-  `}
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   background-color: ${colors.background.primary};
   border: 1px solid ${colors.border.default};
   border-radius: 0.5rem;
@@ -85,20 +74,10 @@ const PredictionSecondaryText = styled.div`
 `;
 
 const LoadingIndicator = styled.div<{ $isMobile: boolean; $top: number; $left: number; $width: number }>`
-  position: ${({ $isMobile }) => ($isMobile ? 'fixed' : 'absolute')};
-  ${({ $isMobile, $top, $left, $width }) =>
-    $isMobile
-      ? `
-    top: ${$top}px;
-    left: ${$left}px;
-    width: ${$width}px;
-    max-width: calc(100vw - ${spacing.md} * 2);
-  `
-      : `
-    top: 100%;
-    left: 0;
-    right: 0;
-  `}
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   background-color: ${colors.background.primary};
   border: 1px solid ${colors.border.default};
   border-radius: 0.5rem;
@@ -196,30 +175,16 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     if (!inputRef.current) return;
 
     const inputRect = inputRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
 
-    if (isMobile) {
-      // Mobile: fixed positioning below input, ensure it's visible
-      const top = Math.min(inputRect.bottom + 4, viewportHeight - 200); // Leave space at bottom
-      const left = inputRect.left;
-      const width = inputRect.width;
-      const margin = 16; // 1rem = 16px for mobile margin
-
-      setDropdownPosition({
-        top,
-        left: Math.max(margin, Math.min(left, viewportWidth - width - margin)),
-        width: Math.min(width, viewportWidth - margin * 2),
-      });
-    } else {
-      // Desktop: absolute positioning (will be relative to container)
-      setDropdownPosition({
-        top: inputRect.height + 4,
-        left: 0,
-        width: inputRect.width,
-      });
-    }
-  }, [isMobile]);
+    // Always use absolute positioning - tied to bottom of input field
+    // Position is now handled by CSS (top: 100%), so we don't need to set position state
+    // But we keep the state for potential future use
+    setDropdownPosition({
+      top: 0,
+      left: 0,
+      width: 0,
+    });
+  }, []);
 
   // Update position when input position changes or predictions show
   useEffect(() => {

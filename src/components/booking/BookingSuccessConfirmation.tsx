@@ -1,7 +1,15 @@
 'use client';
 
 import React from 'react';
+import styled from 'styled-components';
 import { Box, Stack, Text, Button } from '@/design/ui';
+import { colors } from '@/design/system/tokens/tokens';
+
+const Divider = styled.div`
+  height: 1px;
+  background-color: ${colors.border.default};
+  margin: 0.5rem 0;
+`;
 
 interface BookingSuccessConfirmationProps {
   pickupLocation: string;
@@ -13,6 +21,9 @@ interface BookingSuccessConfirmationProps {
   completedBookingId: string | null;
   cmsData: any;
   warning?: string | null;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
 }
 
 export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProps> = ({
@@ -25,6 +36,9 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
   completedBookingId,
   cmsData,
   warning,
+  customerName,
+  customerEmail,
+  customerPhone,
 }) => {
   return (
     <Box variant="elevated" padding="xl" data-testid="booking-success-confirmation">
@@ -58,6 +72,35 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
 
         <Box variant="outlined" padding="lg" data-testid="booking-details-summary">
           <Stack spacing="md">
+            {/* Customer Information */}
+            {(customerName || customerEmail || customerPhone) && (
+              <>
+                <Text weight="bold" size="md" cmsId="booking-detail-customer-section">
+                  {cmsData?.['booking-detail-customer-section'] || 'Your Information'}
+                </Text>
+                {customerName && (
+                  <Stack direction="horizontal" justify="space-between">
+                    <Text weight="medium" cmsId="booking-detail-name">{cmsData?.['booking-detail-name'] || 'Name:'}</Text>
+                    <Text cmsId="customer-name-value">{customerName}</Text>
+                  </Stack>
+                )}
+                {customerEmail && (
+                  <Stack direction="horizontal" justify="space-between">
+                    <Text weight="medium" cmsId="booking-detail-email">{cmsData?.['booking-detail-email'] || 'Email:'}</Text>
+                    <Text cmsId="customer-email-value">{customerEmail}</Text>
+                  </Stack>
+                )}
+                {customerPhone && (
+                  <Stack direction="horizontal" justify="space-between">
+                    <Text weight="medium" cmsId="booking-detail-phone">{cmsData?.['booking-detail-phone'] || 'Phone:'}</Text>
+                    <Text cmsId="customer-phone-value">{customerPhone}</Text>
+                  </Stack>
+                )}
+                <Divider />
+              </>
+            )}
+            
+            {/* Trip Details */}
             <Stack direction="horizontal" justify="space-between">
               <Text weight="medium" cmsId="booking-detail-pickup">{cmsData?.['booking-detail-pickup'] || 'Pickup Location:'}</Text>
               <Text cmsId="pickup-location-value">{pickupLocation}</Text>
