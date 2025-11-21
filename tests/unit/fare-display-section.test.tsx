@@ -5,7 +5,8 @@
  * including fare display, loading states, and error handling.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
 import { renderWithProviders, render, screen } from '../utils/test-providers';
 import { FareDisplaySection } from '@/components/booking/trip-details/FareDisplaySection';
 import { useBooking } from '@/providers/BookingProvider';

@@ -114,29 +114,24 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
   
   // Create helper functions like the quick booking form
   const setPickupLocation = (address: string, coordinates?: Coordinates) => {
-    console.log('LocationInputSection setPickupLocation:', address, coordinates);
     updateTripDetails({ pickup: { ...formData.trip.pickup, address, coordinates: coordinates || null } });
   };
   
   const setDropoffLocation = (address: string, coordinates?: Coordinates) => {
-    console.log('LocationInputSection setDropoffLocation:', address, coordinates);
     updateTripDetails({ dropoff: { ...formData.trip.dropoff, address, coordinates: coordinates || null } });
   };
   
   // Handler functions like the quick booking form
   const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
-    console.log('LocationInputSection handlePickupLocationSelect:', address, coordinates);
     setPickupLocation(address, coordinates);
   };
 
   const handleDropoffLocationSelect = (address: string, coordinates: Coordinates) => {
-    console.log('LocationInputSection handleDropoffLocationSelect:', address, coordinates);
     setDropoffLocation(address, coordinates);
   };
 
   // Swap pickup and dropoff locations
   const handleSwapLocations = () => {
-    console.log('Swapping locations');
     const tempPickup = { ...formData.trip.pickup };
     const tempDropoff = { ...formData.trip.dropoff };
     
@@ -240,7 +235,6 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
             </LabelRow>
             <LocationInput
               id="pickup-location-input"
-              label=""
               placeholder={
                 pickupIsAirport 
                   ? (cmsData?.['tripDetailsPhase-airportPlaceholder'] || 'JFK, LGA, Newark, etc.')
@@ -314,7 +308,6 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
             </LabelRow>
             <LocationInput
               id="dropoff-location-input"
-              label=""
               placeholder={
                 dropoffIsAirport 
                   ? (cmsData?.['tripDetailsPhase-airportPlaceholder'] || 'JFK, LGA, Newark, etc.')

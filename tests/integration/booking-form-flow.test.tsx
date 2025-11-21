@@ -3,17 +3,17 @@
  * Tests the business logic and user flow for the /book page booking form
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BookingFormPhases } from '@/components/booking/BookingFormPhases';
 import { BookingProvider } from '@/providers/BookingProvider';
 import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
 
-// Mock TripDetailsPhase component
-vi.mock('@/components/booking/trip-details/TripDetailsPhase', () => ({
+// Mock TripDetailsPhase component - match real component structure
+vi.mock('@/components/booking/TripDetailsPhase', () => ({
   TripDetailsPhase: ({ cmsData }: any) => (
-    <div data-testid="trip-details-phase">
+    <div data-testid="trip-details-phase-container">
       <input data-testid="pickup-location-input" />
       <input data-testid="dropoff-location-input" />
       <input data-testid="pickup-datetime-input-date" type="date" />
@@ -56,6 +56,9 @@ const renderWithProviders = (component: React.ReactElement) => {
 };
 
 describe('Booking Form Flow - Business Logic', () => {
+  afterEach(() => {
+    cleanup();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -63,7 +66,8 @@ describe('Booking Form Flow - Business Logic', () => {
   it('should start on trip-details phase', () => {
     renderWithProviders(<BookingFormPhases cmsData={{}} />);
     
-    expect(screen.getByTestId('trip-details-phase')).toBeInTheDocument();
+    // The mock provides trip-details-phase-container
+    expect(screen.getByTestId('trip-details-phase-container')).toBeInTheDocument();
     expect(screen.queryByTestId('contact-info-phase')).not.toBeInTheDocument();
     expect(screen.queryByTestId('payment-phase')).not.toBeInTheDocument();
   });
@@ -80,7 +84,7 @@ describe('Booking Form Flow - Business Logic', () => {
     // Should still be on trip-details phase (validation failed)
     // Note: Actual validation behavior depends on implementation
     // This test verifies the button exists and can be clicked
-    expect(screen.getByTestId('trip-details-phase')).toBeInTheDocument();
+    expect(screen.getByTestId('trip-details-phase-container')).toBeInTheDocument();
   });
 
   it('should navigate to contact-info phase when trip details are valid', async () => {
@@ -108,7 +112,7 @@ describe('Booking Form Flow - Business Logic', () => {
     if (backButton) {
       await user.click(backButton);
       // Should return to trip-details
-      expect(screen.getByTestId('trip-details-phase')).toBeInTheDocument();
+      expect(screen.getByTestId('trip-details-phase-container')).toBeInTheDocument();
     }
   });
 
@@ -145,7 +149,7 @@ describe('Booking Form Flow - Business Logic', () => {
     
     // Should show validation error or stay on same phase
     // Verification depends on actual validation implementation
-    expect(screen.getByTestId('trip-details-phase')).toBeInTheDocument();
+    expect(screen.getByTestId('trip-details-phase-container')).toBeInTheDocument();
   });
 
   it('should show date and time inputs in trip details phase', () => {

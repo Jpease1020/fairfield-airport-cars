@@ -1,21 +1,119 @@
 'use client';
 
 import React, { useRef, useCallback, useEffect, useState } from 'react';
-import { flushSync } from 'react-dom';
 import styled from 'styled-components';
-import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { Input } from './Input';
+import { colors, spacing, fontSize, shadows } from '../../../system/tokens/tokens';
 
-const LocationInputContainer = styled.div`
+const LocationInputContainer = styled.div<{ $fullWidth: boolean }>`
   position: relative;
-  width: 100%;
+  width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
+`;
+
+// Mobile: fixed positioning to appear above keyboard
+// Desktop: absolute positioning relative to container
+const PredictionsDropdown = styled.div<{ $isMobile: boolean; $top: number; $left: number; $width: number }>`
+  position: ${({ $isMobile }) => ($isMobile ? 'fixed' : 'absolute')};
+  ${({ $isMobile, $top, $left, $width }) =>
+    $isMobile
+      ? `
+    top: ${$top}px;
+    left: ${$left}px;
+    width: ${$width}px;
+    max-width: calc(100vw - ${spacing.md} * 2);
+  `
+      : `
+    top: 100%;
+    left: 0;
+    right: 0;
+  `}
+  background-color: ${colors.background.primary};
+  border: 1px solid ${colors.border.default};
+  border-radius: 0.5rem;
+  box-shadow: ${shadows.lg};
+  z-index: 9999; /* Very high z-index to appear above keyboard and other elements */
+  max-height: ${({ $isMobile }) => ($isMobile ? '40vh' : '300px')};
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  
+  /* Mobile-specific: ensure dropdown is visible and scrollable */
+  @media (max-width: 768px) {
+    max-height: min(40vh, 300px);
+    /* Prevent body scroll when dropdown is open */
+    overscroll-behavior: contain;
+  }
+`;
+
+const PredictionItem = styled.div<{ $isLast: boolean; $isSelected: boolean }>`
+  padding: ${spacing.md} ${spacing.lg};
+  cursor: pointer;
+  background-color: ${({ $isSelected }) => ($isSelected ? colors.background.secondary : 'transparent')};
+  border-bottom: ${({ $isLast }) => ($isLast ? 'none' : `1px solid ${colors.border.light}`)};
+  transition: background-color 0.15s ease;
+  min-height: 44px; /* Touch-friendly minimum height (WCAG) */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  /* Active state for touch devices */
+  -webkit-tap-highlight-color: transparent;
+  
+  &:hover,
+  &:active {
+    background-color: ${colors.background.secondary};
+  }
+  
+  /* Ensure text is readable and properly sized */
+  @media (max-width: 768px) {
+    padding: ${spacing.md};
+    min-height: 48px; /* Slightly larger on mobile for easier tapping */
+  }
+`;
+
+const PredictionMainText = styled.div`
+  font-weight: 500;
+  font-size: ${fontSize.md};
+  color: ${colors.text.primary};
+  line-height: 1.4;
+`;
+
+const PredictionSecondaryText = styled.div`
+  font-size: ${fontSize.sm};
+  color: ${colors.text.secondary};
+  margin-top: ${spacing.xs};
+  line-height: 1.3;
+`;
+
+const LoadingIndicator = styled.div<{ $isMobile: boolean; $top: number; $left: number; $width: number }>`
+  position: ${({ $isMobile }) => ($isMobile ? 'fixed' : 'absolute')};
+  ${({ $isMobile, $top, $left, $width }) =>
+    $isMobile
+      ? `
+    top: ${$top}px;
+    left: ${$left}px;
+    width: ${$width}px;
+    max-width: calc(100vw - ${spacing.md} * 2);
+  `
+      : `
+    top: 100%;
+    left: 0;
+    right: 0;
+  `}
+  background-color: ${colors.background.primary};
+  border: 1px solid ${colors.border.default};
+  border-radius: 0.5rem;
+  padding: ${spacing.md};
+  text-align: center;
+  color: ${colors.text.secondary};
+  font-size: ${fontSize.sm};
+  z-index: 9999;
 `;
 
 interface LocationInputProps {
   value: string;
-  onChange: (value: string) => void;
-  onLocationSelect: (address: string, coordinates: { lat: number; lng: number }) => void;
-  onCoordsChange?: (coordinates: { lat: number; lng: number } | null) => void;
+  onChange: (_value: string) => void;
+  onLocationSelect: (_address: string, _coordinates: { lat: number; lng: number }) => void;
+  onCoordsChange?: (_coordinates: { lat: number; lng: number } | null) => void;
   coords?: { lat: number; lng: number } | null;
   placeholder?: string;
   disabled?: boolean;
@@ -28,6 +126,27 @@ interface LocationInputProps {
   restrictToAirports?: boolean;
   'data-testid'?: string;
   [key: string]: unknown;
+}
+
+interface Prediction {
+  place_id: string;
+  description: string;
+  structured_formatting: {
+    main_text: string;
+    secondary_text: string;
+  };
+  types: string[];
+}
+
+interface PlaceDetails {
+  place_id: string;
+  formatted_address: string;
+  name: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  types: string[];
 }
 
 export const LocationInput: React.FC<LocationInputProps> = ({
@@ -49,186 +168,361 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [_placeAutocomplete, setPlaceAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
-  const isProcessingPlaceSelection = useRef(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const places = useMapsLibrary('places');
-  
-  // Use refs for callbacks to prevent recreating autocomplete
-  const onChangeRef = useRef(onChange);
-  const onLocationSelectRef = useRef(onLocationSelect);
-  const onCoordsChangeRef = useRef(onCoordsChange);
-  
-  // Update refs when callbacks change
+  const predictionsRef = useRef<HTMLDivElement>(null);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [showPredictions, setShowPredictions] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+
+  // Detect mobile device
   useEffect(() => {
-    onChangeRef.current = onChange;
-    onLocationSelectRef.current = onLocationSelect;
-    onCoordsChangeRef.current = onCoordsChange;
-  }, [onChange, onLocationSelect, onCoordsChange]);
-
-  // Extract address from place result
-  const getAddressFromPlace = useCallback((place: google.maps.places.PlaceResult): string => {
-    if (place.types?.includes('airport')) {
-      return place.name || place.formatted_address || '';
-    }
-    if (place.types?.includes('establishment') || place.types?.includes('point_of_interest')) {
-      return place.name || place.formatted_address || '';
-    }
-    return place.formatted_address || place.name || '';
-  }, []);
-
-  // Handle place selection from autocomplete
-  // This is the ONLY place where we update React state from Google Maps events
-  // We avoid direct DOM manipulation - let React control the value through state
-  // Using a stable callback that doesn't change to prevent autocomplete recreation
-  const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
-    if (!place.geometry?.location) {
-      return;
-    }
-
-    const address = getAddressFromPlace(place);
-    if (!address) {
-      return;
-    }
-
-    const coordinates = {
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng()
+    const checkMobile = () => {
+      const isMobileDevice =
+        typeof window !== 'undefined' &&
+        (window.innerWidth <= 768 ||
+          /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+      setIsMobile(isMobileDevice);
     };
 
-    // Mark that we're processing a place selection to prevent input change conflicts
-    isProcessingPlaceSelection.current = true;
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-    // Update React state ONLY - React will update the DOM through the controlled component
-    // Use flushSync to ensure state updates synchronously before blur events fire on mobile
-    flushSync(() => {
-      onChangeRef.current(address);
-    });
+  // Calculate dropdown position
+  const updateDropdownPosition = useCallback(() => {
+    if (!inputRef.current) return;
 
-    // Notify callbacks about location selection
-    onLocationSelectRef.current(address, coordinates);
-    if (onCoordsChangeRef.current) {
-      onCoordsChangeRef.current(coordinates);
-    }
+    const inputRect = inputRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
 
-    // Keep input in view on mobile after selection
-    // Use requestAnimationFrame to ensure this happens after React re-render
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    if (typeof window !== 'undefined' && window.requestAnimationFrame && isMobile) {
-      window.requestAnimationFrame(() => {
-        if (inputRef.current) {
-          inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+    if (isMobile) {
+      // Mobile: fixed positioning below input, ensure it's visible
+      const top = Math.min(inputRect.bottom + 4, viewportHeight - 200); // Leave space at bottom
+      const left = inputRect.left;
+      const width = inputRect.width;
+      const margin = 16; // 1rem = 16px for mobile margin
+
+      setDropdownPosition({
+        top,
+        left: Math.max(margin, Math.min(left, viewportWidth - width - margin)),
+        width: Math.min(width, viewportWidth - margin * 2),
+      });
+    } else {
+      // Desktop: absolute positioning (will be relative to container)
+      setDropdownPosition({
+        top: inputRect.height + 4,
+        left: 0,
+        width: inputRect.width,
       });
     }
+  }, [isMobile]);
 
-    // Clear the processing flag after a delay
-    // This ensures any blur events that fire can check the flag
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    timeoutRef.current = setTimeout(() => {
-      isProcessingPlaceSelection.current = false;
-      timeoutRef.current = null;
-    }, 200);
-  }, [getAddressFromPlace]);
-
-  // Initialize autocomplete when places library is loaded
-  // This effect should ONLY run when places library loads or restrictToAirports changes
-  // NOT when value or handlePlaceSelect changes (to prevent recreating autocomplete)
+  // Update position when input position changes or predictions show
   useEffect(() => {
-    if (!places || !inputRef.current) {
-      setPlaceAutocomplete(null);
+    if (!showPredictions || !inputRef.current) {
       return;
     }
 
-    const options: google.maps.places.AutocompleteOptions = {
-      fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types'],
-      componentRestrictions: { country: 'us' },
-      ...(restrictToAirports && { types: ['airport'] })
-    };
+    updateDropdownPosition();
 
-    const autocomplete = new places.Autocomplete(inputRef.current, options);
-    setPlaceAutocomplete(autocomplete);
-
-    // Add place_changed listener - this is the PRIMARY way Google Maps notifies us
-    const placeChangedListener = autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      
-      // Check if place has geometry (required for coordinates)
-      if (place && place.geometry?.location) {
-        handlePlaceSelect(place);
-      } else {
-        // Even without geometry, update the address if we have one
-        if (place.formatted_address || place.name) {
-          const address = place.formatted_address || place.name || '';
-          flushSync(() => {
-            onChangeRef.current(address);
-          });
-        }
-      }
-    });
-
-    // Cleanup: remove listener
-    return () => {
-      if (placeChangedListener && google.maps && google.maps.event) {
-        google.maps.event.removeListener(placeChangedListener);
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
+    // Update position on scroll/resize - use passive listener and debounce for performance
+    let scrollTimeout: NodeJS.Timeout | null = null;
+    const handleUpdate = () => {
+      if (inputRef.current) {
+        updateDropdownPosition();
       }
     };
-    // Only recreate autocomplete when places library or restrictToAirports changes
-    // handlePlaceSelect is stable (doesn't change), so it's safe to include
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [places, restrictToAirports]);
-
-  // Handle manual input changes
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only update if we're not processing a place selection
-    // This prevents conflicts when Google Maps autocomplete sets the value
-    if (!isProcessingPlaceSelection.current) {
-      onChangeRef.current(e.target.value);
-    }
-  }, []);
-
-  // Handle blur - sync DOM value to React state if they differ
-  // This handles cases where Google Maps sets a value but React state didn't update
-  const handleBlur = useCallback(() => {
-    // If we're processing a place selection, the value should already be synced via flushSync
-    // But we check as a safety net in case something went wrong
-    if (isProcessingPlaceSelection.current) {
-      // The value should already be set, but verify DOM matches React state
-      if (inputRef.current && inputRef.current.value !== value) {
-        // If DOM has a value but React state doesn't match, sync it
-        const domValue = inputRef.current.value;
-        if (domValue) {
-          flushSync(() => {
-            onChangeRef.current(domValue);
-          });
-        }
-      }
-      return;
-    }
     
-    // Normal blur: sync DOM value to React state if they differ
-    // This handles edge cases where Google Maps might have set a value
-    if (inputRef.current && inputRef.current.value !== value) {
-      const domValue = inputRef.current.value;
-      if (domValue) {
-        onChangeRef.current(domValue);
+    const handleScroll = () => {
+      // Debounce scroll updates to prevent excessive recalculations
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
       }
+      scrollTimeout = setTimeout(handleUpdate, 50);
+    };
+    
+    // Use passive listener for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleUpdate);
+
+    // Handle visual viewport changes (keyboard show/hide on mobile)
+    let visualViewport: (typeof window)['visualViewport'] | null = null;
+    if (typeof window !== 'undefined' && window.visualViewport) {
+      visualViewport = window.visualViewport;
+      visualViewport.addEventListener('resize', handleUpdate);
     }
-  }, [value]);
+
+    return () => {
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleUpdate);
+      if (visualViewport) {
+        visualViewport.removeEventListener('resize', handleUpdate);
+      }
+    };
+  }, [showPredictions, updateDropdownPosition]);
+
+  // Fetch predictions using Google Places AutocompleteService directly from frontend
+  const fetchPredictions = useCallback(
+    async (input: string) => {
+      if (!input.trim() || input.length < 3) {
+        setPredictions([]);
+        setShowPredictions(false);
+        return;
+      }
+
+      // Wait for Google Maps to be available
+      if (typeof window === 'undefined' || !window.google?.maps?.places) {
+        setPredictions([]);
+        setShowPredictions(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const autocompleteService = new window.google.maps.places.AutocompleteService();
+
+        autocompleteService.getPlacePredictions(
+          {
+            input: input,
+            componentRestrictions: { country: 'us' },
+            ...(restrictToAirports && { types: ['airport'] }),
+          },
+          (predictions, status) => {
+            if (
+              status === window.google.maps.places.PlacesServiceStatus.OK &&
+              predictions
+            ) {
+              let filteredPredictions = predictions.map((p) => ({
+                place_id: p.place_id,
+                description: p.description,
+                structured_formatting: p.structured_formatting,
+                types: p.types || [],
+              }));
+
+              // Additional filtering for airports if needed
+              if (restrictToAirports) {
+                filteredPredictions = filteredPredictions.filter((p) =>
+                  p.types?.some((type) => type === 'airport')
+                );
+              }
+
+              setPredictions(filteredPredictions);
+              setShowPredictions(filteredPredictions.length > 0);
+              setSelectedIndex(-1);
+            } else {
+              setPredictions([]);
+              setShowPredictions(false);
+            }
+            setIsLoading(false);
+          }
+        );
+      } catch (_error) {
+        setPredictions([]);
+        setShowPredictions(false);
+        setIsLoading(false);
+      }
+    },
+    [restrictToAirports]
+  );
+
+  // Debounce timer for search
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch place details using Google Places Service directly from frontend
+  const fetchPlaceDetails = useCallback(
+    async (placeId: string): Promise<PlaceDetails | null> => {
+      // Wait for Google Maps to be available
+      if (typeof window === 'undefined' || !window.google?.maps?.places) {
+        return null;
+      }
+
+      return new Promise((resolve) => {
+        const placesService = new window.google.maps.places.PlacesService(
+          document.createElement('div')
+        );
+
+        placesService.getDetails(
+          {
+            placeId: placeId,
+            fields: ['formatted_address', 'geometry', 'name', 'place_id', 'types'],
+          },
+          (place, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
+              if (!place.geometry?.location) {
+                resolve(null);
+                return;
+              }
+
+              resolve({
+                place_id: place.place_id || placeId,
+                formatted_address: place.formatted_address || place.name || '',
+                name: place.name || place.formatted_address || '',
+                coordinates: {
+                  lat: place.geometry.location.lat(),
+                  lng: place.geometry.location.lng(),
+                },
+                types: place.types || [],
+              });
+            } else {
+              resolve(null);
+            }
+          }
+        );
+      });
+    },
+    []
+  );
+
+  // Handle prediction selection
+  const handlePredictionSelect = useCallback(
+    async (prediction: Prediction) => {
+      // Clear any pending search
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+        searchTimeoutRef.current = null;
+      }
+
+      // Close dropdown immediately
+      setShowPredictions(false);
+      setPredictions([]);
+      setSelectedIndex(-1);
+
+      // Fetch place details to get coordinates
+      const placeDetails = await fetchPlaceDetails(prediction.place_id);
+
+      if (placeDetails) {
+        // For airports, prioritize the name field which contains the full airport name
+        // Otherwise use formatted_address for regular addresses
+        const isAirport = placeDetails.types?.some(type => type === 'airport');
+        const address = isAirport 
+          ? (placeDetails.name || prediction.description || placeDetails.formatted_address)
+          : (placeDetails.formatted_address || placeDetails.name || prediction.description);
+        
+        onChange(address);
+        onLocationSelect(address, placeDetails.coordinates);
+        if (onCoordsChange) {
+          onCoordsChange(placeDetails.coordinates);
+        }
+      } else {
+        // Fallback: use prediction description which usually has the full name
+        onChange(prediction.description);
+        if (onCoordsChange) {
+          onCoordsChange(null);
+        }
+      }
+
+      // Don't scroll - let the user maintain their scroll position
+      // Only scroll if the input is actually out of view (which we can check, but for now, skip it)
+    },
+    [onChange, onLocationSelect, onCoordsChange, fetchPlaceDetails, isMobile]
+  );
+
+  // Handle input change - user is typing
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
+      onChange(newValue);
+
+      // Clear any pending search
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      if (newValue.trim().length >= 3) {
+        // Debounce the search - only fetch when user stops typing
+        searchTimeoutRef.current = setTimeout(() => {
+          fetchPredictions(newValue);
+        }, 300);
+      } else {
+        setShowPredictions(false);
+        setPredictions([]);
+      }
+    },
+    [onChange, fetchPredictions]
+  );
+
+  // Handle input focus
+  const handleInputFocus = useCallback(() => {
+    if (predictions.length > 0) {
+      setShowPredictions(true);
+      updateDropdownPosition();
+    }
+  }, [predictions.length, updateDropdownPosition]);
+
+  // Handle keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Escape') {
+        setShowPredictions(false);
+        setSelectedIndex(-1);
+        return;
+      }
+
+      if (!showPredictions || predictions.length === 0) {
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex((prev) => Math.min(prev + 1, predictions.length - 1));
+        setShowPredictions(true);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex((prev) => Math.max(prev - 1, -1));
+        setShowPredictions(true);
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        e.preventDefault();
+        handlePredictionSelect(predictions[selectedIndex]);
+      }
+    },
+    [showPredictions, predictions, handlePredictionSelect, selectedIndex]
+  );
+
+  // Handle click outside to close predictions
+  useEffect(() => {
+    if (!showPredictions) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Element;
+      // Check if click is outside both input and predictions dropdown
+      if (
+        predictionsRef.current &&
+        !predictionsRef.current.contains(target) &&
+        inputRef.current &&
+        !inputRef.current.contains(target)
+      ) {
+        setShowPredictions(false);
+        setSelectedIndex(-1);
+      }
+    };
+
+    // Use both mousedown and touchstart for mobile
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [showPredictions]);
+
+  // Don't prevent body scroll - it causes layout shifts and jumping
+  // The dropdown is positioned fixed on mobile, so it will stay in place during scroll
 
   return (
-    <LocationInputContainer>
+    <LocationInputContainer $fullWidth={fullWidth}>
       <Input
         ref={inputRef}
         value={value}
         onChange={handleInputChange}
-        onBlur={handleBlur}
+        onFocus={handleInputFocus}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
         error={error}
@@ -240,6 +534,45 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         data-testid={dataTestId}
         {...rest}
       />
+
+      {showPredictions && predictions.length > 0 && (
+        <PredictionsDropdown
+          ref={predictionsRef}
+          $isMobile={isMobile}
+          $top={dropdownPosition.top}
+          $left={dropdownPosition.left}
+          $width={dropdownPosition.width}
+        >
+          {predictions.map((prediction, index) => (
+            <PredictionItem
+              key={prediction.place_id}
+              $isLast={index === predictions.length - 1}
+              $isSelected={selectedIndex === index}
+              onClick={() => handlePredictionSelect(prediction)}
+            >
+              <PredictionMainText>
+                {prediction.structured_formatting.main_text}
+              </PredictionMainText>
+              {prediction.structured_formatting.secondary_text && (
+                <PredictionSecondaryText>
+                  {prediction.structured_formatting.secondary_text}
+                </PredictionSecondaryText>
+              )}
+            </PredictionItem>
+          ))}
+        </PredictionsDropdown>
+      )}
+
+      {isLoading && (
+        <LoadingIndicator
+          $isMobile={isMobile}
+          $top={dropdownPosition.top}
+          $left={dropdownPosition.left}
+          $width={dropdownPosition.width}
+        >
+          Loading...
+        </LoadingIndicator>
+      )}
     </LocationInputContainer>
   );
 };

@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, screen, waitFor, fireEvent } from '../utils/test-providers';
+import { renderWithProviders, screen, waitFor, fireEvent, cleanup } from '../utils/test-providers';
 import { HeroCompactBookingForm } from '@/design/components/content-sections/HeroCompactBookingForm';
 import { TripDetailsPhase } from '@/components/booking/TripDetailsPhase';
 import { useBooking } from '@/providers/BookingProvider';
@@ -156,6 +156,9 @@ const BookingObserver = () => {
 };
 
 describe('Hero quick booking bridge', () => {
+  afterEach(() => {
+    cleanup();
+  });
   it('persists hero quick booking data into the full booking form', async () => {
     const user = userEvent.setup();
 
@@ -185,10 +188,17 @@ describe('Hero quick booking bridge', () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByTestId('pickup-location-input')).toHaveValue(pickupValue);
-      expect(screen.getByTestId('dropoff-location-input')).toHaveValue(dropoffValue);
-      expect(screen.getByTestId('pickup-datetime-input-date')).toHaveValue('2025-12-31');
-      expect(screen.getByTestId('pickup-datetime-input-time')).toHaveValue('10:30');
+      // Use getAllByTestId and check the last one (the one in the full booking form)
+      const pickupInputs = screen.getAllByTestId('pickup-location-input');
+      const dropoffInputs = screen.getAllByTestId('dropoff-location-input');
+      const dateInputs = screen.getAllByTestId('pickup-datetime-input-date');
+      const timeInputs = screen.getAllByTestId('pickup-datetime-input-time');
+      
+      // Check the last input (should be from the full booking form)
+      expect(pickupInputs[pickupInputs.length - 1]).toHaveValue(pickupValue);
+      expect(dropoffInputs[dropoffInputs.length - 1]).toHaveValue(dropoffValue);
+      expect(dateInputs[dateInputs.length - 1]).toHaveValue('2025-12-31');
+      expect(timeInputs[timeInputs.length - 1]).toHaveValue('10:30');
     });
 
     const observer = screen.getByTestId('booking-observer');
