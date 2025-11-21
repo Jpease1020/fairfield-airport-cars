@@ -1,6 +1,6 @@
-const CACHE_NAME = 'fairfield-airport-cars-v1';
-const STATIC_CACHE = 'static-v1';
-const DYNAMIC_CACHE = 'dynamic-v1';
+const CACHE_NAME = 'fairfield-airport-cars-v2';
+const STATIC_CACHE = 'static-v2';
+const DYNAMIC_CACHE = 'dynamic-v2';
 
 // Files to cache for offline functionality
 const STATIC_FILES = [
@@ -35,7 +35,10 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames
             .filter((cacheName) => {
-              return cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE;
+              // Delete all old cache versions (v1, static-v1, dynamic-v1, etc.)
+              return cacheName !== STATIC_CACHE && 
+                     cacheName !== DYNAMIC_CACHE &&
+                     cacheName !== CACHE_NAME;
             })
             .map((cacheName) => {
               console.log('📱 Service Worker: Deleting old cache:', cacheName);
@@ -44,13 +47,13 @@ self.addEventListener('activate', (event) => {
         );
       })
       .then(() => {
-        console.log('📱 Service Worker: Activation complete');
+        console.log('📱 Service Worker: Activation complete - forcing clients to reload');
         return self.clients.claim();
       })
   );
 });
 
-// Fetch event - serve from cache when offline
+// Fetch event - network-first for HTML, cache-first for assets
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
@@ -64,6 +67,41 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Network-first strategy for HTML pages (navigation requests)
+  // This ensures users always get the latest version
+  if (event.request.mode === 'navigate' || 
+      event.request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((fetchResponse) => {
+          // Check if valid response
+          if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+            return fetchResponse;
+          }
+
+          // Clone the response
+          const responseToCache = fetchResponse.clone();
+
+          // Cache the updated HTML for offline use
+          caches.open(DYNAMIC_CACHE)
+            .then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+
+          return fetchResponse;
+        })
+        .catch(() => {
+          // If network fails, try cache, then offline page
+          return caches.match(event.request)
+            .then((cachedResponse) => {
+              return cachedResponse || caches.match('/offline');
+            });
+        })
+    );
+    return;
+  }
+
+  // Cache-first strategy for static assets (JS, CSS, images)
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -92,10 +130,8 @@ self.addEventListener('fetch', (event) => {
             return fetchResponse;
           })
           .catch(() => {
-            // If network fails and it's a navigation request, show offline page
-            if (event.request.mode === 'navigate') {
-              return caches.match('/offline');
-            }
+            // If network fails, return error
+            return new Response('Network error', { status: 408 });
           });
       })
   );
