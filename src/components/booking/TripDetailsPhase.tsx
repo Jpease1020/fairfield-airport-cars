@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Container, Stack, StatusMessage, Button } from '@/design/ui';
+import { colors, spacing, borderRadius } from '@/design/system/tokens/tokens';
 import { FareCalculationOverlay } from '@/design/components/base-components/forms/FareCalculationOverlay';
 import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { useFareCalculation } from '@/hooks/useFareCalculation';
@@ -21,6 +22,17 @@ const TripDetailsContainer = styled(Container)`
   }
 `;
 
+const ErrorMessageBox = styled.div`
+  padding: ${spacing.md};
+  background-color: ${colors.danger[50]};
+  border: 1px solid ${colors.danger[200]};
+  border-radius: ${borderRadius.lg};
+  color: ${colors.danger[800]};
+  margin-top: ${spacing.md};
+  width: 100%;
+  font-weight: 500;
+`;
+
 interface TripDetailsPhaseProps {
   cmsData: any;
 }
@@ -32,6 +44,7 @@ export function TripDetailsPhase({
   const {
     formData,
     validation,
+    hasAttemptedValidation,
     goToNextPhase,
     updateTripDetails,
     currentQuote
@@ -148,16 +161,7 @@ export function TripDetailsPhase({
           />
         )}
 
-        {validation.errors.length > 0 && (
-          <StatusMessage
-            type="error"
-            message={validation.errors.join(', ')}
-            id="validation-error-message"
-            data-testid="validation-error-message"
-          />
-        )}
-
-        {validation.warnings.length > 0 && (
+        {validation.warnings.length > 0 && hasAttemptedValidation && (
           <StatusMessage
             type="warning"
             message={validation.warnings.join(', ')}
@@ -167,17 +171,25 @@ export function TripDetailsPhase({
         )}
 
         {/* Navigation */}
-        {/* <Stack direction="horizontal" justify="flex-start" data-testid="trip-details-navigation"> */}
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={goToNextPhase}
-            data-testid="trip-details-next-button"
-            cmsId="trip-details-next-button"
-            text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}
-            fullWidth
-          />
-        {/* </Stack> */}
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={goToNextPhase}
+          data-testid="trip-details-next-button"
+          cmsId="trip-details-next-button"
+          text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}
+          fullWidth
+        />
+        
+        {/* Error message display below button - scroll target for mobile */}
+        {validation.errors.length > 0 && hasAttemptedValidation && (
+          <ErrorMessageBox
+            id="trip-details-error-message"
+            data-testid="trip-details-error-message"
+          >
+            <strong>❌ Error:</strong> {validation.errors.join(', ')}
+          </ErrorMessageBox>
+        )}
       </Stack>
     </TripDetailsContainer>
   );

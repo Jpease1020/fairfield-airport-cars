@@ -64,7 +64,11 @@ export function PaymentPhase({
     submitBooking, 
     currentQuote,
     setQuote,
-    goToPreviousPhase
+    goToPreviousPhase,
+    validation,
+    validateCurrentPhase,
+    setHasAttemptedValidation,
+    setError
   } = useBooking();
   
   // Debug: Log error state changes
@@ -203,10 +207,18 @@ export function PaymentPhase({
         <PaymentNavigation
           onBack={goToPreviousPhase}
           onProcessPayment={async () => {
+            // Validate before submitting
+            setHasAttemptedValidation(true);
+            const validation = validateCurrentPhase();
+            if (!validation.isValid) {
+              setError(validation.errors.join(', '));
+              return;
+            }
             await submitBooking();
           }}
           isProcessingPayment={isSubmitting}
           cmsData={cmsData}
+          validationErrors={validation?.errors || []}
         />
       </Stack>
     </Container>

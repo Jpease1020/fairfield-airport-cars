@@ -119,6 +119,30 @@ describe('BookingProvider', () => {
 
     expect(result.current.currentPhase).toBe('trip-details');
 
+    // Set valid form data before navigating
+    act(() => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(12, 0, 0, 0);
+      
+      result.current.updateTripDetails({
+        pickup: { address: '123 Main St', coordinates: { lat: 40.7128, lng: -74.0060 } },
+        dropoff: { address: '456 Oak Ave', coordinates: { lat: 40.7580, lng: -73.9855 } },
+        pickupDateTime: tomorrow.toISOString().slice(0, 16), // YYYY-MM-DDTHH:mm format
+      });
+      
+      // Set a quote to satisfy validation
+      result.current.setQuote({
+        quoteId: 'test-quote-123',
+        fare: 100,
+        fareType: 'personal',
+        distanceMiles: 25.5,
+        durationMinutes: 35,
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+        expiresInMinutes: 15,
+      });
+    });
+
     act(() => {
       result.current.goToNextPhase();
     });
