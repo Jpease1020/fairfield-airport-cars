@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Stack, Button, Text } from '@/design/ui';
+import { Stack, Button, Text, StatusMessage } from '@/design/ui';
 import { colors, spacing } from '@/design/system/tokens/tokens';
 
 const ButtonWrapper = styled.div`
@@ -26,13 +26,15 @@ interface PaymentNavigationProps {
   onProcessPayment: () => void;
   isProcessingPayment: boolean;
   cmsData: Record<string, string> | undefined;
+  validationErrors?: string[];
 }
 
 export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
   onBack,
   onProcessPayment,
   isProcessingPayment,
-  cmsData
+  cmsData,
+  validationErrors = []
 }) => {
   // Detect mobile screen size
   const [isMobile, setIsMobile] = useState(false);
@@ -82,6 +84,16 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
           {cmsData?.['paymentPhase-noPaymentNote'] || 'No Payment Required'}
         </PaymentNote>
       </ButtonWrapper>
+      
+      {/* Error message display below button - scroll target for mobile */}
+      {validationErrors.length > 0 && (
+        <StatusMessage
+          type="error"
+          message={validationErrors.join(', ')}
+          id="payment-validation-error-message"
+          data-testid="payment-validation-error-message"
+        />
+      )}
     </Stack>
   );
 };

@@ -14,6 +14,7 @@ interface BookingProviderType {
   currentPhase: BookingPhase;
   validation: ValidationResult;
   hasAttemptedValidation: boolean;
+  setHasAttemptedValidation: (value: boolean) => void;
   
   // Form actions
   updateFormData: (_data: Partial<BookingFormData>) => void;
@@ -72,6 +73,7 @@ interface BookingProviderType {
   
   // Helper functions
   setCurrentBooking: (booking: Booking | null) => void;
+  setError: (error: string | null) => void;
   clearError: () => void;
   clearWarning: () => void;
 }
@@ -267,21 +269,31 @@ const [warning, setWarning] = useState<string | null>(null);
     // Don't set hasAttemptedValidation here - only when user tries to proceed
   }, []);
 
-  // Validation logic (with hasAttemptedValidation check) - defined before goToNextPhase
+  // Validation helper functions
+  const validateEmail = useCallback((email: string): boolean => {
+    if (!email || !email.trim()) return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
+  }, []);
+
+  const validateUSPhone = useCallback((phone: string): boolean => {
+    if (!phone || !phone.trim()) return false;
+    // Strip all non-digit characters
+    const digitsOnly = phone.replace(/\D/g, '');
+    // US phone numbers: 10 digits, or 11 digits if starts with 1
+    if (digitsOnly.length === 10) return true;
+    if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) return true;
+    return false;
+  }, []);
+
+  // Validation logic - always runs validation, but only shows errors when hasAttemptedValidation is true
   const validateCurrentPhase = useCallback((): ValidationResult => {
     const errors: string[] = [];
     const warnings: string[] = [];
     const fieldErrors: Record<string, string> = {};
 
-    // Only show validation errors if user has attempted validation
-    if (!hasAttemptedValidation) {
-      return {
-        isValid: true,
-        errors: [],
-        warnings: [],
-        fieldErrors: {}
-      };
-    }
+    // Always run validation, but only show errors if user has attempted validation
+    // This allows validation to work on button click while keeping errors hidden until user tries to proceed
 
     switch (currentPhase) {
       case 'trip-details':
@@ -346,13 +358,23 @@ const [warning, setWarning] = useState<string | null>(null);
           errors.push(errorMsg);
           fieldErrors['name-input'] = errorMsg;
         }
+        
         if (!formData.customer.email.trim()) {
           const errorMsg = 'Email is required';
           errors.push(errorMsg);
           fieldErrors['email-input'] = errorMsg;
+        } else if (!validateEmail(formData.customer.email)) {
+          const errorMsg = 'Please enter a valid email address';
+          errors.push(errorMsg);
+          fieldErrors['email-input'] = errorMsg;
         }
+        
         if (!formData.customer.phone.trim()) {
           const errorMsg = 'Phone number is required';
+          errors.push(errorMsg);
+          fieldErrors['phone-input'] = errorMsg;
+        } else if (!validateUSPhone(formData.customer.phone)) {
+          const errorMsg = 'Please enter a valid US phone number';
           errors.push(errorMsg);
           fieldErrors['phone-input'] = errorMsg;
         }
@@ -365,16 +387,60 @@ const [warning, setWarning] = useState<string | null>(null);
           errors.push(errorMsg);
           warnings.push(errorMsg);
         }
+        
+        // Validate that all previous phase data is still present
+        if (!formData.trip.pickup.address.trim() || formData.trip.pickup.coordinates === null) {
+          const errorMsg = 'Pickup location is required';
+          errors.push(errorMsg);
+          fieldErrors['pickup-location-input'] = errorMsg;
+        }
+        
+        if (!formData.trip.dropoff.address.trim() || formData.trip.dropoff.coordinates === null) {
+          const errorMsg = 'Dropoff location is required';
+          errors.push(errorMsg);
+          fieldErrors['dropoff-location-input'] = errorMsg;
+        }
+        
+        if (!formData.trip.pickupDateTime) {
+          const errorMsg = 'Pickup date and time is required';
+          errors.push(errorMsg);
+          fieldErrors['pickup-datetime-input'] = errorMsg;
+        }
+        
+        if (!formData.customer.name.trim()) {
+          const errorMsg = 'Name is required';
+          errors.push(errorMsg);
+          fieldErrors['name-input'] = errorMsg;
+        }
+        
+        if (!formData.customer.email.trim() || !validateEmail(formData.customer.email)) {
+          const errorMsg = 'Valid email is required';
+          errors.push(errorMsg);
+          fieldErrors['email-input'] = errorMsg;
+        }
+        
+        if (!formData.customer.phone.trim() || !validateUSPhone(formData.customer.phone)) {
+          const errorMsg = 'Valid phone number is required';
+          errors.push(errorMsg);
+          fieldErrors['phone-input'] = errorMsg;
+        }
+        
+        // Ensure fare is valid
+        if (currentQuote && (!currentQuote.fare || currentQuote.fare <= 0)) {
+          const errorMsg = 'Invalid fare amount';
+          errors.push(errorMsg);
+          warnings.push(errorMsg);
+        }
         break;
     }
 
     return {
       isValid: errors.length === 0,
-      errors,
-      warnings,
-      fieldErrors
+      errors: hasAttemptedValidation ? errors : [], // Only show errors if user has attempted validation
+      warnings: hasAttemptedValidation ? warnings : [], // Only show warnings if user has attempted validation
+      fieldErrors: hasAttemptedValidation ? fieldErrors : {} // Only show field errors if user has attempted validation
     };
-  }, [hasAttemptedValidation, currentPhase, formData, currentQuote]);
+  }, [hasAttemptedValidation, currentPhase, formData, currentQuote, validateEmail, validateUSPhone]);
 
   // Phase management
   const goToPhase = useCallback((phase: BookingPhase) => {
@@ -393,13 +459,37 @@ const [warning, setWarning] = useState<string | null>(null);
         setCurrentPhase(phases[currentIndex + 1]);
       }
     } else {
-      // Show errors and scroll to first error field
+      // Show errors and scroll to first error field or error message
       setError(validation.errors.join(', '));
       
-      // Scroll to first error field if fieldErrors exist
-      if (validation.fieldErrors && Object.keys(validation.fieldErrors).length > 0) {
-        const firstErrorFieldId = Object.keys(validation.fieldErrors)[0];
-        setTimeout(() => {
+      // On mobile, prioritize scrolling to the error message so user can see it
+      // On desktop, scroll to the first error field
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+      
+      setTimeout(() => {
+        if (isMobile) {
+          // Try to find the error message element first (below the button)
+          const errorMessageId = currentPhase === 'trip-details' 
+            ? 'trip-details-error-message'
+            : currentPhase === 'contact-info'
+            ? 'contact-info-error-message'
+            : currentPhase === 'payment'
+            ? 'payment-validation-error-message'
+            : null;
+          
+          if (errorMessageId) {
+            const errorMessage = document.getElementById(errorMessageId) || 
+                                document.querySelector(`[data-testid="${errorMessageId}"]`);
+            if (errorMessage) {
+              errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return;
+            }
+          }
+        }
+        
+        // Fallback: scroll to first error field
+        if (validation.fieldErrors && Object.keys(validation.fieldErrors).length > 0) {
+          const firstErrorFieldId = Object.keys(validation.fieldErrors)[0];
           const errorElement = document.getElementById(firstErrorFieldId) || 
                              document.querySelector(`[data-testid="${firstErrorFieldId}"]`) ||
                              document.querySelector(`[id="${firstErrorFieldId}"]`);
@@ -417,8 +507,8 @@ const [warning, setWarning] = useState<string | null>(null);
               }
             }
           }
-        }, 100);
-      }
+        }
+      }, 150); // Slightly longer delay to ensure DOM is updated
     }
   }, [currentPhase, validateCurrentPhase]);
 
@@ -430,23 +520,16 @@ const [warning, setWarning] = useState<string | null>(null);
     }
   }, [currentPhase]);
 
-  // Quick booking form validation
+  // Quick booking form validation - matches trip-details phase validation
   const validateQuickBookingForm = (): ValidationResult => {
     const errors: string[] = [];
     const warnings: string[] = [];
     const fieldErrors: Record<string, string> = {};
 
-    // Only show validation errors if user has attempted validation
-    if (!hasAttemptedValidation) {
-      return {
-        isValid: true,
-        errors: [],
-        warnings: [],
-        fieldErrors: {}
-      };
-    }
+    // Always run validation, but only show errors if user has attempted validation
+    // This allows validation to work on button click while keeping errors hidden until user tries to proceed
 
-    // Validate required fields
+    // Validate required fields - same as trip-details phase
     if (!formData.trip.pickup.address.trim()) {
       const errorMsg = 'Pickup location is required';
       errors.push(errorMsg);
@@ -467,38 +550,44 @@ const [warning, setWarning] = useState<string | null>(null);
       fieldErrors['dropoff-location-input'] = errorMsg;
     }
     
-    // Validate pickup date and time - must have both date and time components
     if (!formData.trip.pickupDateTime) {
       const errorMsg = 'Pickup date and time is required';
       errors.push(errorMsg);
       fieldErrors['pickup-datetime-input'] = errorMsg;
     } else {
-      // Check that pickupDateTime contains both date and time (format: YYYY-MM-DDTHH:mm)
-      const dateTimeParts = formData.trip.pickupDateTime.split('T');
-      if (dateTimeParts.length !== 2) {
-        const errorMsg = 'Both date and time are required';
+      // Validate that pickup date/time is at least 24 hours in the future
+      try {
+        const pickupDate = new Date(formData.trip.pickupDateTime);
+        const now = new Date();
+        const minDateTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+        
+        if (isNaN(pickupDate.getTime())) {
+          const errorMsg = 'Invalid date/time format';
+          errors.push(errorMsg);
+          fieldErrors['pickup-datetime-input'] = errorMsg;
+        } else if (pickupDate < minDateTime) {
+          const errorMsg = 'Please book at least 24 hours in advance';
+          errors.push(errorMsg);
+          fieldErrors['pickup-datetime-input'] = errorMsg;
+        }
+      } catch (dateError) {
+        const errorMsg = 'Invalid date/time format';
         errors.push(errorMsg);
         fieldErrors['pickup-datetime-input'] = errorMsg;
-      } else {
-        const [datePart, timePart] = dateTimeParts;
-        if (!datePart || datePart.trim() === '') {
-          const errorMsg = 'Pickup date is required';
-          errors.push(errorMsg);
-          fieldErrors['pickup-datetime-input'] = errorMsg;
-        }
-        if (!timePart || timePart.trim() === '') {
-          const errorMsg = 'Pickup time is required';
-          errors.push(errorMsg);
-          fieldErrors['pickup-datetime-input'] = errorMsg;
-        }
       }
     }
-
+    
+    // Check for quote (optional for quick booking, but good to have)
+    if (!currentQuote) {
+      const errorMsg = 'Please wait for fare calculation to complete';
+      warnings.push(errorMsg);
+    }
+    
     return {
       isValid: errors.length === 0,
-      errors,
-      warnings,
-      fieldErrors
+      errors: hasAttemptedValidation ? errors : [], // Only show errors if user has attempted validation
+      warnings: hasAttemptedValidation ? warnings : [], // Only show warnings if user has attempted validation
+      fieldErrors: hasAttemptedValidation ? fieldErrors : {} // Only show field errors if user has attempted validation
     };
   };
 
@@ -766,40 +855,55 @@ const [warning, setWarning] = useState<string | null>(null);
     } else {
       setError(validation.errors.join(', '));
       
-      // Scroll to the first error field
-      const firstErrorFieldId = validation.fieldErrors ? Object.keys(validation.fieldErrors)[0] : undefined;
-      if (firstErrorFieldId) {
-        // Map validation field IDs to actual DOM element IDs/data-testids
-        const fieldIdMap: Record<string, string[]> = {
-          'pickup-location-input': ['pickup-location', 'quick-book-pickup-input'],
-          'dropoff-location-input': ['dropoff-location', 'quick-book-dropoff-input'],
-          'pickup-datetime-input': ['pickup-datetime-date', 'pickup-datetime-time', 'quick-book-datetime-input'],
-        };
-        
-        const possibleIds = fieldIdMap[firstErrorFieldId] || [firstErrorFieldId];
-        let errorElement: HTMLElement | null = null;
-        
-        // Try to find the element by ID or data-testid
-        for (const id of possibleIds) {
-          errorElement = document.getElementById(id) || 
-                        document.querySelector(`[data-testid="${id}"]`) as HTMLElement;
-          if (errorElement) break;
+      // On mobile, prioritize scrolling to the error message
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+      
+      setTimeout(() => {
+        if (isMobile) {
+          // Try to find the error message element first
+          const errorMessage = document.getElementById('quick-book-validation-error') || 
+                              document.querySelector(`[data-testid="quick-book-validation-error"]`);
+          if (errorMessage) {
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+          }
         }
         
-        if (errorElement) {
-          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Focus the input if it's focusable
-          if (errorElement instanceof HTMLInputElement) {
-            errorElement.focus();
-          } else {
-            // Try to find an input within the element
-            const input = errorElement.querySelector('input');
-            if (input) {
-              input.focus();
+        // Fallback: scroll to the first error field
+        const firstErrorFieldId = validation.fieldErrors ? Object.keys(validation.fieldErrors)[0] : undefined;
+        if (firstErrorFieldId) {
+          // Map validation field IDs to actual DOM element IDs/data-testids
+          const fieldIdMap: Record<string, string[]> = {
+            'pickup-location-input': ['pickup-location', 'quick-book-pickup-input'],
+            'dropoff-location-input': ['dropoff-location', 'quick-book-dropoff-input'],
+            'pickup-datetime-input': ['pickup-datetime-date', 'pickup-datetime-time', 'quick-book-datetime-input'],
+          };
+          
+          const possibleIds = fieldIdMap[firstErrorFieldId] || [firstErrorFieldId];
+          let errorElement: HTMLElement | null = null;
+          
+          // Try to find the element by ID or data-testid
+          for (const id of possibleIds) {
+            errorElement = document.getElementById(id) || 
+                          document.querySelector(`[data-testid="${id}"]`) as HTMLElement;
+            if (errorElement) break;
+          }
+          
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Focus the input if it's focusable
+            if (errorElement instanceof HTMLInputElement) {
+              errorElement.focus();
+            } else {
+              // Try to find an input within the element
+              const input = errorElement.querySelector('input');
+              if (input) {
+                input.focus();
+              }
             }
           }
         }
-      }
+      }, 150); // Slightly longer delay to ensure DOM is updated
     }
   };
 
@@ -957,6 +1061,7 @@ const clearWarning = () => {
     error,
     warning,
     setCurrentBooking,
+    setError,
     clearError,
     clearWarning,
     
@@ -965,6 +1070,7 @@ const clearWarning = () => {
     currentPhase,
     validation,
     hasAttemptedValidation,
+    setHasAttemptedValidation,
     updateFormData,
     updateTripDetails,
     updateCustomerInfo,

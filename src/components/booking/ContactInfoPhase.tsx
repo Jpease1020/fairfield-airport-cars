@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label } from '@/design/ui';
+import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label, StatusMessage } from '@/design/ui';
 import { CustomerInfo, ValidationResult } from '@/types/booking';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
-import { colors, spacing } from '@/design/system/tokens/tokens';
+import { useBooking } from '@/providers/BookingProvider';
+import { colors, spacing, borderRadius } from '@/design/system/tokens/tokens';
 
 interface ContactInfoPhaseProps {
   customerData: CustomerInfo;
@@ -41,6 +42,17 @@ const ValidationIndicator = styled.span<{ $isValid: boolean }>`
   margin-left: 2px;
 `;
 
+const ErrorMessageBox = styled.div`
+  padding: ${spacing.md};
+  background-color: ${colors.danger[50]};
+  border: 1px solid ${colors.danger[200]};
+  border-radius: ${borderRadius.lg};
+  color: ${colors.danger[800]};
+  margin-top: ${spacing.md};
+  width: 100%;
+  font-weight: 500;
+`;
+
 export function ContactInfoPhase({
   customerData,
   onCustomerUpdate,
@@ -52,6 +64,9 @@ export function ContactInfoPhase({
   // Get CMS data from provider
   const { cmsData: allCmsData } = useCMSData();
   const pageCmsData = allCmsData?.booking || {};
+  
+  // Get hasAttemptedValidation from booking provider
+  const { hasAttemptedValidation } = useBooking();
   
   // Detect mobile screen size
   const [isMobile, setIsMobile] = useState(false);
@@ -210,6 +225,16 @@ export function ContactInfoPhase({
             />
           </Half>
         </ButtonContainer>
+        
+        {/* Error message display below button - scroll target for mobile */}
+        {validation.errors.length > 0 && hasAttemptedValidation && (
+          <ErrorMessageBox
+            id="contact-info-error-message"
+            data-testid="contact-info-error-message"
+          >
+            <strong>❌ Error:</strong> {validation.errors.join(', ')}
+          </ErrorMessageBox>
+        )}
       </Stack>
     </Container>
   );

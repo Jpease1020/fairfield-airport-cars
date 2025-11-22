@@ -15,6 +15,7 @@ import { useFareCalculation } from '@/hooks/useFareCalculation';
 import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { colors } from '../../system/tokens/tokens';
 import { useEffect } from 'react';
+import { StatusMessage } from '../base-components/notifications/StatusMessage';
 
 interface Coordinates {
   lat: number;
@@ -65,6 +66,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     isQuickBookingFormValid,
     submitQuickBookingForm,
     error,
+    hasAttemptedValidation,
+    setHasAttemptedValidation,
   } = useBooking();
   
   // Get validation for quick booking form
@@ -127,21 +130,17 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   };
 
   const handleGetPrice = () => {
-    // Explicitly validate all required fields before proceeding
-    const hasPickupAddress = locationData.pickup.address.trim() !== '';
-    const hasPickupCoords = locationData.pickup.coordinates !== null;
-    const hasDropoffAddress = locationData.dropoff.address.trim() !== '';
-    const hasDropoffCoords = locationData.dropoff.coordinates !== null;
-    const hasDateTime = pickupDateTime && pickupDateTime.includes('T') && pickupDateTime.split('T').length === 2;
-    const [datePart, timePart] = pickupDateTime ? pickupDateTime.split('T') : ['', ''];
-    const hasDate = datePart && datePart.trim() !== '';
-    const hasTime = timePart && timePart.trim() !== '';
+    // Set hasAttemptedValidation to true so validation errors will be shown
+    setHasAttemptedValidation(true);
     
-    // If any field is missing or invalid, trigger validation display and prevent navigation
-    if (!hasPickupAddress || !hasPickupCoords || !hasDropoffAddress || !hasDropoffCoords || !hasDateTime || !hasDate || !hasTime) {
-      // Call submitQuickBookingForm which will validate and show errors, but won't navigate if invalid
+    // Validate the form
+    const validation = validateQuickBookingForm();
+    
+    if (!validation.isValid) {
+      // Show errors - they will be displayed via StatusMessage
+      // submitQuickBookingForm will handle error display and prevent navigation
       submitQuickBookingForm();
-      return; // Explicitly return to prevent any further execution
+      return;
     }
     
     // All fields are valid, proceed with submission
@@ -295,6 +294,16 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               ? 'No available drivers, try modifying the pickup time'
               : availabilityError}
           </ErrorText>
+        )}
+        
+        {/* Validation error messages */}
+        {validation.errors.length > 0 && hasAttemptedValidation && (
+          <StatusMessage
+            type="error"
+            message={validation.errors.join(', ')}
+            id="quick-book-validation-error"
+            data-testid="quick-book-validation-error"
+          />
         )}
         
         {error && (

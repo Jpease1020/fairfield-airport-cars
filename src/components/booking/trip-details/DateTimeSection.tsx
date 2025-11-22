@@ -50,7 +50,7 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
             onChange={onDateTimeChange}
             minDate={undefined} // DateTimePicker will default to 24 hours from now
             fullWidth={true}
-            error={error}
+            error={error || !!validation?.fieldErrors?.['pickup-datetime-input']}
             required
             isValid={!!pickupDateTime && !error && !validation?.fieldErrors?.['pickup-datetime-input']}
             cmsId="pickup-datetime-input"
