@@ -38,13 +38,14 @@ const InputWrapper = styled.div`
   position: relative;
   min-width: 0; /* Allow flexbox to shrink properly */
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  align-items: center; /* Keep inputs aligned horizontally on desktop */
 
-  /* Ensure equal width on mobile */
+  /* On mobile, stack label above input */
   @media (max-width: 768px) {
     flex: 1 1 0; /* Equal flex basis for equal widths */
     min-width: 0;
+    flex-direction: column;
+    align-items: stretch;
   }
 `;
 
