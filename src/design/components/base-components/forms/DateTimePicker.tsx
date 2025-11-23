@@ -56,17 +56,15 @@ const InputWrapper = styled.div`
   position: relative;
   min-width: 0; /* Allow flexbox to shrink properly */
   display: flex;
-  align-items: center; /* Keep inputs aligned horizontally on desktop */
+  flex-direction: column; /* Always stack label above input */
+  align-items: stretch; /* Stretch children to full width */
   box-sizing: border-box; /* Include padding in width calculation */
 
-  /* On mobile, stack label above input */
+  /* On mobile, adjust flex and width constraints */
   @media (max-width: 768px) {
     flex: 1 1 0; /* Equal flex basis - each wrapper gets 50% minus half the gap */
     min-width: 0; /* Critical: allow flexbox to shrink below content size */
     max-width: calc(50% - 0.375rem); /* 50% minus half of spacing.md (0.75rem / 2) */
-    flex-direction: column;
-    align-items: stretch;
-    box-sizing: border-box; /* Include padding in width calculation */
     
     /* Ensure input maintains proper dimensions on mobile */
     > input {
