@@ -418,6 +418,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             size={size}
             fullWidth={true}
             placeholder="Date"
+            title={isMobileDevice ? "Date - Tap to select pickup date" : "Select date"}
             aria-label="Select date"
             data-testid={cmsId ? `${cmsId}-date` : `${id}-date`}
           />
@@ -439,6 +440,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             fullWidth={true}
             step={900} // 15 minute intervals
             placeholder="Time"
+            title={isMobileDevice ? "Time - Tap to select pickup time" : "Select time"}
             aria-label="Select time"
             data-testid={cmsId ? `${cmsId}-time` : `${id}-time`}
           />
