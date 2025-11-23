@@ -84,15 +84,11 @@ const InputWrapper = styled.div`
 `;
 
 const InputLabel = styled.label`
-  display: none; /* Hidden on desktop */
+  display: block; /* Show on all screen sizes */
   font-size: ${fontSize.xs};
   font-weight: 500;
   color: ${colors.text.secondary};
   margin-bottom: ${spacing.xs};
-  
-  @media (max-width: 768px) {
-    display: block; /* Show on mobile */
-  }
 `;
 
 

@@ -44,7 +44,7 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
         <Stack spacing="md">
           <DateTimePicker
             id="pickup-datetime-input"
-            label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'Pickup Date & Time'}
+            label={cmsData?.['tripDetailsPhase-datetimeLabel'] || 'When'}
             placeholder="mm/dd/yyyy, --:-- --"
             value={pickupDateTime}
             onChange={onDateTimeChange}
