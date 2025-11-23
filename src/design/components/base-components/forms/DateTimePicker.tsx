@@ -11,6 +11,8 @@ const DatePickerWrapper = styled.div.withConfig({
 })<{ fullWidth: boolean; error: boolean; size: 'sm' | 'md' | 'lg'; isValid?: boolean }>`
   position: relative;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  max-width: 100%; /* Prevent overflow */
+  box-sizing: border-box; /* Include padding in width calculation */
   
   /* Ensure inputs are positioned correctly for native pickers on mobile */
   @media (max-width: 768px) {
@@ -19,17 +21,33 @@ const DatePickerWrapper = styled.div.withConfig({
     
     /* Ensure proper stacking context */
     z-index: 1;
+    
+    /* Ensure proper width constraints */
+    width: 100%;
+    max-width: 100%;
   }
 `;
 
 const InputGroup = styled(Stack)`
   gap: ${spacing.md};
   align-items: stretch; /* Ensure children have equal height */
+  width: 100%; /* Ensure group takes full width of container */
+  max-width: 100%; /* Prevent overflow */
+  box-sizing: border-box; /* Include padding in width calculation */
+  overflow: visible; /* Allow children to be visible */
   
   /* Stack vertically on very small screens for better mobile UX */
   @media (max-width: 480px) {
     flex-direction: column;
     gap: ${spacing.sm};
+  }
+  
+  /* Ensure proper width constraints on mobile */
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: visible; /* Ensure inputs are visible */
   }
 `;
 
@@ -38,27 +56,37 @@ const InputWrapper = styled.div`
   position: relative;
   min-width: 0; /* Allow flexbox to shrink properly */
   display: flex;
-  align-items: center; /* Keep inputs aligned horizontally on desktop */
+  flex-direction: column; /* Always stack label above input */
+  align-items: stretch; /* Stretch children to full width */
+  box-sizing: border-box; /* Include padding in width calculation */
 
-  /* On mobile, stack label above input */
+  /* On mobile, adjust flex and width constraints */
   @media (max-width: 768px) {
-    flex: 1 1 0; /* Equal flex basis for equal widths */
-    min-width: 0;
-    flex-direction: column;
-    align-items: stretch;
+    flex: 1 1 0; /* Equal flex basis - each wrapper gets 50% minus half the gap */
+    min-width: 0; /* Critical: allow flexbox to shrink below content size */
+    max-width: calc(50% - 0.375rem); /* 50% minus half of spacing.md (0.75rem / 2) */
+    
+    /* Ensure input maintains proper dimensions on mobile */
+    > input {
+      flex: none !important; /* Override Input's flex: 1 when fullWidth */
+      flex-shrink: 1 !important; /* Allow input to shrink if needed */
+      flex-grow: 0 !important; /* Prevent input from growing */
+      width: 100% !important; /* Full width of wrapper */
+      min-width: 0 !important; /* Critical: allow flexbox to shrink properly */
+      max-width: 100% !important; /* Prevent overflow - critical */
+      min-height: 2.5rem; /* Maintain minimum height */
+      height: 2.5rem; /* Fixed height for consistency */
+      box-sizing: border-box !important; /* Include padding in width calculation - critical */
+    }
   }
 `;
 
 const InputLabel = styled.label`
-  display: none; /* Hidden on desktop */
+  display: block; /* Show on all screen sizes */
   font-size: ${fontSize.xs};
   font-weight: 500;
   color: ${colors.text.secondary};
   margin-bottom: ${spacing.xs};
-  
-  @media (max-width: 768px) {
-    display: block; /* Show on mobile */
-  }
 `;
 
 

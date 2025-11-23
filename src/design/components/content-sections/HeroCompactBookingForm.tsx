@@ -225,7 +225,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
           <FieldWrapper>
             <DateTimePicker
               id="pickup-datetime"
-              label="Date of travel"
+              label="When"
               placeholder="mm/dd/yyyy, --:-- --"
               value={pickupDateTime || ''}
               onChange={(datetime) => {
