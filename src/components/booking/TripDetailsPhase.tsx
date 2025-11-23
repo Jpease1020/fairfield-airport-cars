@@ -182,12 +182,17 @@ export function TripDetailsPhase({
         />
         
         {/* Error message display below button - scroll target for mobile */}
-        {validation.errors.length > 0 && hasAttemptedValidation && (
+        {(validation.errors.length > 0 || (validation.fieldErrors && Object.keys(validation.fieldErrors).length > 0)) && hasAttemptedValidation && (
           <ErrorMessageBox
             id="trip-details-error-message"
             data-testid="trip-details-error-message"
           >
-            <strong>❌ Error:</strong> {validation.errors.join(', ')}
+            <strong>❌ Error:</strong>{' '}
+            {validation.errors.length > 0 
+              ? validation.errors.join(', ')
+              : validation.fieldErrors && Object.keys(validation.fieldErrors).length > 0
+              ? Object.values(validation.fieldErrors).join(', ')
+              : 'Please fix the errors above'}
           </ErrorMessageBox>
         )}
       </Stack>
