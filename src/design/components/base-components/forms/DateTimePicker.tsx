@@ -38,12 +38,25 @@ const InputWrapper = styled.div`
   position: relative;
   min-width: 0; /* Allow flexbox to shrink properly */
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
 
   /* Ensure equal width on mobile */
   @media (max-width: 768px) {
     flex: 1 1 0; /* Equal flex basis for equal widths */
     min-width: 0;
+  }
+`;
+
+const InputLabel = styled.label`
+  display: none; /* Hidden on desktop */
+  font-size: ${fontSize.xs};
+  font-weight: 500;
+  color: ${colors.text.secondary};
+  margin-bottom: ${spacing.xs};
+  
+  @media (max-width: 768px) {
+    display: block; /* Show on mobile */
   }
 `;
 
@@ -405,6 +418,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       <InputGroup direction="horizontal" spacing="md">
         {/* Date Input - Native HTML5 */}
         <InputWrapper ref={dateInputWrapperRef}>
+          <InputLabel htmlFor={`${id}-date`}>
+            Date
+          </InputLabel>
           <Input
             id={`${id}-date`}
             type="date"
@@ -426,6 +442,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
         {/* Time Input - Native HTML5 */}
         <InputWrapper ref={timeInputWrapperRef}>
+          <InputLabel htmlFor={`${id}-time`}>
+            Time
+          </InputLabel>
           <Input
             id={`${id}-time`}
             type="time"
