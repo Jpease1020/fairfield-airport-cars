@@ -13,11 +13,9 @@ import {
   H2,
   Button,
   Box,
-  LoadingSpinner,  
-  Input,
-  Label,
-  Form,
-  Span
+  LoadingSpinner,
+  Span,
+  Badge
 } from '@/design/ui';
 
 interface ManageBookingClientProps {
@@ -35,18 +33,9 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editMode, setEditMode] = useState(false);
-  const [localContent, setLocalContent] = useState<any>(null);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      try {
-        const response = await fetch('/api/admin/check-auth');
-      } catch (error) {
-        console.error('Error checking admin status:', error);
-      }
-    };
-
     const fetchBooking = async () => {
       try {
         const response = await fetch(`/api/booking/${bookingId}`);
@@ -64,72 +53,45 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
       }
     };
 
-    checkAdminStatus();
     fetchBooking();
-  }, [bookingId, cmsData]);
+  }, [bookingId, pageCmsData]);
 
-  const handleFieldChange = (field: string, value: string) => {
-    setLocalContent((prev: any) => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  const handleCancelBooking = async () => {
+    if (!confirm(pageCmsData?.['cancel-confirm'] || 'Are you sure you want to cancel this booking? You may be subject to cancellation fees.')) {
+      return;
+    }
 
-  const handleSave = async () => {
+    setCancelling(true);
     try {
-      const response = await fetch('/api/admin/cms/pages', {
+      const response = await fetch('/api/booking/cancel-booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          page: 'manage',
-          content: localContent
+          bookingId,
+          reason: 'Customer requested cancellation'
         }),
       });
 
       if (response.ok) {
-        addToast('success', pageCmsData?.['saveSuccess'] || 'Content saved successfully');
-        setEditMode(false);
+        const data = await response.json();
+        addToast('success', `Booking cancelled. ${data.refundAmount > 0 ? `Refund: $${data.refundAmount.toFixed(2)}` : 'No refund available.'}`);
+        // Refresh booking data
+        const refreshResponse = await fetch(`/api/booking/${bookingId}`);
+        if (refreshResponse.ok) {
+          const refreshedData = await refreshResponse.json();
+          setBooking(refreshedData);
+        }
       } else {
-        addToast('error', pageCmsData?.['saveFailed'] || 'Failed to save content');
+        const errorData = await response.json();
+        addToast('error', errorData.error || 'Failed to cancel booking');
       }
     } catch (error) {
-      console.error('Error updating booking:', error);
-      addToast('error', pageCmsData?.['saveFailed'] || 'Failed to save content');
-    }
-  };
-
-  const handleCancel = () => {
-    setEditMode(false);
-    setLocalContent(null);
-    addToast('info', pageCmsData?.['cancelled'] || 'Changes cancelled');
-  };
-
-  const handleEdit = () => {
-    setLocalContent(booking);
-    setEditMode(true);
-  };
-
-  const handleDelete = async () => {
-    if (!confirm(pageCmsData?.['delete'] || 'Are you sure you want to delete this booking? This action cannot be undone.')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/booking/${bookingId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        addToast('success', pageCmsData?.['deleteSuccess'] || 'Booking deleted successfully');
-        router.push('/bookings');
-      } else {
-        addToast('error', pageCmsData?.['deleteFailed'] || 'Failed to delete booking');
-      }
-    } catch (error) {
-      console.error('Error deleting booking:', error);
-      addToast('error', pageCmsData?.['deleteFailed'] || 'Failed to delete booking');
+      console.error('Error cancelling booking:', error);
+      addToast('error', 'Failed to cancel booking. Please try again.');
+    } finally {
+      setCancelling(false);
     }
   };
 
@@ -223,91 +185,42 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
         <Container>
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 cmsId="booking-details-title" >
-                {pageCmsData?.['title'] || 'Booking Information'}
+              <H2 cmsId="booking-details-title">
+                {pageCmsData?.['booking-details-title'] || 'Booking Information'}
               </H2>
               
-              {editMode ? (
-                <Form>
-                  <Stack spacing="md">
-                    <div>
-                      <Label htmlFor="pickupLocation" cmsId="form-pickup-location-label" >
-                        {pageCmsData?.['label'] || 'Pickup Location'}
-                      </Label>
-                      <Input
-                        id="pickupLocation"
-                        value={localContent?.pickupLocation || ''}
-                        onChange={(e) => handleFieldChange('pickupLocation', e.target.value)}
-                        placeholder={pageCmsData?.['placeholder'] || 'Enter pickup location'}
-                        cmsId="form-pickup-location-input"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="dropoffLocation" cmsId="form-dropoff-location-label" >
-                        {pageCmsData?.['label'] || 'Dropoff Location'}
-                      </Label>
-                      <Input
-                        id="dropoffLocation"
-                        value={localContent?.dropoffLocation || ''}
-                        onChange={(e) => handleFieldChange('dropoffLocation', e.target.value)}
-                        placeholder={pageCmsData?.['placeholder'] || 'Enter dropoff location'}
-                        cmsId="form-dropoff-location-input"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="pickupDateTime" cmsId="form-pickup-date-time-label" >
-                          {pageCmsData?.['label'] || 'Pickup Date & Time'}
-                      </Label>
-                      <Input
-                        id="pickupDateTime"
-                        type="datetime-local"
-                        value={localContent?.pickupDateTime || ''}
-                        onChange={(e) => handleFieldChange('pickupDateTime', e.target.value)}
-                        cmsId="form-pickup-date-time-input"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="notes" cmsId="form-notes-label" >
-                        {pageCmsData?.['label'] || 'Special Notes'}
-                      </Label>
-                      <Input
-                        id="notes"
-                        value={localContent?.notes || ''}
-                        onChange={(e) => handleFieldChange('notes', e.target.value)}
-                        placeholder={pageCmsData?.['placeholder'] || 'Any special requests or notes'}
-                        cmsId="form-notes-input"
-                      />
-                    </div>
-                  </Stack>
-                </Form>
-              ) : (
-                <Stack spacing="md">
-                  <Text cmsId="booking-details-pickup" >
-                    <Span cmsId="pickupLabel" weight="bold">{pageCmsData?.['pickupLabel'] || 'Pickup:'}</Span> {booking.pickupLocation}
+              <Stack spacing="md">
+                <Text>
+                  <Span weight="bold">{pageCmsData?.['pickupLabel'] || 'Pickup:'}</Span>{' '}
+                  {booking.trip?.pickup?.address || booking.pickupLocation || 'N/A'}
+                </Text>
+                <Text>
+                  <Span weight="bold">{pageCmsData?.['dropoffLabel'] || 'Dropoff:'}</Span>{' '}
+                  {booking.trip?.dropoff?.address || booking.dropoffLocation || 'N/A'}
+                </Text>
+                <Text>
+                  <Span weight="bold">{pageCmsData?.['dateTimeLabel'] || 'Date & Time:'}</Span>{' '}
+                  {booking.trip?.pickupDateTime 
+                    ? new Date(booking.trip.pickupDateTime).toLocaleString()
+                    : booking.pickupDateTime 
+                    ? new Date(booking.pickupDateTime).toLocaleString()
+                    : 'N/A'}
+                </Text>
+                <Text>
+                  <Span weight="bold">{pageCmsData?.['statusLabel'] || 'Status:'}</Span>{' '}
+                  {booking.status || 'pending'}
+                </Text>
+                <Text>
+                  <Span weight="bold">{pageCmsData?.['fareLabel'] || 'Fare:'}</Span>{' '}
+                  ${(booking.trip?.fare || booking.fare || 0).toFixed(2)}
+                </Text>
+                {booking.customer?.notes && (
+                  <Text>
+                    <Span weight="bold">{pageCmsData?.['notesLabel'] || 'Notes:'}</Span>{' '}
+                    {booking.customer.notes}
                   </Text>
-                  <Text cmsId="booking-details-dropoff" >
-                    <Span cmsId="dropoffLabel" weight="bold">{pageCmsData?.['dropoffLabel'] || 'Dropoff:'}</Span> {booking.dropoffLocation}
-                  </Text>
-                  <Text cmsId="booking-details-date-time" >
-                    <Span cmsId="dateTimeLabel" weight="bold">{pageCmsData?.['dateTimeLabel'] || 'Date & Time:'}</Span> {new Date(booking.pickupDateTime).toLocaleString()}
-                  </Text>
-
-                  {booking.notes && (
-                    <Text cmsId="booking-details-notes" >
-                      <Span cmsId="notesLabel" weight="bold">{pageCmsData?.['notesLabel'] || 'Notes:'}</Span> {booking.notes}
-                    </Text>
-                  )}
-                  <Text cmsId="booking-details-status" >
-                    <Span cmsId="statusLabel" weight="bold">{pageCmsData?.['statusLabel'] || 'Status:'}</Span> {booking.status}
-                  </Text>
-                  <Text cmsId="booking-details-fare" >
-                    <Span cmsId="fareLabel" weight="bold">{pageCmsData?.['fareLabel'] || 'Fare:'}</Span> ${booking.fare}
-                  </Text>
-                </Stack>
-              )}
+                )}
+              </Stack>
             </Stack>
           </Box>
         </Container>
@@ -317,41 +230,40 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="md" align="center">
-            {editMode ? (
-              <Stack direction="horizontal" spacing="md" align="center">
-                <Button
-                  onClick={handleSave}
-                  variant="primary"
-                  cmsId="actions-save"
-                >
-                  {pageCmsData?.['save'] || 'Save Changes'}
-                </Button>
-                <Button
-                  onClick={handleCancel}
-                  variant="secondary"
-                  cmsId="actions-cancel"
-                >
-                  {pageCmsData?.['cancel'] || 'Cancel'}
-                </Button>
-              </Stack>
-            ) : (
-              <Stack direction="horizontal" spacing="md" align="center">
-                <Button
-                  onClick={handleEdit}
-                  variant="primary"
-                  cmsId="actions-edit"
-                >
-                  {pageCmsData?.['edit'] || 'Edit Booking'}
-                </Button>
-                <Button
-                  onClick={handleDelete}
-                  variant="danger"
-                  cmsId="actions-delete"
-                >
-                  {pageCmsData?.['delete'] || 'Delete Booking'}
-                </Button>
-              </Stack>
-            )}
+            <Stack direction="horizontal" spacing="md" align="center">
+              <Button
+                onClick={() => router.push(`/booking/${bookingId}/edit`)}
+                variant="primary"
+                cmsId="actions-edit"
+                disabled={booking.status === 'cancelled' || booking.status === 'completed'}
+              >
+                {pageCmsData?.['edit-booking'] || 'Edit Booking'}
+              </Button>
+              <Button
+                onClick={() => router.push(`/booking/${bookingId}/edit`)}
+                variant="outline"
+                cmsId="actions-reschedule"
+                disabled={booking.status === 'cancelled' || booking.status === 'completed'}
+              >
+                {pageCmsData?.['reschedule'] || 'Reschedule'}
+              </Button>
+              <Button
+                onClick={handleCancelBooking}
+                variant="outline"
+                cmsId="actions-cancel"
+                disabled={booking.status === 'cancelled' || booking.status === 'completed' || cancelling}
+              >
+                {cancelling ? (pageCmsData?.['cancelling'] || 'Cancelling...') : (pageCmsData?.['cancel-booking'] || 'Cancel Booking')}
+              </Button>
+            </Stack>
+            
+            <Button
+              onClick={() => router.push(`/booking/${bookingId}`)}
+              variant="outline"
+              cmsId="actions-view-details"
+            >
+              {pageCmsData?.['view-details'] || 'View Full Details'}
+            </Button>
             
             <Button
               onClick={() => router.push('/bookings')}

@@ -4,6 +4,7 @@ export interface BusinessSettings {
     name: string;
     email: string;
     phone: string;
+    adminPhone?: string;
     address: string;
     hours: string;
   };

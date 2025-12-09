@@ -11,7 +11,11 @@ import {
   Container,
   Stack,
   Box,
-  Button
+  Button,
+  Input,
+  Label,
+  Select,
+  LoadingSpinner
 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 
@@ -22,7 +26,9 @@ function CancelPageContent() {
   const { addToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [bookingId] = useState('');
+  const [bookingId, setBookingId] = useState('');
+  const [reason, setReason] = useState('');
+  const [bookingInfo, setBookingInfo] = useState<{ pickupDateTime?: string; fare?: number } | null>(null);
 
   const handleCancel = async () => {
     if (!bookingId.trim()) {
@@ -32,21 +38,86 @@ function CancelPageContent() {
 
     setLoading(true);
     try {
-      // Simulate cancellation API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await fetch('/api/booking/cancel-booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId: bookingId.trim(),
+          reason: reason || undefined
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to cancel booking');
+      }
+
+      const refundMessage = data.refundAmount > 0 
+        ? `Booking cancelled successfully. You will receive a refund of $${data.refundAmount.toFixed(2)}.`
+        : 'Booking cancelled successfully. Your deposit is non-refundable at this time.';
       
-      addToast('success', 'Booking cancelled successfully. You will receive a confirmation email.');
+      addToast('success', refundMessage);
       
       // Redirect to home after successful cancellation
       setTimeout(() => {
         router.push('/');
-      }, 2000);
+      }, 3000);
     } catch (error) {
       console.error('Cancellation error:', error);
-      const errorMsg = 'Failed to cancel booking. Please contact customer support.';
+      const errorMsg = error instanceof Error ? error.message : 'Failed to cancel booking. Please contact customer support.';
       addToast('error', errorMsg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLookupBooking = async () => {
+    if (!bookingId.trim()) {
+      addToast('error', 'Please enter your booking ID');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/booking/${bookingId.trim()}`);
+      if (response.ok) {
+        const booking = await response.json();
+        const pickupDateTime = booking.trip?.pickupDateTime || booking.pickupDateTime;
+        const fare = booking.trip?.fare || booking.fare;
+        setBookingInfo({ pickupDateTime, fare });
+        
+        // Calculate refund info
+        if (pickupDateTime) {
+          const now = new Date();
+          const pickupTime = new Date(pickupDateTime);
+          const hoursUntilPickup = (pickupTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+          
+          let refundPercent = 0;
+          if (hoursUntilPickup > 24) {
+            refundPercent = 100;
+          } else if (hoursUntilPickup > 3) {
+            refundPercent = 50;
+          }
+          
+          const depositAmount = booking.payment?.depositAmount || booking.depositAmount || (fare || 0) / 2;
+          const refundAmount = (depositAmount * refundPercent) / 100;
+          
+          if (refundAmount > 0) {
+            addToast('info', `If cancelled now, you would receive a refund of $${refundAmount.toFixed(2)} (${refundPercent}% of deposit)`);
+          } else {
+            addToast('warning', 'Cancellation within 3 hours of pickup time is non-refundable.');
+          }
+        }
+      } else {
+        addToast('error', 'Booking not found. Please check your booking ID.');
+        setBookingInfo(null);
+      }
+    } catch (error) {
+      console.error('Lookup error:', error);
+      addToast('error', 'Failed to lookup booking. Please try again.');
+      setBookingInfo(null);
     }
   };
 
@@ -92,24 +163,24 @@ function CancelPageContent() {
 
   const cancellationPolicy = [
     {
-      title: "Free Cancellation",
-      description: "Cancel up to 2 hours before pickup time with no charge"
+      title: "Over 24 Hours",
+      description: "100% refund of deposit if cancelled more than 24 hours before pickup"
     },
     {
-      title: "Late Cancellation",
-      description: "Cancellations within 2 hours may incur a fee"
+      title: "3-24 Hours",
+      description: "50% refund of deposit if cancelled 3-24 hours before pickup"
     },
     {
-      title: "Emergency Cancellations",
-      description: "Contact us directly for special circumstances"
+      title: "Under 3 Hours",
+      description: "No refund if cancelled less than 3 hours before pickup"
     },
     {
       title: "Refund Processing",
       description: "Refunds typically process within 3-5 business days"
     },
     {
-      title: "Weather/Flight Delays",
-      description: "No charge for cancellations due to circumstances beyond your control"
+      title: "Emergency Cancellations",
+      description: "Contact us directly for special circumstances"
     }
   ];
 
@@ -125,26 +196,80 @@ function CancelPageContent() {
             </Stack>
             
             <Stack data-testid="cancel-form-fields" spacing="md">
-              <Text data-testid="cancel-booking-id-field" cmsId="ignore">
-                <strong>Booking ID:</strong> Enter your booking reference number
-              </Text>
-              <Text data-testid="cancel-reason-field" cmsId="ignore">
-                <strong>Reason:</strong> Select a reason for cancellation (optional)
-              </Text>
+              <Container>
+                <Label htmlFor="booking-id">Booking ID</Label>
+                <Input
+                  id="booking-id"
+                  value={bookingId}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBookingId(e.target.value)}
+                  placeholder="Enter your booking ID"
+                  disabled={loading}
+                />
+                <Text size="sm" color="secondary">Enter your booking reference number</Text>
+              </Container>
+              
+              <Stack direction="horizontal" spacing="md">
+                <Button
+                  variant="outline"
+                  onClick={handleLookupBooking}
+                  disabled={loading || !bookingId.trim()}
+                  text="Lookup Booking"
+                />
+              </Stack>
+
+              {bookingInfo && (
+                <Box variant="outlined" padding="md">
+                  <Stack spacing="sm">
+                    <Text weight="bold">Booking Found</Text>
+                    {bookingInfo.pickupDateTime && (
+                      <Text size="sm">Pickup: {new Date(bookingInfo.pickupDateTime).toLocaleString()}</Text>
+                    )}
+                    {bookingInfo.fare && (
+                      <Text size="sm">Fare: ${bookingInfo.fare.toFixed(2)}</Text>
+                    )}
+                  </Stack>
+                </Box>
+              )}
+
+              <Container>
+                <Label htmlFor="cancel-reason">Cancellation Reason (Optional)</Label>
+                <Select
+                  id="cancel-reason"
+                  value={reason}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setReason(e.target.value)}
+                  disabled={loading}
+                  options={[
+                    { value: '', label: 'Select a reason (optional)' },
+                    { value: 'change-of-plans', label: 'Change of Plans' },
+                    { value: 'found-alternative', label: 'Found Alternative Transportation' },
+                    { value: 'flight-cancelled', label: 'Flight Cancelled' },
+                    { value: 'flight-delayed', label: 'Flight Delayed' },
+                    { value: 'emergency', label: 'Emergency' },
+                    { value: 'other', label: 'Other' }
+                  ]}
+                />
+              </Container>
             </Stack>
             
             <Stack direction="horizontal" spacing="md" align="center" data-testid="cancel-form-actions">
-              {quickActions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant={action.variant}
-                  onClick={action.onClick}
-                  disabled={action.disabled}
-                  cmsId="cancel-form-action"
-                  
-                  text={action.label}
-                />
-              ))}
+              {loading ? (
+                <LoadingSpinner />
+              ) : (
+                <>
+                  <Button
+                    variant="primary"
+                    onClick={handleCancel}
+                    disabled={!bookingId.trim()}
+                    text="Cancel Booking"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push('/')}
+                    disabled={loading}
+                    text="Back to Home"
+                  />
+                </>
+              )}
             </Stack>
           </Stack>
         </Container>

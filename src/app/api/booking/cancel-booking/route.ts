@@ -73,6 +73,20 @@ export async function POST(req: NextRequest) {
       email ? bookingNotificationService.sendBookingCancelled(bookingId, email, refundAmount) : Promise.resolve()
     ]);
 
+    // Send SMS notification to admin (Gregg)
+    try {
+      const { sendAdminSms } = await import('@/lib/services/admin-notification-service');
+      const customerName = booking.customer?.name || booking.name || 'Customer';
+      const pickupDateTimeStr = pickupDateTime ? new Date(pickupDateTime).toLocaleString() : 'scheduled time';
+      const message = `Booking cancelled: ${bookingId} - ${customerName} - ${pickupDateTimeStr} - Refund: $${refundAmount.toFixed(2)}`;
+      await sendAdminSms(message);
+      console.log('✅ [CANCEL BOOKING] Admin SMS sent successfully');
+    } catch (smsError) {
+      // Don't fail cancellation if SMS fails
+      console.error('❌ [CANCEL BOOKING] Failed to send admin SMS:', smsError);
+      console.warn('⚠️ [CANCEL BOOKING] Booking cancelled but admin SMS not sent');
+    }
+
     return NextResponse.json({ 
       message: 'Booking cancelled',
       refundAmount,

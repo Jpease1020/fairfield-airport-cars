@@ -174,6 +174,17 @@ function BusinessPageContent() {
                   </Container>
                   
                   <Container>
+                    <Label htmlFor="company-admin-phone">Admin Phone Number</Label>
+                    <Input
+                      id="company-admin-phone"
+                      value={settings.company.adminPhone || ''}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('company', 'adminPhone', e.target.value)}
+                      placeholder="(555) 123-4567"
+                    />
+                    <Text size="sm" color="secondary">Phone number for admin SMS notifications (Gregg)</Text>
+                  </Container>
+                  
+                  <Container>
                     <Label htmlFor="company-email">Email Address</Label>
                     <Input
                       id="company-email"

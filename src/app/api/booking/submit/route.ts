@@ -268,6 +268,19 @@ export async function POST(request: Request) {
       console.warn('⚠️ [BOOKING SUBMIT] Booking created but driver was not notified');
     }
 
+    // Send SMS notification to admin (Gregg)
+    try {
+      const { sendAdminSms } = await import('@/lib/services/admin-notification-service');
+      const pickupDateTimeStr = trip.pickupDateTime.toLocaleString();
+      const message = `New booking: ${customer.name} - ${trip.pickup.address} to ${trip.dropoff.address} on ${pickupDateTimeStr} - $${fare.toFixed(2)}`;
+      await sendAdminSms(message);
+      console.log('✅ [BOOKING SUBMIT] Admin SMS sent successfully');
+    } catch (smsError) {
+      // Don't fail booking creation if SMS fails
+      console.error('❌ [BOOKING SUBMIT] Failed to send admin SMS:', smsError);
+      console.warn('⚠️ [BOOKING SUBMIT] Booking created but admin SMS not sent');
+    }
+
     return NextResponse.json({ 
       success: true, 
       bookingId: bookingResult.bookingId,
