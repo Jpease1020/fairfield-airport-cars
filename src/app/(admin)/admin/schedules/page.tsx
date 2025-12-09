@@ -42,7 +42,7 @@ export default function AdminSchedulesPage() {
     fetchSchedules();
   }, [selectedDate]);
 
-  const getStatusColor = (status: TimeSlot['status']) => {
+  const _getStatusColor = (status: TimeSlot['status']) => {
     switch (status) {
       case 'available': return 'var(--color-green-500)';
       case 'booked': return 'var(--color-red-500)';

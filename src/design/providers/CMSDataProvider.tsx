@@ -7,7 +7,7 @@ interface CMSContextType {
   isLoading: boolean;
 }
 
-const CMSContext = createContext<CMSContextType | undefined>(undefined);
+export const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 interface CMSDataProviderProps {
   children: ReactNode;

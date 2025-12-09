@@ -79,7 +79,7 @@ export default function PaymentSuccessClient() {
 
     // Check if this is a return from Square payment
     const source = searchParams?.get('source');
-    const urlBookingId = searchParams?.get('bookingId');
+    const _urlBookingId = searchParams?.get('bookingId');
     
     if (source === 'square') {
       processPaymentSuccess();

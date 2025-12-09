@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Box, Text } from '@/design/ui';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { isOnline, addConnectionListener } from '@/lib/pwa';
 import { colors } from '@/design/system/tokens/tokens';
 import styled from 'styled-components';
@@ -21,6 +22,8 @@ const StatusBanner = styled(Box)<{ isOnline: boolean }>`
 `;
 
 export const ConnectionStatus: React.FC = () => {
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.['connection-status'] || {};
   const [online, setOnline] = useState(true);
 
   useEffect(() => {
@@ -32,8 +35,8 @@ export const ConnectionStatus: React.FC = () => {
 
   return (
     <StatusBanner isOnline={online}>
-      <Text size="sm" weight="medium">
-        📡 You're offline. Booking requires an internet connection.
+      <Text size="sm" weight="medium" cmsId="connection-status-offline">
+        {pageCmsData?.['connection-status-offline'] || "📡 You're offline. Booking requires an internet connection."}
       </Text>
     </StatusBanner>
   );

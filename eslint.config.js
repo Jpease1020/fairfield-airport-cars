@@ -273,9 +273,32 @@ export default [
       'tests/**/*',
       'vitest.config.ts',
       'scripts/**/*',
+      'temp/**/*',
       'temp-design-library/**/*',
       'src/lib/services/email-service.ts', // Email templates need hardcoded HTML/CSS
-      'public/sw.js' // Service worker runs in different context with its own globals
+      'public/sw.js', // Service worker runs in different context with its own globals
+      'public/firebase-messaging-sw.js' // Service worker runs in different context
     ]
+  },
+  // Node.js scripts configuration
+  {
+    files: ['temp/**/*.js', 'scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+      'no-undef': 'off',
+    },
   }
 ];

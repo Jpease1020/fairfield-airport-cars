@@ -27,7 +27,7 @@ const LegendBox = styled(Box)<{ $backgroundColor: string }>`
 `;
 
 export default function DriverCalendarPage() {
-  const { cmsData } = useCMSData();
+  const { cmsData: _cmsData } = useCMSData();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [schedule, setSchedule] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function DriverCalendarPage() {
 
   // Driver ID (hardcoded for single driver setup) - keep ID consistent with database
   const DRIVER_ID = 'gregg-driver-001';
-  const DRIVER_NAME = 'Driver'; // User-facing name is generic
+  const _DRIVER_NAME = 'Driver'; // User-facing name is generic
 
   const loadSchedule = async (date: Date) => {
     try {

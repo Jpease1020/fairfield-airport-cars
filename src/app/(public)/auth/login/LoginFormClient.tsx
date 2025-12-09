@@ -89,7 +89,7 @@ export default function LoginFormClient() {
       } else {
         router.push('/dashboard');
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Invalid email or password');
     } finally {
       setLoading(false);
@@ -108,7 +108,7 @@ export default function LoginFormClient() {
       } else {
         router.push('/dashboard');
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Google sign-in failed');
     } finally {
       setLoading(false);

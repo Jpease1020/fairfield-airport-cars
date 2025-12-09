@@ -14,8 +14,7 @@ import {
   Button,
   Box,
   LoadingSpinner,
-  Span,
-  Badge
+  Span
 } from '@/design/ui';
 
 interface ManageBookingClientProps {
@@ -210,7 +209,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                   <Span weight="bold">{pageCmsData?.['statusLabel'] || 'Status:'}</Span>{' '}
                   {booking.status || 'pending'}
                 </Text>
-                <Text>
+                <Text cmsId="fare-display">
                   <Span weight="bold">{pageCmsData?.['fareLabel'] || 'Fare:'}</Span>{' '}
                   ${(booking.trip?.fare || booking.fare || 0).toFixed(2)}
                 </Text>

@@ -7,7 +7,6 @@ import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToa
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { Booking } from '@/types/booking';
 import { BookingProvider, useBooking } from '@/providers/BookingProvider';
-import { BookingFormPhases } from '@/components/booking/BookingFormPhases';
 import { TripDetailsPhase } from '@/components/booking/TripDetailsPhase';
 import { ContactInfoPhase } from '@/components/booking/ContactInfoPhase';
 
@@ -222,7 +221,7 @@ function EditBookingContent({ bookingId, cmsData }: EditBookingClientProps) {
         throw new Error(errorData.error || 'Failed to update booking');
       }
 
-      const result = await response.json();
+      const _result = await response.json();
       addToast('success', 'Booking updated successfully!');
       
       // Redirect to booking details page
@@ -260,7 +259,7 @@ function EditBookingContent({ bookingId, cmsData }: EditBookingClientProps) {
         
         {currentPhase === 'payment' && (
           <Stack spacing="lg">
-            <Text>Review your changes and save</Text>
+            <Text cmsId="review-changes">{pageCmsData?.['review-changes'] || 'Review your changes and save'}</Text>
             <Stack direction="horizontal" spacing="md">
               <Button
                 onClick={goToPreviousPhase}

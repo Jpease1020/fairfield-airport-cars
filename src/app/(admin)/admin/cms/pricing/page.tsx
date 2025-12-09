@@ -26,7 +26,7 @@ function PricingSettingsContent() {
   const { cmsData: allCmsData } = useCMSData();
   const cmsData = allCmsData?.pricing || {};
   const { addToast } = useToast();
-  const { businessSettings, loading: businessLoading } = useBusinessSettings();
+  const { businessSettings: _businessSettings, loading: _businessLoading } = useBusinessSettings();
   const [settings, setSettings] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Container, Stack, Text, DataTable, Badge, Alert, LoadingSpinner } from '@/design/ui';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 
 interface BookingAttempt {
   id: string;
@@ -36,6 +37,8 @@ const formatTimestamp = (createdAt?: BookingAttempt['createdAt']) => {
 };
 
 export const BookingAttemptTable: React.FC = () => {
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.['booking-attempts'] || {};
   const [attempts, setAttempts] = useState<BookingAttempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +68,7 @@ export const BookingAttemptTable: React.FC = () => {
       <Container>
         <Stack direction="horizontal" spacing="md" align="center">
           <LoadingSpinner />
-          <Text>Loading booking attempts…</Text>
+          <Text cmsId="loading-attempts">{pageCmsData?.['loading-attempts'] || 'Loading booking attempts…'}</Text>
         </Stack>
       </Container>
     );
@@ -98,9 +101,9 @@ export const BookingAttemptTable: React.FC = () => {
     <Container>
       <Stack spacing="lg">
         <Stack spacing="xs">
-          <Text size="lg" weight="bold">Booking Attempts</Text>
-          <Text size="sm" color="secondary">
-            Failed or warning attempts are logged here so you can follow up manually.
+          <Text size="lg" weight="bold" cmsId="booking-attempts-title">{pageCmsData?.['booking-attempts-title'] || 'Booking Attempts'}</Text>
+          <Text size="sm" color="secondary" cmsId="booking-attempts-description">
+            {pageCmsData?.['booking-attempts-description'] || 'Failed or warning attempts are logged here so you can follow up manually.'}
           </Text>
         </Stack>
         <DataTable
