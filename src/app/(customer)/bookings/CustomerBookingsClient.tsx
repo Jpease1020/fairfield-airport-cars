@@ -49,8 +49,10 @@ export default function CustomerBookingsClient() {
     const unsubscribe = onAuthChange(async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         setUser(firebaseUser);
-        await loadCustomerProfile(firebaseUser.uid);
-        await loadCustomerBookings(firebaseUser.uid);
+        const profile = await loadCustomerProfile(firebaseUser.uid);
+        if (profile) {
+          await loadCustomerBookings(firebaseUser.uid);
+        }
       } else {
         router.push('/auth/login');
       }
@@ -64,23 +66,62 @@ export default function CustomerBookingsClient() {
     };
   }, [router]);
 
-  const loadCustomerProfile = async (uid: string) => {
+  const loadCustomerProfile = async (uid: string): Promise<User | null> => {
     try {
       const customerProfile = await getCustomerProfile(uid);
       setProfile(customerProfile);
+      return customerProfile;
     } catch (error) {
       console.error('Error loading customer profile:', error);
       setError('Failed to load profile');
+      return null;
     }
   };
 
   const loadCustomerBookings = async (uid: string) => {
     try {
-      // TODO: Replace with actual API call to get real bookings
-      setBookings([]);
+      if (!profile) {
+        setBookings([]);
+        return;
+      }
+
+      // Use email or phone from profile to fetch bookings
+      const identifier = profile.email || profile.phone;
+      if (!identifier) {
+        setBookings([]);
+        return;
+      }
+
+      const queryParam = profile.email ? 'email' : 'phone';
+      const response = await fetch(`/api/booking/get-customer-bookings?${queryParam}=${encodeURIComponent(identifier)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch bookings');
+      }
+
+      const data = await response.json();
+      if (data.success && Array.isArray(data.bookings)) {
+        // Transform API response to match Booking interface
+        const transformedBookings: Booking[] = data.bookings.map((booking: any) => ({
+          id: booking.id,
+          pickupLocation: booking.trip?.pickup?.address || booking.pickupLocation || 'N/A',
+          dropoffLocation: booking.trip?.dropoff?.address || booking.dropoffLocation || 'N/A',
+          pickupDateTime: booking.trip?.pickupDateTime || booking.pickupDateTime || '',
+          status: booking.status || 'pending',
+          fare: booking.trip?.fare || booking.fare || 0,
+          driverName: booking.driverName || booking.driver?.name,
+          vehicleInfo: booking.vehicleInfo || booking.driver?.vehicleInfo,
+          createdAt: booking.createdAt || '',
+          balanceDue: booking.balanceDue
+        }));
+        setBookings(transformedBookings);
+      } else {
+        setBookings([]);
+      }
     } catch (error) {
       console.error('Error loading bookings:', error);
       setError('Failed to load bookings');
+      setBookings([]);
     }
   };
 
@@ -222,15 +263,42 @@ export default function CustomerBookingsClient() {
                     </Badge>
                   </Stack>
                   
+                  <Stack spacing="sm">
+                    <Text size="sm">
+                      <strong>From:</strong> {booking.pickupLocation}
+                    </Text>
+                    <Text size="sm">
+                      <strong>To:</strong> {booking.dropoffLocation}
+                    </Text>
+                    {booking.pickupDateTime && (
+                      <Text size="sm">
+                        <strong>Date/Time:</strong> {new Date(booking.pickupDateTime).toLocaleString()}
+                      </Text>
+                    )}
+                    <Text size="sm">
+                      <strong>Fare:</strong> ${booking.fare.toFixed(2)}
+                    </Text>
+                  </Stack>
+                  
                   <Stack direction="horizontal" spacing="md" align="center">
                     <Button
-                      onClick={() => router.push(`/status/${booking.id}`)}
+                      onClick={() => router.push(`/booking/${booking.id}`)}
                       variant="outline"
                       size="sm"
-                      cmsId='view-status'
-                      data-testid={`view-status-${booking.id}`}
+                      cmsId='view-details'
+                      data-testid={`view-details-${booking.id}`}
                     >
-                      {pageCmsData?.['view-status'] || 'View Status'}
+                      {pageCmsData?.['view-details'] || 'View Details'}
+                    </Button>
+                    <Button
+                      onClick={() => router.push(`/booking/${booking.id}/edit`)}
+                      variant="outline"
+                      size="sm"
+                      cmsId='edit-booking'
+                      data-testid={`edit-booking-${booking.id}`}
+                      disabled={booking.status === 'cancelled' || booking.status === 'completed'}
+                    >
+                      {pageCmsData?.['edit-booking'] || 'Edit'}
                     </Button>
                     <Button
                       onClick={() => router.push(`/manage/${booking.id}`)}
@@ -241,6 +309,17 @@ export default function CustomerBookingsClient() {
                     >
                       {pageCmsData?.['manage-booking'] || 'Manage'}
                     </Button>
+                    {booking.status !== 'cancelled' && booking.status !== 'completed' && (
+                      <Button
+                        onClick={() => router.push(`/cancel?bookingId=${booking.id}`)}
+                        variant="outline"
+                        size="sm"
+                        cmsId='cancel-booking'
+                        data-testid={`cancel-booking-${booking.id}`}
+                      >
+                        {pageCmsData?.['cancel-booking'] || 'Cancel'}
+                      </Button>
+                    )}
                     {booking.status === 'completed' && (
                       <Button
                         onClick={() => router.push(`/feedback/${booking.id}`)}
