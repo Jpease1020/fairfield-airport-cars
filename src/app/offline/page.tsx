@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Container, Stack, H1, Text, Button, Box } from '@/design/ui';
+import { useCMSData } from '@/design/providers/CMSDataProvider';
 import styled from 'styled-components';
 import { colors } from '@/design/system/tokens/tokens';
 
@@ -15,6 +16,9 @@ const EmojiDisplay = styled.div`
 `;
 
 export default function OfflinePage() {
+  const { cmsData: allCmsData } = useCMSData();
+  const pageCmsData = allCmsData?.['offline'] || {};
+
   const handleRetry = () => {
     window.location.reload();
   };
@@ -33,25 +37,24 @@ export default function OfflinePage() {
         <Stack spacing="lg" align="center">
           <EmojiDisplay>📱</EmojiDisplay>
           
-          <H1 color="primary">
-            You're Offline
+          <H1 color="primary" cmsId="offline-title">
+            {pageCmsData?.['offline-title'] || "You're Offline"}
           </H1>
           
-          <Text size="lg" color="secondary" align="center">
-            It looks like you're not connected to the internet right now. 
-            Don't worry - you can still browse some parts of the app!
+          <Text size="lg" color="secondary" align="center" cmsId="offline-description">
+            {pageCmsData?.['offline-description'] || "It looks like you're not connected to the internet right now. Don't worry - you can still browse some parts of the app!"}
           </Text>
           
           <Stack spacing="md" align="center">
-            <Text size="sm" color="secondary">
-              When you're back online, you can:
+            <Text size="sm" color="secondary" cmsId="offline-when-online">
+              {pageCmsData?.['offline-when-online'] || 'When you\'re back online, you can:'}
             </Text>
             
             <Stack spacing="sm" align="flex-start">
-              <Text size="sm">• Book airport transportation</Text>
-              <Text size="sm">• View your existing bookings</Text>
-              <Text size="sm">• Track your driver in real-time</Text>
-              <Text size="sm">• Get notifications about your ride</Text>
+              <Text size="sm" cmsId="offline-feature-1">{pageCmsData?.['offline-feature-1'] || '• Book airport transportation'}</Text>
+              <Text size="sm" cmsId="offline-feature-2">{pageCmsData?.['offline-feature-2'] || '• View your existing bookings'}</Text>
+              <Text size="sm" cmsId="offline-feature-3">{pageCmsData?.['offline-feature-3'] || '• Track your driver in real-time'}</Text>
+              <Text size="sm" cmsId="offline-feature-4">{pageCmsData?.['offline-feature-4'] || '• Get notifications about your ride'}</Text>
             </Stack>
           </Stack>
           
@@ -60,21 +63,23 @@ export default function OfflinePage() {
               onClick={handleRetry}
               variant="primary"
               size="lg"
+              cmsId="offline-try-again"
             >
-              Try Again
+              {pageCmsData?.['offline-try-again'] || 'Try Again'}
             </Button>
             
             <Button
               onClick={handleGoHome}
               variant="secondary"
               size="lg"
+              cmsId="offline-go-home"
             >
-              Go Home
+              {pageCmsData?.['offline-go-home'] || 'Go Home'}
             </Button>
           </Stack>
           
-          <Text size="xs" color="secondary" align="center">
-            Need immediate assistance? Text us at (203) 555-0123
+          <Text size="xs" color="secondary" align="center" cmsId="offline-assistance">
+            {pageCmsData?.['offline-assistance'] || 'Need immediate assistance? Text us at (203) 555-0123'}
           </Text>
         </Stack>
       </OfflineCard>

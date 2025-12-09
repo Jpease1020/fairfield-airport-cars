@@ -48,7 +48,7 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
         }
         const data = await response.json();
         setBookingDetails(data);
-      } catch (err) {
+      } catch (_err) {
         setError('Failed to load booking details');
       } finally {
         setLoading(false);
@@ -58,7 +58,7 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
     fetchBookingDetails();
   }, [bookingId]);
 
-  const handlePaymentSuccess = (result: any) => {
+  const handlePaymentSuccess = (_result: any) => {
     setPaymentSuccess(true);
     // Redirect to success page after a short delay
     setTimeout(() => {
@@ -138,7 +138,9 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <Text align="center" cmsId="ignore">No booking details found.</Text>
+              <Text align="center" cmsId="no-booking-details">
+                {cmsData?.['no-booking-details'] || 'No booking details found.'}
+              </Text>
             </Stack>
           </Container>
         </GridSection>

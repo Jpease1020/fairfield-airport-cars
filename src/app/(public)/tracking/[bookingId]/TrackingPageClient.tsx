@@ -126,7 +126,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
   };
 
   // Handle map load
-  const handleMapLoad = (map: google.maps.Map) => {
+  const handleMapLoad = (_map: google.maps.Map) => {
     // console.log('🗺️ Enhanced map loaded successfully');
   };
 

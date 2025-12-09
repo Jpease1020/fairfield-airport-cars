@@ -34,7 +34,7 @@ function DriverTrackingPageContent() {
         } else {
           setError('Failed to load booking details');
         }
-      } catch (err) {
+      } catch (_err) {
         setError('Error loading booking details');
       } finally {
         setLoading(false);

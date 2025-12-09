@@ -104,7 +104,7 @@ function PaymentsPageContent() {
       
       const data = await response.json();
       setPayments(data.payments || []);
-    } catch (err) {
+    } catch (_err) {
       setError(cmsData?.['error-fetchFailed'] || 'Failed to fetch payments');
     } finally {
       setLoading(false);

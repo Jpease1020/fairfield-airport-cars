@@ -2,11 +2,12 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Container, Stack, Text, Button } from '@/design/ui';
+import { CMSContext } from '@/design/providers/CMSDataProvider';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -39,30 +40,39 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <Container>
-          <Stack spacing="lg" align="center">
-            <Text variant="lead" color="error" cmsId="error-boundary-title">
-              Something went wrong
-            </Text>
-            <Text cmsId="error-boundary-message">
-              We&apos;re sorry, but something unexpected happened. Please try refreshing the page.
-            </Text>
-            <Stack direction="horizontal" spacing="md">
-              <Button
-                onClick={() => window.location.reload()}
-                variant="primary"
-                cmsId="error-boundary-refresh-button"
-                text="Refresh Page"
-              />
-              <Button
-                onClick={() => window.location.href = '/'}
-                variant="outline"
-                cmsId="error-boundary-home-button"
-                text="Go Home"
-              />
-            </Stack>
-          </Stack>
-        </Container>
+        <CMSContext.Consumer>
+          {(cmsContext: { cmsData: any; isLoading: boolean } | undefined) => {
+            const pageCmsData = cmsContext?.cmsData?.['error-boundary'] || {};
+            return (
+              <Container>
+                <Stack spacing="lg" align="center">
+                  <Text variant="lead" color="error" cmsId="error-boundary-title">
+                    {pageCmsData?.['error-boundary-title'] || 'Something went wrong'}
+                  </Text>
+                  <Text cmsId="error-boundary-message">
+                    {pageCmsData?.['error-boundary-message'] || "We're sorry, but something unexpected happened. Please try refreshing the page."}
+                  </Text>
+                  <Stack direction="horizontal" spacing="md">
+                    <Button
+                      onClick={() => window.location.reload()}
+                      variant="primary"
+                      cmsId="error-boundary-refresh-button"
+                    >
+                      {pageCmsData?.['error-boundary-refresh-button'] || 'Refresh Page'}
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/'}
+                      variant="outline"
+                      cmsId="error-boundary-home-button"
+                    >
+                      {pageCmsData?.['error-boundary-home-button'] || 'Go Home'}
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Container>
+            );
+          }}
+        </CMSContext.Consumer>
       );
     }
 

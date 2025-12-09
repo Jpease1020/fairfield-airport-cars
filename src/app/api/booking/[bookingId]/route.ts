@@ -1,10 +1,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
-import { getBooking, updateBooking } from '@/lib/services/booking-service';
+import { getBooking } from '@/lib/services/booking-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { FieldValue } from 'firebase-admin/firestore';
-import type { TripDetails, CustomerInfo } from '@/types/booking';
 
 export async function GET(
   request: NextRequest,

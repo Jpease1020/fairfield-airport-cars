@@ -28,7 +28,7 @@ interface Booking {
 
 export default function FindBookingClient() {
   const { cmsData: allCmsData } = useCMSData();
-  const cmsData = allCmsData?.['find-booking'] || {};
+  const pageCmsData = allCmsData?.['find-booking'] || {};
   const router = useRouter();
   const [lookupType, setLookupType] = useState<'email' | 'phone'>('email');
   const [identifier, setIdentifier] = useState('');
@@ -111,10 +111,10 @@ export default function FindBookingClient() {
       <Stack spacing="xl">
         <Stack spacing="md" align="center">
           <H1 cmsId="find-booking-title">
-            {cmsData?.['find-booking-title'] || 'Find My Booking'}
+            {pageCmsData?.['find-booking-title'] || 'Find My Booking'}
           </H1>
           <Text align="center" variant="muted" cmsId="find-booking-description">
-            {cmsData?.['find-booking-description'] || 'Enter your email or phone number to find your bookings'}
+            {pageCmsData?.['find-booking-description'] || 'Enter your email or phone number to find your bookings'}
           </Text>
         </Stack>
 
@@ -122,7 +122,7 @@ export default function FindBookingClient() {
           <Stack spacing="lg">
             {/* Lookup Type Selection */}
             <Stack spacing="md">
-              <Label>Lookup By</Label>
+              <Label cmsId="lookup-by-label">{pageCmsData?.['lookup-by-label'] || 'Lookup By'}</Label>
               <Stack direction="horizontal" spacing="lg">
                 <RadioButton
                   id="lookup-email"
@@ -186,7 +186,7 @@ export default function FindBookingClient() {
               variant="primary"
               cmsId="search-bookings"
             >
-              {loading ? 'Searching...' : (cmsData?.['search-bookings'] || 'Find Bookings')}
+              {loading ? 'Searching...' : (pageCmsData?.['search-bookings'] || 'Find Bookings')}
             </Button>
           </Stack>
         </Box>
@@ -195,7 +195,7 @@ export default function FindBookingClient() {
         {loading && (
           <Stack spacing="md" align="center">
             <LoadingSpinner />
-            <Text variant="muted">Searching for bookings...</Text>
+            <Text variant="muted" cmsId="searching-bookings">{pageCmsData?.['searching-bookings'] || 'Searching for bookings...'}</Text>
           </Stack>
         )}
 
@@ -205,25 +205,25 @@ export default function FindBookingClient() {
             {bookings.length === 0 ? (
               <Box variant="elevated" padding="lg">
                 <Stack spacing="md" align="center">
-                  <Text weight="bold" size="lg">
-                    {cmsData?.['no-bookings-found'] || 'No Bookings Found'}
+                  <Text weight="bold" size="lg" cmsId="no-bookings-found">
+                    {pageCmsData?.['no-bookings-found'] || 'No Bookings Found'}
                   </Text>
                   <Text variant="muted" align="center">
-                    {cmsData?.['no-bookings-message'] || 'We couldn\'t find any bookings for that email or phone number. Please check your information and try again.'}
+                    {pageCmsData?.['no-bookings-message'] || 'We couldn\'t find any bookings for that email or phone number. Please check your information and try again.'}
                   </Text>
                 </Stack>
               </Box>
             ) : (
               <Stack spacing="md">
                 <Text weight="bold" size="lg">
-                  {cmsData?.['bookings-found'] || `Found ${bookings.length} booking${bookings.length > 1 ? 's' : ''}`}
+                  {pageCmsData?.['bookings-found'] || `Found ${bookings.length} booking${bookings.length > 1 ? 's' : ''}`}
                 </Text>
                 {bookings.map((booking) => (
                   <Box key={booking.id} variant="elevated" padding="lg">
                     <Stack spacing="md">
                       <Stack direction="horizontal" justify="space-between" align="center">
-                        <Text weight="bold" size="lg">
-                          Booking #{booking.id}
+                        <Text weight="bold" size="lg" cmsId="booking-number">
+                          {pageCmsData?.['booking-number'] || 'Booking'} #{booking.id}
                         </Text>
                         <Badge variant={getStatusVariant(booking.status)}>
                           {getStatusText(booking.status)}
@@ -242,8 +242,8 @@ export default function FindBookingClient() {
                             <strong>Date/Time:</strong> {new Date(booking.pickupDateTime).toLocaleString()}
                           </Text>
                         )}
-                        <Text size="sm">
-                          <strong>Fare:</strong> ${booking.fare.toFixed(2)}
+                        <Text size="sm" cmsId="fare-display">
+                          <strong>{pageCmsData?.['fare-label'] || 'Fare:'}</strong> ${booking.fare.toFixed(2)}
                         </Text>
                       </Stack>
 
@@ -252,7 +252,7 @@ export default function FindBookingClient() {
                         variant="primary"
                         cmsId="view-booking-details"
                       >
-                        {cmsData?.['view-booking-details'] || 'View Booking Details'}
+                        {pageCmsData?.['view-booking-details'] || 'View Booking Details'}
                       </Button>
                     </Stack>
                   </Box>

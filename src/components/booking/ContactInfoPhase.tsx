@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label, StatusMessage } from '@/design/ui';
+import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label } from '@/design/ui';
 import { CustomerInfo, ValidationResult } from '@/types/booking';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
 import { useBooking } from '@/providers/BookingProvider';

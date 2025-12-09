@@ -78,7 +78,7 @@ export default function CustomerBookingsClient() {
     }
   };
 
-  const loadCustomerBookings = async (uid: string) => {
+  const loadCustomerBookings = async (_uid: string) => {
     try {
       if (!profile) {
         setBookings([]);
@@ -275,8 +275,8 @@ export default function CustomerBookingsClient() {
                         <strong>Date/Time:</strong> {new Date(booking.pickupDateTime).toLocaleString()}
                       </Text>
                     )}
-                    <Text size="sm">
-                      <strong>Fare:</strong> ${booking.fare.toFixed(2)}
+                    <Text size="sm" cmsId="fare-display">
+                      <strong>{pageCmsData?.['fare-label'] || 'Fare:'}</strong> ${booking.fare.toFixed(2)}
                     </Text>
                   </Stack>
                   
