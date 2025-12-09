@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   // Enhanced performance optimizations
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
   },
+  // Turbopack config (empty to allow webpack to work)
+  // We use webpack via --webpack flag in build script
+  turbopack: {},
   // Server external packages
   serverExternalPackages: ['firebase-admin'],
   // Optimized image configuration
