@@ -3,66 +3,13 @@ import { Client } from '@googlemaps/google-maps-services-js';
 import { getSettings } from '@/lib/business/settings-service';
 import { createQuote } from '@/lib/services/quote-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
+import { classifyTrip, isAirportLocation } from '@/lib/services/service-area-validation';
 import { z } from 'zod';
-import { KNOWN_AIRPORTS } from '@/utils/constants';
 
 const mapsClient = new Client({});
 
 function metersToMiles(m: number): number { return m / 1609.34; }
 function secondsToMinutes(s: number): number { return s / 60; }
-
-const AIRPORT_KEYWORDS = ['airport', 'terminal', 'intl', 'international'];
-
-const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
-
-function distanceMilesBetweenCoordinates(lat1: number, lng1: number, lat2: number, lng2: number): number {
-  const EARTH_RADIUS_MILES = 3958.8;
-  const dLat = toRadians(lat2 - lat1);
-  const dLng = toRadians(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return EARTH_RADIUS_MILES * c;
-}
-
-function isFiniteNumber(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value);
-}
-
-function isAirportLocation(address?: string | null, coords?: { lat: number; lng: number } | null): boolean {
-  const normalizedAddress = address?.toLowerCase() ?? '';
-
-  if (normalizedAddress.length > 0) {
-    if (AIRPORT_KEYWORDS.some(keyword => normalizedAddress.includes(keyword))) {
-      return true;
-    }
-
-    for (const airport of KNOWN_AIRPORTS) {
-      if (
-        normalizedAddress.includes(airport.code.toLowerCase()) ||
-        normalizedAddress.includes(airport.name.toLowerCase())
-      ) {
-        return true;
-      }
-    }
-  }
-
-  if (coords && isFiniteNumber(coords.lat) && isFiniteNumber(coords.lng)) {
-    return KNOWN_AIRPORTS.some(airport => {
-      const distance = distanceMilesBetweenCoordinates(
-        coords.lat,
-        coords.lng,
-        airport.coordinates.lat,
-        airport.coordinates.lng
-      );
-      return distance <= airport.radiusMiles;
-    });
-  }
-
-  return false;
-}
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -111,6 +58,34 @@ export async function POST(request: Request) {
     }, { status: 400 });
   }
 
+  // Validate service area and airport requirements BEFORE calling Google Maps
+  const tripClassification = classifyTrip(
+    origin,
+    destination,
+    pickupCoords ?? null,
+    dropoffCoords ?? null
+  );
+
+  if (tripClassification.classification !== 'normal') {
+    // Log blocked trips for monitoring
+    if (tripClassification.classification === 'soft_block' || tripClassification.classification === 'hard_block') {
+      console.log('[SERVICE_AREA] Blocked trip:', {
+        classification: tripClassification.classification,
+        code: tripClassification.code,
+        origin,
+        destination,
+        pickupCoords,
+        dropoffCoords,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    return NextResponse.json({
+      error: tripClassification.message,
+      code: tripClassification.code,
+    }, { status: 400 });
+  }
+
   let element: any;
 
 
@@ -153,6 +128,7 @@ export async function POST(request: Request) {
     fare = Math.ceil(fare * 0.9);
   }
 
+  // Check if pickup is airport for return trip multiplier
   const isAirportPickup = isAirportLocation(origin, pickupCoords ?? null);
   const isAirportDropoff = isAirportLocation(destination, dropoffCoords ?? null);
 

@@ -80,13 +80,14 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
     }
 
     // Create booking document atomically with custom ID
+    // Respect status from bookingData (e.g. 'requires_approval' for exception bookings)
     const bookingDoc = {
       ...bookingData,
       driverId: selectedDriver?.driverId || null,
       driverName: selectedDriver?.driverName || 'To be assigned',
       depositAmount,
       balanceDue,
-      status: 'pending',
+      status: bookingData.status || 'pending', // Use provided status or default to 'pending'
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     };

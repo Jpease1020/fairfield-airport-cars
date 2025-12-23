@@ -25,7 +25,8 @@ export default function AdminDashboardClient() {
     totalBookings: 0,
     activeDrivers: 0,
     revenueThisMonth: 0,
-    customerRating: 0
+    customerRating: 0,
+    pendingApprovals: 0
   });
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,11 +80,15 @@ export default function AdminDashboardClient() {
       // Calculate average customer rating (if we have feedback data)
       const customerRating = 4.9; // This would come from feedback service
 
+      // Count bookings requiring approval
+      const pendingApprovals = bookings.filter(b => b.status === 'requires_approval').length;
+
       setStats({
         totalBookings,
         activeDrivers,
         revenueThisMonth,
-        customerRating
+        customerRating,
+        pendingApprovals
       });
 
       // Generate recent activity from real data
@@ -206,7 +211,7 @@ export default function AdminDashboardClient() {
         </Stack>
 
         {/* Stats Grid */}
-        <Grid cols={{ xs: 1, md: 2, lg: 4 }} gap="lg">
+        <Grid cols={{ xs: 1, md: 2, lg: 5 }} gap="lg">
           <GridItem>
             <Box variant="elevated" padding="lg">
               <Stack spacing="sm" align="center">
@@ -215,6 +220,28 @@ export default function AdminDashboardClient() {
                 <Text align="center" color="muted" cmsId="stats-total-bookings" >
                   {cmsData?.['stats-total-bookings'] || 'Total Bookings'}
                 </Text>
+              </Stack>
+            </Box>
+          </GridItem>
+          
+          <GridItem>
+            <Box 
+              variant="elevated" 
+              padding="lg"
+              style={{ cursor: stats.pendingApprovals > 0 ? 'pointer' : 'default' }}
+              onClick={() => stats.pendingApprovals > 0 && (window.location.href = '/admin/bookings?status=requires_approval')}
+            >
+              <Stack spacing="sm" align="center">
+                <Text size="3xl">🔍</Text>
+                <H2>{stats.pendingApprovals}</H2>
+                <Text align="center" color="muted" cmsId="stats-pending-approvals">
+                  {cmsData?.['stats-pending-approvals'] || 'Pending Approvals'}
+                </Text>
+                {stats.pendingApprovals > 0 && (
+                  <Text variant="small" color="warning" weight="medium">
+                    {cmsData?.['stats-pending-approvals-action'] || 'Click to review'}
+                  </Text>
+                )}
               </Stack>
             </Box>
           </GridItem>

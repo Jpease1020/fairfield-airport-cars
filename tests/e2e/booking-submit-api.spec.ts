@@ -62,7 +62,7 @@ test.describe('Booking Submit API - Local Validation', () => {
         pickupCoords: { lat: 41.1408, lng: -73.2613 },
         dropoffCoords: { lat: 40.6413, lng: -73.7781 },
         fareType: 'personal',
-        pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        pickupTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       }
     });
 
@@ -120,13 +120,14 @@ test.describe('Booking Submit API - Local Validation', () => {
     
     // Step 1: Get quote
     console.log('1️⃣ Getting quote...');
+    const pickupTime = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
     const quoteData = {
       origin: 'Fairfield Station, Fairfield, CT',
       destination: 'JFK Airport, Queens, NY',
       pickupCoords: { lat: 41.1408, lng: -73.2613 },
       dropoffCoords: { lat: 40.6413, lng: -73.7781 },
       fareType: 'personal',
-      pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      pickupTime: pickupTime
     };
 
     const quoteResponse = await request.post(`${BASE_URL}/api/booking/quote`, {
@@ -156,7 +157,7 @@ test.describe('Booking Submit API - Local Validation', () => {
           address: quoteData.destination,
           coordinates: quoteData.dropoffCoords
         },
-        pickupDateTime: quoteData.pickupDateTime,
+        pickupDateTime: pickupTime,
         fareType: 'personal',
         fare: quote.fare
       }
@@ -243,7 +244,7 @@ test.describe('Booking Submit API - Local Validation', () => {
         pickupCoords: { lat: 41.1408, lng: -73.2613 },
         dropoffCoords: { lat: 40.6413, lng: -73.7781 },
         fareType: 'personal',
-        pickupDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        pickupTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       }
     });
 

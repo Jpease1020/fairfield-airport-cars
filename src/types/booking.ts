@@ -71,7 +71,7 @@ export interface TrackingInfo {
   lastUpdated: Date;
 }
 
-export type BookingStatus = 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+export type BookingStatus = 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'requires_approval';
 
 export interface BookingConfirmation {
   status: 'pending' | 'confirmed';
@@ -96,6 +96,13 @@ export interface Booking {
   tracking?: TrackingInfo;
   confirmation?: BookingConfirmation;
   calendarEventId?: string; // Google Calendar event ID for rides@fairfieldairportcars.com
+  
+  // Exception booking fields (for VIP exceptions that bypass service area)
+  requiresApproval?: boolean;
+  exceptionReason?: string;
+  approvedAt?: string; // ISO timestamp
+  rejectedAt?: string; // ISO timestamp
+  rejectionReason?: string;
   
   // Legacy fields for backward compatibility
   pickupLocation?: string;

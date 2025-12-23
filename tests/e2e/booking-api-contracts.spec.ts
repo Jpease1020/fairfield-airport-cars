@@ -37,11 +37,11 @@ const REAL_API_SCENARIOS = {
   },
   shortTrip: {
     origin: 'Fairfield Station, Fairfield, CT',
-    destination: 'Fairfield University, Fairfield, CT',
+    destination: 'HPN Airport, White Plains, NY', // Changed to airport to comply with service area rules
     pickupCoords: { lat: 41.1408, lng: -73.2613 },
-    dropoffCoords: { lat: 41.1415, lng: -73.2620 },
+    dropoffCoords: { lat: 41.067005, lng: -73.707574 }, // HPN coordinates
     fareType: 'personal' as const,
-    expectedFareRange: { min: 15, max: 35 }
+    expectedFareRange: { min: 50, max: 100 }
   }
 };
 

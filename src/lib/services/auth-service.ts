@@ -26,6 +26,7 @@ export interface User {
   // Customer-specific fields
   totalBookings?: number;
   totalSpent?: number;
+  isVip?: boolean; // VIP customer flag for exception bookings
   preferences?: {
     defaultPickupLocation?: string;
     defaultDropoffLocation?: string;
