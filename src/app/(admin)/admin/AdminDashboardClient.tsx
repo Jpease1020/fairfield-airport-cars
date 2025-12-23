@@ -228,8 +228,9 @@ export default function AdminDashboardClient() {
             <Box 
               variant="elevated" 
               padding="lg"
-              style={{ cursor: stats.pendingApprovals > 0 ? 'pointer' : 'default' }}
-              onClick={() => stats.pendingApprovals > 0 && (window.location.href = '/admin/bookings?status=requires_approval')}
+              onClick={stats.pendingApprovals > 0 ? () => {
+                window.location.href = '/admin/bookings?status=requires_approval';
+              } : undefined}
             >
               <Stack spacing="sm" align="center">
                 <Text size="3xl">🔍</Text>

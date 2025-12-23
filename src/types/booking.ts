@@ -67,7 +67,7 @@ export interface TrackingInfo {
     heading?: number;
     speed?: number;
   };
-  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'requires_approval';
   lastUpdated: Date;
 }
 

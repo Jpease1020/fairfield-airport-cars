@@ -43,7 +43,7 @@ export interface Booking {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDateTime: Date;
-  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'requires_approval';
   fare: number;
   dynamicFare?: number;
   depositPaid: boolean;
@@ -61,6 +61,12 @@ export interface Booking {
   depositAmount?: number;
   reminderSent?: boolean;
   onMyWaySent?: boolean;
+  // Exception booking fields (for VIP exceptions that bypass service area)
+  requiresApproval?: boolean;
+  exceptionReason?: string;
+  approvedAt?: string; // ISO timestamp
+  rejectedAt?: string; // ISO timestamp
+  rejectionReason?: string;
   createdAt: Date;
   updatedAt: Date;
 }
