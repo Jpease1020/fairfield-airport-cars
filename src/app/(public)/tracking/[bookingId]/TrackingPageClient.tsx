@@ -307,6 +307,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                     booking.status === 'in-progress' ? 'info' :
                     booking.status === 'confirmed' ? 'warning' :
                     booking.status === 'cancelled' ? 'error' :
+                    booking.status === 'requires_approval' ? 'warning' :
                     booking.status === 'pending' ? 'pending' :
                     'default'
                   }

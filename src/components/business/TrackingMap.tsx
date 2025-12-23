@@ -40,7 +40,7 @@ interface TrackingMapProps {
     speed?: number;
   };
   estimatedArrival?: Date;
-  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'requires_approval';
   onMapLoad?: (map: google.maps.Map) => void;
   cmsData: any;
 }

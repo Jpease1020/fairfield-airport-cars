@@ -22,7 +22,7 @@ interface TrackingETADisplayProps {
     heading?: number;
     speed?: number;
   };
-  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'requires_approval';
   pickupLocation: string;
   dropoffLocation: string;
   cmsData: any;

@@ -197,7 +197,7 @@ export async function POST(request: Request) {
         tipPercent: 0,
         totalAmount: fare
       },
-      status: (isExceptionBooking ? 'requires_approval' : 'pending') as const,
+      status: isExceptionBooking ? ('requires_approval' as const) : ('pending' as const),
       ...(isExceptionBooking && {
         requiresApproval: true,
         exceptionReason: 'VIP exception',
