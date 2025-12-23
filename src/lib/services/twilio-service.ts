@@ -25,17 +25,8 @@ export const sendSms = async ({ to, body }: SmsPayload) => {
       to,
     });
     return message;
-  } catch (error: any) {
-    console.error(`❌ [TWILIO] Failed to send SMS to ${to}:`, error);
-    
-    // Check for A2P 10DLC registration error
-    if (error?.code === 30034 || error?.message?.includes('A2P 10DLC') || error?.message?.includes('Unregistered Number')) {
-      console.error('❌ [TWILIO] A2P 10DLC Registration Error (30034)');
-      console.error('❌ [TWILIO] Your Twilio phone number needs to be registered for US A2P messaging.');
-      console.error('❌ [TWILIO] Register at: https://console.twilio.com/us1/develop/sms/regulatory-compliance/a2p-10dlc');
-      console.error('❌ [TWILIO] This is required for sending SMS to US numbers.');
-    }
-    
+  } catch (error) {
+    console.error(`Failed to send SMS to ${to}:`, error);
     throw error;
   }
 };

@@ -110,6 +110,7 @@ export const BOOKING_STATUS = {
   inProgress: 'in-progress',
   completed: 'completed',
   cancelled: 'cancelled',
+  requiresApproval: 'requires_approval',
 } as const;
 
 export const PAYMENT_STATUS = {
@@ -160,6 +161,18 @@ export const KNOWN_AIRPORTS = [
     code: 'HPN',
     name: 'Westchester County Airport',
     coordinates: { lat: 41.067005, lng: -73.707574 },
+    radiusMiles: 3,
+  },
+  {
+    code: 'BDL',
+    name: 'Bradley International Airport',
+    coordinates: { lat: 41.938889, lng: -72.683056 },
+    radiusMiles: 5,
+  },
+  {
+    code: 'HVN',
+    name: 'Tweed New Haven Airport',
+    coordinates: { lat: 41.263889, lng: -72.886667 },
     radiusMiles: 3,
   },
   {

@@ -139,10 +139,46 @@
 - Log quote creation, expiry, 409/410 occurrences.
 - Track abandoned quotes (counts only).
 
+## Service Area Rules
+
+### Geographic Constraints
+- **Service Area**: Fairfield County, CT and surrounding areas
+  - **Normal radius**: 25 miles from service centers (standard self-service bookings)
+  - **Extended radius**: 40 miles from service centers (soft-block area, requires call/text)
+  - **Service centers**: Newtown, Stamford, Fairfield, Westport (CT)
+
+### Airport Requirements
+- **Every trip must include at least one airport endpoint** (pickup or dropoff must be a recognized airport)
+- **Supported airports**:
+  - Major NYC: JFK, LGA, EWR
+  - CT regional: BDL (Hartford), HVN (New Haven)
+  - Nearby NY: HPN (Westchester County Airport)
+  - Other: BDR (Sikorsky), ISP (Long Island MacArthur)
+
+### Trip Classification
+1. **Normal**: At least one end in normal service area AND at least one end is an airport
+2. **Missing Airport**: Both ends in service area but neither is an airport → `MISSING_AIRPORT_ENDPOINT`
+3. **Soft Block**: At least one end in extended area or is an airport, but outside normal area → `OUT_OF_SERVICE_SOFT`
+4. **Hard Block**: Neither end in extended area and neither is an airport → `OUT_OF_SERVICE_HARD`
+
+### Error Codes
+- `MISSING_AIRPORT_ENDPOINT`: "We currently only offer trips between Fairfield County, CT and airports. Please make sure either your pickup or dropoff is an airport (e.g. JFK, LGA, EWR, BDL, HVN, HPN)."
+- `OUT_OF_SERVICE_SOFT`: "This trip is slightly outside our normal self-service area. Please call or text us to see if we can accommodate it."
+- `OUT_OF_SERVICE_HARD`: "We focus on Fairfield County, CT and nearby airports, and we're not able to serve this route."
+
+### VIP Exception Bookings
+- VIP customers can request out-of-policy trips via call/text
+- Exception bookings are created with `status: 'requires_approval'` and require manual approval from Gregg
+- Exception code (stored in `BOOKING_EXCEPTION_SECRET` env var) bypasses service area validation
+- All exception bookings are logged for audit purposes
+
 ## Configuration
 - `expiresInMinutes`: default 15.
 - Tolerance: default 5%.
+- Service area centers and radii: defined in `src/lib/services/service-area-validation.ts`
+- Exception secret: `BOOKING_EXCEPTION_SECRET` environment variable
 
 ## Notes
 - No quotes persist beyond session on the client; Firestore handles expiry.
+- Service area validation happens BEFORE Google Maps API call to save costs on invalid requests.
 - This document is the business contract for quoting.

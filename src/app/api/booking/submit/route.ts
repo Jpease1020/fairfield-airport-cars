@@ -8,11 +8,13 @@ import { getBooking } from '@/lib/services/booking-service';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
+import { classifyTrip } from '@/lib/services/service-area-validation';
 
 export async function POST(request: Request) {
   const schema = z.object({
     quoteId: z.string().optional(), // Quote ID for validation
     fare: z.number().min(1),
+    exceptionCode: z.string().optional(), // Secret code for VIP exception bookings
     customer: z.object({
       name: z.string().min(1),
       email: z.string().email(),
@@ -44,7 +46,47 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(raw);
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
 
-  const { quoteId, fare, customer, trip } = parsed.data;
+  const { quoteId, fare, exceptionCode, customer, trip } = parsed.data;
+
+  // Check if exception code is provided and valid
+  const isValidExceptionCode = exceptionCode && exceptionCode === process.env.BOOKING_EXCEPTION_SECRET;
+  const isExceptionBooking = isValidExceptionCode === true;
+
+  // Validate service area UNLESS this is an exception booking
+  if (!isExceptionBooking) {
+    const tripClassification = classifyTrip(
+      trip.pickup.address,
+      trip.dropoff.address,
+      trip.pickup.coordinates ?? null,
+      trip.dropoff.coordinates ?? null
+    );
+
+    if (tripClassification.classification !== 'normal') {
+      // Log blocked trips for monitoring
+      console.log('[SERVICE_AREA] Blocked booking submission:', {
+        classification: tripClassification.classification,
+        code: tripClassification.code,
+        pickup: trip.pickup.address,
+        dropoff: trip.dropoff.address,
+        customerEmail: customer.email,
+        timestamp: new Date().toISOString(),
+      });
+
+      return NextResponse.json({
+        error: tripClassification.message,
+        code: tripClassification.code,
+      }, { status: 400 });
+    }
+  } else {
+    // Log exception booking creation
+    console.log('[EXCEPTION_BOOKING] Exception booking created:', {
+      pickup: trip.pickup.address,
+      dropoff: trip.dropoff.address,
+      customerEmail: customer.email,
+      customerName: customer.name,
+      timestamp: new Date().toISOString(),
+    });
+  }
 
   // Validate quote if provided
   if (quoteId) {
@@ -155,7 +197,11 @@ export async function POST(request: Request) {
         tipPercent: 0,
         totalAmount: fare
       },
-      status: 'pending' as const
+      status: (isExceptionBooking ? 'requires_approval' : 'pending') as const,
+      ...(isExceptionBooking && {
+        requiresApproval: true,
+        exceptionReason: 'VIP exception',
+      }),
     };
 
     // Generate confirmation token BEFORE booking creation (atomic)

@@ -83,6 +83,21 @@ GOOGLE_MAPS_SERVER_API_KEY=your_google_maps_server_api_key
 NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY=your_google_maps_client_api_key
 ```
 
+## 🟡 IMPORTANT - VIP Exception Bookings
+
+**Server-side only (NEVER use NEXT_PUBLIC_ prefix):**
+```
+BOOKING_EXCEPTION_SECRET=your_secret_code_here
+```
+
+**Purpose:** Allows creating exception bookings that bypass service area restrictions. These bookings require manual approval.
+
+**Security Notes:**
+- This is a **server-side only** variable - never expose it in the client
+- Use a strong, random secret (e.g., generate with: `openssl rand -hex 32`)
+- Only admins can use this via the admin exception booking form
+- Store this securely in Vercel environment variables
+
 ## 🔵 Public Variables (Already Set)
 
 These should already be set:

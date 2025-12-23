@@ -730,6 +730,25 @@ const [warning, setWarning] = useState<string | null>(null);
         const errorText = (data.details || data.error || '').toString();
         const fullErrorText = `${data.error || ''} ${errorText}`.trim();
         
+        // Check for service area error codes
+        const errorCode = data.code;
+        if (errorCode === 'MISSING_AIRPORT_ENDPOINT') {
+          const errorMsg = 'We currently only offer trips between Fairfield County, CT and airports. Please make sure either your pickup or dropoff is an airport (e.g. JFK, LGA, EWR, BDL, HVN, HPN).';
+          setError(errorMsg);
+          setIsSubmitting(false);
+          return { success: false };
+        } else if (errorCode === 'OUT_OF_SERVICE_SOFT') {
+          const errorMsg = 'This trip is slightly outside our normal self-service area. Please call or text us to see if we can accommodate it.';
+          setError(errorMsg);
+          setIsSubmitting(false);
+          return { success: false };
+        } else if (errorCode === 'OUT_OF_SERVICE_HARD') {
+          const errorMsg = "We focus on Fairfield County, CT and nearby airports, and we're not able to serve this route.";
+          setError(errorMsg);
+          setIsSubmitting(false);
+          return { success: false };
+        }
+        
         // Check for conflict errors (case-insensitive, check both error and details)
         if (fullErrorText.match(/time slot conflicts|not available|conflicts with existing|already booked/i)) {
           // Extract suggested times - handle multiple formats:
