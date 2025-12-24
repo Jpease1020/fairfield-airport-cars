@@ -16,6 +16,7 @@ import { useBookingAvailability } from '@/hooks/useBookingAvailability';
 import { colors } from '../../system/tokens/tokens';
 import { useEffect } from 'react';
 import { StatusMessage } from '../base-components/notifications/StatusMessage';
+import { isAirportLocation } from '@/lib/services/service-area-validation';
 
 interface Coordinates {
   lat: number;
@@ -50,6 +51,48 @@ const ErrorText = styled(Text)`
   font-style: italic;
 `;
 
+const SwapButtonContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  margin: -0.5rem 0;
+`;
+
+const SwapButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: ${colors.background.primary};
+  border: 2px solid ${colors.primary[600]};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: ${colors.primary[600]};
+
+  &:hover {
+    background-color: ${colors.primary[600]};
+    transform: rotate(180deg);
+    
+    svg {
+      color: ${colors.text.white};
+    }
+  }
+
+  &:active {
+    transform: rotate(180deg) scale(0.95);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
 interface HeroCompactBookingFormProps {
   'data-testid'?: string;
 }
@@ -63,7 +106,6 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     formData,
     updateTripDetails,
     validateQuickBookingForm,
-    isQuickBookingFormValid,
     submitQuickBookingForm,
     error,
     hasAttemptedValidation,
@@ -78,6 +120,12 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     dropoff: formData.trip.dropoff
   };
   
+  // Both fields are flexible - either can be airport or address
+  // Server-side validation ensures at least one endpoint is an airport
+  
+  // Track which field is detected as airport to suggest the opposite for the other field
+  const [detectedAirportField, setDetectedAirportField] = React.useState<'pickup' | 'dropoff' | null>(null);
+  
   const setPickupLocation = (address: string, coordinates?: Coordinates) => {
     updateTripDetails({ pickup: { ...formData.trip.pickup, address, coordinates: coordinates || null } });
   };
@@ -86,8 +134,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     updateTripDetails({ dropoff: { ...formData.trip.dropoff, address, coordinates: coordinates || null } });
   };
   
-  const isLocationValid = validation.isValid;
-  const locationErrors = validation.errors;
+  // const isLocationValid = validation.isValid; // Unused for now
+  // const locationErrors = validation.errors; // Unused for now
   
   // Get datetime from provider instead of local state
   const pickupDateTime = formData.trip.pickupDateTime;
@@ -104,7 +152,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   });
 
   // Check driver availability when date/time changes
-  const { error: availabilityError, checkAvailability, isLoading: isCheckingAvailability } = useBookingAvailability();
+  const { error: availabilityError, checkAvailability } = useBookingAvailability();
 
   useEffect(() => {
     if (pickupDateTime && pickupDate && pickupTime) {
@@ -119,14 +167,53 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
 
   // Note: Removed currentQuote since we simplified to currentFare only
 
+  // Swap pickup and dropoff locations (optional convenience feature)
+  const handleSwapLocations = () => {
+    const tempPickup = { ...formData.trip.pickup };
+    const tempDropoff = { ...formData.trip.dropoff };
+    
+    // Swap the locations
+    updateTripDetails({
+      pickup: tempDropoff,
+      dropoff: tempPickup
+    });
+    
+    // Swap the detected airport field
+    if (detectedAirportField === 'pickup') {
+      setDetectedAirportField('dropoff');
+    } else if (detectedAirportField === 'dropoff') {
+      setDetectedAirportField('pickup');
+    }
+  };
 
   // Handle location selection using global context
+  // Auto-detect if selected location is an airport and suggest the opposite for the other field
   const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
     setPickupLocation(address, coordinates);
+    
+    // Detect if this is an airport
+    if (isAirportLocation(address, coordinates)) {
+      setDetectedAirportField('pickup');
+    } else {
+      // If not an airport, clear detection (user might have changed their mind)
+      if (detectedAirportField === 'pickup') {
+        setDetectedAirportField(null);
+      }
+    }
   };
 
   const handleDropoffLocationSelect = (address: string, coordinates: Coordinates) => {
     setDropoffLocation(address, coordinates);
+    
+    // Detect if this is an airport
+    if (isAirportLocation(address, coordinates)) {
+      setDetectedAirportField('dropoff');
+    } else {
+      // If not an airport, clear detection (user might have changed their mind)
+      if (detectedAirportField === 'dropoff') {
+        setDetectedAirportField(null);
+      }
+    }
   };
 
   const handleGetPrice = () => {
@@ -181,7 +268,11 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             </FieldLabel>
             <LocationInput
               id="pickup-location"
-              placeholder="From: Fairfield Station"
+              placeholder={
+                detectedAirportField === 'dropoff' 
+                  ? "From: Your address" 
+                  : "From: Fairfield Station or JFK Airport"
+              }
               value={locationData.pickup.address}
               onChange={(address) => setPickupLocation(address)}
               onLocationSelect={handlePickupLocationSelect}
@@ -191,6 +282,30 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               data-testid="quick-book-pickup-input"
             />
           </FieldWrapper>
+          
+          {/* Swap Button - Optional convenience feature */}
+          <SwapButtonContainer>
+            <SwapButton
+              onClick={handleSwapLocations}
+              type="button"
+              aria-label="Swap pickup and dropoff locations"
+              data-testid="swap-locations-button"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                />
+              </svg>
+            </SwapButton>
+          </SwapButtonContainer>
           
           <FieldWrapper>
             <FieldLabel weight="semibold" size="sm">
@@ -211,11 +326,14 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             </FieldLabel>
             <LocationInput
               id="dropoff-location"
-              placeholder="To: JFK Airport"
+              placeholder={
+                detectedAirportField === 'pickup' 
+                  ? "To: Your address" 
+                  : "To: JFK Airport or Fairfield Station"
+              }
               value={locationData.dropoff.address}
               onChange={(address) => setDropoffLocation(address)}
               onLocationSelect={handleDropoffLocationSelect}
-              restrictToAirports={true}
               size="md"
               fullWidth
               error={!!validation?.fieldErrors?.['dropoff-location-input']}

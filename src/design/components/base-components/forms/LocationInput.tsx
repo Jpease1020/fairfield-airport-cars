@@ -4,10 +4,20 @@ import React, { useRef, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Input } from './Input';
 import { colors, spacing, fontSize, shadows } from '../../../system/tokens/tokens';
+import { isAirportLocation, isWithinHomeAreaNormal, isWithinHomeAreaExtended } from '@/lib/services/service-area-validation';
 
 const LocationInputContainer = styled.div<{ $fullWidth: boolean }>`
   position: relative;
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
+`;
+
+const ErrorMessage = styled.div`
+  color: ${colors.danger[600]};
+  font-size: ${fontSize.xs};
+  margin-top: ${spacing.xs};
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
 `;
 
 // Always use absolute positioning - tied to bottom of input field
@@ -146,6 +156,8 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   'data-testid': dataTestId,
   ...rest
 }) => {
+  // Track validation error state
+  const [validationError, setValidationError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const predictionsRef = useRef<HTMLDivElement>(null);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
@@ -174,7 +186,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   const updateDropdownPosition = useCallback(() => {
     if (!inputRef.current) return;
 
-    const inputRect = inputRef.current.getBoundingClientRect();
+      // const inputRect = inputRef.current.getBoundingClientRect(); // Unused for now
 
     // Always use absolute positioning - tied to bottom of input field
     // Position is now handled by CSS (top: 100%), so we don't need to set position state
@@ -265,12 +277,13 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           {
             input: input,
             componentRestrictions: { country: 'us' },
-            ...(restrictToAirports && { types: ['airport'] }),
-            // For non-airport inputs: strictly restrict to service area bounds
-            // For airport inputs: don't restrict bounds (we want all airports, they're filtered by type)
             ...(restrictToAirports 
-              ? {} 
-              : { bounds: serviceAreaBounds } // Strict bounds for non-airport locations
+              ? { types: ['airport'] } 
+              : { 
+                  // Allow both addresses AND airports, but restrict to service area for addresses
+                  types: ['address', 'airport'], // Show both addresses and airports
+                  bounds: serviceAreaBounds // Strict bounds for addresses (airports can be outside bounds)
+                }
             ),
           },
           (predictions, status) => {
@@ -290,6 +303,33 @@ export const LocationInput: React.FC<LocationInputProps> = ({
                 filteredPredictions = filteredPredictions.filter((p) =>
                   p.types?.some((type) => type === 'airport')
                 );
+              }
+
+              // For flexible inputs (addresses OR airports), filter out cities/regions
+              // But allow both addresses and airports
+              if (!restrictToAirports) {
+                filteredPredictions = filteredPredictions.filter((p) => {
+                  const isAirport = p.types?.some((type) => type === 'airport');
+                  
+                  // Always allow airports
+                  if (isAirport) {
+                    return true;
+                  }
+                  
+                  // For non-airports, exclude cities/regions (only allow addresses)
+                  const excludedTypes = ['locality', 'administrative_area_level_1', 'administrative_area_level_2', 'country', 'political'];
+                  const isCityOrRegion = p.types?.some((type) => excludedTypes.includes(type));
+                  const isAddress = p.types?.some((type) => 
+                    type === 'street_address' || 
+                    type === 'premise' || 
+                    type === 'subpremise' ||
+                    type === 'establishment' ||
+                    type === 'point_of_interest'
+                  );
+
+                  // Allow addresses, reject cities/regions
+                  return isAddress && !isCityOrRegion;
+                });
               }
 
               setPredictions(filteredPredictions);
@@ -377,9 +417,76 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       const placeDetails = await fetchPlaceDetails(prediction.place_id);
 
       if (placeDetails) {
+        // Check if this is an airport (airports are always allowed regardless of location)
+        const isAirport = isAirportLocation(placeDetails.formatted_address || placeDetails.name, placeDetails.coordinates);
+        
+        // For flexible inputs (not restricted to airports only), validate that it's either an airport or an address (not a city/region)
+        if (!restrictToAirports) {
+          // Always allow airports
+          if (!isAirport) {
+            const excludedTypes = ['locality', 'administrative_area_level_1', 'administrative_area_level_2', 'country', 'political', 'postal_code'];
+            const isCityOrRegion = placeDetails.types?.some((type) => excludedTypes.includes(type));
+            const isAddress = placeDetails.types?.some((type) => 
+              type === 'street_address' || 
+              type === 'premise' || 
+              type === 'subpremise' ||
+              type === 'establishment' ||
+              type === 'point_of_interest'
+            );
+
+            // Reject if it's a city/region and not a valid address
+            if (isCityOrRegion && !isAddress) {
+              // Don't select - just show error or clear
+              onChange(prediction.description);
+              if (onCoordsChange) {
+                onCoordsChange(null);
+              }
+              return;
+            }
+
+            // Client-side validation: Check if address is within service area
+            if (placeDetails.coordinates) {
+              const inNormalArea = isWithinHomeAreaNormal(placeDetails.coordinates);
+              const inExtendedArea = isWithinHomeAreaExtended(placeDetails.coordinates);
+              
+              // If address is outside extended area, reject it immediately
+              if (!inNormalArea && !inExtendedArea) {
+                // Clear the selection
+                onChange('');
+                if (onCoordsChange) {
+                  onCoordsChange(null);
+                }
+                // Set validation error message
+                setValidationError('Address outside service area. We serve Fairfield County, CT and nearby airports.');
+                // Clear error after 8 seconds (give user time to read)
+                setTimeout(() => setValidationError(null), 8000);
+                return;
+              }
+              
+              // Clear validation error if address is valid
+              setValidationError(null);
+            }
+          }
+        } else {
+          // For airport-only inputs, verify it's actually an airport
+          if (!isAirport) {
+            onChange('');
+            if (onCoordsChange) {
+              onCoordsChange(null);
+            }
+            // Set validation error message
+            setValidationError('Please select an airport (e.g., JFK, LGA, EWR, BDL, HVN, HPN).');
+            // Clear error after 5 seconds
+            setTimeout(() => setValidationError(null), 5000);
+            return;
+          }
+          
+          // Clear validation error if airport is valid
+          setValidationError(null);
+        }
+
         // For airports, prioritize the name field which contains the full airport name
         // Otherwise use formatted_address for regular addresses
-        const isAirport = placeDetails.types?.some(type => type === 'airport');
         const address = isAirport 
           ? (placeDetails.name || prediction.description || placeDetails.formatted_address)
           : (placeDetails.formatted_address || placeDetails.name || prediction.description);
@@ -400,7 +507,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       // Don't scroll - let the user maintain their scroll position
       // Only scroll if the input is actually out of view (which we can check, but for now, skip it)
     },
-    [onChange, onLocationSelect, onCoordsChange, fetchPlaceDetails, isMobile]
+    [onChange, onLocationSelect, onCoordsChange, fetchPlaceDetails, isMobile, restrictToAirports]
   );
 
   // Handle input change - user is typing
@@ -494,6 +601,9 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   // Don't prevent body scroll - it causes layout shifts and jumping
   // The dropdown is positioned fixed on mobile, so it will stay in place during scroll
 
+  // Combine external error prop with internal validation error
+  const hasError = error || !!validationError;
+
   return (
     <LocationInputContainer $fullWidth={fullWidth}>
       <Input
@@ -504,7 +614,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        error={error}
+        error={hasError}
         size={size}
         fullWidth={fullWidth}
         name={name}
@@ -513,6 +623,11 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         data-testid={dataTestId}
         {...rest}
       />
+      {validationError && (
+        <ErrorMessage role="alert" aria-live="polite">
+          {validationError}
+        </ErrorMessage>
+      )}
 
       {showPredictions && predictions.length > 0 && (
         <PredictionsDropdown
