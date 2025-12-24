@@ -21,11 +21,13 @@ const ErrorMessage = styled.div`
 `;
 
 // Always use absolute positioning - tied to bottom of input field
-const PredictionsDropdown = styled.div<{ $isMobile: boolean; $top: number; $left: number; $width: number }>`
+const PredictionsDropdown = styled.div<{ $isMobile: boolean }>`
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
+  width: 100%;
+  margin-top: ${spacing.xs};
   background-color: ${colors.background.primary};
   border: 1px solid ${colors.border.default};
   border-radius: 0.5rem;
@@ -83,11 +85,13 @@ const PredictionSecondaryText = styled.div`
   line-height: 1.3;
 `;
 
-const LoadingIndicator = styled.div<{ $isMobile: boolean; $top: number; $left: number; $width: number }>`
+const LoadingIndicator = styled.div<{ $isMobile: boolean }>`
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
+  width: 100%;
+  margin-top: ${spacing.xs};
   background-color: ${colors.background.primary};
   border: 1px solid ${colors.border.default};
   border-radius: 0.5rem;
@@ -164,7 +168,6 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   const [showPredictions, setShowPredictions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   // Detect mobile device
@@ -182,68 +185,6 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Calculate dropdown position
-  const updateDropdownPosition = useCallback(() => {
-    if (!inputRef.current) return;
-
-      // const inputRect = inputRef.current.getBoundingClientRect(); // Unused for now
-
-    // Always use absolute positioning - tied to bottom of input field
-    // Position is now handled by CSS (top: 100%), so we don't need to set position state
-    // But we keep the state for potential future use
-    setDropdownPosition({
-      top: 0,
-      left: 0,
-      width: 0,
-    });
-  }, []);
-
-  // Update position when input position changes or predictions show
-  useEffect(() => {
-    if (!showPredictions || !inputRef.current) {
-      return;
-    }
-
-    updateDropdownPosition();
-
-    // Update position on scroll/resize - use passive listener and debounce for performance
-    let scrollTimeout: NodeJS.Timeout | null = null;
-    const handleUpdate = () => {
-      if (inputRef.current) {
-        updateDropdownPosition();
-      }
-    };
-    
-    const handleScroll = () => {
-      // Debounce scroll updates to prevent excessive recalculations
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-      scrollTimeout = setTimeout(handleUpdate, 50);
-    };
-    
-    // Use passive listener for better performance
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleUpdate);
-
-    // Handle visual viewport changes (keyboard show/hide on mobile)
-    let visualViewport: (typeof window)['visualViewport'] | null = null;
-    if (typeof window !== 'undefined' && window.visualViewport) {
-      visualViewport = window.visualViewport;
-      visualViewport.addEventListener('resize', handleUpdate);
-    }
-
-    return () => {
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleUpdate);
-      if (visualViewport) {
-        visualViewport.removeEventListener('resize', handleUpdate);
-      }
-    };
-  }, [showPredictions, updateDropdownPosition]);
 
   // Fetch predictions using Google Places AutocompleteService directly from frontend
   const fetchPredictions = useCallback(
@@ -538,9 +479,8 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   const handleInputFocus = useCallback(() => {
     if (predictions.length > 0) {
       setShowPredictions(true);
-      updateDropdownPosition();
     }
-  }, [predictions.length, updateDropdownPosition]);
+  }, [predictions.length]);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
@@ -633,9 +573,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         <PredictionsDropdown
           ref={predictionsRef}
           $isMobile={isMobile}
-          $top={dropdownPosition.top}
-          $left={dropdownPosition.left}
-          $width={dropdownPosition.width}
+          data-testid="location-predictions-dropdown"
         >
           {predictions.map((prediction, index) => (
             <PredictionItem
@@ -658,12 +596,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       )}
 
       {isLoading && (
-        <LoadingIndicator
-          $isMobile={isMobile}
-          $top={dropdownPosition.top}
-          $left={dropdownPosition.left}
-          $width={dropdownPosition.width}
-        >
+        <LoadingIndicator $isMobile={isMobile}>
           Loading...
         </LoadingIndicator>
       )}
