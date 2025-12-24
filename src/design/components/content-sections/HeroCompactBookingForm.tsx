@@ -215,6 +215,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               value={locationData.dropoff.address}
               onChange={(address) => setDropoffLocation(address)}
               onLocationSelect={handleDropoffLocationSelect}
+              restrictToAirports={true}
               size="md"
               fullWidth
               error={!!validation?.fieldErrors?.['dropoff-location-input']}
