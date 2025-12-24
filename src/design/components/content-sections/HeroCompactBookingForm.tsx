@@ -51,48 +51,6 @@ const ErrorText = styled(Text)`
   font-style: italic;
 `;
 
-const SwapButtonContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-  margin: -0.5rem 0;
-`;
-
-const SwapButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: ${colors.background.primary};
-  border: 2px solid ${colors.primary[600]};
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  color: ${colors.primary[600]};
-
-  &:hover {
-    background-color: ${colors.primary[600]};
-    transform: rotate(180deg);
-    
-    svg {
-      color: ${colors.text.white};
-    }
-  }
-
-  &:active {
-    transform: rotate(180deg) scale(0.95);
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
 interface HeroCompactBookingFormProps {
   'data-testid'?: string;
 }
@@ -166,25 +124,6 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   }, [pickupDateTime, pickupDate, pickupTime, checkAvailability]);
 
   // Note: Removed currentQuote since we simplified to currentFare only
-
-  // Swap pickup and dropoff locations (optional convenience feature)
-  const handleSwapLocations = () => {
-    const tempPickup = { ...formData.trip.pickup };
-    const tempDropoff = { ...formData.trip.dropoff };
-    
-    // Swap the locations
-    updateTripDetails({
-      pickup: tempDropoff,
-      dropoff: tempPickup
-    });
-    
-    // Swap the detected airport field
-    if (detectedAirportField === 'pickup') {
-      setDetectedAirportField('dropoff');
-    } else if (detectedAirportField === 'dropoff') {
-      setDetectedAirportField('pickup');
-    }
-  };
 
   // Handle location selection using global context
   // Auto-detect if selected location is an airport and suggest the opposite for the other field
@@ -282,30 +221,6 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               data-testid="quick-book-pickup-input"
             />
           </FieldWrapper>
-          
-          {/* Swap Button - Optional convenience feature */}
-          <SwapButtonContainer>
-            <SwapButton
-              onClick={handleSwapLocations}
-              type="button"
-              aria-label="Swap pickup and dropoff locations"
-              data-testid="swap-locations-button"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                />
-              </svg>
-            </SwapButton>
-          </SwapButtonContainer>
           
           <FieldWrapper>
             <FieldLabel weight="semibold" size="sm">
