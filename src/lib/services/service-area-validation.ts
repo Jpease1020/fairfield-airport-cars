@@ -209,16 +209,25 @@ export function classifyTrip(
     };
   }
 
-  // Soft-block extended trip: not a normal trip, but at least one end is in home extended area or at a known airport within its radius. AND at least one end must be an airport.
-  if (hasAirportEndpoint && (pickupInHomeExtended || dropoffInHomeExtended || pickupIsAirport || dropoffIsAirport)) {
-    return {
-      classification: 'soft_block',
-      code: 'OUT_OF_SERVICE_SOFT',
-      message: 'This trip is slightly outside our normal self-service area. Please call or text us to see if we can accommodate it.',
-    };
+  // Soft-block extended trip: not a normal trip, but at least one end is in home extended area AND at least one end must be an airport.
+  // Both ends must be within extended area OR one end in extended area and the other is an airport
+  if (hasAirportEndpoint && (pickupInHomeExtended || dropoffInHomeExtended)) {
+    // At least one end is in extended area, and we have an airport endpoint
+    // Check if the other end is reasonable (either in extended area or is the airport)
+    const otherEndReasonable = pickupInHomeExtended 
+      ? (dropoffInHomeExtended || dropoffIsAirport)
+      : (pickupInHomeExtended || pickupIsAirport);
+    
+    if (otherEndReasonable) {
+      return {
+        classification: 'soft_block',
+        code: 'OUT_OF_SERVICE_SOFT',
+        message: 'This trip is slightly outside our normal self-service area. Please call or text us to see if we can accommodate it.',
+      };
+    }
   }
 
-  // Hard-block trip: neither end in extended home area, and neither end at a known airport
+  // Hard-block trip: neither end in extended home area (even if one is an airport)
   return {
     classification: 'hard_block',
     code: 'OUT_OF_SERVICE_HARD',

@@ -63,7 +63,7 @@ interface BookingProviderType {
   // Quote management (15-minute expiration)
   currentQuote: QuoteData | null;
   setQuote: (quote: QuoteData | null) => void;
-  submitBooking: () => Promise<{ success: boolean; newTotal?: number }>;
+  submitBooking: (exceptionCode?: string) => Promise<{ success: boolean; newTotal?: number }>;
   completeFlightInfo: () => void;
   
   // Route calculation (for traffic-aware pricing)
@@ -663,26 +663,30 @@ const [warning, setWarning] = useState<string | null>(null);
   };
 
   // Submit booking using current quote (secure pricing)
-  const submitBooking = async (): Promise<{ success: boolean; newTotal?: number }> => {
+  const submitBooking = async (exceptionCode?: string): Promise<{ success: boolean; newTotal?: number }> => {
     setIsSubmitting(true);
     setError(null);
     setWarning(null);
     setSuccess(null);
 
-    if (!currentQuote) {
+    // For exception bookings, skip quote validation
+    if (!exceptionCode && !currentQuote) {
       setIsSubmitting(false);
       setError('Please get a quote before submitting booking.');
       return { success: false };
     }
     
-    // Check if quote has expired
-    const now = new Date();
-    const expiryDate = new Date(currentQuote.expiresAt);
-    if (now > expiryDate) {
-      setIsSubmitting(false);
-      setError('Your quote has expired. Please get a new quote.');
-      setCurrentQuote(null); // Clear expired quote
-      return { success: false };
+    // For exception bookings, skip quote expiry check
+    if (!exceptionCode && currentQuote) {
+      // Check if quote has expired
+      const now = new Date();
+      const expiryDate = new Date(currentQuote.expiresAt);
+      if (now > expiryDate) {
+        setIsSubmitting(false);
+        setError('Your quote has expired. Please get a new quote.');
+        setCurrentQuote(null); // Clear expired quote
+        return { success: false };
+      }
     }
 
     try {
@@ -693,18 +697,34 @@ const [warning, setWarning] = useState<string | null>(null);
         pickupDateTime = new Date(pickupDateTime).toISOString();
       }
 
+      const requestBody: any = {
+        customer: formData.customer,
+        trip: {
+          ...formData.trip,
+          pickupDateTime
+        }
+      };
+
+      // Add exception code if provided (bypasses service area validation)
+      if (exceptionCode) {
+        requestBody.exceptionCode = exceptionCode;
+        // For exception bookings, use fare from formData or currentQuote
+        requestBody.fare = formData.trip.fare || currentQuote?.fare || 0;
+      } else {
+        // Normal booking requires quote
+        if (!currentQuote) {
+          setIsSubmitting(false);
+          setError('Please get a quote before submitting booking.');
+          return { success: false };
+        }
+        requestBody.quoteId = currentQuote.quoteId;
+        requestBody.fare = currentQuote.fare;
+      }
+
       const res = await fetch('/api/booking/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          quoteId: currentQuote.quoteId,  // Send quote ID for validation
-          fare: currentQuote.fare,
-          customer: formData.customer,
-          trip: {
-            ...formData.trip,
-            pickupDateTime
-          }
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!res.ok) {

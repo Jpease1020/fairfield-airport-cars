@@ -253,11 +253,25 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       try {
         const autocompleteService = new window.google.maps.places.AutocompleteService();
 
+        // Define service area bounds (Fairfield County, CT + nearby airports)
+        // Bounding box covers: Fairfield County, CT + NYC airports (JFK, LGA, EWR)
+        // Southwest: NYC area, Northeast: CT area
+        const serviceAreaBounds = new window.google.maps.LatLngBounds(
+          new window.google.maps.LatLng(40.5, -74.5), // Southwest corner (NYC area)
+          new window.google.maps.LatLng(42.0, -72.5)  // Northeast corner (CT area)
+        );
+
         autocompleteService.getPlacePredictions(
           {
             input: input,
             componentRestrictions: { country: 'us' },
             ...(restrictToAirports && { types: ['airport'] }),
+            // For non-airport inputs: strictly restrict to service area bounds
+            // For airport inputs: don't restrict bounds (we want all airports, they're filtered by type)
+            ...(restrictToAirports 
+              ? {} 
+              : { bounds: serviceAreaBounds } // Strict bounds for non-airport locations
+            ),
           },
           (predictions, status) => {
             if (
