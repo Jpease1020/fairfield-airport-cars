@@ -20,6 +20,18 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   const [showCalendarButton, setShowCalendarButton] = useState(false);
   const { addToast } = useToast();
 
+  // Check if calendar was already added (must be before early returns)
+  useEffect(() => {
+    if (booking?.id && typeof window !== 'undefined') {
+      try {
+        setShowCalendarButton(!hasCalendarBeenAdded(booking.id));
+      } catch {
+        // localStorage might not be available in test environment
+        setShowCalendarButton(true);
+      }
+    }
+  }, [booking?.id]);
+
   useEffect(() => {
     const fetchBooking = async () => {
       try {
@@ -214,13 +226,6 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   const customerPhone = booking.customer.phone || 'Not specified';
   const customerEmail = booking.customer.email || 'Not specified';
   const fare = booking.trip.fare || 0;
-  
-  // Check if calendar was already added
-  useEffect(() => {
-    if (booking?.id) {
-      setShowCalendarButton(!hasCalendarBeenAdded(booking.id));
-    }
-  }, [booking?.id]);
 
   const actionButtons = [
     {
