@@ -118,8 +118,12 @@ export async function downloadIcsFile(data: CalendarEventData, filename?: string
  * Check if calendar event was already added for this booking
  */
 export function hasCalendarBeenAdded(bookingId: string): boolean {
-  if (typeof window === 'undefined') return false;
-  return !!localStorage.getItem(`calendarAdded-${bookingId}`);
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') return false;
+  try {
+    return !!localStorage.getItem(`calendarAdded-${bookingId}`);
+  } catch {
+    return false;
+  }
 }
 
 /**
