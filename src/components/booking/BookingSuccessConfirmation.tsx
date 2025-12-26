@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Box, Stack, Text, Button } from '@/design/ui';
 import { colors } from '@/design/system/tokens/tokens';
+import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
 
 const Divider = styled.div`
   height: 1px;
@@ -144,23 +145,36 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
           </Stack>
         </Stack>
 
-        <Stack direction="horizontal" spacing="md">
-          <Button
-            onClick={() => window.location.href = `/booking/${completedBookingId || 'unknown'}`}
-            variant="primary"
-            size="lg"
-            data-testid="view-booking-button"
-            cmsId="view-booking-button"
-            text={cmsData?.['view-booking-button'] || 'View My Booking'}
-          />
-          <Button
-            onClick={() => window.location.href = '/bookings'}
-            variant="outline"
-            size="lg"
-            data-testid="all-bookings-button"
-            cmsId="all-bookings-button"
-            text={cmsData?.['all-bookings-button'] || 'All My Bookings'}
-          />
+        <Stack spacing="md" align="center">
+          {completedBookingId && (
+            <AddToCalendarButton
+              pickupAddress={pickupLocation}
+              dropoffAddress={dropoffLocation}
+              pickupDateTime={pickupDateTime}
+              bookingId={completedBookingId}
+              customerName={customerName}
+              variant="primary"
+              size="lg"
+            />
+          )}
+          <Stack direction="horizontal" spacing="md">
+            <Button
+              onClick={() => window.location.href = `/booking/${completedBookingId || 'unknown'}`}
+              variant="primary"
+              size="lg"
+              data-testid="view-booking-button"
+              cmsId="view-booking-button"
+              text={cmsData?.['view-booking-button'] || 'View My Booking'}
+            />
+            <Button
+              onClick={() => window.location.href = '/bookings'}
+              variant="outline"
+              size="lg"
+              data-testid="all-bookings-button"
+              cmsId="all-bookings-button"
+              text={cmsData?.['all-bookings-button'] || 'All My Bookings'}
+            />
+          </Stack>
         </Stack>
       </Stack>
     </Box>

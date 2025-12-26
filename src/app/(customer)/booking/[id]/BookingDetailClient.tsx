@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/design/ui';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
+import { hasCalendarBeenAdded } from '@/lib/utils/calendar-utils';
 
 interface BookingDetailClientProps {
   bookingId: string;
@@ -103,6 +105,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formatDateTime = (dateTime: Date | string | undefined | any) => {
     if (!dateTime) {
       return 'Not specified';
@@ -210,6 +213,15 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   const customerPhone = booking.customer.phone || 'Not specified';
   const customerEmail = booking.customer.email || 'Not specified';
   const fare = booking.trip.fare || 0;
+  
+  // Check if calendar was already added
+  const [showCalendarButton, setShowCalendarButton] = useState(false);
+  
+  useEffect(() => {
+    if (booking?.id) {
+      setShowCalendarButton(!hasCalendarBeenAdded(booking.id));
+    }
+  }, [booking?.id]);
 
   const actionButtons = [
     {
@@ -294,6 +306,23 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
           </Container>
         </Container>
       </GridSection>
+
+      {/* Add to Calendar (conditional) */}
+      {showCalendarButton && booking?.id && (
+        <GridSection variant="content" columns={1}>
+          <Container>
+            <AddToCalendarButton
+              pickupAddress={pickupAddress}
+              dropoffAddress={dropoffAddress}
+              pickupDateTime={pickupDateTime}
+              bookingId={booking.id}
+              customerName={customerName}
+              variant="primary"
+              size="md"
+            />
+          </Container>
+        </GridSection>
+      )}
 
       {/* Actions */}
       <GridSection variant="content" columns={1}>
