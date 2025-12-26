@@ -93,8 +93,15 @@ export async function POST(request: NextRequest) {
       updatedAt: FieldValue.serverTimestamp()
     });
 
+    // Get the full booking record (we already have bookingData from above, but getBooking normalizes it)
     const bookingRecord = await getBooking(bookingId);
     if (bookingRecord) {
+      // Include calendarAddedByUser from the raw document data for email service
+      // This tells the email service whether to include the .ics attachment
+      // We already have bookingData from the bookingDoc.fetch above
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (bookingRecord as any).calendarAddedByUser = bookingData?.calendarAddedByUser === true;
+      
       // Create calendar event for confirmed booking
       try {
         const { createBookingCalendarEvent } = await import('@/lib/services/google-calendar');

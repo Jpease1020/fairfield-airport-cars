@@ -21,6 +21,8 @@ import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { firebaseTrackingService, type ETACalculation, type DriverLocation } from '@/lib/services/firebase-tracking-service';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
+import { hasCalendarBeenAdded } from '@/lib/utils/calendar-utils';
 
 interface TrackingPageClientProps {
   bookingId: string;
@@ -38,6 +40,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
   const [etaCalculation, setETACalculation] = useState<ETACalculation | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [trackingActive, setTrackingActive] = useState(false);
+  const [showCalendarButton, setShowCalendarButton] = useState(false);
 
   // Load booking data and initialize Firebase tracking
   useEffect(() => {
@@ -56,7 +59,13 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
           return;
         }
 
-        setBooking(adaptOldBookingToNew(bookingData));
+        const normalizedBooking = adaptOldBookingToNew(bookingData);
+        setBooking(normalizedBooking);
+
+        // Check if calendar was already added
+        if (normalizedBooking?.id) {
+          setShowCalendarButton(!hasCalendarBeenAdded(normalizedBooking.id));
+        }
 
         // Initialize Firebase tracking
         await firebaseTrackingService.initializeTracking(bookingId);
@@ -354,6 +363,21 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                 {booking.trip.pickup.address} → {booking.trip.dropoff.address}
               </Text>
             </Stack>
+
+            {/* Add to Calendar (conditional) */}
+            {showCalendarButton && booking?.id && (
+              <Stack spacing="sm">
+                <AddToCalendarButton
+                  pickupAddress={booking.trip.pickup.address}
+                  dropoffAddress={booking.trip.dropoff.address}
+                  pickupDateTime={booking.trip.pickupDateTime}
+                  bookingId={booking.id}
+                  customerName={booking.customer.name}
+                  variant="primary"
+                  size="md"
+                />
+              </Stack>
+            )}
 
             {/* ETA Information */}
             {etaCalculation && (

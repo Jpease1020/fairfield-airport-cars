@@ -133,12 +133,21 @@ export async function sendConfirmationEmail(booking: Booking) {
     organizer: { name: businessSettings?.company?.name || 'Fairfield Airport Cars', email: EMAIL_FROM },
   };
 
-  const { value: icsValue } = await new Promise<{ value: string }>((resolve) => {
-    createEvent(event, (error: Error | null, value: string) => {
-      if (error || !value) resolve({ value: '' });
-      else resolve({ value });
+  // Check if user has already added calendar event
+  // If they have, don't include the .ics attachment in the email
+  const calendarAddedByUser = (booking as any).calendarAddedByUser === true;
+  
+  let icsValue = '';
+  if (!calendarAddedByUser) {
+    // Only generate .ics file if user hasn't already added it
+    const { value } = await new Promise<{ value: string }>((resolve) => {
+      createEvent(event, (error: Error | null, value: string) => {
+        if (error || !value) resolve({ value: '' });
+        else resolve({ value });
+      });
     });
-  });
+    icsValue = value;
+  }
 
   // Create tracking URL and base URL for PWA install link
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
@@ -231,13 +240,13 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team</p>
       </div>
     `,
-    attachments: [
+    attachments: icsValue ? [
       {
         filename: 'ride.ics',
         content: icsValue,
         contentType: 'text/calendar',
       },
-    ],
+    ] : [],
   };
 
   await transporter.sendMail(mailOptions);
