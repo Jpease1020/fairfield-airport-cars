@@ -17,6 +17,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCalendarButton, setShowCalendarButton] = useState(false);
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -215,8 +216,6 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   const fare = booking.trip.fare || 0;
   
   // Check if calendar was already added
-  const [showCalendarButton, setShowCalendarButton] = useState(false);
-  
   useEffect(() => {
     if (booking?.id) {
       setShowCalendarButton(!hasCalendarBeenAdded(booking.id));
