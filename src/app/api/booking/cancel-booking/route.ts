@@ -50,10 +50,18 @@ export async function POST(req: NextRequest) {
       balanceDue: 0
     });
 
-    // Process refund if applicable
-    const squareOrderId = booking.payment?.squareOrderId || booking.squareOrderId;
-    if (refundAmount > 0 && squareOrderId) {
-      await refundPayment(squareOrderId, refundAmount * 100, 'USD');
+    // Process refund if applicable - need paymentId, not orderId
+    const squarePaymentId = booking.payment?.squarePaymentId || booking.squarePaymentId;
+    if (refundAmount > 0 && squarePaymentId) {
+      try {
+        await refundPayment(squarePaymentId, refundAmount * 100, 'USD', reason);
+        console.log(`✅ Refund processed: $${refundAmount.toFixed(2)} for booking ${bookingId}`);
+      } catch (refundError) {
+        console.error(`❌ Refund failed for booking ${bookingId}:`, refundError);
+        // Don't fail the cancellation if refund fails - admin can process manually
+      }
+    } else if (refundAmount > 0 && !squarePaymentId) {
+      console.warn(`⚠️ Cannot process refund - no payment ID stored for booking ${bookingId}`);
     }
 
     const pickupDateTime = booking.trip?.pickupDateTime || booking.pickupDateTime;

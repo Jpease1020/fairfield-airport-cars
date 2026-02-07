@@ -11,8 +11,8 @@ const {
   EMAIL_FROM = 'no-reply@fairfieldairportcars.com',
 } = process.env;
 
-// Override EMAIL_FROM to use the verified address
-const VERIFIED_EMAIL_FROM = 'no-reply@fairfieldairportcar.com';
+// Override EMAIL_FROM to use the verified address (note: 'cars' not 'car')
+const VERIFIED_EMAIL_FROM = 'no-reply@fairfieldairportcars.com';
 
 console.log('🔧 Email service environment check:');
   console.log(`   EMAIL_HOST: ${EMAIL_HOST ? '✅ Set' : '❌ Missing'}`);
@@ -194,7 +194,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
   const mailOptions = {
     from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
     to: customerEmail,
-    bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
+    bcc: ['rides@fairfieldairportcar.com'],
     subject: `Your Ride Confirmation - ${booking.id}`,
     text: emailText,
     html: `
@@ -404,7 +404,7 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
     const result = await transporter.sendMail({
       from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
       to: customerEmail,
-      bcc: ['rides@fairfieldairportcar.com', 'justinpease2@gmail.com'],
+      bcc: ['rides@fairfieldairportcar.com'],
       subject: `Action Required: Confirm your booking (${booking.id})`,
       text: emailText,
       html

@@ -24,5 +24,3 @@ export { TrackingMap } from './TrackingMap';
 export { TrafficETA } from './TrafficETA';
 export { VoiceInput } from './VoiceInput';
 export { VoiceOutput } from './VoiceOutput';
-export { default as GlobalCommentModal } from './GlobalCommentModal';
-export { default as GlobalCommentIcons } from './GlobalCommentIcons';

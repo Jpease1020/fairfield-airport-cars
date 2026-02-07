@@ -155,10 +155,46 @@ export const createPaymentLink = async ({ bookingId, amount, currency, descripti
   throw new Error('createPaymentLink is deprecated. Use the Web Payments SDK frontend with processPayment backend instead.');
 };
 
-export async function refundPayment(orderId: string, amount: number, currency: string) {
-  // TODO: Fix refund functionality - need to check correct Square SDK v43 method names
-  console.warn('Refund functionality temporarily disabled - need to fix Square SDK method names');
-  throw new Error('Refund functionality not yet implemented');
+export async function refundPayment(paymentId: string, amount: number, currency: string, reason?: string) {
+  const client = initializeSquareClient();
+  if (!client) {
+    throw new Error('Square service is not available in this environment.');
+  }
+
+  try {
+    // Square SDK v43 uses refundPayment method
+    const refundResponse = await client.refunds.refundPayment({
+      idempotencyKey: uuidv4(),
+      paymentId: paymentId,
+      amountMoney: {
+        amount: BigInt(amount),
+        currency: currency as 'USD' | 'EUR' | 'GBP' | 'CAD',
+      },
+      reason: reason || 'Customer requested cancellation',
+    });
+
+    const refund = refundResponse.refund;
+    if (!refund) {
+      throw new Error('Failed to create refund');
+    }
+
+    console.log('✅ Square refund processed:', {
+      refundId: refund.id,
+      status: refund.status,
+      amount: refund.amountMoney?.amount?.toString(),
+    });
+
+    return {
+      success: true,
+      refundId: refund.id,
+      status: refund.status,
+      amount: refund.amountMoney ? Number(refund.amountMoney.amount) : 0,
+      currency: refund.amountMoney?.currency,
+    };
+  } catch (error) {
+    console.error('Square refund error:', error);
+    throw new Error(`Failed to process refund: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }
 
 interface CreatePaymentPayload {

@@ -3,7 +3,7 @@ import twilio from 'twilio';
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID || 'MGd18969191e05806b623ffd2ae4b95850';
+const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
 
 const client = twilio(accountSid, authToken);
 
@@ -13,8 +13,8 @@ interface SmsPayload {
 }
 
 export const sendSms = async ({ to, body }: SmsPayload) => {
-  if (!accountSid || !authToken) {
-    console.error('Twilio credentials are not configured in .env.local');
+  if (!accountSid || !authToken || !messagingServiceSid) {
+    console.error('Twilio credentials are not configured. Required: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID');
     throw new Error('Twilio service is not configured.');
   }
 
