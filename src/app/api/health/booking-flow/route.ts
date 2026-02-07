@@ -31,14 +31,27 @@ export async function GET() {
 
     // 2. Environment Variables Check
     const envVars = {
+      // Payment (Square)
       SQUARE_ACCESS_TOKEN: !!process.env.SQUARE_ACCESS_TOKEN,
+      SQUARE_LOCATION_ID: !!process.env.SQUARE_LOCATION_ID,
+      SQUARE_WEBHOOK_SIGNATURE_KEY: !!process.env.SQUARE_WEBHOOK_SIGNATURE_KEY,
+      // SMS (Twilio)
       TWILIO_ACCOUNT_SID: !!process.env.TWILIO_ACCOUNT_SID,
       TWILIO_AUTH_TOKEN: !!process.env.TWILIO_AUTH_TOKEN,
+      TWILIO_MESSAGING_SERVICE_SID: !!process.env.TWILIO_MESSAGING_SERVICE_SID,
+      // Email
+      EMAIL_HOST: !!process.env.EMAIL_HOST,
+      EMAIL_USER: !!process.env.EMAIL_USER,
+      EMAIL_PASS: !!process.env.EMAIL_PASS,
+      // Google
       NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY: !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_CLIENT_API_KEY,
       GOOGLE_CALENDAR_TOKENS: !!process.env.GOOGLE_CALENDAR_TOKENS,
+      // Firebase
       FIREBASE_PROJECT_ID: !!process.env.FIREBASE_PROJECT_ID,
       FIREBASE_CLIENT_EMAIL: !!process.env.FIREBASE_CLIENT_EMAIL,
       FIREBASE_PRIVATE_KEY: !!process.env.FIREBASE_PRIVATE_KEY,
+      // Base URL
+      NEXT_PUBLIC_BASE_URL: !!process.env.NEXT_PUBLIC_BASE_URL,
     };
 
     const missingVars = Object.entries(envVars)

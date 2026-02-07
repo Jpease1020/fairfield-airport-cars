@@ -2,69 +2,173 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Button, Text, Stack } from '@/design/ui';
 import { isRunningAsPWA, checkInstalledRelatedApps } from '@/lib/pwa';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+import { colors } from '@/design/system/tokens/tokens';
 
-const BannerContainer = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: white;
-  padding: 16px 20px;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    padding: 20px;
-    text-align: center;
+const slideUp = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
   }
-`;
-
-const CloseButton = styled.button`
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.8;
-  transition: opacity 0.2s;
-  
-  &:hover {
+  to {
+    transform: translateY(0);
     opacity: 1;
   }
 `;
 
+const BannerContainer = styled.div<{ $variant?: 'default' | 'success' }>`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: ${props => props.$variant === 'success'
+    ? 'linear-gradient(135deg, #059669 0%, #047857 100%)'
+    : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'};
+  color: white;
+  padding: 20px 24px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: ${slideUp} 0.3s ease-out;
+
+  @media (max-width: 768px) {
+    padding: 24px 20px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+`;
+
+const CloseButton = styled.button`
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+`;
+
 const ContentWrapper = styled.div`
-  flex: 1;
   display: flex;
   align-items: center;
   gap: 16px;
-  
+  max-width: 600px;
+  margin: 0 auto;
+
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 12px;
+    text-align: center;
+    gap: 16px;
+  }
+`;
+
+const IconWrapper = styled.div`
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+`;
+
+const TextContent = styled.div`
+  flex: 1;
+`;
+
+const FeatureList = styled.ul`
+  margin: 8px 0 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+`;
+
+const FeatureItem = styled.li`
+  font-size: 13px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const BannerTitle = styled.div`
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+`;
+
+const InstallButton = styled.button`
+  background: white;
+  color: ${colors.primary[600]};
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 14px 24px;
   }
 `;
 
 interface PWAInstallBannerProps {
   onDismiss?: () => void;
+  /** Show after a successful booking with enhanced messaging */
+  variant?: 'default' | 'post-booking';
+  /** Force show the banner regardless of dismissal state */
+  forceShow?: boolean;
 }
 
-export const PWAInstallBanner: React.FC<PWAInstallBannerProps> = ({ onDismiss }) => {
+export const PWAInstallBanner: React.FC<PWAInstallBannerProps> = ({
+  onDismiss,
+  variant = 'default',
+  forceShow = false
+}) => {
   const pathname = usePathname();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showBanner, setShowBanner] = useState(false);
@@ -208,36 +312,45 @@ export const PWAInstallBanner: React.FC<PWAInstallBannerProps> = ({ onDismiss })
   // Don't show if:
   // - Still checking installation status
   // - Already installed
-  // - User dismissed it
-  // - No banner should be shown
+  // - User dismissed it (unless forceShow)
+  // - No banner should be shown (unless forceShow)
   // - No deferred prompt available
-  if (isChecking || isInstalled || isDismissed || !showBanner || !deferredPrompt) {
+  if (isChecking || isInstalled || !deferredPrompt) {
     return null;
   }
 
+  if (!forceShow && (isDismissed || !showBanner)) {
+    return null;
+  }
+
+  const isPostBooking = variant === 'post-booking';
+
   return (
-    <BannerContainer>
+    <BannerContainer $variant={isPostBooking ? 'success' : 'default'}>
       <ContentWrapper>
-        <div style={{ flex: 1 }}>
-          <Text variant="body" style={{ color: 'white', fontWeight: 600, marginBottom: '4px' }}>
-            📱 Install Our App
-          </Text>
-          <Text variant="small" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-            Get ride reminders, track your driver, and faster access
-          </Text>
-        </div>
-        <Stack direction="horizontal" spacing="sm" style={{ alignItems: 'center' }}>
-          <Button
-            onClick={handleInstallClick}
-            variant="secondary"
-            size="md"
-          >
-            Install Now
-          </Button>
+        <IconWrapper>
+          {isPostBooking ? '✓' : '📱'}
+        </IconWrapper>
+        <TextContent>
+          <BannerTitle>
+            {isPostBooking
+              ? 'Booking Confirmed! Install our app to track your ride'
+              : 'Get the Fairfield Airport Cars App'}
+          </BannerTitle>
+          <FeatureList>
+            <FeatureItem>✓ Track your driver live</FeatureItem>
+            <FeatureItem>✓ Ride reminders</FeatureItem>
+            <FeatureItem>✓ One-tap rebooking</FeatureItem>
+          </FeatureList>
+        </TextContent>
+        <ButtonGroup>
+          <InstallButton onClick={handleInstallClick}>
+            Install Free
+          </InstallButton>
           <CloseButton onClick={handleDismiss} aria-label="Dismiss">
-            ×
+            ✕
           </CloseButton>
-        </Stack>
+        </ButtonGroup>
       </ContentWrapper>
     </BannerContainer>
   );
