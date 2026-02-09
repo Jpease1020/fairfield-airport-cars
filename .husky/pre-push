@@ -2,8 +2,9 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 #
-# Pre-push hook to run unit and integration tests
-# This hook will run tests before allowing a push
+# Pre-push hook to run tests before allowing a push
+# Runs: unit tests, integration tests, build, and critical E2E tests (if server available)
+#
 
 # Colors for output
 RED='\033[0;31m'
@@ -65,6 +66,28 @@ else
     exit 1
 fi
 
+# Check if dev server is running on port 3000 for E2E tests
+echo "${YELLOW}🌐 Checking for dev server...${NC}"
+if curl -s http://localhost:3000 > /dev/null 2>&1; then
+    echo "${YELLOW}🎭 Dev server detected! Running critical E2E tests...${NC}"
+    E2E_OUTPUT=$(npm run test:e2e:critical 2>&1)
+    E2E_EXIT_CODE=$?
+
+    if [ $E2E_EXIT_CODE -eq 0 ]; then
+        echo "${GREEN}✅ Critical E2E tests passed!${NC}"
+    else
+        echo "${RED}❌ Critical E2E tests failed!${NC}"
+        echo "$E2E_OUTPUT"
+        echo ""
+        echo "${YELLOW}💡 The autocomplete or booking form may be broken.${NC}"
+        echo "${YELLOW}💡 Please fix E2E test failures before pushing.${NC}"
+        exit 1
+    fi
+else
+    echo "${YELLOW}⚠️  No dev server running on localhost:3000${NC}"
+    echo "${YELLOW}   Skipping E2E tests. Run 'npm run dev' to enable E2E testing.${NC}"
+    echo "${YELLOW}   RECOMMENDATION: Run E2E tests manually before deploying critical changes.${NC}"
+fi
+
 echo "${GREEN}🎉 All tests and build passed! Proceeding with push...${NC}"
 exit 0
-
