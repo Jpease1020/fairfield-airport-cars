@@ -1,4 +1,3 @@
-// @ts-nocheck - Tests are scaffolding, need type refinement before enabling
 /**
  * Time Slot Locking Integration Test
  *
@@ -15,337 +14,245 @@
  * What this tests:
  * 1. Locking a time slot during checkout
  * 2. Locked slots show as unavailable to other users
- * 3. Lock expiration after timeout
- * 4. Lock release on abandonment
- * 5. Slot becomes permanently booked after payment
- * 6. Buffer time enforcement between bookings
- *
- * STATUS: Tests need refinement to match actual API types.
+ * 3. Lock release on abandonment
+ * 4. Conflict detection for same slot
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-
-const describeSkip = describe.skip;
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 
 // Mock the booking lock service
 vi.mock('@/lib/services/booking-lock-service', () => ({
-  lockTimeSlot: vi.fn(),
-  releaseTimeSlot: vi.fn(),
-  isTimeSlotLocked: vi.fn(),
-  getTimeSlotLock: vi.fn(),
+  bookingLockService: {
+    lockTimeSlot: vi.fn(),
+    releaseTimeSlot: vi.fn(),
+    isTimeSlotLocked: vi.fn(),
+  },
 }));
 
 // Mock the driver scheduling service
 vi.mock('@/lib/services/driver-scheduling-service', () => ({
-  checkAvailability: vi.fn(),
-  getAvailableSlots: vi.fn(),
-  bookTimeSlot: vi.fn(),
-  releaseBookedSlot: vi.fn(),
+  driverSchedulingService: {
+    checkBookingConflicts: vi.fn(),
+    getAvailableDriversForTimeSlot: vi.fn(),
+  },
 }));
 
-import {
-  lockTimeSlot,
-  releaseTimeSlot,
-  isTimeSlotLocked,
-} from '@/lib/services/booking-lock-service';
+import { bookingLockService } from '@/lib/services/booking-lock-service';
+import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 
-import {
-  checkAvailability,
-  getAvailableSlots,
-  bookTimeSlot,
-} from '@/lib/services/driver-scheduling-service';
+const mockLockTimeSlot = bookingLockService.lockTimeSlot as ReturnType<typeof vi.fn>;
+const mockReleaseTimeSlot = bookingLockService.releaseTimeSlot as ReturnType<typeof vi.fn>;
+const mockIsTimeSlotLocked = bookingLockService.isTimeSlotLocked as ReturnType<typeof vi.fn>;
+const mockCheckBookingConflicts = driverSchedulingService.checkBookingConflicts as ReturnType<typeof vi.fn>;
+const mockGetAvailableDriversForTimeSlot = driverSchedulingService.getAvailableDriversForTimeSlot as ReturnType<typeof vi.fn>;
 
-const mockLockTimeSlot = lockTimeSlot as ReturnType<typeof vi.fn>;
-const mockReleaseTimeSlot = releaseTimeSlot as ReturnType<typeof vi.fn>;
-const mockIsTimeSlotLocked = isTimeSlotLocked as ReturnType<typeof vi.fn>;
-const mockCheckAvailability = checkAvailability as ReturnType<typeof vi.fn>;
-const mockGetAvailableSlots = getAvailableSlots as ReturnType<typeof vi.fn>;
-const mockBookTimeSlot = bookTimeSlot as ReturnType<typeof vi.fn>;
+// Load route handlers once
+let lockPost: typeof import('@/app/api/booking/lock-time-slot/route').POST;
+let releasePost: typeof import('@/app/api/booking/release-time-slot/route').POST;
+let checkAvailabilityPost: typeof import('@/app/api/booking/check-availability/route').POST;
 
-describeSkip('Time Slot Locking', () => {
-  const testDate = new Date('2024-03-15T10:00:00Z');
-  const testSlotId = '2024-03-15T10:00';
+beforeAll(async () => {
+  ({ POST: lockPost } = await import('@/app/api/booking/lock-time-slot/route'));
+  ({ POST: releasePost } = await import('@/app/api/booking/release-time-slot/route'));
+  ({ POST: checkAvailabilityPost } = await import('@/app/api/booking/check-availability/route'));
+});
+
+// Helper to create a request object with json() method
+const createRequest = (body: Record<string, unknown>) => {
+  return {
+    json: () => Promise.resolve(body),
+  } as any;
+};
+
+describe('Time Slot Locking', () => {
+  const testTimeSlot = '2024-03-15-10:00';
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useFakeTimers();
-    vi.setSystemTime(testDate);
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   describe('Lock Acquisition', () => {
     it('locks a time slot when customer starts checkout', async () => {
-      mockLockTimeSlot.mockResolvedValueOnce({
-        success: true,
-        lockId: 'lock-123',
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-      });
+      mockLockTimeSlot.mockResolvedValueOnce(true);
 
-      const { POST } = await import('@/app/api/booking/lock-time-slot/route');
-
-      const request = new Request('http://localhost:3000/api/booking/lock-time-slot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pickupDateTime: testDate.toISOString(),
-          sessionId: 'session-abc-123',
-        }),
-      });
-
-      const response = await POST(request);
+      const response = await lockPost(createRequest({
+        timeSlot: testTimeSlot,
+      }));
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.lockId).toBeDefined();
-      expect(mockLockTimeSlot).toHaveBeenCalled();
+      expect(mockLockTimeSlot).toHaveBeenCalledWith(testTimeSlot, expect.any(String));
     });
 
     it('rejects lock request for already locked slot', async () => {
-      mockLockTimeSlot.mockResolvedValueOnce({
-        success: false,
-        error: 'Slot already locked',
-      });
+      mockLockTimeSlot.mockResolvedValueOnce(false);
 
-      const { POST } = await import('@/app/api/booking/lock-time-slot/route');
-
-      const request = new Request('http://localhost:3000/api/booking/lock-time-slot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pickupDateTime: testDate.toISOString(),
-          sessionId: 'different-session',
-        }),
-      });
-
-      const response = await POST(request);
+      const response = await lockPost(createRequest({
+        timeSlot: testTimeSlot,
+      }));
       const data = await response.json();
 
       expect(response.status).toBe(409); // Conflict
       expect(data.success).toBe(false);
-    });
-  });
-
-  describe('Availability Checking', () => {
-    it('shows locked slot as unavailable', async () => {
-      mockCheckAvailability.mockResolvedValueOnce({
-        available: false,
-        reason: 'Slot is currently locked by another user',
-      });
-
-      const { POST } = await import('@/app/api/booking/check-availability/route');
-
-      const request = new Request('http://localhost:3000/api/booking/check-availability', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pickupDateTime: testDate.toISOString(),
-        }),
-      });
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(data.available).toBe(false);
+      expect(data.error).toContain('already locked');
     });
 
-    it('shows available slot as available', async () => {
-      mockCheckAvailability.mockResolvedValueOnce({
-        available: true,
-      });
-
-      const { POST } = await import('@/app/api/booking/check-availability/route');
-
-      const request = new Request('http://localhost:3000/api/booking/check-availability', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pickupDateTime: testDate.toISOString(),
-        }),
-      });
-
-      const response = await POST(request);
+    it('returns 400 when timeSlot is missing', async () => {
+      const response = await lockPost(createRequest({}));
       const data = await response.json();
 
-      expect(data.available).toBe(true);
-    });
-
-    it('respects 60-minute buffer between bookings', async () => {
-      // Existing booking at 10:00
-      mockCheckAvailability.mockResolvedValueOnce({
-        available: false,
-        reason: 'Too close to existing booking (60-minute buffer required)',
-      });
-
-      const { POST } = await import('@/app/api/booking/check-availability/route');
-
-      // Trying to book at 10:30 - should fail due to buffer
-      const request = new Request('http://localhost:3000/api/booking/check-availability', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pickupDateTime: new Date('2024-03-15T10:30:00Z').toISOString(),
-        }),
-      });
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(data.available).toBe(false);
-      expect(data.reason).toContain('buffer');
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Time slot is required');
     });
   });
 
   describe('Lock Release', () => {
     it('releases lock when checkout is abandoned', async () => {
-      mockReleaseTimeSlot.mockResolvedValueOnce({ success: true });
+      mockReleaseTimeSlot.mockResolvedValueOnce(undefined);
 
-      const { POST } = await import('@/app/api/booking/release-time-slot/route');
-
-      const request = new Request('http://localhost:3000/api/booking/release-time-slot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lockId: 'lock-123',
-          sessionId: 'session-abc-123',
-        }),
-      });
-
-      const response = await POST(request);
+      const response = await releasePost(createRequest({
+        timeSlot: testTimeSlot,
+      }));
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(mockReleaseTimeSlot).toHaveBeenCalled();
+      expect(mockReleaseTimeSlot).toHaveBeenCalledWith(testTimeSlot, 'any');
     });
 
-    it('lock expires automatically after 5 minutes', async () => {
-      // Initial lock check - locked
-      mockIsTimeSlotLocked.mockResolvedValueOnce(true);
+    it('returns 400 when timeSlot is missing for release', async () => {
+      const response = await releasePost(createRequest({}));
+      const data = await response.json();
 
-      // After 5 minutes - no longer locked
-      mockIsTimeSlotLocked.mockResolvedValueOnce(false);
-
-      // First check - should be locked
-      let result = await mockIsTimeSlotLocked(testSlotId);
-      expect(result).toBe(true);
-
-      // Advance time by 6 minutes
-      vi.advanceTimersByTime(6 * 60 * 1000);
-
-      // Second check - should be unlocked
-      result = await mockIsTimeSlotLocked(testSlotId);
-      expect(result).toBe(false);
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Time slot is required');
     });
   });
 
-  describe('Booking Confirmation', () => {
-    it('converts lock to permanent booking after payment', async () => {
-      mockBookTimeSlot.mockResolvedValueOnce({
-        success: true,
-        bookingId: 'booking-123',
+  describe('Availability Checking', () => {
+    it('shows slot as available when no conflicts exist', async () => {
+      mockCheckBookingConflicts.mockResolvedValueOnce({
+        hasConflict: false,
+        conflictingBookings: [],
+        suggestedTimeSlots: [],
       });
+      mockGetAvailableDriversForTimeSlot.mockResolvedValueOnce([
+        { id: 'driver-1', name: 'Gregg' },
+      ]);
 
-      // This would be called by the payment success handler
-      const result = await mockBookTimeSlot({
-        pickupDateTime: testDate,
-        bookingId: 'booking-123',
-        lockId: 'lock-123',
+      const response = await checkAvailabilityPost(createRequest({
+        date: '2024-03-15',
+        startTime: '10:00',
+        endTime: '11:00',
+      }));
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.isAvailable).toBe(true);
+      expect(data.hasConflict).toBe(false);
+      expect(data.availableDrivers).toBe(1);
+    });
+
+    it('shows slot as unavailable when there is a conflict', async () => {
+      mockCheckBookingConflicts.mockResolvedValueOnce({
+        hasConflict: true,
+        conflictingBookings: [{
+          bookingId: 'booking-123',
+          customerName: 'John Doe',
+          timeSlot: '10:00-11:00',
+          driverName: 'Gregg',
+        }],
+        suggestedTimeSlots: ['11:30', '12:00'],
       });
+      mockGetAvailableDriversForTimeSlot.mockResolvedValueOnce([]);
 
-      expect(result.success).toBe(true);
-      expect(mockBookTimeSlot).toHaveBeenCalled();
+      const response = await checkAvailabilityPost(createRequest({
+        date: '2024-03-15',
+        startTime: '10:00',
+        endTime: '11:00',
+      }));
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.isAvailable).toBe(false);
+      expect(data.hasConflict).toBe(true);
+      expect(data.conflictingBookings).toHaveLength(1);
+      expect(data.suggestedTimeSlots).toContain('11:30');
+    });
+
+    it('shows slot as unavailable when no drivers are available', async () => {
+      mockCheckBookingConflicts.mockResolvedValueOnce({
+        hasConflict: false,
+        conflictingBookings: [],
+        suggestedTimeSlots: [],
+      });
+      mockGetAvailableDriversForTimeSlot.mockResolvedValueOnce([]);
+
+      const response = await checkAvailabilityPost(createRequest({
+        date: '2024-03-15',
+        startTime: '10:00',
+        endTime: '11:00',
+      }));
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.isAvailable).toBe(false);
+      expect(data.availableDrivers).toBe(0);
+    });
+
+    it('returns 400 when required fields are missing', async () => {
+      const response = await checkAvailabilityPost(createRequest({
+        date: '2024-03-15',
+        // missing startTime and endTime
+      }));
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('required');
     });
   });
 });
 
-describeSkip('Double Booking Prevention', () => {
+describe('Double Booking Prevention', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('prevents two customers from booking the same slot', async () => {
+  it('prevents two customers from locking the same slot', async () => {
     // First customer locks the slot
     mockLockTimeSlot
-      .mockResolvedValueOnce({ success: true, lockId: 'lock-1' })
-      // Second customer tries to lock - fails
-      .mockResolvedValueOnce({ success: false, error: 'Already locked' });
-
-    const { POST } = await import('@/app/api/booking/lock-time-slot/route');
-
-    const pickupTime = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      .mockResolvedValueOnce(true)  // First lock succeeds
+      .mockResolvedValueOnce(false); // Second lock fails
 
     // Customer 1 locks
-    const request1 = new Request('http://localhost:3000/api/booking/lock-time-slot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pickupDateTime: pickupTime,
-        sessionId: 'customer-1',
-      }),
-    });
-
-    const response1 = await POST(request1);
+    const response1 = await lockPost(createRequest({
+      timeSlot: '2024-03-15-10:00',
+    }));
     expect(response1.status).toBe(200);
 
     // Customer 2 tries to lock same slot
-    const request2 = new Request('http://localhost:3000/api/booking/lock-time-slot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pickupDateTime: pickupTime,
-        sessionId: 'customer-2',
-      }),
-    });
-
-    const response2 = await POST(request2);
+    const response2 = await lockPost(createRequest({
+      timeSlot: '2024-03-15-10:00',
+    }));
     expect(response2.status).toBe(409); // Conflict
   });
 
-  it('allows booking after previous lock expires', async () => {
-    vi.useFakeTimers();
+  it('allows booking after lock is released', async () => {
+    mockReleaseTimeSlot.mockResolvedValueOnce(undefined);
+    mockLockTimeSlot.mockResolvedValueOnce(true);
 
-    mockLockTimeSlot
-      // First lock
-      .mockResolvedValueOnce({ success: true, lockId: 'lock-1' })
-      // After expiry, second lock succeeds
-      .mockResolvedValueOnce({ success: true, lockId: 'lock-2' });
+    // First, release any existing lock
+    const releaseResponse = await releasePost(createRequest({
+      timeSlot: '2024-03-15-10:00',
+    }));
+    expect(releaseResponse.status).toBe(200);
 
-    const { POST } = await import('@/app/api/booking/lock-time-slot/route');
-
-    const pickupTime = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-    // Customer 1 locks but abandons checkout
-    const request1 = new Request('http://localhost:3000/api/booking/lock-time-slot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pickupDateTime: pickupTime,
-        sessionId: 'customer-1',
-      }),
-    });
-
-    await POST(request1);
-
-    // Wait for lock to expire (5+ minutes)
-    vi.advanceTimersByTime(6 * 60 * 1000);
-
-    // Customer 2 can now lock the same slot
-    const request2 = new Request('http://localhost:3000/api/booking/lock-time-slot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pickupDateTime: pickupTime,
-        sessionId: 'customer-2',
-      }),
-    });
-
-    const response2 = await POST(request2);
-    expect(response2.status).toBe(200);
-
-    vi.useRealTimers();
+    // Now a new customer can lock the slot
+    const lockResponse = await lockPost(createRequest({
+      timeSlot: '2024-03-15-10:00',
+    }));
+    expect(lockResponse.status).toBe(200);
   });
 });

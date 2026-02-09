@@ -1,4 +1,3 @@
-// @ts-nocheck - Tests are scaffolding, need type refinement before enabling
 /**
  * Cancellation & Refund Flow Integration Test
  *
@@ -10,24 +9,11 @@
  * - 3-24 hours before pickup: 50% refund
  * - <3 hours before pickup: 0% refund
  *
- * What this tests:
- * 1. Customer can cancel a booking
- * 2. Correct refund percentage is calculated based on timing
- * 3. Refund is processed via Square
- * 4. Booking status is updated to 'cancelled'
- * 5. Customer receives cancellation confirmation (email + SMS)
- * 6. Admin is notified of cancellation
- * 7. Calendar event is deleted (if exists)
- * 8. Time slot is released for rebooking
- *
- * STATUS: Tests need refinement to match actual API types (NextRequest vs Request).
- * Run unit tests in tests/unit/cancel-booking.route.test.ts for working coverage.
+ * NOTE: Core unit tests are in tests/unit/cancel-booking.route.test.ts
+ * This file tests higher-level integration scenarios.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-
-// Skip these tests until they're refined to work with actual API signatures
-const describeSkip = describe.skip;
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 
 // Mock external services
 vi.mock('@/lib/services/twilio-service', () => ({
@@ -36,7 +22,6 @@ vi.mock('@/lib/services/twilio-service', () => ({
 
 vi.mock('@/lib/services/email-service', () => ({
   sendConfirmationEmail: vi.fn().mockResolvedValue(undefined),
-  sendCancellationEmail: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('@/lib/services/square-service', () => ({
@@ -44,8 +29,6 @@ vi.mock('@/lib/services/square-service', () => ({
     success: true,
     refundId: 'mock-refund-id',
     status: 'COMPLETED',
-    amount: 2550,
-    currency: 'USD',
   }),
 }));
 
@@ -53,9 +36,11 @@ vi.mock('@/lib/services/admin-notification-service', () => ({
   sendAdminSms: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock('@/lib/services/google-calendar', () => ({
-  deleteCalendarEvent: vi.fn().mockResolvedValue(undefined),
-  getStoredCalendarTokens: vi.fn().mockResolvedValue(null),
+vi.mock('@/lib/services/booking-notification-service', () => ({
+  bookingNotificationService: {
+    notifyBookingCancelled: vi.fn().mockResolvedValue(undefined),
+    sendBookingCancelled: vi.fn().mockResolvedValue(undefined),
+  },
 }));
 
 vi.mock('@/lib/services/booking-service', () => ({
@@ -64,19 +49,26 @@ vi.mock('@/lib/services/booking-service', () => ({
   cancelBooking: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('@/utils/bookingAdapter', () => ({
+  adaptOldBookingToNew: vi.fn((booking) => booking),
+}));
+
 import { sendSms } from '@/lib/services/twilio-service';
 import { refundPayment } from '@/lib/services/square-service';
-import { sendAdminSms } from '@/lib/services/admin-notification-service';
-import { deleteCalendarEvent } from '@/lib/services/google-calendar';
-import { getBooking, updateBooking, cancelBooking } from '@/lib/services/booking-service';
+import { getBooking, cancelBooking, updateBooking } from '@/lib/services/booking-service';
 
 const mockSendSms = sendSms as ReturnType<typeof vi.fn>;
 const mockRefundPayment = refundPayment as ReturnType<typeof vi.fn>;
-const mockSendAdminSms = sendAdminSms as ReturnType<typeof vi.fn>;
-const mockDeleteCalendarEvent = deleteCalendarEvent as ReturnType<typeof vi.fn>;
 const mockGetBooking = getBooking as ReturnType<typeof vi.fn>;
-const mockUpdateBooking = updateBooking as ReturnType<typeof vi.fn>;
 const mockCancelBooking = cancelBooking as ReturnType<typeof vi.fn>;
+const mockUpdateBooking = updateBooking as ReturnType<typeof vi.fn>;
+
+// Load POST handler once
+let POST: typeof import('@/app/api/booking/cancel-booking/route').POST;
+
+beforeAll(async () => {
+  ({ POST } = await import('@/app/api/booking/cancel-booking/route'));
+});
 
 // Helper to create a mock booking with pickup time X hours from now
 const createMockBooking = (hoursUntilPickup: number, depositAmount: number = 25.50) => {
@@ -87,27 +79,33 @@ const createMockBooking = (hoursUntilPickup: number, depositAmount: number = 25.
     customer: {
       firstName: 'Test',
       lastName: 'Customer',
+      name: 'Test Customer',
       email: 'test@example.com',
       phone: '+12035551234',
     },
     trip: {
       pickup: { address: '123 Main St, Fairfield, CT' },
       dropoff: { address: 'Bradley International Airport' },
-      pickupDateTime: pickupTime,
+      pickupDateTime: pickupTime.toISOString(),
+      fare: 85.00,
     },
     payment: {
       depositAmount,
       depositPaid: true,
       squarePaymentId: 'sq-payment-123',
-      squareOrderId: 'sq-order-123',
     },
     fare: 85.00,
-    calendarEventId: 'cal-event-123',
-    createdAt: new Date(),
   };
 };
 
-describeSkip('Cancellation & Refund Flow', () => {
+// Helper to create a request object with json() method
+const createRequest = (body: Record<string, unknown>) => {
+  return {
+    json: () => Promise.resolve(body),
+  } as any;
+};
+
+describe('Cancellation & Refund Flow', () => {
   let consoleLogSpy: ReturnType<typeof vi.spyOn>;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
   let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
@@ -125,244 +123,125 @@ describeSkip('Cancellation & Refund Flow', () => {
     consoleWarnSpy.mockRestore();
   });
 
-  describe('Refund Calculation', () => {
-    it('calculates 100% refund for cancellation >24 hours before pickup', async () => {
+  describe('Refund Calculation by Timing', () => {
+    it('gives 100% refund when cancelled >24 hours before pickup', async () => {
       const booking = createMockBooking(48); // 48 hours from now
       mockGetBooking.mockResolvedValueOnce(booking);
+      mockCancelBooking.mockResolvedValueOnce(undefined);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockRefundPayment.mockResolvedValueOnce({ success: true, refundId: 'refund-123' });
+      mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Change of plans',
-        }),
-      });
-
-      const response = await POST(request);
       expect(response.status).toBe(200);
-
-      // Should refund full deposit amount
+      // Should refund full amount: $25.50 * 100% = $25.50 = 2550 cents
       expect(mockRefundPayment).toHaveBeenCalledWith(
         'sq-payment-123',
-        2550, // $25.50 in cents
+        2550,
         'USD',
-        expect.any(String)
+        'Test'
       );
     });
 
-    it('calculates 50% refund for cancellation 3-24 hours before pickup', async () => {
+    it('gives 50% refund when cancelled 3-24 hours before pickup', async () => {
       const booking = createMockBooking(12); // 12 hours from now
       mockGetBooking.mockResolvedValueOnce(booking);
+      mockCancelBooking.mockResolvedValueOnce(undefined);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockRefundPayment.mockResolvedValueOnce({ success: true, refundId: 'refund-456' });
+      mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Flight cancelled',
-        }),
-      });
-
-      const response = await POST(request);
       expect(response.status).toBe(200);
-
-      // Should refund 50% of deposit
+      // Should refund 50%: $25.50 * 50% = $12.75 = 1275 cents
       expect(mockRefundPayment).toHaveBeenCalledWith(
         'sq-payment-123',
-        1275, // $12.75 in cents (50% of $25.50)
+        1275,
         'USD',
-        expect.any(String)
+        'Test'
       );
     });
 
-    it('calculates 0% refund for cancellation <3 hours before pickup', async () => {
+    it('gives 0% refund when cancelled <3 hours before pickup', async () => {
       const booking = createMockBooking(1); // 1 hour from now
       mockGetBooking.mockResolvedValueOnce(booking);
+      mockCancelBooking.mockResolvedValueOnce(undefined);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Emergency',
-        }),
-      });
-
-      const response = await POST(request);
       expect(response.status).toBe(200);
-
-      // Should NOT call refund (0% refund)
+      // Should NOT call refund (0%)
       expect(mockRefundPayment).not.toHaveBeenCalled();
     });
   });
 
   describe('Cancellation Process', () => {
-    it('updates booking status to cancelled', async () => {
+    it('marks booking as cancelled', async () => {
       const booking = createMockBooking(48);
       mockGetBooking.mockResolvedValueOnce(booking);
+      mockCancelBooking.mockResolvedValueOnce(undefined);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockRefundPayment.mockResolvedValueOnce({ success: true });
+      mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Customer request' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Change of plans',
-        }),
-      });
-
-      await POST(request);
-
-      // Booking should be marked as cancelled
-      expect(mockCancelBooking).toHaveBeenCalledWith('test-booking-123');
+      expect(mockCancelBooking).toHaveBeenCalledWith('test-booking-123', 'Customer request');
     });
 
     it('sends cancellation SMS to customer', async () => {
       const booking = createMockBooking(48);
       mockGetBooking.mockResolvedValueOnce(booking);
+      mockCancelBooking.mockResolvedValueOnce(undefined);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockRefundPayment.mockResolvedValueOnce({ success: true });
+      mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Change of plans',
-        }),
-      });
-
-      await POST(request);
-
-      // SMS should be sent to customer
       expect(mockSendSms).toHaveBeenCalled();
       const smsCall = mockSendSms.mock.calls[0][0];
       expect(smsCall.to).toBe('+12035551234');
-      expect(smsCall.body).toContain('cancel');
-    });
-
-    it('notifies admin of cancellation', async () => {
-      const booking = createMockBooking(48);
-      mockGetBooking.mockResolvedValueOnce(booking);
-
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
-
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Change of plans',
-        }),
-      });
-
-      await POST(request);
-
-      // Admin should be notified
-      expect(mockSendAdminSms).toHaveBeenCalled();
+      expect(smsCall.body).toContain('cancelled');
     });
   });
 
-  describe('Calendar Integration', () => {
-    it('deletes calendar event when booking is cancelled', async () => {
-      const booking = createMockBooking(48);
-      booking.calendarEventId = 'google-cal-event-123';
-      mockGetBooking.mockResolvedValueOnce(booking);
+  describe('Error Handling', () => {
+    it('returns 404 for non-existent booking', async () => {
+      mockGetBooking.mockResolvedValueOnce(null);
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      const response = await POST(createRequest({ bookingId: 'non-existent', reason: 'Test' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Change of plans',
-        }),
-      });
-
-      await POST(request);
-
-      // Calendar event should be deleted
-      expect(mockDeleteCalendarEvent).toHaveBeenCalledWith('google-cal-event-123');
+      expect(response.status).toBe(404);
     });
-  });
 
-  describe('Edge Cases', () => {
-    it('handles cancellation of already cancelled booking gracefully', async () => {
+    it('returns 400 for already cancelled booking', async () => {
       const booking = createMockBooking(48);
       booking.status = 'cancelled';
       mockGetBooking.mockResolvedValueOnce(booking);
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Duplicate request',
-        }),
-      });
-
-      const response = await POST(request);
-
-      // Should handle gracefully (either success or specific error)
-      expect([200, 400]).toContain(response.status);
-    });
-
-    it('handles non-existent booking', async () => {
-      mockGetBooking.mockResolvedValueOnce(null);
-
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
-
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'non-existent-booking',
-          reason: 'Test',
-        }),
-      });
-
-      const response = await POST(request);
-
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(400);
     });
 
     it('continues cancellation even if refund fails', async () => {
       const booking = createMockBooking(48);
       mockGetBooking.mockResolvedValueOnce(booking);
+      mockCancelBooking.mockResolvedValueOnce(undefined);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
       mockRefundPayment.mockRejectedValueOnce(new Error('Square API error'));
+      mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
 
-      const { POST } = await import('@/app/api/booking/cancel-booking/route');
+      const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      const request = new Request('http://localhost:3000/api/booking/cancel-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'test-booking-123',
-          reason: 'Change of plans',
-        }),
-      });
-
-      const response = await POST(request);
-
-      // Cancellation should still succeed (refund can be handled manually)
+      // Cancellation should still succeed
       expect(response.status).toBe(200);
-
-      // Booking should still be cancelled
       expect(mockCancelBooking).toHaveBeenCalled();
-
-      // Error should be logged
-      expect(consoleErrorSpy).toHaveBeenCalled();
     });
   });
 });

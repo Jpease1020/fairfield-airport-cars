@@ -1,4 +1,3 @@
-// @ts-nocheck - Tests are scaffolding, need type refinement before enabling
 /**
  * Ride Experience Integration Test
  *
@@ -20,67 +19,97 @@
  * 3. Update location in real-time
  * 4. Mark pickup complete
  * 5. Mark dropoff complete
- *
- * STATUS: Tests need refinement to match actual API types.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
-const describeSkip = describe.skip;
-
-// Mock location and tracking services
-vi.mock('@/lib/services/driver-location-service', () => ({
-  updateDriverLocation: vi.fn().mockResolvedValue({ success: true }),
-  getDriverLocation: vi.fn(),
-  startTracking: vi.fn().mockResolvedValue({ success: true }),
-  stopTracking: vi.fn().mockResolvedValue({ success: true }),
-}));
-
+// Mock the booking service
 vi.mock('@/lib/services/booking-service', () => ({
   getBooking: vi.fn(),
   updateBooking: vi.fn().mockResolvedValue(undefined),
-  getUpcomingBookings: vi.fn(),
 }));
 
-vi.mock('@/lib/services/twilio-service', () => ({
-  sendSms: vi.fn().mockResolvedValue({ sid: 'mock-sms-sid' }),
+// Mock the driver service
+vi.mock('@/lib/services/driver-service', () => ({
+  getDriver: vi.fn(),
 }));
 
-vi.mock('@/lib/services/push-notification-service', () => ({
-  sendPushNotification: vi.fn().mockResolvedValue({ success: true }),
+// Mock the driver location service
+vi.mock('@/lib/services/driver-location-service', () => ({
+  driverLocationService: {
+    initializeDriverTracking: vi.fn().mockResolvedValue(undefined),
+    stopDriverTracking: vi.fn().mockResolvedValue(undefined),
+    getActiveDriverSubscriptions: vi.fn().mockReturnValue([]),
+  },
 }));
 
-import {
-  updateDriverLocation,
-  getDriverLocation,
-  startTracking,
-  stopTracking,
-} from '@/lib/services/driver-location-service';
+// Mock Firebase admin
+vi.mock('@/lib/utils/firebase-admin', () => ({
+  getAdminDb: vi.fn().mockReturnValue({
+    collection: vi.fn().mockReturnValue({
+      doc: vi.fn().mockReturnValue({
+        get: vi.fn().mockResolvedValue({
+          exists: true,
+          id: 'test-booking-123',
+          data: () => ({
+            status: 'confirmed',
+            driverId: 'driver-123',
+            customer: { name: 'Test Customer' },
+          }),
+        }),
+        update: vi.fn().mockResolvedValue(undefined),
+      }),
+    }),
+  }),
+}));
 
-import {
-  getBooking,
-  updateBooking,
-  getUpcomingBookings,
-} from '@/lib/services/booking-service';
+// Mock driver scheduling service
+vi.mock('@/lib/services/driver-scheduling-service', () => ({
+  driverSchedulingService: {
+    checkBookingConflicts: vi.fn().mockResolvedValue({
+      hasConflict: false,
+      conflictingBookings: [],
+      suggestedTimeSlots: [],
+    }),
+    cancelBooking: vi.fn().mockResolvedValue(undefined),
+    bookTimeSlot: vi.fn().mockResolvedValue(undefined),
+  },
+}));
 
-import { sendSms } from '@/lib/services/twilio-service';
+// Mock fetch for WebSocket updates
+global.fetch = vi.fn().mockResolvedValue({
+  ok: true,
+  json: () => Promise.resolve({ success: true }),
+});
 
-const mockUpdateDriverLocation = updateDriverLocation as ReturnType<typeof vi.fn>;
-const mockGetDriverLocation = getDriverLocation as ReturnType<typeof vi.fn>;
-const mockStartTracking = startTracking as ReturnType<typeof vi.fn>;
-const mockStopTracking = stopTracking as ReturnType<typeof vi.fn>;
+import { getBooking, updateBooking } from '@/lib/services/booking-service';
+import { getDriver } from '@/lib/services/driver-service';
+import { driverLocationService } from '@/lib/services/driver-location-service';
+
 const mockGetBooking = getBooking as ReturnType<typeof vi.fn>;
 const mockUpdateBooking = updateBooking as ReturnType<typeof vi.fn>;
-const mockGetUpcomingBookings = getUpcomingBookings as ReturnType<typeof vi.fn>;
-const mockSendSms = sendSms as ReturnType<typeof vi.fn>;
+const mockGetDriver = getDriver as ReturnType<typeof vi.fn>;
+const mockInitializeDriverTracking = driverLocationService.initializeDriverTracking as ReturnType<typeof vi.fn>;
+const mockGetActiveDriverSubscriptions = driverLocationService.getActiveDriverSubscriptions as ReturnType<typeof vi.fn>;
+
+// Load route handlers once
+let trackingGet: typeof import('@/app/api/tracking/[bookingId]/route').GET;
+let startTrackingPost: typeof import('@/app/api/drivers/start-tracking/route').POST;
+
+beforeAll(async () => {
+  ({ GET: trackingGet } = await import('@/app/api/tracking/[bookingId]/route'));
+  ({ POST: startTrackingPost } = await import('@/app/api/drivers/start-tracking/route'));
+});
 
 // Test data
 const mockBooking = {
   id: 'booking-ride-123',
   status: 'confirmed',
+  driverId: 'gregg-123',
   customer: {
     firstName: 'Test',
     lastName: 'Customer',
+    name: 'Test Customer',
     email: 'test@example.com',
     phone: '+12035551234',
   },
@@ -95,333 +124,227 @@ const mockBooking = {
       lat: 41.9389,
       lng: -72.6832,
     },
-    pickupDateTime: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
+    pickupDateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
   },
-  driver: {
-    id: 'gregg-123',
-    name: 'Gregg',
-    phone: '+12035559999',
-    vehicle: {
-      make: 'Toyota',
-      model: 'Camry',
-      color: 'Black',
-      licensePlate: 'CT-123-ABC',
-    },
+  pickupLocation: '123 Main St, Fairfield, CT',
+  pickupDateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+  estimatedArrival: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+};
+
+const mockDriver = {
+  id: 'gregg-123',
+  name: 'Gregg',
+  phone: '+12035559999',
+  vehicleInfo: {
+    make: 'Toyota',
+    model: 'Camry',
+    color: 'Black',
+    licensePlate: 'CT-123-ABC',
+  },
+  currentLocation: {
+    lat: 41.15,
+    lng: -73.25,
   },
 };
 
-const mockDriverLocation = {
-  lat: 41.15,
-  lng: -73.25,
-  timestamp: new Date(),
-  heading: 45,
-  speed: 35,
+// Helper to create a request object with json() method
+const createRequest = (body: Record<string, unknown>) => {
+  return {
+    json: () => Promise.resolve(body),
+    nextUrl: { origin: 'http://localhost:3000' },
+  } as any;
 };
 
-describeSkip('Ride Experience - Customer Perspective', () => {
+// Helper to create params for dynamic routes
+const createParams = (bookingId: string) => ({
+  params: Promise.resolve({ bookingId }),
+});
+
+describe('Ride Experience - Customer Perspective', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('Pre-Ride: Booking Status', () => {
-    it('customer can view their confirmed booking', async () => {
-      mockGetBooking.mockResolvedValueOnce(mockBooking);
-
-      const { GET } = await import('@/app/api/booking/[bookingId]/route');
-
-      const request = new Request('http://localhost:3000/api/booking/booking-ride-123', {
-        method: 'GET',
-      });
-
-      const response = await GET(request, { params: Promise.resolve({ bookingId: 'booking-ride-123' }) });
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data.status).toBe('confirmed');
-      expect(data.driver).toBeDefined();
-      expect(data.trip.pickup.address).toBe('123 Main St, Fairfield, CT');
-    });
-
-    it('customer can see driver and vehicle info', async () => {
-      mockGetBooking.mockResolvedValueOnce(mockBooking);
-
-      const { GET } = await import('@/app/api/booking/[bookingId]/route');
-
-      const request = new Request('http://localhost:3000/api/booking/booking-ride-123', {
-        method: 'GET',
-      });
-
-      const response = await GET(request, { params: Promise.resolve({ bookingId: 'booking-ride-123' }) });
-      const data = await response.json();
-
-      expect(data.driver.name).toBe('Gregg');
-      expect(data.driver.vehicle.make).toBe('Toyota');
-      expect(data.driver.vehicle.color).toBe('Black');
-    });
-  });
-
   describe('Live Tracking', () => {
-    it('customer can get real-time driver location', async () => {
+    it('customer can get real-time driver location and booking info', async () => {
       mockGetBooking.mockResolvedValueOnce(mockBooking);
-      mockGetDriverLocation.mockResolvedValueOnce(mockDriverLocation);
+      mockGetDriver.mockResolvedValueOnce(mockDriver);
 
-      const { GET } = await import('@/app/api/tracking/[bookingId]/route');
-
-      const request = new Request('http://localhost:3000/api/tracking/booking-ride-123', {
-        method: 'GET',
-      });
-
-      const response = await GET(request, { params: Promise.resolve({ bookingId: 'booking-ride-123' }) });
+      const response = await trackingGet(
+        createRequest({}) as any,
+        createParams('booking-ride-123')
+      );
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.driverLocation).toBeDefined();
-      expect(data.driverLocation.lat).toBe(mockDriverLocation.lat);
-      expect(data.driverLocation.lng).toBe(mockDriverLocation.lng);
+      expect(data.driverName).toBe('Gregg');
+      expect(data.driverPhone).toBe('+12035559999');
+      expect(data.vehicleInfo).toBeDefined();
+      expect(data.currentLocation).toBeDefined();
     });
 
-    it('tracking includes ETA to pickup', async () => {
+    it('returns 404 for non-existent booking', async () => {
+      mockGetBooking.mockResolvedValueOnce(null);
+
+      const response = await trackingGet(
+        createRequest({}) as any,
+        createParams('non-existent')
+      );
+
+      expect(response.status).toBe(404);
+    });
+
+    it('returns 404 when driver is not found', async () => {
       mockGetBooking.mockResolvedValueOnce(mockBooking);
-      mockGetDriverLocation.mockResolvedValueOnce(mockDriverLocation);
+      mockGetDriver.mockResolvedValueOnce(null);
 
-      const { GET } = await import('@/app/api/tracking/[bookingId]/route');
+      const response = await trackingGet(
+        createRequest({}) as any,
+        createParams('booking-ride-123')
+      );
 
-      const request = new Request('http://localhost:3000/api/tracking/booking-ride-123', {
-        method: 'GET',
-      });
-
-      const response = await GET(request, { params: Promise.resolve({ bookingId: 'booking-ride-123' }) });
-      const data = await response.json();
-
-      // Should include ETA information
-      expect(data.eta || data.estimatedArrival).toBeDefined();
-    });
-  });
-
-  describe('Status Updates', () => {
-    it('customer sees status change to in-progress at pickup', async () => {
-      const inProgressBooking = { ...mockBooking, status: 'in-progress' };
-      mockGetBooking.mockResolvedValueOnce(inProgressBooking);
-
-      const { GET } = await import('@/app/api/booking/[bookingId]/route');
-
-      const request = new Request('http://localhost:3000/api/booking/booking-ride-123', {
-        method: 'GET',
-      });
-
-      const response = await GET(request, { params: Promise.resolve({ bookingId: 'booking-ride-123' }) });
-      const data = await response.json();
-
-      expect(data.status).toBe('in-progress');
-    });
-
-    it('customer sees status change to completed at dropoff', async () => {
-      const completedBooking = { ...mockBooking, status: 'completed' };
-      mockGetBooking.mockResolvedValueOnce(completedBooking);
-
-      const { GET } = await import('@/app/api/booking/[bookingId]/route');
-
-      const request = new Request('http://localhost:3000/api/booking/booking-ride-123', {
-        method: 'GET',
-      });
-
-      const response = await GET(request, { params: Promise.resolve({ bookingId: 'booking-ride-123' }) });
-      const data = await response.json();
-
-      expect(data.status).toBe('completed');
+      expect(response.status).toBe(404);
     });
   });
 });
 
-describeSkip('Ride Experience - Driver (Gregg) Perspective', () => {
+describe('Ride Experience - Driver (Gregg) Perspective', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('Viewing Upcoming Rides', () => {
-    it('driver can see upcoming bookings', async () => {
-      mockGetUpcomingBookings.mockResolvedValueOnce([mockBooking]);
-
-      const result = await mockGetUpcomingBookings({ driverId: 'gregg-123' });
-
-      expect(result).toHaveLength(1);
-      expect(result[0].customer.firstName).toBe('Test');
-    });
-  });
-
-  describe('Location Tracking', () => {
+  describe('Starting Location Tracking', () => {
     it('driver can start location tracking for a booking', async () => {
-      mockStartTracking.mockResolvedValueOnce({ success: true });
+      mockGetBooking.mockResolvedValueOnce(mockBooking);
+      mockGetActiveDriverSubscriptions.mockReturnValueOnce([]);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockInitializeDriverTracking.mockResolvedValueOnce(undefined);
 
-      const { POST } = await import('@/app/api/drivers/start-tracking/route');
-
-      const request = new Request('http://localhost:3000/api/drivers/start-tracking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: 'booking-ride-123',
-          driverId: 'gregg-123',
-        }),
-      });
-
-      const response = await POST(request);
+      const response = await startTrackingPost(createRequest({
+        bookingId: 'booking-ride-123',
+        driverId: 'gregg-123',
+        driverName: 'Gregg',
+      }));
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
+      expect(data.bookingId).toBe('booking-ride-123');
+      expect(data.driverId).toBe('gregg-123');
     });
 
-    it('driver location updates are stored', async () => {
-      mockUpdateDriverLocation.mockResolvedValueOnce({ success: true });
-
-      const result = await mockUpdateDriverLocation({
+    it('returns 400 when bookingId is missing', async () => {
+      const response = await startTrackingPost(createRequest({
         driverId: 'gregg-123',
-        bookingId: 'booking-ride-123',
-        location: mockDriverLocation,
-      });
+      }));
+      const data = await response.json();
 
-      expect(result.success).toBe(true);
-      expect(mockUpdateDriverLocation).toHaveBeenCalledWith(
-        expect.objectContaining({
-          location: expect.objectContaining({
-            lat: mockDriverLocation.lat,
-            lng: mockDriverLocation.lng,
-          }),
-        })
-      );
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('required');
     });
-  });
 
-  describe('Status Management', () => {
-    it('driver can mark pickup complete (status → in-progress)', async () => {
+    it('returns 400 when driverId is missing', async () => {
+      const response = await startTrackingPost(createRequest({
+        bookingId: 'booking-ride-123',
+      }));
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('required');
+    });
+
+    it('returns 404 when booking is not found', async () => {
+      mockGetBooking.mockResolvedValueOnce(null);
+
+      const response = await startTrackingPost(createRequest({
+        bookingId: 'non-existent',
+        driverId: 'gregg-123',
+      }));
+      const data = await response.json();
+
+      expect(response.status).toBe(404);
+      expect(data.error).toBe('Booking not found');
+    });
+
+    it('returns 409 when tracking is already active for driver', async () => {
       mockGetBooking.mockResolvedValueOnce(mockBooking);
-      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockGetActiveDriverSubscriptions.mockReturnValueOnce(['gregg-123']);
 
-      // Update booking status to in-progress
-      await mockUpdateBooking('booking-ride-123', {
-        status: 'in-progress',
-        actualPickupTime: new Date(),
-      });
-
-      expect(mockUpdateBooking).toHaveBeenCalledWith(
-        'booking-ride-123',
-        expect.objectContaining({
-          status: 'in-progress',
-        })
-      );
-    });
-
-    it('driver can mark dropoff complete (status → completed)', async () => {
-      mockGetBooking.mockResolvedValueOnce({ ...mockBooking, status: 'in-progress' });
-      mockUpdateBooking.mockResolvedValueOnce(undefined);
-      mockStopTracking.mockResolvedValueOnce({ success: true });
-
-      // Update booking status to completed
-      await mockUpdateBooking('booking-ride-123', {
-        status: 'completed',
-        actualDropoffTime: new Date(),
-      });
-
-      expect(mockUpdateBooking).toHaveBeenCalledWith(
-        'booking-ride-123',
-        expect.objectContaining({
-          status: 'completed',
-        })
-      );
-    });
-
-    it('sends SMS to customer when driver is en route', async () => {
-      mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
-
-      await mockSendSms({
-        to: mockBooking.customer.phone,
-        body: `Your driver Gregg is on the way! Track your ride: https://example.com/tracking/booking-ride-123`,
-      });
-
-      expect(mockSendSms).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: '+12035551234',
-          body: expect.stringContaining('on the way'),
-        })
-      );
-    });
-  });
-});
-
-describeSkip('Post-Ride Experience', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('feedback request is sent after ride completion', async () => {
-    mockSendSms.mockResolvedValueOnce({ sid: 'sms-feedback' });
-
-    // Simulate feedback request SMS
-    await mockSendSms({
-      to: mockBooking.customer.phone,
-      body: `Thanks for riding with Fairfield Airport Cars! How was your trip? Leave feedback: https://example.com/feedback/booking-ride-123`,
-    });
-
-    expect(mockSendSms).toHaveBeenCalledWith(
-      expect.objectContaining({
-        body: expect.stringContaining('feedback'),
-      })
-    );
-  });
-
-  it('customer can submit feedback', async () => {
-    const { POST } = await import('@/app/api/reviews/submit/route');
-
-    const request = new Request('http://localhost:3000/api/reviews/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      const response = await startTrackingPost(createRequest({
         bookingId: 'booking-ride-123',
-        rating: 5,
-        comment: 'Great service! Gregg was very professional.',
-      }),
+        driverId: 'gregg-123',
+      }));
+      const data = await response.json();
+
+      expect(response.status).toBe(409);
+      expect(data.error).toContain('already active');
     });
 
-    const response = await POST(request);
+    it('updates booking with driver assignment when starting tracking', async () => {
+      mockGetBooking.mockResolvedValueOnce(mockBooking);
+      mockGetActiveDriverSubscriptions.mockReturnValueOnce([]);
+      mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockInitializeDriverTracking.mockResolvedValueOnce(undefined);
 
-    expect(response.status).toBe(200);
+      await startTrackingPost(createRequest({
+        bookingId: 'booking-ride-123',
+        driverId: 'gregg-123',
+        driverName: 'Gregg',
+      }));
+
+      expect(mockUpdateBooking).toHaveBeenCalledWith('booking-ride-123', expect.objectContaining({
+        driverId: 'gregg-123',
+        driverName: 'Gregg',
+        status: 'confirmed',
+      }));
+    });
   });
 });
 
-describeSkip('Edge Cases & Error Handling', () => {
+describe('Booking Status Views', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('handles tracking request for non-existent booking', async () => {
-    mockGetBooking.mockResolvedValueOnce(null);
+  it('tracking shows correct status for confirmed booking', async () => {
+    mockGetBooking.mockResolvedValueOnce({ ...mockBooking, status: 'confirmed' });
+    mockGetDriver.mockResolvedValueOnce(mockDriver);
 
-    const { GET } = await import('@/app/api/tracking/[bookingId]/route');
-
-    const request = new Request('http://localhost:3000/api/tracking/non-existent', {
-      method: 'GET',
-    });
-
-    const response = await GET(request, { params: Promise.resolve({ bookingId: 'non-existent' }) });
-
-    expect(response.status).toBe(404);
-  });
-
-  it('handles driver location unavailable gracefully', async () => {
-    mockGetBooking.mockResolvedValueOnce(mockBooking);
-    mockGetDriverLocation.mockResolvedValueOnce(null);
-
-    const { GET } = await import('@/app/api/tracking/[bookingId]/route');
-
-    const request = new Request('http://localhost:3000/api/tracking/booking-ride-123', {
-      method: 'GET',
-    });
-
-    const response = await GET(request, { params: Promise.resolve({ bookingId: 'booking-ride-123' }) });
+    const response = await trackingGet(
+      createRequest({}) as any,
+      createParams('booking-ride-123')
+    );
     const data = await response.json();
 
-    // Should return booking info even if location unavailable
     expect(response.status).toBe(200);
-    expect(data.driverLocation).toBeNull();
+    expect(data.status).toBe('confirmed');
+  });
+
+  it('tracking shows correct status for in-progress booking', async () => {
+    mockGetBooking.mockResolvedValueOnce({ ...mockBooking, status: 'in-progress' });
+    mockGetDriver.mockResolvedValueOnce(mockDriver);
+
+    const response = await trackingGet(
+      createRequest({}) as any,
+      createParams('booking-ride-123')
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.status).toBe('in-progress');
+  });
+
+  it('tracking shows correct status for completed booking', async () => {
+    mockGetBooking.mockResolvedValueOnce({ ...mockBooking, status: 'completed' });
+    mockGetDriver.mockResolvedValueOnce(mockDriver);
+
+    const response = await trackingGet(
+      createRequest({}) as any,
+      createParams('booking-ride-123')
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.status).toBe('completed');
   });
 });
