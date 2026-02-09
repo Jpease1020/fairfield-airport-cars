@@ -1,113 +1,235 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * LocationInput Autocomplete Test
- * 
- * Tests that the autocomplete dropdown works correctly:
- * 1. Shows predictions when typing
- * 2. Allows selection of predictions
- * 3. Validates addresses are in service area
- * 4. Shows error for out-of-area addresses
+ * LocationInput Autocomplete E2E Tests
+ *
+ * CRITICAL: These tests verify the booking flow's address input works correctly.
+ * If autocomplete is broken, customers cannot book rides.
+ *
+ * Tests verify:
+ * 1. Google Places API returns successful responses (not errors)
+ * 2. Autocomplete dropdown actually appears with predictions
+ * 3. User can select a prediction and coordinates are populated
+ * 4. Service area validation works
  */
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
-test.describe('LocationInput Autocomplete', () => {
+test.describe('LocationInput Autocomplete - Critical Path', () => {
   test.beforeEach(async ({ page }) => {
+    // Listen for Google Places API errors
+    page.on('response', async (response) => {
+      const url = response.url();
+      if (url.includes('maps.googleapis.com/maps/api/place')) {
+        const status = response.status();
+        if (status !== 200) {
+          console.error(`Google Places API error: ${status} - ${url}`);
+        }
+      }
+    });
+
     await page.goto(BASE_URL);
+    await page.waitForLoadState('networkidle');
   });
 
-  test('autocomplete dropdown shows when typing in location input', async ({ page }) => {
-    // Wait for page to load
-    await page.waitForLoadState('networkidle');
+  test('CRITICAL: autocomplete dropdown appears when typing an address', async ({ page }) => {
+    // This is the most critical test - if this fails, booking is broken
 
-    // Find the pickup location input
+    // Find the pickup location input (the non-airport one)
     const pickupInput = page.getByTestId('quick-book-pickup-input');
-    await expect(pickupInput).toBeVisible();
+    await expect(pickupInput).toBeVisible({ timeout: 10000 });
 
-    // Type in the input to trigger autocomplete
-    await pickupInput.fill('Fairfield');
-    
-    // Wait a bit for debounce and API call
-    await page.waitForTimeout(500);
+    // Type a valid address in our service area
+    await pickupInput.click();
+    await pickupInput.fill('123 Main Street Fairfield');
 
-    // Check if dropdown appears (it should show predictions)
-    // The dropdown should be visible if predictions are returned
-    const dropdown = page.locator('[data-testid="location-predictions-dropdown"]').or(
-      page.locator('div').filter({ hasText: /Fairfield/i }).first()
-    );
+    // Wait for debounce (300ms) + API call
+    await page.waitForTimeout(1000);
 
-    // Check if any prediction items are visible
-    // We can't directly test the dropdown since it's dynamically rendered
-    // But we can verify the input is working by checking if it accepts input
-    await expect(pickupInput).toHaveValue(/Fairfield/);
+    // CRITICAL: Verify dropdown appears with predictions
+    const dropdown = page.getByTestId('location-predictions-dropdown');
+
+    // The dropdown MUST appear - if it doesn't, autocomplete is broken
+    await expect(dropdown).toBeVisible({ timeout: 5000 });
+
+    // Verify there are actual predictions in the dropdown
+    const predictions = dropdown.locator('div').filter({ hasText: /Fairfield|CT|Connecticut/i });
+    const predictionCount = await predictions.count();
+
+    expect(predictionCount).toBeGreaterThan(0);
+    console.log(`✅ Autocomplete working: ${predictionCount} predictions shown`);
   });
 
-  test('autocomplete allows selecting a prediction', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
+  test('CRITICAL: selecting a prediction populates coordinates', async ({ page }) => {
+    // Without coordinates, the booking form won't let users proceed
 
     const pickupInput = page.getByTestId('quick-book-pickup-input');
-    await expect(pickupInput).toBeVisible();
+    await expect(pickupInput).toBeVisible({ timeout: 10000 });
 
     // Type to trigger autocomplete
-    await pickupInput.fill('Fairfield Station');
-    await page.waitForTimeout(800); // Wait for API call and dropdown to appear
+    await pickupInput.click();
+    await pickupInput.fill('Fairfield Metro Station');
+    await page.waitForTimeout(1000);
 
-    // Try to find and click a prediction
-    // Since we can't guarantee what predictions Google returns, we'll verify
-    // that the input is interactive and can accept selections
-    await expect(pickupInput).toBeEditable();
-  });
+    // Wait for dropdown
+    const dropdown = page.getByTestId('location-predictions-dropdown');
+    await expect(dropdown).toBeVisible({ timeout: 5000 });
 
-  test('autocomplete validates service area for addresses', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
+    // Click the first prediction
+    const firstPrediction = dropdown.locator('div[class*="PredictionItem"]').first();
+    await firstPrediction.click();
 
-    const pickupInput = page.getByTestId('quick-book-pickup-input');
-    await expect(pickupInput).toBeVisible();
-
-    // Type an address that should be in service area
-    await pickupInput.fill('Fairfield Station, Fairfield, CT');
+    // Wait for place details API call
     await page.waitForTimeout(500);
 
-    // The input should accept valid addresses
-    await expect(pickupInput).toHaveValue(/Fairfield/);
+    // The input should now have a formatted address
+    const inputValue = await pickupInput.inputValue();
+    expect(inputValue.length).toBeGreaterThan(5);
+
+    // Verify the validation indicator shows success (green checkmark)
+    // This indicates coordinates were populated
+    const validationIndicator = page.locator('text=" ✓"').first();
+    await expect(validationIndicator).toBeVisible({ timeout: 3000 });
+
+    console.log(`✅ Address selected and coordinates populated: "${inputValue}"`);
   });
 
-  test('autocomplete shows error for out-of-area addresses', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
-
-    const pickupInput = page.getByTestId('quick-book-pickup-input');
-    await expect(pickupInput).toBeVisible();
-
-    // Type an address that should be rejected (outside service area)
-    // Note: This test depends on Google Places API returning the address
-    // and our validation catching it. The error message should appear.
-    await pickupInput.fill('Dallas, TX');
-    await page.waitForTimeout(1000); // Wait for API call and validation
-
-    // Check if error message appears (if address is selected and validated)
-    // The validation happens on selection, so we need to wait for that
-    const errorMessage = page.locator('text=/outside.*service area/i').or(
-      page.locator('text=/Address outside service area/i')
-    );
-
-    // Error might appear if user selects an out-of-area address
-    // This is a best-effort test since it depends on Google API responses
-    await expect(pickupInput).toBeVisible();
-  });
-
-  test('autocomplete works for airport inputs', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
+  test('CRITICAL: airport autocomplete shows airport results', async ({ page }) => {
+    // The airport input is restricted to airports only
 
     const dropoffInput = page.getByTestId('quick-book-dropoff-input');
-    await expect(dropoffInput).toBeVisible();
+    await expect(dropoffInput).toBeVisible({ timeout: 10000 });
 
     // Type an airport code
+    await dropoffInput.click();
     await dropoffInput.fill('JFK');
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1000);
 
-    // Should accept airport input
-    await expect(dropoffInput).toHaveValue(/JFK/);
+    // Dropdown should appear with airport results
+    const dropdown = page.getByTestId('location-predictions-dropdown');
+    await expect(dropdown).toBeVisible({ timeout: 5000 });
+
+    // Should show JFK airport
+    const jfkPrediction = dropdown.locator('div').filter({ hasText: /JFK|Kennedy/i });
+    await expect(jfkPrediction.first()).toBeVisible();
+
+    console.log('✅ Airport autocomplete working');
+  });
+
+  test('Google Places API does not return INVALID_REQUEST error', async ({ page }) => {
+    // This test specifically catches the bug where types: ['address', 'airport']
+    // causes Google to return INVALID_REQUEST
+
+    let apiErrorDetected = false;
+    let errorMessage = '';
+
+    // Listen for the autocomplete API response
+    page.on('response', async (response) => {
+      const url = response.url();
+      if (url.includes('maps.googleapis.com/maps/api/place/js/AutocompletionService')) {
+        try {
+          const text = await response.text();
+          if (text.includes('INVALID_REQUEST') || text.includes('error_message')) {
+            apiErrorDetected = true;
+            errorMessage = text.substring(0, 200);
+          }
+        } catch {
+          // Response might not be text
+        }
+      }
+    });
+
+    const pickupInput = page.getByTestId('quick-book-pickup-input');
+    await expect(pickupInput).toBeVisible({ timeout: 10000 });
+
+    // Type to trigger autocomplete
+    await pickupInput.click();
+    await pickupInput.fill('100 Main Street');
+    await page.waitForTimeout(1500);
+
+    // Check that no API error was detected
+    if (apiErrorDetected) {
+      console.error('❌ Google Places API returned error:', errorMessage);
+    }
+    expect(apiErrorDetected).toBe(false);
+
+    console.log('✅ No Google Places API errors detected');
   });
 });
 
+test.describe('LocationInput Service Area Validation', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(BASE_URL);
+    await page.waitForLoadState('networkidle');
+  });
+
+  test('shows error for addresses outside service area', async ({ page }) => {
+    const pickupInput = page.getByTestId('quick-book-pickup-input');
+    await expect(pickupInput).toBeVisible({ timeout: 10000 });
+
+    // Type an address far outside service area
+    await pickupInput.click();
+    await pickupInput.fill('123 Main Street Los Angeles');
+    await page.waitForTimeout(1000);
+
+    // Try to select if dropdown appears
+    const dropdown = page.getByTestId('location-predictions-dropdown');
+    const isDropdownVisible = await dropdown.isVisible().catch(() => false);
+
+    if (isDropdownVisible) {
+      const firstPrediction = dropdown.locator('div[class*="PredictionItem"]').first();
+      const isPredictionVisible = await firstPrediction.isVisible().catch(() => false);
+
+      if (isPredictionVisible) {
+        await firstPrediction.click();
+        await page.waitForTimeout(500);
+
+        // Should show service area error
+        const errorMessage = page.locator('text=/outside.*service area/i');
+        await expect(errorMessage).toBeVisible({ timeout: 3000 });
+
+        console.log('✅ Service area validation working');
+      }
+    }
+  });
+});
+
+test.describe('Complete Booking Form Location Flow', () => {
+  test('can fill both pickup and dropoff to enable fare calculation', async ({ page }) => {
+    await page.goto(BASE_URL);
+    await page.waitForLoadState('networkidle');
+
+    // Fill pickup (address)
+    const pickupInput = page.getByTestId('quick-book-pickup-input');
+    await pickupInput.click();
+    await pickupInput.fill('Fairfield Metro');
+    await page.waitForTimeout(1000);
+
+    let dropdown = page.getByTestId('location-predictions-dropdown');
+    if (await dropdown.isVisible()) {
+      await dropdown.locator('div[class*="PredictionItem"]').first().click();
+      await page.waitForTimeout(500);
+    }
+
+    // Fill dropoff (airport)
+    const dropoffInput = page.getByTestId('quick-book-dropoff-input');
+    await dropoffInput.click();
+    await dropoffInput.fill('JFK');
+    await page.waitForTimeout(1000);
+
+    dropdown = page.getByTestId('location-predictions-dropdown');
+    if (await dropdown.isVisible()) {
+      await dropdown.locator('div[class*="PredictionItem"]').first().click();
+      await page.waitForTimeout(500);
+    }
+
+    // Both inputs should show validation success
+    const checkmarks = page.locator('text=" ✓"');
+    const checkmarkCount = await checkmarks.count();
+
+    // Should have at least 2 checkmarks (pickup and dropoff validated)
+    expect(checkmarkCount).toBeGreaterThanOrEqual(2);
+
+    console.log('✅ Both locations validated, booking form ready');
+  });
+});
