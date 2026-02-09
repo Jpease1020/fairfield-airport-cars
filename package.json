@@ -24,6 +24,7 @@
     "firebase:emulators:seed": "node scripts/seed-cms-to-emulators.js",
     "deploy": "npm run build && vercel --prod",
     "deploy:preview": "npm run build && vercel",
+    "smoke:prod": "node scripts/smoke-test-production.mjs",
     "prepare": "husky"
   },
   "dependencies": {
