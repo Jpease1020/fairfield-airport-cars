@@ -326,13 +326,56 @@ function AdminBookingsPageContent() {
     ? bookings 
     : bookings.filter(b => b.status === selectedStatus);
 
-  const tableData = filteredBookings.map(booking => ({
+  // Helper to format relative time
+  const formatRelativeTime = (dateString: string | undefined) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+  };
+
+  // Helper to get confirmation status display
+  const getConfirmationStatus = (booking: Booking) => {
+    const confirmation = (booking as any).confirmation;
+    if (!confirmation) {
+      return { icon: '❓', text: 'No email', variant: 'default' as const };
+    }
+    if (confirmation.status === 'confirmed' && confirmation.confirmedAt) {
+      return { icon: '✅', text: 'Confirmed', variant: 'success' as const, time: formatRelativeTime(confirmation.confirmedAt) };
+    }
+    if (confirmation.sentAt) {
+      return { icon: '⏳', text: 'Pending', variant: 'warning' as const, time: formatRelativeTime(confirmation.sentAt) };
+    }
+    return { icon: '❓', text: 'Unknown', variant: 'default' as const };
+  };
+
+  const tableData = filteredBookings.map(booking => {
+    const confirmStatus = getConfirmationStatus(booking);
+
+    return {
     id: booking.id,
     customer: (
       <Stack spacing="xs">
         <Text variant="body" weight="medium">{booking.name}</Text>
         <Text variant="small" color="secondary">{booking.email}</Text>
         <Text variant="small" color="secondary">{booking.phone}</Text>
+      </Stack>
+    ),
+    emailStatus: (
+      <Stack spacing="xs" align="center">
+        <Badge variant={confirmStatus.variant}>
+          {confirmStatus.icon} {confirmStatus.text}
+        </Badge>
+        {confirmStatus.time && (
+          <Text variant="small" color="secondary">{confirmStatus.time}</Text>
+        )}
       </Stack>
     ),
     route: (
@@ -432,7 +475,8 @@ function AdminBookingsPageContent() {
         )}
       </Stack>
     )
-  }));
+  };
+  });
 
   if (loading) {
     return (
@@ -562,6 +606,7 @@ function AdminBookingsPageContent() {
             data={tableData}
             columns={[
               { key: 'customer', label: cmsData?.['table-columns-customer'] || 'Customer'},
+              { key: 'emailStatus', label: cmsData?.['table-columns-email-status'] || 'Email'},
               { key: 'route', label: cmsData?.['table-columns-route'] || 'Route'},
               { key: 'dateTime', label: cmsData?.['table-columns-date-time'] || 'Date & Time'},
               { key: 'status', label: cmsData?.['table-columns-status'] || 'Status'},

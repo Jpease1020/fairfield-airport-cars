@@ -5,7 +5,7 @@ import { createHash } from 'crypto';
 import { randomBytes } from 'crypto';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getBooking } from '@/lib/services/booking-service';
-import { sendBookingVerificationEmail } from '@/lib/services/email-service';
+import { sendBookingVerificationEmail, sendDriverNotificationEmail } from '@/lib/services/email-service';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
 import { classifyTrip } from '@/lib/services/service-area-validation';
@@ -301,6 +301,17 @@ export async function POST(request: Request) {
         dropoffAddress: trip.dropoff.address,
         pickupDateTime: trip.pickupDateTime.toISOString(),
       });
+    }
+
+    // Send driver notification email (separate from customer email, formatted for driver use)
+    try {
+      console.log('📧 [BOOKING SUBMIT] Sending driver notification email...');
+      await sendDriverNotificationEmail(bookingRecord as any);
+      console.log('✅ [BOOKING SUBMIT] Driver notification email sent successfully');
+    } catch (driverEmailError) {
+      // Don't fail booking creation if driver email fails
+      console.error('❌ [BOOKING SUBMIT] Failed to send driver notification email:', driverEmailError);
+      console.warn('⚠️ [BOOKING SUBMIT] Booking created but driver email not sent');
     }
 
     // Send push notification to driver (Gregg) about new booking

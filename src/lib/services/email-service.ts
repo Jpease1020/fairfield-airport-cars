@@ -423,6 +423,247 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
   }
 }
 
+/**
+ * Send a driver notification email to Gregg with all booking details
+ * This is a separate email from the customer confirmation, formatted for driver use
+ */
+export async function sendDriverNotificationEmail(booking: Booking) {
+  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
+    console.warn('❌ [EMAIL SERVICE] Cannot send driver notification email - credentials not configured');
+    return;
+  }
+
+  const transporter = getTransporter();
+  const businessSettings = await cmsFlattenedService.getBusinessSettings();
+
+  // Safely parse pickupDateTime
+  let pickupDate: Date;
+  const pickupDateTimeRaw: any = booking.trip.pickupDateTime;
+
+  if (pickupDateTimeRaw instanceof Date) {
+    pickupDate = pickupDateTimeRaw;
+  } else if (typeof pickupDateTimeRaw === 'string') {
+    pickupDate = new Date(pickupDateTimeRaw);
+  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw) {
+    pickupDate = pickupDateTimeRaw.toDate();
+  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw) {
+    pickupDate = new Date(pickupDateTimeRaw.seconds * 1000);
+  } else {
+    pickupDate = pickupDateTimeRaw ? new Date(pickupDateTimeRaw) : new Date();
+  }
+
+  if (isNaN(pickupDate.getTime())) {
+    console.error('❌ [EMAIL SERVICE] Invalid pickupDateTime for driver notification:', pickupDateTimeRaw);
+    pickupDate = new Date();
+  }
+
+  // Format date/time for easy reading
+  const formatDate = (date: Date): string => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const formatTime = (date: Date): string => {
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  // Get booking details with fallbacks
+  const pickupAddress = booking.trip?.pickup?.address || booking.pickupLocation || 'Not specified';
+  const dropoffAddress = booking.trip?.dropoff?.address || booking.dropoffLocation || 'Not specified';
+  const customerName = booking.customer?.name || booking.name || 'Not provided';
+  const customerEmail = booking.customer?.email || booking.email || 'Not provided';
+  const customerPhone = booking.customer?.phone || booking.phone || 'Not provided';
+  const notes = booking.customer?.notes || booking.notes || '';
+  const fare = booking.fare || booking.trip?.fare || 0;
+  const tipAmount = booking.tipAmount || booking.trip?.tipAmount || 0;
+  const totalFare = fare + tipAmount;
+
+  // Flight info
+  const flightInfo = booking.flightInfo || booking.trip?.flightInfo;
+  const hasFlightInfo = flightInfo && (flightInfo.airline || flightInfo.flightNumber);
+
+  // Driver email (Gregg)
+  const driverEmail = EMAIL_CONFIG.verifiedSender; // rides@fairfieldairportcar.com
+
+  const emailSubject = `🚗 NEW RIDE: ${formatDate(pickupDate)} at ${formatTime(pickupDate)}`;
+
+  const emailText = `
+═══════════════════════════════════════════════════
+          🚗 NEW BOOKING NOTIFICATION
+═══════════════════════════════════════════════════
+
+📅 DATE & TIME
+──────────────────────────────────────────────────
+Date: ${formatDate(pickupDate)}
+Time: ${formatTime(pickupDate)}
+
+📍 ROUTE
+──────────────────────────────────────────────────
+PICKUP:  ${pickupAddress}
+DROPOFF: ${dropoffAddress}
+
+👤 CUSTOMER DETAILS
+──────────────────────────────────────────────────
+Name:  ${customerName}
+Phone: ${customerPhone}
+Email: ${customerEmail}
+
+${hasFlightInfo ? `✈️ FLIGHT INFO
+──────────────────────────────────────────────────
+Airline: ${flightInfo?.airline || 'N/A'}
+Flight#: ${flightInfo?.flightNumber || 'N/A'}
+Terminal: ${flightInfo?.terminal || 'N/A'}
+Arrival: ${flightInfo?.arrivalTime || 'N/A'}
+` : ''}
+${notes ? `📝 SPECIAL NOTES
+──────────────────────────────────────────────────
+${notes}
+` : ''}
+💰 PAYMENT
+──────────────────────────────────────────────────
+Fare: $${fare.toFixed(2)}
+${tipAmount > 0 ? `Tip: $${tipAmount.toFixed(2)}` : ''}
+TOTAL: $${totalFare.toFixed(2)}
+
+═══════════════════════════════════════════════════
+Booking ID: ${booking.id}
+Booked at: ${new Date().toLocaleString('en-US')}
+═══════════════════════════════════════════════════
+`;
+
+  const emailHtml = `
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc;">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h1 style="margin: 0; font-size: 24px;">🚗 NEW BOOKING</h1>
+        <p style="margin: 8px 0 0 0; font-size: 18px; opacity: 0.9;">${formatDate(pickupDate)} at ${formatTime(pickupDate)}</p>
+      </div>
+
+      <!-- Route Section -->
+      <div style="background: white; padding: 20px; margin: 0; border-left: 4px solid #10b981;">
+        <h2 style="color: #059669; margin: 0 0 12px 0; font-size: 16px;">📍 ROUTE</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280; width: 80px;"><strong>PICKUP:</strong></td>
+            <td style="padding: 8px 0; color: #111827; font-size: 15px;">${pickupAddress}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;"><strong>DROPOFF:</strong></td>
+            <td style="padding: 8px 0; color: #111827; font-size: 15px;">${dropoffAddress}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Customer Section -->
+      <div style="background: #f1f5f9; padding: 20px; margin: 0; border-left: 4px solid #3b82f6;">
+        <h2 style="color: #1d4ed8; margin: 0 0 12px 0; font-size: 16px;">👤 CUSTOMER</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280; width: 80px;"><strong>Name:</strong></td>
+            <td style="padding: 8px 0; color: #111827; font-size: 15px;">${customerName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;"><strong>Phone:</strong></td>
+            <td style="padding: 8px 0; color: #111827; font-size: 15px;"><a href="tel:${customerPhone}" style="color: #2563eb; text-decoration: none;">${customerPhone}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;"><strong>Email:</strong></td>
+            <td style="padding: 8px 0; color: #111827; font-size: 15px;"><a href="mailto:${customerEmail}" style="color: #2563eb; text-decoration: none;">${customerEmail}</a></td>
+          </tr>
+        </table>
+      </div>
+
+      ${hasFlightInfo ? `
+      <!-- Flight Info Section -->
+      <div style="background: white; padding: 20px; margin: 0; border-left: 4px solid #f59e0b;">
+        <h2 style="color: #d97706; margin: 0 0 12px 0; font-size: 16px;">✈️ FLIGHT INFO</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280; width: 80px;"><strong>Airline:</strong></td>
+            <td style="padding: 8px 0; color: #111827;">${flightInfo?.airline || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;"><strong>Flight #:</strong></td>
+            <td style="padding: 8px 0; color: #111827; font-weight: bold;">${flightInfo?.flightNumber || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;"><strong>Terminal:</strong></td>
+            <td style="padding: 8px 0; color: #111827;">${flightInfo?.terminal || 'N/A'}</td>
+          </tr>
+          ${flightInfo?.arrivalTime ? `
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;"><strong>Arrival:</strong></td>
+            <td style="padding: 8px 0; color: #111827;">${flightInfo.arrivalTime}</td>
+          </tr>
+          ` : ''}
+        </table>
+      </div>
+      ` : ''}
+
+      ${notes ? `
+      <!-- Notes Section -->
+      <div style="background: #fef3c7; padding: 20px; margin: 0; border-left: 4px solid #f59e0b;">
+        <h2 style="color: #92400e; margin: 0 0 12px 0; font-size: 16px;">📝 SPECIAL NOTES</h2>
+        <p style="margin: 0; color: #78350f; font-size: 15px; white-space: pre-wrap;">${notes}</p>
+      </div>
+      ` : ''}
+
+      <!-- Payment Section -->
+      <div style="background: #ecfdf5; padding: 20px; margin: 0; border-left: 4px solid #10b981;">
+        <h2 style="color: #059669; margin: 0 0 12px 0; font-size: 16px;">💰 PAYMENT</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280;">Fare:</td>
+            <td style="padding: 4px 0; color: #111827; text-align: right;">$${fare.toFixed(2)}</td>
+          </tr>
+          ${tipAmount > 0 ? `
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280;">Tip:</td>
+            <td style="padding: 4px 0; color: #111827; text-align: right;">$${tipAmount.toFixed(2)}</td>
+          </tr>
+          ` : ''}
+          <tr style="border-top: 2px solid #10b981;">
+            <td style="padding: 12px 0 4px 0; color: #059669; font-weight: bold; font-size: 18px;">TOTAL:</td>
+            <td style="padding: 12px 0 4px 0; color: #059669; font-weight: bold; font-size: 18px; text-align: right;">$${totalFare.toFixed(2)}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px;">
+        <p style="margin: 0;">Booking ID: <strong style="color: #e2e8f0;">${booking.id}</strong></p>
+        <p style="margin: 8px 0 0 0;">Booked at ${new Date().toLocaleString('en-US')}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const result = await transporter.sendMail({
+      from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
+      to: driverEmail,
+      subject: emailSubject,
+      text: emailText,
+      html: emailHtml
+    });
+
+    console.log('✅ [EMAIL SERVICE] Driver notification email sent successfully');
+    console.log(`   Message ID: ${result.messageId}`);
+    console.log(`   To: ${driverEmail}`);
+  } catch (error) {
+    console.error('❌ [EMAIL SERVICE] Failed to send driver notification email');
+    console.error(`   Error: ${error instanceof Error ? error.message : String(error)}`);
+    // Don't throw - driver notification is non-critical
+  }
+}
+
 export async function sendEnhancedTestEmail(to: string, bookingId: string) {
   if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
     console.log('⚠️ Email service not configured, logging test email instead');
