@@ -62,6 +62,7 @@ export async function POST(request: Request) {
       const bookingResult = await createBookingAtomic({
         ...bookingData,
         squareOrderId: paymentResult.orderId,
+        squarePaymentId: paymentResult.paymentId, // Store payment ID for refunds
         depositPaid: true,
         depositAmount: amount / 100, // Convert cents to dollars
         tipAmount: tipAmount > 0 ? tipAmount / 100 : 0, // Convert cents to dollars

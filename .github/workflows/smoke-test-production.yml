@@ -1,0 +1,47 @@
+name: Production Smoke Test
+
+# Run after Vercel deployment completes
+on:
+  deployment_status:
+  # Also allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    # Only run when deployment succeeds and it's production
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment == 'Production')
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Wait for deployment to be fully ready
+        run: sleep 30
+
+      - name: Run smoke tests
+        id: smoke-test
+        run: node scripts/smoke-test-production.mjs
+        env:
+          SMOKE_TEST_URL: https://www.fairfieldairportcars.com
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "🚨 SMOKE TESTS FAILED!"
+          echo "Production may have issues after the latest deployment."
+          echo "Check the logs above for details."
+          echo ""
+          echo "Recommended actions:"
+          echo "1. Check https://www.fairfieldairportcars.com manually"
+          echo "2. Review the latest commit for issues"
+          echo "3. Consider rolling back if critical functionality is broken"

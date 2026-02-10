@@ -31,6 +31,7 @@ export const viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
+  // eslint-disable-next-line fairfield/no-hardcoded-colors -- viewport themeColor requires raw hex
   themeColor: '#2563eb',
 };
 
@@ -59,7 +60,6 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
         <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-152x152.png" />
-        {/* Splash screens for iOS */}
         <meta name="format-detection" content="telephone=no" />
       </head>
       <body>
