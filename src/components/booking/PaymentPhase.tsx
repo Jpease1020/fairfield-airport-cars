@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, StatusMessage, Box } from '@/design/ui';
+import { Container, Stack, StatusMessage, Box, Modal } from '@/design/ui';
 import { PaymentSummary } from './payment/PaymentSummary';
 import { PaymentForm } from './payment/PaymentForm';
 import { PaymentNavigation } from './payment/PaymentNavigation';
@@ -9,6 +9,7 @@ import { PaymentNavigation } from './payment/PaymentNavigation';
 import { useBooking } from '@/providers/BookingProvider';
 import { Button, Text } from '@/design/ui';
 import styled from 'styled-components';
+import { colors } from '@/design/system/tokens/tokens';
 
 const DisabledFormWrapper = styled(Box)`
   opacity: 0.5;
@@ -17,6 +18,44 @@ const DisabledFormWrapper = styled(Box)`
 
 const ErrorWrapper = styled.div`
   width: 100%;
+`;
+
+const ErrorModalContent = styled.div`
+  text-align: center;
+`;
+
+const ErrorIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 1rem;
+`;
+
+const SuggestedTimesBox = styled.div`
+  background-color: ${colors.warning[50]};
+  border: 2px solid ${colors.warning[400]};
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+`;
+
+const SuggestedTimesList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+`;
+
+const TimeChip = styled.span`
+  background-color: ${colors.primary[100]};
+  color: ${colors.primary[700]};
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+`;
+
+const ModalHelperText = styled.div`
+  margin-top: 1rem;
 `;
 
 // Component to handle error message scrolling and prominence
@@ -71,12 +110,48 @@ export function PaymentPhase({
     setError
   } = useBooking();
   
-  // Debug: Log error state changes
+  // State for error modal
+  const [showErrorModal, setShowErrorModal] = React.useState(false);
+  const [errorModalContent, setErrorModalContent] = React.useState<{
+    title: string;
+    message: string;
+    suggestedTimes?: string[];
+  } | null>(null);
+
+  // Check if error is a time slot conflict and show modal
   React.useEffect(() => {
     if (error) {
       console.error('🚨 [PAYMENT PHASE] Error displayed:', error);
+
+      // Check if this is a time slot conflict error
+      const isTimeConflict = error.match(/time slot|already booked|conflict/i);
+
+      if (isTimeConflict) {
+        // Extract suggested times from the error message
+        const timesMatch = error.match(/(\d{1,2}:\d{2}-\d{1,2}:\d{2}(?:\s*,\s*\d{1,2}:\d{2}-\d{1,2}:\d{2})*)/g);
+        const suggestedTimes = timesMatch ? timesMatch[0].split(/\s*,\s*/) : [];
+
+        setErrorModalContent({
+          title: '⚠️ Time Slot Unavailable',
+          message: 'The time you selected is already booked. Please go back and choose a different time.',
+          suggestedTimes: suggestedTimes.length > 0 ? suggestedTimes : undefined
+        });
+        setShowErrorModal(true);
+      }
     }
   }, [error]);
+
+  // Close modal and go back to change time
+  const handleGoBackToChangeTime = () => {
+    setShowErrorModal(false);
+    setError(null);
+    goToPreviousPhase();
+  };
+
+  // Close modal but stay on page
+  const handleCloseModal = () => {
+    setShowErrorModal(false);
+  };
   
   // Extract data from formData
   const tripData = formData.trip;
@@ -221,6 +296,54 @@ export function PaymentPhase({
           validationErrors={validation?.errors || []}
         />
       </Stack>
+
+      {/* Error Modal for Time Slot Conflicts */}
+      <Modal
+        isOpen={showErrorModal}
+        title={errorModalContent?.title || 'Error'}
+        onClose={handleCloseModal}
+        size="md"
+        footer={
+          <Stack direction="horizontal" spacing="md">
+            <Button
+              variant="outline"
+              onClick={handleCloseModal}
+              text="Close"
+            />
+            <Button
+              variant="primary"
+              onClick={handleGoBackToChangeTime}
+              text="Go Back & Change Time"
+            />
+          </Stack>
+        }
+      >
+        <ErrorModalContent>
+          <ErrorIcon>🚫</ErrorIcon>
+          <Text size="lg" weight="medium">
+            {errorModalContent?.message}
+          </Text>
+
+          {errorModalContent?.suggestedTimes && errorModalContent.suggestedTimes.length > 0 && (
+            <SuggestedTimesBox>
+              <Text size="md" weight="bold" color="warning" cmsId="time-conflict-suggested-times-label">
+                Suggested Available Times:
+              </Text>
+              <SuggestedTimesList>
+                {errorModalContent.suggestedTimes.map((time, index) => (
+                  <TimeChip key={index}>{time}</TimeChip>
+                ))}
+              </SuggestedTimesList>
+            </SuggestedTimesBox>
+          )}
+
+          <ModalHelperText>
+            <Text size="sm" color="secondary" cmsId="time-conflict-helper-text">
+              Please go back and select a different pickup time to complete your booking.
+            </Text>
+          </ModalHelperText>
+        </ErrorModalContent>
+      </Modal>
     </Container>
   );
 }
