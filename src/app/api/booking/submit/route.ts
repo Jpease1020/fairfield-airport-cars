@@ -292,6 +292,14 @@ export async function POST(request: Request) {
         status: 'warning',
         bookingId: bookingResult.bookingId,
         reason: emailWarning,
+        // Include customer info for debugging
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phone,
+        // Include trip info
+        pickupAddress: trip.pickup.address,
+        dropoffAddress: trip.dropoff.address,
+        pickupDateTime: trip.pickupDateTime.toISOString(),
       });
     }
 
@@ -342,10 +350,18 @@ export async function POST(request: Request) {
       stage: 'submit',
       status: 'failed',
       reason: errorMessage,
+      // Include customer info for debugging
+      customerName: customer?.name,
+      customerEmail: customer?.email,
+      customerPhone: customer?.phone,
+      // Include trip info
+      pickupAddress: trip?.pickup?.address,
+      dropoffAddress: trip?.dropoff?.address,
+      pickupDateTime: trip?.pickupDateTime?.toISOString?.() || String(trip?.pickupDateTime),
     });
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Failed to create booking',
-      details: errorMessage 
+      details: errorMessage
     }, { status: 500 });
   }
 }

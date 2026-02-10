@@ -11,6 +11,7 @@ import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
 import { getAllCMSDataCached } from '@/lib/services/cms-cache';
 import { BookingProvider } from '@/providers/BookingProvider';
 import { PWAProvider } from '@/components/pwa/PWAProvider';
+import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
 
 import { AppContent } from './AppContent';
 import { NavigationWrapper } from '@/components/app/NavigationWrapper';
@@ -51,6 +52,15 @@ export default async function RootLayout({
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
         <meta name="keywords" content={metadata.keywords} />
+        {/* Apple PWA support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Airport Cars" />
+        <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-152x152.png" />
+        {/* Splash screens for iOS */}
+        <meta name="format-detection" content="telephone=no" />
       </head>
       <body>
         <StyledComponentsRegistry>
@@ -70,8 +80,7 @@ export default async function RootLayout({
                             </Container>
                             
                             <Footer data-testid="layout-footer" />
-                            {/* PWA Install Banner - Hidden until functionality is verified */}
-                            {/* <PWAInstallBanner /> */}
+                            <PWAInstallBanner />
                           </InteractionModeProvider>
                         </AdminProvider>
                       </AccessibilityEnhancer>
