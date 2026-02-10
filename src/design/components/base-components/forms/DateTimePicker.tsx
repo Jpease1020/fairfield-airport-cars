@@ -109,6 +109,13 @@ const HelperText = styled.div`
   color: ${colors.text.secondary};
 `;
 
+const AdjustmentMessage = styled.div`
+  margin-top: ${spacing.xs};
+  font-size: ${fontSize.xs};
+  color: ${colors.warning[600]};
+  font-weight: 500;
+`;
+
 const IconWrapper = styled.span`
   display: flex;
   align-items: center;
@@ -183,6 +190,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
   // Detect if device is mobile (iOS Safari, Android Chrome, etc.)
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  // Track when time has been auto-adjusted
+  const [timeAdjusted, setTimeAdjusted] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -259,14 +269,23 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     
     // If the new date is the minimum date, ensure time is at least the minimum time
     let timeToUse = timeValue || minDateTime.toTimeString().slice(0, 5); // HH:mm format
+    let wasAdjusted = false;
     if (isNewDateMinDate && timeToUse) {
       const minTime = minDateTime.toTimeString().slice(0, 5);
       // If current time is before minimum time, use minimum time
       if (timeToUse < minTime) {
         timeToUse = minTime;
+        wasAdjusted = true;
       }
     }
-    
+
+    // Show adjustment message if time was auto-corrected
+    if (wasAdjusted) {
+      setTimeAdjusted(true);
+      // Clear the message after 5 seconds
+      setTimeout(() => setTimeAdjusted(false), 5000);
+    }
+
     // Validate the combined date/time
     const isValid = validateDateTime(newDate, timeToUse);
     
@@ -303,14 +322,23 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     
     // If the selected date is the minimum date, enforce minimum time
     let timeToUse = newTime;
+    let wasAdjusted = false;
     if (isSelectedDateMinDate) {
       const minTime = minDateTime.toTimeString().slice(0, 5); // HH:mm format
       // If the selected time is before the minimum time, use the minimum time
       if (newTime < minTime) {
         timeToUse = minTime;
+        wasAdjusted = true;
       }
     }
-    
+
+    // Show adjustment message if time was auto-corrected
+    if (wasAdjusted) {
+      setTimeAdjusted(true);
+      // Clear the message after 5 seconds
+      setTimeout(() => setTimeAdjusted(false), 5000);
+    }
+
     // Validate the combined date/time
     const isValid = validateDateTime(dateToUse, timeToUse);
     
@@ -500,6 +528,13 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <HelperText>
           Please book at least 24 hours in advance
         </HelperText>
+      )}
+
+      {/* Show message when time was auto-adjusted to 24 hours from now */}
+      {timeAdjusted && (
+        <AdjustmentMessage role="status" aria-live="polite" data-testid={`${id}-adjustment-message`}>
+          Adjusted to earliest available time (24 hours from now)
+        </AdjustmentMessage>
       )}
     </DatePickerWrapper>
   );

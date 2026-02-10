@@ -11,6 +11,14 @@ export interface BookingAttemptEntry {
   reason?: string;
   bookingId?: string | null;
   payload?: Record<string, unknown>;
+  // Customer info for easier debugging
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  // Trip info
+  pickupAddress?: string;
+  dropoffAddress?: string;
+  pickupDateTime?: string;
 }
 
 const ATTEMPTS_COLLECTION = 'booking_attempts';

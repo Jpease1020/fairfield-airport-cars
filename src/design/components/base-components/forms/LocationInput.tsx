@@ -377,11 +377,13 @@ export const LocationInput: React.FC<LocationInputProps> = ({
 
             // Reject if it's a city/region and not a valid address
             if (isCityOrRegion && !isAddress) {
-              // Don't select - just show error or clear
-              onChange(prediction.description);
+              // Clear the selection and show error message
+              onChange('');
               if (onCoordsChange) {
                 onCoordsChange(null);
               }
+              setValidationError('Please enter a specific address, not a city or region');
+              setTimeout(() => setValidationError(null), 8000);
               return;
             }
 
