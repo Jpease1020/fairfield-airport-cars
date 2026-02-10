@@ -27,11 +27,9 @@ export const AdminNavigation: React.FC = () => {
   const navigationItems: NavigationItem[] = [
     { name: 'Dashboard', href: '/admin', current: currentPath === '/admin' },
     { name: 'Bookings', href: '/admin/bookings', current: currentPath === '/admin/bookings' },
-    { name: 'Calendar', href: '/admin/calendar', current: currentPath === '/admin/calendar' },
-    { name: 'Drivers', href: '/admin/drivers', current: currentPath === '/admin/drivers' },
-    { name: 'Comments', href: '/admin/comments', current: currentPath === '/admin/comments' },
-    { name: 'CMS', href: '/admin/cms', current: currentPath.startsWith('/admin/cms') },
-    { name: 'Costs', href: '/admin/costs', current: currentPath === '/admin/costs' },
+    { name: 'Payments', href: '/admin/payments', current: currentPath === '/admin/payments' },
+    { name: 'Schedule', href: '/admin/schedules', current: currentPath.startsWith('/admin/schedules') },
+    { name: 'Tracking', href: '/admin/driver/location', current: currentPath.startsWith('/admin/driver') },
   ];
 
   const logo = (

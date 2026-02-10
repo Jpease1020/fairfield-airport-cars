@@ -218,12 +218,13 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           {
             input: input,
             componentRestrictions: { country: 'us' },
-            ...(restrictToAirports 
-              ? { types: ['airport'] } 
-              : { 
-                  // Allow both addresses AND airports, but restrict to service area for addresses
-                  types: ['address', 'airport'], // Show both addresses and airports
-                  bounds: serviceAreaBounds // Strict bounds for addresses (airports can be outside bounds)
+            ...(restrictToAirports
+              ? { types: ['airport'] }
+              : {
+                  // Don't specify types - Google doesn't allow mixing 'address' with other types
+                  // Just use bounds to prefer results in our service area
+                  // We'll filter out cities/regions client-side
+                  bounds: serviceAreaBounds
                 }
             ),
           },

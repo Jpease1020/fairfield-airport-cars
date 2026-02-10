@@ -13,14 +13,18 @@ function isValidSignature(signatureHeader: string | null, body: string, url: str
   const hmac = crypto.createHmac('sha256', signatureKey);
   hmac.update(url + body);
   const hash = hmac.digest('base64');
-  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signatureHeader));
+  const hashBuffer = Buffer.from(hash);
+  const signatureBuffer = Buffer.from(signatureHeader);
+  // timingSafeEqual requires equal length buffers
+  if (hashBuffer.length !== signatureBuffer.length) return false;
+  return crypto.timingSafeEqual(hashBuffer, signatureBuffer);
 }
 
 export async function POST(req: Request) {
   const rawBody = await req.text(); // need raw string for signature validation
   const signatureHeader = req.headers.get('x-square-hmacsha256-signature');
 
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/square-webhook`;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/square-webhook`;
 
   if (!isValidSignature(signatureHeader, rawBody, url)) {
     console.error('Invalid Square webhook signature');

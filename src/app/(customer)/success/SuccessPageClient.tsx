@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { 
+import {
   GridSection,
   LoadingSpinner,
   Text,
@@ -13,6 +13,8 @@ import {
   // TextComponentChildren,
 } from '@/design/ui';
 import { Booking } from '@/types/booking';
+import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
+import { isRunningAsPWA } from '@/lib/pwa';
 
 interface SuccessPageClientProps {
   cmsData?: any;
@@ -28,6 +30,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [showPWAPrompt, setShowPWAPrompt] = useState(false);
 
   const fetchBookingDetails = useCallback(async () => {
     if (!bookingId) {
@@ -53,6 +56,15 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
   useEffect(() => {
     setIsClient(true);
     fetchBookingDetails();
+
+    // Show PWA prompt after successful booking load (slight delay for better UX)
+    const timer = setTimeout(() => {
+      if (!isRunningAsPWA()) {
+        setShowPWAPrompt(true);
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [bookingId, fetchBookingDetails]);
 
   const successActions = [
@@ -246,7 +258,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
                 {pageCmsData?.['success-emergencyContact-description'] || 'Contact us anytime if you have questions or need to make changes'}
               </Text>
             </Stack>
-          
+
             <Stack spacing="md" align="center">
               <Text data-testid="success-emergency-phone" cmsId="success-emergencyContact-phone">{pageCmsData?.['success-emergencyContact-phone'] || '💬 Text support for phone number'}</Text>
               <Text data-testid="success-emergency-message" cmsId="success-emergencyContact-message">{pageCmsData?.['success-emergencyContact-message'] || 'Save this number! Our driver is available to assist you.'}</Text>
@@ -254,6 +266,15 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
           </Stack>
         </Container>
       </GridSection>
+
+      {/* PWA Install Prompt - shows after successful booking */}
+      {showPWAPrompt && (
+        <PWAInstallBanner
+          variant="post-booking"
+          forceShow={true}
+          onDismiss={() => setShowPWAPrompt(false)}
+        />
+      )}
     </>
   );
 }
