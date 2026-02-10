@@ -2,25 +2,24 @@ import nodemailer from 'nodemailer';
 import { createEvent } from 'ics';
 import { Booking } from '@/types/booking';
 import { cmsFlattenedService } from './cms-service';
+import { EMAIL_CONFIG } from '@/utils/constants';
 
 const {
   EMAIL_HOST,
   EMAIL_PORT,
   EMAIL_USER,
   EMAIL_PASS,
-  EMAIL_FROM = 'no-reply@fairfieldairportcars.com',
 } = process.env;
 
-// Override EMAIL_FROM to use the verified sender in SendGrid
-// Must match verified sender: rides@fairfieldairportcar.com (without 's')
-const VERIFIED_EMAIL_FROM = 'rides@fairfieldairportcar.com';
+// Use verified sender from constants (must match SendGrid verified sender)
+const VERIFIED_EMAIL_FROM = EMAIL_CONFIG.verifiedSender;
 
 console.log('🔧 Email service environment check:');
   console.log(`   EMAIL_HOST: ${EMAIL_HOST ? '✅ Set' : '❌ Missing'}`);
   console.log(`   EMAIL_PORT: ${EMAIL_PORT ? '✅ Set' : '❌ Missing'}`);
   console.log(`   EMAIL_USER: ${EMAIL_USER ? '✅ Set' : '❌ Missing'}`);
   console.log(`   EMAIL_PASS: ${EMAIL_PASS ? '✅ Set' : '❌ Missing'}`);
-  console.log(`   EMAIL_FROM: ${EMAIL_FROM}`);
+  console.log(`   VERIFIED_FROM: ${VERIFIED_EMAIL_FROM}`);
 
 if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
   console.warn('Email environment variables are not fully configured. Confirmation emails will not be sent.');
@@ -131,7 +130,7 @@ export async function sendConfirmationEmail(booking: Booking) {
     title: 'Airport Car Service',
     description: `Ride from ${pickupAddress} to ${dropoffAddress}`,
     location: pickupAddress,
-    organizer: { name: businessSettings?.company?.name || 'Fairfield Airport Cars', email: EMAIL_FROM },
+    organizer: { name: businessSettings?.company?.name || 'Fairfield Airport Cars', email: VERIFIED_EMAIL_FROM },
   };
 
   // Check if user has already added calendar event
@@ -195,7 +194,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
   const mailOptions = {
     from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
     to: customerEmail,
-    bcc: ['rides@fairfieldairportcar.com'],
+    bcc: EMAIL_CONFIG.bccRecipients,
     subject: `Your Ride Confirmation - ${booking.id}`,
     text: emailText,
     html: `
@@ -405,7 +404,7 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
     const result = await transporter.sendMail({
       from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
       to: customerEmail,
-      bcc: ['rides@fairfieldairportcar.com'],
+      bcc: EMAIL_CONFIG.bccRecipients,
       subject: `Action Required: Confirm your booking (${booking.id})`,
       text: emailText,
       html
