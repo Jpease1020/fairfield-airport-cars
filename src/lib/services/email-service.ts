@@ -11,8 +11,9 @@ const {
   EMAIL_FROM = 'no-reply@fairfieldairportcars.com',
 } = process.env;
 
-// Override EMAIL_FROM to use the verified address (note: 'cars' not 'car')
-const VERIFIED_EMAIL_FROM = 'no-reply@fairfieldairportcars.com';
+// Override EMAIL_FROM to use the verified sender in SendGrid
+// Must match verified sender: rides@fairfieldairportcar.com (without 's')
+const VERIFIED_EMAIL_FROM = 'rides@fairfieldairportcar.com';
 
 console.log('🔧 Email service environment check:');
   console.log(`   EMAIL_HOST: ${EMAIL_HOST ? '✅ Set' : '❌ Missing'}`);
