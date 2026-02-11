@@ -61,6 +61,8 @@ export interface Booking {
   depositAmount?: number;
   reminderSent?: boolean;
   onMyWaySent?: boolean;
+  // SMS Marketing opt-in (TCPA compliance)
+  smsOptIn?: boolean;
   // Exception booking fields (for VIP exceptions that bypass service area)
   requiresApproval?: boolean;
   exceptionReason?: string;
@@ -394,11 +396,13 @@ export interface MarketingCustomer {
   lastBookingDate: Date | null;
   totalSpent: number;
   isActive: boolean; // Booked in last 90 days
+  smsOptIn: boolean; // TCPA compliance: only customers who opted in
 }
 
 /**
  * Get unique customers from bookings for marketing campaigns.
  * Deduplicates by phone number and calculates aggregate stats.
+ * Only returns customers who have opted in to SMS marketing (TCPA compliance).
  */
 export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
   try {
@@ -409,6 +413,7 @@ export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
       name: string;
       phone: string;
       email: string;
+      smsOptIn: boolean;
       bookings: Booking[];
     }>();
 
@@ -425,16 +430,20 @@ export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
       const existing = customerMap.get(normalizedPhone);
       if (existing) {
         existing.bookings.push(booking);
-        // Use most recent name/email
+        // Use most recent name/email/smsOptIn (latest booking takes precedence)
         if (booking.createdAt > existing.bookings[0].createdAt) {
           existing.name = booking.name;
           existing.email = booking.email;
+          // If they opted in on any booking, consider them opted in
+          // If they opted out on a later booking, respect that
+          existing.smsOptIn = booking.smsOptIn ?? existing.smsOptIn;
         }
       } else {
         customerMap.set(normalizedPhone, {
           name: booking.name,
           phone: booking.phone,
           email: booking.email,
+          smsOptIn: booking.smsOptIn ?? false,
           bookings: [booking],
         });
       }
@@ -472,6 +481,7 @@ export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
         lastBookingDate: lastBooking?.pickupDateTime || null,
         totalSpent,
         isActive,
+        smsOptIn: data.smsOptIn,
       });
     }
 
