@@ -114,7 +114,8 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
       email: '',
       phone: '',
       notes: '',
-      saveInfoForFuture: false
+      saveInfoForFuture: false,
+      smsOptIn: true // Default to opted-in for higher conversion
     },
     payment: {
       depositAmount: null,
@@ -212,7 +213,8 @@ const [warning, setWarning] = useState<string | null>(null);
           email: existingBooking.customer.email || '',
           phone: existingBooking.customer.phone || '',
           notes: existingBooking.customer.notes || '',
-          saveInfoForFuture: existingBooking.customer.saveInfoForFuture || false
+          saveInfoForFuture: existingBooking.customer.saveInfoForFuture || false,
+          smsOptIn: existingBooking.customer.smsOptIn ?? true
         },
         payment: {
           depositAmount: existingBooking.payment.depositAmount || null,
@@ -862,7 +864,8 @@ const [warning, setWarning] = useState<string | null>(null);
         email: '',
         phone: '',
         notes: '',
-        saveInfoForFuture: false
+        saveInfoForFuture: false,
+        smsOptIn: true // Default to opted-in for higher conversion
       },
       payment: {
         depositAmount: null,

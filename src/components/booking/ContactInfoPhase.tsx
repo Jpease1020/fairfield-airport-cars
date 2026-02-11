@@ -53,6 +53,10 @@ const ErrorMessageBox = styled.div`
   font-weight: 500;
 `;
 
+const SmsDisclaimerText = styled(Text)`
+  margin-left: 28px;
+`;
+
 export function ContactInfoPhase({
   customerData,
   onCustomerUpdate,
@@ -192,6 +196,21 @@ export function ContactInfoPhase({
                 data-testid="save-info-checkbox"
                 label={pageCmsData?.['save-info-label'] || 'Save my information for future bookings'}
               />
+            </Stack>
+
+            <Stack spacing="sm">
+              <RadioButton
+                id="sms-opt-in"
+                name="sms-opt-in"
+                value="sms-opt-in"
+                checked={customerData.smsOptIn}
+                onChange={() => onCustomerUpdate({ smsOptIn: !customerData.smsOptIn })}
+                data-testid="sms-opt-in-checkbox"
+                label="Send me occasional deals and promotions via text message"
+              />
+              <SmsDisclaimerText variant="small" color="secondary">
+                Message frequency varies. Msg & data rates may apply. Reply STOP to unsubscribe.
+              </SmsDisclaimerText>
             </Stack>
           </Stack>
         </Box>

@@ -20,6 +20,7 @@ export async function POST(request: Request) {
       email: z.string().email(),
       phone: z.string().min(1),
       notes: z.string().optional().nullable(),
+      smsOptIn: z.boolean().optional().default(false),
     }),
     trip: z.object({
       pickup: z.object({
@@ -187,7 +188,8 @@ export async function POST(request: Request) {
         email: customer.email,
         phone: customer.phone,
         notes: customer.notes || '',
-        saveInfoForFuture: false
+        saveInfoForFuture: false,
+        smsOptIn: customer.smsOptIn || false
       },
       payment: {
         depositAmount: 0,

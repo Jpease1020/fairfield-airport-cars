@@ -88,6 +88,7 @@ export interface Booking {
     phone: string;
     notes?: string;
     saveInfoForFuture?: boolean;
+    smsOptIn?: boolean;
   };
   payment?: {
     depositAmount: number | null;
