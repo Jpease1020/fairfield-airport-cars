@@ -114,7 +114,7 @@ export default function BookingConfirmationPage() {
           {message || 'We could not confirm your booking.'}
         </Text>
         <Text align="center" color="secondary" cmsId="booking-confirm-error-help">
-          Please forward your confirmation email to rides@fairfieldairportcars.com or text (646) 221-6370 so we can help.
+          Please forward your confirmation email to rides@fairfieldairportcar.com or text (646) 221-6370 so we can help.
         </Text>
         <Button
           variant="primary"

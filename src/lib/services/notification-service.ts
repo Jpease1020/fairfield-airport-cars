@@ -43,7 +43,7 @@ class NotificationService {
     this.config = {
       email: {
         enabled: false,
-        recipients: ['admin@fairfieldairportcars.com']
+        recipients: ['rides@fairfieldairportcar.com']
       },
       sms: {
         enabled: false,
