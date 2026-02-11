@@ -106,7 +106,7 @@ function EditBookingContent({ bookingId, cmsData }: EditBookingClientProps) {
               {
                 id: 'contact-support',
                 label: 'Text Support',
-                onClick: () => addToast('info', 'Text Support: (203) 555-0123'),
+                onClick: () => addToast('info', 'Text Support: (646) 221-6370'),
                 variant: 'outline',
                 icon: '💬'
               }
