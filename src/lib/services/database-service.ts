@@ -382,4 +382,109 @@ export const deleteDocument = async (collectionName: string, id: string): Promis
     console.error(`Error deleting document in ${collectionName}:`, error);
     throw new Error(`Failed to delete ${collectionName} document`);
   }
+};
+
+// ===== MARKETING =====
+export interface MarketingCustomer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  bookingCount: number;
+  lastBookingDate: Date | null;
+  totalSpent: number;
+  isActive: boolean; // Booked in last 90 days
+}
+
+/**
+ * Get unique customers from bookings for marketing campaigns.
+ * Deduplicates by phone number and calculates aggregate stats.
+ */
+export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
+  try {
+    const bookings = await getAllBookings();
+
+    // Group bookings by phone number (normalized)
+    const customerMap = new Map<string, {
+      name: string;
+      phone: string;
+      email: string;
+      bookings: Booking[];
+    }>();
+
+    for (const booking of bookings) {
+      // Skip bookings without valid phone numbers
+      if (!booking.phone || booking.phone.trim() === '') continue;
+
+      // Normalize phone number (remove spaces, dashes, parentheses)
+      const normalizedPhone = booking.phone.replace(/[\s\-()]/g, '');
+
+      // Skip invalid phone numbers (must have at least 10 digits)
+      if (normalizedPhone.replace(/\D/g, '').length < 10) continue;
+
+      const existing = customerMap.get(normalizedPhone);
+      if (existing) {
+        existing.bookings.push(booking);
+        // Use most recent name/email
+        if (booking.createdAt > existing.bookings[0].createdAt) {
+          existing.name = booking.name;
+          existing.email = booking.email;
+        }
+      } else {
+        customerMap.set(normalizedPhone, {
+          name: booking.name,
+          phone: booking.phone,
+          email: booking.email,
+          bookings: [booking],
+        });
+      }
+    }
+
+    // Calculate 90 days ago for "active" determination
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
+    // Convert to MarketingCustomer array
+    const customers: MarketingCustomer[] = [];
+    let index = 0;
+
+    for (const [_phone, data] of customerMap) {
+      const completedBookings = data.bookings.filter(b =>
+        b.status === 'completed' || b.status === 'confirmed'
+      );
+
+      const lastBooking = data.bookings.reduce((latest, b) =>
+        !latest || b.pickupDateTime > latest.pickupDateTime ? b : latest
+      , null as Booking | null);
+
+      const totalSpent = completedBookings.reduce((sum, b) => sum + b.fare, 0);
+
+      const isActive = lastBooking
+        ? lastBooking.pickupDateTime >= ninetyDaysAgo
+        : false;
+
+      customers.push({
+        id: `customer-${index++}`,
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        bookingCount: data.bookings.length,
+        lastBookingDate: lastBooking?.pickupDateTime || null,
+        totalSpent,
+        isActive,
+      });
+    }
+
+    // Sort by last booking date (most recent first)
+    customers.sort((a, b) => {
+      if (!a.lastBookingDate) return 1;
+      if (!b.lastBookingDate) return -1;
+      return b.lastBookingDate.getTime() - a.lastBookingDate.getTime();
+    });
+
+    return customers;
+  } catch (error) {
+    console.error('Error fetching marketing customers:', error);
+    return [];
+  }
 }; 
