@@ -67,6 +67,13 @@ export interface Booking {
   approvedAt?: string; // ISO timestamp
   rejectedAt?: string; // ISO timestamp
   rejectionReason?: string;
+  // Email confirmation tracking
+  confirmation?: {
+    status: 'pending' | 'confirmed';
+    token?: string;
+    sentAt?: string;
+    confirmedAt?: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }

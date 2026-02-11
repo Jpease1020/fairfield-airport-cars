@@ -6,9 +6,34 @@ export const APP_CONFIG = {
   name: 'Fairfield Airport Cars',
   version: '1.0.0',
   description: 'Premium airport transportation service',
-  supportEmail: 'support@fairfieldairportcars.com',
-  supportPhone: '(203) 555-0123',
 } as const;
+
+/**
+ * Business contact information
+ * Used throughout the app for customer-facing contact details
+ */
+export const BUSINESS_CONTACT = {
+  // Primary contact for rides and bookings
+  phone: '(646) 221-6370',
+  // Email addresses - note: domain is 'fairfieldairportcar.com' (no 's')
+  ridesEmail: 'rides@fairfieldairportcar.com',
+  supportEmail: 'support@fairfieldairportcar.com',
+} as const;
+
+/**
+ * Email service configuration
+ * VERIFIED_EMAIL_FROM must match a verified sender in SendGrid
+ * Current verified sender: rides@fairfieldairportcar.com
+ */
+export const EMAIL_CONFIG = {
+  // Must match SendGrid verified sender exactly
+  verifiedSender: 'rides@fairfieldairportcar.com',
+  // Default from name shown in emails
+  fromName: 'Fairfield Airport Cars',
+  // BCC for all booking emails (for records)
+  // Note: typed as string[] so nodemailer can use it (readonly array not compatible)
+  bccRecipients: ['rides@fairfieldairportcar.com'] as string[],
+};
 
 export const BOOKING_CONFIG = {
   minAdvanceHours: 2,
