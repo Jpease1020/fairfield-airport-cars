@@ -115,7 +115,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
       phone: '',
       notes: '',
       saveInfoForFuture: false,
-      smsOptIn: true // Default to opted-in for higher conversion
+      smsOptIn: true // Default checked per business preference
     },
     payment: {
       depositAmount: null,
@@ -865,7 +865,7 @@ const [warning, setWarning] = useState<string | null>(null);
         phone: '',
         notes: '',
         saveInfoForFuture: false,
-        smsOptIn: true // Default to opted-in for higher conversion
+        smsOptIn: true // Default checked per business preference
       },
       payment: {
         depositAmount: null,
