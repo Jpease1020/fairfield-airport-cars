@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label } from '@/design/ui';
 import { CustomerInfo, ValidationResult } from '@/types/booking';
@@ -15,6 +15,14 @@ interface ContactInfoPhaseProps {
   onContinue: () => void;
   validation: ValidationResult;
   cmsData: any;
+}
+
+/**
+ * Validates if a phone number is a valid US phone (10+ digits)
+ */
+function isValidUSPhone(phone: string): boolean {
+  const digitsOnly = phone.replace(/\D/g, '');
+  return digitsOnly.length >= 10;
 }
 
 // Styled component defined outside to prevent dynamic creation
@@ -53,6 +61,10 @@ const ErrorMessageBox = styled.div`
   font-weight: 500;
 `;
 
+const SmsDisclaimerText = styled(Text)`
+  margin-left: 28px;
+`;
+
 export function ContactInfoPhase({
   customerData,
   onCustomerUpdate,
@@ -67,9 +79,74 @@ export function ContactInfoPhase({
   
   // Get hasAttemptedValidation from booking provider
   const { hasAttemptedValidation } = useBooking();
-  
+
+  // Track if we've already looked up preferences for this phone
+  const lastLookedUpPhone = useRef<string>('');
+  const [_isLoadingPreferences, setIsLoadingPreferences] = useState(false);
+
   // Detect mobile screen size
   const [isMobile, setIsMobile] = useState(false);
+
+  /**
+   * Look up returning customer's preferences when phone number is entered
+   * This auto-fills their SMS opt-in preference from their last booking
+   */
+  const lookupCustomerPreferences = useCallback(async (phone: string) => {
+    // Normalize phone for comparison
+    const normalizedPhone = phone.replace(/\D/g, '');
+
+    // Skip if we've already looked up this phone
+    if (normalizedPhone === lastLookedUpPhone.current) return;
+
+    // Only lookup if phone is valid
+    if (!isValidUSPhone(phone)) return;
+
+    lastLookedUpPhone.current = normalizedPhone;
+    setIsLoadingPreferences(true);
+
+    try {
+      const res = await fetch(`/api/customer/preferences?phone=${encodeURIComponent(phone)}`);
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      if (data.found && data.preferences) {
+        // Auto-fill returning customer's preferences
+        const updates: Partial<CustomerInfo> = {
+          smsOptIn: data.preferences.smsOptIn
+        };
+
+        // If they opted to save info and we have it, also fill name/email
+        if (data.preferences.saveInfoForFuture) {
+          if (data.preferences.name && !customerData.name) {
+            updates.name = data.preferences.name;
+          }
+          if (data.preferences.email && !customerData.email) {
+            updates.email = data.preferences.email;
+          }
+          updates.saveInfoForFuture = true;
+        }
+
+        onCustomerUpdate(updates);
+      }
+    } catch (error) {
+      // Silently fail - this is a nice-to-have feature
+      console.error('[ContactInfoPhase] Failed to lookup preferences:', error);
+    } finally {
+      setIsLoadingPreferences(false);
+    }
+  }, [customerData.name, customerData.email, onCustomerUpdate]);
+
+  // Lookup preferences when phone number changes and is valid
+  useEffect(() => {
+    if (isValidUSPhone(customerData.phone)) {
+      // Debounce the lookup
+      const timeoutId = setTimeout(() => {
+        lookupCustomerPreferences(customerData.phone);
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [customerData.phone, lookupCustomerPreferences]);
   
   useEffect(() => {
     const checkMobile = () => {
@@ -192,6 +269,21 @@ export function ContactInfoPhase({
                 data-testid="save-info-checkbox"
                 label={pageCmsData?.['save-info-label'] || 'Save my information for future bookings'}
               />
+            </Stack>
+
+            <Stack spacing="sm">
+              <RadioButton
+                id="sms-opt-in"
+                name="sms-opt-in"
+                value="sms-opt-in"
+                checked={customerData.smsOptIn}
+                onChange={() => onCustomerUpdate({ smsOptIn: !customerData.smsOptIn })}
+                data-testid="sms-opt-in-checkbox"
+                label="Send me occasional deals and promotions via text message"
+              />
+              <SmsDisclaimerText variant="small" color="secondary">
+                Message frequency varies. Msg & data rates may apply. Reply STOP to unsubscribe.
+              </SmsDisclaimerText>
             </Stack>
           </Stack>
         </Box>

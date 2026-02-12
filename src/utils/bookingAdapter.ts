@@ -53,7 +53,8 @@ export function adaptOldBookingToNew(oldBooking: OldBooking): NewBooking {
       email: oldBooking.customer?.email || oldBooking.email || '',
       phone: oldBooking.customer?.phone || oldBooking.phone || '',
       notes: oldBooking.customer?.notes || oldBooking.notes || '',
-      saveInfoForFuture: oldBooking.customer?.saveInfoForFuture || false
+      saveInfoForFuture: oldBooking.customer?.saveInfoForFuture || false,
+      smsOptIn: oldBooking.customer?.smsOptIn ?? false // Default to false for legacy bookings
     },
     
     payment: {

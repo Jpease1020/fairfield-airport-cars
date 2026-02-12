@@ -79,7 +79,7 @@ export default function OfflinePage() {
           </Stack>
           
           <Text size="xs" color="secondary" align="center" cmsId="offline-assistance">
-            {pageCmsData?.['offline-assistance'] || 'Need immediate assistance? Text us at (203) 555-0123'}
+            {pageCmsData?.['offline-assistance'] || 'Need immediate assistance? Text us at (646) 221-6370'}
           </Text>
         </Stack>
       </OfflineCard>

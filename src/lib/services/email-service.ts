@@ -181,7 +181,7 @@ Track your driver in real-time: ${trackingUrl}
 ======================
 If you have any questions or need to make changes, please contact us:
 Text or call: ${businessSettings?.company?.phone || '(646) 221-6370'}
-Email: ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}
+Email: ${businessSettings?.company?.email || 'rides@fairfieldairportcar.com'}
 
 Thank you for choosing ${businessSettings?.company?.name || 'Fairfield Airport Cars'}!
 
@@ -231,7 +231,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
           <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
         <p>If you have any questions or need to make changes, please contact us:</p>
         <p><strong>Text or call:</strong> ${businessSettings?.company?.phone || '(646) 221-6370'}</p>
-          <p><strong>Email:</strong> ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}</p>
+          <p><strong>Email:</strong> ${businessSettings?.company?.email || 'rides@fairfieldairportcar.com'}</p>
         </div>
         
         <p>Thank you for choosing <strong>${businessSettings?.company?.name || 'Fairfield Airport Cars'}</strong>!</p>
@@ -393,7 +393,7 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
 
       <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: #a16207; margin-top: 0;">💬 Need help?</h3>
-        <p>Text or call us at ${businessSettings?.company?.phone || '(646) 221-6370'} or email ${businessSettings?.company?.email || 'rides@fairfieldairportcars.com'}.</p>
+        <p>Text or call us at ${businessSettings?.company?.phone || '(646) 221-6370'} or email ${businessSettings?.company?.email || 'rides@fairfieldairportcar.com'}.</p>
       </div>
 
       <p>Thank you for choosing <strong>${businessSettings?.company?.name || 'Fairfield Airport Cars'}</strong>!</p>
@@ -706,7 +706,7 @@ Track your driver in real-time: ${trackingUrl}
 ======================
 If you have any questions or need to make changes, please contact us:
 Text: (646) 221-6370
-Email: rides@fairfieldairportcars.com
+Email: rides@fairfieldairportcar.com
 
 Thank you for choosing Fairfield Airport Cars!
 
@@ -749,7 +749,7 @@ The Fairfield Airport Cars Team`;
           <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
           <p>If you have any questions or need to make changes, please contact us:</p>
           <p><strong>Text:</strong> (646) 221-6370</p>
-          <p><strong>Email:</strong> rides@fairfieldairportcars.com</p>
+          <p><strong>Email:</strong> rides@fairfieldairportcar.com</p>
         </div>
         
         <p>Thank you for choosing <strong>Fairfield Airport Cars</strong>!</p>

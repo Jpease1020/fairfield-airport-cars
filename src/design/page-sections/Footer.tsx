@@ -98,7 +98,7 @@ export const Footer: React.FC = () => {
                   cmsId="email"
                   
                 >
-                  {cmsData?.['email'] || '✉️ rides@fairfieldairportcars.com'}
+                  {cmsData?.['email'] || '✉️ rides@fairfieldairportcar.com'}
                 </Text>
               </Stack>
 
