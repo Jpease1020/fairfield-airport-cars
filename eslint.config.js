@@ -286,6 +286,8 @@ export default [
       'temp-design-library/**/*',
       'src/lib/services/email-service.ts', // Email templates need hardcoded HTML/CSS
       'src/app/api/contact/route.ts', // Contact form email templates need hardcoded HTML/CSS
+      'src/app/reply/**/*', // Standalone SMS reply UI for Gregg
+      'src/app/api/twilio/**/*', // Twilio webhook endpoints
       'public/sw.js', // Service worker runs in different context with its own globals
       'public/firebase-messaging-sw.js' // Service worker runs in different context
     ]
