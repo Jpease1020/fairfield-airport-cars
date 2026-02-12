@@ -409,7 +409,26 @@ function AdminBookingsPageContent() {
         )}
       </Stack>
     ),
-    dateTime: formatDate(booking.pickupDateTime),
+    tripDetails: (
+      <Stack spacing="xs">
+        <Text variant="small">
+          <Text variant="small" weight="medium">Pickup:</Text> {formatDate(booking.pickupDateTime)}
+        </Text>
+        {booking.flightNumber && (
+          <Text variant="small">
+            <Text variant="small" weight="medium">Flight:</Text> ✈️ {booking.flightNumber}
+          </Text>
+        )}
+        {booking.notes && (
+          <Text variant="small" color="secondary">
+            <Text variant="small" weight="medium">Notes:</Text> {booking.notes}
+          </Text>
+        )}
+        <Text variant="small" color="secondary">
+          <Text variant="small" weight="medium">Booked:</Text> {formatDate(booking.createdAt)}
+        </Text>
+      </Stack>
+    ),
     status: (
       <Badge variant={getStatusVariant(booking.status)}>
         {getStatusIcon(booking.status)} {booking.status}
@@ -420,8 +439,13 @@ function AdminBookingsPageContent() {
         <Text variant="body" weight="medium">
           {formatCurrency(booking.fare)}
         </Text>
+        {booking.depositPaid && (
+          <Text variant="small" color="success">
+            ✓ Deposit paid
+          </Text>
+        )}
         {booking.balanceDue > 0 && (
-          <Text variant="small" color="error">
+          <Text variant="small" color="warning">
             Balance: {formatCurrency(booking.balanceDue)}
           </Text>
         )}
@@ -608,7 +632,7 @@ function AdminBookingsPageContent() {
               { key: 'customer', label: cmsData?.['table-columns-customer'] || 'Customer'},
               { key: 'emailStatus', label: cmsData?.['table-columns-email-status'] || 'Email'},
               { key: 'route', label: cmsData?.['table-columns-route'] || 'Route'},
-              { key: 'dateTime', label: cmsData?.['table-columns-date-time'] || 'Date & Time'},
+              { key: 'tripDetails', label: cmsData?.['table-columns-trip-details'] || 'Trip Details'},
               { key: 'status', label: cmsData?.['table-columns-status'] || 'Status'},
               { key: 'fare', label: cmsData?.['table-columns-fare'] || 'Fare'},
               { key: 'actions', label: cmsData?.['table-columns-actions'] || 'Actions'}
