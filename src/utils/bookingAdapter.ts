@@ -2,6 +2,51 @@ import { Booking as NewBooking } from '@/types/booking';
 import { Booking as OldBooking } from '@/lib/services/booking-service';
 
 /**
+ * Helper to safely convert various date formats to ISO string
+ * Handles: Date objects, ISO strings, Firestore Timestamps (with _seconds or seconds), numbers
+ */
+function safeToISOString(dateValue: any): string {
+  if (!dateValue) {
+    return new Date().toISOString();
+  }
+
+  // Already a Date object
+  if (dateValue instanceof Date) {
+    return dateValue.toISOString();
+  }
+
+  // Already an ISO string
+  if (typeof dateValue === 'string') {
+    const parsed = new Date(dateValue);
+    return isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+  }
+
+  // Firestore Timestamp with toDate method
+  if (typeof dateValue === 'object' && typeof dateValue.toDate === 'function') {
+    return dateValue.toDate().toISOString();
+  }
+
+  // Firestore Timestamp serialized with _seconds (from JSON)
+  if (typeof dateValue === 'object' && '_seconds' in dateValue) {
+    return new Date(dateValue._seconds * 1000).toISOString();
+  }
+
+  // Firestore Timestamp with seconds property
+  if (typeof dateValue === 'object' && 'seconds' in dateValue) {
+    return new Date(dateValue.seconds * 1000).toISOString();
+  }
+
+  // Unix timestamp (number)
+  if (typeof dateValue === 'number') {
+    return new Date(dateValue).toISOString();
+  }
+
+  // Fallback - log and return current date
+  console.warn('[bookingAdapter] Could not parse date value:', dateValue);
+  return new Date().toISOString();
+}
+
+/**
  * Converts old Booking interface to new Booking interface
  * This maintains backward compatibility while using the new structure
  */
@@ -11,7 +56,7 @@ export function adaptOldBookingToNew(oldBooking: OldBooking): NewBooking {
     status: oldBooking.status,
     createdAt: oldBooking.createdAt,
     updatedAt: oldBooking.updatedAt,
-    
+
     // Core data - map from old structure to new structure
     // Check nested structure first (new format), then fall back to flat fields (old format)
     trip: {
@@ -23,15 +68,7 @@ export function adaptOldBookingToNew(oldBooking: OldBooking): NewBooking {
         address: oldBooking.trip?.dropoff?.address || oldBooking.dropoffLocation || '',
         coordinates: oldBooking.trip?.dropoff?.coordinates || null
       },
-      pickupDateTime: oldBooking.trip?.pickupDateTime 
-        ? (oldBooking.trip.pickupDateTime instanceof Date 
-            ? oldBooking.trip.pickupDateTime.toISOString() 
-            : String(oldBooking.trip.pickupDateTime))
-        : (oldBooking.pickupDateTime 
-            ? (oldBooking.pickupDateTime instanceof Date 
-                ? oldBooking.pickupDateTime.toISOString() 
-                : new Date(oldBooking.pickupDateTime).toISOString())
-            : new Date().toISOString()),
+      pickupDateTime: safeToISOString(oldBooking.trip?.pickupDateTime || oldBooking.pickupDateTime),
       fareType: oldBooking.trip?.fareType || 'personal',
       flightInfo: oldBooking.trip?.flightInfo || {
         hasFlight: !!oldBooking.flightNumber,

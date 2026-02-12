@@ -90,7 +90,7 @@ const HamburgerIcon = () => (
 
 export function ModeToggleMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const { editMode, commentMode, toggleEditMode, toggleCommentMode } = useInteractionMode();
+  const { editMode, toggleEditMode } = useInteractionMode();
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -98,11 +98,6 @@ export function ModeToggleMenu() {
 
   const handleEditModeToggle = () => {
     toggleEditMode();
-    setIsOpen(false); // Close menu after selection
-  };
-
-  const handleCommentModeToggle = () => {
-    toggleCommentMode();
     setIsOpen(false); // Close menu after selection
   };
 
@@ -127,24 +122,16 @@ export function ModeToggleMenu() {
   return (
     <FABContainer data-mode-menu>
       <MenuItems $isOpen={isOpen}>
-        <MenuItem 
+        <MenuItem
           $isActive={editMode}
           onClick={handleEditModeToggle}
           title="Toggle edit mode to modify page content"
         >
           ✏️ {editMode ? 'Exit Edit' : 'Edit Content'}
         </MenuItem>
-        
-        <MenuItem 
-          $isActive={commentMode}
-          onClick={handleCommentModeToggle}
-          title="Toggle comment mode to add feedback"
-        >
-          💬 {commentMode ? 'Exit Comments' : 'Comment Mode'}
-        </MenuItem>
       </MenuItems>
-      
-      <HamburgerButton 
+
+      <HamburgerButton
         $isOpen={isOpen}
         onClick={handleToggle}
         title="Toggle mode menu"
@@ -160,7 +147,6 @@ export function ModeToggleMenu() {
 export function ModeToggleMenuStandalone() {
   const [isOpen, setIsOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [commentMode, setCommentMode] = useState(false);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -170,12 +156,6 @@ export function ModeToggleMenuStandalone() {
     setEditMode(!editMode);
     setIsOpen(false);
     // You might want to dispatch a custom event here for edit mode
-  };
-
-  const handleCommentModeToggle = () => {
-    setCommentMode(!commentMode);
-    setIsOpen(false);
-    // You might want to dispatch a custom event here for comment mode
   };
 
   // Close menu when clicking outside
@@ -199,24 +179,16 @@ export function ModeToggleMenuStandalone() {
   return (
     <FABContainer data-mode-menu>
       <MenuItems $isOpen={isOpen}>
-        <MenuItem 
+        <MenuItem
           $isActive={editMode}
           onClick={handleEditModeToggle}
           title="Toggle edit mode to modify page content"
         >
           ✏️ {editMode ? 'Exit Edit' : 'Edit Content'}
         </MenuItem>
-        
-        <MenuItem 
-          $isActive={commentMode}
-          onClick={handleCommentModeToggle}
-          title="Toggle comment mode to add feedback"
-        >
-          💬 {commentMode ? 'Exit Comments' : 'Comment Mode'}
-        </MenuItem>
       </MenuItems>
-      
-      <HamburgerButton 
+
+      <HamburgerButton
         $isOpen={isOpen}
         onClick={handleToggle}
         title="Toggle mode menu"

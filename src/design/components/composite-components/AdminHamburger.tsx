@@ -9,9 +9,7 @@ import { colors, spacing, shadows, zIndex } from '../../system/tokens/tokens';
 
 interface FloatingEditButtonProps {
   editMode?: boolean;
-  commentMode?: boolean;
   onToggleEditMode?: () => void;
-  onToggleCommentMode?: () => void;
 }
 
 // Floating container - needs fixed positioning for global access
@@ -135,9 +133,7 @@ const HamburgerIcon = styled(FlexboxContainer)<{ $isOpen: boolean }>`
 
 export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
   editMode = false,
-  commentMode = false,
   onToggleEditMode,
-  onToggleCommentMode,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -148,16 +144,6 @@ export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
     }
     if (onToggleEditMode) {
       onToggleEditMode();
-    }
-  };
-
-  const handleCommentMode = (e?: React.MouseEvent<HTMLButtonElement>) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (onToggleCommentMode) {
-      onToggleCommentMode();
     }
   };
 
@@ -195,9 +181,6 @@ export const AdminHamburger: React.FC<FloatingEditButtonProps> = ({
           <PanelText>Admin Controls</PanelText>
           <PanelButton onClick={handleEditMode} $isActive={editMode} data-admin-control="true">
             {editMode ? '✓' : '○'} Edit Mode
-          </PanelButton>
-          <PanelButton onClick={handleCommentMode} $isActive={commentMode} data-admin-control="true">
-            {commentMode ? '✓' : '○'} Comment Mode
           </PanelButton>
         </PanelContent>
       </AdminPanel>
