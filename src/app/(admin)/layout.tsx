@@ -53,12 +53,12 @@ export default function AdminLayout({
         
         if (!hasAdminRole) {
           // Redirect non-admin users to login
-          router.push('/login');
+          router.push('/auth/login');
         }
       } else {
         setUser(null);
         setIsAdmin(false);
-        router.push('/login');
+        router.push('/auth/login');
       }
       setLoading(false);
     });
