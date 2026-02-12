@@ -206,7 +206,7 @@ export function ContactInfoPhase({
                 cmsId="form-name-input"
                 fullWidth
                 required
-                error={!!validation?.fieldErrors?.['name-input']}
+                error={hasInteractedWithPhase && !!validation?.fieldErrors?.['name-input']}
                 data-testid="name-input"
               />
             </Stack>
@@ -229,7 +229,7 @@ export function ContactInfoPhase({
                 cmsId="form-email-input"
                 fullWidth
                 required
-                error={!!validation?.fieldErrors?.['email-input']}
+                error={hasInteractedWithPhase && !!validation?.fieldErrors?.['email-input']}
                 data-testid="email-input"
               />
             </Stack>
@@ -257,7 +257,7 @@ export function ContactInfoPhase({
                 cmsId="form-phone-input"
                 fullWidth
                 required
-                error={!!validation?.fieldErrors?.['phone-input']}
+                error={hasInteractedWithPhase && !!validation?.fieldErrors?.['phone-input']}
                 data-testid="phone-input"
               />
             </Stack>
