@@ -65,6 +65,19 @@ const SmsDisclaimerText = styled(Text)`
   margin-left: 28px;
 `;
 
+/**
+ * Helper to get CMS value, ignoring placeholder-like values
+ * CMS sometimes returns "form name label" instead of null
+ */
+function getCmsValue(cmsData: Record<string, string> | undefined, key: string, fallback: string): string {
+  const value = cmsData?.[key];
+  // Ignore values that look like placeholders (contain "label", "placeholder", "button", etc.)
+  if (value && !value.toLowerCase().includes('label') && !value.toLowerCase().includes('placeholder')) {
+    return value;
+  }
+  return fallback;
+}
+
 export function ContactInfoPhase({
   customerData,
   onCustomerUpdate,
@@ -76,9 +89,12 @@ export function ContactInfoPhase({
   // Get CMS data from provider
   const { cmsData: allCmsData } = useCMSData();
   const pageCmsData = allCmsData?.booking || {};
-  
+
   // Get hasAttemptedValidation from booking provider
   const { hasAttemptedValidation } = useBooking();
+
+  // Track if user has interacted with THIS phase (not carried over from other phases)
+  const [hasInteractedWithPhase, setHasInteractedWithPhase] = useState(false);
 
   // Track if we've already looked up preferences for this phone
   const lastLookedUpPhone = useRef<string>('');
@@ -175,8 +191,8 @@ export function ContactInfoPhase({
 
             <Stack spacing="sm">
               <Label htmlFor="name-input">
-                {pageCmsData?.['form-name-label'] || 'Full Name'}
-                <ValidationIndicator 
+                {getCmsValue(pageCmsData, 'form-name-label', 'Full Name')}
+                <ValidationIndicator
                   $isValid={!!customerData.name.trim() && !validation?.fieldErrors?.['name-input']}
                 >
                   {!!customerData.name.trim() && !validation?.fieldErrors?.['name-input'] ? ' ✓' : ' *'}
@@ -197,8 +213,8 @@ export function ContactInfoPhase({
 
             <Stack spacing="sm">
               <Label htmlFor="email-input">
-                {pageCmsData?.['form-email-label'] || 'Email'}
-                <ValidationIndicator 
+                {getCmsValue(pageCmsData, 'form-email-label', 'Email')}
+                <ValidationIndicator
                   $isValid={!!customerData.email.trim() && !validation?.fieldErrors?.['email-input']}
                 >
                   {!!customerData.email.trim() && !validation?.fieldErrors?.['email-input'] ? ' ✓' : ' *'}
@@ -220,8 +236,8 @@ export function ContactInfoPhase({
 
             <Stack spacing="sm">
               <Label htmlFor="phone-input">
-                {pageCmsData?.['form-phone-label'] || 'Phone Number'}
-                <ValidationIndicator 
+                {getCmsValue(pageCmsData, 'form-phone-label', 'Phone Number')}
+                <ValidationIndicator
                   $isValid={!!customerData.phone.trim() && !validation?.fieldErrors?.['phone-input']}
                 >
                   {!!customerData.phone.trim() && !validation?.fieldErrors?.['phone-input'] ? ' ✓' : ' *'}
@@ -303,7 +319,10 @@ export function ContactInfoPhase({
           </Half>
           <Half>
             <Button
-              onClick={onContinue}
+              onClick={() => {
+                setHasInteractedWithPhase(true);
+                onContinue();
+              }}
               variant="primary"
               fullWidth
               size="md"
@@ -317,9 +336,9 @@ export function ContactInfoPhase({
             />
           </Half>
         </ButtonContainer>
-        
-        {/* Error message display below button - scroll target for mobile */}
-        {validation.errors.length > 0 && hasAttemptedValidation && (
+
+        {/* Error message display below button - only show after user clicks Continue on THIS phase */}
+        {validation.errors.length > 0 && hasAttemptedValidation && hasInteractedWithPhase && (
           <ErrorMessageBox
             id="contact-info-error-message"
             data-testid="contact-info-error-message"
