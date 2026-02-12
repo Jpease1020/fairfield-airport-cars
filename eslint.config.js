@@ -224,11 +224,12 @@ export default [
       ],
     },
   },
-  // 🛡️ ADMIN COMPONENTS - Relaxed rules for admin-only components
+  // 🛡️ ADMIN & PUBLIC COMPONENTS - Relaxed rules for admin-only components and public pages
   {
     files: [
       'src/design/components/composite-components/DataTable.tsx',
       'src/app/(admin)/**/*.{js,jsx,ts,tsx}',
+      'src/app/(public)/**/*.{js,jsx,ts,tsx}', // Public pages don't need CMS integration
       'src/components/business/AdminNavigation.tsx',
       'src/components/business/GlobalCommentModal.tsx',
       'src/components/business/GlobalCommentIcons.tsx',
@@ -284,6 +285,7 @@ export default [
       'temp/**/*',
       'temp-design-library/**/*',
       'src/lib/services/email-service.ts', // Email templates need hardcoded HTML/CSS
+      'src/app/api/contact/route.ts', // Contact form email templates need hardcoded HTML/CSS
       'public/sw.js', // Service worker runs in different context with its own globals
       'public/firebase-messaging-sw.js' // Service worker runs in different context
     ]

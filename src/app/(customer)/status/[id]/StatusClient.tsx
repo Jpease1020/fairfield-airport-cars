@@ -87,7 +87,7 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
     {
       id: 'get-support',
       label: cmsData?.['getSupport'] || 'Get Support',
-      onClick: () => addToast('info', cmsData?.['supportContact'] || 'Text Support: (203) 555-0123'),
+      onClick: () => addToast('info', cmsData?.['supportContact'] || 'Text Support: (646) 221-6370'),
       variant: 'outline' as const,
       icon: '🆘'
     }
@@ -133,7 +133,7 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
                 {
                   id: 'contact-support',
                   label: cmsData?.['contactSupport'] || 'Contact Support',
-                  onClick: () => addToast('info', cmsData?.['supportContact'] || 'Text Support: (203) 555-0123'),
+                  onClick: () => addToast('info', cmsData?.['supportContact'] || 'Text Support: (646) 221-6370'),
                   variant: 'outline',
                   icon: '💬'
                 }

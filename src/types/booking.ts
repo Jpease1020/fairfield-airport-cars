@@ -38,6 +38,7 @@ export interface CustomerInfo {
   phone: string;
   notes: string;
   saveInfoForFuture: boolean;
+  smsOptIn: boolean; // TCPA compliance: user must opt-in to receive marketing SMS
 }
 
 export interface PaymentInfo {

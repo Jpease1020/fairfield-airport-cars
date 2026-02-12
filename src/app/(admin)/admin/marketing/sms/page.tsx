@@ -27,6 +27,7 @@ interface MarketingCustomer {
   lastBookingDate: string | null;
   totalSpent: number;
   isActive: boolean;
+  smsOptIn: boolean;
 }
 
 interface CampaignResult {
@@ -58,7 +59,7 @@ export default function SMSMarketingPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [filter, setFilter] = useState<'opted-in' | 'all' | 'active' | 'inactive'>('opted-in');
 
   // Modal states
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -89,11 +90,12 @@ export default function SMSMarketingPage() {
     fetchCustomers();
   }, [fetchCustomers]);
 
-  // Filter customers based on active status
+  // Filter customers based on opt-in and active status
   const filteredCustomers = customers.filter(c => {
-    if (filter === 'active') return c.isActive;
-    if (filter === 'inactive') return !c.isActive;
-    return true;
+    if (filter === 'opted-in') return c.smsOptIn;
+    if (filter === 'active') return c.isActive && c.smsOptIn;
+    if (filter === 'inactive') return !c.isActive && c.smsOptIn;
+    return true; // 'all' shows everyone (for visibility, but warn about non-opted-in)
   });
 
   // Selection handlers
@@ -104,7 +106,8 @@ export default function SMSMarketingPage() {
   };
 
   const selectAll = () => {
-    setSelectedIds(filteredCustomers.map(c => c.id));
+    // Only select customers who have opted in (TCPA compliance)
+    setSelectedIds(filteredCustomers.filter(c => c.smsOptIn).map(c => c.id));
   };
 
   const deselectAll = () => {
@@ -175,8 +178,9 @@ export default function SMSMarketingPage() {
   // Stats
   const stats = {
     total: customers.length,
-    active: customers.filter(c => c.isActive).length,
-    inactive: customers.filter(c => !c.isActive).length,
+    optedIn: customers.filter(c => c.smsOptIn).length,
+    active: customers.filter(c => c.isActive && c.smsOptIn).length,
+    inactive: customers.filter(c => !c.isActive && c.smsOptIn).length,
     selected: selectedIds.length,
   };
 
@@ -194,19 +198,26 @@ export default function SMSMarketingPage() {
   // Build table data
   const tableData = filteredCustomers.map(customer => ({
     id: customer.id,
-    select: (
+    select: customer.smsOptIn ? (
       <input
         type="checkbox"
         checked={selectedIds.includes(customer.id)}
         onChange={() => toggleSelect(customer.id)}
         style={{ width: '18px', height: '18px', cursor: 'pointer' }}
       />
+    ) : (
+      <span title="Customer has not opted in to SMS marketing">—</span>
     ),
     name: customer.name,
     phone: customer.phone,
     bookings: customer.bookingCount,
     lastBooking: formatDate(customer.lastBookingDate),
     spent: formatCurrency(customer.totalSpent),
+    optIn: (
+      <Badge variant={customer.smsOptIn ? 'success' : 'default'}>
+        {customer.smsOptIn ? '✓ Opted In' : 'Not Opted In'}
+      </Badge>
+    ),
     status: (
       <Badge variant={customer.isActive ? 'success' : 'default'}>
         {customer.isActive ? 'Active' : 'Inactive'}
@@ -220,8 +231,20 @@ export default function SMSMarketingPage() {
         {/* Header */}
         <Stack spacing="sm">
           <Text size="2xl" weight="bold">SMS Marketing</Text>
-          <Text color="secondary">Send promotional messages to your customers via SMS</Text>
+          <Text color="secondary">Send promotional messages to customers who have opted in</Text>
         </Stack>
+
+        {/* TCPA Compliance Notice */}
+        <Alert variant="info">
+          <Stack spacing="xs">
+            <Text weight="bold">📋 TCPA Compliance</Text>
+            <Text variant="small">
+              Only customers who checked &quot;Send me occasional deals and promotions via text message&quot;
+              during booking are shown here. Sending marketing messages to non-opted-in customers
+              may violate the Telephone Consumer Protection Act (TCPA).
+            </Text>
+          </Stack>
+        </Alert>
 
         {/* Error Alert */}
         {error && (
@@ -242,15 +265,15 @@ export default function SMSMarketingPage() {
           <Box variant="elevated" padding="lg">
             <Stack spacing="xs" align="center">
               <Text size="xl">✅</Text>
-              <Text size="2xl" weight="bold">{stats.active}</Text>
-              <Text variant="small" color="secondary">Active (90 days)</Text>
+              <Text size="2xl" weight="bold">{stats.optedIn}</Text>
+              <Text variant="small" color="secondary">Opted In</Text>
             </Stack>
           </Box>
           <Box variant="elevated" padding="lg">
             <Stack spacing="xs" align="center">
-              <Text size="xl">😴</Text>
-              <Text size="2xl" weight="bold">{stats.inactive}</Text>
-              <Text variant="small" color="secondary">Inactive</Text>
+              <Text size="xl">🟢</Text>
+              <Text size="2xl" weight="bold">{stats.active}</Text>
+              <Text variant="small" color="secondary">Active + Opted In</Text>
             </Stack>
           </Box>
           <Box variant="elevated" padding="lg">
@@ -330,12 +353,13 @@ export default function SMSMarketingPage() {
               <Stack direction="horizontal" spacing="sm">
                 <select
                   value={filter}
-                  onChange={(e) => setFilter(e.target.value as 'all' | 'active' | 'inactive')}
+                  onChange={(e) => setFilter(e.target.value as 'opted-in' | 'all' | 'active' | 'inactive')}
                   style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
                 >
-                  <option value="all">All Customers</option>
-                  <option value="active">Active (90 days)</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="opted-in">Opted In (TCPA Compliant)</option>
+                  <option value="active">Active + Opted In</option>
+                  <option value="inactive">Inactive + Opted In</option>
+                  <option value="all">All Customers (View Only)</option>
                 </select>
               </Stack>
             </Stack>
@@ -372,7 +396,8 @@ export default function SMSMarketingPage() {
                   { key: 'bookings', label: 'Bookings' },
                   { key: 'lastBooking', label: 'Last Booking' },
                   { key: 'spent', label: 'Total Spent' },
-                  { key: 'status', label: 'Status' },
+                  { key: 'optIn', label: 'SMS Consent' },
+                  { key: 'status', label: 'Activity' },
                 ]}
               />
             )}
