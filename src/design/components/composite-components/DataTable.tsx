@@ -143,13 +143,18 @@ export function DataTable<T extends Record<string, any>>({
               key={index}
             >
               <Stack direction="horizontal" spacing="md">
-                {columns.map((column) => (
-                  <Container key={String(column.key)}>
-                    {column.render
-                      ? column.render(row[column.key], row, index)
-                      : String(row[column.key] || '-')}
-                  </Container>
-                ))}
+                {columns.map((column) => {
+                  const value = row[column.key];
+                  return (
+                    <Container key={String(column.key)}>
+                      {column.render
+                        ? column.render(value, row, index)
+                        : React.isValidElement(value)
+                          ? value
+                          : String(value ?? '-')}
+                    </Container>
+                  );
+                })}
                 {actions.length > 0 && (
                   <Container>
                     <Stack direction="horizontal" spacing="sm">
