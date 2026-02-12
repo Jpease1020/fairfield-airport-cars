@@ -100,6 +100,8 @@ export const useFareCalculation = ({
           errorMessage = 'This trip is slightly outside our normal self-service area. Please call or text us to see if we can accommodate it.';
         } else if (errorCode === 'OUT_OF_SERVICE_HARD') {
           errorMessage = "We focus on Fairfield County, CT and nearby airports, and we're not able to serve this route.";
+        } else if (errorCode === 'PICKUP_NOT_SERVED') {
+          errorMessage = "We don't offer pickups from New York City. Our service area is Connecticut and nearby airports.";
         }
         
         setError(errorMessage);

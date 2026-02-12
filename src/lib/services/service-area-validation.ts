@@ -17,9 +17,10 @@ export interface ServiceAreaCenter {
   extendedRadiusMiles: number;
 }
 
-// Fairfield County service area centers
-// Normal radius: standard self-service bookings
+// Fairfield County + central CT service area centers
+// Normal radius: standard self-service bookings (allow CT pickups to airports)
 // Extended radius: soft-block area (requires call/text)
+// NYC pickups are explicitly excluded below so only CT/origin side is allowed to book.
 const SERVICE_AREA_CENTERS: ServiceAreaCenter[] = [
   {
     name: 'Newtown, CT',
@@ -45,7 +46,20 @@ const SERVICE_AREA_CENTERS: ServiceAreaCenter[] = [
     normalRadiusMiles: 25,
     extendedRadiusMiles: 40,
   },
+  // Central CT: New Britain, Hartford, New Haven area — self-service allowed (CT → airports)
+  {
+    name: 'Hartford, CT',
+    coordinates: { lat: 41.7658, lng: -72.6734 },
+    normalRadiusMiles: 35,
+    extendedRadiusMiles: 50,
+  },
 ];
+
+// Pickup exclusion: we do not offer pickups from NYC (only CT / airport side)
+const NYC_PICKUP_EXCLUSION = {
+  center: { lat: 40.7128, lng: -74.006 } as Coordinates,
+  radiusMiles: 25, // NYC metro: Manhattan, boroughs, nearby NJ
+};
 
 const AIRPORT_KEYWORDS = ['airport', 'terminal', 'intl', 'international'];
 
@@ -115,6 +129,22 @@ export function isAirportLocation(
 }
 
 /**
+ * Check if pickup is in the NYC exclusion zone (we do not offer pickups from NYC)
+ */
+export function isPickupInExcludedZone(coords: Coordinates | null | undefined): boolean {
+  if (!coords || !isFiniteNumber(coords.lat) || !isFiniteNumber(coords.lng)) {
+    return false;
+  }
+  const distance = distanceMilesBetweenCoordinates(
+    coords.lat,
+    coords.lng,
+    NYC_PICKUP_EXCLUSION.center.lat,
+    NYC_PICKUP_EXCLUSION.center.lng
+  );
+  return distance <= NYC_PICKUP_EXCLUSION.radiusMiles;
+}
+
+/**
  * Check if coordinates are within the normal service area (standard bookings)
  */
 export function isWithinHomeAreaNormal(coords: Coordinates | null | undefined): boolean {
@@ -173,11 +203,22 @@ export function classifyTrip(
   pickupCoords: Coordinates | null | undefined,
   dropoffCoords: Coordinates | null | undefined
 ): TripValidationResult {
+  // We do not offer pickups from NYC (except airports: JFK/LGA/EWR → CT is allowed)
+  const pickupInExcludedZone = isPickupInExcludedZone(pickupCoords);
+  const pickupIsAirport = isAirportLocation(pickupAddress, pickupCoords);
+  if (pickupInExcludedZone && !pickupIsAirport) {
+    return {
+      classification: 'hard_block',
+      code: 'PICKUP_NOT_SERVED',
+      message:
+        "We don't offer pickups from New York City. Our service area is Connecticut and nearby airports.",
+    };
+  }
+
   const pickupInHomeNormal = isWithinHomeAreaNormal(pickupCoords);
   const dropoffInHomeNormal = isWithinHomeAreaNormal(dropoffCoords);
   const pickupInHomeExtended = isWithinHomeAreaExtended(pickupCoords);
   const dropoffInHomeExtended = isWithinHomeAreaExtended(dropoffCoords);
-  const pickupIsAirport = isAirportLocation(pickupAddress, pickupCoords);
   const dropoffIsAirport = isAirportLocation(dropoffAddress, dropoffCoords);
 
   // Check if at least one end is an airport
