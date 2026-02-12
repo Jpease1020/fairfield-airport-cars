@@ -40,12 +40,12 @@ const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
           
           if (!hasAdminRole) {
             // Redirect non-admin users to login
-            router.push('/login');
+            router.push('/auth/login');
           }
         } else {
           setUser(null);
           setIsAdmin(false);
-          router.push('/login');
+          router.push('/auth/login');
         }
         setLoading(false);
       });
