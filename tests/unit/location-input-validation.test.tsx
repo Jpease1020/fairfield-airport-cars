@@ -101,11 +101,11 @@ describe('LocationInput - Basic Rendering', () => {
         onChange={onChange}
         onLocationSelect={onLocationSelect}
         error={true}
-        data-testid="test-location-input"
+        data-testid="test-location-input-error"
       />
     );
 
-    const input = screen.getByTestId('test-location-input');
+    const input = screen.getByTestId('test-location-input-error');
     expect(input).toHaveAttribute('aria-invalid', 'true');
   });
 

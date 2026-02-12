@@ -769,6 +769,11 @@ const [warning, setWarning] = useState<string | null>(null);
           setError(errorMsg);
           setIsSubmitting(false);
           return { success: false };
+        } else if (errorCode === 'PICKUP_NOT_SERVED') {
+          const errorMsg = "We don't offer pickups from New York City. Our service area is Connecticut and nearby airports.";
+          setError(errorMsg);
+          setIsSubmitting(false);
+          return { success: false };
         }
         
         // Check for conflict errors (case-insensitive, check both error and details)
