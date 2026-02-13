@@ -29,8 +29,6 @@ export const AdminNavigation: React.FC = () => {
     { name: 'Bookings', href: '/admin/bookings', current: currentPath === '/admin/bookings' },
     { name: 'Payments', href: '/admin/payments', current: currentPath === '/admin/payments' },
     { name: 'Schedule', href: '/admin/schedules', current: currentPath.startsWith('/admin/schedules') },
-    { name: 'Marketing', href: '/admin/marketing/sms', current: currentPath.startsWith('/admin/marketing') },
-    { name: 'Tracking', href: '/admin/driver/location', current: currentPath.startsWith('/admin/driver') },
   ];
 
   const logo = (
