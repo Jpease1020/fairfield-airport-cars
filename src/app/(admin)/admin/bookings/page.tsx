@@ -293,14 +293,51 @@ function AdminBookingsPageContent() {
     }).format(amount);
   };
 
-  const formatDate = (date: Date | null | undefined) => {
-    if (!date) return 'No date set';
-    
-    // Handle invalid dates
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
+  /**
+   * Safely parse various date formats and convert to Date object
+   * Handles: Date objects, ISO strings, Firestore Timestamps (with _seconds or seconds), numbers
+   */
+  const parseDate = (dateValue: any): Date | null => {
+    if (!dateValue) return null;
+
+    // Already a Date object
+    if (dateValue instanceof Date) {
+      return isNaN(dateValue.getTime()) ? null : dateValue;
     }
-    
+
+    // ISO string
+    if (typeof dateValue === 'string') {
+      const parsed = new Date(dateValue);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    // Firestore Timestamp with toDate method
+    if (typeof dateValue === 'object' && typeof dateValue.toDate === 'function') {
+      return dateValue.toDate();
+    }
+
+    // Firestore Timestamp serialized with _seconds (from JSON)
+    if (typeof dateValue === 'object' && '_seconds' in dateValue) {
+      return new Date(dateValue._seconds * 1000);
+    }
+
+    // Firestore Timestamp with seconds property
+    if (typeof dateValue === 'object' && 'seconds' in dateValue) {
+      return new Date(dateValue.seconds * 1000);
+    }
+
+    // Unix timestamp (number)
+    if (typeof dateValue === 'number') {
+      return new Date(dateValue);
+    }
+
+    return null;
+  };
+
+  const formatDate = (dateValue: any) => {
+    const date = parseDate(dateValue);
+    if (!date) return 'No date set';
+
     try {
       return new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
@@ -310,16 +347,55 @@ function AdminBookingsPageContent() {
         minute: '2-digit',
       }).format(date);
     } catch (error) {
-      console.error('Error formatting date:', error, date);
+      console.error('Error formatting date:', error, dateValue);
       return 'Date error';
     }
+  };
+
+  // Helper to get fare from booking (nested or flat structure)
+  const getBookingFare = (booking: Booking): number => {
+    return (booking as any).trip?.fare ?? booking.fare ?? 0;
+  };
+
+  // Helper to get customer info (nested or flat structure)
+  const getCustomerName = (booking: Booking): string => {
+    return (booking as any).customer?.name ?? booking.name ?? '';
+  };
+  const getCustomerEmail = (booking: Booking): string => {
+    return (booking as any).customer?.email ?? booking.email ?? '';
+  };
+  const getCustomerPhone = (booking: Booking): string => {
+    return (booking as any).customer?.phone ?? booking.phone ?? '';
+  };
+
+  // Helper to get location addresses (nested or flat structure)
+  const getPickupAddress = (booking: Booking): string => {
+    return (booking as any).trip?.pickup?.address ?? booking.pickupLocation ?? '';
+  };
+  const getDropoffAddress = (booking: Booking): string => {
+    return (booking as any).trip?.dropoff?.address ?? booking.dropoffLocation ?? '';
+  };
+
+  // Helper to get pickup date/time (nested or flat structure)
+  const getPickupDateTime = (booking: Booking): any => {
+    return (booking as any).trip?.pickupDateTime ?? booking.pickupDateTime;
+  };
+
+  // Helper to get balance due (nested or flat structure)
+  const getBalanceDue = (booking: Booking): number => {
+    return (booking as any).payment?.balanceDue ?? booking.balanceDue ?? 0;
+  };
+
+  // Helper to check deposit paid (nested or flat structure)
+  const getDepositPaid = (booking: Booking): boolean => {
+    return (booking as any).payment?.depositPaid ?? booking.depositPaid ?? false;
   };
 
   const stats = {
     totalBookings: bookings.length,
     confirmedBookings: bookings.filter(b => b.status === 'confirmed').length,
     inProgressBookings: bookings.filter(b => b.status === 'in-progress').length,
-    totalRevenue: bookings.reduce((sum, b) => sum + b.fare, 0)
+    totalRevenue: bookings.reduce((sum, b) => sum + getBookingFare(b), 0)
   };
 
   const filteredBookings = selectedStatus === 'all' 
@@ -363,9 +439,9 @@ function AdminBookingsPageContent() {
     id: booking.id,
     customer: (
       <Stack spacing="xs">
-        <Text variant="body" weight="medium">{booking.name}</Text>
-        <Text variant="small" color="secondary">{booking.email}</Text>
-        <Text variant="small" color="secondary">{booking.phone}</Text>
+        <Text variant="body" weight="medium">{getCustomerName(booking)}</Text>
+        <Text variant="small" color="secondary">{getCustomerEmail(booking)}</Text>
+        <Text variant="small" color="secondary">{getCustomerPhone(booking)}</Text>
       </Stack>
     ),
     emailStatus: (
@@ -381,10 +457,10 @@ function AdminBookingsPageContent() {
     route: (
       <Stack spacing="xs">
         <Text variant="small">
-          <Text variant="small" weight="medium">From:</Text> {booking.pickupLocation}
+          <Text variant="small" weight="medium">From:</Text> {getPickupAddress(booking)}
         </Text>
         <Text variant="small">
-          <Text variant="small" weight="medium">To:</Text> {booking.dropoffLocation}
+          <Text variant="small" weight="medium">To:</Text> {getDropoffAddress(booking)}
         </Text>
         {booking.exceptionReason && (
           <Text variant="small" color="warning">
@@ -412,7 +488,7 @@ function AdminBookingsPageContent() {
     tripDetails: (
       <Stack spacing="xs">
         <Text variant="small">
-          <Text variant="small" weight="medium">Pickup:</Text> {formatDate(booking.pickupDateTime)}
+          <Text variant="small" weight="medium">Pickup:</Text> {formatDate(getPickupDateTime(booking))}
         </Text>
         {booking.flightNumber && (
           <Text variant="small">
@@ -437,16 +513,16 @@ function AdminBookingsPageContent() {
     fare: (
       <Stack spacing="xs">
         <Text variant="body" weight="medium">
-          {formatCurrency(booking.fare)}
+          {formatCurrency(getBookingFare(booking))}
         </Text>
-        {booking.depositPaid && (
+        {getDepositPaid(booking) && (
           <Text variant="small" color="success">
             ✓ Deposit paid
           </Text>
         )}
-        {booking.balanceDue > 0 && (
+        {getBalanceDue(booking) > 0 && (
           <Text variant="small" color="warning">
-            Balance: {formatCurrency(booking.balanceDue)}
+            Balance: {formatCurrency(getBalanceDue(booking))}
           </Text>
         )}
       </Stack>
@@ -720,10 +796,10 @@ function AdminBookingsPageContent() {
                     {cmsData?.['modal-booking-details'] || 'Booking Details:'}
                   </Text>
                   <Text variant="small">
-                    <Text variant="small" weight="medium">Customer:</Text> {bookingToReject.name} ({bookingToReject.email})
+                    <Text variant="small" weight="medium">Customer:</Text> {getCustomerName(bookingToReject)} ({getCustomerEmail(bookingToReject)})
                   </Text>
                   <Text variant="small">
-                    <Text variant="small" weight="medium">Route:</Text> {bookingToReject.pickupLocation} → {bookingToReject.dropoffLocation}
+                    <Text variant="small" weight="medium">Route:</Text> {getPickupAddress(bookingToReject)} → {getDropoffAddress(bookingToReject)}
                   </Text>
                 </Stack>
               </Box>
