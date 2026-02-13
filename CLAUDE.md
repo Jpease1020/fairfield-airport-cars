@@ -1,5 +1,59 @@
 # Fairfield Airport Cars - Claude Code Instructions
 
+## Session Startup (Claude does this automatically)
+
+**On first interaction of a session, Claude should:**
+1. Run `whoami` to detect the current user
+2. Look up their profile in "Developer Profiles" section below
+3. Apply their tool routing preferences silently
+4. If no profile found, ask about their tools
+
+---
+
+## Developer Profiles (Auto-Detection)
+
+### @justinpease
+- **Tools:** Claude, Gemini CLI, Cursor, ChatGPT
+- **IDE:** VS Code / Cursor
+- **Skills:** Available
+
+### @template (copy for new devs)
+- **Tools:** [Claude, Gemini CLI?, Cursor?, Copilot?, ChatGPT?]
+- **IDE:** [VS Code / Cursor / etc.]
+- **Skills:** [Available / Not available]
+
+---
+
+## Token Efficiency & Tool Routing
+
+| Task Type | Best Tool | Why |
+|-----------|-----------|-----|
+| Repo-wide search/scan | Gemini CLI | Cheaper for large scans |
+| Batch refactors | Gemini CLI + Cursor | Gemini plans, Cursor applies |
+| Architecture decisions | Claude | Best at tradeoff reasoning |
+| Single file edits | Cursor | Fast, in-context |
+| Marketing copy/docs | ChatGPT | Good at narrative |
+
+**Claude will redirect you** when a task is better suited for another tool.
+
+---
+
+## Session Length Management
+
+**Warning signs (Claude monitors):**
+- 15-20+ exchanges in one thread
+- Context getting repetitive
+- Switching between unrelated topics
+
+**When to restart:**
+- After completing a feature
+- Before starting unrelated work
+- When Claude suggests it
+
+**Quick restart:** Use `/compact` command
+
+---
+
 ## Project Overview
 Airport car service website for Gregg's single-driver operation in Fairfield County, CT.
 Customers book rides to/from airports (JFK, LGA, EWR, BDL, HVN, HPN).
