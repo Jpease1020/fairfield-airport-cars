@@ -84,7 +84,6 @@ export const API_ENDPOINTS = {
   places: '/api/places-autocomplete',
   fare: '/api/booking/estimate-fare',
   timeSlot: '/api/booking/check-time-slot',
-  analytics: '/api/admin/analytics',
 } as const;
 
 export const ROUTES = {
