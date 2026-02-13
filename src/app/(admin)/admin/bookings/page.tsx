@@ -432,8 +432,19 @@ function AdminBookingsPageContent() {
     return { icon: '❓', text: 'Unknown', variant: 'default' as const };
   };
 
+  // Helper to shorten address for display
+  const shortenAddress = (address: string): string => {
+    if (!address) return '';
+    // Remove ", USA" suffix and truncate if too long
+    const shortened = address.replace(/, USA$/, '');
+    return shortened.length > 40 ? shortened.substring(0, 37) + '...' : shortened;
+  };
+
   const tableData = filteredBookings.map(booking => {
     const confirmStatus = getConfirmationStatus(booking);
+    const fare = getBookingFare(booking);
+    const balance = getBalanceDue(booking);
+    const depositPaid = getDepositPaid(booking);
 
     return {
     id: booking.id,
@@ -442,67 +453,30 @@ function AdminBookingsPageContent() {
         <Text variant="body" weight="medium">{getCustomerName(booking)}</Text>
         <Text variant="small" color="secondary">{getCustomerEmail(booking)}</Text>
         <Text variant="small" color="secondary">{getCustomerPhone(booking)}</Text>
-      </Stack>
-    ),
-    emailStatus: (
-      <Stack spacing="xs" align="center">
-        <Badge variant={confirmStatus.variant}>
+        <Badge variant={confirmStatus.variant} style={{ marginTop: '4px' }}>
           {confirmStatus.icon} {confirmStatus.text}
         </Badge>
-        {confirmStatus.time && (
-          <Text variant="small" color="secondary">{confirmStatus.time}</Text>
-        )}
       </Stack>
     ),
     route: (
       <Stack spacing="xs">
         <Text variant="small">
-          <Text variant="small" weight="medium">From:</Text> {getPickupAddress(booking)}
+          <strong>From:</strong> {shortenAddress(getPickupAddress(booking))}
         </Text>
         <Text variant="small">
-          <Text variant="small" weight="medium">To:</Text> {getDropoffAddress(booking)}
+          <strong>To:</strong> {shortenAddress(getDropoffAddress(booking))}
         </Text>
-        {booking.exceptionReason && (
-          <Text variant="small" color="warning">
-            <Text variant="small" weight="medium">Exception:</Text> {booking.exceptionReason}
-          </Text>
-        )}
         {booking.requiresApproval && (
-          <Text variant="small" color="warning" weight="medium">
-            ⚠️ Requires Approval
-          </Text>
-        )}
-        {booking.approvedAt && (
-          <Text variant="small" color="success">
-            ✅ Approved {new Date(booking.approvedAt).toLocaleDateString()}
-          </Text>
-        )}
-        {booking.rejectedAt && (
-          <Text variant="small" color="error">
-            ❌ Rejected {new Date(booking.rejectedAt).toLocaleDateString()}
-            {booking.rejectionReason && `: ${booking.rejectionReason}`}
-          </Text>
+          <Badge variant="warning">⚠️ Needs Approval</Badge>
         )}
       </Stack>
     ),
-    tripDetails: (
+    pickup: (
       <Stack spacing="xs">
-        <Text variant="small">
-          <Text variant="small" weight="medium">Pickup:</Text> {formatDate(getPickupDateTime(booking))}
-        </Text>
+        <Text variant="small" weight="medium">{formatDate(getPickupDateTime(booking))}</Text>
         {booking.flightNumber && (
-          <Text variant="small">
-            <Text variant="small" weight="medium">Flight:</Text> ✈️ {booking.flightNumber}
-          </Text>
+          <Text variant="small" color="secondary">✈️ {booking.flightNumber}</Text>
         )}
-        {booking.notes && (
-          <Text variant="small" color="secondary">
-            <Text variant="small" weight="medium">Notes:</Text> {booking.notes}
-          </Text>
-        )}
-        <Text variant="small" color="secondary">
-          <Text variant="small" weight="medium">Booked:</Text> {formatDate(booking.createdAt)}
-        </Text>
       </Stack>
     ),
     status: (
@@ -512,18 +486,13 @@ function AdminBookingsPageContent() {
     ),
     fare: (
       <Stack spacing="xs">
-        <Text variant="body" weight="medium">
-          {formatCurrency(getBookingFare(booking))}
-        </Text>
-        {getDepositPaid(booking) && (
-          <Text variant="small" color="success">
-            ✓ Deposit paid
-          </Text>
-        )}
-        {getBalanceDue(booking) > 0 && (
-          <Text variant="small" color="warning">
-            Balance: {formatCurrency(getBalanceDue(booking))}
-          </Text>
+        <Text variant="body" weight="medium">{formatCurrency(fare)}</Text>
+        {depositPaid ? (
+          <Text variant="small" color="success">✓ Paid</Text>
+        ) : balance > 0 && balance < fare ? (
+          <Text variant="small" color="warning">Due: {formatCurrency(balance)}</Text>
+        ) : (
+          <Text variant="small" color="secondary">Unpaid</Text>
         )}
       </Stack>
     ),
@@ -705,13 +674,12 @@ function AdminBookingsPageContent() {
           <DataTable
             data={tableData}
             columns={[
-              { key: 'customer', label: cmsData?.['table-columns-customer'] || 'Customer'},
-              { key: 'emailStatus', label: cmsData?.['table-columns-email-status'] || 'Email'},
-              { key: 'route', label: cmsData?.['table-columns-route'] || 'Route'},
-              { key: 'tripDetails', label: cmsData?.['table-columns-trip-details'] || 'Trip Details'},
-              { key: 'status', label: cmsData?.['table-columns-status'] || 'Status'},
-              { key: 'fare', label: cmsData?.['table-columns-fare'] || 'Fare'},
-              { key: 'actions', label: cmsData?.['table-columns-actions'] || 'Actions'}
+              { key: 'customer', label: 'Customer'},
+              { key: 'route', label: 'Route'},
+              { key: 'pickup', label: 'Pickup'},
+              { key: 'status', label: 'Status'},
+              { key: 'fare', label: 'Fare'},
+              { key: 'actions', label: 'Actions'}
             ]}
           />
         )}
