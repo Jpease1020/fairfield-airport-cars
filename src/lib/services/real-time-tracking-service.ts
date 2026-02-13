@@ -3,6 +3,7 @@
 
 import { getBooking, updateBooking } from './booking-service';
 import { Booking } from '@/types/booking';
+import { getPickupAddress } from '@/utils/booking-helpers';
 
 export interface TrackingData {
   bookingId: string;
@@ -155,7 +156,7 @@ class RealTimeTrackingService {
       if (!booking) return null;
 
       // Get destination coordinates (pickup location)
-      const pickupLocation = booking.pickupLocation || booking.trip?.pickup?.address;
+      const pickupLocation = getPickupAddress(booking);
       if (!pickupLocation) return null;
       const destinationCoords = await this.getCoordinates(pickupLocation);
       if (!destinationCoords) return null;

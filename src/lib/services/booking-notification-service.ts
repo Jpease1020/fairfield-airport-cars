@@ -1,5 +1,6 @@
 import { pushNotificationService } from './push-notification-service';
 import { getBooking } from './booking-service';
+import { getPickupAddress, getDropoffAddress, getPickupDateTime, parseBookingDate } from '@/utils/booking-helpers';
 
 class BookingNotificationService {
   private static instance: BookingNotificationService;
@@ -16,11 +17,12 @@ class BookingNotificationService {
       const booking = await getBooking(bookingId);
       if (!booking) return;
 
-      const pickupTime = booking.pickupDateTime ? new Date(booking.pickupDateTime).toLocaleString() : 'TBD';
+      const pickupDate = parseBookingDate(getPickupDateTime(booking));
+      const pickupTime = pickupDate ? pickupDate.toLocaleString() : 'TBD';
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Booking Confirmed! 🚗',
-        body: `Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} is confirmed for ${pickupTime}`,
+        body: `Your ride from ${getPickupAddress(booking)} to ${getDropoffAddress(booking)} is confirmed for ${pickupTime}`,
         icon: '/favicon.ico',
         data: {
           bookingId,
@@ -40,7 +42,8 @@ class BookingNotificationService {
       const booking = await getBooking(bookingId);
       if (!booking) return;
 
-      const pickupTime = booking.pickupDateTime ? new Date(booking.pickupDateTime).toLocaleString() : 'TBD';
+      const pickupDate = parseBookingDate(getPickupDateTime(booking));
+      const pickupTime = pickupDate ? pickupDate.toLocaleString() : 'TBD';
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Reminder: Your Ride Tomorrow 🚗',
@@ -66,7 +69,7 @@ class BookingNotificationService {
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Driver Assigned! 🚗',
-        body: `${driverName} will be your driver for your ride from ${booking.pickupLocation}`,
+        body: `${driverName} will be your driver for your ride from ${getPickupAddress(booking)}`,
         icon: '/favicon.ico',
         data: {
           bookingId,
@@ -113,7 +116,7 @@ class BookingNotificationService {
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Driver has arrived! 🚗',
-        body: `${driverName} has arrived at ${booking.pickupLocation}. Safe travels!`,
+        body: `${driverName} has arrived at ${getPickupAddress(booking)}. Safe travels!`,
         icon: '/favicon.ico',
         data: {
           bookingId,
@@ -162,7 +165,7 @@ class BookingNotificationService {
 
       await pushNotificationService.sendToUser(userId, {
         title: 'Booking Cancelled 🚗',
-        body: `Your ride scheduled for ${booking.pickupDateTime ? new Date(booking.pickupDateTime).toLocaleString() : 'TBD'} has been cancelled.${refundMessage}`,
+        body: `Your ride scheduled for ${parseBookingDate(getPickupDateTime(booking))?.toLocaleString() ?? 'TBD'} has been cancelled.${refundMessage}`,
         icon: '/favicon.ico',
         data: {
           bookingId,

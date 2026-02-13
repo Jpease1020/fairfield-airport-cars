@@ -3,6 +3,19 @@ import { createEvent } from 'ics';
 import { Booking } from '@/types/booking';
 import { cmsFlattenedService } from './cms-service';
 import { EMAIL_CONFIG } from '@/utils/constants';
+import {
+  getCustomerName,
+  getCustomerEmail,
+  getCustomerPhone,
+  getCustomerNotes,
+  getPickupAddress,
+  getDropoffAddress,
+  getPickupDateTime,
+  getFare,
+  getTipAmount,
+  getFlightInfo,
+  parseBookingDate,
+} from '@/utils/booking-helpers';
 
 const {
   EMAIL_HOST,
@@ -72,31 +85,8 @@ export async function sendConfirmationEmail(booking: Booking) {
 
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
-  // Safely parse pickupDateTime - handle Date objects, ISO strings, Firestore Timestamps, etc.
-  let pickupDate: Date;
-  const pickupDateTimeRaw: any = booking.trip.pickupDateTime;
-  
-  if (pickupDateTimeRaw instanceof Date) {
-    pickupDate = pickupDateTimeRaw;
-  } else if (typeof pickupDateTimeRaw === 'string') {
-    pickupDate = new Date(pickupDateTimeRaw);
-  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw) {
-    // Firestore Timestamp
-    pickupDate = pickupDateTimeRaw.toDate();
-  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw) {
-    // Firestore Timestamp with seconds property
-    pickupDate = new Date(pickupDateTimeRaw.seconds * 1000);
-  } else {
-    // Fallback: try to parse as date or use current date
-    pickupDate = pickupDateTimeRaw ? new Date(pickupDateTimeRaw) : new Date();
-  }
-  
-  // Validate the date is valid
-  if (isNaN(pickupDate.getTime())) {
-    console.error('❌ [EMAIL SERVICE] Invalid pickupDateTime:', pickupDateTimeRaw);
-    // Fallback to a default date if parsing failed
-    pickupDate = new Date();
-  }
+  // Use centralized date parsing from booking-helpers
+  const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
 
   // Format date without seconds
   const formatDateTime = (date: Date): string => {
@@ -112,11 +102,11 @@ export async function sendConfirmationEmail(booking: Booking) {
       hour12: true
     });
   };
-  
-  // Get pickup and dropoff addresses from new structure (trip.pickup.address) or legacy fields
-  const pickupAddress = booking.trip?.pickup?.address || booking.pickupLocation || 'Pickup location not specified';
-  const dropoffAddress = booking.trip?.dropoff?.address || booking.dropoffLocation || 'Dropoff location not specified';
-  const customerName = booking.customer?.name || booking.name || 'Valued Customer';
+
+  // Use centralized helpers for booking data access
+  const pickupAddress = getPickupAddress(booking) || 'Pickup location not specified';
+  const dropoffAddress = getDropoffAddress(booking) || 'Dropoff location not specified';
+  const customerName = getCustomerName(booking) || 'Valued Customer';
 
   const event = {
     start: [
@@ -188,8 +178,8 @@ Thank you for choosing ${businessSettings?.company?.name || 'Fairfield Airport C
 Best regards,
 The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
 
-  // Get customer email with fallback
-  const customerEmail = booking.customer?.email || booking.email || '';
+  // Get customer email using centralized helper
+  const customerEmail = getCustomerEmail(booking);
 
   const mailOptions = {
     from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
@@ -268,11 +258,11 @@ export async function sendTestEmail(to: string, subject = 'Test Email', text = '
 }
 
 export async function sendBookingVerificationEmail(booking: Booking, confirmationUrl: string) {
-  // Get customer name, email, and addresses with fallbacks (early for logging)
-  const customerName = booking.customer?.name || booking.name || 'Valued Customer';
-  const customerEmail = booking.customer?.email || booking.email || '';
-  const pickupAddress = booking.trip?.pickup?.address || booking.pickupLocation || 'Pickup location not specified';
-  const dropoffAddress = booking.trip?.dropoff?.address || booking.dropoffLocation || 'Dropoff location not specified';
+  // Use centralized helpers for booking data access
+  const customerName = getCustomerName(booking) || 'Valued Customer';
+  const customerEmail = getCustomerEmail(booking);
+  const pickupAddress = getPickupAddress(booking) || 'Pickup location not specified';
+  const dropoffAddress = getDropoffAddress(booking) || 'Dropoff location not specified';
 
   console.log('📧 [EMAIL SERVICE] Attempting to send booking verification email...');
   console.log(`   To: ${customerEmail}`);
@@ -294,43 +284,10 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
   
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
-  // Safely parse pickupDateTime - handle Date objects, ISO strings, Firestore Timestamps, etc.
-  let pickupDate: Date;
-  const pickupDateTimeRaw: any = booking.trip.pickupDateTime;
-  
-  console.log('📅 [EMAIL SERVICE] Parsing pickupDateTime:', {
-    raw: pickupDateTimeRaw,
-    type: typeof pickupDateTimeRaw,
-    isDate: pickupDateTimeRaw instanceof Date,
-    hasToDate: pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw,
-    hasSeconds: pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw
-  });
-  
-  if (pickupDateTimeRaw instanceof Date) {
-    pickupDate = pickupDateTimeRaw;
-  } else if (typeof pickupDateTimeRaw === 'string') {
-    pickupDate = new Date(pickupDateTimeRaw);
-  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw) {
-    // Firestore Timestamp
-    pickupDate = pickupDateTimeRaw.toDate();
-  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw) {
-    // Firestore Timestamp with seconds property
-    pickupDate = new Date(pickupDateTimeRaw.seconds * 1000);
-  } else {
-    // Fallback: try to parse as date or use current date
-    pickupDate = pickupDateTimeRaw ? new Date(pickupDateTimeRaw) : new Date();
-  }
-  
-  // Validate the date is valid
-  if (isNaN(pickupDate.getTime())) {
-    console.error('❌ [EMAIL SERVICE] Invalid pickupDateTime:', pickupDateTimeRaw);
-    console.error('   Attempted to parse as:', pickupDate);
-    // Fallback to a default date if parsing failed
-    pickupDate = new Date();
-  } else {
-    console.log('✅ [EMAIL SERVICE] Successfully parsed pickupDateTime:', pickupDate.toISOString());
-  }
-  
+  // Use centralized date parsing from booking-helpers
+  const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
+  console.log('📅 [EMAIL SERVICE] Parsed pickupDateTime:', pickupDate.toISOString());
+
   // Format date without seconds
   const formatDateTime = (date: Date): string => {
     if (isNaN(date.getTime())) {
@@ -436,26 +393,8 @@ export async function sendDriverNotificationEmail(booking: Booking) {
   const transporter = getTransporter();
   const businessSettings = await cmsFlattenedService.getBusinessSettings();
 
-  // Safely parse pickupDateTime
-  let pickupDate: Date;
-  const pickupDateTimeRaw: any = booking.trip.pickupDateTime;
-
-  if (pickupDateTimeRaw instanceof Date) {
-    pickupDate = pickupDateTimeRaw;
-  } else if (typeof pickupDateTimeRaw === 'string') {
-    pickupDate = new Date(pickupDateTimeRaw);
-  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'toDate' in pickupDateTimeRaw) {
-    pickupDate = pickupDateTimeRaw.toDate();
-  } else if (pickupDateTimeRaw && typeof pickupDateTimeRaw === 'object' && 'seconds' in pickupDateTimeRaw) {
-    pickupDate = new Date(pickupDateTimeRaw.seconds * 1000);
-  } else {
-    pickupDate = pickupDateTimeRaw ? new Date(pickupDateTimeRaw) : new Date();
-  }
-
-  if (isNaN(pickupDate.getTime())) {
-    console.error('❌ [EMAIL SERVICE] Invalid pickupDateTime for driver notification:', pickupDateTimeRaw);
-    pickupDate = new Date();
-  }
+  // Use centralized date parsing from booking-helpers
+  const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
 
   // Format date/time for easy reading
   const formatDate = (date: Date): string => {
@@ -475,20 +414,20 @@ export async function sendDriverNotificationEmail(booking: Booking) {
     });
   };
 
-  // Get booking details with fallbacks
-  const pickupAddress = booking.trip?.pickup?.address || booking.pickupLocation || 'Not specified';
-  const dropoffAddress = booking.trip?.dropoff?.address || booking.dropoffLocation || 'Not specified';
-  const customerName = booking.customer?.name || booking.name || 'Not provided';
-  const customerEmail = booking.customer?.email || booking.email || 'Not provided';
-  const customerPhone = booking.customer?.phone || booking.phone || 'Not provided';
-  const notes = booking.customer?.notes || booking.notes || '';
-  const fare = booking.fare || booking.trip?.fare || 0;
-  const tipAmount = booking.tipAmount || booking.trip?.tipAmount || 0;
+  // Use centralized helpers for booking data access
+  const pickupAddress = getPickupAddress(booking) || 'Not specified';
+  const dropoffAddress = getDropoffAddress(booking) || 'Not specified';
+  const customerName = getCustomerName(booking) || 'Not provided';
+  const customerEmail = getCustomerEmail(booking) || 'Not provided';
+  const customerPhone = getCustomerPhone(booking) || 'Not provided';
+  const notes = getCustomerNotes(booking);
+  const fare = getFare(booking);
+  const tipAmount = getTipAmount(booking);
   const totalFare = fare + tipAmount;
 
   // Flight info
-  const flightInfo = booking.flightInfo || booking.trip?.flightInfo;
-  const hasFlightInfo = flightInfo && (flightInfo.airline || flightInfo.flightNumber);
+  const flightInfo = getFlightInfo(booking);
+  const hasFlightInfo = flightInfo.hasFlight;
 
   // Driver email (Gregg)
   const driverEmail = EMAIL_CONFIG.verifiedSender; // rides@fairfieldairportcar.com
