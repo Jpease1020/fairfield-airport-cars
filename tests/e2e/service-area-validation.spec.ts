@@ -7,13 +7,11 @@
 
 import { test, expect } from '@playwright/test';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
-
 test.describe('Service Area Validation', () => {
   const futurePickupTime = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
   test('Valid trip within service area with airport should succeed', async ({ request }) => {
-    const response = await request.post(`${API_BASE_URL}/api/booking/quote`, {
+    const response = await request.post(`/api/booking/quote`, {
       data: {
         origin: 'Fairfield Station, Fairfield, CT',
         destination: 'JFK Airport, Queens, NY',
@@ -32,7 +30,7 @@ test.describe('Service Area Validation', () => {
   });
 
   test('Trip without airport endpoint should return MISSING_AIRPORT_ENDPOINT', async ({ request }) => {
-    const response = await request.post(`${API_BASE_URL}/api/booking/quote`, {
+    const response = await request.post(`/api/booking/quote`, {
       data: {
         origin: 'Fairfield Station, Fairfield, CT',
         destination: 'Fairfield University, Fairfield, CT',
@@ -51,7 +49,7 @@ test.describe('Service Area Validation', () => {
   });
 
   test('Trip completely out of service area should return OUT_OF_SERVICE_HARD', async ({ request }) => {
-    const response = await request.post(`${API_BASE_URL}/api/booking/quote`, {
+    const response = await request.post(`/api/booking/quote`, {
       data: {
         origin: 'Miami, FL',
         destination: 'Dallas, TX',
@@ -71,7 +69,7 @@ test.describe('Service Area Validation', () => {
 
   test('Booking submit validates service area', async ({ request }) => {
     // Try to submit a booking without an airport
-    const response = await request.post(`${API_BASE_URL}/api/booking/submit`, {
+    const response = await request.post(`/api/booking/submit`, {
       data: {
         fare: 50,
         customer: {
@@ -111,7 +109,7 @@ test.describe('Service Area Validation', () => {
     ];
 
     for (const airport of airports) {
-      const response = await request.post(`${API_BASE_URL}/api/booking/quote`, {
+      const response = await request.post(`/api/booking/quote`, {
         data: {
           origin: 'Fairfield Station, Fairfield, CT',
           destination: `${airport.name} Airport`,
@@ -130,7 +128,7 @@ test.describe('Service Area Validation', () => {
   });
 
   test('Reverse trip (airport to home) should succeed', async ({ request }) => {
-    const response = await request.post(`${API_BASE_URL}/api/booking/quote`, {
+    const response = await request.post(`/api/booking/quote`, {
       data: {
         origin: 'JFK Airport, Queens, NY',
         destination: 'Fairfield Station, Fairfield, CT',
@@ -153,7 +151,7 @@ test.describe('Service Area Validation - Edge Cases', () => {
 
   test('Trip with coordinates but no address text should still validate', async ({ request }) => {
     // Test that coordinates are used for validation even if address text is minimal
-    const response = await request.post(`${API_BASE_URL}/api/booking/quote`, {
+    const response = await request.post(`/api/booking/quote`, {
       data: {
         origin: 'Fairfield, CT',
         destination: 'JFK',
@@ -169,9 +167,9 @@ test.describe('Service Area Validation - Edge Cases', () => {
     expect(response.status()).toBe(200);
   });
 
-  test('Trip with missing coordinates should still validate using address text', async ({ request }) => {
-    // Test that address text is used for airport detection when coordinates missing
-    const response = await request.post(`${API_BASE_URL}/api/booking/quote`, {
+  test('Trip with missing coordinates should return 400 (coordinates required)', async ({ request }) => {
+    // Coordinates are required for distance calculation
+    const response = await request.post(`/api/booking/quote`, {
       data: {
         origin: 'Fairfield Station, Fairfield, CT',
         destination: 'John F. Kennedy International Airport, Queens, NY',
@@ -181,8 +179,7 @@ test.describe('Service Area Validation - Edge Cases', () => {
       }
     });
 
-    // Should succeed because "International Airport" in address indicates airport
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(400);
   });
 });
 
