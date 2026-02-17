@@ -115,7 +115,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children, exis
       phone: '',
       notes: '',
       saveInfoForFuture: false,
-      smsOptIn: true // Default checked per business preference
+      smsOptIn: false // Default unchecked for TCPA compliance (affirmative consent required)
     },
     payment: {
       depositAmount: null,
@@ -865,7 +865,7 @@ const [warning, setWarning] = useState<string | null>(null);
         phone: '',
         notes: '',
         saveInfoForFuture: false,
-        smsOptIn: true // Default checked per business preference
+        smsOptIn: false // Default unchecked for TCPA compliance (affirmative consent required)
       },
       payment: {
         depositAmount: null,

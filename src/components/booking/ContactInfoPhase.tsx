@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 import { Container, Stack, Text, Button, Box, Input, Textarea, RadioButton, H2, Label } from '@/design/ui';
 import { CustomerInfo, ValidationResult } from '@/types/booking';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
@@ -63,6 +64,10 @@ const ErrorMessageBox = styled.div`
 
 const SmsDisclaimerText = styled(Text)`
   margin-left: 28px;
+`;
+
+const SmsTermsLink = styled(Link)`
+  text-decoration: underline;
 `;
 
 /**
@@ -295,10 +300,11 @@ export function ContactInfoPhase({
                 checked={customerData.smsOptIn}
                 onChange={() => onCustomerUpdate({ smsOptIn: !customerData.smsOptIn })}
                 data-testid="sms-opt-in-checkbox"
-                label="Send me occasional deals and promotions via text message"
+                label="I agree to receive SMS messages from Fairfield Airport Car Service including booking confirmations, reminders, and occasional promotions."
               />
               <SmsDisclaimerText variant="small" color="secondary">
-                Message frequency varies. Msg & data rates may apply. Reply STOP to unsubscribe.
+                Msg frequency varies. Msg & data rates may apply. Reply STOP to opt out, HELP for help.{' '}
+                <SmsTermsLink href="/sms-terms">SMS Terms & Conditions</SmsTermsLink>
               </SmsDisclaimerText>
             </Stack>
           </Stack>
