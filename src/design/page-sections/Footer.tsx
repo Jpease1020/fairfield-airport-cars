@@ -44,13 +44,17 @@ export const Footer: React.FC = () => {
       label: cmsData?.['links-privacy-label'] || 'Privacy', 
       href: '/privacy' 
     },
-    { 
-      label: cmsData?.['links-terms-label'] || 'Terms', 
-      href: '/terms' 
+    {
+      label: cmsData?.['links-terms-label'] || 'Terms',
+      href: '/terms'
     },
-    { 
-      label: cmsData?.['links-contact-label'] || 'Contact', 
-      href: '/contact' 
+    {
+      label: 'SMS Terms',
+      href: '/sms-terms'
+    },
+    {
+      label: cmsData?.['links-contact-label'] || 'Contact',
+      href: '/contact'
     },
   ];
 
