@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import {
   Text,
   Container,
@@ -213,11 +214,20 @@ export default function PrivacyPageContent() {
 
             <Box data-testid="privacy-section-7">
               <Stack spacing="md">
-                <H4 data-testid="privacy-section-title-7" cmsId="sections-7-title">
-                  {cmsData?.['sections-7-title'] || '8. Third-Party Links'}
+                <H4 data-testid="privacy-section-title-7">
+                  8. SMS & Text Message Communications
                 </H4>
-                <Text data-testid="privacy-section-content-7" cmsId="sections-7-content">
-                  {cmsData?.['sections-7-content'] || 'Our website may contain links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to review their privacy policies.'}
+                <Text data-testid="privacy-section-content-7">
+                  When you opt in to receive SMS messages during the booking process, we collect and store your phone number and SMS consent status. We use this information to send you:
+                </Text>
+                <Stack spacing="sm">
+                  <Text>{'\u2022'} Booking confirmations and status updates</Text>
+                  <Text>{'\u2022'} Pickup reminders and driver notifications</Text>
+                  <Text>{'\u2022'} Occasional promotional offers (no more than 4 per month)</Text>
+                </Stack>
+                <Text>
+                  SMS consent is not required to use our services. You may opt out at any time by replying STOP to any message, or by unchecking the SMS consent checkbox during your next booking. Your phone number is not sold, rented, or shared with third parties for their marketing purposes. For full details, see our{' '}
+                  <Link href="/sms-terms" style={{ textDecoration: 'underline' }}>SMS Terms & Conditions</Link>.
                 </Text>
               </Stack>
             </Box>
@@ -225,10 +235,21 @@ export default function PrivacyPageContent() {
             <Box data-testid="privacy-section-8">
               <Stack spacing="md">
                 <H4 data-testid="privacy-section-title-8" cmsId="sections-8-title">
-                  {cmsData?.['sections-8-title'] || '9. Contact Us'}
+                  {cmsData?.['sections-8-title'] || '9. Third-Party Links'}
                 </H4>
                 <Text data-testid="privacy-section-content-8" cmsId="sections-8-content">
-                  {cmsData?.['sections-8-content'] || 'If you have questions about this Privacy Policy or how we handle your information, please contact us: Fairfield Airport Cars, Text: (646) 221-6370, Email: rides@fairfieldairportcar.com'}
+                  {cmsData?.['sections-8-content'] || 'Our website may contain links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to review their privacy policies.'}
+                </Text>
+              </Stack>
+            </Box>
+
+            <Box data-testid="privacy-section-9">
+              <Stack spacing="md">
+                <H4 data-testid="privacy-section-title-9" cmsId="sections-9-title">
+                  {cmsData?.['sections-9-title'] || '10. Contact Us'}
+                </H4>
+                <Text data-testid="privacy-section-content-9" cmsId="sections-9-content">
+                  {cmsData?.['sections-9-content'] || 'If you have questions about this Privacy Policy or how we handle your information, please contact us: Fairfield Airport Cars, Text: (646) 221-6370, Email: rides@fairfieldairportcar.com'}
                 </Text>
               </Stack>
             </Box>
