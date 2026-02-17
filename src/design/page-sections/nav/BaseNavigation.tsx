@@ -41,7 +41,6 @@ const ActionsContainer = styled.div`
 // Mobile-only max-height for nav container
 const NavContainer = styled(PositionedContainer)`
   margin-bottom: ${spacing.lg};
-  border-bottom: 1px solid ${colors.border.default};
   padding-top: ${spacing.md};
   padding-bottom: ${spacing.md};
 
