@@ -65,6 +65,15 @@ class NotificationService {
   async init() {
     if (this.isInitialized) return;
 
+    // Enable admin alert channel from env so Gregg gets booking problems and app issues
+    const alertPhone = process.env.NOTIFICATION_ALERT_PHONE || process.env.GREGG_SMS_FORWARD_NUMBER;
+    if (alertPhone) {
+      this.config.sms = { ...this.config.sms, enabled: true, recipients: [alertPhone] };
+    }
+    if (process.env.NOTIFICATION_ALERT_EMAIL_ENABLED === 'true' && this.config.email?.recipients?.length) {
+      this.config.email = { ...this.config.email, enabled: true };
+    }
+
     // Test notification channels
     if (process.env.NODE_ENV === 'production') {
       await this.testChannels();
@@ -148,6 +157,31 @@ class NotificationService {
         feature,
         error: error.message,
         stack: error.stack
+      },
+      priority: 'high'
+    });
+  }
+
+  /**
+   * Notify admin when a user has a problem during the booking flow.
+   * Call from catch blocks of submit, process-payment, cancel-booking.
+   */
+  async sendBookingProblem(
+    stage: 'submit' | 'payment' | 'cancel',
+    error: unknown,
+    context?: { bookingId?: string; userPhone?: string; userEmail?: string; [key: string]: unknown }
+  ): Promise<void> {
+    const err = error instanceof Error ? error : new Error(String(error));
+    const message = `Booking flow failed at ${stage}: ${err.message}`;
+    await this.sendNotification({
+      type: 'critical',
+      title: `🚨 Booking problem (${stage})`,
+      message,
+      context: {
+        stage,
+        error: err.message,
+        stack: err.stack,
+        ...context
       },
       priority: 'high'
     });
@@ -308,4 +342,12 @@ export const sendHighErrorRate = (errorRate: number, totalInteractions: number) 
 
 export const sendBrokenFeature = (feature: string, error: any) => {
   return notificationService.sendBrokenFeature(feature, error);
+};
+
+export const sendBookingProblem = (
+  stage: 'submit' | 'payment' | 'cancel',
+  error: unknown,
+  context?: { bookingId?: string; userPhone?: string; userEmail?: string; [key: string]: unknown }
+) => {
+  return notificationService.sendBookingProblem(stage, error, context);
 }; 
