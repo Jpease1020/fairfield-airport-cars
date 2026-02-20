@@ -80,6 +80,8 @@ temp/
 # IDE and editor files
 .vscode/
 .idea/
+.claude/
+.cursor/plans/
 *.swp
 *.swo
 *~
