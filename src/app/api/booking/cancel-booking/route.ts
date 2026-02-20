@@ -4,10 +4,14 @@ import { sendSms } from '@/lib/services/twilio-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { getBusinessRules, getCancellationFeePercent } from '@/lib/business/business-rules';
+import { sendBookingProblem } from '@/lib/services/notification-service';
 
 export async function POST(req: NextRequest) {
+  let bookingId: string | undefined;
   try {
-    const { bookingId, reason } = await req.json();
+    const body = await req.json();
+    bookingId = body.bookingId;
+    const reason = body.reason;
 
     if (!bookingId) {
       return NextResponse.json({ error: 'Booking ID is required' }, { status: 400 });
@@ -74,6 +78,11 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('Cancel booking error', err);
+    try {
+      await sendBookingProblem('cancel', err, { bookingId });
+    } catch (notifyErr) {
+      console.error('Failed to send booking-problem notification:', notifyErr);
+    }
     return NextResponse.json({ error: 'Failed to cancel booking' }, { status: 500 });
   }
 } 

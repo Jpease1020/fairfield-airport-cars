@@ -9,6 +9,7 @@ import { sendBookingVerificationEmail, sendDriverNotificationEmail } from '@/lib
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
 import { classifyTrip } from '@/lib/services/service-area-validation';
+import { sendBookingProblem } from '@/lib/services/notification-service';
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -358,6 +359,14 @@ export async function POST(request: Request) {
 
   } catch (err) {
     console.error('Booking creation error:', err);
+    try {
+      await sendBookingProblem('submit', err, {
+        userPhone: customer?.phone,
+        userEmail: customer?.email,
+      });
+    } catch (notifyErr) {
+      console.error('Failed to send booking-problem notification:', notifyErr);
+    }
     const errorMessage = err instanceof Error ? err.message : 'Failed to create booking';
     await recordBookingAttempt({
       stage: 'submit',

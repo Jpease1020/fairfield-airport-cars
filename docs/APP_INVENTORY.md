@@ -30,6 +30,12 @@ High-level overview of major features and where they live.
 - **Outbound:** Every `sendSms()` call logs to `smsMessages` with `direction: 'outbound'`.
 - **Collection:** `smsMessages` (from, to, body, direction, twilioMessageSid, createdAt).
 
+## Admin alert notifications (booking problems and app issues)
+
+- **Service:** `src/lib/services/notification-service.ts`. When a user has a problem during submit, payment, or cancel, or when the app hits a critical error, the service notifies Gregg.
+- **Wired in:** Catch blocks of `POST /api/booking/submit`, `POST /api/payment/process-payment`, `POST /api/booking/cancel-booking` call `sendBookingProblem(stage, error, context)`.
+- **Channels:** Enable at least one via env so alerts reach Gregg: set `NOTIFICATION_ALERT_PHONE` or `GREGG_SMS_FORWARD_NUMBER` for SMS; or `NOTIFICATION_ALERT_EMAIL_ENABLED=true` for email (recipients: rides@fairfieldairportcar.com). In production, `init()` applies this config.
+
 ## Auth & admin
 
 - Firebase Auth; admin determined by Firestore `users/{uid}.role === 'admin'`. Admin layout and withAuth protect `/admin/*`.

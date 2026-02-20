@@ -7,11 +7,17 @@ import { randomBytes } from 'crypto';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
+import { sendBookingProblem } from '@/lib/services/notification-service';
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
+  let existingBookingId: string | undefined;
+  let bookingData: any;
   try {
-    const { paymentToken, amount, currency, bookingData, existingBookingId, tipAmount = 0 } = await request.json();
+    const body = await request.json();
+    const { paymentToken, amount, currency, bookingData: bd, existingBookingId: eid, tipAmount = 0 } = body;
+    existingBookingId = eid;
+    bookingData = bd;
 
     // Check for smoke test mode
     const smokeTestHeader = request.headers.get('x-smoke-test');
@@ -68,7 +74,7 @@ export async function POST(request: Request) {
     let emailWarning: string | null = null;
     
     if (!bookingId && bookingData) {
-      // Create new booking with payment information
+      // Create new booking with payment information (cast: request body + payment fields match BookingCreateData at runtime)
       const bookingResult = await createBookingAtomic({
         ...bookingData,
         squareOrderId: paymentResult.orderId,
@@ -80,7 +86,7 @@ export async function POST(request: Request) {
         balanceDue: 0, // No balance due since deposit is paid
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
+      } as any);
       
       bookingId = bookingResult.bookingId;
       
@@ -148,6 +154,15 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Failed to process payment:', error);
+    try {
+      await sendBookingProblem('payment', error, {
+        bookingId: existingBookingId,
+        userPhone: bookingData?.customer?.phone,
+        userEmail: bookingData?.customer?.email,
+      });
+    } catch (notifyErr) {
+      console.error('Failed to send booking-problem notification:', notifyErr);
+    }
     const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
     await recordBookingAttempt({
       stage: 'payment',
