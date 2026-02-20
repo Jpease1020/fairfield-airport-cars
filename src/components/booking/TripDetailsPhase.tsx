@@ -101,15 +101,7 @@ export function TripDetailsPhase({
       <Stack spacing="2xl" data-testid="trip-details-phase-stack">
         {/* Location Input Section */}
         <LocationInputSection
-          pickupLocation={tripData.pickup.address}
-          dropoffLocation={tripData.dropoff.address}
-          pickupCoords={tripData.pickup.coordinates}
-          dropoffCoords={tripData.dropoff.coordinates}
-          onPickupLocationChange={(address) => updateTripDetails({ pickup: { ...tripData.pickup, address } })}
-          onDropoffLocationChange={(address) => updateTripDetails({ dropoff: { ...tripData.dropoff, address } })}
-          onPickupCoordsChange={(coords) => updateTripDetails({ pickup: { ...tripData.pickup, coordinates: coords } })}
-          onDropoffCoordsChange={(coords) => updateTripDetails({ dropoff: { ...tripData.dropoff, coordinates: coords } })}
-          departureTime={tripData.pickupDateTime}
+          onRouteCalculated={() => {}}
           cmsData={cmsData}
         />
 

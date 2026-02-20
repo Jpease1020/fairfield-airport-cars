@@ -45,7 +45,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
     <Box variant="elevated" padding="xl" data-testid="booking-success-confirmation">
       <Stack spacing="xl" align="center">
         <Text size="3xl" weight="bold" color="primary" cmsId="booking-confirmed-title">
-          {cmsData?.['booking-confirmed-title'] || 'Confirm Your Booking'}
+          {cmsData?.['booking-confirmed-title'] || 'Booking confirmed'}
         </Text>
 
         <Text

@@ -4,10 +4,11 @@
  * Tests the complete cancellation journey with correct refund calculations.
  * This protects both the business (no over-refunds) and customers (correct refunds).
  *
- * Refund Policy:
- * - >24 hours before pickup: 100% refund
- * - 3-24 hours before pickup: 50% refund
- * - <3 hours before pickup: 0% refund
+ * Refund Policy (fee-based):
+ * - 24h+ before pickup: 0% fee, 100% refund
+ * - 12-24h: 25% fee, 75% refund
+ * - 6-12h: 50% fee, 50% refund
+ * - <6h: 75% fee, 25% refund
  *
  * NOTE: Core unit tests are in tests/unit/cancel-booking.route.test.ts
  * This file tests higher-level integration scenarios.
@@ -51,6 +52,23 @@ vi.mock('@/lib/services/booking-service', () => ({
 
 vi.mock('@/utils/bookingAdapter', () => ({
   adaptOldBookingToNew: vi.fn((booking) => booking),
+}));
+
+vi.mock('@/lib/business/business-rules', () => ({
+  getBusinessRules: vi.fn().mockResolvedValue({
+    cancellationFeeTiers: {
+      over24hFeePercent: 0,
+      under24hFeePercent: 25,
+      under12hFeePercent: 50,
+      under6hFeePercent: 75,
+    },
+  }),
+  getCancellationFeePercent: vi.fn((hours: number, tiers: { over24hFeePercent: number; under24hFeePercent: number; under12hFeePercent: number; under6hFeePercent: number }) => {
+    if (hours >= 24) return tiers.over24hFeePercent;
+    if (hours >= 12) return tiers.under24hFeePercent;
+    if (hours >= 6) return tiers.under12hFeePercent;
+    return tiers.under6hFeePercent;
+  }),
 }));
 
 import { sendSms } from '@/lib/services/twilio-service';
@@ -135,16 +153,19 @@ describe('Cancellation & Refund Flow', () => {
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
       expect(response.status).toBe(200);
-      // Should refund full amount: $25.50 * 100% = $25.50 = 2550 cents
-      expect(mockRefundPayment).toHaveBeenCalledWith(
-        'sq-payment-123',
-        2550,
-        'USD',
-        'Test'
+      // Route passes options to cancelBooking; service will call refundPayment. Assert options.
+      expect(mockCancelBooking).toHaveBeenCalledWith(
+        'test-booking-123',
+        'Test',
+        expect.objectContaining({
+          refundAmount: 25.5,
+          squarePaymentId: 'sq-payment-123',
+          cancellationFee: 0,
+        })
       );
     });
 
-    it('gives 50% refund when cancelled 3-24 hours before pickup', async () => {
+    it('gives 75% refund when cancelled 12-24 hours before pickup (25% fee)', async () => {
       const booking = createMockBooking(12); // 12 hours from now
       mockGetBooking.mockResolvedValueOnce(booking);
       mockCancelBooking.mockResolvedValueOnce(undefined);
@@ -155,27 +176,39 @@ describe('Cancellation & Refund Flow', () => {
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
       expect(response.status).toBe(200);
-      // Should refund 50%: $25.50 * 50% = $12.75 = 1275 cents
-      expect(mockRefundPayment).toHaveBeenCalledWith(
-        'sq-payment-123',
-        1275,
-        'USD',
-        'Test'
+      // 25% fee → 75% refund: $25.50 * 0.75 = $19.125
+      expect(mockCancelBooking).toHaveBeenCalledWith(
+        'test-booking-123',
+        'Test',
+        expect.objectContaining({
+          refundAmount: 19.125,
+          squarePaymentId: 'sq-payment-123',
+          cancellationFee: 6.375,
+        })
       );
     });
 
-    it('gives 0% refund when cancelled <3 hours before pickup', async () => {
+    it('gives 25% refund when cancelled <6 hours before pickup (75% fee)', async () => {
       const booking = createMockBooking(1); // 1 hour from now
       mockGetBooking.mockResolvedValueOnce(booking);
       mockCancelBooking.mockResolvedValueOnce(undefined);
       mockUpdateBooking.mockResolvedValueOnce(undefined);
+      mockRefundPayment.mockResolvedValueOnce({ success: true, refundId: 'refund-789' });
       mockSendSms.mockResolvedValueOnce({ sid: 'sms-123' });
 
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
       expect(response.status).toBe(200);
-      // Should NOT call refund (0%)
-      expect(mockRefundPayment).not.toHaveBeenCalled();
+      // 75% fee → 25% refund: $25.50 * 0.25 = $6.375
+      expect(mockCancelBooking).toHaveBeenCalledWith(
+        'test-booking-123',
+        'Test',
+        expect.objectContaining({
+          refundAmount: 6.375,
+          squarePaymentId: 'sq-payment-123',
+          cancellationFee: 19.125,
+        })
+      );
     });
   });
 
@@ -190,7 +223,15 @@ describe('Cancellation & Refund Flow', () => {
 
       await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Customer request' }));
 
-      expect(mockCancelBooking).toHaveBeenCalledWith('test-booking-123', 'Customer request');
+      expect(mockCancelBooking).toHaveBeenCalledWith(
+        'test-booking-123',
+        'Customer request',
+        expect.objectContaining({
+          refundAmount: expect.any(Number),
+          squarePaymentId: expect.any(String),
+          cancellationFee: expect.any(Number),
+        })
+      );
     });
 
     it('sends cancellation SMS to customer', async () => {

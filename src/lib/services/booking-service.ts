@@ -7,6 +7,8 @@ import { BookingCreateData } from '@/types/booking';
 import { getDriver } from './driver-service';
 import { driverSchedulingService } from './driver-scheduling-service';
 import { generateShortBookingId } from '@/utils/booking-id-generator';
+import { getBusinessRules } from '@/lib/business/business-rules';
+import { refundPayment } from './square-service';
 
 
 // Helper function to safely convert Firestore dates to JavaScript Date objects
@@ -161,7 +163,9 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
   }
 };
 
-// ATOMIC BOOKING: Prevents double booking with Firestore transactions
+// ATOMIC BOOKING: Single implementation for submit and process-payment. Conflict check and driver
+// lookup run outside the transaction; transaction only creates the doc; bookTimeSlot runs after.
+/** Single entry point for creating bookings (used by submit + process-payment). Admin uses this via booking-service-admin. Legacy createBooking() below is for backward compatibility only. */
 export const createBookingAtomic = async (bookingData: BookingCreateData): Promise<{ bookingId: string }> => {
   const db = getAdminDb();
   const pickupDate = bookingData.trip.pickupDateTime as unknown as Date;
@@ -169,74 +173,57 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
   const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
   const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
 
-  return await db.runTransaction(async (transaction: any) => {
-    // 1. Check for conflicts atomically
-    const conflictCheck = await driverSchedulingService.checkBookingConflicts(
-      dateStr,
-      startTime,
-      endTime
-    );
+  // 1. Check for conflicts and get drivers OUTSIDE transaction (recommended for Firestore)
+  const conflictCheck = await driverSchedulingService.checkBookingConflicts(
+    dateStr,
+    startTime,
+    endTime
+  );
+  if (conflictCheck.hasConflict) {
+    throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
+  }
 
-    if (conflictCheck.hasConflict) {
-      throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
-    }
+  const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
+    dateStr,
+    startTime,
+    endTime
+  );
+  const selectedDriver = availableDrivers.length > 0 ? availableDrivers[0] : null;
+  const depositAmount = bookingData.payment.depositAmount ?? 0;
+  const balanceDue = bookingData.trip.fare! - depositAmount;
+  const status = (bookingData as { status?: string }).status ?? 'pending';
 
-    // 2. Get available drivers atomically
-    const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
-      dateStr,
-      startTime,
-      endTime
-    );
-
-    // For promotional no-payment bookings, allow booking without immediate driver assignment
-    let selectedDriver = null;
-    if (availableDrivers.length > 0) {
-      // 3. Select driver if available (single driver setup)
-      selectedDriver = availableDrivers[0];
-    }
-    // If no driver available, booking status will be 'pending' and driver assigned later
-
-    // 4. Calculate deposit (30% of total fare) - currently $0 for promotion
-    const depositAmount = bookingData.payment.depositAmount || 0;
-    const balanceDue = bookingData.trip.fare! - depositAmount;
-
-    // 5. Generate short booking ID and check for collisions (inside transaction)
+  const { bookingId } = await db.runTransaction(async (transaction: any) => {
     let bookingId = generateShortBookingId();
     let attempts = 0;
     const maxAttempts = 10;
-    
-    // Check if ID already exists (very unlikely but handle it)
     while (attempts < maxAttempts) {
       const existingDocRef = db.collection('bookings').doc(bookingId);
       const existingDoc = await transaction.get(existingDocRef);
-      if (!existingDoc.exists) {
-        break; // ID is available
-      }
+      if (!existingDoc.exists) break;
       bookingId = generateShortBookingId();
       attempts++;
     }
-    
     if (attempts >= maxAttempts) {
       throw new Error('Failed to generate unique booking ID. Please try again.');
     }
-
-    // 6. Create booking document atomically with custom ID
     const bookingDoc = {
       ...bookingData,
-      driverId: selectedDriver?.driverId || null,
-      driverName: selectedDriver?.driverName || 'To be assigned',
+      driverId: selectedDriver?.driverId ?? null,
+      driverName: selectedDriver?.driverName ?? 'To be assigned',
       depositAmount,
       balanceDue,
-      status: 'pending',
+      status,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     };
+    transaction.set(db.collection('bookings').doc(bookingId), bookingDoc);
+    return { bookingId };
+  });
 
-    const docRef = db.collection('bookings').doc(bookingId);
-    transaction.set(docRef, bookingDoc);
-
-    // 7. Book the time slot atomically (only if driver available)
-    if (selectedDriver) {
+  // 2. Book time slot AFTER transaction (avoids async work inside transaction)
+  if (selectedDriver) {
+    try {
       await driverSchedulingService.bookTimeSlot(
         selectedDriver.driverId,
         selectedDriver.driverName,
@@ -249,12 +236,14 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
         bookingData.trip.dropoff.address
       );
       console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
-    } else {
-      console.log(`✅ BOOKING PENDING: ${bookingId} - driver will be assigned later`);
+    } catch (slotError) {
+      console.error(`⚠️ Booking ${bookingId} created but time slot booking failed:`, slotError);
     }
+  } else {
+    console.log(`✅ BOOKING PENDING: ${bookingId} - driver will be assigned later`);
+  }
 
-    return { bookingId };
-  });
+  return { bookingId };
 };
 
 // Create booking with payment integration and driver scheduling (LEGACY - use createBookingAtomic)
@@ -299,9 +288,17 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
       throw new Error('No driver is available for the requested time slot');
     }
 
-    // Calculate deposit (30% of total fare)
+    // Deposit from business rules (deposit.required: false => 0; percent or fixed otherwise)
     const fare = bookingData.fare || bookingData.trip?.fare || 0;
-    const depositAmount = Math.round(fare * 0.3 * 100) / 100; // Round to 2 decimal places
+    const rules = await getBusinessRules();
+    let depositAmount = 0;
+    if (rules.deposit.required && fare > 0) {
+      if (rules.deposit.mode === 'percent') {
+        depositAmount = Math.round((fare * rules.deposit.value / 100) * 100) / 100;
+      } else {
+        depositAmount = Math.min(rules.deposit.value, fare);
+      }
+    }
     const balanceDue = fare - depositAmount;
 
     const db = getAdminDb();
@@ -421,8 +418,19 @@ export const deleteBooking = async (id: string): Promise<void> => {
   });
 };
 
-// Cancel booking with refund logic and schedule cleanup
-export const cancelBooking = async (bookingId: string, reason?: string): Promise<void> => {
+/** Options for cancelBooking when the caller has already computed refund/fee (e.g. cancel-booking API route). Refund is processed via Square when refundAmount (dollars) and squarePaymentId are provided. */
+export interface CancelBookingOptions {
+  refundAmount?: number; // dollars; converted to cents when calling Square
+  squarePaymentId?: string;
+  cancellationFee?: number;
+}
+
+// Cancel booking with schedule cleanup and optional refund. Refund is processed here when options are provided.
+export const cancelBooking = async (
+  bookingId: string,
+  reason?: string,
+  options?: CancelBookingOptions
+): Promise<void> => {
   const db = getAdminDb();
   // Get booking first to check for calendar event
   const booking = await getBooking(bookingId);
@@ -482,8 +490,25 @@ export const cancelBooking = async (bookingId: string, reason?: string): Promise
   // Free up the time slot in the driver's schedule
   await driverSchedulingService.cancelBooking(bookingId);
   
-  // TODO: Implement refund logic with Square API
-  // await processRefund(bookingId);
+  // Refund is processed here when options are provided (e.g. by cancel-booking API route).
+  if (options?.refundAmount != null && options.refundAmount > 0 && options.squarePaymentId) {
+    try {
+      await refundPayment(options.squarePaymentId, options.refundAmount * 100, 'USD', reason);
+      console.log(`✅ Refund processed: $${options.refundAmount.toFixed(2)} for booking ${bookingId}`);
+    } catch (refundError) {
+      console.error(`❌ Refund failed for booking ${bookingId}:`, refundError);
+      // Don't fail the cancellation if refund fails - admin can process manually
+    }
+  } else if (options?.refundAmount != null && options.refundAmount > 0 && !options?.squarePaymentId) {
+    console.warn(`⚠️ Cannot process refund - no payment ID stored for booking ${bookingId}`);
+  }
+
+  if (options?.cancellationFee != null) {
+    await updateBooking(bookingId, {
+      cancellationFee: options.cancellationFee,
+      balanceDue: 0,
+    });
+  }
 };
 
 // Update driver location for real-time tracking

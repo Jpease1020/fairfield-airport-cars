@@ -68,9 +68,11 @@ export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'u
       cleanData.userId = quoteData.userId;
     }
     
-    // Only include pickupDateTime if it's defined
+    // Always store pickupDateTime so quote hash validation can prevent reuse with different time
     if (quoteData.pickupDateTime) {
       cleanData.pickupDateTime = quoteData.pickupDateTime;
+    } else {
+      throw new Error('pickupDateTime is required when creating a quote');
     }
 
     let quoteId: string;

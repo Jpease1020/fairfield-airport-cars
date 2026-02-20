@@ -170,15 +170,7 @@ export default function CreateExceptionBookingPage() {
                   Trip Details
                 </Text>
                 <LocationInputSection
-                  pickupLocation={formData.trip.pickup.address}
-                  dropoffLocation={formData.trip.dropoff.address}
-                  pickupCoords={formData.trip.pickup.coordinates}
-                  dropoffCoords={formData.trip.dropoff.coordinates}
-                  onPickupLocationChange={(address) => updateTripDetails({ pickup: { ...formData.trip.pickup, address } })}
-                  onDropoffLocationChange={(address) => updateTripDetails({ dropoff: { ...formData.trip.dropoff, address } })}
-                  onPickupCoordsChange={(coords) => updateTripDetails({ pickup: { ...formData.trip.pickup, coordinates: coords } })}
-                  onDropoffCoordsChange={(coords) => updateTripDetails({ dropoff: { ...formData.trip.dropoff, coordinates: coords } })}
-                  departureTime={formData.trip.pickupDateTime}
+                  onRouteCalculated={undefined}
                   cmsData={{}}
                 />
                 <DateTimeSection

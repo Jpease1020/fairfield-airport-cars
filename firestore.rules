@@ -2,10 +2,14 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // COMPLETELY RELAXED RULES FOR LOCAL DEVELOPMENT
-    // This allows the seeding script to work without permission issues
+    // Business rules config: only admin users (users/{uid}.role == 'admin') may read/write
+    match /config/{document} {
+      allow read, write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    // Relaxed rules for local development (seeding, etc.)
     match /{document=**} {
-      allow read, write: if true;  // Allow everything in development
+      allow read, write: if true;
     }
   }
 }

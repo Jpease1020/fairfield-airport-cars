@@ -5,9 +5,6 @@
 
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
-import { BookingCreateData } from '@/types/booking';
-import { generateShortBookingId } from '@/utils/booking-id-generator';
-import { driverSchedulingService } from './driver-scheduling-service';
 
 // Helper to safely convert Firestore dates
 const safeToDate = (dateField: any): Date => {
@@ -23,106 +20,8 @@ const safeToDate = (dateField: any): Date => {
   return new Date();
 };
 
-// ATOMIC BOOKING: Prevents double booking with Firestore transactions
-export const createBookingAtomic = async (bookingData: BookingCreateData): Promise<{ bookingId: string }> => {
-  const db = getAdminDb();
-  const pickupDate = bookingData.trip.pickupDateTime as unknown as Date;
-  const dateStr = pickupDate.toISOString().split('T')[0];
-  const startTime = pickupDate.toTimeString().slice(0, 5);
-  const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
-
-  // Check for conflicts BEFORE transaction (can't use client SDK inside transaction)
-  const conflictCheck = await driverSchedulingService.checkBookingConflicts(
-    dateStr,
-    startTime,
-    endTime
-  );
-
-  if (conflictCheck.hasConflict) {
-    throw new Error(`Time slot conflicts with existing bookings. Suggested times: ${conflictCheck.suggestedTimeSlots.join(', ')}`);
-  }
-
-  // Get available drivers BEFORE transaction
-  const availableDrivers = await driverSchedulingService.getAvailableDriversForTimeSlot(
-    dateStr,
-    startTime,
-    endTime
-  );
-
-  let selectedDriver = null;
-  if (availableDrivers.length > 0) {
-    selectedDriver = availableDrivers[0];
-  }
-
-  // Calculate deposit
-  const depositAmount = bookingData.payment.depositAmount || 0;
-  const balanceDue = bookingData.trip.fare! - depositAmount;
-
-  // Transaction only handles booking creation and ID collision check
-  return await db.runTransaction(async (transaction: any) => {
-    // Generate short booking ID and check for collisions (inside transaction)
-    let bookingId = generateShortBookingId();
-    let attempts = 0;
-    const maxAttempts = 10;
-    
-    while (attempts < maxAttempts) {
-      const existingDocRef = db.collection('bookings').doc(bookingId);
-      const existingDoc = await transaction.get(existingDocRef);
-      if (!existingDoc.exists) {
-        break;
-      }
-      bookingId = generateShortBookingId();
-      attempts++;
-    }
-    
-    if (attempts >= maxAttempts) {
-      throw new Error('Failed to generate unique booking ID. Please try again.');
-    }
-
-    // Create booking document atomically with custom ID
-    // Respect status from bookingData (e.g. 'requires_approval' for exception bookings)
-    const bookingDoc = {
-      ...bookingData,
-      driverId: selectedDriver?.driverId || null,
-      driverName: selectedDriver?.driverName || 'To be assigned',
-      depositAmount,
-      balanceDue,
-      status: bookingData.status || 'pending', // Use provided status or default to 'pending'
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    };
-
-    const docRef = db.collection('bookings').doc(bookingId);
-    transaction.set(docRef, bookingDoc);
-
-    return { bookingId };
-  }).then(async ({ bookingId }: { bookingId: string }) => {
-    // Book the time slot AFTER transaction completes (outside transaction)
-    if (selectedDriver) {
-      try {
-        await driverSchedulingService.bookTimeSlot(
-          selectedDriver.driverId,
-          selectedDriver.driverName,
-          dateStr,
-          startTime,
-          endTime,
-          bookingId,
-          bookingData.customer.name,
-          bookingData.trip.pickup.address,
-          bookingData.trip.dropoff.address
-        );
-        console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
-      } catch (slotError) {
-        console.error(`⚠️ Booking ${bookingId} created but time slot booking failed:`, slotError);
-        // Don't fail the booking - it's created, just log the error
-      }
-    } else {
-      console.log(`✅ BOOKING PENDING: ${bookingId} - driver will be assigned later`);
-    }
-
-    return { bookingId };
-  });
-};
+// Re-export from single source of truth (booking-service) to avoid duplicate logic
+export { createBookingAtomic } from './booking-service';
 
 // Get booking with real-time status
 export const getBooking = async (bookingId: string): Promise<any | null> => {

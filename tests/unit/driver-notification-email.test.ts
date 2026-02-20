@@ -264,7 +264,7 @@ describe('Driver Notification Email Service', () => {
   it('should use fallback values for missing booking data', async () => {
     const { sendDriverNotificationEmail } = await import('@/lib/services/email-service');
 
-    // Minimal booking with missing optional fields
+    // Minimal booking with missing optional fields - ensures driver email never breaks
     const minimalBooking = {
       id: 'booking-456',
       trip: {
@@ -281,21 +281,15 @@ describe('Driver Notification Email Service', () => {
         notes: '',
         saveInfoForFuture: false,
       },
-      // Legacy fallback fields
-      pickupLocation: 'Fallback Pickup',
-      dropoffLocation: 'Fallback Dropoff',
-      name: 'Fallback Name',
-      email: 'fallback@example.com',
-      phone: '(555) 555-5555',
     };
 
     await sendDriverNotificationEmail(minimalBooking as any);
 
     const emailCall = mockSendMail.mock.calls[0][0];
 
-    // Should use fallback values
-    expect(emailCall.text).toContain('Fallback Pickup');
-    expect(emailCall.text).toContain('Fallback Dropoff');
-    expect(emailCall.text).toContain('Fallback Name');
+    // Service uses "Not specified" / "Not provided" for missing data - email must still send
+    expect(emailCall.text).toContain('Not specified');
+    expect(emailCall.text).toContain('Not provided');
+    expect(emailCall.subject).toMatch(/NEW (RIDE|BOOKING)/i);
   });
 });

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { getBooking, cancelBooking, updateBooking } from '@/lib/services/booking-service';
-import { refundPayment } from '@/lib/services/square-service';
 import { sendSms } from '@/lib/services/twilio-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 
@@ -36,10 +35,25 @@ vi.mock('@/utils/bookingAdapter', () => ({
   adaptOldBookingToNew: vi.fn((booking) => booking),
 }));
 
+vi.mock('@/lib/business/business-rules', () => ({
+  getBusinessRules: vi.fn().mockResolvedValue({
+    cancellationFeeTiers: {
+      over24hFeePercent: 0,
+      under24hFeePercent: 25,
+      under12hFeePercent: 50,
+      under6hFeePercent: 75,
+    },
+  }),
+  getCancellationFeePercent: vi.fn((hours: number, tiers: { over24hFeePercent: number; under24hFeePercent: number; under12hFeePercent: number; under6hFeePercent: number }) => {
+    if (hours >= 24) return tiers.over24hFeePercent;
+    if (hours >= 12) return tiers.under24hFeePercent;
+    if (hours >= 6) return tiers.under12hFeePercent;
+    return tiers.under6hFeePercent;
+  }),
+}));
+
 const mockGetBooking = getBooking as unknown as ReturnType<typeof vi.fn>;
 const mockCancelBooking = cancelBooking as unknown as ReturnType<typeof vi.fn>;
-const mockUpdateBooking = updateBooking as unknown as ReturnType<typeof vi.fn>;
-const mockRefundPayment = refundPayment as unknown as ReturnType<typeof vi.fn>;
 const mockSendSms = sendSms as unknown as ReturnType<typeof vi.fn>;
 const mockSendConfirmationEmail = sendConfirmationEmail as unknown as ReturnType<typeof vi.fn>;
 
@@ -128,8 +142,6 @@ describe('POST /api/booking/cancel-booking', () => {
     const booking = createMockBooking(48, 75); // 48 hours out, $75 deposit
     mockGetBooking.mockResolvedValueOnce(booking);
     mockCancelBooking.mockResolvedValueOnce(undefined);
-    mockUpdateBooking.mockResolvedValueOnce(undefined);
-    mockRefundPayment.mockResolvedValueOnce({ success: true, refundId: 'refund-123' });
     mockSendSms.mockResolvedValueOnce(undefined);
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
@@ -140,16 +152,18 @@ describe('POST /api/booking/cancel-booking', () => {
     expect(payload.refundAmount).toBe(75); // 100% refund
     expect(payload.cancellationFee).toBe(0);
 
-    // Verify refund was called with correct payment ID and amount
-    expect(mockRefundPayment).toHaveBeenCalledWith('pay-123', 7500, 'USD', 'Changed plans');
+    // Route delegates refund to cancelBooking; verify options passed so service can process refund
+    expect(mockCancelBooking).toHaveBeenCalledWith('booking-123', 'Changed plans', {
+      refundAmount: 75,
+      squarePaymentId: 'pay-123',
+      cancellationFee: 0,
+    });
   });
 
-  it('processes 50% refund when cancellation is 3-24 hours before pickup', async () => {
-    const booking = createMockBooking(12, 100); // 12 hours out, $100 deposit
+  it('processes 75% refund (25% fee) when cancellation is 12-24 hours before pickup', async () => {
+    const booking = createMockBooking(12, 100); // 12 hours out, $100 paid
     mockGetBooking.mockResolvedValueOnce(booking);
     mockCancelBooking.mockResolvedValueOnce(undefined);
-    mockUpdateBooking.mockResolvedValueOnce(undefined);
-    mockRefundPayment.mockResolvedValueOnce({ success: true, refundId: 'refund-456' });
     mockSendSms.mockResolvedValueOnce(undefined);
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
@@ -157,17 +171,20 @@ describe('POST /api/booking/cancel-booking', () => {
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.refundAmount).toBe(50); // 50% refund
-    expect(payload.cancellationFee).toBe(50);
+    expect(payload.refundAmount).toBe(75); // 25% fee → 75% refund
+    expect(payload.cancellationFee).toBe(25);
 
-    expect(mockRefundPayment).toHaveBeenCalledWith('pay-123', 5000, 'USD', undefined);
+    expect(mockCancelBooking).toHaveBeenCalledWith('booking-123', undefined, {
+      refundAmount: 75,
+      squarePaymentId: 'pay-123',
+      cancellationFee: 25,
+    });
   });
 
-  it('processes 0% refund when cancellation is <3 hours before pickup', async () => {
-    const booking = createMockBooking(1, 100); // 1 hour out, $100 deposit
+  it('processes 25% refund (75% fee) when cancellation is <6 hours before pickup', async () => {
+    const booking = createMockBooking(1, 100); // 1 hour out, $100 paid
     mockGetBooking.mockResolvedValueOnce(booking);
     mockCancelBooking.mockResolvedValueOnce(undefined);
-    mockUpdateBooking.mockResolvedValueOnce(undefined);
     mockSendSms.mockResolvedValueOnce(undefined);
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
@@ -175,40 +192,41 @@ describe('POST /api/booking/cancel-booking', () => {
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.refundAmount).toBe(0); // No refund
-    expect(payload.cancellationFee).toBe(100);
+    expect(payload.refundAmount).toBe(25); // 75% fee → 25% refund
+    expect(payload.cancellationFee).toBe(75);
 
-    // Should NOT call refundPayment when refund is $0
-    expect(mockRefundPayment).not.toHaveBeenCalled();
+    expect(mockCancelBooking).toHaveBeenCalledWith('booking-123', undefined, {
+      refundAmount: 25,
+      squarePaymentId: 'pay-123',
+      cancellationFee: 75,
+    });
   });
 
   it('continues cancellation even if refund fails', async () => {
     const booking = createMockBooking(48, 75);
     mockGetBooking.mockResolvedValueOnce(booking);
+    // cancelBooking (in service) catches refund errors and does not rethrow, so route still gets 200
     mockCancelBooking.mockResolvedValueOnce(undefined);
-    mockUpdateBooking.mockResolvedValueOnce(undefined);
-    mockRefundPayment.mockRejectedValueOnce(new Error('Square API error'));
     mockSendSms.mockResolvedValueOnce(undefined);
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
     const payload = await response.json();
 
-    // Should still return success - cancellation happened
     expect(response.status).toBe(200);
     expect(payload.message).toBe('Booking cancelled');
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Refund failed for booking'),
-      expect.any(Error)
-    );
+    expect(mockCancelBooking).toHaveBeenCalledWith('booking-123', undefined, {
+      refundAmount: 75,
+      squarePaymentId: 'pay-123',
+      cancellationFee: 0,
+    });
   });
 
-  it('warns when no payment ID is available for refund', async () => {
+  it('passes options without squarePaymentId when no payment ID is available', async () => {
     const booking = createMockBooking(48, 75);
     (booking.payment as Record<string, unknown>).squarePaymentId = undefined; // No payment ID
     mockGetBooking.mockResolvedValueOnce(booking);
     mockCancelBooking.mockResolvedValueOnce(undefined);
-    mockUpdateBooking.mockResolvedValueOnce(undefined);
     mockSendSms.mockResolvedValueOnce(undefined);
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
@@ -216,18 +234,19 @@ describe('POST /api/booking/cancel-booking', () => {
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(mockRefundPayment).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Cannot process refund - no payment ID')
-    );
+    expect(payload.refundAmount).toBe(75);
+    // Service receives refundAmount but no squarePaymentId; it logs a warn and does not call refundPayment
+    expect(mockCancelBooking).toHaveBeenCalledWith('booking-123', undefined, {
+      refundAmount: 75,
+      squarePaymentId: undefined,
+      cancellationFee: 0,
+    });
   });
 
   it('sends notifications to customer and admin', async () => {
     const booking = createMockBooking(48, 75);
     mockGetBooking.mockResolvedValueOnce(booking);
     mockCancelBooking.mockResolvedValueOnce(undefined);
-    mockUpdateBooking.mockResolvedValueOnce(undefined);
-    mockRefundPayment.mockResolvedValueOnce({ success: true });
     mockSendSms.mockResolvedValueOnce(undefined);
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 

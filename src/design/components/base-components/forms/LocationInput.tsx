@@ -20,6 +20,30 @@ const ErrorMessage = styled.div`
   gap: ${spacing.xs};
 `;
 
+const PlacesUnavailableMessage = styled.div`
+  margin-top: ${spacing.sm};
+  padding: ${spacing.sm} ${spacing.md};
+  background-color: ${colors.background.secondary};
+  border: 1px solid ${colors.border.default};
+  border-radius: 0.5rem;
+  font-size: ${fontSize.sm};
+  color: ${colors.text.secondary};
+`;
+
+const RetryLink = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: ${colors.primary[600]};
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: ${spacing.xs};
+  &:hover {
+    color: ${colors.primary[700]};
+  }
+`;
+
 // Always use absolute positioning - tied to bottom of input field
 const PredictionsDropdown = styled.div<{ $isMobile: boolean }>`
   position: absolute;
@@ -169,6 +193,28 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [placesUnavailable, setPlacesUnavailable] = useState(false);
+
+  // Detect when Google Places API never loads (e.g. script error, no API key) and show fallback message
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.google?.maps?.places) return;
+
+    const PLACES_LOAD_TIMEOUT_MS = 10000;
+    const timeoutId = setTimeout(() => {
+      if (!window.google?.maps?.places) {
+        setPlacesUnavailable(true);
+      }
+    }, PLACES_LOAD_TIMEOUT_MS);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const handlePlacesRetry = useCallback(() => {
+    if (typeof window !== 'undefined' && window.google?.maps?.places) {
+      setPlacesUnavailable(false);
+    }
+  }, []);
 
   // Detect mobile device
   useEffect(() => {
@@ -195,13 +241,17 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         return;
       }
 
-      // Wait for Google Maps to be available
+      // If Places API isn't loaded yet (script error, no key, or slow load), show fallback so user isn't left with nothing
       if (typeof window === 'undefined' || !window.google?.maps?.places) {
         setPredictions([]);
         setShowPredictions(false);
+        if (typeof window !== 'undefined') {
+          setPlacesUnavailable(true);
+        }
         return;
       }
 
+      setPlacesUnavailable(false);
       setIsLoading(true);
       try {
         const autocompleteService = new window.google.maps.places.AutocompleteService();
@@ -570,6 +620,16 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         <ErrorMessage role="alert" aria-live="polite">
           {validationError}
         </ErrorMessage>
+      )}
+
+      {placesUnavailable && (
+        <PlacesUnavailableMessage role="alert" data-testid="location-input-places-unavailable">
+          Address search is temporarily unavailable. Please refresh the page or{' '}
+          <RetryLink type="button" onClick={handlePlacesRetry} data-testid="location-input-places-retry">
+            try again
+          </RetryLink>
+          . You can still enter an address manually.
+        </PlacesUnavailableMessage>
       )}
 
       {showPredictions && predictions.length > 0 && (

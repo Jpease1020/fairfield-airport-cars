@@ -163,16 +163,20 @@ function CancelPageContent() {
 
   const cancellationPolicy = [
     {
-      title: "Over 24 Hours",
-      description: "100% refund of deposit if cancelled more than 24 hours before pickup"
+      title: "24+ Hours Before Pickup",
+      description: "No cancellation fee"
     },
     {
-      title: "3-24 Hours",
-      description: "50% refund of deposit if cancelled 3-24 hours before pickup"
+      title: "12–24 Hours Before",
+      description: "25% cancellation fee"
     },
     {
-      title: "Under 3 Hours",
-      description: "No refund if cancelled less than 3 hours before pickup"
+      title: "6–12 Hours Before",
+      description: "50% cancellation fee"
+    },
+    {
+      title: "Under 6 Hours",
+      description: "75% cancellation fee"
     },
     {
       title: "Refund Processing",

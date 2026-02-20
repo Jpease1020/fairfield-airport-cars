@@ -86,7 +86,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ cmsData }) => {
               color="secondary"
               cmsId="faq-items-2-answer"
             >
-              {cmsData?.['faq-items-2-answer'] || 'Yes, you can modify or cancel your booking up to 3 hours before pickup.'}
+              {cmsData?.['faq-items-2-answer'] || 'Yes. Cancellations 24+ hours in advance have no fee; less than 24h incur a 25% fee, less than 12h 50%, less than 6h 75%. Contact us to modify your booking.'}
             </Text>
           </Stack>
         </Stack>

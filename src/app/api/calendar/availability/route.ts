@@ -1,6 +1,7 @@
 // src/app/api/calendar/availability/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createOAuth2Client, setCredentials, initializeCalendarAPI, checkAvailability, getAvailableSlots } from '@/lib/services/google-calendar';
+import { getBusinessRules } from '@/lib/business/business-rules';
 
 const calendarIntegrationEnabled = process.env.ENABLE_GOOGLE_CALENDAR === 'true';
 
@@ -14,14 +15,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
+    const rules = await getBusinessRules();
     const { 
       startTime, 
       endTime, 
       date, 
       durationMinutes = 60, 
-      bufferMinutes = 30,
+      bufferMinutes: bodyBuffer,
       tokens 
     } = body;
+    const bufferMinutes = typeof bodyBuffer === 'number' ? bodyBuffer : rules.bookingBufferMinutes;
 
     if (!tokens) {
       return NextResponse.json(

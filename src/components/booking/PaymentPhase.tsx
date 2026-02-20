@@ -1,20 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Container, Stack, StatusMessage, Box, Modal } from '@/design/ui';
+import { Container, Stack, StatusMessage, Modal } from '@/design/ui';
 import { PaymentSummary } from './payment/PaymentSummary';
-import { PaymentForm } from './payment/PaymentForm';
 import { PaymentNavigation } from './payment/PaymentNavigation';
 // Types imported from booking provider context
 import { useBooking } from '@/providers/BookingProvider';
 import { Button, Text } from '@/design/ui';
 import styled from 'styled-components';
 import { colors } from '@/design/system/tokens/tokens';
-
-const DisabledFormWrapper = styled(Box)`
-  opacity: 0.5;
-  pointer-events: none;
-`;
 
 const ErrorWrapper = styled.div`
   width: 100%;
@@ -156,9 +150,7 @@ export function PaymentPhase({
   // Extract data from formData
   const tripData = formData.trip;
   const customerData = formData.customer;
-  const paymentData = formData.payment;
   const [isRefreshingQuote, setIsRefreshingQuote] = React.useState(false);
-  const getTotalWithTip = () => (currentQuote?.fare || 0) + paymentData.tipAmount;
 
   return (
     <Container maxWidth="7xl" padding="xl" data-testid="payment-phase-container">
@@ -186,50 +178,20 @@ export function PaymentPhase({
           cmsData={cmsData}
         />
 
-        {/* No Deposit Required Promo - Above Payment Form */}
+        {/* Limited-time no-payment promo (temp feature). No greyed-out form — confirm CTA only. */}
         <Container variant="card" padding="xl" data-testid="no-deposit-promo">
           <Stack spacing="lg" align="center">
             <Text size="xl" weight="bold" color="primary" cmsId="no-deposit-title">
-              🎉 Limited Time Offer!
+              Limited time only
             </Text>
             <Text size="lg" weight="bold" color="success" cmsId="no-deposit-message">
-              No Payment Required - Book Now!
+              No payment required — book now
             </Text>
             <Text size="md" color="secondary" align="center" cmsId="no-deposit-description">
-              Complete your booking without any payment. Simply confirm your details and we'll see you at pickup! Payment will be collected after your ride.
+              Confirm your details below. We'll see you at pickup. Payment will be collected after your ride. This offer is for a short time only.
             </Text>
           </Stack>
         </Container>
-
-        {/* Payment Form - Greyed Out (for visual context) */}
-        <DisabledFormWrapper>
-          <PaymentForm
-            showPaymentForm={true}
-            totalAmount={getTotalWithTip()}
-            bookingData={{
-              name: customerData.name,
-              email: customerData.email,
-              phone: customerData.phone,
-              pickupLocation: tripData.pickup.address,
-              dropoffLocation: tripData.dropoff.address,
-              pickupDateTime: tripData.pickupDateTime,
-              fare: currentQuote?.fare || null,
-              flightNumber: tripData.flightInfo?.flightNumber || '',
-              notes: customerData.notes,
-              tipAmount: paymentData.tipAmount,
-              totalAmount: getTotalWithTip(),
-              flightInfo: tripData.flightInfo,
-              fareType: tripData.fareType,
-              saveInfoForFuture: customerData.saveInfoForFuture,
-            }}
-            isProcessingPayment={false}
-            paymentError={null}
-            onPaymentSuccess={() => {}}
-            onPaymentError={() => {}}
-            onPaymentReady={() => {}}
-            cmsData={cmsData}
-          />
-        </DisabledFormWrapper>
 
         {!currentQuote && (
           <Stack spacing="md" align="center">
@@ -282,7 +244,6 @@ export function PaymentPhase({
         <PaymentNavigation
           onBack={goToPreviousPhase}
           onProcessPayment={async () => {
-            // Validate before submitting
             setHasAttemptedValidation(true);
             const validation = validateCurrentPhase();
             if (!validation.isValid) {
@@ -294,6 +255,7 @@ export function PaymentPhase({
           isProcessingPayment={isSubmitting}
           cmsData={cmsData}
           validationErrors={validation?.errors || []}
+          noPaymentRequired={!(currentQuote?.fare != null && currentQuote.fare > 0)}
         />
       </Stack>
 

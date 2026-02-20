@@ -3,7 +3,6 @@ import { sendSms } from '@/lib/services/twilio-service';
 import { getBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
-import { bookingNotificationService } from '@/lib/services/booking-notification-service';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
 
 export async function POST(request: Request) {
@@ -24,22 +23,14 @@ export async function POST(request: Request) {
     const pickupDate = booking.pickupDateTime ? new Date(booking.pickupDateTime) : new Date();
     const messageBody = `Thank you for booking with ${businessSettings?.company?.name || 'Fairfield Airport Car Service'}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${pickupDate.toLocaleString()} is confirmed.`;
 
-    // Send all notifications in parallel
     await Promise.all([
-      // Existing SMS notification
-      booking.phone ? sendSms({
-        to: booking.phone,
-        body: messageBody,
-      }) : Promise.resolve(),
-      // Existing email notification
+      booking.phone ? sendSms({ to: booking.phone, body: messageBody }) : Promise.resolve(),
       sendConfirmationEmail(adaptOldBookingToNew(booking)),
-      // New push notification (using email as user identifier)
-      booking.email ? bookingNotificationService.sendBookingConfirmation(bookingId, booking.email) : Promise.resolve()
     ]);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Confirmation notifications sent successfully',
-      channels: ['sms', 'email', 'push']
+      channels: ['sms', 'email'],
     });
   } catch (error) {
     console.error('Failed to send confirmation notifications:', error);
