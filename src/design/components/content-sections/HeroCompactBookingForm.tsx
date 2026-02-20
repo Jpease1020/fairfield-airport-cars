@@ -77,13 +77,8 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     pickup: formData.trip.pickup,
     dropoff: formData.trip.dropoff
   };
-  
-  // Both fields are flexible - either can be airport or address
-  // Server-side validation ensures at least one endpoint is an airport
-  
-  // Track which field is detected as airport to suggest the opposite for the other field
   const [detectedAirportField, setDetectedAirportField] = React.useState<'pickup' | 'dropoff' | null>(null);
-  
+
   const setPickupLocation = (address: string, coordinates?: Coordinates) => {
     updateTripDetails({ pickup: { ...formData.trip.pickup, address, coordinates: coordinates || null } });
   };
@@ -109,21 +104,16 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     pickupDateTime: pickupDateTime, // Required for fare calculation
   });
 
-  // Check driver availability when date/time changes
   const { error: availabilityError, checkAvailability } = useBookingAvailability();
 
   useEffect(() => {
     if (pickupDateTime && pickupDate && pickupTime) {
-      // Calculate end time (2 hours after pickup, standard ride duration)
       const pickupDateObj = new Date(pickupDateTime);
       const endTimeObj = new Date(pickupDateObj.getTime() + 2 * 60 * 60 * 1000);
-      const endTime = endTimeObj.toTimeString().slice(0, 5); // HH:MM format
-      
+      const endTime = endTimeObj.toTimeString().slice(0, 5);
       checkAvailability(pickupDate, pickupTime, endTime);
     }
   }, [pickupDateTime, pickupDate, pickupTime, checkAvailability]);
-
-  // Note: Removed currentQuote since we simplified to currentFare only
 
   // Handle location selection using global context
   // Auto-detect if selected location is an airport and suggest the opposite for the other field

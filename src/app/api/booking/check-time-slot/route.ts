@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBusinessRules } from '@/lib/business/business-rules';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { pickupDateTime, bufferMinutes = 60 } = body;
+    const { pickupDateTime, bufferMinutes: bodyBuffer } = body;
+    const rules = await getBusinessRules();
+    const bufferMinutes = typeof bodyBuffer === 'number' ? bodyBuffer : rules.bookingBufferMinutes;
     
     if (!pickupDateTime) {
       return NextResponse.json(

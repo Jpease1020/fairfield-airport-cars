@@ -8,6 +8,7 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 
+// Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
   try {
     const { paymentToken, amount, currency, bookingData, existingBookingId, tipAmount = 0 } = await request.json();
@@ -20,6 +21,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ 
         error: 'Missing required payment information' 
       }, { status: 400 });
+    }
+
+    // Ensure amount and tip are in cents (integers) to prevent double conversion or decimal confusion
+    const amountCents = Number(amount);
+    const tipCents = Number(tipAmount);
+    if (!Number.isInteger(amountCents) || amountCents < 0) {
+      return NextResponse.json({ error: 'Invalid amount: must be a non-negative integer (cents).' }, { status: 400 });
+    }
+    if (!Number.isInteger(tipCents) || tipCents < 0) {
+      return NextResponse.json({ error: 'Invalid tipAmount: must be a non-negative integer (cents).' }, { status: 400 });
     }
 
     // SECURITY: Process payment FIRST, then create booking
@@ -37,11 +48,10 @@ export async function POST(request: Request) {
         orderId: `smoke-test-order-${Date.now()}`,
       };
     } else {
-      // Real payment processing
-      // Amount is in cents, so we pass it directly to Square
+      // Real payment processing (amountCents and tipCents are both in cents)
       paymentResult = await processPayment(
         paymentToken, 
-        amount + tipAmount, // Include tip in total amount (both in cents)
+        amountCents + tipCents,
         currency, 
         existingBookingId || 'temp-booking-id' // Use existing ID or temp for new bookings
       );
@@ -64,8 +74,8 @@ export async function POST(request: Request) {
         squareOrderId: paymentResult.orderId,
         squarePaymentId: paymentResult.paymentId, // Store payment ID for refunds
         depositPaid: true,
-        depositAmount: amount / 100, // Convert cents to dollars
-        tipAmount: tipAmount > 0 ? tipAmount / 100 : 0, // Convert cents to dollars
+        depositAmount: amountCents / 100, // Convert cents to dollars
+        tipAmount: tipCents > 0 ? tipCents / 100 : 0, // Convert cents to dollars
         status: 'pending',
         balanceDue: 0, // No balance due since deposit is paid
         createdAt: new Date(),

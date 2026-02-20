@@ -58,7 +58,11 @@ Customers book rides to/from airports (JFK, LGA, EWR, BDL, HVN, HPN).
 | Unit | `npm run test:unit` | Business logic, calculations |
 | Integration | `npm run test:integration` | API routes with mocked services |
 | E2E Critical | `npm run test:e2e:critical` | Autocomplete, booking form (needs dev server) |
-| Full E2E | `npm run test:e2e` | All browser flows |
+| E2E CI | `npm run test:e2e:ci` | Against preview URL; **no DB writes** (health, quote, validation, mocked flows) |
+| E2E Local | `npm run test:e2e:local` | Full booking flows against localhost + emulators (seed first) |
+| Full E2E | `npm run test:e2e` | Same as E2E Local (all browser flows, local server) |
+
+**E2E modes:** Use `test:e2e:ci` in CI with `E2E_BASE_URL=<preview url>`. Use `test:e2e:local` (or `test:e2e`) with emulators + seed for full booking validation. See `docs/E2E_TESTING.md`.
 
 **Pre-push hook runs:** Unit → Integration → Build → E2E (if dev server running)
 

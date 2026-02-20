@@ -83,16 +83,7 @@ const SwapButton = styled.button`
 `;
 
 interface LocationInputSectionProps {
-  pickupLocation: string;
-  dropoffLocation: string;
-  pickupCoords: Coordinates | null;
-  dropoffCoords: Coordinates | null;
-  onPickupLocationChange: (location: string) => void;
-  onDropoffLocationChange: (location: string) => void;
-  onPickupCoordsChange: (coords: Coordinates | null) => void;
-  onDropoffCoordsChange: (coords: Coordinates | null) => void;
   onRouteCalculated?: (routeInfo: { distance: string; duration: string; durationInTraffic: string | null; trafficLevel: string }) => void;
-  departureTime?: string; // For future trip estimation
   cmsData: any;
 }
 
@@ -100,52 +91,29 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
   onRouteCalculated,
   cmsData
 }) => {
-  // Use booking provider directly like the quick booking form
   const { formData, updateTripDetails, validation } = useBooking();
-  
-  // Track if locations are swapped (default: home on top, airport on bottom = going TO airport)
   const [isSwapped, setIsSwapped] = React.useState(false);
-  
-  // Determine which input is which based on swap state
-  // Default (not swapped): pickup = home, dropoff = airport (going TO airport)
-  // Swapped: pickup = airport, dropoff = home (coming FROM airport)
   const pickupIsAirport = isSwapped;
   const dropoffIsAirport = !isSwapped;
-  
-  // Create helper functions like the quick booking form
+
   const setPickupLocation = (address: string, coordinates?: Coordinates) => {
     updateTripDetails({ pickup: { ...formData.trip.pickup, address, coordinates: coordinates || null } });
   };
-  
   const setDropoffLocation = (address: string, coordinates?: Coordinates) => {
     updateTripDetails({ dropoff: { ...formData.trip.dropoff, address, coordinates: coordinates || null } });
   };
-  
-  // Handler functions like the quick booking form
   const handlePickupLocationSelect = (address: string, coordinates: Coordinates) => {
     setPickupLocation(address, coordinates);
   };
-
   const handleDropoffLocationSelect = (address: string, coordinates: Coordinates) => {
     setDropoffLocation(address, coordinates);
   };
-
-  // Swap pickup and dropoff locations
   const handleSwapLocations = () => {
     const tempPickup = { ...formData.trip.pickup };
     const tempDropoff = { ...formData.trip.dropoff };
-    
-    // Swap the locations
-    updateTripDetails({
-      pickup: tempDropoff,
-      dropoff: tempPickup
-    });
-    
-    // Toggle swap state
+    updateTripDetails({ pickup: tempDropoff, dropoff: tempPickup });
     setIsSwapped(!isSwapped);
   };
-
-  // Get route calculation from provider (for traffic-aware pricing)
   const { route, routeLoading, routeError } = useBooking();
 
   // Notify parent when route is calculated
@@ -165,7 +133,6 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
         <H2 cmsId="trip-details-location-title">
           {cmsData?.['tripDetailsPhase-locationTitle'] || 'Where are you going?'}
         </H2>
-        
         <Text color="secondary" cmsId="trip-details-location-description">
           {cmsData?.['tripDetailsPhase-locationDescription'] || 'Enter your pickup and dropoff locations to get started.'}
         </Text>

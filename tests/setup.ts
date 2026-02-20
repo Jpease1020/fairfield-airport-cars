@@ -1,6 +1,6 @@
 /**
  * Clean Test Setup for RTL-Heavy Testing
- * 
+ *
  * Optimized for React Testing Library with realistic mocks
  * and proper provider setup for integration testing.
  */

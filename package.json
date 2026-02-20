@@ -16,6 +16,8 @@
     "test:unit": "vitest run tests/unit --coverage",
     "test:integration": "vitest run tests/integration --coverage",
     "test:e2e": "playwright test --config config/playwright.config.ts",
+    "test:e2e:ci": "E2E_CI=1 playwright test --config config/playwright.ci.config.ts",
+    "test:e2e:local": "playwright test --config config/playwright.config.ts",
     "test:e2e:critical": "playwright test --config config/playwright.config.ts tests/e2e/location-input-autocomplete.spec.ts --project=chromium",
     "test:api": "vitest run tests/api --coverage",
     "test:booking-submit": "BASE_URL=http://localhost:3000 playwright test --config config/playwright.config.ts --project=chromium tests/e2e/booking-submit-api.spec.ts",

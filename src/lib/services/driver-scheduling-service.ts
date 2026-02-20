@@ -135,22 +135,22 @@ export class DriverSchedulingService {
       const scheduleDoc = scheduleSnapshot.docs[0];
       const schedule = (scheduleDoc.data ? scheduleDoc.data() : scheduleDoc) as DriverSchedule;
       
-      // Check if the requested time slot conflicts with existing bookings
+      // Check if the requested time slot conflicts with existing bookings or prep
       const requestedStart = this.timeToMinutes(startTime);
       const requestedEnd = this.timeToMinutes(endTime);
-      
+      const MINUTES_PER_DAY = 24 * 60;
+
       for (const slot of schedule.timeSlots) {
-        if (slot.status === 'booked' || slot.status === 'blocked') {
+        if (slot.status === 'booked' || slot.status === 'blocked' || slot.status === 'prep') {
           const slotStart = this.timeToMinutes(slot.startTime);
           const slotEnd = this.timeToMinutes(slot.endTime);
-          
-          // Check for overlap
-          if (requestedStart < slotEnd && requestedEnd > slotStart) {
+          const overlaps = this.slotOverlapsRange(slotStart, slotEnd, requestedStart, requestedEnd, MINUTES_PER_DAY);
+          if (overlaps) {
             return false;
           }
         }
       }
-      
+
       return true;
     } catch (error) {
       console.error('Error checking driver availability:', error);
@@ -215,12 +215,25 @@ export class DriverSchedulingService {
       
       const requestedStart = this.timeToMinutes(startTime);
       const requestedEnd = this.timeToMinutes(endTime);
-      
+      const MINUTES_PER_DAY = 24 * 60;
+
       // Also check prep time (1 hour before pickup) for conflicts
       const prepStartTime = this.subtractHours(startTime, 1);
       const prepStart = this.timeToMinutes(prepStartTime);
       const prepEnd = requestedStart;
-      
+      // When pickup is in the first hour after midnight (e.g. 00:30), prep spans previous day 23:30 -> 00:30
+      const prepSpansMidnight = prepStart > prepEnd;
+
+      const prepOverlapsSlot = (slotStart: number, slotEnd: number): boolean => {
+        if (!prepSpansMidnight) {
+          return prepStart < slotEnd && prepEnd > slotStart;
+        }
+        // Prep is two segments: [0, prepEnd] and [prepStart, MINUTES_PER_DAY]
+        const overlapsFirst = slotStart < prepEnd && slotEnd > 0;
+        const overlapsSecond = slotStart < MINUTES_PER_DAY && slotEnd > prepStart;
+        return overlapsFirst || overlapsSecond;
+      };
+
       // Handle both Admin SDK (docs array) and Client SDK (docs array) formats
       const docs = scheduleSnapshot.docs || [];
       for (const scheduleDoc of docs) {
@@ -243,8 +256,8 @@ export class DriverSchedulingService {
               });
             }
             
-            // Check for overlap with prep time
-            if (prepStart < slotEnd && prepEnd > slotStart) {
+            // Check for overlap with prep time (handles prep spanning midnight)
+            if (prepOverlapsSlot(slotStart, slotEnd)) {
               conflicts.push({
                 bookingId: slot.bookingId!,
                 customerName: slot.customerName!,
@@ -641,6 +654,26 @@ export class DriverSchedulingService {
     }
     
     return suggestions;
+  }
+
+  /**
+   * Check if a slot [slotStart, slotEnd] (possibly spanning midnight when slotStart > slotEnd)
+   * overlaps with [rangeStart, rangeEnd]. All values in minutes since midnight.
+   */
+  private slotOverlapsRange(
+    slotStart: number,
+    slotEnd: number,
+    rangeStart: number,
+    rangeEnd: number,
+    minutesPerDay: number = 24 * 60
+  ): boolean {
+    if (slotStart <= slotEnd) {
+      return rangeStart < slotEnd && rangeEnd > slotStart;
+    }
+    // Slot spans midnight: [0, slotEnd] and [slotStart, minutesPerDay]
+    const overlapsFirst = rangeStart < slotEnd && rangeEnd > 0;
+    const overlapsSecond = rangeStart < minutesPerDay && rangeEnd > slotStart;
+    return overlapsFirst || overlapsSecond;
   }
 
   /**

@@ -6,8 +6,8 @@
  * 2. Service area validation shows proper error message
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
 
 // Mock service area validation
@@ -42,6 +42,8 @@ beforeEach(() => {
 });
 
 describe('LocationInput - Basic Rendering', () => {
+  afterEach(() => cleanup());
+
   it('renders the input component', () => {
     const onChange = vi.fn();
     const onLocationSelect = vi.fn();

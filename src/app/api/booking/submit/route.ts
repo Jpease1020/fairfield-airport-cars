@@ -106,34 +106,35 @@ export async function POST(request: Request) {
       }, { status: 410 });
     }
     
-    // Validate route hasn't changed (prevent tampering)
-    // Normalize pickupDateTime to ISO string for comparison
-    const currentPickupDateTime = trip.pickupDateTime instanceof Date 
-      ? trip.pickupDateTime.toISOString() 
-      : new Date(trip.pickupDateTime).toISOString();
-    
-    // Handle backward compatibility: old quotes may not have pickupDateTime stored
-    let storedPickupDateTime = '';
-    if (quote.pickupDateTime) {
-      storedPickupDateTime = quote.pickupDateTime instanceof Date
-        ? quote.pickupDateTime.toISOString()
-        : new Date(quote.pickupDateTime).toISOString();
+    // Require pickupDateTime on quote so we can validate time wasn't changed (prevent quote reuse with different time)
+    const storedPickupDateTime = quote.pickupDateTime
+      ? (quote.pickupDateTime instanceof Date
+          ? quote.pickupDateTime.toISOString()
+          : new Date(quote.pickupDateTime).toISOString())
+      : '';
+    if (!storedPickupDateTime) {
+      return NextResponse.json({
+        error: 'Quote is missing trip time. Please request a new quote.',
+        code: 'QUOTE_MISSING_TIME',
+      }, { status: 409 });
     }
-    
-    // For old quotes without pickupDateTime, only validate address and fareType
-    // For new quotes with pickupDateTime, validate everything including pickup time
+
+    const currentPickupDateTime = trip.pickupDateTime instanceof Date
+      ? trip.pickupDateTime.toISOString()
+      : new Date(trip.pickupDateTime).toISOString();
+
+    // Always include pickupDateTime in hash so submitted time must match quote time
     const currentRouteHash = createHash('sha256')
-      .update(`${trip.pickup.address}|${trip.dropoff.address}|${storedPickupDateTime ? currentPickupDateTime : ''}|${trip.fareType}`)
+      .update(`${trip.pickup.address}|${trip.dropoff.address}|${currentPickupDateTime}|${trip.fareType}`)
       .digest('hex');
-    
     const storedRouteHash = createHash('sha256')
       .update(`${quote.pickupAddress}|${quote.dropoffAddress}|${storedPickupDateTime}|${quote.fareType}`)
       .digest('hex');
-    
+
     if (currentRouteHash !== storedRouteHash) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Trip details have changed. Please request a new quote.',
-        code: 'ROUTE_CHANGED'
+        code: 'ROUTE_CHANGED',
       }, { status: 409 });
     }
     
@@ -220,8 +221,7 @@ export async function POST(request: Request) {
       }
     };
 
-    // Import booking service - use admin version which has conflict checks OUTSIDE transaction
-    const { createBookingAtomic } = await import('@/lib/services/booking-service-admin');
+    const { createBookingAtomic } = await import('@/lib/services/booking-service');
     
     // Add timeout wrapper for booking creation
     const bookingPromise = createBookingAtomic(bookingDataWithConfirmation);

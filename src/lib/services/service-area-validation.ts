@@ -156,7 +156,8 @@ export type TripClassification =
   | 'normal'
   | 'missing_airport'
   | 'soft_block'
-  | 'hard_block';
+  | 'hard_block'
+  | 'invalid';
 
 export interface TripValidationResult {
   classification: TripClassification;
@@ -180,8 +181,37 @@ export function classifyTrip(
   const pickupIsAirport = isAirportLocation(pickupAddress, pickupCoords);
   const dropoffIsAirport = isAirportLocation(dropoffAddress, dropoffCoords);
 
+  // Business rule: one end must be airport, one must be home address (no airport-to-airport)
+  if (pickupIsAirport && dropoffIsAirport) {
+    return {
+      classification: 'invalid',
+      code: 'TWO_AIRPORTS_NOT_ALLOWED',
+      message: 'We only serve trips between a Fairfield County address and an airport. Please set pickup or dropoff to your home or business address.',
+    };
+  }
+
   // Check if at least one end is an airport
   const hasAirportEndpoint = pickupIsAirport || dropoffIsAirport;
+
+  // Fallback: if coordinates are missing but address clearly indicates home area,
+  // treat it as being within the extended home area so we don't hard-block
+  // obviously valid trips (e.g. "Fairfield Station, Fairfield, CT").
+  const pickupLooksLikeHomeAddress =
+    pickupAddress.toLowerCase().includes('fairfield') ||
+    pickupAddress.toLowerCase().includes('stamford') ||
+    pickupAddress.toLowerCase().includes('westport') ||
+    pickupAddress.toLowerCase().includes('newtown');
+
+  const dropoffLooksLikeHomeAddress =
+    dropoffAddress.toLowerCase().includes('fairfield') ||
+    dropoffAddress.toLowerCase().includes('stamford') ||
+    dropoffAddress.toLowerCase().includes('westport') ||
+    dropoffAddress.toLowerCase().includes('newtown');
+
+  const pickupInHomeExtendedOrAddress =
+    pickupInHomeExtended || (!pickupCoords && pickupLooksLikeHomeAddress);
+  const dropoffInHomeExtendedOrAddress =
+    dropoffInHomeExtended || (!dropoffCoords && dropoffLooksLikeHomeAddress);
 
   // Normal in-range trip: at least one end in home normal area, and the other end is either in home normal or is a known airport. AND at least one end must be an airport.
   if (hasAirportEndpoint && (pickupInHomeNormal || dropoffInHomeNormal)) {
@@ -199,8 +229,8 @@ export function classifyTrip(
   }
 
   // Missing airport endpoint: both ends are in home area (normal or extended) but neither is an airport
-  if ((pickupInHomeNormal || pickupInHomeExtended) && 
-      (dropoffInHomeNormal || dropoffInHomeExtended) && 
+  if ((pickupInHomeNormal || pickupInHomeExtendedOrAddress) && 
+      (dropoffInHomeNormal || dropoffInHomeExtendedOrAddress) && 
       !hasAirportEndpoint) {
     return {
       classification: 'missing_airport',
@@ -211,12 +241,12 @@ export function classifyTrip(
 
   // Soft-block extended trip: not a normal trip, but at least one end is in home extended area AND at least one end must be an airport.
   // Both ends must be within extended area OR one end in extended area and the other is an airport
-  if (hasAirportEndpoint && (pickupInHomeExtended || dropoffInHomeExtended)) {
+  if (hasAirportEndpoint && (pickupInHomeExtendedOrAddress || dropoffInHomeExtendedOrAddress)) {
     // At least one end is in extended area, and we have an airport endpoint
     // Check if the other end is reasonable (either in extended area or is the airport)
-    const otherEndReasonable = pickupInHomeExtended 
-      ? (dropoffInHomeExtended || dropoffIsAirport)
-      : (pickupInHomeExtended || pickupIsAirport);
+    const otherEndReasonable = pickupInHomeExtendedOrAddress 
+      ? (dropoffInHomeExtendedOrAddress || dropoffIsAirport)
+      : (pickupInHomeExtendedOrAddress || pickupIsAirport);
     
     if (otherEndReasonable) {
       return {

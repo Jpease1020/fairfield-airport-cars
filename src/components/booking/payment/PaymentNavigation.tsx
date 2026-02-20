@@ -27,6 +27,8 @@ interface PaymentNavigationProps {
   isProcessingPayment: boolean;
   cmsData: Record<string, string> | undefined;
   validationErrors?: string[];
+  /** When true, show "No Payment Required" note under the button. When false, hide it to avoid confusion. */
+  noPaymentRequired?: boolean;
 }
 
 export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
@@ -34,7 +36,8 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
   onProcessPayment,
   isProcessingPayment,
   cmsData,
-  validationErrors = []
+  validationErrors = [],
+  noPaymentRequired = true,
 }) => {
   // Detect mobile screen size
   const [isMobile, setIsMobile] = useState(false);
@@ -80,9 +83,11 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
           }
           fullWidth
         />
-        <PaymentNote>
-          {cmsData?.['paymentPhase-noPaymentNote'] || 'No Payment Required'}
-        </PaymentNote>
+        {noPaymentRequired && (
+          <PaymentNote>
+            {cmsData?.['paymentPhase-noPaymentNote'] || 'No Payment Required'}
+          </PaymentNote>
+        )}
       </ButtonWrapper>
       
       {/* Error message display below button - scroll target for mobile */}

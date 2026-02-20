@@ -1,8 +1,13 @@
 'use client';
 
+/**
+ * Flight info section for trip details.
+ * Note: flightInfo.arrivalTime stores the flight departure time (when the plane leaves).
+ * The label is shown as "Departure Time" so customers enter the correct time.
+ */
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Stack, H2, Text, Input, Box } from '@/design/ui';
+import { Stack, H2, Text, Input, Box, DateTimePicker } from '@/design/ui';
 import { FlightInfo } from '@/types/booking';
 import { colors } from '@/design/system/tokens/tokens';
 import { useBooking } from '@/providers/BookingProvider';
@@ -281,16 +286,16 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
               </Stack>
 
               <Stack spacing="xs">
-                <Text weight="medium" cmsId="tripDetailsPhase-arrivalTimeLabel">
-                  {cmsData?.['tripDetailsPhase-arrivalTimeLabel'] || 'Arrival Time'}
-                </Text>
-                <Input
-                  type="datetime-local"
-                  placeholder={cmsData?.['tripDetailsPhase-arrivalTimePlaceholder'] || 'e.g., 10:30 AM'}
-                  value={flightInfo.arrivalTime}
-                  onChange={(e) => handleArrivalTimeChange(e.target.value)}
+                <DateTimePicker
+                  id="flight-departure-datetime"
+                  label={cmsData?.['tripDetailsPhase-flightDepartureTimeLabel'] || cmsData?.['tripDetailsPhase-arrivalTimeLabel'] || 'Departure Time'}
+                  placeholder={cmsData?.['tripDetailsPhase-arrivalTimePlaceholder'] || 'e.g., 10:30 AM (when your flight leaves)'}
+                  value={flightInfo.arrivalTime || ''}
+                  onChange={(dateTime) => handleArrivalTimeChange(dateTime)}
+                  minDate={new Date()}
                   fullWidth={true}
                   data-testid="arrival-time-input"
+                  aria-label="Flight departure time (when your flight leaves)"
                 />
               </Stack>
 

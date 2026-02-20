@@ -29,6 +29,7 @@ interface SquarePaymentFormProps {
     flightInfo?: any;
     fareType?: string;
     saveInfoForFuture?: boolean;
+    smsOptIn?: boolean;
   };
 }
 
@@ -129,11 +130,12 @@ export function SquarePaymentForm({
             fare: bookingData?.fare || (amount / 100),
             flightNumber: bookingData?.flightNumber || '',
             notes: bookingData?.notes || '',
-            tipAmount: bookingData?.tipAmount || 0,
+            tipAmount: Math.round((bookingData?.tipAmount ?? 0) * 100), // Send tip in cents
             totalAmount: bookingData?.totalAmount || (amount / 100),
             flightInfo: bookingData?.flightInfo || {},
             fareType: bookingData?.fareType || 'business',
             saveInfoForFuture: bookingData?.saveInfoForFuture || false,
+            smsOptIn: bookingData?.smsOptIn ?? false,
           },
           existingBookingId: bookingId, // Use existing ID if provided
         }),

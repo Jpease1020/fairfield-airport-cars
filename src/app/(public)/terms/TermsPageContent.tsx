@@ -74,7 +74,7 @@ export default function TermsPageContent() {
                 {cmsData?.['booking-cancellation-title'] || '3. Booking and Cancellation Policy'}
               </H4>
               <Text cmsId="booking-cancellation-content">
-                {cmsData?.['booking-cancellation-content'] || 'All bookings are subject to availability. Cancellation policies vary based on timing: 100% refund for cancellations over 24 hours in advance, 50% refund for cancellations 3-24 hours in advance, and no refund for cancellations under 3 hours.'}
+                {cmsData?.['booking-cancellation-content'] || 'All bookings are subject to availability. Cancellations made 24 hours or more in advance have no fee. Cancellations made less than 24 hours in advance are subject to a 25% cancellation fee; less than 12 hours, 50%; less than 6 hours, 75%.'}
               </Text>
             </Stack>
           </Box>

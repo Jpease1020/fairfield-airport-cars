@@ -150,6 +150,22 @@ describe('POST /api/payment/process-payment', () => {
     );
   });
 
+  it('returns 400 when amount is not an integer (must be cents)', async () => {
+    const response = await POST(buildRequest({ ...baseRequestBody, amount: 150.5 }));
+    const payload = await response.json();
+    expect(response.status).toBe(400);
+    expect(payload.error).toContain('Invalid amount');
+    expect(mockProcessPayment).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when tipAmount is negative', async () => {
+    const response = await POST(buildRequest({ ...baseRequestBody, tipAmount: -100 }));
+    const payload = await response.json();
+    expect(response.status).toBe(400);
+    expect(payload.error).toContain('Invalid tipAmount');
+    expect(mockProcessPayment).not.toHaveBeenCalled();
+  });
+
   it('returns 400 when payment processing fails and skips booking creation', async () => {
     mockProcessPayment.mockResolvedValueOnce({ success: false });
 

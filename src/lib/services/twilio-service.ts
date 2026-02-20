@@ -1,4 +1,5 @@
 import twilio from 'twilio';
+import { saveSmsMessage } from './sms-message-service';
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -24,6 +25,17 @@ export const sendSms = async ({ to, body }: SmsPayload) => {
       messagingServiceSid: messagingServiceSid,
       to,
     });
+    try {
+      await saveSmsMessage({
+        from: twilioPhoneNumber || 'system',
+        to,
+        body,
+        direction: 'outbound',
+        twilioMessageSid: message.sid,
+      });
+    } catch (logErr) {
+      console.warn('Failed to log outbound SMS:', logErr);
+    }
     return message;
   } catch (error) {
     console.error(`Failed to send SMS to ${to}:`, error);
