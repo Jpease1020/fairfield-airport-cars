@@ -4,8 +4,12 @@ import { getBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: Request) {
+  const authResult = await requireAdmin(request);
+  if (!authResult.ok) return authResult.response;
+
   const { bookingId } = await request.json();
 
   if (!bookingId) {

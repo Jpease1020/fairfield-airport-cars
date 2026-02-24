@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createReview, hasBookingBeenReviewed } from '@/lib/services/review-service';
 import { getBooking } from '@/lib/services/booking-service';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: Request) {
   try {
@@ -35,6 +36,9 @@ export async function POST(request: Request) {
         error: 'Booking not found' 
       }, { status: 404 });
     }
+
+    const accessResult = await requireOwnerOrAdmin(request, booking);
+    if (!accessResult.ok) return accessResult.response;
 
     // Create the review
     const reviewId = await createReview({

@@ -18,6 +18,7 @@ import {
   LoadingSpinner
 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 function CancelPageContent() {
   // Get CMS data from provider
@@ -38,7 +39,7 @@ function CancelPageContent() {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/booking/cancel-booking', {
+      const response = await authFetch('/api/booking/cancel-booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +82,7 @@ function CancelPageContent() {
     }
 
     try {
-      const response = await fetch(`/api/booking/${bookingId.trim()}`);
+      const response = await authFetch(`/api/booking/${bookingId.trim()}`);
       if (response.ok) {
         const booking = await response.json();
         const pickupDateTime = booking.trip?.pickupDateTime || booking.pickupDateTime;

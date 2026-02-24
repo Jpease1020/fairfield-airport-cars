@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
 import { Container, Stack, Text, Box, Button, Input, Label, LoadingSpinner, Alert, H1 } from '@/design/ui';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface BusinessRulesForm {
   serviceArea: { normalRadiusMiles: number; extendedRadiusMiles: number };
@@ -41,7 +42,7 @@ export default function AdminSettingsPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    fetch('/api/admin/business-rules')
+    authFetch('/api/admin/business-rules')
       .then((res) => res.ok ? res.json() : Promise.reject(new Error('Failed to load')))
       .then((data) => {
         setForm({
@@ -62,7 +63,7 @@ export default function AdminSettingsPage() {
     setSaving(true);
     setError(null);
     setSuccess(false);
-    fetch('/api/admin/business-rules', {
+    authFetch('/api/admin/business-rules', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
@@ -77,7 +78,7 @@ export default function AdminSettingsPage() {
     if (!confirm('Restore all business rules to defaults?')) return;
     setSaving(true);
     setError(null);
-    fetch('/api/admin/business-rules/restore', { method: 'POST' })
+    authFetch('/api/admin/business-rules/restore', { method: 'POST' })
       .then((res) => res.ok ? undefined : Promise.reject(new Error('Restore failed')))
       .then(() => {
         setForm(defaultForm);

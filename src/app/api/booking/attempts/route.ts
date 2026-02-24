@@ -3,11 +3,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 const ATTEMPTS_COLLECTION = 'booking_attempts';
 
 export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { searchParams } = new URL(request.url);
     const limitParam = searchParams.get('limit');
     const limitValue = limitParam ? parseInt(limitParam, 10) : 50;
@@ -32,5 +36,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
 

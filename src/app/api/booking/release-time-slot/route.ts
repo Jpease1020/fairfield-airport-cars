@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { bookingLockService } from '@/lib/services/booking-lock-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { timeSlot } = await request.json();
 
     if (!timeSlot) {

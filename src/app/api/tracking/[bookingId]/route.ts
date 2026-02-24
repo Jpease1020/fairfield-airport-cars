@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBooking } from '@/lib/services/booking-service';
 import { getDriver } from '@/lib/services/driver-service';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function GET(
   request: NextRequest,
@@ -15,6 +16,14 @@ export async function GET(
       return NextResponse.json({ 
         error: 'Booking not found' 
       }, { status: 404 });
+    }
+
+    const token = request.nextUrl.searchParams.get('token');
+    const hasTrackingAccess = token && (booking as any).trackingToken && token === (booking as any).trackingToken;
+
+    if (!hasTrackingAccess) {
+      const accessResult = await requireOwnerOrAdmin(request, booking);
+      if (!accessResult.ok) return accessResult.response;
     }
 
     // Get driver details

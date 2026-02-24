@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Container, Stack, Text, Alert } from '@/design/ui';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface SquarePaymentFormProps {
   amount: number; // Amount in cents
@@ -22,6 +23,7 @@ interface SquarePaymentFormProps {
     dropoffLocation: string;
     pickupDateTime: string; // Accept string, convert to Date internally
     fare: number | null; // Accept null, handle internally
+    quoteId?: string;
     flightNumber?: string;
     notes?: string;
     tipAmount?: number;
@@ -110,7 +112,7 @@ export function SquarePaymentForm({
       }
 
       // Step 2: Process payment FIRST (security requirement)
-      const paymentResponse = await fetch('/api/payment/process-payment', {
+      const paymentResponse = await authFetch('/api/payment/process-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,6 +130,7 @@ export function SquarePaymentForm({
             dropoffLocation: bookingData?.dropoffLocation || 'Dropoff Location',
             pickupDateTime: bookingData?.pickupDateTime || new Date().toISOString(),
             fare: bookingData?.fare || (amount / 100),
+            quoteId: bookingData?.quoteId,
             flightNumber: bookingData?.flightNumber || '',
             notes: bookingData?.notes || '',
             tipAmount: Math.round((bookingData?.tipAmount ?? 0) * 100), // Send tip in cents
@@ -259,5 +262,4 @@ export function SquarePaymentForm({
     </Container>
   );
 }
-
 

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { to, bookingId } = await request.json();
     
     if (!to) {
@@ -80,4 +84,3 @@ export async function POST(request: NextRequest) {
     }, { status: 500 });
   }
 }
-

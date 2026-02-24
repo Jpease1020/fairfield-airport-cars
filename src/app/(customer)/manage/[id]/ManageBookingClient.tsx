@@ -16,6 +16,7 @@ import {
   LoadingSpinner,
   Span
 } from '@/design/ui';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface ManageBookingClientProps {
   bookingId: string;
@@ -37,7 +38,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const response = await fetch(`/api/booking/${bookingId}`);
+        const response = await authFetch(`/api/booking/${bookingId}`);
         if (response.ok) {
           const data = await response.json();
           setBooking(data);
@@ -62,7 +63,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
 
     setCancelling(true);
     try {
-      const response = await fetch('/api/booking/cancel-booking', {
+      const response = await authFetch('/api/booking/cancel-booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
         const data = await response.json();
         addToast('success', `Booking cancelled. ${data.refundAmount > 0 ? `Refund: $${data.refundAmount.toFixed(2)}` : 'No refund available.'}`);
         // Refresh booking data
-        const refreshResponse = await fetch(`/api/booking/${bookingId}`);
+        const refreshResponse = await authFetch(`/api/booking/${bookingId}`);
         if (refreshResponse.ok) {
           const refreshedData = await refreshResponse.json();
           setBooking(refreshedData);

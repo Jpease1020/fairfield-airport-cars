@@ -9,6 +9,7 @@ import { Booking } from '@/types/booking';
 import { BookingProvider, useBooking } from '@/providers/BookingProvider';
 import { TripDetailsPhase } from '@/components/booking/TripDetailsPhase';
 import { ContactInfoPhase } from '@/components/booking/ContactInfoPhase';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface EditBookingClientProps {
   bookingId: string;
@@ -30,7 +31,7 @@ function EditBookingContent({ bookingId, cmsData }: EditBookingClientProps) {
     if (bookingId) {
       const fetchBooking = async () => {
         try {
-          const response = await fetch(`/api/booking/${bookingId}`);
+          const response = await authFetch(`/api/booking/${bookingId}`);
           if (!response.ok) {
             throw new Error('Failed to fetch booking');
           }
@@ -208,7 +209,7 @@ function EditBookingContent({ bookingId, cmsData }: EditBookingClientProps) {
         };
       }
 
-      const response = await fetch(`/api/booking/${bookingId}`, {
+      const response = await authFetch(`/api/booking/${bookingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

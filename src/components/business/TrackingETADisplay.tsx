@@ -10,6 +10,7 @@ import {
   LoadingSpinner,
   Alert
 } from '@/design/ui';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 
 interface TrackingETADisplayProps {
@@ -60,7 +61,7 @@ export function TrackingETADisplay({
         setLoading(true);
         setError(null);
 
-        const response = await fetch('/api/tracking/eta', {
+        const response = await authFetch('/api/tracking/eta', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 /**
  * API endpoint to mark that a user has added the booking to their calendar
@@ -38,6 +39,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const bookingData = bookingDoc.data();
+    const accessResult = await requireOwnerOrAdmin(request, bookingData);
+    if (!accessResult.ok) return accessResult.response;
+
     // Mark that user has added calendar event
     await db.collection('bookings').doc(bookingId).update({
       calendarAddedByUser: true,
@@ -57,4 +62,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

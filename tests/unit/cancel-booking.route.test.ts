@@ -21,14 +21,16 @@ vi.mock('@/lib/services/email-service', () => ({
   sendConfirmationEmail: vi.fn(),
 }));
 
-vi.mock('@/lib/services/booking-notification-service', () => ({
-  bookingNotificationService: {
-    sendBookingCancelled: vi.fn(),
-  },
+vi.mock('@/lib/services/notification-service', () => ({
+  sendBookingProblem: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('@/lib/services/admin-notification-service', () => ({
   sendAdminSms: vi.fn(),
+}));
+
+vi.mock('@/lib/utils/auth-server', () => ({
+  requireOwnerOrAdmin: vi.fn().mockResolvedValue({ ok: true, auth: { uid: 'test', role: 'admin' } }),
 }));
 
 vi.mock('@/utils/bookingAdapter', () => ({
@@ -112,9 +114,9 @@ describe('POST /api/booking/cancel-booking', () => {
 
   it('returns 400 when bookingId is missing', async () => {
     const response = await POST(buildRequest({}));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(400);
+    expect(response!.status).toBe(400);
     expect(payload.error).toBe('Booking ID is required');
   });
 
@@ -122,9 +124,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockGetBooking.mockResolvedValueOnce(null);
 
     const response = await POST(buildRequest({ bookingId: 'nonexistent' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(404);
+    expect(response!.status).toBe(404);
     expect(payload.error).toBe('Booking not found');
   });
 
@@ -132,9 +134,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockGetBooking.mockResolvedValueOnce({ ...createMockBooking(48), status: 'cancelled' });
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(400);
+    expect(response!.status).toBe(400);
     expect(payload.error).toBe('Booking is already cancelled');
   });
 
@@ -146,9 +148,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123', reason: 'Changed plans' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.refundAmount).toBe(75); // 100% refund
     expect(payload.cancellationFee).toBe(0);
 
@@ -168,9 +170,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.refundAmount).toBe(75); // 25% fee → 75% refund
     expect(payload.cancellationFee).toBe(25);
 
@@ -189,9 +191,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.refundAmount).toBe(25); // 75% fee → 25% refund
     expect(payload.cancellationFee).toBe(75);
 
@@ -211,9 +213,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.message).toBe('Booking cancelled');
     expect(mockCancelBooking).toHaveBeenCalledWith('booking-123', undefined, {
       refundAmount: 75,
@@ -231,9 +233,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.refundAmount).toBe(75);
     // Service receives refundAmount but no squarePaymentId; it logs a warn and does not call refundPayment
     expect(mockCancelBooking).toHaveBeenCalledWith('booking-123', undefined, {
@@ -251,9 +253,9 @@ describe('POST /api/booking/cancel-booking', () => {
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.channels).toContain('sms');
     expect(payload.channels).toContain('email');
 

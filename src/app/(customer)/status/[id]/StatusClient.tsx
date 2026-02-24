@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider, H1, H2, Stack, Box } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface StatusClientProps {
   bookingId: string;
@@ -49,7 +50,7 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const response = await fetch(`/api/booking/${bookingId}/status`);
+        const response = await authFetch(`/api/booking/${bookingId}/status`);
         if (response.ok) {
           const data = await response.json();
           setStatus(data.status);

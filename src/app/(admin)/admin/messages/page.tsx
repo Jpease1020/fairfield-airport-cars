@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
 import { Container, Stack, Text, Alert, LoadingSpinner, H1 } from '@/design/ui';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface SmsMessage {
   id: string;
@@ -26,7 +27,7 @@ export default function AdminMessagesPage() {
     setLoading(true);
     const params = new URLSearchParams();
     if (direction !== 'all') params.set('direction', direction);
-    fetch(`/api/admin/sms-messages?${params.toString()}`)
+    authFetch(`/api/admin/sms-messages?${params.toString()}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load messages');
         return res.json();

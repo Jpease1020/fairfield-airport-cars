@@ -5,6 +5,7 @@ import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { getBusinessRules, getCancellationFeePercent } from '@/lib/business/business-rules';
 import { sendBookingProblem } from '@/lib/services/notification-service';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(req: NextRequest) {
   let bookingId: string | undefined;
@@ -22,6 +23,9 @@ export async function POST(req: NextRequest) {
     if (!booking) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
+
+    const accessResult = await requireOwnerOrAdmin(req, booking);
+    if (!accessResult.ok) return accessResult.response;
 
     if (booking.status === 'cancelled') {
       return NextResponse.json({ error: 'Booking is already cancelled' }, { status: 400 });

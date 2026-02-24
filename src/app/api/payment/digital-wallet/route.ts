@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPayment } from '@/lib/services/square-service';
-import { updateBooking } from '@/lib/services/booking-service';
+import { getBooking, updateBooking } from '@/lib/services/booking-service';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,6 +13,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const booking = await getBooking(bookingId);
+    if (!booking) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+    const accessResult = await requireOwnerOrAdmin(request, booking);
+    if (!accessResult.ok) return accessResult.response;
 
     // Process payment with Square
     const paymentResult = await createPayment({

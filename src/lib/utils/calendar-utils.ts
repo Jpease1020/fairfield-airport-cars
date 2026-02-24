@@ -4,6 +4,7 @@
  */
 
 import { createEvent } from 'ics';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 export interface CalendarEventData {
   title: string;
@@ -138,7 +139,7 @@ export async function markCalendarAsAdded(bookingId: string): Promise<void> {
   
   // Update server-side tracking so email can check this
   try {
-    await fetch('/api/booking/calendar-added', {
+    await authFetch('/api/booking/calendar-added', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -181,4 +182,3 @@ export function createCalendarEventData(
     bookingId,
   };
 }
-

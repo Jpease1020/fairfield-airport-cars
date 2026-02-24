@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 // GET - Fetch CMS data for a specific page or all pages
 export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { searchParams } = new URL(request.url);
     const page = searchParams.get('page');
 
@@ -27,6 +31,9 @@ export async function GET(request: NextRequest) {
 // POST - Seed/Update entire page data
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const body = await request.json();
     const { page, data } = body;
 
@@ -47,6 +54,9 @@ export async function POST(request: NextRequest) {
 // PUT - Update a CMS field
 export async function PUT(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const body = await request.json();
     const { fieldPath, value } = body;
 

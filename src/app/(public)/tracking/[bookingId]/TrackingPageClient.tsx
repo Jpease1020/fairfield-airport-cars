@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { 
   Container, 
   Stack, 
@@ -32,6 +33,8 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
   // Get CMS data from provider - extract only what this page needs
   const { cmsData: allCmsData } = useCMSData();
   const cmsData = allCmsData?.tracking || {};
+  const searchParams = useSearchParams();
+  const trackingToken = searchParams?.get('token') ?? undefined;
   
   
   const [booking, setBooking] = useState<Booking | null>(null);
@@ -49,7 +52,10 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/booking/${bookingId}`);
+        const url = trackingToken
+          ? `/api/booking/${bookingId}?token=${encodeURIComponent(trackingToken)}`
+          : `/api/booking/${bookingId}`;
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error('Failed to fetch booking');
         }

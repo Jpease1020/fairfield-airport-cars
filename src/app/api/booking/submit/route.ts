@@ -9,6 +9,7 @@ import { sendBookingVerificationEmail, sendDriverNotificationEmail } from '@/lib
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
 import { classifyTrip } from '@/lib/services/service-area-validation';
+import { getAuthContext } from '@/lib/utils/auth-server';
 import { sendBookingProblem } from '@/lib/services/notification-service';
 
 export async function POST(request: Request) {
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
 
   const { quoteId, fare, exceptionCode, customer, trip } = parsed.data;
+  const authContext = await getAuthContext(request);
 
   // Check if exception code is provided and valid
   const isValidExceptionCode = exceptionCode && exceptionCode === process.env.BOOKING_EXCEPTION_SECRET;
@@ -201,6 +203,8 @@ export async function POST(request: Request) {
         tipPercent: 0,
         totalAmount: fare
       },
+      customerUserId: authContext?.uid ?? null,
+      trackingToken: randomBytes(16).toString('hex'),
       status: isExceptionBooking ? ('requires_approval' as const) : ('pending' as const),
       ...(isExceptionBooking && {
         requiresApproval: true,

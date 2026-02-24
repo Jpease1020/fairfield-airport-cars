@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getBooking } from '@/lib/services/booking-service';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(req: Request) {
   const { bookingId } = await req.json();
@@ -7,6 +8,9 @@ export async function POST(req: Request) {
 
   const booking = await getBooking(bookingId);
   if (!booking) return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+
+  const accessResult = await requireOwnerOrAdmin(req, booking);
+  if (!accessResult.ok) return accessResult.response;
 
   if (!booking.balanceDue || booking.balanceDue <= 0) return NextResponse.json({ message: 'No balance due' });
 

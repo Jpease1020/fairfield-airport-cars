@@ -18,6 +18,7 @@ import {
 } from '@/design/ui';
 import { Star } from 'lucide-react';
 import { colors } from '@/design/ui';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface FeedbackClientProps {
   bookingId: string;
@@ -38,7 +39,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
     const fetchBookingDetails = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/bookings/${bookingId}`);
+        const response = await authFetch(`/api/booking/${bookingId}`);
         if (!response.ok) {
           throw new Error('Booking not found or invalid');
         }
@@ -62,7 +63,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/reviews/submit', {
+      const response = await authFetch('/api/reviews/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

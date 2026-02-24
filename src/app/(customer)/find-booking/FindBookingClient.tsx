@@ -13,18 +13,8 @@ import {
   Box,
   LoadingSpinner,
   H1,
-  Badge
 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
-
-interface Booking {
-  id: string;
-  pickupLocation: string;
-  dropoffLocation: string;
-  pickupDateTime: string;
-  status: string;
-  fare: number;
-}
 
 export default function FindBookingClient() {
   const { cmsData: allCmsData } = useCMSData();
@@ -32,18 +22,19 @@ export default function FindBookingClient() {
   const router = useRouter();
   const [lookupType, setLookupType] = useState<'email' | 'phone'>('email');
   const [identifier, setIdentifier] = useState('');
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searched, setSearched] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleLookup = async () => {
+  const handleSend = async () => {
     if (!identifier.trim()) {
       setError('Please enter your email or phone number');
       return;
     }
 
-    // Basic validation
     if (lookupType === 'email' && !identifier.includes('@')) {
       setError('Please enter a valid email address');
       return;
@@ -51,58 +42,71 @@ export default function FindBookingClient() {
 
     setLoading(true);
     setError(null);
-    setSearched(true);
+    setSuccessMessage(null);
 
     try {
-      const queryParam = lookupType === 'email' ? 'email' : 'phone';
-      const response = await fetch(`/api/booking/get-customer-bookings?${queryParam}=${encodeURIComponent(identifier.trim())}`);
+      if (lookupType === 'email') {
+        const response = await fetch('/api/auth/request-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: identifier.trim(), redirect: '/bookings' }),
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to find bookings');
-      }
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data?.error || 'Failed to send magic link');
+        }
 
-      const data = await response.json();
-      if (data.success && Array.isArray(data.bookings)) {
-        const transformedBookings: Booking[] = data.bookings.map((booking: any) => ({
-          id: booking.id,
-          pickupLocation: booking.trip?.pickup?.address || booking.pickupLocation || 'N/A',
-          dropoffLocation: booking.trip?.dropoff?.address || booking.dropoffLocation || 'N/A',
-          pickupDateTime: booking.trip?.pickupDateTime || booking.pickupDateTime || '',
-          status: booking.status || 'pending',
-          fare: booking.trip?.fare || booking.fare || 0
-        }));
-        setBookings(transformedBookings);
+        setSuccessMessage('We sent you a secure link. Check your email to access your bookings.');
       } else {
-        setBookings([]);
+        const response = await fetch('/api/auth/request-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: identifier.trim() }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data?.error || 'Failed to send verification code');
+        }
+
+        setOtpSent(true);
+        setSuccessMessage('We sent a 6-digit code to your phone.');
       }
     } catch (err) {
-      console.error('Lookup error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to find bookings');
-      setBookings([]);
+      setError(err instanceof Error ? err.message : 'Failed to send verification');
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case 'completed': return 'completed';
-      case 'confirmed': return 'confirmed';
-      case 'in-progress': return 'warning';
-      case 'pending': return 'pending';
-      case 'cancelled': return 'cancelled';
-      default: return 'default';
+  const handleVerifyOtp = async () => {
+    if (!otpCode.trim()) {
+      setError('Please enter the verification code');
+      return;
     }
-  };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'completed': return 'Completed';
-      case 'confirmed': return 'Confirmed';
-      case 'in-progress': return 'In Progress';
-      case 'pending': return 'Pending';
-      case 'cancelled': return 'Cancelled';
-      default: return 'Unknown';
+    setVerifying(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ phone: identifier.trim(), code: otpCode.trim() }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || 'Failed to verify code');
+      }
+
+      router.push('/bookings');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to verify code');
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -114,13 +118,12 @@ export default function FindBookingClient() {
             {pageCmsData?.['find-booking-title'] || 'Find My Booking'}
           </H1>
           <Text align="center" variant="muted" cmsId="find-booking-description">
-            {pageCmsData?.['find-booking-description'] || 'Enter your email or phone number to find your bookings'}
+            {pageCmsData?.['find-booking-description'] || 'We will send you a secure link or code to access your bookings.'}
           </Text>
         </Stack>
 
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
-            {/* Lookup Type Selection */}
             <Stack spacing="md">
               <Label cmsId="lookup-by-label">{pageCmsData?.['lookup-by-label'] || 'Lookup By'}</Label>
               <Stack direction="horizontal" spacing="lg">
@@ -132,8 +135,10 @@ export default function FindBookingClient() {
                   onChange={(value) => {
                     setLookupType(value as 'email' | 'phone');
                     setIdentifier('');
-                    setBookings([]);
-                    setSearched(false);
+                    setOtpCode('');
+                    setOtpSent(false);
+                    setSuccessMessage(null);
+                    setError(null);
                   }}
                   label="Email"
                 />
@@ -145,15 +150,16 @@ export default function FindBookingClient() {
                   onChange={(value) => {
                     setLookupType(value as 'email' | 'phone');
                     setIdentifier('');
-                    setBookings([]);
-                    setSearched(false);
+                    setOtpCode('');
+                    setOtpSent(false);
+                    setSuccessMessage(null);
+                    setError(null);
                   }}
                   label="Phone"
                 />
               </Stack>
             </Stack>
 
-            {/* Input Field */}
             <Stack spacing="sm">
               <Label htmlFor="identifier">
                 {lookupType === 'email' ? 'Email Address' : 'Phone Number'}
@@ -166,103 +172,62 @@ export default function FindBookingClient() {
                 placeholder={lookupType === 'email' ? 'your.email@example.com' : '(555) 123-4567'}
                 onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === 'Enter') {
-                    handleLookup();
+                    handleSend();
                   }
                 }}
               />
             </Stack>
 
-            {/* Error Message */}
+            {otpSent && lookupType === 'phone' && (
+              <Stack spacing="sm">
+                <Label htmlFor="otpCode">Verification Code</Label>
+                <Input
+                  id="otpCode"
+                  type="text"
+                  value={otpCode}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOtpCode(e.target.value)}
+                  placeholder="Enter 6-digit code"
+                />
+                <Button
+                  onClick={handleVerifyOtp}
+                  disabled={verifying || !otpCode.trim()}
+                  variant="primary"
+                >
+                  {verifying ? 'Verifying...' : 'Verify Code'}
+                </Button>
+              </Stack>
+            )}
+
             {error && (
               <Box variant="outlined" padding="md">
                 <Text color="error">{error}</Text>
               </Box>
             )}
 
-            {/* Search Button */}
+            {successMessage && (
+              <Box variant="outlined" padding="md">
+                <Text>{successMessage}</Text>
+              </Box>
+            )}
+
             <Button
-              onClick={handleLookup}
+              onClick={handleSend}
               disabled={loading || !identifier.trim()}
               variant="primary"
               cmsId="search-bookings"
             >
-              {loading ? 'Searching...' : (pageCmsData?.['search-bookings'] || 'Find Bookings')}
+              {loading ? 'Sending...' : (lookupType === 'email' ? 'Send Magic Link' : 'Send Code')}
             </Button>
           </Stack>
         </Box>
 
-        {/* Loading State */}
         {loading && (
           <Stack spacing="md" align="center">
             <LoadingSpinner />
-            <Text variant="muted" cmsId="searching-bookings">{pageCmsData?.['searching-bookings'] || 'Searching for bookings...'}</Text>
+            <Text variant="muted">Sending your verification...</Text>
           </Stack>
-        )}
-
-        {/* Results */}
-        {!loading && searched && (
-          <>
-            {bookings.length === 0 ? (
-              <Box variant="elevated" padding="lg">
-                <Stack spacing="md" align="center">
-                  <Text weight="bold" size="lg" cmsId="no-bookings-found">
-                    {pageCmsData?.['no-bookings-found'] || 'No Bookings Found'}
-                  </Text>
-                  <Text variant="muted" align="center">
-                    {pageCmsData?.['no-bookings-message'] || 'We couldn\'t find any bookings for that email or phone number. Please check your information and try again.'}
-                  </Text>
-                </Stack>
-              </Box>
-            ) : (
-              <Stack spacing="md">
-                <Text weight="bold" size="lg">
-                  {pageCmsData?.['bookings-found'] || `Found ${bookings.length} booking${bookings.length > 1 ? 's' : ''}`}
-                </Text>
-                {bookings.map((booking) => (
-                  <Box key={booking.id} variant="elevated" padding="lg">
-                    <Stack spacing="md">
-                      <Stack direction="horizontal" justify="space-between" align="center">
-                        <Text weight="bold" size="lg" cmsId="booking-number">
-                          {pageCmsData?.['booking-number'] || 'Booking'} #{booking.id}
-                        </Text>
-                        <Badge variant={getStatusVariant(booking.status)}>
-                          {getStatusText(booking.status)}
-                        </Badge>
-                      </Stack>
-                      
-                      <Stack spacing="sm">
-                        <Text size="sm">
-                          <strong>From:</strong> {booking.pickupLocation}
-                        </Text>
-                        <Text size="sm">
-                          <strong>To:</strong> {booking.dropoffLocation}
-                        </Text>
-                        {booking.pickupDateTime && (
-                          <Text size="sm">
-                            <strong>Date/Time:</strong> {new Date(booking.pickupDateTime).toLocaleString()}
-                          </Text>
-                        )}
-                        <Text size="sm" cmsId="fare-display">
-                          <strong>{pageCmsData?.['fare-label'] || 'Fare:'}</strong> ${booking.fare.toFixed(2)}
-                        </Text>
-                      </Stack>
-
-                      <Button
-                        onClick={() => router.push(`/booking/${booking.id}`)}
-                        variant="primary"
-                        cmsId="view-booking-details"
-                      >
-                        {pageCmsData?.['view-booking-details'] || 'View Booking Details'}
-                      </Button>
-                    </Stack>
-                  </Box>
-                ))}
-              </Stack>
-            )}
-          </>
         )}
       </Stack>
     </Container>
   );
 }
-

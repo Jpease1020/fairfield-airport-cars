@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import admin from 'firebase-admin';
 import fs from 'fs';
 import path from 'path';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -14,6 +15,9 @@ const db = admin.firestore();
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     console.log('🚀 Starting CMS data deployment to production...');
     
     // Read the cleaned data

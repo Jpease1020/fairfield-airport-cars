@@ -152,7 +152,7 @@ describe('Cancellation & Refund Flow', () => {
 
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       // Route passes options to cancelBooking; service will call refundPayment. Assert options.
       expect(mockCancelBooking).toHaveBeenCalledWith(
         'test-booking-123',
@@ -175,7 +175,7 @@ describe('Cancellation & Refund Flow', () => {
 
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       // 25% fee → 75% refund: $25.50 * 0.75 = $19.125
       expect(mockCancelBooking).toHaveBeenCalledWith(
         'test-booking-123',
@@ -198,7 +198,7 @@ describe('Cancellation & Refund Flow', () => {
 
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       // 75% fee → 25% refund: $25.50 * 0.25 = $6.375
       expect(mockCancelBooking).toHaveBeenCalledWith(
         'test-booking-123',
@@ -257,7 +257,7 @@ describe('Cancellation & Refund Flow', () => {
 
       const response = await POST(createRequest({ bookingId: 'non-existent', reason: 'Test' }));
 
-      expect(response.status).toBe(404);
+      expect(response!.status).toBe(404);
     });
 
     it('returns 400 for already cancelled booking', async () => {
@@ -267,7 +267,7 @@ describe('Cancellation & Refund Flow', () => {
 
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
     });
 
     it('continues cancellation even if refund fails', async () => {
@@ -281,7 +281,7 @@ describe('Cancellation & Refund Flow', () => {
       const response = await POST(createRequest({ bookingId: 'test-booking-123', reason: 'Test' }));
 
       // Cancellation should still succeed
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(mockCancelBooking).toHaveBeenCalled();
     });
   });
