@@ -16,6 +16,7 @@ import {
   H1
 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface Payment {
   id: string;
@@ -73,7 +74,7 @@ function PaymentsPageContent() {
 
   const handleRefund = async (payment: Payment) => {
     try {
-      const response = await fetch('/api/admin/payments/refund', {
+      const response = await authFetch('/api/admin/payments/refund', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ function PaymentsPageContent() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/admin/payments');
+      const response = await authFetch('/api/admin/payments');
       if (!response.ok) {
         throw new Error('Failed to fetch payments');
       }

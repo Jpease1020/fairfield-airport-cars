@@ -1,14 +1,18 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Helper function to check authentication from cookies
+const ENFORCE_COOKIE_AUTH = process.env.ENFORCE_COOKIE_AUTH === 'true';
+
+// Helper function to check authentication from cookies (optional)
 async function isAuthenticated(request: NextRequest): Promise<boolean> {
+  if (!ENFORCE_COOKIE_AUTH) return true;
   const authCookie = request.cookies.get('auth-token');
   return !!authCookie?.value;
 }
 
-// Helper function to check admin status from cookies
+// Helper function to check admin status from cookies (optional)
 async function isAdmin(request: NextRequest): Promise<boolean> {
+  if (!ENFORCE_COOKIE_AUTH) return true;
   const adminCookie = request.cookies.get('admin-token');
   return !!adminCookie?.value;
 }

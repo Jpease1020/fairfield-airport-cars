@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 // Helper to safely convert Firestore dates to ISO strings
 const safeToDate = (dateField: any): string | null => {
@@ -23,8 +24,11 @@ const safeToDate = (dateField: any): string | null => {
   return null;
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const db = getAdminDb();
 
     // Get all payments, ordered by creation date (most recent first)

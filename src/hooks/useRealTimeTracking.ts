@@ -2,6 +2,7 @@
 // Provides real-time tracking functionality for React components
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { authFetch } from '@/lib/utils/auth-fetch';
 // Use API route instead of direct import (booking-service uses Admin SDK)
 
 interface DriverLocation {
@@ -52,7 +53,7 @@ export const useRealTimeTracking = (bookingId: string) => {
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/booking/${bookingId}`);
+      const response = await authFetch(`/api/booking/${bookingId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch booking');
       }
@@ -90,7 +91,7 @@ export const useRealTimeTracking = (bookingId: string) => {
         url.searchParams.set('lastUpdate', lastUpdate);
       }
 
-      const response = await fetch(url.toString());
+      const response = await authFetch(url.toString());
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -162,7 +163,7 @@ export const useRealTimeTracking = (bookingId: string) => {
     if (!bookingId) return;
 
     try {
-      const response = await fetch(`/api/ws/bookings/${bookingId}`, {
+      const response = await authFetch(`/api/ws/bookings/${bookingId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

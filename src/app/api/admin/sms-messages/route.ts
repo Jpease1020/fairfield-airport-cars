@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 /**
  * GET /api/admin/sms-messages – list recent SMS for admin.
@@ -8,6 +9,9 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
  */
 export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const db = getAdminDb();
     const { searchParams } = new URL(request.url);
     const limitNum = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200);

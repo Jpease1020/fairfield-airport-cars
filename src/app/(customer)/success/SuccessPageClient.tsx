@@ -15,6 +15,7 @@ import {
 import { Booking } from '@/types/booking';
 import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
 import { isRunningAsPWA } from '@/lib/pwa';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface SuccessPageClientProps {
   cmsData?: any;
@@ -40,7 +41,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
     }
 
     try {
-      const response = await fetch(`/api/booking/${bookingId}`);
+      const response = await authFetch(`/api/booking/${bookingId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch booking details');
       }

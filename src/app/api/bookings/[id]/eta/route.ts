@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getEstimatedArrival } from '@/lib/services/booking-service';
+import { getEstimatedArrival, getBooking } from '@/lib/services/booking-service';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function GET(
   request: NextRequest,
@@ -7,6 +8,18 @@ export async function GET(
 ) {
   try {
     const { id: bookingId } = await params;
+    const booking = await getBooking(bookingId);
+    if (!booking) {
+      return NextResponse.json({
+        success: false,
+        error: 'Booking not found',
+        estimatedArrival: null,
+      }, { status: 404 });
+    }
+
+    const accessResult = await requireOwnerOrAdmin(request, booking);
+    if (!accessResult.ok) return accessResult.response;
+
     const estimatedArrival = await getEstimatedArrival(bookingId);
     
     if (!estimatedArrival) {

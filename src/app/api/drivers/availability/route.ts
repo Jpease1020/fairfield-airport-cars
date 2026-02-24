@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAvailableDrivers } from '@/lib/services/booking-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const drivers = await getAvailableDrivers();
     
     return NextResponse.json({
@@ -25,6 +29,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { driverId, location, status } = await request.json();
     
     // Update driver location and status

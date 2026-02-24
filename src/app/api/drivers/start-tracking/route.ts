@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { driverLocationService } from '@/lib/services/driver-location-service';
 import { getBooking, updateBooking } from '@/lib/services/booking-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { bookingId, driverId, driverName } = await request.json();
 
     if (!bookingId || !driverId) {
@@ -74,6 +78,9 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { searchParams } = new URL(request.url);
     const bookingId = searchParams.get('bookingId');
     const driverId = searchParams.get('driverId');
@@ -111,6 +118,9 @@ export async function DELETE(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { searchParams } = new URL(request.url);
     const bookingId = searchParams.get('bookingId');
     const driverId = searchParams.get('driverId');

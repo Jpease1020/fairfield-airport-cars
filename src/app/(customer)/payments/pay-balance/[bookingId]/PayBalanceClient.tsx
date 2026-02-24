@@ -13,6 +13,7 @@ import {
   LoadingSpinner
 } from '@/design/ui';
 import { SquarePaymentForm } from '@/components/business/SquarePaymentForm';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface BookingDetails {
   id: string;
@@ -42,7 +43,7 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
-        const response = await fetch(`/api/booking/${bookingId}`);
+        const response = await authFetch(`/api/booking/${bookingId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch booking details');
         }

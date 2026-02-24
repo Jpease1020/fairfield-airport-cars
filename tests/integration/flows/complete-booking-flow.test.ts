@@ -155,9 +155,9 @@ describe('Complete Booking Flow', () => {
       });
 
       const response = await POST(request);
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.bookingId).toBeDefined();
     });
@@ -254,9 +254,9 @@ describe('Complete Booking Flow', () => {
       });
 
       const response = await POST(request);
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
       expect(data.error).toBeDefined();
     });
 
@@ -299,7 +299,7 @@ describe('Complete Booking Flow', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
     });
 
     it('rejects request missing amount', async () => {
@@ -317,7 +317,7 @@ describe('Complete Booking Flow', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
     });
   });
 });

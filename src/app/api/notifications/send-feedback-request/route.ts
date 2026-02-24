@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { sendSms } from '@/lib/services/twilio-service';
 import { getBooking } from '@/lib/services/booking-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: Request) {
+  const authResult = await requireAdmin(request);
+  if (!authResult.ok) return authResult.response;
+
   const { bookingId } = await request.json();
 
   if (!bookingId) {

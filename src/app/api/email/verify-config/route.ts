@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 /**
  * Verify email service configuration without sending an email
@@ -7,6 +8,9 @@ import nodemailer from 'nodemailer';
  */
 export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const {
       EMAIL_HOST,
       EMAIL_PORT,
@@ -103,4 +107,3 @@ export async function GET(request: NextRequest) {
     }, { status: 500 });
   }
 }
-

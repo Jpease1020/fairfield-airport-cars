@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBooking, updateBooking } from '@/lib/services/booking-service';
+import { requireAdmin, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 // In-memory store for real-time updates (in production, use Redis)
 const realTimeUpdates = new Map<string, any[]>();
@@ -20,6 +21,13 @@ export async function GET(
     const booking = await getBooking(bookingId);
     if (!booking) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+
+    const token = request.nextUrl.searchParams.get('token');
+    const hasTrackingAccess = token && (booking as any).trackingToken && token === (booking as any).trackingToken;
+    if (!hasTrackingAccess) {
+      const accessResult = await requireOwnerOrAdmin(request, booking);
+      if (!accessResult.ok) return accessResult.response;
     }
 
     // Get last update timestamp from query params
@@ -60,6 +68,9 @@ export async function POST(
   }
 
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { type, data } = await request.json();
     
     switch (type) {

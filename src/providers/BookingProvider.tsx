@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo, ReactNo
 import { useRouter } from 'next/navigation';
 import { Booking, BookingFormData, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo, QuoteData } from '@/types/booking';
 import { useRouteCalculation } from '@/hooks/useRouteCalculation';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface BookingProviderType {
   // Current booking
@@ -723,7 +724,7 @@ const [warning, setWarning] = useState<string | null>(null);
         requestBody.fare = currentQuote.fare;
       }
 
-      const res = await fetch('/api/booking/submit', {
+      const res = await authFetch('/api/booking/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
@@ -958,7 +959,7 @@ const [warning, setWarning] = useState<string | null>(null);
     setError(null);
     
     try {
-      const response = await fetch('/api/booking', {
+      const response = await authFetch('/api/booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -989,7 +990,7 @@ const [warning, setWarning] = useState<string | null>(null);
     setError(null);
     
     try {
-      const response = await fetch(`/api/booking/${id}`, {
+      const response = await authFetch(`/api/booking/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1020,7 +1021,7 @@ const [warning, setWarning] = useState<string | null>(null);
     setError(null);
     
     try {
-      const response = await fetch(`/api/booking/${id}`);
+      const response = await authFetch(`/api/booking/${id}`);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -1048,7 +1049,7 @@ const [warning, setWarning] = useState<string | null>(null);
     setError(null);
     
     try {
-      const response = await fetch(`/api/booking/${id}`, {
+      const response = await authFetch(`/api/booking/${id}`, {
         method: 'DELETE',
       });
 

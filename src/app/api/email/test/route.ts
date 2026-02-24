@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendTestEmail } from '@/lib/services/email-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const { to, subject, text } = await request.json();
     if (!to) {
       return NextResponse.json({ error: 'Missing "to" address' }, { status: 400 });
@@ -20,5 +24,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to send test email' }, { status: 500 });
   }
 }
-
 

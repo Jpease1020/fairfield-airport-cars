@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
+import { requireAuth, requireAdmin, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 // Helper to safely convert Firestore dates to ISO strings
 const safeToDate = (dateField: any): string | null => {
@@ -27,6 +28,9 @@ const safeToDate = (dateField: any): string | null => {
 
 export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAuth(request);
+    if (!authResult.ok) return authResult.response;
+
     const { searchParams } = new URL(request.url);
     const bookingId = searchParams.get('id');
 
@@ -75,6 +79,17 @@ export async function GET(request: NextRequest) {
             }
           : undefined
       };
+
+      const accessResult = await requireOwnerOrAdmin(request, booking);
+      if (!accessResult.ok) return accessResult.response;
+      const auth = accessResult.auth;
+      if (auth && auth.role !== 'admin' && booking.confirmation?.token) {
+        booking.confirmation = {
+          status: booking.confirmation.status,
+          sentAt: booking.confirmation.sentAt,
+          confirmedAt: booking.confirmation.confirmedAt,
+        };
+      }
       
       console.log(`✅ [GET-BOOKINGS] Retrieved booking ${bookingId}`);
       return NextResponse.json({
@@ -82,6 +97,9 @@ export async function GET(request: NextRequest) {
         booking
       });
     } else {
+      const adminResult = await requireAdmin(request);
+      if (!adminResult.ok) return adminResult.response;
+
       // Get all bookings (limit to 50) - Admin only, requires auth check in production
       const snapshot = await db.collection('bookings')
         .orderBy('createdAt', 'desc')

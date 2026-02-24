@@ -174,9 +174,9 @@ describe('Ride Experience - Customer Perspective', () => {
         createRequest({}) as any,
         createParams('booking-ride-123')
       );
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.driverName).toBe('Gregg');
       expect(data.driverPhone).toBe('+12035559999');
       expect(data.vehicleInfo).toBeDefined();
@@ -191,7 +191,7 @@ describe('Ride Experience - Customer Perspective', () => {
         createParams('non-existent')
       );
 
-      expect(response.status).toBe(404);
+      expect(response!.status).toBe(404);
     });
 
     it('returns 404 when driver is not found', async () => {
@@ -203,7 +203,7 @@ describe('Ride Experience - Customer Perspective', () => {
         createParams('booking-ride-123')
       );
 
-      expect(response.status).toBe(404);
+      expect(response!.status).toBe(404);
     });
   });
 });
@@ -225,9 +225,9 @@ describe('Ride Experience - Driver (Gregg) Perspective', () => {
         driverId: 'gregg-123',
         driverName: 'Gregg',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.bookingId).toBe('booking-ride-123');
       expect(data.driverId).toBe('gregg-123');
@@ -237,9 +237,9 @@ describe('Ride Experience - Driver (Gregg) Perspective', () => {
       const response = await startTrackingPost(createRequest({
         driverId: 'gregg-123',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
       expect(data.error).toContain('required');
     });
 
@@ -247,9 +247,9 @@ describe('Ride Experience - Driver (Gregg) Perspective', () => {
       const response = await startTrackingPost(createRequest({
         bookingId: 'booking-ride-123',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
       expect(data.error).toContain('required');
     });
 
@@ -260,9 +260,9 @@ describe('Ride Experience - Driver (Gregg) Perspective', () => {
         bookingId: 'non-existent',
         driverId: 'gregg-123',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(404);
+      expect(response!.status).toBe(404);
       expect(data.error).toBe('Booking not found');
     });
 
@@ -274,9 +274,9 @@ describe('Ride Experience - Driver (Gregg) Perspective', () => {
         bookingId: 'booking-ride-123',
         driverId: 'gregg-123',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(409);
+      expect(response!.status).toBe(409);
       expect(data.error).toContain('already active');
     });
 
@@ -314,9 +314,9 @@ describe('Booking Status Views', () => {
       createRequest({}) as any,
       createParams('booking-ride-123')
     );
-    const data = await response.json();
+    const data = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(data.status).toBe('confirmed');
   });
 
@@ -328,9 +328,9 @@ describe('Booking Status Views', () => {
       createRequest({}) as any,
       createParams('booking-ride-123')
     );
-    const data = await response.json();
+    const data = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(data.status).toBe('in-progress');
   });
 
@@ -342,9 +342,9 @@ describe('Booking Status Views', () => {
       createRequest({}) as any,
       createParams('booking-ride-123')
     );
-    const data = await response.json();
+    const data = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(data.status).toBe('completed');
   });
 });

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const pricingData = await request.json();
     
     // Validate required fields
@@ -50,8 +54,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAdmin(request);
+    if (!authResult.ok) return authResult.response;
+
     const cmsData = await cmsFlattenedService.getAllCMSData();
     const pricingData = cmsData?.pricing || {};
 

@@ -8,6 +8,8 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { sendBookingProblem } from '@/lib/services/notification-service';
+import { getAuthContext, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
+import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
@@ -18,6 +20,7 @@ export async function POST(request: Request) {
     const { paymentToken, amount, currency, bookingData: bd, existingBookingId: eid, tipAmount = 0 } = body;
     existingBookingId = eid;
     bookingData = bd;
+    const authContext = await getAuthContext(request);
 
     // Check for smoke test mode
     const smokeTestHeader = request.headers.get('x-smoke-test');
@@ -37,6 +40,35 @@ export async function POST(request: Request) {
     }
     if (!Number.isInteger(tipCents) || tipCents < 0) {
       return NextResponse.json({ error: 'Invalid tipAmount: must be a non-negative integer (cents).' }, { status: 400 });
+    }
+
+    if (existingBookingId) {
+      const existingBooking = await getBooking(existingBookingId);
+      if (!existingBooking) {
+        return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+      }
+      const accessResult = await requireOwnerOrAdmin(request, existingBooking);
+      if (!accessResult.ok) return accessResult.response;
+    }
+
+    if (bookingData?.quoteId) {
+      const quote = await getQuote(bookingData.quoteId);
+      if (!quote) {
+        return NextResponse.json({ error: 'Quote not found', code: 'QUOTE_NOT_FOUND' }, { status: 404 });
+      }
+      if (!isQuoteValid(quote)) {
+        return NextResponse.json({ error: 'Quote expired', code: 'QUOTE_EXPIRED' }, { status: 410 });
+      }
+
+      const expectedCents = Math.round(quote.price * 100);
+      if (amountCents !== expectedCents) {
+        return NextResponse.json({
+          error: 'Payment amount does not match quote',
+          code: 'AMOUNT_MISMATCH',
+          expectedAmountCents: expectedCents,
+          providedAmountCents: amountCents,
+        }, { status: 409 });
+      }
     }
 
     // SECURITY: Process payment FIRST, then create booking
@@ -77,6 +109,8 @@ export async function POST(request: Request) {
       // Create new booking with payment information (cast: request body + payment fields match BookingCreateData at runtime)
       const bookingResult = await createBookingAtomic({
         ...bookingData,
+        customerUserId: authContext?.uid ?? null,
+        trackingToken: bookingData?.trackingToken || randomBytes(16).toString('hex'),
         squareOrderId: paymentResult.orderId,
         squarePaymentId: paymentResult.paymentId, // Store payment ID for refunds
         depositPaid: true,

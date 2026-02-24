@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         found: false,
         preferences: {
-          smsOptIn: true,
+          smsOptIn: false,
           saveInfoForFuture: false
         }
       });
@@ -67,13 +67,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       found: true,
       preferences: {
-        smsOptIn: matchingBooking.customer?.smsOptIn ?? true,
-        saveInfoForFuture: matchingBooking.customer?.saveInfoForFuture ?? false,
-        // Also return saved info if they opted to save it
-        ...(matchingBooking.customer?.saveInfoForFuture && {
-          name: matchingBooking.customer?.name,
-          email: matchingBooking.customer?.email
-        })
+        smsOptIn: matchingBooking.customer?.smsOptIn ?? false,
+        saveInfoForFuture: matchingBooking.customer?.saveInfoForFuture ?? false
       }
     });
   } catch (error) {

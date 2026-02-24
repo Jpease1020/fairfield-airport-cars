@@ -20,6 +20,7 @@ import {
   Span
 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 function PricingSettingsContent() {
   // Get CMS data from provider
@@ -134,7 +135,7 @@ function PricingSettingsContent() {
       setLoading(true);
       
       // Update pricing settings in CMS
-      const response = await fetch('/api/admin/cms/pricing', {
+      const response = await authFetch('/api/admin/cms/pricing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

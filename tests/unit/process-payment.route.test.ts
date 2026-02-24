@@ -133,9 +133,9 @@ describe('POST /api/payment/process-payment', () => {
     mockSendSms.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest(baseRequestBody));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.bookingId).toBe('booking-123');
     expect(payload.paymentId).toBe('pay-001');
 
@@ -152,16 +152,16 @@ describe('POST /api/payment/process-payment', () => {
 
   it('returns 400 when amount is not an integer (must be cents)', async () => {
     const response = await POST(buildRequest({ ...baseRequestBody, amount: 150.5 }));
-    const payload = await response.json();
-    expect(response.status).toBe(400);
+    const payload = await response!.json();
+    expect(response!.status).toBe(400);
     expect(payload.error).toContain('Invalid amount');
     expect(mockProcessPayment).not.toHaveBeenCalled();
   });
 
   it('returns 400 when tipAmount is negative', async () => {
     const response = await POST(buildRequest({ ...baseRequestBody, tipAmount: -100 }));
-    const payload = await response.json();
-    expect(response.status).toBe(400);
+    const payload = await response!.json();
+    expect(response!.status).toBe(400);
     expect(payload.error).toContain('Invalid tipAmount');
     expect(mockProcessPayment).not.toHaveBeenCalled();
   });
@@ -170,9 +170,9 @@ describe('POST /api/payment/process-payment', () => {
     mockProcessPayment.mockResolvedValueOnce({ success: false });
 
     const response = await POST(buildRequest(baseRequestBody));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(400);
+    expect(response!.status).toBe(400);
     expect(payload.error).toBe('Payment processing failed');
 
     expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
@@ -221,9 +221,9 @@ describe('POST /api/payment/process-payment', () => {
     mockSendSms.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest(baseRequestBody));
-    const payload = await response.json();
+    const payload = await response!.json();
 
-    expect(response.status).toBe(200);
+    expect(response!.status).toBe(200);
     expect(payload.bookingId).toBe('booking-456');
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'Failed to send verification notifications:',

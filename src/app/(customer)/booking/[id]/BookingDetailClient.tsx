@@ -6,6 +6,7 @@ import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
 import { hasCalendarBeenAdded } from '@/lib/utils/calendar-utils';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface BookingDetailClientProps {
   bookingId: string;
@@ -35,7 +36,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const response = await fetch(`/api/booking/get-bookings-simple?id=${bookingId}`);
+        const response = await authFetch(`/api/booking/get-bookings-simple?id=${bookingId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch booking');
         }

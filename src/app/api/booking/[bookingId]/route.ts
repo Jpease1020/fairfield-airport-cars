@@ -4,6 +4,7 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getBooking } from '@/lib/services/booking-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { FieldValue } from 'firebase-admin/firestore';
+import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function GET(
   request: NextRequest,
@@ -35,6 +36,30 @@ export async function GET(
       updatedAt: bookingData?.updatedAt?.toDate?.()?.toISOString() || bookingData?.updatedAt,
     };
 
+    const token = request.nextUrl.searchParams.get('token');
+    const hasTrackingAccess = token && bookingData?.trackingToken && token === bookingData.trackingToken;
+
+    if (!hasTrackingAccess) {
+      const accessResult = await requireOwnerOrAdmin(request, booking);
+      if (!accessResult.ok) return accessResult.response;
+      const auth = accessResult.auth;
+      if (auth && auth.role !== 'admin' && booking.confirmation?.token) {
+        booking.confirmation = {
+          status: booking.confirmation.status,
+          sentAt: booking.confirmation.sentAt,
+          confirmedAt: booking.confirmation.confirmedAt,
+        };
+      }
+    }
+
+    if (hasTrackingAccess && booking.confirmation?.token) {
+      booking.confirmation = {
+        status: booking.confirmation.status,
+        sentAt: booking.confirmation.sentAt,
+        confirmedAt: booking.confirmation.confirmedAt,
+      };
+    }
+
     return NextResponse.json(booking);
   } catch (error) {
     console.error('Error fetching booking:', error);
@@ -65,6 +90,9 @@ export async function PUT(
     if (!existingBooking) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
+
+    const accessResult = await requireOwnerOrAdmin(request, existingBooking);
+    if (!accessResult.ok) return accessResult.response;
 
     if (existingBooking.status === 'cancelled') {
       return NextResponse.json({ error: 'Cannot edit a cancelled booking' }, { status: 400 });

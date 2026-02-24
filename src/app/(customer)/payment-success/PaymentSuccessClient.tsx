@@ -12,6 +12,7 @@ import {
   LoadingSpinner,
 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 export default function PaymentSuccessClient() {  
   const { cmsData: allCmsData } = useCMSData();
@@ -36,7 +37,7 @@ export default function PaymentSuccessClient() {
         const bookingData = JSON.parse(pendingBookingData);
         
         // Create the actual booking now that payment is confirmed
-        const response = await fetch('/api/booking', {
+        const response = await authFetch('/api/booking', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

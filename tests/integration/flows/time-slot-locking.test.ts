@@ -78,9 +78,9 @@ describe('Time Slot Locking', () => {
       const response = await lockPost(createRequest({
         timeSlot: testTimeSlot,
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.lockId).toBeDefined();
       expect(mockLockTimeSlot).toHaveBeenCalledWith(testTimeSlot, expect.any(String));
@@ -92,18 +92,18 @@ describe('Time Slot Locking', () => {
       const response = await lockPost(createRequest({
         timeSlot: testTimeSlot,
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(409); // Conflict
+      expect(response!.status).toBe(409); // Conflict
       expect(data.success).toBe(false);
       expect(data.error).toContain('already locked');
     });
 
     it('returns 400 when timeSlot is missing', async () => {
       const response = await lockPost(createRequest({}));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
       expect(data.error).toBe('Time slot is required');
     });
   });
@@ -115,18 +115,18 @@ describe('Time Slot Locking', () => {
       const response = await releasePost(createRequest({
         timeSlot: testTimeSlot,
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.success).toBe(true);
       expect(mockReleaseTimeSlot).toHaveBeenCalledWith(testTimeSlot, 'any');
     });
 
     it('returns 400 when timeSlot is missing for release', async () => {
       const response = await releasePost(createRequest({}));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
       expect(data.error).toBe('Time slot is required');
     });
   });
@@ -147,9 +147,9 @@ describe('Time Slot Locking', () => {
         startTime: '10:00',
         endTime: '11:00',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.isAvailable).toBe(true);
       expect(data.hasConflict).toBe(false);
       expect(data.availableDrivers).toBe(1);
@@ -173,9 +173,9 @@ describe('Time Slot Locking', () => {
         startTime: '10:00',
         endTime: '11:00',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.isAvailable).toBe(false);
       expect(data.hasConflict).toBe(true);
       expect(data.conflictingBookings).toHaveLength(1);
@@ -195,9 +195,9 @@ describe('Time Slot Locking', () => {
         startTime: '10:00',
         endTime: '11:00',
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(200);
+      expect(response!.status).toBe(200);
       expect(data.isAvailable).toBe(false);
       expect(data.availableDrivers).toBe(0);
     });
@@ -207,9 +207,9 @@ describe('Time Slot Locking', () => {
         date: '2024-03-15',
         // missing startTime and endTime
       }));
-      const data = await response.json();
+      const data = await response!.json();
 
-      expect(response.status).toBe(400);
+      expect(response!.status).toBe(400);
       expect(data.error).toContain('required');
     });
   });
@@ -230,13 +230,13 @@ describe('Double Booking Prevention', () => {
     const response1 = await lockPost(createRequest({
       timeSlot: '2024-03-15-10:00',
     }));
-    expect(response1.status).toBe(200);
+    expect(response1!.status).toBe(200);
 
     // Customer 2 tries to lock same slot
     const response2 = await lockPost(createRequest({
       timeSlot: '2024-03-15-10:00',
     }));
-    expect(response2.status).toBe(409); // Conflict
+    expect(response2!.status).toBe(409); // Conflict
   });
 
   it('allows booking after lock is released', async () => {
@@ -247,12 +247,12 @@ describe('Double Booking Prevention', () => {
     const releaseResponse = await releasePost(createRequest({
       timeSlot: '2024-03-15-10:00',
     }));
-    expect(releaseResponse.status).toBe(200);
+    expect(releaseResponse!.status).toBe(200);
 
     // Now a new customer can lock the slot
     const lockResponse = await lockPost(createRequest({
       timeSlot: '2024-03-15-10:00',
     }));
-    expect(lockResponse.status).toBe(200);
+    expect(lockResponse!.status).toBe(200);
   });
 });
