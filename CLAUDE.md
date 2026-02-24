@@ -41,7 +41,7 @@ Customers book rides to/from airports (JFK, LGA, EWR, BDL, HVN, HPN).
 
 **SMS/Email notifications:**
 - [ ] Twilio messaging service SID is configured (not hardcoded)
-- [ ] Email domain matches production (fairfieldairportcars.com)
+- [ ] Email domain matches production (fairfieldairportcar.com)
 - [ ] Test that messages actually send in dev
 
 **Environment variables:**

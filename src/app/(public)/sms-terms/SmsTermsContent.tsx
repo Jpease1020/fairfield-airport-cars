@@ -60,7 +60,7 @@ export default function SmsTermsContent() {
             <Stack spacing="md">
               <H4>2. Consent & Opt-In</H4>
               <Text>
-                You may opt in to receive SMS messages by checking the SMS consent checkbox during the booking process on our website at fairfieldairportcars.com. By checking the box labeled &quot;I agree to receive SMS messages from Fairfield Airport Car Service,&quot; you provide your express written consent to receive text messages at the phone number you provide.
+                You may opt in to receive SMS messages by checking the SMS consent checkbox during the booking process on our website at fairfieldairportcar.com. By checking the box labeled &quot;I agree to receive SMS messages from Fairfield Airport Car Service,&quot; you provide your express written consent to receive text messages at the phone number you provide.
               </Text>
               <Text>
                 Consent is not required as a condition of purchasing any goods or services. You may book a ride without opting in to SMS messages.
@@ -139,7 +139,7 @@ export default function SmsTermsContent() {
               <Stack spacing="sm">
                 <Text>Text: (646) 221-6370</Text>
                 <Text>Email: rides@fairfieldairportcar.com</Text>
-                <Text>Web: fairfieldairportcars.com</Text>
+                <Text>Web: fairfieldairportcar.com</Text>
               </Stack>
             </Stack>
           </Box>

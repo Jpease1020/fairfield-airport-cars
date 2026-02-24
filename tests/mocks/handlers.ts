@@ -50,7 +50,7 @@ export const mockCMSData = {
 export const mockBusinessSettings = {
   company: {
     name: 'Fairfield Airport Cars',
-    email: 'info@fairfieldairportcars.com',
+    email: 'info@fairfieldairportcar.com',
     phone: '203-555-0123'
   },
   booking: {

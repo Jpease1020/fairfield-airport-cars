@@ -47,5 +47,5 @@ export const getBaseUrl = (): string => {
   if (process.env.NODE_ENV === 'development') {
     return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   }
-  return process.env.NEXT_PUBLIC_BASE_URL || 'https://fairfieldairportcars.com';
+  return process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fairfieldairportcar.com';
 };
