@@ -135,9 +135,9 @@ Page sections:
 - Textarea for message (max 160 chars for single SMS)
 - Character counter
 - Template buttons:
-  - "Promotional" → "Hi {{name}}! Get 10% off your next ride with Fairfield Airport Cars. Book at fairfieldairportcars.com"
-  - "Re-engagement" → "Hi {{name}}, we miss you! It's been a while since your last ride. Ready to book? fairfieldairportcars.com"
-  - "Seasonal" → "Hi {{name}}! Holiday travel? Book your airport ride early. fairfieldairportcars.com"
+  - "Promotional" → "Hi {{name}}! Get 10% off your next ride with Fairfield Airport Cars. Book at fairfieldairportcar.com"
+  - "Re-engagement" → "Hi {{name}}, we miss you! It's been a while since your last ride. Ready to book? fairfieldairportcar.com"
+  - "Seasonal" → "Hi {{name}}! Holiday travel? Book your airport ride early. fairfieldairportcar.com"
 - Preview with sample customer name
 
 #### D. Customer Selection

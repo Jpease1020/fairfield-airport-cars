@@ -96,7 +96,7 @@ export interface Booking {
   driver?: DriverInfo;
   tracking?: TrackingInfo;
   confirmation?: BookingConfirmation;
-  calendarEventId?: string; // Google Calendar event ID for rides@fairfieldairportcars.com
+  calendarEventId?: string; // Google Calendar event ID for rides@fairfieldairportcar.com
   
   // Exception booking fields (for VIP exceptions that bypass service area)
   requiresApproval?: boolean;
