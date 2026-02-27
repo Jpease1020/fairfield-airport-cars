@@ -161,9 +161,9 @@ const StyledContainer = styled.div.withConfig({
         `;
       case 'navigation':
         return `
-          position: sticky;
-          top: 0;
-          z-index: 1000;
+          position: relative;
+          top: auto;
+          z-index: auto;
           background-color: ${colors.background.primary};
           border-bottom: 1px solid ${colors.border.default};
           box-shadow: ${shadows.sm};

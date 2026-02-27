@@ -1,60 +1,68 @@
-# E2E Testing: CI vs Local
+# E2E Testing Strategy
 
-Two modes keep CI safe (no production DB writes) while allowing full booking validation locally.
+This project now uses three explicit E2E lanes so we can test UI safely without relying on production writes.
 
-## Confidence: no DB writes when running against prod
+## Lanes
 
-- **booking-submit-api.spec.ts** – entire file excluded in CI config (always creates bookings).
-- **production-smoke.test.ts** – excluded in CI config and skipped in-spec when target is not localhost (full create → cancel flow).
-- **production-booking-health.spec.ts** – “Full booking API test” skips when `!isLocalTarget(BASE_URL)` (create + cancel).
-- **booking-api-contracts.spec.ts** – “Valid quote allows booking submission” skips when `!isLocalTarget(getEffectiveBaseUrl())`.
-- **service-area-validation.spec.ts** – “Booking submit validates service area” sends *invalid* payload (no airport); expects 400. API should validate before any write; no booking is created on success path.
-- **complete-booking-flow.spec.ts** and **customer-booking-flow.spec.ts** – mock `/api/booking/submit` via `page.route(…).fulfill()`; no real submit.
-- **core-user-flows-validation.test.ts** and **core-business-validation.test.ts** – whole describe is `test.describe.skip`; not run.
-- **booking-flows.test.ts** and **admin-booking-management.spec.ts** – skipped or describe skipped; not run.
+1. `ui-mocked` (frontend regression lane)
+- Directory: `tests/e2e/ui-mocked`
+- Config: `config/playwright.ui-mocked.config.ts`
+- Goal: verify UI shell/flows and visual behavior independent of backend mutations.
+- Safe for prod/preview targets.
 
-## CI E2E (no database writes)
+2. `preview-safe` (real deployment, non-mutating lane)
+- Directory: `tests/e2e/preview-safe`
+- Config: `config/playwright.preview-safe.config.ts`
+- Goal: verify critical behavior against deployed app without creating bookings/payments.
+- Intended for Vercel preview or production read-only checks.
 
-Runs against a **deployed URL** (e.g. Vercel preview). **We never run tests that create anything in the database when the target is prod/preview.** No bookings are created; no data is written to the deployment’s database.
+3. `full-flow` (local emulator/staging lane)
+- Directory: `tests/e2e/full-flow`
+- Config: `config/playwright.full-flow.config.ts` (also `config/playwright.config.ts`)
+- Goal: real end-to-end flows that may create data.
+- Run locally with emulators (or staging), never against production.
 
-- Any test that creates or mutates DB records is skipped when the target URL is not localhost (see `tests/e2e/helpers.ts`: `isLocalTarget()`).
-- The CI config also excludes the entire `booking-submit-api.spec.ts` suite.
+## Scripts
 
-- **Command:** `npm run test:e2e:ci`
-- **Config:** `config/playwright.ci.config.ts`
-- **Base URL:** `E2E_BASE_URL` or `BASE_URL` (default: `https://fairfield-airport-cars.vercel.app`)
-- **What runs:** Health checks, quote API, validation (e.g. service area), UI flows that mock submit (e.g. complete-booking-flow), location autocomplete (against preview).
-- **What’s skipped:** Any test that creates or cancels real bookings (e.g. “Full booking API test”, “Valid quote allows booking submission”). The entire `booking-submit-api.spec.ts` suite is excluded.
+- `npm run test:e2e`
+  - Runs `ui-mocked` + `preview-safe`
+- `npm run test:e2e:ui-mocked`
+- `npm run test:e2e:preview-safe`
+- `npm run test:e2e:ci`
+  - Alias for preview-safe lane in CI
+- `npm run test:e2e:full-flow`
+- `npm run test:e2e:local`
+  - Alias for full-flow lane
 
-**Example (CI or manual against a preview):**
+## Recommended Usage
 
+### PR checks
+Run:
 ```bash
-E2E_BASE_URL=https://fairfield-airport-cars-3y7uw0icg-justin-peases-projects.vercel.app npm run test:e2e:ci
+npm run test:e2e:ui-mocked
 ```
 
-Use the same `E2E_BASE_URL` in your CI (e.g. Vercel’s preview URL) so tests hit the deployment you care about.
+### Preview smoke (safe)
+Run:
+```bash
+E2E_BASE_URL="https://<vercel-preview-url>" npm run test:e2e:preview-safe
+```
 
-## Local E2E (full booking flows)
+### Production-safe smoke (no booking creation)
+Run:
+```bash
+E2E_BASE_URL="https://www.fairfieldairportcar.com" npm run test:e2e:preview-safe
+```
 
-Runs against **localhost** with the **Firebase emulators**. Use this to validate full booking creation, payment, and cancellation against emulated Firestore (and optional CMS seed).
+### Full booking validation
+Run with emulators:
+```bash
+NEXT_PUBLIC_USE_EMULATORS=true npm run firebase:emulators
+NEXT_PUBLIC_USE_EMULATORS=true npm run test:e2e:full-flow
+```
 
-- **Command:** `npm run test:e2e:local` or `npm run test:e2e`
-- **Config:** `config/playwright.config.ts`
-- **Base URL:** `http://localhost:3000`
-- **Server:** Playwright starts the dev server via `webServer` (or use an already-running `npm run dev`).
-- **What runs:** All e2e specs, including tests that create and cancel bookings and `booking-submit-api.spec.ts`.
+## Rule of thumb
 
-**Recommended setup:**
-
-1. Start emulators: `npm run firebase:emulators`
-2. (Optional) Seed CMS: `npm run firebase:emulators:seed` (in another terminal, after emulators are up)
-3. Run local e2e: `npm run test:e2e:local` (dev server is started by Playwright if not already running)
-
-Ensure the app is pointed at emulators (e.g. `NEXT_PUBLIC_USE_EMULATORS=true` or your project’s equivalent) when running local e2e.
-
-## Summary
-
-| Goal                         | Command                 | Base URL        | DB writes |
-|-----------------------------|-------------------------|-----------------|-----------|
-| CI / preview smoke          | `npm run test:e2e:ci`    | E2E_BASE_URL    | None      |
-| Full booking validation     | `npm run test:e2e:local` | localhost:3000  | Emulators |
+- Use `ui-mocked` to catch UI breakages.
+- Use `preview-safe` to confirm deployed behavior safely.
+- Use `full-flow` only where writes are acceptable (emulator/staging).

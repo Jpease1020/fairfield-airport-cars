@@ -20,16 +20,7 @@ const baseURL =
   'https://fairfield-airport-cars.vercel.app';
 
 export default defineConfig({
-  testDir: '../tests/e2e',
-  testIgnore: [
-    '**/unit/**',
-    '**/integration/**',
-    '**/api-tests.spec.ts',
-    '**/setup.ts',
-    // Local-only: creates real bookings; run only with emulators (test:e2e:local)
-    '**/booking-submit-api.spec.ts',
-    '**/production-smoke.test.ts',
-  ],
+  testDir: '../tests/e2e/preview-safe',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

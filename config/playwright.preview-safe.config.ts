@@ -1,10 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = process.env.E2E_BASE_URL || 'http://localhost:3000';
-const isExternal = baseURL !== 'http://localhost:3000';
+const baseURL =
+  process.env.E2E_BASE_URL ||
+  process.env.BASE_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  'https://fairfield-airport-cars.vercel.app';
 
 export default defineConfig({
-  testDir: '../tests/e2e/full-flow',
+  testDir: '../tests/e2e/preview-safe',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -21,12 +24,5 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  // Skip local dev server when running against an external URL
-  ...(isExternal ? {} : {
-    webServer: {
-      command: 'npm run dev',
-      url: 'http://localhost:3000',
-      reuseExistingServer: !process.env.CI,
-    },
-  }),
-}); 
+  webServer: undefined,
+});
