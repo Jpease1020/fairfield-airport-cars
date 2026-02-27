@@ -71,6 +71,10 @@ vi.mock('@/lib/business/business-rules', () => ({
   }),
 }));
 
+vi.mock('@/lib/utils/auth-server', () => ({
+  requireOwnerOrAdmin: vi.fn().mockResolvedValue({ ok: true }),
+}));
+
 import { sendSms } from '@/lib/services/twilio-service';
 import { refundPayment } from '@/lib/services/square-service';
 import { getBooking, cancelBooking, updateBooking } from '@/lib/services/booking-service';

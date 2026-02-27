@@ -76,6 +76,11 @@ vi.mock('@/lib/services/driver-scheduling-service', () => ({
   },
 }));
 
+vi.mock('@/lib/utils/auth-server', () => ({
+  requireAdmin: vi.fn().mockResolvedValue({ ok: true }),
+  requireOwnerOrAdmin: vi.fn().mockResolvedValue({ ok: true }),
+}));
+
 // Mock fetch for WebSocket updates
 global.fetch = vi.fn().mockResolvedValue({
   ok: true,
@@ -151,7 +156,10 @@ const mockDriver = {
 const createRequest = (body: Record<string, unknown>) => {
   return {
     json: () => Promise.resolve(body),
-    nextUrl: { origin: 'http://localhost:3000' },
+    nextUrl: {
+      origin: 'http://localhost:3000',
+      searchParams: new URLSearchParams(),
+    },
   } as any;
 };
 

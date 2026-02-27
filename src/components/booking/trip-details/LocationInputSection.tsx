@@ -83,8 +83,8 @@ const SwapButton = styled.button`
 `;
 
 interface LocationInputSectionProps {
-  onRouteCalculated?: (routeInfo: { distance: string; duration: string; durationInTraffic: string | null; trafficLevel: string }) => void;
-  cmsData: any;
+  onRouteCalculated?: (_routeInfo: { distance: string; duration: string; durationInTraffic: string | null; trafficLevel: string }) => void;
+  cmsData?: Record<string, string>;
 }
 
 export const LocationInputSection: React.FC<LocationInputSectionProps> = ({

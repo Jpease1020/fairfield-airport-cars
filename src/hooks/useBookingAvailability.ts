@@ -12,13 +12,19 @@ export interface AvailabilityCheck {
   suggestedTimeSlots: string[];
   availableDrivers: number;
   drivers: Array<{ driverId: string; driverName: string }>;
+  message?: string;
 }
 
 export interface AvailabilityCheckResult {
   data: AvailabilityCheck | null;
   isLoading: boolean;
   error: string | null;
-  checkAvailability: (date: string, startTime: string, endTime: string) => Promise<void>;
+  checkAvailability: (payload: {
+    pickupDateTime?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+  }) => Promise<void>;
 }
 
 export const useBookingAvailability = (): AvailabilityCheckResult => {
@@ -26,7 +32,12 @@ export const useBookingAvailability = (): AvailabilityCheckResult => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const checkAvailability = useCallback(async (date: string, startTime: string, endTime: string) => {
+  const checkAvailability = useCallback(async (payload: {
+    pickupDateTime?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+  }) => {
     setIsLoading(true);
     setError(null);
     
@@ -36,11 +47,7 @@ export const useBookingAvailability = (): AvailabilityCheckResult => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          date,
-          startTime,
-          endTime
-        })
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
@@ -50,17 +57,7 @@ export const useBookingAvailability = (): AvailabilityCheckResult => {
       const result = await response.json();
       setData(result);
       if (!result.isAvailable) {
-        if (result.hasConflict) {
-          const firstConflict = result.conflictingBookings[0];
-          const suggested = result.suggestedTimeSlots.length > 0 ? ` Try ${result.suggestedTimeSlots.join(', ')} instead.` : '';
-          setError(
-            firstConflict
-              ? `That time overlaps with an existing ride (${firstConflict.timeSlot}).${suggested}`
-              : `That time conflicts with another booking.${suggested}`
-          );
-        } else {
-          setError('No drivers are available at that time. Please choose a different time.');
-        }
+        setError(result.message || 'No drivers are available at that time. Please choose a different time.');
         return;
       }
 

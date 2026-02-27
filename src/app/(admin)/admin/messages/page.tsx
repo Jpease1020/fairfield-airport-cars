@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Stack, Text, Alert, LoadingSpinner, H1 } from '@/design/ui';
+import { Container, Stack, Text, Alert, LoadingSpinner, H1, Box, Button, Input } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface SmsMessage {
@@ -21,6 +21,9 @@ export default function AdminMessagesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [direction, setDirection] = useState<'all' | 'inbound' | 'outbound'>('all');
+  const [resendBookingId, setResendBookingId] = useState('');
+  const [resending, setResending] = useState(false);
+  const [resendResult, setResendResult] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,10 +61,56 @@ export default function AdminMessagesPage() {
     }
   };
 
+  const handleResendConfirmation = async () => {
+    const id = resendBookingId.trim();
+    if (!id) {
+      setResendResult('Enter a booking ID');
+      return;
+    }
+    setResending(true);
+    setResendResult(null);
+    setError(null);
+    try {
+      const res = await authFetch('/api/notifications/send-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId: id }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Resend failed');
+      }
+      setResendResult('Confirmation resent.');
+      setResendBookingId('');
+    } catch (e) {
+      setResendResult(e instanceof Error ? e.message : 'Resend failed');
+    } finally {
+      setResending(false);
+    }
+  };
+
   return (
     <Container>
       <Stack spacing="lg">
-        <H1>SMS Messages</H1>
+        <H1>Messages</H1>
+        <Text size="sm" color="secondary">SMS activity. Resend confirmation by booking ID below.</Text>
+
+        <Box variant="outlined" padding="md">
+          <Stack spacing="sm">
+            <Text weight="bold">Resend confirmation</Text>
+            <Stack direction="horizontal" spacing="md" align="center">
+              <Input
+                placeholder="Booking ID"
+                value={resendBookingId}
+                onChange={(e) => setResendBookingId(e.target.value)}
+                style={{ width: 200 }}
+              />
+              <Button variant="primary" size="sm" onClick={handleResendConfirmation} disabled={resending} text={resending ? 'Sending…' : 'Resend'} />
+            </Stack>
+            {resendResult && <Text size="sm" color={resendResult.startsWith('Confirmation') ? 'secondary' : undefined}>{resendResult}</Text>}
+          </Stack>
+        </Box>
+
         <Stack direction="horizontal" spacing="md" align="center">
           <Text as="span" weight="bold">Filter:</Text>
           {(['all', 'inbound', 'outbound'] as const).map((d) => (

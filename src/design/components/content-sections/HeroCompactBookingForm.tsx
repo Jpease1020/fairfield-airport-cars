@@ -107,13 +107,10 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   const { error: availabilityError, checkAvailability } = useBookingAvailability();
 
   useEffect(() => {
-    if (pickupDateTime && pickupDate && pickupTime) {
-      const pickupDateObj = new Date(pickupDateTime);
-      const endTimeObj = new Date(pickupDateObj.getTime() + 2 * 60 * 60 * 1000);
-      const endTime = endTimeObj.toTimeString().slice(0, 5);
-      checkAvailability(pickupDate, pickupTime, endTime);
+    if (pickupDateTime) {
+      checkAvailability({ pickupDateTime });
     }
-  }, [pickupDateTime, pickupDate, pickupTime, checkAvailability]);
+  }, [pickupDateTime, checkAvailability]);
 
   // Handle location selection using global context
   // Auto-detect if selected location is an airport and suggest the opposite for the other field

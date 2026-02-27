@@ -109,13 +109,12 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
               } : undefined
             );
             setETACalculation(initialETA);
-          } catch (etaError) {
-            console.error('Error calculating initial ETA:', etaError);
+          } catch {
+            // Initial ETA is optional; page still renders with live updates.
           }
         }
 
-      } catch (err) {
-        console.error('Error loading booking:', err);
+      } catch {
         setError(cmsData?.['tracking-loadFailed'] || 'Failed to load booking information');
       } finally {
         setLoading(false);
@@ -164,8 +163,8 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
       );
       setETACalculation(updatedETA);
       setLastUpdate(new Date());
-    } catch (err) {
-      console.error('Error refreshing tracking:', err);
+    } catch {
+      setError(cmsData?.['tracking-loadFailed'] || 'Failed to load booking information');
     }
   };
 

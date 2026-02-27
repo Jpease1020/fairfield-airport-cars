@@ -11,6 +11,7 @@ import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-ser
 import { classifyTrip } from '@/lib/services/service-area-validation';
 import { getAuthContext } from '@/lib/utils/auth-server';
 import { sendBookingProblem } from '@/lib/services/notification-service';
+import { Booking } from '@/types/booking';
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -55,6 +56,16 @@ export async function POST(request: Request) {
   // Check if exception code is provided and valid
   const isValidExceptionCode = exceptionCode && exceptionCode === process.env.BOOKING_EXCEPTION_SECRET;
   const isExceptionBooking = isValidExceptionCode === true;
+
+  if (!isExceptionBooking && !quoteId) {
+    return NextResponse.json(
+      {
+        error: 'Quote is required for booking submission. Please request a new quote.',
+        code: 'QUOTE_REQUIRED',
+      },
+      { status: 400 }
+    );
+  }
 
   // Validate service area UNLESS this is an exception booking
   if (!isExceptionBooking) {
@@ -285,7 +296,7 @@ export async function POST(request: Request) {
       console.log(`   Customer Email: ${bookingRecord.customer?.email || bookingRecord.email}`);
       console.log(`   Confirmation Token: ${confirmationToken.substring(0, 8)}...`);
       // Use booking directly - we always save with nested structure, so no adapter needed
-      await sendBookingVerificationEmail(bookingRecord as any, confirmationUrl);
+      await sendBookingVerificationEmail(bookingRecord as unknown as Booking, confirmationUrl);
       console.log('✅ [BOOKING SUBMIT] Verification email sent successfully');
     } catch (emailError) {
       console.error('❌ [BOOKING SUBMIT] Failed to send verification email:', emailError);
@@ -313,7 +324,7 @@ export async function POST(request: Request) {
     // Send driver notification email (separate from customer email, formatted for driver use)
     try {
       console.log('📧 [BOOKING SUBMIT] Sending driver notification email...');
-      await sendDriverNotificationEmail(bookingRecord as any);
+      await sendDriverNotificationEmail(bookingRecord as unknown as Booking);
       console.log('✅ [BOOKING SUBMIT] Driver notification email sent successfully');
     } catch (driverEmailError) {
       // Don't fail booking creation if driver email fails
@@ -372,6 +383,40 @@ export async function POST(request: Request) {
       console.error('Failed to send booking-problem notification:', notifyErr);
     }
     const errorMessage = err instanceof Error ? err.message : 'Failed to create booking';
+    const conflictMatch = errorMessage.match(/suggested times?:\s*(.+)$/i);
+    const suggestedTimes = conflictMatch?.[1]
+      ? conflictMatch[1]
+          .split(',')
+          .map((slot) => slot.trim())
+          .filter(Boolean)
+      : [];
+    const isTimeSlotConflict =
+      /time slot conflicts|not available|conflicts with existing|already booked|no driver is available/i.test(errorMessage);
+
+    if (isTimeSlotConflict) {
+      await recordBookingAttempt({
+        stage: 'submit',
+        status: 'failed',
+        reason: errorMessage,
+        customerName: customer?.name,
+        customerEmail: customer?.email,
+        customerPhone: customer?.phone,
+        pickupAddress: trip?.pickup?.address,
+        dropoffAddress: trip?.dropoff?.address,
+        pickupDateTime: trip?.pickupDateTime?.toISOString?.() || String(trip?.pickupDateTime),
+      });
+
+      return NextResponse.json(
+        {
+          error: 'This time slot is no longer available. Please choose a different time.',
+          code: 'TIME_SLOT_CONFLICT',
+          details: errorMessage,
+          suggestedTimes,
+        },
+        { status: 409 }
+      );
+    }
+
     await recordBookingAttempt({
       stage: 'submit',
       status: 'failed',

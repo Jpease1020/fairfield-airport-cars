@@ -3,6 +3,10 @@ import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { requireAdmin } from '@/lib/utils/auth-server';
 
 export async function POST(request: NextRequest) {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   try {
     const authResult = await requireAdmin(request);
     if (!authResult.ok) return authResult.response;

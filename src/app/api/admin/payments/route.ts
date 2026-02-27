@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
         updatedAt: safeToDate(data.updatedAt),
         refundAmount: data.refundAmount,
         refundReason: data.refundReason,
+        reconciliationNotes: data.reconciliationNotes || '',
       };
     });
 

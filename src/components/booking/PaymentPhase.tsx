@@ -99,7 +99,6 @@ export function PaymentPhase({
     setQuote,
     goToPreviousPhase,
     validation,
-    validateCurrentPhase,
     setHasAttemptedValidation,
     setError
   } = useBooking();
@@ -116,19 +115,11 @@ export function PaymentPhase({
   React.useEffect(() => {
     if (error) {
       console.error('🚨 [PAYMENT PHASE] Error displayed:', error);
-
-      // Check if this is a time slot conflict error
-      const isTimeConflict = error.match(/time slot|already booked|conflict/i);
-
+      const isTimeConflict = error.includes('time slot is already booked');
       if (isTimeConflict) {
-        // Extract suggested times from the error message
-        const timesMatch = error.match(/(\d{1,2}:\d{2}-\d{1,2}:\d{2}(?:\s*,\s*\d{1,2}:\d{2}-\d{1,2}:\d{2})*)/g);
-        const suggestedTimes = timesMatch ? timesMatch[0].split(/\s*,\s*/) : [];
-
         setErrorModalContent({
           title: '⚠️ Time Slot Unavailable',
           message: 'The time you selected is already booked. Please go back and choose a different time.',
-          suggestedTimes: suggestedTimes.length > 0 ? suggestedTimes : undefined
         });
         setShowErrorModal(true);
       }
@@ -245,11 +236,6 @@ export function PaymentPhase({
           onBack={goToPreviousPhase}
           onProcessPayment={async () => {
             setHasAttemptedValidation(true);
-            const validation = validateCurrentPhase();
-            if (!validation.isValid) {
-              setError(validation.errors.join(', '));
-              return;
-            }
             await submitBooking();
           }}
           isProcessingPayment={isSubmitting}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { realTimeTrackingService } from '@/lib/services/real-time-tracking-service';
+import { trackingService } from '@/lib/services/tracking-service';
 import { getBooking } from '@/lib/services/booking-service';
 import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (!accessResult.ok) return accessResult.response;
 
     // Calculate ETA using the tracking service
-    const etaInfo = await realTimeTrackingService.calculateETA(bookingId, driverLocation);
+    const etaInfo = await trackingService.calculateEta(bookingId, driverLocation);
 
     if (!etaInfo) {
       return NextResponse.json(
