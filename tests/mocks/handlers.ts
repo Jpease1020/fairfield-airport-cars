@@ -166,6 +166,28 @@ export const handlers = [
     });
   }),
 
+  http.post('*/api/booking/validate-phase', async () => {
+    return HttpResponse.json({
+      validation: {
+        isValid: true,
+        errors: [],
+        warnings: [],
+        fieldErrors: {},
+      }
+    });
+  }),
+
+  http.post('http://localhost:3000/api/booking/validate-phase', async () => {
+    return HttpResponse.json({
+      validation: {
+        isValid: true,
+        errors: [],
+        warnings: [],
+        fieldErrors: {},
+      }
+    });
+  }),
+
   http.post('/api/booking/create-booking-simple', async ({ request }) => {
     const body = await request.json() as any;
     return HttpResponse.json({

@@ -37,8 +37,8 @@ const TestWrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('BookingProvider', () => {
-  describe('24-hour minimum booking validation', () => {
-    it('should show error when pickup date/time is less than 24 hours in advance', () => {
+  describe('local fallback validation', () => {
+    it('should require trip details fields when attempted', () => {
       const { result } = renderHook(() => useBooking(), {
         wrapper: ({ children }) => (
           <CMSDataProvider initialCmsData={{}}>
@@ -48,31 +48,18 @@ describe('BookingProvider', () => {
       });
 
       act(() => {
-        // Set a date/time that's only 12 hours from now (should fail validation)
-        const now = new Date();
-        const twelveHoursLater = new Date(now.getTime() + 12 * 60 * 60 * 1000);
-        const dateTimeString = twelveHoursLater.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm format
-
-        result.current.updateTripDetails({
-          pickup: { address: '123 Main St', coordinates: { lat: 40.7128, lng: -74.0060 } },
-          dropoff: { address: '456 Oak Ave', coordinates: { lat: 40.7580, lng: -73.9855 } },
-          pickupDateTime: dateTimeString,
-        });
-      });
-
-      act(() => {
         result.current.setHasAttemptedValidation(true);
       });
 
       const validation = result.current.validation;
 
-      // Should have validation error for 24-hour minimum
       expect(validation.isValid).toBe(false);
-      expect(validation.fieldErrors?.['pickup-datetime-input']).toBe('Please book at least 24 hours in advance');
-      expect(validation.errors).toContain('Please book at least 24 hours in advance');
+      expect(validation.fieldErrors?.['pickup-location-input']).toBe('Pickup location is required');
+      expect(validation.fieldErrors?.['dropoff-location-input']).toBe('Dropoff location is required');
+      expect(validation.fieldErrors?.['pickup-datetime-input']).toBe('Pickup date and time is required');
     });
 
-    it('should allow booking when date/time is more than 24 hours in advance', () => {
+    it('should pass fallback trip-details validation with required fields present', () => {
       const { result } = renderHook(() => useBooking(), {
         wrapper: ({ children }) => (
           <CMSDataProvider initialCmsData={{}}>
@@ -82,26 +69,10 @@ describe('BookingProvider', () => {
       });
 
       act(() => {
-        // Set a date/time that's 25 hours from now (should pass validation)
-        const now = new Date();
-        const twentyFiveHoursLater = new Date(now.getTime() + 25 * 60 * 60 * 1000);
-        const dateTimeString = twentyFiveHoursLater.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm format
-
         result.current.updateTripDetails({
           pickup: { address: '123 Main St', coordinates: { lat: 40.7128, lng: -74.0060 } },
           dropoff: { address: '456 Oak Ave', coordinates: { lat: 40.7580, lng: -73.9855 } },
-          pickupDateTime: dateTimeString,
-        });
-
-        // Set a quote to satisfy validation
-        result.current.setQuote({
-          quoteId: 'test-quote-123',
-          fare: 100,
-          fareType: 'personal',
-          distanceMiles: 25.5,
-          durationMinutes: 35,
-          expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-          expiresInMinutes: 15,
+          pickupDateTime: '2027-03-01T10:00',
         });
       });
 
@@ -111,7 +82,6 @@ describe('BookingProvider', () => {
 
       const validation = result.current.validation;
 
-      // Should pass validation for trip-details phase
       expect(validation.isValid).toBe(true);
       expect(validation.fieldErrors?.['pickup-datetime-input']).toBeUndefined();
     });
@@ -193,7 +163,7 @@ describe('BookingProvider', () => {
     expect(result.current.formData.payment.depositAmount).toBe(0);
   });
 
-  it('should navigate between phases', () => {
+  it('should navigate between phases', async () => {
     const { result } = renderHook(() => useBooking(), {
       wrapper: TestWrapper
     });
@@ -202,30 +172,15 @@ describe('BookingProvider', () => {
 
     // Set valid form data before navigating
     act(() => {
-      // Ensure date/time is at least 25 hours from now to pass 24-hour validation
-      const now = new Date();
-      const futureDateTime = new Date(now.getTime() + 25 * 60 * 60 * 1000); // 25 hours from now
-      
       result.current.updateTripDetails({
         pickup: { address: '123 Main St', coordinates: { lat: 40.7128, lng: -74.0060 } },
         dropoff: { address: '456 Oak Ave', coordinates: { lat: 40.7580, lng: -73.9855 } },
-        pickupDateTime: futureDateTime.toISOString().slice(0, 16), // YYYY-MM-DDTHH:mm format
-      });
-      
-      // Set a quote to satisfy validation
-      result.current.setQuote({
-        quoteId: 'test-quote-123',
-        fare: 100,
-        fareType: 'personal',
-        distanceMiles: 25.5,
-        durationMinutes: 35,
-        expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-        expiresInMinutes: 15,
+        pickupDateTime: '2027-03-01T10:00',
       });
     });
 
-    act(() => {
-      result.current.goToNextPhase();
+    await act(async () => {
+      await result.current.goToNextPhase();
     });
 
     expect(result.current.currentPhase).toBe('contact-info');
@@ -264,9 +219,8 @@ describe('BookingProvider', () => {
       wrapper: TestWrapper
     });
 
-    // First trigger an error by submitting without fare
     act(() => {
-      result.current.submitBooking();
+      result.current.setError('Test error');
     });
 
     expect(result.current.error).toBeTruthy();

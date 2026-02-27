@@ -116,6 +116,65 @@ export const server = setupServer(
     });
   }),
 
+  http.post('/api/booking/validate-phase', async ({ request }) => {
+    const body = await request.json() as any;
+    const phase = body?.phase;
+    const formData = body?.formData ?? {};
+    const trip = formData?.trip ?? {};
+    const customer = formData?.customer ?? {};
+    const errors: string[] = [];
+    const fieldErrors: Record<string, string> = {};
+
+    const requireTripCore = () => {
+      if (!trip?.pickup?.address?.trim()) {
+        const msg = 'Pickup location is required';
+        errors.push(msg);
+        fieldErrors['pickup-location-input'] = msg;
+      }
+      if (!trip?.dropoff?.address?.trim()) {
+        const msg = 'Dropoff location is required';
+        errors.push(msg);
+        fieldErrors['dropoff-location-input'] = msg;
+      }
+      if (!trip?.pickupDateTime) {
+        const msg = 'Pickup date and time is required';
+        errors.push(msg);
+        fieldErrors['pickup-datetime-input'] = msg;
+      }
+    };
+
+    if (phase === 'trip-details' || phase === 'quick-booking' || phase === 'payment') {
+      requireTripCore();
+    }
+
+    if (phase === 'contact-info' || phase === 'payment') {
+      if (!customer?.name?.trim()) {
+        const msg = 'Name is required';
+        errors.push(msg);
+        fieldErrors['name-input'] = msg;
+      }
+      if (!customer?.email?.trim()) {
+        const msg = 'Email is required';
+        errors.push(msg);
+        fieldErrors['email-input'] = msg;
+      }
+      if (!customer?.phone?.trim()) {
+        const msg = 'Phone number is required';
+        errors.push(msg);
+        fieldErrors['phone-input'] = msg;
+      }
+    }
+
+    return HttpResponse.json({
+      validation: {
+        isValid: errors.length === 0,
+        errors,
+        warnings: [],
+        fieldErrors,
+      }
+    });
+  }),
+
   // Availability check API
   http.post('/api/booking/check-time-slot', async ({ request }) => {
     const body = await request.json() as any;

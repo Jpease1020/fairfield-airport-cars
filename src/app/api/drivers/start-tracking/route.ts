@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { driverLocationService } from '@/lib/services/driver-location-service';
+import { trackingService } from '@/lib/services/tracking-service';
 import { getBooking, updateBooking } from '@/lib/services/booking-service';
 import { requireAdmin } from '@/lib/utils/auth-server';
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if tracking is already active
-    const activeSubscriptions = driverLocationService.getActiveDriverSubscriptions();
+    const activeSubscriptions = trackingService.driverLocation.getActiveDriverSubscriptions();
     if (activeSubscriptions.includes(driverId)) {
       return NextResponse.json(
         { error: 'Tracking already active for this driver' },
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Start driver tracking
-    await driverLocationService.initializeDriverTracking(driverId);
+    await trackingService.driverLocation.initializeDriverTracking(driverId);
 
     // Send real-time update
     await fetch(`${request.nextUrl.origin}/api/ws/bookings/${bookingId}`, {
@@ -100,7 +100,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Stop driver tracking
-    driverLocationService.stopDriverTracking(driverId);
+    trackingService.driverLocation.stopDriverTracking(driverId);
 
     return NextResponse.json({
       success: true,
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
 
     if (bookingId && driverId) {
       // Get tracking status for specific booking and driver
-      const activeSubscriptions = driverLocationService.getActiveDriverSubscriptions();
+      const activeSubscriptions = trackingService.driverLocation.getActiveDriverSubscriptions();
       const isTracking = activeSubscriptions.includes(driverId);
       return NextResponse.json({
         bookingId,
@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
       });
     } else {
       // Get all active trackings
-      const activeSubscriptions = driverLocationService.getActiveDriverSubscriptions();
+      const activeSubscriptions = trackingService.driverLocation.getActiveDriverSubscriptions();
       return NextResponse.json({
         activeSubscriptions,
         count: activeSubscriptions.length,

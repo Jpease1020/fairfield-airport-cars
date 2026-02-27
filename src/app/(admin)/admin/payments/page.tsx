@@ -27,6 +27,7 @@ interface Payment {
   createdAt: Date;
   customerEmail: string;
   customerName: string;
+  reconciliationNotes?: string;
 }
 
 function PaymentsPageContent() {
@@ -38,6 +39,8 @@ function PaymentsPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [savingNoteId, setSavingNoteId] = useState<string | null>(null);
+  const [noteDrafts, setNoteDrafts] = useState<Record<string, string | undefined>>({});
 
   const formatCurrency = (amount: number, currency: string = 'USD') => {
     return new Intl.NumberFormat('en-US', {
@@ -72,24 +75,20 @@ function PaymentsPageContent() {
     };
   };
 
-  const handleRefund = async (payment: Payment) => {
+  const saveReconciliationNote = async (paymentId: string, notes: string) => {
+    setSavingNoteId(paymentId);
     try {
-      const response = await authFetch('/api/admin/payments/refund', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ paymentId: payment.id }),
+      const res = await authFetch(`/api/admin/payments/${paymentId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reconciliationNotes: notes }),
       });
-
-      if (response.ok) {
-        // Refresh payments
-        fetchPayments();
-      } else {
-        throw new Error('Failed to process refund');
+      if (res.ok) {
+        setPayments((prev) => prev.map((p) => (p.id === paymentId ? { ...p, reconciliationNotes: notes } : p)));
+        setNoteDrafts((d) => ({ ...d, [paymentId]: '' }));
       }
-    } catch (err) {
-      console.error('Refund error:', err);
+    } finally {
+      setSavingNoteId(null);
     }
   };
 
@@ -147,24 +146,36 @@ function PaymentsPageContent() {
     ? payments 
     : payments.filter(p => p.status === selectedStatus);
 
-  const tableData = filteredPayments.map(payment => ({
-    id: payment.id,
-    customer: payment.customerName,
-    email: payment.customerEmail,
-    amount: formatCurrency(payment.amount, payment.currency),
-    status: payment.status,
-    date: formatDate(payment.createdAt),
-    actions: payment.status === 'completed' ? (
-      <Button 
-        size="sm" 
-        variant="secondary" 
-        onClick={() => handleRefund(payment)}
-        cmsId="table-actions-refund"
-        
-        text={cmsData?.['table-actions-refund'] || 'Refund'}
-      />
-    ) : null
-  }));
+  const tableData = filteredPayments.map(payment => {
+    const note = noteDrafts[payment.id] ?? payment.reconciliationNotes ?? '';
+    return {
+      id: payment.id,
+      customer: payment.customerName,
+      email: payment.customerEmail,
+      amount: formatCurrency(payment.amount, payment.currency),
+      status: payment.status,
+      date: formatDate(payment.createdAt),
+      notes: (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <input
+            type="text"
+            placeholder="Reconciliation note"
+            value={note}
+            onChange={(e) => setNoteDrafts((d) => ({ ...d, [payment.id]: e.target.value }))}
+            onBlur={() => {
+              const v = (noteDrafts[payment.id] ?? payment.reconciliationNotes ?? '').trim();
+              if (v !== (payment.reconciliationNotes ?? '')) saveReconciliationNote(payment.id, v);
+            }}
+            style={{ padding: '6px 8px', fontSize: 13, maxWidth: 200, border: '1px solid #e5e7eb', borderRadius: 6 }}
+          />
+          {savingNoteId === payment.id && <span style={{ fontSize: 12, color: '#6b7280' }}>Saving…</span>}
+        </div>
+      ),
+      bookingLink: payment.bookingId ? (
+        <a href={`/booking/${payment.bookingId}`} style={{ fontSize: 13 }}>View booking</a>
+      ) : null,
+    };
+  });
 
   return (
     <Container>
@@ -174,7 +185,7 @@ function PaymentsPageContent() {
             {cmsData?.['title'] || 'Payment Management'}
           </H1>
           <Text variant="body" color="secondary" cmsId="subtitle" >
-            {cmsData?.['subtitle'] || 'Track all payment transactions and manage refunds'}
+            {cmsData?.['subtitle'] || 'Track all payment transactions. To refund a booking, use Bookings → Cancel (refunds follow business rules).'}
           </Text>
         </Stack>
 
@@ -268,7 +279,8 @@ function PaymentsPageContent() {
               { key: 'amount', label: cmsData?.['table-columns-amount'] || 'Amount' },
               { key: 'status', label: cmsData?.['table-columns-status'] || 'Status' },
               { key: 'date', label: cmsData?.['table-columns-date'] || 'Date' },
-              { key: 'actions', label: cmsData?.['table-columns-actions'] || 'Actions' }
+              { key: 'notes', label: 'Notes' },
+              { key: 'bookingLink', label: 'Booking' },
             ]}
           />
         )}

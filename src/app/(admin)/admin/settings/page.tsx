@@ -34,28 +34,54 @@ const defaultForm: BusinessRulesForm = {
   features: { trackingEnabled: true, reviewsEnabled: true },
 };
 
+const defaultProfile = { businessName: '', primaryPhone: '', primaryEmail: '', websiteUrl: '' };
+const defaultNotifications = {
+  adminPhones: [] as string[],
+  adminEmails: [] as string[],
+  channels: { sms: true, email: true, tracking: true, feedback: true },
+};
+
 export default function AdminSettingsPage() {
   const [form, setForm] = useState<BusinessRulesForm>(defaultForm);
+  const [profile, setProfile] = useState(defaultProfile);
+  const [notifications, setNotifications] = useState(defaultNotifications);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    authFetch('/api/admin/business-rules')
-      .then((res) => res.ok ? res.json() : Promise.reject(new Error('Failed to load')))
-      .then((data) => {
+    Promise.all([
+      authFetch('/api/admin/business-rules').then((res) => res.ok ? res.json() : Promise.reject(new Error('Failed to load rules'))),
+      authFetch('/api/admin/settings/profile').then((res) => res.ok ? res.json() : Promise.resolve(null)),
+      authFetch('/api/admin/settings/notifications').then((res) => res.ok ? res.json() : Promise.resolve(null)),
+    ])
+      .then(([data, profileData, notifData]: [Record<string, unknown>, Record<string, unknown> | null, Record<string, unknown> | null]) => {
+        const d = data as Partial<BusinessRulesForm>;
         setForm({
-          serviceArea: data.serviceArea ?? defaultForm.serviceArea,
-          bookingBufferMinutes: data.bookingBufferMinutes ?? defaultForm.bookingBufferMinutes,
-          cancellationFeeTiers: data.cancellationFeeTiers ?? defaultForm.cancellationFeeTiers,
-          deposit: data.deposit ?? defaultForm.deposit,
-          features: data.features ?? defaultForm.features,
-          updatedAt: data.updatedAt,
-          version: data.version,
+          serviceArea: (d.serviceArea as BusinessRulesForm['serviceArea']) ?? defaultForm.serviceArea,
+          bookingBufferMinutes: (d.bookingBufferMinutes as number) ?? defaultForm.bookingBufferMinutes,
+          cancellationFeeTiers: (d.cancellationFeeTiers as BusinessRulesForm['cancellationFeeTiers']) ?? defaultForm.cancellationFeeTiers,
+          deposit: (d.deposit as BusinessRulesForm['deposit']) ?? defaultForm.deposit,
+          features: (d.features as BusinessRulesForm['features']) ?? defaultForm.features,
+          updatedAt: d.updatedAt as string | undefined,
+          version: d.version as number | undefined,
+        });
+        const p = profileData ?? {};
+        setProfile({
+          businessName: (p.businessName as string) ?? defaultProfile.businessName,
+          primaryPhone: (p.primaryPhone as string) ?? defaultProfile.primaryPhone,
+          primaryEmail: (p.primaryEmail as string) ?? defaultProfile.primaryEmail,
+          websiteUrl: (p.websiteUrl as string) ?? defaultProfile.websiteUrl,
+        });
+        const n = notifData ?? {};
+        setNotifications({
+          adminPhones: Array.isArray(n.adminPhones) ? n.adminPhones : defaultNotifications.adminPhones,
+          adminEmails: Array.isArray(n.adminEmails) ? n.adminEmails : defaultNotifications.adminEmails,
+          channels: { ...defaultNotifications.channels, ...(n.channels as object) },
         });
       })
-      .catch(() => setError('Failed to load business rules'))
+      .catch(() => setError('Failed to load settings'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -88,6 +114,36 @@ export default function AdminSettingsPage() {
       .finally(() => setSaving(false));
   };
 
+  const handleSaveProfile = () => {
+    setSaving(true);
+    setError(null);
+    setSuccess(false);
+    authFetch('/api/admin/settings/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profile),
+    })
+      .then((res) => res.ok ? undefined : res.json().then((e) => Promise.reject(new Error(e.error || 'Save failed'))))
+      .then(() => setSuccess(true))
+      .catch((e) => setError(e.message ?? 'Failed to save profile'))
+      .finally(() => setSaving(false));
+  };
+
+  const handleSaveNotifications = () => {
+    setSaving(true);
+    setError(null);
+    setSuccess(false);
+    authFetch('/api/admin/settings/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(notifications),
+    })
+      .then((res) => res.ok ? undefined : res.json().then((e) => Promise.reject(new Error(e.error || 'Save failed'))))
+      .then(() => setSuccess(true))
+      .catch((e) => setError(e.message ?? 'Failed to save notifications'))
+      .finally(() => setSaving(false));
+  };
+
   const update = (path: string, value: unknown) => {
     setForm((prev) => {
       const next = JSON.parse(JSON.stringify(prev));
@@ -105,7 +161,7 @@ export default function AdminSettingsPage() {
   return (
     <Container>
       <Stack spacing="lg">
-        <H1>Business Rules</H1>
+        <H1>Settings</H1>
         {form.updatedAt && (
           <Text size="sm" color="secondary">Last updated: {new Date(form.updatedAt).toLocaleString()} {form.version != null && `(v${form.version})`}</Text>
         )}
@@ -113,7 +169,52 @@ export default function AdminSettingsPage() {
         {success && <Alert variant="success">Saved.</Alert>}
 
         <Box variant="outlined" padding="lg">
-          <Text weight="bold" marginBottom="md">Service area</Text>
+          <Text weight="bold" marginBottom="md">Business profile</Text>
+          <Stack spacing="md">
+            <Box>
+              <Label>Business name</Label>
+              <Input value={profile.businessName} onChange={(e) => setProfile((p) => ({ ...p, businessName: e.target.value }))} placeholder="Fairfield Airport Cars" />
+            </Box>
+            <Box>
+              <Label>Primary phone</Label>
+              <Input type="tel" value={profile.primaryPhone} onChange={(e) => setProfile((p) => ({ ...p, primaryPhone: e.target.value }))} placeholder="+1..." />
+            </Box>
+            <Box>
+              <Label>Primary email</Label>
+              <Input type="email" value={profile.primaryEmail} onChange={(e) => setProfile((p) => ({ ...p, primaryEmail: e.target.value }))} placeholder="gregg@..." />
+            </Box>
+            <Box>
+              <Label>Website URL</Label>
+              <Input type="url" value={profile.websiteUrl} onChange={(e) => setProfile((p) => ({ ...p, websiteUrl: e.target.value }))} placeholder="https://..." />
+            </Box>
+            <Button variant="primary" size="sm" onClick={handleSaveProfile} disabled={saving} text="Save profile" />
+          </Stack>
+        </Box>
+
+        <Box variant="outlined" padding="lg">
+          <Text weight="bold" marginBottom="md">Notification preferences</Text>
+          <Text size="sm" color="secondary" style={{ marginBottom: 12 }}>Admin alert phones/emails (comma-separated). Channel toggles for customer-facing features.</Text>
+          <Stack spacing="md">
+            <Box>
+              <Label>Admin phones (comma-separated)</Label>
+              <Input value={(notifications.adminPhones ?? []).join(', ')} onChange={(e) => setNotifications((n) => ({ ...n, adminPhones: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) }))} placeholder="+1234567890" />
+            </Box>
+            <Box>
+              <Label>Admin emails (comma-separated)</Label>
+              <Input type="text" value={(notifications.adminEmails ?? []).join(', ')} onChange={(e) => setNotifications((n) => ({ ...n, adminEmails: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) }))} placeholder="you@example.com" />
+            </Box>
+            <Stack spacing="sm">
+              <label><input type="checkbox" checked={notifications.channels?.sms ?? true} onChange={(e) => setNotifications((n) => ({ ...n, channels: { ...n.channels, sms: e.target.checked } }))} /> <Text as="span">SMS confirmations</Text></label>
+              <label><input type="checkbox" checked={notifications.channels?.email ?? true} onChange={(e) => setNotifications((n) => ({ ...n, channels: { ...n.channels, email: e.target.checked } }))} /> <Text as="span">Email confirmations</Text></label>
+              <label><input type="checkbox" checked={notifications.channels?.tracking ?? true} onChange={(e) => setNotifications((n) => ({ ...n, channels: { ...n.channels, tracking: e.target.checked } }))} /> <Text as="span">Tracking links</Text></label>
+              <label><input type="checkbox" checked={notifications.channels?.feedback ?? true} onChange={(e) => setNotifications((n) => ({ ...n, channels: { ...n.channels, feedback: e.target.checked } }))} /> <Text as="span">Feedback requests</Text></label>
+            </Stack>
+            <Button variant="primary" size="sm" onClick={handleSaveNotifications} disabled={saving} text="Save notifications" />
+          </Stack>
+        </Box>
+
+        <Box variant="outlined" padding="lg">
+          <Text weight="bold" marginBottom="md">Business rules — Service area</Text>
           <Stack spacing="md" direction="horizontal">
             <Box>
               <Label>Normal radius (miles)</Label>
@@ -216,8 +317,8 @@ export default function AdminSettingsPage() {
         </Box>
 
         <Stack spacing="md" direction="horizontal">
-          <Button variant="primary" onClick={handleSave} disabled={saving} text={saving ? 'Saving…' : 'Save'} />
-          <Button variant="outline" onClick={handleRestore} disabled={saving} text="Restore defaults" />
+          <Button variant="primary" onClick={handleSave} disabled={saving} text={saving ? 'Saving…' : 'Save business rules'} />
+          <Button variant="outline" onClick={handleRestore} disabled={saving} text="Restore rules to defaults" />
         </Stack>
       </Stack>
     </Container>

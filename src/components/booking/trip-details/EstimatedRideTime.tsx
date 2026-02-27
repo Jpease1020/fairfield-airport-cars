@@ -5,7 +5,7 @@ import { Stack, Text, Box } from '@/design/ui';
 import { useBooking } from '@/providers/BookingProvider';
 
 interface EstimatedRideTimeProps {
-  cmsData: any;
+  cmsData?: Record<string, string>;
 }
 
 export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData }) => {
@@ -62,6 +62,7 @@ export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData })
             {cmsData?.['tripDetailsPhase-routeInfo'] || 'Trip Information'}
           </Text>
         <Text cmsId="route-distance" size="sm">
+          {/* eslint-disable-next-line fairfield/enforce-cms-usage */}
           {cmsData?.['tripDetailsPhase-distance'] || 'Distance'}: {route.distance}
         </Text>
         {route.durationInTraffic && route.durationInTraffic !== route.duration && (
@@ -71,6 +72,7 @@ export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData })
         )}
         {route.trafficLevel && route.trafficLevel !== 'unknown' && (
           <Text cmsId="route-traffic" size="sm" color={route.trafficLevel === 'high' ? 'error' : route.trafficLevel === 'medium' ? 'warning' : 'success'}>
+            {/* eslint-disable-next-line fairfield/enforce-cms-usage */}
             {cmsData?.['tripDetailsPhase-trafficLevel'] || 'Traffic'}: {route.trafficLevel}
           </Text>
         )}

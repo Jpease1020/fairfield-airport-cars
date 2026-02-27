@@ -83,12 +83,7 @@ export function TripDetailsPhase({
   // Check availability when pickup date/time changes
   useEffect(() => {
     if (tripData.pickupDateTime && tripData.pickup.address && tripData.dropoff.address) {
-      const pickupDate = new Date(tripData.pickupDateTime);
-      const dateStr = pickupDate.toISOString().split('T')[0];
-      const startTime = pickupDate.toTimeString().slice(0, 5);
-      const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
-      
-      checkAvailability(dateStr, startTime, endTime);
+      checkAvailability({ pickupDateTime: tripData.pickupDateTime });
     }
   }, [tripData.pickupDateTime, tripData.pickup.address, tripData.dropoff.address, checkAvailability]);
 

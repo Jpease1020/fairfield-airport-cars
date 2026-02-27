@@ -7,6 +7,10 @@ import { requireAdmin } from '@/lib/utils/auth-server';
  * This helps diagnose configuration issues
  */
 export async function GET(request: NextRequest) {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   try {
     const authResult = await requireAdmin(request);
     if (!authResult.ok) return authResult.response;

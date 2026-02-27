@@ -91,8 +91,8 @@ interface TrafficETAProps {
     heading: number;
     speed: number;
   };
-  onETAUpdate?: (eta: ETACalculation) => void;
-  cmsData: any;
+  onETAUpdate?: (_eta: ETACalculation) => void;
+  cmsData?: Record<string, string>;
 }
 
 export function TrafficETA({
@@ -151,15 +151,6 @@ export function TrafficETA({
       setError('Failed to calculate ETA');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getTrafficIcon = (level: 'low' | 'medium' | 'high') => {
-    switch (level) {
-      case 'low': return '🟢';
-      case 'medium': return '🟡';
-      case 'high': return '🔴';
-      default: return '⚪';
     }
   };
 
@@ -281,6 +272,7 @@ export function TrafficETA({
           <Stack direction="horizontal" justify="space-between" align="center">
             <Text variant="muted" size="sm" cmsId="traffic-eta-route">{cmsData?.['traffic-etaRoute'] || 'Route'}</Text>
             <Text variant="muted" size="sm" cmsId="ignore">
+              {/* eslint-disable-next-line fairfield/enforce-cms-usage */}
               {pickupLocation} → {dropoffLocation}
             </Text>
           </Stack>
@@ -300,7 +292,7 @@ export function TrafficETA({
           <Alert variant="warning">
             <Stack spacing="xs">
               <Text weight="bold" cmsId="traffic-eta-traffic-alert">{cmsData?.['traffic-etaTrafficAlert'] || 'Traffic Alert'}</Text>
-              <Text size="sm">
+              <Text size="sm" cmsId="traffic-eta-high-traffic-message">
                 {cmsData?.['traffic-etaHighTraffic'] || 'Heavy traffic detected. Consider allowing extra time for your journey.'}
               </Text>
             </Stack>

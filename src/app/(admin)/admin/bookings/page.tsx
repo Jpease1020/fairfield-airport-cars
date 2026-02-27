@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { NextPage } from 'next';
 import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
+import { authFetch } from '@/lib/utils/auth-fetch';
 import {
   Stack,
   Text,
@@ -14,10 +15,12 @@ import {
   Alert,
   LoadingSpinner,
   Container,
+  Input,
 } from '@/design/ui';
 import { Modal } from '@/design/components/base-components/Modal';
 import { Textarea } from '@/design/components/base-components/forms/Textarea';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
+import Link from 'next/link';
 import styled from 'styled-components';
 
 // Styled components for the booking cards
@@ -285,13 +288,29 @@ const BookingsCount = styled.div`
   margin-bottom: 16px;
 `;
 
+const AIRPORTS = [
+  { code: 'all', label: 'All airports' },
+  { code: 'JFK', label: 'JFK' },
+  { code: 'LGA', label: 'LGA' },
+  { code: 'EWR', label: 'EWR' },
+  { code: 'BDL', label: 'BDL' },
+  { code: 'HVN', label: 'HVN' },
+  { code: 'HPN', label: 'HPN' },
+];
+
 function AdminBookingsPageContent() {
   const { cmsData } = useCMSData();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedAirport, setSelectedAirport] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [resendingId, setResendingId] = useState<string | null>(null);
 
   // Check for status filter in URL params
   React.useEffect(() => {
@@ -302,6 +321,7 @@ function AdminBookingsPageContent() {
     }
   }, []);
 
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
   const [bookingToReject, setBookingToReject] = useState<Booking | null>(null);
   const [rejectionReason, setRejectionReason] = useState<string>('');
@@ -355,8 +375,59 @@ function AdminBookingsPageContent() {
     }
   };
 
+  const handleResendConfirmation = async (booking: Booking) => {
+    try {
+      setResendingId(booking.id!);
+      setError(null);
+      const res = await authFetch('/api/notifications/send-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId: booking.id }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Resend failed');
+      }
+      setSuccessMessage('Confirmation resent.');
+      setTimeout(() => setSuccessMessage(null), 4000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to resend confirmation');
+    } finally {
+      setResendingId(null);
+    }
+  };
+
+  const handleCancelBooking = async (booking: Booking) => {
+    const name = getCustomerName(booking);
+    if (!confirm(`Cancel this booking for ${name}? Refund will follow business rules.`)) return;
+    try {
+      setCancellingId(booking.id!);
+      setError(null);
+      const res = await authFetch('/api/booking/cancel-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId: booking.id, reason: 'Cancelled by admin' }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Cancel failed');
+      }
+      const data = await res.json();
+      setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: 'cancelled' as Booking['status'] } : b));
+      if (data.refundAmount != null) {
+        setSuccessMessage(`Cancelled. Refund: $${Number(data.refundAmount).toFixed(2)}`);
+        setTimeout(() => setSuccessMessage(null), 4000);
+      }
+    } catch (err) {
+      console.error('Error cancelling booking:', err);
+      setError(err instanceof Error ? err.message : 'Failed to cancel booking');
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
   const handleDeleteBooking = async (booking: Booking) => {
-    if (!confirm(`Are you sure you want to delete the booking for ${getCustomerName(booking)}?`)) {
+    if (!confirm(`Permanently delete the booking for ${getCustomerName(booking)}? This cannot be undone.`)) {
       return;
     }
     try {
@@ -506,6 +577,32 @@ function AdminBookingsPageContent() {
     return (booking as any).trip?.dropoff?.address ?? booking.dropoffLocation ?? '';
   };
 
+  const getAirportFromBooking = (booking: Booking): string | null => {
+    const pickup = getPickupAddress(booking).toLowerCase();
+    const dropoff = getDropoffAddress(booking).toLowerCase();
+    const codes = ['jfk', 'lga', 'ewr', 'bdl', 'hvn', 'hpn'];
+    const names: Record<string, string[]> = {
+      jfk: ['jfk', 'kennedy'],
+      lga: ['lga', 'laguardia', 'la guardia'],
+      ewr: ['ewr', 'newark'],
+      bdl: ['bdl', 'bradley'],
+      hvn: ['hvn', 'tweed'],
+      hpn: ['hpn', 'westchester', 'white plains'],
+    };
+    for (const code of codes) {
+      if (pickup.includes(code) || dropoff.includes(code)) return code.toUpperCase();
+      for (const n of names[code] || []) {
+        if (pickup.includes(n) || dropoff.includes(n)) return code.toUpperCase();
+      }
+    }
+    return null;
+  };
+
+  const getConfirmationSent = (booking: Booking): boolean => {
+    const sentAt = (booking as any).confirmation?.sentAt ?? (booking as any).confirmationSentAt;
+    return !!sentAt;
+  };
+
   const getPickupDateTime = (booking: Booking): any => {
     return (booking as any).trip?.pickupDateTime ?? booking.pickupDateTime;
   };
@@ -549,9 +646,49 @@ function AdminBookingsPageContent() {
     totalRevenue: bookings.reduce((sum, b) => sum + getBookingFare(b), 0)
   };
 
-  const filteredBookings = selectedStatus === 'all'
+  let filteredBookings = selectedStatus === 'all'
     ? bookings
     : bookings.filter(b => b.status === selectedStatus);
+
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    filteredBookings = filteredBookings.filter((b) => {
+      const name = getCustomerName(b).toLowerCase();
+      const email = getCustomerEmail(b).toLowerCase();
+      const phone = getCustomerPhone(b).toLowerCase();
+      const pickup = getPickupAddress(b).toLowerCase();
+      const dropoff = getDropoffAddress(b).toLowerCase();
+      const id = (b.id ?? '').toLowerCase();
+      return (
+        name.includes(q) ||
+        email.includes(q) ||
+        phone.includes(q) ||
+        pickup.includes(q) ||
+        dropoff.includes(q) ||
+        id.includes(q)
+      );
+    });
+  }
+
+  if (startDate || endDate) {
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    filteredBookings = filteredBookings.filter((b) => {
+      const pickup = parseDate(getPickupDateTime(b));
+      if (!pickup) return false;
+      if (start && pickup < start) return false;
+      if (end) {
+        const endOfDay = new Date(end);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (pickup > endOfDay) return false;
+      }
+      return true;
+    });
+  }
+
+  if (selectedAirport && selectedAirport !== 'all') {
+    filteredBookings = filteredBookings.filter((b) => getAirportFromBooking(b) === selectedAirport);
+  }
 
   if (loading) {
     return (
@@ -586,6 +723,7 @@ function AdminBookingsPageContent() {
             text="+ Create Exception"
           />
         </PageHeader>
+        {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
         {/* Stats */}
         <StatsBar>
@@ -607,7 +745,7 @@ function AdminBookingsPageContent() {
           </StatCard>
         </StatsBar>
 
-        {/* Filter Buttons */}
+        {/* Filters */}
         <FilterBar>
           <FilterButton
             $active={selectedStatus === 'all'}
@@ -639,6 +777,36 @@ function AdminBookingsPageContent() {
           >
             Completed ({bookings.filter(b => b.status === 'completed').length})
           </FilterButton>
+          <div style={{ flexGrow: 1 }} />
+          <select
+            value={selectedAirport}
+            onChange={(e) => setSelectedAirport(e.target.value)}
+            style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 14 }}
+            aria-label="Filter by airport"
+          >
+            {AIRPORTS.map((a) => (
+              <option key={a.code} value={a.code}>{a.label}</option>
+            ))}
+          </select>
+          <Input
+            type="search"
+            placeholder="Search name, email, phone, route, ID"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ maxWidth: 260 }}
+          />
+          <Input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            aria-label="Start date"
+          />
+          <Input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            aria-label="End date"
+          />
         </FilterBar>
 
         {/* Bookings Count */}
@@ -666,7 +834,11 @@ function AdminBookingsPageContent() {
                   {/* Header */}
                   <BookingHeader>
                     <CustomerInfo>
-                      <CustomerName>{getCustomerName(booking)}</CustomerName>
+                      <CustomerName>
+                        <Link href={`/booking/${booking.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                          {getCustomerName(booking)}
+                        </Link>
+                      </CustomerName>
                       <CustomerContact>
                         {getCustomerPhone(booking) && (
                           <a href={`tel:${getCustomerPhone(booking)}`}>{getCustomerPhone(booking)}</a>
@@ -709,6 +881,13 @@ function AdminBookingsPageContent() {
                     </DetailSection>
                   </BookingDetails>
 
+                  {/* Payment & confirmation flags */}
+                  <div style={{ marginBottom: 12, display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 13, color: '#6b7280' }}>
+                    <span>Payment: {getDepositPaid(booking) ? '✓ Deposit paid' : balance > 0 ? `Balance $${formatCurrency(balance)}` : 'Unpaid'}</span>
+                    <span>Confirmation: {getConfirmationSent(booking) ? '✓ Sent' : '—'}</span>
+                    {getAirportFromBooking(booking) && <span>Airport: {getAirportFromBooking(booking)}</span>}
+                  </div>
+
                   {/* Footer */}
                   <BookingFooter>
                     <ActionButtons>
@@ -729,6 +908,27 @@ function AdminBookingsPageContent() {
                         </>
                       ) : (
                         <>
+                          <Link href={`/booking/${booking.id}`}>
+                            <Button size="sm" variant="outline" text="View" />
+                          </Link>
+                          {booking.status !== 'cancelled' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleResendConfirmation(booking)}
+                              disabled={resendingId === booking.id}
+                              text={resendingId === booking.id ? 'Sending…' : 'Resend confirm'}
+                            />
+                          )}
+                          {booking.status !== 'cancelled' && (
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => handleCancelBooking(booking)}
+                              disabled={cancellingId === booking.id}
+                              text={cancellingId === booking.id ? 'Cancelling…' : 'Cancel'}
+                            />
+                          )}
                           {booking.status === 'pending' && (
                             <Button
                               size="sm"

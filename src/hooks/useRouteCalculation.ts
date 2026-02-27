@@ -8,7 +8,7 @@ interface Coordinates {
   lng: number;
 }
 
-interface RouteInfo {
+export interface RouteInfo {
   distance: string;
   duration: string;
   durationInTraffic: string | null;

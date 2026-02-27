@@ -37,6 +37,10 @@ vi.mock('@/lib/services/driver-scheduling-service', () => ({
   },
 }));
 
+vi.mock('@/lib/utils/auth-server', () => ({
+  requireAdmin: vi.fn().mockResolvedValue({ ok: true }),
+}));
+
 import { bookingLockService } from '@/lib/services/booking-lock-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 
