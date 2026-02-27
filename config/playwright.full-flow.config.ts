@@ -21,12 +21,13 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  // Skip local dev server when running against an external URL
-  ...(isExternal ? {} : {
-    webServer: {
-      command: 'npm run dev',
-      url: 'http://localhost:3000',
-      reuseExistingServer: !process.env.CI,
-    },
-  }),
-}); 
+  ...(isExternal
+    ? { webServer: undefined }
+    : {
+        webServer: {
+          command: 'npm run dev',
+          url: 'http://localhost:3000',
+          reuseExistingServer: !process.env.CI,
+        },
+      }),
+});
