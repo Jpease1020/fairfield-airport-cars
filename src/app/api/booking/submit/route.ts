@@ -12,6 +12,7 @@ import { classifyTrip } from '@/lib/services/service-area-validation';
 import { getAuthContext } from '@/lib/utils/auth-server';
 import { sendBookingProblem } from '@/lib/services/notification-service';
 import { Booking } from '@/types/booking';
+import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -354,7 +355,7 @@ export async function POST(request: Request) {
     // Send SMS notification to admin (Gregg)
     try {
       const { sendAdminSms } = await import('@/lib/services/admin-notification-service');
-      const pickupDateTimeStr = trip.pickupDateTime.toLocaleString();
+      const pickupDateTimeStr = formatBusinessDateTime(trip.pickupDateTime);
       const message = `New booking: ${customer.name} - ${trip.pickup.address} to ${trip.dropoff.address} on ${pickupDateTimeStr} - $${fare.toFixed(2)}`;
       await sendAdminSms(message);
       console.log('✅ [BOOKING SUBMIT] Admin SMS sent successfully');

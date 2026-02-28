@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vite
 import { getBooking, cancelBooking, updateBooking } from '@/lib/services/booking-service';
 import { sendSms } from '@/lib/services/twilio-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
+import { sendAdminSms } from '@/lib/services/admin-notification-service';
 
 vi.mock('@/lib/services/booking-service', () => ({
   getBooking: vi.fn(),
@@ -58,6 +59,7 @@ const mockGetBooking = getBooking as unknown as ReturnType<typeof vi.fn>;
 const mockCancelBooking = cancelBooking as unknown as ReturnType<typeof vi.fn>;
 const mockSendSms = sendSms as unknown as ReturnType<typeof vi.fn>;
 const mockSendConfirmationEmail = sendConfirmationEmail as unknown as ReturnType<typeof vi.fn>;
+const mockSendAdminSms = sendAdminSms as unknown as ReturnType<typeof vi.fn>;
 
 let POST: typeof import('@/app/api/booking/cancel-booking/route').POST;
 
@@ -247,10 +249,12 @@ describe('POST /api/booking/cancel-booking', () => {
 
   it('sends notifications to customer and admin', async () => {
     const booking = createMockBooking(48, 75);
+    booking.trip.pickupDateTime = '2026-03-02T13:00:00.000Z';
     mockGetBooking.mockResolvedValueOnce(booking);
     mockCancelBooking.mockResolvedValueOnce(undefined);
     mockSendSms.mockResolvedValueOnce(undefined);
     mockSendConfirmationEmail.mockResolvedValueOnce(undefined);
+    mockSendAdminSms.mockResolvedValueOnce(undefined);
 
     const response = await POST(buildRequest({ bookingId: 'booking-123' }));
     const payload = await response!.json();
@@ -262,10 +266,11 @@ describe('POST /api/booking/cancel-booking', () => {
     // Customer SMS sent
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+15555550123',
-      body: expect.stringContaining('cancelled'),
+      body: expect.stringContaining('3/2/2026, 8:00 AM'),
     });
 
     // Customer email sent
     expect(mockSendConfirmationEmail).toHaveBeenCalled();
+    expect(mockSendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2026, 8:00 AM'));
   });
 });

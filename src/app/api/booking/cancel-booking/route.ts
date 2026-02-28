@@ -6,6 +6,7 @@ import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { getBusinessRules, getCancellationFeePercent } from '@/lib/business/business-rules';
 import { sendBookingProblem } from '@/lib/services/notification-service';
 import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
+import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
 
 export async function POST(req: NextRequest) {
   let bookingId: string | undefined;
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
     const phone = booking.customer?.phone || booking.phone;
     const email = booking.customer?.email || booking.email;
     
-    const messageBody = `Your ride scheduled for ${pickupDateTime ? new Date(pickupDateTime).toLocaleString() : 'your scheduled time'} has been cancelled. ${
+    const messageBody = `Your ride scheduled for ${pickupDateTime ? formatBusinessDateTime(pickupDateTime) : 'your scheduled time'} has been cancelled. ${
       refundAmount === 0 ? (cancellationFee > 0 ? `A cancellation fee of $${cancellationFee.toFixed(2)} applies.` : 'No refund applies.') : `We have refunded $${refundAmount.toFixed(2)}.`}`;
 
     // Send SMS and email (push removed)
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
     try {
       const { sendAdminSms } = await import('@/lib/services/admin-notification-service');
       const customerName = booking.customer?.name || booking.name || 'Customer';
-      const pickupDateTimeStr = pickupDateTime ? new Date(pickupDateTime).toLocaleString() : 'scheduled time';
+      const pickupDateTimeStr = pickupDateTime ? formatBusinessDateTime(pickupDateTime) : 'scheduled time';
       const message = `Booking cancelled: ${bookingId} - ${customerName} - ${pickupDateTimeStr} - Refund: $${refundAmount.toFixed(2)}`;
       await sendAdminSms(message);
       console.log('✅ [CANCEL BOOKING] Admin SMS sent successfully');
