@@ -27,6 +27,10 @@ vi.mock('@/lib/services/driver-notification-service', () => ({
   notifyDriverOfNewBooking: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('@/lib/services/admin-notification-service', () => ({
+  sendAdminSms: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('@/lib/services/service-area-validation', () => ({
   classifyTrip: vi.fn().mockReturnValue({
     classification: 'normal',
@@ -46,6 +50,7 @@ vi.mock('@/lib/services/notification-service', () => ({
 import * as quoteService from '@/lib/services/quote-service';
 import * as bookingService from '@/lib/services/booking-service';
 import * as firebaseAdmin from '@/lib/utils/firebase-admin';
+import { sendAdminSms } from '@/lib/services/admin-notification-service';
 
 let POST: typeof import('@/app/api/booking/submit/route').POST;
 
@@ -219,5 +224,46 @@ describe('POST /api/booking/submit', () => {
     expect(payload.code).toBe('FARE_MISMATCH');
     expect(payload.expectedFare).toBe(200);
     expect(payload.providedFare).toBe(120);
+  });
+
+  it('sends admin SMS with business-timezone formatted pickup time', async () => {
+    vi.mocked(quoteService.getQuote).mockResolvedValue({
+      pickupAddress: basePayload.trip.pickup.address,
+      dropoffAddress: basePayload.trip.dropoff.address,
+      pickupDateTime: '2026-03-02T13:00:00.000Z',
+      fareType: basePayload.trip.fareType,
+      price: 120,
+    } as any);
+
+    vi.mocked(bookingService.createBookingAtomic).mockResolvedValue({
+      bookingId: 'booking_123',
+    } as any);
+
+    vi.mocked(bookingService.getBooking).mockResolvedValue({
+      id: 'booking_123',
+      confirmation: { token: 'tok_123' },
+      customer: { email: basePayload.customer.email },
+      trip: {
+        pickup: { address: basePayload.trip.pickup.address },
+        dropoff: { address: basePayload.trip.dropoff.address },
+        pickupDateTime: '2026-03-02T13:00:00.000Z',
+      },
+      payment: { totalAmount: 120 },
+      status: 'pending',
+    } as any);
+
+    const response = await POST(
+      buildRequest({
+        ...basePayload,
+        quoteId: 'quote_123',
+        trip: {
+          ...basePayload.trip,
+          pickupDateTime: '2026-03-02T13:00:00.000Z',
+        },
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2026, 8:00 AM'));
   });
 });

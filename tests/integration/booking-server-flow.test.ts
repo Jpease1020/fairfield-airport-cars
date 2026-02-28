@@ -45,6 +45,7 @@ vi.mock('@/lib/utils/auth-server', () => ({
 
 import * as quoteService from '@/lib/services/quote-service';
 import * as bookingService from '@/lib/services/booking-service';
+import { sendAdminSms } from '@/lib/services/admin-notification-service';
 
 let validatePhasePOST: typeof import('@/app/api/booking/validate-phase/route').POST;
 let submitPOST: typeof import('@/app/api/booking/submit/route').POST;
@@ -159,6 +160,15 @@ describe('Booking server golden path', () => {
     expect(submitRes.status).toBe(200);
     expect(submitData.success).toBe(true);
     expect(submitData.bookingId).toBe('booking_123');
+    expect(bookingService.createBookingAtomic).toHaveBeenCalledWith(
+      expect.objectContaining({
+        trip: expect.objectContaining({
+          pickupDateTime: expect.any(Date),
+        }),
+      })
+    );
+    const createdBookingArg = vi.mocked(bookingService.createBookingAtomic).mock.calls[0]?.[0] as any;
+    expect(createdBookingArg.trip.pickupDateTime.toISOString()).toBe(submitPayload.trip.pickupDateTime);
   });
 
   it('returns structured conflict on submit when slot is unavailable', async () => {
@@ -180,5 +190,44 @@ describe('Booking server golden path', () => {
     expect(submitRes.status).toBe(409);
     expect(submitData.code).toBe('TIME_SLOT_CONFLICT');
     expect(submitData.suggestedTimes).toEqual(['06:00-08:00']);
+  });
+
+  it('uses business-time formatted pickup time in admin SMS from submitted trip timestamp', async () => {
+    const payload = {
+      ...submitPayload,
+      trip: {
+        ...submitPayload.trip,
+        pickupDateTime: '2026-03-02T13:00:00.000Z',
+      },
+    };
+
+    vi.mocked(quoteService.getQuote).mockResolvedValue({
+      pickupAddress: payload.trip.pickup.address,
+      dropoffAddress: payload.trip.dropoff.address,
+      pickupDateTime: payload.trip.pickupDateTime,
+      fareType: payload.trip.fareType,
+      price: payload.fare,
+    } as any);
+
+    vi.mocked(bookingService.createBookingAtomic).mockResolvedValue({ bookingId: 'booking_456' });
+    vi.mocked(bookingService.getBooking).mockResolvedValue({
+      id: 'booking_456',
+      confirmation: { token: 'tok_456' },
+      customer: { email: payload.customer.email },
+      trip: {
+        pickup: { address: payload.trip.pickup.address },
+        dropoff: { address: payload.trip.dropoff.address },
+        pickupDateTime: payload.trip.pickupDateTime,
+      },
+      payment: { totalAmount: payload.fare },
+      status: 'pending',
+    } as any);
+
+    const submitRes = await submitPOST(req('http://localhost/api/booking/submit', payload));
+    const submitData = await submitRes.json();
+
+    expect(submitRes.status).toBe(200);
+    expect(submitData.success).toBe(true);
+    expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2026, 8:00 AM'));
   });
 });

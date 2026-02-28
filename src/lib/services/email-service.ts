@@ -16,6 +16,12 @@ import {
   getFlightInfo,
   parseBookingDate,
 } from '@/utils/booking-helpers';
+import {
+  formatBusinessDate,
+  formatBusinessDateTime,
+  formatBusinessTime,
+  getBusinessDateTimeParts,
+} from '@/lib/utils/booking-date-time';
 
 const {
   EMAIL_HOST,
@@ -88,34 +94,28 @@ export async function sendConfirmationEmail(booking: Booking) {
   // Use centralized date parsing from booking-helpers
   const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
 
-  // Format date without seconds
-  const formatDateTime = (date: Date): string => {
-    if (isNaN(date.getTime())) {
-      return 'Date not available';
-    }
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
   // Use centralized helpers for booking data access
   const pickupAddress = getPickupAddress(booking) || 'Pickup location not specified';
   const dropoffAddress = getDropoffAddress(booking) || 'Dropoff location not specified';
   const customerName = getCustomerName(booking) || 'Valued Customer';
 
+  const pickupDateTimeParts = getBusinessDateTimeParts(pickupDate);
   const event = {
-    start: [
-      pickupDate.getFullYear(),
-      pickupDate.getMonth() + 1,
-      pickupDate.getDate(),
-      pickupDate.getHours(),
-      pickupDate.getMinutes(),
-    ],
+    start: pickupDateTimeParts
+      ? [
+          pickupDateTimeParts.year,
+          pickupDateTimeParts.month,
+          pickupDateTimeParts.day,
+          pickupDateTimeParts.hour,
+          pickupDateTimeParts.minute,
+        ]
+      : [
+          pickupDate.getUTCFullYear(),
+          pickupDate.getUTCMonth() + 1,
+          pickupDate.getUTCDate(),
+          pickupDate.getUTCHours(),
+          pickupDate.getUTCMinutes(),
+        ],
     duration: { hours: 2, minutes: 0 }, // rough default
     title: 'Airport Car Service',
     description: `Ride from ${pickupAddress} to ${dropoffAddress}`,
@@ -153,7 +153,7 @@ Your ride has been confirmed! Here are your booking details:
 📋 BOOKING DETAILS
 ==================
 Booking ID: ${booking.id}
-Date & Time: ${formatDateTime(pickupDate)}
+Date & Time: ${formatBusinessDateTime(pickupDate)}
 Pickup Location: ${pickupAddress}
 Drop-off Location: ${dropoffAddress}
 ${booking.flightInfo?.airline ? `Airline: ${booking.flightInfo.airline}` : ''}
@@ -198,7 +198,7 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
           <p><strong>Booking ID:</strong> ${booking.id}</p>
-          <p><strong>Date & Time:</strong> ${formatDateTime(pickupDate)}</p>
+          <p><strong>Date & Time:</strong> ${formatBusinessDateTime(pickupDate)}</p>
           <p><strong>Pickup Location:</strong> ${pickupAddress}</p>
           <p><strong>Drop-off Location:</strong> ${dropoffAddress}</p>
           ${booking.flightInfo?.airline ? `<p><strong>Airline:</strong> ${booking.flightInfo.airline}</p>` : ''}
@@ -290,22 +290,6 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
   const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
   console.log('📅 [EMAIL SERVICE] Parsed pickupDateTime:', pickupDate.toISOString());
 
-  // Format date without seconds
-  const formatDateTime = (date: Date): string => {
-    if (isNaN(date.getTime())) {
-      return 'Date not available';
-    }
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-
   if (!customerEmail) {
     console.error('❌ [EMAIL SERVICE] Cannot send verification email - customer email is missing');
     throw new Error('Customer email is required to send verification email');
@@ -322,7 +306,7 @@ Once you confirm, we'll finalize your driver assignment and send you the full it
 
 Booking summary:
 - Booking ID: ${booking.id}
-- Date & Time: ${formatDateTime(pickupDate)}
+- Date & Time: ${formatBusinessDateTime(pickupDate)}
 - Pickup: ${pickupAddress}
 - Dropoff: ${dropoffAddress}
 
@@ -345,7 +329,7 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
       <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 Booking Summary</h3>
         <p><strong>Booking ID:</strong> ${booking.id}</p>
-        <p><strong>Date & Time:</strong> ${formatDateTime(pickupDate)}</p>
+        <p><strong>Date & Time:</strong> ${formatBusinessDateTime(pickupDate)}</p>
         <p><strong>Pickup:</strong> ${pickupAddress}</p>
         <p><strong>Dropoff:</strong> ${dropoffAddress}</p>
       </div>
@@ -398,24 +382,6 @@ export async function sendDriverNotificationEmail(booking: Booking) {
   // Use centralized date parsing from booking-helpers
   const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
 
-  // Format date/time for easy reading
-  const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
   // Use centralized helpers for booking data access
   const pickupAddress = getPickupAddress(booking) || 'Not specified';
   const dropoffAddress = getDropoffAddress(booking) || 'Not specified';
@@ -434,7 +400,7 @@ export async function sendDriverNotificationEmail(booking: Booking) {
   // Driver email (Gregg)
   const driverEmail = EMAIL_CONFIG.verifiedSender; // rides@fairfieldairportcar.com
 
-  const emailSubject = `🚗 NEW RIDE: ${formatDate(pickupDate)} at ${formatTime(pickupDate)}`;
+  const emailSubject = `🚗 NEW RIDE: ${formatBusinessDate(pickupDate)} at ${formatBusinessTime(pickupDate)}`;
 
   const emailText = `
 ═══════════════════════════════════════════════════
@@ -443,8 +409,8 @@ export async function sendDriverNotificationEmail(booking: Booking) {
 
 📅 DATE & TIME
 ──────────────────────────────────────────────────
-Date: ${formatDate(pickupDate)}
-Time: ${formatTime(pickupDate)}
+Date: ${formatBusinessDate(pickupDate)}
+Time: ${formatBusinessTime(pickupDate)}
 
 📍 ROUTE
 ──────────────────────────────────────────────────
@@ -476,7 +442,7 @@ TOTAL: $${totalFare.toFixed(2)}
 
 ═══════════════════════════════════════════════════
 Booking ID: ${booking.id}
-Booked at: ${new Date().toLocaleString('en-US')}
+Booked at: ${formatBusinessDateTime(new Date())}
 ═══════════════════════════════════════════════════
 `;
 
@@ -485,7 +451,7 @@ Booked at: ${new Date().toLocaleString('en-US')}
       <!-- Header -->
       <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="margin: 0; font-size: 24px;">🚗 NEW BOOKING</h1>
-        <p style="margin: 8px 0 0 0; font-size: 18px; opacity: 0.9;">${formatDate(pickupDate)} at ${formatTime(pickupDate)}</p>
+        <p style="margin: 8px 0 0 0; font-size: 18px; opacity: 0.9;">${formatBusinessDate(pickupDate)} at ${formatBusinessTime(pickupDate)}</p>
       </div>
 
       <!-- Route Section -->
@@ -581,7 +547,7 @@ Booked at: ${new Date().toLocaleString('en-US')}
       <!-- Footer -->
       <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px;">
         <p style="margin: 0;">Booking ID: <strong style="color: #e2e8f0;">${booking.id}</strong></p>
-        <p style="margin: 8px 0 0 0;">Booked at ${new Date().toLocaleString('en-US')}</p>
+        <p style="margin: 8px 0 0 0;">Booked at ${formatBusinessDateTime(new Date())}</p>
       </div>
     </div>
   `;
@@ -629,7 +595,7 @@ Your ride has been confirmed! Here are your booking details:
 📋 BOOKING DETAILS
 ==================
 Booking ID: ${bookingId}
-Date & Time: ${new Date().toLocaleString()}
+Date & Time: ${formatBusinessDateTime(new Date())}
 Pickup Location: Fairfield Station, Fairfield, CT
 Drop-off Location: JFK Airport, Queens, NY
 Special Instructions: E2E Test Booking - Extra luggage
@@ -668,7 +634,7 @@ The Fairfield Airport Cars Team`;
         <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
           <p><strong>Booking ID:</strong> ${bookingId}</p>
-          <p><strong>Date & Time:</strong> ${new Date().toLocaleString()}</p>
+          <p><strong>Date & Time:</strong> ${formatBusinessDateTime(new Date())}</p>
           <p><strong>Pickup Location:</strong> Fairfield Station, Fairfield, CT</p>
           <p><strong>Drop-off Location:</strong> JFK Airport, Queens, NY</p>
           <p><strong>Special Instructions:</strong> E2E Test Booking - Extra luggage</p>
