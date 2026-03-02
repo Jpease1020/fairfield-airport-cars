@@ -21,6 +21,16 @@ vi.mock('@/lib/services/twilio-service', () => ({
   sendSms: vi.fn(),
 }));
 
+vi.mock('@/lib/utils/firebase-admin', () => ({
+  getAdminDb: vi.fn(() => ({
+    collection: vi.fn(() => ({
+      doc: vi.fn(() => ({
+        update: vi.fn().mockResolvedValue(undefined),
+      })),
+    })),
+  })),
+}));
+
 vi.mock('@/lib/utils/firebase-server', () => ({
   db: {},
   auth: null,
@@ -146,8 +156,20 @@ describe('POST /api/payment/process-payment', () => {
         depositAmount: 150,
         tipAmount: 0,
         status: 'pending',
+        bookingTimeline: expect.arrayContaining([
+          expect.objectContaining({
+            source: 'payment',
+            event: 'payment_booking_create',
+            normalizedPickupDateTimeIso: '2025-01-01T15:00:00.000Z',
+            businessPickupDateTime: '1/1/2025, 10:00 AM',
+          }),
+        ]),
       })
     );
+    expect(mockSendSms).toHaveBeenCalledWith({
+      to: '+15555550123',
+      body: expect.stringContaining('1/1/2025, 10:00 AM'),
+    });
   });
 
   it('returns 400 when amount is not an integer (must be cents)', async () => {
@@ -231,6 +253,3 @@ describe('POST /api/payment/process-payment', () => {
     );
   });
 });
-
-
-

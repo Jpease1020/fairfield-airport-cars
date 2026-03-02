@@ -52,6 +52,10 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
 
   const { quoteId, fare, exceptionCode, customer, trip } = parsed.data;
+  const submittedPickupDateTimeRaw =
+    typeof (raw as { trip?: { pickupDateTime?: unknown } })?.trip?.pickupDateTime === 'string'
+      ? (raw as { trip?: { pickupDateTime?: string } }).trip?.pickupDateTime
+      : undefined;
   const authContext = await getAuthContext(request);
 
   // Check if exception code is provided and valid
@@ -215,6 +219,16 @@ export async function POST(request: Request) {
         tipPercent: 0,
         totalAmount: fare
       },
+      bookingTimeline: [
+        {
+          source: 'submit' as const,
+          event: 'booking_submit_received',
+          submittedPickupDateTimeRaw,
+          normalizedPickupDateTimeIso: trip.pickupDateTime.toISOString(),
+          businessPickupDateTime: formatBusinessDateTime(trip.pickupDateTime),
+          recordedAt: new Date().toISOString(),
+        },
+      ],
       customerUserId: authContext?.uid ?? null,
       trackingToken: randomBytes(16).toString('hex'),
       status: isExceptionBooking ? ('requires_approval' as const) : ('pending' as const),

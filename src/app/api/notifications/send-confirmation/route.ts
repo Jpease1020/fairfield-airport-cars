@@ -5,6 +5,7 @@ import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { requireAdmin } from '@/lib/utils/auth-server';
+import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
 
 export async function POST(request: Request) {
   const authResult = await requireAdmin(request);
@@ -24,8 +25,10 @@ export async function POST(request: Request) {
     }
 
     const businessSettings = await cmsFlattenedService.getBusinessSettings();
-    const pickupDate = booking.pickupDateTime ? new Date(booking.pickupDateTime) : new Date();
-    const messageBody = `Thank you for booking with ${businessSettings?.company?.name || 'Fairfield Airport Car Service'}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${pickupDate.toLocaleString()} is confirmed.`;
+    const pickupDateTimeText = booking.pickupDateTime
+      ? formatBusinessDateTime(booking.pickupDateTime)
+      : 'your scheduled time';
+    const messageBody = `Thank you for booking with ${businessSettings?.company?.name || 'Fairfield Airport Car Service'}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${pickupDateTimeText} is confirmed.`;
 
     await Promise.all([
       booking.phone ? sendSms({ to: booking.phone, body: messageBody }) : Promise.resolve(),
