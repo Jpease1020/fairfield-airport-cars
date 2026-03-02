@@ -265,5 +265,17 @@ describe('POST /api/booking/submit', () => {
 
     expect(response.status).toBe(200);
     expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2026, 8:00 AM'));
+    expect(bookingService.createBookingAtomic).toHaveBeenCalledWith(
+      expect.objectContaining({
+        bookingTimeline: expect.arrayContaining([
+          expect.objectContaining({
+            source: 'submit',
+            event: 'booking_submit_received',
+            normalizedPickupDateTimeIso: '2026-03-02T13:00:00.000Z',
+            businessPickupDateTime: '3/2/2026, 8:00 AM',
+          }),
+        ]),
+      })
+    );
   });
 });

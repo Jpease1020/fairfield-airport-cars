@@ -10,6 +10,7 @@ import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { sendBookingProblem } from '@/lib/services/notification-service';
 import { getAuthContext, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
+import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
@@ -106,9 +107,27 @@ export async function POST(request: Request) {
     let emailWarning: string | null = null;
     
     if (!bookingId && bookingData) {
+      const pickupDateTimeValue = bookingData.pickupDateTime || bookingData.trip?.pickupDateTime;
+      const parsedPickupDateTime = new Date(pickupDateTimeValue || Date.now());
+      const normalizedPickupDateTimeIso = Number.isNaN(parsedPickupDateTime.getTime())
+        ? new Date().toISOString()
+        : parsedPickupDateTime.toISOString();
+
       // Create new booking with payment information (cast: request body + payment fields match BookingCreateData at runtime)
       const bookingResult = await createBookingAtomic({
         ...bookingData,
+        bookingTimeline: [
+          ...(Array.isArray(bookingData.bookingTimeline) ? bookingData.bookingTimeline : []),
+          {
+            source: 'payment',
+            event: 'payment_booking_create',
+            submittedPickupDateTimeRaw:
+              typeof pickupDateTimeValue === 'string' ? pickupDateTimeValue : undefined,
+            normalizedPickupDateTimeIso,
+            businessPickupDateTime: formatBusinessDateTime(normalizedPickupDateTimeIso),
+            recordedAt: new Date().toISOString(),
+          },
+        ],
         customerUserId: authContext?.uid ?? null,
         trackingToken: bookingData?.trackingToken || randomBytes(16).toString('hex'),
         squareOrderId: paymentResult.orderId,
@@ -155,7 +174,7 @@ export async function POST(request: Request) {
               confirmationUrl
             );
 
-            const smsMessage = `We received your booking request for ${new Date(bookingData.pickupDateTime).toLocaleString()}. Please check your email to confirm the ride. Booking ID: ${bookingId}`;
+            const smsMessage = `We received your booking request for ${formatBusinessDateTime(pickupDateTimeValue)}. Please check your email to confirm the ride. Booking ID: ${bookingId}`;
             await sendSms({
               to: bookingData.customer.phone,
               body: smsMessage

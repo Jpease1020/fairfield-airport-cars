@@ -6,6 +6,7 @@
 
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getMessaging } from 'firebase-admin/messaging';
+import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
 
 const DRIVER_ID = 'gregg-driver-001'; // Gregg's driver ID
 
@@ -53,14 +54,7 @@ export async function notifyDriverOfNewBooking(data: BookingNotificationData): P
       return;
     }
 
-    const pickupDate = new Date(data.pickupDateTime);
-    const formattedDate = pickupDate.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
+    const formattedDate = formatBusinessDateTime(data.pickupDateTime);
 
     const message = {
       token,
@@ -174,5 +168,4 @@ export async function notifyDriverOfBookingUpdate(
     console.error('Failed to send booking update notification:', error);
   }
 }
-
 

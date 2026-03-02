@@ -81,6 +81,15 @@ export interface BookingConfirmation {
   confirmedAt?: string;
 }
 
+export interface BookingTimelineEntry {
+  source: 'submit' | 'payment';
+  event: string;
+  submittedPickupDateTimeRaw?: string;
+  normalizedPickupDateTimeIso: string;
+  businessPickupDateTime: string;
+  recordedAt: string;
+}
+
 export interface Booking {
   id?: string;
   status: BookingStatus;
@@ -96,6 +105,7 @@ export interface Booking {
   driver?: DriverInfo;
   tracking?: TrackingInfo;
   confirmation?: BookingConfirmation;
+  bookingTimeline?: BookingTimelineEntry[];
   calendarEventId?: string; // Google Calendar event ID for rides@fairfieldairportcar.com
   
   // Exception booking fields (for VIP exceptions that bypass service area)
@@ -162,6 +172,7 @@ export interface BookingCreateData {
   driver?: DriverInfo;
   tracking?: TrackingInfo;
   confirmation?: BookingConfirmation;
+  bookingTimeline?: BookingTimelineEntry[];
 }
 
 export type BookingPhase = 'trip-details' | 'contact-info' | 'payment' | 'payment-processing' | 'flight-info';
