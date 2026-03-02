@@ -2,20 +2,14 @@
 
 import React, { useState, useMemo, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Booking, BookingPhase, ValidationResult, TripDetails, CustomerInfo, PaymentInfo, QuoteData } from '@/types/booking';
+import { Booking, BookingPhase, TripDetails, CustomerInfo, PaymentInfo, QuoteData } from '@/types/booking';
 import { useRouteCalculation } from '@/hooks/useRouteCalculation';
-import { submitBookingRequest } from '@/providers/booking/booking-api-client';
 import { BookingProviderType } from '@/providers/booking/provider-types';
 import { BookingContext, useBooking } from '@/providers/booking/context';
-import {
-  clearAllErrorsAction,
-  resetFormAction,
-  submitQuickBookingFormAction,
-} from '@/providers/booking/actions';
-import { submitBookingFlow, submitFormFlow } from '@/providers/booking/submission';
 import { useBookingPhaseValidation } from '@/providers/booking/use-phase-validation';
 import { useBookingCrud } from '@/providers/booking/use-booking-crud';
 import { useBookingFormState } from '@/providers/booking/use-booking-form-state';
+import { createBookingProviderActions } from '@/providers/booking/provider-actions-factory';
 import {
   hasAnyFormData,
   isContactInfoComplete as isContactInfoCompleteSelector,
@@ -139,87 +133,36 @@ const [warning, setWarning] = useState<string | null>(null);
     return hasAnyFormData(formData);
   };
 
-  // Clear all form errors
-  const clearAllErrors = () => {
-    clearAllErrorsAction({
-      setError,
-      setHasAttemptedValidation,
-      setWarning,
-      clearAllApiValidation,
-    });
-  };
-
-  const validateForm = (): ValidationResult => {
-    setHasAttemptedValidation(true);
-    return validateCurrentPhase();
-  };
-
-  // Form submission
-  const submitForm = async () => {
-    await submitFormFlow({
-      currentPhase,
-      existingBookingId: existingBooking?.id,
-      formData,
-      validatePhaseWithApi,
-      createBooking,
-      updateBooking,
-      setIsSubmitting,
-      setError,
-      setSuccess,
-      setHasAttemptedValidation,
-    });
-  };
-
-  // Submit booking using current quote (secure pricing)
-  const submitBooking = async (exceptionCode?: string): Promise<{ success: boolean; newTotal?: number }> => {
-    return submitBookingFlow({
-      exceptionCode,
-      formData,
-      currentQuote,
-      validatePhaseWithApi,
-      submitBookingRequest,
-      setIsSubmitting,
-      setError,
-      setWarning,
-      setSuccess,
-      setHasAttemptedValidation,
-      setCompletedBookingId,
-      setCurrentPhase,
-    });
-  };
-
-  const completeFlightInfo = useCallback(() => {
-    setSuccess('Booking submitted — confirm via email.');
-    // Stay in flight-info phase but show success state
-  }, []);
-  
-
-  // No need for quote validation - fare is always valid when current
-
-  // Reset form
-  const resetForm = () => {
-    resetFormAction({
-      resetFormData,
-      setCurrentQuote,
-      setCurrentPhase,
-      setWarning,
-      setError,
-      setSuccess,
-      setHasAttemptedValidation,
-      clearAllApiValidation,
-      clearStoredFormData,
-    });
-  };
-
-  // Submit quick booking form (for hero form)
-  const submitQuickBookingForm = async () => {
-    await submitQuickBookingFormAction({
-      setHasAttemptedValidation,
-      validatePhaseWithApi: async () => validatePhaseWithApi('quick-booking'),
-      router,
-      setError,
-    });
-  };
+  const {
+    clearAllErrors,
+    validateForm,
+    submitForm,
+    submitBooking,
+    resetForm,
+    submitQuickBookingForm,
+    completeFlightInfo,
+  } = createBookingProviderActions({
+    router,
+    currentPhase,
+    existingBooking,
+    formData,
+    currentQuote,
+    validatePhaseWithApi,
+    validateCurrentPhase,
+    createBooking,
+    updateBooking,
+    resetFormData,
+    clearStoredFormData,
+    clearAllApiValidation,
+    setCurrentQuote,
+    setCurrentPhase,
+    setIsSubmitting,
+    setError,
+    setWarning,
+    setSuccess,
+    setHasAttemptedValidation,
+    setCompletedBookingId,
+  });
 
   // Compute validation reactively
   const validation = useMemo(() => validateCurrentPhase(), [validateCurrentPhase]);
