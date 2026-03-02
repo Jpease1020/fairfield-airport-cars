@@ -4,5 +4,4 @@ export * from './cms-service';
 export * from './email-service';
 export * from './square-service';
 export * from './twilio-service';
-export * from './promo-service';
 export * from './notification-service';

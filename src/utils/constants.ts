@@ -79,10 +79,12 @@ export const VALIDATION_RULES = {
 } as const;
 
 export const API_ENDPOINTS = {
-  booking: '/api/booking',
-  payment: '/api/payment',
+  bookingSubmit: '/api/booking/submit',
+  bookingQuote: '/api/booking/quote',
+  bookingValidatePhase: '/api/booking/validate-phase',
+  paymentProcess: '/api/payment/process-payment',
+  trackingEta: '/api/tracking/eta',
   places: '/api/places-autocomplete',
-  fare: '/api/booking/estimate-fare',
   timeSlot: '/api/booking/check-time-slot',
 } as const;
 

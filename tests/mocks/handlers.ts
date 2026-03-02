@@ -69,28 +69,16 @@ export const handlers = [
     });
   }),
 
-  // CMS API
-  http.get('/api/admin/cms/pages', () => {
-    return HttpResponse.json(mockCMSData);
-  }),
-
   // Business Settings API
   http.get('/api/admin/business-settings', () => {
     return HttpResponse.json(mockBusinessSettings);
   }),
 
-  // Booking APIs - Updated to match actual endpoints
-  http.get('/api/booking', () => {
+  // Booking APIs - canonical endpoints
+  http.post('/api/booking/submit', async () => {
     return HttpResponse.json({
       success: true,
-      message: 'Booking API is working'
-    });
-  }),
-
-  http.get('/api/booking/estimate-fare', () => {
-    return HttpResponse.json({
-      success: true,
-      message: 'Estimate fare endpoint is working'
+      bookingId: 'test-booking-123'
     });
   }),
 
@@ -101,36 +89,7 @@ export const handlers = [
     });
   }),
 
-  http.post('/api/booking/estimate-fare', async ({ request }) => {
-    const body = await request.json() as any;
-    
-    // Calculate fare based on fare type and route
-    let baseFare = 95.50; // Default fare
-    
-    // Route-specific fares
-    if (body?.dropoffLocation?.includes('LaGuardia') || body?.dropoffLocation?.includes('LGA')) {
-      baseFare = 78.25; // Stamford to LGA
-    } else if (body?.pickupLocation?.includes('Fairfield') && body?.dropoffLocation?.includes('JFK')) {
-      baseFare = 95.50; // Fairfield to JFK
-    }
-    
-    // Apply business multiplier (35% increase)
-    const fare = body?.fareType === 'business' ? baseFare * 1.35 : baseFare;
-    
-    return HttpResponse.json({
-      quoteId: `quote_${Date.now()}`,
-      fare: Math.round(fare * 100) / 100,
-      distanceMiles: 42.3,
-      durationMinutes: 58,
-      fareType: body?.fareType || 'personal',
-      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-      expiresInMinutes: 15,
-      distance: '45 miles',
-      duration: '1 hour 15 minutes'
-    });
-  }),
-
-  // Quote endpoint (same logic as estimate-fare)
+  // Quote endpoint
   http.post('/api/booking/quote', async ({ request }) => {
     const body = await request.json() as any;
     
@@ -188,15 +147,6 @@ export const handlers = [
     });
   }),
 
-  http.post('/api/booking/create-booking-simple', async ({ request }) => {
-    const body = await request.json() as any;
-    return HttpResponse.json({
-      id: 'test-booking-123',
-      status: 'confirmed',
-      ...(body as object)
-    });
-  }),
-
   http.get('/api/booking/get-bookings-simple', () => {
     return HttpResponse.json([mockBookingData]);
   }),
@@ -214,17 +164,12 @@ export const handlers = [
   }),
 
   // Payment APIs
-  http.get('/api/payment/create-checkout-session', () => {
+  http.post('/api/payment/process-payment', async () => {
     return HttpResponse.json({
       success: true,
-      message: 'Create checkout session endpoint is working'
-    });
-  }),
-
-  http.get('/api/payment/complete-payment', () => {
-    return HttpResponse.json({
-      success: true,
-      message: 'Complete payment endpoint is working'
+      bookingId: 'test-booking-123',
+      paymentId: 'test-payment-123',
+      status: 'COMPLETED'
     });
   }),
 
@@ -232,22 +177,6 @@ export const handlers = [
     return HttpResponse.json({
       success: true,
       message: 'Square webhook endpoint is working'
-    });
-  }),
-
-  http.post('/api/payment/create-checkout-session', async ({ request }) => {
-    const body = await request.json() as any;
-    return HttpResponse.json({
-      checkoutUrl: 'https://squareup.com/checkout/test-session',
-      sessionId: 'test-session-123'
-    });
-  }),
-
-  http.post('/api/payment/complete-payment', async ({ request }) => {
-    const body = await request.json() as any;
-    return HttpResponse.json({
-      success: true,
-      paymentId: 'test-payment-123'
     });
   }),
 
@@ -322,16 +251,6 @@ export const handlers = [
     ]);
   }),
 
-  // Booking APIs - Additional endpoints
-  http.post('/api/booking', async ({ request }) => {
-    const body = await request.json() as any;
-    return HttpResponse.json({
-      success: true,
-      bookingId: 'test-booking-123',
-      paymentUrl: 'https://checkout.square.com/test'
-    });
-  }),
-
   http.get('/api/booking/:id', () => {
     return HttpResponse.json(mockBookingData);
   }),
@@ -391,16 +310,8 @@ export const handlers = [
   }),
 
   // Error simulation handlers
-  http.post('/api/booking/estimate-fare', async () => {
+  http.post('/api/booking/quote-error', async () => {
     // Simulate network error
     return new HttpResponse(null, { status: 500 });
-  }),
-
-  http.post('/api/booking/create-booking-simple', async () => {
-    // Simulate validation error
-    return HttpResponse.json(
-      { error: 'Invalid booking data' },
-      { status: 400 }
-    );
   })
 ]; 

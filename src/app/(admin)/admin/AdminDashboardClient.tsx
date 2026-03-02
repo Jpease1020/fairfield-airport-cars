@@ -1,319 +1,193 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Container, 
-  Stack, 
-  Text, 
-  Button, 
-  Box, 
-  Grid,
-  GridItem,
-  LoadingSpinner,
-  Alert,
-  H2,
-} from '@/design/ui';
-import { getAllBookings, getAllDrivers, getAllPayments } from '@/lib/services/database-service';
-import { useCMSData } from '@/design/providers/CMSDataProvider';      
+import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { Alert, Box, Button, Container, Grid, GridItem, H2, LoadingSpinner, Stack, Text } from '@/design/ui';
+import { getAllBookings } from '@/lib/services/database-service';
+import { authFetch } from '@/lib/utils/auth-fetch';
+
+type HealthStatus = 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
+
+interface DashboardSnapshot {
+  pendingApprovals: number;
+  todaysRides: number;
+  nextRideText: string;
+  monthCosts: number;
+  health: HealthStatus;
+}
+
+const navLinks = [
+  { href: '/admin/bookings', label: 'Bookings', description: 'View and manage all bookings' },
+  { href: '/admin/payments', label: 'Payments', description: 'Track payments, refunds, and balances' },
+  { href: '/admin/messages', label: 'Messages', description: 'Send customer updates and reminders' },
+  { href: '/admin/costs', label: 'Costs', description: 'Track Twilio, SendGrid, Firebase, and cloud spend' },
+  { href: '/admin/schedules', label: 'Schedule', description: 'Manage rides and driver schedule' },
+  { href: '/admin/settings', label: 'Settings', description: 'Update business rules and core settings' },
+  { href: '/admin/health', label: 'Health', description: 'Check system status and service health' },
+];
+
+const toMonthKey = (date: Date): string =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+const isSameLocalDay = (a: Date, b: Date): boolean =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
+
+function formatNextRide(date: Date | null): string {
+  if (!date) return 'No upcoming rides';
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
 
 export default function AdminDashboardClient() {
-  // Get CMS data from provider
-  const { cmsData: allCmsData } = useCMSData();
-  const cmsData = allCmsData?.admin || {};
-  
-  const [stats, setStats] = useState({
-    totalBookings: 0,
-    activeDrivers: 0,
-    revenueThisMonth: 0,
-    customerRating: 0,
-    pendingApprovals: 0
+  const [snapshot, setSnapshot] = useState<DashboardSnapshot>({
+    pendingApprovals: 0,
+    todaysRides: 0,
+    nextRideText: 'No upcoming rides',
+    monthCosts: 0,
+    health: 'unknown',
   });
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  async function loadSnapshot() {
+    setLoading(true);
+    setError(null);
 
-  const fetchDashboardData = useCallback(async () => {
     try {
-      setError(null);
-      setLoading(true);
+      const now = new Date();
+      const month = toMonthKey(now);
 
-      // Fetch real data from database with individual error handling
-      let bookings: any[] = [];
-      let drivers: any[] = [];
-      let payments: any[] = [];
+      const [bookingsResult, costsResult, healthResult] = await Promise.allSettled([
+        getAllBookings(),
+        authFetch(`/api/admin/costs?month=${month}`),
+        authFetch('/api/admin/health'),
+      ]);
 
-      try {
-        bookings = await getAllBookings();
-      } catch (err) {
-        console.warn('⚠️ Could not load bookings:', err);
-        bookings = [];
+      let pendingApprovals = 0;
+      let todaysRides = 0;
+      let nextRideDate: Date | null = null;
+      if (bookingsResult.status === 'fulfilled') {
+        const bookings = bookingsResult.value;
+        pendingApprovals = bookings.filter((booking) => booking.status === 'requires_approval').length;
+
+        const futureDates: Date[] = [];
+        for (const booking of bookings) {
+          const pickupDate = new Date(booking.pickupDateTime);
+          if (Number.isNaN(pickupDate.getTime())) continue;
+          if (isSameLocalDay(pickupDate, now)) todaysRides += 1;
+          if (pickupDate >= now && booking.status !== 'cancelled') futureDates.push(pickupDate);
+        }
+
+        futureDates.sort((a, b) => a.getTime() - b.getTime());
+        nextRideDate = futureDates[0] ?? null;
       }
 
-      try {
-        drivers = await getAllDrivers();
-      } catch (err) {
-        console.warn('⚠️ Could not load drivers:', err);
-        drivers = [];
+      let monthCosts = 0;
+      if (costsResult.status === 'fulfilled' && costsResult.value.ok) {
+        const costsData = await costsResult.value.json();
+        monthCosts = (costsData.entries || []).reduce(
+          (sum: number, entry: { amount?: number }) => sum + Number(entry.amount || 0),
+          0
+        );
       }
 
-      try {
-        payments = await getAllPayments();
-      } catch (err) {
-        console.warn('⚠️ Could not load payments:', err);
-        payments = [];
+      let health: HealthStatus = 'unknown';
+      if (healthResult.status === 'fulfilled' && healthResult.value.ok) {
+        const healthData = await healthResult.value.json();
+        health = (healthData.status as HealthStatus) || 'unknown';
       }
 
-      // Calculate real stats (handle empty data gracefully)
-      const totalBookings = bookings.length;
-      const activeDrivers = drivers.filter(d => d.status === 'available').length;
-      const revenueThisMonth = payments
-        .filter(p => p.status === 'completed')
-        .reduce((sum, p) => sum + (p.amount || 0), 0);
-      
-      // Calculate average customer rating (if we have feedback data)
-      const customerRating = 4.9; // This would come from feedback service
-
-      // Count bookings requiring approval
-      const pendingApprovals = bookings.filter(b => b.status === 'requires_approval').length;
-
-      setStats({
-        totalBookings,
-        activeDrivers,
-        revenueThisMonth,
-        customerRating,
-        pendingApprovals
+      setSnapshot({
+        pendingApprovals,
+        todaysRides,
+        nextRideText: formatNextRide(nextRideDate),
+        monthCosts,
+        health,
       });
-
-      // Generate recent activity from real data
-      const activity: Array<{
-        type: string;
-        message: string;
-        time: string;
-        icon: string;
-      }> = [];
-      
-      // Add recent bookings
-      const recentBookings = bookings
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 3);
-      
-      recentBookings.forEach(booking => {
-        activity.push({
-          type: 'booking',
-          message: `New booking from ${booking.customerName || 'Customer'} to ${booking.dropoffLocation}`,
-          time: new Date(booking.createdAt).toLocaleDateString(),
-          icon: '📋'
-        });
-      });
-
-      // Add recent payments
-      const recentPayments = payments
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 2);
-      
-      recentPayments.forEach(payment => {
-        activity.push({
-          type: 'payment',
-          message: `Payment received: ${formatCurrency(payment.amount)}`,
-          time: new Date(payment.createdAt).toLocaleDateString(),
-          icon: '💰'
-        });
-      });
-
-      // Add driver updates
-      const recentDriverUpdates = drivers
-        .filter(d => d.lastUpdated)
-        .sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())
-        .slice(0, 2);
-      
-      recentDriverUpdates.forEach(driver => {
-        activity.push({
-          type: 'driver',
-          message: `Driver ${driver.name} status: ${driver.status}`,
-          time: new Date(driver.lastUpdated).toLocaleDateString(),
-          icon: '🚗'
-        });
-      });
-
-      // Sort by time and take top 5
-      const sortedActivity = activity
-        .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-        .slice(0, 5);
-
-      setRecentActivity(sortedActivity);
-      setLoading(false);
     } catch (err) {
-      console.error('❌ Error fetching dashboard data:', err);
-      setError('Failed to load dashboard data');
+      setError(err instanceof Error ? err.message : 'Failed to load admin home');
+    } finally {
       setLoading(false);
     }
-  }, []);
+  }
 
   useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+    loadSnapshot();
+  }, []);
 
-  if (loading) {
-    return (
-      <Container maxWidth="full" padding="xl">
-        <Stack spacing="xl" align="center">
-          <LoadingSpinner size="lg" />
-          <Text>Loading dashboard...</Text>
-        </Stack>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container maxWidth="full" padding="xl">
-        <Stack spacing="xl" align="center">
-          <Alert variant="error">
-            <Text>{error}</Text>
-          </Alert>
-          <Button onClick={fetchDashboardData} cmsId="retry-button">
-            <Text cmsId="retry-button">
-              Retry
-            </Text>
-          </Button>
-        </Stack>
-      </Container>
-    );
-  }
+  const healthLabel = useMemo(() => {
+    if (snapshot.health === 'healthy') return 'Healthy';
+    if (snapshot.health === 'degraded') return 'Degraded';
+    if (snapshot.health === 'unhealthy') return 'Unhealthy';
+    return 'Unknown';
+  }, [snapshot.health]);
 
   return (
     <Container maxWidth="full" padding="xl">
       <Stack spacing="xl">
-        {/* Header */}
-        <Stack spacing="md" align="center">
-          <H2 
-            align="center" 
-            cmsId="title"
-            
-          >
-            {cmsData?.['title'] || 'Admin Dashboard'}
-          </H2>
-          <Text 
-            variant="lead" 
-            align="center" 
-            cmsId="subtitle"
-            
-          >
-            {cmsData?.['subtitle'] || 'Manage your airport transportation business'}
-          </Text>
+        <Stack spacing="sm">
+          <H2>Admin Home</H2>
+          <Text color="muted">Quick access for Gregg. Keep this page simple and actionable.</Text>
         </Stack>
 
-        {/* Stats Grid */}
-        <Grid cols={{ xs: 1, md: 2, lg: 5 }} gap="lg">
-          <GridItem>
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="sm" align="center">
-                <Text size="3xl">📋</Text>
-                <H2>{stats.totalBookings}</H2>
-                <Text align="center" color="muted" cmsId="stats-total-bookings" >
-                  {cmsData?.['stats-total-bookings'] || 'Total Bookings'}
-                </Text>
-              </Stack>
-            </Box>
-          </GridItem>
-          
-          <GridItem>
-            <Box 
-              variant="elevated" 
-              padding="lg"
-              onClick={stats.pendingApprovals > 0 ? () => {
-                window.location.href = '/admin/bookings?status=requires_approval';
-              } : undefined}
-            >
-              <Stack spacing="sm" align="center">
-                <Text size="3xl">🔍</Text>
-                <H2>{stats.pendingApprovals}</H2>
-                <Text align="center" color="muted" cmsId="stats-pending-approvals">
-                  {cmsData?.['stats-pending-approvals'] || 'Pending Approvals'}
-                </Text>
-                {stats.pendingApprovals > 0 && (
-                  <Text variant="small" color="warning" weight="medium">
-                    {cmsData?.['stats-pending-approvals-action'] || 'Click to review'}
-                  </Text>
-                )}
-              </Stack>
-            </Box>
-          </GridItem>
-          
-          <GridItem>
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="sm" align="center">
-                <Text size="3xl">🚗</Text>
-                <H2>{stats.activeDrivers}</H2>
-                <Text align="center" color="muted" cmsId="stats-active-drivers">
-                  {cmsData?.['stats-active-drivers'] || 'Active Drivers'}
-                </Text>
-              </Stack>
-            </Box>
-          </GridItem>
-          
-          <GridItem>
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="sm" align="center">
-                <Text size="3xl">💰</Text>
-                <H2>{formatCurrency(stats.revenueThisMonth)}</H2>
-                <Text align="center" color="muted" cmsId="stats-revenue-this-month">
-                  {cmsData?.['stats-revenue-this-month'] || 'Revenue This Month'}
-                </Text>
-              </Stack>
-            </Box>
-          </GridItem>
-          
-          <GridItem>
-            <Box variant="elevated" padding="lg">
-              <Stack spacing="sm" align="center">
-                <Text size="3xl">⭐</Text>
-                <H2>{stats.customerRating}</H2>
-                <Text align="center" color="muted" cmsId="stats-customer-rating">
-                  {cmsData?.['stats-customer-rating'] || 'Customer Rating'}
-                </Text>
-              </Stack>
-            </Box>
-          </GridItem>
+        {error && (
+          <Alert variant="error">
+            <Text>{error}</Text>
+          </Alert>
+        )}
+
+        <Grid cols={{ xs: 1, md: 2, lg: 3 }} gap="lg">
+          {navLinks.map((item) => (
+            <GridItem key={item.href}>
+              <Link href={item.href} style={{ textDecoration: 'none' }}>
+                <Box variant="elevated" padding="lg">
+                  <Stack spacing="sm">
+                    <Text weight="bold">{item.label}</Text>
+                    <Text size="sm" color="muted">
+                      {item.description}
+                    </Text>
+                  </Stack>
+                </Box>
+              </Link>
+            </GridItem>
+          ))}
         </Grid>
 
-        {/* Recent Activity */}
-        <Box variant="elevated" padding="xl">
-          <Stack spacing="lg">
-            <H2 align="center">Recent Activity</H2>
-            {recentActivity.length > 0 ? (
-              <Stack spacing="md">
-                {recentActivity.map((activity, index) => (
-                  <Box key={index} variant="elevated" padding="md">
-                    <Stack direction={{ xs: 'vertical', md: 'horizontal' }} spacing="md" align="center">
-                      <Text size="xl">{activity.icon}</Text>
-                      <Stack spacing="sm">
-                        <Text>{activity.message}</Text>
-                        <Text variant="small" color="muted">{activity.time}</Text>
-                      </Stack>
-                    </Stack>
-                  </Box>
-                ))}
+        <Box variant="elevated" padding="lg">
+          <Stack spacing="md">
+            <Stack direction="horizontal" align="center" justify="space-between">
+              <Text weight="bold">At A Glance</Text>
+              <Button variant="outline" size="sm" onClick={loadSnapshot} disabled={loading} text={loading ? 'Refreshing…' : 'Refresh'} />
+            </Stack>
+
+            {loading ? (
+              <Stack direction="horizontal" spacing="sm" align="center">
+                <LoadingSpinner size="sm" />
+                <Text size="sm">Loading snapshot…</Text>
               </Stack>
             ) : (
-              <Text align="center" color="muted">No recent activity</Text>
+              <Stack spacing="sm">
+                <Text>Pending approvals: {snapshot.pendingApprovals}</Text>
+                <Text>Today&apos;s rides: {snapshot.todaysRides}</Text>
+                <Text>Next ride: {snapshot.nextRideText}</Text>
+                <Text>
+                  This month&apos;s costs: $
+                  {snapshot.monthCosts.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </Text>
+                <Text>System health: {healthLabel}</Text>
+              </Stack>
             )}
           </Stack>
         </Box>
-
-        {/* Quick Actions */}
-        <Stack spacing="md" align="center">
-          <Button onClick={fetchDashboardData} variant="outline" cmsId="refresh-data-button"  text="Refresh Data" />
-        </Stack>
       </Stack>
     </Container>
   );
 }
-
