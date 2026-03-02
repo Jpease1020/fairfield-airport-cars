@@ -29,6 +29,28 @@ This document tracks production-readiness gates. No new features should be start
 - Production-safe smoke checks (read-only): `PENDING` (run before release)
 - Security route guard checks (admin/test endpoints): `PASS` in existing tests
 
+## Canonical Booking/Payment Endpoints
+- Quote: `POST /api/booking/quote`
+- Validate phase: `POST /api/booking/validate-phase`
+- Submit booking: `POST /api/booking/submit`
+- Process payment: `POST /api/payment/process-payment`
+- ETA: `POST /api/tracking/eta`
+
+Deprecated (returns `410`):
+- `POST /api/booking`
+- `GET /api/bookings/[id]/eta`
+- `POST /api/payment/create-checkout-session`
+- `POST /api/payment/complete-payment`
+- `POST /api/booking/lock-time-slot`
+- `POST /api/booking/release-time-slot`
+
+## Mandatory Gate Commands
+1. `npm run type-check`
+2. `npx vitest run tests/unit/booking-submit.route.test.ts tests/unit/cancel-booking.route.test.ts tests/unit/process-payment.route.test.ts tests/unit/send-confirmation.route.test.ts tests/unit/booking-time-formatting-guard.test.ts tests/unit/deprecated-endpoints.test.ts tests/integration/booking-server-flow.test.ts tests/integration/flows/cancellation-refund-flow.test.ts tests/integration/health/endpoint-health.test.ts`
+3. `npm run test:e2e:ui-mocked`
+4. `npm run test:e2e:preview-safe`
+5. `npm run smoke:prod` (network-enabled runner only)
+
 ## Remaining Work Before Feature Development
 1. Run full CI lane for unit + integration + preview-safe E2E.
 2. Run production-safe smoke checks and capture output artifact.

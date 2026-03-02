@@ -18,13 +18,7 @@
  *    - Customer notifications
  *    - Calendar event deletion
  *
- * 3. time-slot-locking.test.ts
- *    - Lock acquisition during checkout
- *    - Double-booking prevention
- *    - Lock expiration
- *    - Buffer time enforcement
- *
- * 4. ride-experience.test.ts
+ * 3. ride-experience.test.ts
  *    - Customer: view booking, track driver, see status
  *    - Driver: start tracking, update location, complete ride
  *    - Post-ride: feedback submission
