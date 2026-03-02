@@ -104,9 +104,6 @@ if (isFirebaseAdminConfigured() || shouldInitializeForEmulators) {
         
         console.log('🚀 Initializing Firebase Admin for production...');
         console.log(`   Project ID: ${projectId}`);
-        console.log(`   Client Email: ${clientEmail}`);
-        console.log(`   Private Key: ${privateKey.length} chars, starts with: ${privateKey.substring(0, 30)}...`);
-        console.log(`   Private Key has newlines: ${privateKey.includes('\n')}`);
         
         try {
           initializeApp({

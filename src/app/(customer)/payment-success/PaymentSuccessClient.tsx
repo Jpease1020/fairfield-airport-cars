@@ -36,32 +36,58 @@ export default function PaymentSuccessClient() {
 
         const bookingData = JSON.parse(pendingBookingData);
         
-        // Create the actual booking now that payment is confirmed
-        const response = await authFetch('/api/booking', {
+        const pickupAddress =
+          bookingData?.trip?.pickup?.address || bookingData.pickupLocation || '';
+        const dropoffAddress =
+          bookingData?.trip?.dropoff?.address || bookingData.dropoffLocation || '';
+        const pickupDateTime =
+          bookingData?.trip?.pickupDateTime || bookingData.pickupDateTime || '';
+        const fare =
+          bookingData?.trip?.fare || bookingData.fare || bookingData.totalAmount || 0;
+
+        // Create the actual booking now that payment is confirmed.
+        // This uses the canonical submit endpoint and does not rely on deprecated /api/booking.
+        const response = await authFetch('/api/booking/submit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: bookingData.name,
-            email: bookingData.email,
-            phone: bookingData.phone,
-            pickupLocation: bookingData.pickupLocation,
-            dropoffLocation: bookingData.dropoffLocation,
-            pickupDateTime: bookingData.pickupDateTime,
-            notes: bookingData.notes,
-            fare: bookingData.fare,
-            tipAmount: bookingData.tipAmount,
-            tipPercent: bookingData.tipPercent,
-            totalAmount: bookingData.totalAmount,
-            flightInfo: bookingData.flightInfo,
-            fareType: bookingData.fareType,
-            saveInfoForFuture: bookingData.saveInfoForFuture,
+            quoteId: bookingData.quoteId,
+            exceptionCode: bookingData.exceptionCode,
+            fare,
+            customer: {
+              name: bookingData?.customer?.name || bookingData.name || '',
+              email: bookingData?.customer?.email || bookingData.email || '',
+              phone: bookingData?.customer?.phone || bookingData.phone || '',
+              notes: bookingData?.customer?.notes || bookingData.notes || '',
+              smsOptIn: bookingData?.customer?.smsOptIn ?? false,
+            },
+            trip: {
+              pickup: {
+                address: pickupAddress,
+                coordinates: bookingData?.trip?.pickup?.coordinates || null,
+              },
+              dropoff: {
+                address: dropoffAddress,
+                coordinates: bookingData?.trip?.dropoff?.coordinates || null,
+              },
+              pickupDateTime,
+              fareType: bookingData?.trip?.fareType || bookingData.fareType || 'personal',
+              flightInfo: bookingData?.trip?.flightInfo || bookingData.flightInfo || {
+                hasFlight: false,
+                airline: '',
+                flightNumber: '',
+                arrivalTime: '',
+                terminal: '',
+              },
+            },
           }),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create booking');
+          const errorData = await response.json().catch(() => null);
+          throw new Error(errorData?.error || 'Failed to create booking');
         }
 
         const data = await response.json();
