@@ -1,302 +1,84 @@
 'use client';
 
-// Force dynamic rendering to prevent server-side rendering issues
 export const dynamic = 'force-dynamic';
 
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { NextPage } from 'next';
-import { getAllBookings, getBookingsByStatus, updateDocument, deleteDocument, type Booking } from '@/lib/services/database-service';
-import { authFetch } from '@/lib/utils/auth-fetch';
+import Link from 'next/link';
 import {
-  Stack,
-  Text,
-  Button,
-  Box,
   Alert,
-  LoadingSpinner,
+  Box,
+  Button,
   Container,
   Input,
+  LoadingSpinner,
+  Stack,
+  Text,
 } from '@/design/ui';
 import { Modal } from '@/design/components/base-components/Modal';
 import { Textarea } from '@/design/components/base-components/forms/Textarea';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
-import Link from 'next/link';
-import styled from 'styled-components';
-
-// Styled components for the booking cards
-const BookingCard = styled.div<{ $isException?: boolean }>`
-  background: white;
-  border: 1px solid ${props => props.$isException ? '#f59e0b' : '#e5e7eb'};
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-
-  ${props => props.$isException && `
-    border-left: 4px solid #f59e0b;
-    background: #fffbeb;
-  `}
-`;
-
-const BookingHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f3f4f6;
-`;
-
-const CustomerInfo = styled.div`
-  flex: 1;
-`;
-
-const CustomerName = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 4px 0;
-`;
-
-const CustomerContact = styled.div`
-  font-size: 14px;
-  color: #6b7280;
-
-  a {
-    color: #2563eb;
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
-const StatusBadge = styled.span<{ $variant: string }>`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-
-  ${props => {
-    switch (props.$variant) {
-      case 'pending':
-        return 'background: #fef3c7; color: #92400e;';
-      case 'confirmed':
-        return 'background: #d1fae5; color: #065f46;';
-      case 'completed':
-        return 'background: #dbeafe; color: #1e40af;';
-      case 'cancelled':
-        return 'background: #fee2e2; color: #991b1b;';
-      case 'in-progress':
-        return 'background: #e0e7ff; color: #3730a3;';
-      case 'requires_approval':
-        return 'background: #fef3c7; color: #92400e; border: 1px dashed #f59e0b;';
-      default:
-        return 'background: #f3f4f6; color: #374151;';
-    }
-  }}
-`;
-
-const BookingDetails = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 16px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const DetailSection = styled.div``;
-
-const DetailLabel = styled.div`
-  font-size: 11px;
-  font-weight: 600;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-`;
-
-const DetailValue = styled.div`
-  font-size: 15px;
-  color: #111827;
-`;
-
-const RouteDisplay = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const LocationRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-`;
-
-const LocationIcon = styled.span`
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 12px;
-  flex-shrink: 0;
-`;
-
-const PickupIcon = styled(LocationIcon)`
-  background: #d1fae5;
-  color: #065f46;
-`;
-
-const DropoffIcon = styled(LocationIcon)`
-  background: #fee2e2;
-  color: #991b1b;
-`;
-
-const LocationText = styled.div`
-  font-size: 14px;
-  color: #374151;
-  line-height: 1.4;
-`;
-
-const BookingFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid #f3f4f6;
-`;
-
-const FareDisplay = styled.div`
-  text-align: right;
-`;
-
-const FareAmount = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-  color: #111827;
-`;
-
-const FareStatus = styled.div<{ $paid?: boolean }>`
-  font-size: 12px;
-  color: ${props => props.$paid ? '#065f46' : '#dc2626'};
-  font-weight: 500;
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const PageContainer = styled.div`
-  padding: 24px 0;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const PageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-`;
-
-const PageTitle = styled.h1`
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-`;
-
-const FilterBar = styled.div`
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-`;
-
-const FilterButton = styled.button<{ $active?: boolean }>`
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid ${props => props.$active ? '#2563eb' : '#e5e7eb'};
-  background: ${props => props.$active ? '#2563eb' : 'white'};
-  color: ${props => props.$active ? 'white' : '#374151'};
-
-  &:hover {
-    border-color: #2563eb;
-  }
-`;
-
-const StatsBar = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-const StatCard = styled.div`
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-`;
-
-const StatValue = styled.div`
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
-`;
-
-const StatLabel = styled.div`
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 4px;
-`;
-
-const BookingsList = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const EmptyState = styled.div`
-  text-align: center;
-  padding: 60px 20px;
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-`;
-
-const BookingsCount = styled.div`
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 16px;
-`;
-
-const AIRPORTS = [
-  { code: 'all', label: 'All airports' },
-  { code: 'JFK', label: 'JFK' },
-  { code: 'LGA', label: 'LGA' },
-  { code: 'EWR', label: 'EWR' },
-  { code: 'BDL', label: 'BDL' },
-  { code: 'HVN', label: 'HVN' },
-  { code: 'HPN', label: 'HPN' },
-];
+import {
+  deleteDocument,
+  getAllBookings,
+  getBookingsByStatus,
+  type Booking,
+  updateDocument,
+} from '@/lib/services/database-service';
+import { authFetch } from '@/lib/utils/auth-fetch';
+import {
+  AIRPORTS,
+  ActionButtons,
+  BookingCard,
+  BookingDetails,
+  BookingFooter,
+  BookingHeader,
+  BookingsCount,
+  BookingsList,
+  CustomerContact,
+  CustomerInfo,
+  CustomerName,
+  DetailLabel,
+  DetailSection,
+  DetailValue,
+  DropoffIcon,
+  EmptyState,
+  FareAmount,
+  FareDisplay,
+  FareStatus,
+  FilterBar,
+  FilterButton,
+  LocationRow,
+  LocationText,
+  PageContainer,
+  PageHeader,
+  PageTitle,
+  PickupIcon,
+  RouteDisplay,
+  StatCard,
+  StatLabel,
+  StatsBar,
+  StatusBadge,
+  StatValue,
+} from './bookings-styles';
+import {
+  formatCurrency,
+  formatDate,
+  getAirportFromBooking,
+  getBalanceDue,
+  getBookingFare,
+  getConfirmationSent,
+  getCustomerEmail,
+  getCustomerName,
+  getCustomerPhone,
+  getDepositPaid,
+  getDropoffAddress,
+  getPickupAddress,
+  getPickupDateTime,
+  getStatusIcon,
+  getStatusLabel,
+  parseDate,
+} from './bookings-utils';
 
 function AdminBookingsPageContent() {
   const { cmsData } = useCMSData();
@@ -311,41 +93,31 @@ function AdminBookingsPageContent() {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [resendingId, setResendingId] = useState<string | null>(null);
-
-  // Check for status filter in URL params
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const statusParam = params.get('status');
-    if (statusParam) {
-      setSelectedStatus(statusParam);
-    }
-  }, []);
-
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
   const [bookingToReject, setBookingToReject] = useState<Booking | null>(null);
   const [rejectionReason, setRejectionReason] = useState<string>('');
   const [rejectionReasonType, setRejectionReasonType] = useState<string>('other');
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const statusParam = params.get('status');
+    if (statusParam) setSelectedStatus(statusParam);
+  }, []);
+
   const fetchBookings = useCallback(async () => {
     try {
       setError(null);
       setLoading(true);
 
-      let fetchedBookings: Booking[];
+      const fetchedBookings =
+        selectedStatus === 'all'
+          ? await getAllBookings()
+          : await getBookingsByStatus(selectedStatus as Booking['status']);
 
-      if (selectedStatus === 'all') {
-        fetchedBookings = await getAllBookings();
-      } else {
-        fetchedBookings = await getBookingsByStatus(selectedStatus as Booking['status']);
-      }
-
-      // Sort by pickup date (upcoming first)
       fetchedBookings.sort((a, b) => {
-        const dateA = getPickupDateTime(a);
-        const dateB = getPickupDateTime(b);
-        const parsedA = parseDate(dateA);
-        const parsedB = parseDate(dateB);
+        const parsedA = parseDate(getPickupDateTime(a));
+        const parsedB = parseDate(getPickupDateTime(b));
         if (!parsedA || !parsedB) return 0;
         return parsedA.getTime() - parsedB.getTime();
       });
@@ -366,9 +138,7 @@ function AdminBookingsPageContent() {
   const handleStatusUpdate = async (booking: Booking, newStatus: Booking['status']) => {
     try {
       await updateDocument('bookings', booking.id!, { status: newStatus });
-      setBookings(prev => prev.map(b =>
-        b.id === booking.id ? { ...b, status: newStatus } : b
-      ));
+      setBookings((prev) => prev.map((b) => (b.id === booking.id ? { ...b, status: newStatus } : b)));
     } catch (err) {
       console.error('Error updating booking status:', err);
       setError('Failed to update booking status');
@@ -413,7 +183,9 @@ function AdminBookingsPageContent() {
         throw new Error(data?.error || 'Cancel failed');
       }
       const data = await res.json();
-      setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: 'cancelled' as Booking['status'] } : b));
+      setBookings((prev) =>
+        prev.map((b) => (b.id === booking.id ? { ...b, status: 'cancelled' as Booking['status'] } : b))
+      );
       if (data.refundAmount != null) {
         setSuccessMessage(`Cancelled. Refund: $${Number(data.refundAmount).toFixed(2)}`);
         setTimeout(() => setSuccessMessage(null), 4000);
@@ -427,12 +199,10 @@ function AdminBookingsPageContent() {
   };
 
   const handleDeleteBooking = async (booking: Booking) => {
-    if (!confirm(`Permanently delete the booking for ${getCustomerName(booking)}? This cannot be undone.`)) {
-      return;
-    }
+    if (!confirm(`Permanently delete the booking for ${getCustomerName(booking)}? This cannot be undone.`)) return;
     try {
       await deleteDocument('bookings', booking.id!);
-      setBookings(prev => prev.filter(b => b.id !== booking.id));
+      setBookings((prev) => prev.filter((b) => b.id !== booking.id));
     } catch (err) {
       console.error('Error deleting booking:', err);
       setError('Failed to delete booking');
@@ -441,22 +211,24 @@ function AdminBookingsPageContent() {
 
   const handleApproveException = async (booking: Booking) => {
     try {
-      const updateData: Record<string, any> = {
+      const updateData = {
         status: 'confirmed' as Booking['status'],
         requiresApproval: false,
         approvedAt: new Date().toISOString(),
       };
-
       await updateDocument('bookings', booking.id!, updateData);
-
-      setBookings(prev => prev.map(b =>
-        b.id === booking.id ? {
-          ...b,
-          status: 'confirmed' as Booking['status'],
-          requiresApproval: false,
-          approvedAt: updateData.approvedAt,
-        } : b
-      ));
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === booking.id
+            ? {
+                ...b,
+                status: 'confirmed' as Booking['status'],
+                requiresApproval: false,
+                approvedAt: updateData.approvedAt,
+              }
+            : b
+        )
+      );
     } catch (err) {
       console.error('Error approving exception booking:', err);
       setError('Failed to approve booking');
@@ -471,19 +243,20 @@ function AdminBookingsPageContent() {
         rejectedAt: new Date().toISOString(),
         requiresApproval: false,
       };
-
       await updateDocument('bookings', booking.id!, updateData);
-
-      setBookings(prev => prev.map(b =>
-        b.id === booking.id ? {
-          ...b,
-          status: 'cancelled' as Booking['status'],
-          rejectionReason: reason,
-          rejectedAt: updateData.rejectedAt,
-          requiresApproval: false,
-        } : b
-      ));
-
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === booking.id
+            ? {
+                ...b,
+                status: 'cancelled' as Booking['status'],
+                rejectionReason: reason,
+                rejectedAt: updateData.rejectedAt,
+                requiresApproval: false,
+              }
+            : b
+        )
+      );
       setRejectionModalOpen(false);
       setBookingToReject(null);
       setRejectionReason('');
@@ -518,137 +291,14 @@ function AdminBookingsPageContent() {
     handleRejectException(bookingToReject, finalReason);
   };
 
-  // Helper functions
-  const parseDate = (dateValue: any): Date | null => {
-    if (!dateValue) return null;
-    if (dateValue instanceof Date) return isNaN(dateValue.getTime()) ? null : dateValue;
-    if (typeof dateValue === 'string') {
-      const parsed = new Date(dateValue);
-      return isNaN(parsed.getTime()) ? null : parsed;
-    }
-    if (typeof dateValue === 'object' && typeof dateValue.toDate === 'function') return dateValue.toDate();
-    if (typeof dateValue === 'object' && '_seconds' in dateValue) return new Date(dateValue._seconds * 1000);
-    if (typeof dateValue === 'object' && 'seconds' in dateValue) return new Date(dateValue.seconds * 1000);
-    if (typeof dateValue === 'number') return new Date(dateValue);
-    return null;
-  };
-
-  const formatDate = (dateValue: any) => {
-    const date = parseDate(dateValue);
-    if (!date) return 'No date set';
-    return new Intl.DateTimeFormat('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    }).format(date);
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
-  const getBookingFare = (booking: Booking): number => {
-    return (booking as any).trip?.fare ?? booking.fare ?? 0;
-  };
-
-  const getCustomerName = (booking: Booking): string => {
-    return (booking as any).customer?.name ?? booking.name ?? 'Unknown';
-  };
-
-  const getCustomerEmail = (booking: Booking): string => {
-    return (booking as any).customer?.email ?? booking.email ?? '';
-  };
-
-  const getCustomerPhone = (booking: Booking): string => {
-    return (booking as any).customer?.phone ?? booking.phone ?? '';
-  };
-
-  const getPickupAddress = (booking: Booking): string => {
-    return (booking as any).trip?.pickup?.address ?? booking.pickupLocation ?? '';
-  };
-
-  const getDropoffAddress = (booking: Booking): string => {
-    return (booking as any).trip?.dropoff?.address ?? booking.dropoffLocation ?? '';
-  };
-
-  const getAirportFromBooking = (booking: Booking): string | null => {
-    const pickup = getPickupAddress(booking).toLowerCase();
-    const dropoff = getDropoffAddress(booking).toLowerCase();
-    const codes = ['jfk', 'lga', 'ewr', 'bdl', 'hvn', 'hpn'];
-    const names: Record<string, string[]> = {
-      jfk: ['jfk', 'kennedy'],
-      lga: ['lga', 'laguardia', 'la guardia'],
-      ewr: ['ewr', 'newark'],
-      bdl: ['bdl', 'bradley'],
-      hvn: ['hvn', 'tweed'],
-      hpn: ['hpn', 'westchester', 'white plains'],
-    };
-    for (const code of codes) {
-      if (pickup.includes(code) || dropoff.includes(code)) return code.toUpperCase();
-      for (const n of names[code] || []) {
-        if (pickup.includes(n) || dropoff.includes(n)) return code.toUpperCase();
-      }
-    }
-    return null;
-  };
-
-  const getConfirmationSent = (booking: Booking): boolean => {
-    const sentAt = (booking as any).confirmation?.sentAt ?? (booking as any).confirmationSentAt;
-    return !!sentAt;
-  };
-
-  const getPickupDateTime = (booking: Booking): any => {
-    return (booking as any).trip?.pickupDateTime ?? booking.pickupDateTime;
-  };
-
-  const getBalanceDue = (booking: Booking): number => {
-    return (booking as any).payment?.balanceDue ?? booking.balanceDue ?? 0;
-  };
-
-  const getDepositPaid = (booking: Booking): boolean => {
-    return (booking as any).payment?.depositPaid ?? booking.depositPaid ?? false;
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending': return '⏳';
-      case 'confirmed': return '✅';
-      case 'completed': return '🎉';
-      case 'cancelled': return '❌';
-      case 'requires_approval': return '⚠️';
-      case 'in-progress': return '🚗';
-      default: return '📋';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'pending': return 'Pending';
-      case 'confirmed': return 'Confirmed';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      case 'requires_approval': return 'Needs Approval';
-      case 'in-progress': return 'In Progress';
-      default: return status;
-    }
-  };
-
   const stats = {
     totalBookings: bookings.length,
-    confirmedBookings: bookings.filter(b => b.status === 'confirmed').length,
-    pendingBookings: bookings.filter(b => b.status === 'pending' || b.status === 'requires_approval').length,
-    totalRevenue: bookings.reduce((sum, b) => sum + getBookingFare(b), 0)
+    confirmedBookings: bookings.filter((b) => b.status === 'confirmed').length,
+    pendingBookings: bookings.filter((b) => b.status === 'pending' || b.status === 'requires_approval').length,
+    totalRevenue: bookings.reduce((sum, b) => sum + getBookingFare(b), 0),
   };
 
-  let filteredBookings = selectedStatus === 'all'
-    ? bookings
-    : bookings.filter(b => b.status === selectedStatus);
+  let filteredBookings = selectedStatus === 'all' ? bookings : bookings.filter((b) => b.status === selectedStatus);
 
   if (searchQuery.trim()) {
     const q = searchQuery.trim().toLowerCase();
@@ -659,14 +309,7 @@ function AdminBookingsPageContent() {
       const pickup = getPickupAddress(b).toLowerCase();
       const dropoff = getDropoffAddress(b).toLowerCase();
       const id = (b.id ?? '').toLowerCase();
-      return (
-        name.includes(q) ||
-        email.includes(q) ||
-        phone.includes(q) ||
-        pickup.includes(q) ||
-        dropoff.includes(q) ||
-        id.includes(q)
-      );
+      return name.includes(q) || email.includes(q) || phone.includes(q) || pickup.includes(q) || dropoff.includes(q) || id.includes(q);
     });
   }
 
@@ -714,18 +357,12 @@ function AdminBookingsPageContent() {
   return (
     <Container>
       <PageContainer>
-        {/* Header */}
         <PageHeader>
           <PageTitle>Bookings</PageTitle>
-          <Button
-            variant="primary"
-            onClick={() => window.location.href = '/admin/bookings/create-exception'}
-            text="+ Create Exception"
-          />
+          <Button variant="primary" onClick={() => (window.location.href = '/admin/bookings/create-exception')} text="+ Create Exception" />
         </PageHeader>
         {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
-        {/* Stats */}
         <StatsBar>
           <StatCard>
             <StatValue>{stats.totalBookings}</StatValue>
@@ -745,37 +382,21 @@ function AdminBookingsPageContent() {
           </StatCard>
         </StatsBar>
 
-        {/* Filters */}
         <FilterBar>
-          <FilterButton
-            $active={selectedStatus === 'all'}
-            onClick={() => setSelectedStatus('all')}
-          >
+          <FilterButton $active={selectedStatus === 'all'} onClick={() => setSelectedStatus('all')}>
             All ({bookings.length})
           </FilterButton>
-          <FilterButton
-            $active={selectedStatus === 'pending'}
-            onClick={() => setSelectedStatus('pending')}
-          >
-            Pending ({bookings.filter(b => b.status === 'pending').length})
+          <FilterButton $active={selectedStatus === 'pending'} onClick={() => setSelectedStatus('pending')}>
+            Pending ({bookings.filter((b) => b.status === 'pending').length})
           </FilterButton>
-          <FilterButton
-            $active={selectedStatus === 'confirmed'}
-            onClick={() => setSelectedStatus('confirmed')}
-          >
-            Confirmed ({bookings.filter(b => b.status === 'confirmed').length})
+          <FilterButton $active={selectedStatus === 'confirmed'} onClick={() => setSelectedStatus('confirmed')}>
+            Confirmed ({bookings.filter((b) => b.status === 'confirmed').length})
           </FilterButton>
-          <FilterButton
-            $active={selectedStatus === 'requires_approval'}
-            onClick={() => setSelectedStatus('requires_approval')}
-          >
-            Needs Approval ({bookings.filter(b => b.status === 'requires_approval').length})
+          <FilterButton $active={selectedStatus === 'requires_approval'} onClick={() => setSelectedStatus('requires_approval')}>
+            Needs Approval ({bookings.filter((b) => b.status === 'requires_approval').length})
           </FilterButton>
-          <FilterButton
-            $active={selectedStatus === 'completed'}
-            onClick={() => setSelectedStatus('completed')}
-          >
-            Completed ({bookings.filter(b => b.status === 'completed').length})
+          <FilterButton $active={selectedStatus === 'completed'} onClick={() => setSelectedStatus('completed')}>
+            Completed ({bookings.filter((b) => b.status === 'completed').length})
           </FilterButton>
           <div style={{ flexGrow: 1 }} />
           <select
@@ -785,7 +406,9 @@ function AdminBookingsPageContent() {
             aria-label="Filter by airport"
           >
             {AIRPORTS.map((a) => (
-              <option key={a.code} value={a.code}>{a.label}</option>
+              <option key={a.code} value={a.code}>
+                {a.label}
+              </option>
             ))}
           </select>
           <Input
@@ -795,35 +418,27 @@ function AdminBookingsPageContent() {
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ maxWidth: 260 }}
           />
-          <Input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            aria-label="Start date"
-          />
-          <Input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            aria-label="End date"
-          />
+          <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} aria-label="Start date" />
+          <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} aria-label="End date" />
         </FilterBar>
 
-        {/* Bookings Count */}
         <BookingsCount>
           Showing {filteredBookings.length} booking{filteredBookings.length !== 1 ? 's' : ''}
         </BookingsCount>
 
-        {/* Bookings List */}
         {filteredBookings.length === 0 ? (
           <EmptyState>
-            <Text size="xl" style={{ marginBottom: '8px' }}>📭</Text>
-            <Text size="lg" weight="medium">No bookings found</Text>
+            <Text size="xl" style={{ marginBottom: '8px' }}>
+              📭
+            </Text>
+            <Text size="lg" weight="medium">
+              No bookings found
+            </Text>
             <Text color="secondary">No bookings match the selected filter.</Text>
           </EmptyState>
         ) : (
           <BookingsList>
-            {filteredBookings.map(booking => {
+            {filteredBookings.map((booking) => {
               const fare = getBookingFare(booking);
               const depositPaid = getDepositPaid(booking);
               const balance = getBalanceDue(booking);
@@ -831,7 +446,6 @@ function AdminBookingsPageContent() {
 
               return (
                 <BookingCard key={booking.id} $isException={isException}>
-                  {/* Header */}
                   <BookingHeader>
                     <CustomerInfo>
                       <CustomerName>
@@ -840,13 +454,9 @@ function AdminBookingsPageContent() {
                         </Link>
                       </CustomerName>
                       <CustomerContact>
-                        {getCustomerPhone(booking) && (
-                          <a href={`tel:${getCustomerPhone(booking)}`}>{getCustomerPhone(booking)}</a>
-                        )}
+                        {getCustomerPhone(booking) && <a href={`tel:${getCustomerPhone(booking)}`}>{getCustomerPhone(booking)}</a>}
                         {getCustomerPhone(booking) && getCustomerEmail(booking) && ' • '}
-                        {getCustomerEmail(booking) && (
-                          <a href={`mailto:${getCustomerEmail(booking)}`}>{getCustomerEmail(booking)}</a>
-                        )}
+                        {getCustomerEmail(booking) && <a href={`mailto:${getCustomerEmail(booking)}`}>{getCustomerEmail(booking)}</a>}
                       </CustomerContact>
                     </CustomerInfo>
                     <StatusBadge $variant={booking.status}>
@@ -854,7 +464,6 @@ function AdminBookingsPageContent() {
                     </StatusBadge>
                   </BookingHeader>
 
-                  {/* Details */}
                   <BookingDetails>
                     <DetailSection>
                       <DetailLabel>Pickup Date & Time</DetailLabel>
@@ -881,30 +490,18 @@ function AdminBookingsPageContent() {
                     </DetailSection>
                   </BookingDetails>
 
-                  {/* Payment & confirmation flags */}
                   <div style={{ marginBottom: 12, display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 13, color: '#6b7280' }}>
-                    <span>Payment: {getDepositPaid(booking) ? '✓ Deposit paid' : balance > 0 ? `Balance $${formatCurrency(balance)}` : 'Unpaid'}</span>
+                    <span>Payment: {getDepositPaid(booking) ? '✓ Deposit paid' : balance > 0 ? `Balance ${formatCurrency(balance)}` : 'Unpaid'}</span>
                     <span>Confirmation: {getConfirmationSent(booking) ? '✓ Sent' : '—'}</span>
                     {getAirportFromBooking(booking) && <span>Airport: {getAirportFromBooking(booking)}</span>}
                   </div>
 
-                  {/* Footer */}
                   <BookingFooter>
                     <ActionButtons>
                       {booking.status === 'requires_approval' ? (
                         <>
-                          <Button
-                            size="sm"
-                            variant="success"
-                            onClick={() => handleApproveException(booking)}
-                            text="✓ Approve"
-                          />
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => openRejectionModal(booking)}
-                            text="✗ Reject"
-                          />
+                          <Button size="sm" variant="success" onClick={() => handleApproveException(booking)} text="✓ Approve" />
+                          <Button size="sm" variant="danger" onClick={() => openRejectionModal(booking)} text="✗ Reject" />
                         </>
                       ) : (
                         <>
@@ -930,27 +527,12 @@ function AdminBookingsPageContent() {
                             />
                           )}
                           {booking.status === 'pending' && (
-                            <Button
-                              size="sm"
-                              variant="success"
-                              onClick={() => handleStatusUpdate(booking, 'confirmed')}
-                              text="✓ Confirm"
-                            />
+                            <Button size="sm" variant="success" onClick={() => handleStatusUpdate(booking, 'confirmed')} text="✓ Confirm" />
                           )}
                           {(booking.status === 'confirmed' || booking.status === 'pending') && (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleStatusUpdate(booking, 'completed')}
-                              text="Mark Complete"
-                            />
+                            <Button size="sm" variant="secondary" onClick={() => handleStatusUpdate(booking, 'completed')} text="Mark Complete" />
                           )}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDeleteBooking(booking)}
-                            text="Delete"
-                          />
+                          <Button size="sm" variant="outline" onClick={() => handleDeleteBooking(booking)} text="Delete" />
                         </>
                       )}
                     </ActionButtons>
@@ -968,7 +550,6 @@ function AdminBookingsPageContent() {
           </BookingsList>
         )}
 
-        {/* Rejection Reason Modal */}
         <Modal
           isOpen={rejectionModalOpen}
           onClose={() => {
@@ -991,21 +572,17 @@ function AdminBookingsPageContent() {
                 }}
                 text="Cancel"
               />
-              <Button
-                variant="danger"
-                onClick={handleRejectionConfirm}
-                text="Confirm Rejection"
-              />
+              <Button variant="danger" onClick={handleRejectionConfirm} text="Confirm Rejection" />
             </Stack>
           }
         >
           <Stack spacing="md">
-            <Text variant="body">
-              Please provide a reason for rejecting this booking:
-            </Text>
+            <Text variant="body">Please provide a reason for rejecting this booking:</Text>
 
             <Stack spacing="sm">
-              <Text variant="small" weight="medium">Reason Type:</Text>
+              <Text variant="small" weight="medium">
+                Reason Type:
+              </Text>
               <select
                 value={rejectionReasonType}
                 onChange={(e) => setRejectionReasonType(e.target.value)}
@@ -1019,19 +596,18 @@ function AdminBookingsPageContent() {
             </Stack>
 
             <Stack spacing="sm">
-              <Text variant="small" weight="medium">Additional Details:</Text>
-              <Textarea
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Enter details..."
-                rows={3}
-              />
+              <Text variant="small" weight="medium">
+                Additional Details:
+              </Text>
+              <Textarea value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} placeholder="Enter details..." rows={3} />
             </Stack>
 
             {bookingToReject && (
               <Box variant="filled" padding="sm">
                 <Stack spacing="xs">
-                  <Text variant="small" weight="medium">Booking Details:</Text>
+                  <Text variant="small" weight="medium">
+                    Booking Details:
+                  </Text>
                   <Text variant="small">
                     <strong>Customer:</strong> {getCustomerName(bookingToReject)}
                   </Text>
@@ -1050,14 +626,16 @@ function AdminBookingsPageContent() {
 
 const AdminBookingsPage: NextPage = () => {
   return (
-    <Suspense fallback={
-      <Container>
-        <Stack direction="horizontal" spacing="md" align="center" style={{ padding: '40px 0' }}>
-          <LoadingSpinner />
-          <Text>Loading admin bookings...</Text>
-        </Stack>
-      </Container>
-    }>
+    <Suspense
+      fallback={
+        <Container>
+          <Stack direction="horizontal" spacing="md" align="center" style={{ padding: '40px 0' }}>
+            <LoadingSpinner />
+            <Text>Loading admin bookings...</Text>
+          </Stack>
+        </Container>
+      }
+    >
       <AdminBookingsPageContent />
     </Suspense>
   );
