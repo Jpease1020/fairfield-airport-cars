@@ -4,7 +4,7 @@ import { getSettings } from '@/lib/business/settings-service';
 import { createQuote } from '@/lib/services/quote-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { classifyTrip, isAirportLocation } from '@/lib/services/service-area-validation';
-import { z } from 'zod';
+import { quoteRequestSchema, quoteResponseSchema } from '@/lib/contracts/booking-api';
 
 const mapsClient = new Client({});
 
@@ -12,24 +12,8 @@ function metersToMiles(m: number): number { return m / 1609.34; }
 function secondsToMinutes(s: number): number { return s / 60; }
 
 export async function POST(request: Request) {
-  const schema = z.object({
-    origin: z.string().min(3).max(256),
-    destination: z.string().min(3).max(256),
-    pickupCoords: z
-      .object({ lat: z.number().gte(-90).lte(90), lng: z.number().gte(-180).lte(180) })
-      .nullable()
-      .optional(),
-    dropoffCoords: z
-      .object({ lat: z.number().gte(-90).lte(90), lng: z.number().gte(-180).lte(180) })
-      .nullable()
-      .optional(),
-    fareType: z.enum(['personal', 'business']).default('business'),
-    pickupTime: z.string().datetime().nullable().optional(),
-    sessionId: z.string().optional(), // For anonymous users
-    userId: z.string().optional(), // For authenticated users
-  });
   const raw = await request.json().catch(() => ({}));
-  const parsed = schema.safeParse(raw);
+  const parsed = quoteRequestSchema.safeParse(raw);
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
   const { origin, destination, pickupCoords, dropoffCoords, fareType, pickupTime, sessionId, userId } = parsed.data;
 
@@ -183,7 +167,7 @@ export async function POST(request: Request) {
     });
 
     // Return simple quote data with availability warning if applicable
-    return NextResponse.json({ 
+    const responseBody = quoteResponseSchema.parse({
       quoteId: quoteResult.quoteId,
       fare,
       distanceMiles: Math.round(distanceMiles * 100) / 100,
@@ -194,9 +178,10 @@ export async function POST(request: Request) {
       availabilityWarning,
       suggestedTimes
     });
+    return NextResponse.json(responseBody);
   } catch (error) {
     // Return fare without quote ID if storage fails
-    return NextResponse.json({ 
+    const responseBody = quoteResponseSchema.parse({
       fare,
       distanceMiles: Math.round(distanceMiles * 100) / 100,
       durationMinutes: Math.round(durationMinutes),
@@ -206,5 +191,6 @@ export async function POST(request: Request) {
       availabilityWarning,
       suggestedTimes
     });
+    return NextResponse.json(responseBody);
   }
 }
