@@ -182,11 +182,11 @@ export function ContactInfoPhase({
   return (
     <Container maxWidth="4xl" padding="xl">
       <Stack spacing="xl">
-        <H2 align="center" cmsId="personal-info-title" >
+        <H2 align="center" >
           {pageCmsData?.['contactInfoPhase-title'] || 'Contact Information'}
         </H2>
         
-        <Text align="center" color="secondary" cmsId="contact-info-description">
+        <Text align="center" color="secondary">
           {pageCmsData?.['contactInfoPhase-description'] || 'Please provide your contact information to proceed with your booking.'}
         </Text>
         
@@ -208,7 +208,7 @@ export function ContactInfoPhase({
                 value={customerData.name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ name: e.target.value })}
                 placeholder={pageCmsData?.['form-name-placeholder'] || 'Enter your full name'}
-                cmsId="form-name-input"
+
                 fullWidth
                 required
                 error={hasInteractedWithPhase && !!validation?.fieldErrors?.['name-input']}
@@ -231,7 +231,7 @@ export function ContactInfoPhase({
                 value={customerData.email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ email: e.target.value })}
                 placeholder={pageCmsData?.['form-email-placeholder'] || 'Enter your email'}
-                cmsId="form-email-input"
+
                 fullWidth
                 required
                 error={hasInteractedWithPhase && !!validation?.fieldErrors?.['email-input']}
@@ -259,7 +259,7 @@ export function ContactInfoPhase({
                 value={customerData.phone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onCustomerUpdate({ phone: e.target.value })}
                 placeholder={'Enter your phone number'}
-                cmsId="form-phone-input"
+
                 fullWidth
                 required
                 error={hasInteractedWithPhase && !!validation?.fieldErrors?.['phone-input']}
@@ -273,7 +273,7 @@ export function ContactInfoPhase({
                 value={customerData.notes}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onCustomerUpdate({ notes: e.target.value })}
                 placeholder={pageCmsData?.['form-notes-placeholder'] || 'Any special instructions for your driver?'}
-                cmsId="form-notes-input"
+
                 fullWidth
                 rows={3}
                 data-testid="notes-input"
@@ -318,7 +318,7 @@ export function ContactInfoPhase({
               variant="outline"
               fullWidth
               size="md"
-              cmsId="back-button"
+
               data-testid="contact-info-back-button"            
               text={pageCmsData?.['back-button'] || 'Back'}
             />
@@ -332,7 +332,7 @@ export function ContactInfoPhase({
               variant="primary"
               fullWidth
               size="md"
-              cmsId="continue-button"
+
               data-testid="contact-info-continue-button"
               text={
                 isMobile

@@ -167,7 +167,7 @@ export default function CustomerBookingsClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="initializing">{pageCmsData?.['initializing'] || 'Initializing bookings...'}</Text>
+          <Text>{pageCmsData?.['initializing'] || 'Initializing bookings...'}</Text>
         </Stack>
       </Container>
     );
@@ -178,7 +178,7 @@ export default function CustomerBookingsClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="loading-bookings">{pageCmsData?.['loading-bookings'] || 'Loading your bookings...'}</Text>
+          <Text>{pageCmsData?.['loading-bookings'] || 'Loading your bookings...'}</Text>
         </Stack>
       </Container>
     );
@@ -212,8 +212,8 @@ export default function CustomerBookingsClient() {
     <Container>
       <Stack spacing="xl">
         <Stack spacing="md">
-          <H1 cmsId="bookings-title">{pageCmsData?.['bookings-title'] || 'My Bookings'}</H1>
-          <Text variant="muted" cmsId="bookings-description">
+          <H1>{pageCmsData?.['bookings-title'] || 'My Bookings'}</H1>
+          <Text variant="muted">
             {pageCmsData?.['bookings-description'] || 'View and manage your upcoming and past rides.'}
           </Text>
         </Stack>

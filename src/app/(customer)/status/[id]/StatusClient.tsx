@@ -101,7 +101,7 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" cmsId="status-loading-message" >
+              <Text align="center" >
                 {cmsData?.['message'] || 'Please wait while we fetch your booking details...'}
               </Text>
             </Stack>
@@ -117,10 +117,10 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" cmsId="status-error-title" >
+              <H1 align="center" >
                 {cmsData?.['title'] || 'Unable to Load Booking'}
               </H1>
-              <Text align="center" cmsId="status-error-description" >
+              <Text align="center" >
                 {cmsData?.['description'] || 'This could be due to an invalid booking ID or a temporary system issue.'}
               </Text>
               <ActionButtonGroup buttons={[
@@ -152,10 +152,10 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <H1 align="center" cmsId="status-main-title" >
+            <H1 align="center" >
               {cmsData?.['title'] || 'Booking Status'}
             </H1>
-            <Text align="center" cmsId="status-subtitle" >
+            <Text align="center" >
               {cmsData?.['subtitle'] || `Tracking your ride for booking #${bookingId}`}
             </Text>
           </Stack>
@@ -168,13 +168,13 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
           <Box variant="elevated" padding="lg">
             <Stack spacing="md" align="center">
               <Text size="2xl" align="center">{getStatusIcon(status)}</Text>
-              <H2 align="center" cmsId="current-status-title" >
+              <H2 align="center" >
                 {cmsData?.['currentStatus-title'] || 'Current Status'}
               </H2>
-              <Text align="center" size="lg" cmsId="current-status-status" >
+              <Text align="center" size="lg" >
                 {getStatusText(status)}
               </Text>
-              <Text align="center" cmsId="current-status-description" >
+              <Text align="center" >
                 {getStatusText(status) === 'confirmed' && (cmsData?.['confirmed'] || 'Your ride is confirmed and driver assigned')}
                 {getStatusText(status) === 'en-route' && (cmsData?.['enRoute'] || 'Your driver is on the way to pick you up')}
                 {getStatusText(status) === 'arrived' && (cmsData?.['arrived'] || 'Your driver has arrived at the pickup location')}
@@ -184,7 +184,7 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
               </Text>
 
               {estimatedArrival && (
-                <Text align="center" cmsId="estimated-arrival-message" >
+                <Text align="center" >
                   <strong>
                     {cmsData?.['label'] || '⏰ Estimated Arrival:'}
                   </strong> {estimatedArrival ? estimatedArrival.toString() : (cmsData?.['calculating'] || 'Calculating...')}
@@ -199,7 +199,7 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="md" align="center">
-            <H2 align="center" cmsId="status-actions-title" >
+            <H2 align="center" >
               {cmsData?.['actions-title'] || 'Quick Actions'}
             </H2>
             <ActionButtonGroup buttons={quickActions} />
@@ -215,7 +215,7 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
               onClick={() => setShowDetails(!showDetails)}
               variant="ghost"
               size="sm"
-              cmsId="show-details-button"
+
             >
               {cmsData?.['show-details-button'] || (showDetails ? 'Hide' : 'Show')}
               {cmsData?.['show-details-label'] || ' booking details'}
@@ -230,36 +230,36 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
           <Container>
             <Box variant="elevated" padding="lg">
               <Stack spacing="md">
-                <H2 cmsId="booking-details-title" >
+                <H2 >
                   {cmsData?.['booking-details-title'] || 'Booking Details'}
                 </H2>
                 <div>
-                  <Text cmsId="booking-details-booking-id" >
+                  <Text >
                     <strong>
                       {cmsData?.['booking-details-booking-id'] || 'Booking ID:'}
                     </strong> {bookingId}
                   </Text>
-                  <Text cmsId="booking-details-pickup" >
+                  <Text >
                     <strong>
                       {cmsData?.['booking-details-pickup'] || 'Pickup:'}
                     </strong> {booking?.pickupLocation || (cmsData?.['pickup-notAvailable'] || 'N/A')}
                   </Text>
-                  <Text cmsId="booking-details-dropoff" >
+                  <Text >
                     <strong>
                       {cmsData?.['booking-details-dropoff'] || 'Dropoff:'}
                     </strong> {booking?.dropoffLocation || (cmsData?.['dropoff-notAvailable'] || 'N/A')}
                   </Text>
-                  <Text cmsId="booking-details-date" >
+                  <Text >
                     <strong>
                       {cmsData?.['booking-details-date'] || 'Date:'}
                     </strong> {booking?.date ? new Date(booking.date).toLocaleDateString() : (cmsData?.['date-notAvailable'] || 'N/A')}
                   </Text>
-                  <Text cmsId="booking-details-time" >
+                  <Text >
                     <strong>
                       {cmsData?.['booking-details-time'] || 'Time:'}
                     </strong> {booking?.time || (cmsData?.['time-notAvailable'] || 'N/A')}
                   </Text>
-                  <Text cmsId="booking-details-fare" >
+                  <Text >
                     <strong>
                       {cmsData?.['booking-details-fare'] || 'Fare:'}
                     </strong> ${booking?.fare || (cmsData?.['fare-notAvailable'] || 'N/A')}

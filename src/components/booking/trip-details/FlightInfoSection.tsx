@@ -233,11 +233,11 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
   return (
     <DarkerGreyBox padding="lg" rounded="md" data-testid="flight-info-section">
       <Stack spacing="lg">
-        <H2 cmsId="trip-details-flight-title">
+        <H2>
           {cmsData?.['tripDetailsPhase-flightTitle'] || 'Flight Information'}
         </H2>
         
-        <Text color="secondary" cmsId="trip-details-flight-description">
+        <Text color="secondary">
           {cmsData?.['tripDetailsPhase-flightDescription'] || 'Help us provide better service by sharing your flight details.'}
         </Text>
         
@@ -260,7 +260,7 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
           {flightInfo.hasFlight && (
             <Stack spacing="md">
               <Stack spacing="xs">
-                <Text weight="medium" cmsId="tripDetailsPhase-flightNumberLabel">
+                <Text weight="medium">
                   {cmsData?.['tripDetailsPhase-flightNumberLabel'] || 'Flight Number'}
                 </Text>
                 <Input
@@ -273,7 +273,7 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
               </Stack>
 
               <Stack spacing="xs">
-                <Text weight="medium" cmsId="tripDetailsPhase-airlineLabel">
+                <Text weight="medium">
                   {cmsData?.['tripDetailsPhase-airlineLabel'] || 'Airline'}
                 </Text>
                 <Input
@@ -300,7 +300,7 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
               </Stack>
 
               <Stack spacing="xs">
-                <Text weight="medium" cmsId="tripDetailsPhase-terminalLabel">
+                <Text weight="medium">
                   {cmsData?.['tripDetailsPhase-terminalLabel'] || 'Terminal / Gate'}
                 </Text>
                 <Input

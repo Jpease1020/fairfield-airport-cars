@@ -137,7 +137,7 @@ export const AddToCalendarButton: React.FC<AddToCalendarButtonProps> = ({
         fullWidth={fullWidth}
         onClick={() => setIsOpen(!isOpen)}
         data-testid="add-to-calendar-button"
-        cmsId="add-to-calendar-button"
+
         text="📅 Add to Calendar"
       />
       <DropdownMenu $isOpen={isOpen} variant="elevated">
@@ -147,21 +147,21 @@ export const AddToCalendarButton: React.FC<AddToCalendarButtonProps> = ({
             data-testid="add-to-google-calendar"
           >
             <span>📅</span>
-            <Text size="sm" cmsId="ignore">Google Calendar</Text>
+            <Text size="sm">Google Calendar</Text>
           </DropdownItem>
           <DropdownItem
             onClick={() => handleCalendarAction('outlook')}
             data-testid="add-to-outlook-calendar"
           >
             <span>📧</span>
-            <Text size="sm" cmsId="ignore">Outlook / Microsoft Teams</Text>
+            <Text size="sm">Outlook / Microsoft Teams</Text>
           </DropdownItem>
           <DropdownItem
             onClick={() => handleCalendarAction('ics')}
             data-testid="download-ics-file"
           >
             <span>🍎</span>
-            <Text size="sm" cmsId="ignore">Download .ics (Apple Calendar)</Text>
+            <Text size="sm">Download .ics (Apple Calendar)</Text>
           </DropdownItem>
         </Stack>
       </DropdownMenu>

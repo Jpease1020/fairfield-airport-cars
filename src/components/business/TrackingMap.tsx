@@ -325,7 +325,7 @@ export function TrackingMap({
       <Container data-testid="tracking-map-loading">
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="tracking-map-loading">{ cmsData?.['trackingMapLoading'] || 'Loading map...'}</Text>
+          <Text>{ cmsData?.['trackingMapLoading'] || 'Loading map...'}</Text>
         </Stack>
       </Container>
     );
@@ -337,9 +337,9 @@ export function TrackingMap({
       return (
         <Container data-testid="tracking-map-error">
           <Stack spacing="lg" align="center">
-            <Text variant="h3" color="secondary" cmsId="tracking-map-google-maps-not-available-title">{cmsData?.['trackingMapGoogleMapsNotAvailableTitle'] || '🗺️ Google Maps Not Available'}</Text>
-            <Text color="secondary" cmsId="tracking-map-google-maps-not-available">{cmsData?.['trackingMapGoogleMapsNotAvailable'] || 'To use the tracking system, you need to configure a Google Maps API key.'}</Text>
-            <Text variant="body" color="secondary" size="sm" cmsId="tracking-map-google-maps-not-available-set-api-key">{cmsData?.['trackingMapGoogleMapsNotAvailableSetApiKey'] || 'Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env.local file'}</Text>
+            <Text variant="h3" color="secondary">{cmsData?.['trackingMapGoogleMapsNotAvailableTitle'] || '🗺️ Google Maps Not Available'}</Text>
+            <Text color="secondary">{cmsData?.['trackingMapGoogleMapsNotAvailable'] || 'To use the tracking system, you need to configure a Google Maps API key.'}</Text>
+            <Text variant="body" color="secondary" size="sm">{cmsData?.['trackingMapGoogleMapsNotAvailableSetApiKey'] || 'Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env.local file'}</Text>
           </Stack>
         </Container>
       );
@@ -348,7 +348,7 @@ export function TrackingMap({
     return (
       <Container data-testid="tracking-map-error">
         <Alert variant="error">
-          <Text cmsId="tracking-map-error">{cmsData?.['trackingMapError'] || error || trackingError || 'Unknown error'}</Text>
+          <Text>{cmsData?.['trackingMapError'] || error || trackingError || 'Unknown error'}</Text>
         </Alert>
       </Container>
     );
@@ -360,7 +360,7 @@ export function TrackingMap({
         {/* Map Status */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="xs">
-            <Text weight="bold" size="lg" cmsId="tracking-map-live-tracking">{cmsData?.['trackingMapLiveTracking'] || 'Live Tracking'}</Text>
+            <Text weight="bold" size="lg">{cmsData?.['trackingMapLiveTracking'] || 'Live Tracking'}</Text>
             <Text variant="muted">
               {bookingStatus?.driverLocation 
                 ? cmsData?.['trackingMapDriverIsOnTheWay'] || 'Driver is on the way'
@@ -391,15 +391,15 @@ export function TrackingMap({
         <Stack direction="horizontal" spacing="md" align="center">
           <Stack direction="horizontal" align="center" spacing="xs">
             <LegendItem $backgroundColor={colors.success[600]} />
-            <Text size="sm" cmsId="tracking-map-driver-location">{cmsData?.['trackingMapDriverLocation'] || 'Driver Location'}</Text>
+            <Text size="sm">{cmsData?.['trackingMapDriverLocation'] || 'Driver Location'}</Text>
           </Stack>
           <Stack direction="horizontal" align="center" spacing="xs">
             <LegendItem $backgroundColor={colors.primary[600]} />
-            <Text size="sm" cmsId="tracking-map-pickup-location">{cmsData?.['trackingMapPickupLocation'] || 'Pickup Location'}</Text>
+            <Text size="sm">{cmsData?.['trackingMapPickupLocation'] || 'Pickup Location'}</Text>
           </Stack>
           <Stack direction="horizontal" align="center" spacing="xs">
             <LegendItem $backgroundColor={colors.danger[600]} />
-            <Text size="sm" cmsId="tracking-map-dropoff-location">{cmsData?.['trackingMapDropoffLocation'] || 'Dropoff Location'}</Text>
+            <Text size="sm">{cmsData?.['trackingMapDropoffLocation'] || 'Dropoff Location'}</Text>
           </Stack>
         </Stack>
       </Stack>

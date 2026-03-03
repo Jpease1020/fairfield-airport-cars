@@ -70,7 +70,7 @@ vi.mock('@/design/components/base-components/forms/LocationInput', () => ({
 
 // Mock DateTimePicker to avoid native input issues in tests
 vi.mock('@/design/components/base-components/forms/DateTimePicker', () => ({
-  DateTimePicker: ({ value, onChange, 'data-testid': testId, cmsId, ...props }: any) => {
+  DateTimePicker: ({ value, onChange, 'data-testid': testId, ...props }: any) => {
     // Filter out non-DOM props
     const { fullWidth, isValid, error, size, minDate, maxDate, required, ...domProps } = props;
     const dateValue = value ? value.split('T')[0] : '';
@@ -88,17 +88,18 @@ vi.mock('@/design/components/base-components/forms/DateTimePicker', () => ({
       if (onChange) onChange(newValue);
     };
     
+    const resolvedTestId = testId || 'date-time-picker';
     return (
-      <div data-testid={testId || cmsId}>
+      <div data-testid={resolvedTestId}>
         <input
-          data-testid={`${testId || cmsId}-date`}
+          data-testid={`${resolvedTestId}-date`}
           type="date"
           value={dateValue}
           onChange={handleDateChange}
           {...domProps}
         />
         <input
-          data-testid={`${testId || cmsId}-time`}
+          data-testid={`${resolvedTestId}-time`}
           type="time"
           value={timeValue}
           onChange={handleTimeChange}
@@ -111,7 +112,7 @@ vi.mock('@/design/components/base-components/forms/DateTimePicker', () => ({
 
 const renderWithProviders = (component: React.ReactElement) => {
   const result = render(
-    <CMSDataProvider initialCmsData={{}}>
+    <CMSDataProvider>
       <BookingProvider>
         {component}
       </BookingProvider>
@@ -379,4 +380,3 @@ describe('Hero Quick Booking Form - Business Logic', () => {
     }
   });
 });
-

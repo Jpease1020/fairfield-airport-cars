@@ -357,10 +357,6 @@ export type StatusType = 'success' | 'warning' | 'error' | 'info' | 'loading';
 // Loading state type
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error'; 
 
-// CMS-safe content types
-export type CMSSafeString = string & { __brand: 'CMS_SAFE' };
-export type CMSFallbackString = string & { __brand: 'CMS_FALLBACK' };
-
 // Union type for allowed children in text components
 export type TextComponentChildren = 
   | string                          // Any string (simplified)
@@ -369,24 +365,5 @@ export type TextComponentChildren =
 
 // Base interface for all text components (H1, H2, Text, Span, etc.)
 export interface BaseTextComponentProps extends BaseComponentProps {
-  // Mandatory CMS identifier
-  cmsId: string;
-  
-  // Optional CMS data for validation
-  cmsData: any;
-  
-  // Content editing mode
-  mode?: 'edit' | 'comment' | null;
+  // legacy content-editing CMS fields removed
 }
-
-// Admin-specific interface with optional cmsId for admin-only components
-export interface AdminTextComponentProps extends BaseComponentProps {
-  // Optional CMS identifier for admin components
-  cmsId?: string;
-  
-  // Optional CMS data for validation
-  cmsData?: any;
-  
-  // Content editing mode
-  mode?: 'edit' | 'comment' | null;
-} 

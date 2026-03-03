@@ -96,7 +96,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner size="lg" />
-              <Text cmsId="successPageInitializing">{pageCmsData?.['successPageInitializing'] || 'Initializing...'}</Text>
+              <Text>{pageCmsData?.['successPageInitializing'] || 'Initializing...'}</Text>
             </Stack>
           </Container>
         </GridSection>
@@ -156,7 +156,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <Span data-testid="success-icon" size="xl" cmsId="success-icon">🎉</Span>
+            <Span data-testid="success-icon" size="xl">🎉</Span>
             <Stack spacing="md" align="center">
                               <Text data-testid="success-booking-confirmed-title" weight="bold">
                   {pageCmsData?.['success-bookingConfirmed-title'] || 'Booking Confirmed!'}
@@ -165,7 +165,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
                   {pageCmsData?.['success-bookingConfirmed-message'] || 'Your ride has been successfully booked. Check your email for confirmation and details.'}
                 </Text>
             </Stack>
-            <Button data-testid="success-back-home-button" variant="primary" size="lg" onClick={() => window.location.href = '/'} cmsId="success-actions-back_to_home"  text={pageCmsData?.['success-actions-back_to_home'] || 'Back to Home'} />
+            <Button data-testid="success-back-home-button" variant="primary" size="lg" onClick={() => window.location.href = '/'}  text={pageCmsData?.['success-actions-back_to_home'] || 'Back to Home'} />
           </Stack>
         </Container>
       </GridSection>
@@ -202,9 +202,9 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
                 </Text>
               </Stack>
               <Stack data-testid="success-payment-details" spacing="sm">
-                <Text data-testid="success-total-fare" cmsId="ignore"><strong>Total Fare:</strong> ${booking.trip.fare}</Text>
-                <Text data-testid="success-deposit" cmsId="ignore"><strong>Deposit:</strong> ${booking.payment.depositAmount} {booking.payment.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
-                <Text data-testid="success-balance-due" cmsId="ignore"><strong>Balance Due:</strong> ${booking.payment.balanceDue || 0}</Text>
+                <Text data-testid="success-total-fare"><strong>Total Fare:</strong> ${booking.trip.fare}</Text>
+                <Text data-testid="success-deposit"><strong>Deposit:</strong> ${booking.payment.depositAmount} {booking.payment.depositPaid ? '✅ Paid' : '⏳ Pending'}</Text>
+                <Text data-testid="success-balance-due"><strong>Balance Due:</strong> ${booking.payment.balanceDue || 0}</Text>
               </Stack>
             </Stack>
           </Container>
@@ -225,10 +225,10 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
             </Stack>
           
             <Stack data-testid="success-next-steps-list" spacing="md">
-              <Text data-testid="success-next-step-email" cmsId="success-nextSteps-items-0">{pageCmsData?.['success-nextSteps-items-0'] || "📧 You'll receive a confirmation email with all booking details"}</Text>
-              <Text data-testid="success-next-step-sms" cmsId="success-nextSteps-items-1">{pageCmsData?.['success-nextSteps-items-1'] || "📱 We'll send you SMS updates about your driver and pickup time"}</Text>
-              <Text data-testid="success-next-step-driver" cmsId="success-nextSteps-items-2">{pageCmsData?.['success-nextSteps-items-2'] || '👨‍💼 Your driver will contact you 30 minutes before pickup'}</Text>
-              <Text data-testid="success-next-step-flight" cmsId="success-nextSteps-items-3">{pageCmsData?.['success-nextSteps-items-3'] || '✈️ We monitor your flight for any delays or changes'}</Text>
+              <Text data-testid="success-next-step-email">{pageCmsData?.['success-nextSteps-items-0'] || "📧 You'll receive a confirmation email with all booking details"}</Text>
+              <Text data-testid="success-next-step-sms">{pageCmsData?.['success-nextSteps-items-1'] || "📱 We'll send you SMS updates about your driver and pickup time"}</Text>
+              <Text data-testid="success-next-step-driver">{pageCmsData?.['success-nextSteps-items-2'] || '👨‍💼 Your driver will contact you 30 minutes before pickup'}</Text>
+              <Text data-testid="success-next-step-flight">{pageCmsData?.['success-nextSteps-items-3'] || '✈️ We monitor your flight for any delays or changes'}</Text>
             </Stack>
 
             <Stack direction="horizontal" spacing="md" align="center" data-testid="success-actions">
@@ -237,7 +237,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
                   key={index}
                   variant={action.variant}
                   onClick={action.onClick}
-                  cmsId="success-action"
+
                   
                   text={action.label as string}
                 />
@@ -261,8 +261,8 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
             </Stack>
 
             <Stack spacing="md" align="center">
-              <Text data-testid="success-emergency-phone" cmsId="success-emergencyContact-phone">{pageCmsData?.['success-emergencyContact-phone'] || '💬 Text support for phone number'}</Text>
-              <Text data-testid="success-emergency-message" cmsId="success-emergencyContact-message">{pageCmsData?.['success-emergencyContact-message'] || 'Save this number! Our driver is available to assist you.'}</Text>
+              <Text data-testid="success-emergency-phone">{pageCmsData?.['success-emergencyContact-phone'] || '💬 Text support for phone number'}</Text>
+              <Text data-testid="success-emergency-message">{pageCmsData?.['success-emergencyContact-message'] || 'Save this number! Our driver is available to assist you.'}</Text>
             </Stack>
           </Stack>
         </Container>

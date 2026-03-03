@@ -58,20 +58,20 @@ export const EstimatedRideTime: React.FC<EstimatedRideTimeProps> = ({ cmsData })
       
       <Box padding="md">
         <Stack spacing="sm">
-          <Text weight="medium" cmsId="route-info-title" size="sm">
+          <Text weight="medium" size="sm">
             {cmsData?.['tripDetailsPhase-routeInfo'] || 'Trip Information'}
           </Text>
-        <Text cmsId="route-distance" size="sm">
+        <Text size="sm">
           {/* eslint-disable-next-line fairfield/enforce-cms-usage */}
           {cmsData?.['tripDetailsPhase-distance'] || 'Distance'}: {route.distance}
         </Text>
         {route.durationInTraffic && route.durationInTraffic !== route.duration && (
-          <Text size="xs" color="secondary" cmsId="tripDetailsPhase-trafficAdjusted">
+          <Text size="xs" color="secondary">
             {cmsData?.['tripDetailsPhase-trafficAdjusted'] || '(traffic adjusted)'}
           </Text>
         )}
         {route.trafficLevel && route.trafficLevel !== 'unknown' && (
-          <Text cmsId="route-traffic" size="sm" color={route.trafficLevel === 'high' ? 'error' : route.trafficLevel === 'medium' ? 'warning' : 'success'}>
+          <Text size="sm" color={route.trafficLevel === 'high' ? 'error' : route.trafficLevel === 'medium' ? 'warning' : 'success'}>
             {/* eslint-disable-next-line fairfield/enforce-cms-usage */}
             {cmsData?.['tripDetailsPhase-trafficLevel'] || 'Traffic'}: {route.trafficLevel}
           </Text>

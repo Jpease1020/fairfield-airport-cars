@@ -4,11 +4,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, spacing, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
 import { BaseTextComponentProps, TextComponentChildren } from '../../../system/shared-types';
-import { useCMSData } from '../../../providers/CMSDataProvider';
 
 // Styled span component
 const StyledSpan = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'color', 'weight', 'cmsId'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'color', 'weight'].includes(prop)
 })<{
   variant: 'default' | 'bold' | 'italic' | 'code' | 'mark' | 'link' | 'badge';
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -127,7 +126,7 @@ const StyledSpan = styled.span.withConfig({
   }}
 `;
 
-export interface SpanProps extends Omit<BaseTextComponentProps, 'cmsData' | 'cmsId'> {
+export interface SpanProps extends BaseTextComponentProps {
   // Core props - now type-safe
   children: TextComponentChildren;
   
@@ -136,9 +135,6 @@ export interface SpanProps extends Omit<BaseTextComponentProps, 'cmsData' | 'cms
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   color?: 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'error' | 'info';
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
-  
-  // Content editing
-  cmsId?: string; // Optional for admin components
   
   // Rest props
   [key: string]: any;
@@ -150,30 +146,17 @@ export const Span: React.FC<SpanProps> = ({
   size = 'md',
   color = 'default',
   weight = 'normal',
-  cmsId,
   ...rest
 }) => {
-  // Get CMS data from provider
-  const { cmsData } = useCMSData();
-  
-  // Don't add data-cms-id for decorative elements
-  const shouldIgnoreCMS = cmsId === 'ignore';
-  
-  // If we have CMS data and cmsId, try to get the field value
-  const displayContent = cmsData && cmsId && !shouldIgnoreCMS 
-    ? ((cmsData as any)?.[cmsId] || children)
-    : children;
-  
   return (
     <StyledSpan
       variant={variant}
       size={size}
       color={color}
       weight={weight}
-      {...(!shouldIgnoreCMS && cmsId ? { 'data-cms-id': cmsId } : {})}
       {...rest}
     >
-      {displayContent}
+      {children}
     </StyledSpan>
   );
-}; 
+};

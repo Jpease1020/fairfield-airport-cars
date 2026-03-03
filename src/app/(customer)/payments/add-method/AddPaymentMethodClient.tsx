@@ -137,7 +137,7 @@ export default function AddPaymentMethodClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="method-initializing">Initializing...</Text>
+          <Text>Initializing...</Text>
         </Stack>
       </Container>
     );
@@ -148,7 +148,7 @@ export default function AddPaymentMethodClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="method-loading">Loading...</Text>
+          <Text>Loading...</Text>
         </Stack>
       </Container>
     );
@@ -158,8 +158,8 @@ export default function AddPaymentMethodClient() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted" cmsId="method-login-required">Please log in to add payment methods.</Text>
-          <Button onClick={() => router.push('/auth/login')} cmsId="method-go-to-login" text="Go to Login"/>          
+          <Text variant="muted">Please log in to add payment methods.</Text>
+          <Button onClick={() => router.push('/auth/login')} text="Go to Login"/>          
         </Stack>
       </Container>
     );
@@ -213,7 +213,7 @@ export default function AddPaymentMethodClient() {
                     {/* Credit Card Fields */}
                     <Stack spacing="md">
                       <Stack spacing="md">
-                        <Label htmlFor="cardNumber" cmsId="add-payment-method-form-card-number-label">
+                        <Label htmlFor="cardNumber">
                           {pageCmsData?.['payments-label'] || 'Card Number'}
                         </Label>
                         <Input
@@ -222,7 +222,7 @@ export default function AddPaymentMethodClient() {
                           value={formData.cardNumber}
                           onChange={(e) => handleInputChange('cardNumber', e.target.value)}
                           placeholder={pageCmsData?.['payments-placeholder'] || '1234 5678 9012 3456'}
-                          cmsId="add-payment-method-form-card-number-input"
+
                           required
                         />
                       </Stack>
@@ -230,14 +230,14 @@ export default function AddPaymentMethodClient() {
                       <Grid cols={2} gap="md" responsive>
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="expiryMonth" cmsId="add-payment-method-form-card-expiry-month-label">
+                            <Label htmlFor="expiryMonth">
                               {pageCmsData?.['payments-label'] || 'Expiry Month'}
                             </Label>
                             <Select
                               id="expiryMonth"
                               value={formData.expiryMonth}
                               onChange={(e) => handleInputChange('expiryMonth', e.target.value)}
-                              cmsId="add-payment-method-form-card-expiry-month-select"
+
                               required
                               options={Array.from({ length: 12 }, (_, i) => i + 1).map(month => ({
                                 value: month.toString().padStart(2, '0'),
@@ -249,14 +249,14 @@ export default function AddPaymentMethodClient() {
                         
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="expiryYear" cmsId="add-payment-method-form-card-expiry-year-label">
+                            <Label htmlFor="expiryYear">
                               {pageCmsData?.['payments-label'] || 'Expiry Year'}
                             </Label>
                             <Select
                               id="expiryYear"
                               value={formData.expiryYear}
                               onChange={(e) => handleInputChange('expiryYear', e.target.value)}
-                              cmsId="add-payment-method-form-card-expiry-year-select"
+
                               required
                               options={Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => ({
                                 value: year.toString(),
@@ -270,7 +270,7 @@ export default function AddPaymentMethodClient() {
                       <Grid cols={2} gap="md" responsive>
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="cvv" cmsId="add-payment-method-form-card-cvv-label">
+                            <Label htmlFor="cvv">
                               {pageCmsData?.['payments-label'] || 'CVV'}
                             </Label>
                             <Input
@@ -279,7 +279,7 @@ export default function AddPaymentMethodClient() {
                               value={formData.cvv}
                               onChange={(e) => handleInputChange('cvv', e.target.value)}
                               placeholder={pageCmsData?.['payments-placeholder'] || '123'}
-                              cmsId="add-payment-method-form-card-cvv-input"
+
                               required
                             />
                           </Stack>
@@ -287,7 +287,7 @@ export default function AddPaymentMethodClient() {
                         
                         <GridItem>
                           <Stack spacing="md">
-                            <Label htmlFor="cardholderName" cmsId="add-payment-method-form-card-name-label">
+                            <Label htmlFor="cardholderName">
                               {pageCmsData?.['payments-label'] || 'Cardholder Name'}
                             </Label>
                             <Input
@@ -296,7 +296,7 @@ export default function AddPaymentMethodClient() {
                               value={formData.cardholderName}
                               onChange={(e) => handleInputChange('cardholderName', e.target.value)}
                               placeholder={pageCmsData?.['payments-placeholder'] || 'John Doe'}
-                              cmsId="add-payment-method-form-card-name-input"
+
                               required
                             />
                           </Stack>
@@ -306,7 +306,7 @@ export default function AddPaymentMethodClient() {
 
                     {/* Default Payment Method */}
                     <Stack spacing="md">
-                      <Label htmlFor="isDefault" cmsId="add-payment-method-form-default-label">
+                      <Label htmlFor="isDefault">
                         <input
                           type="checkbox"
                           id="isDefault"
@@ -324,7 +324,7 @@ export default function AddPaymentMethodClient() {
                         variant="primary"
                         size="lg"
                         disabled={saving}
-                        cmsId="add-payment-method-form-submit-button"
+
                       >
                         {saving ? (
                           pageCmsData?.['payments-loading'] || 'Adding Payment Method...'
@@ -333,7 +333,7 @@ export default function AddPaymentMethodClient() {
                         }
                       </Button>
                       
-                      <Text size="sm" variant="muted" cmsId="add-payment-method-form-submit-note">
+                      <Text size="sm" variant="muted">
                           {pageCmsData?.['payments-note'] || '🔒 Your payment information is secure and encrypted'}
                       </Text>
                     </Stack>
@@ -349,12 +349,12 @@ export default function AddPaymentMethodClient() {
           title="Security"
           content={
             <Stack spacing="md">
-              <Text variant="muted" cmsId="ignore">
+              <Text variant="muted">
                  {pageCmsData?.['method-security-notice'] || 'Your payment information is encrypted and securely processed by Square. We do not store your full card details on our servers.'}
               </Text>
               <Stack direction="horizontal" align="center" spacing="sm">
-                <Text variant="muted" size="sm" cmsId="ignore">🔒</Text>
-                <Text variant="muted" size="sm" cmsId="ignore">
+                <Text variant="muted" size="sm">🔒</Text>
+                <Text variant="muted" size="sm">
                   {pageCmsData?.['method-ssl-notice'] || '256-bit SSL encryption'}
                 </Text>
               </Stack>

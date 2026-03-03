@@ -63,16 +63,16 @@ export default function SetupPage() {
       <Stack spacing="xl" align="center">
         <Box variant="elevated" padding="xl">
           <Stack spacing="lg" align="center">
-            <H1 cmsId="title" >
+            <H1 >
               Admin Setup
             </H1>
             
             {user ? (
               <Stack spacing="lg">
-                <Text cmsId="logged-in-email" >
+                <Text >
                   Logged in as: <Text weight="bold">{user.email}</Text>
                 </Text>
-                <Text cmsId="logged-in-description" >
+                <Text >
                   Click the button below to create your admin user role in the database.
                 </Text>
                 
@@ -81,7 +81,7 @@ export default function SetupPage() {
                   disabled={loading}
                   variant="primary"
                   size="lg"
-                  cmsId="logged-in-setup-button"
+
                   
                 >
                   {loading ? 'Setting up...' : 'Setup Admin User'}
@@ -95,10 +95,10 @@ export default function SetupPage() {
               </Stack>
             ) : (
               <Stack spacing="lg">
-                <Text cmsId="not-logged-in-message" >
+                <Text >
                   Please log in first to set up your admin account.
                 </Text>
-                <Link href="/auth/login" cmsId='not-logged-in-go-to-login' >
+                <Link href="/auth/login" >
                   Go to Login
                 </Link>
               </Stack>

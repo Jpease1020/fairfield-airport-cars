@@ -260,7 +260,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
               required
               error={!!validation?.fieldErrors?.['pickup-datetime-input']}
               isValid={!!pickupDateTime && !validation?.fieldErrors?.['pickup-datetime-input']}
-              cmsId="quick-book-datetime-input"
+              data-testid="quick-book-datetime-input"
             />
           </FieldWrapper>
         </Stack>
@@ -279,13 +279,13 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             {/* Promotional Message */}
             <Box variant="filled" padding="md" data-testid="quick-book-promo-section">
               <Stack spacing="sm" align="center">
-                <Text size="lg" weight="bold" color="primary" cmsId="promo-limited-time" data-testid="quick-book-promo-title">
+                <Text size="lg" weight="bold" color="primary" data-testid="quick-book-promo-title">
                   🎉 Limited Time Offer!
                 </Text>
-                <StrikethroughText size="md" color="secondary" cmsId="promo-deposit-strikethrough" data-testid="quick-book-deposit-strikethrough">
+                <StrikethroughText size="md" color="secondary" data-testid="quick-book-deposit-strikethrough">
                   Deposit: ${(estimatedFare * 0.3).toFixed(2)}
                 </StrikethroughText>
-                <Text size="lg" weight="bold" color="success" cmsId="promo-no-deposit" data-testid="quick-book-no-deposit">
+                <Text size="lg" weight="bold" color="success" data-testid="quick-book-no-deposit">
                   No Deposit Required - Book Now!
                 </Text>
               </Stack>
@@ -299,7 +299,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             variant="primary"
             size="md"
             onClick={handleGetPrice}
-            cmsId="get-price-button"
+
             data-testid="quick-book-secure-rate-button"
             text="Book Now to Secure Rate →"
           />

@@ -146,7 +146,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(({
                 <Stack direction="horizontal" spacing="sm" align="center">
                   {actions}
                   {showCloseButton && (
-                    <Button variant="ghost" size="sm" aria-label="Close drawer" onClick={onClose} cmsId="ignore" text={cmsData?.['close-drawer-button'] || 'Close'}/>
+                    <Button variant="ghost" size="sm" aria-label="Close drawer" onClick={onClose} text={cmsData?.['close-drawer-button'] || 'Close'}/>
                   )}
                 </Stack>
               </Stack>

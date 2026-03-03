@@ -122,7 +122,7 @@ export default function LoginFormClient() {
             <Stack spacing="md" align="center" data-testid="login-header-stack">
               <H1 
                 align="center" 
-                cmsId="title"
+
                 data-testid="login-title"
               >
                 {pageCmsData?.['login-title'] || 'Welcome Back'}
@@ -130,7 +130,7 @@ export default function LoginFormClient() {
               <H2 
                 align="center" 
                 variant="default"
-                cmsId="subtitle"
+
                 data-testid="login-subtitle"
               >
                 {pageCmsData?.['login-subtitle'] || 'Sign in to your account'}
@@ -184,7 +184,7 @@ export default function LoginFormClient() {
                   size="lg"
                   fullWidth={true}  
                   disabled={loading}
-                  cmsId="sign-in-button"
+
                   data-testid="sign-in-button"
                 >
                   {pageCmsData?.[loading ? 'form.signInButtonLoading' : 'form.signInButton'] || (loading ? 'Signing In...' : 'Sign In')}
@@ -203,7 +203,7 @@ export default function LoginFormClient() {
               variant="outline"
               size="lg"
               disabled={loading}
-              cmsId="google-sign-in-button"
+
               data-testid="google-sign-in-button"
               fullWidth={true}
             >

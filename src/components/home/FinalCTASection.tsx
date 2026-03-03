@@ -15,7 +15,7 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ cmsData }) => 
         <Stack spacing="md" align="center">
           <H2
             align="center"
-            cmsId="final-cta-title"
+
             data-testid="final-cta-title"
           >
             {cmsData?.['final-cta-title'] || 'Ready to Book Your Ride?'}
@@ -23,7 +23,7 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ cmsData }) => 
           <Text
             align="center"
             size="lg"
-            cmsId="final-cta-description"
+
             data-testid="final-cta-description"
           >
             {cmsData?.['final-cta-description'] || 'Experience reliable airport transportation with Fairfield Airport Cars'}
@@ -35,7 +35,7 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ cmsData }) => 
             <Button
               variant="primary"
               size="lg"
-              cmsId="final-cta-primary-button"
+
               data-testid="final-cta-primary-button"
             >
               {cmsData?.['final-cta-primary-button'] || 'Book Now'}
@@ -45,7 +45,7 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ cmsData }) => 
             <Button
               variant="secondary"
               size="lg"
-              cmsId="final-cta-secondary-button"
+
               data-testid="final-cta-secondary-button"
             >
               {cmsData?.['final-cta-secondary-button'] || 'Learn More'}

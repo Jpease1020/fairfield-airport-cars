@@ -9,7 +9,7 @@ export default function SuccessPage() {
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="loading-text">Loading...</Text>
+          <Text>Loading...</Text>
         </Stack>
       </Container>
     }>

@@ -180,10 +180,10 @@ export function TrackingETADisplay({
         {/* Status Header */}
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack direction="horizontal" align="center" spacing="sm">
-            <Text size="lg" cmsId="tracking-status-icon">{statusInfo.icon}</Text>
+            <Text size="lg">{statusInfo.icon}</Text>
             <Stack spacing="xs">
-              <Text weight="bold" cmsId="tracking-status-text">{statusInfo.text}</Text>
-              <Text variant="muted" size="sm" cmsId="tracking-booking-id">
+              <Text weight="bold">{statusInfo.text}</Text>
+              <Text variant="muted" size="sm">
                 {cmsData?.['tracking-bookingId'] || `Booking #${bookingId.slice(-8)}`}
               </Text>
             </Stack>
@@ -198,19 +198,19 @@ export function TrackingETADisplay({
           <Box variant="outlined" padding="lg">
             <Stack spacing="md">
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text weight="bold" size="lg" cmsId="tracking-eta-title">{cmsData?.['tracking-etaTitle'] || 'Estimated Arrival'}</Text>
+                <Text weight="bold" size="lg">{cmsData?.['tracking-etaTitle'] || 'Estimated Arrival'}</Text>
                 {loading && <LoadingSpinner size="sm" />}
               </Stack>
 
               {error ? (
                 <Alert variant="error">
-                  <Text cmsId="tracking-error">{error}</Text>
+                  <Text>{error}</Text>
                 </Alert>
               ) : etaInfo ? (
                 <Stack spacing="md">
                   {/* Time Remaining */}
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text cmsId="tracking-time-remaining">{cmsData?.['tracking-timeRemaining'] || 'Time Remaining'}</Text>
+                    <Text>{cmsData?.['tracking-timeRemaining'] || 'Time Remaining'}</Text>
                     <Text weight="bold" size="lg">
                       {formatTimeRemaining(etaInfo.estimatedArrival)}
                     </Text>
@@ -218,7 +218,7 @@ export function TrackingETADisplay({
 
                   {/* Arrival Time */}
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text cmsId="tracking-arrival-time">{cmsData?.['tracking-arrivalTime'] || 'Arrival Time'}</Text>
+                    <Text>{cmsData?.['tracking-arrivalTime'] || 'Arrival Time'}</Text>
                     <Text weight="bold">
                       {etaInfo.estimatedArrival.toLocaleTimeString()}
                     </Text>
@@ -226,20 +226,20 @@ export function TrackingETADisplay({
 
                   {/* Distance */}
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text cmsId="tracking-distance">{cmsData?.['tracking-distance'] || 'Distance'}</Text>
-                    <Text cmsId="ignore">{etaInfo.distanceMiles.toFixed(1)} miles</Text>
+                    <Text>{cmsData?.['tracking-distance'] || 'Distance'}</Text>
+                    <Text>{etaInfo.distanceMiles.toFixed(1)} miles</Text>
                   </Stack>
 
                   {/* Traffic Conditions */}
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text cmsId="tracking-traffic">{cmsData?.['tracking-traffic'] || 'Traffic'}</Text>
+                    <Text>{cmsData?.['tracking-traffic'] || 'Traffic'}</Text>
                     <Badge variant={getTrafficColor(etaInfo.trafficConditions)}>
                       {getTrafficText(etaInfo.trafficConditions)}
                     </Badge>
                   </Stack>
                 </Stack>
               ) : (
-                <Text variant="muted" cmsId="tracking-calculating">{cmsData?.['tracking-calculating'] || 'Calculating arrival time...'}</Text>
+                <Text variant="muted">{cmsData?.['tracking-calculating'] || 'Calculating arrival time...'}</Text>
               )}
             </Stack>
           </Box>
@@ -248,17 +248,17 @@ export function TrackingETADisplay({
         {/* Route Information */}
         <Box variant="outlined" padding="lg">
           <Stack spacing="md">
-            <Text weight="bold" cmsId="tracking-route-info">{cmsData?.['tracking-route-info'] || 'Route Information'}</Text>
+            <Text weight="bold">{cmsData?.['tracking-route-info'] || 'Route Information'}</Text>
             
             <Stack spacing="sm">
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text cmsId="tracking-from">{cmsData?.['tracking-from'] || 'From'}</Text>
-                <Text weight="bold" cmsId="ignore">{pickupLocation}</Text>
+                <Text>{cmsData?.['tracking-from'] || 'From'}</Text>
+                <Text weight="bold">{pickupLocation}</Text>
               </Stack>
               
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text cmsId="tracking-to">{cmsData?.['tracking-to'] || 'To'}</Text>
-                <Text weight="bold" cmsId="ignore">{dropoffLocation}</Text>
+                <Text>{cmsData?.['tracking-to'] || 'To'}</Text>
+                <Text weight="bold">{dropoffLocation}</Text>
               </Stack>
             </Stack>
           </Stack>
@@ -268,25 +268,25 @@ export function TrackingETADisplay({
         {driverLocation && (
           <Box variant="outlined" padding="lg">
             <Stack spacing="md">
-              <Text weight="bold" cmsId="tracking-driver-info">{cmsData?.['tracking-driverInfo'] || 'Driver Information'}</Text>
+              <Text weight="bold">{cmsData?.['tracking-driverInfo'] || 'Driver Information'}</Text>
               
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text cmsId="tracking-last-updated">{cmsData?.['tracking-lastUpdated'] || 'Last Updated'}</Text>
-                  <Text cmsId="ignore">{driverLocation.timestamp.toLocaleTimeString()}</Text>
+                  <Text>{cmsData?.['tracking-lastUpdated'] || 'Last Updated'}</Text>
+                  <Text>{driverLocation.timestamp.toLocaleTimeString()}</Text>
                 </Stack>
                 
                 {driverLocation.speed && (
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text cmsId="tracking-speed">{cmsData?.['tracking-speed'] || 'Speed'}</Text>
-                    <Text cmsId="ignore">{Math.round(driverLocation.speed)} mph</Text>
+                    <Text>{cmsData?.['tracking-speed'] || 'Speed'}</Text>
+                    <Text>{Math.round(driverLocation.speed)} mph</Text>
                   </Stack>
                 )}
                 
                 {driverLocation.heading && (
                   <Stack direction="horizontal" justify="space-between" align="center">
-                    <Text cmsId="tracking-heading">{cmsData?.['tracking-heading'] || 'Heading'}</Text>
-                    <Text cmsId="ignore">{Math.round(driverLocation.heading)}°</Text>
+                    <Text>{cmsData?.['tracking-heading'] || 'Heading'}</Text>
+                    <Text>{Math.round(driverLocation.heading)}°</Text>
                   </Stack>
                 )}
               </Stack>

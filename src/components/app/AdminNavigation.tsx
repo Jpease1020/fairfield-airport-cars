@@ -43,13 +43,13 @@ export const AdminNavigation: React.FC = () => {
 
   const actions = (
     <Link href="/" data-testid="admin-nav-view-site-link" id="admin-nav-view-site-link">
-      <Button variant="outline" size="sm" data-testid="admin-nav-view-site-button" id="admin-nav-view-site-button" cmsId="admin-nav-view-site-button"  text={cmsData?.['adminNavigation-viewSiteButton'] || 'View Site'} />
+      <Button variant="outline" size="sm" data-testid="admin-nav-view-site-button" id="admin-nav-view-site-button"  text={cmsData?.['adminNavigation-viewSiteButton'] || 'View Site'} />
     </Link>
   );
 
   const mobileActions = (
     <Link href="/" data-testid="admin-nav-mobile-view-site-link" id="admin-nav-mobile-view-site-link">
-      <Button variant="outline" size="sm" data-testid="admin-nav-mobile-view-site-button" id="admin-nav-mobile-view-site-button" cmsId="admin-nav-mobile-view-site-button"  text={cmsData?.['adminNavigation-mobile-viewSiteButton'] || 'View Site'} />
+      <Button variant="outline" size="sm" data-testid="admin-nav-mobile-view-site-button" id="admin-nav-mobile-view-site-button"  text={cmsData?.['adminNavigation-mobile-viewSiteButton'] || 'View Site'} />
     </Link>
   );
 
@@ -58,7 +58,7 @@ export const AdminNavigation: React.FC = () => {
       variant="outline"
       size="sm"
       onClick={handleLogout}
-      cmsId="admin-logout-button"
+
       
       text="🚪 Logout"
     />

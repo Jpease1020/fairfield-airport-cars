@@ -47,7 +47,6 @@ type DateTimePickerMockProps = {
   value?: string;
   onChange?: (value: string) => void;
   'data-testid'?: string;
-  cmsId?: string;
   minDate?: Date;
   fullWidth?: boolean;
   [key: string]: unknown;
@@ -59,7 +58,6 @@ vi.mock('@/design/components/base-components/forms/DateTimePicker', () => ({
     value = '',
     onChange,
     'data-testid': dataTestId,
-    cmsId,
     minDate: _minDate,
     fullWidth: _fullWidth,
     ...rest
@@ -67,7 +65,7 @@ vi.mock('@/design/components/base-components/forms/DateTimePicker', () => ({
     // Parse ISO string into date and time parts
     const datePart = value ? value.split('T')[0] : '';
     const timePart = value ? value.split('T')[1]?.slice(0, 5) : '';
-    const testId = dataTestId ?? cmsId ?? 'date-time-picker';
+    const testId = dataTestId ?? (typeof rest.id === 'string' ? rest.id : 'date-time-picker');
     
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newDate = e.target.value;
@@ -209,4 +207,3 @@ describe('Hero quick booking bridge', () => {
     expect(observer.getAttribute('data-dropoff-lat')).not.toBe('');
   });
 });
-

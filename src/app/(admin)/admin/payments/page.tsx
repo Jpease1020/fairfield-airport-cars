@@ -120,7 +120,7 @@ function PaymentsPageContent() {
       <Container>
         <Stack spacing="lg" align="center">
           <LoadingSpinner />
-          <Text variant="body" cmsId="loading-loading-payments" >
+          <Text variant="body" >
             {cmsData?.['loading-loadingPayments'] || 'Loading payments from database...'}
           </Text>
         </Stack>
@@ -135,7 +135,7 @@ function PaymentsPageContent() {
           <Alert variant="error" title={cmsData?.['error-title'] || 'Error Loading Payments'}>
             {error}
           </Alert>
-          <Button onClick={fetchPayments} variant="primary" cmsId="error-try-again"  text={cmsData?.['error-tryAgain'] || 'Try Again'} />         
+          <Button onClick={fetchPayments} variant="primary"  text={cmsData?.['error-tryAgain'] || 'Try Again'} />         
         </Stack>
       </Container>
     );
@@ -181,17 +181,17 @@ function PaymentsPageContent() {
     <Container>
       <Stack spacing="xl">    
         <Stack spacing="md">
-          <H1 cmsId="title" >
+          <H1 >
             {cmsData?.['title'] || 'Payment Management'}
           </H1>
-          <Text variant="body" color="secondary" cmsId="subtitle" >
+          <Text variant="body" color="secondary" >
             {cmsData?.['subtitle'] || 'Track all payment transactions. To refund a booking, use Bookings → Cancel (refunds follow business rules).'}
           </Text>
         </Stack>
 
         {/* Status Filter */}
         <Stack spacing="sm">
-          <Text variant="small" weight="medium" cmsId="filter-title" >
+          <Text variant="small" weight="medium" >
             {cmsData?.['filter-title'] || 'Filter by Status'}
           </Text>
           <select
@@ -212,7 +212,7 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">💰</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" cmsId="stats-total-payments" >
+                <Text variant="small" color="secondary" >
                   {cmsData?.['stats-totalPayments'] || 'Total Payments'}
                 </Text>
                 <Text size="xl" weight="bold">{stats.totalPayments}</Text>
@@ -224,7 +224,7 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">✅</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" cmsId="stats-completed" >
+                <Text variant="small" color="secondary" >
                   {cmsData?.['stats-completed'] || 'Completed'}
                 </Text>
                 <Text size="xl" weight="bold">{stats.completedPayments}</Text>
@@ -236,7 +236,7 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">📊</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" cmsId="stats-total-revenue" >
+                <Text variant="small" color="secondary" >
                   {cmsData?.['stats-totalRevenue'] || 'Total Revenue'}
                 </Text>
                 <Text size="xl" weight="bold">{formatCurrency(stats.totalAmount)}</Text>
@@ -248,7 +248,7 @@ function PaymentsPageContent() {
             <Stack direction="horizontal" spacing="md" align="center">
               <Text size="xl">🔄</Text>
               <Stack spacing="xs">
-                <Text variant="small" color="secondary" cmsId="stats-net-revenue" >
+                <Text variant="small" color="secondary" >
                   {cmsData?.['stats-netRevenue'] || 'Net Revenue'}
                 </Text>
                 <Text size="xl" weight="bold">{formatCurrency(stats.netRevenue)}</Text>
@@ -262,10 +262,10 @@ function PaymentsPageContent() {
           <Box>
             <Stack spacing="md" align="center">
               <Text size="xl">💳</Text>
-              <Text size="lg" weight="medium" cmsId="table-no-payments-title" >
+              <Text size="lg" weight="medium" >
                 {cmsData?.['table-noPayments-title'] || 'No Payments Found'}
               </Text>
-              <Text variant="body" color="secondary" cmsId="table-no-payments-description" >
+              <Text variant="body" color="secondary" >
                 {cmsData?.['table-noPayments-description'] || 'No payments match your current filter criteria.'}
               </Text>
             </Stack>

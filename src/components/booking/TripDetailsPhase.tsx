@@ -163,7 +163,7 @@ export function TripDetailsPhase({
           size="lg"
           onClick={goToNextPhase}
           data-testid="trip-details-next-button"
-          cmsId="trip-details-next-button"
+
           text={cmsData?.['tripDetailsPhase-nextButton'] || 'Continue to Contact Info'}
           fullWidth
         />

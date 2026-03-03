@@ -102,7 +102,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" cmsId="loading-message" >
+              <Text align="center" >
                 {pageCmsData?.['message'] || 'Loading booking details...'}
               </Text>
             </Stack>
@@ -118,16 +118,16 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" cmsId="error-title" >
+              <H1 align="center" >
                   {pageCmsData?.['title'] || 'Unable to Load Booking'}
               </H1>
-              <Text align="center" cmsId="error-description" >
+              <Text align="center" >
                 {pageCmsData?.['description'] || 'We could not load the booking details. Please check your booking ID and try again.'}
               </Text>
               <Button
                 onClick={() => router.push('/bookings')}
                 variant="primary"
-                cmsId="error-view-bookings"
+
               >
                 {pageCmsData?.['viewBookings'] || 'View My Bookings'}
               </Button>
@@ -144,16 +144,16 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" cmsId="no-booking-title" >
+              <H1 align="center" >
                 {pageCmsData?.['title'] || 'No Booking Found'}
               </H1>
-              <Text align="center" cmsId="no-booking-description" >
+              <Text align="center" >
                 {pageCmsData?.['description'] || 'The booking you are looking for could not be found.'}
               </Text>
               <Button
                 onClick={() => router.push('/bookings')}
                 variant="primary"
-                cmsId="view-bookings"
+
               >
                 {pageCmsData?.['view-bookings'] || 'View My Bookings'}
               </Button>
@@ -170,10 +170,10 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <H1 align="center" cmsId="title" >
+            <H1 align="center" >
               {pageCmsData?.['title'] || 'Manage Booking'}
             </H1>
-            <Text align="center" cmsId="subtitle" >
+            <Text align="center" >
               {pageCmsData?.['subtitle'] || `Manage your booking #${bookingId}`}
             </Text>
           </Stack>
@@ -185,7 +185,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
         <Container>
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg">
-              <H2 cmsId="booking-details-title">
+              <H2>
                 {pageCmsData?.['booking-details-title'] || 'Booking Information'}
               </H2>
               
@@ -210,7 +210,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                   <Span weight="bold">{pageCmsData?.['statusLabel'] || 'Status:'}</Span>{' '}
                   {booking.status || 'pending'}
                 </Text>
-                <Text cmsId="fare-display">
+                <Text>
                   <Span weight="bold">{pageCmsData?.['fareLabel'] || 'Fare:'}</Span>{' '}
                   ${(booking.trip?.fare || booking.fare || 0).toFixed(2)}
                 </Text>
@@ -234,7 +234,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
               <Button
                 onClick={() => router.push(`/booking/${bookingId}/edit`)}
                 variant="primary"
-                cmsId="actions-edit"
+
                 disabled={booking.status === 'cancelled' || booking.status === 'completed'}
               >
                 {pageCmsData?.['edit-booking'] || 'Edit Booking'}
@@ -242,7 +242,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
               <Button
                 onClick={() => router.push(`/booking/${bookingId}/edit`)}
                 variant="outline"
-                cmsId="actions-reschedule"
+
                 disabled={booking.status === 'cancelled' || booking.status === 'completed'}
               >
                 {pageCmsData?.['reschedule'] || 'Reschedule'}
@@ -250,7 +250,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
               <Button
                 onClick={handleCancelBooking}
                 variant="outline"
-                cmsId="actions-cancel"
+
                 disabled={booking.status === 'cancelled' || booking.status === 'completed' || cancelling}
               >
                 {cancelling ? (pageCmsData?.['cancelling'] || 'Cancelling...') : (pageCmsData?.['cancel-booking'] || 'Cancel Booking')}
@@ -260,7 +260,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
             <Button
               onClick={() => router.push(`/booking/${bookingId}`)}
               variant="outline"
-              cmsId="actions-view-details"
+
             >
               {pageCmsData?.['view-details'] || 'View Full Details'}
             </Button>
@@ -268,7 +268,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
             <Button
               onClick={() => router.push('/bookings')}
               variant="outline"
-              cmsId="actions-back-to-bookings"
+
             >
               {pageCmsData?.['backToBookings'] || 'Back to Bookings'}
             </Button>

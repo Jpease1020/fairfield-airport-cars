@@ -97,7 +97,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
     <Container variant="default" padding="sm">
       <Stack direction="horizontal" spacing="sm" align="center" justify="space-between">
         <Stack direction="horizontal" spacing="sm" align="center">
-          <Span cmsId="toast-icon">{getIcon()}</Span>
+          <Span>{getIcon()}</Span>
           <Text size="sm">
             {toast.message}
           </Text>
@@ -108,7 +108,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
           variant="ghost"
           size="sm"
         >
-          <Span cmsId="ignore">×</Span>
+          <Span>×</Span>
         </Button>
       </Stack>
     </Container>

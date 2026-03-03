@@ -47,7 +47,7 @@ vi.mock('@/components/booking/PaymentPhase', () => ({
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
-    <CMSDataProvider initialCmsData={{}}>
+    <CMSDataProvider>
       <BookingProvider>
         {component}
       </BookingProvider>

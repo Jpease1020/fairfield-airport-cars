@@ -19,7 +19,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ cmsData }) => {
       <Stack spacing="md" align="center">
         <H2
           align="center"
-          cmsId="faq-title"
+
           data-testid="faq-title"
         >
           {cmsData?.['faq-title'] || 'Frequently Asked Questions'}
@@ -27,7 +27,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ cmsData }) => {
         <Text
           align="center"
           size="lg"
-          cmsId="faq-subtitle"
+
           data-testid="faq-subtitle"
         >
           {cmsData?.['faq-subtitle'] || 'Everything you need to know about our service'}
@@ -41,14 +41,14 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ cmsData }) => {
               variant="lead"
               weight="semibold"
               size="lg"
-              cmsId="faq-items-0-question"
+
             >
               {cmsData?.['faq-items-0-question'] || 'How far in advance should I book?'}
             </Text>
             <Text
               size="md"
               color="secondary"
-              cmsId="faq-items-0-answer"
+
             >
               {cmsData?.['faq-items-0-answer'] || 'We recommend booking at least 24 hours in advance for the best availability.'}
             </Text>
@@ -59,14 +59,14 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ cmsData }) => {
               variant="lead"
               weight="semibold"
               size="lg"
-              cmsId="faq-items-1-question"
+
             >
               {cmsData?.['faq-items-1-question'] || 'What if my flight is delayed?'}
             </Text>
             <Text
               size="md"
               color="secondary"
-              cmsId="faq-items-1-answer"
+
             >
               {cmsData?.['faq-items-1-answer'] || 'We track your flight and automatically adjust pickup times for delays.'}
             </Text>
@@ -77,14 +77,14 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ cmsData }) => {
               variant="lead"
               weight="semibold"
               size="lg"
-              cmsId="faq-items-2-question"
+
             >
               {cmsData?.['faq-items-2-question'] || 'Can I cancel or modify my booking?'}
             </Text>
             <Text
               size="md"
               color="secondary"
-              cmsId="faq-items-2-answer"
+
             >
               {cmsData?.['faq-items-2-answer'] || 'Yes. Cancellations 24+ hours in advance have no fee; less than 24h incur a 25% fee, less than 12h 50%, less than 6h 75%. Contact us to modify your booking.'}
             </Text>

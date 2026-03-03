@@ -196,13 +196,13 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-form-title" weight="bold" cmsId="cancel-form-title">{cmsData?.['cancel-form-title'] || '📝 Cancel Your Booking'}</Text>
-              <Text data-testid="cancel-form-description" cmsId="cancel-form-description">{cmsData?.['cancel-form-description'] || 'Please provide your booking details to process the cancellation'}</Text>
+              <Text data-testid="cancel-form-title" weight="bold">{cmsData?.['cancel-form-title'] || '📝 Cancel Your Booking'}</Text>
+              <Text data-testid="cancel-form-description">{cmsData?.['cancel-form-description'] || 'Please provide your booking details to process the cancellation'}</Text>
             </Stack>
             
             <Stack data-testid="cancel-form-fields" spacing="md">
               <Container>
-                <Label htmlFor="booking-id" cmsId="booking-id-label">{cmsData?.['booking-id-label'] || 'Booking ID'}</Label>
+                <Label htmlFor="booking-id">{cmsData?.['booking-id-label'] || 'Booking ID'}</Label>
                 <Input
                   id="booking-id"
                   value={bookingId}
@@ -210,7 +210,7 @@ function CancelPageContent() {
                   placeholder="Enter your booking ID"
                   disabled={loading}
                 />
-                <Text size="sm" color="secondary" cmsId="booking-id-hint">{cmsData?.['booking-id-hint'] || 'Enter your booking reference number'}</Text>
+                <Text size="sm" color="secondary">{cmsData?.['booking-id-hint'] || 'Enter your booking reference number'}</Text>
               </Container>
               
               <Stack direction="horizontal" spacing="md">
@@ -225,19 +225,19 @@ function CancelPageContent() {
               {bookingInfo && (
                 <Box variant="outlined" padding="md">
                   <Stack spacing="sm">
-                    <Text weight="bold" cmsId="booking-found">{cmsData?.['booking-found'] || 'Booking Found'}</Text>
+                    <Text weight="bold">{cmsData?.['booking-found'] || 'Booking Found'}</Text>
                     {bookingInfo.pickupDateTime && (
-                      <Text size="sm" cmsId="pickup-time">Pickup: {new Date(bookingInfo.pickupDateTime).toLocaleString()}</Text>
+                      <Text size="sm">Pickup: {new Date(bookingInfo.pickupDateTime).toLocaleString()}</Text>
                     )}
                     {bookingInfo.fare && (
-                      <Text size="sm" cmsId="fare-amount">Fare: ${bookingInfo.fare.toFixed(2)}</Text>
+                      <Text size="sm">Fare: ${bookingInfo.fare.toFixed(2)}</Text>
                     )}
                   </Stack>
                 </Box>
               )}
 
               <Container>
-                <Label htmlFor="cancel-reason" cmsId="cancel-reason-label">{cmsData?.['cancel-reason-label'] || 'Cancellation Reason (Optional)'}</Label>
+                <Label htmlFor="cancel-reason">{cmsData?.['cancel-reason-label'] || 'Cancellation Reason (Optional)'}</Label>
                 <Select
                   id="cancel-reason"
                   value={reason}
@@ -285,8 +285,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-policy-title" weight="bold" cmsId="cancel-policy-title">{cmsData?.['cancel-policy-title'] || '📋 Cancellation Policy'}</Text>
-              <Text data-testid="cancel-policy-description" cmsId="cancel-policy-description">{cmsData?.['cancel-policy-description'] || 'Important information about our cancellation terms'}</Text>
+              <Text data-testid="cancel-policy-title" weight="bold">{cmsData?.['cancel-policy-title'] || '📋 Cancellation Policy'}</Text>
+              <Text data-testid="cancel-policy-description">{cmsData?.['cancel-policy-description'] || 'Important information about our cancellation terms'}</Text>
             </Stack>
             
             <Stack data-testid="cancel-policy-list" spacing="md">
@@ -308,8 +308,8 @@ function CancelPageContent() {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="md" align="center">
-              <Text data-testid="cancel-alternatives-title" weight="bold" cmsId="alternatives-title">{cmsData?.['cancel-alternatives-title'] || '🔄 Alternative Options'}</Text>
-              <Text data-testid="cancel-alternatives-description" cmsId="cancel-alternatives-description">{cmsData?.['cancel-alternatives-description'] || 'Consider these alternatives before cancelling'}</Text>
+              <Text data-testid="cancel-alternatives-title" weight="bold">{cmsData?.['cancel-alternatives-title'] || '🔄 Alternative Options'}</Text>
+              <Text data-testid="cancel-alternatives-description">{cmsData?.['cancel-alternatives-description'] || 'Consider these alternatives before cancelling'}</Text>
             </Stack>
             
             <FeatureGrid data-testid="cancel-alternatives-grid" features={alternativeOptions} columns={3} />

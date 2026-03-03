@@ -121,10 +121,10 @@ export default function PaymentSuccessClient() {
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <H1 align="center" cmsId="processing-title">
+          <H1 align="center">
               {cmsData?.['title'] || 'Processing Your Payment...'}
           </H1>
-          <Text align="center" cmsId="processing-description">
+          <Text align="center">
             {cmsData?.['description'] || 'Please wait while we confirm your payment and create your booking.'}
           </Text>
         </Stack>
@@ -136,13 +136,13 @@ export default function PaymentSuccessClient() {
     return (
       <Container maxWidth="2xl" padding="xl">
         <Stack spacing="xl" align="center">
-          <H1 align="center" cmsId="error-title">
+          <H1 align="center">
             {cmsData?.['title'] || 'Payment Processing Error'}
           </H1>
-          <Text align="center" cmsId="error-description">
+          <Text align="center">
             {error || cmsData?.['description'] || 'There was an error processing your payment.'}
           </Text>
-          <Button onClick={() => router.push('/book')} variant="primary" cmsId="tryAgain"  text={cmsData?.['tryAgain'] || 'Try Again'}/>
+          <Button onClick={() => router.push('/book')} variant="primary"  text={cmsData?.['tryAgain'] || 'Try Again'}/>
         </Stack>
       </Container>
     );
@@ -152,21 +152,21 @@ export default function PaymentSuccessClient() {
     <Container maxWidth="2xl" padding="xl">
       <Stack spacing="xl" align="center">
         <Box variant="filled" padding="xl">
-          <Text size="xl" cmsId="ignore">✅</Text>
+          <Text size="xl">✅</Text>
         </Box>
         
-        <H1 align="center" cmsId="success-title">
+        <H1 align="center">
           {cmsData?.['success-title'] || 'Payment Successful!'}
         </H1>
         
-        <Text align="center" cmsId="success-description">
+        <Text align="center">
           {cmsData?.['success-description'] || 'Your deposit has been processed and your booking is confirmed.'}
         </Text>
 
         {bookingId && (
           <Box variant="outlined" padding="lg">
             <Stack spacing="sm">
-              <Text weight="bold" cmsId="success-booking-id">
+              <Text weight="bold">
                 {cmsData?.['success-booking-id'] || 'Booking ID:'}
               </Text>
               <Text size="lg" variant="body">{bookingId}</Text>
@@ -184,7 +184,7 @@ export default function PaymentSuccessClient() {
               }
             }} 
             variant="primary" 
-            cmsId="track-ride" 
+ 
              
             text={cmsData?.['track-ride'] || 'Track My Ride'}
           />
@@ -194,7 +194,7 @@ export default function PaymentSuccessClient() {
               router.push('/bookings');
             }} 
             variant="secondary" 
-            cmsId="view-bookings" 
+ 
              
             text={cmsData?.['view-bookings'] || 'View All Bookings'} 
           />

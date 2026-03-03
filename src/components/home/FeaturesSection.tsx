@@ -40,7 +40,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
       <Stack spacing="md" align="center">
         <H2
           align="center"
-          cmsId="features-title"
+
           data-testid="features-title"
         >
           {cmsData?.['features-title'] || 'Why Choose Us'}
@@ -48,7 +48,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
         <Text
           align="center"
           size="lg"
-          cmsId="features-subtitle"
+
           data-testid="features-subtitle"
         >
           {cmsData?.['features-subtitle'] || 'Experience the difference with our premium service'}
@@ -64,13 +64,13 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
         <GreyBox variant="elevated" padding="lg" data-testid="feature-box-1">
           <Col grow align="center">
             <Stack spacing="sm" align="center">
-              <Text size="xl" align="center" cmsId="ignore">⭐</Text>
+              <Text size="xl" align="center">⭐</Text>
               <Text
                 align="center"
                 variant="lead"
                 weight="semibold"
                 size="lg"
-                cmsId="features-items-0-title"
+
               >
                 {cmsData?.['features-items-0-title'] || 'Reliable Service'}
               </Text>
@@ -78,7 +78,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
                 align="center"
                 size="md"
                 color="secondary"
-                cmsId="features-items-0-description"
+
               >
                 {cmsData?.['features-items-0-description'] || 'Professional drivers and well-maintained vehicles'}
               </Text>
@@ -89,13 +89,13 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
         <GreyBox variant="elevated" padding="lg" data-testid="feature-box-2">
           <Col grow align="center">
             <Stack spacing="md" align="center">
-              <Text size="xl" align="center" cmsId="ignore">🚗</Text>
+              <Text size="xl" align="center">🚗</Text>
               <Text
                 align="center"
                 variant="lead"
                 weight="semibold"
                 size="lg"
-                cmsId="features-items-1-title"
+
               >
                 {cmsData?.['features-items-1-title'] || 'Flight Tracking'}
               </Text>
@@ -103,7 +103,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
                 align="center"
                 size="md"
                 color="secondary"
-                cmsId="features-items-1-description"
+
               >
                 {cmsData?.['features-items-1-description'] || 'We monitor your flight for delays and adjust pickup times'}
               </Text>
@@ -114,13 +114,13 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
         <GreyBox variant="elevated" padding="lg" data-testid="feature-box-3">
           <Col grow align="center">
             <Stack spacing="md" align="center">
-              <Text size="xl" align="center" cmsId="ignore">💳</Text>
+              <Text size="xl" align="center">💳</Text>
               <Text
                 align="center"
                 variant="lead"
                 weight="semibold"
                 size="lg"
-                cmsId="features-items-2-title"
+
               >
                 {cmsData?.['features-items-2-title'] || '24/7 Support'}
               </Text>
@@ -128,7 +128,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
                 align="center"
                 size="md"
                 color="secondary"
-                cmsId="features-items-2-description"
+
               >
                 {cmsData?.['features-items-2-description'] || 'Round-the-clock customer service and emergency support'}
               </Text>

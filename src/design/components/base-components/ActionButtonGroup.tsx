@@ -49,7 +49,7 @@ export const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({
           disabled={button.disabled}
           href={button.href}
           icon={button.icon}
-          cmsId="ignore"
+
         >
           {button.label}
         </Button>

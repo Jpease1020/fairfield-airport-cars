@@ -61,7 +61,7 @@ export default function AdminHelpClient() {
         <Stack spacing="md" align="center">
           <H3 
             align="center" 
-            cmsId="title"
+
             
           >
             {cmsData?.['title'] || 'Admin Help'}
@@ -69,7 +69,7 @@ export default function AdminHelpClient() {
           <Text 
             variant="lead" 
             align="center" 
-            cmsId="subtitle"
+
             
           >
             {cmsData?.['subtitle'] || 'Get help with managing your business'}

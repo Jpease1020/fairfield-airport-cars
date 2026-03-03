@@ -62,10 +62,10 @@ export function FlightInfoPhase({
       <Stack spacing="2xl" data-testid="flight-info-phase-stack">
         {/* Header */}
         <Stack spacing="md" align="center">
-          <H2 cmsId="flight-info-phase-title">
+          <H2>
             {cmsData?.['flight-info-phase-title'] || 'Almost There—Complete Your Booking'}
           </H2>
-          <Text size="lg" align="center" color="secondary" cmsId="flight-info-phase-description">
+          <Text size="lg" align="center" color="secondary">
             {cmsData?.['flight-info-phase-description'] || 'Your ride has been successfully booked. Help us provide better service by sharing your flight details (optional).'}
           </Text>
           <Text
@@ -73,7 +73,7 @@ export function FlightInfoPhase({
             align="center"
             color="warning"
             weight="medium"
-            cmsId="flight-info-phase-warning"
+
             data-testid="flight-info-phase-warning"
           >
             {cmsData?.['flight-info-phase-warning'] ||
@@ -84,20 +84,20 @@ export function FlightInfoPhase({
         {/* Customer Information Section - Always show if we're on this page */}
         <Box variant="outlined" padding="lg" data-testid="customer-info-section">
           <Stack spacing="md">
-            <Text weight="bold" size="md" cmsId="flight-info-customer-section">
+            <Text weight="bold" size="md">
               {cmsData?.['flight-info-customer-section'] || 'Your Information'}
             </Text>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="flight-info-customer-name">{cmsData?.['flight-info-customer-name'] || 'Name:'}</Text>
-              <Text cmsId="flight-info-customer-name-value">{customer.name || 'Not provided'}</Text>
+              <Text weight="medium">{cmsData?.['flight-info-customer-name'] || 'Name:'}</Text>
+              <Text>{customer.name || 'Not provided'}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="flight-info-customer-email">{cmsData?.['flight-info-customer-email'] || 'Email:'}</Text>
-              <Text cmsId="flight-info-customer-email-value">{customer.email || 'Not provided'}</Text>
+              <Text weight="medium">{cmsData?.['flight-info-customer-email'] || 'Email:'}</Text>
+              <Text>{customer.email || 'Not provided'}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="flight-info-customer-phone">{cmsData?.['flight-info-customer-phone'] || 'Phone:'}</Text>
-              <Text cmsId="flight-info-customer-phone-value">{customer.phone || 'Not provided'}</Text>
+              <Text weight="medium">{cmsData?.['flight-info-customer-phone'] || 'Phone:'}</Text>
+              <Text>{customer.phone || 'Not provided'}</Text>
             </Stack>
           </Stack>
         </Box>
@@ -112,7 +112,7 @@ export function FlightInfoPhase({
         {warning && (
           <WarningBox variant="filled" padding="lg" data-testid="flight-info-phase-warning-message">
             <Stack spacing="sm" align="center">
-              <Text size="lg" weight="bold" color="warning" align="center" cmsId="flight-info-email-warning-title">
+              <Text size="lg" weight="bold" color="warning" align="center">
                 {cmsData?.['flight-info-email-warning-title'] || '⚠️ Email Not Sent'}
               </Text>
               <Text size="md" align="center" color="warning">
@@ -132,7 +132,7 @@ export function FlightInfoPhase({
             size="lg"
             onClick={completeFlightInfo}
             data-testid="flight-info-complete-button"
-            cmsId="flight-info-complete-button"
+
             text={cmsData?.['flight-info-complete-button'] || 'Save Flight Info'}
             fullWidth
           />

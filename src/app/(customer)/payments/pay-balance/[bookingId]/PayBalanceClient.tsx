@@ -78,7 +78,7 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" cmsId="loading-message">
+              <Text align="center">
                 {cmsData?.['payments-message'] || 'Loading booking details...'}
               </Text>
             </Stack>
@@ -94,16 +94,16 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" cmsId="error-title">
+              <H1 align="center">
                 {cmsData?.['payments-title'] || 'Unable to Load Booking'}
               </H1>
-              <Text align="center" cmsId="error-description">
+              <Text align="center">
                 {cmsData?.['payments-description'] || 'We could not load the booking details. Please check your booking ID and try again.'}
               </Text>
               <Button
                 onClick={() => router.push('/bookings')}
                 variant="primary"
-                cmsId="error-view-bookings"
+
               >
                 {cmsData?.['payments-viewBookings'] || 'View My Bookings'}
               </Button>
@@ -120,10 +120,10 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" cmsId="success-title">
+              <H1 align="center">
                 {cmsData?.['payments-title'] || 'Payment Successful!'}
               </H1>
-              <Text align="center" cmsId="success-description">
+              <Text align="center">
                 {cmsData?.['payments-description'] || 'Your payment has been processed successfully. Redirecting to confirmation...'}
               </Text>
             </Stack>
@@ -139,7 +139,7 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <Text align="center" cmsId="no-booking-details">
+              <Text align="center">
                 {cmsData?.['no-booking-details'] || 'No booking details found.'}
               </Text>
             </Stack>
@@ -157,19 +157,19 @@ export default function PayBalanceClient({ bookingId }: PayBalanceClientProps) {
         <Container>
           <Stack spacing="lg">
             <Stack spacing="sm" align="center">
-              <H1 align="center" cmsId="title">
+              <H1 align="center">
                 {cmsData?.['payments-title'] || 'Complete Payment'}
               </H1>
-              <Text align="center" cmsId="subtitle">
+              <Text align="center">
                 {cmsData?.['payments-subtitle'] || `Complete payment for your booking from ${bookingDetails.pickupLocation} to ${bookingDetails.dropoffLocation}`}
               </Text>
             </Stack>
 
             <Stack spacing="md" align="center">
-              <Text variant="h3" cmsId="amount-title">
+              <Text variant="h3">
                 {cmsData?.['payments-title'] || 'Amount Due'}
               </Text>
-              <Text variant="h2" cmsId="amount-value">
+              <Text variant="h2">
                 ${bookingDetails.balanceDue.toFixed(2)}
               </Text>
             </Stack>

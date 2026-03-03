@@ -302,10 +302,10 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Container spacing="md">
-            <Text cmsId="booking-fare-info-includes-fees">
+            <Text>
               {cmsData?.['booking-fare-info-includes-fees'] || 'Includes all fees and taxes'}
             </Text>
-            <Text size="lg" cmsId="ignore">
+            <Text size="lg">
               ${fare.toFixed(2)}
             </Text>
           </Container>
@@ -332,8 +332,8 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
       {/* Actions */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Text cmsId="booking-quick-actions-title">{cmsData?.['booking-quick-actions-title'] || '🎯 Quick Actions'}</Text>
-          <Text cmsId="booking-quick-actions-description">{cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}</Text>
+          <Text>{cmsData?.['booking-quick-actions-title'] || '🎯 Quick Actions'}</Text>
+          <Text>{cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}</Text>
           <ActionButtonGroup buttons={actionButtons} />
         </Container>
       </GridSection>
