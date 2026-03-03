@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 
 import { GoogleMapsClientProvider } from '@/providers/GoogleMapsClientProvider';
 import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
-import { getAllCMSDataCached } from '@/lib/services/cms-cache';
+import staticCmsData from '@/content/static-cms.generated.json';
 import { BookingProvider } from '@/providers/BookingProvider';
 import { PWAProvider } from '@/components/pwa/PWAProvider';
 import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
@@ -39,14 +39,11 @@ export const viewport = {
 // In production, use default Next.js behavior (static generation with ISR)
 // Only export dynamic in development - in production Next.js will use defaults
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Fetch CMS data once at build time or per serverless function call
-  const allCmsData = await getAllCMSDataCached();
-
   return (
     <html lang="en">
       <head>
@@ -65,7 +62,7 @@ export default async function RootLayout({
       <body>
         <StyledComponentsRegistry>
           <PWAProvider>
-            <CMSDataProvider initialCmsData={allCmsData}>
+            <CMSDataProvider initialCmsData={staticCmsData}>
               <Suspense fallback={<div>Loading...</div>}>
                 <GoogleMapsClientProvider>
                 <BookingProvider>
@@ -95,4 +92,3 @@ export default async function RootLayout({
     </html>
   );
 }
-

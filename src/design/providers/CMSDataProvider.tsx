@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
+import { getStaticCmsData } from '@/lib/services/cms-source';
 
 interface CMSContextType {
   cmsData: any | null;
@@ -18,21 +19,10 @@ export const CMSDataProvider: React.FC<CMSDataProviderProps> = ({
   children, 
   initialCmsData = null 
 }) => {
-  const [cmsData, setCmsData] = useState(initialCmsData);
-  const [isLoading, setIsLoading] = useState(!initialCmsData);
-
-  // Client-side hydration
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !cmsData) {
-      // Only fetch on client if no initial data provided
-      setIsLoading(true);
-      // You could add client-side fetching here if needed
-      setIsLoading(false);
-    }
-  }, [cmsData]);
+  const cmsData = initialCmsData ?? getStaticCmsData();
 
   return (
-    <CMSContext.Provider value={{ cmsData, isLoading }}>
+    <CMSContext.Provider value={{ cmsData, isLoading: false }}>
       {children}
     </CMSContext.Provider>
   );

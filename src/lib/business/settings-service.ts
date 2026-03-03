@@ -4,8 +4,6 @@ import { Settings, DEFAULT_SETTINGS } from '@/types/settings';
 export async function getSettings(): Promise<Settings> {
   try {
     const cmsConfig = await cmsFlattenedService.getAllCMSData();
-    console.log('CMS config keys:', Object.keys(cmsConfig));
-    console.log('Pricing data:', cmsConfig.pricing);
     if (!cmsConfig || !cmsConfig.pricing) {
       console.error('CMS config or pricing is null, falling back to defaults');
       return DEFAULT_SETTINGS;
