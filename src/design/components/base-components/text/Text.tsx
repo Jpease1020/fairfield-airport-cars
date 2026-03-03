@@ -4,12 +4,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors, fontSize, fontWeight, fontFamily, transitions } from '../../../system/tokens/tokens';
 import { BaseComponentProps, TextVariant, TextSize, FontWeight, TextAlign, ColorVariant, SpacingScale } from '../../../system/shared-types';
-import { useCMSData } from '../../../providers/CMSDataProvider';
-import { useInteractionMode } from '../../../providers/InteractionModeProvider';
 
 // Styled text component
 const StyledText = styled.p.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'color', 'isInteractive', 'cmsId'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'weight', 'align', 'color', 'isInteractive'].includes(prop)
 })<{
   variant: TextVariant;
   size: TextSize;
@@ -142,17 +140,15 @@ export interface TextProps extends BaseComponentProps {
   // HTML attributes
   as?: 'p' | 'span' | 'div' | 'article' | 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   
-  // Content editing
+  // Legacy content-editing props (contentEditable still supported for HTML use)
   contentEditable?: boolean;
   suppressContentEditableWarning?: boolean;
-  cmsKey?: string;
-  cmsId?: string; // Add cmsId property
   
   // Event handlers
-  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
-  onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
-  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onKeyDown?: (_e: React.KeyboardEvent<HTMLDivElement>) => void;
+  onFocus?: (_e: React.FocusEvent<HTMLDivElement>) => void;
+  onBlur?: (_e: React.FocusEvent<HTMLDivElement>) => void;
+  onClick?: (_e: React.MouseEvent<HTMLDivElement>) => void;
   
   // Styling
   style?: React.CSSProperties;
@@ -166,58 +162,8 @@ export const Text: React.FC<TextProps> = ({
   align = 'left',
   color = 'default',
   as: Component = 'p',
-  cmsId,
   ...rest
 }) => {
-  // Get CMS data from provider
-  const { cmsData } = useCMSData();
-  
-  // Get mode from provider
-  let mode: 'edit' | 'comment' | null = null;
-  try {
-    const context = useInteractionMode();
-    mode = context.mode;
-  } catch {
-    // Provider not available, use null as default
-    mode = null;
-  }
-  const ref = React.useRef<HTMLElement | null>(null);
-  
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Get cmsId from either cmsId prop or cmsId attribute
-    const cmsIdentifier = cmsId || (e.currentTarget as HTMLElement).getAttribute('cmsId');
-    
-    if (mode === 'edit' && cmsIdentifier) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // Dispatch custom event to open edit modal
-      const event = new (window as any).CustomEvent('openInlineEditor', {
-        detail: { cmsId: cmsIdentifier, element: e.currentTarget, x: e.clientX, y: e.clientY }
-      });
-      document.dispatchEvent(event);
-    } else if (mode === 'comment' && cmsIdentifier) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // Dispatch custom event to open comment modal
-      const event = new (window as any).CustomEvent('openCommentModal', {
-        detail: { cmsId: cmsIdentifier, element: e.currentTarget, x: e.clientX, y: e.clientY }
-      });
-      document.dispatchEvent(event);
-    }
-    
-    rest.onClick?.(e);
-  };
-  
-  // Don't add data-cms-id for decorative elements
-  const shouldIgnoreCMS = cmsId === 'ignore';
-  
-  // If we have CMS data and cmsId, try to get the field value
-  const displayContent = cmsData && cmsId && !shouldIgnoreCMS 
-    ? ((cmsData as any)?.[cmsId] || children)
-    : children;
-
   return (
     <StyledText
       as={Component}
@@ -226,13 +172,10 @@ export const Text: React.FC<TextProps> = ({
       weight={weight}
       align={align}
       color={color}
-      ref={ref as any}
-      onClick={mode ? handleClick : rest.onClick}
-      isInteractive={!!mode}
-      {...(!shouldIgnoreCMS && cmsId ? { 'data-cms-id': cmsId } : {})}
+      isInteractive={false}
       {...rest}
     >
-      {displayContent}
+      {children}
     </StyledText>
   );
 };

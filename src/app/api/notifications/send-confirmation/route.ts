@@ -3,9 +3,9 @@ import { sendSms } from '@/lib/services/twilio-service';
 import { getBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
-import { cmsFlattenedService } from '@/lib/services/cms-service';
 import { requireAdmin } from '@/lib/utils/auth-server';
 import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { APP_CONFIG } from '@/utils/constants';
 
 export async function POST(request: Request) {
   const authResult = await requireAdmin(request);
@@ -24,11 +24,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
 
-    const businessSettings = await cmsFlattenedService.getBusinessSettings();
     const pickupDateTimeText = booking.pickupDateTime
       ? formatBusinessDateTime(booking.pickupDateTime)
       : 'your scheduled time';
-    const messageBody = `Thank you for booking with ${businessSettings?.company?.name || 'Fairfield Airport Car Service'}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${pickupDateTimeText} is confirmed.`;
+    const messageBody = `Thank you for booking with ${APP_CONFIG.name}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${pickupDateTimeText} is confirmed.`;
 
     await Promise.all([
       booking.phone ? sendSms({ to: booking.phone, body: messageBody }) : Promise.resolve(),

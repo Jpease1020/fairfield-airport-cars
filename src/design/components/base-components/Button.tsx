@@ -6,12 +6,10 @@ import { colors, spacing, fontSize, borderRadius, transitions, shadows, fontWeig
 import { LoadingSpinner } from './notifications/LoadingSpinner';
 import { ButtonVariant, ButtonSize } from '../../system/shared-types';
 import { BaseTextComponentProps, TextComponentChildren } from '../../system/shared-types';
-import { useInteractionMode } from '../../providers/InteractionModeProvider';
-import { useCMSData } from '../../providers/CMSDataProvider';
 
 // Styled button component with enhanced modern styling
 const StyledButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'shape', 'fullWidth', 'loading', 'icon', 'iconPosition', 'cmsId'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'shape', 'fullWidth', 'loading', 'icon', 'iconPosition'].includes(prop)
 })<{
   variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning';
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -295,7 +293,7 @@ const StyledButton = styled.button.withConfig({
 `;
 
 // Button Component - Enhanced with better props and functionality
-export interface ButtonProps extends Omit<BaseTextComponentProps, 'cmsId' | 'cmsData'> {
+export interface ButtonProps extends BaseTextComponentProps {
   children?: TextComponentChildren; // Make optional since we can use text prop
   text?: string; // New: direct text prop for button content
   variant?: ButtonVariant;
@@ -313,7 +311,6 @@ export interface ButtonProps extends Omit<BaseTextComponentProps, 'cmsId' | 'cms
   target?: string;
   rel?: string;
   disableInteractionOverride?: boolean;
-  cmsId?: string; // Make optional for Button
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -334,58 +331,15 @@ export const Button: React.FC<ButtonProps> = ({
   href,
   target,
   rel,
-  cmsId,
-  disableInteractionOverride,
+  disableInteractionOverride: _disableInteractionOverride,
   ...rest
 }) => {
-  // Get CMS data from provider
-  const { cmsData } = useCMSData();
-  
-  // Get mode from provider
-  let mode: 'edit' | 'comment' | null = null;
-  try {
-    const context = useInteractionMode();
-    mode = context.mode;
-  } catch {
-    // Provider not available, use null as default
-    mode = null;
-  }
-
   // Determine the component to render
   const renderComponent = href ? 'a' : Component;
   const ref = React.useRef<any>(null);
-  
-  // Don't add data-cms-id for decorative elements
-  const shouldIgnoreCMS = cmsId === 'ignore';
-  
-  // Determine button content - use CMS field if available
-  const buttonContent = cmsData && cmsId && !shouldIgnoreCMS && text
-    ? ((cmsData as any)?.[cmsId] || text)
-    : (text || children);
+  const buttonContent = text || children;
   
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // If we're in edit/comment mode and this button doesn't have the override
-    if (mode && !disableInteractionOverride) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // If we have a cmsId, dispatch the appropriate edit event
-      if (cmsId) {
-        if (mode === 'edit') {
-          const event = new (window as any).CustomEvent('openInlineEditor', {
-            detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
-          });
-          document.dispatchEvent(event);
-        } else if (mode === 'comment') {
-          const event = new (window as any).CustomEvent('openCommentModal', {
-            detail: { cmsId, element: e.currentTarget, x: e.clientX, y: e.clientY }
-          });
-          document.dispatchEvent(event);
-        }
-      }
-      return;
-    }
-    
     onClick?.(e);
   };
   
@@ -406,7 +360,6 @@ export const Button: React.FC<ButtonProps> = ({
       target={target}
       rel={rel}
       ref={ref}
-      {...(!shouldIgnoreCMS && cmsId ? { 'data-cms-id': cmsId } : {})}
       {...rest}
     >
       {loading && <LoadingSpinner size="sm" />}

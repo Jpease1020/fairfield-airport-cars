@@ -5,7 +5,7 @@
  */
 
 import { sendSms } from './twilio-service';
-import { cmsFlattenedService } from './cms-service';
+import { getBusinessConfig } from '@/lib/config/business-config';
 
 /**
  * Send SMS notification to admin (Gregg)
@@ -13,9 +13,8 @@ import { cmsFlattenedService } from './cms-service';
  */
 export async function sendAdminSms(message: string): Promise<void> {
   try {
-    // Get admin phone from business settings
-    const businessSettings = await cmsFlattenedService.getBusinessSettings();
-    const adminPhone = businessSettings?.company?.adminPhone;
+    const business = getBusinessConfig();
+    const adminPhone = business.adminPhone;
 
     if (!adminPhone) {
       console.warn('⚠️ Admin phone number not configured. SMS notification skipped.');
@@ -34,4 +33,3 @@ export async function sendAdminSms(message: string): Promise<void> {
     console.error('❌ Failed to send admin SMS notification:', error);
   }
 }
-

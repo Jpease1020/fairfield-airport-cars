@@ -3,12 +3,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { StyledComponentsRegistry, AccessibilityEnhancer } from '@/design/ui';
 import { ErrorBoundary } from '@/components/business/ErrorBoundary';  
 import { AdminProvider } from '@/design/providers/AdminProvider';
-import { InteractionModeProvider } from '@/design/providers/InteractionModeProvider';
 import { Suspense } from 'react';
 
 import { GoogleMapsClientProvider } from '@/providers/GoogleMapsClientProvider';
-import { CMSDataProvider } from '@/design/providers/CMSDataProvider';
-import staticCmsData from '@/content/static-cms.generated.json';
 import { BookingProvider } from '@/providers/BookingProvider';
 import { PWAProvider } from '@/components/pwa/PWAProvider';
 import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
@@ -62,30 +59,26 @@ export default function RootLayout({
       <body>
         <StyledComponentsRegistry>
           <PWAProvider>
-            <CMSDataProvider initialCmsData={staticCmsData}>
               <Suspense fallback={<div>Loading...</div>}>
                 <GoogleMapsClientProvider>
                 <BookingProvider>
                     <ErrorBoundary>
                       <AccessibilityEnhancer>
                         <AdminProvider>
-                          <InteractionModeProvider>
-                            <NavigationWrapper />
-                            
-                            <Container as="main" maxWidth="full" data-testid="layout-main-content">
-                              <AppContent>{children}</AppContent>
-                            </Container>
-                            
-                            <Footer data-testid="layout-footer" />
-                            <PWAInstallBanner />
-                          </InteractionModeProvider>
+                          <NavigationWrapper />
+                          
+                          <Container as="main" maxWidth="full" data-testid="layout-main-content">
+                            <AppContent>{children}</AppContent>
+                          </Container>
+                          
+                          <Footer data-testid="layout-footer" />
+                          <PWAInstallBanner />
                         </AdminProvider>
                       </AccessibilityEnhancer>
                     </ErrorBoundary>
                 </BookingProvider>
               </GoogleMapsClientProvider>
               </Suspense>
-            </CMSDataProvider>
           </PWAProvider>
         </StyledComponentsRegistry>
       </body>

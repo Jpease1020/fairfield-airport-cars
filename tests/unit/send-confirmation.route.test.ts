@@ -17,14 +17,6 @@ vi.mock('@/utils/bookingAdapter', () => ({
   adaptOldBookingToNew: vi.fn((booking) => booking),
 }));
 
-vi.mock('@/lib/services/cms-service', () => ({
-  cmsFlattenedService: {
-    getBusinessSettings: vi.fn().mockResolvedValue({
-      company: { name: 'Fairfield Airport Cars' },
-    }),
-  },
-}));
-
 vi.mock('@/lib/utils/auth-server', () => ({
   requireAdmin: vi.fn().mockResolvedValue({ ok: true, auth: { uid: 'admin' } }),
 }));

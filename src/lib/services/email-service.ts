@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
 import { createEvent } from 'ics';
 import { Booking } from '@/types/booking';
-import { cmsFlattenedService } from './cms-service';
 import { EMAIL_CONFIG } from '@/utils/constants';
+import { getBusinessConfig } from '@/lib/config/business-config';
 import {
   getCustomerName,
   getCustomerEmail,
@@ -89,7 +89,7 @@ export async function sendConfirmationEmail(booking: Booking) {
   
   const transporter = getTransporter();
 
-  const businessSettings = await cmsFlattenedService.getBusinessSettings();
+  const business = getBusinessConfig();
 
   // Use centralized date parsing from booking-helpers
   const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
@@ -120,7 +120,7 @@ export async function sendConfirmationEmail(booking: Booking) {
     title: 'Airport Car Service',
     description: `Ride from ${pickupAddress} to ${dropoffAddress}`,
     location: pickupAddress,
-    organizer: { name: businessSettings?.company?.name || 'Fairfield Airport Cars', email: VERIFIED_EMAIL_FROM },
+    organizer: { name: business.name, email: VERIFIED_EMAIL_FROM },
   };
 
   // Check if user has already added calendar event
@@ -172,19 +172,19 @@ Track your driver in real-time: ${trackingUrl}
 💬 CONTACT INFORMATION
 ======================
 If you have any questions or need to make changes, please contact us:
-Text or call: ${businessSettings?.company?.phone || '(646) 221-6370'}
-Email: ${businessSettings?.company?.email || 'rides@fairfieldairportcar.com'}
+Text or call: ${business.phone}
+Email: ${business.email}
 
-Thank you for choosing ${businessSettings?.company?.name || 'Fairfield Airport Cars'}!
+Thank you for choosing ${business.name}!
 
 Best regards,
-The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
+The ${business.name} Team`;
 
   // Get customer email using centralized helper
   const customerEmail = getCustomerEmail(booking);
 
   const mailOptions = {
-    from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
+    from: `${business.name} <${VERIFIED_EMAIL_FROM}>`,
     to: customerEmail,
     bcc: EMAIL_CONFIG.bccRecipients,
     subject: `Your Ride Confirmation - ${booking.id}`,
@@ -222,14 +222,14 @@ The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
         <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
         <p>If you have any questions or need to make changes, please contact us:</p>
-        <p><strong>Text or call:</strong> ${businessSettings?.company?.phone || '(646) 221-6370'}</p>
-          <p><strong>Email:</strong> ${businessSettings?.company?.email || 'rides@fairfieldairportcar.com'}</p>
+        <p><strong>Text or call:</strong> ${business.phone}</p>
+          <p><strong>Email:</strong> ${business.email}</p>
         </div>
         
-        <p>Thank you for choosing <strong>${businessSettings?.company?.name || 'Fairfield Airport Cars'}</strong>!</p>
+        <p>Thank you for choosing <strong>${business.name}</strong>!</p>
         
         <p>Best regards,<br>
-        The ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team</p>
+        The ${business.name} Team</p>
       </div>
     `,
     attachments: icsValue ? [
@@ -284,7 +284,7 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
   // Get transporter (will throw if not configured)
   const transporter = getTransporter();
   
-  const businessSettings = await cmsFlattenedService.getBusinessSettings();
+  const business = getBusinessConfig();
 
   // Use centralized date parsing from booking-helpers
   const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
@@ -310,10 +310,10 @@ Booking summary:
 - Pickup: ${pickupAddress}
 - Dropoff: ${dropoffAddress}
 
-Need help? Text or call us at ${businessSettings?.company?.phone || '(646) 221-6370'}.
+Need help? Text or call us at ${business.phone}.
 
 Thank you,
-${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
+${business.name} Team`;
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -336,16 +336,16 @@ ${businessSettings?.company?.name || 'Fairfield Airport Cars'} Team`;
 
       <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: #a16207; margin-top: 0;">💬 Need help?</h3>
-        <p>Text or call us at ${businessSettings?.company?.phone || '(646) 221-6370'} or email ${businessSettings?.company?.email || 'rides@fairfieldairportcar.com'}.</p>
+        <p>Text or call us at ${business.phone} or email ${business.email}.</p>
       </div>
 
-      <p>Thank you for choosing <strong>${businessSettings?.company?.name || 'Fairfield Airport Cars'}</strong>!</p>
+      <p>Thank you for choosing <strong>${business.name}</strong>!</p>
     </div>
   `;
 
   try {
     const result = await transporter.sendMail({
-      from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
+      from: `${business.name} <${VERIFIED_EMAIL_FROM}>`,
       to: customerEmail,
       bcc: EMAIL_CONFIG.bccRecipients,
       subject: `Action Required: Confirm your booking (${booking.id})`,
@@ -377,7 +377,7 @@ export async function sendDriverNotificationEmail(booking: Booking) {
   }
 
   const transporter = getTransporter();
-  const businessSettings = await cmsFlattenedService.getBusinessSettings();
+  const business = getBusinessConfig();
 
   // Use centralized date parsing from booking-helpers
   const pickupDate = parseBookingDate(getPickupDateTime(booking)) || new Date();
@@ -554,7 +554,7 @@ Booked at: ${formatBusinessDateTime(new Date())}
 
   try {
     const result = await transporter.sendMail({
-      from: `${businessSettings?.company?.name || 'Fairfield Airport Cars'} <${VERIFIED_EMAIL_FROM}>`,
+      from: `${business.name} <${VERIFIED_EMAIL_FROM}>`,
       to: driverEmail,
       subject: emailSubject,
       text: emailText,
@@ -685,9 +685,9 @@ export async function sendMagicLinkEmail(email: string, magicLinkUrl: string) {
   }
 
   const transporter = getTransporter();
-  const businessSettings = await cmsFlattenedService.getBusinessSettings();
-  const companyName = businessSettings?.company?.name || 'Fairfield Airport Cars';
-  const supportEmail = businessSettings?.company?.email || 'rides@fairfieldairportcar.com';
+  const business = getBusinessConfig();
+  const companyName = business.name;
+  const supportEmail = business.email;
 
   const subject = `Your booking access link`;
   const text = `Use this secure link to access your bookings:\n${magicLinkUrl}\n\nThis link expires in 15 minutes. If you did not request it, you can ignore this email.\n\nNeed help? Reply to this email or contact ${supportEmail}.\n\n${companyName}`;

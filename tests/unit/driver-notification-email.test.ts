@@ -20,19 +20,6 @@ vi.mock('nodemailer', () => ({
   },
 }));
 
-// Mock CMS service
-vi.mock('@/lib/services/cms-service', () => ({
-  cmsFlattenedService: {
-    getBusinessSettings: vi.fn().mockResolvedValue({
-      company: {
-        name: 'Fairfield Airport Cars',
-        phone: '(646) 221-6370',
-        email: 'rides@fairfieldairportcar.com',
-      },
-    }),
-  },
-}));
-
 // Mock ics for calendar event creation
 vi.mock('ics', () => ({
   createEvent: vi.fn((event, callback) => {
