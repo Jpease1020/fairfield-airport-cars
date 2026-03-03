@@ -106,7 +106,6 @@ export type { NavigationItem } from './page-sections/nav/BaseNavigation';
 
 // Layer 7: Providers (depends on base components)
 export { AccessibilityEnhancer } from './providers/AccessibilityEnhancer';
-export { InteractionModeProvider, useInteractionMode, useEditMode } from './providers/InteractionModeProvider';
 export { ThemeProvider } from './providers/ThemeProvider';
 export { StyledComponentsRegistry } from './providers/StyledComponentsRegistry';
 

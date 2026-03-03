@@ -13,17 +13,15 @@ vi.mock('@/lib/services/twilio-service', () => ({
   sendSms: vi.fn(),
 }));
 
-vi.mock('@/lib/services/cms-service', () => ({
-  cmsFlattenedService: {
-    getBusinessSettings: vi.fn(),
-  },
+vi.mock('@/lib/config/business-config', () => ({
+  getBusinessConfig: vi.fn(),
 }));
 
 import { sendSms } from '@/lib/services/twilio-service';
-import { cmsFlattenedService } from '@/lib/services/cms-service';
+import { getBusinessConfig } from '@/lib/config/business-config';
 
 const mockSendSms = sendSms as ReturnType<typeof vi.fn>;
-const mockGetBusinessSettings = cmsFlattenedService.getBusinessSettings as ReturnType<typeof vi.fn>;
+const mockGetBusinessConfig = getBusinessConfig as ReturnType<typeof vi.fn>;
 
 describe('Admin Notification Service', () => {
   beforeEach(() => {
@@ -31,16 +29,17 @@ describe('Admin Notification Service', () => {
   });
 
   it('should send SMS when admin phone is configured', async () => {
-    mockGetBusinessSettings.mockResolvedValueOnce({
-      company: {
-        adminPhone: '+12035551234',
-      },
+    mockGetBusinessConfig.mockReturnValueOnce({
+      name: 'Fairfield Airport Cars',
+      phone: '(646) 221-6370',
+      email: 'rides@fairfieldairportcar.com',
+      adminPhone: '+12035551234',
     });
     mockSendSms.mockResolvedValueOnce({ sid: 'test-sms-123' });
 
     await sendAdminSms('Test message');
 
-    expect(mockGetBusinessSettings).toHaveBeenCalled();
+    expect(mockGetBusinessConfig).toHaveBeenCalled();
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+12035551234',
       body: 'Test message',
@@ -48,10 +47,11 @@ describe('Admin Notification Service', () => {
   });
 
   it('should handle missing admin phone gracefully without throwing', async () => {
-    mockGetBusinessSettings.mockResolvedValueOnce({
-      company: {
-        adminPhone: undefined,
-      },
+    mockGetBusinessConfig.mockReturnValueOnce({
+      name: 'Fairfield Airport Cars',
+      phone: '(646) 221-6370',
+      email: 'rides@fairfieldairportcar.com',
+      adminPhone: undefined,
     });
 
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -59,7 +59,7 @@ describe('Admin Notification Service', () => {
     // Should not throw
     await expect(sendAdminSms('Test message')).resolves.not.toThrow();
 
-    expect(mockGetBusinessSettings).toHaveBeenCalled();
+    expect(mockGetBusinessConfig).toHaveBeenCalled();
     expect(mockSendSms).not.toHaveBeenCalled();
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       expect.stringContaining('Admin phone number not configured')
@@ -69,10 +69,11 @@ describe('Admin Notification Service', () => {
   });
 
   it('should handle SMS sending errors gracefully without throwing', async () => {
-    mockGetBusinessSettings.mockResolvedValueOnce({
-      company: {
-        adminPhone: '+12035551234',
-      },
+    mockGetBusinessConfig.mockReturnValueOnce({
+      name: 'Fairfield Airport Cars',
+      phone: '(646) 221-6370',
+      email: 'rides@fairfieldairportcar.com',
+      adminPhone: '+12035551234',
     });
     mockSendSms.mockRejectedValueOnce(new Error('Twilio error'));
 
@@ -90,7 +91,12 @@ describe('Admin Notification Service', () => {
   });
 
   it('should handle null business settings gracefully', async () => {
-    mockGetBusinessSettings.mockResolvedValueOnce(null);
+    mockGetBusinessConfig.mockReturnValueOnce({
+      name: 'Fairfield Airport Cars',
+      phone: '(646) 221-6370',
+      email: 'rides@fairfieldairportcar.com',
+      adminPhone: undefined,
+    });
 
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
@@ -102,4 +108,3 @@ describe('Admin Notification Service', () => {
     consoleWarnSpy.mockRestore();
   });
 });
-
