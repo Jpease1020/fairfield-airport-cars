@@ -3,9 +3,6 @@
 
 export * from './tokens/tokens';
 export * from './tokens/variants';
-export * from './tokens/cms-integrated-colors';
-export * from './tokens/cms-integrated-spacing';
-export * from './tokens/cms-integrated-typography';
 export * from './utils';
 export * from './constants';
 export * from './styles'; 
