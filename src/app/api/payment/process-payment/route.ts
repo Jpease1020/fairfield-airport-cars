@@ -1,24 +1,35 @@
 import { NextResponse } from 'next/server';
 import { processPayment } from '@/lib/services/square-service';
-import { createBookingAtomic, getBooking } from '@/lib/services/booking-service';
-import { sendBookingVerificationEmail } from '@/lib/services/email-service';
-import { sendSms } from '@/lib/services/twilio-service';
-import { randomBytes } from 'crypto';
-import { getAdminDb } from '@/lib/utils/firebase-admin';
-import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
+import { getBooking } from '@/lib/services/booking-service';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { sendBookingProblem } from '@/lib/services/notification-service';
 import { getAuthContext, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
-import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { paymentProcessRequestSchema } from '@/lib/contracts/booking-api';
+import { createPaidBookingAndNotify } from '@/lib/services/booking-orchestrator';
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
   let existingBookingId: string | undefined;
   let bookingData: any;
   try {
-    const body = await request.json();
-    const { paymentToken, amount, currency, bookingData: bd, existingBookingId: eid, tipAmount = 0 } = body;
+    const rawBody = await request.json().catch(() => ({}));
+    const parsed = paymentProcessRequestSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid payment request', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const {
+      paymentToken,
+      amount,
+      currency,
+      bookingData: bd,
+      existingBookingId: eid,
+      tipAmount = 0,
+    } = parsed.data;
     existingBookingId = eid;
     bookingData = bd;
     const authContext = await getAuthContext(request);
@@ -107,92 +118,22 @@ export async function POST(request: Request) {
     let emailWarning: string | null = null;
     
     if (!bookingId && bookingData) {
-      const pickupDateTimeValue = bookingData.pickupDateTime || bookingData.trip?.pickupDateTime;
-      const parsedPickupDateTime = new Date(pickupDateTimeValue || Date.now());
-      const normalizedPickupDateTimeIso = Number.isNaN(parsedPickupDateTime.getTime())
-        ? new Date().toISOString()
-        : parsedPickupDateTime.toISOString();
-
-      // Create new booking with payment information (cast: request body + payment fields match BookingCreateData at runtime)
-      const bookingResult = await createBookingAtomic({
+      const paymentEnrichedBookingData = {
         ...bookingData,
-        bookingTimeline: [
-          ...(Array.isArray(bookingData.bookingTimeline) ? bookingData.bookingTimeline : []),
-          {
-            source: 'payment',
-            event: 'payment_booking_create',
-            submittedPickupDateTimeRaw:
-              typeof pickupDateTimeValue === 'string' ? pickupDateTimeValue : undefined,
-            normalizedPickupDateTimeIso,
-            businessPickupDateTime: formatBusinessDateTime(normalizedPickupDateTimeIso),
-            recordedAt: new Date().toISOString(),
-          },
-        ],
-        customerUserId: authContext?.uid ?? null,
-        trackingToken: bookingData?.trackingToken || randomBytes(16).toString('hex'),
         squareOrderId: paymentResult.orderId,
-        squarePaymentId: paymentResult.paymentId, // Store payment ID for refunds
-        depositPaid: true,
-        depositAmount: amountCents / 100, // Convert cents to dollars
-        tipAmount: tipCents > 0 ? tipCents / 100 : 0, // Convert cents to dollars
-        status: 'pending',
-        balanceDue: 0, // No balance due since deposit is paid
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as any);
-      
+        squarePaymentId: paymentResult.paymentId,
+      };
+
+      const bookingResult = await createPaidBookingAndNotify({
+        bookingData: paymentEnrichedBookingData,
+        amountCents,
+        tipCents,
+        authUserId: authContext?.uid ?? null,
+        smokeTest: isSmokeTest,
+      });
+
       bookingId = bookingResult.bookingId;
-      
-      // Mark as smoke test booking if in smoke test mode
-      if (isSmokeTest && bookingId) {
-        const db = getAdminDb();
-        await db.collection('bookings').doc(bookingId).update({
-          _smokeTest: true,
-          _smokeTestTimestamp: new Date().toISOString(),
-        });
-      }
-      
-      // Send verification email after successful booking creation
-      if (bookingId) {
-        try {
-          const confirmationToken = randomBytes(32).toString('hex');
-          const db = getAdminDb();
-          await db.collection('bookings').doc(bookingId).update({
-            confirmation: {
-              status: 'pending',
-              token: confirmationToken,
-              sentAt: new Date().toISOString()
-            }
-          });
-
-          const bookingRecord = await getBooking(bookingId);
-          if (bookingRecord) {
-            const confirmationUrlBase = process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
-            const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingId}&token=${confirmationToken}`;
-            await sendBookingVerificationEmail(
-              adaptOldBookingToNew(bookingRecord),
-              confirmationUrl
-            );
-
-            const smsMessage = `We received your booking request for ${formatBusinessDateTime(pickupDateTimeValue)}. Please check your email to confirm the ride. Booking ID: ${bookingId}`;
-            await sendSms({
-              to: bookingData.customer.phone,
-              body: smsMessage
-            });
-          }
-        } catch (notificationError) {
-          console.error('Failed to send verification notifications:', notificationError);
-          emailWarning =
-            'Your booking is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 to finish confirming.';
-          await recordBookingAttempt({
-            stage: 'payment',
-            status: 'warning',
-            bookingId,
-            reason: emailWarning,
-          });
-          // Don't fail the payment if notifications fail
-        }
-      }
+      emailWarning = bookingResult.emailWarning;
     }
 
     return NextResponse.json({

@@ -1,42 +1,12 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { classifyTrip } from '@/lib/services/service-area-validation';
+import {
+  validatePhaseRequestSchema,
+  validatePhaseResponseSchema,
+} from '@/lib/contracts/booking-api';
 
 const phaseSchema = z.enum(['trip-details', 'contact-info', 'payment', 'quick-booking']);
-
-const formSchema = z.object({
-  trip: z.object({
-    pickup: z.object({
-      address: z.string().optional().default(''),
-      coordinates: z.object({ lat: z.number(), lng: z.number() }).nullable().optional(),
-    }),
-    dropoff: z.object({
-      address: z.string().optional().default(''),
-      coordinates: z.object({ lat: z.number(), lng: z.number() }).nullable().optional(),
-    }),
-    pickupDateTime: z.string().optional().default(''),
-    fareType: z.enum(['personal', 'business']).optional().default('personal'),
-  }),
-  customer: z.object({
-    name: z.string().optional().default(''),
-    email: z.string().optional().default(''),
-    phone: z.string().optional().default(''),
-  }),
-});
-
-const requestSchema = z.object({
-  phase: phaseSchema,
-  skipQuoteRequirement: z.boolean().optional().default(false),
-  formData: formSchema,
-  quote: z
-    .object({
-      quoteId: z.string().optional(),
-      fare: z.number().optional(),
-      expiresAt: z.string().optional(),
-    })
-    .nullable()
-    .optional(),
-});
 
 const isValidUSPhone = (phone: string): boolean => {
   const digitsOnly = phone.replace(/\D/g, '');
@@ -46,11 +16,11 @@ const isValidUSPhone = (phone: string): boolean => {
 };
 
 const checkTripRules = (
-  formData: z.infer<typeof formSchema>,
+  formData: z.infer<typeof validatePhaseRequestSchema>['formData'],
   errors: string[],
   fieldErrors: Record<string, string>,
   includeQuoteRequirement: boolean,
-  quote?: z.infer<typeof requestSchema>['quote']
+  quote?: z.infer<typeof validatePhaseRequestSchema>['quote']
 ) => {
   const pickupAddress = formData.trip.pickup.address.trim();
   const dropoffAddress = formData.trip.dropoff.address.trim();
@@ -126,7 +96,7 @@ const checkTripRules = (
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const parsed = requestSchema.safeParse(body);
+    const parsed = validatePhaseRequestSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -215,7 +185,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({
+    const responseBody = validatePhaseResponseSchema.parse({
       validation: {
         isValid: errors.length === 0,
         errors,
@@ -223,6 +193,7 @@ export async function POST(request: Request) {
         fieldErrors,
       },
     });
+    return NextResponse.json(responseBody);
   } catch {
     return NextResponse.json(
       {
