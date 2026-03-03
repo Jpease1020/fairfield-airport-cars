@@ -255,6 +255,22 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       setIsLoading(true);
       try {
         const autocompleteService = new window.google.maps.places.AutocompleteService();
+        let settled = false;
+
+        const settle = () => {
+          if (settled) return false;
+          settled = true;
+          return true;
+        };
+
+        // Protect against external API hangs so users don't get stuck on a perpetual loader.
+        const fallbackTimeout = setTimeout(() => {
+          if (!settle()) return;
+          setPredictions([]);
+          setShowPredictions(false);
+          setPlacesUnavailable(true);
+          setIsLoading(false);
+        }, 3500);
 
         // Define service area bounds (Fairfield County, CT + nearby airports)
         // Bounding box covers: Fairfield County, CT + NYC airports (JFK, LGA, EWR)
@@ -279,6 +295,9 @@ export const LocationInput: React.FC<LocationInputProps> = ({
             ),
           },
           (predictions, status) => {
+            clearTimeout(fallbackTimeout);
+            if (!settle()) return;
+
             if (
               status === window.google.maps.places.PlacesServiceStatus.OK &&
               predictions
@@ -302,39 +321,68 @@ export const LocationInput: React.FC<LocationInputProps> = ({
               if (!restrictToAirports) {
                 filteredPredictions = filteredPredictions.filter((p) => {
                   const isAirport = p.types?.some((type) => type === 'airport');
-                  
+
                   // Always allow airports
                   if (isAirport) {
                     return true;
                   }
-                  
-                  // For non-airports, exclude cities/regions (only allow addresses)
-                  const excludedTypes = ['locality', 'administrative_area_level_1', 'administrative_area_level_2', 'country', 'political'];
-                  const isCityOrRegion = p.types?.some((type) => excludedTypes.includes(type));
-                  const isAddress = p.types?.some((type) => 
-                    type === 'street_address' || 
-                    type === 'premise' || 
-                    type === 'subpremise' ||
-                    type === 'establishment' ||
-                    type === 'point_of_interest'
+
+                  // Keep specific location-like predictions and only reject pure political regions.
+                  // Google often returns `route`, `geocode`, or `subpremise` for valid addresses.
+                  const excludedTypes = [
+                    'locality',
+                    'administrative_area_level_1',
+                    'administrative_area_level_2',
+                    'country',
+                    'political',
+                  ];
+                  const addressLikeTypes = [
+                    'street_address',
+                    'route',
+                    'geocode',
+                    'premise',
+                    'subpremise',
+                    'establishment',
+                    'point_of_interest',
+                    'intersection',
+                    'postal_code',
+                    'plus_code',
+                  ];
+
+                  const hasAddressLikeType = p.types?.some((type) =>
+                    addressLikeTypes.includes(type)
+                  );
+                  const isPurePolitical = p.types?.every((type) =>
+                    excludedTypes.includes(type)
                   );
 
-                  // Allow addresses, reject cities/regions
-                  return isAddress && !isCityOrRegion;
+                  return hasAddressLikeType && !isPurePolitical;
                 });
               }
 
               setPredictions(filteredPredictions);
               setShowPredictions(filteredPredictions.length > 0);
               setSelectedIndex(-1);
+              setPlacesUnavailable(false);
             } else {
               setPredictions([]);
               setShowPredictions(false);
+
+              const unavailableStatuses = [
+                window.google.maps.places.PlacesServiceStatus.INVALID_REQUEST,
+                window.google.maps.places.PlacesServiceStatus.REQUEST_DENIED,
+                window.google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT,
+                window.google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR,
+              ];
+              setPlacesUnavailable(unavailableStatuses.includes(status));
             }
             setIsLoading(false);
           }
         );
       } catch (_error) {
+        if (typeof window !== 'undefined') {
+          setPlacesUnavailable(true);
+        }
         setPredictions([]);
         setShowPredictions(false);
         setIsLoading(false);
