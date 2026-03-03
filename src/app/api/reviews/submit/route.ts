@@ -2,8 +2,16 @@ import { NextResponse } from 'next/server';
 import { createReview, hasBookingBeenReviewed } from '@/lib/services/review-service';
 import { getBooking } from '@/lib/services/booking-service';
 import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 export async function POST(request: Request) {
+  const limited = enforceRateLimit(request, {
+    bucket: 'api:reviews:submit',
+    limit: 10,
+    windowMs: 60 * 60_000,
+  });
+  if (limited) return limited;
+
   try {
     const { bookingId, rating, comment } = await request.json();
 

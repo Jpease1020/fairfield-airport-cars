@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { EMAIL_CONFIG, BUSINESS_CONTACT } from '@/utils/constants';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 const {
   EMAIL_HOST,
@@ -34,6 +35,13 @@ const getTransporter = () => {
 };
 
 export async function POST(request: NextRequest) {
+  const limited = enforceRateLimit(request, {
+    bucket: 'api:contact',
+    limit: 5,
+    windowMs: 60 * 60_000,
+  });
+  if (limited) return limited;
+
   try {
     const { name, email, phone, message } = await request.json();
 

@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, query, where, addDoc, updateDoc, serverTimestamp, orderBy } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, setDoc, where, updateDoc, serverTimestamp, orderBy } from 'firebase/firestore';
 import { db as clientDb } from '@/lib/utils/firebase-server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 
@@ -59,6 +59,13 @@ export class DriverSchedulingService {
       DriverSchedulingService.instance = new DriverSchedulingService();
     }
     return DriverSchedulingService.instance;
+  }
+
+  /**
+   * Stable schedule document ID so concurrent writes contend on the same doc.
+   */
+  getScheduleDocId(driverId: string, date: string): string {
+    return `${driverId}_${date}`;
   }
 
   /**
@@ -323,10 +330,12 @@ export class DriverSchedulingService {
 
       // Get or create driver schedule for the date
       let schedule = await this.getDriverSchedule(driverId, date);
+      const scheduleDocId = this.getScheduleDocId(driverId, date);
       
       if (!schedule) {
         // Create new schedule
         schedule = {
+          id: scheduleDocId,
           driverId,
           driverName,
           date,
@@ -409,12 +418,12 @@ export class DriverSchedulingService {
             updatedAt: FieldValue.serverTimestamp()
           });
         } else {
-          const docRef = await db.collection('driverSchedules').add({
+          await db.collection('driverSchedules').doc(scheduleDocId).set({
             ...schedule,
             createdAt: FieldValue.serverTimestamp(),
             updatedAt: FieldValue.serverTimestamp()
           });
-          schedule.id = docRef.id;
+          schedule.id = scheduleDocId;
         }
       } else {
         // Client SDK
@@ -424,12 +433,12 @@ export class DriverSchedulingService {
             updatedAt: serverTimestamp()
           });
         } else {
-          const docRef = await addDoc(collection(db, 'driverSchedules'), {
+          await setDoc(doc(db, 'driverSchedules', scheduleDocId), {
             ...schedule,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
           });
-          schedule.id = docRef.id;
+          schedule.id = scheduleDocId;
         }
       }
     } catch (error) {
@@ -512,6 +521,28 @@ export class DriverSchedulingService {
     try {
       const db = getDb();
       if (!db) throw new Error('Database not initialized');
+      const scheduleDocId = this.getScheduleDocId(driverId, date);
+
+      // First try deterministic doc ID path.
+      if (typeof window === 'undefined' && db.collection) {
+        const deterministic = await db.collection('driverSchedules').doc(scheduleDocId).get();
+        if (deterministic.exists) {
+          const deterministicData = deterministic.data() ?? {};
+          return {
+            id: deterministic.id,
+            ...deterministicData
+          } as DriverSchedule;
+        }
+      } else {
+        const deterministic = await getDoc(doc(db, 'driverSchedules', scheduleDocId));
+        if (deterministic.exists()) {
+          const deterministicData = deterministic.data() ?? {};
+          return {
+            id: deterministic.id,
+            ...deterministicData
+          } as DriverSchedule;
+        }
+      }
 
       // Use Admin SDK if available (server-side), otherwise client SDK
       let scheduleSnapshot;
@@ -535,10 +566,10 @@ export class DriverSchedulingService {
         return null;
       }
 
-      const doc = scheduleSnapshot.docs[0];
+      const scheduleDoc = scheduleSnapshot.docs[0];
       return {
-        id: doc.id,
-        ...(doc.data ? doc.data() : doc)
+        id: scheduleDoc.id,
+        ...(scheduleDoc.data ? scheduleDoc.data() : scheduleDoc)
       } as DriverSchedule;
     } catch (error) {
       console.error('Error getting driver schedule:', error);

@@ -7,8 +7,16 @@ import { getBusinessRules, getCancellationFeePercent } from '@/lib/business/busi
 import { sendBookingProblem } from '@/lib/services/notification-service';
 import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 export async function POST(req: NextRequest) {
+  const limited = enforceRateLimit(req, {
+    bucket: 'api:booking:cancel-booking',
+    limit: 20,
+    windowMs: 60 * 60_000,
+  });
+  if (limited) return limited;
+
   let bookingId: string | undefined;
   try {
     const body = await req.json();

@@ -22,10 +22,10 @@ vi.mock('twilio', () => ({
 describe('SMS Marketing', () => {
   beforeEach(() => {
     vi.resetModules();
-    mockMessagesCreate.mockClear();
+    mockMessagesCreate.mockReset();
 
     // Set up environment variables
-    process.env.TWILIO_ACCOUNT_SID = 'test-account-sid';
+    process.env.TWILIO_ACCOUNT_SID = 'AC1234567890abcdef1234567890abcd';
     process.env.TWILIO_AUTH_TOKEN = 'test-auth-token';
     process.env.TWILIO_MESSAGING_SERVICE_SID = 'test-messaging-service-sid';
   });
@@ -64,7 +64,7 @@ describe('SMS Marketing', () => {
 
       expect(mockMessagesCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          body: 'Hi John, welcome!', // Should use first name only
+          body: expect.stringContaining('Hi John, welcome!'), // Should use first name only
         })
       );
     });
@@ -80,7 +80,7 @@ describe('SMS Marketing', () => {
 
       expect(mockMessagesCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          body: 'Hi John!',
+          body: expect.stringContaining('Hi John!'),
         })
       );
     });
@@ -183,7 +183,7 @@ describe('SMS Marketing', () => {
 
       expect(mockMessagesCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          body: 'Hi John, this is John!',
+          body: expect.stringContaining('Hi John, this is John!'),
         })
       );
     });
@@ -199,7 +199,37 @@ describe('SMS Marketing', () => {
 
       expect(mockMessagesCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          body: 'Hi there!',
+          body: expect.stringContaining('Hi there!'),
+        })
+      );
+    });
+
+    it('should append opt-out notice by default', async () => {
+      mockMessagesCreate.mockResolvedValue({ sid: 'test-id' });
+      const { sendBulkSms } = await import('@/lib/services/twilio-service');
+
+      await sendBulkSms([{ phone: '+12035551234', name: 'Test User' }], 'Campaign message');
+
+      expect(mockMessagesCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          body: expect.stringContaining('Reply STOP to opt out.'),
+        })
+      );
+    });
+
+    it('should support disabling opt-out appending explicitly', async () => {
+      mockMessagesCreate.mockResolvedValue({ sid: 'test-id' });
+      const { sendBulkSms } = await import('@/lib/services/twilio-service');
+
+      await sendBulkSms(
+        [{ phone: '+12035551234', name: 'Test User' }],
+        'Campaign message',
+        { includeOptOutNotice: false }
+      );
+
+      expect(mockMessagesCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          body: 'Campaign message',
         })
       );
     });

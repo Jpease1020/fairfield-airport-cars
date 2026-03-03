@@ -1,4 +1,14 @@
 import { http, HttpResponse } from 'msw';
+import {
+  paymentProcessRequestSchema,
+  paymentProcessSuccessResponseSchema,
+  quoteRequestSchema,
+  quoteResponseSchema,
+  submitBookingRequestSchema,
+  submitBookingSuccessResponseSchema,
+  validatePhaseRequestSchema,
+  validatePhaseResponseSchema,
+} from '@/lib/contracts/booking-api';
 
 // Mock data for tests
 export const mockBookingData = {
@@ -75,11 +85,22 @@ export const handlers = [
   }),
 
   // Booking APIs - canonical endpoints
-  http.post('/api/booking/submit', async () => {
-    return HttpResponse.json({
+  http.post('/api/booking/submit', async ({ request }) => {
+    const rawBody = await request.json().catch(() => ({}));
+    const parsed = submitBookingRequestSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return HttpResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    return HttpResponse.json(submitBookingSuccessResponseSchema.parse({
       success: true,
-      bookingId: 'test-booking-123'
-    });
+      bookingId: 'test-booking-123',
+      totalFare: parsed.data.fare,
+      message: 'Booking confirmed successfully',
+    }));
   }),
 
   http.get('/api/booking/check-time-slot', () => {
@@ -91,17 +112,23 @@ export const handlers = [
 
   // Quote endpoint
   http.post('/api/booking/quote', async ({ request }) => {
-    const body = await request.json() as any;
+    const rawBody = await request.json().catch(() => ({}));
+    const parsed = quoteRequestSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return HttpResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const body = parsed.data;
     
     // Calculate fare based on fare type and route
     let baseFare = 95.50; // Default fare
     
     // Route-specific fares - check destination
-    const destination = body?.destination || body?.dropoffLocation || '';
-    const origin = body?.origin || body?.pickupLocation || '';
-    const fareType = body?.fareType || 'personal';
-    
-    console.log('MSW Quote Handler:', { origin, destination, fareType });
+    const destination = body.destination;
+    const origin = body.origin;
+    const fareType = body.fareType;
     
     if (destination.includes('LaGuardia') || destination.includes('LGA')) {
       baseFare = 78.25; // Stamford to LGA
@@ -111,10 +138,8 @@ export const handlers = [
     
     // Apply business multiplier (35% increase)
     const fare = fareType === 'business' ? baseFare * 1.35 : baseFare;
-    
-    console.log('MSW Quote Result:', { baseFare, fareType, fare });
-    
-    return HttpResponse.json({
+
+    return HttpResponse.json(quoteResponseSchema.parse({
       quoteId: `quote_${Date.now()}`,
       fare: Math.round(fare * 100) / 100,
       distanceMiles: 42.3,
@@ -122,29 +147,61 @@ export const handlers = [
       fareType,
       expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
       expiresInMinutes: 15
-    });
+    }));
   }),
 
-  http.post('*/api/booking/validate-phase', async () => {
-    return HttpResponse.json({
+  http.post('*/api/booking/validate-phase', async ({ request }) => {
+    const rawBody = await request.json().catch(() => ({}));
+    const parsed = validatePhaseRequestSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return HttpResponse.json(
+        validatePhaseResponseSchema.parse({
+          validation: {
+            isValid: false,
+            errors: ['Invalid validation payload'],
+            warnings: [],
+            fieldErrors: {},
+          },
+        }),
+        { status: 400 }
+      );
+    }
+
+    return HttpResponse.json(validatePhaseResponseSchema.parse({
       validation: {
         isValid: true,
         errors: [],
         warnings: [],
         fieldErrors: {},
       }
-    });
+    }));
   }),
 
-  http.post('http://localhost:3000/api/booking/validate-phase', async () => {
-    return HttpResponse.json({
+  http.post('http://localhost:3000/api/booking/validate-phase', async ({ request }) => {
+    const rawBody = await request.json().catch(() => ({}));
+    const parsed = validatePhaseRequestSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return HttpResponse.json(
+        validatePhaseResponseSchema.parse({
+          validation: {
+            isValid: false,
+            errors: ['Invalid validation payload'],
+            warnings: [],
+            fieldErrors: {},
+          },
+        }),
+        { status: 400 }
+      );
+    }
+
+    return HttpResponse.json(validatePhaseResponseSchema.parse({
       validation: {
         isValid: true,
         errors: [],
         warnings: [],
         fieldErrors: {},
       }
-    });
+    }));
   }),
 
   http.get('/api/booking/get-bookings-simple', () => {
@@ -164,13 +221,24 @@ export const handlers = [
   }),
 
   // Payment APIs
-  http.post('/api/payment/process-payment', async () => {
-    return HttpResponse.json({
+  http.post('/api/payment/process-payment', async ({ request }) => {
+    const rawBody = await request.json().catch(() => ({}));
+    const parsed = paymentProcessRequestSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return HttpResponse.json(
+        { error: 'Invalid payment request', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    return HttpResponse.json(paymentProcessSuccessResponseSchema.parse({
       success: true,
       bookingId: 'test-booking-123',
       paymentId: 'test-payment-123',
-      status: 'COMPLETED'
-    });
+      status: 'COMPLETED',
+      amount: parsed.data.amount,
+      currency: parsed.data.currency,
+    }));
   }),
 
   http.get('/api/payment/square-webhook', () => {
