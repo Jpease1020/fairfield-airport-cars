@@ -24,7 +24,14 @@ const DesktopCompanyInfo = styled(Stack)`
   }
 `;
 
-export const Footer: React.FC = () => {
+type FooterProps = {
+  className?: string;
+  id?: string;
+  style?: React.CSSProperties;
+  'data-testid'?: string;
+};
+
+export const Footer: React.FC<FooterProps> = (props) => {
   // Get CMS data from provider
   const { cmsData: allCmsData } = useCMSData();
   const cmsData = allCmsData?.footer || {};
@@ -64,6 +71,7 @@ export const Footer: React.FC = () => {
       padding="xl"
       margin="none" 
       as="footer"
+      {...props}
     >
       <Stack justify="center" align="center" fullWidth>
         <Container margin="none" spacing={{ xs: 'md', md: 'xl' }}>
@@ -74,7 +82,7 @@ export const Footer: React.FC = () => {
               variant="lead" 
               weight="semibold" 
               color="primary"
-              cmsId="licensed"
+
             >
               {cmsData?.['licensed'] || '✅  Licensed & Insured'}
             </Text>
@@ -91,7 +99,7 @@ export const Footer: React.FC = () => {
                 <Text 
                   size="sm" 
                   color="secondary"
-                  cmsId="phone"
+
                   
                 >
                   {cmsData?.['phone'] || '📱 Text us: (646) 221-6370'}
@@ -99,7 +107,7 @@ export const Footer: React.FC = () => {
                 <Text 
                   size="sm" 
                   color="secondary"
-                  cmsId="email"
+
                   
                 >
                   {cmsData?.['email'] || '✉️ rides@fairfieldairportcar.com'}
@@ -112,7 +120,7 @@ export const Footer: React.FC = () => {
                 variant="lead" 
                 weight="semibold" 
                 color="primary"
-                cmsId="licensed-desktop"
+
               >
                 {cmsData?.['licensed'] || '✅  Licensed & Insured'}
               </Text>
@@ -140,7 +148,7 @@ export const Footer: React.FC = () => {
                 color="secondary" 
                 weight="medium"
                 align="center"
-                cmsId="copyright"
+
                 
               >
                 {cmsData?.['copyright'] || `© ${currentYear} Fairfield Airport Cars. All rights reserved.`}
