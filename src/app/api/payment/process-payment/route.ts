@@ -7,9 +7,17 @@ import { getAuthContext, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
 import { paymentProcessRequestSchema } from '@/lib/contracts/booking-api';
 import { createPaidBookingAndNotify } from '@/lib/services/booking-orchestrator';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
+  const limited = enforceRateLimit(request, {
+    bucket: 'api:payment:process-payment',
+    limit: 10,
+    windowMs: 10 * 60_000,
+  });
+  if (limited) return limited;
+
   let existingBookingId: string | undefined;
   let bookingData: any;
   try {

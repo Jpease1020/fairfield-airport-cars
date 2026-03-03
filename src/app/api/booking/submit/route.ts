@@ -1,12 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/utils/auth-server';
 import { submitBookingRequestSchema } from '@/lib/contracts/booking-api';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 import {
   BookingApiError,
   submitBookingOrchestration,
 } from '@/lib/services/booking-orchestrator';
 
 export async function POST(request: Request) {
+  const limited = enforceRateLimit(request, {
+    bucket: 'api:booking:submit',
+    limit: 20,
+    windowMs: 10 * 60_000,
+  });
+  if (limited) return limited;
+
   const raw = await request.json().catch(() => ({}));
   const parsed = submitBookingRequestSchema.safeParse(raw);
 

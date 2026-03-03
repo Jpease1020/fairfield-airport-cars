@@ -5,6 +5,7 @@ import { createQuote } from '@/lib/services/quote-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { classifyTrip, isAirportLocation } from '@/lib/services/service-area-validation';
 import { quoteRequestSchema, quoteResponseSchema } from '@/lib/contracts/booking-api';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 const mapsClient = new Client({});
 
@@ -12,6 +13,13 @@ function metersToMiles(m: number): number { return m / 1609.34; }
 function secondsToMinutes(s: number): number { return s / 60; }
 
 export async function POST(request: Request) {
+  const limited = enforceRateLimit(request, {
+    bucket: 'api:booking:quote',
+    limit: 30,
+    windowMs: 60_000,
+  });
+  if (limited) return limited;
+
   const raw = await request.json().catch(() => ({}));
   const parsed = quoteRequestSchema.safeParse(raw);
   if (!parsed.success) return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });

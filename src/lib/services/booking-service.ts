@@ -127,6 +127,29 @@ export interface Driver {
   lastUpdated: Date;
 }
 
+const timeToMinutes = (time: string): number => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+};
+
+const slotOverlapsRange = (slotStart: number, slotEnd: number, rangeStart: number, rangeEnd: number): boolean => {
+  if (slotStart <= slotEnd) {
+    return rangeStart < slotEnd && rangeEnd > slotStart;
+  }
+  const overlapsFirst = rangeStart < slotEnd && rangeEnd > 0;
+  const overlapsSecond = rangeStart < 24 * 60 && rangeEnd > slotStart;
+  return overlapsFirst || overlapsSecond;
+};
+
+const subtractOneHour = (time: string): string => {
+  const [hoursStr, minutesStr] = time.split(':');
+  const totalMinutes = Number(hoursStr) * 60 + Number(minutesStr) - 60;
+  const wrapped = totalMinutes < 0 ? totalMinutes + 24 * 60 : totalMinutes;
+  const hours = Math.floor(wrapped / 60);
+  const minutes = wrapped % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+};
+
 // Note: Dynamic pricing moved to /api/booking/quote for centralized fare calculation
 
 // Real-time booking status management
@@ -163,8 +186,8 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
   }
 };
 
-// ATOMIC BOOKING: Single implementation for submit and process-payment. Conflict check and driver
-// lookup run outside the transaction; transaction only creates the doc; bookTimeSlot runs after.
+// ATOMIC BOOKING: Single implementation for submit and process-payment.
+// Final slot reservation and booking creation happen in one Firestore transaction.
 /** Single entry point for creating bookings (used by submit + process-payment). Admin uses this via booking-service-admin. Legacy createBooking() below is for backward compatibility only. */
 export const createBookingAtomic = async (bookingData: BookingCreateData): Promise<{ bookingId: string }> => {
   const db = getAdminDb();
@@ -172,6 +195,7 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
   const dateStr = pickupDate.toISOString().split('T')[0]; // YYYY-MM-DD
   const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
   const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
+  const prepStartTime = subtractOneHour(startTime);
 
   // 1. Check for conflicts and get drivers OUTSIDE transaction (recommended for Firestore)
   const conflictCheck = await driverSchedulingService.checkBookingConflicts(
@@ -192,6 +216,9 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
   const depositAmount = bookingData.payment.depositAmount ?? 0;
   const balanceDue = bookingData.trip.fare! - depositAmount;
   const status = (bookingData as { status?: string }).status ?? 'pending';
+  const scheduleDocId = selectedDriver
+    ? driverSchedulingService.getScheduleDocId(selectedDriver.driverId, dateStr)
+    : null;
 
   const { bookingId } = await db.runTransaction(async (transaction: any) => {
     let bookingId = generateShortBookingId();
@@ -217,28 +244,113 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     };
+
+    if (selectedDriver && scheduleDocId) {
+      const scheduleRef = db.collection('driverSchedules').doc(scheduleDocId);
+      const deterministicScheduleDoc = await transaction.get(scheduleRef);
+      let scheduleData: any = null;
+
+      if (deterministicScheduleDoc.exists) {
+        scheduleData = deterministicScheduleDoc.data();
+      } else {
+        const legacyScheduleQuery = db
+          .collection('driverSchedules')
+          .where('driverId', '==', selectedDriver.driverId)
+          .where('date', '==', dateStr)
+          .limit(1);
+        const legacyScheduleSnapshot = await transaction.get(legacyScheduleQuery);
+        if (!legacyScheduleSnapshot.empty) {
+          scheduleData = legacyScheduleSnapshot.docs[0]?.data();
+        }
+      }
+
+      const timeSlots = Array.isArray(scheduleData?.timeSlots)
+        ? [...scheduleData.timeSlots]
+        : driverSchedulingService.generateTimeSlots();
+
+      const requestedStart = timeToMinutes(startTime);
+      const requestedEnd = timeToMinutes(endTime);
+      const prepStart = timeToMinutes(prepStartTime);
+      const prepEnd = requestedStart;
+      const prepSpansMidnight = prepStart > prepEnd;
+      const prepOverlaps = (slotStart: number, slotEnd: number): boolean => {
+        if (!prepSpansMidnight) return prepStart < slotEnd && prepEnd > slotStart;
+        const overlapsFirst = slotStart < prepEnd && slotEnd > 0;
+        const overlapsSecond = slotStart < 24 * 60 && slotEnd > prepStart;
+        return overlapsFirst || overlapsSecond;
+      };
+
+      for (const slot of timeSlots) {
+        if (slot?.status === 'booked' || slot?.status === 'prep' || slot?.status === 'blocked') {
+          const slotStart = timeToMinutes(slot.startTime);
+          const slotEnd = timeToMinutes(slot.endTime);
+          if (
+            slotOverlapsRange(slotStart, slotEnd, requestedStart, requestedEnd) ||
+            prepOverlaps(slotStart, slotEnd)
+          ) {
+            throw new Error('Time slot conflicts with existing bookings.');
+          }
+        }
+      }
+
+      const customerName = bookingData.customer.name;
+      const pickupLocation = bookingData.trip.pickup.address;
+      const dropoffLocation = bookingData.trip.dropoff.address;
+      const upsertSlot = (
+        slotId: string,
+        slotStart: string,
+        slotEnd: string,
+        slotStatus: 'prep' | 'booked',
+        notes?: string
+      ) => {
+        const index = timeSlots.findIndex((slot) => slot.id === slotId);
+        const nextSlot = {
+          id: slotId,
+          startTime: slotStart,
+          endTime: slotEnd,
+          isAvailable: false,
+          status: slotStatus,
+          bookingId,
+          customerName,
+          pickupLocation,
+          dropoffLocation,
+          ...(notes ? { notes } : {}),
+        };
+
+        if (index === -1) {
+          timeSlots.push(nextSlot);
+        } else {
+          timeSlots[index] = {
+            ...timeSlots[index],
+            ...nextSlot,
+          };
+        }
+      };
+
+      upsertSlot(`${prepStartTime}-${startTime}`, prepStartTime, startTime, 'prep', 'Driver prep time');
+      upsertSlot(`${startTime}-${endTime}`, startTime, endTime, 'booked');
+
+      transaction.set(
+        scheduleRef,
+        {
+          id: scheduleDocId,
+          driverId: selectedDriver.driverId,
+          driverName: selectedDriver.driverName,
+          date: dateStr,
+          timeSlots,
+          createdAt: scheduleData?.createdAt ?? FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+    }
+
     transaction.set(db.collection('bookings').doc(bookingId), bookingDoc);
     return { bookingId };
   });
 
-  // 2. Book time slot AFTER transaction (avoids async work inside transaction)
   if (selectedDriver) {
-    try {
-      await driverSchedulingService.bookTimeSlot(
-        selectedDriver.driverId,
-        selectedDriver.driverName,
-        dateStr,
-        startTime,
-        endTime,
-        bookingId,
-        bookingData.customer.name,
-        bookingData.trip.pickup.address,
-        bookingData.trip.dropoff.address
-      );
-      console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
-    } catch (slotError) {
-      console.error(`⚠️ Booking ${bookingId} created but time slot booking failed:`, slotError);
-    }
+    console.log(`✅ ATOMIC BOOKING SUCCESS: ${bookingId} with driver: ${selectedDriver.driverName}`);
   } else {
     console.log(`✅ BOOKING PENDING: ${bookingId} - driver will be assigned later`);
   }

@@ -5,6 +5,7 @@ import {
   validatePhaseRequestSchema,
   validatePhaseResponseSchema,
 } from '@/lib/contracts/booking-api';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 const phaseSchema = z.enum(['trip-details', 'contact-info', 'payment', 'quick-booking']);
 
@@ -94,6 +95,13 @@ const checkTripRules = (
 };
 
 export async function POST(request: Request) {
+  const limited = enforceRateLimit(request, {
+    bucket: 'api:booking:validate-phase',
+    limit: 90,
+    windowMs: 60_000,
+  });
+  if (limited) return limited;
+
   try {
     const body = await request.json().catch(() => ({}));
     const parsed = validatePhaseRequestSchema.safeParse(body);
