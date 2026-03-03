@@ -2,9 +2,6 @@
 
 // Layer 1: Foundation
 export * from './foundation/tokens/tokens';
-export * from './foundation/tokens/cms-integrated-colors';
-export * from './foundation/tokens/cms-integrated-spacing';
-export * from './foundation/tokens/cms-integrated-typography';
 export * from './foundation/utils';
 export * from './foundation/constants';
 export * from './foundation/styles';
