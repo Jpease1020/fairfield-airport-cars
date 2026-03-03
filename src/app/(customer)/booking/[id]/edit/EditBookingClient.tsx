@@ -260,7 +260,7 @@ function EditBookingContent({ bookingId, cmsData }: EditBookingClientProps) {
         
         {currentPhase === 'payment' && (
           <Stack spacing="lg">
-            <Text cmsId="review-changes">{pageCmsData?.['review-changes'] || 'Review your changes and save'}</Text>
+            <Text>{pageCmsData?.['review-changes'] || 'Review your changes and save'}</Text>
             <Stack direction="horizontal" spacing="md">
               <Button
                 onClick={goToPreviousPhase}

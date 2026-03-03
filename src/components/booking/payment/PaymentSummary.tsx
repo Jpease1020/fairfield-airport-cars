@@ -29,50 +29,50 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({
   return (
     <Box variant="elevated" padding="lg" data-testid="payment-summary">
       <Stack spacing="lg">
-        <H2 align="center" cmsId="payment-summary-title">
+        <H2 align="center">
           {cmsData?.['paymentPhase-summaryTitle'] || 'Booking Summary'}
         </H2>
         
         <Stack spacing="md">
           <Stack direction="horizontal" justify="space-between">
-            <Text weight="medium" cmsId="payment-summary-pickup">
+            <Text weight="medium">
               {cmsData?.['paymentPhase-pickup'] || 'Pickup:'}
             </Text>
-            <Text cmsId="pickup-location">{pickupLocation}</Text>
+            <Text>{pickupLocation}</Text>
           </Stack>
           
           <Stack direction="horizontal" justify="space-between">
-            <Text weight="medium" cmsId="payment-summary-dropoff">
+            <Text weight="medium">
               {cmsData?.['paymentPhase-dropoff'] || 'Dropoff:'}
             </Text>
-            <Text cmsId="dropoff-location">{dropoffLocation}</Text>
+            <Text>{dropoffLocation}</Text>
           </Stack>
           
           <Stack direction="horizontal" justify="space-between">
-            <Text weight="medium" cmsId="payment-summary-datetime">
+            <Text weight="medium">
               {cmsData?.['paymentPhase-datetime'] || 'Date & Time:'}
             </Text>
-            <Text cmsId="pickup-datetime">{new Date(pickupDateTime).toLocaleString()}</Text>
+            <Text>{new Date(pickupDateTime).toLocaleString()}</Text>
           </Stack>
           
           <Stack direction="horizontal" justify="space-between">
-            <Text weight="medium" cmsId="payment-summary-fare">
+            <Text weight="medium">
               {cmsData?.['paymentPhase-fare'] || 'Base Fare:'}
             </Text>
-            <Text cmsId="base-fare">${fare?.toFixed(2) || '0.00'}</Text>
+            <Text>${fare?.toFixed(2) || '0.00'}</Text>
           </Stack>
           
           <TotalRow direction="horizontal" justify="space-between">
-            <Text weight="bold" size="lg" cmsId="payment-summary-total">
+            <Text weight="bold" size="lg">
               {cmsData?.['paymentPhase-total'] || 'Total:'}
             </Text>
-            <Text weight="bold" size="lg" color="primary" cmsId="total-amount">
+            <Text weight="bold" size="lg" color="primary">
               ${total.toFixed(2)}
             </Text>
           </TotalRow>
         </Stack>
 
-        <Text size="sm" color="secondary" align="center" cmsId="payment-phase-deposit-note">
+        <Text size="sm" color="secondary" align="center">
           {cmsData?.['paymentPhase-depositNote'] ||
             'No payment is required right now. Confirm your ride and pay after your trip.'}
         </Text>

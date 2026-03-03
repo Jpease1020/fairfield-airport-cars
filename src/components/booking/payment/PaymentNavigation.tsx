@@ -61,7 +61,7 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
           onClick={onBack}
           disabled={isProcessingPayment}
           data-testid="payment-back-button"
-          cmsId="payment-back-button"
+
           text={cmsData?.['paymentPhase-backButton'] || 'Back'}
           fullWidth
         />
@@ -75,7 +75,7 @@ export const PaymentNavigation: React.FC<PaymentNavigationProps> = ({
           disabled={isProcessingPayment}
           loading={isProcessingPayment}
           data-testid="payment-process-button"
-          cmsId="payment-process-button"
+
           text={
             isMobile
               ? (cmsData?.['paymentPhase-processButton-mobile'] || 'Confirm Booking')

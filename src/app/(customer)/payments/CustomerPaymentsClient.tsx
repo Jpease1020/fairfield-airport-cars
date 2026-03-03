@@ -120,7 +120,7 @@ export default function CustomerPaymentsClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="initializing">{cmsData?.['initializing'] || 'Initializing payments...'}</Text>
+          <Text>{cmsData?.['initializing'] || 'Initializing payments...'}</Text>
         </Stack>
       </Container>
     );
@@ -131,7 +131,7 @@ export default function CustomerPaymentsClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="loading_info">{cmsData?.['loading_info'] || 'Loading your payment information...'}</Text>
+          <Text>{cmsData?.['loading_info'] || 'Loading your payment information...'}</Text>
         </Stack>
       </Container>
     );
@@ -141,8 +141,8 @@ export default function CustomerPaymentsClient() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text variant="muted" cmsId="login_required">{cmsData?.['login_required'] || 'Please log in to view your payments.'}</Text>
-          <Button onClick={() => router.push('/auth/login')} cmsId="go-to-login"  text={cmsData?.['go_to_login'] || 'Go to Login'}/>          
+          <Text variant="muted">{cmsData?.['login_required'] || 'Please log in to view your payments.'}</Text>
+          <Button onClick={() => router.push('/auth/login')}  text={cmsData?.['go_to_login'] || 'Go to Login'}/>          
         </Stack>
       </Container>
     );
@@ -165,14 +165,14 @@ export default function CustomerPaymentsClient() {
         <Stack direction="horizontal" justify="space-between" align="center">
           <Stack spacing="sm">
             <H1 
-              cmsId="title"
+
               
             >
               {cmsData?.['title'] || 'My Payments'}
             </H1>
             <Text 
               variant="muted"
-              cmsId="subtitle"
+
               
             >
               {cmsData?.['subtitle'] || 'Manage your payment methods and view transaction history'}
@@ -181,7 +181,7 @@ export default function CustomerPaymentsClient() {
           <Button 
             onClick={handleAddPaymentMethod} 
             variant="primary"
-            cmsId="add-payment-method"
+
             
           >
             {cmsData?.['add-payment-method'] || 'Add Payment Method'}
@@ -206,7 +206,7 @@ export default function CustomerPaymentsClient() {
           content={
             <Stack spacing="md">
               {paymentMethods.length === 0 ? (
-                <Text variant="muted" align="center" cmsId="no-methods-message" >
+                <Text variant="muted" align="center" >
                   {cmsData?.['message'] || 'No payment methods added yet'}
                 </Text>
               ) : (
@@ -243,7 +243,7 @@ export default function CustomerPaymentsClient() {
           content={
             <Stack spacing="md">
               {payments.length === 0 ? (
-                <Text variant="muted" align="center" cmsId="no-history-message" >
+                <Text variant="muted" align="center" >
                   {cmsData?.['message'] || 'No payment history available'}
                 </Text>
               ) : (
@@ -251,21 +251,21 @@ export default function CustomerPaymentsClient() {
                   <Box key={payment.id} variant="outlined" padding="md">
                     <Stack direction="horizontal" justify="space-between" align="center">
                       <Stack spacing="sm">
-                        <Text size="lg" cmsId="ignore">
+                        <Text size="lg">
                           {payment.type === 'deposit' ? '💰' : payment.type === 'balance' ? '💳' : payment.type === 'tip' ? '💝' : '💵'}
                         </Text>
-                        <Text weight="bold" cmsId="ignore">
+                        <Text weight="bold">
                           {payment.description}
                         </Text>
-                        <Text variant="muted" size="sm" cmsId="ignore">
+                        <Text variant="muted" size="sm">
                           {new Date(payment.date).toLocaleDateString()}
                         </Text>
                       </Stack>
                       <Stack spacing="sm" align="flex-end">
-                        <Text weight="bold" size="lg" cmsId="ignore">
+                        <Text weight="bold" size="lg">
                           ${payment.amount.toFixed(2)}
                         </Text>
-                        <Text variant="muted" size="sm" cmsId="ignore">
+                        <Text variant="muted" size="sm">
                           {payment.status}
                         </Text>
                       </Stack>

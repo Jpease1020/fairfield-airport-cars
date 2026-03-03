@@ -7,7 +7,7 @@ import { BaseTextComponentProps, TextComponentChildren } from '../../../system/s
 
 // Styled link component
 const StyledLink = styled.a.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'size', 'external', 'cmsId'].includes(prop)
+  shouldForwardProp: (prop) => !['variant', 'size', 'external'].includes(prop)
 })<{
   variant: 'primary' | 'secondary' | 'muted' | 'underline' | 'button';
   size: 'sm' | 'base' | 'lg';
@@ -100,7 +100,7 @@ const StyledLink = styled.a.withConfig({
   }
 `;
 
-export interface LinkProps extends Omit<BaseTextComponentProps, 'cmsId' | 'cmsData'> {
+export interface LinkProps extends BaseTextComponentProps {
   // Core props - now type-safe
   children: TextComponentChildren;
   
@@ -113,14 +113,6 @@ export interface LinkProps extends Omit<BaseTextComponentProps, 'cmsId' | 'cmsDa
   href: string;
   target?: string;
   rel?: string;
-  
-  // Content editing (optional)
-  cmsId?: string;
-  cmsData?: any;
-  mode?: 'edit' | 'comment' | null;
-  // cmsId: string; - now mandatory
-  // cmsData: any; - optional
-  // mode?: 'edit' | 'comment' | null; - optional
   
   // Event handlers
   onClick?: (e: React.MouseEvent) => void;

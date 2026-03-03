@@ -178,7 +178,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
         {...rest}
       />
       {autocompleteError && (
-        <Text size="sm" color="error" cmsId="address-input-error">
+        <Text size="sm" color="error">
           {autocompleteError}
         </Text>
       )}

@@ -6,7 +6,7 @@ import { colors, spacing, fontSize, borderRadius, transitions, shadows } from '.
 
 // Styled Input component with flexbox
 const StyledInput = styled.input.withConfig({
-  shouldForwardProp: (prop) => !['size', 'fullWidth', 'error', 'disabled', 'cmsId'].includes(prop)
+  shouldForwardProp: (prop) => !['size', 'fullWidth', 'error', 'disabled'].includes(prop)
 })<{
   size: 'sm' | 'md' | 'lg';
   fullWidth: boolean;

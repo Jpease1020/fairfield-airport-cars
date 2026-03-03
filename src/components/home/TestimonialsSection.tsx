@@ -211,14 +211,14 @@ const RightButton = styled(NavigationButton)`
 `;
 
 interface TestimonialProps {
+  id: string;
   rating: number;
   review: string;
   name: string;
   location: string;
-  cmsId: string;
 }
 
-const Testimonial: React.FC<TestimonialProps> = ({ rating, review, name, location, cmsId }) => {
+const Testimonial: React.FC<TestimonialProps> = ({ id, rating, review, name, location }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   
   // Determine if review is long enough to need "Read More"
@@ -226,7 +226,7 @@ const Testimonial: React.FC<TestimonialProps> = ({ rating, review, name, locatio
   const needsReadMore = review.length > 250;
 
   return (
-    <TestimonialCard variant="elevated" padding="lg" data-testid={`testimonial-${cmsId}`}>
+    <TestimonialCard variant="elevated" padding="lg" data-testid={`testimonial-${id}`}>
       <FullHeightStack spacing="md" direction="vertical">
         <StarRating rating={rating} size="lg" aria-label={`${rating} star rating`} />
         
@@ -235,7 +235,6 @@ const Testimonial: React.FC<TestimonialProps> = ({ rating, review, name, locatio
             $isExpanded={isExpanded}
             size="md" 
             color="secondary"
-            cmsId={`${cmsId}-review`}
           >
             "{review}"
           </QuoteText>
@@ -255,7 +254,6 @@ const Testimonial: React.FC<TestimonialProps> = ({ rating, review, name, locatio
           <Text 
             weight="semibold" 
             size="md"
-            cmsId={`${cmsId}-name`}
           >
             {name}
           </Text>
@@ -263,7 +261,6 @@ const Testimonial: React.FC<TestimonialProps> = ({ rating, review, name, locatio
           <Text 
             size="sm" 
             color="secondary"
-            cmsId={`${cmsId}-location`}
           >
             {location}
           </Text>
@@ -346,7 +343,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
         <Stack spacing="md" align="center">
           <H2
             align="center"
-            cmsId="testimonials-title"
+
             data-testid="testimonials-title"
           >
             {cmsData?.['testimonials-title'] || 'What Our Customers Say'}
@@ -354,7 +351,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
           <Text
             align="center"
             size="lg"
-            cmsId="testimonials-subtitle"
+
             data-testid="testimonials-subtitle"
           >
             {cmsData?.['testimonials-subtitle'] || 'Trusted by travelers across Connecticut'}
@@ -375,11 +372,11 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
             {testimonials.map((testimonial) => (
               <Testimonial
                 key={testimonial.id}
+                id={testimonial.id}
                 rating={testimonial.rating}
                 review={cmsData?.[`${testimonial.id}-review`] || testimonial.review}
                 name={cmsData?.[`${testimonial.id}-name`] || testimonial.name}
                 location={cmsData?.[`${testimonial.id}-location`] || testimonial.location}
-                cmsId={testimonial.id}
               />
             ))}
           </CarouselTrack>
@@ -397,7 +394,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ cmsDat
             {/* Mobile: Swipe hint text */}
             <ScrollHintText 
             color="primary" 
-            cmsId="testimonials-swipe-hint"
+
             >
             {cmsData?.['testimonials-swipe-hint'] || '← Swipe to see more reviews →'}
             </ScrollHintText>      

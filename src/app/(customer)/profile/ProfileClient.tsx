@@ -170,7 +170,7 @@ export default function ProfileClient() {
       <Container maxWidth="full" padding="xl">
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="ignore">Loading profile...</Text>
+          <Text>Loading profile...</Text>
         </Stack>
       </Container>
     );
@@ -181,9 +181,9 @@ export default function ProfileClient() {
       <Container maxWidth="full" padding="xl">
         <Stack spacing="xl" align="center">
           <Alert variant="error">
-            <Text cmsId="ignore">{error}</Text>
+            <Text>{error}</Text>
           </Alert>
-          <Button onClick={() => router.push('/auth/login')} cmsId="back-to-login"  text={pageCmsData?.['back-to-login'] || 'Back to Login'}/>          
+          <Button onClick={() => router.push('/auth/login')}  text={pageCmsData?.['back-to-login'] || 'Back to Login'}/>          
         </Stack>
       </Container>
     );
@@ -196,7 +196,7 @@ export default function ProfileClient() {
         <Stack spacing="md" align="center">
           <H1 
             align="center" 
-            cmsId="profile-title"
+
             
           >
             {pageCmsData?.['profile-title'] || 'Profile Settings'}
@@ -204,7 +204,7 @@ export default function ProfileClient() {
           <Text 
             variant="lead" 
             align="center" 
-            cmsId="profile-subtitle"
+
             
           >
             {pageCmsData?.['profile-subtitle'] || 'Manage your account information and preferences'}
@@ -213,13 +213,13 @@ export default function ProfileClient() {
 
         {success && (
           <Alert variant="success">
-            <Text cmsId="ignore">{success}</Text>
+            <Text>{success}</Text>
           </Alert>
         )}
 
         {error && (
           <Alert variant="error">
-            <Text cmsId="ignore">{error}</Text>
+            <Text>{error}</Text>
           </Alert>
         )}
 
@@ -256,7 +256,7 @@ export default function ProfileClient() {
                       disabled={true} // Email cannot be changed
                       placeholder="Your email address"
                     />
-                    <Text variant="small" color="muted" cmsId="email-address-cannot-be-changed">
+                    <Text variant="small" color="muted">
                       {pageCmsData?.['email-address-cannot-be-changed'] || 'Email address cannot be changed. Contact support if needed.'}
                     </Text>
                   </div>
@@ -315,7 +315,7 @@ export default function ProfileClient() {
               >
                 <Stack spacing="md">
                   <div>
-                    <Label cmsId="notifications-email">
+                    <Label>
                       <input
                         type="checkbox"
                         checked={formData.notifications.email}
@@ -328,7 +328,7 @@ export default function ProfileClient() {
                   </div>
                   
                   <div>
-                    <Label cmsId="notifications-sms">
+                    <Label>
                       <input
                         type="checkbox"
                         checked={formData.notifications.sms}
@@ -348,7 +348,7 @@ export default function ProfileClient() {
                   <Button
                     onClick={() => setIsEditing(true)}
                     variant="primary"
-                    cmsId="profile-buttons-edit"
+
                     
                   >
                     {pageCmsData?.['profile-buttons-edit'] || 'Edit Profile'}
@@ -359,14 +359,14 @@ export default function ProfileClient() {
                       onClick={handleSave}
                       variant="primary"
                       disabled={saving}
-                      cmsId="profile-buttons-save"
+
                     >
                       {pageCmsData?.[saving ? 'buttons.saving' : 'buttons.save'] || saving ? 'Saving...' : 'Save Changes'}
                     </Button>
                     <Button
                       onClick={handleCancel}
                       variant="outline"
-                      cmsId="profile-buttons-cancel"
+
                     >
                       {pageCmsData?.['buttons.cancel'] || 'Cancel'}
                     </Button>

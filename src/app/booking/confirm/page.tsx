@@ -66,7 +66,7 @@ export default function BookingConfirmationPage() {
       return (
         <Stack spacing="md" align="center">
           <LoadingSpinner size="lg" variant="spinner" />
-          <Text size="lg" color="secondary" cmsId="booking-confirm-loading-text">
+          <Text size="lg" color="secondary">
             Confirming your booking…
           </Text>
         </Stack>
@@ -76,10 +76,10 @@ export default function BookingConfirmationPage() {
     if (state === 'success') {
       return (
         <Stack spacing="lg" align="center">
-          <Text size="lg" weight="bold" color="success" cmsId="booking-confirm-success-message">
+          <Text size="lg" weight="bold" color="success">
             {message}
           </Text>
-          <Text align="center" color="secondary" cmsId="booking-confirm-success-description">
+          <Text align="center" color="secondary">
             We've notified the Fairfield Airport Cars team. You'll receive your final itinerary shortly.
           </Text>
           <ButtonContainer direction="horizontal" spacing="md" align="stretch" justify="center">
@@ -88,7 +88,7 @@ export default function BookingConfirmationPage() {
                 variant="primary"
                 size="md"
                 onClick={() => window.location.href = `/booking/${bookingId}`}
-                cmsId="booking-confirm-view-booking-button"
+
                 text="View Booking"
                 fullWidth
               />
@@ -98,7 +98,7 @@ export default function BookingConfirmationPage() {
                 variant="outline"
                 size="md"
                 onClick={() => window.location.href = '/'}
-                cmsId="booking-confirm-return-home-button"
+
                 text="Return Home"
                 fullWidth
               />
@@ -110,17 +110,17 @@ export default function BookingConfirmationPage() {
 
     return (
       <Stack spacing="lg" align="center" justify="center">
-        <Text size="lg" weight="bold" color="error" cmsId="booking-confirm-error-message">
+        <Text size="lg" weight="bold" color="error">
           {message || 'We could not confirm your booking.'}
         </Text>
-        <Text align="center" color="secondary" cmsId="booking-confirm-error-help">
+        <Text align="center" color="secondary">
           Please forward your confirmation email to rides@fairfieldairportcar.com or text (646) 221-6370 so we can help.
         </Text>
         <Button
           variant="primary"
           size="md"
           onClick={() => window.location.href = '/'}
-          cmsId="booking-confirm-error-return-home-button"
+
           text="Return Home"
         />
       </Stack>
@@ -130,7 +130,7 @@ export default function BookingConfirmationPage() {
   return (
     <Container maxWidth="lg" padding="xl" alignSelf="center">
       <Stack spacing="2xl" align="center">
-        <H2 cmsId="booking-confirm-page-title">Finalize Your Booking</H2>
+        <H2>Finalize Your Booking</H2>
         {renderContent()}
       </Stack>
     </Container>

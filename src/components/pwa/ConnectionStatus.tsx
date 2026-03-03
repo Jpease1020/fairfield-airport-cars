@@ -35,7 +35,7 @@ export const ConnectionStatus: React.FC = () => {
 
   return (
     <StatusBanner isOnline={online}>
-      <Text size="sm" weight="medium" cmsId="connection-status-offline">
+      <Text size="sm" weight="medium">
         {pageCmsData?.['connection-status-offline'] || "📡 You're offline. Booking requires an internet connection."}
       </Text>
     </StatusBanner>

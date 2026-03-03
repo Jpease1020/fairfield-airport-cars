@@ -112,7 +112,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
           <Container>
             <Stack spacing="lg" align="center">
               <LoadingSpinner />
-              <Text align="center" cmsId="loading-message" >
+              <Text align="center" >
                 {pageCmsData?.['loading-message'] || 'Please wait while we fetch your booking details...'}
               </Text>
             </Stack>
@@ -128,16 +128,16 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" cmsId="error-title" >
+              <H1 align="center" >
                 {pageCmsData?.['error-title'] || 'Unable to Load Booking'}
               </H1>
-              <Text align="center" cmsId="error-description" >
+              <Text align="center" >
                 {pageCmsData?.['error-description'] || 'We could not load your booking details. Please check your booking ID and try again.'}
               </Text>
               <Button
                 onClick={() => window.location.href = '/bookings'}
                 variant="primary"
-                cmsId="error-view-bookings"
+
                 
                 text={pageCmsData?.['error-view-bookings'] || 'View My Bookings'}
               />
@@ -154,10 +154,10 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
         <GridSection variant="content" columns={1}>
           <Container>
             <Stack spacing="lg" align="center">
-              <H1 align="center" cmsId="success-title" >
+              <H1 align="center" >
                 {pageCmsData?.['success-title'] || 'Thank You!'}
               </H1>
-              <Text align="center" cmsId="success-description" >
+              <Text align="center" >
                 {pageCmsData?.['success-description'] || 'Your feedback has been submitted successfully. We appreciate your input and will use it to improve our service.'}
               </Text>
               <Stack direction="horizontal" spacing="md" align="center">
@@ -167,7 +167,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
                     onClick={action.onClick}
                     variant={action.variant}
                     icon={action.icon}
-                    cmsId="feedback-alternative-action"
+
                     
                     text={action.label}
                   />
@@ -186,10 +186,10 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="lg" align="center">
-            <H1 align="center" cmsId="title" >
+            <H1 align="center" >
               {pageCmsData?.['title'] || 'Share Your Experience'}
             </H1>
-            <Text align="center" cmsId="subtitle" >
+            <Text align="center" >
               {pageCmsData?.['subtitle'] || `We'd love to hear about your ride for booking #${bookingId}`}
             </Text>
           </Stack>
@@ -215,7 +215,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => setRating(star)}
-                          cmsId="rate-experience-star"
+
                           
                         >
                           <Star size={24} fill={rating >= star ? colors.primary[500] : 'transparent'} />
@@ -230,10 +230,10 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
 
                 {/* Comment Section */}
                 <Stack spacing="md">
-                  <Label htmlFor="comment" cmsId="comment-label" >
+                  <Label htmlFor="comment" >
                     {pageCmsData?.['comment-label'] || 'Additional Comments (Optional)'}
                   </Label>
-                  <Text cmsId="comment-description" >
+                  <Text >
                     {pageCmsData?.['comment-description'] || 'Tell us more about your experience, any suggestions, or what we did well'}
                   </Text>
                   <Textarea
@@ -242,7 +242,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
                     placeholder={pageCmsData?.['comment-placeholder'] || 'Share your thoughts about your ride experience...'}
                     rows={4}
-                    cmsId="comment-input"
+
                   />
                 </Stack>
 
@@ -253,7 +253,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
                     variant="primary"
                     size="lg"
                     disabled={rating === 0 || loading}
-                    cmsId="submit-button"
+
                   >
                     {loading ? (
                       pageCmsData?.['loading'] || 'Submitting...'
@@ -261,7 +261,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
                       pageCmsData?.['text'] || 'Submit Feedback'
                     )}
                   </Button>
-                  <Text size="sm" variant="muted" cmsId="submit-note" >
+                  <Text size="sm" variant="muted" >
                     {pageCmsData?.['note'] || 'Your feedback helps us improve our service for all customers'}
                   </Text>
                 </Stack>
@@ -275,7 +275,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
       <GridSection variant="content" columns={1}>
         <Container>
           <Stack spacing="md" align="center">
-            <Text align="center" cmsId="alternatives-title" >
+            <Text align="center" >
               {pageCmsData?.['title'] || 'Need help with something else?'}
             </Text>
             <Stack direction="horizontal" spacing="md" align="center">
@@ -285,7 +285,7 @@ function FeedbackPageContent({ bookingId, cmsData }: FeedbackClientProps) {
                   onClick={action.onClick}
                   variant={action.variant}
                   icon={action.icon}
-                  cmsId="feedback-alternative-action"
+
                 >
                   {action.label}
                 </Button>

@@ -36,12 +36,12 @@ function BookPageClient() {
       <Stack align="center">
         {showPageHeader && (
           <Stack spacing="md" align="center">
-            <H2 align="center" cmsId="hero-title">
+            <H2 align="center">
               {success
                 ? (pageCmsData?.['booking-confirmed-page-title'] || 'Booking confirmed')
                 : (pageCmsData?.['hero-title'] || 'Complete Your Booking')}
             </H2>
-            <Text variant="lead" align="center" cmsId="hero-subtitle">
+            <Text variant="lead" align="center">
               {success
                 ? (pageCmsData?.['booking-confirmed-page-subtitle'] || 'Check your email to finalize your ride.')
                 : (pageCmsData?.['hero-subtitle'] || 'Fill in your details below')}

@@ -10,17 +10,17 @@ export default function NotFound() {
   return (
     <Container>
       <Stack spacing="xl" align="center" justify="center">
-        <Text variant="lead" size="xl" weight="bold" cmsId="not-found-title">
+        <Text variant="lead" size="xl" weight="bold">
           {(cmsData as any)?.['not-found-title'] || '404'}
         </Text>
-        <Text variant="lead" size="lg" cmsId="not-found-subtitle">
+        <Text variant="lead" size="lg">
           {(cmsData as any)?.['not-found-subtitle'] || 'Page Not Found'}
         </Text>
-        <Text variant="body" align="center" cmsId="not-found-message">
+        <Text variant="body" align="center">
           {(cmsData as any)?.['not-found-message'] || "The page you're looking for doesn't exist or has been moved."}
         </Text>
         <Link href="/">
-          <Button variant="primary" cmsId="not-found-cta">
+          <Button variant="primary">
             {(cmsData as any)?.['not-found-cta'] || 'Go Home'}
           </Button>
         </Link>

@@ -132,7 +132,7 @@ export default function ForgotPasswordClient() {
                     size="lg"
                     disabled={loading}
                     data-testid="reset-password-button"
-                    cmsId="reset-password-button"
+
                     
                     text={cmsData?.['customer-forgot_password-reset_button'] || (loading ? '🔄 Sending...' : '📧 Send Reset Link')}
                   />

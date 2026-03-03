@@ -94,9 +94,9 @@ export function DataTable<T extends Record<string, any>>({
       <Container>
         <Stack align="center" spacing="md">
           <Container>
-            <Span cmsId="ignore">⏳</Span>
+            <Span>⏳</Span>
           </Container>
-          <Text cmsId="ignore">Loading...</Text>
+          <Text>Loading...</Text>
         </Stack>
       </Container>
     );
@@ -107,10 +107,10 @@ export function DataTable<T extends Record<string, any>>({
       <Container>
         <Stack align="center" spacing="md">
           <Container>
-            <Span cmsId="ignore">{emptyIcon}</Span>
+            <Span>{emptyIcon}</Span>
           </Container>
-          <Text cmsId="ignore">No Data</Text>
-          <Text cmsId="ignore">{emptyMessage}</Text>
+          <Text>No Data</Text>
+          <Text>{emptyMessage}</Text>
         </Stack>
       </Container>
     );
@@ -167,7 +167,7 @@ export function DataTable<T extends Record<string, any>>({
                             size="sm"
                             onClick={() => action.onClick(row)}
                           >
-                            {action.icon && <Span cmsId="ignore">{action.icon}</Span>}
+                            {action.icon && <Span>{action.icon}</Span>}
                           </Button>
                         ))}
                     </Stack>

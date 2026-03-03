@@ -32,11 +32,11 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   return (
     <Box variant="elevated" padding="lg" data-testid="payment-form">
       <Stack spacing="lg">
-        <H2 align="center" cmsId="payment-form-title">
+        <H2 align="center">
           {cmsData?.['paymentPhasePaymentForm'] || 'Payment Information'}
         </H2>
         
-        <Text align="center" color="secondary" cmsId="payment-form-description">
+        <Text align="center" color="secondary">
           {cmsData?.['paymentPhase-paymentDescription'] || 'Complete your booking by providing payment information.'}
         </Text>
         

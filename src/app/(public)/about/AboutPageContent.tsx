@@ -26,7 +26,7 @@ export default function AboutPageContent() {
           <Stack spacing="md" align="center">
             <H1 
               align="center" 
-              cmsId="title" 
+ 
             >
               {cmsData?.['title'] || 'About Us'}
             </H1>
@@ -34,7 +34,7 @@ export default function AboutPageContent() {
               variant="lead" 
               align="center" 
               size="lg" 
-              cmsId="subtitle" 
+ 
             >
               {cmsData?.['subtitle'] || 'Your Trusted Airport Transportation Partner'}
             </Text>
@@ -49,7 +49,7 @@ export default function AboutPageContent() {
             <Text 
               align="center" 
               size="lg" 
-              cmsId="description" 
+ 
             >
               {cmsData?.['description'] || 'We are Fairfield Airport Car Service, your trusted partner for reliable and comfortable airport transportation. With years of experience, we understand the importance of punctuality and safety. Our professional drivers are background-checked and equipped with clean, well-maintained vehicles to ensure a smooth and enjoyable journey for you.'}
             </Text>
@@ -62,7 +62,7 @@ export default function AboutPageContent() {
         <Stack spacing="lg" align="center">
           <Text 
             align="center" 
-            cmsId="cta-subtitle" 
+ 
           >
             {cmsData?.['cta-subtitle'] || 'Ready to experience premium airport transportation?'}
           </Text>
@@ -71,7 +71,7 @@ export default function AboutPageContent() {
             <Link href="/book">
             <Button
               variant="primary"
-              cmsId="cta-primary-button"
+
             >
               {cmsData?.['cta-primary-button'] || 'Book Your Ride'}
             </Button>

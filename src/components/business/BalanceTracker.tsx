@@ -64,7 +64,7 @@ export function BalanceTracker({
       <Card variant="elevated" padding="lg">
         <Stack spacing="lg">
           <Stack direction="horizontal" justify="space-between" align="center">
-            <Text variant="h3" cmsId="balance-tracker-payment-status">{pageCmsData?.['balanceTrackerPaymentStatus'] || 'Payment Status'}</Text>
+            <Text variant="h3">{pageCmsData?.['balanceTrackerPaymentStatus'] || 'Payment Status'}</Text>
             <Badge variant={paymentStatus.color as any}>
               {paymentStatus.text}
             </Badge>
@@ -73,32 +73,32 @@ export function BalanceTracker({
           <Box variant="outlined" padding="md">
             <Stack spacing="sm">
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text cmsId="balance-tracker-base-fare">{pageCmsData?.['balanceTrackerBaseFare'] || 'Base Fare:'}</Text>
-                <Text weight="medium" cmsId="balance-tracker-base-fare-amount">{formatCurrency(totalFare)}</Text>
+                <Text>{pageCmsData?.['balanceTrackerBaseFare'] || 'Base Fare:'}</Text>
+                <Text weight="medium">{formatCurrency(totalFare)}</Text>
               </Stack>
               
               {tipAmount > 0 && (
                 <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text cmsId="balance-tracker-tip">{pageCmsData?.['balanceTrackerTip'] || 'Tip:'}</Text>
-                  <Text weight="medium" cmsId="ignore">+{formatCurrency(tipAmount)}</Text>
+                  <Text>{pageCmsData?.['balanceTrackerTip'] || 'Tip:'}</Text>
+                  <Text weight="medium">+{formatCurrency(tipAmount)}</Text>
                 </Stack>
               )}
               
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text weight="bold" cmsId="balance-tracker-total-amount">{pageCmsData?.['balanceTrackerTotalAmount'] || 'Total Amount:'}</Text>
-                <Text weight="bold" cmsId="balance-tracker-total-amount-amount">{formatCurrency(totalWithTip)}</Text>
+                <Text weight="bold">{pageCmsData?.['balanceTrackerTotalAmount'] || 'Total Amount:'}</Text>
+                <Text weight="bold">{formatCurrency(totalWithTip)}</Text>
               </Stack>
               
               <Stack direction="horizontal" justify="space-between" align="center">
-                <Text cmsId="balance-tracker-deposit-paid">{pageCmsData?.['balanceTrackerDepositPaid'] || 'Deposit Paid:'}</Text>
-                <Text weight="medium" color="success" cmsId="ignore">-{formatCurrency(depositAmount)}</Text>
+                <Text>{pageCmsData?.['balanceTrackerDepositPaid'] || 'Deposit Paid:'}</Text>
+                <Text weight="medium" color="success">-{formatCurrency(depositAmount)}</Text>
               </Stack>
               
               <Stack direction="horizontal" justify="space-between" align="center">
                 <Text variant="h4" weight="bold">
                   {balanceDue > 0 ? (pageCmsData?.['balanceTrackerRemainingBalance'] || 'Remaining Balance:') : (pageCmsData?.['balanceTrackerAmountPaid'] || 'Amount Paid:')}
                 </Text>
-                <Text variant="h4" weight="bold" color={balanceDue > 0 ? 'primary' : 'success'} cmsId="ignore">
+                <Text variant="h4" weight="bold" color={balanceDue > 0 ? 'primary' : 'success'}>
                   {formatCurrency(Math.abs(balanceDue))}
                 </Text>
               </Stack>
@@ -110,19 +110,19 @@ export function BalanceTracker({
               <Text variant="body" color="muted">
                 {pageCmsData?.['balanceTrackerCompletePayment'] || 'Complete your payment to confirm your booking'}
               </Text>
-              <Link href={`/payments/pay-balance/${bookingId}`} cmsId="pay-balance-link" >
-                <Button variant="primary" fullWidth cmsId="pay-balance-button"  text="Pay Remaining Balance" />
+              <Link href={`/payments/pay-balance/${bookingId}`} >
+                <Button variant="primary" fullWidth  text="Pay Remaining Balance" />
               </Link>
             </Stack>
           )}
 
           {balanceDue <= 0 && (
             <Stack spacing="sm">
-              <Text variant="body" color="success" cmsId="balance-tracker-payment-complete">
+              <Text variant="body" color="success">
                 ✅ {pageCmsData?.['balanceTrackerPaymentComplete'] || 'Payment complete! Your booking is confirmed.'}
               </Text>
-              <Link href={`/booking/${bookingId}`} cmsId="view-booking-link" >
-                <Button variant="outline" fullWidth cmsId="view-booking-button"  text="View Booking Details" />
+              <Link href={`/booking/${bookingId}`} >
+                <Button variant="outline" fullWidth  text="View Booking Details" />
               </Link>
             </Stack>
           )}
@@ -173,16 +173,16 @@ export function BalanceSummary({ bookings, cmsData }: BalanceSummaryProps) {
     <Container>
       <Card variant="elevated" padding="lg">
         <Stack spacing="lg">
-          <Text variant="h3" cmsId="balance-summary-payment-summary">{pageCmsData?.['balanceSummaryPaymentSummary'] || 'Payment Summary'}</Text>
+          <Text variant="h3">{pageCmsData?.['balanceSummaryPaymentSummary'] || 'Payment Summary'}</Text>
           
           <Grid cols={3} gap="lg" responsive>
             <GridItem>
               <Stack spacing="sm" align="center">
-                <Text variant="lead" cmsId="balance-summary-total-owed">{pageCmsData?.['balanceSummaryTotalOwed'] || 'Total Owed'}</Text>
+                <Text variant="lead">{pageCmsData?.['balanceSummaryTotalOwed'] || 'Total Owed'}</Text>
                 <Text variant="h3" weight="bold" color="primary">
                   {formatCurrency(totalOwed)}
                 </Text>
-                <Text variant="small" color="muted" cmsId="ignore">
+                <Text variant="small" color="muted">
                   {pendingPayments.length} pending payment{pendingPayments.length !== 1 ? 's' : ''}
                 </Text>
               </Stack>
@@ -190,11 +190,11 @@ export function BalanceSummary({ bookings, cmsData }: BalanceSummaryProps) {
             
             <GridItem>
               <Stack spacing="sm" align="center">
-                <Text variant="lead" cmsId="balance-summary-total-paid">{pageCmsData?.['balanceSummaryTotalPaid'] || 'Total Paid'}</Text>
+                <Text variant="lead">{pageCmsData?.['balanceSummaryTotalPaid'] || 'Total Paid'}</Text>
                 <Text variant="h3" weight="bold" color="success">
                   {formatCurrency(totalPaid)}
                 </Text>
-                <Text variant="small" color="muted" cmsId="ignore">
+                <Text variant="small" color="muted">
                   {bookings.filter(b => b.balanceDue <= 0).length} completed booking{bookings.filter(b => b.balanceDue <= 0).length !== 1 ? 's' : ''}
                 </Text>
               </Stack>
@@ -202,8 +202,8 @@ export function BalanceSummary({ bookings, cmsData }: BalanceSummaryProps) {
             
             <GridItem>
               <Stack spacing="sm" align="center">
-                <Text variant="lead" cmsId="balance-summary-active-bookings">{pageCmsData?.['balanceSummaryActiveBookings'] || 'Active Bookings'}</Text>
-                <Text variant="h3" weight="bold" cmsId="balance-summary-active-bookings-count">
+                <Text variant="lead">{pageCmsData?.['balanceSummaryActiveBookings'] || 'Active Bookings'}</Text>
+                <Text variant="h3" weight="bold">
                   {activeBookings.length}
                 </Text>
                 <Text variant="small" color="muted">
@@ -215,19 +215,19 @@ export function BalanceSummary({ bookings, cmsData }: BalanceSummaryProps) {
 
           {pendingPayments.length > 0 && (
             <Stack spacing="sm">
-              <Text variant="lead" cmsId="balance-summary-pending-payments">{pageCmsData?.['balanceSummaryPendingPayments'] || 'Pending Payments'}</Text>
+              <Text variant="lead">{pageCmsData?.['balanceSummaryPendingPayments'] || 'Pending Payments'}</Text>
               <Stack spacing="sm">
                 {pendingPayments.map(booking => (
                   <Box key={booking.id} variant="outlined" padding="sm">
                     <Stack direction="horizontal" justify="space-between" align="center">
                       <Stack spacing="xs">
-                        <Text weight="medium" cmsId="balance-summary-booking-id">{pageCmsData?.['balanceSummaryBookingId'] || `Booking #${booking.id}`}</Text>
+                        <Text weight="medium">{pageCmsData?.['balanceSummaryBookingId'] || `Booking #${booking.id}`}</Text>
                         <Text variant="small" color="muted">
                           {pageCmsData?.['balanceSummaryBalance'] || 'Balance:'} {formatCurrency(booking.balanceDue)}
                         </Text>
                       </Stack>
-                      <Link href={`/payments/pay-balance/${booking.id}`} cmsId="pay-now-link" >
-                        <Button size="sm" variant="primary" cmsId="pay-now-button" text={pageCmsData?.['balanceSummaryPayNow'] || 'Pay Now'} />
+                      <Link href={`/payments/pay-balance/${booking.id}`} >
+                        <Button size="sm" variant="primary" text={pageCmsData?.['balanceSummaryPayNow'] || 'Pay Now'} />
                       </Link>
                     </Stack>
                   </Box>

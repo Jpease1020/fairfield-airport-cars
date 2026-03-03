@@ -94,7 +94,7 @@ export default function DashboardClient() {
             <H1 
               align="center" 
               data-testid="welcome-title"
-              cmsId="welcome-title"
+
               
             >
               {pageCmsData?.['welcome-title'] || '👋 Welcome to Your Dashboard'}
@@ -102,7 +102,7 @@ export default function DashboardClient() {
             <Text 
               variant="lead" 
               align="center" 
-              cmsId="welcome-subtitle"
+
               
             >
               {pageCmsData?.['welcome-subtitle'] || 'Manage your airport transportation from one central hub'}
@@ -133,7 +133,7 @@ export default function DashboardClient() {
 
           {/* Account Stats */}
           <Stack spacing="lg" align="center">
-            <H4 align="center" cmsId="stats-title">
+            <H4 align="center">
               {pageCmsData?.['stats-title'] || 'Account Overview'}
             </H4>
             <Grid cols={{ xs: 1, md: 3 }} gap="md">

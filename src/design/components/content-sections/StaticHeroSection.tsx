@@ -45,13 +45,13 @@ export function StaticHeroSection({
     <Container variant="hero" padding="xl">
       <Stack spacing="xl" align="center">
         <Stack spacing="md" align="center">
-          <H1 size="2xl" color="primary" align="center" cmsId={titleId}>
+          <H1 size="2xl" color="primary" align="center">
             {title}
           </H1>
-          <Text variant="lead" size="lg" align="center" cmsId={subtitleId}>
+          <Text variant="lead" size="lg" align="center">
             {subtitle}
           </Text>
-          <Text variant="muted" size="md" align="center" cmsId={descriptionId}>
+          <Text variant="muted" size="md" align="center">
             {description}
           </Text>
         </Stack>
@@ -62,10 +62,10 @@ export function StaticHeroSection({
           align="center"
         >
           <Link href={primaryAction.href}>
-            <Button variant="primary" size="lg" cmsId={primaryAction.labelId || ''} text={primaryAction.label}/>
+            <Button variant="primary" size="lg" text={primaryAction.label}/>
           </Link>
           <Link href={secondaryAction.href}>
-            <Button variant="outline" size="lg" cmsId={secondaryAction.labelId || ''} text={secondaryAction.label}/>
+            <Button variant="outline" size="lg" text={secondaryAction.label}/>
           </Link>
         </Stack>
       </Stack>

@@ -95,7 +95,7 @@ export default function DriversClient() {
     return (
       <Container>
         <Alert variant="error">
-          <Text cmsId="errors-access-denied">{cmsData?.['errors-access-denied'] || 'Access denied. Admin privileges required.'}</Text>
+          <Text>{cmsData?.['errors-access-denied'] || 'Access denied. Admin privileges required.'}</Text>
         </Alert>
       </Container>
     );
@@ -106,7 +106,7 @@ export default function DriversClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <LoadingSpinner size="lg" />
-          <Text cmsId="loading-loading-driver">{cmsData?.['loading-loading-driver'] || 'Loading driver information...'}</Text>
+          <Text>{cmsData?.['loading-loading-driver'] || 'Loading driver information...'}</Text>
         </Stack>
       </Container>
     );
@@ -117,9 +117,9 @@ export default function DriversClient() {
       <Container>
         <Stack spacing="xl" align="center">
           <Alert variant="error">
-            <Text cmsId="errors-no-driver-dynamic">{cmsData?.['errors-no-driver-dynamic'] || error}</Text>
+            <Text>{cmsData?.['errors-no-driver-dynamic'] || error}</Text>
           </Alert>
-          <Button onClick={fetchDriver} cmsId="retry-driver-fetch"  text="Retry" />
+          <Button onClick={fetchDriver}  text="Retry" />
         </Stack>
       </Container>
     );
@@ -129,7 +129,7 @@ export default function DriversClient() {
     return (
       <Container>
         <Stack spacing="xl" align="center">
-          <Text cmsId="errors-no-driver">{cmsData?.['errors-no-driver'] || 'No driver found.'}</Text>
+          <Text>{cmsData?.['errors-no-driver'] || 'No driver found.'}</Text>
         </Stack>
       </Container>
     );
@@ -143,7 +143,7 @@ export default function DriversClient() {
           <Text 
             variant="h1" 
             align="center" 
-            cmsId="title"
+
             
           >
             {cmsData?.['title'] || 'Driver Management'}
@@ -151,7 +151,7 @@ export default function DriversClient() {
           <Text 
             variant="lead" 
             align="center" 
-            cmsId="subtitle"
+
             
           >
             {cmsData?.['subtitle'] || 'Manage your driver status and information'}
@@ -250,7 +250,7 @@ export default function DriversClient() {
                   onClick={() => handleStatusUpdate('available')}
                   variant="success"
                   disabled={driver.status === 'available' || updating}
-                  cmsId="actions-set-available"
+
                 >
                   ✅ {cmsData?.['actions-set-available'] || 'Set Available'}
                 </Button>
@@ -259,7 +259,7 @@ export default function DriversClient() {
                   onClick={() => handleStatusUpdate('busy')}
                   variant="warning"
                   disabled={driver.status === 'busy' || updating}
-                  cmsId="actions-set-busy"
+
                 >
                   🚗 {cmsData?.['actions-set-busy'] || 'Set Busy'}
                 </Button>
@@ -268,7 +268,7 @@ export default function DriversClient() {
                   onClick={() => handleStatusUpdate('offline')}
                   variant="secondary"
                   disabled={driver.status === 'offline' || updating}
-                  cmsId="actions-set-offline"
+
                 >
                   ⏸️ {cmsData?.['actions-set-offline'] || 'Set Offline'}
                 </Button>

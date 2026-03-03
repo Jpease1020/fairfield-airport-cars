@@ -130,23 +130,23 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
   return (
     <DarkerGreyBox padding="lg" rounded="md" data-testid="location-input-section">
       <Stack spacing="lg">
-        <H2 cmsId="trip-details-location-title">
+        <H2>
           {cmsData?.['tripDetailsPhase-locationTitle'] || 'Where are you going?'}
         </H2>
-        <Text color="secondary" cmsId="trip-details-location-description">
+        <Text color="secondary">
           {cmsData?.['tripDetailsPhase-locationDescription'] || 'Enter your pickup and dropoff locations to get started.'}
         </Text>
         
       {/* Route Information Display */}
         {/* {route && (
           <Stack spacing="sm" padding="md">
-            <Text weight="medium" cmsId="route-info-title">
+            <Text weight="medium">
               {cmsData?.['tripDetailsPhase-routeInfo'] || 'Trip Information'}
             </Text>
-            <Text cmsId="route-distance">
+            <Text>
               {cmsData?.['tripDetailsPhase-distance'] || 'Distance'}: {route.distance}
             </Text>
-            <Text cmsId="route-duration">
+            <Text>
               {cmsData?.['tripDetailsPhase-duration'] || 'Duration'}: {route.durationInTraffic || route.duration}
               {route.durationInTraffic && route.durationInTraffic !== route.duration && (
                 <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }} data-cms-id="tripDetailsPhase-trafficAdjusted">
@@ -155,7 +155,7 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
               )}
             </Text>
             {route.trafficLevel !== 'unknown' && (
-              <Text cmsId="route-traffic" color={route.trafficLevel === 'high' ? 'error' : route.trafficLevel === 'medium' ? 'warning' : 'success'}>
+              <Text color={route.trafficLevel === 'high' ? 'error' : route.trafficLevel === 'medium' ? 'warning' : 'success'}>
                 {cmsData?.['tripDetailsPhase-trafficLevel'] || 'Traffic'}: {route.trafficLevel}
               </Text>
             )}
@@ -163,13 +163,13 @@ export const LocationInputSection: React.FC<LocationInputSectionProps> = ({
         )} */}
         
         {routeLoading && (
-          <Text color="secondary" cmsId="route-calculating">
+          <Text color="secondary">
             {cmsData?.['tripDetailsPhase-calculatingRoute'] || 'Calculating route...'}
           </Text>
         )}
         
         {routeError && (
-          <Text color="error" cmsId="route-error">
+          <Text color="error">
             {cmsData?.['tripDetailsPhase-routeError'] || 'Unable to calculate route. Please check your locations.'}
           </Text>
         )}

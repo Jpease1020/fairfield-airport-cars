@@ -141,7 +141,6 @@ export interface DateTimePickerProps {
   fullWidth?: boolean;
   required?: boolean;
   isValid?: boolean; // Whether the field has a valid value
-  cmsId?: string;
   [key: string]: any;
 }
 
@@ -159,9 +158,11 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   fullWidth = false,
   required = false,
   isValid,
-  cmsId,
   ...rest
 }) => {
+  const explicitTestId = typeof rest['data-testid'] === 'string' ? rest['data-testid'] : undefined;
+  const testIdBase = explicitTestId || id || 'date-time-picker';
+
   // Parse ISO string into date and time strings for native inputs
   // Native inputs expect: date="YYYY-MM-DD", time="HH:mm"
   const { dateValue, timeValue } = useMemo(() => {
@@ -459,7 +460,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       fullWidth={fullWidth} 
       error={error} 
       size={size}
-      data-testid={cmsId}
+      data-testid={testIdBase}
     >
       {label && (
         <LabelWrapper htmlFor={id}>
@@ -493,7 +494,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             placeholder="Date"
             title={isMobileDevice ? "Date - Tap to select pickup date" : "Select date"}
             aria-label="Select date"
-            data-testid={cmsId ? `${cmsId}-date` : `${id}-date`}
+            data-testid={`${testIdBase}-date`}
           />
         </InputWrapper>
 
@@ -518,7 +519,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             placeholder="Time"
             title={isMobileDevice ? "Time - Tap to select pickup time" : "Select time"}
             aria-label="Select time"
-            data-testid={cmsId ? `${cmsId}-time` : `${id}-time`}
+            data-testid={`${testIdBase}-time`}
           />
         </InputWrapper>
       </InputGroup>
@@ -532,7 +533,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
       {/* Show message when time was auto-adjusted to 24 hours from now */}
       {timeAdjusted && (
-        <AdjustmentMessage role="status" aria-live="polite" data-testid={`${id}-adjustment-message`}>
+        <AdjustmentMessage role="status" aria-live="polite" data-testid={`${testIdBase}-adjustment-message`}>
           Adjusted to earliest available time (24 hours from now)
         </AdjustmentMessage>
       )}

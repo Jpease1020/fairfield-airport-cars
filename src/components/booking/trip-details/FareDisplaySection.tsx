@@ -65,7 +65,7 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
   return (
     <Box variant="elevated" padding="lg" data-testid="fare-display">
       <Stack spacing="sm">
-        <H3 cmsId="trip-details-fare-title" data-testid="fare-display-title">
+        <H3 data-testid="fare-display-title">
           {cmsData?.['tripDetailsPhase-fareTitle'] || 'Estimated Fare'}
         </H3>
         

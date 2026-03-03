@@ -172,13 +172,13 @@ export function PaymentPhase({
         {/* Limited-time no-payment promo (temp feature). No greyed-out form — confirm CTA only. */}
         <Container variant="card" padding="xl" data-testid="no-deposit-promo">
           <Stack spacing="lg" align="center">
-            <Text size="xl" weight="bold" color="primary" cmsId="no-deposit-title">
+            <Text size="xl" weight="bold" color="primary">
               Limited time only
             </Text>
-            <Text size="lg" weight="bold" color="success" cmsId="no-deposit-message">
+            <Text size="lg" weight="bold" color="success">
               No payment required — book now
             </Text>
-            <Text size="md" color="secondary" align="center" cmsId="no-deposit-description">
+            <Text size="md" color="secondary" align="center">
               Confirm your details below. We'll see you at pickup. Payment will be collected after your ride. This offer is for a short time only.
             </Text>
           </Stack>
@@ -186,7 +186,7 @@ export function PaymentPhase({
 
         {!currentQuote && (
           <Stack spacing="md" align="center">
-            <Text color="warning" cmsId="paymentPhase-expiredQuote">Price quote expired. Please refresh to continue.</Text>
+            <Text color="warning">Price quote expired. Please refresh to continue.</Text>
             <Button
               variant="outline"
               size="md"
@@ -226,7 +226,7 @@ export function PaymentPhase({
               disabled={isRefreshingQuote}
               loading={isRefreshingQuote}
               data-testid="refresh-quote-button"
-              cmsId="refresh-quote-button"
+
               text={cmsData?.['paymentPhase-refreshQuote'] || 'Refresh Quote'}
             />
           </Stack>
@@ -274,7 +274,7 @@ export function PaymentPhase({
 
           {errorModalContent?.suggestedTimes && errorModalContent.suggestedTimes.length > 0 && (
             <SuggestedTimesBox>
-              <Text size="md" weight="bold" color="warning" cmsId="time-conflict-suggested-times-label">
+              <Text size="md" weight="bold" color="warning">
                 Suggested Available Times:
               </Text>
               <SuggestedTimesList>
@@ -286,7 +286,7 @@ export function PaymentPhase({
           )}
 
           <ModalHelperText>
-            <Text size="sm" color="secondary" cmsId="time-conflict-helper-text">
+            <Text size="sm" color="secondary">
               Please go back and select a different pickup time to complete your booking.
             </Text>
           </ModalHelperText>

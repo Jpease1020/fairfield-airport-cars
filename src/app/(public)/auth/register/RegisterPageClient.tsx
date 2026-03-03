@@ -299,7 +299,7 @@ export default function RegisterPageClient() {
                     size="lg"
                     disabled={loading}
                     data-testid="register-button"
-                    cmsId="register-button"
+
                     
                     text={pageCmsData?.['customer-register-sign_up_button'] || (loading ? '🔄 Creating Account...' : '📝 Create Account')}
                   />
@@ -317,7 +317,7 @@ export default function RegisterPageClient() {
                     onClick={handleGoogleSignIn}
                     disabled={loading}
                     data-testid="google-signin-button"
-                    cmsId="google-signin-button"
+
                     
                     text={pageCmsData?.['customer-register-google_sign_in_button'] || (loading ? '🔄 Connecting...' : 'Sign Up with Google')}
                   />

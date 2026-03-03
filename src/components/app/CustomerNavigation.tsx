@@ -60,7 +60,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
           onClick={() => auth.signOut()}
           data-testid="nav-logout-button" 
           id="nav-logout-button"
-          cmsId="nav-logout-button"
+
           
           text={cmsData?.['navigation-logout'] || 'Logout'}
         />
@@ -72,7 +72,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
           href="/book"
           data-testid="nav-book-now-button" 
           id="nav-book-now-button"
-          cmsId="nav-book-now-button"
+
           
           text={cmsData?.['navigation-bookNow'] || 'Book Now'}
         />
@@ -89,7 +89,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
           onClick={() => auth.signOut()}
           data-testid="nav-mobile-logout-button" 
           id="nav-mobile-logout-button"
-          cmsId="nav-mobile-logout-button"
+
           
           text={cmsData?.['navigation-mobile-logout'] || 'Logout'}
         />
@@ -101,7 +101,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
           href="/book"
           data-testid="nav-mobile-book-now-button" 
           id="nav-mobile-book-now-button"
-          cmsId="nav-mobile-book-now-button"
+
           
           text={cmsData?.['navigation-mobile-bookNow'] || 'Book Now'}
         />

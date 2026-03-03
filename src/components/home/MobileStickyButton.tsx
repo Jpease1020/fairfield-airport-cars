@@ -29,7 +29,7 @@ export const MobileStickyButton: React.FC<MobileStickyButtonProps> = ({ cmsData 
           variant="primary"
           size="lg"
           data-testid="mobile-sticky-book-now"
-          cmsId="mobile-sticky-book-now"
+
           text={cmsData?.['mobile-sticky-book-now'] || 'Book Now'}
         />
       </Link>

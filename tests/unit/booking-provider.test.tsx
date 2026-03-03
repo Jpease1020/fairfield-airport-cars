@@ -41,7 +41,7 @@ describe('BookingProvider', () => {
     it('should require trip details fields when attempted', () => {
       const { result } = renderHook(() => useBooking(), {
         wrapper: ({ children }) => (
-          <CMSDataProvider initialCmsData={{}}>
+          <CMSDataProvider>
             <BookingProvider>{children}</BookingProvider>
           </CMSDataProvider>
         ),
@@ -62,7 +62,7 @@ describe('BookingProvider', () => {
     it('should pass fallback trip-details validation with required fields present', () => {
       const { result } = renderHook(() => useBooking(), {
         wrapper: ({ children }) => (
-          <CMSDataProvider initialCmsData={{}}>
+          <CMSDataProvider>
             <BookingProvider>{children}</BookingProvider>
           </CMSDataProvider>
         ),

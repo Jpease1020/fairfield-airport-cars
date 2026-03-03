@@ -240,7 +240,7 @@ export function SquarePaymentForm({
 
         {paymentError && (
           <Alert variant="error">
-            <Text size="sm" cmsId="payment-error-message">{paymentError}</Text>
+            <Text size="sm">{paymentError}</Text>
           </Alert>
         )}
 
@@ -250,7 +250,7 @@ export function SquarePaymentForm({
             disabled={disabled || isLoading || !cardRef.current}
             variant="primary"
             size="lg"
-            cmsId="payment-form-submit"
+
             text={isLoading 
               ? cmsData?.['payment-form-processing'] || 'Processing...'
               : cmsData?.['payment-form-submit'] || `Pay $${(amount / 100).toFixed(2)} & Confirm Booking`

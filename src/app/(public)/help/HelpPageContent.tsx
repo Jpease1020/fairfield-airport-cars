@@ -33,7 +33,7 @@ export default function HelpPageContent() {
           <Stack spacing="md" align="center">
             <H1 
               align="center" 
-              cmsId="title" 
+ 
             >
               {cmsData?.['title'] || 'Help & Support'}
             </H1>
@@ -41,7 +41,7 @@ export default function HelpPageContent() {
               variant="lead" 
               align="center" 
               size="lg" 
-              cmsId="subtitle" 
+ 
             >
               {cmsData?.['subtitle'] || 'Find answers to common questions and get the help you need'}
             </Text>
@@ -55,17 +55,17 @@ export default function HelpPageContent() {
           {/* Quick Actions */}
           <DarkerGreyBox padding="lg">
             <Stack spacing="md">
-              <H2 cmsId="quick-actions-title">
+              <H2>
                 {cmsData?.['quick-actions-title'] || 'Quick Actions'}
               </H2>
               <Stack direction="horizontal" spacing="md">
                 <Link href="/book">
-                  <Button variant="primary" cmsId="book-ride-button">
+                  <Button variant="primary">
                     {cmsData?.['book-ride-button'] || 'Book a Ride'}
                   </Button>
                 </Link>
                 <Link href="/contact">
-                  <Button variant="secondary" cmsId="contact-support-button">
+                  <Button variant="secondary">
                     {cmsData?.['contact-support-button'] || 'Contact Support'}
                   </Button>
                 </Link>
@@ -76,17 +76,17 @@ export default function HelpPageContent() {
           {/* FAQ Section */}
           <Box variant="elevated" padding="lg">
             <Stack spacing="md">
-              <H2 cmsId="faq-title">
+              <H2>
                 {cmsData?.['faq-title'] || 'Frequently Asked Questions'}
               </H2>
               
               <Stack spacing="md">
                 <Box variant="outlined" padding="md">
                   <Stack spacing="sm">
-                    <Text weight="bold" cmsId="faq-1-question">
+                    <Text weight="bold">
                       {cmsData?.['faq-1-question'] || 'How do I book a ride?'}
                     </Text>
-                    <Text cmsId="faq-1-answer">
+                    <Text>
                       {cmsData?.['faq-1-answer'] || 'You can book a ride by clicking the "Book a Ride" button above, or by texting us at (646) 221-6370. Simply provide your pickup location, destination, and preferred time.'}
                     </Text>
                   </Stack>
@@ -94,10 +94,10 @@ export default function HelpPageContent() {
 
                 <Box variant="outlined" padding="md">
                   <Stack spacing="sm">
-                    <Text weight="bold" cmsId="faq-2-question">
+                    <Text weight="bold">
                       {cmsData?.['faq-2-question'] || 'What is your cancellation policy?'}
                     </Text>
-                    <Text cmsId="faq-2-answer">
+                    <Text>
                       {cmsData?.['faq-2-answer'] || 'Cancellations made 24 hours or more in advance have no fee. Cancellations made less than 24 hours in advance are subject to a 25% cancellation fee; less than 12 hours in advance, 50%; less than 6 hours in advance, 75%.'}
                     </Text>
                   </Stack>
@@ -105,10 +105,10 @@ export default function HelpPageContent() {
 
                 <Box variant="outlined" padding="md">
                   <Stack spacing="sm">
-                    <Text weight="bold" cmsId="faq-3-question">
+                    <Text weight="bold">
                       {cmsData?.['faq-3-question'] || 'How far in advance should I book?'}
                     </Text>
-                    <Text cmsId="faq-3-answer">
+                    <Text>
                       {cmsData?.['faq-3-answer'] || 'We recommend booking at least 24 hours in advance for airport rides, especially during peak travel times. However, we can often accommodate same-day bookings based on availability.'}
                     </Text>
                   </Stack>
@@ -116,10 +116,10 @@ export default function HelpPageContent() {
 
                 <Box variant="outlined" padding="md">
                   <Stack spacing="sm">
-                    <Text weight="bold" cmsId="faq-4-question">
+                    <Text weight="bold">
                       {cmsData?.['faq-4-question'] || 'What payment methods do you accept?'}
                     </Text>
-                    <Text cmsId="faq-4-answer">
+                    <Text>
                       {cmsData?.['faq-4-answer'] || 'We accept all major credit cards, debit cards, and digital payment methods. Payment is processed securely at the time of booking.'}
                     </Text>
                   </Stack>
@@ -127,10 +127,10 @@ export default function HelpPageContent() {
 
                 <Box variant="outlined" padding="md">
                   <Stack spacing="sm">
-                    <Text weight="bold" cmsId="faq-5-question">
+                    <Text weight="bold">
                       {cmsData?.['faq-5-question'] || 'Do you provide child safety seats?'}
                     </Text>
-                    <Text cmsId="faq-5-answer">
+                    <Text>
                       {cmsData?.['faq-5-answer'] || 'Yes, we can provide child safety seats upon request. Please mention this when booking so we can ensure availability.'}
                     </Text>
                   </Stack>
@@ -142,25 +142,25 @@ export default function HelpPageContent() {
           {/* Contact Information */}
           <DarkerGreyBox padding="lg">
             <Stack spacing="md">
-              <H2 cmsId="contact-info-title">
+              <H2>
                 {cmsData?.['contact-info-title'] || 'Still Need Help?'}
               </H2>
-              <Text cmsId="contact-info-description">
+              <Text>
                 {cmsData?.['contact-info-description'] || 'If you can\'t find the answer you\'re looking for, our customer service team is here to help.'}
               </Text>
               <Stack direction="horizontal" spacing="md">
-                <Text weight="bold" cmsId="phone-label">
+                <Text weight="bold">
                   {cmsData?.['phone-label'] || 'Phone:'}
                 </Text>
-                <Text cmsId="phone-value">
+                <Text>
                   {cmsData?.['phone-value'] || 'Text: (646) 221-6370'}
                 </Text>
               </Stack>
               <Stack direction="horizontal" spacing="md">
-                <Text weight="bold" cmsId="email-label">
+                <Text weight="bold">
                   {cmsData?.['email-label'] || 'Email:'}
                 </Text>
-                <Text cmsId="email-value">
+                <Text>
                   {cmsData?.['email-value'] || 'rides@fairfieldairportcar.com'}
                 </Text>
               </Stack>

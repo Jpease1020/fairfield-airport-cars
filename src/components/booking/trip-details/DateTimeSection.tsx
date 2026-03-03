@@ -33,11 +33,11 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
   return (
     <DarkerGreyBox padding="lg" rounded="md" data-testid="datetime-section">
       <Stack spacing="lg">
-        <H2 cmsId="trip-details-datetime-title">
+        <H2>
           {cmsData?.['tripDetailsPhase-datetimeTitle'] || 'When do you need a ride?'}
         </H2>
         
-        <Text color="secondary" cmsId="trip-details-datetime-description">
+        <Text color="secondary">
           {cmsData?.['tripDetailsPhase-datetimeDescription'] || 'Select your preferred pickup date and time.'}
         </Text>
         
@@ -53,7 +53,7 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
             error={error || !!validation?.fieldErrors?.['pickup-datetime-input']}
             required
             isValid={!!pickupDateTime && !error && !validation?.fieldErrors?.['pickup-datetime-input']}
-            cmsId="pickup-datetime-input"
+
           />
           
           <Select

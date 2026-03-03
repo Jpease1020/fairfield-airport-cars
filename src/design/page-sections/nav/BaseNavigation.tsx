@@ -226,7 +226,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
           id="navigation-mobile-menu-button"
           aria-label="Toggle mobile menu"
           aria-expanded={mobileMenuOpen}
-          cmsId="mobile-menu-button"
+
           
           text="Menu"
         >
@@ -249,7 +249,7 @@ export const BaseNavigation: React.FC<BaseNavigationProps> = ({
               size="sm"
               aria-label="Close mobile menu"
               data-testid={`${dataTestIdPrefix}-mobile-close-button`}
-              cmsId="mobile-close-button"
+
               
               text="✕"
             />

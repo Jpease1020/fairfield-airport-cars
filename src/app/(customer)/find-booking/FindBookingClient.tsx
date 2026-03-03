@@ -114,10 +114,10 @@ export default function FindBookingClient() {
     <Container maxWidth="2xl" padding="xl">
       <Stack spacing="xl">
         <Stack spacing="md" align="center">
-          <H1 cmsId="find-booking-title">
+          <H1>
             {pageCmsData?.['find-booking-title'] || 'Find My Booking'}
           </H1>
-          <Text align="center" variant="muted" cmsId="find-booking-description">
+          <Text align="center" variant="muted">
             {pageCmsData?.['find-booking-description'] || 'We will send you a secure link or code to access your bookings.'}
           </Text>
         </Stack>
@@ -125,7 +125,7 @@ export default function FindBookingClient() {
         <Box variant="elevated" padding="lg">
           <Stack spacing="lg">
             <Stack spacing="md">
-              <Label cmsId="lookup-by-label">{pageCmsData?.['lookup-by-label'] || 'Lookup By'}</Label>
+              <Label>{pageCmsData?.['lookup-by-label'] || 'Lookup By'}</Label>
               <Stack direction="horizontal" spacing="lg">
                 <RadioButton
                   id="lookup-email"
@@ -214,7 +214,7 @@ export default function FindBookingClient() {
               onClick={handleSend}
               disabled={loading || !identifier.trim()}
               variant="primary"
-              cmsId="search-bookings"
+
             >
               {loading ? 'Sending...' : (lookupType === 'email' ? 'Send Magic Link' : 'Send Code')}
             </Button>

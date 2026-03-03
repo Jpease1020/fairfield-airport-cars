@@ -143,7 +143,7 @@ export const State: React.FC<StateProps> = ({
     if (type === 'error' && retry) {
       return (
         <Stack direction="vertical" align="center" spacing="md">
-          <Button onClick={retry} variant="outline" size={size} cmsId="state-retry-button" text={`🔄 ${retryLabel}`} />
+          <Button onClick={retry} variant="outline" size={size} text={`🔄 ${retryLabel}`} />
         </Stack>
       );
     }

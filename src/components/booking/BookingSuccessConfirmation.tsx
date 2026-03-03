@@ -44,7 +44,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
   return (
     <Box variant="elevated" padding="xl" data-testid="booking-success-confirmation">
       <Stack spacing="xl" align="center">
-        <Text size="3xl" weight="bold" color="primary" cmsId="booking-confirmed-title">
+        <Text size="3xl" weight="bold" color="primary">
           {cmsData?.['booking-confirmed-title'] || 'Booking confirmed'}
         </Text>
 
@@ -53,7 +53,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
           weight="medium"
           align="center"
           color="warning"
-          cmsId="booking-confirmed-warning"
+
           data-testid="booking-confirmation-warning"
         >
           {cmsData?.['booking-confirmed-warning'] ||
@@ -66,7 +66,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
           </Text>
         )}
 
-        <Text size="lg" align="center" cmsId="booking-confirmed-description">
+        <Text size="lg" align="center">
           {cmsData?.['booking-confirmed-description'] ||
             `We’re holding your ride from ${pickupLocation} to ${dropoffLocation}. Finish confirmation via the email in your inbox.`}
         </Text>
@@ -76,25 +76,25 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
             {/* Customer Information */}
             {(customerName || customerEmail || customerPhone) && (
               <>
-                <Text weight="bold" size="md" cmsId="booking-detail-customer-section">
+                <Text weight="bold" size="md">
                   {cmsData?.['booking-detail-customer-section'] || 'Your Information'}
                 </Text>
                 {customerName && (
                   <Stack direction="horizontal" justify="space-between">
-                    <Text weight="medium" cmsId="booking-detail-name">{cmsData?.['booking-detail-name'] || 'Name:'}</Text>
-                    <Text cmsId="customer-name-value">{customerName}</Text>
+                    <Text weight="medium">{cmsData?.['booking-detail-name'] || 'Name:'}</Text>
+                    <Text>{customerName}</Text>
                   </Stack>
                 )}
                 {customerEmail && (
                   <Stack direction="horizontal" justify="space-between">
-                    <Text weight="medium" cmsId="booking-detail-email">{cmsData?.['booking-detail-email'] || 'Email:'}</Text>
-                    <Text cmsId="customer-email-value">{customerEmail}</Text>
+                    <Text weight="medium">{cmsData?.['booking-detail-email'] || 'Email:'}</Text>
+                    <Text>{customerEmail}</Text>
                   </Stack>
                 )}
                 {customerPhone && (
                   <Stack direction="horizontal" justify="space-between">
-                    <Text weight="medium" cmsId="booking-detail-phone">{cmsData?.['booking-detail-phone'] || 'Phone:'}</Text>
-                    <Text cmsId="customer-phone-value">{customerPhone}</Text>
+                    <Text weight="medium">{cmsData?.['booking-detail-phone'] || 'Phone:'}</Text>
+                    <Text>{customerPhone}</Text>
                   </Stack>
                 )}
                 <Divider />
@@ -103,43 +103,43 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
             
             {/* Trip Details */}
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="booking-detail-pickup">{cmsData?.['booking-detail-pickup'] || 'Pickup Location:'}</Text>
-              <Text cmsId="pickup-location-value">{pickupLocation}</Text>
+              <Text weight="medium">{cmsData?.['booking-detail-pickup'] || 'Pickup Location:'}</Text>
+              <Text>{pickupLocation}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="booking-detail-dropoff">{cmsData?.['booking-detail-dropoff'] || 'Dropoff Location:'}</Text>
-              <Text cmsId="dropoff-location-value">{dropoffLocation}</Text>
+              <Text weight="medium">{cmsData?.['booking-detail-dropoff'] || 'Dropoff Location:'}</Text>
+              <Text>{dropoffLocation}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="booking-detail-datetime">{cmsData?.['booking-detail-datetime'] || 'Date & Time:'}</Text>
-              <Text cmsId="datetime-value">{new Date(pickupDateTime).toLocaleString()}</Text>
+              <Text weight="medium">{cmsData?.['booking-detail-datetime'] || 'Date & Time:'}</Text>
+              <Text>{new Date(pickupDateTime).toLocaleString()}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="booking-detail-total">{cmsData?.['booking-detail-total'] || 'Total Fare:'}</Text>
-              <Text weight="bold" color="primary" cmsId="total-fare-value">${(fare || 0) + tipAmount}</Text>
+              <Text weight="medium">{cmsData?.['booking-detail-total'] || 'Total Fare:'}</Text>
+              <Text weight="bold" color="primary">${(fare || 0) + tipAmount}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium" cmsId="booking-detail-payment">{cmsData?.['booking-detail-payment'] || 'Payment:'}</Text>
-              <Text color="success" cmsId="payment-status-value">{depositAmount && depositAmount > 0 ? `$${depositAmount.toFixed(2)} Paid` : 'Due After Ride'}</Text>
+              <Text weight="medium">{cmsData?.['booking-detail-payment'] || 'Payment:'}</Text>
+              <Text color="success">{depositAmount && depositAmount > 0 ? `$${depositAmount.toFixed(2)} Paid` : 'Due After Ride'}</Text>
             </Stack>
           </Stack>
         </Box>
 
         <Stack spacing="md" align="center">
-          <Text size="lg" weight="medium" align="center" cmsId="whats-next-title">
+          <Text size="lg" weight="medium" align="center">
             {cmsData?.['whats-next-title'] || "What's Next?"}
           </Text>
           <Stack spacing="sm" align="flex-start">
-            <Text size="sm" color="secondary" cmsId="whats-next-email">
+            <Text size="sm" color="secondary">
               ✉️ You'll receive a confirmation email shortly
             </Text>
-            <Text size="sm" color="secondary" cmsId="whats-next-driver">
+            <Text size="sm" color="secondary">
               👤 A driver will be assigned and contact you soon
             </Text>
-            <Text size="sm" color="secondary" cmsId="whats-next-pickup">
+            <Text size="sm" color="secondary">
               💬 Driver will text to confirm details 15 minutes before pickup
             </Text>
-            <Text size="sm" color="secondary" cmsId="whats-next-track">
+            <Text size="sm" color="secondary">
               🗺️ Track your driver in real-time on the booking page
             </Text>
           </Stack>
@@ -163,7 +163,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
               variant="primary"
               size="lg"
               data-testid="view-booking-button"
-              cmsId="view-booking-button"
+
               text={cmsData?.['view-booking-button'] || 'View My Booking'}
             />
             <Button
@@ -171,7 +171,7 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
               variant="outline"
               size="lg"
               data-testid="all-bookings-button"
-              cmsId="all-bookings-button"
+
               text={cmsData?.['all-bookings-button'] || 'All My Bookings'}
             />
           </Stack>

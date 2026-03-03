@@ -32,7 +32,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ cmsData }) => {
           <Stack spacing="md" padding={{ lg: '2xl' }}>
             <H1
               align="center"
-              cmsId="hero-title"
+
               data-testid="hero-title"
             >
               {cmsData?.['hero-title'] || 'Premium Airport Transportation'}
@@ -41,7 +41,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ cmsData }) => {
             <Text
               align="center"
               size="lg"
-              cmsId="hero-description"
+
               data-testid="hero-description"
             >
               {cmsData?.['hero-description'] || "No cancellations. No surprises. Just reliable, comfortable airport rides from Fairfield County."}

@@ -35,13 +35,13 @@ export function PaymentSummary({
       <Card variant="elevated" padding="lg">
         <Stack direction="vertical" spacing="lg">
           <Stack direction="vertical" spacing="sm">
-              <Text variant="lead" weight="bold" cmsId="payment-summary-title">{cmsData?.['paymentSummaryTitle'] || '💳 Payment Summary'}</Text >
-            <Text variant="small" color="muted" cmsId="payment-summary-subtitle">{cmsData?.['paymentSummarySubtitle'] || 'Review your fare breakdown'}</Text>
+              <Text variant="lead" weight="bold">{cmsData?.['paymentSummaryTitle'] || '💳 Payment Summary'}</Text >
+            <Text variant="small" color="muted">{cmsData?.['paymentSummarySubtitle'] || 'Review your fare breakdown'}</Text>
           </Stack>
 
           <Stack direction="vertical" spacing="sm">
             <Stack direction="horizontal" spacing="sm" justify="space-between">
-              <Text variant="body" cmsId="payment-summary-base-fare">{cmsData?.['paymentSummaryBaseFare'] || 'Base Fare'}</Text>
+              <Text variant="body">{cmsData?.['paymentSummaryBaseFare'] || 'Base Fare'}</Text>
               <Text variant="body" weight="medium">
                 {formatCurrency(baseFare)}
               </Text>
@@ -49,7 +49,7 @@ export function PaymentSummary({
 
             <Card variant="default" padding="xs">
               <Stack direction="horizontal" spacing="sm" justify="space-between">
-                <Text variant="body" cmsId="payment-summary-subtotal">{cmsData?.['paymentSummarySubtotal'] || 'Subtotal'}</Text>
+                <Text variant="body">{cmsData?.['paymentSummarySubtotal'] || 'Subtotal'}</Text>
                 <Text variant="body" weight="medium">
                   {formatCurrency(subtotal)}
                 </Text>
@@ -59,8 +59,8 @@ export function PaymentSummary({
             {tipAmount > 0 && (
               <Stack direction="horizontal" spacing="sm" justify="space-between">
                 <Stack direction="horizontal" spacing="sm" align="center">
-                  <Badge variant="success" cmsId="ignore">💡</Badge>
-                  <Text variant="body" cmsId="payment-summary-tip">{cmsData?.['paymentSummaryTip'] || 'Tip ({tipPercent}%)'}</Text>
+                  <Badge variant="success">💡</Badge>
+                  <Text variant="body">{cmsData?.['paymentSummaryTip'] || 'Tip ({tipPercent}%)'}</Text>
                 </Stack>
                 <Text variant="body" weight="medium">
                   {formatCurrency(tipAmount)}
@@ -70,9 +70,9 @@ export function PaymentSummary({
 
             <Card variant="elevated" padding="md">
               <Stack direction="horizontal" spacing="sm" justify="space-between">
-                  <Text variant="lead" weight="bold" cmsId="payment-summary-total">{cmsData?.['paymentSummaryTotal'] || 'Total'}</Text>
-                <Text variant="lead" weight="bold" cmsId="payment-summary-total-amount">{cmsData?.['paymentSummaryTotalAmount'] || 'Total'}</Text>
-                <Text variant="lead" weight="bold" cmsId="ignore">
+                  <Text variant="lead" weight="bold">{cmsData?.['paymentSummaryTotal'] || 'Total'}</Text>
+                <Text variant="lead" weight="bold">{cmsData?.['paymentSummaryTotalAmount'] || 'Total'}</Text>
+                <Text variant="lead" weight="bold">
                   {formatCurrency(total)}
                 </Text>
               </Stack>
