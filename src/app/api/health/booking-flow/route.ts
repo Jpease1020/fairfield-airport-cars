@@ -52,6 +52,10 @@ export async function GET() {
       FIREBASE_PRIVATE_KEY: !!process.env.FIREBASE_PRIVATE_KEY,
       // Base URL
       NEXT_PUBLIC_BASE_URL: !!process.env.NEXT_PUBLIC_BASE_URL,
+      // Chat assistant
+      CHAT_BOOKING_ENABLED: !!process.env.CHAT_BOOKING_ENABLED,
+      NEXT_PUBLIC_CHAT_BOOKING_ENABLED: !!process.env.NEXT_PUBLIC_CHAT_BOOKING_ENABLED,
+      ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY,
     };
 
     const missingVars = Object.entries(envVars)
@@ -227,4 +231,3 @@ export async function GET() {
     });
   }
 }
-
