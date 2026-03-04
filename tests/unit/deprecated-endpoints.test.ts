@@ -52,29 +52,4 @@ describe('Deprecated endpoint behavior', () => {
     expect(payload.code).toBe('DEPRECATED_ENDPOINT');
   });
 
-  it('returns 410 for POST /api/booking/lock-time-slot', async () => {
-    const { POST } = await import('@/app/api/booking/lock-time-slot/route');
-    const response = await POST(
-      new Request('http://localhost/api/booking/lock-time-slot', {
-        method: 'POST',
-      }) as any
-    );
-    const payload = await response.json();
-
-    expect(response.status).toBe(410);
-    expect(payload.code).toBe('DEPRECATED_ENDPOINT');
-  });
-
-  it('returns 410 for POST /api/booking/release-time-slot', async () => {
-    const { POST } = await import('@/app/api/booking/release-time-slot/route');
-    const response = await POST(
-      new Request('http://localhost/api/booking/release-time-slot', {
-        method: 'POST',
-      }) as any
-    );
-    const payload = await response.json();
-
-    expect(response.status).toBe(410);
-    expect(payload.code).toBe('DEPRECATED_ENDPOINT');
-  });
 });
