@@ -110,9 +110,7 @@ export function BalanceTracker({
               <Text variant="body" color="muted">
                 {pageCmsData?.['balanceTrackerCompletePayment'] || 'Complete your payment to confirm your booking'}
               </Text>
-              <Link href={`/payments/pay-balance/${bookingId}`} >
-                <Button variant="primary" fullWidth  text="Pay Remaining Balance" />
-              </Link>
+              <Button variant="primary" fullWidth  text="Pay Remaining Balance" disabled />
             </Stack>
           )}
 
@@ -226,9 +224,7 @@ export function BalanceSummary({ bookings, cmsData }: BalanceSummaryProps) {
                           {pageCmsData?.['balanceSummaryBalance'] || 'Balance:'} {formatCurrency(booking.balanceDue)}
                         </Text>
                       </Stack>
-                      <Link href={`/payments/pay-balance/${booking.id}`} >
-                        <Button size="sm" variant="primary" text={pageCmsData?.['balanceSummaryPayNow'] || 'Pay Now'} />
-                      </Link>
+                      <Button size="sm" variant="primary" text={pageCmsData?.['balanceSummaryPayNow'] || 'Pay Now'} disabled />
                     </Stack>
                   </Box>
                 ))}
