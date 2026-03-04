@@ -244,21 +244,6 @@ The ${business.name} Team`;
   await transporter.sendMail(mailOptions);
 } 
 
-export async function sendTestEmail(to: string, subject = 'Test Email', text = 'This is a test email from Fairfield Airport Cars.') {
-  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
-    return false;
-  }
-  const transporter = getTransporter();
-  const mailOptions = {
-    from: VERIFIED_EMAIL_FROM,
-    to,
-    subject,
-    text,
-  };
-  await transporter.sendMail(mailOptions);
-  return true;
-}
-
 export async function sendBookingVerificationEmail(booking: Booking, confirmationUrl: string) {
   // Use centralized helpers for booking data access
   const customerName = getCustomerName(booking) || 'Valued Customer';
@@ -568,113 +553,6 @@ Booked at: ${formatBusinessDateTime(new Date())}
     console.error('❌ [EMAIL SERVICE] Failed to send driver notification email');
     console.error(`   Error: ${error instanceof Error ? error.message : String(error)}`);
     // Don't throw - driver notification is non-critical
-  }
-}
-
-export async function sendEnhancedTestEmail(to: string, bookingId: string) {
-  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
-    console.log('⚠️ Email service not configured, logging test email instead');
-    console.log('📧 TEST EMAIL (not actually sent):');
-    console.log(`   To: ${to}`);
-    console.log(`   Subject: Your Ride Confirmation - ${bookingId}`);
-    console.log(`   Booking ID: ${bookingId}`);
-    console.log(`   Pickup: Fairfield Station, Fairfield, CT`);
-    console.log(`   Dropoff: JFK Airport, Queens, NY`);
-    console.log(`   Fare: $150.00`);
-    console.log(`   Tracking URL: http://localhost:3000/tracking/${bookingId}`);
-    return false;
-  }
-  
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const trackingUrl = `${baseUrl}/tracking/${bookingId}`;
-  
-  const emailText = `Hi E2E Test User,
-
-Your ride has been confirmed! Here are your booking details:
-
-📋 BOOKING DETAILS
-==================
-Booking ID: ${bookingId}
-Date & Time: ${formatBusinessDateTime(new Date())}
-Pickup Location: Fairfield Station, Fairfield, CT
-Drop-off Location: JFK Airport, Queens, NY
-Special Instructions: E2E Test Booking - Extra luggage
-
-💰 FARE INFORMATION
-===================
-Base Fare: $150.00
-Total Amount: $150.00
-
-🔗 TRACK YOUR RIDE
-==================
-Track your driver in real-time: ${trackingUrl}
-
-💬 CONTACT INFORMATION
-======================
-If you have any questions or need to make changes, please contact us:
-Text: (646) 221-6370
-Email: rides@fairfieldairportcar.com
-
-Thank you for choosing Fairfield Airport Cars!
-
-Best regards,
-The Fairfield Airport Cars Team`;
-
-  const mailOptions = {
-    from: `Fairfield Airport Cars <${VERIFIED_EMAIL_FROM}>`,
-    to,
-    subject: `Your Ride Confirmation - ${bookingId}`,
-    text: emailText,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: var(--color-primary-600);">Hi E2E Test User,</h2>
-        
-        <p>Your ride has been confirmed! Here are your booking details:</p>
-        
-        <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
-          <p><strong>Booking ID:</strong> ${bookingId}</p>
-          <p><strong>Date & Time:</strong> ${formatBusinessDateTime(new Date())}</p>
-          <p><strong>Pickup Location:</strong> Fairfield Station, Fairfield, CT</p>
-          <p><strong>Drop-off Location:</strong> JFK Airport, Queens, NY</p>
-          <p><strong>Special Instructions:</strong> E2E Test Booking - Extra luggage</p>
-        </div>
-        
-        <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #166534; margin-top: 0;">💰 FARE INFORMATION</h3>
-          <p><strong>Base Fare:</strong> $150.00</p>
-          <p><strong>Total Amount:</strong> $150.00</p>
-        </div>
-        
-        <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-          <h3 style="color: #1d4ed8; margin-top: 0;">🔗 TRACK YOUR RIDE</h3>
-          <p>Track your driver in real-time:</p>
-          <a href="${trackingUrl}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Live Tracking</a>
-        </div>
-        
-        <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
-          <p>If you have any questions or need to make changes, please contact us:</p>
-          <p><strong>Text:</strong> (646) 221-6370</p>
-          <p><strong>Email:</strong> rides@fairfieldairportcar.com</p>
-        </div>
-        
-        <p>Thank you for choosing <strong>Fairfield Airport Cars</strong>!</p>
-        
-        <p>Best regards,<br>
-        The Fairfield Airport Cars Team</p>
-      </div>
-    `,
-  };
-  
-  try {
-    const transporter = getTransporter();
-    await transporter.sendMail(mailOptions);
-    console.log(`📧 Enhanced test email sent successfully to ${to}`);
-    return true;
-  } catch (error) {
-    console.error('❌ Failed to send enhanced test email:', error instanceof Error ? error.message : 'Unknown error');
-    return false;
   }
 }
 
