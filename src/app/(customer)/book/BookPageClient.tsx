@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Container, Stack, H2, Text } from '@/design/ui';
+import { Button, Container, Stack, H2, Text } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { useBooking } from '@/providers/BookingProvider';
+import { BookingChat } from '@/components/booking/BookingChat';
 
 import BookingForm from './booking-form';
 
@@ -14,6 +15,8 @@ function BookPageClient() {
   const { currentPhase, updateTripDetails, success } = useBooking();
   const showPageHeader = currentPhase !== 'flight-info';
   const searchParams = useSearchParams();
+  const chatEnabled = process.env.NEXT_PUBLIC_CHAT_BOOKING_ENABLED === 'true';
+  const [showForm, setShowForm] = useState(!chatEnabled);
 
   useEffect(() => {
     if (!searchParams) return;
@@ -48,7 +51,31 @@ function BookPageClient() {
             </Text>
           </Stack>
         )}
-        <BookingForm cmsData={pageCmsData} />
+
+        {chatEnabled && !showForm && (
+          <Stack spacing="sm" align="center" style={{ width: '100%' }}>
+            <BookingChat />
+            <Button
+              type="button"
+              variant="ghost"
+              text="Prefer the classic form?"
+              onClick={() => setShowForm(true)}
+              size="sm"
+            />
+          </Stack>
+        )}
+
+        {showForm && <BookingForm cmsData={pageCmsData} />}
+
+        {chatEnabled && showForm && (
+          <Button
+            type="button"
+            variant="outline"
+            text="Try chat assistant"
+            onClick={() => setShowForm(false)}
+            size="sm"
+          />
+        )}
       </Stack>
     </Container>
   );
