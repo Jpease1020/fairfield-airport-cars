@@ -110,10 +110,6 @@ export default function CustomerPaymentsClient() {
     }
   };
 
-  const handleAddPaymentMethod = () => {
-    // TODO: Implement payment method addition
-    router.push('/payments/add-method');
-  };
 
   if (!isClient) {
     return (
@@ -178,14 +174,6 @@ export default function CustomerPaymentsClient() {
               {cmsData?.['subtitle'] || 'Manage your payment methods and view transaction history'}
             </Text>
           </Stack>
-          <Button 
-            onClick={handleAddPaymentMethod} 
-            variant="primary"
-
-            
-          >
-            {cmsData?.['add-payment-method'] || 'Add Payment Method'}
-          </Button>
         </Stack>
 
         {/* Payment Summary */}
