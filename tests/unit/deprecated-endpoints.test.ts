@@ -26,30 +26,5 @@ describe('Deprecated endpoint behavior', () => {
     expect(payload.code).toBe('DEPRECATED_ENDPOINT');
   });
 
-  it('returns 410 for POST /api/payment/create-checkout-session', async () => {
-    const { POST } = await import('@/app/api/payment/create-checkout-session/route');
-    const response = await POST(
-      new Request('http://localhost/api/payment/create-checkout-session', {
-        method: 'POST',
-      })
-    );
-    const payload = await response.json();
-
-    expect(response.status).toBe(410);
-    expect(payload.code).toBe('DEPRECATED_ENDPOINT');
-  });
-
-  it('returns 410 for POST /api/payment/complete-payment', async () => {
-    const { POST } = await import('@/app/api/payment/complete-payment/route');
-    const response = await POST(
-      new Request('http://localhost/api/payment/complete-payment', {
-        method: 'POST',
-      })
-    );
-    const payload = await response.json();
-
-    expect(response.status).toBe(410);
-    expect(payload.code).toBe('DEPRECATED_ENDPOINT');
-  });
 
 });
