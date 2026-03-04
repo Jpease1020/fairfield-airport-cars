@@ -59,7 +59,7 @@ export function buildBookingVerificationEmailHtml({
       <h2 style="color: var(--color-primary-600);">Hi ${customerName},</h2>
       <p>One more step to secure your ride from <strong>${pickupAddress}</strong> to <strong>${dropoffAddress}</strong>.</p>
       <p style="margin: 24px 0;">
-        <a href="${confirmationUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+        <a href="${confirmationUrl}" style="display: inline-block; background-color: var(--color-primary); color: var(--color-background-primary); padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
           Confirm My Booking
         </a>
       </p>
@@ -73,8 +73,8 @@ export function buildBookingVerificationEmailHtml({
         <p><strong>Dropoff:</strong> ${dropoffAddress}</p>
       </div>
 
-      <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #a16207; margin-top: 0;">💬 Need help?</h3>
+      <div style="background-color: var(--color-background-secondary); padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="color: var(--color-warning); margin-top: 0;">💬 Need help?</h3>
         <p>Text or call us at ${businessPhone} or email ${businessEmail}.</p>
       </div>
 

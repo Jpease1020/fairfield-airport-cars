@@ -48,6 +48,12 @@ const BOOKING_CREATE_TIMEOUT_MS = 50_000;
 
 function normalizeIso(value: Date | string): string {
   const parsed = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new BookingApiError(400, {
+      error: 'Invalid pickup date/time. Please choose a valid date and time.',
+      code: 'INVALID_PICKUP_DATETIME',
+    });
+  }
   return parsed.toISOString();
 }
 

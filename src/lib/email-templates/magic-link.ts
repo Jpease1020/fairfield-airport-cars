@@ -19,10 +19,10 @@ export function buildMagicLinkEmailHtml({
 }: MagicLinkTemplateData): string {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #2563eb;">Access your bookings</h2>
+      <h2 style="color: var(--color-primary);">Access your bookings</h2>
       <p>Click the button below to securely access your bookings. This link expires in 15 minutes.</p>
       <p style="margin: 24px 0;">
-        <a href="${magicLinkUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+        <a href="${magicLinkUrl}" style="display: inline-block; background-color: var(--color-primary); color: var(--color-background-primary); padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
           View My Bookings
         </a>
       </p>

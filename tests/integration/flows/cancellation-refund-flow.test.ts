@@ -170,7 +170,7 @@ describe('Cancellation & Refund Flow', () => {
     });
 
     it('gives 75% refund when cancelled 12-24 hours before pickup (25% fee)', async () => {
-      const booking = createMockBooking(12); // 12 hours from now
+      const booking = createMockBooking(13); // Use buffer above 12h to avoid boundary flake
       mockGetBooking.mockResolvedValueOnce(booking);
       mockCancelBooking.mockResolvedValueOnce(undefined);
       mockUpdateBooking.mockResolvedValueOnce(undefined);

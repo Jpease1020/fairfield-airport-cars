@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { login, signInWithGoogle, authService } from '@/lib/services/auth-service';
 import { auth } from '@/lib/utils/firebase';
 import { 
@@ -46,22 +45,6 @@ const OrDivider = styled.div`
   
   &::after {
     margin-left: ${spacing.sm};
-  }
-`;
-
-const LinkText = styled(Text)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: ${spacing.md};
-  
-  a {
-    color: var(--primary-color);
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
-    }
   }
 `;
 

@@ -1,46 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getBusinessRules } from '@/lib/business/business-rules';
+import type { NextRequest } from 'next/server';
+import { POST as checkAvailabilityPost } from '@/app/api/booking/check-availability/route';
 
+// Legacy alias retained for backward compatibility. Use /api/booking/check-availability.
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { pickupDateTime, bufferMinutes: bodyBuffer } = body;
-    const rules = await getBusinessRules();
-    const bufferMinutes = typeof bodyBuffer === 'number' ? bodyBuffer : rules.bookingBufferMinutes;
-    
-    if (!pickupDateTime) {
-      return NextResponse.json(
-        { error: 'pickupDateTime is required' },
-        { status: 400 }
-      );
-    }
-
-    const pickupDate = new Date(pickupDateTime);
-    const start = new Date(pickupDate.getTime() - bufferMinutes * 60 * 1000);
-    const end = new Date(pickupDate.getTime() + bufferMinutes * 60 * 1000);
-
-    // Simple availability logic - always return available for now
-    // In a real app, this would check against existing bookings
-    const isAvailable = true;
-    const conflictingBookings = 0;
-    
-    return NextResponse.json({
-      success: true,
-      isAvailable,
-      conflictingBookings,
-      timeRange: {
-        start: start.toISOString(),
-        end: end.toISOString()
-      }
-    });
-
-  } catch (error: any) {
-    console.error('❌ Error checking time slot:', error);
-    
-    return NextResponse.json({
-      success: false,
-      error: error.message || 'Failed to check time slot',
-      details: error.code || 'unknown_error'
-    }, { status: 500 });
-  }
-} 
+  return checkAvailabilityPost(request);
+}
