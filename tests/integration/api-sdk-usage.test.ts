@@ -1,235 +1,234 @@
-/**
- * Integration tests to ensure API routes use Admin SDK
- * and work correctly without authentication
- */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { getAdminDb } from '@/lib/utils/firebase-admin';
+const getAdminDb = vi.fn();
+const requireAuth = vi.fn();
+const requireAdmin = vi.fn();
+const requireOwnerOrAdmin = vi.fn();
+const getBooking = vi.fn();
+const sendConfirmationEmail = vi.fn().mockResolvedValue(undefined);
+const adaptOldBookingToNew = vi.fn((booking) => booking);
+const createBookingCalendarEvent = vi.fn().mockResolvedValue(null);
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
+vi.mock('@/lib/utils/firebase-admin', () => ({
+  getAdminDb,
+}));
 
-describe('API SDK Usage - Unauthenticated Access', () => {
-  let testBookingId: string | null = null;
-  let skipTests = false;
+vi.mock('@/lib/utils/auth-server', () => ({
+  requireAuth,
+  requireAdmin,
+  requireOwnerOrAdmin,
+}));
 
-  beforeAll(async () => {
-    // Create a test booking for retrieval tests
-    try {
-      const db = getAdminDb();
-      const testBooking = {
-        trip: {
-          pickup: {
-            address: 'Test Pickup Location',
-            coordinates: { lat: 41.1, lng: -73.3 }
-          },
-          dropoff: {
-            address: 'Test Dropoff Location',
-            coordinates: { lat: 40.6, lng: -73.8 }
-          },
-          pickupDateTime: new Date().toISOString(),
-          fareType: 'personal',
-          fare: 100
-        },
-        customer: {
-          name: 'Test User',
-          email: 'test@example.com',
-          phone: '2035551234'
-        },
-        payment: {
-          depositAmount: 0,
-          balanceDue: 100,
-          totalAmount: 100
-        },
-        status: 'pending',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
+vi.mock('@/lib/services/booking-service', () => ({
+  getBooking,
+}));
 
-      const docRef = await db.collection('bookings').add(testBooking);
-      testBookingId = docRef.id;
-      console.log(`✅ Created test booking: ${testBookingId}`);
-    } catch (error) {
-      console.error('❌ Failed to create test booking:', error);
-      console.warn('⚠️ Skipping API SDK usage tests - Admin SDK not available in test environment');
-      skipTests = true;
-    }
-  });
+vi.mock('@/lib/services/email-service', () => ({
+  sendConfirmationEmail,
+}));
 
-  afterAll(async () => {
-    // Clean up test booking
-    if (testBookingId) {
-      try {
-        const db = getAdminDb();
-        await db.collection('bookings').doc(testBookingId).delete();
-        console.log(`✅ Cleaned up test booking: ${testBookingId}`);
-      } catch (error) {
-        console.error('❌ Failed to cleanup test booking:', error);
-      }
-    }
+vi.mock('@/utils/bookingAdapter', () => ({
+  adaptOldBookingToNew,
+}));
+
+vi.mock('@/lib/services/google-calendar', () => ({
+  createBookingCalendarEvent,
+}));
+
+function makeNextRequest(url: string, init?: RequestInit): Request {
+  const request = new Request(url, init) as Request & { nextUrl: URL };
+  request.nextUrl = new URL(url);
+  return request;
+}
+
+function makeTimestamp(iso: string) {
+  return {
+    toDate: () => new Date(iso),
+  };
+}
+
+function ensureResponse(response: Response | undefined): Response {
+  expect(response).toBeDefined();
+  if (!response) {
+    throw new Error('Expected route handler to return a response');
+  }
+  return response;
+}
+
+describe('API access and confirmation flow', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    requireAuth.mockResolvedValue({ ok: true, auth: { role: 'customer', uid: 'cust-1' } });
+    requireAdmin.mockResolvedValue({ ok: true, auth: { role: 'admin', uid: 'admin-1' } });
+    requireOwnerOrAdmin.mockResolvedValue({ ok: true, auth: { role: 'customer', uid: 'cust-1' } });
   });
 
   describe('GET /api/booking/get-bookings-simple', () => {
-    it('should retrieve booking without authentication (email link scenario)', async () => {
-      if (skipTests || !testBookingId) {
-        console.warn('⚠️ Skipping test - Admin SDK not available or test booking not created');
-        return;
-      }
+    it('returns auth response when request is not authorized', async () => {
+      requireAuth.mockResolvedValue({
+        ok: false,
+        response: new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }),
+      });
 
-      // Simulate unauthenticated request (no auth headers)
-      const response = await fetch(
-        `${API_BASE_URL}/api/booking/get-bookings-simple?id=${testBookingId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-            // No Authorization header - simulating email link access
-          }
-        }
+      const { GET } = await import('@/app/api/booking/get-bookings-simple/route');
+      const response = ensureResponse(
+        await GET(makeNextRequest('http://localhost/api/booking/get-bookings-simple?id=booking-1') as any)
+      );
+
+      expect(response.status).toBe(401);
+      const body = await response.json();
+      expect(body.error).toBe('Unauthorized');
+    });
+
+    it('returns booking data for authorized owner access', async () => {
+      const timestamp = makeTimestamp('2026-03-05T10:00:00.000Z');
+      getAdminDb.mockReturnValue({
+        collection: vi.fn(() => ({
+          doc: vi.fn(() => ({
+            get: vi.fn().mockResolvedValue({
+              exists: true,
+              id: 'booking-1',
+              data: () => ({
+                status: 'confirmed',
+                createdAt: timestamp,
+                updatedAt: timestamp,
+                pickupDateTime: timestamp,
+                confirmation: {
+                  status: 'pending',
+                  token: 'secret-token',
+                  sentAt: timestamp,
+                },
+              }),
+            }),
+          })),
+        })),
+      });
+
+      const { GET } = await import('@/app/api/booking/get-bookings-simple/route');
+      const response = ensureResponse(
+        await GET(makeNextRequest('http://localhost/api/booking/get-bookings-simple?id=booking-1') as any)
       );
 
       expect(response.status).toBe(200);
-      const data = await response.json();
-      
-      expect(data.success).toBe(true);
-      expect(data.booking).toBeDefined();
-      expect(data.booking.id).toBe(testBookingId);
-      expect(data.booking.trip).toBeDefined();
-      expect(data.booking.customer).toBeDefined();
-    });
-
-    it('should return 404 for non-existent booking', async () => {
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/api/booking/get-bookings-simple?id=NONEXISTENT123`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-
-        // If server is not running, skip test
-        if (response.status === 0 || !response.ok && response.status >= 500) {
-          console.warn('⚠️ Skipping test - API server not available');
-          return;
-        }
-
-        expect(response.status).toBe(404);
-        const data = await response.json().catch(() => ({}));
-        // Endpoint returns { success: false, error: '...' } or { error: '...' }
-        expect(data.error || data.message || 'Booking not found').toContain('not found');
-      } catch (error) {
-        // If fetch fails (server not running), skip test
-        console.warn('⚠️ Skipping test - API server not available:', error);
-      }
-    });
-
-    it('should handle missing booking ID gracefully', async () => {
-      const response = await fetch(
-        `${API_BASE_URL}/api/booking/get-bookings-simple`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      // Should return list of bookings or error (404 is also acceptable - endpoint might require ID)
-      expect([200, 400, 404, 500]).toContain(response.status);
-    });
-  });
-
-  describe('GET /api/booking/[bookingId]', () => {
-    it('should retrieve booking without authentication', async () => {
-      if (skipTests || !testBookingId) {
-        console.warn('⚠️ Skipping test - Admin SDK not available or test booking not created');
-        return;
-      }
-
-      const response = await fetch(
-        `${API_BASE_URL}/api/booking/${testBookingId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-            // No Authorization header
-          }
-        }
-      );
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      
-      expect(data.id).toBe(testBookingId);
-      expect(data.trip).toBeDefined();
-      expect(data.customer).toBeDefined();
+      const body = await response.json();
+      expect(body.success).toBe(true);
+      expect(body.booking.id).toBe('booking-1');
+      expect(body.booking.createdAt).toBe('2026-03-05T10:00:00.000Z');
+      expect(body.booking.confirmation.token).toBeUndefined();
     });
   });
 
   describe('POST /api/booking/confirm', () => {
-    it('should handle confirmation without authentication (email link scenario)', async () => {
-      if (skipTests || !testBookingId) {
-        console.warn('⚠️ Skipping test - Admin SDK not available or test booking not created');
-        return;
-      }
-
-      // First, add a confirmation token to the booking
-      const db = getAdminDb();
-      const confirmationToken = 'test-token-12345';
-      await db.collection('bookings').doc(testBookingId).update({
-        confirmation: {
-          status: 'pending',
-          token: confirmationToken,
-          sentAt: new Date().toISOString()
-        }
-      });
-
-      const response = await fetch(
-        `${API_BASE_URL}/api/booking/confirm`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-            // No Authorization header
-          },
-          body: JSON.stringify({
-            bookingId: testBookingId,
-            token: confirmationToken
-          })
-        }
+    it('returns 400 when bookingId or token is missing', async () => {
+      const { POST } = await import('@/app/api/booking/confirm/route');
+      const response = ensureResponse(
+        await POST(
+          makeNextRequest('http://localhost/api/booking/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookingId: 'booking-1' }),
+          }) as any
+        )
       );
 
-      // Should work without auth (uses Admin SDK)
-      expect([200, 409]).toContain(response.status);
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.error).toContain('required');
+    });
+
+    it('returns 401 when confirmation token does not match', async () => {
+      const docGet = vi.fn().mockResolvedValue({
+        exists: true,
+        data: () => ({
+          status: 'pending',
+          confirmation: {
+            status: 'pending',
+            token: 'expected-token',
+            sentAt: '2026-03-05T10:00:00.000Z',
+          },
+        }),
+      });
+
+      const docUpdate = vi.fn().mockResolvedValue(undefined);
+
+      getAdminDb.mockReturnValue({
+        collection: vi.fn(() => ({
+          doc: vi.fn(() => ({
+            get: docGet,
+            update: docUpdate,
+          })),
+        })),
+      });
+
+      const { POST } = await import('@/app/api/booking/confirm/route');
+      const response = ensureResponse(
+        await POST(
+          makeNextRequest('http://localhost/api/booking/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookingId: 'booking-1', token: 'wrong-token' }),
+          }) as any
+        )
+      );
+
+      expect(response.status).toBe(401);
+      expect(docUpdate).not.toHaveBeenCalled();
+      const body = await response.json();
+      expect(body.error).toContain('Invalid confirmation token');
+    });
+
+    it('confirms booking and sends confirmation email when token matches', async () => {
+      const docUpdate = vi.fn().mockResolvedValue(undefined);
+      const bookingDocData = {
+        status: 'pending',
+        calendarAddedByUser: false,
+        confirmation: {
+          status: 'pending',
+          token: 'expected-token',
+          sentAt: '2026-03-05T10:00:00.000Z',
+        },
+      };
+
+      getAdminDb.mockReturnValue({
+        collection: vi.fn(() => ({
+          doc: vi.fn(() => ({
+            get: vi.fn().mockResolvedValue({ exists: true, data: () => bookingDocData }),
+            update: docUpdate,
+          })),
+        })),
+      });
+
+      getBooking.mockResolvedValue({
+        id: 'booking-1',
+        status: 'confirmed',
+        trip: {
+          pickupDateTime: '2026-03-10T10:00:00.000Z',
+          pickup: { address: '123 Main St' },
+          dropoff: { address: 'JFK' },
+        },
+        customer: {
+          name: 'Test Rider',
+          email: 'test@example.com',
+        },
+      });
+
+      const { POST } = await import('@/app/api/booking/confirm/route');
+      const response = ensureResponse(
+        await POST(
+          makeNextRequest('http://localhost/api/booking/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-smoke-test': 'true' },
+            body: JSON.stringify({ bookingId: 'booking-1', token: 'expected-token' }),
+          }) as any
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(docUpdate).toHaveBeenCalled();
+      expect(createBookingCalendarEvent).toHaveBeenCalledTimes(1);
+      expect(adaptOldBookingToNew).toHaveBeenCalledTimes(1);
+      expect(sendConfirmationEmail).toHaveBeenCalledTimes(1);
     });
   });
 });
-
-describe('API SDK Usage - Verify Admin SDK Usage', () => {
-  it('should verify get-bookings-simple uses Admin SDK (no auth required)', async () => {
-    // This test verifies the endpoint works without authentication
-    // If it uses Client SDK, it would fail with permission errors
-    
-    const response = await fetch(
-      `${API_BASE_URL}/api/booking/get-bookings-simple?id=TEST123`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    // Should return 404 (not found) not 403 (permission denied)
-    // 403 would indicate Client SDK auth failure
-    expect(response.status).not.toBe(403);
-    expect([200, 404, 500]).toContain(response.status);
-    
-    if (response.status === 403) {
-      throw new Error('Endpoint is using Client SDK instead of Admin SDK!');
-    }
-  });
-});
-
