@@ -9,6 +9,17 @@ interface TokenPayload {
   nonce: string;
 }
 
+export type VerificationResult =
+  | {
+      ok: true;
+      nonce: string;
+      exp: number;
+    }
+  | {
+      ok: false;
+      reason: string;
+    };
+
 function requireSecret(): string {
   const secret =
     process.env.CHAT_CONFIRMATION_SECRET ||
@@ -108,7 +119,7 @@ export function verifyConfirmationToken(params: {
   token: string;
   summaryHash: string;
   now?: Date;
-}): { ok: boolean; reason?: string } {
+}): VerificationResult {
   const [encodedPayload, providedSignature] = params.token.split('.');
 
   if (!encodedPayload || !providedSignature) {
@@ -136,5 +147,5 @@ export function verifyConfirmationToken(params: {
     return { ok: false, reason: 'summary_mismatch' };
   }
 
-  return { ok: true };
+  return { ok: true, nonce: payload.nonce, exp: payload.exp };
 }

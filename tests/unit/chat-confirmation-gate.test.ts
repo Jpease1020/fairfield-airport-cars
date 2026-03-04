@@ -55,7 +55,9 @@ describe('chat confirmation gate', () => {
     });
 
     expect(verified.ok).toBe(false);
-    expect(verified.reason).toBe('summary_mismatch');
+    if (!verified.ok) {
+      expect(verified.reason).toBe('summary_mismatch');
+    }
   });
 
   it('rejects expired token', () => {
@@ -68,6 +70,8 @@ describe('chat confirmation gate', () => {
     });
 
     expect(verified.ok).toBe(false);
-    expect(verified.reason).toBe('expired');
+    if (!verified.ok) {
+      expect(verified.reason).toBe('expired');
+    }
   });
 });
