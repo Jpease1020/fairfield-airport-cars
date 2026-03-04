@@ -19,6 +19,25 @@ export function isLocalTarget(url: string | undefined): boolean {
 }
 
 /**
+ * True for known production hosts.
+ * Use this to add an extra guard before allowing destructive test lanes.
+ */
+export function isProdLikeTarget(url: string | undefined): boolean {
+  if (!url) return false;
+  try {
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
+    return (
+      host === 'fairfield-airport-cars.vercel.app' ||
+      host === 'fairfieldairportcar.com' ||
+      host === 'www.fairfieldairportcar.com'
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Effective base URL for the run (env or default).
  * Use with isLocalTarget() to decide whether DB-creating tests are allowed.
  */

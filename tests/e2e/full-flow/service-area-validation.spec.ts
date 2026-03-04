@@ -6,6 +6,18 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { getEffectiveBaseUrl, isLocalTarget, isProdLikeTarget } from '../helpers';
+
+const targetBaseUrl = getEffectiveBaseUrl();
+const allowDestructive = process.env.ALLOW_DESTRUCTIVE_E2E === 'true';
+const allowProdDestructive = process.env.ALLOW_DESTRUCTIVE_E2E_PROD === 'true';
+const canRunDestructive = isLocalTarget(targetBaseUrl) || allowDestructive;
+const prodLikeBlocked = isProdLikeTarget(targetBaseUrl) && !allowProdDestructive;
+
+test.skip(
+  !canRunDestructive || prodLikeBlocked,
+  `Skipping destructive full-flow tests for target ${targetBaseUrl}.`
+);
 
 test.describe('Service Area Validation', () => {
   const futurePickupTime = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
@@ -182,4 +194,3 @@ test.describe('Service Area Validation - Edge Cases', () => {
     expect(response.status()).toBe(400);
   });
 });
-
