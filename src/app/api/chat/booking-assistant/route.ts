@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
+import { BUSINESS_CONTACT } from '@/utils/constants';
 import { CHAT_SYSTEM_PROMPT } from '@/lib/chat/chat-system-prompt';
 import {
   CHAT_TOOL_DEFINITIONS,
@@ -28,6 +29,7 @@ import type {
   ToolResultBlock,
   ToolUseBlock,
 } from '@/lib/chat/chat-types';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
 
 export const runtime = 'nodejs';
 
@@ -87,8 +89,89 @@ const requestSchema = z.object({
     .optional(),
 });
 
+const toolCoordinatesSchema = z
+  .object({
+    lat: z.number(),
+    lng: z.number(),
+  })
+  .strict();
+
+const toolLocationSchema = z
+  .object({
+    address: z.string().min(1),
+    coordinates: toolCoordinatesSchema,
+  })
+  .strict();
+
+const resolveAddressInputSchema = z
+  .object({
+  query: z.string().min(3).max(256),
+  })
+  .strict();
+
+const checkAvailabilityInputSchema = z
+  .object({
+    pickupDateTime: z.string().min(1),
+  })
+  .strict();
+
+const getQuoteInputSchema = z
+  .object({
+    origin: z.string().min(1),
+    destination: z.string().min(1),
+    pickupCoords: toolCoordinatesSchema,
+    dropoffCoords: toolCoordinatesSchema,
+    pickupTime: z.string().min(1),
+    fareType: z.enum(['personal', 'business']).optional(),
+  })
+  .strict();
+
+const validateTripInputSchema = z
+  .object({
+    trip: z
+      .object({
+        pickup: toolLocationSchema,
+        dropoff: toolLocationSchema,
+        pickupDateTime: z.string().min(1),
+        fareType: z.enum(['personal', 'business']).optional(),
+      })
+      .strict(),
+  })
+  .strict();
+
+const validateContactInputSchema = z
+  .object({
+    customer: z
+      .object({
+        name: z.string().min(1),
+        email: z.string().min(1),
+        phone: z.string().min(1),
+      })
+      .strict(),
+  })
+  .strict();
+
+const handoffInputSchema = z
+  .object({
+    reason: z.string().min(1).max(500),
+  })
+  .strict();
+
+const toolInputSchemas = {
+  resolve_address: resolveAddressInputSchema,
+  check_availability: checkAvailabilityInputSchema,
+  get_quote: getQuoteInputSchema,
+  validate_trip_details: validateTripInputSchema,
+  validate_contact_info: validateContactInputSchema,
+  handoff_to_human: handoffInputSchema,
+} as const;
+
 function isChatEnabled(): boolean {
-  return process.env.CHAT_BOOKING_ENABLED === 'true';
+  const explicit = process.env.CHAT_BOOKING_ENABLED;
+  if (explicit === 'true') return true;
+  if (explicit === 'false') return false;
+
+  return process.env.VERCEL_ENV === 'preview' && process.env.CHAT_BOOKING_PREVIEW_ENABLED === 'true';
 }
 
 function asToolUseBlocks(blocks: ProviderInputBlock[]): ToolUseBlock[] {
@@ -103,6 +186,58 @@ function extractAssistantText(blocks: Array<{ type: 'text'; text: string } | Too
 function buildContext(request: Request): ToolExecutionContext {
   const origin = new URL(request.url).origin;
   return { origin };
+}
+
+function validateToolInput(name: string, input: Record<string, unknown>) {
+  const schema = toolInputSchemas[name as keyof typeof toolInputSchemas];
+  if (!schema) {
+    return {
+      ok: false as const,
+      error: 'UNKNOWN_TOOL',
+      details: `Tool "${name}" is not allowed.`,
+    };
+  }
+
+  const parsed = schema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      ok: false as const,
+      error: 'INVALID_TOOL_INPUT',
+      details: parsed.error.flatten(),
+    };
+  }
+
+  return {
+    ok: true as const,
+    data: parsed.data,
+  };
+}
+
+async function consumeConfirmationNonce(params: {
+  nonce: string;
+  summaryHash: string;
+  exp: number;
+}): Promise<{ ok: boolean; reason?: 'already_used' | 'store_unavailable' }> {
+  const nonceId = `${params.summaryHash}:${params.nonce}`;
+
+  try {
+    const db = getAdminDb();
+    await db.collection('chatConfirmationNonces').doc(nonceId).create({
+      nonceId,
+      summaryHash: params.summaryHash,
+      consumedAt: new Date(),
+      expiresAt: new Date(params.exp * 1000),
+    });
+    return { ok: true };
+  } catch (error) {
+    const code = (error as { code?: unknown })?.code;
+    const message = error instanceof Error ? error.message.toLowerCase() : '';
+    if (code === 6 || code === 'already-exists' || message.includes('already exists')) {
+      return { ok: false, reason: 'already_used' };
+    }
+    console.error('[chat-booking] failed to persist confirmation nonce', error);
+    return { ok: false, reason: 'store_unavailable' };
+  }
 }
 
 function coerceDraft(raw: unknown): BookingDraft {
@@ -343,6 +478,29 @@ async function runConfirmedBooking(params: {
     };
   }
 
+  const nonceStatus = await consumeConfirmationNonce({
+    nonce: tokenCheck.nonce,
+    summaryHash: computedHash,
+    exp: tokenCheck.exp,
+  });
+
+  if (!nonceStatus.ok) {
+    if (nonceStatus.reason === 'already_used') {
+      return {
+        message:
+          'This confirmation was already used. If booking succeeded, check your confirmation email. Otherwise, review and confirm again.',
+        draft: params.draft,
+        showConfirmation: true,
+      };
+    }
+
+    return {
+      message: `We hit a temporary confirmation issue. Please try again or call ${BUSINESS_CONTACT.phone}.`,
+      draft: params.draft,
+      showConfirmation: true,
+    };
+  }
+
   const bookingResult = await createBooking(params.context, {
     quoteId: summary.quoteId,
     fare: summary.fare,
@@ -438,55 +596,96 @@ export async function POST(request: Request) {
   let assistantText = '';
   let handoff: { reason: string; phone: string } | undefined;
 
-  for (let i = 0; i < 8; i++) {
-    const modelResponse = await provider.generate({
-      systemPrompt: CHAT_SYSTEM_PROMPT,
-      tools: CHAT_TOOL_DEFINITIONS,
-      messages: messageHistory,
-      maxTokens: 900,
-      temperature: 0.1,
-    });
-
-    if (modelResponse.stopReason === 'end_turn') {
-      assistantText = extractAssistantText(modelResponse.content);
-      break;
-    }
-
-    if (modelResponse.stopReason !== 'tool_use') {
-      assistantText = extractAssistantText(modelResponse.content) || 'How would you like to proceed?';
-      break;
-    }
-
-    const toolUseBlocks = asToolUseBlocks(modelResponse.content as ProviderInputBlock[]);
-    if (toolUseBlocks.length === 0) {
-      assistantText = extractAssistantText(modelResponse.content) || 'How would you like to proceed?';
-      break;
-    }
-
-    const toolResults: ToolResultBlock[] = [];
-
-    for (const block of toolUseBlocks) {
-      const executed = await executeToolCall({
-        name: block.name,
-        input: block.input,
-        draft: currentDraft,
-        context,
+  try {
+    for (let i = 0; i < 8; i++) {
+      const modelResponse = await provider.generate({
+        systemPrompt: CHAT_SYSTEM_PROMPT,
+        tools: CHAT_TOOL_DEFINITIONS,
+        messages: messageHistory,
+        maxTokens: 900,
+        temperature: 0.1,
       });
 
-      currentDraft = executed.draft;
-      if (executed.handoff) {
-        handoff = executed.handoff;
+      if (modelResponse.stopReason === 'end_turn') {
+        assistantText = extractAssistantText(modelResponse.content);
+        break;
       }
 
-      toolResults.push({
-        type: 'tool_result',
-        toolUseId: block.id,
-        content: JSON.stringify(executed.result),
-      });
-    }
+      if (modelResponse.stopReason !== 'tool_use') {
+        assistantText = extractAssistantText(modelResponse.content) || 'How would you like to proceed?';
+        break;
+      }
 
-    messageHistory.push({ role: 'assistant', content: modelResponse.content });
-    messageHistory.push({ role: 'user', content: toolResults });
+      const toolUseBlocks = asToolUseBlocks(modelResponse.content as ProviderInputBlock[]);
+      if (toolUseBlocks.length === 0) {
+        assistantText = extractAssistantText(modelResponse.content) || 'How would you like to proceed?';
+        break;
+      }
+
+      const toolResults: ToolResultBlock[] = [];
+
+      for (const block of toolUseBlocks) {
+        const validated = validateToolInput(block.name, block.input);
+        if (!validated.ok) {
+          toolResults.push({
+            type: 'tool_result',
+            toolUseId: block.id,
+            content: JSON.stringify({
+              error: validated.error,
+              details: validated.details,
+            }),
+          });
+          continue;
+        }
+
+        try {
+          const executed = await executeToolCall({
+            name: block.name,
+            input: validated.data as Record<string, unknown>,
+            draft: currentDraft,
+            context,
+          });
+
+          currentDraft = executed.draft;
+          if (executed.handoff) {
+            handoff = executed.handoff;
+          }
+
+          toolResults.push({
+            type: 'tool_result',
+            toolUseId: block.id,
+            content: JSON.stringify(executed.result),
+          });
+        } catch (toolError) {
+          console.error('[chat-booking] tool execution failed', {
+            tool: block.name,
+            error: toolError,
+          });
+          toolResults.push({
+            type: 'tool_result',
+            toolUseId: block.id,
+            content: JSON.stringify({
+              error: 'TOOL_EXECUTION_FAILED',
+              details: `Tool ${block.name} failed.`,
+            }),
+          });
+        }
+      }
+
+      messageHistory.push({ role: 'assistant', content: modelResponse.content });
+      messageHistory.push({ role: 'user', content: toolResults });
+    }
+  } catch (error) {
+    console.error('[chat-booking] model loop failed', error);
+    return NextResponse.json({
+      message: `I ran into a temporary issue. Please try again, use the booking form, or call ${BUSINESS_CONTACT.phone}.`,
+      draft: currentDraft,
+      showConfirmation: false,
+      handoff: {
+        reason: 'Temporary assistant outage',
+        phone: BUSINESS_CONTACT.phone,
+      },
+    });
   }
 
   const response: ChatResponse = {
