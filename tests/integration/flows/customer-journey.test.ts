@@ -15,6 +15,14 @@ vi.mock('@/lib/services/booking-service', async () => {
 });
 vi.mock('@/lib/security/rate-limit', () => ({ enforceRateLimit: vi.fn(() => null) }));
 
+function ensureResponse(response: Response | undefined): Response {
+  expect(response).toBeDefined();
+  if (!response) {
+    throw new Error('Expected route handler to return a response');
+  }
+  return response;
+}
+
 describe('Customer journey', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -58,10 +66,12 @@ describe('Customer journey', () => {
     const req = new Request('http://localhost/api/booking/booking-123?token=valid-token') as any;
     req.nextUrl = new URL(req.url);
 
-    const res = await GET(req, { params: Promise.resolve({ bookingId: 'booking-123' }) });
+    const response = ensureResponse(
+      await GET(req, { params: Promise.resolve({ bookingId: 'booking-123' }) })
+    );
 
-    expect(res.status).toBe(200);
-    const data = await res.json();
+    expect(response.status).toBe(200);
+    const data = await response.json();
     expect(data.id).toBe('booking-123');
     expect(data.confirmation.token).toBeUndefined();
   });
@@ -72,24 +82,26 @@ describe('Customer journey', () => {
     const req = new Request('http://localhost/api/booking/booking-123?token=wrong') as any;
     req.nextUrl = new URL(req.url);
 
-    const res = await GET(req, { params: Promise.resolve({ bookingId: 'booking-123' }) });
+    const response = ensureResponse(
+      await GET(req, { params: Promise.resolve({ bookingId: 'booking-123' }) })
+    );
 
-    expect(res.status).toBe(403);
+    expect(response.status).toBe(403);
   });
 
   it('POST /api/reviews/submit records feedback for completed booking', async () => {
     requireOwnerOrAdmin.mockResolvedValue({ ok: true, auth: { role: 'customer' } });
 
     const { POST } = await import('@/app/api/reviews/submit/route');
-    const res = await POST(
+    const response = ensureResponse(await POST(
       new Request('http://localhost/api/reviews/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ bookingId: 'booking-123', rating: 5, comment: 'Great ride' }),
       })
-    );
+    ));
 
-    expect(res.status).toBe(200);
+    expect(response.status).toBe(200);
     expect(createReview).toHaveBeenCalledTimes(1);
   });
 });

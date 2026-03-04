@@ -105,64 +105,64 @@ export function buildDriverNotificationEmailHtml({
   bookedAt,
 }: DriverNotificationTemplateData): string {
   return `
-    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc;">
-      <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: var(--color-background-secondary);">
+      <div style="background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%); color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="margin: 0; font-size: 24px;">🚗 NEW BOOKING</h1>
         <p style="margin: 8px 0 0 0; font-size: 18px; opacity: 0.9;">${pickupDate} at ${pickupTime}</p>
       </div>
 
-      <div style="background: white; padding: 20px; margin: 0; border-left: 4px solid #10b981;">
-        <h2 style="color: #059669; margin: 0 0 12px 0; font-size: 16px;">📍 ROUTE</h2>
+      <div style="background: white; padding: 20px; margin: 0; border-left: 4px solid var(--color-success);">
+        <h2 style="color: var(--color-success); margin: 0 0 12px 0; font-size: 16px;">📍 ROUTE</h2>
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
-            <td style="padding: 8px 0; color: #6b7280; width: 80px;"><strong>PICKUP:</strong></td>
-            <td style="padding: 8px 0; color: #111827; font-size: 15px;">${pickupAddress}</td>
+            <td style="padding: 8px 0; color: var(--color-text-muted); width: 80px;"><strong>PICKUP:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary); font-size: 15px;">${pickupAddress}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6b7280;"><strong>DROPOFF:</strong></td>
-            <td style="padding: 8px 0; color: #111827; font-size: 15px;">${dropoffAddress}</td>
+            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>DROPOFF:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary); font-size: 15px;">${dropoffAddress}</td>
           </tr>
         </table>
       </div>
 
-      <div style="background: #f1f5f9; padding: 20px; margin: 0; border-left: 4px solid #3b82f6;">
-        <h2 style="color: #1d4ed8; margin: 0 0 12px 0; font-size: 16px;">👤 CUSTOMER</h2>
+      <div style="background: var(--color-background-tertiary); padding: 20px; margin: 0; border-left: 4px solid var(--color-primary);">
+        <h2 style="color: var(--color-primary-hover); margin: 0 0 12px 0; font-size: 16px;">👤 CUSTOMER</h2>
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
-            <td style="padding: 8px 0; color: #6b7280; width: 80px;"><strong>Name:</strong></td>
-            <td style="padding: 8px 0; color: #111827; font-size: 15px;">${customerName}</td>
+            <td style="padding: 8px 0; color: var(--color-text-muted); width: 80px;"><strong>Name:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary); font-size: 15px;">${customerName}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6b7280;"><strong>Phone:</strong></td>
-            <td style="padding: 8px 0; color: #111827; font-size: 15px;"><a href="tel:${customerPhone}" style="color: #2563eb; text-decoration: none;">${customerPhone}</a></td>
+            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>Phone:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary); font-size: 15px;"><a href="tel:${customerPhone}" style="color: var(--color-primary); text-decoration: none;">${customerPhone}</a></td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6b7280;"><strong>Email:</strong></td>
-            <td style="padding: 8px 0; color: #111827; font-size: 15px;"><a href="mailto:${customerEmail}" style="color: #2563eb; text-decoration: none;">${customerEmail}</a></td>
+            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>Email:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary); font-size: 15px;"><a href="mailto:${customerEmail}" style="color: var(--color-primary); text-decoration: none;">${customerEmail}</a></td>
           </tr>
         </table>
       </div>
 
       ${hasFlightInfo ? `
-      <div style="background: white; padding: 20px; margin: 0; border-left: 4px solid #f59e0b;">
-        <h2 style="color: #d97706; margin: 0 0 12px 0; font-size: 16px;">✈️ FLIGHT INFO</h2>
+      <div style="background: white; padding: 20px; margin: 0; border-left: 4px solid var(--color-warning);">
+        <h2 style="color: var(--color-warning); margin: 0 0 12px 0; font-size: 16px;">✈️ FLIGHT INFO</h2>
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
-            <td style="padding: 8px 0; color: #6b7280; width: 80px;"><strong>Airline:</strong></td>
-            <td style="padding: 8px 0; color: #111827;">${airline || 'N/A'}</td>
+            <td style="padding: 8px 0; color: var(--color-text-muted); width: 80px;"><strong>Airline:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary);">${airline || 'N/A'}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6b7280;"><strong>Flight #:</strong></td>
-            <td style="padding: 8px 0; color: #111827; font-weight: bold;">${flightNumber || 'N/A'}</td>
+            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>Flight #:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary); font-weight: bold;">${flightNumber || 'N/A'}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6b7280;"><strong>Terminal:</strong></td>
-            <td style="padding: 8px 0; color: #111827;">${terminal || 'N/A'}</td>
+            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>Terminal:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary);">${terminal || 'N/A'}</td>
           </tr>
           ${arrivalTime ? `
           <tr>
-            <td style="padding: 8px 0; color: #6b7280;"><strong>Arrival:</strong></td>
-            <td style="padding: 8px 0; color: #111827;">${arrivalTime}</td>
+            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>Arrival:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-primary);">${arrivalTime}</td>
           </tr>
           ` : ''}
         </table>
@@ -170,34 +170,34 @@ export function buildDriverNotificationEmailHtml({
       ` : ''}
 
       ${notes ? `
-      <div style="background: #fef3c7; padding: 20px; margin: 0; border-left: 4px solid #f59e0b;">
-        <h2 style="color: #92400e; margin: 0 0 12px 0; font-size: 16px;">📝 SPECIAL NOTES</h2>
-        <p style="margin: 0; color: #78350f; font-size: 15px; white-space: pre-wrap;">${notes}</p>
+      <div style="background: var(--color-background-secondary); padding: 20px; margin: 0; border-left: 4px solid var(--color-warning);">
+        <h2 style="color: var(--color-warning); margin: 0 0 12px 0; font-size: 16px;">📝 SPECIAL NOTES</h2>
+        <p style="margin: 0; color: var(--color-text-secondary); font-size: 15px; white-space: pre-wrap;">${notes}</p>
       </div>
       ` : ''}
 
-      <div style="background: #ecfdf5; padding: 20px; margin: 0; border-left: 4px solid #10b981;">
-        <h2 style="color: #059669; margin: 0 0 12px 0; font-size: 16px;">💰 PAYMENT</h2>
+      <div style="background: var(--color-background-secondary); padding: 20px; margin: 0; border-left: 4px solid var(--color-success);">
+        <h2 style="color: var(--color-success); margin: 0 0 12px 0; font-size: 16px;">💰 PAYMENT</h2>
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
-            <td style="padding: 4px 0; color: #6b7280;">Fare:</td>
-            <td style="padding: 4px 0; color: #111827; text-align: right;">$${fare.toFixed(2)}</td>
+            <td style="padding: 4px 0; color: var(--color-text-muted);">Fare:</td>
+            <td style="padding: 4px 0; color: var(--color-text-primary); text-align: right;">$${fare.toFixed(2)}</td>
           </tr>
           ${tipAmount > 0 ? `
           <tr>
-            <td style="padding: 4px 0; color: #6b7280;">Tip:</td>
-            <td style="padding: 4px 0; color: #111827; text-align: right;">$${tipAmount.toFixed(2)}</td>
+            <td style="padding: 4px 0; color: var(--color-text-muted);">Tip:</td>
+            <td style="padding: 4px 0; color: var(--color-text-primary); text-align: right;">$${tipAmount.toFixed(2)}</td>
           </tr>
           ` : ''}
-          <tr style="border-top: 2px solid #10b981;">
-            <td style="padding: 12px 0 4px 0; color: #059669; font-weight: bold; font-size: 18px;">TOTAL:</td>
-            <td style="padding: 12px 0 4px 0; color: #059669; font-weight: bold; font-size: 18px; text-align: right;">$${totalFare.toFixed(2)}</td>
+          <tr style="border-top: 2px solid var(--color-success);">
+            <td style="padding: 12px 0 4px 0; color: var(--color-success); font-weight: bold; font-size: 18px;">TOTAL:</td>
+            <td style="padding: 12px 0 4px 0; color: var(--color-success); font-weight: bold; font-size: 18px; text-align: right;">$${totalFare.toFixed(2)}</td>
           </tr>
         </table>
       </div>
 
-      <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px;">
-        <p style="margin: 0;">Booking ID: <strong style="color: #e2e8f0;">${bookingId}</strong></p>
+      <div style="background: var(--color-background-tertiary); color: var(--color-text-muted); padding: 16px; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px;">
+        <p style="margin: 0;">Booking ID: <strong style="color: var(--color-text-primary);">${bookingId}</strong></p>
         <p style="margin: 8px 0 0 0;">Booked at ${bookedAt}</p>
       </div>
     </div>

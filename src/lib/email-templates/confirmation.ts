@@ -87,20 +87,20 @@ export function buildConfirmationEmailHtml({
           ${booking.notes ? `<p><strong>Special Instructions:</strong> ${booking.notes}</p>` : ''}
         </div>
 
-        <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #166534; margin-top: 0;">💰 FARE INFORMATION</h3>
+        <div style="background-color: var(--color-background-secondary); padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: var(--color-success); margin-top: 0;">💰 FARE INFORMATION</h3>
           ${booking.tipAmount && booking.tipAmount > 0 ? `<p><strong>Tip:</strong> $${booking.tipAmount?.toFixed(2)}</p>` : ''}
           <p><strong>Total Amount:</strong> $${((booking.fare || 0) + (booking.tipAmount || 0)).toFixed(2)}</p>
         </div>
 
-        <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-          <h3 style="color: #1d4ed8; margin-top: 0;">🔗 TRACK YOUR RIDE</h3>
+        <div style="background-color: var(--color-background-tertiary); padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+          <h3 style="color: var(--color-primary-hover); margin-top: 0;">🔗 TRACK YOUR RIDE</h3>
           <p>Track your driver in real-time:</p>
-          <a href="${trackingUrl}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Live Tracking</a>
+          <a href="${trackingUrl}" style="display: inline-block; background-color: var(--color-primary); color: var(--color-background-primary); padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Live Tracking</a>
         </div>
 
-        <div style="background-color: #fefce8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #a16207; margin-top: 0;">💬 CONTACT INFORMATION</h3>
+        <div style="background-color: var(--color-background-secondary); padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: var(--color-warning); margin-top: 0;">💬 CONTACT INFORMATION</h3>
         <p>If you have any questions or need to make changes, please contact us:</p>
         <p><strong>Text or call:</strong> ${businessPhone}</p>
           <p><strong>Email:</strong> ${businessEmail}</p>

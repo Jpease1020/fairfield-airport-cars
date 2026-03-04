@@ -85,7 +85,8 @@ export const API_ENDPOINTS = {
   paymentProcess: '/api/payment/process-payment',
   trackingEta: '/api/tracking/eta',
   places: '/api/places-autocomplete',
-  timeSlot: '/api/booking/check-time-slot',
+  timeSlot: '/api/booking/check-availability',
+  legacyTimeSlot: '/api/booking/check-time-slot',
 } as const;
 
 export const ROUTES = {

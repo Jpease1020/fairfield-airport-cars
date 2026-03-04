@@ -23,6 +23,14 @@ vi.mock('@/lib/utils/auth-server', () => ({ requireOwnerOrAdmin }));
 vi.mock('@/lib/security/rate-limit', () => ({ enforceRateLimit: vi.fn(() => null) }));
 vi.mock('@/lib/utils/booking-date-time', () => ({ formatBusinessDateTime: vi.fn(() => 'Mar 5, 2026 10:00 AM') }));
 
+function ensureResponse(response: Response | undefined): Response {
+  expect(response).toBeDefined();
+  if (!response) {
+    throw new Error('Expected route handler to return a response');
+  }
+  return response;
+}
+
 describe('Admin journey', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -48,10 +56,12 @@ describe('Admin journey', () => {
     const req = new Request('http://localhost/api/booking/booking-123/status') as any;
     req.nextUrl = new URL(req.url);
 
-    const res = await GET(req, { params: Promise.resolve({ bookingId: 'booking-123' }) });
-    expect(res.status).toBe(200);
+    const response = ensureResponse(
+      await GET(req, { params: Promise.resolve({ bookingId: 'booking-123' }) })
+    );
+    expect(response.status).toBe(200);
 
-    const data = await res.json();
+    const data = await response.json();
     expect(data.status).toBe('confirmed');
   });
 
@@ -70,10 +80,10 @@ describe('Admin journey', () => {
     }) as any;
     req.nextUrl = new URL(req.url);
 
-    const res = await POST(req);
-    expect(res.status).toBe(200);
+    const response = ensureResponse(await POST(req));
+    expect(response.status).toBe(200);
 
-    const data = await res.json();
+    const data = await response.json();
     expect(data.refundAmount).toBe(expectedRefund);
     expect(data.cancellationFee).toBe(expectedFee);
     expect(cancelBooking).toHaveBeenCalledWith(

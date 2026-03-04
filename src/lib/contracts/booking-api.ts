@@ -102,7 +102,17 @@ export const submitBookingRequestSchema = z.object({
       address: z.string().min(1),
       coordinates: coordinatesSchema.nullable(),
     }),
-    pickupDateTime: z.string().transform((value) => new Date(value)),
+    pickupDateTime: z.string().transform((value, ctx) => {
+      const parsed = new Date(value);
+      if (Number.isNaN(parsed.getTime())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'pickupDateTime must be a valid ISO datetime string',
+        });
+        return z.NEVER;
+      }
+      return parsed;
+    }),
     fareType: fareTypeSchema,
     flightInfo: z
       .object({
