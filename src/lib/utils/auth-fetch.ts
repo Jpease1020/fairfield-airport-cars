@@ -3,16 +3,16 @@ import { auth } from '@/lib/utils/firebase';
 
 export const authFetch = async (input: RequestInfo, init: RequestInit = {}) => {
   const headers = new Headers(init.headers || {});
-  let finalInit = { ...init };
+  const finalInit = { ...init };
 
-  try {
-    const user = auth.currentUser;
-    if (user) {
+  const user = auth?.currentUser ?? null;
+  if (user) {
+    try {
       const token = await user.getIdToken();
       headers.set('Authorization', `Bearer ${token}`);
+    } catch (error) {
+      console.error('Failed to attach auth token:', error);
     }
-  } catch (error) {
-    console.error('Failed to attach auth token:', error);
   }
 
   if (!finalInit.credentials) {
