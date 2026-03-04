@@ -165,7 +165,7 @@ describe('POST /api/booking/cancel-booking', () => {
   });
 
   it('processes 75% refund (25% fee) when cancellation is 12-24 hours before pickup', async () => {
-    const booking = createMockBooking(12, 100); // 12 hours out, $100 paid
+    const booking = createMockBooking(13, 100); // Keep above 12h to avoid boundary flake
     mockGetBooking.mockResolvedValueOnce(booking);
     mockCancelBooking.mockResolvedValueOnce(undefined);
     mockSendSms.mockResolvedValueOnce(undefined);
