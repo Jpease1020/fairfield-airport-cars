@@ -210,18 +210,6 @@ export default function LoginFormClient() {
               {pageCmsData?.[loading ? 'form.googleSignInButtonLoading' : 'form.googleSignInButton'] || (loading ? 'Signing In...' : 'Continue with Google')}
             </Button>
             
-            <LinkText variant="small" color="muted" data-testid="signup-link-container">
-              {pageCmsData?.['login-form-no-account'] || "Don't have an account?"}{' '}
-              <Link href="/register" data-testid="signup-link">
-                {pageCmsData?.['login-form-signup-link'] || 'Sign up'}
-              </Link>
-            </LinkText>
-            
-            <LinkText variant="small" color="muted" data-testid="forgot-password-link-container">
-              <Link href="/forgot-password" data-testid="forgot-password-link">
-                {pageCmsData?.['login-form-forgot-password'] || 'Forgot your password?'}
-              </Link>
-            </LinkText>
           </Stack>
       </Container>
     </ToastProvider>
