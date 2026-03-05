@@ -62,6 +62,7 @@ describe('POST /api/chat/booking-assistant', () => {
     vi.clearAllMocks();
     process.env.CHAT_BOOKING_ENABLED = 'true';
     process.env.CHAT_BOOKING_PREVIEW_ENABLED = 'false';
+    process.env.CHAT_BOOKING_PROD_ENABLED = 'false';
     process.env.AUTH_SESSION_SECRET = 'test-secret';
     process.env.VERCEL_ENV = 'development';
 
@@ -101,6 +102,42 @@ describe('POST /api/chat/booking-assistant', () => {
     );
 
     expect(response.status).toBe(404);
+  });
+
+  it('returns 404 in production unless CHAT_BOOKING_PROD_ENABLED is true', async () => {
+    process.env.VERCEL_ENV = 'production';
+    process.env.CHAT_BOOKING_ENABLED = 'true';
+    process.env.CHAT_BOOKING_PROD_ENABLED = 'false';
+
+    const { POST } = await import('@/app/api/chat/booking-assistant/route');
+    const response = await POST(
+      buildRequest({
+        messages: [{ role: 'user', content: 'hello' }],
+        draft: {},
+      })
+    );
+
+    expect(response.status).toBe(404);
+  });
+
+  it('allows chat in production only when CHAT_BOOKING_PROD_ENABLED is true', async () => {
+    process.env.VERCEL_ENV = 'production';
+    process.env.CHAT_BOOKING_PROD_ENABLED = 'true';
+
+    providerGenerate.mockResolvedValueOnce({
+      stopReason: 'end_turn',
+      content: [{ type: 'text', text: 'How can I help with your booking?' }],
+    });
+
+    const { POST } = await import('@/app/api/chat/booking-assistant/route');
+    const response = await POST(
+      buildRequest({
+        messages: [{ role: 'user', content: 'hello' }],
+        draft: {},
+      })
+    );
+
+    expect(response.status).toBe(200);
   });
 
   it('returns 400 for invalid payload', async () => {
