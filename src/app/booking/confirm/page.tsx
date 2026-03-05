@@ -25,6 +25,18 @@ export default function BookingConfirmationPage() {
   const [state, setState] = useState<ConfirmationState>('idle');
   const [message, setMessage] = useState<string>('');
 
+  const isAlreadyConfirmedMessage =
+    state === 'success' && /already confirmed/i.test(message);
+
+  const pageTitle =
+    state === 'loading' || state === 'idle'
+      ? 'Finalize Your Booking'
+      : state === 'success'
+        ? isAlreadyConfirmedMessage
+          ? 'Booking Already Confirmed'
+          : 'Booking Confirmed'
+        : 'Booking Confirmation Needed';
+
   useEffect(() => {
     const confirmBooking = async () => {
       if (!bookingId || !token) {
@@ -130,7 +142,7 @@ export default function BookingConfirmationPage() {
   return (
     <Container maxWidth="lg" padding="xl" alignSelf="center">
       <Stack spacing="2xl" align="center">
-        <H2>Finalize Your Booking</H2>
+        <H2>{pageTitle}</H2>
         {renderContent()}
       </Stack>
     </Container>

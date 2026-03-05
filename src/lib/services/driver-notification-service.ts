@@ -6,7 +6,7 @@
 
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getMessaging } from 'firebase-admin/messaging';
-import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 
 const DRIVER_ID = 'gregg-driver-001'; // Gregg's driver ID
 
@@ -54,13 +54,13 @@ export async function notifyDriverOfNewBooking(data: BookingNotificationData): P
       return;
     }
 
-    const formattedDate = formatBusinessDateTime(data.pickupDateTime);
+    const formattedDate = formatBusinessDateTimeWithZone(data.pickupDateTime);
 
     const message = {
       token,
       notification: {
         title: '🚗 New Booking Received',
-        body: `${data.customerName} - ${formattedDate} - $${data.fare.toFixed(2)}`
+        body: `${data.customerName} - Pickup: ${formattedDate} - $${data.fare.toFixed(2)}`
       },
       data: {
         type: 'new_booking',
@@ -78,7 +78,7 @@ export async function notifyDriverOfNewBooking(data: BookingNotificationData): P
         },
         notification: {
           title: '🚗 New Booking Received',
-          body: `${data.customerName} - ${formattedDate} - $${data.fare.toFixed(2)}`,
+          body: `${data.customerName} - Pickup: ${formattedDate} - $${data.fare.toFixed(2)}`,
           icon: '/favicon.ico',
           badge: '/favicon.ico',
           tag: 'new-booking',
@@ -168,4 +168,3 @@ export async function notifyDriverOfBookingUpdate(
     console.error('Failed to send booking update notification:', error);
   }
 }
-

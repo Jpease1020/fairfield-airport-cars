@@ -6,6 +6,7 @@ import { Button, Stack, Text, Box, Input } from '@/design/ui';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import styled from 'styled-components';
 import { colors, spacing } from '@/design/system/tokens/tokens';
+import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 const CheckerContainer = styled(Box)`
   padding: ${spacing.lg};
@@ -200,7 +201,7 @@ export const AvailabilityChecker: React.FC = () => {
                     {slot.available ? '✅ Available' : '❌ Unavailable'}
                   </Text>
                   <Text size="sm">
-                    {new Date(slot.start).toLocaleString()} - {new Date(slot.end).toLocaleString()}
+                    {formatDateTimeNoSeconds(slot.start)} - {formatDateTimeNoSeconds(slot.end)}
                   </Text>
                   {slot.reason && (
                     <Text size="sm" color="secondary">

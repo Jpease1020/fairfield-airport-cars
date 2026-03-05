@@ -24,6 +24,7 @@ import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
 import { hasCalendarBeenAdded } from '@/lib/utils/calendar-utils';
+import { formatDateTimeNoSeconds, formatTimeNoSeconds } from '@/utils/formatting';
 
 interface TrackingPageClientProps {
   bookingId: string;
@@ -226,7 +227,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
           </Stack>
           {lastUpdate && (
             <Text variant="muted" size="sm" >
-              {cmsData?.['tracking-label'] || 'Last updated:'} {lastUpdate.toLocaleTimeString()}
+              {cmsData?.['tracking-label'] || 'Last updated:'} {formatTimeNoSeconds(lastUpdate)}
               {trackingActive && (cmsData?.['tracking-live'] || ' • Live tracking active')}
             </Text>
           )}
@@ -338,7 +339,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                   {cmsData?.['tracking-pickupTime'] || 'Pickup Time'}
                 </Text>
                 <Text weight="bold">
-                  {new Date(booking.trip.pickupDateTime).toLocaleString()}
+                  {formatDateTimeNoSeconds(booking.trip.pickupDateTime)}
                 </Text>
               </Stack>
               
@@ -391,7 +392,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                   {cmsData?.['tracking-current'] || 'Current ETA'}
                 </Text>
                 <Text weight="bold">
-                  {etaCalculation.estimatedArrival.toLocaleTimeString()} 
+                  {formatTimeNoSeconds(etaCalculation.estimatedArrival)} 
                   ({etaCalculation.duration} {cmsData?.['tracking-minutes'] || 'min'}, {etaCalculation.distance.toFixed(1)} {cmsData?.['tracking-miles'] || 'miles'})
                 </Text>
                 <Text size="sm" variant="muted" >
@@ -411,7 +412,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                 </Text>
                 <Text size="sm" variant="muted" >
                   {cmsData?.['tracking-speed'] || 'Speed:'} {booking.driverLocation.speed || 0} {cmsData?.['tracking-mph'] || 'mph'} • 
-                  {cmsData?.['tracking-updated'] || 'Updated:'} {booking.driverLocation.timestamp.toLocaleTimeString()}
+                  {cmsData?.['tracking-updated'] || 'Updated:'} {formatTimeNoSeconds(booking.driverLocation.timestamp)}
                 </Text>
               </Stack>
             )}

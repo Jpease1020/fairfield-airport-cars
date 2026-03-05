@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
+import {
   GridSection,
   ToastProvider,
   useToast,
@@ -17,6 +17,7 @@ import {
   Span
 } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 interface ManageBookingClientProps {
   bookingId: string;
@@ -199,11 +200,11 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                   {booking.trip?.dropoff?.address || booking.dropoffLocation || 'N/A'}
                 </Text>
                 <Text>
-                  <Span weight="bold">{pageCmsData?.['dateTimeLabel'] || 'Date & Time:'}</Span>{' '}
+                  <Span weight="bold">{pageCmsData?.['dateTimeLabel'] || 'Pickup Time:'}</Span>{' '}
                   {booking.trip?.pickupDateTime 
-                    ? new Date(booking.trip.pickupDateTime).toLocaleString()
+                    ? formatDateTimeNoSeconds(booking.trip.pickupDateTime)
                     : booking.pickupDateTime 
-                    ? new Date(booking.pickupDateTime).toLocaleString()
+                    ? formatDateTimeNoSeconds(booking.pickupDateTime)
                     : 'N/A'}
                 </Text>
                 <Text>

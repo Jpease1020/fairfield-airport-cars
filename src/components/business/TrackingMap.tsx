@@ -12,6 +12,7 @@ import {
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
 import { useRealTimeTracking } from '@/hooks/useRealTimeTracking';
+import { formatTimeNoSeconds } from '@/utils/formatting';
 
 // Styled components for map elements
 const MapContainer = styled.div`
@@ -372,8 +373,8 @@ export function TrackingMap({
           {(bookingStatus?.estimatedArrival) && (
             <Box variant="outlined" padding="sm">
               <Text size="sm" weight="bold">
-                {cmsData?.['trackingMapEta'] || 'ETA:'} {bookingStatus?.estimatedArrival 
-                  ? new Date(bookingStatus.estimatedArrival).toLocaleTimeString()
+                {cmsData?.['trackingMapEta'] || 'ETA:'} {bookingStatus?.estimatedArrival
+                  ? formatTimeNoSeconds(bookingStatus.estimatedArrival)
                   : cmsData?.['trackingMapCalculating'] || 'Calculating...'
                 }
               </Text>

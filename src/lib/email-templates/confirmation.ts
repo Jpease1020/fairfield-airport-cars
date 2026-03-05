@@ -30,12 +30,13 @@ Your ride has been confirmed! Here are your booking details:
 📋 BOOKING DETAILS
 ==================
 Booking ID: ${booking.id}
-Date & Time: ${pickupDateTime}
+Pickup Time: ${pickupDateTime}
 Pickup Location: ${pickupAddress}
 Drop-off Location: ${dropoffAddress}
 ${booking.flightInfo?.airline ? `Airline: ${booking.flightInfo.airline}` : ''}
 ${booking.flightInfo?.flightNumber ? `Flight Number: ${booking.flightInfo.flightNumber}` : ''}
 ${booking.flightInfo?.terminal ? `Terminal: ${booking.flightInfo.terminal}` : ''}
+${booking.flightInfo?.arrivalTime ? `Flight Time (as provided): ${booking.flightInfo.arrivalTime}` : ''}
 ${booking.notes ? `Special Instructions: ${booking.notes}` : ''}
 
 💰 FARE INFORMATION
@@ -78,12 +79,13 @@ export function buildConfirmationEmailHtml({
         <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
           <p><strong>Booking ID:</strong> ${booking.id}</p>
-          <p><strong>Date & Time:</strong> ${pickupDateTime}</p>
+          <p><strong>Pickup Time:</strong> ${pickupDateTime}</p>
           <p><strong>Pickup Location:</strong> ${pickupAddress}</p>
           <p><strong>Drop-off Location:</strong> ${dropoffAddress}</p>
           ${booking.flightInfo?.airline ? `<p><strong>Airline:</strong> ${booking.flightInfo.airline}</p>` : ''}
           ${booking.flightInfo?.flightNumber ? `<p><strong>Flight Number:</strong> ${booking.flightInfo.flightNumber}</p>` : ''}
           ${booking.flightInfo?.terminal ? `<p><strong>Terminal:</strong> ${booking.flightInfo.terminal}</p>` : ''}
+          ${booking.flightInfo?.arrivalTime ? `<p><strong>Flight Time (as provided):</strong> ${booking.flightInfo.arrivalTime}</p>` : ''}
           ${booking.notes ? `<p><strong>Special Instructions:</strong> ${booking.notes}</p>` : ''}
         </div>
 

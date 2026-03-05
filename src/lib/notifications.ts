@@ -110,7 +110,7 @@ export const sendBookingNotification = async (type: 'confirmed' | 'cancelled' | 
   const notifications = {
     confirmed: {
       title: '✅ Booking Confirmed',
-      body: `Your airport ride is confirmed for ${bookingData.pickupDateTime}`,
+      body: `Your airport ride is confirmed. Pickup time: ${bookingData.pickupDateTime}`,
       actions: [
         { action: 'view', title: 'View Details' },
         { action: 'modify', title: 'Modify Booking' }
@@ -155,6 +155,5 @@ export const sendTestNotification = async (): Promise<void> => {
     ]
   });
 };
-
 
 

@@ -13,6 +13,7 @@ import {
 import { colors } from '@/design/foundation/tokens/tokens';
 import styled from 'styled-components';
 import { firebaseTrackingService, type ETACalculation } from '@/lib/services/firebase-tracking-service';
+import { formatTimeNoSeconds } from '@/utils/formatting';
 
 // Styled components for ETA display
 const ETACard = styled.div<{ $trafficLevel: 'low' | 'medium' | 'high' }>`
@@ -172,11 +173,7 @@ export function TrafficETA({
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
+    return formatTimeNoSeconds(date);
   };
 
   const formatDuration = (minutes: number) => {
@@ -281,7 +278,7 @@ export function TrafficETA({
             <Stack direction="horizontal" justify="space-between" align="center">
               <Text variant="muted" size="sm">{cmsData?.['traffic-etaLastUpdated'] || 'Last Updated'}</Text>
               <Text variant="muted" size="sm">
-                {lastUpdate.toLocaleTimeString()}
+                {formatTime(lastUpdate)}
               </Text>
             </Stack>
           )}

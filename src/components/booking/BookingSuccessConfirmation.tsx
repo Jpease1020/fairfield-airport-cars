@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Box, Stack, Text, Button } from '@/design/ui';
 import { colors } from '@/design/system/tokens/tokens';
 import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
+import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 const Divider = styled.div`
   height: 1px;
@@ -111,8 +112,8 @@ export const BookingSuccessConfirmation: React.FC<BookingSuccessConfirmationProp
               <Text>{dropoffLocation}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
-              <Text weight="medium">{cmsData?.['booking-detail-datetime'] || 'Date & Time:'}</Text>
-              <Text>{new Date(pickupDateTime).toLocaleString()}</Text>
+              <Text weight="medium">{cmsData?.['booking-detail-datetime'] || 'Pickup Time:'}</Text>
+              <Text>{formatDateTimeNoSeconds(pickupDateTime)}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text weight="medium">{cmsData?.['booking-detail-total'] || 'Total Fare:'}</Text>
