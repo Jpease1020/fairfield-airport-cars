@@ -30,6 +30,8 @@ export async function GET() {
     }
 
     // 2. Environment Variables Check
+    const hasLlmApiKey = !!process.env.GEMINI_API_KEY || !!process.env.ANTHROPIC_API_KEY;
+
     const envVars = {
       // Payment (Square)
       SQUARE_ACCESS_TOKEN: !!process.env.SQUARE_ACCESS_TOKEN,
@@ -57,7 +59,7 @@ export async function GET() {
       CHAT_BOOKING_PREVIEW_ENABLED: !!process.env.CHAT_BOOKING_PREVIEW_ENABLED,
       NEXT_PUBLIC_CHAT_BOOKING_ENABLED: !!process.env.NEXT_PUBLIC_CHAT_BOOKING_ENABLED,
       NEXT_PUBLIC_CHAT_BOOKING_PREVIEW_ENABLED: !!process.env.NEXT_PUBLIC_CHAT_BOOKING_PREVIEW_ENABLED,
-      ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY,
+      LLM_API_KEY: hasLlmApiKey,
     };
 
     const missingVars = Object.entries(envVars)
