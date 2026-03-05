@@ -23,6 +23,24 @@ export const formatDate = (date: Date | string, options?: Intl.DateTimeFormatOpt
   return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(dateObj);
 };
 
+export const formatDateTimeNoSeconds = (
+  date: Date | string,
+  options?: Intl.DateTimeFormatOptions
+): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(dateObj);
+};
+
 export const formatPhoneNumber = (phone: string): string => {
   // Remove all non-digit characters
   const cleaned = phone.replace(/\D/g, '');
@@ -45,6 +63,21 @@ export const formatTime = (date: Date | string, options?: Intl.DateTimeFormatOpt
     hour12: true,
   };
   
+  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(dateObj);
+};
+
+export const formatTimeNoSeconds = (
+  date: Date | string,
+  options?: Intl.DateTimeFormatOptions
+): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
   return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(dateObj);
 };
 

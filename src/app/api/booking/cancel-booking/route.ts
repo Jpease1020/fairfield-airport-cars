@@ -6,7 +6,7 @@ import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { getBusinessRules, getCancellationFeePercent } from '@/lib/business/business-rules';
 import { sendBookingProblem } from '@/lib/services/notification-service';
 import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
-import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 export async function POST(req: NextRequest) {
@@ -62,8 +62,11 @@ export async function POST(req: NextRequest) {
     const pickupDateTime = booking.trip?.pickupDateTime || booking.pickupDateTime;
     const phone = booking.customer?.phone || booking.phone;
     const email = booking.customer?.email || booking.email;
+    const pickupTimeLabel = pickupDateTime
+      ? formatBusinessDateTimeWithZone(pickupDateTime)
+      : 'your scheduled time';
     
-    const messageBody = `Your ride scheduled for ${pickupDateTime ? formatBusinessDateTime(pickupDateTime) : 'your scheduled time'} has been cancelled. ${
+    const messageBody = `Your ride has been cancelled.\nPickup time: ${pickupTimeLabel}\n${
       refundAmount === 0 ? (cancellationFee > 0 ? `A cancellation fee of $${cancellationFee.toFixed(2)} applies.` : 'No refund applies.') : `We have refunded $${refundAmount.toFixed(2)}.`}`;
 
     // Send SMS and email (push removed)
@@ -75,8 +78,8 @@ export async function POST(req: NextRequest) {
     try {
       const { sendAdminSms } = await import('@/lib/services/admin-notification-service');
       const customerName = booking.customer?.name || booking.name || 'Customer';
-      const pickupDateTimeStr = pickupDateTime ? formatBusinessDateTime(pickupDateTime) : 'scheduled time';
-      const message = `Booking cancelled: ${bookingId} - ${customerName} - ${pickupDateTimeStr} - Refund: $${refundAmount.toFixed(2)}`;
+      const pickupDateTimeStr = pickupDateTime ? formatBusinessDateTimeWithZone(pickupDateTime) : 'scheduled time';
+      const message = `Booking cancelled: ${bookingId} - ${customerName} - Pickup time: ${pickupDateTimeStr} - Refund: $${refundAmount.toFixed(2)}`;
       await sendAdminSms(message);
       console.log('✅ [CANCEL BOOKING] Admin SMS sent successfully');
     } catch (smsError) {

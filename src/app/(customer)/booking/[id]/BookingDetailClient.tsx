@@ -276,7 +276,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
             <Text>{dropoffAddress}</Text>
           </Container>
           <Container>
-            {cmsData?.['booking-pickup_datetime-label'] || 'Pickup Date & Time:'}
+            {cmsData?.['booking-pickup_datetime-label'] || 'Pickup Time:'}
             <Text>{formatDateTime(pickupDateTime)}</Text>
           </Container>
         </Container>

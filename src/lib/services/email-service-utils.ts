@@ -17,8 +17,9 @@ import {
 } from '@/utils/booking-helpers';
 import {
   formatBusinessDate,
-  formatBusinessDateTime,
   formatBusinessTime,
+  formatBusinessTimeWithZone,
+  formatBusinessDateTimeWithZone,
   getBusinessDateTimeParts,
 } from '@/lib/utils/booking-date-time';
 
@@ -89,11 +90,14 @@ export const buildDriverTemplateData = (booking: Booking) => {
   const fare = getFare(booking);
   const tipAmount = getTipAmount(booking);
   const flightInfo = getFlightInfo(booking);
+  const flightTimeText = typeof flightInfo.arrivalTime === 'string'
+    ? flightInfo.arrivalTime.trim()
+    : '';
 
   return {
     bookingId: booking.id,
     pickupDate: formatBusinessDate(pickupDate),
-    pickupTime: formatBusinessTime(pickupDate),
+    pickupTime: formatBusinessTimeWithZone(pickupDate),
     pickupAddress: getPickupAddress(booking) || 'Not specified',
     dropoffAddress: getDropoffAddress(booking) || 'Not specified',
     customerName: getCustomerName(booking) || 'Not provided',
@@ -107,8 +111,8 @@ export const buildDriverTemplateData = (booking: Booking) => {
     airline: flightInfo.airline,
     flightNumber: flightInfo.flightNumber,
     terminal: flightInfo.terminal,
-    arrivalTime: flightInfo.arrivalTime,
-    bookedAt: formatBusinessDateTime(new Date()),
+    arrivalTime: flightTimeText,
+    bookedAt: formatBusinessDateTimeWithZone(new Date()),
     subject: `🚗 NEW RIDE: ${formatBusinessDate(pickupDate)} at ${formatBusinessTime(pickupDate)}`,
   };
 };

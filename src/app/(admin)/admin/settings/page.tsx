@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import React, { useState, useEffect } from 'react';
 import { Container, Stack, Text, Box, Button, Input, Label, LoadingSpinner, Alert, H1 } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 interface BusinessRulesForm {
   serviceArea: { normalRadiusMiles: number; extendedRadiusMiles: number };
@@ -163,7 +164,7 @@ export default function AdminSettingsPage() {
       <Stack spacing="lg">
         <H1>Settings</H1>
         {form.updatedAt && (
-          <Text size="sm" color="secondary">Last updated: {new Date(form.updatedAt).toLocaleString()} {form.version != null && `(v${form.version})`}</Text>
+          <Text size="sm" color="secondary">Last updated: {formatDateTimeNoSeconds(form.updatedAt)} {form.version != null && `(v${form.version})`}</Text>
         )}
         {error && <Alert variant="error">{error}</Alert>}
         {success && <Alert variant="success">Saved.</Alert>}

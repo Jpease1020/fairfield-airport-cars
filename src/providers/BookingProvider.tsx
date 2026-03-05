@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, ReactNode, useCallback } from 'react';
+import React, { useState, useMemo, ReactNode, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Booking, BookingPhase, TripDetails, CustomerInfo, PaymentInfo, QuoteData } from '@/types/booking';
 import { useRouteCalculation } from '@/hooks/useRouteCalculation';
@@ -20,6 +20,8 @@ interface BookingProviderProps {
   children: ReactNode;
   existingBooking?: Booking; // For editing existing bookings
 }
+
+const QUOTE_STORAGE_KEY = 'booking-current-quote';
 
 export const BookingProvider: React.FC<BookingProviderProps> = ({ children, existingBooking }) => {
   const router = useRouter();
@@ -42,6 +44,43 @@ const [success, setSuccess] = useState<string | null>(null);
 const [warning, setWarning] = useState<string | null>(null);
   const [completedBookingId, setCompletedBookingId] = useState<string | null>(null);
   const [currentQuote, setCurrentQuote] = useState<QuoteData | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedQuote = sessionStorage.getItem(QUOTE_STORAGE_KEY);
+      if (!storedQuote) return;
+
+      const parsedQuote = JSON.parse(storedQuote) as QuoteData;
+      if (!parsedQuote?.expiresAt) {
+        sessionStorage.removeItem(QUOTE_STORAGE_KEY);
+        return;
+      }
+
+      const expiresAtMs = new Date(parsedQuote.expiresAt).getTime();
+      if (!Number.isFinite(expiresAtMs) || expiresAtMs <= Date.now()) {
+        sessionStorage.removeItem(QUOTE_STORAGE_KEY);
+        return;
+      }
+
+      setCurrentQuote(parsedQuote);
+    } catch (error) {
+      console.error('Failed to restore quote from session storage:', error);
+      sessionStorage.removeItem(QUOTE_STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (!currentQuote) {
+        sessionStorage.removeItem(QUOTE_STORAGE_KEY);
+        return;
+      }
+
+      sessionStorage.setItem(QUOTE_STORAGE_KEY, JSON.stringify(currentQuote));
+    } catch (error) {
+      console.error('Failed to persist quote to session storage:', error);
+    }
+  }, [currentQuote]);
 
   const {
     formData,

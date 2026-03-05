@@ -44,10 +44,10 @@ export function buildDriverNotificationEmailText({
           🚗 NEW BOOKING NOTIFICATION
 ═══════════════════════════════════════════════════
 
-📅 DATE & TIME
+📅 PICKUP SCHEDULE
 ──────────────────────────────────────────────────
 Date: ${pickupDate}
-Time: ${pickupTime}
+Pickup Time: ${pickupTime}
 
 📍 ROUTE
 ──────────────────────────────────────────────────
@@ -65,7 +65,7 @@ ${hasFlightInfo ? `✈️ FLIGHT INFO
 Airline: ${airline || 'N/A'}
 Flight#: ${flightNumber || 'N/A'}
 Terminal: ${terminal || 'N/A'}
-Arrival: ${arrivalTime || 'N/A'}
+Flight Time (as provided): ${arrivalTime || 'N/A'}
 ` : ''}
 ${notes ? `📝 SPECIAL NOTES
 ──────────────────────────────────────────────────
@@ -161,7 +161,7 @@ export function buildDriverNotificationEmailHtml({
           </tr>
           ${arrivalTime ? `
           <tr>
-            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>Arrival:</strong></td>
+            <td style="padding: 8px 0; color: var(--color-text-muted);"><strong>Flight Time (as provided):</strong></td>
             <td style="padding: 8px 0; color: var(--color-text-primary);">${arrivalTime}</td>
           </tr>
           ` : ''}

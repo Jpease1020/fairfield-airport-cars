@@ -16,6 +16,7 @@ import { Booking } from '@/types/booking';
 import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
 import { isRunningAsPWA } from '@/lib/pwa';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 interface SuccessPageClientProps {
   cmsData?: any;
@@ -186,7 +187,7 @@ export default function SuccessPageClient({ cmsData }: SuccessPageClientProps) {
               <Stack data-testid="success-trip-details-list" spacing="sm">
                 <Text data-testid="success-pickup-location"><strong>From:</strong> {booking.trip.pickup.address}</Text>
                 <Text data-testid="success-dropoff-location"><strong>To:</strong> {booking.trip.dropoff.address}</Text>
-                <Text data-testid="success-pickup-time"><strong>When:</strong> {new Date(booking.trip.pickupDateTime).toLocaleString()}</Text>
+                <Text data-testid="success-pickup-time"><strong>When:</strong> {formatDateTimeNoSeconds(booking.trip.pickupDateTime)}</Text>
               </Stack>
             </Stack>
           </Container>

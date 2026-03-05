@@ -4,7 +4,7 @@ import { getBooking } from '@/lib/services/booking-service';
 import { sendConfirmationEmail } from '@/lib/services/email-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { requireAdmin } from '@/lib/utils/auth-server';
-import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 import { APP_CONFIG } from '@/utils/constants';
 import { getDropoffAddress, getPickupAddress, getPickupDateTime } from '@/utils/booking-helpers';
 
@@ -27,11 +27,11 @@ export async function POST(request: Request) {
 
     const pickupDateTimeValue = getPickupDateTime(booking);
     const pickupDateTimeText = pickupDateTimeValue
-      ? formatBusinessDateTime(pickupDateTimeValue)
+      ? formatBusinessDateTimeWithZone(pickupDateTimeValue)
       : 'your scheduled time';
     const pickupAddress = getPickupAddress(booking) || 'your pickup location';
     const dropoffAddress = getDropoffAddress(booking) || 'your dropoff location';
-    const messageBody = `Thank you for booking with ${APP_CONFIG.name}! Your ride from ${pickupAddress} to ${dropoffAddress} on ${pickupDateTimeText} is confirmed.`;
+    const messageBody = `Thank you for booking with ${APP_CONFIG.name}! Your ride is confirmed.\nPickup time: ${pickupDateTimeText}\nRoute: ${pickupAddress} -> ${dropoffAddress}`;
 
     await Promise.all([
       booking.phone ? sendSms({ to: booking.phone, body: messageBody }) : Promise.resolve(),

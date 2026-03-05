@@ -3,6 +3,7 @@
 import React from 'react';
 import { Stack, Box, Text, H2 } from '@/design/ui';
 import styled from 'styled-components';
+import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 const TotalRow = styled(Stack)`
   border-top: 1px solid var(--border-color);
@@ -50,9 +51,9 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({
           
           <Stack direction="horizontal" justify="space-between">
             <Text weight="medium">
-              {cmsData?.['paymentPhase-datetime'] || 'Date & Time:'}
+              {cmsData?.['paymentPhase-datetime'] || 'Pickup Time:'}
             </Text>
-            <Text>{new Date(pickupDateTime).toLocaleString()}</Text>
+            <Text>{formatDateTimeNoSeconds(pickupDateTime)}</Text>
           </Stack>
           
           <Stack direction="horizontal" justify="space-between">

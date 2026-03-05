@@ -29,6 +29,22 @@ export function formatBusinessDateTime(value: DateInput): string {
   }).format(date);
 }
 
+export function formatBusinessDateTimeWithZone(value: DateInput): string {
+  const date = toDate(value);
+  if (!date) return 'Date not available';
+
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: getBusinessTimeZone(),
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZoneName: 'short',
+  }).format(date);
+}
+
 export function formatBusinessDate(value: DateInput): string {
   const date = toDate(value);
   if (!date) return 'Date not available';
@@ -51,6 +67,19 @@ export function formatBusinessTime(value: DateInput): string {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
+  }).format(date);
+}
+
+export function formatBusinessTimeWithZone(value: DateInput): string {
+  const date = toDate(value);
+  if (!date) return 'Time not available';
+
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: getBusinessTimeZone(),
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZoneName: 'short',
   }).format(date);
 }
 

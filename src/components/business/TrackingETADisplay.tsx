@@ -11,6 +11,7 @@ import {
   Alert
 } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatTimeNoSeconds } from '@/utils/formatting';
 
 
 interface TrackingETADisplayProps {
@@ -220,7 +221,7 @@ export function TrackingETADisplay({
                   <Stack direction="horizontal" justify="space-between" align="center">
                     <Text>{cmsData?.['tracking-arrivalTime'] || 'Arrival Time'}</Text>
                     <Text weight="bold">
-                      {etaInfo.estimatedArrival.toLocaleTimeString()}
+                      {formatTimeNoSeconds(etaInfo.estimatedArrival)}
                     </Text>
                   </Stack>
 
@@ -273,7 +274,7 @@ export function TrackingETADisplay({
               <Stack spacing="sm">
                 <Stack direction="horizontal" justify="space-between" align="center">
                   <Text>{cmsData?.['tracking-lastUpdated'] || 'Last Updated'}</Text>
-                  <Text>{driverLocation.timestamp.toLocaleTimeString()}</Text>
+                  <Text>{formatTimeNoSeconds(driverLocation.timestamp)}</Text>
                 </Stack>
                 
                 {driverLocation.speed && (

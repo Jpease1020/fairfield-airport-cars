@@ -7,7 +7,7 @@ import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
 import { classifyTrip } from '@/lib/services/service-area-validation';
 import { sendBookingProblem } from '@/lib/services/notification-service';
-import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { formatBusinessDateTime, formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 import { sendAdminSms } from '@/lib/services/admin-notification-service';
 import { sendSms } from '@/lib/services/twilio-service';
 import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
@@ -326,8 +326,8 @@ export async function submitBookingOrchestration(
     }
 
     try {
-      const pickupDateTimeStr = formatBusinessDateTime(trip.pickupDateTime);
-      const message = `New booking: ${customer.name} - ${trip.pickup.address} to ${trip.dropoff.address} on ${pickupDateTimeStr} - $${fare.toFixed(2)}`;
+      const pickupDateTimeStr = formatBusinessDateTimeWithZone(trip.pickupDateTime);
+      const message = `New booking: ${customer.name} - Pickup time: ${pickupDateTimeStr} - Route: ${trip.pickup.address} -> ${trip.dropoff.address} - $${fare.toFixed(2)}`;
       await sendAdminSms(message);
     } catch {
       // Non-critical
@@ -456,7 +456,7 @@ export async function createPaidBookingAndNotify(
       const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${confirmationToken}`;
       await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
 
-      const smsMessage = `We received your booking request for ${formatBusinessDateTime(pickupDateTimeValue)}. Please check your email to confirm the ride. Booking ID: ${bookingResult.bookingId}`;
+      const smsMessage = `We received your booking request.\nPickup time: ${formatBusinessDateTimeWithZone(pickupDateTimeValue)}\nPlease check your email to confirm the ride. Booking ID: ${bookingResult.bookingId}`;
       await sendSms({
         to: bookingData.customer.phone,
         body: smsMessage,

@@ -33,7 +33,7 @@ Once you confirm, we'll finalize your driver assignment and send you the full it
 
 Booking summary:
 - Booking ID: ${booking.id}
-- Date & Time: ${pickupDateTime}
+- Pickup Time: ${pickupDateTime}
 - Pickup: ${pickupAddress}
 - Dropoff: ${dropoffAddress}
 
@@ -68,7 +68,7 @@ export function buildBookingVerificationEmailHtml({
       <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 Booking Summary</h3>
         <p><strong>Booking ID:</strong> ${booking.id}</p>
-        <p><strong>Date & Time:</strong> ${pickupDateTime}</p>
+        <p><strong>Pickup Time:</strong> ${pickupDateTime}</p>
         <p><strong>Pickup:</strong> ${pickupAddress}</p>
         <p><strong>Dropoff:</strong> ${dropoffAddress}</p>
       </div>

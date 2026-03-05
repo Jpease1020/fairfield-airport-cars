@@ -7,7 +7,7 @@ import {
   getDropoffAddress,
   getPickupAddress,
 } from '@/utils/booking-helpers';
-import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
+import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 import { buildConfirmationEmailHtml, buildConfirmationEmailText } from '@/lib/email-templates/confirmation';
 import {
   buildBookingVerificationEmailHtml,
@@ -50,7 +50,7 @@ export async function sendConfirmationEmail(booking: Booking) {
     text: buildConfirmationEmailText({
       booking,
       customerName,
-      pickupDateTime: formatBusinessDateTime(pickupDate),
+      pickupDateTime: formatBusinessDateTimeWithZone(pickupDate),
       pickupAddress,
       dropoffAddress,
       trackingUrl,
@@ -61,7 +61,7 @@ export async function sendConfirmationEmail(booking: Booking) {
     html: buildConfirmationEmailHtml({
       booking,
       customerName,
-      pickupDateTime: formatBusinessDateTime(pickupDate),
+      pickupDateTime: formatBusinessDateTimeWithZone(pickupDate),
       pickupAddress,
       dropoffAddress,
       trackingUrl,
@@ -101,7 +101,7 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
       pickupAddress,
       dropoffAddress,
       confirmationUrl,
-      pickupDateTime: formatBusinessDateTime(pickupDate),
+      pickupDateTime: formatBusinessDateTimeWithZone(pickupDate),
       businessName: business.name,
       businessPhone: business.phone,
       businessEmail: business.email,
@@ -112,7 +112,7 @@ export async function sendBookingVerificationEmail(booking: Booking, confirmatio
       pickupAddress,
       dropoffAddress,
       confirmationUrl,
-      pickupDateTime: formatBusinessDateTime(pickupDate),
+      pickupDateTime: formatBusinessDateTimeWithZone(pickupDate),
       businessName: business.name,
       businessPhone: business.phone,
       businessEmail: business.email,

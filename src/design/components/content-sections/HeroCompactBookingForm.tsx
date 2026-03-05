@@ -65,6 +65,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     updateTripDetails,
     validateQuickBookingForm,
     submitQuickBookingForm,
+    currentQuote,
     error,
     hasAttemptedValidation,
     setHasAttemptedValidation,
@@ -92,8 +93,6 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
   
   // Get datetime from provider instead of local state
   const pickupDateTime = formData.trip.pickupDateTime;
-  const pickupDate = pickupDateTime ? pickupDateTime.split('T')[0] : '';
-  const pickupTime = pickupDateTime ? pickupDateTime.split('T')[1] : '';
   
   const { fare: estimatedFare, isCalculating, error: fareError } = useFareCalculation({
     pickupLocation: locationData.pickup.address,
@@ -103,6 +102,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
     fareType: formData.trip.fareType,
     pickupDateTime: pickupDateTime, // Required for fare calculation
   });
+  const displayFare = currentQuote?.fare ?? estimatedFare;
 
   const { error: availabilityError, checkAvailability } = useBookingAvailability();
 
@@ -266,10 +266,10 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
         </Stack>
         
         {/* Show estimated price in real-time from shared hook */}
-        {estimatedFare && (
+        {displayFare !== null && displayFare !== undefined && (
           <Stack spacing="sm" align="center" data-testid="quick-book-price-display">
             <Text size="lg" weight="bold" color="primary" data-testid="quick-book-fare-amount">
-              Estimated Fare: ${estimatedFare}
+              Estimated Fare: ${displayFare}
             </Text>
             {/* Quote countdown removed - using simplified fare system */}
             {isCalculating && (
@@ -283,7 +283,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
                   ⏳ Limited Time Offer!
                 </Text>
                 <StrikethroughText size="md" color="secondary" data-testid="quick-book-deposit-strikethrough">
-                  Deposit: ${(estimatedFare * 0.3).toFixed(2)}
+                  Deposit: ${(displayFare * 0.3).toFixed(2)}
                 </StrikethroughText>
                 <Text size="lg" weight="bold" color="success" data-testid="quick-book-no-deposit">
                   No Deposit Required - Book Now!

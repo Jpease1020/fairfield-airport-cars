@@ -19,6 +19,7 @@ import {
 } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 function CancelPageContent() {
   // Get CMS data from provider
@@ -227,7 +228,7 @@ function CancelPageContent() {
                   <Stack spacing="sm">
                     <Text weight="bold">{cmsData?.['booking-found'] || 'Booking Found'}</Text>
                     {bookingInfo.pickupDateTime && (
-                      <Text size="sm">Pickup: {new Date(bookingInfo.pickupDateTime).toLocaleString()}</Text>
+                      <Text size="sm">Pickup: {formatDateTimeNoSeconds(bookingInfo.pickupDateTime)}</Text>
                     )}
                     {bookingInfo.fare && (
                       <Text size="sm">Fare: ${bookingInfo.fare.toFixed(2)}</Text>
