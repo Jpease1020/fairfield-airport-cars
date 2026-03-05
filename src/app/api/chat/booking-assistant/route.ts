@@ -167,11 +167,20 @@ const toolInputSchemas = {
 } as const;
 
 function isChatEnabled(): boolean {
+  const env = process.env.VERCEL_ENV;
+  if (env === 'production') {
+    return process.env.CHAT_BOOKING_PROD_ENABLED === 'true';
+  }
+
+  if (env === 'preview') {
+    return process.env.CHAT_BOOKING_PREVIEW_ENABLED === 'true';
+  }
+
   const explicit = process.env.CHAT_BOOKING_ENABLED;
   if (explicit === 'true') return true;
   if (explicit === 'false') return false;
 
-  return process.env.VERCEL_ENV === 'preview' && process.env.CHAT_BOOKING_PREVIEW_ENABLED === 'true';
+  return false;
 }
 
 function asToolUseBlocks(blocks: ProviderInputBlock[]): ToolUseBlock[] {

@@ -15,10 +15,13 @@ function BookPageClient() {
   const { currentPhase, updateTripDetails, success } = useBooking();
   const showPageHeader = currentPhase !== 'flight-info';
   const searchParams = useSearchParams();
+  const runtimeEnv = process.env.NEXT_PUBLIC_VERCEL_ENV;
+  const isPreview = runtimeEnv === 'preview';
+  const isProduction = runtimeEnv === 'production';
   const chatEnabled =
-    process.env.NEXT_PUBLIC_CHAT_BOOKING_ENABLED === 'true' ||
-    (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' &&
-      process.env.NEXT_PUBLIC_CHAT_BOOKING_PREVIEW_ENABLED === 'true');
+    (isProduction && process.env.NEXT_PUBLIC_CHAT_BOOKING_PROD_ENABLED === 'true') ||
+    (isPreview && process.env.NEXT_PUBLIC_CHAT_BOOKING_PREVIEW_ENABLED === 'true') ||
+    (!isProduction && !isPreview && process.env.NEXT_PUBLIC_CHAT_BOOKING_ENABLED === 'true');
   const [showForm, setShowForm] = useState(!chatEnabled);
 
   useEffect(() => {
