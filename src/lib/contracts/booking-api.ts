@@ -14,6 +14,13 @@ export const bookingPhaseSchema = z.enum([
 
 export const fareTypeSchema = z.enum(['personal', 'business']);
 
+const isoDateTimeWithOffsetSchema = z
+  .string()
+  .regex(
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/,
+    'pickupDateTime must be an ISO datetime string with timezone offset'
+  );
+
 export const bookingTripFormSchema = z.object({
   pickup: z.object({
     address: z.string().optional().default(''),
@@ -102,12 +109,12 @@ export const submitBookingRequestSchema = z.object({
       address: z.string().min(1),
       coordinates: coordinatesSchema.nullable(),
     }),
-    pickupDateTime: z.string().transform((value, ctx) => {
+    pickupDateTime: isoDateTimeWithOffsetSchema.transform((value, ctx) => {
       const parsed = new Date(value);
       if (Number.isNaN(parsed.getTime())) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'pickupDateTime must be a valid ISO datetime string',
+          message: 'pickupDateTime must be a valid ISO datetime string with timezone offset',
         });
         return z.NEVER;
       }

@@ -1,4 +1,5 @@
 import { Booking, BookingFormData, BookingPhase, QuoteData, ValidationResult } from '@/types/booking';
+import { normalizePickupDateTimeForApi } from '@/lib/utils/pickup-datetime';
 
 interface SubmitFormParams {
   currentPhase: BookingPhase;
@@ -107,12 +108,19 @@ export async function submitBookingFlow(params: SubmitBookingParams): Promise<{ 
     return { success: false };
   }
 
+  let pickupDateTime: string;
   try {
-    let pickupDateTime = formData.trip.pickupDateTime;
-    if (pickupDateTime && !pickupDateTime.includes(':00.')) {
-      pickupDateTime = new Date(pickupDateTime).toISOString();
-    }
+    pickupDateTime = normalizePickupDateTimeForApi(formData.trip.pickupDateTime);
+  } catch (error) {
+    const message = error instanceof Error
+      ? error.message
+      : 'Please enter a valid pickup date and time.';
+    setIsSubmitting(false);
+    setError(message);
+    return { success: false };
+  }
 
+  try {
     const requestBody: Record<string, unknown> = {
       customer: formData.customer,
       trip: {

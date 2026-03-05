@@ -1,14 +1,14 @@
 import { Booking } from '@/types/booking';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { normalizePickupDateTimeForApi } from '@/lib/utils/pickup-datetime';
 
 export async function createBookingRequest(data: Partial<Booking>): Promise<Booking> {
   const pickupDateTimeValue = data.trip?.pickupDateTime || data.pickupDateTime;
-  const pickupDateTime =
-    pickupDateTimeValue instanceof Date
-      ? pickupDateTimeValue.toISOString()
-      : typeof pickupDateTimeValue === 'string'
-        ? pickupDateTimeValue
-        : '';
+  const pickupDateTime = pickupDateTimeValue instanceof Date
+    ? pickupDateTimeValue.toISOString()
+    : typeof pickupDateTimeValue === 'string' && pickupDateTimeValue.trim()
+      ? normalizePickupDateTimeForApi(pickupDateTimeValue)
+      : '';
 
   const pickupAddress = data.trip?.pickup?.address || data.pickupLocation || '';
   const dropoffAddress = data.trip?.dropoff?.address || data.dropoffLocation || '';

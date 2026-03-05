@@ -36,6 +36,26 @@ const safeToDate = (dateField: any): Date => {
   return new Date();
 };
 
+const safeToOptionalDate = (dateField: any): Date | undefined => {
+  if (!dateField) return undefined;
+
+  if (dateField instanceof Date) {
+    return Number.isNaN(dateField.getTime()) ? undefined : dateField;
+  }
+
+  if (dateField && typeof dateField.toDate === 'function') {
+    const parsed = dateField.toDate();
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+  }
+
+  if (typeof dateField === 'string' || typeof dateField === 'number') {
+    const parsed = new Date(dateField);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+  }
+
+  return undefined;
+};
+
 
 const timeToMinutes = (time: string): number => {
   const [hours, minutes] = time.split(':').map(Number);
@@ -279,10 +299,12 @@ export const getBooking = async (bookingId: string): Promise<Booking | null> => 
   
   const data = bookingDoc.data();
   
+  const pickupDateTimeRaw = data?.trip?.pickupDateTime ?? data?.pickupDateTime;
+
   return {
     id: bookingDoc.id,
     ...data,
-    pickupDateTime: safeToDate(data?.pickupDateTime),
+    pickupDateTime: safeToOptionalDate(pickupDateTimeRaw),
     createdAt: safeToDate(data?.createdAt),
     updatedAt: safeToDate(data?.updatedAt),
     confirmation: data?.confirmation
@@ -320,11 +342,12 @@ export const getBookings = async (
   
   return snapshot.docs.map((doc: any) => {
     const data = doc.data();
+    const pickupDateTimeRaw = data?.trip?.pickupDateTime ?? data?.pickupDateTime;
     
     return {
       id: doc.id,
       ...data,
-      pickupDateTime: safeToDate(data?.pickupDateTime),
+      pickupDateTime: safeToOptionalDate(pickupDateTimeRaw),
       createdAt: safeToDate(data?.createdAt),
       updatedAt: safeToDate(data?.updatedAt),
     };
