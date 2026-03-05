@@ -299,6 +299,44 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
       expect(body.error).toBe('Invalid input');
       expect(submitBookingOrchestration).not.toHaveBeenCalled();
     });
+
+    it('rejects pickup datetime without timezone offset with 400', async () => {
+      const { POST } = await import('@/app/api/booking/submit/route');
+
+      const response = await POST(
+        new Request('http://localhost/api/booking/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            quoteId: 'quote-123',
+            fare: 120,
+            customer: {
+              name: 'Test User',
+              email: 'test@example.com',
+              phone: '+12035550123',
+              notes: '',
+            },
+            trip: {
+              pickup: {
+                address: '123 Main St',
+                coordinates: null,
+              },
+              dropoff: {
+                address: 'JFK Airport',
+                coordinates: null,
+              },
+              pickupDateTime: '2027-03-01T10:00:00',
+              fareType: 'personal',
+            },
+          }),
+        })
+      );
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.error).toBe('Invalid input');
+      expect(submitBookingOrchestration).not.toHaveBeenCalled();
+    });
   });
 
   describe('POST /api/booking/check-time-slot', () => {

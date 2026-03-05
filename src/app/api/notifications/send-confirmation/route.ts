@@ -6,6 +6,7 @@ import { adaptOldBookingToNew } from '@/utils/bookingAdapter';
 import { requireAdmin } from '@/lib/utils/auth-server';
 import { formatBusinessDateTime } from '@/lib/utils/booking-date-time';
 import { APP_CONFIG } from '@/utils/constants';
+import { getDropoffAddress, getPickupAddress, getPickupDateTime } from '@/utils/booking-helpers';
 
 export async function POST(request: Request) {
   const authResult = await requireAdmin(request);
@@ -24,10 +25,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
 
-    const pickupDateTimeText = booking.pickupDateTime
-      ? formatBusinessDateTime(booking.pickupDateTime)
+    const pickupDateTimeValue = getPickupDateTime(booking);
+    const pickupDateTimeText = pickupDateTimeValue
+      ? formatBusinessDateTime(pickupDateTimeValue)
       : 'your scheduled time';
-    const messageBody = `Thank you for booking with ${APP_CONFIG.name}! Your ride from ${booking.pickupLocation} to ${booking.dropoffLocation} on ${pickupDateTimeText} is confirmed.`;
+    const pickupAddress = getPickupAddress(booking) || 'your pickup location';
+    const dropoffAddress = getDropoffAddress(booking) || 'your dropoff location';
+    const messageBody = `Thank you for booking with ${APP_CONFIG.name}! Your ride from ${pickupAddress} to ${dropoffAddress} on ${pickupDateTimeText} is confirmed.`;
 
     await Promise.all([
       booking.phone ? sendSms({ to: booking.phone, body: messageBody }) : Promise.resolve(),

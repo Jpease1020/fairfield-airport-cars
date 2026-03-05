@@ -105,4 +105,30 @@ describe('submitBookingFlow time serialization', () => {
     const requestBody = submitBookingRequest.mock.calls[0][0] as any;
     expect(requestBody.trip.pickupDateTime).toBe(pickupDateTime);
   });
+
+  it('stops before submit when pickup time is invalid', async () => {
+    const submitBookingRequest = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ bookingId: 'booking_3' }),
+    });
+    const setError = vi.fn();
+
+    const result = await submitBookingFlow({
+      formData: createFormData('not-a-date'),
+      currentQuote: createQuote(),
+      validatePhaseWithApi: vi.fn().mockResolvedValue({ isValid: true, errors: [] }),
+      submitBookingRequest,
+      setIsSubmitting: vi.fn(),
+      setError,
+      setWarning: vi.fn(),
+      setSuccess: vi.fn(),
+      setHasAttemptedValidation: vi.fn(),
+      setCompletedBookingId: vi.fn(),
+      setCurrentPhase: vi.fn(),
+    });
+
+    expect(result.success).toBe(false);
+    expect(submitBookingRequest).not.toHaveBeenCalled();
+    expect(setError).toHaveBeenCalledWith('Pickup date/time must be a valid ISO datetime string.');
+  });
 });
