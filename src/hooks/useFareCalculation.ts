@@ -22,18 +22,31 @@ export const useFareCalculation = ({
   fareType,
   pickupDateTime
 }: UseFareCalculationProps) => {
-  const { setQuote: setProviderQuote } = useBooking();
+  const { setQuote: setProviderQuote, currentQuote } = useBooking();
   const setQuoteRef = useRef(setProviderQuote);
   setQuoteRef.current = setProviderQuote; // Keep ref updated
   
-  const [fare, setFare] = useState<number | null>(null);
+  const [fare, setFare] = useState<number | null>(currentQuote?.fare ?? null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [quoteData, setQuoteData] = useState<QuoteData | null>(null);
+  const [quoteData, setQuoteData] = useState<QuoteData | null>(currentQuote ?? null);
 
   // Use ref to track if calculation is in progress to prevent multiple simultaneous calls
   const calculatingRef = useRef(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasValidCurrentQuote = useMemo(() => {
+    if (!currentQuote?.expiresAt) return false;
+    const expiresAtTime = new Date(currentQuote.expiresAt).getTime();
+    return Number.isFinite(expiresAtTime) && expiresAtTime > Date.now();
+  }, [currentQuote]);
+
+  useEffect(() => {
+    if (hasValidCurrentQuote && currentQuote) {
+      setFare(currentQuote.fare);
+      setQuoteData(currentQuote);
+      setError(null);
+    }
+  }, [hasValidCurrentQuote, currentQuote]);
 
   const calculateFare = useCallback(async () => {
     // Only calculate if we have both locations, coordinates, AND pickup date/time
@@ -47,6 +60,14 @@ export const useFareCalculation = ({
       });
       setFare(null);
       setQuoteData(null);
+      return;
+    }
+
+    // Keep fare stable across screens until quote expires or trip details change.
+    if (hasValidCurrentQuote && currentQuote) {
+      setFare(currentQuote.fare);
+      setQuoteData(currentQuote);
+      setError(null);
       return;
     }
 
@@ -103,7 +124,7 @@ export const useFareCalculation = ({
       setIsCalculating(false);
       calculatingRef.current = false;
     }
-  }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType, pickupDateTime]);
+  }, [pickupLocation, dropoffLocation, pickupCoords, dropoffCoords, fareType, pickupDateTime, hasValidCurrentQuote, currentQuote]);
 
   // Smart calculation: only when we have complete data (including pickupDateTime)
   const shouldCalculate = useMemo(() => {

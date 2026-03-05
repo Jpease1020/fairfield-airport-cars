@@ -280,7 +280,7 @@ export const HeroCompactBookingForm: React.FC<HeroCompactBookingFormProps> = ({
             <Box variant="filled" padding="md" data-testid="quick-book-promo-section">
               <Stack spacing="sm" align="center">
                 <Text size="lg" weight="bold" color="primary" data-testid="quick-book-promo-title">
-                  🎉 Limited Time Offer!
+                  ⏳ Limited Time Offer!
                 </Text>
                 <StrikethroughText size="md" color="secondary" data-testid="quick-book-deposit-strikethrough">
                   Deposit: ${(estimatedFare * 0.3).toFixed(2)}
