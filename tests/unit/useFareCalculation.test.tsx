@@ -11,10 +11,12 @@ import { useFareCalculation } from '@/hooks/useFareCalculation';
 
 // Mock the provider
 const mockSetQuote = vi.fn();
+let mockCurrentQuote: any = null;
 
 vi.mock('@/providers/BookingProvider', () => ({
   useBooking: () => ({
-    setQuote: mockSetQuote
+    setQuote: mockSetQuote,
+    currentQuote: mockCurrentQuote,
   })
 }));
 
@@ -26,6 +28,7 @@ describe('useFareCalculation Hook - RTL Style', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.fetch = vi.fn();
+    mockCurrentQuote = null;
   });
 
   it('should calculate fare for real trip data', async () => {
@@ -207,5 +210,34 @@ describe('useFareCalculation Hook - RTL Style', () => {
     expect(result.current.fare).toBe(95.50);
     expect(global.fetch).toHaveBeenCalled();
     expect((global.fetch as any).mock.calls.length).toBeLessThanOrEqual(5);
+  });
+
+  it('reuses a valid existing quote without refetching', async () => {
+    mockCurrentQuote = {
+      quoteId: 'quote_existing',
+      fare: 264,
+      distanceMiles: 50,
+      durationMinutes: 75,
+      fareType: 'personal',
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      expiresInMinutes: 10,
+    };
+
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+    const { result } = renderHook(() => useFareCalculation({
+      pickupLocation: 'Fairfield Station, Fairfield, CT',
+      dropoffLocation: 'JFK Airport, Queens, NY',
+      pickupCoords: { lat: 41.1408, lng: -73.2613 },
+      dropoffCoords: { lat: 40.6413, lng: -73.7781 },
+      fareType: 'personal',
+      pickupDateTime: futureDate,
+    }));
+
+    await waitFor(() => {
+      expect(result.current.fare).toBe(264);
+    });
+
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });
