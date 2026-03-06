@@ -7,6 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { Alert, Box, Button, Container, H1, LoadingSpinner, Stack, Text, Textarea } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { isSmsInboxClientEnabled } from '@/lib/utils/sms-inbox-feature-client';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 interface SmsThread {
@@ -55,6 +56,7 @@ const cannedReplies = [
 ];
 
 export default function AdminMessageThreadPage() {
+  const smsInboxEnabled = isSmsInboxClientEnabled();
   const router = useRouter();
   const params = useParams<{ threadId: string }>();
   const threadId = params?.threadId || '';
@@ -67,6 +69,11 @@ export default function AdminMessageThreadPage() {
   const [replyBody, setReplyBody] = useState('');
 
   useEffect(() => {
+    if (!smsInboxEnabled) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadThread() {
@@ -100,9 +107,10 @@ export default function AdminMessageThreadPage() {
     return () => {
       cancelled = true;
     };
-  }, [threadId]);
+  }, [threadId, smsInboxEnabled]);
 
   async function reloadThread() {
+    if (!smsInboxEnabled) return;
     const response = await authFetch(`/api/admin/messages/threads/${threadId}`);
     if (!response.ok) throw new Error('Failed to refresh thread');
     const payload = await response.json();
@@ -111,6 +119,7 @@ export default function AdminMessageThreadPage() {
   }
 
   async function handleSend() {
+    if (!smsInboxEnabled) return;
     const trimmed = replyBody.trim();
     if (!trimmed) return;
 
@@ -150,72 +159,82 @@ export default function AdminMessageThreadPage() {
           <LoadingSpinner />
         ) : (
           <>
-            <Stack spacing="xs">
-              <H1>{thread?.customerName || thread?.customerPhone || 'SMS Thread'}</H1>
-              {thread?.customerName && <Text color="secondary">{thread.customerPhone}</Text>}
-            </Stack>
+            {!smsInboxEnabled && (
+              <Alert variant="info">
+                SMS inbox is disabled in this environment. Enable the preview flag to test thread replies here.
+              </Alert>
+            )}
 
-            {error && <Alert variant="error">{error}</Alert>}
+            {smsInboxEnabled && (
+              <>
+                <Stack spacing="xs">
+                  <H1>{thread?.customerName || thread?.customerPhone || 'SMS Thread'}</H1>
+                  {thread?.customerName && <Text color="secondary">{thread.customerPhone}</Text>}
+                </Stack>
 
-            <Box variant="outlined" padding="lg">
-              <Stack spacing="md">
-                {messages.length === 0 ? (
-                  <Text color="secondary">No messages yet.</Text>
-                ) : (
-                  messages.map((message) => (
-                    <MessageBubble key={message.id} $sender={message.senderType}>
-                      <Stack spacing="xs">
-                        <Text size="sm" weight="bold">
-                          {message.senderType === 'customer'
-                            ? (thread?.customerName || thread?.customerPhone || 'Customer')
-                            : message.senderType === 'admin'
-                              ? 'Gregg'
-                              : 'System'}
-                        </Text>
-                        <Text>{message.body}</Text>
-                        <Text size="sm" color="secondary">
-                          {message.createdAt ? formatDateTimeNoSeconds(message.createdAt) : 'Just now'}
-                        </Text>
-                      </Stack>
-                    </MessageBubble>
-                  ))
-                )}
-              </Stack>
-            </Box>
+                {error && <Alert variant="error">{error}</Alert>}
 
-            <ComposerBar variant="elevated" padding="lg">
-              <Stack spacing="md">
-                <Stack direction="horizontal" spacing="sm" align="center" wrap="wrap">
-                  {cannedReplies.map((reply) => (
-                    <Button
-                      key={reply}
-                      variant="outline"
-                      size="sm"
-                      text={reply}
-                      onClick={() => setReplyBody(reply)}
+                <Box variant="outlined" padding="lg">
+                  <Stack spacing="md">
+                    {messages.length === 0 ? (
+                      <Text color="secondary">No messages yet.</Text>
+                    ) : (
+                      messages.map((message) => (
+                        <MessageBubble key={message.id} $sender={message.senderType}>
+                          <Stack spacing="xs">
+                            <Text size="sm" weight="bold">
+                              {message.senderType === 'customer'
+                                ? (thread?.customerName || thread?.customerPhone || 'Customer')
+                                : message.senderType === 'admin'
+                                  ? 'Gregg'
+                                  : 'System'}
+                            </Text>
+                            <Text>{message.body}</Text>
+                            <Text size="sm" color="secondary">
+                              {message.createdAt ? formatDateTimeNoSeconds(message.createdAt) : 'Just now'}
+                            </Text>
+                          </Stack>
+                        </MessageBubble>
+                      ))
+                    )}
+                  </Stack>
+                </Box>
+
+                <ComposerBar variant="elevated" padding="lg">
+                  <Stack spacing="md">
+                    <Stack direction="horizontal" spacing="sm" align="center" wrap="wrap">
+                      {cannedReplies.map((reply) => (
+                        <Button
+                          key={reply}
+                          variant="outline"
+                          size="sm"
+                          text={reply}
+                          onClick={() => setReplyBody(reply)}
+                        />
+                      ))}
+                    </Stack>
+                    <Textarea
+                      value={replyBody}
+                      onChange={(event) => setReplyBody(event.target.value)}
+                      rows={4}
+                      placeholder="Type your reply..."
                     />
-                  ))}
-                </Stack>
-                <Textarea
-                  value={replyBody}
-                  onChange={(event) => setReplyBody(event.target.value)}
-                  rows={4}
-                  placeholder="Type your reply..."
-                />
-                <Stack direction="horizontal" justify="space-between" align="center">
-                  <Text size="sm" color="secondary">
-                    Reply sends through the business number.
-                  </Text>
-                  <Button
-                    variant="primary"
-                    size="md"
-                    text={sending ? 'Sending...' : 'Send reply'}
-                    onClick={handleSend}
-                    disabled={sending || !replyBody.trim()}
-                  />
-                </Stack>
-              </Stack>
-            </ComposerBar>
+                    <Stack direction="horizontal" justify="space-between" align="center">
+                      <Text size="sm" color="secondary">
+                        Reply sends through the business number.
+                      </Text>
+                      <Button
+                        variant="primary"
+                        size="md"
+                        text={sending ? 'Sending...' : 'Send reply'}
+                        onClick={handleSend}
+                        disabled={sending || !replyBody.trim()}
+                      />
+                    </Stack>
+                  </Stack>
+                </ComposerBar>
+              </>
+            )}
           </>
         )}
       </Stack>
