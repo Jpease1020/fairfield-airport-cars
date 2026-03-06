@@ -16,7 +16,7 @@ vi.mock('@/lib/services/sms-message-service', () => ({
 
 vi.mock('@/lib/services/sms-thread-service', () => ({
   findOrCreateThread: vi.fn().mockResolvedValue({ threadId: 'thread_abc', created: false }),
-  updateThreadOnInbound: vi.fn().mockResolvedValue(undefined),
+  updateThreadOnInbound: vi.fn().mockResolvedValue(true),
 }));
 
 import { sendSms } from '@/lib/services/twilio-service';
@@ -75,5 +75,34 @@ describe('POST /api/twilio/incoming-sms (threading)', () => {
         body: expect.stringContaining('/admin/messages/thread_abc'),
       })
     );
+  });
+
+  it('does not notify Gregg again when the thread already has unread messages', async () => {
+    mockUpdateThreadOnInbound.mockResolvedValueOnce(false);
+
+    const response = await POST(
+      new Request('https://www.fairfieldairportcar.com/api/twilio/incoming-sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'x-twilio-signature': 'valid-signature',
+        },
+        body: new URLSearchParams({
+          From: '+12035550123',
+          To: '+16462216370',
+          Body: 'Second message in same thread',
+          MessageSid: 'SM124',
+        }).toString(),
+      }) as any
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockSaveSmsMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: 'thread_abc',
+        direction: 'inbound',
+      })
+    );
+    expect(mockSendSms).not.toHaveBeenCalled();
   });
 });

@@ -9,6 +9,8 @@ import { Alert, Box, Button, Container, H1, LoadingSpinner, Stack, Text, Textare
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
+const THREAD_POLL_INTERVAL_MS = 5000;
+
 interface SmsThread {
   id: string;
   customerPhone: string;
@@ -69,9 +71,14 @@ export default function AdminMessageThreadPage() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadThread() {
-      setLoading(true);
-      setError(null);
+    async function loadThread(options?: { silent?: boolean; markAsRead?: boolean }) {
+      const silent = options?.silent === true;
+      const markAsRead = options?.markAsRead !== false;
+
+      if (!silent) {
+        setLoading(true);
+        setError(null);
+      }
 
       try {
         const response = await authFetch(`/api/admin/messages/threads/${threadId}`);
@@ -83,22 +90,31 @@ export default function AdminMessageThreadPage() {
           setMessages(payload.messages ?? []);
         }
 
-        authFetch(`/api/admin/messages/threads/${threadId}/read`, { method: 'POST' }).catch(() => undefined);
+        if (markAsRead) {
+          authFetch(`/api/admin/messages/threads/${threadId}/read`, { method: 'POST' }).catch(() => undefined);
+        }
       } catch (loadError) {
-        if (!cancelled) {
+        if (!cancelled && !silent) {
           setError(loadError instanceof Error ? loadError.message : 'Failed to load thread');
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled && !silent) setLoading(false);
       }
     }
 
     if (threadId) {
-      loadThread();
+      loadThread({ markAsRead: true });
     }
+
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === 'visible' && threadId) {
+        loadThread({ silent: true, markAsRead: false }).catch(() => undefined);
+      }
+    }, THREAD_POLL_INTERVAL_MS);
 
     return () => {
       cancelled = true;
+      window.clearInterval(intervalId);
     };
   }, [threadId]);
 

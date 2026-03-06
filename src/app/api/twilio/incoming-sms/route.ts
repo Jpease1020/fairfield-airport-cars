@@ -43,12 +43,13 @@ export async function POST(request: NextRequest) {
     new URL(request.url).origin;
 
   let threadId: string | null = null;
+  let shouldNotifyAdmin = false;
 
   try {
     if (from) {
       const thread = await findOrCreateThread(from);
       threadId = thread.threadId;
-      await updateThreadOnInbound(threadId, body);
+      shouldNotifyAdmin = await updateThreadOnInbound(threadId, body);
     }
 
     await saveSmsMessage({
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     console.error('[Twilio webhook] Failed to persist inbound thread/message:', error);
   }
 
-  if (forwardToNumber && body.trim()) {
+  if (forwardToNumber && body.trim() && shouldNotifyAdmin) {
     try {
       const forwardBody = `New message from ${from}: "${body.trim().slice(0, 80)}" Reply: ${
         threadId ? `${baseUrl}/admin/messages/${threadId}` : `${baseUrl}/admin/messages`

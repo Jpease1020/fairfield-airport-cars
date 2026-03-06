@@ -103,8 +103,11 @@ export async function findOrCreateThread(
   return { threadId: ref.id, created: true };
 }
 
-export async function updateThreadOnInbound(threadId: string, messageBody: string): Promise<void> {
+export async function updateThreadOnInbound(threadId: string, messageBody: string): Promise<boolean> {
   const db = getAdminDb();
+  const threadDoc = await db.collection(THREADS_COLLECTION).doc(threadId).get();
+  const currentUnreadCount = Number(threadDoc.data()?.unreadCount ?? 0);
+
   await db.collection(THREADS_COLLECTION).doc(threadId).update({
     lastMessageAt: FieldValue.serverTimestamp(),
     lastMessagePreview: toPreview(messageBody),
@@ -112,6 +115,8 @@ export async function updateThreadOnInbound(threadId: string, messageBody: strin
     unreadCount: FieldValue.increment(1),
     updatedAt: FieldValue.serverTimestamp(),
   });
+
+  return currentUnreadCount === 0;
 }
 
 export async function updateThreadOnOutbound(threadId: string, messageBody: string): Promise<void> {
