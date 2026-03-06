@@ -4,7 +4,7 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getBooking } from '@/lib/services/booking-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { FieldValue } from 'firebase-admin/firestore';
-import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
+import { requireOwnerAdminOrTrackingToken, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 
 export async function GET(
   request: NextRequest,
@@ -36,23 +36,12 @@ export async function GET(
       updatedAt: bookingData?.updatedAt?.toDate?.()?.toISOString() || bookingData?.updatedAt,
     };
 
-    const token = request.nextUrl.searchParams.get('token');
-    const hasTrackingAccess = token && bookingData?.trackingToken && token === bookingData.trackingToken;
+    const accessResult = await requireOwnerAdminOrTrackingToken(request, booking);
+    if (!accessResult.ok) return accessResult.response;
+    const accessMode = 'access' in accessResult ? accessResult.access : undefined;
+    const auth = accessResult.auth;
 
-    if (!hasTrackingAccess) {
-      const accessResult = await requireOwnerOrAdmin(request, booking);
-      if (!accessResult.ok) return accessResult.response;
-      const auth = accessResult.auth;
-      if (auth && auth.role !== 'admin' && booking.confirmation?.token) {
-        booking.confirmation = {
-          status: booking.confirmation.status,
-          sentAt: booking.confirmation.sentAt,
-          confirmedAt: booking.confirmation.confirmedAt,
-        };
-      }
-    }
-
-    if (hasTrackingAccess && booking.confirmation?.token) {
+    if ((accessMode === 'tracking-token' || (auth && auth.role !== 'admin')) && booking.confirmation?.token) {
       booking.confirmation = {
         status: booking.confirmation.status,
         sentAt: booking.confirmation.sentAt,

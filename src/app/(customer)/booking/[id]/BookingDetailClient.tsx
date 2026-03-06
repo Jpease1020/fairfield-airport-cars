@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/design/ui';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
@@ -17,6 +18,8 @@ interface BookingDetailClientProps {
 function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   const { cmsData: allCmsData } = useCMSData();
   const cmsData = allCmsData?.booking || {};
+  const searchParams = useSearchParams();
+  const trackingToken = searchParams?.get('token') ?? '';
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,8 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const response = await authFetch(`/api/booking/get-bookings-simple?id=${bookingId}`);
+        const tokenQuery = trackingToken ? `&token=${encodeURIComponent(trackingToken)}` : '';
+        const response = await authFetch(`/api/booking/get-bookings-simple?id=${bookingId}${tokenQuery}`);
         if (!response.ok) {
           throw new Error('Failed to fetch booking');
         }
@@ -106,7 +110,10 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
     if (bookingId) {
       fetchBooking();
     }
-  }, [bookingId]);
+  }, [bookingId, trackingToken]);
+
+  const withToken = (path: string) =>
+    trackingToken ? `${path}?token=${encodeURIComponent(trackingToken)}` : path;
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -203,14 +210,14 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
     {
       id: 'manage-booking',
       label: 'Manage Booking',
-      onClick: () => window.location.href = `/manage/${booking.id}`,
+      onClick: () => window.location.href = withToken(`/manage/${booking.id}`),
       variant: 'outline' as const,
       icon: '⚙️'
     },
     {
       id: 'check-status',
       label: 'Check Status',
-      onClick: () => window.location.href = `/status/${booking.id}`,
+      onClick: () => window.location.href = withToken(`/status/${booking.id}`),
       variant: 'outline' as const,
       icon: '📊'
     },

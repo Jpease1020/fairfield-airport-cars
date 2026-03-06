@@ -5,6 +5,7 @@
 
 import { createEvent } from 'ics';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { getUtcDateTimeParts } from '@/lib/utils/booking-date-time';
 
 export interface CalendarEventData {
   title: string;
@@ -58,21 +59,31 @@ export function generateOutlookCalendarUrl(data: CalendarEventData): string {
  */
 export async function generateIcsFile(data: CalendarEventData): Promise<string> {
   return new Promise((resolve, reject) => {
+    const start = getUtcDateTimeParts(data.startDate);
+    const end = getUtcDateTimeParts(data.endDate);
     const event = {
-      start: [
-        data.startDate.getFullYear(),
-        data.startDate.getMonth() + 1,
-        data.startDate.getDate(),
-        data.startDate.getHours(),
-        data.startDate.getMinutes(),
-      ],
-      end: [
-        data.endDate.getFullYear(),
-        data.endDate.getMonth() + 1,
-        data.endDate.getDate(),
-        data.endDate.getHours(),
-        data.endDate.getMinutes(),
-      ],
+      start: start
+        ? [start.year, start.month, start.day, start.hour, start.minute] as [number, number, number, number, number]
+        : [
+            data.startDate.getUTCFullYear(),
+            data.startDate.getUTCMonth() + 1,
+            data.startDate.getUTCDate(),
+            data.startDate.getUTCHours(),
+            data.startDate.getUTCMinutes(),
+          ] as [number, number, number, number, number],
+      end: end
+        ? [end.year, end.month, end.day, end.hour, end.minute] as [number, number, number, number, number]
+        : [
+            data.endDate.getUTCFullYear(),
+            data.endDate.getUTCMonth() + 1,
+            data.endDate.getUTCDate(),
+            data.endDate.getUTCHours(),
+            data.endDate.getUTCMinutes(),
+          ] as [number, number, number, number, number],
+      startInputType: 'utc' as const,
+      startOutputType: 'utc' as const,
+      endInputType: 'utc' as const,
+      endOutputType: 'utc' as const,
       title: data.title,
       description: data.description,
       location: data.location,

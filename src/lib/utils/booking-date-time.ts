@@ -129,3 +129,22 @@ export function getBusinessDateTimeParts(value: DateInput): {
 
   return { year, month, day, hour, minute };
 }
+
+export function getUtcDateTimeParts(value: DateInput): {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+} | null {
+  const date = toDate(value);
+  if (!date) return null;
+
+  return {
+    year: date.getUTCFullYear(),
+    month: date.getUTCMonth() + 1,
+    day: date.getUTCDate(),
+    hour: date.getUTCHours(),
+    minute: date.getUTCMinutes(),
+  };
+}

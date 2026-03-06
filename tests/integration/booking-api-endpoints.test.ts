@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const requireAuth = vi.fn();
 const requireAdmin = vi.fn();
 const requireOwnerOrAdmin = vi.fn();
+const requireOwnerAdminOrTrackingToken = vi.fn();
 const getAuthContext = vi.fn();
 const getAdminDb = vi.fn();
 const checkBookingConflicts = vi.fn();
@@ -24,6 +25,7 @@ vi.mock('@/lib/utils/auth-server', () => ({
   requireAuth,
   requireAdmin,
   requireOwnerOrAdmin,
+  requireOwnerAdminOrTrackingToken,
   getAuthContext,
 }));
 
@@ -74,6 +76,7 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
     requireAuth.mockResolvedValue({ ok: true, auth: { role: 'admin', uid: 'admin-1' } });
     requireAdmin.mockResolvedValue({ ok: true, auth: { role: 'admin', uid: 'admin-1' } });
     requireOwnerOrAdmin.mockResolvedValue({ ok: true, auth: { role: 'admin', uid: 'admin-1' } });
+    requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: { role: 'admin', uid: 'admin-1' }, access: 'admin' });
     getAuthContext.mockResolvedValue({ uid: 'admin-1' });
 
     checkBookingConflicts.mockResolvedValue({

@@ -57,7 +57,8 @@ export async function POST(request: NextRequest) {
     // Don't rely on booking.status alone, as that can be set by other processes (e.g., payment webhook)
     if (confirmation?.status === 'confirmed') {
       return NextResponse.json({
-        message: 'Booking already confirmed.'
+        message: 'Booking already confirmed.',
+        trackingToken: bookingData?.trackingToken ?? null,
       });
     }
 
@@ -137,7 +138,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      message: 'Booking confirmed successfully.'
+      message: 'Booking confirmed successfully.',
+      trackingToken: bookingData?.trackingToken ?? null,
     });
   } catch (error) {
     console.error('Booking confirmation error:', error);
@@ -147,4 +149,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

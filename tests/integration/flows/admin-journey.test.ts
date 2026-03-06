@@ -9,6 +9,7 @@ const getBusinessRules = vi.fn();
 const getCancellationFeePercent = vi.fn();
 const sendBookingProblem = vi.fn().mockResolvedValue(undefined);
 const requireOwnerOrAdmin = vi.fn();
+const requireOwnerAdminOrTrackingToken = vi.fn();
 
 vi.mock('@/lib/services/booking-service', async () => {
   const actual = await vi.importActual('@/lib/services/booking-service');
@@ -19,9 +20,12 @@ vi.mock('@/lib/services/email-service', () => ({ sendConfirmationEmail }));
 vi.mock('@/utils/bookingAdapter', () => ({ adaptOldBookingToNew }));
 vi.mock('@/lib/business/business-rules', () => ({ getBusinessRules, getCancellationFeePercent }));
 vi.mock('@/lib/services/notification-service', () => ({ sendBookingProblem }));
-vi.mock('@/lib/utils/auth-server', () => ({ requireOwnerOrAdmin }));
+vi.mock('@/lib/utils/auth-server', () => ({ requireOwnerOrAdmin, requireOwnerAdminOrTrackingToken }));
 vi.mock('@/lib/security/rate-limit', () => ({ enforceRateLimit: vi.fn(() => null) }));
-vi.mock('@/lib/utils/booking-date-time', () => ({ formatBusinessDateTime: vi.fn(() => 'Mar 5, 2026 10:00 AM') }));
+vi.mock('@/lib/utils/booking-date-time', () => ({
+  formatBusinessDateTime: vi.fn(() => 'Mar 5, 2026 10:00 AM'),
+  formatBusinessDateTimeWithZone: vi.fn(() => 'Mar 5, 2026 10:00 AM ET'),
+}));
 
 function ensureResponse(response: Response | undefined): Response {
   expect(response).toBeDefined();
@@ -36,6 +40,7 @@ describe('Admin journey', () => {
     vi.clearAllMocks();
 
     requireOwnerOrAdmin.mockResolvedValue({ ok: true, auth: { role: 'admin' } });
+    requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: { role: 'admin' }, access: 'admin' });
     getBusinessRules.mockResolvedValue({ cancellationFeeTiers: [] });
     getBooking.mockResolvedValue({
       id: 'booking-123',

@@ -24,6 +24,7 @@ export default function BookingConfirmationPage() {
 
   const [state, setState] = useState<ConfirmationState>('idle');
   const [message, setMessage] = useState<string>('');
+  const [trackingToken, setTrackingToken] = useState<string | null>(null);
 
   const isAlreadyConfirmedMessage =
     state === 'success' && /already confirmed/i.test(message);
@@ -63,6 +64,7 @@ export default function BookingConfirmationPage() {
 
         setState('success');
         setMessage(payload.message || 'Your booking is confirmed!');
+        setTrackingToken(typeof payload.trackingToken === 'string' ? payload.trackingToken : null);
       } catch (error) {
         console.error('Booking confirmation error:', error);
         setState('error');
@@ -99,7 +101,10 @@ export default function BookingConfirmationPage() {
               <Button
                 variant="primary"
                 size="md"
-                onClick={() => window.location.href = `/booking/${bookingId}`}
+                onClick={() => {
+                  const tokenQuery = trackingToken ? `?token=${encodeURIComponent(trackingToken)}` : '';
+                  window.location.href = `/booking/${bookingId}${tokenQuery}`;
+                }}
 
                 text="View Booking"
                 fullWidth

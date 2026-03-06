@@ -165,3 +165,27 @@ export const requireOwnerOrAdmin = async (request: Request, booking: any) => {
 
   return authResult;
 };
+
+export const hasTrackingAccess = (request: Request, booking: any): boolean => {
+  const token = new URL(request.url).searchParams.get('token');
+  return Boolean(token && booking?.trackingToken && token === booking.trackingToken);
+};
+
+export const requireOwnerAdminOrTrackingToken = async (request: Request, booking: any) => {
+  if (hasTrackingAccess(request, booking)) {
+    return {
+      ok: true as const,
+      auth: null,
+      access: 'tracking-token' as const,
+    };
+  }
+
+  const authResult = await requireOwnerOrAdmin(request, booking);
+  if (!authResult.ok) return authResult;
+
+  return {
+    ok: true as const,
+    auth: authResult.auth,
+    access: authResult.auth?.role === 'admin' ? ('admin' as const) : ('owner' as const),
+  };
+};
