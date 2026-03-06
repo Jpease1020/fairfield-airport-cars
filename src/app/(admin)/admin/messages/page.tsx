@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { Alert, Badge, Box, Button, Container, H1, LoadingSpinner, Stack, Text } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
-import { isSmsInboxClientEnabled } from '@/lib/utils/sms-inbox-feature-client';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 interface SmsThread {
@@ -51,19 +50,12 @@ const EmptyState = styled(Box)`
 `;
 
 export default function AdminMessagesPage() {
-  const smsInboxEnabled = isSmsInboxClientEnabled();
   const router = useRouter();
   const [threads, setThreads] = useState<SmsThread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!smsInboxEnabled) {
-      setLoading(false);
-      setThreads([]);
-      return;
-    }
-
     let cancelled = false;
 
     async function loadThreads() {
@@ -88,7 +80,7 @@ export default function AdminMessagesPage() {
     return () => {
       cancelled = true;
     };
-  }, [smsInboxEnabled]);
+  }, []);
 
   return (
     <Container maxWidth="lg" padding="xl">
@@ -100,15 +92,9 @@ export default function AdminMessagesPage() {
           </Text>
         </Stack>
 
-        {!smsInboxEnabled && (
-          <Alert variant="info">
-            SMS inbox is disabled in this environment. Enable the preview flag to test it here.
-          </Alert>
-        )}
-
         {error && <Alert variant="error">{error}</Alert>}
 
-        {!smsInboxEnabled ? null : loading ? (
+        {loading ? (
           <LoadingSpinner />
         ) : threads.length === 0 ? (
           <EmptyState variant="outlined" padding="xl">
@@ -156,22 +142,20 @@ export default function AdminMessagesPage() {
           </Stack>
         )}
 
-        {smsInboxEnabled && (
-          <Box variant="outlined" padding="md">
-            <Stack spacing="sm">
-              <Text weight="bold">Debug view</Text>
-              <Text size="sm" color="secondary">
-                The flat SMS message log is still available at `/api/admin/sms-messages` for troubleshooting.
-              </Text>
-              <Button
-                variant="outline"
-                size="sm"
-                text="Refresh inbox"
-                onClick={() => window.location.reload()}
-              />
-            </Stack>
-          </Box>
-        )}
+        <Box variant="outlined" padding="md">
+          <Stack spacing="sm">
+            <Text weight="bold">Debug view</Text>
+            <Text size="sm" color="secondary">
+              The flat SMS message log is still available at `/api/admin/sms-messages` for troubleshooting.
+            </Text>
+            <Button
+              variant="outline"
+              size="sm"
+              text="Refresh inbox"
+              onClick={() => window.location.reload()}
+            />
+          </Stack>
+        </Box>
       </Stack>
     </Container>
   );

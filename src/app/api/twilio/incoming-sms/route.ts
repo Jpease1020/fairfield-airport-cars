@@ -3,7 +3,6 @@ import twilio from 'twilio';
 import { sendSms } from '@/lib/services/twilio-service';
 import { saveSmsMessage } from '@/lib/services/sms-message-service';
 import { findOrCreateThread, updateThreadOnInbound } from '@/lib/services/sms-thread-service';
-import { isSmsInboxEnabled } from '@/lib/utils/sms-inbox-feature';
 
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const forwardToNumber = process.env.GREGG_SMS_FORWARD_NUMBER || process.env.ADMIN_FORWARD_SMS_TO;
@@ -42,12 +41,11 @@ export async function POST(request: NextRequest) {
     process.env.NEXT_PUBLIC_BASE_URL ||
     process.env.BASE_URL ||
     new URL(request.url).origin;
-  const smsInboxEnabled = isSmsInboxEnabled();
 
   let threadId: string | null = null;
 
   try {
-    if (smsInboxEnabled && from) {
+    if (from) {
       const thread = await findOrCreateThread(from);
       threadId = thread.threadId;
       await updateThreadOnInbound(threadId, body);
@@ -59,7 +57,7 @@ export async function POST(request: NextRequest) {
       body,
       direction: 'inbound',
       twilioMessageSid: messageSid,
-      threadId: smsInboxEnabled ? threadId : null,
+      threadId,
       senderType: 'customer',
     });
   } catch (error) {
@@ -68,11 +66,9 @@ export async function POST(request: NextRequest) {
 
   if (forwardToNumber && body.trim()) {
     try {
-      const forwardBody = smsInboxEnabled
-        ? `New message from ${from}: "${body.trim().slice(0, 80)}" Reply: ${
-            threadId ? `${baseUrl}/admin/messages/${threadId}` : `${baseUrl}/admin/messages`
-          }`
-        : `From ${from}: ${body}`;
+      const forwardBody = `New message from ${from}: "${body.trim().slice(0, 80)}" Reply: ${
+        threadId ? `${baseUrl}/admin/messages/${threadId}` : `${baseUrl}/admin/messages`
+      }`;
       await sendSms({ to: forwardToNumber, body: forwardBody, logMessage: false });
     } catch (err) {
       console.error('[Twilio webhook] Failed to forward to Gregg:', err);

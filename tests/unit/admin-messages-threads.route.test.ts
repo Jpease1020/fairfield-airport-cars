@@ -80,10 +80,6 @@ beforeAll(async () => {
 describe('admin SMS thread routes', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    delete process.env.VERCEL_ENV;
-    process.env.SMS_INBOX_ENABLED = 'true';
-    delete process.env.SMS_INBOX_PREVIEW_ENABLED;
-    delete process.env.SMS_INBOX_PROD_ENABLED;
   });
 
   it('lists SMS threads', async () => {
@@ -133,16 +129,5 @@ describe('admin SMS thread routes', () => {
       senderType: 'admin',
     });
     expect(mockUpdateThreadOnOutbound).toHaveBeenCalledWith('thread_1', 'Yes, I can do that.');
-  });
-
-  it('returns 404 when SMS inbox is disabled', async () => {
-    process.env.SMS_INBOX_ENABLED = 'false';
-
-    const response = await getThreadsRoute(
-      new Request('http://localhost/api/admin/messages/threads?limit=10') as any
-    );
-
-    expect(response?.status).toBe(404);
-    expect(mockGetThreads).not.toHaveBeenCalled();
   });
 });
