@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { collection, doc, onSnapshot, query, where } from 'firebase/firestore';
@@ -49,6 +49,12 @@ const MessageBubble = styled.div<{ $sender: SmsThreadMessage['senderType'] }>`
 const ComposerBar = styled(Box)`
   position: sticky;
   bottom: 0;
+`;
+
+const MessageList = styled.div`
+  max-height: min(60vh, 640px);
+  overflow-y: auto;
+  padding-right: 4px;
 `;
 
 const cannedReplies = [
@@ -101,6 +107,9 @@ export default function AdminMessageThreadPage() {
   const router = useRouter();
   const params = useParams<{ threadId: string }>();
   const threadId = params?.threadId || '';
+  const messageListRef = useRef<HTMLDivElement | null>(null);
+  const autoScrollRef = useRef(true);
+  const previousMessageCountRef = useRef(0);
 
   const [thread, setThread] = useState<SmsThread | null>(null);
   const [messages, setMessages] = useState<SmsThreadMessage[]>([]);
@@ -260,6 +269,39 @@ export default function AdminMessageThreadPage() {
     }
   }
 
+  useEffect(() => {
+    const container = messageListRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const distanceFromBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight;
+      autoScrollRef.current = distanceFromBottom < 96;
+    };
+
+    handleScroll();
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [threadId]);
+
+  useEffect(() => {
+    const container = messageListRef.current;
+    if (!container) return;
+
+    const hasNewMessage = messages.length > previousMessageCountRef.current;
+    const shouldScroll = autoScrollRef.current || previousMessageCountRef.current === 0;
+
+    if (hasNewMessage && shouldScroll) {
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+      });
+    }
+
+    previousMessageCountRef.current = messages.length;
+  }, [messages]);
+
   return (
     <Container maxWidth="lg" padding="xl">
       <Stack spacing="lg">
@@ -272,15 +314,11 @@ export default function AdminMessageThreadPage() {
           <LoadingSpinner />
         ) : (
           <>
-            <Stack spacing="xs">
-              <H1>{thread?.customerName || thread?.customerPhone || 'SMS Thread'}</H1>
-              {thread?.customerName && <Text color="secondary">{thread.customerPhone}</Text>}
-            </Stack>
-
             {error && <Alert variant="error">{error}</Alert>}
 
             <Box variant="outlined" padding="lg">
-              <Stack spacing="md">
+              <MessageList ref={messageListRef}>
+                <Stack spacing="md">
                 {messages.length === 0 ? (
                   <Text color="secondary">No messages yet.</Text>
                 ) : (
@@ -302,7 +340,8 @@ export default function AdminMessageThreadPage() {
                     </MessageBubble>
                   ))
                 )}
-              </Stack>
+                </Stack>
+              </MessageList>
             </Box>
 
             <ComposerBar variant="elevated" padding="lg">
