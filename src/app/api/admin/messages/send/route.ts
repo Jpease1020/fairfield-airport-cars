@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { requireAdmin } from '@/lib/utils/auth-server';
 import { getThread, updateThreadOnOutbound } from '@/lib/services/sms-thread-service';
 import { sendSms } from '@/lib/services/twilio-service';
-import { isSmsInboxEnabled } from '@/lib/utils/sms-inbox-feature';
 
 const schema = z.object({
   threadId: z.string().min(1),
@@ -11,10 +10,6 @@ const schema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  if (!isSmsInboxEnabled()) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  }
-
   const authResult = await requireAdmin(request);
   if (!authResult.ok) return authResult.response;
 

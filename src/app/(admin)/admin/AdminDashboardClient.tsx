@@ -6,7 +6,6 @@ import { Alert, Box, Button, Container, Grid, GridItem, H2, LoadingSpinner, Stac
 import { getAllBookings } from '@/lib/services/database-service';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
-import { isSmsInboxClientEnabled } from '@/lib/utils/sms-inbox-feature-client';
 
 type HealthStatus = 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
 
@@ -18,9 +17,10 @@ interface DashboardSnapshot {
   health: HealthStatus;
 }
 
-const baseNavLinks = [
+const navLinks = [
   { href: '/admin/bookings', label: 'Bookings', description: 'View and manage all bookings' },
   { href: '/admin/payments', label: 'Payments', description: 'Track payments, refunds, and balances' },
+  { href: '/admin/messages', label: 'Messages', description: 'Send customer updates and reminders' },
   { href: '/admin/costs', label: 'Costs', description: 'Track Twilio, SendGrid, Firebase, and cloud spend' },
   { href: '/admin/schedules', label: 'Schedule', description: 'Manage rides and driver schedule' },
   { href: '/admin/settings', label: 'Settings', description: 'Update business rules and core settings' },
@@ -47,7 +47,6 @@ function formatNextRide(date: Date | null): string {
 }
 
 export default function AdminDashboardClient() {
-  const smsInboxEnabled = isSmsInboxClientEnabled();
   const [snapshot, setSnapshot] = useState<DashboardSnapshot>({
     pendingApprovals: 0,
     todaysRides: 0,
@@ -57,16 +56,6 @@ export default function AdminDashboardClient() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navLinks = useMemo(() => {
-    if (!smsInboxEnabled) return baseNavLinks;
-
-    return [
-      baseNavLinks[0],
-      baseNavLinks[1],
-      { href: '/admin/messages', label: 'Messages', description: 'Send customer updates and reminders' },
-      ...baseNavLinks.slice(2),
-    ];
-  }, [smsInboxEnabled]);
 
   async function loadSnapshot() {
     setLoading(true);

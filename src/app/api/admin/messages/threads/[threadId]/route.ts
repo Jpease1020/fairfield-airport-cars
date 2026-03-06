@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/utils/auth-server';
 import { getThread, getThreadMessages } from '@/lib/services/sms-thread-service';
-import { isSmsInboxEnabled } from '@/lib/utils/sms-inbox-feature';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ threadId: string }> }
 ) {
-  if (!isSmsInboxEnabled()) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  }
-
   const authResult = await requireAdmin(request);
   if (!authResult.ok) return authResult.response;
 
