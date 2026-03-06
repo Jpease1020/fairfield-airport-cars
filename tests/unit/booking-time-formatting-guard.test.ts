@@ -9,6 +9,9 @@ const filesThatMustUseSharedFormatter = [
   'src/app/api/notifications/send-confirmation/route.ts',
   'src/lib/services/email-service.ts',
   'src/lib/services/driver-notification-service.ts',
+  'src/app/(customer)/booking/[id]/BookingDetailClient.tsx',
+  'src/components/booking/ConfirmationCard.tsx',
+  'src/app/(admin)/admin/AdminDashboardClient.tsx',
 ];
 
 describe('booking time formatting guard', () => {

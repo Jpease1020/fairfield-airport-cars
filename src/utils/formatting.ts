@@ -1,6 +1,7 @@
 /**
  * Utility functions for formatting data
  */
+import { getBusinessTimeZone } from '@/lib/utils/booking-date-time';
 
 export const formatCurrency = (amount: number, currency = 'USD'): string => {
   return new Intl.NumberFormat('en-US', {
@@ -30,6 +31,7 @@ export const formatDateTimeNoSeconds = (
   const dateObj = typeof date === 'string' ? new Date(date) : date;
 
   const defaultOptions: Intl.DateTimeFormatOptions = {
+    timeZone: getBusinessTimeZone(),
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
@@ -73,6 +75,7 @@ export const formatTimeNoSeconds = (
   const dateObj = typeof date === 'string' ? new Date(date) : date;
 
   const defaultOptions: Intl.DateTimeFormatOptions = {
+    timeZone: getBusinessTimeZone(),
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
