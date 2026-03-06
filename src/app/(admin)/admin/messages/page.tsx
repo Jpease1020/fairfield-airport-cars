@@ -9,6 +9,8 @@ import { Alert, Badge, Box, Button, Container, H1, LoadingSpinner, Stack, Text }
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
+const INBOX_POLL_INTERVAL_MS = 5000;
+
 interface SmsThread {
   id: string;
   customerPhone: string;
@@ -58,9 +60,12 @@ export default function AdminMessagesPage() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadThreads() {
-      setLoading(true);
-      setError(null);
+    async function loadThreads(options?: { silent?: boolean }) {
+      const silent = options?.silent === true;
+      if (!silent) {
+        setLoading(true);
+      }
+      if (!silent) setError(null);
 
       try {
         const response = await authFetch('/api/admin/messages/threads');
@@ -68,17 +73,24 @@ export default function AdminMessagesPage() {
         const payload = await response.json();
         if (!cancelled) setThreads(payload.threads ?? []);
       } catch (loadError) {
-        if (!cancelled) {
+        if (!cancelled && !silent) {
           setError(loadError instanceof Error ? loadError.message : 'Failed to load inbox');
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled && !silent) setLoading(false);
       }
     }
 
     loadThreads();
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadThreads({ silent: true }).catch(() => undefined);
+      }
+    }, INBOX_POLL_INTERVAL_MS);
+
     return () => {
       cancelled = true;
+      window.clearInterval(intervalId);
     };
   }, []);
 

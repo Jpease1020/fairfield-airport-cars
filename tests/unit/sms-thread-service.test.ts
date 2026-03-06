@@ -121,9 +121,14 @@ describe('sms-thread-service', () => {
     );
   });
 
-  it('updates inbound thread metadata and increments unread count', async () => {
+  it('updates inbound thread metadata, increments unread count, and returns true for first unread message', async () => {
+    threadDocGet.mockResolvedValue({
+      exists: true,
+      data: () => ({ unreadCount: 0 }),
+    });
+
     const { updateThreadOnInbound } = await import('@/lib/services/sms-thread-service');
-    await updateThreadOnInbound('thread_123', 'Can you pick me up at JFK tomorrow?');
+    const shouldNotifyAdmin = await updateThreadOnInbound('thread_123', 'Can you pick me up at JFK tomorrow?');
 
     expect(threadDocUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -131,6 +136,19 @@ describe('sms-thread-service', () => {
         unreadCount: { __type: 'increment', amount: 1 },
       })
     );
+    expect(shouldNotifyAdmin).toBe(true);
+  });
+
+  it('suppresses repeated admin notifications when thread already has unread messages', async () => {
+    threadDocGet.mockResolvedValue({
+      exists: true,
+      data: () => ({ unreadCount: 2 }),
+    });
+
+    const { updateThreadOnInbound } = await import('@/lib/services/sms-thread-service');
+    const shouldNotifyAdmin = await updateThreadOnInbound('thread_123', 'Following up on my last message');
+
+    expect(shouldNotifyAdmin).toBe(false);
   });
 
   it('marks a thread read by resetting unread count', async () => {
