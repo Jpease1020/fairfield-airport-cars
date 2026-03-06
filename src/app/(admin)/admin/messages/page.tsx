@@ -5,11 +5,14 @@ export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
+import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { Alert, Badge, Box, Button, Container, H1, LoadingSpinner, Stack, Text } from '@/design/ui';
+import { db } from '@/lib/utils/firebase';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 const INBOX_POLL_INTERVAL_MS = 5000;
+const INBOX_THREAD_LIMIT = 100;
 
 interface SmsThread {
   id: string;
@@ -51,6 +54,26 @@ const EmptyState = styled(Box)`
   justify-content: center;
 `;
 
+const toIso = (value: unknown): string | null => {
+  if (value && typeof value === 'object' && 'toDate' in value && typeof value.toDate === 'function') {
+    return value.toDate().toISOString();
+  }
+  return typeof value === 'string' ? value : null;
+};
+
+const mapThread = (doc: { id: string; data: () => Record<string, unknown> }): SmsThread => {
+  const raw = doc.data();
+  return {
+    id: doc.id,
+    customerPhone: typeof raw.customerPhone === 'string' ? raw.customerPhone : '',
+    customerName: typeof raw.customerName === 'string' ? raw.customerName : null,
+    status: raw.status === 'closed' ? 'closed' : 'open',
+    lastMessageAt: toIso(raw.lastMessageAt),
+    lastMessagePreview: typeof raw.lastMessagePreview === 'string' ? raw.lastMessagePreview : '',
+    unreadCount: typeof raw.unreadCount === 'number' ? raw.unreadCount : 0,
+  };
+};
+
 export default function AdminMessagesPage() {
   const router = useRouter();
   const [threads, setThreads] = useState<SmsThread[]>([]);
@@ -59,6 +82,7 @@ export default function AdminMessagesPage() {
 
   useEffect(() => {
     let cancelled = false;
+    let pollIntervalId: number | null = null;
 
     async function loadThreads(options?: { silent?: boolean }) {
       const silent = options?.silent === true;
@@ -81,16 +105,47 @@ export default function AdminMessagesPage() {
       }
     }
 
-    loadThreads();
-    const intervalId = window.setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        loadThreads({ silent: true }).catch(() => undefined);
+    const startPollingFallback = () => {
+      if (pollIntervalId !== null) return;
+      pollIntervalId = window.setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          loadThreads({ silent: true }).catch(() => undefined);
+        }
+      }, INBOX_POLL_INTERVAL_MS);
+    };
+
+    loadThreads().catch(() => undefined);
+
+    const threadsQuery = query(
+      collection(db, 'smsThreads'),
+      orderBy('lastMessageAt', 'desc'),
+      limit(INBOX_THREAD_LIMIT)
+    );
+
+    const unsubscribe = onSnapshot(
+      threadsQuery,
+      (snapshot) => {
+        if (cancelled) return;
+        setThreads(snapshot.docs.map((doc) => mapThread(doc as any)));
+        setError(null);
+        setLoading(false);
+
+        if (pollIntervalId !== null) {
+          window.clearInterval(pollIntervalId);
+          pollIntervalId = null;
+        }
+      },
+      (listenerError) => {
+        console.error('Realtime SMS inbox listener failed, using polling fallback:', listenerError);
+        if (cancelled) return;
+        startPollingFallback();
       }
-    }, INBOX_POLL_INTERVAL_MS);
+    );
 
     return () => {
       cancelled = true;
-      window.clearInterval(intervalId);
+      unsubscribe();
+      if (pollIntervalId !== null) window.clearInterval(pollIntervalId);
     };
   }, []);
 

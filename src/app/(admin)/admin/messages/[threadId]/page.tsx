@@ -5,7 +5,9 @@ export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import styled from 'styled-components';
+import { collection, doc, onSnapshot, query, where } from 'firebase/firestore';
 import { Alert, Box, Button, Container, H1, LoadingSpinner, Stack, Text, Textarea } from '@/design/ui';
+import { db } from '@/lib/utils/firebase';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
@@ -56,6 +58,45 @@ const cannedReplies = [
   'Please confirm your address.',
 ];
 
+const toIso = (value: unknown): string | null => {
+  if (value && typeof value === 'object' && 'toDate' in value && typeof value.toDate === 'function') {
+    return value.toDate().toISOString();
+  }
+  return typeof value === 'string' ? value : null;
+};
+
+const mapThread = (
+  id: string,
+  raw: Record<string, unknown>
+): SmsThread => ({
+  id,
+  customerPhone: typeof raw.customerPhone === 'string' ? raw.customerPhone : '',
+  customerName: typeof raw.customerName === 'string' ? raw.customerName : null,
+  status: raw.status === 'closed' ? 'closed' : 'open',
+  unreadCount: typeof raw.unreadCount === 'number' ? raw.unreadCount : 0,
+});
+
+const mapMessage = (
+  doc: { id: string; data: () => Record<string, unknown> }
+): SmsThreadMessage => {
+  const raw = doc.data();
+  return {
+    id: doc.id,
+    threadId: typeof raw.threadId === 'string' ? raw.threadId : null,
+    direction: raw.direction === 'outbound' ? 'outbound' : 'inbound',
+    senderType:
+      raw.senderType === 'admin' || raw.senderType === 'system' || raw.senderType === 'customer'
+        ? raw.senderType
+        : raw.direction === 'outbound'
+          ? 'system'
+          : 'customer',
+    from: typeof raw.from === 'string' ? raw.from : '',
+    to: typeof raw.to === 'string' ? raw.to : '',
+    body: typeof raw.body === 'string' ? raw.body : '',
+    createdAt: toIso(raw.createdAt),
+  };
+};
+
 export default function AdminMessageThreadPage() {
   const router = useRouter();
   const params = useParams<{ threadId: string }>();
@@ -70,6 +111,7 @@ export default function AdminMessageThreadPage() {
 
   useEffect(() => {
     let cancelled = false;
+    let pollIntervalId: number | null = null;
 
     async function loadThread(options?: { silent?: boolean; markAsRead?: boolean }) {
       const silent = options?.silent === true;
@@ -102,19 +144,83 @@ export default function AdminMessageThreadPage() {
       }
     }
 
+    const startPollingFallback = () => {
+      if (pollIntervalId !== null) return;
+      pollIntervalId = window.setInterval(() => {
+        if (document.visibilityState === 'visible' && threadId) {
+          loadThread({ silent: true, markAsRead: false }).catch(() => undefined);
+        }
+      }, THREAD_POLL_INTERVAL_MS);
+    };
+
     if (threadId) {
-      loadThread({ markAsRead: true });
+      loadThread({ markAsRead: true }).catch(() => undefined);
     }
 
-    const intervalId = window.setInterval(() => {
-      if (document.visibilityState === 'visible' && threadId) {
-        loadThread({ silent: true, markAsRead: false }).catch(() => undefined);
+    if (!threadId) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    let threadSnapshotReady = false;
+    let messagesSnapshotReady = false;
+    const completeLoading = () => {
+      if (threadSnapshotReady && messagesSnapshotReady) {
+        setLoading(false);
+        setError(null);
+        if (pollIntervalId !== null) {
+          window.clearInterval(pollIntervalId);
+          pollIntervalId = null;
+        }
       }
-    }, THREAD_POLL_INTERVAL_MS);
+    };
+
+    const unsubscribeThread = onSnapshot(
+      doc(db, 'smsThreads', threadId),
+      (snapshot) => {
+        if (cancelled) return;
+        if (snapshot.exists()) {
+          setThread(mapThread(snapshot.id, snapshot.data() as Record<string, unknown>));
+        }
+        threadSnapshotReady = true;
+        completeLoading();
+      },
+      (listenerError) => {
+        console.error('Realtime SMS thread listener failed, using polling fallback:', listenerError);
+        if (cancelled) return;
+        startPollingFallback();
+      }
+    );
+
+    const unsubscribeMessages = onSnapshot(
+      query(collection(db, 'smsMessages'), where('threadId', '==', threadId)),
+      (snapshot) => {
+        if (cancelled) return;
+        const nextMessages = snapshot.docs
+          .map((messageDoc) => mapMessage(messageDoc as any))
+          .sort((a, b) => {
+            if (!a.createdAt && !b.createdAt) return 0;
+            if (!a.createdAt) return -1;
+            if (!b.createdAt) return 1;
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          });
+        setMessages(nextMessages);
+        messagesSnapshotReady = true;
+        completeLoading();
+      },
+      (listenerError) => {
+        console.error('Realtime SMS message listener failed, using polling fallback:', listenerError);
+        if (cancelled) return;
+        startPollingFallback();
+      }
+    );
 
     return () => {
       cancelled = true;
-      window.clearInterval(intervalId);
+      unsubscribeThread();
+      unsubscribeMessages();
+      if (pollIntervalId !== null) window.clearInterval(pollIntervalId);
     };
   }, [threadId]);
 

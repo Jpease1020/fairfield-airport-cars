@@ -77,6 +77,12 @@ vi.mock('firebase/firestore', () => ({
   where: vi.fn(() => ({})),
   orderBy: vi.fn(() => ({})),
   limit: vi.fn(() => ({})),
+  onSnapshot: vi.fn((_target, next) => {
+    if (typeof next === 'function') {
+      next({ docs: [], exists: () => false, id: 'mock-doc', data: () => ({}) });
+    }
+    return vi.fn();
+  }),
   getDocs: vi.fn(() => Promise.resolve({
     docs: [],
     empty: true,
