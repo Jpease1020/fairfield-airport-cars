@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBooking } from '@/lib/services/booking-service';
-import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
+import { requireOwnerAdminOrTrackingToken } from '@/lib/utils/auth-server';
 
 export async function GET(
   request: NextRequest,
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
 
-    const accessResult = await requireOwnerOrAdmin(request, booking);
+    const accessResult = await requireOwnerAdminOrTrackingToken(request, booking);
     if (!accessResult.ok) return accessResult.response;
 
     return NextResponse.json({

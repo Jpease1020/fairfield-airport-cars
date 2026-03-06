@@ -20,7 +20,7 @@ import {
   formatBusinessTime,
   formatBusinessTimeWithZone,
   formatBusinessDateTimeWithZone,
-  getBusinessDateTimeParts,
+  getUtcDateTimeParts,
 } from '@/lib/utils/booking-date-time';
 
 const { EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS } = process.env;
@@ -60,7 +60,7 @@ export const buildCalendarAttachment = async (booking: Booking, pickupAddress: s
   if ((booking as any).calendarAddedByUser === true) return [];
 
   const pickupDate = getBookingPickupDate(booking);
-  const parts = getBusinessDateTimeParts(pickupDate);
+  const parts = getUtcDateTimeParts(pickupDate);
   const event = {
     start: parts
       ? [parts.year, parts.month, parts.day, parts.hour, parts.minute]
@@ -71,6 +71,8 @@ export const buildCalendarAttachment = async (booking: Booking, pickupAddress: s
           pickupDate.getUTCHours(),
           pickupDate.getUTCMinutes(),
         ],
+    startInputType: 'utc' as const,
+    startOutputType: 'utc' as const,
     duration: { hours: 2, minutes: 0 },
     title: 'Airport Car Service',
     description: `Ride from ${pickupAddress} to ${dropoffAddress}`,

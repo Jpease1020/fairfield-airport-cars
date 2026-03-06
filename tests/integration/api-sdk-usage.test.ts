@@ -4,6 +4,7 @@ const getAdminDb = vi.fn();
 const requireAuth = vi.fn();
 const requireAdmin = vi.fn();
 const requireOwnerOrAdmin = vi.fn();
+const requireOwnerAdminOrTrackingToken = vi.fn();
 const getBooking = vi.fn();
 const sendConfirmationEmail = vi.fn().mockResolvedValue(undefined);
 const adaptOldBookingToNew = vi.fn((booking) => booking);
@@ -17,6 +18,7 @@ vi.mock('@/lib/utils/auth-server', () => ({
   requireAuth,
   requireAdmin,
   requireOwnerOrAdmin,
+  requireOwnerAdminOrTrackingToken,
 }));
 
 vi.mock('@/lib/services/booking-service', () => ({
@@ -62,6 +64,7 @@ describe('API access and confirmation flow', () => {
     requireAuth.mockResolvedValue({ ok: true, auth: { role: 'customer', uid: 'cust-1' } });
     requireAdmin.mockResolvedValue({ ok: true, auth: { role: 'admin', uid: 'admin-1' } });
     requireOwnerOrAdmin.mockResolvedValue({ ok: true, auth: { role: 'customer', uid: 'cust-1' } });
+    requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: { role: 'customer', uid: 'cust-1' }, access: 'owner' });
   });
 
   describe('GET /api/booking/get-bookings-simple', () => {
@@ -115,6 +118,49 @@ describe('API access and confirmation flow', () => {
       expect(body.success).toBe(true);
       expect(body.booking.id).toBe('booking-1');
       expect(body.booking.createdAt).toBe('2026-03-05T10:00:00.000Z');
+      expect(body.booking.confirmation.token).toBeUndefined();
+    });
+
+    it('returns booking data for valid tracking-token access without auth', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({
+        ok: true,
+        auth: null,
+        access: 'tracking-token',
+      });
+
+      const timestamp = makeTimestamp('2026-03-05T10:00:00.000Z');
+      getAdminDb.mockReturnValue({
+        collection: vi.fn(() => ({
+          doc: vi.fn(() => ({
+            get: vi.fn().mockResolvedValue({
+              exists: true,
+              id: 'booking-1',
+              data: () => ({
+                status: 'confirmed',
+                trackingToken: 'track-123',
+                createdAt: timestamp,
+                updatedAt: timestamp,
+                pickupDateTime: timestamp,
+                confirmation: {
+                  status: 'pending',
+                  token: 'secret-token',
+                  sentAt: timestamp,
+                },
+              }),
+            }),
+          })),
+        })),
+      });
+
+      const { GET } = await import('@/app/api/booking/get-bookings-simple/route');
+      const response = ensureResponse(
+        await GET(makeNextRequest('http://localhost/api/booking/get-bookings-simple?id=booking-1&token=track-123') as any)
+      );
+
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.success).toBe(true);
+      expect(body.booking.id).toBe('booking-1');
       expect(body.booking.confirmation.token).toBeUndefined();
     });
   });
@@ -229,6 +275,8 @@ describe('API access and confirmation flow', () => {
       expect(createBookingCalendarEvent).toHaveBeenCalledTimes(1);
       expect(adaptOldBookingToNew).toHaveBeenCalledTimes(1);
       expect(sendConfirmationEmail).toHaveBeenCalledTimes(1);
+      const body = await response.json();
+      expect(body.trackingToken).toBeNull();
     });
   });
 });

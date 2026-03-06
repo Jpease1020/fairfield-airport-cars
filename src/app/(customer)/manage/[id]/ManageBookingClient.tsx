@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   GridSection,
   ToastProvider,
@@ -29,6 +29,9 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
   const pageCmsData = cmsData || {};
   
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const trackingToken = searchParams?.get('token') ?? '';
+  const hasTokenAccess = trackingToken.length > 0;
   const { addToast } = useToast();
   
   const [booking, setBooking] = useState<any>(null);
@@ -39,23 +42,27 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const response = await authFetch(`/api/booking/${bookingId}`);
+        const tokenQuery = trackingToken ? `?token=${encodeURIComponent(trackingToken)}` : '';
+        const response = await authFetch(`/api/booking/${bookingId}${tokenQuery}`);
         if (response.ok) {
           const data = await response.json();
           setBooking(data);
         } else {
-          setError(pageCmsData?.['bookingNotFound'] || 'Booking not found');
+          setError('Booking not found');
         }
       } catch (error) {
         console.error('Error fetching booking:', error);
-        setError(pageCmsData?.['loadFailed'] || 'Failed to load booking');
+        setError('Failed to load booking');
       } finally {
         setLoading(false);
       }
     };
 
     fetchBooking();
-  }, [bookingId, pageCmsData]);
+  }, [bookingId, trackingToken]);
+
+  const withToken = (path: string) =>
+    trackingToken ? `${path}?token=${encodeURIComponent(trackingToken)}` : path;
 
   const handleCancelBooking = async () => {
     if (!confirm(pageCmsData?.['cancel-confirm'] || 'Are you sure you want to cancel this booking? You may be subject to cancellation fees.')) {
@@ -189,6 +196,12 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
               <H2>
                 {pageCmsData?.['booking-details-title'] || 'Booking Information'}
               </H2>
+
+              {hasTokenAccess && (
+                <Text color="secondary">
+                  {pageCmsData?.['token-access-note'] || 'You are viewing this booking from a secure email link. For security, editing or cancelling still requires a signed-in customer session or help from support.'}
+                </Text>
+              )}
               
               <Stack spacing="md">
                 <Text>
@@ -236,7 +249,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                 onClick={() => router.push(`/booking/${bookingId}/edit`)}
                 variant="primary"
 
-                disabled={booking.status === 'cancelled' || booking.status === 'completed'}
+                disabled={hasTokenAccess || booking.status === 'cancelled' || booking.status === 'completed'}
               >
                 {pageCmsData?.['edit-booking'] || 'Edit Booking'}
               </Button>
@@ -244,7 +257,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                 onClick={() => router.push(`/booking/${bookingId}/edit`)}
                 variant="outline"
 
-                disabled={booking.status === 'cancelled' || booking.status === 'completed'}
+                disabled={hasTokenAccess || booking.status === 'cancelled' || booking.status === 'completed'}
               >
                 {pageCmsData?.['reschedule'] || 'Reschedule'}
               </Button>
@@ -252,14 +265,14 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                 onClick={handleCancelBooking}
                 variant="outline"
 
-                disabled={booking.status === 'cancelled' || booking.status === 'completed' || cancelling}
+                disabled={hasTokenAccess || booking.status === 'cancelled' || booking.status === 'completed' || cancelling}
               >
                 {cancelling ? (pageCmsData?.['cancelling'] || 'Cancelling...') : (pageCmsData?.['cancel-booking'] || 'Cancel Booking')}
               </Button>
             </Stack>
             
             <Button
-              onClick={() => router.push(`/booking/${bookingId}`)}
+              onClick={() => router.push(withToken(`/booking/${bookingId}`))}
               variant="outline"
 
             >

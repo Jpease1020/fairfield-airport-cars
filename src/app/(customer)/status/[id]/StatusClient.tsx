@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Container, Text, Button, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider, H1, H2, Stack, Box } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { authFetch } from '@/lib/utils/auth-fetch';
@@ -13,6 +14,8 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
   // Get CMS data from provider - extract only what this page needs
   const { cmsData: allCmsData } = useCMSData();
   const cmsData = allCmsData?.['customer-status'] || {};
+  const searchParams = useSearchParams();
+  const trackingToken = searchParams?.get('token') ?? '';
   
   const { addToast } = useToast();
   
@@ -50,31 +53,35 @@ function BookingStatusPageContent({ bookingId }: StatusClientProps) {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const response = await authFetch(`/api/booking/${bookingId}/status`);
+        const tokenQuery = trackingToken ? `?token=${encodeURIComponent(trackingToken)}` : '';
+        const response = await authFetch(`/api/booking/${bookingId}/status${tokenQuery}`);
         if (response.ok) {
           const data = await response.json();
           setStatus(data.status);
           setBooking(data.booking);
           setEstimatedArrival(data.estimatedArrival ? new Date(data.estimatedArrival) : null);
         } else {
-          setError(cmsData?.['loadFailed'] || 'Failed to load booking status');
+          setError('Failed to load booking status');
         }
       } catch (error) {
         console.error('Error fetching booking:', error);
-        setError(cmsData?.['loadFailed'] || 'Failed to load booking');
+        setError('Failed to load booking');
       } finally {
         setLoading(false);
       }
     };
 
     fetchStatus();
-  }, [bookingId, cmsData]);
+  }, [bookingId, trackingToken]);
+
+  const withToken = (path: string) =>
+    trackingToken ? `${path}?token=${encodeURIComponent(trackingToken)}` : path;
 
   const quickActions = [
     {
       id: 'manage-booking',
       label: cmsData?.['manageBooking'] || 'Manage Booking',
-      onClick: () => window.location.href = `/manage/${bookingId}`,
+      onClick: () => window.location.href = withToken(`/manage/${bookingId}`),
       variant: 'primary' as const,
       icon: '📋'
     },

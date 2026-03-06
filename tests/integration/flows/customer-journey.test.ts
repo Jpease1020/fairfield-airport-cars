@@ -2,12 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getAdminDb = vi.fn();
 const requireOwnerOrAdmin = vi.fn();
+const requireOwnerAdminOrTrackingToken = vi.fn();
 const createReview = vi.fn();
 const hasBookingBeenReviewed = vi.fn();
 const getBooking = vi.fn();
 
 vi.mock('@/lib/utils/firebase-admin', () => ({ getAdminDb }));
-vi.mock('@/lib/utils/auth-server', () => ({ requireOwnerOrAdmin }));
+vi.mock('@/lib/utils/auth-server', () => ({ requireOwnerOrAdmin, requireOwnerAdminOrTrackingToken }));
 vi.mock('@/lib/services/review-service', () => ({ createReview, hasBookingBeenReviewed }));
 vi.mock('@/lib/services/booking-service', async () => {
   const actual = await vi.importActual('@/lib/services/booking-service');
@@ -47,6 +48,13 @@ describe('Customer journey', () => {
     });
 
     requireOwnerOrAdmin.mockResolvedValue({ ok: false, response: new Response('Forbidden', { status: 403 }) });
+    requireOwnerAdminOrTrackingToken.mockImplementation(async (request: Request, booking: any) => {
+      const token = new URL(request.url).searchParams.get('token');
+      if (token && booking?.trackingToken === token) {
+        return { ok: true, auth: null, access: 'tracking-token' };
+      }
+      return { ok: false, response: new Response('Forbidden', { status: 403 }) };
+    });
     hasBookingBeenReviewed.mockResolvedValue(false);
     createReview.mockResolvedValue('review-123');
     getBooking.mockResolvedValue({

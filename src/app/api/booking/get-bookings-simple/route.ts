@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
-import { requireAuth, requireAdmin, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
+import { requireAuth, requireAdmin, requireOwnerAdminOrTrackingToken } from '@/lib/utils/auth-server';
 
 // Helper to safely convert Firestore dates to ISO strings
 const safeToDate = (dateField: any): string | null => {
@@ -28,15 +28,18 @@ const safeToDate = (dateField: any): string | null => {
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await requireAuth(request);
-    if (!authResult.ok) return authResult.response;
-
     const { searchParams } = new URL(request.url);
     const bookingId = searchParams.get('id');
 
     const db = getAdminDb();
 
     if (bookingId) {
+      const trackingToken = searchParams.get('token');
+      if (!trackingToken) {
+        const authResult = await requireAuth(request);
+        if (!authResult.ok) return authResult.response;
+      }
+
       // Get specific booking using Admin SDK (no auth required)
       const docRef = db.collection('bookings').doc(bookingId);
       const docSnap = await docRef.get();
@@ -80,10 +83,11 @@ export async function GET(request: NextRequest) {
           : undefined
       };
 
-      const accessResult = await requireOwnerOrAdmin(request, booking);
+      const accessResult = await requireOwnerAdminOrTrackingToken(request, booking);
       if (!accessResult.ok) return accessResult.response;
       const auth = accessResult.auth;
-      if (auth && auth.role !== 'admin' && booking.confirmation?.token) {
+      const accessMode = 'access' in accessResult ? accessResult.access : undefined;
+      if ((accessMode === 'tracking-token' || (auth && auth.role !== 'admin')) && booking.confirmation?.token) {
         booking.confirmation = {
           status: booking.confirmation.status,
           sentAt: booking.confirmation.sentAt,
@@ -97,6 +101,9 @@ export async function GET(request: NextRequest) {
         booking
       });
     } else {
+      const authResult = await requireAuth(request);
+      if (!authResult.ok) return authResult.response;
+
       const adminResult = await requireAdmin(request);
       if (!adminResult.ok) return adminResult.response;
 
