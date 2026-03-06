@@ -1,5 +1,5 @@
 import twilio from 'twilio';
-import { saveSmsMessage } from './sms-message-service';
+import { saveSmsMessage, type SmsSenderType } from './sms-message-service';
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -11,9 +11,22 @@ const getTwilioClient = () => twilio(accountSid, authToken);
 interface SmsPayload {
   to: string;
   body: string;
+  logMessage?: boolean;
+  threadId?: string | null;
+  senderType?: SmsSenderType;
+  bookingId?: string;
+  customerId?: string;
 }
 
-export const sendSms = async ({ to, body }: SmsPayload) => {
+export const sendSms = async ({
+  to,
+  body,
+  logMessage = true,
+  threadId,
+  senderType,
+  bookingId,
+  customerId,
+}: SmsPayload) => {
   if (!accountSid || !authToken || !messagingServiceSid) {
     console.error('Twilio credentials are not configured. Required: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID');
     throw new Error('Twilio service is not configured.');
@@ -26,16 +39,22 @@ export const sendSms = async ({ to, body }: SmsPayload) => {
       messagingServiceSid: messagingServiceSid,
       to,
     });
-    try {
-      await saveSmsMessage({
-        from: twilioPhoneNumber || 'system',
-        to,
-        body,
-        direction: 'outbound',
-        twilioMessageSid: message.sid,
-      });
-    } catch (logErr) {
-      console.warn('Failed to log outbound SMS:', logErr);
+    if (logMessage) {
+      try {
+        await saveSmsMessage({
+          from: twilioPhoneNumber || 'system',
+          to,
+          body,
+          direction: 'outbound',
+          twilioMessageSid: message.sid,
+          threadId,
+          senderType,
+          bookingId,
+          customerId,
+        });
+      } catch (logErr) {
+        console.warn('Failed to log outbound SMS:', logErr);
+      }
     }
     return message;
   } catch (error) {

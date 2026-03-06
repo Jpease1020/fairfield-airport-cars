@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signInWithGoogle, authService } from '@/lib/services/auth-service';
 import { auth } from '@/lib/utils/firebase';
+import { browserLocalPersistence, setPersistence } from 'firebase/auth';
 import { 
   Container,
   Stack,
@@ -59,12 +60,21 @@ export default function LoginFormClient() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const ensureLocalPersistence = async () => {
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+    } catch (persistenceError) {
+      console.warn('Failed to set local auth persistence:', persistenceError);
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
     try {
+      await ensureLocalPersistence();
       await login(email, password);
       const current = auth.currentUser;
       if (current && await authService.isAdmin(current.uid)) {
@@ -84,6 +94,7 @@ export default function LoginFormClient() {
     setError(null);
     
     try {
+      await ensureLocalPersistence();
       await signInWithGoogle();
       const current = auth.currentUser;
       if (current && await authService.isAdmin(current.uid)) {
