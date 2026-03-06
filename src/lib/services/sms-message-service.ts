@@ -2,6 +2,7 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
 export type SmsDirection = 'inbound' | 'outbound';
+export type SmsSenderType = 'customer' | 'admin' | 'system';
 
 const COLLECTION = 'smsMessages';
 
@@ -17,14 +18,19 @@ export async function saveSmsMessage(params: {
   twilioMessageSid?: string;
   bookingId?: string;
   customerId?: string;
+  threadId?: string | null;
+  senderType?: SmsSenderType;
 }): Promise<string | null> {
   try {
     const db = getAdminDb();
+    const senderType = params.senderType ?? (params.direction === 'inbound' ? 'customer' : 'system');
     const ref = await db.collection(COLLECTION).add({
       from: params.from,
       to: params.to,
       body: params.body,
       direction: params.direction,
+      threadId: params.threadId ?? null,
+      senderType,
       twilioMessageSid: params.twilioMessageSid ?? null,
       bookingId: params.bookingId ?? null,
       customerId: params.customerId ?? null,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import twilio from 'twilio';
 import { sendSms } from '@/lib/services/twilio-service';
 import { saveSmsMessage } from '@/lib/services/sms-message-service';
+import { findOrCreateThread, updateThreadOnInbound } from '@/lib/services/sms-thread-service';
 
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const forwardToNumber = process.env.GREGG_SMS_FORWARD_NUMBER || process.env.ADMIN_FORWARD_SMS_TO;
@@ -36,19 +37,39 @@ export async function POST(request: NextRequest) {
   const to = params.To || '';
   const body = params.Body || '';
   const messageSid = params.MessageSid || '';
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    process.env.BASE_URL ||
+    new URL(request.url).origin;
 
-  await saveSmsMessage({
-    from,
-    to,
-    body,
-    direction: 'inbound',
-    twilioMessageSid: messageSid,
-  });
+  let threadId: string | null = null;
+
+  try {
+    if (from) {
+      const thread = await findOrCreateThread(from);
+      threadId = thread.threadId;
+      await updateThreadOnInbound(threadId, body);
+    }
+
+    await saveSmsMessage({
+      from,
+      to,
+      body,
+      direction: 'inbound',
+      twilioMessageSid: messageSid,
+      threadId,
+      senderType: 'customer',
+    });
+  } catch (error) {
+    console.error('[Twilio webhook] Failed to persist inbound thread/message:', error);
+  }
 
   if (forwardToNumber && body.trim()) {
     try {
-      const forwardBody = `From ${from}: ${body}`;
-      await sendSms({ to: forwardToNumber, body: forwardBody });
+      const preview = body.trim().slice(0, 80);
+      const threadUrl = threadId ? `${baseUrl}/admin/messages/${threadId}` : `${baseUrl}/admin/messages`;
+      const forwardBody = `New message from ${from}: "${preview}" Reply: ${threadUrl}`;
+      await sendSms({ to: forwardToNumber, body: forwardBody, logMessage: false });
     } catch (err) {
       console.error('[Twilio webhook] Failed to forward to Gregg:', err);
     }
