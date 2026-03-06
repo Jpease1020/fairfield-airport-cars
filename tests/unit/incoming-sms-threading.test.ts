@@ -40,6 +40,10 @@ beforeAll(async () => {
 describe('POST /api/twilio/incoming-sms (threading)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.VERCEL_ENV;
+    process.env.SMS_INBOX_ENABLED = 'true';
+    delete process.env.SMS_INBOX_PREVIEW_ENABLED;
+    delete process.env.SMS_INBOX_PROD_ENABLED;
   });
 
   it('stores inbound messages with thread metadata and notifies Gregg with a deep link', async () => {
@@ -73,6 +77,42 @@ describe('POST /api/twilio/incoming-sms (threading)', () => {
       expect.objectContaining({
         logMessage: false,
         body: expect.stringContaining('/admin/messages/thread_abc'),
+      })
+    );
+  });
+
+  it('falls back to plain forwarding when SMS inbox is disabled', async () => {
+    process.env.SMS_INBOX_ENABLED = 'false';
+
+    const response = await POST(
+      new Request('https://www.fairfieldairportcar.com/api/twilio/incoming-sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'x-twilio-signature': 'valid-signature',
+        },
+        body: new URLSearchParams({
+          From: '+12035550123',
+          To: '+16462216370',
+          Body: 'Legacy forward only',
+          MessageSid: 'SM124',
+        }).toString(),
+      }) as any
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockFindOrCreateThread).not.toHaveBeenCalled();
+    expect(mockUpdateThreadOnInbound).not.toHaveBeenCalled();
+    expect(mockSaveSmsMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: null,
+        direction: 'inbound',
+      })
+    );
+    expect(mockSendSms).toHaveBeenCalledWith(
+      expect.objectContaining({
+        logMessage: false,
+        body: 'From +12035550123: Legacy forward only',
       })
     );
   });

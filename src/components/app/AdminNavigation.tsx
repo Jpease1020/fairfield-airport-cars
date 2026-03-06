@@ -7,6 +7,7 @@ import { Button } from '../../design/components/base-components/Button';
 import { BaseNavigation, NavigationItem } from '../../design/page-sections/nav/BaseNavigation';
 import { auth } from '../../lib/utils/firebase';
 import { useCMSData } from '../../design/providers/CMSDataProvider';
+import { isSmsInboxClientEnabled } from '@/lib/utils/sms-inbox-feature-client';
 
 export const AdminNavigation: React.FC = () => {
   // Get CMS data from provider
@@ -15,6 +16,7 @@ export const AdminNavigation: React.FC = () => {
   
   const pathname = usePathname();
   const currentPath = pathname ?? '';
+  const smsInboxEnabled = isSmsInboxClientEnabled();
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -28,12 +30,19 @@ export const AdminNavigation: React.FC = () => {
     { name: 'Dashboard', href: '/admin', current: currentPath === '/admin' },
     { name: 'Bookings', href: '/admin/bookings', current: currentPath === '/admin/bookings' },
     { name: 'Payments', href: '/admin/payments', current: currentPath === '/admin/payments' },
-    { name: 'Messages', href: '/admin/messages', current: currentPath === '/admin/messages' },
     { name: 'Costs', href: '/admin/costs', current: currentPath === '/admin/costs' },
     { name: 'Schedule', href: '/admin/schedules', current: currentPath.startsWith('/admin/schedules') },
     { name: 'Health', href: '/admin/health', current: currentPath === '/admin/health' },
     { name: 'Settings', href: '/admin/settings', current: currentPath === '/admin/settings' },
   ];
+
+  if (smsInboxEnabled) {
+    navigationItems.splice(3, 0, {
+      name: 'Messages',
+      href: '/admin/messages',
+      current: currentPath.startsWith('/admin/messages'),
+    });
+  }
 
   const logo = (
     <Link href="/admin" data-testid="admin-nav-logo-link" id="admin-nav-logo-link">
