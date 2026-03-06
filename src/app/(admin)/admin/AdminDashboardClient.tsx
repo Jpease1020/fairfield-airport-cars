@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Alert, Box, Button, Container, Grid, GridItem, H2, LoadingSpinner, Stack, Text } from '@/design/ui';
 import { getAllBookings } from '@/lib/services/database-service';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 
 type HealthStatus = 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
 
@@ -34,16 +35,15 @@ const isSameLocalDay = (a: Date, b: Date): boolean =>
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
 
+const formatCurrency = (amount: number): string =>
+  new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+
 function formatNextRide(date: Date | null): string {
   if (!date) return 'No upcoming rides';
-  return date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
+  return formatBusinessDateTimeWithZone(date);
 }
 
 export default function AdminDashboardClient() {
@@ -180,7 +180,7 @@ export default function AdminDashboardClient() {
                 <Text>Next ride: {snapshot.nextRideText}</Text>
                 <Text>
                   This month&apos;s costs: $
-                  {snapshot.monthCosts.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatCurrency(snapshot.monthCosts)}
                 </Text>
                 <Text>System health: {healthLabel}</Text>
               </Stack>

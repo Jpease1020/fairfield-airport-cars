@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button, Stack, Text } from '@/design/ui';
 import type { ConfirmationContext } from '@/lib/chat/chat-types';
+import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 
 interface ConfirmationCardProps {
   confirmation: ConfirmationContext;
@@ -14,14 +15,7 @@ interface ConfirmationCardProps {
 function formatDateTime(value: string): string {
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return parsed.toLocaleString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+  return formatBusinessDateTimeWithZone(parsed);
 }
 
 export function ConfirmationCard({ confirmation, onConfirm, onEdit, loading = false }: ConfirmationCardProps) {

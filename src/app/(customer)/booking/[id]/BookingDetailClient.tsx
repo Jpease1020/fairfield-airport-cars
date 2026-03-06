@@ -7,6 +7,8 @@ import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
 import { hasCalendarBeenAdded } from '@/lib/utils/calendar-utils';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
+import { parseBookingDate } from '@/utils/booking-helpers';
 
 interface BookingDetailClientProps {
   bookingId: string;
@@ -119,42 +121,11 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const formatDateTime = (dateTime: Date | string | undefined | any) => {
-    if (!dateTime) {
-      return 'Not specified';
-    }
-    
-    // Handle Firestore Timestamp objects
-    let date: Date;
-    if (dateTime && typeof dateTime.toDate === 'function') {
-      // Firestore Timestamp
-      date = dateTime.toDate();
-    } else if (dateTime && typeof dateTime.getTime === 'function') {
-      // Already a Date object
-      date = dateTime;
-    } else if (typeof dateTime === 'string') {
-      // ISO string
-      date = new Date(dateTime);
-    } else if (typeof dateTime === 'number') {
-      // Timestamp number
-      date = new Date(dateTime);
-    } else {
-      return 'Invalid date';
-    }
-    
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
-    }
-    
-    return date.toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const formatDateTime = (dateTime: unknown) => {
+    if (!dateTime) return 'Not specified';
+    const date = parseBookingDate(dateTime);
+    if (!date) return 'Invalid date';
+    return formatBusinessDateTimeWithZone(date);
   };
 
   if (loading) {
