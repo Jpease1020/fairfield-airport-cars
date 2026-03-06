@@ -57,13 +57,6 @@ const MessageList = styled.div`
   padding-right: 4px;
 `;
 
-const cannedReplies = [
-  'Yes, I am available.',
-  'What time is your flight?',
-  'I am on my way.',
-  'Please confirm your address.',
-];
-
 const toIso = (value: unknown): string | null => {
   if (value && typeof value === 'object' && 'toDate' in value && typeof value.toDate === 'function') {
     return value.toDate().toISOString();
@@ -346,17 +339,6 @@ export default function AdminMessageThreadPage() {
 
             <ComposerBar variant="elevated" padding="lg">
               <Stack spacing="md">
-                <Stack direction="horizontal" spacing="sm" align="center" wrap="wrap">
-                  {cannedReplies.map((reply) => (
-                    <Button
-                      key={reply}
-                      variant="outline"
-                      size="sm"
-                      text={reply}
-                      onClick={() => setReplyBody(reply)}
-                    />
-                  ))}
-                </Stack>
                 <Textarea
                   value={replyBody}
                   onChange={(event) => setReplyBody(event.target.value)}
