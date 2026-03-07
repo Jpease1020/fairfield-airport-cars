@@ -174,6 +174,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
   }
 
   const pickupDateTime = getPickupDateTime(booking);
+  const canModifyBooking = !hasTokenAccess && booking.status !== 'cancelled' && booking.status !== 'completed';
 
   return (
     <Container variant="default" padding="none">
@@ -242,50 +243,77 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
       {/* Action Buttons */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Stack spacing="md" align="center">
-            <Stack direction="horizontal" spacing="md" align="center">
-              <Button
-                onClick={() => router.push(`/booking/${bookingId}/edit`)}
-                variant="primary"
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg" align="center">
+              {canModifyBooking ? (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                    gap: '16px',
+                    width: '100%',
+                  }}
+                >
+                  <Button
+                    onClick={() => router.push(`/booking/${bookingId}/edit`)}
+                    variant="primary"
+                    fullWidth
+                  >
+                    {pageCmsData?.['edit-booking'] || 'Edit Booking'}
+                  </Button>
+                  <Button
+                    onClick={() => router.push(`/booking/${bookingId}/edit`)}
+                    variant="outline"
+                    fullWidth
+                  >
+                    {pageCmsData?.['reschedule'] || 'Reschedule'}
+                  </Button>
+                  <Button
+                    onClick={handleCancelBooking}
+                    variant="outline"
+                    fullWidth
+                    disabled={cancelling}
+                  >
+                    {cancelling ? (pageCmsData?.['cancelling'] || 'Cancelling...') : (pageCmsData?.['cancel-booking'] || 'Cancel Booking')}
+                  </Button>
+                </div>
+              ) : (
+                <Box variant="outlined" padding="md">
+                  <Text align="center" color="secondary">
+                    {hasTokenAccess
+                      ? (pageCmsData?.['token-access-actions-note'] || 'This secure link is read-only. To edit, reschedule, or cancel, sign in to your customer account or contact support.')
+                      : (pageCmsData?.['booking-locked-note'] || 'This booking can no longer be edited online. Please contact support if you need help.')}
+                  </Text>
+                </Box>
+              )}
 
-                disabled={hasTokenAccess || booking.status === 'cancelled' || booking.status === 'completed'}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '16px',
+                  width: '100%',
+                  maxWidth: '520px',
+                }}
               >
-                {pageCmsData?.['edit-booking'] || 'Edit Booking'}
-              </Button>
-              <Button
-                onClick={() => router.push(`/booking/${bookingId}/edit`)}
-                variant="outline"
+                <Button
+                  onClick={() => router.push(withToken(`/booking/${bookingId}`))}
+                  variant="outline"
+                  fullWidth
+                >
+                  {pageCmsData?.['view-details'] || 'View Full Details'}
+                </Button>
 
-                disabled={hasTokenAccess || booking.status === 'cancelled' || booking.status === 'completed'}
-              >
-                {pageCmsData?.['reschedule'] || 'Reschedule'}
-              </Button>
-              <Button
-                onClick={handleCancelBooking}
-                variant="outline"
-
-                disabled={hasTokenAccess || booking.status === 'cancelled' || booking.status === 'completed' || cancelling}
-              >
-                {cancelling ? (pageCmsData?.['cancelling'] || 'Cancelling...') : (pageCmsData?.['cancel-booking'] || 'Cancel Booking')}
-              </Button>
+                <Button
+                  onClick={() => router.push('/bookings')}
+                  variant="outline"
+                  fullWidth
+                >
+                  {pageCmsData?.['backToBookings'] || 'Back to Bookings'}
+                </Button>
+              </div>
             </Stack>
-            
-            <Button
-              onClick={() => router.push(withToken(`/booking/${bookingId}`))}
-              variant="outline"
-
-            >
-              {pageCmsData?.['view-details'] || 'View Full Details'}
-            </Button>
-            
-            <Button
-              onClick={() => router.push('/bookings')}
-              variant="outline"
-
-            >
-              {pageCmsData?.['backToBookings'] || 'Back to Bookings'}
-            </Button>
-          </Stack>
+          </Box>
         </Container>
       </GridSection>
     </Container>
