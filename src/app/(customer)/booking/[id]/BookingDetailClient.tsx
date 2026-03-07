@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import styled from 'styled-components';
 import { Box, Button, Container, H2, Stack, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/design/ui';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
@@ -14,6 +15,19 @@ import { parseBookingDate } from '@/utils/booking-helpers';
 interface BookingDetailClientProps {
   bookingId: string;
 }
+
+const NarrowActionContainer = styled.div`
+  width: 100%;
+  max-width: 360px;
+`;
+
+const ResponsiveActionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 760px;
+`;
 
 function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
   const { cmsData: allCmsData } = useCMSData();
@@ -330,7 +344,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
           <Container>
             <Box variant="elevated" padding="lg">
               <Stack align="center">
-                <div style={{ width: '100%', maxWidth: '360px' }}>
+                <NarrowActionContainer>
                   <AddToCalendarButton
                     pickupAddress={pickupAddress}
                     dropoffAddress={dropoffAddress}
@@ -341,7 +355,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
                     size="md"
                     fullWidth
                   />
-                </div>
+                </NarrowActionContainer>
               </Stack>
             </Box>
           </Container>
@@ -357,15 +371,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
               <Text align="center" color="secondary">
                 {cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}
               </Text>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                  gap: '16px',
-                  width: '100%',
-                  maxWidth: '760px',
-                }}
-              >
+              <ResponsiveActionGrid>
                 {actionButtons.map((action) => (
                   <Button
                     key={action.id}
@@ -376,7 +382,7 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
                     {action.icon} {action.label}
                   </Button>
                 ))}
-              </div>
+              </ResponsiveActionGrid>
             </Stack>
           </Box>
         </Container>

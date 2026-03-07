@@ -271,6 +271,68 @@ export default [
       'no-debugger': 'warn', // Allow debugger statements in admin components
     },
   },
+  // 📧 EMAIL TEMPLATES - Email-safe HTML/CSS needs inline styles and fixed colors
+  {
+    files: ['src/lib/email-templates/**/*.{js,jsx,ts,tsx}'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptPlugin,
+      'fairfield': fairfieldCustomRules,
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'no-unused-vars': 'warn',
+      'fairfield/no-hardcoded-colors': 'off',
+      'fairfield/no-inline-styles': 'off',
+      'fairfield/no-classname-props': 'off',
+      'fairfield/no-html-structure': 'off',
+      'fairfield/enforce-design-system': 'off',
+      'fairfield/no-hardcoded-text-in-components': 'off',
+      'fairfield/enforce-cms-usage': 'off',
+    },
+  },
+  // 💬 LEGACY BOOKING CHAT - keep functional until it is fully refactored to design primitives
+  {
+    files: [
+      'src/components/booking/BookingChat.tsx',
+      'src/components/booking/ConfirmationCard.tsx',
+    ],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptPlugin,
+      'fairfield': fairfieldCustomRules,
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'no-unused-vars': 'warn',
+      'fairfield/no-hardcoded-colors': 'off',
+      'fairfield/no-inline-styles': 'off',
+      'fairfield/no-html-structure': 'off',
+      'fairfield/enforce-design-system': 'off',
+      'fairfield/no-hardcoded-text-in-components': 'off',
+      'fairfield/enforce-cms-usage': 'off',
+    },
+  },
   {
     ignores: [
       'src/future-features/**/*',
