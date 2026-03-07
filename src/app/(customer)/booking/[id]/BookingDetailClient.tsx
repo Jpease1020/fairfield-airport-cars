@@ -16,11 +16,6 @@ interface BookingDetailClientProps {
   bookingId: string;
 }
 
-const NarrowActionContainer = styled.div`
-  width: 100%;
-  max-width: 360px;
-`;
-
 const ResponsiveActionGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
@@ -342,30 +337,6 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
         </Container>
       </GridSection>
 
-      {/* Add to Calendar (conditional) */}
-      {showCalendarButton && booking?.id && (
-        <GridSection variant="content" columns={1}>
-          <Container>
-            <Box variant="elevated" padding="lg">
-              <Stack align="center">
-                <NarrowActionContainer>
-                  <AddToCalendarButton
-                    pickupAddress={pickupAddress}
-                    dropoffAddress={dropoffAddress}
-                    pickupDateTime={pickupDateTime}
-                    bookingId={booking.id}
-                    customerName={customerName}
-                    variant="primary"
-                    size="md"
-                    fullWidth
-                  />
-                </NarrowActionContainer>
-              </Stack>
-            </Box>
-          </Container>
-        </GridSection>
-      )}
-
       {/* Actions */}
       <GridSection variant="content" columns={1}>
         <Container>
@@ -376,6 +347,18 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
                 {cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}
               </Text>
               <ResponsiveActionGrid>
+                {showCalendarButton && booking?.id && (
+                  <AddToCalendarButton
+                    pickupAddress={pickupAddress}
+                    dropoffAddress={dropoffAddress}
+                    pickupDateTime={pickupDateTime}
+                    bookingId={booking.id}
+                    customerName={customerName}
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                  />
+                )}
                 {actionButtons.map((action) => (
                   <Button
                     key={action.id}
