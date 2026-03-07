@@ -1,9 +1,6 @@
 'use client';
 
-// Force dynamic rendering to prevent server-side rendering issues
-export const dynamic = 'force-dynamic';
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Container, 
   Stack, 
@@ -33,6 +30,7 @@ interface Payment {
 function PaymentsPageContent() {
   const { cmsData: allCmsData } = useCMSData();
   const cmsData = allCmsData?.admin || {};
+  const fetchFailedMessage = cmsData?.['error-fetchFailed'] || 'Failed to fetch payments';
   
   
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -92,7 +90,7 @@ function PaymentsPageContent() {
     }
   };
 
-  const fetchPayments = async () => {
+  const fetchPayments = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -105,15 +103,15 @@ function PaymentsPageContent() {
       const data = await response.json();
       setPayments(data.payments || []);
     } catch (_err) {
-      setError(cmsData?.['error-fetchFailed'] || 'Failed to fetch payments');
+      setError(fetchFailedMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchFailedMessage]);
 
   useEffect(() => {
     fetchPayments();
-  }, [cmsData]);
+  }, [fetchPayments]);
 
   if (loading) {
     return (
