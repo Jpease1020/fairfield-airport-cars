@@ -79,6 +79,15 @@ export default function AdminMessagesPage() {
   const [threads, setThreads] = useState<SmsThread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [backfillState, setBackfillState] = useState<{
+    loading: boolean;
+    summary: string | null;
+    error: string | null;
+  }>({
+    loading: false,
+    summary: null,
+    error: null,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -149,6 +158,67 @@ export default function AdminMessagesPage() {
     };
   }, []);
 
+  async function runBackfill() {
+    setBackfillState({ loading: true, summary: null, error: null });
+
+    try {
+      const previewResponse = await authFetch('/api/admin/messages/backfill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apply: false }),
+      });
+      const previewPayload = await previewResponse.json().catch(() => ({}));
+
+      if (!previewResponse.ok) {
+        throw new Error(previewPayload.error || 'Failed to preview SMS history backfill');
+      }
+
+      if (!previewPayload.matchedMessages) {
+        setBackfillState({
+          loading: false,
+          summary: 'No legacy SMS history needed backfill.',
+          error: null,
+        });
+        return;
+      }
+
+      const confirmed = window.confirm(
+        `Backfill ${previewPayload.matchedMessages} legacy SMS messages into threads?`
+      );
+      if (!confirmed) {
+        setBackfillState({
+          loading: false,
+          summary: `Preview found ${previewPayload.matchedMessages} messages to attach. Backfill cancelled.`,
+          error: null,
+        });
+        return;
+      }
+
+      const applyResponse = await authFetch('/api/admin/messages/backfill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apply: true }),
+      });
+      const applyPayload = await applyResponse.json().catch(() => ({}));
+
+      if (!applyResponse.ok) {
+        throw new Error(applyPayload.error || 'Failed to backfill SMS history');
+      }
+
+      setBackfillState({
+        loading: false,
+        summary: `Backfilled ${applyPayload.updatedMessages} SMS messages into threads.`,
+        error: null,
+      });
+    } catch (backfillError) {
+      setBackfillState({
+        loading: false,
+        summary: null,
+        error: backfillError instanceof Error ? backfillError.message : 'Failed to backfill SMS history',
+      });
+    }
+  }
+
   return (
     <Container maxWidth="lg" padding="xl">
       <Stack spacing="lg">
@@ -215,6 +285,15 @@ export default function AdminMessagesPage() {
             <Text size="sm" color="secondary">
               The flat SMS message log is still available at `/api/admin/sms-messages` for troubleshooting.
             </Text>
+            {backfillState.summary && <Alert variant="success">{backfillState.summary}</Alert>}
+            {backfillState.error && <Alert variant="error">{backfillState.error}</Alert>}
+            <Button
+              variant="outline"
+              size="sm"
+              text={backfillState.loading ? 'Backfilling legacy history...' : 'Backfill old SMS history'}
+              onClick={() => runBackfill().catch(() => undefined)}
+              disabled={backfillState.loading}
+            />
             <Button
               variant="outline"
               size="sm"
