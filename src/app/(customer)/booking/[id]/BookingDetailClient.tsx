@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Container, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/design/ui';
+import { Box, Container, H2, Stack, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/design/ui';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
@@ -235,58 +235,92 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
       {/* Booking Status */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Text>{cmsData?.['booking-status-title'] || `${getStatusIcon(booking.status)} Booking Status`}</Text>
-          <Text>{cmsData?.['booking-status-description'] || `Your booking is currently ${booking.status}`}</Text>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="sm" align="center">
+              <Text size="lg" weight="bold">
+                {cmsData?.['booking-status-title'] || `${getStatusIcon(booking.status)} Booking Status`}
+              </Text>
+              <Text align="center">
+                {cmsData?.['booking-status-description'] || `Your booking is currently ${booking.status}`}
+              </Text>
+            </Stack>
+          </Box>
         </Container>
       </GridSection>
 
       {/* Trip Details */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {cmsData?.['booking-trip_details-title'] || '📍 Trip Details'}
-          {cmsData?.['booking-trip_details-description'] || 'Your pickup and dropoff information'}
-          <Container>
-            {cmsData?.['booking-pickup_location-label'] || 'Pickup Location:'}
-            <Text>{pickupAddress}</Text>
-          </Container>
-          <Container>
-            {cmsData?.['booking-dropoff_location-label'] || 'Dropoff Location:'}
-            <Text>{dropoffAddress}</Text>
-          </Container>
-          <Container>
-            {cmsData?.['booking-pickup_datetime-label'] || 'Pickup Time:'}
-            <Text>{formatDateTime(pickupDateTime)}</Text>
-          </Container>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <Stack spacing="sm">
+                <H2>{cmsData?.['booking-trip_details-title'] || '📍 Trip Details'}</H2>
+                <Text color="secondary">
+                  {cmsData?.['booking-trip_details-description'] || 'Your pickup and dropoff information'}
+                </Text>
+              </Stack>
+              <Stack spacing="md">
+                <Stack spacing="xs">
+                  <Text size="sm" weight="bold">{cmsData?.['booking-pickup_location-label'] || 'Pickup Location:'}</Text>
+                  <Text>{pickupAddress}</Text>
+                </Stack>
+                <Stack spacing="xs">
+                  <Text size="sm" weight="bold">{cmsData?.['booking-dropoff_location-label'] || 'Dropoff Location:'}</Text>
+                  <Text>{dropoffAddress}</Text>
+                </Stack>
+                <Stack spacing="xs">
+                  <Text size="sm" weight="bold">{cmsData?.['booking-pickup_datetime-label'] || 'Pickup Time:'}</Text>
+                  <Text>{formatDateTime(pickupDateTime)}</Text>
+                </Stack>
+              </Stack>
+            </Stack>
+          </Box>
         </Container>
       </GridSection>
 
       {/* Passenger Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-          {cmsData?.['booking-passenger_info-title'] || '👤 Passenger Information'}
-          {cmsData?.['booking-passenger_info-description'] || 'Your contact details for this booking'}
-          <Container spacing="lg">
-            {cmsData?.['booking-passenger_name-label'] || 'Passenger:'}
-            <Text>{customerName}</Text>
-            {cmsData?.['booking-passenger_phone-label'] || 'Phone:'}
-            <Text>{customerPhone}</Text>
-            {cmsData?.['booking-passenger_email-label'] || 'Email:'}
-            <Text>{customerEmail}</Text>
-          </Container>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="lg">
+              <Stack spacing="sm">
+                <H2>{cmsData?.['booking-passenger_info-title'] || '👤 Passenger Information'}</H2>
+                <Text color="secondary">
+                  {cmsData?.['booking-passenger_info-description'] || 'Your contact details for this booking'}
+                </Text>
+              </Stack>
+              <Stack spacing="md">
+                <Stack spacing="xs">
+                  <Text size="sm" weight="bold">{cmsData?.['booking-passenger_name-label'] || 'Passenger:'}</Text>
+                  <Text>{customerName}</Text>
+                </Stack>
+                <Stack spacing="xs">
+                  <Text size="sm" weight="bold">{cmsData?.['booking-passenger_phone-label'] || 'Phone:'}</Text>
+                  <Text>{customerPhone}</Text>
+                </Stack>
+                <Stack spacing="xs">
+                  <Text size="sm" weight="bold">{cmsData?.['booking-passenger_email-label'] || 'Email:'}</Text>
+                  <Text>{customerEmail}</Text>
+                </Stack>
+              </Stack>
+            </Stack>
+          </Box>
         </Container>
       </GridSection>
 
       {/* Fare Information */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Container spacing="md">
-            <Text>
-              {cmsData?.['booking-fare-info-includes-fees'] || 'Includes all fees and taxes'}
-            </Text>
-            <Text size="lg">
-              ${fare.toFixed(2)}
-            </Text>
-          </Container>
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="sm" align="center">
+              <Text color="secondary">
+                {cmsData?.['booking-fare-info-includes-fees'] || 'Includes all fees and taxes'}
+              </Text>
+              <Text size="lg" weight="bold">
+                ${fare.toFixed(2)}
+              </Text>
+            </Stack>
+          </Box>
         </Container>
       </GridSection>
 
@@ -310,9 +344,15 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
       {/* Actions */}
       <GridSection variant="content" columns={1}>
         <Container>
-          <Text>{cmsData?.['booking-quick-actions-title'] || '🎯 Quick Actions'}</Text>
-          <Text>{cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}</Text>
-          <ActionButtonGroup buttons={actionButtons} />
+          <Box variant="elevated" padding="lg">
+            <Stack spacing="md" align="center">
+              <Text size="lg" weight="bold">{cmsData?.['booking-quick-actions-title'] || '🎯 Quick Actions'}</Text>
+              <Text align="center" color="secondary">
+                {cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}
+              </Text>
+              <ActionButtonGroup buttons={actionButtons} />
+            </Stack>
+          </Box>
         </Container>
       </GridSection>
     </Container>

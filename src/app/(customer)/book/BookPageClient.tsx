@@ -50,11 +50,11 @@ function BookPageClient() {
                 ? (pageCmsData?.['booking-confirmed-page-title'] || 'Booking confirmed')
                 : (pageCmsData?.['hero-title'] || 'Complete Your Booking')}
             </H2>
-            <Text variant="lead" align="center">
-              {success
-                ? (pageCmsData?.['booking-confirmed-page-subtitle'] || 'Check your email to finalize your ride.')
-                : (pageCmsData?.['hero-subtitle'] || 'Fill in your details below')}
-            </Text>
+            {success && (
+              <Text variant="lead" align="center">
+                {pageCmsData?.['booking-confirmed-page-subtitle'] || 'Check your email to finalize your ride.'}
+              </Text>
+            )}
           </Stack>
         )}
 

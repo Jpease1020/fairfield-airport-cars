@@ -18,6 +18,7 @@ import {
 } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
+import { getPickupDateTime } from '@/utils/booking-helpers';
 
 interface ManageBookingClientProps {
   bookingId: string;
@@ -172,6 +173,8 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
     );
   }
 
+  const pickupDateTime = getPickupDateTime(booking);
+
   return (
     <Container variant="default" padding="none">
       {/* Page Header */}
@@ -214,11 +217,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                 </Text>
                 <Text>
                   <Span weight="bold">{pageCmsData?.['dateTimeLabel'] || 'Pickup Time:'}</Span>{' '}
-                  {booking.trip?.pickupDateTime 
-                    ? formatDateTimeNoSeconds(booking.trip.pickupDateTime)
-                    : booking.pickupDateTime 
-                    ? formatDateTimeNoSeconds(booking.pickupDateTime)
-                    : 'N/A'}
+                  {pickupDateTime ? formatDateTimeNoSeconds(pickupDateTime) : 'N/A'}
                 </Text>
                 <Text>
                   <Span weight="bold">{pageCmsData?.['statusLabel'] || 'Status:'}</Span>{' '}

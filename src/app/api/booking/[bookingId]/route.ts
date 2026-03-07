@@ -26,11 +26,32 @@ export async function GET(
     }
 
     const bookingData = bookingDoc.data();
+    const normalizedTrip = bookingData?.trip
+      ? {
+          ...bookingData.trip,
+          pickupDateTime:
+            bookingData.trip?.pickupDateTime?.toDate?.()?.toISOString() ||
+            bookingData.trip?.pickupDateTime,
+        }
+      : undefined;
+    const normalizedConfirmation = bookingData?.confirmation
+      ? {
+          ...bookingData.confirmation,
+          sentAt:
+            bookingData.confirmation?.sentAt?.toDate?.()?.toISOString() ||
+            bookingData.confirmation?.sentAt,
+          confirmedAt:
+            bookingData.confirmation?.confirmedAt?.toDate?.()?.toISOString() ||
+            bookingData.confirmation?.confirmedAt,
+        }
+      : undefined;
     
     // Convert Firebase timestamps to ISO strings for JSON serialization
     const booking = {
       id: bookingDoc.id,
       ...bookingData,
+      ...(normalizedTrip ? { trip: normalizedTrip } : {}),
+      ...(normalizedConfirmation ? { confirmation: normalizedConfirmation } : {}),
       pickupDateTime: bookingData?.pickupDateTime?.toDate?.()?.toISOString() || bookingData?.pickupDateTime,
       createdAt: bookingData?.createdAt?.toDate?.()?.toISOString() || bookingData?.createdAt,
       updatedAt: bookingData?.updatedAt?.toDate?.()?.toISOString() || bookingData?.updatedAt,
