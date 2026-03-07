@@ -122,7 +122,7 @@ export default function TermsPageContent() {
                 {cmsData?.['contact-title'] || '7. Contact Information'}
               </H4>
               <Text>
-                {cmsData?.['contact-content'] || 'If you have any questions about these Terms of Service, please contact us at rides@fairfieldairportcar.com or text us at (646) 221-6370.'}
+                {cmsData?.['contact-content'] || 'If you have any questions about these Terms of Service, please contact us at rides@fairfieldairportcar.com or text us at (203) 990-1815.'}
               </Text>
             </Stack>
           </Box>

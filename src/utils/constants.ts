@@ -14,7 +14,7 @@ export const APP_CONFIG = {
  */
 export const BUSINESS_CONTACT = {
   // Primary contact for rides and bookings
-  phone: '(646) 221-6370',
+  phone: '(203) 990-1815',
   // Email addresses - note: domain is 'fairfieldairportcar.com' (no 's')
   ridesEmail: 'rides@fairfieldairportcar.com',
   supportEmail: 'support@fairfieldairportcar.com',
