@@ -23,10 +23,14 @@ const NarrowActionContainer = styled.div`
 
 const ResponsiveActionGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: 16px;
   width: 100%;
   max-width: 760px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {

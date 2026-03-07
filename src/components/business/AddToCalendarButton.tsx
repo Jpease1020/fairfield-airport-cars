@@ -25,7 +25,9 @@ const DropdownMenu = styled(Box)<{ $isOpen: boolean }>`
   top: 100%;
   left: 0;
   margin-top: ${spacing.xs};
-  min-width: 200px;
+  width: min(320px, calc(100vw - 32px));
+  min-width: 0;
+  max-width: calc(100vw - 32px);
   background-color: ${colors.background.primary};
   border: 1px solid ${colors.border.default};
   border-radius: ${borderRadius.default};
@@ -33,6 +35,11 @@ const DropdownMenu = styled(Box)<{ $isOpen: boolean }>`
   z-index: 1000;
   display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
   padding: ${spacing.sm};
+
+  @media (max-width: 640px) {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 `;
 
 const DropdownItem = styled.button`
@@ -168,4 +175,3 @@ export const AddToCalendarButton: React.FC<AddToCalendarButtonProps> = ({
     </DropdownContainer>
   );
 };
-
