@@ -28,9 +28,13 @@ interface ManageBookingClientProps {
 
 const ActionGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: 16px;
   width: 100%;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const SecondaryActionGrid = styled(ActionGrid)`
