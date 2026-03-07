@@ -2,12 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import styled from 'styled-components';
 import { Button, Container, Stack, H2, Text } from '@/design/ui';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { useBooking } from '@/providers/BookingProvider';
 import { BookingChat } from '@/components/booking/BookingChat';
 
 import BookingForm from './booking-form';
+
+const FullWidthStack = styled(Stack)`
+  width: 100%;
+`;
 
 function BookPageClient() {
   const { cmsData: allCmsData } = useCMSData();
@@ -59,7 +64,7 @@ function BookPageClient() {
         )}
 
         {chatEnabled && !showForm && (
-          <Stack spacing="sm" align="center" style={{ width: '100%' }}>
+          <FullWidthStack spacing="sm" align="center">
             <BookingChat />
             <Button
               type="button"
@@ -68,7 +73,7 @@ function BookPageClient() {
               onClick={() => setShowForm(true)}
               size="sm"
             />
-          </Stack>
+          </FullWidthStack>
         )}
 
         {showForm && <BookingForm cmsData={pageCmsData} />}

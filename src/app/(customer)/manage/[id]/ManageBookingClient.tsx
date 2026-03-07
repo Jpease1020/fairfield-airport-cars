@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import styled from 'styled-components';
 import {
   GridSection,
   ToastProvider,
@@ -24,6 +25,17 @@ interface ManageBookingClientProps {
   bookingId: string;
   cmsData?: any;
 }   
+
+const ActionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+`;
+
+const SecondaryActionGrid = styled(ActionGrid)`
+  max-width: 520px;
+`;
 
 function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientProps) {
   // Temporary: no CMS data for now
@@ -246,14 +258,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
           <Box variant="elevated" padding="lg">
             <Stack spacing="lg" align="center">
               {canModifyBooking ? (
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: '16px',
-                    width: '100%',
-                  }}
-                >
+                <ActionGrid>
                   <Button
                     onClick={() => router.push(`/booking/${bookingId}/edit`)}
                     variant="primary"
@@ -276,7 +281,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                   >
                     {cancelling ? (pageCmsData?.['cancelling'] || 'Cancelling...') : (pageCmsData?.['cancel-booking'] || 'Cancel Booking')}
                   </Button>
-                </div>
+                </ActionGrid>
               ) : (
                 <Box variant="outlined" padding="md">
                   <Text align="center" color="secondary">
@@ -287,15 +292,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                 </Box>
               )}
 
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                  gap: '16px',
-                  width: '100%',
-                  maxWidth: '520px',
-                }}
-              >
+              <SecondaryActionGrid>
                 <Button
                   onClick={() => router.push(withToken(`/booking/${bookingId}`))}
                   variant="outline"
@@ -311,7 +308,7 @@ function ManageBookingPageContent({ bookingId, cmsData }: ManageBookingClientPro
                 >
                   {pageCmsData?.['backToBookings'] || 'Back to Bookings'}
                 </Button>
-              </div>
+              </SecondaryActionGrid>
             </Stack>
           </Box>
         </Container>

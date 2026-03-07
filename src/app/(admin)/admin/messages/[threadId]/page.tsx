@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { collection, doc, onSnapshot, query, where } from 'firebase/firestore';
-import { Alert, Box, Button, Container, H1, LoadingSpinner, Stack, Text, Textarea } from '@/design/ui';
+import { Alert, Box, Button, Container, LoadingSpinner, Stack, Text, Textarea } from '@/design/ui';
 import { db } from '@/lib/utils/firebase';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatBusinessDate } from '@/lib/utils/booking-date-time';
@@ -308,7 +308,7 @@ export default function AdminMessageThreadPage() {
     const shouldScroll = autoScrollRef.current || previousMessageCountRef.current === 0;
 
     if (hasNewMessage && shouldScroll) {
-      requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
         container.scrollTop = container.scrollHeight;
       });
     }
