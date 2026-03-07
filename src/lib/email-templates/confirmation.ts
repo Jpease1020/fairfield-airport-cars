@@ -70,48 +70,102 @@ export function buildConfirmationEmailHtml({
   businessPhone,
   businessEmail,
 }: ConfirmationTemplateData): string {
+  const totalAmount = ((booking.fare || 0) + (booking.tipAmount || 0)).toFixed(2);
+  const cleanPhone = businessPhone.replace(/[^+\d]/g, '');
+
   return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: var(--color-primary-600);">Hi ${customerName},</h2>
-
-        <p>Your ride has been confirmed! Here are your booking details:</p>
-
-        <div style="background-color: var(--color-gray-50); padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: var(--color-primary-700); margin-top: 0;">📋 BOOKING DETAILS</h3>
-          <p><strong>Booking ID:</strong> ${booking.id}</p>
-          <p><strong>Pickup Time:</strong> ${pickupDateTime}</p>
-          <p><strong>Pickup Location:</strong> ${pickupAddress}</p>
-          <p><strong>Drop-off Location:</strong> ${dropoffAddress}</p>
-          ${booking.flightInfo?.airline ? `<p><strong>Airline:</strong> ${booking.flightInfo.airline}</p>` : ''}
-          ${booking.flightInfo?.flightNumber ? `<p><strong>Flight Number:</strong> ${booking.flightInfo.flightNumber}</p>` : ''}
-          ${booking.flightInfo?.terminal ? `<p><strong>Terminal:</strong> ${booking.flightInfo.terminal}</p>` : ''}
-          ${booking.flightInfo?.arrivalTime ? `<p><strong>Flight Time (as provided):</strong> ${booking.flightInfo.arrivalTime}</p>` : ''}
-          ${booking.notes ? `<p><strong>Special Instructions:</strong> ${booking.notes}</p>` : ''}
+    <div style="margin:0; padding:32px 16px; background-color:#f3f5f7; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; color:#172033;">
+      <div style="max-width:640px; margin:0 auto; background-color:#ffffff; border:1px solid #d7dee7; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(23,32,51,0.06);">
+        <div style="padding:20px 28px; background:linear-gradient(135deg,#0f2e57 0%,#17457f 100%); color:#ffffff;">
+          <div style="font-size:12px; letter-spacing:0.12em; text-transform:uppercase; opacity:0.82; margin-bottom:10px;">Ride confirmed</div>
+          <div style="font-size:30px; line-height:1.2; font-weight:700; margin:0;">Your booking is set</div>
+          <div style="font-size:14px; opacity:0.88; margin-top:10px;">Booking ID: ${booking.id}</div>
         </div>
 
-        <div style="background-color: var(--color-background-secondary); padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: var(--color-success); margin-top: 0;">💰 FARE INFORMATION</h3>
-          ${booking.tipAmount && booking.tipAmount > 0 ? `<p><strong>Tip:</strong> $${booking.tipAmount?.toFixed(2)}</p>` : ''}
-          <p><strong>Total Amount:</strong> $${((booking.fare || 0) + (booking.tipAmount || 0)).toFixed(2)}</p>
+        <div style="padding:32px 28px 12px 28px;">
+          <div style="font-size:18px; font-weight:700; margin-bottom:18px;">Hi ${customerName},</div>
+          <div style="font-size:17px; line-height:1.65; color:#25324a; margin-bottom:24px;">
+            Your ride has been confirmed. Here is your final itinerary and your live tracking link.
+          </div>
+
+          <div style="border:1px solid #d7dee7; border-radius:16px; overflow:hidden; margin-bottom:24px;">
+            <div style="padding:16px 20px; background-color:#f8fafc; border-bottom:1px solid #d7dee7; font-size:20px; font-weight:700; color:#172033;">
+              Booking Details
+            </div>
+            <div style="padding:20px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                <tr>
+                  <td style="padding:0 0 12px 0; font-size:14px; color:#6a768b;">Pickup Time</td>
+                  <td style="padding:0 0 12px 16px; font-size:16px; color:#172033; font-weight:600; text-align:right;">${pickupDateTime}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 12px 0; font-size:14px; color:#6a768b; vertical-align:top;">Pickup</td>
+                  <td style="padding:0 0 12px 16px; font-size:16px; color:#172033; text-align:right;">${pickupAddress}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 12px 0; font-size:14px; color:#6a768b; vertical-align:top;">Dropoff</td>
+                  <td style="padding:0 0 12px 16px; font-size:16px; color:#172033; text-align:right;">${dropoffAddress}</td>
+                </tr>
+                ${booking.flightInfo?.airline ? `
+                <tr>
+                  <td style="padding:0 0 12px 0; font-size:14px; color:#6a768b;">Airline</td>
+                  <td style="padding:0 0 12px 16px; font-size:16px; color:#172033; text-align:right;">${booking.flightInfo.airline}</td>
+                </tr>` : ''}
+                ${booking.flightInfo?.flightNumber ? `
+                <tr>
+                  <td style="padding:0 0 12px 0; font-size:14px; color:#6a768b;">Flight Number</td>
+                  <td style="padding:0 0 12px 16px; font-size:16px; color:#172033; text-align:right;">${booking.flightInfo.flightNumber}</td>
+                </tr>` : ''}
+                ${booking.flightInfo?.terminal ? `
+                <tr>
+                  <td style="padding:0 0 12px 0; font-size:14px; color:#6a768b;">Terminal</td>
+                  <td style="padding:0 0 12px 16px; font-size:16px; color:#172033; text-align:right;">${booking.flightInfo.terminal}</td>
+                </tr>` : ''}
+                ${booking.flightInfo?.arrivalTime ? `
+                <tr>
+                  <td style="padding:0 0 12px 0; font-size:14px; color:#6a768b;">Flight Time</td>
+                  <td style="padding:0 0 12px 16px; font-size:16px; color:#172033; text-align:right;">${booking.flightInfo.arrivalTime}</td>
+                </tr>` : ''}
+                ${booking.notes ? `
+                <tr>
+                  <td style="padding:0; font-size:14px; color:#6a768b; vertical-align:top;">Notes</td>
+                  <td style="padding:0 0 0 16px; font-size:16px; color:#172033; text-align:right;">${booking.notes}</td>
+                </tr>` : ''}
+              </table>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+            <div style="flex:1 1 220px; padding:20px; border-radius:16px; background-color:#f6f8fb; border:1px solid #d7dee7;">
+              <div style="font-size:18px; font-weight:700; color:#172033; margin-bottom:12px;">Fare Summary</div>
+              ${booking.tipAmount && booking.tipAmount > 0 ? `<div style="font-size:15px; color:#4c5a71; margin-bottom:8px;">Tip: $${booking.tipAmount.toFixed(2)}</div>` : ''}
+              <div style="font-size:26px; font-weight:800; color:#0f2e57;">$${totalAmount}</div>
+              <div style="font-size:13px; color:#6a768b; margin-top:8px;">Includes the confirmed trip total.</div>
+            </div>
+
+            <div style="flex:1 1 220px; padding:20px; border-radius:16px; background-color:#eef6ff; border:1px solid #c8dcf5; text-align:center;">
+              <div style="font-size:18px; font-weight:700; color:#172033; margin-bottom:10px;">Track Your Ride</div>
+              <div style="font-size:15px; line-height:1.6; color:#4c5a71; margin-bottom:16px;">Open live tracking when your driver is on the way.</div>
+              <a href="${trackingUrl}" style="display:inline-block; background-color:#0f2e57; color:#ffffff; text-decoration:none; font-weight:700; font-size:16px; line-height:1; padding:14px 24px; border-radius:999px; box-shadow:0 6px 18px rgba(15,46,87,0.18);">
+                View Live Tracking
+              </a>
+            </div>
+          </div>
+
+          <div style="padding:18px 20px; border-radius:16px; background-color:#fff8ea; border:1px solid #f3d8a4; color:#5a430f; margin-bottom:24px;">
+            <div style="font-size:16px; font-weight:700; margin-bottom:6px;">Need help?</div>
+            <div style="font-size:15px; line-height:1.6;">
+              Text or call <a href="tel:${cleanPhone}" style="color:#5a430f; font-weight:700; text-decoration:underline;">${businessPhone}</a>
+              <br />
+              Email <a href="mailto:${businessEmail}" style="color:#5a430f; font-weight:700; text-decoration:underline;">${businessEmail}</a>
+            </div>
+          </div>
+
+          <div style="font-size:15px; line-height:1.7; color:#4c5a71; padding-bottom:28px;">
+            Thank you for choosing <strong style="color:#172033;">${businessName}</strong>.
+          </div>
         </div>
-
-        <div style="background-color: var(--color-background-tertiary); padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-          <h3 style="color: var(--color-primary-hover); margin-top: 0;">🔗 TRACK YOUR RIDE</h3>
-          <p>Track your driver in real-time:</p>
-          <a href="${trackingUrl}" style="display: inline-block; background-color: var(--color-primary); color: var(--color-background-primary); padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Live Tracking</a>
-        </div>
-
-        <div style="background-color: var(--color-background-secondary); padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: var(--color-warning); margin-top: 0;">💬 CONTACT INFORMATION</h3>
-        <p>If you have any questions or need to make changes, please contact us:</p>
-        <p><strong>Text or call:</strong> ${businessPhone}</p>
-          <p><strong>Email:</strong> ${businessEmail}</p>
-        </div>
-
-        <p>Thank you for choosing <strong>${businessName}</strong>!</p>
-
-        <p>Best regards,<br>
-        The ${businessName} Team</p>
       </div>
-    `;
+    </div>
+  `;
 }

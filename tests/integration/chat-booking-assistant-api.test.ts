@@ -87,7 +87,7 @@ describe('POST /api/chat/booking-assistant', () => {
     validateTripDetails.mockResolvedValue({ valid: true, errors: [], fieldErrors: {} });
     validateContactInfo.mockResolvedValue({ valid: true, errors: [], fieldErrors: {} });
     createBooking.mockResolvedValue({ success: true, bookingId: 'FAC-9001', totalFare: 145 });
-    handoffToHuman.mockResolvedValue({ handoff: true, reason: 'manual', phone: '(646) 221-6370' });
+    handoffToHuman.mockResolvedValue({ handoff: true, reason: 'manual', phone: '(203) 990-1815' });
   });
 
   it('returns 404 when chat feature flag is disabled', async () => {

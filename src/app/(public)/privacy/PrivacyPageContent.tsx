@@ -249,7 +249,7 @@ export default function PrivacyPageContent() {
                   {cmsData?.['sections-9-title'] || '10. Contact Us'}
                 </H4>
                 <Text data-testid="privacy-section-content-9">
-                  {cmsData?.['sections-9-content'] || 'If you have questions about this Privacy Policy or how we handle your information, please contact us: Fairfield Airport Cars, Text: (646) 221-6370, Email: rides@fairfieldairportcar.com'}
+                  {cmsData?.['sections-9-content'] || 'If you have questions about this Privacy Policy or how we handle your information, please contact us: Fairfield Airport Cars, Text: (203) 990-1815, Email: rides@fairfieldairportcar.com'}
                 </Text>
               </Stack>
             </Box>

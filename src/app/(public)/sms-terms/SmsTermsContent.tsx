@@ -105,7 +105,7 @@ export default function SmsTermsContent() {
                 For help or questions about our SMS program, reply HELP to any message, or contact us at:
               </Text>
               <Stack spacing="sm">
-                <Text>{'\u2022'} Text: (646) 221-6370</Text>
+                <Text>{'\u2022'} Text: (203) 990-1815</Text>
                 <Text>{'\u2022'} Email: rides@fairfieldairportcar.com</Text>
               </Stack>
             </Stack>
@@ -137,7 +137,7 @@ export default function SmsTermsContent() {
                 Fairfield Airport Car Service
               </Text>
               <Stack spacing="sm">
-                <Text>Text: (646) 221-6370</Text>
+                <Text>Text: (203) 990-1815</Text>
                 <Text>Email: rides@fairfieldairportcar.com</Text>
                 <Text>Web: fairfieldairportcar.com</Text>
               </Stack>

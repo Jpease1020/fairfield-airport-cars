@@ -291,7 +291,7 @@ export async function submitBookingOrchestration(
       await sendBookingVerificationEmail(bookingRecord as unknown as Booking, confirmationUrl);
     } catch {
       emailWarning =
-        'Your ride request is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 so we can finalize it.';
+        'Your ride request is saved, but we could not send the confirmation email. Please text us at (203) 990-1815 so we can finalize it.';
       await recordBookingAttempt({
         stage: 'submit',
         status: 'warning',
@@ -465,7 +465,7 @@ export async function createPaidBookingAndNotify(
   } catch (notificationError) {
     console.error('Failed to send verification notifications:', notificationError);
     emailWarning =
-      'Your booking is saved, but we could not send the confirmation email. Please text us at (646) 221-6370 to finish confirming.';
+      'Your booking is saved, but we could not send the confirmation email. Please text us at (203) 990-1815 to finish confirming.';
     await recordBookingAttempt({
       stage: 'payment',
       status: 'warning',

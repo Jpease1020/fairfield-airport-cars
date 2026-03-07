@@ -31,7 +31,7 @@ describe('Admin Notification Service', () => {
   it('should send SMS when admin phone is configured', async () => {
     mockGetBusinessConfig.mockReturnValueOnce({
       name: 'Fairfield Airport Cars',
-      phone: '(646) 221-6370',
+      phone: '(203) 990-1815',
       email: 'rides@fairfieldairportcar.com',
       adminPhone: '+12035551234',
     });
@@ -49,7 +49,7 @@ describe('Admin Notification Service', () => {
   it('should handle missing admin phone gracefully without throwing', async () => {
     mockGetBusinessConfig.mockReturnValueOnce({
       name: 'Fairfield Airport Cars',
-      phone: '(646) 221-6370',
+      phone: '(203) 990-1815',
       email: 'rides@fairfieldairportcar.com',
       adminPhone: undefined,
     });
@@ -71,7 +71,7 @@ describe('Admin Notification Service', () => {
   it('should handle SMS sending errors gracefully without throwing', async () => {
     mockGetBusinessConfig.mockReturnValueOnce({
       name: 'Fairfield Airport Cars',
-      phone: '(646) 221-6370',
+      phone: '(203) 990-1815',
       email: 'rides@fairfieldairportcar.com',
       adminPhone: '+12035551234',
     });
@@ -93,7 +93,7 @@ describe('Admin Notification Service', () => {
   it('should handle null business settings gracefully', async () => {
     mockGetBusinessConfig.mockReturnValueOnce({
       name: 'Fairfield Airport Cars',
-      phone: '(646) 221-6370',
+      phone: '(203) 990-1815',
       email: 'rides@fairfieldairportcar.com',
       adminPhone: undefined,
     });

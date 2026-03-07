@@ -119,7 +119,7 @@ export function FlightInfoPhase({
                 {warning}
               </Text>
               <WarningSubtext size="sm" align="center" color="secondary">
-                Also check your spam/junk folder. If you still don't see the email, please text us at (646) 221-6370.
+                Also check your spam/junk folder. If you still don't see the email, please text us at (203) 990-1815.
               </WarningSubtext>
             </Stack>
           </WarningBox>
