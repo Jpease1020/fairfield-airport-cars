@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Box, Container, H2, Stack, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/design/ui';
+import { Box, Button, Container, H2, Stack, Text, LoadingSpinner, ActionButtonGroup, GridSection, useToast, ToastProvider } from '@/design/ui';
 import { Booking } from '@/types/booking';
 import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
@@ -328,15 +328,22 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
       {showCalendarButton && booking?.id && (
         <GridSection variant="content" columns={1}>
           <Container>
-            <AddToCalendarButton
-              pickupAddress={pickupAddress}
-              dropoffAddress={dropoffAddress}
-              pickupDateTime={pickupDateTime}
-              bookingId={booking.id}
-              customerName={customerName}
-              variant="primary"
-              size="md"
-            />
+            <Box variant="elevated" padding="lg">
+              <Stack align="center">
+                <div style={{ width: '100%', maxWidth: '360px' }}>
+                  <AddToCalendarButton
+                    pickupAddress={pickupAddress}
+                    dropoffAddress={dropoffAddress}
+                    pickupDateTime={pickupDateTime}
+                    bookingId={booking.id}
+                    customerName={customerName}
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                  />
+                </div>
+              </Stack>
+            </Box>
           </Container>
         </GridSection>
       )}
@@ -350,7 +357,26 @@ function BookingDetailsContent({ bookingId }: BookingDetailClientProps) {
               <Text align="center" color="secondary">
                 {cmsData?.['booking-quick-actions-description'] || 'Manage your booking or book another ride'}
               </Text>
-              <ActionButtonGroup buttons={actionButtons} />
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '16px',
+                  width: '100%',
+                  maxWidth: '760px',
+                }}
+              >
+                {actionButtons.map((action) => (
+                  <Button
+                    key={action.id}
+                    onClick={action.onClick}
+                    variant={action.variant}
+                    fullWidth
+                  >
+                    {action.icon} {action.label}
+                  </Button>
+                ))}
+              </div>
             </Stack>
           </Box>
         </Container>
