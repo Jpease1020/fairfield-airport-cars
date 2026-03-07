@@ -1,6 +1,7 @@
 /**
  * Utility functions for formatting data
  */
+import { parseBookingDate } from '@/utils/booking-helpers';
 import { getBusinessTimeZone } from '@/lib/utils/booking-date-time';
 
 export const formatCurrency = (amount: number, currency = 'USD'): string => {
@@ -25,10 +26,11 @@ export const formatDate = (date: Date | string, options?: Intl.DateTimeFormatOpt
 };
 
 export const formatDateTimeNoSeconds = (
-  date: Date | string,
+  date: Date | string | number | Record<string, unknown>,
   options?: Intl.DateTimeFormatOptions
 ): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = parseBookingDate(date);
+  if (!dateObj) return 'Date not available';
 
   const defaultOptions: Intl.DateTimeFormatOptions = {
     timeZone: getBusinessTimeZone(),
@@ -69,10 +71,11 @@ export const formatTime = (date: Date | string, options?: Intl.DateTimeFormatOpt
 };
 
 export const formatTimeNoSeconds = (
-  date: Date | string,
+  date: Date | string | number | Record<string, unknown>,
   options?: Intl.DateTimeFormatOptions
 ): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = parseBookingDate(date);
+  if (!dateObj) return 'Time not available';
 
   const defaultOptions: Intl.DateTimeFormatOptions = {
     timeZone: getBusinessTimeZone(),
