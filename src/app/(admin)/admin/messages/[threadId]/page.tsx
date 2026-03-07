@@ -9,6 +9,7 @@ import { collection, doc, onSnapshot, query, where } from 'firebase/firestore';
 import { Alert, Box, Button, Container, H1, LoadingSpinner, Stack, Text, Textarea } from '@/design/ui';
 import { db } from '@/lib/utils/firebase';
 import { authFetch } from '@/lib/utils/auth-fetch';
+import { formatBusinessDate } from '@/lib/utils/booking-date-time';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
 const THREAD_POLL_INTERVAL_MS = 5000;
@@ -49,6 +50,23 @@ const MessageBubble = styled.div<{ $sender: SmsThreadMessage['senderType'] }>`
 const ComposerBar = styled(Box)`
   position: sticky;
   bottom: 0;
+`;
+
+const DayDivider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+`;
+
+const DayDividerLine = styled.div`
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+`;
+
+const DayDividerLabel = styled(Text)`
+  white-space: nowrap;
 `;
 
 const MessageList = styled.div`
@@ -95,6 +113,9 @@ const mapMessage = (
     createdAt: toIso(raw.createdAt),
   };
 };
+
+const getMessageDayLabel = (createdAt: string | null): string =>
+  createdAt ? formatBusinessDate(createdAt) : 'Unknown date';
 
 export default function AdminMessageThreadPage() {
   const router = useRouter();
@@ -315,23 +336,41 @@ export default function AdminMessageThreadPage() {
                 {messages.length === 0 ? (
                   <Text color="secondary">No messages yet.</Text>
                 ) : (
-                  messages.map((message) => (
-                    <MessageBubble key={message.id} $sender={message.senderType}>
-                      <Stack spacing="xs">
-                        <Text size="sm" weight="bold">
-                          {message.senderType === 'customer'
-                            ? (thread?.customerName || thread?.customerPhone || 'Customer')
-                            : message.senderType === 'admin'
-                              ? 'Gregg'
-                              : 'System'}
-                        </Text>
-                        <Text>{message.body}</Text>
-                        <Text size="sm" color="secondary">
-                          {message.createdAt ? formatDateTimeNoSeconds(message.createdAt) : 'Just now'}
-                        </Text>
-                      </Stack>
-                    </MessageBubble>
-                  ))
+                  messages.map((message, index) => {
+                    const currentDay = getMessageDayLabel(message.createdAt);
+                    const previousDay =
+                      index > 0 ? getMessageDayLabel(messages[index - 1]?.createdAt ?? null) : null;
+                    const showDivider = index === 0 || currentDay !== previousDay;
+
+                    return (
+                      <React.Fragment key={message.id}>
+                        {showDivider && (
+                          <DayDivider>
+                            <DayDividerLine />
+                            <DayDividerLabel size="sm" color="secondary">
+                              {currentDay}
+                            </DayDividerLabel>
+                            <DayDividerLine />
+                          </DayDivider>
+                        )}
+                        <MessageBubble $sender={message.senderType}>
+                          <Stack spacing="xs">
+                            <Text size="sm" weight="bold">
+                              {message.senderType === 'customer'
+                                ? (thread?.customerName || thread?.customerPhone || 'Customer')
+                                : message.senderType === 'admin'
+                                  ? 'Gregg'
+                                  : 'System'}
+                            </Text>
+                            <Text>{message.body}</Text>
+                            <Text size="sm" color="secondary">
+                              {message.createdAt ? formatDateTimeNoSeconds(message.createdAt) : 'Just now'}
+                            </Text>
+                          </Stack>
+                        </MessageBubble>
+                      </React.Fragment>
+                    );
+                  })
                 )}
                 </Stack>
               </MessageList>

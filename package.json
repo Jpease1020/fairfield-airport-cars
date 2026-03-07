@@ -31,6 +31,7 @@
     "deploy:preview": "npm run build && vercel",
     "cms:export-snapshot": "node scripts/export-cms-snapshot.mjs",
     "cms:verify-parity": "node scripts/verify-cms-static-parity.mjs",
+    "sms:backfill-threads": "node scripts/backfill-sms-thread-ids.mjs",
     "smoke:prod": "node scripts/smoke-test-production.mjs",
     "prepare": "husky"
   },
