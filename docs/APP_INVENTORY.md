@@ -18,7 +18,7 @@ High-level overview of major features and where they live.
 
 ## Cancellation
 
-- Fee-based policy: 24h+ no fee; &lt;24h 25%; &lt;12h 50%; &lt;6h 75%. Copy on Help, Terms, Home FAQ, Cancel page, and API messages. Single FAQ entry for cancellation.
+- Fee-based policy: 24h+ no fee; <24h 25%; <12h 50%; <6h 75%. Copy on Help, Terms, Home FAQ, Cancel page, and API messages. Single FAQ entry for cancellation.
 
 ## Save my info & SMS opt-in
 
@@ -44,3 +44,32 @@ High-level overview of major features and where they live.
 
 - **Design system:** `src/design/` – tokens, layout, base components. See LAYOUT_SYSTEM_GUIDE.md and DESIGN_SYSTEM_PROTECTION.md.
 - **Booking flow:** Trip details → Contact info → Payment; quote API, submit API, process-payment; booking stored in Firestore `bookings`.
+
+---
+
+## THIRD-PARTY SERVICES (Reference)
+
+| Service | Purpose | Monthly Cost | Config Location |
+|---------|---------|--------------|-----------------|
+| **Square** | Payment processing | 2.6% + $0.10/txn (~$20-50) | `.env` SQUARE_* |
+| **Twilio** | SMS notifications | ~$0.0075/SMS (~$5-20) | `.env` TWILIO_* |
+| **SendGrid** | Email (SMTP) | Free-$10 | `.env` EMAIL_* |
+| **Google Maps** | Address autocomplete | ~$5-50 | `.env` GOOGLE_MAPS_* |
+| **Google Calendar** | Driver availability | Free | `.env` GOOGLE_* |
+| **Firebase Firestore** | Database | Free-$50 | `.env` FIREBASE_* |
+| **Firebase Auth** | User authentication | Free | `.env` FIREBASE_* |
+| **Vercel** | Hosting | $0-20 | `vercel.json` |
+
+---
+
+## COST BREAKDOWN (Estimated)
+
+| Service | Low | High | Notes |
+|---------|-----|------|-------|
+| Square | $20 | $50 | 2.6% + $0.10 per txn |
+| Twilio | $5 | $20 | ~$0.0075/SMS |
+| SendGrid | $0 | $10 | Free tier covers most |
+| Google Maps | $5 | $50 | Pay per request |
+| Firebase | $0 | $50 | Free tier usually enough |
+| Vercel | $0 | $20 | Free tier or Pro |
+| **Total** | **$30** | **$200** | |
