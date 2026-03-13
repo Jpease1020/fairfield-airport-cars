@@ -497,4 +497,27 @@ export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
     console.error('Error fetching marketing customers:', error);
     return [];
   }
-}; 
+};
+
+/**
+ * Update smsOptIn for all bookings matching a phone number.
+ * Used by the inbound SMS webhook to handle STOP/START keywords.
+ */
+export const updateSmsOptInByPhone = async (phone: string, smsOptIn: boolean): Promise<number> => {
+  const normalizedInput = phone.replace(/\D/g, '').slice(-10);
+  if (normalizedInput.length < 10) return 0;
+
+  const snapshot = await getDocs(collection(db, 'bookings'));
+  let updatedCount = 0;
+
+  for (const docSnap of snapshot.docs) {
+    const data = docSnap.data();
+    const bookingPhone = (data.phone || '').replace(/\D/g, '').slice(-10);
+    if (bookingPhone === normalizedInput) {
+      await updateDoc(doc(db, 'bookings', docSnap.id), { smsOptIn });
+      updatedCount++;
+    }
+  }
+
+  return updatedCount;
+};

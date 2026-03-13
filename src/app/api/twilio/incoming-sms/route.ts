@@ -3,6 +3,7 @@ import twilio from 'twilio';
 import { sendSms } from '@/lib/services/twilio-service';
 import { saveSmsMessage } from '@/lib/services/sms-message-service';
 import { findOrCreateThread, updateThreadOnInbound } from '@/lib/services/sms-thread-service';
+import { updateSmsOptInByPhone } from '@/lib/services/database-service';
 
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const forwardToNumber = process.env.GREGG_SMS_FORWARD_NUMBER || process.env.ADMIN_FORWARD_SMS_TO;
@@ -42,6 +43,23 @@ export async function POST(request: NextRequest) {
     process.env.BASE_URL ||
     new URL(request.url).origin;
 
+  // Detect SMS opt-out/opt-in keywords (Twilio standard + CTIA required)
+  const OPT_OUT_KEYWORDS = ['stop', 'unsubscribe', 'cancel', 'end', 'quit'];
+  const OPT_IN_KEYWORDS = ['start', 'unstop'];
+  const normalizedBody = body.trim().toLowerCase();
+  const isOptOut = OPT_OUT_KEYWORDS.includes(normalizedBody);
+  const isOptIn = OPT_IN_KEYWORDS.includes(normalizedBody);
+
+  // Handle opt-out/opt-in: update smsOptIn in Firestore
+  if ((isOptOut || isOptIn) && from) {
+    try {
+      const updatedCount = await updateSmsOptInByPhone(from, isOptIn);
+      console.log(`[Twilio webhook] SMS ${isOptOut ? 'opt-out' : 'opt-in'} from ${from}: updated ${updatedCount} bookings`);
+    } catch (error) {
+      console.error(`[Twilio webhook] Failed to update smsOptIn for ${from}:`, error);
+    }
+  }
+
   let threadId: string | null = null;
   let shouldNotifyAdmin = false;
 
@@ -65,7 +83,8 @@ export async function POST(request: NextRequest) {
     console.error('[Twilio webhook] Failed to persist inbound thread/message:', error);
   }
 
-  if (forwardToNumber && body.trim() && shouldNotifyAdmin) {
+  // Don't forward opt-out/opt-in keywords to Gregg — just noise
+  if (forwardToNumber && body.trim() && shouldNotifyAdmin && !isOptOut && !isOptIn) {
     try {
       const forwardBody = `New message from ${from}: "${body.trim().slice(0, 80)}" Reply: ${
         threadId ? `${baseUrl}/admin/messages/${threadId}` : `${baseUrl}/admin/messages`
