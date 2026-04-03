@@ -38,6 +38,7 @@ export async function POST(request: Request) {
     baseFare: BASE_FARE,
     perMile: PER_MILE_RATE,
     perMinute: PER_MINUTE_RATE,
+    personalDiscountPercent,
     airportReturnMultiplier,
   } = settings;
 
@@ -115,9 +116,9 @@ export async function POST(request: Request) {
 
   let fare = Math.ceil(BASE_FARE + distanceMiles * PER_MILE_RATE + durationTrafficMinutes * PER_MINUTE_RATE);
 
-  // Apply 10% discount for personal rides
-  if (fareType === 'personal') {
-    fare = Math.ceil(fare * 0.9);
+  // Apply personal ride discount
+  if (fareType === 'personal' && personalDiscountPercent > 0) {
+    fare = Math.ceil(fare * (1 - personalDiscountPercent / 100));
   }
 
   // Check if pickup is airport for return trip multiplier

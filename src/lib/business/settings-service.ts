@@ -1,4 +1,5 @@
 import { Settings, DEFAULT_SETTINGS } from '@/types/settings';
+import { getPricingConfig } from '@/lib/business/pricing-config';
 
 const readNumberEnv = (key: string): number | undefined => {
   const raw = process.env[key];
@@ -8,14 +9,17 @@ const readNumberEnv = (key: string): number | undefined => {
 };
 
 export async function getSettings(): Promise<Settings> {
+  // Read pricing from Firestore (with env var fallback built into getPricingConfig defaults)
+  const pricing = await getPricingConfig();
+
   return {
-    baseFare: readNumberEnv('FARE_BASE') ?? DEFAULT_SETTINGS.baseFare,
-    perMile: readNumberEnv('FARE_PER_MILE') ?? DEFAULT_SETTINGS.perMile,
-    perMinute: readNumberEnv('FARE_PER_MINUTE') ?? DEFAULT_SETTINGS.perMinute,
+    baseFare: pricing.baseFare,
+    perMile: pricing.perMile,
+    perMinute: pricing.perMinute,
+    personalDiscountPercent: pricing.personalDiscountPercent,
+    airportReturnMultiplier: pricing.airportReturnMultiplier,
     depositPercent: readNumberEnv('FARE_DEPOSIT_PERCENT') ?? DEFAULT_SETTINGS.depositPercent,
     bufferMinutes: readNumberEnv('BOOKING_BUFFER_MINUTES') ?? DEFAULT_SETTINGS.bufferMinutes,
-    airportReturnMultiplier:
-      readNumberEnv('FARE_AIRPORT_RETURN_MULTIPLIER') ?? DEFAULT_SETTINGS.airportReturnMultiplier,
     cancellation: {
       over24hRefundPercent:
         readNumberEnv('CANCEL_REFUND_OVER_24H_PERCENT') ??
@@ -28,8 +32,4 @@ export async function getSettings(): Promise<Settings> {
         DEFAULT_SETTINGS.cancellation.under3hRefundPercent,
     },
   };
-}
-
-export async function updateSettings(_partial: Partial<Settings>): Promise<void> {
-  throw new Error('Runtime settings updates are disabled. Configure pricing via environment variables.');
 }

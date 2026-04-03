@@ -8,6 +8,7 @@ export interface Settings {
   baseFare: number;          // dollars
   perMile: number;          // dollars per mile
   perMinute: number;        // dollars per minute
+  personalDiscountPercent: number; // % discount for personal rides
   depositPercent: number;   // % of fare charged upfront
   bufferMinutes: number;    // gap required between rides
   airportReturnMultiplier: number; // multiplier for airport-to-home rides
@@ -15,12 +16,13 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  baseFare: 10,
-  perMile: 3.5,
-  perMinute: 0.5,
+  baseFare: 15,
+  perMile: 1.80,
+  perMinute: 0.20,
+  personalDiscountPercent: 10,
   depositPercent: 50,
   bufferMinutes: 60,
-  airportReturnMultiplier: 1.8,
+  airportReturnMultiplier: 1.15,
   cancellation: {
     over24hRefundPercent: 100,
     between3And24hRefundPercent: 50,
