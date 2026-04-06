@@ -32,7 +32,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
   const { isLoggedIn } = useAuth();
   const navigationItems: NavigationItem[] = [
     ...(currentPath !== '/' ? [{ name: 'Home', href: '/', current: false }] : []),
-    ...(currentPath !== '/book' ? [{ name: 'Book a Ride', href: '/book', current: false }] : []),
+    // "Book Now" button in actions handles booking CTA — no need for duplicate nav link
     ...(currentPath !== '/about' ? [{ name: 'About', href: '/about', current: false }] : []),
     ...(currentPath !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
     ...(isLoggedIn && currentPath !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),

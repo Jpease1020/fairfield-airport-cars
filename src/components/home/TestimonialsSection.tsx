@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  overflow: visible;
+  overflow: hidden;
   padding: 0 60px;
   
   @media (max-width: 768px) {
