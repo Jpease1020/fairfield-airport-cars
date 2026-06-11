@@ -47,7 +47,9 @@ export default function RootLayout({
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
         <meta name="keywords" content={metadata.keywords} />
-        {/* Apple PWA support */}
+        {/* PWA support — `mobile-web-app-capable` is the standard tag;
+            `apple-mobile-web-app-capable` is kept for older iOS Safari. */}
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Airport Cars" />
