@@ -86,7 +86,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ cmsData }) => {
               color="secondary"
 
             >
-              {cmsData?.['faq-items-2-answer'] || 'Yes. Cancellations 24+ hours in advance have no fee; less than 24h incur a 25% fee, less than 12h 50%, less than 6h 75%. Contact us to modify your booking.'}
+              {cmsData?.['faq-items-2-answer'] || 'Yes. Cancellations 24+ hours in advance receive a full refund; 3–24 hours in advance receive a 50% refund; less than 3 hours receive no refund. Contact us to modify your booking.'}
             </Text>
           </Stack>
         </Stack>

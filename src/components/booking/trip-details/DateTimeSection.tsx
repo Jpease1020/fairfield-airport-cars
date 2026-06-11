@@ -56,18 +56,23 @@ export const DateTimeSection: React.FC<DateTimeSectionProps> = ({
 
           />
           
-          <Select
-            id="fare-type-select"
-            label={cmsData?.['tripDetailsPhase-fareTypeLabel'] || 'Fare Type'}
-            value={fareType}
-            onChange={(e) => onFareTypeChange(e.target.value as 'personal' | 'business')}
-            options={[
-              { value: 'personal', label: cmsData?.['tripDetailsPhase-personalFare'] || 'Personal' },
-              { value: 'business', label: cmsData?.['tripDetailsPhase-businessFare'] || 'Business' }
-            ]}
-            fullWidth={true}
-            data-testid="fare-type-select"
-          />
+          <Stack spacing="xs">
+            <Select
+              id="fare-type-select"
+              label={cmsData?.['tripDetailsPhase-fareTypeLabel'] || 'Fare Type'}
+              value={fareType}
+              onChange={(e) => onFareTypeChange(e.target.value as 'personal' | 'business')}
+              options={[
+                { value: 'personal', label: cmsData?.['tripDetailsPhase-personalFare'] || 'Personal' },
+                { value: 'business', label: cmsData?.['tripDetailsPhase-businessFare'] || 'Business' }
+              ]}
+              fullWidth={true}
+              data-testid="fare-type-select"
+            />
+            <Text size="sm" color="secondary">
+              {fareType === 'personal' ? 'Personal rides receive a 10% discount' : 'Standard business rate'}
+            </Text>
+          </Stack>
         </Stack>
       </Stack>
     </DarkerGreyBox>

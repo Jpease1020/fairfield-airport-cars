@@ -1,6 +1,9 @@
-const CACHE_NAME = 'fairfield-airport-cars-v2';
-const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v2';
+// Bump these on any caching-behavior change. The `activate` handler deletes
+// every cache whose name isn't in this set, so bumping the version purges
+// stale/poisoned entries from prior deploys for all returning users.
+const CACHE_NAME = 'fairfield-airport-cars-v3';
+const STATIC_CACHE = 'static-v3';
+const DYNAMIC_CACHE = 'dynamic-v3';
 
 // Files to cache for offline functionality
 const STATIC_FILES = [
@@ -12,7 +15,7 @@ const STATIC_FILES = [
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('📱 Service Worker: Installing v2...');
+  console.log(`📱 Service Worker: Installing (${STATIC_CACHE})...`);
   // Force immediate activation, don't wait for all tabs to close
   self.skipWaiting();
   
@@ -69,9 +72,19 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Skip Firebase and external API calls
-  if (event.request.url.includes('firebase') || 
+  if (event.request.url.includes('firebase') ||
       event.request.url.includes('googleapis') ||
       event.request.url.includes('/api/')) {
+    return;
+  }
+
+  // Skip Next.js build assets (/_next/). They are content-hashed and served
+  // with immutable cache headers, so the browser/CDN already cache them safely.
+  // Letting the SW cache-first them caused version skew across deploys — a
+  // stale cached chunk could be returned where the new HTML expected a
+  // different file, producing "Refused to execute script (text/css)" MIME
+  // errors. Bypass the SW entirely for these.
+  if (event.request.url.includes('/_next/')) {
     return;
   }
 

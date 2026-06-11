@@ -59,6 +59,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({ cmsData }) => 
         direction={{ xs: 'vertical', md: 'horizontal' }}
         spacing={{ xs: 'lg', md: 'xl' }}
         align="stretch"
+        justify="center"
         padding="xl"
       >
         <GreyBox variant="elevated" padding="lg" data-testid="feature-box-1">

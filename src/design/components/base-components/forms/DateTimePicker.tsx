@@ -127,6 +127,13 @@ const IconWrapper = styled.span`
   pointer-events: none; /* Prevent icon from blocking clicks */
 `;
 
+// Format a Date as YYYY-MM-DD using LOCAL components.
+// Using toISOString() here would convert to UTC, which shifts the date by a
+// day during evening hours in negative-offset timezones (e.g. US Eastern),
+// breaking the "is this the minimum date?" comparison and the time min/snap logic.
+const formatLocalDate = (d: Date): string =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
 export interface DateTimePickerProps {
   id?: string;
   label?: string;
@@ -233,7 +240,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   // Calculate minimum time dynamically based on selected date
   // If the selected date is the minimum date (tomorrow), restrict time to 24 hours from now
   // If the selected date is later, allow any time
-  const minDateOnly = effectiveMinDate.toISOString().slice(0, 10);
+  const minDateOnly = formatLocalDate(effectiveMinDate);
   const selectedDateOnly = dateValue || '';
   const isSelectedDateMinDate = selectedDateOnly === minDateOnly;
   const minTimeString = isSelectedDateMinDate ? minDateTime.toTimeString().slice(0, 5) : undefined;
@@ -265,7 +272,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     }
     
     // Check if the new date is the minimum date
-    const minDateOnly = effectiveMinDate.toISOString().slice(0, 10);
+    const minDateOnly = formatLocalDate(effectiveMinDate);
     const isNewDateMinDate = newDate === minDateOnly;
     
     // If the new date is the minimum date, ensure time is at least the minimum time
@@ -315,10 +322,10 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     }
     
     // Combine with existing date or use minimum date (24 hours from now)
-    const dateToUse = dateValue || minDateTime.toISOString().slice(0, 10); // YYYY-MM-DD format
-    
+    const dateToUse = dateValue || formatLocalDate(minDateTime); // YYYY-MM-DD format
+
     // Check if the selected date is the minimum date
-    const minDateOnly = effectiveMinDate.toISOString().slice(0, 10);
+    const minDateOnly = formatLocalDate(effectiveMinDate);
     const isSelectedDateMinDate = dateToUse === minDateOnly;
     
     // If the selected date is the minimum date, enforce minimum time

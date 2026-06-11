@@ -32,12 +32,13 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
   const { isLoggedIn } = useAuth();
   const navigationItems: NavigationItem[] = [
     ...(currentPath !== '/' ? [{ name: 'Home', href: '/', current: false }] : []),
-    ...(currentPath !== '/book' ? [{ name: 'Book a Ride', href: '/book', current: false }] : []),
+    // "Book Now" button in actions handles booking CTA — no need for duplicate nav link
     ...(currentPath !== '/about' ? [{ name: 'About', href: '/about', current: false }] : []),
     ...(currentPath !== '/help' ? [{ name: 'Help', href: '/help', current: false }] : []),
     ...(isLoggedIn && currentPath !== '/dashboard' ? [{ name: 'My Dashboard', href: '/dashboard', current: false }] : []),
     ...(isAdmin && !currentPath.startsWith('/admin') ? [{ name: 'Admin', href: '/admin', current: false }] : []),
     ...(!isLoggedIn ? [{ name: 'Login', href: '/auth/login', current: false }] : []),
+    // Logout is in the actions area as a ghost button, not a nav link
   ];
 
   const logo = (
@@ -53,28 +54,26 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
 
   const actions = (
     <>
-      {isLoggedIn && (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => auth.signOut()}
-          data-testid="nav-logout-button" 
-          id="nav-logout-button"
-
-          
-          text={cmsData?.['navigation-logout'] || 'Logout'}
-        />
-      )}
       {currentPath !== '/book' && (
-        <Button 
-          variant="primary" 
-          size="lg" 
+        <Button
+          variant="primary"
+          size="lg"
           href="/book"
-          data-testid="nav-book-now-button" 
+          data-testid="nav-book-now-button"
           id="nav-book-now-button"
 
-          
+
           text={cmsData?.['navigation-bookNow'] || 'Book Now'}
+        />
+      )}
+      {isLoggedIn && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => auth.signOut()}
+          data-testid="nav-logout-button"
+          id="nav-logout-button"
+          text={cmsData?.['navigation-logout'] || 'Sign Out'}
         />
       )}
     </>
@@ -82,28 +81,24 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
 
   const mobileActions = (
     <>
-      {isLoggedIn && (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => auth.signOut()}
-          data-testid="nav-mobile-logout-button" 
-          id="nav-mobile-logout-button"
-
-          
-          text={cmsData?.['navigation-mobile-logout'] || 'Logout'}
+      {currentPath !== '/book' && (
+        <MobileBookNowButton
+          variant="primary"
+          size="sm"
+          href="/book"
+          data-testid="nav-mobile-book-now-button"
+          id="nav-mobile-book-now-button"
+          text={cmsData?.['navigation-mobile-bookNow'] || 'Book Now'}
         />
       )}
-      {currentPath !== '/book' && (
-        <MobileBookNowButton 
-          variant="primary" 
-          size="sm" 
-          href="/book"
-          data-testid="nav-mobile-book-now-button" 
-          id="nav-mobile-book-now-button"
-
-          
-          text={cmsData?.['navigation-mobile-bookNow'] || 'Book Now'}
+      {isLoggedIn && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => auth.signOut()}
+          data-testid="nav-mobile-logout-button"
+          id="nav-mobile-logout-button"
+          text={cmsData?.['navigation-mobile-logout'] || 'Sign Out'}
         />
       )}
     </>
