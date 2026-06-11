@@ -14,7 +14,10 @@ const StickyButtonContainer = styled.div`
   z-index: 1000;
   padding: 0.75rem 1rem;
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-  background: ${colors.background.primary}f2;
+  /* ~95% opaque so content blurs softly behind the bar. The token resolves to
+     a var()/hex, so an appended hex-alpha ("...f2") would be invalid CSS and
+     dropped — use color-mix to add transparency while staying token-driven. */
+  background: color-mix(in srgb, ${colors.background.primary} 95%, transparent);
   backdrop-filter: blur(8px);
   border-top: 1px solid ${colors.border.default};
 
