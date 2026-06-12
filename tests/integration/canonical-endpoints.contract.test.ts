@@ -7,7 +7,8 @@ import {
 } from '@/lib/contracts/booking-api';
 
 vi.mock('@googlemaps/google-maps-services-js', () => ({
-  Client: vi.fn().mockImplementation(() => ({
+  // Regular function (not arrow) so `new Client()` works under vitest 4.
+  Client: vi.fn().mockImplementation(function () { return ({
     distancematrix: vi.fn().mockResolvedValue({
       data: {
         rows: [
@@ -24,7 +25,7 @@ vi.mock('@googlemaps/google-maps-services-js', () => ({
         ],
       },
     }),
-  })),
+  }); }),
 }));
 
 vi.mock('@/lib/business/settings-service', () => ({

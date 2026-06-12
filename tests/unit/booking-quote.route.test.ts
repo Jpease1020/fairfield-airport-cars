@@ -9,9 +9,11 @@ const mockIsAirportLocation = vi.fn();
 const mockEnforceRateLimit = vi.fn();
 
 vi.mock('@googlemaps/google-maps-services-js', () => ({
-  Client: vi.fn().mockImplementation(() => ({
-    distancematrix: mockDistanceMatrix,
-  })),
+  // Regular function (not arrow) so it works as a constructor: the route calls
+  // `new Client()`, and vitest 4 no longer allows arrow-fn mock impls with `new`.
+  Client: vi.fn().mockImplementation(function () {
+    return { distancematrix: mockDistanceMatrix };
+  }),
 }));
 
 vi.mock('@/lib/business/settings-service', () => ({

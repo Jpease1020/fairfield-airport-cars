@@ -171,18 +171,19 @@ afterAll(() => {
   server.close();
 });
 
-// Global test utilities
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn()
-}));
-
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn()
-}));
+// Global test utilities.
+// These must be real constructors: Next's <Link> prefetch and other code call
+// `new IntersectionObserver(...)`. vitest 4 no longer lets an arrow-function mock
+// implementation be used with `new` (arrow functions can't be constructors), so
+// model them as classes.
+class MockObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() { return []; }
+}
+global.ResizeObserver = MockObserver as unknown as typeof ResizeObserver;
+global.IntersectionObserver = MockObserver as unknown as typeof IntersectionObserver;
 
 // Mock fetch for realistic API testing - REMOVED to let MSW handle it
 // global.fetch = vi.fn();
