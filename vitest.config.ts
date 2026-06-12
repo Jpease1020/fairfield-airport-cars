@@ -9,16 +9,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/.claude/**', '**/.worktrees/**'],
-    // Optimize memory usage - use threads with isolation
+    // Optimize memory usage - single worker with isolation.
+    // Vitest 4 removed `poolOptions`; `maxWorkers` + `isolate` are the
+    // top-level replacements for the old threads.{singleThread,maxThreads,isolate}.
     pool: 'threads',
-    poolOptions: {
-      threads: {
-        singleThread: true, // Use single thread to prevent memory accumulation
-        isolate: true, // Isolate each test file for memory safety
-        minThreads: 1,
-        maxThreads: 1, // Single thread only
-      },
-    },
+    maxWorkers: 1, // Single worker to prevent memory accumulation
+    isolate: true, // Isolate each test file for memory safety
     // Reduce memory pressure
     testTimeout: 10000, // 10 second timeout per test
     hookTimeout: 10000, // 10 second timeout for hooks

@@ -374,7 +374,10 @@ export const LocationInput: React.FC<LocationInputProps> = ({
                 window.google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT,
                 window.google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR,
               ];
-              setPlacesUnavailable(unavailableStatuses.includes(status));
+              // @types/google.maps 3.65 types the callback `status` as a string
+              // union while the enum members are `PlacesServiceStatus`; compare as
+              // strings (the enum values are strings at runtime).
+              setPlacesUnavailable((unavailableStatuses as string[]).includes(status));
             }
             setIsLoading(false);
           }

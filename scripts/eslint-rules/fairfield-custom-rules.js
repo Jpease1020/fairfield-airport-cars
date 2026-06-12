@@ -18,7 +18,7 @@ export default {
         },
       },
       create(context) {
-        const filename = context.getFilename();
+        const filename = context.filename; // ESLint 10: getFilename() removed, use .filename
         
         // Skip design token files and CMS color files
         if (filename.includes('tokens') || 
@@ -217,7 +217,7 @@ export default {
       create(context) {
         return {
           ImportDeclaration(node) {
-            const filename = context.getFilename();
+            const filename = context.filename; // ESLint 10: getFilename() removed, use .filename
             const source = node.source.value;
             
             // Check if we're in the design directory and importing from @/ui
@@ -253,7 +253,7 @@ export default {
       create(context) {
         return {
           ImportDeclaration(node) {
-            const filename = context.getFilename();
+            const filename = context.filename; // ESLint 10: getFilename() removed, use .filename
             const source = node.source.value;
             
             // Check if importing from types directory within design system
@@ -289,7 +289,7 @@ export default {
         },
       },
       create(context) {
-        const filename = context.getFilename();
+        const filename = context.filename; // ESLint 10: getFilename() removed, use .filename
         
         // Only apply to design system files
         if (!filename.includes('src/design/')) {
@@ -345,7 +345,7 @@ export default {
         },
       },
       create(context) {
-        const filename = context.getFilename();
+        const filename = context.filename; // ESLint 10: getFilename() removed, use .filename
         
         // Skip admin files - they don't need CMS integration
         if (filename.includes('/admin/') || 
@@ -459,7 +459,7 @@ export default {
         },
       },
       create(context) {
-        const filename = context.getFilename();
+        const filename = context.filename; // ESLint 10: getFilename() removed, use .filename
         
         // Skip admin files
         if (filename.includes('/admin/') || 

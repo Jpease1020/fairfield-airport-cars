@@ -334,14 +334,22 @@ export default [
     },
   },
   {
+    // NOTE: ESLint 10 dropped `.eslintignore`; these globs are the migrated
+    // equivalent (flat-config ignores). Keep in sync with what used to live there.
     ignores: [
       'src/future-features/**/*',
       'node_modules/**/*',
       '.next/**/*',
+      'out/**/*',
+      'dist/**/*',
+      'build/**/*',
       'coverage/**/*',
+      'reports/**/*',
       'test-results/**/*',
       'playwright-report/**/*',
       'tests/**/*',
+      'public/**/*',
+      'docs/**/*',
       'vitest.config.ts',
       'scripts/**/*',
       'temp/**/*',
@@ -372,5 +380,16 @@ export default [
       '@typescript-eslint/no-var-requires': 'off',
       'no-undef': 'off',
     },
-  }
+  },
+  // ESLint 10 added these rules to js.configs.recommended. They surface real
+  // improvements (error-cause chaining, dead assignments) but were never enforced
+  // under ESLint 9, so they light up ~30 pre-existing sites. Keep them as warnings
+  // for CI stability (matching this project's existing convention) — they can be
+  // promoted to errors and the sites fixed in a dedicated follow-up.
+  {
+    rules: {
+      'preserve-caught-error': 'warn',
+      'no-useless-assignment': 'warn',
+    },
+  },
 ];
