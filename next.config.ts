@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   // Advanced webpack optimization
-  webpack: (config, { isServer, dev, webpack }) => {
+  webpack: (config, { isServer, webpack }) => {
     // Exclude temp directory from build
     config.watchOptions = {
       ...config.watchOptions,
@@ -51,30 +51,14 @@ const nextConfig: NextConfig = {
       );
     }
 
-    // Production optimizations
-    if (!dev) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              priority: 10,
-            },
-            styled: {
-              test: /[\\/]node_modules[\\/]styled-components[\\/]/,
-              name: 'styled-components',
-              chunks: 'all',
-              priority: 20,
-            },
-          },
-        },
-      };
-    }
-    
+    // NOTE: Do NOT override config.optimization.splitChunks here. Next.js ships a
+    // carefully-tuned splitChunks config that keeps CSS chunks associated with the
+    // correct entry. A wholesale replacement (a custom `chunks: 'all'` with only
+    // vendor/styled cacheGroups) breaks that association, causing a CSS file to be
+    // emitted into the entry's *script* bootstrap list as `<script src="….css">`.
+    // The browser then refuses it ("MIME type text/css is not executable"), the app
+    // JS never executes, hydration fails, and every <Link> on the page is dead.
+
     // Add fallbacks for Node.js modules
     config.resolve.fallback = {
       ...config.resolve.fallback,
