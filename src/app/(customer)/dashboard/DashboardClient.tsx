@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   useToast,
   Container,
@@ -19,6 +20,7 @@ export default function DashboardClient() {
   const { cmsData: allCmsData } = useCMSData();
   const pageCmsData = allCmsData?.dashboard || {};
   const { addToast } = useToast();
+  const router = useRouter();
   
 
   const dashboardActions = [
@@ -27,14 +29,14 @@ export default function DashboardClient() {
       icon: "📋",
       label: pageCmsData?.['actions.bookings.label'] || 'My Bookings',
       description: pageCmsData?.['actions.bookings.description'] || 'View and manage your current and past bookings',
-      href: "/manage"
+      href: "/bookings"
     },
     {
       id: 2,
       icon: "📅",
       label: pageCmsData?.['actions.status.label'] || 'Booking Status',
       description: pageCmsData?.['actions.status.description'] || 'Check the status of your upcoming rides',
-      href: "/status"
+      href: "/bookings"
     },
     {
       id: 3,
@@ -113,11 +115,13 @@ export default function DashboardClient() {
           <Grid cols={{ xs: 1, md: 2, lg: 3 }} gap="lg">
             {dashboardActions.map((action) => (
               <GridItem key={action.id}>
-                <Box 
-                  variant="elevated" 
-                  padding="lg" 
-                  as="div" 
-                  onClick={action.onClick}
+                <Box
+                  variant="elevated"
+                  padding="lg"
+                  as="div"
+                  onClick={() =>
+                    action.onClick ? action.onClick() : router.push(action.href)
+                  }
                 >
                   <Stack spacing="md" align="center">
                     <Text size="3xl">{action.icon}</Text>
