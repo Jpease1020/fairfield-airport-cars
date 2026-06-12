@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
   Container, 
@@ -33,7 +33,10 @@ interface TrackingPageClientProps {
 export default function TrackingPageClient({ bookingId }: TrackingPageClientProps) {
   // Get CMS data from provider - extract only what this page needs
   const { cmsData: allCmsData } = useCMSData();
-  const cmsData = allCmsData?.tracking || {};
+  // Memoize so the reference is stable across renders. Previously `|| {}` minted a
+  // new object every render, which — when used as a useEffect dependency — caused the
+  // load effect to re-fire on every render (infinite fetch + Firebase-listener loop).
+  const cmsData = useMemo(() => allCmsData?.tracking || {}, [allCmsData]);
   const searchParams = useSearchParams();
   const trackingToken = searchParams?.get('token') ?? undefined;
   
@@ -48,19 +51,28 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
 
   // Load booking data and initialize Firebase tracking
   useEffect(() => {
+    // Guards against the async chain settling after this effect run is torn down
+    // (unmount, or a bookingId/trackingToken change). Without it, late-resolving
+    // promises call setState on a stale render and can register a Firestore listener
+    // after cleanup already ran — leaking the subscription.
+    let cancelled = false;
+
     const loadBooking = async () => {
       try {
         setLoading(true);
         setError(null);
+        setTrackingActive(false);
 
         const url = trackingToken
           ? `/api/booking/${bookingId}?token=${encodeURIComponent(trackingToken)}`
           : `/api/booking/${bookingId}`;
         const response = await fetch(url);
+        if (cancelled) return;
         if (!response.ok) {
           throw new Error('Failed to fetch booking');
         }
         const bookingData = await response.json();
+        if (cancelled) return;
         if (!bookingData) {
           setError(cmsData?.['tracking-bookingNotFound'] || 'Booking not found');
           return;
@@ -76,8 +88,15 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
 
         // Initialize Firebase tracking
         await firebaseTrackingService.initializeTracking(bookingId);
+        // If this run was cancelled while initializeTracking was in flight, the cleanup
+        // has already run its stopTracking. Tear down the subscription this call just
+        // created (otherwise it outlives the component) and bail before touching state.
+        if (cancelled) {
+          firebaseTrackingService.stopTracking(bookingId);
+          return;
+        }
         setTrackingActive(true);
-        
+
         // Set up location update callback
         firebaseTrackingService.onLocationUpdate(bookingId, (location: DriverLocation) => {
           setBooking(prev => prev ? {
@@ -109,6 +128,7 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
                 speed: bookingData.driverLocation.speed || 0
               } : undefined
             );
+            if (cancelled) return;
             setETACalculation(initialETA);
           } catch {
             // Initial ETA is optional; page still renders with live updates.
@@ -116,9 +136,10 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
         }
 
       } catch {
+        if (cancelled) return;
         setError(cmsData?.['tracking-loadFailed'] || 'Failed to load booking information');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
@@ -126,13 +147,18 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
       loadBooking();
     }
 
-    // Cleanup on unmount
+    // Cleanup on unmount / dependency change. stopTracking is idempotent (no-ops when
+    // nothing is subscribed), so we call it unconditionally rather than gating on the
+    // `trackingActive` state — reading that here would capture a stale closure value.
     return () => {
-      if (trackingActive) {
-        firebaseTrackingService.stopTracking(bookingId);
-      }
+      cancelled = true;
+      firebaseTrackingService.stopTracking(bookingId);
     };
-  }, [bookingId, trackingActive, cmsData]);
+    // Intentionally depends only on the tracking identity. cmsData is excluded (it is
+    // used only for fallback error strings) and trackingActive is excluded (it is set
+    // inside this effect); including either re-fires the effect and re-initializes
+    // tracking on every render.
+  }, [bookingId, trackingToken]);
 
   // Handle ETA updates
   const handleETAUpdate = (eta: ETACalculation) => {
