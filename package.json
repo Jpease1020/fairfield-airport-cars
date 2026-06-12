@@ -98,5 +98,13 @@
     "typescript": "^6.0.3",
     "unimported": "^1.31.0",
     "vitest": "^4.1.8"
+  },
+  "overrides": {
+    "googleapis-common": {
+      "google-auth-library": "10.7.0"
+    },
+    "google-gax": {
+      "google-auth-library": "10.7.0"
+    }
   }
 }
