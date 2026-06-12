@@ -25,6 +25,7 @@ import { useCMSData } from '@/design/providers/CMSDataProvider';
 import { AddToCalendarButton } from '@/components/business/AddToCalendarButton';
 import { hasCalendarBeenAdded } from '@/lib/utils/calendar-utils';
 import { formatDateTimeNoSeconds, formatTimeNoSeconds } from '@/utils/formatting';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 interface TrackingPageClientProps {
   bookingId: string;
@@ -66,7 +67,12 @@ export default function TrackingPageClient({ bookingId }: TrackingPageClientProp
         const url = trackingToken
           ? `/api/booking/${bookingId}?token=${encodeURIComponent(trackingToken)}`
           : `/api/booking/${bookingId}`;
-        const response = await fetch(url);
+        // authFetch attaches the logged-in user's Firebase ID token (Bearer) and
+        // credentials. /api/booking/:id requires owner/admin auth OR a ?token=; a
+        // plain fetch sent neither, so an owner/admin viewing tracking without the
+        // emailed token got 401 ("Unauthorized"). The ?token= path still works for
+        // email tracking links (authFetch just adds auth headers when available).
+        const response = await authFetch(url);
         if (cancelled) return;
         if (!response.ok) {
           throw new Error('Failed to fetch booking');
