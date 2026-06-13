@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
 import { Container, Stack, Text, Box, Button, Input, Label, LoadingSpinner, Alert, H1, H2 } from '@/design/ui';
+import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
 
@@ -54,6 +55,8 @@ export default function AdminPricingPage() {
   // Quote tester state
   const [testOrigin, setTestOrigin] = useState('');
   const [testDestination, setTestDestination] = useState('');
+  const [testOriginCoords, setTestOriginCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [testDestinationCoords, setTestDestinationCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [testFareType, setTestFareType] = useState<'personal' | 'business'>('personal');
   const [testLoading, setTestLoading] = useState(false);
   const [testError, setTestError] = useState<string | null>(null);
@@ -118,6 +121,8 @@ export default function AdminPricingPage() {
       body: JSON.stringify({
         origin: testOrigin,
         destination: testDestination,
+        pickupCoords: testOriginCoords,
+        dropoffCoords: testDestinationCoords,
         fareType: testFareType,
         pricingOverrides: {
           baseFare: form.baseFare,
@@ -259,18 +264,22 @@ export default function AdminPricingPage() {
             <Stack spacing="md" direction="horizontal">
               <div style={{ flex: 1 }}>
                 <Label>From</Label>
-                <Input
+                <LocationInput
                   value={testOrigin}
-                  onChange={(e) => setTestOrigin(e.target.value)}
+                  onChange={(value) => { setTestOrigin(value); setTestOriginCoords(null); }}
+                  onLocationSelect={(address, coordinates) => { setTestOrigin(address); setTestOriginCoords(coordinates); }}
                   placeholder="e.g. 123 Main St, Fairfield, CT"
+                  fullWidth
                 />
               </div>
               <div style={{ flex: 1 }}>
                 <Label>To</Label>
-                <Input
+                <LocationInput
                   value={testDestination}
-                  onChange={(e) => setTestDestination(e.target.value)}
+                  onChange={(value) => { setTestDestination(value); setTestDestinationCoords(null); }}
+                  onLocationSelect={(address, coordinates) => { setTestDestination(address); setTestDestinationCoords(coordinates); }}
                   placeholder="e.g. LaGuardia Airport"
+                  fullWidth
                 />
               </div>
             </Stack>
