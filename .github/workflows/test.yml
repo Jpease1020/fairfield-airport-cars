@@ -50,8 +50,13 @@ jobs:
     - name: Install Playwright browsers
       run: npx playwright install --with-deps chromium
 
-    - name: Run E2E tests
-      run: npm run test:e2e
+    # Runs only the self-contained `ui-mocked` lane (starts its own dev server,
+    # mocks the backend). The `preview-safe` lane needs E2E_BASE_URL pointing at a
+    # deployed Vercel preview and has no webServer, so `npm run test:e2e` always
+    # failed here. Wire preview-safe to the preview URL as a follow-up (see
+    # docs/SITE_AUDIT_ROADMAP.md Phase 0).
+    - name: Run E2E tests (ui-mocked)
+      run: npm run test:e2e:ui-mocked
       env:
         CI: true
         NODE_OPTIONS: '--max-old-space-size=4096'

@@ -28,6 +28,8 @@ export default defineConfig({
           command: 'npm run dev',
           url: 'http://localhost:3000',
           reuseExistingServer: !process.env.CI,
+          // Cold Next dev compile in CI can exceed the 60s default; give margin.
+          timeout: 120_000,
         },
       }),
 });
