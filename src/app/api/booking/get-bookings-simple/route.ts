@@ -70,8 +70,9 @@ export async function GET(request: NextRequest) {
       // Convert Firestore timestamps and format booking. `rawData.trip.pickupDateTime` is a raw
       // Firestore Timestamp (never normalized by the spread below), and the flat top-level
       // `pickupDateTime` is absent on every booking created through the normal submit flow — so
-      // both must be derived from whichever one actually has the value.
-      const normalizedPickupDateTime = safeToDate(rawData.pickupDateTime ?? rawData.trip?.pickupDateTime);
+      // both must be derived from whichever one actually has the value. Nested takes precedence
+      // over the legacy flat field, matching getBooking()/getPickupDateTime() elsewhere.
+      const normalizedPickupDateTime = safeToDate(rawData.trip?.pickupDateTime ?? rawData.pickupDateTime);
       const booking = {
         id: docSnap.id,
         ...rawData,
@@ -120,7 +121,7 @@ export async function GET(request: NextRequest) {
 
       const bookings = snapshot.docs.map((docSnap: QueryDocumentSnapshot) => {
         const data = docSnap.data();
-        const normalizedPickupDateTime = safeToDate(data.pickupDateTime ?? data.trip?.pickupDateTime);
+        const normalizedPickupDateTime = safeToDate(data.trip?.pickupDateTime ?? data.pickupDateTime);
         return {
           id: docSnap.id,
           ...data,

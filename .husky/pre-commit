@@ -20,8 +20,10 @@ if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
     exit 0
 fi
 
-# Get list of staged files
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|jsx)$' | grep -v 'node_modules' | grep -v '\.d\.ts$' | grep -v '\.min\.js$')
+# Get list of staged files (the trailing `|| true` matters: this hook runs under `sh -e`, and
+# grep exits 1 when a commit stages no matching files — without it, that exit kills the script
+# here instead of reaching the "no files to lint" check below).
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|jsx)$' | grep -v 'node_modules' | grep -v '\.d\.ts$' | grep -v '\.min\.js$' || true)
 
 if [ -z "$STAGED_FILES" ]; then
     echo "${GREEN}✅ No TypeScript/JavaScript files to lint${NC}"
