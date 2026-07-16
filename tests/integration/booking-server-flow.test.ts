@@ -46,6 +46,8 @@ vi.mock('@/lib/utils/auth-server', () => ({
 import * as quoteService from '@/lib/services/quote-service';
 import * as bookingService from '@/lib/services/booking-service';
 import { sendAdminSms } from '@/lib/services/admin-notification-service';
+import { sendBookingVerificationEmail, sendDriverNotificationEmail } from '@/lib/services/email-service';
+import { notifyDriverOfNewBooking } from '@/lib/services/driver-notification-service';
 
 let validatePhasePOST: typeof import('@/app/api/booking/validate-phase/route').POST;
 let submitPOST: typeof import('@/app/api/booking/submit/route').POST;
@@ -229,5 +231,46 @@ describe('Booking server golden path', () => {
     expect(submitRes.status).toBe(200);
     expect(submitData.success).toBe(true);
     expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2026, 8:00 AM'));
+  });
+
+  it('SMOKE_TEST_MODE=true suppresses the verification email, driver notifications, and admin SMS (regression: a real local test booking on 2026-07-16 sent a real notification because nothing checked this flag)', async () => {
+    const previousSmokeTestMode = process.env.SMOKE_TEST_MODE;
+    process.env.SMOKE_TEST_MODE = 'true';
+
+    try {
+      vi.mocked(quoteService.getQuote).mockResolvedValue({
+        pickupAddress: submitPayload.trip.pickup.address,
+        dropoffAddress: submitPayload.trip.dropoff.address,
+        pickupDateTime: submitPayload.trip.pickupDateTime,
+        fareType: submitPayload.trip.fareType,
+        price: submitPayload.fare,
+      } as any);
+
+      vi.mocked(bookingService.createBookingAtomic).mockResolvedValue({ bookingId: 'booking_smoke' });
+      vi.mocked(bookingService.getBooking).mockResolvedValue({
+        id: 'booking_smoke',
+        confirmation: { token: 'tok_smoke' },
+        customer: { email: submitPayload.customer.email },
+        trip: {
+          pickup: { address: submitPayload.trip.pickup.address },
+          dropoff: { address: submitPayload.trip.dropoff.address },
+          pickupDateTime: submitPayload.trip.pickupDateTime,
+        },
+        payment: { totalAmount: submitPayload.fare },
+        status: 'pending',
+      } as any);
+
+      const submitRes = await submitPOST(req('http://localhost/api/booking/submit', submitPayload));
+      const submitData = await submitRes.json();
+
+      expect(submitRes.status).toBe(200);
+      expect(submitData.success).toBe(true);
+      expect(sendBookingVerificationEmail).not.toHaveBeenCalled();
+      expect(sendDriverNotificationEmail).not.toHaveBeenCalled();
+      expect(notifyDriverOfNewBooking).not.toHaveBeenCalled();
+      expect(sendAdminSms).not.toHaveBeenCalled();
+    } finally {
+      process.env.SMOKE_TEST_MODE = previousSmokeTestMode;
+    }
   });
 });

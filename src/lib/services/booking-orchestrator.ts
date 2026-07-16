@@ -312,56 +312,66 @@ export async function submitBookingOrchestration(
       throw new Error('Booking was created but could not be retrieved');
     }
 
-    await createTentativeCalendarEventForBooking(bookingResult.bookingId, bookingRecord);
+    // Smoke test mode must suppress every real external side effect, not just calendar/payment —
+    // this is what actually failed 2026-07-16: a local test booking sent a real driver
+    // notification email and (would have) texted the admin, because nothing here checked this
+    // flag. Never derive this from a request header — only the server's own env can set it.
+    const isSmokeTest = process.env.SMOKE_TEST_MODE === 'true';
+
+    await createTentativeCalendarEventForBooking(bookingResult.bookingId, bookingRecord, isSmokeTest);
 
     const confirmationUrlBase =
       process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
     const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${resolvedConfirmationToken}`;
 
-    try {
-      await sendBookingVerificationEmail(bookingRecord as unknown as Booking, confirmationUrl);
-    } catch {
-      emailWarning =
-        'Your ride request is saved, but we could not send the confirmation email. Please text us at (203) 990-1815 so we can finalize it.';
-      await recordBookingAttempt({
-        stage: 'submit',
-        status: 'warning',
-        bookingId: bookingResult.bookingId,
-        reason: emailWarning,
-        customerName: customer.name,
-        customerEmail: customer.email,
-        customerPhone: customer.phone,
-        pickupAddress: trip.pickup.address,
-        dropoffAddress: trip.dropoff.address,
-        pickupDateTime: trip.pickupDateTime.toISOString(),
-      });
-    }
+    if (isSmokeTest) {
+      console.log(`🧪 Smoke test mode - skipping verification email, driver notifications, and admin SMS for booking ${bookingResult.bookingId}`);
+    } else {
+      try {
+        await sendBookingVerificationEmail(bookingRecord as unknown as Booking, confirmationUrl);
+      } catch {
+        emailWarning =
+          'Your ride request is saved, but we could not send the confirmation email. Please text us at (203) 990-1815 so we can finalize it.';
+        await recordBookingAttempt({
+          stage: 'submit',
+          status: 'warning',
+          bookingId: bookingResult.bookingId,
+          reason: emailWarning,
+          customerName: customer.name,
+          customerEmail: customer.email,
+          customerPhone: customer.phone,
+          pickupAddress: trip.pickup.address,
+          dropoffAddress: trip.dropoff.address,
+          pickupDateTime: trip.pickupDateTime.toISOString(),
+        });
+      }
 
-    try {
-      await sendDriverNotificationEmail(bookingRecord as unknown as Booking);
-    } catch {
-      // Non-critical
-    }
+      try {
+        await sendDriverNotificationEmail(bookingRecord as unknown as Booking);
+      } catch {
+        // Non-critical
+      }
 
-    try {
-      await notifyDriverOfNewBooking({
-        bookingId: bookingResult.bookingId,
-        customerName: customer.name,
-        pickupAddress: trip.pickup.address,
-        dropoffAddress: trip.dropoff.address,
-        pickupDateTime: trip.pickupDateTime.toISOString(),
-        fare,
-      });
-    } catch {
-      // Non-critical
-    }
+      try {
+        await notifyDriverOfNewBooking({
+          bookingId: bookingResult.bookingId,
+          customerName: customer.name,
+          pickupAddress: trip.pickup.address,
+          dropoffAddress: trip.dropoff.address,
+          pickupDateTime: trip.pickupDateTime.toISOString(),
+          fare,
+        });
+      } catch {
+        // Non-critical
+      }
 
-    try {
-      const pickupDateTimeStr = formatBusinessDateTimeWithZone(trip.pickupDateTime);
-      const message = `New booking: ${customer.name} - Pickup time: ${pickupDateTimeStr} - Route: ${trip.pickup.address} -> ${trip.dropoff.address} - $${fare.toFixed(2)}`;
-      await sendAdminSms(message);
-    } catch {
-      // Non-critical
+      try {
+        const pickupDateTimeStr = formatBusinessDateTimeWithZone(trip.pickupDateTime);
+        const message = `New booking: ${customer.name} - Pickup time: ${pickupDateTimeStr} - Route: ${trip.pickup.address} -> ${trip.dropoff.address} - $${fare.toFixed(2)}`;
+        await sendAdminSms(message);
+      } catch {
+        // Non-critical
+      }
     }
 
     return {
@@ -488,13 +498,19 @@ export async function createPaidBookingAndNotify(
       const confirmationUrlBase =
         process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
       const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${confirmationToken}`;
-      await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
 
-      const smsMessage = `We received your booking request.\nPickup time: ${formatBusinessDateTimeWithZone(pickupDateTimeValue)}\nPlease check your email to confirm the ride. Booking ID: ${bookingResult.bookingId}`;
-      await sendSms({
-        to: bookingData.customer.phone,
-        body: smsMessage,
-      });
+      const isSmokeTest = smokeTest || process.env.SMOKE_TEST_MODE === 'true';
+      if (isSmokeTest) {
+        console.log(`🧪 Smoke test mode - skipping verification email and SMS for booking ${bookingResult.bookingId}`);
+      } else {
+        await sendBookingVerificationEmail(adaptOldBookingToNew(bookingRecord), confirmationUrl);
+
+        const smsMessage = `We received your booking request.\nPickup time: ${formatBusinessDateTimeWithZone(pickupDateTimeValue)}\nPlease check your email to confirm the ride. Booking ID: ${bookingResult.bookingId}`;
+        await sendSms({
+          to: bookingData.customer.phone,
+          body: smsMessage,
+        });
+      }
     }
   } catch (notificationError) {
     console.error('Failed to send verification notifications:', notificationError);

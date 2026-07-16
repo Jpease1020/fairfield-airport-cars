@@ -69,28 +69,35 @@ export async function POST(req: NextRequest) {
     const messageBody = `Your ride has been cancelled.\nPickup time: ${pickupTimeLabel}\n${
       refundAmount === 0 ? (cancellationFee > 0 ? `A cancellation fee of $${cancellationFee.toFixed(2)} applies.` : 'No refund applies.') : `We have refunded $${refundAmount.toFixed(2)}.`}`;
 
-    // Send SMS and email (push removed)
-    await Promise.all([
-      phone ? sendSms({ to: phone, body: messageBody }) : Promise.resolve(),
-      email ? sendConfirmationEmail(adaptOldBookingToNew({ ...booking, status: 'cancelled', updatedAt: new Date(), cancellationFee })) : Promise.resolve(),
-    ]);
+    // Smoke test mode is a server-only env flag — never derived from a client-supplied header.
+    const isSmokeTest = process.env.SMOKE_TEST_MODE === 'true';
 
-    try {
-      const { sendAdminSms } = await import('@/lib/services/admin-notification-service');
-      const customerName = booking.customer?.name || booking.name || 'Customer';
-      const pickupDateTimeStr = pickupDateTime ? formatBusinessDateTimeWithZone(pickupDateTime) : 'scheduled time';
-      const message = `Booking cancelled: ${bookingId} - ${customerName} - Pickup time: ${pickupDateTimeStr} - Refund: $${refundAmount.toFixed(2)}`;
-      await sendAdminSms(message);
-      console.log('✅ [CANCEL BOOKING] Admin SMS sent successfully');
-    } catch (smsError) {
-      console.error('❌ [CANCEL BOOKING] Failed to send admin SMS:', smsError);
+    if (isSmokeTest) {
+      console.log(`🧪 Smoke test mode - skipping customer SMS/email and admin SMS for cancelled booking ${bookingId}`);
+    } else {
+      // Send SMS and email (push removed)
+      await Promise.all([
+        phone ? sendSms({ to: phone, body: messageBody }) : Promise.resolve(),
+        email ? sendConfirmationEmail(adaptOldBookingToNew({ ...booking, status: 'cancelled', updatedAt: new Date(), cancellationFee })) : Promise.resolve(),
+      ]);
+
+      try {
+        const { sendAdminSms } = await import('@/lib/services/admin-notification-service');
+        const customerName = booking.customer?.name || booking.name || 'Customer';
+        const pickupDateTimeStr = pickupDateTime ? formatBusinessDateTimeWithZone(pickupDateTime) : 'scheduled time';
+        const message = `Booking cancelled: ${bookingId} - ${customerName} - Pickup time: ${pickupDateTimeStr} - Refund: $${refundAmount.toFixed(2)}`;
+        await sendAdminSms(message);
+        console.log('✅ [CANCEL BOOKING] Admin SMS sent successfully');
+      } catch (smsError) {
+        console.error('❌ [CANCEL BOOKING] Failed to send admin SMS:', smsError);
+      }
     }
 
     return NextResponse.json({
       message: 'Booking cancelled',
       refundAmount,
       cancellationFee,
-      channels: ['sms', 'email'],
+      channels: isSmokeTest ? [] : ['sms', 'email'],
     });
   } catch (err) {
     console.error('Cancel booking error', err);
