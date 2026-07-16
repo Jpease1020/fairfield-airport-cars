@@ -8,6 +8,7 @@ const orderBy = vi.fn(() => 'orderby-clause');
 
 vi.mock('firebase/firestore', () => ({
   collection,
+  doc: vi.fn(() => ({})),
   getDocs,
   addDoc: vi.fn(),
   updateDoc: vi.fn(),
