@@ -1,6 +1,7 @@
 // src/app/api/calendar/callback/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createOAuth2Client, getTokens, setCredentials, initializeCalendarAPI, storeCalendarTokens } from '@/lib/services/google-calendar';
+import { requireAdmin } from '@/lib/utils/auth-server';
 
 const calendarIntegrationEnabled = process.env.ENABLE_GOOGLE_CALENDAR === 'true';
 
@@ -11,6 +12,13 @@ export async function GET(request: NextRequest) {
       { status: 501 }
     );
   }
+
+  // API routes are excluded from middleware's admin gate (see matcher in middleware.ts),
+  // and this route persists whatever OAuth tokens it receives as the app's shared calendar
+  // credentials — without this check, anyone who completes Google's consent screen with
+  // their own account could hijack calendar write access.
+  const accessResult = await requireAdmin(request);
+  if (!accessResult.ok) return accessResult.response;
 
   try {
     const { searchParams } = new URL(request.url);
