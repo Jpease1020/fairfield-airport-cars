@@ -136,6 +136,7 @@ export const submitBookingRequestSchema = z.object({
 export const submitBookingSuccessResponseSchema = z.object({
   success: z.literal(true),
   bookingId: z.string(),
+  trackingToken: z.string().optional(),
   totalFare: z.number(),
   message: z.string(),
   emailWarning: z.string().nullable().optional(),

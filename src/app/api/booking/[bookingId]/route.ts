@@ -4,7 +4,7 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
 import { getBooking } from '@/lib/services/booking-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { FieldValue } from 'firebase-admin/firestore';
-import { requireOwnerAdminOrTrackingToken, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
+import { requireOwnerAdminOrTrackingToken } from '@/lib/utils/auth-server';
 
 export async function GET(
   request: NextRequest,
@@ -101,11 +101,25 @@ export async function PUT(
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
 
-    const accessResult = await requireOwnerOrAdmin(request, existingBooking);
+    // Tracking-token access (no Firebase session — e.g. a guest right after booking) is allowed here,
+    // but scoped down below to flight-info updates only.
+    const accessResult = await requireOwnerAdminOrTrackingToken(request, existingBooking);
     if (!accessResult.ok) return accessResult.response;
 
     if (existingBooking.status === 'cancelled') {
       return NextResponse.json({ error: 'Cannot edit a cancelled booking' }, { status: 400 });
+    }
+
+    const accessMode = 'access' in accessResult ? accessResult.access : undefined;
+    if (accessMode === 'tracking-token') {
+      const requestedKeys = Object.keys(body || {});
+      const disallowedKeys = requestedKeys.filter((key) => key !== 'flightInfo');
+      if (disallowedKeys.length > 0) {
+        return NextResponse.json(
+          { error: 'This link can only be used to update flight info. Please log in to edit other booking details.' },
+          { status: 403 }
+        );
+      }
     }
 
     // Track what changed for SMS notification
@@ -214,6 +228,31 @@ export async function PUT(
         updateData.pickupDateTime = newPickupDateTime;
         dateTimeChanged = true;
         changedFields.push('pickup date/time');
+      }
+    }
+
+    // Handle flight info update (post-submit flight info phase)
+    if (updates.flightInfo) {
+      const existingFlightInfo = existingTrip.flightInfo || {};
+      const mergedFlightInfo = {
+        ...existingFlightInfo,
+        ...updates.flightInfo,
+      };
+      const flightInfoChanged = (['hasFlight', 'airline', 'flightNumber', 'arrivalTime', 'terminal'] as const).some(
+        (key) => mergedFlightInfo[key] !== existingFlightInfo[key]
+      );
+
+      if (flightInfoChanged) {
+        updateData.trip = {
+          ...existingTrip,
+          ...updateData.trip, // Preserve other trip updates
+          flightInfo: mergedFlightInfo,
+        };
+        // Also update legacy flat field used by admin bookings table
+        if (updates.flightInfo.flightNumber !== undefined) {
+          updateData.flightNumber = updates.flightInfo.flightNumber;
+        }
+        changedFields.push('flight info');
       }
     }
 

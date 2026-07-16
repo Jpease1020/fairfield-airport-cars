@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from 'crypto';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
 import { createBookingAtomic, getBooking } from '@/lib/services/booking-service';
 import { sendBookingVerificationEmail, sendDriverNotificationEmail } from '@/lib/services/email-service';
@@ -128,6 +129,34 @@ function parseTimeSlotConflict(errorMessage: string): string[] {
     .split(',')
     .map((slot) => slot.trim())
     .filter(Boolean);
+}
+
+// Hold the time slot on the calendar as soon as the booking exists, marked PENDING until
+// the customer confirms. Non-throwing: calendar sync failures must never block a booking.
+async function createTentativeCalendarEventForBooking(
+  bookingId: string,
+  bookingRecord: Record<string, any>,
+  smokeTest?: boolean
+): Promise<void> {
+  try {
+    const { createBookingCalendarEvent, toCalendarBookingInput } = await import('@/lib/services/google-calendar');
+    const calendarBookingInput = toCalendarBookingInput(bookingId, bookingRecord);
+
+    const calendarEventId = await createBookingCalendarEvent(
+      calendarBookingInput,
+      { smokeTest, pending: true }
+    );
+
+    if (calendarEventId) {
+      const db = getAdminDb();
+      await db.collection('bookings').doc(bookingId).update({
+        calendarEventId,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    }
+  } catch (calendarError) {
+    console.error(`Failed to create tentative calendar event for booking ${bookingId} (non-blocking):`, calendarError);
+  }
 }
 
 async function ensureConfirmationToken(
@@ -283,6 +312,8 @@ export async function submitBookingOrchestration(
       throw new Error('Booking was created but could not be retrieved');
     }
 
+    await createTentativeCalendarEventForBooking(bookingResult.bookingId, bookingRecord);
+
     const confirmationUrlBase =
       process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
     const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${resolvedConfirmationToken}`;
@@ -336,6 +367,7 @@ export async function submitBookingOrchestration(
     return {
       success: true,
       bookingId: bookingResult.bookingId,
+      trackingToken: bookingDataWithConfirmation.trackingToken,
       totalFare: fare,
       message: 'Booking created successfully — pending email confirmation',
       emailWarning,
@@ -451,6 +483,8 @@ export async function createPaidBookingAndNotify(
 
     const bookingRecord = await getBooking(bookingResult.bookingId);
     if (bookingRecord) {
+      await createTentativeCalendarEventForBooking(bookingResult.bookingId, bookingRecord, smokeTest);
+
       const confirmationUrlBase =
         process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://localhost:3000';
       const confirmationUrl = `${confirmationUrlBase}/booking/confirm?bookingId=${bookingResult.bookingId}&token=${confirmationToken}`;

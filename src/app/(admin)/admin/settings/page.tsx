@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Stack, Text, Box, Button, Input, Label, LoadingSpinner, Alert, H1 } from '@/design/ui';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
+import { GoogleCalendarConnect } from '@/components/calendar/GoogleCalendarConnect';
 
 interface BusinessRulesForm {
   serviceArea: { normalRadiusMiles: number; extendedRadiusMiles: number };
@@ -212,6 +213,10 @@ export default function AdminSettingsPage() {
             </Stack>
             <Button variant="primary" size="sm" onClick={handleSaveNotifications} disabled={saving} text="Save notifications" />
           </Stack>
+        </Box>
+
+        <Box variant="outlined" padding="lg">
+          <GoogleCalendarConnect />
         </Box>
 
         <Box variant="outlined" padding="lg">

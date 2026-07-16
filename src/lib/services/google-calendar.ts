@@ -2,10 +2,56 @@
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { Client, TrafficModel } from '@googlemaps/google-maps-services-js';
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+
+const CALENDAR_TOKENS_COLLECTION = 'systemConfig';
+const CALENDAR_TOKENS_DOC = 'googleCalendarTokens';
 
 // Google Calendar API configuration
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || 'primary';
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
+
+export interface CalendarBookingInput {
+  id: string;
+  trip: {
+    pickup: { address: string };
+    dropoff: { address: string };
+    pickupDateTime: Date | string;
+  };
+  customer: {
+    name: string;
+    email: string;
+  };
+}
+
+// Normalizes a raw Firestore booking record (as returned by getBooking(), where
+// bookingRecord.trip.pickupDateTime is still an un-normalized Firestore Timestamp) into the
+// shape createBookingCalendarEvent/confirmBookingCalendarEvent expect. Building `new Date(...)`
+// directly from a Timestamp object produces an Invalid Date, so this always normalizes it —
+// unlike `bookingRecord.trip || fallback`, which never applies a fallback once trip exists.
+export function toCalendarBookingInput(bookingId: string, bookingRecord: Record<string, any>): CalendarBookingInput {
+  const rawPickupDateTime =
+    bookingRecord?.trip?.pickupDateTime ?? bookingRecord?.pickupDateTime ?? new Date();
+  const pickupDateTime =
+    rawPickupDateTime instanceof Date
+      ? rawPickupDateTime
+      : typeof rawPickupDateTime?.toDate === 'function'
+        ? rawPickupDateTime.toDate()
+        : new Date(rawPickupDateTime);
+
+  return {
+    id: bookingId,
+    trip: {
+      pickup: { address: bookingRecord?.trip?.pickup?.address || bookingRecord?.pickupLocation || '' },
+      dropoff: { address: bookingRecord?.trip?.dropoff?.address || bookingRecord?.dropoffLocation || '' },
+      pickupDateTime,
+    },
+    customer: {
+      name: bookingRecord?.customer?.name || bookingRecord?.name || '',
+      email: bookingRecord?.customer?.email || bookingRecord?.email || '',
+    },
+  };
+}
 
 const mapsClient = new Client({});
 const DRIVER_HOME_BASE = process.env.DRIVER_HOME_BASE || 'Newtown, CT';
@@ -395,14 +441,16 @@ export const createBookingEvent = async (
   }
 };
 
-// Update an existing calendar event
+// Update an existing calendar event. Uses events.patch (not events.update) since `updates` is
+// a Partial<CalendarEvent> — events.update does not support patch semantics and replaces the
+// entire event resource, which would drop any field not included in `updates` (e.g. start/end).
 export const updateBookingEvent = async (
   calendar: any,
   eventId: string,
   updates: Partial<CalendarEvent>
 ): Promise<CalendarEvent> => {
   try {
-    const response = await calendar.events.update({
+    const response = await calendar.events.patch({
       calendarId: CALENDAR_ID,
       eventId: eventId,
       resource: updates,
@@ -459,18 +507,27 @@ export const getTokens = async (
   }
 };
 
-// Get stored calendar tokens (from environment or database)
-// TODO: Implement secure token storage in database
+// Persist OAuth tokens server-side (Firestore) so they survive across requests/deploys
+export const storeCalendarTokens = async (tokens: any): Promise<void> => {
+  const db = getAdminDb();
+  await db.collection(CALENDAR_TOKENS_COLLECTION).doc(CALENDAR_TOKENS_DOC).set({
+    tokens,
+    updatedAt: new Date().toISOString(),
+  });
+};
+
+// Get stored calendar tokens (env var takes precedence, falls back to Firestore)
 export const getStoredCalendarTokens = async (): Promise<any | null> => {
   try {
-    // Check environment variable first (for server-side operations)
+    // Check environment variable first (for server-side operations / local overrides)
     if (process.env.GOOGLE_CALENDAR_TOKENS) {
       return JSON.parse(process.env.GOOGLE_CALENDAR_TOKENS);
     }
-    
-    // TODO: Fetch from secure database storage
-    // For now, return null if not in environment
-    return null;
+
+    const db = getAdminDb();
+    const doc = await db.collection(CALENDAR_TOKENS_COLLECTION).doc(CALENDAR_TOKENS_DOC).get();
+    const data = doc.exists ? doc.data() : null;
+    return data?.tokens ?? null;
   } catch (error) {
     console.error('Error getting stored calendar tokens:', error);
     return null;
@@ -480,19 +537,8 @@ export const getStoredCalendarTokens = async (): Promise<any | null> => {
 // Create calendar event for a booking and return event ID
 // This is used server-side when bookings are confirmed
 export const createBookingCalendarEvent = async (
-  booking: {
-    id: string;
-    trip: {
-      pickup: { address: string };
-      dropoff: { address: string };
-      pickupDateTime: Date | string;
-    };
-    customer: {
-      name: string;
-      email: string;
-    };
-  },
-  options?: { smokeTest?: boolean }
+  booking: CalendarBookingInput,
+  options?: { smokeTest?: boolean; pending?: boolean }
 ): Promise<string | null> => {
   try {
     // Skip calendar operations in smoke test mode
@@ -522,9 +568,10 @@ export const createBookingCalendarEvent = async (
     const endTime = new Date(pickupTime);
     endTime.setHours(endTime.getHours() + 2); // Assume 2 hour duration
 
+    const isPending = options?.pending === true;
     const event = await createBookingEvent(calendar, {
-      summary: `Ride: ${booking.customer.name}`,
-      description: `Booking ID: ${booking.id}\nPickup: ${booking.trip.pickup.address}\nDropoff: ${booking.trip.dropoff.address}`,
+      summary: `${isPending ? '⏳ PENDING — ' : ''}Ride: ${booking.customer.name}`,
+      description: `${isPending ? 'AWAITING CUSTOMER CONFIRMATION — this slot is held tentatively. If the customer never confirms, cancel it manually from the admin dashboard to free the slot.\n\n' : ''}Booking ID: ${booking.id}\nPickup: ${booking.trip.pickup.address}\nDropoff: ${booking.trip.dropoff.address}`,
       startTime: pickupTime,
       endTime: endTime,
       customerEmail: booking.customer.email,
@@ -534,7 +581,7 @@ export const createBookingCalendarEvent = async (
     });
 
     if (event.id) {
-      console.log(`✅ Created calendar event ${event.id} for booking ${booking.id}`);
+      console.log(`✅ Created ${isPending ? 'tentative ' : ''}calendar event ${event.id} for booking ${booking.id}`);
       return event.id;
     }
 
@@ -543,5 +590,52 @@ export const createBookingCalendarEvent = async (
     console.error(`Failed to create calendar event for booking ${booking.id}:`, error);
     // Don't throw - calendar event creation failure shouldn't break booking
     return null;
+  }
+};
+
+// Remove the tentative "PENDING" marker from an existing calendar event once the customer
+// confirms, and re-sync start/end/location in case the booking was edited (pickup/dropoff/time)
+// between submission and confirmation. Non-throwing: calendar sync failures must never block
+// confirmation.
+export const confirmBookingCalendarEvent = async (
+  eventId: string,
+  booking: CalendarBookingInput,
+  options?: { smokeTest?: boolean }
+): Promise<void> => {
+  try {
+    const isSmokeTest = options?.smokeTest || process.env.SMOKE_TEST_MODE === 'true';
+    if (isSmokeTest) {
+      console.log(`🧪 Smoke test mode - skipping calendar event confirmation for booking ${booking.id}`);
+      return;
+    }
+
+    const calendarIntegrationEnabled = process.env.ENABLE_GOOGLE_CALENDAR === 'true';
+    if (!calendarIntegrationEnabled) return;
+
+    const tokens = await getStoredCalendarTokens();
+    if (!tokens) {
+      console.warn('Calendar tokens not available - cannot update event for booking', booking.id);
+      return;
+    }
+
+    const oauth2Client = createOAuth2Client();
+    setCredentials(oauth2Client, tokens);
+    const calendar = initializeCalendarAPI(oauth2Client);
+
+    const pickupTime = new Date(booking.trip.pickupDateTime);
+    const endTime = new Date(pickupTime);
+    endTime.setHours(endTime.getHours() + 2);
+
+    await updateBookingEvent(calendar, eventId, {
+      summary: `Ride: ${booking.customer.name}`,
+      description: `Booking ID: ${booking.id}\nPickup: ${booking.trip.pickup.address}\nDropoff: ${booking.trip.dropoff.address}`,
+      start: { dateTime: pickupTime.toISOString(), timeZone: 'America/New_York' },
+      end: { dateTime: endTime.toISOString(), timeZone: 'America/New_York' },
+      location: `${booking.trip.pickup.address} → ${booking.trip.dropoff.address}`,
+    });
+
+    console.log(`✅ Cleared PENDING marker and synced timing on calendar event ${eventId} for booking ${booking.id}`);
+  } catch (error) {
+    console.error(`Failed to update calendar event for booking ${booking.id}:`, error);
   }
 };

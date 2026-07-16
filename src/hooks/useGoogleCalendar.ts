@@ -1,5 +1,6 @@
 // src/hooks/useGoogleCalendar.ts
 import { useState, useCallback, useEffect } from 'react';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
 const CALENDAR_ENABLED = process.env.NEXT_PUBLIC_ENABLE_GOOGLE_CALENDAR === 'true';
 const CALENDAR_DISABLED_MESSAGE =
@@ -83,7 +84,9 @@ export const useGoogleCalendar = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`/api/calendar/callback?code=${code}`);
+      // /api/calendar/callback requires admin auth (it persists calendar credentials) —
+      // authFetch attaches the signed-in admin's Firebase ID token as a Bearer header.
+      const response = await authFetch(`/api/calendar/callback?code=${code}`);
       const data = await response.json();
       
       if (!response.ok) {
