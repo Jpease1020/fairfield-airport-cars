@@ -72,6 +72,14 @@ production-shaped notification content, for a booking that only ever existed in 
 emulator). `SMOKE_TEST_MODE=true` makes booking creation, cancellation, and calendar/payment code
 paths skip all of those real external sends and log what would have happened instead.
 
+**This env var only takes effect on the process that actually serves the API routes.** Playwright's
+`full-flow` config uses `reuseExistingServer: !process.env.CI` locally — if you already have
+`npm run dev` running in another terminal without `SMOKE_TEST_MODE=true`, the command above starts
+Playwright with the flag set, but Playwright reuses your existing dev server instead of starting a
+new one, and that existing server still sends real notifications. Either stop any running dev
+server before running `full-flow` locally, or restart it with `SMOKE_TEST_MODE=true npm run dev`
+first.
+
 **Also seed or expect defaults for `config/pricing`.** An unseeded local Firestore (a fresh
 emulator, or a database missing that doc) falls back to `DEFAULT_PRICING_CONFIG` in
 `pricing-config.ts` — generic rates, not whatever the business has actually configured in
