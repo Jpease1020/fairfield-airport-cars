@@ -84,6 +84,10 @@ vi.mock('@/lib/utils/firebase-admin', () => ({
   }),
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 // Import mocked services for assertions
 import { sendSms } from '@/lib/services/twilio-service';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';

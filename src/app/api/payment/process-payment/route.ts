@@ -11,7 +11,7 @@ import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:payment:process-payment',
     limit: 10,
     windowMs: 10 * 60_000,

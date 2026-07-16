@@ -4,14 +4,11 @@ export interface AvailabilityCheck {
   isAvailable: boolean;
   hasConflict: boolean;
   conflictingBookings: Array<{
-    bookingId: string;
-    customerName: string;
     timeSlot: string;
-    driverName: string;
   }>;
   suggestedTimeSlots: string[];
   availableDrivers: number;
-  drivers: Array<{ driverId: string; driverName: string }>;
+  driverName: string | null;
   message?: string;
 }
 

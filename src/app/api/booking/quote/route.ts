@@ -13,7 +13,7 @@ function metersToMiles(m: number): number { return m / 1609.34; }
 function secondsToMinutes(s: number): number { return s / 60; }
 
 export async function POST(request: Request) {
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:booking:quote',
     limit: 30,
     windowMs: 60_000,

@@ -98,6 +98,10 @@ vi.mock('@/lib/services/booking-service', () => ({
   getBooking: vi.fn().mockResolvedValue(null),
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock('@/lib/services/booking-attempts-service', () => ({
   recordBookingAttempt: vi.fn().mockResolvedValue(undefined),
 }));

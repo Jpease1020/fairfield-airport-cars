@@ -70,10 +70,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       isAvailable,
       hasConflict: conflictCheck.hasConflict,
-      conflictingBookings: conflictCheck.conflictingBookings,
+      // This route is public/unauthenticated — never expose other customers' names or
+      // booking IDs to it, only the time-slot info needed to explain the conflict.
+      conflictingBookings: conflictCheck.conflictingBookings.map((booking) => ({
+        timeSlot: booking.timeSlot,
+      })),
       suggestedTimeSlots: conflictCheck.suggestedTimeSlots,
       availableDrivers: availableDrivers.length,
-      drivers: availableDrivers,
       driverName: availableDrivers.length > 0 ? 'Your Driver' : null,
       message,
       checkedWindow: {

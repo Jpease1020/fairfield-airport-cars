@@ -5,7 +5,7 @@ import { requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 export async function POST(request: Request) {
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:reviews:submit',
     limit: 10,
     windowMs: 60 * 60_000,

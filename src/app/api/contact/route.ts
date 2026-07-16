@@ -10,6 +10,17 @@ const {
   EMAIL_PASS,
 } = process.env;
 
+// Contact form fields are attacker-controlled and get interpolated straight into HTML email
+// bodies below — escape them so a message can't inject markup/links into an email sent from
+// the business's own verified sender address.
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 // Create transporter for sending emails
 const getTransporter = () => {
   if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
@@ -35,7 +46,7 @@ const getTransporter = () => {
 };
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:contact',
     limit: 5,
     windowMs: 60 * 60_000,
@@ -73,6 +84,11 @@ export async function POST(request: NextRequest) {
 
     const transporter = getTransporter();
 
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safePhone = phone ? escapeHtml(phone) : null;
+    const safeMessage = escapeHtml(message);
+
     // Send email to business
     await transporter.sendMail({
       from: `"${EMAIL_CONFIG.fromName}" <${EMAIL_CONFIG.verifiedSender}>`,
@@ -84,14 +100,14 @@ export async function POST(request: NextRequest) {
           <h2 style="color: #1a365d;">New Contact Form Submission</h2>
 
           <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-            <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
+            <p><strong>Name:</strong> ${safeName}</p>
+            <p><strong>Email:</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
+            <p><strong>Phone:</strong> ${safePhone || 'Not provided'}</p>
           </div>
 
           <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
             <h3 style="color: #2d3748; margin-top: 0;">Message:</h3>
-            <p style="white-space: pre-wrap;">${message}</p>
+            <p style="white-space: pre-wrap;">${safeMessage}</p>
           </div>
 
           <p style="color: #718096; font-size: 12px; margin-top: 20px;">
@@ -123,7 +139,7 @@ This message was sent from the contact form on fairfieldairportcar.com
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #1a365d;">Thank You for Reaching Out!</h2>
 
-          <p>Dear ${name},</p>
+          <p>Dear ${safeName},</p>
 
           <p>We've received your message and will get back to you as soon as possible, typically within 24 hours.</p>
 
@@ -131,7 +147,7 @@ This message was sent from the contact form on fairfieldairportcar.com
 
           <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #2d3748; margin-top: 0;">Your Message:</h3>
-            <p style="white-space: pre-wrap; color: #4a5568;">${message}</p>
+            <p style="white-space: pre-wrap; color: #4a5568;">${safeMessage}</p>
           </div>
 
           <p>Best regards,<br>

@@ -14,6 +14,10 @@ vi.mock('@/lib/services/square-service', () => ({
   refundPayment: vi.fn(),
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock('@/lib/services/twilio-service', () => ({
   sendSms: vi.fn(),
 }));

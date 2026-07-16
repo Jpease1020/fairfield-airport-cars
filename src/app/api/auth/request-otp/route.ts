@@ -8,6 +8,7 @@ import {
   OTP_MIN_INTERVAL_SECONDS,
   OTP_TTL_MINUTES,
 } from '@/lib/utils/auth-session';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 const generateOtp = (): string => {
   const code = crypto.randomInt(0, 1000000).toString().padStart(6, '0');
@@ -15,6 +16,16 @@ const generateOtp = (): string => {
 };
 
 export async function POST(request: NextRequest) {
+  // The per-phone cooldown below only throttles repeated requests for ONE phone number — it
+  // does nothing to stop a script cycling through many different numbers, each triggering a
+  // real SMS at the business's Twilio cost. Add an IP-level limit too.
+  const limited = await enforceRateLimit(request, {
+    bucket: 'api:auth:request-otp',
+    limit: 10,
+    windowMs: 60 * 60_000,
+  });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const phoneInput = body?.phone;

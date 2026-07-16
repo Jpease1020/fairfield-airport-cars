@@ -36,6 +36,10 @@ vi.mock('@/lib/utils/firebase-server', () => ({
   auth: null,
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock('firebase/firestore', () => ({
   doc: vi.fn(() => ({})),
   updateDoc: vi.fn(() => Promise.resolve()),

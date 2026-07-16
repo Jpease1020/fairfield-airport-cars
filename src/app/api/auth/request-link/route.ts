@@ -7,8 +7,19 @@ import {
   normalizeEmail,
   OTP_MIN_INTERVAL_SECONDS,
 } from '@/lib/utils/auth-session';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 export async function POST(request: NextRequest) {
+  // The per-email cooldown below only throttles repeated requests for ONE email address — it
+  // does nothing to stop a script cycling through many different addresses, each triggering a
+  // real email at the business's cost/reputation risk. Add an IP-level limit too.
+  const limited = await enforceRateLimit(request, {
+    bucket: 'api:auth:request-link',
+    limit: 10,
+    windowMs: 60 * 60_000,
+  });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const emailInput = body?.email;

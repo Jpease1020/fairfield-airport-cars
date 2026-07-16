@@ -54,6 +54,10 @@ vi.mock('@/utils/bookingAdapter', () => ({
   adaptOldBookingToNew: vi.fn((booking) => booking),
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock('@/lib/business/business-rules', () => ({
   getBusinessRules: vi.fn().mockResolvedValue({
     cancellationFeeTiers: {
