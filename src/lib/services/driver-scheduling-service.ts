@@ -27,6 +27,15 @@ export interface DriverSchedule {
   updatedAt: Date;
 }
 
+// Firestore returns createdAt/updatedAt as raw Timestamps, not Date instances — this type
+// claims Date, so normalize at the read boundary rather than let a future caller do
+// `schedule.updatedAt.getTime()` on what's actually a Timestamp object.
+const normalizeScheduleDates = (raw: any): DriverSchedule => ({
+  ...raw,
+  createdAt: raw?.createdAt?.toDate ? raw.createdAt.toDate() : (raw?.createdAt instanceof Date ? raw.createdAt : new Date(raw?.createdAt ?? Date.now())),
+  updatedAt: raw?.updatedAt?.toDate ? raw.updatedAt.toDate() : (raw?.updatedAt instanceof Date ? raw.updatedAt : new Date(raw?.updatedAt ?? Date.now())),
+});
+
 export interface TimeSlot {
   id: string;
   startTime: string; // HH:MM format
@@ -528,19 +537,19 @@ export class DriverSchedulingService {
         const deterministic = await db.collection('driverSchedules').doc(scheduleDocId).get();
         if (deterministic.exists) {
           const deterministicData = deterministic.data() ?? {};
-          return {
+          return normalizeScheduleDates({
             id: deterministic.id,
             ...deterministicData
-          } as DriverSchedule;
+          });
         }
       } else {
         const deterministic = await getDoc(doc(db, 'driverSchedules', scheduleDocId));
         if (deterministic.exists()) {
           const deterministicData = deterministic.data() ?? {};
-          return {
+          return normalizeScheduleDates({
             id: deterministic.id,
             ...deterministicData
-          } as DriverSchedule;
+          });
         }
       }
 
@@ -567,10 +576,10 @@ export class DriverSchedulingService {
       }
 
       const scheduleDoc = scheduleSnapshot.docs[0];
-      return {
+      return normalizeScheduleDates({
         id: scheduleDoc.id,
         ...(scheduleDoc.data ? scheduleDoc.data() : scheduleDoc)
-      } as DriverSchedule;
+      });
     } catch (error) {
       console.error('Error getting driver schedule:', error);
       return null;
@@ -610,10 +619,10 @@ export class DriverSchedulingService {
       }
       
       const docs = scheduleSnapshot.docs || [];
-      return docs.map((doc: any) => ({
+      return docs.map((doc: any) => normalizeScheduleDates({
         id: doc.id,
         ...(doc.data ? doc.data() : doc)
-      })) as DriverSchedule[];
+      }));
     } catch (error) {
       console.error('Error getting driver schedules:', error);
       return [];

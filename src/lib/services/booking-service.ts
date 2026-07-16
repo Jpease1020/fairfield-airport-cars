@@ -298,13 +298,20 @@ export const getBooking = async (bookingId: string): Promise<Booking | null> => 
   }
   
   const data = bookingDoc.data();
-  
+
   const pickupDateTimeRaw = data?.trip?.pickupDateTime ?? data?.pickupDateTime;
+  const normalizedPickupDateTime = safeToOptionalDate(pickupDateTimeRaw);
 
   return {
     id: bookingDoc.id,
     ...data,
-    pickupDateTime: safeToOptionalDate(pickupDateTimeRaw),
+    // `...data` above carries the raw (un-normalized) Firestore Timestamp through on
+    // `data.trip.pickupDateTime` — override it here so callers reading either the nested
+    // `trip.pickupDateTime` or the flat `pickupDateTime` get the same normalized Date. Without
+    // this, `new Date(booking.trip.pickupDateTime)` on a raw Timestamp silently produces an
+    // Invalid Date (NaN on any arithmetic), which is exactly what caused this bug.
+    ...(data?.trip ? { trip: { ...data.trip, pickupDateTime: normalizedPickupDateTime ?? data.trip.pickupDateTime } } : {}),
+    pickupDateTime: normalizedPickupDateTime,
     createdAt: safeToDate(data?.createdAt),
     updatedAt: safeToDate(data?.updatedAt),
     confirmation: data?.confirmation
@@ -343,11 +350,13 @@ export const getBookings = async (
   return snapshot.docs.map((doc: any) => {
     const data = doc.data();
     const pickupDateTimeRaw = data?.trip?.pickupDateTime ?? data?.pickupDateTime;
-    
+    const normalizedPickupDateTime = safeToOptionalDate(pickupDateTimeRaw);
+
     return {
       id: doc.id,
       ...data,
-      pickupDateTime: safeToOptionalDate(pickupDateTimeRaw),
+      ...(data?.trip ? { trip: { ...data.trip, pickupDateTime: normalizedPickupDateTime ?? data.trip.pickupDateTime } } : {}),
+      pickupDateTime: normalizedPickupDateTime,
       createdAt: safeToDate(data?.createdAt),
       updatedAt: safeToDate(data?.updatedAt),
     };

@@ -67,11 +67,16 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // Convert Firestore timestamps and format booking
+      // Convert Firestore timestamps and format booking. `rawData.trip.pickupDateTime` is a raw
+      // Firestore Timestamp (never normalized by the spread below), and the flat top-level
+      // `pickupDateTime` is absent on every booking created through the normal submit flow — so
+      // both must be derived from whichever one actually has the value.
+      const normalizedPickupDateTime = safeToDate(rawData.pickupDateTime ?? rawData.trip?.pickupDateTime);
       const booking = {
         id: docSnap.id,
         ...rawData,
-        pickupDateTime: safeToDate(rawData.pickupDateTime),
+        ...(rawData.trip ? { trip: { ...rawData.trip, pickupDateTime: normalizedPickupDateTime ?? rawData.trip.pickupDateTime } } : {}),
+        pickupDateTime: normalizedPickupDateTime,
         createdAt: safeToDate(rawData.createdAt),
         updatedAt: safeToDate(rawData.updatedAt),
         confirmation: rawData.confirmation
@@ -115,10 +120,12 @@ export async function GET(request: NextRequest) {
 
       const bookings = snapshot.docs.map((docSnap: QueryDocumentSnapshot) => {
         const data = docSnap.data();
+        const normalizedPickupDateTime = safeToDate(data.pickupDateTime ?? data.trip?.pickupDateTime);
         return {
           id: docSnap.id,
           ...data,
-          pickupDateTime: safeToDate(data.pickupDateTime),
+          ...(data.trip ? { trip: { ...data.trip, pickupDateTime: normalizedPickupDateTime ?? data.trip.pickupDateTime } } : {}),
+          pickupDateTime: normalizedPickupDateTime,
           createdAt: safeToDate(data.createdAt),
           updatedAt: safeToDate(data.updatedAt),
           confirmation: data.confirmation
