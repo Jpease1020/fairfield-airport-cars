@@ -40,6 +40,7 @@ import {
   getCustomerPhone,
   getDepositPaid,
   getDropoffAddress,
+  getFlightNumber,
   getPickupAddress,
   getPickupDateTime,
   getStatusIcon,
@@ -133,9 +134,9 @@ export function BookingsTable({
                 <DetailSection>
                   <DetailLabel>Pickup Date & Time</DetailLabel>
                   <DetailValue>{formatDate(getPickupDateTime(booking))}</DetailValue>
-                  {booking.flightNumber && (
+                  {getFlightNumber(booking) && (
                     <Text variant="small" color="secondary" style={{ marginTop: '4px' }}>
-                      ✈️ Flight: {booking.flightNumber}
+                      ✈️ Flight: {getFlightNumber(booking)}
                     </Text>
                   )}
                 </DetailSection>
