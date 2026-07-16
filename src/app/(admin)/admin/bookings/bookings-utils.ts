@@ -34,22 +34,25 @@ export const formatCurrency = (amount: number): string =>
   }).format(amount);
 
 export const getBookingFare = (booking: Booking): number =>
-  (booking as any).trip?.fare ?? booking.fare ?? 0;
+  booking.trip?.fare ?? booking.fare ?? 0;
 
 export const getCustomerName = (booking: Booking): string =>
-  (booking as any).customer?.name ?? booking.name ?? 'Unknown';
+  booking.customer?.name ?? booking.name ?? 'Unknown';
 
 export const getCustomerEmail = (booking: Booking): string =>
-  (booking as any).customer?.email ?? booking.email ?? '';
+  booking.customer?.email ?? booking.email ?? '';
 
 export const getCustomerPhone = (booking: Booking): string =>
-  (booking as any).customer?.phone ?? booking.phone ?? '';
+  booking.customer?.phone ?? booking.phone ?? '';
 
 export const getPickupAddress = (booking: Booking): string =>
-  (booking as any).trip?.pickup?.address ?? booking.pickupLocation ?? '';
+  booking.trip?.pickup?.address ?? booking.pickupLocation ?? '';
 
 export const getDropoffAddress = (booking: Booking): string =>
-  (booking as any).trip?.dropoff?.address ?? booking.dropoffLocation ?? '';
+  booking.trip?.dropoff?.address ?? booking.dropoffLocation ?? '';
+
+export const getFlightNumber = (booking: Booking): string =>
+  booking.trip?.flightInfo?.flightNumber ?? booking.flightNumber ?? '';
 
 export const getAirportFromBooking = (booking: Booking): string | null => {
   const pickup = getPickupAddress(booking).toLowerCase();
@@ -74,18 +77,18 @@ export const getAirportFromBooking = (booking: Booking): string | null => {
 };
 
 export const getConfirmationSent = (booking: Booking): boolean => {
-  const sentAt = (booking as any).confirmation?.sentAt ?? (booking as any).confirmationSentAt;
+  const sentAt = booking.confirmation?.sentAt ?? (booking as { confirmationSentAt?: unknown }).confirmationSentAt;
   return Boolean(sentAt);
 };
 
-export const getPickupDateTime = (booking: Booking): any =>
-  (booking as any).trip?.pickupDateTime ?? booking.pickupDateTime;
+export const getPickupDateTime = (booking: Booking): Date | string | undefined =>
+  booking.trip?.pickupDateTime ?? booking.pickupDateTime;
 
 export const getBalanceDue = (booking: Booking): number =>
-  (booking as any).payment?.balanceDue ?? booking.balanceDue ?? 0;
+  booking.payment?.balanceDue ?? booking.balanceDue ?? 0;
 
 export const getDepositPaid = (booking: Booking): boolean =>
-  (booking as any).payment?.depositPaid ?? booking.depositPaid ?? false;
+  booking.payment?.depositPaid ?? booking.depositPaid ?? false;
 
 export const getStatusIcon = (status: string): string => {
   switch (status) {

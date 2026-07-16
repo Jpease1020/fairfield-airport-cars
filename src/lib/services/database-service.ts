@@ -35,19 +35,25 @@ const safeToDate = (dateField: any): Date => {
 };
 
 // ===== BOOKINGS =====
+// Legacy flat fields below are optional, not required — a booking created through the normal
+// submit flow only ever populates the nested `trip`/`customer`/`payment` shape (see
+// booking-orchestrator.ts); the flat fields exist purely for pre-migration records. Declaring
+// them as required was inaccurate and forced every real consumer to `as any`-cast just to reach
+// `trip`/`customer`/`payment`, which weren't declared here at all despite being present on every
+// real Firestore document. Both gaps are fixed below.
 export interface Booking {
   id?: string;
-  name: string;
-  email: string;
-  phone: string;
-  pickupLocation: string;
-  dropoffLocation: string;
-  pickupDateTime: Date;
+  name?: string;
+  email?: string;
+  phone?: string;
+  pickupLocation?: string;
+  dropoffLocation?: string;
+  pickupDateTime?: Date;
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'requires_approval';
-  fare: number;
+  fare?: number;
   dynamicFare?: number;
-  depositPaid: boolean;
-  balanceDue: number;
+  depositPaid?: boolean;
+  balanceDue?: number;
   flightNumber?: string;
   notes?: string;
   driverId?: string;
@@ -76,25 +82,76 @@ export interface Booking {
     sentAt?: string;
     confirmedAt?: string;
   };
+  calendarEventId?: string;
   createdAt: Date;
   updatedAt: Date;
+
+  // Nested structure (modern format) — present on every booking created through the normal flow.
+  trip?: {
+    pickup: { address: string; coordinates?: { lat: number; lng: number } | null };
+    dropoff: { address: string; coordinates?: { lat: number; lng: number } | null };
+    pickupDateTime: Date | string;
+    fare?: number;
+    fareType?: 'personal' | 'business';
+    flightInfo?: {
+      hasFlight: boolean;
+      airline: string;
+      flightNumber: string;
+      arrivalTime: string;
+      terminal: string;
+    };
+  };
+  customer?: {
+    name: string;
+    email: string;
+    phone: string;
+    notes?: string;
+    saveInfoForFuture?: boolean;
+    smsOptIn?: boolean;
+  };
+  payment?: {
+    depositAmount: number | null;
+    balanceDue: number;
+    depositPaid: boolean;
+    squareOrderId?: string;
+    squarePaymentId?: string;
+    tipAmount: number;
+    tipPercent: number;
+    totalAmount: number;
+  };
+  driverLocation?: {
+    lat: number;
+    lng: number;
+    timestamp: Date;
+    heading?: number;
+    speed?: number;
+  };
 }
+
+// `...data` below carries the raw (un-normalized) Firestore Timestamp through on
+// `data.trip.pickupDateTime` — this mirrors and must stay in sync with the same fix in
+// src/lib/services/booking-service.ts's getBooking()/getBookings(). Without it,
+// `new Date(booking.trip.pickupDateTime)` on a raw Timestamp silently produces an Invalid Date.
+const normalizeBookingDoc = (id: string, data: any): Booking => {
+  const pickupDateTimeRaw = data?.trip?.pickupDateTime ?? data?.pickupDateTime;
+  const normalizedPickupDateTime = safeToDate(pickupDateTimeRaw);
+
+  return {
+    id,
+    ...data,
+    ...(data?.trip ? { trip: { ...data.trip, pickupDateTime: normalizedPickupDateTime } } : {}),
+    pickupDateTime: normalizedPickupDateTime,
+    estimatedArrival: data.estimatedArrival ? safeToDate(data.estimatedArrival) : undefined,
+    actualArrival: data.actualArrival ? safeToDate(data.actualArrival) : undefined,
+    createdAt: safeToDate(data.createdAt),
+    updatedAt: safeToDate(data.updatedAt),
+  } as Booking;
+};
 
 export const getAllBookings = async (): Promise<Booking[]> => {
   try {
     const snapshot = await getDocs(collection(db, 'bookings'));
-    return snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        pickupDateTime: safeToDate(data.pickupDateTime),
-        estimatedArrival: data.estimatedArrival ? safeToDate(data.estimatedArrival) : undefined,
-        actualArrival: data.actualArrival ? safeToDate(data.actualArrival) : undefined,
-        createdAt: safeToDate(data.createdAt),
-        updatedAt: safeToDate(data.updatedAt),
-      } as Booking;
-    });
+    return snapshot.docs.map(doc => normalizeBookingDoc(doc.id, doc.data()));
   } catch (error) {
     console.error('Error fetching bookings:', error);
     return [];
@@ -109,18 +166,7 @@ export const getBookingsByStatus = async (status: Booking['status']): Promise<Bo
       orderBy('createdAt', 'desc')
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        pickupDateTime: safeToDate(data.pickupDateTime),
-        estimatedArrival: data.estimatedArrival ? safeToDate(data.estimatedArrival) : undefined,
-        actualArrival: data.actualArrival ? safeToDate(data.actualArrival) : undefined,
-        createdAt: safeToDate(data.createdAt),
-        updatedAt: safeToDate(data.updatedAt),
-      } as Booking;
-    });
+    return snapshot.docs.map(doc => normalizeBookingDoc(doc.id, doc.data()));
   } catch (error) {
     console.error('Error fetching bookings by status:', error);
     throw new Error('Failed to fetch bookings');
@@ -308,7 +354,7 @@ export const getBookingStats = async () => {
     const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
     const totalRevenue = bookings
       .filter(b => b.status === 'completed')
-      .reduce((sum, b) => sum + b.fare, 0);
+      .reduce((sum, b) => sum + (b.trip?.fare ?? b.fare ?? 0), 0);
     
     return {
       totalBookings,
@@ -432,17 +478,17 @@ export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
         existing.bookings.push(booking);
         // Use most recent name/email/smsOptIn (latest booking takes precedence)
         if (booking.createdAt > existing.bookings[0].createdAt) {
-          existing.name = booking.name;
-          existing.email = booking.email;
+          existing.name = booking.name ?? existing.name;
+          existing.email = booking.email ?? existing.email;
           // If they opted in on any booking, consider them opted in
           // If they opted out on a later booking, respect that
           existing.smsOptIn = booking.smsOptIn ?? existing.smsOptIn;
         }
       } else {
         customerMap.set(normalizedPhone, {
-          name: booking.name,
+          name: booking.name ?? 'Unknown',
           phone: booking.phone,
-          email: booking.email,
+          email: booking.email ?? '',
           smsOptIn: booking.smsOptIn ?? false,
           bookings: [booking],
         });
@@ -463,12 +509,12 @@ export const getMarketingCustomers = async (): Promise<MarketingCustomer[]> => {
       );
 
       const lastBooking = data.bookings.reduce((latest, b) =>
-        !latest || b.pickupDateTime > latest.pickupDateTime ? b : latest
+        !latest || (b.pickupDateTime && latest.pickupDateTime && b.pickupDateTime > latest.pickupDateTime) ? b : latest
       , null as Booking | null);
 
-      const totalSpent = completedBookings.reduce((sum, b) => sum + b.fare, 0);
+      const totalSpent = completedBookings.reduce((sum, b) => sum + (b.trip?.fare ?? b.fare ?? 0), 0);
 
-      const isActive = lastBooking
+      const isActive = lastBooking?.pickupDateTime
         ? lastBooking.pickupDateTime >= ninetyDaysAgo
         : false;
 

@@ -80,7 +80,9 @@ export default function AdminDashboardClient() {
 
         const futureDates: Date[] = [];
         for (const booking of bookings) {
-          const pickupDate = new Date(booking.pickupDateTime);
+          const rawPickupDateTime = booking.trip?.pickupDateTime ?? booking.pickupDateTime;
+          if (!rawPickupDateTime) continue;
+          const pickupDate = new Date(rawPickupDateTime);
           if (Number.isNaN(pickupDate.getTime())) continue;
           if (isSameLocalDay(pickupDate, now)) todaysRides += 1;
           if (pickupDate >= now && booking.status !== 'cancelled') futureDates.push(pickupDate);
