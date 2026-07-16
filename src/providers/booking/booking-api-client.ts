@@ -72,8 +72,11 @@ export async function createBookingRequest(data: Partial<Booking>): Promise<Book
   } as Booking;
 }
 
-export async function updateBookingRequest(id: string, data: Partial<Booking>): Promise<Booking> {
-  const response = await authFetch(`/api/booking/${id}`, {
+export async function updateBookingRequest(id: string, data: Partial<Booking>, trackingToken?: string): Promise<Booking> {
+  const url = trackingToken
+    ? `/api/booking/${id}?token=${encodeURIComponent(trackingToken)}`
+    : `/api/booking/${id}`;
+  const response = await authFetch(url, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

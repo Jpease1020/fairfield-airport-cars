@@ -14,10 +14,12 @@ interface CreateBookingProviderActionsParams {
   existingBooking?: Booking;
   formData: any;
   currentQuote: QuoteData | null;
+  completedBookingId: string | null;
+  completedTrackingToken: string | null;
   validatePhaseWithApi: (_phase: 'trip-details' | 'contact-info' | 'payment' | 'quick-booking', _options?: { skipQuoteRequirement?: boolean }) => Promise<ValidationResult>;
   validateCurrentPhase: () => ValidationResult;
   createBooking: (_data: Partial<Booking>) => Promise<Booking>;
-  updateBooking: (_id: string, _data: Partial<Booking>) => Promise<Booking>;
+  updateBooking: (_id: string, _data: Partial<Booking>, _trackingToken?: string) => Promise<Booking>;
   resetFormData: () => void;
   clearStoredFormData: () => void;
   clearAllApiValidation: () => void;
@@ -29,6 +31,7 @@ interface CreateBookingProviderActionsParams {
   setSuccess: (_value: string | null) => void;
   setHasAttemptedValidation: (_value: boolean) => void;
   setCompletedBookingId: (_value: string | null) => void;
+  setCompletedTrackingToken: (_value: string | null) => void;
 }
 
 export function createBookingProviderActions(params: CreateBookingProviderActionsParams) {
@@ -38,6 +41,8 @@ export function createBookingProviderActions(params: CreateBookingProviderAction
     existingBooking,
     formData,
     currentQuote,
+    completedBookingId,
+    completedTrackingToken,
     validatePhaseWithApi,
     validateCurrentPhase,
     createBooking,
@@ -53,6 +58,7 @@ export function createBookingProviderActions(params: CreateBookingProviderAction
     setSuccess,
     setHasAttemptedValidation,
     setCompletedBookingId,
+    setCompletedTrackingToken,
   } = params;
 
   const clearAllErrors = () => {
@@ -97,6 +103,7 @@ export function createBookingProviderActions(params: CreateBookingProviderAction
       setSuccess,
       setHasAttemptedValidation,
       setCompletedBookingId,
+      setCompletedTrackingToken,
       setCurrentPhase,
     });
 
@@ -123,8 +130,26 @@ export function createBookingProviderActions(params: CreateBookingProviderAction
     });
   };
 
-  const completeFlightInfo = () => {
-    setSuccess('Booking submitted — confirm via email.');
+  const completeFlightInfo = async () => {
+    if (!completedBookingId) {
+      setError('Could not save flight info — booking ID is missing. Please text us your flight number at (203) 990-1815.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await updateBooking(
+        completedBookingId,
+        { flightInfo: formData.trip.flightInfo } as Partial<Booking>,
+        completedTrackingToken ?? undefined
+      );
+      setError(null);
+      setSuccess('Booking submitted — confirm via email.');
+    } catch {
+      setError('We could not save your flight info. Please text us your flight number at (203) 990-1815.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return {

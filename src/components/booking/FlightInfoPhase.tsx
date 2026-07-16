@@ -40,7 +40,9 @@ export function FlightInfoPhase({
     formData,
     updateTripDetails,
     completeFlightInfo,
-    warning
+    warning,
+    error,
+    isSubmitting
   } = useBooking();
   
   const tripData = formData.trip;
@@ -109,6 +111,19 @@ export function FlightInfoPhase({
           cmsData={cmsData}
         />
 
+        {error && (
+          <WarningBox variant="filled" padding="lg" data-testid="flight-info-phase-error-message">
+            <Stack spacing="sm" align="center">
+              <Text size="lg" weight="bold" color="warning" align="center">
+                {cmsData?.['flight-info-save-error-title'] || '⚠️ Flight Info Not Saved'}
+              </Text>
+              <Text size="md" align="center" color="warning">
+                {error}
+              </Text>
+            </Stack>
+          </WarningBox>
+        )}
+
         {warning && (
           <WarningBox variant="filled" padding="lg" data-testid="flight-info-phase-warning-message">
             <Stack spacing="sm" align="center">
@@ -131,9 +146,10 @@ export function FlightInfoPhase({
             variant="primary"
             size="lg"
             onClick={completeFlightInfo}
+            disabled={isSubmitting}
             data-testid="flight-info-complete-button"
 
-            text={cmsData?.['flight-info-complete-button'] || 'Save Flight Info'}
+            text={isSubmitting ? 'Saving…' : (cmsData?.['flight-info-complete-button'] || 'Save Flight Info')}
             fullWidth
           />
         </Stack>

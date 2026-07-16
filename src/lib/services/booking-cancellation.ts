@@ -30,11 +30,10 @@ export const cancelBooking = async (
             setCredentials,
             initializeCalendarAPI,
             deleteBookingEvent,
+            getStoredCalendarTokens,
           } = await import('./google-calendar');
 
-          const storedTokens = process.env.GOOGLE_CALENDAR_TOKENS
-            ? JSON.parse(process.env.GOOGLE_CALENDAR_TOKENS)
-            : null;
+          const storedTokens = await getStoredCalendarTokens();
 
           if (storedTokens) {
             const oauth2Client = createOAuth2Client();

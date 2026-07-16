@@ -103,9 +103,9 @@ export async function POST(request: NextRequest) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (bookingRecord as any).calendarAddedByUser = bookingData?.calendarAddedByUser === true;
       
-      // Create calendar event for confirmed booking
+      // Sync calendar event for the now-confirmed booking
       try {
-        const { createBookingCalendarEvent } = await import('@/lib/services/google-calendar');
+        const { createBookingCalendarEvent, confirmBookingCalendarEvent } = await import('@/lib/services/google-calendar');
         const pickupDateTime = bookingRecord.trip?.pickupDateTime || bookingRecord.pickupDateTime || new Date();
         const tripData = bookingRecord.trip || {
           pickup: { address: bookingRecord.pickupLocation || '' },
@@ -116,22 +116,33 @@ export async function POST(request: NextRequest) {
           name: bookingRecord.name || '',
           email: bookingRecord.email || '',
         };
-        const calendarEventId = await createBookingCalendarEvent({
-          id: bookingId,
-          trip: tripData,
-          customer: customerData,
-        }, { smokeTest: isSmokeTest });
 
-        // Store calendar event ID in booking
-        if (calendarEventId) {
-          await db.collection('bookings').doc(bookingId).update({
-            calendarEventId: calendarEventId,
-            updatedAt: FieldValue.serverTimestamp()
-          });
+        const existingCalendarEventId = bookingData?.calendarEventId;
+        if (existingCalendarEventId) {
+          // A tentative event was already created at submission time — just clear the PENDING marker
+          await confirmBookingCalendarEvent(existingCalendarEventId, {
+            id: bookingId,
+            trip: tripData,
+            customer: customerData,
+          }, { smokeTest: isSmokeTest });
+        } else {
+          // No tentative event exists (older booking, or it failed to create earlier) — create one now
+          const calendarEventId = await createBookingCalendarEvent({
+            id: bookingId,
+            trip: tripData,
+            customer: customerData,
+          }, { smokeTest: isSmokeTest });
+
+          if (calendarEventId) {
+            await db.collection('bookings').doc(bookingId).update({
+              calendarEventId: calendarEventId,
+              updatedAt: FieldValue.serverTimestamp()
+            });
+          }
         }
       } catch (calendarError) {
-        console.error('Failed to create calendar event (non-blocking):', calendarError);
-        // Don't fail confirmation if calendar event creation fails
+        console.error('Failed to sync calendar event (non-blocking):', calendarError);
+        // Don't fail confirmation if calendar event sync fails
       }
 
       await sendConfirmationEmail(adaptOldBookingToNew(bookingRecord));

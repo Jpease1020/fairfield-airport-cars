@@ -1,6 +1,6 @@
 // src/app/api/calendar/callback/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createOAuth2Client, getTokens, setCredentials, initializeCalendarAPI } from '@/lib/services/google-calendar';
+import { createOAuth2Client, getTokens, setCredentials, initializeCalendarAPI, storeCalendarTokens } from '@/lib/services/google-calendar';
 
 const calendarIntegrationEnabled = process.env.ENABLE_GOOGLE_CALENDAR === 'true';
 
@@ -25,21 +25,20 @@ export async function GET(request: NextRequest) {
 
     const oauth2Client = createOAuth2Client();
     const tokens = await getTokens(oauth2Client, code);
-    
-    // Store tokens securely (in production, use a secure database)
-    // For now, we'll return them to the client
-    // TODO: Implement secure token storage
-    
+
     setCredentials(oauth2Client, tokens);
     const calendar = initializeCalendarAPI(oauth2Client);
-    
+
     // Test the connection
     const testResponse = await calendar.calendarList.list();
-    
+
+    // Persist tokens server-side (Firestore) so future requests don't need this flow again
+    await storeCalendarTokens(tokens);
+
     return NextResponse.json({
       success: true,
       message: 'Google Calendar connected successfully',
-      tokens: tokens, // Remove this in production
+      tokens: tokens, // Kept for the existing client-side availability-checker flow
       calendars: testResponse.data.items?.length || 0
     });
     

@@ -43,6 +43,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 const [success, setSuccess] = useState<string | null>(null);
 const [warning, setWarning] = useState<string | null>(null);
   const [completedBookingId, setCompletedBookingId] = useState<string | null>(null);
+  const [completedTrackingToken, setCompletedTrackingToken] = useState<string | null>(null);
   const [currentQuote, setCurrentQuote] = useState<QuoteData | null>(null);
 
   useEffect(() => {
@@ -186,6 +187,8 @@ const [warning, setWarning] = useState<string | null>(null);
     existingBooking,
     formData,
     currentQuote,
+    completedBookingId,
+    completedTrackingToken,
     validatePhaseWithApi,
     validateCurrentPhase,
     createBooking,
@@ -201,6 +204,7 @@ const [warning, setWarning] = useState<string | null>(null);
     setSuccess,
     setHasAttemptedValidation,
     setCompletedBookingId,
+    setCompletedTrackingToken,
   });
 
   // Compute validation reactively

@@ -26,6 +26,7 @@ interface SubmitBookingParams {
   setSuccess: (_value: string | null) => void;
   setHasAttemptedValidation: (_value: boolean) => void;
   setCompletedBookingId: (_value: string | null) => void;
+  setCompletedTrackingToken: (_value: string | null) => void;
   setCurrentPhase: (_phase: BookingPhase) => void;
 }
 
@@ -90,6 +91,7 @@ export async function submitBookingFlow(params: SubmitBookingParams): Promise<{ 
     setSuccess,
     setHasAttemptedValidation,
     setCompletedBookingId,
+    setCompletedTrackingToken,
     setCurrentPhase,
   } = params;
 
@@ -168,6 +170,7 @@ export async function submitBookingFlow(params: SubmitBookingParams): Promise<{ 
 
     const responseData = await res.json();
     setCompletedBookingId(responseData.bookingId || null);
+    setCompletedTrackingToken(responseData.trackingToken || null);
     if (responseData.emailWarning) {
       setWarning(responseData.emailWarning);
     }

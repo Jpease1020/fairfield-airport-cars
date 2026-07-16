@@ -34,12 +34,12 @@ export function useBookingCrud(params: UseBookingCrudParams) {
     }
   }, [setError]);
 
-  const updateBooking = useCallback(async (id: string, data: Partial<Booking>): Promise<Booking> => {
+  const updateBooking = useCallback(async (id: string, data: Partial<Booking>, trackingToken?: string): Promise<Booking> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const booking = await updateBookingRequest(id, data);
+      const booking = await updateBookingRequest(id, data, trackingToken);
       setCurrentBooking(booking);
       return booking;
     } catch (err) {

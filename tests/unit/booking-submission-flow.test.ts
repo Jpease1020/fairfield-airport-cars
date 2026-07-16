@@ -73,6 +73,7 @@ describe('submitBookingFlow time serialization', () => {
       setSuccess: vi.fn(),
       setHasAttemptedValidation: vi.fn(),
       setCompletedBookingId: vi.fn(),
+      setCompletedTrackingToken: vi.fn(),
       setCurrentPhase: vi.fn(),
     });
 
@@ -99,6 +100,7 @@ describe('submitBookingFlow time serialization', () => {
       setSuccess: vi.fn(),
       setHasAttemptedValidation: vi.fn(),
       setCompletedBookingId: vi.fn(),
+      setCompletedTrackingToken: vi.fn(),
       setCurrentPhase: vi.fn(),
     });
 
@@ -124,6 +126,7 @@ describe('submitBookingFlow time serialization', () => {
       setSuccess: vi.fn(),
       setHasAttemptedValidation: vi.fn(),
       setCompletedBookingId: vi.fn(),
+      setCompletedTrackingToken: vi.fn(),
       setCurrentPhase: vi.fn(),
     });
 
