@@ -7,7 +7,7 @@ import {
 import BookingDetailClient from './BookingDetailClient';
 
 // Enable ISR for dynamic content updates
-export const revalidate = 3600; // Revalidate every hour
+export const dynamic = 'force-dynamic';
 
 // Main page component (Server Component)
 export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
