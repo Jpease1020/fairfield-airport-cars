@@ -226,6 +226,29 @@ describe('POST /api/booking/cancel-booking', () => {
     });
   });
 
+  it('SMOKE_TEST_MODE=true suppresses customer SMS/email and admin SMS (regression: see booking-server-flow.test.ts for the same fix on booking creation)', async () => {
+    const previousSmokeTestMode = process.env.SMOKE_TEST_MODE;
+    process.env.SMOKE_TEST_MODE = 'true';
+
+    try {
+      const booking = createMockBooking(48, 75);
+      mockGetBooking.mockResolvedValueOnce(booking);
+      mockCancelBooking.mockResolvedValueOnce(undefined);
+
+      const response = await POST(buildRequest({ bookingId: 'booking-123' }));
+      const payload = await response!.json();
+
+      expect(response!.status).toBe(200);
+      expect(mockCancelBooking).toHaveBeenCalled();
+      expect(mockSendSms).not.toHaveBeenCalled();
+      expect(mockSendConfirmationEmail).not.toHaveBeenCalled();
+      expect(mockSendAdminSms).not.toHaveBeenCalled();
+      expect(payload.channels).toEqual([]);
+    } finally {
+      process.env.SMOKE_TEST_MODE = previousSmokeTestMode;
+    }
+  });
+
   it('passes options without squarePaymentId when no payment ID is available', async () => {
     const booking = createMockBooking(48, 75);
     (booking.payment as Record<string, unknown>).squarePaymentId = undefined; // No payment ID

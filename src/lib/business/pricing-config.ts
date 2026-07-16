@@ -44,6 +44,16 @@ export async function getPricingConfig(): Promise<PricingConfig> {
     const docRef = db.collection('config').doc('pricing');
     const snap = await docRef.get();
     if (!snap.exists) {
+      // Loud on purpose: silently falling back to generic defaults produced a real quote that
+      // looked wrong (2026-07-16) — a local emulator with no seeded config/pricing doc quoted
+      // ~$126 for a route the real configured rates would have priced closer to $160. Anyone
+      // pointed at an empty/unseeded Firestore (emulator, fresh env) needs to see this
+      // immediately, not discover it after a confusing quote reaches someone.
+      console.warn(
+        '⚠️  config/pricing document not found in Firestore — using DEFAULT_PRICING_CONFIG ' +
+        `(baseFare=$${DEFAULT_PRICING_CONFIG.baseFare}, perMile=$${DEFAULT_PRICING_CONFIG.perMile}, perMinute=$${DEFAULT_PRICING_CONFIG.perMinute}), ` +
+        'NOT the real configured business rates. Quotes generated right now will not match production pricing.'
+      );
       cached = { config: DEFAULT_PRICING_CONFIG, at: Date.now() };
       return DEFAULT_PRICING_CONFIG;
     }
