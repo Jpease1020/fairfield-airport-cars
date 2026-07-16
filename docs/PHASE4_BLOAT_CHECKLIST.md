@@ -1,82 +1,48 @@
-# Phase 4 Bloat — Proposed Deletions Checklist
+# Phase 4 Bloat — Status
 
-Use this to approve removals in batches. **Per .cursorrules: ask before each file delete; no bulk delete without permission.**
+Historical cleanup checklist. Re-verified 2026-07-16 — most of it is done; kept here as a record rather than a live TODO. **Per .cursorrules: ask before each file delete; no bulk delete without permission.**
 
 ---
 
 ## Batch A — Components (zero external use)
 
-These are **never imported** outside `src/components/business/` (only exported from the barrel). Safe to remove once you approve; we will also remove their exports from `src/components/business/index.ts`.
+**Done.** All 15 files were removed (commit `88c9fe5a`, ~5 months before this note) and `src/components/business/index.ts` no longer exports any of them: `CostTrackingDashboard`, `VoiceInput`, `VoiceOutput`, `BookingAttemptTable`, `TipCalculator`, `DriverProfileCard`, `ReviewShowcase`, `ChatContainer`, `ChatInput`, `ChatMessage`, `PriceGuarantee`, `DriverTrackingInterface`, `EditModeToggle`, `DigitalWalletPayment`, `BookingCard`.
 
-| File | Lines (approx) | Notes |
-|------|----------------|--------|
-| `CostTrackingDashboard.tsx` | ~426 | Uses real-cost-tracking; no pages use it. |
-| `VoiceInput.tsx` | ~404 | No callers. |
-| `VoiceOutput.tsx` | ~392 | No callers. |
-| `BookingAttemptTable.tsx` | — | No callers. |
-| `TipCalculator.tsx` | — | No callers. |
-| `DriverProfileCard.tsx` | — | No callers. |
-| `ReviewShowcase.tsx` | — | No callers. |
-| `ChatContainer.tsx` | — | No callers (only imports ChatMessage). |
-| `ChatInput.tsx` | — | No callers. |
-| `ChatMessage.tsx` | — | No callers. |
-| `PriceGuarantee.tsx` | — | Only referenced in commented-out code (HeroSection, FareDisplaySection). |
-| `DriverTrackingInterface.tsx` | — | No callers in app. |
-| `EditModeToggle.tsx` | — | No callers (ModeToggleMenu uses its own handler, not this component). |
-| `DigitalWalletPayment.tsx` | — | No callers. |
-| `BookingCard.tsx` | — | Admin bookings page uses a local `styled.div` named BookingCard, not this. |
-
-**Kept (not in Batch A):** `DriverLocationTracker`, `LiveTrackingMap`, `TrackingETADisplay` — reserved for custom map tracker; tracking page currently uses `TrackingMap` + `TrafficETA` only. Do not delete until you move to shared location or confirm removal.
-
-**Approval:** Say "Approve Batch A" to remove these 15 component files + update `business/index.ts`.  
-**Done:** Batch A executed; 15 files removed, index updated.  
-If you prefer to do a subset first, say e.g. "Approve Batch A: only Chat* and Voice*." (DriverLocationTracker, LiveTrackingMap, TrackingETADisplay are not in the list.)
+`DriverLocationTracker`, `LiveTrackingMap`, `TrackingETADisplay` were correctly kept (reserved for the custom map tracker).
 
 ---
 
 ## Batch B — API routes (unused or dev-only)
 
-| Route / path | Callers | Proposal |
-|--------------|---------|----------|
-| `POST /api/booking/route.ts` | BookingProvider, PaymentSuccessClient | Returns **403** always. Either remove and fix callers to use submit/process-payment, or keep as explicit block. |
-| `POST /api/payment/create-checkout-session/route.ts` | None found | Deprecated; redirects to pay-balance. **Remove** or keep as redirect. |
-| `GET/POST /api/booking/lock-time-slot` | None | **Remove** if confirmed unused. |
-| `GET/POST /api/booking/release-time-slot` | None | **Remove** if confirmed unused. |
-| `GET /api/bookings/[id]/eta/route.ts` | None (only `/api/tracking/eta` is used) | Consolidate to one ETA route or **remove** this one. |
-| Email dev routes | test-email page calls `/api/email/simple-test`; routes exist: `test`, `verify-config`, `test-confirmation`, `test-booking-verification`, `enhanced-test` | **Guard for production** (e.g. NODE_ENV or ALLOW_EMAIL_TEST) or remove; align test-email page with actual route (e.g. `test` vs `simple-test`). |
+| Route / path | Status |
+|--------------|--------|
+| `POST /api/booking/route.ts` | **Keep.** Zero internal callers, but it's an intentional, documented deprecation shim (see `docs/STABILITY_SCOREBOARD.md`'s "Deprecated (returns 410)" list) — returns 410 with a redirect message for any stale/external caller still hitting the old path, and has direct test coverage (`tests/unit/deprecated-endpoints.test.ts`). Deleting it would turn a helpful 410 into a bare 404. Do not remove. |
+| `POST /api/payment/create-checkout-session/route.ts` | Already removed. |
+| `GET/POST /api/booking/lock-time-slot` | Already removed. |
+| `GET/POST /api/booking/release-time-slot` | Already removed. |
+| `GET /api/bookings/[id]/eta/route.ts` | **Keep** — same reasoning as `/api/booking/route.ts` above; also a tested 410 deprecation shim, not dead code. |
+| `GET /api/email/verify-config/route.ts` | Removed 2026-07-16 (dev-only diagnostic route, already 404s in production, zero callers, no test coverage). |
+| Other email dev/test routes (`test`, `test-confirmation`, `test-booking-verification`, `enhanced-test`, `simple-test`) | Already removed — none of these files exist anymore. |
 
-**Approval:** Say "Approve Batch B" (or which items) to remove or guard as above.
+Batch B is now fully closed out — the two 410 stubs are intentionally kept, everything else is gone.
 
 ---
 
-## Batch C — Service consolidation (document first, then merge)
+## Batch C — Service consolidation
 
-No deletions here until we document and then merge:
+See `docs/PHASE4_SERVICE_CONSOLIDATION.md` — **its "remove notification-service" recommendation was wrong and must not be acted on.** Re-verified 2026-07-16: `notification-service.ts`'s `sendBookingProblem` is directly imported by `cancel-booking/route.ts`, `process-payment/route.ts`, and `booking-orchestrator.ts` — it's live, load-bearing error-alerting code, not dead.
 
-- **Notification-related:** `notification-service`, `booking-notification-service`, `admin-notification-service`, `driver-notification-service` → document which stay, which merge.
-- **Driver/tracking:** `real-time-tracking-service`, `firebase-tracking-service`, `driver-location-service`, `driver-service` → document which stay, which merge.
-
-**Done:** Batch C doc created: `docs/PHASE4_SERVICE_CONSOLIDATION.md` (callers + merge plan).  
-**Approval:** Say "Approve remove booking-notification-service" to delete that file; "Audit notification-service" to trace and propose.
+`booking-notification-service.ts` (the other candidate) was already removed.
 
 ---
 
 ## Batch D — Design system duplication
 
-- **Tokens:** `src/design/system/tokens/` vs `foundation/tokens/` — single source (audit and consolidate).
-- **ErrorBoundary:** `src/components/business/ErrorBoundary` is used by `app/layout.tsx`; check for duplicate in design — one canonical place.
-
-**Approval:** Say "Approve Batch D" to audit and propose a single-source plan (no deletes until you approve the plan).
+Not yet audited. Still open if anyone wants to pick it up: `src/design/system/tokens/` vs `foundation/tokens/`, and confirming there's only one canonical `ErrorBoundary`.
 
 ---
 
-## Summary
+## Dependency cleanup (found in the same pass, 2026-07-16)
 
-| Batch | Action | When |
-|-------|--------|------|
-| A | Remove 15 unused components + index exports (tracking components kept) | After you say "Approve Batch A" (or subset). |
-| B | Remove or guard 5+ API routes | After you say "Approve Batch B" (or items). |
-| C | Document notification + driver services, then propose merge | Done: see `docs/PHASE4_SERVICE_CONSOLIDATION.md`. |
-| D | Audit tokens + ErrorBoundary, propose single source | After you say "Approve Batch D". |
-
-After Batch A (and optionally B), re-run coverage to get a cleaner baseline before setting thresholds (backlog #16).
+- Removed `@fullcalendar/core`, `@fullcalendar/daygrid`, `@fullcalendar/react` — installed but never imported anywhere.
+- Removed `react-datepicker` + `@types/react-datepicker` — only its CSS was imported globally in `layout.tsx`, no component ever used the library itself. (`react-datetime-picker`, mentioned in an earlier version of this doc, was already removed prior to this pass — it wasn't even in `package.json`.)
