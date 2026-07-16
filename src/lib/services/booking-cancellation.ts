@@ -61,7 +61,13 @@ export const cancelBooking = async (
 
   await driverSchedulingService.cancelBooking(bookingId);
 
-  if (options?.refundAmount != null && options.refundAmount > 0 && options.squarePaymentId) {
+  const isSmokeTest = process.env.SMOKE_TEST_MODE === 'true';
+
+  if (isSmokeTest) {
+    if (options?.refundAmount != null && options.refundAmount > 0) {
+      console.log(`🧪 Smoke test mode - skipping Square refund for booking ${bookingId}`);
+    }
+  } else if (options?.refundAmount != null && options.refundAmount > 0 && options.squarePaymentId) {
     try {
       await refundPayment(options.squarePaymentId, options.refundAmount * 100, 'USD', reason);
       console.log(`✅ Refund processed: $${options.refundAmount.toFixed(2)} for booking ${bookingId}`);
