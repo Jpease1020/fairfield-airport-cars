@@ -367,4 +367,126 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
       expect(getAvailableDriversForTimeSlot).toHaveBeenCalledWith('2026-03-05', '10:00', '12:00');
     });
   });
+
+  describe('PUT /api/booking/[bookingId] — tracking-token flight-info flow (guest, no Firebase session)', () => {
+    const existingFlightInfo = { hasFlight: false, airline: '', flightNumber: '', arrivalTime: '', terminal: '' };
+    const baseBookingData = {
+      status: 'pending',
+      trackingToken: 'track-abc',
+      trip: {
+        pickup: { address: '123 Main St', coordinates: null },
+        dropoff: { address: 'JFK', coordinates: null },
+        pickupDateTime: makeTimestamp('2026-04-01T10:00:00.000Z'),
+        flightInfo: existingFlightInfo,
+      },
+      customer: { name: 'Test Rider', email: 'rider@example.com', phone: '+12035551234' },
+      createdAt: makeTimestamp('2026-03-01T00:00:00.000Z'),
+      updatedAt: makeTimestamp('2026-03-01T00:00:00.000Z'),
+    };
+
+    const mockBookingDb = () => {
+      const docUpdate = vi.fn().mockResolvedValue(undefined);
+      const docGet = vi.fn().mockResolvedValue({ exists: true, id: 'booking-1', data: () => baseBookingData });
+      getAdminDb.mockReturnValue({
+        collection: vi.fn(() => ({
+          doc: vi.fn(() => ({
+            get: docGet,
+            update: docUpdate,
+          })),
+        })),
+      });
+      return { docUpdate, docGet };
+    };
+
+    it('allows tracking-token access to save flight info', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
+      const { docUpdate } = mockBookingDb();
+
+      const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+      const response = ensureResponse(
+        await PUT(
+          makeNextRequest('http://localhost/api/booking/booking-1?token=track-abc', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              flightInfo: { hasFlight: true, airline: 'Delta', flightNumber: 'DL123', arrivalTime: '', terminal: '4' },
+            }),
+          }) as any,
+          { params: Promise.resolve({ bookingId: 'booking-1' }) }
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(docUpdate).toHaveBeenCalled();
+      const updatePayload = docUpdate.mock.calls[0][0] as any;
+      expect(updatePayload.trip.flightInfo.flightNumber).toBe('DL123');
+      expect(updatePayload.flightNumber).toBe('DL123');
+      const body = await response.json();
+      expect(body.changedFields).toContain('flight info');
+    });
+
+    it('rejects tracking-token access trying to change fields other than flightInfo', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
+      const { docUpdate } = mockBookingDb();
+
+      const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+      const response = ensureResponse(
+        await PUT(
+          makeNextRequest('http://localhost/api/booking/booking-1?token=track-abc', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customer: { name: 'Hacked Name' } }),
+          }) as any,
+          { params: Promise.resolve({ bookingId: 'booking-1' }) }
+        )
+      );
+
+      expect(response.status).toBe(403);
+      expect(docUpdate).not.toHaveBeenCalled();
+    });
+
+    it('does not report a change (and skips the admin SMS trigger) when flight info is unchanged', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
+      mockBookingDb();
+
+      const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+      const response = ensureResponse(
+        await PUT(
+          makeNextRequest('http://localhost/api/booking/booking-1?token=track-abc', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ flightInfo: existingFlightInfo }),
+          }) as any,
+          { params: Promise.resolve({ bookingId: 'booking-1' }) }
+        )
+      );
+
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.changedFields).toEqual([]);
+    });
+
+    it('rejects a request with no valid access (no session, no tracking token)', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({
+        ok: false,
+        response: new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }),
+      });
+      const { docUpdate } = mockBookingDb();
+
+      const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+      const response = ensureResponse(
+        await PUT(
+          makeNextRequest('http://localhost/api/booking/booking-1', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ flightInfo: { hasFlight: true, airline: 'Delta', flightNumber: 'DL123', arrivalTime: '', terminal: '4' } }),
+          }) as any,
+          { params: Promise.resolve({ bookingId: 'booking-1' }) }
+        )
+      );
+
+      expect(response.status).toBe(401);
+      expect(docUpdate).not.toHaveBeenCalled();
+    });
+  });
 });
