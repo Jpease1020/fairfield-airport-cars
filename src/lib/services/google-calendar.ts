@@ -11,6 +11,48 @@ const CALENDAR_TOKENS_DOC = 'googleCalendarTokens';
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || 'primary';
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
+export interface CalendarBookingInput {
+  id: string;
+  trip: {
+    pickup: { address: string };
+    dropoff: { address: string };
+    pickupDateTime: Date | string;
+  };
+  customer: {
+    name: string;
+    email: string;
+  };
+}
+
+// Normalizes a raw Firestore booking record (as returned by getBooking(), where
+// bookingRecord.trip.pickupDateTime is still an un-normalized Firestore Timestamp) into the
+// shape createBookingCalendarEvent/confirmBookingCalendarEvent expect. Building `new Date(...)`
+// directly from a Timestamp object produces an Invalid Date, so this always normalizes it —
+// unlike `bookingRecord.trip || fallback`, which never applies a fallback once trip exists.
+export function toCalendarBookingInput(bookingId: string, bookingRecord: Record<string, any>): CalendarBookingInput {
+  const rawPickupDateTime =
+    bookingRecord?.trip?.pickupDateTime ?? bookingRecord?.pickupDateTime ?? new Date();
+  const pickupDateTime =
+    rawPickupDateTime instanceof Date
+      ? rawPickupDateTime
+      : typeof rawPickupDateTime?.toDate === 'function'
+        ? rawPickupDateTime.toDate()
+        : new Date(rawPickupDateTime);
+
+  return {
+    id: bookingId,
+    trip: {
+      pickup: { address: bookingRecord?.trip?.pickup?.address || bookingRecord?.pickupLocation || '' },
+      dropoff: { address: bookingRecord?.trip?.dropoff?.address || bookingRecord?.dropoffLocation || '' },
+      pickupDateTime,
+    },
+    customer: {
+      name: bookingRecord?.customer?.name || bookingRecord?.name || '',
+      email: bookingRecord?.customer?.email || bookingRecord?.email || '',
+    },
+  };
+}
+
 const mapsClient = new Client({});
 const DRIVER_HOME_BASE = process.env.DRIVER_HOME_BASE || 'Newtown, CT';
 const DEFAULT_LOOKBACK_MINUTES = 240; // 4 hours
@@ -495,18 +537,7 @@ export const getStoredCalendarTokens = async (): Promise<any | null> => {
 // Create calendar event for a booking and return event ID
 // This is used server-side when bookings are confirmed
 export const createBookingCalendarEvent = async (
-  booking: {
-    id: string;
-    trip: {
-      pickup: { address: string };
-      dropoff: { address: string };
-      pickupDateTime: Date | string;
-    };
-    customer: {
-      name: string;
-      email: string;
-    };
-  },
+  booking: CalendarBookingInput,
   options?: { smokeTest?: boolean; pending?: boolean }
 ): Promise<string | null> => {
   try {
@@ -562,20 +593,13 @@ export const createBookingCalendarEvent = async (
   }
 };
 
-// Remove the tentative "PENDING" marker from an existing calendar event once the
-// customer confirms. Non-throwing: calendar sync failures must never block confirmation.
+// Remove the tentative "PENDING" marker from an existing calendar event once the customer
+// confirms, and re-sync start/end/location in case the booking was edited (pickup/dropoff/time)
+// between submission and confirmation. Non-throwing: calendar sync failures must never block
+// confirmation.
 export const confirmBookingCalendarEvent = async (
   eventId: string,
-  booking: {
-    id: string;
-    trip: {
-      pickup: { address: string };
-      dropoff: { address: string };
-    };
-    customer: {
-      name: string;
-    };
-  },
+  booking: CalendarBookingInput,
   options?: { smokeTest?: boolean }
 ): Promise<void> => {
   try {
@@ -598,12 +622,19 @@ export const confirmBookingCalendarEvent = async (
     setCredentials(oauth2Client, tokens);
     const calendar = initializeCalendarAPI(oauth2Client);
 
+    const pickupTime = new Date(booking.trip.pickupDateTime);
+    const endTime = new Date(pickupTime);
+    endTime.setHours(endTime.getHours() + 2);
+
     await updateBookingEvent(calendar, eventId, {
       summary: `Ride: ${booking.customer.name}`,
       description: `Booking ID: ${booking.id}\nPickup: ${booking.trip.pickup.address}\nDropoff: ${booking.trip.dropoff.address}`,
+      start: { dateTime: pickupTime.toISOString(), timeZone: 'America/New_York' },
+      end: { dateTime: endTime.toISOString(), timeZone: 'America/New_York' },
+      location: `${booking.trip.pickup.address} → ${booking.trip.dropoff.address}`,
     });
 
-    console.log(`✅ Cleared PENDING marker on calendar event ${eventId} for booking ${booking.id}`);
+    console.log(`✅ Cleared PENDING marker and synced timing on calendar event ${eventId} for booking ${booking.id}`);
   } catch (error) {
     console.error(`Failed to update calendar event for booking ${booking.id}:`, error);
   }

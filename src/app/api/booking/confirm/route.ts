@@ -105,33 +105,17 @@ export async function POST(request: NextRequest) {
       
       // Sync calendar event for the now-confirmed booking
       try {
-        const { createBookingCalendarEvent, confirmBookingCalendarEvent } = await import('@/lib/services/google-calendar');
-        const pickupDateTime = bookingRecord.trip?.pickupDateTime || bookingRecord.pickupDateTime || new Date();
-        const tripData = bookingRecord.trip || {
-          pickup: { address: bookingRecord.pickupLocation || '' },
-          dropoff: { address: bookingRecord.dropoffLocation || '' },
-          pickupDateTime: pickupDateTime as Date | string,
-        };
-        const customerData = bookingRecord.customer || {
-          name: bookingRecord.name || '',
-          email: bookingRecord.email || '',
-        };
+        const { createBookingCalendarEvent, confirmBookingCalendarEvent, toCalendarBookingInput } = await import('@/lib/services/google-calendar');
+        const calendarBookingInput = toCalendarBookingInput(bookingId, bookingRecord);
 
         const existingCalendarEventId = bookingData?.calendarEventId;
         if (existingCalendarEventId) {
-          // A tentative event was already created at submission time — just clear the PENDING marker
-          await confirmBookingCalendarEvent(existingCalendarEventId, {
-            id: bookingId,
-            trip: tripData,
-            customer: customerData,
-          }, { smokeTest: isSmokeTest });
+          // A tentative event was already created at submission time — just clear the PENDING
+          // marker and re-sync timing in case the booking was edited before confirmation
+          await confirmBookingCalendarEvent(existingCalendarEventId, calendarBookingInput, { smokeTest: isSmokeTest });
         } else {
           // No tentative event exists (older booking, or it failed to create earlier) — create one now
-          const calendarEventId = await createBookingCalendarEvent({
-            id: bookingId,
-            trip: tripData,
-            customer: customerData,
-          }, { smokeTest: isSmokeTest });
+          const calendarEventId = await createBookingCalendarEvent(calendarBookingInput, { smokeTest: isSmokeTest });
 
           if (calendarEventId) {
             await db.collection('bookings').doc(bookingId).update({

@@ -10,6 +10,11 @@ const sendConfirmationEmail = vi.fn().mockResolvedValue(undefined);
 const adaptOldBookingToNew = vi.fn((booking) => booking);
 const createBookingCalendarEvent = vi.fn().mockResolvedValue(null);
 const confirmBookingCalendarEvent = vi.fn().mockResolvedValue(undefined);
+const toCalendarBookingInput = vi.fn((bookingId: string, bookingRecord: any) => ({
+  id: bookingId,
+  trip: bookingRecord.trip,
+  customer: bookingRecord.customer,
+}));
 
 vi.mock('@/lib/utils/firebase-admin', () => ({
   getAdminDb,
@@ -37,6 +42,7 @@ vi.mock('@/utils/bookingAdapter', () => ({
 vi.mock('@/lib/services/google-calendar', () => ({
   createBookingCalendarEvent,
   confirmBookingCalendarEvent,
+  toCalendarBookingInput,
 }));
 
 function makeNextRequest(url: string, init?: RequestInit): Request {

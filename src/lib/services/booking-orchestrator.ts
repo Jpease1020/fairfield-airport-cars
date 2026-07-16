@@ -139,20 +139,11 @@ async function createTentativeCalendarEventForBooking(
   smokeTest?: boolean
 ): Promise<void> {
   try {
-    const { createBookingCalendarEvent } = await import('@/lib/services/google-calendar');
-    const pickupDateTime = bookingRecord.trip?.pickupDateTime || bookingRecord.pickupDateTime || new Date();
-    const tripData = bookingRecord.trip || {
-      pickup: { address: bookingRecord.pickupLocation || '' },
-      dropoff: { address: bookingRecord.dropoffLocation || '' },
-      pickupDateTime,
-    };
-    const customerData = bookingRecord.customer || {
-      name: bookingRecord.name || '',
-      email: bookingRecord.email || '',
-    };
+    const { createBookingCalendarEvent, toCalendarBookingInput } = await import('@/lib/services/google-calendar');
+    const calendarBookingInput = toCalendarBookingInput(bookingId, bookingRecord);
 
     const calendarEventId = await createBookingCalendarEvent(
-      { id: bookingId, trip: tripData, customer: customerData },
+      calendarBookingInput,
       { smokeTest, pending: true }
     );
 
