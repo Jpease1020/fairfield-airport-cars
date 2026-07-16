@@ -9,9 +9,8 @@ export async function POST(request: NextRequest) {
   try {
     const { bookingId, token } = await request.json();
 
-    // Check for smoke test mode
-    const smokeTestHeader = request.headers.get('x-smoke-test');
-    const isSmokeTest = smokeTestHeader === 'true' || process.env.SMOKE_TEST_MODE === 'true';
+    // Smoke test mode is a server-only env flag — never derived from a client-supplied header.
+    const isSmokeTest = process.env.SMOKE_TEST_MODE === 'true';
 
     if (!bookingId || !token) {
       return NextResponse.json(

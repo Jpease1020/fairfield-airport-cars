@@ -172,6 +172,65 @@ describe('POST /api/payment/process-payment', () => {
     });
   });
 
+  it('ignores a client-supplied x-smoke-test header — real payment still runs (regression: header used to bypass Square entirely)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-real',
+      paymentId: 'pay-real',
+      status: 'COMPLETED',
+      amount: 15000,
+      currency: 'USD',
+    });
+    mockCreateBookingAtomic.mockResolvedValueOnce({ bookingId: 'booking-real' });
+    mockGetBooking.mockResolvedValueOnce({
+      id: 'booking-real',
+      trip: {
+        pickup: baseRequestBody.bookingData.trip.pickup,
+        dropoff: baseRequestBody.bookingData.trip.dropoff,
+        pickupDateTime: baseRequestBody.bookingData.trip.pickupDateTime,
+        fareType: baseRequestBody.bookingData.trip.fareType,
+        flightInfo: baseRequestBody.bookingData.trip.flightInfo,
+      },
+      customer: {
+        name: baseRequestBody.bookingData.customer.name,
+        email: baseRequestBody.bookingData.customer.email,
+        phone: baseRequestBody.bookingData.customer.phone,
+        notes: baseRequestBody.bookingData.customer.notes,
+        saveInfoForFuture: baseRequestBody.bookingData.customer.saveInfoForFuture,
+      },
+      payment: {
+        tipAmount: baseRequestBody.bookingData.payment.tipAmount,
+        tipPercent: 0,
+        balanceDue: 0,
+        depositAmount: 150,
+        depositPaid: true,
+        totalAmount: baseRequestBody.bookingData.payment.totalAmount,
+      },
+      status: 'pending',
+    });
+    mockSendBookingVerificationEmail.mockResolvedValueOnce(undefined);
+    mockSendSms.mockResolvedValueOnce(undefined);
+
+    const request = new Request('http://localhost/api/payment/process-payment', {
+      method: 'POST',
+      body: JSON.stringify(baseRequestBody),
+      headers: {
+        'Content-Type': 'application/json',
+        // An attacker-controlled header. Must NOT put the route into smoke-test mode —
+        // only process.env.SMOKE_TEST_MODE may do that.
+        'x-smoke-test': 'true',
+      },
+    });
+
+    const response = await POST(request);
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(200);
+    expect(mockProcessPayment).toHaveBeenCalledTimes(1);
+    expect(mockProcessPayment).toHaveBeenCalledWith('tok_test', 15000, 'USD', 'temp-booking-id');
+    expect(payload.paymentId).toBe('pay-real');
+  });
+
   it('returns 400 when amount is not an integer (must be cents)', async () => {
     const response = await POST(buildRequest({ ...baseRequestBody, amount: 150.5 }));
     const payload = await response!.json();

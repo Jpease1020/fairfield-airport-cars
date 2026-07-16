@@ -272,7 +272,7 @@ describe('API access and confirmation flow', () => {
         await POST(
           makeNextRequest('http://localhost/api/booking/confirm', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-smoke-test': 'true' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ bookingId: 'booking-1', token: 'expected-token' }),
           }) as any
         )
