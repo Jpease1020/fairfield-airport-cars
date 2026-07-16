@@ -1,5 +1,4 @@
 import '@/design/globals.css';
-import 'react-datepicker/dist/react-datepicker.css';
 import { StyledComponentsRegistry, AccessibilityEnhancer } from '@/design/ui';
 import { ErrorBoundary } from '@/components/business/ErrorBoundary';  
 import { AdminProvider } from '@/design/providers/AdminProvider';

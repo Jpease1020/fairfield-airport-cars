@@ -50,7 +50,7 @@ One ordered list merging the **Unified Plan** remainder and the **full audit** f
 | 14 | **Unit tests: business rules & cancellation** | `tests/unit/` | Business rules (getBusinessRules, defaults, cache), service-area, driver-scheduling buffer, cancellation fee boundaries (24h, 12h, 6h). | [x] Done: getBusinessRules + invalidateCache; getCancellationFeePercent + schema in business-rules.test.ts. |
 | 15 | **E2E: booking + admin settings** | `tests/e2e/` | Booking happy path (mock payments); admin settings change (e.g. bookingBufferMinutes) and confirm used after TTL. | [x] Done: complete-booking-flow = canonical happy path (mocked); admin-settings.spec.ts redirect-to-login; integration business-rules-save-get (save then get returns new value). |
 | 16 | **CI: Vitest + Playwright + coverage** | CI config | Run on PR; coverage reporting; fail below threshold. | [ ] |
-| 17 | **Unused packages** | `package.json` | Remove or narrow openai, octokit; run audit and remove dead code paths. (More in Phase 5.) | [ ] |
+| 17 | **Unused packages** | `package.json` | Remove or narrow openai, octokit; run audit and remove dead code paths. (More in Phase 5.) | [x] Done: neither openai nor octokit is in package.json (verified 2026-07-16, already removed prior to this check). |
 
 ---
 
@@ -58,24 +58,10 @@ One ordered list merging the **Unified Plan** remainder and the **full audit** f
 
 | # | Item | Where / Notes | Acceptance |
 |---|------|----------------|------------|
-| 18 | **Unused components (~2k+ lines)** | See list below; **checklist:** `docs/PHASE4_BLOAT_CHECKLIST.md` | Delete only with explicit permission per .cursorrules. Confirm zero imports, then propose deletion list. |
-|  | *Components (zero imports)* | | |
-|  | CostTrackingDashboard.tsx (426) | | |
-|  | DriverLocationTracker.tsx (415) | | |
-|  | VoiceInput.tsx (404), VoiceOutput.tsx (392) | | |
-|  | BookingAttemptTable, TipCalculator | | |
-|  | NotificationManager (if still present after push removal) | | |
-|  | DriverProfileCard, ReviewShowcase | | |
-|  | ChatContainer, ChatInput, ChatMessage | | |
-|  | PriceGuarantee (commented out everywhere) | | |
-| 19 | **Unnecessary API routes** | `src/app/api/` | Consolidate or remove after confirming no callers. |
-|  | 5 email test routes | `/api/email/test*`, verify-config, enhanced-test | Dev-only; remove or guard for production. |
-|  | Duplicate ETA | `/api/bookings/[id]/eta` and `/api/tracking/eta` | One ETA route or clear split of responsibilities. |
-|  | Time-slot routes | 4 → 2 if possible | |
-|  | `/api/booking/route.ts` | Returns 403; delete if truly disabled. | |
-|  | `/api/payment/create-checkout-session` | Deprecated flow; remove or redirect. | |
-| 20 | **Service consolidation** | `src/lib/services/` | 5 notification → 2; 5 driver/tracking → 2. Document which stay and which merge. |
-| 21 | **Design system duplication** | Token dirs, ErrorBoundary | Single source: `src/design/system/tokens/` vs `foundation/tokens/`. One ErrorBoundary (common vs business). |
+| 18 | **Unused components (~2k+ lines)** | See `docs/PHASE4_BLOAT_CHECKLIST.md` | [x] Done — all 15 removed (see checklist doc for current status). |
+| 19 | **Unnecessary API routes** | `src/app/api/` | [x] Done — see `docs/PHASE4_BLOAT_CHECKLIST.md` Batch B. Two routes were intentionally kept as tested 410-deprecation shims rather than deleted (`/api/booking`, `/api/bookings/[id]/eta`); everything else in the batch is removed. |
+| 20 | **Service consolidation** | `src/lib/services/` | [x] Done — see `docs/PHASE4_SERVICE_CONSOLIDATION.md` (note: its original recommendation to remove `notification-service` was wrong and was corrected 2026-07-16 — that service is live and must stay). |
+| 21 | **Design system duplication** | Token dirs, ErrorBoundary | [ ] Still open — not yet audited. |
 
 ---
 
@@ -83,11 +69,11 @@ One ordered list merging the **Unified Plan** remainder and the **full audit** f
 
 | # | Item | Notes | Acceptance |
 |---|------|--------|------------|
-| 22 | **openai** | Not in business requirements | Remove or restrict to optional feature; remove dead paths. |
-| 23 | **octokit** | No GitHub feature in app | Remove or restrict; remove dead paths. |
-| 24 | **Date pickers** | react-datepicker + react-datetime-picker | One date/time solution (e.g. keep DateTimePicker pattern). |
-| 25 | **@fullcalendar/* (3)** | Heavy; optional feature | Remove if not required; or lazy-load. |
-| 26 | **googleapis + google-auth-library** | Optional calendar sync | Keep only if used; otherwise remove or lazy-load. |
+| 22 | **openai** | Not in business requirements | [x] Done — not in package.json. |
+| 23 | **octokit** | No GitHub feature in app | [x] Done — not in package.json. |
+| 24 | **Date pickers** | react-datepicker + react-datetime-picker | [x] Done 2026-07-16 — both removed (react-datetime-picker wasn't even installed; react-datepicker had zero component usage, only a dead CSS import). |
+| 25 | **@fullcalendar/* (3)** | Heavy; optional feature | [x] Done 2026-07-16 — removed, zero usage found anywhere in src/. |
+| 26 | **googleapis + google-auth-library** | Optional calendar sync | [x] Verified 2026-07-16 — actively used by `google-calendar.ts` (9+ call sites). Keep. |
 
 ---
 
@@ -95,8 +81,8 @@ One ordered list merging the **Unified Plan** remainder and the **full audit** f
 
 | # | Item | Where | Acceptance |
 |---|------|--------|------------|
-| 27 | **BookingProvider god object** | `src/providers/BookingProvider.tsx` (~1,159 lines) | Extract sub-concerns (e.g. quote, validation, submit) into smaller modules or hooks. |
-| 28 | **Admin bookings page** | Admin bookings page (~866 lines) | Extract components/sections. |
+| 27 | **BookingProvider god object** | `src/providers/BookingProvider.tsx` | [x] Done (verified 2026-07-16): now 293 lines, delegates to `src/providers/booking/*` (use-booking-crud, use-booking-form-state, use-phase-validation, provider-actions-factory, submission, form-selectors). File itself is composition/wiring only. |
+| 28 | **Admin bookings page** | `src/app/(admin)/admin/bookings/` | [x] Done (verified 2026-07-16): `page.tsx` is now 51 lines (composition only), split into `useBookings.ts`, `BookingsTable.tsx`, `BookingFilters.tsx`, `bookings-utils.ts`, `bookings-styles.ts`. |
 | 29 | **TODO/FIXME** | Codebase | Resolve or ticket: refunds, ETA, secure token storage, real-time tracking (see Phase 3). |
 | 30 | **Validation consistency** | TripDetailsPhase vs ContactInfoPhase | Same pattern: provider state vs local state; align approach. |
 | 31 | **isMobile detection** | Multiple components | Single shared hook or util; reuse. |

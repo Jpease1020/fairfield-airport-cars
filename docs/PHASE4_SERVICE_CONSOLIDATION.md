@@ -10,10 +10,10 @@ Callers and merge plan. **No deletions in this doc** — approve before removing
 |--------|---------|------|
 | **admin-notification-service** | `booking/submit`, `cancel-booking`, `booking/[bookingId]` | `sendAdminSms` — **keep**. |
 | **driver-notification-service** | `booking/submit` | `notifyDriverOfNewBooking` — **keep**. |
-| **booking-notification-service** | *None* | All methods are no-ops (push removed). Exported but never imported. **Candidate to remove** (or keep as stub for API compatibility). |
-| **notification-service** | Only re-exported from `lib/services/index.ts` | Generic admin alerts (email/SMS/webhook/Slack). No direct imports found. **Candidate to remove or guard** if you don’t use it. |
+| **booking-notification-service** | *None* | Already removed (confirmed gone as of 2026-07-16). |
+| **notification-service** | `cancel-booking/route.ts`, `process-payment/route.ts`, `booking-orchestrator.ts` (all import `sendBookingProblem` directly) | **UPDATE 2026-07-16: this row's original claim was wrong.** Re-audited and found live, direct imports — this is load-bearing error-alerting code. **Do not remove.** |
 
-**Merge plan:** Keep **admin-notification-service** and **driver-notification-service**. Remove or slim **booking-notification-service** (no callers). Audit **notification-service**; remove from index or delete file if unused.
+**Merge plan (superseded):** `booking-notification-service` is gone. `notification-service` stays — it's actively used, not a removal candidate.
 
 ---
 
@@ -32,11 +32,9 @@ Callers and merge plan. **No deletions in this doc** — approve before removing
 
 ## Summary
 
-| Action | Service | When |
-|--------|---------|------|
-| **Remove or slim** | booking-notification-service | After approval (no callers, no-ops). |
-| **Audit / remove** | notification-service | After confirming no use of generic admin alerts. |
-| **Keep as-is** | admin-notification-service, driver-notification-service | — |
-| **Keep as-is** | driver-service, driver-location-service, firebase-tracking-service, real-time-tracking-service | — |
-
-Say **"Approve remove booking-notification-service"** to delete that file and drop its export from `lib/services/index.ts` (if it’s there). Say **"Audit notification-service"** to trace any usage and then propose delete or keep.
+| Action | Service | Status |
+|--------|---------|--------|
+| Removed | booking-notification-service | Done. |
+| Keep as-is | notification-service | Live — used by 3 call sites (see above). |
+| Keep as-is | admin-notification-service, driver-notification-service | — |
+| Keep as-is | driver-service, driver-location-service, firebase-tracking-service, real-time-tracking-service | — |
