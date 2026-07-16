@@ -9,6 +9,10 @@ vi.mock('@/lib/services/service-area-validation', () => ({
   }),
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 let POST: typeof import('@/app/api/booking/validate-phase/route').POST;
 
 beforeAll(async () => {

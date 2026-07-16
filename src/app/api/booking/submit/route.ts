@@ -8,7 +8,7 @@ import {
 } from '@/lib/services/booking-orchestrator';
 
 export async function POST(request: Request) {
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:booking:submit',
     limit: 20,
     windowMs: 10 * 60_000,

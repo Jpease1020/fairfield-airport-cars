@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { resetRateLimitStoreForTests } from '@/lib/security/rate-limit';
+import { createFakeRateLimitDb } from '../utils/fake-rate-limit-db';
 
 const sendSms = vi.fn().mockResolvedValue({ sid: 'sms-123' });
 const getAdminDb = vi.fn();
@@ -32,15 +32,16 @@ vi.mock('@/lib/utils/auth-session', () => ({
 describe('OTP auth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    resetRateLimitStoreForTests();
   });
 
   it('POST /api/auth/request-otp returns 200 and sends SMS', async () => {
     const otpDocSet = vi.fn().mockResolvedValue(undefined);
     const rateDocGet = vi.fn().mockResolvedValue({ exists: false, data: () => ({}) });
     const rateDocSet = vi.fn().mockResolvedValue(undefined);
+    const { rateLimitCollection, runTransaction } = createFakeRateLimitDb();
 
     getAdminDb.mockReturnValue({
+      runTransaction,
       collection: vi.fn((name: string) => {
         if (name === 'authOtps') {
           return {
@@ -56,6 +57,8 @@ describe('OTP auth', () => {
             })),
           };
         }
+
+        if (name === 'rateLimits') return rateLimitCollection;
 
         return { doc: vi.fn() };
       }),
@@ -82,7 +85,9 @@ describe('OTP auth', () => {
 
   it('rate-limits request-otp by IP even across different phone numbers (regression: was only throttled per-phone, so a script could SMS-bomb arbitrary numbers)', async () => {
     const rateDocGet = vi.fn().mockResolvedValue({ exists: false, data: () => ({}) });
+    const { rateLimitCollection, runTransaction } = createFakeRateLimitDb();
     getAdminDb.mockReturnValue({
+      runTransaction,
       collection: vi.fn((name: string) => {
         if (name === 'authOtps') {
           return { doc: vi.fn(() => ({ set: vi.fn().mockResolvedValue(undefined) })) };
@@ -90,6 +95,7 @@ describe('OTP auth', () => {
         if (name === 'authOtpRequests') {
           return { doc: vi.fn(() => ({ get: rateDocGet, set: vi.fn().mockResolvedValue(undefined) })) };
         }
+        if (name === 'rateLimits') return rateLimitCollection;
         return { doc: vi.fn() };
       }),
     });

@@ -95,7 +95,7 @@ const checkTripRules = (
 };
 
 export async function POST(request: Request) {
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:booking:validate-phase',
     limit: 90,
     windowMs: 60_000,

@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
-
-type RateLimitBucket = {
-  count: number;
-  resetAt: number;
-};
+import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { FieldValue, type DocumentReference, type Transaction } from 'firebase-admin/firestore';
 
 export type RateLimitOptions = {
   bucket: string;
@@ -19,17 +16,11 @@ type RateLimitResult = {
   retryAfterSeconds: number;
 };
 
-const buckets = new Map<string, RateLimitBucket>();
-let lastPruneAt = 0;
-const PRUNE_INTERVAL_MS = 60_000;
-
-function pruneExpired(now: number): void {
-  if (now - lastPruneAt < PRUNE_INTERVAL_MS) return;
-  for (const [key, value] of buckets.entries()) {
-    if (value.resetAt <= now) buckets.delete(key);
-  }
-  lastPruneAt = now;
-}
+// Shared Firestore-backed store so the limit holds across cold starts and
+// concurrently-scaled serverless instances (an in-memory Map is per-instance
+// and can be trivially bypassed). Configure a Firestore TTL policy on
+// rateLimits.resetAt so expired counters are garbage-collected automatically.
+const RATE_LIMIT_COLLECTION = 'rateLimits';
 
 function getClientIp(request: Request): string {
   const headers = (request as { headers?: { get?: (key: string) => string | null } }).headers;
@@ -52,48 +43,53 @@ function getClientIp(request: Request): string {
   );
 }
 
-function evaluateRateLimit({ bucket, limit, windowMs, key }: RateLimitOptions): RateLimitResult {
-  const now = Date.now();
-  pruneExpired(now);
-
+async function evaluateRateLimit({ bucket, limit, windowMs, key }: RateLimitOptions): Promise<RateLimitResult> {
   const subject = key?.trim() || 'anon';
   const lookupKey = `${bucket}:${subject}`;
-  const existing = buckets.get(lookupKey);
+  const db = getAdminDb();
+  const docRef: DocumentReference = db.collection(RATE_LIMIT_COLLECTION).doc(lookupKey);
 
-  if (!existing || existing.resetAt <= now) {
-    const resetAt = now + windowMs;
-    buckets.set(lookupKey, { count: 1, resetAt });
+  return db.runTransaction(async (transaction: Transaction) => {
+    const now = Date.now();
+    const snap = await transaction.get(docRef);
+    const data = snap.exists ? (snap.data() as { count: number; resetAt: number }) : null;
+
+    if (!data || data.resetAt <= now) {
+      const resetAt = now + windowMs;
+      transaction.set(docRef, { count: 1, resetAt, updatedAt: FieldValue.serverTimestamp() });
+      return {
+        allowed: true,
+        remaining: Math.max(0, limit - 1),
+        resetAt,
+        retryAfterSeconds: 0,
+      };
+    }
+
+    if (data.count >= limit) {
+      const retryAfterSeconds = Math.max(1, Math.ceil((data.resetAt - now) / 1000));
+      return {
+        allowed: false,
+        remaining: 0,
+        resetAt: data.resetAt,
+        retryAfterSeconds,
+      };
+    }
+
+    transaction.update(docRef, { count: data.count + 1, updatedAt: FieldValue.serverTimestamp() });
     return {
       allowed: true,
-      remaining: Math.max(0, limit - 1),
-      resetAt,
+      remaining: Math.max(0, limit - (data.count + 1)),
+      resetAt: data.resetAt,
       retryAfterSeconds: 0,
     };
-  }
-
-  if (existing.count >= limit) {
-    const retryAfterSeconds = Math.max(1, Math.ceil((existing.resetAt - now) / 1000));
-    return {
-      allowed: false,
-      remaining: 0,
-      resetAt: existing.resetAt,
-      retryAfterSeconds,
-    };
-  }
-
-  existing.count += 1;
-  buckets.set(lookupKey, existing);
-
-  return {
-    allowed: true,
-    remaining: Math.max(0, limit - existing.count),
-    resetAt: existing.resetAt,
-    retryAfterSeconds: 0,
-  };
+  });
 }
 
-export function enforceRateLimit(request: Request, options: Omit<RateLimitOptions, 'key'>): NextResponse | null {
-  const result = evaluateRateLimit({
+export async function enforceRateLimit(
+  request: Request,
+  options: Omit<RateLimitOptions, 'key'>
+): Promise<NextResponse | null> {
+  const result = await evaluateRateLimit({
     ...options,
     key: getClientIp(request),
   });
@@ -117,7 +113,8 @@ export function enforceRateLimit(request: Request, options: Omit<RateLimitOption
   );
 }
 
-export function resetRateLimitStoreForTests(): void {
-  buckets.clear();
-  lastPruneAt = 0;
+export async function resetRateLimitStoreForTests(): Promise<void> {
+  const db = getAdminDb();
+  const refs = await db.collection(RATE_LIMIT_COLLECTION).listDocuments();
+  await Promise.all(refs.map((ref: { delete: () => Promise<unknown> }) => ref.delete()));
 }

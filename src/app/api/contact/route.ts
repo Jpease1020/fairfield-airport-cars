@@ -46,7 +46,7 @@ const getTransporter = () => {
 };
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:contact',
     limit: 5,
     windowMs: 60 * 60_000,

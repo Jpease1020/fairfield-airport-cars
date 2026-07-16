@@ -10,7 +10,7 @@ import { formatBusinessDateTimeWithZone } from '@/lib/utils/booking-date-time';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 export async function POST(req: NextRequest) {
-  const limited = enforceRateLimit(req, {
+  const limited = await enforceRateLimit(req, {
     bucket: 'api:booking:cancel-booking',
     limit: 20,
     windowMs: 60 * 60_000,

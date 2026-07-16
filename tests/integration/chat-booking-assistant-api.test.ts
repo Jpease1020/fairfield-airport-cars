@@ -49,6 +49,10 @@ vi.mock('@/lib/utils/firebase-admin', () => ({
   getAdminDb,
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 function buildRequest(body: Record<string, unknown>) {
   return new Request('http://localhost/api/chat/booking-assistant', {
     method: 'POST',

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   // The per-phone cooldown below only throttles repeated requests for ONE phone number — it
   // does nothing to stop a script cycling through many different numbers, each triggering a
   // real SMS at the business's Twilio cost. Add an IP-level limit too.
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:auth:request-otp',
     limit: 10,
     windowMs: 60 * 60_000,

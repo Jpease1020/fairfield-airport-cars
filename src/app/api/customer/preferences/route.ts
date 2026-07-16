@@ -9,7 +9,7 @@ import { enforceRateLimit } from '@/lib/security/rate-limit';
 export async function GET(request: NextRequest) {
   // Unauthenticated by design (called before a returning customer logs in), but that makes
   // this a phone-number-confirmation oracle — rate limit to make bulk enumeration impractical.
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:customer:preferences',
     limit: 20,
     windowMs: 10 * 60_000,

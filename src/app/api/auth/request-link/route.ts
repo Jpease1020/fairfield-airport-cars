@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   // The per-email cooldown below only throttles repeated requests for ONE email address — it
   // does nothing to stop a script cycling through many different addresses, each triggering a
   // real email at the business's cost/reputation risk. Add an IP-level limit too.
-  const limited = enforceRateLimit(request, {
+  const limited = await enforceRateLimit(request, {
     bucket: 'api:auth:request-link',
     limit: 10,
     windowMs: 60 * 60_000,

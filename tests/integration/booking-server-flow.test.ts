@@ -43,6 +43,10 @@ vi.mock('@/lib/utils/auth-server', () => ({
   getAuthContext: vi.fn().mockResolvedValue(null),
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 import * as quoteService from '@/lib/services/quote-service';
 import * as bookingService from '@/lib/services/booking-service';
 import { sendAdminSms } from '@/lib/services/admin-notification-service';

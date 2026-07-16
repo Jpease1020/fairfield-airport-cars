@@ -47,6 +47,10 @@ vi.mock('@/lib/services/notification-service', () => ({
   sendBookingProblem: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 import * as quoteService from '@/lib/services/quote-service';
 import * as bookingService from '@/lib/services/booking-service';
 import * as firebaseAdmin from '@/lib/utils/firebase-admin';

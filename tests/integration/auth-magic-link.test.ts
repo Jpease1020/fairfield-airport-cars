@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { resetRateLimitStoreForTests } from '@/lib/security/rate-limit';
+import { createFakeRateLimitDb } from '../utils/fake-rate-limit-db';
 
 const sendMagicLinkEmail = vi.fn().mockResolvedValue(undefined);
 const getAdminDb = vi.fn();
@@ -23,7 +23,6 @@ vi.mock('@/lib/utils/firebase-admin', () => ({
 describe('magic link auth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    resetRateLimitStoreForTests();
     process.env.NEXT_PUBLIC_BASE_URL = 'http://localhost:3000';
 
     const linksCollection = {
@@ -40,10 +39,14 @@ describe('magic link auth', () => {
       })),
     };
 
+    const { rateLimitCollection, runTransaction } = createFakeRateLimitDb();
+
     getAdminDb.mockReturnValue({
+      runTransaction,
       collection: vi.fn((name: string) => {
         if (name === 'authMagicLinks') return linksCollection;
         if (name === 'authMagicLinkRequests') return requestsCollection;
+        if (name === 'rateLimits') return rateLimitCollection;
         return { doc: vi.fn() };
       }),
     });

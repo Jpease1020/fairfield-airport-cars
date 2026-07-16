@@ -12,6 +12,10 @@ vi.mock('@/utils/constants', () => ({
   BUSINESS_CONTACT: { ridesEmail: 'rides@fairfieldairportcar.com', phone: '(203) 990-1815' },
 }));
 
+vi.mock('@/lib/security/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
+
 let POST: typeof import('@/app/api/contact/route').POST;
 
 beforeAll(async () => {
