@@ -12,10 +12,11 @@ const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || 'primary';
 
 export async function GET(request: NextRequest) {
   try {
-    // Only allow in smoke test mode
-    const isSmokeTest = request.headers.get('x-smoke-test') === 'true' || 
-                       process.env.SMOKE_TEST_MODE === 'true';
-    
+    // Smoke test mode is a server-only env flag — never derived from a client-supplied header,
+    // since that would let anyone use this endpoint to probe booking existence and trigger live
+    // Google Calendar API calls.
+    const isSmokeTest = process.env.SMOKE_TEST_MODE === 'true';
+
     if (!isSmokeTest) {
       return NextResponse.json({ error: 'Unauthorized - smoke test only' }, { status: 401 });
     }
