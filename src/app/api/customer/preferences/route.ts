@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 /**
  * Look up a customer's most recent preferences by phone number
  * Used to auto-fill returning customers' opt-in preferences
  */
 export async function GET(request: NextRequest) {
+  // Unauthenticated by design (called before a returning customer logs in), but that makes
+  // this a phone-number-confirmation oracle — rate limit to make bulk enumeration impractical.
+  const limited = enforceRateLimit(request, {
+    bucket: 'api:customer:preferences',
+    limit: 20,
+    windowMs: 10 * 60_000,
+  });
+  if (limited) return limited;
+
   try {
     const { searchParams } = new URL(request.url);
     const phone = searchParams.get('phone');

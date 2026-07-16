@@ -366,6 +366,32 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
       expect(checkBookingConflicts).toHaveBeenCalledWith('2026-03-05', '10:00', '12:00');
       expect(getAvailableDriversForTimeSlot).toHaveBeenCalledWith('2026-03-05', '10:00', '12:00');
     });
+
+    it('never leaks other customers\' names or booking IDs to this public, unauthenticated endpoint', async () => {
+      checkBookingConflicts.mockResolvedValueOnce({
+        hasConflict: true,
+        conflictingBookings: [
+          { bookingId: 'secret-booking-1', customerName: 'Jane Rider', timeSlot: '10:00-12:00', driverName: 'Gregg' },
+        ],
+        suggestedTimeSlots: ['13:00-15:00'],
+      });
+
+      const { POST } = await import('@/app/api/booking/check-time-slot/route');
+      const response = await POST(
+        makeNextRequest('http://localhost/api/booking/check-time-slot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: '2026-03-05', startTime: '10:00', endTime: '12:00' }),
+        }) as any
+      );
+
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.conflictingBookings).toEqual([{ timeSlot: '10:00-12:00' }]);
+      const rawBody = JSON.stringify(body);
+      expect(rawBody).not.toContain('Jane Rider');
+      expect(rawBody).not.toContain('secret-booking-1');
+    });
   });
 
   describe('PUT /api/booking/[bookingId] — tracking-token flight-info flow (guest, no Firebase session)', () => {

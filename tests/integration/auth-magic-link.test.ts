@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { resetRateLimitStoreForTests } from '@/lib/security/rate-limit';
 
 const sendMagicLinkEmail = vi.fn().mockResolvedValue(undefined);
 const getAdminDb = vi.fn();
@@ -22,6 +23,7 @@ vi.mock('@/lib/utils/firebase-admin', () => ({
 describe('magic link auth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetRateLimitStoreForTests();
     process.env.NEXT_PUBLIC_BASE_URL = 'http://localhost:3000';
 
     const linksCollection = {
@@ -59,6 +61,27 @@ describe('magic link auth', () => {
 
     expect(res.status).toBe(200);
     expect(sendMagicLinkEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it('rate-limits request-link by IP even across different email addresses (regression: was only throttled per-email, so a script could email-bomb arbitrary addresses)', async () => {
+    const { POST } = await import('@/app/api/auth/request-link/route');
+    const makeRequest = (i: number) =>
+      POST(
+        new Request('http://localhost/api/auth/request-link', {
+          method: 'POST',
+          body: JSON.stringify({ email: `victim${i}@example.com` }),
+          headers: { 'Content-Type': 'application/json', 'x-forwarded-for': '203.0.113.9' },
+        }) as any
+      );
+
+    const responses = [];
+    for (let i = 0; i < 11; i++) {
+      responses.push(await makeRequest(i));
+    }
+
+    const statuses = responses.map((r) => r.status);
+    expect(statuses.slice(0, 10).every((s) => s === 200)).toBe(true);
+    expect(statuses[10]).toBe(429);
   });
 
   it('POST /api/auth/verify-link with invalid token returns 400', async () => {

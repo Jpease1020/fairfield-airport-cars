@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { resetRateLimitStoreForTests } from '@/lib/security/rate-limit';
 
 const sendSms = vi.fn().mockResolvedValue({ sid: 'sms-123' });
 const getAdminDb = vi.fn();
@@ -31,6 +32,7 @@ vi.mock('@/lib/utils/auth-session', () => ({
 describe('OTP auth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetRateLimitStoreForTests();
   });
 
   it('POST /api/auth/request-otp returns 200 and sends SMS', async () => {
@@ -76,6 +78,40 @@ describe('OTP auth', () => {
         to: '+12035550123',
       })
     );
+  });
+
+  it('rate-limits request-otp by IP even across different phone numbers (regression: was only throttled per-phone, so a script could SMS-bomb arbitrary numbers)', async () => {
+    const rateDocGet = vi.fn().mockResolvedValue({ exists: false, data: () => ({}) });
+    getAdminDb.mockReturnValue({
+      collection: vi.fn((name: string) => {
+        if (name === 'authOtps') {
+          return { doc: vi.fn(() => ({ set: vi.fn().mockResolvedValue(undefined) })) };
+        }
+        if (name === 'authOtpRequests') {
+          return { doc: vi.fn(() => ({ get: rateDocGet, set: vi.fn().mockResolvedValue(undefined) })) };
+        }
+        return { doc: vi.fn() };
+      }),
+    });
+
+    const { POST } = await import('@/app/api/auth/request-otp/route');
+    const makeRequest = (phoneSuffix: number) =>
+      POST(
+        new Request('http://localhost/api/auth/request-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-forwarded-for': '203.0.113.5' },
+          body: JSON.stringify({ phone: `20355501${String(phoneSuffix).padStart(2, '0')}` }),
+        }) as any
+      );
+
+    const responses = [];
+    for (let i = 0; i < 11; i++) {
+      responses.push(await makeRequest(i));
+    }
+
+    const statuses = responses.map((r) => r.status);
+    expect(statuses.slice(0, 10).every((s) => s === 200)).toBe(true);
+    expect(statuses[10]).toBe(429);
   });
 
   it('POST /api/auth/verify-otp with wrong code returns 400 and increments attempts', async () => {
