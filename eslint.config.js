@@ -148,7 +148,8 @@ export default [
       'fairfield/no-circular-ui-imports': 'error',
       'fairfield/enforce-types-architecture': 'error',
       'fairfield/no-absolute-imports-in-design': 'error',
-      
+      'fairfield/no-client-route-segment-config': 'error',
+
       // 🎯 CMS Field Consistency Rules
       'no-restricted-syntax': [
         'warn',

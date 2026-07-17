@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import SuccessPageClient from './SuccessPageClient';
 import { LoadingSpinner, Container, Stack, Text } from '@/design/ui';
 
+export const dynamic = 'force-dynamic';
+
 // Main page component
 export default function SuccessPage() {
   return (
