@@ -85,10 +85,10 @@ describe('AdminPricingPageClient — batch route tester', () => {
 
     // Every pickup/airport pair should appear in the rendered table.
     await waitFor(() => {
-      expect(screen.getAllByText('Fairfield (train station)').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Fairfield, CT').length).toBeGreaterThan(0);
       expect(screen.getAllByText('JFK').length).toBeGreaterThan(0);
       expect(screen.getAllByText('HPN').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('Trumbull (town center)').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Trumbull, CT').length).toBeGreaterThan(0);
     });
 
     // Fares from the (mocked) results should render.

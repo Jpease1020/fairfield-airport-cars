@@ -5,6 +5,7 @@ import { Container, Stack, Text, Box, Button, Input, Label, LoadingSpinner, Aler
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
+import { KNOWN_AIRPORTS } from '@/utils/constants';
 
 interface PricingForm {
   baseFare: number;
@@ -59,25 +60,32 @@ interface CommonAirport {
   coords: { lat: number; lng: number };
 }
 
-// The pickup points and airports Gregg's customers actually book most often — real addresses so
-// each one resolves cleanly through Google's Distance Matrix, and real coordinates (matching the
-// service-area/airport-detection logic's own reference points where they overlap) so every route
-// classifies as a normal in-service-area trip rather than tripping the soft/hard-block checks.
+// The pickup points Gregg's customers actually book most often. Label and address intentionally
+// match (both plain town names) — Google resolves these to the town centroid, so a label implying
+// a specific landmark (e.g. "train station") would overstate precision the query doesn't have.
 const COMMON_PICKUPS: CommonPickup[] = [
-  { label: 'Fairfield (train station)', address: 'Fairfield, CT', coords: { lat: 41.1408, lng: -73.2633 } },
-  { label: 'Westport (downtown)', address: 'Westport, CT', coords: { lat: 41.1415, lng: -73.3579 } },
-  { label: 'Stamford (train station)', address: 'Stamford, CT', coords: { lat: 41.0534, lng: -73.5387 } },
-  { label: 'Trumbull (town center)', address: 'Trumbull, CT', coords: { lat: 41.2429, lng: -73.2007 } },
+  { label: 'Fairfield, CT', address: 'Fairfield, CT', coords: { lat: 41.1408, lng: -73.2633 } },
+  { label: 'Westport, CT', address: 'Westport, CT', coords: { lat: 41.1415, lng: -73.3579 } },
+  { label: 'Stamford, CT', address: 'Stamford, CT', coords: { lat: 41.0534, lng: -73.5387 } },
+  { label: 'Trumbull, CT', address: 'Trumbull, CT', coords: { lat: 41.2429, lng: -73.2007 } },
 ];
 
-const COMMON_AIRPORTS: CommonAirport[] = [
-  { label: 'JFK', address: 'John F. Kennedy International Airport, Queens, NY', coords: { lat: 40.6413111, lng: -73.7781391 } },
-  { label: 'LGA', address: 'LaGuardia Airport, Queens, NY 11371', coords: { lat: 40.7769271, lng: -73.8739659 } },
-  { label: 'EWR', address: 'Newark Liberty International Airport, Newark, NJ', coords: { lat: 40.6895314, lng: -74.1744624 } },
-  { label: 'BDL', address: 'Bradley International Airport, Windsor Locks, CT', coords: { lat: 41.938889, lng: -72.683056 } },
-  { label: 'HVN', address: 'Tweed New Haven Airport, New Haven, CT', coords: { lat: 41.263889, lng: -72.886667 } },
-  { label: 'HPN', address: 'Westchester County Airport, White Plains, NY', coords: { lat: 41.067005, lng: -73.707574 } },
-];
+// A curated, geocodable full address per airport (KNOWN_AIRPORTS' bare `name` is enough for some
+// of these, but a city/state suffix makes the Distance Matrix lookup more reliable) — coordinates
+// are derived from KNOWN_AIRPORTS itself (single source of truth) rather than re-typed here, so
+// this can't silently drift if an airport's reference coordinates are ever tuned in constants.ts.
+const COMMON_AIRPORT_ADDRESSES: Record<string, string> = {
+  JFK: 'John F. Kennedy International Airport, Queens, NY',
+  LGA: 'LaGuardia Airport, Queens, NY 11371',
+  EWR: 'Newark Liberty International Airport, Newark, NJ',
+  BDL: 'Bradley International Airport, Windsor Locks, CT',
+  HVN: 'Tweed New Haven Airport, New Haven, CT',
+  HPN: 'Westchester County Airport, White Plains, NY',
+};
+
+const COMMON_AIRPORTS: CommonAirport[] = KNOWN_AIRPORTS.filter((a) => a.code in COMMON_AIRPORT_ADDRESSES).map(
+  (a) => ({ label: a.code, address: COMMON_AIRPORT_ADDRESSES[a.code], coords: a.coordinates })
+);
 
 interface BatchRouteResult {
   pickupLabel: string;
