@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { applyMinimumFare } from '@/lib/business/pricing-config';
 
 const getAdminDb = vi.fn();
 
@@ -71,5 +72,24 @@ describe('getPricingConfig — minimumFare default', () => {
     const config = await getPricingConfig();
 
     expect(config.minimumFare).toBe(75);
+  });
+});
+
+describe('applyMinimumFare — shared floor logic (used by both the real quote endpoint and the admin test-quote preview so they can\'t silently drift on how the floor is applied)', () => {
+  it('raises a fare below the floor, and reports it as applied', () => {
+    expect(applyMinimumFare(45, 100)).toEqual({ fare: 100, minimumFareApplied: true });
+  });
+
+  it('leaves a fare at or above the floor unchanged, and reports it as not applied', () => {
+    expect(applyMinimumFare(150, 100)).toEqual({ fare: 150, minimumFareApplied: false });
+    expect(applyMinimumFare(100, 100)).toEqual({ fare: 100, minimumFareApplied: false });
+  });
+
+  it('treats a configured floor of 0 as "no floor" rather than clamping everything to 0', () => {
+    expect(applyMinimumFare(45, 0)).toEqual({ fare: 45, minimumFareApplied: false });
+  });
+
+  it('ceils a fractional minimumFare so the result is always a whole dollar (regression: a fractional floor could win Math.max and produce a fractional final fare)', () => {
+    expect(applyMinimumFare(45, 99.5)).toEqual({ fare: 100, minimumFareApplied: true });
   });
 });

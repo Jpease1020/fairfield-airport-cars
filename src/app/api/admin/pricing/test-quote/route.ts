@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Client } from '@googlemaps/google-maps-services-js';
-import { getPricingConfig } from '@/lib/business/pricing-config';
+import { applyMinimumFare, getPricingConfig } from '@/lib/business/pricing-config';
 import { requireAdmin } from '@/lib/utils/auth-server';
 import { isAirportLocation } from '@/lib/services/service-area-validation';
 
@@ -84,8 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     const subtotal = Math.ceil(rawFare);
-    const minimumFareApplied = pricing.minimumFare > 0 && subtotal < pricing.minimumFare;
-    const fare = minimumFareApplied ? pricing.minimumFare : subtotal;
+    const { fare, minimumFareApplied } = applyMinimumFare(subtotal, pricing.minimumFare);
 
     return NextResponse.json({
       fare,

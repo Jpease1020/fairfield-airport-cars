@@ -208,6 +208,7 @@ describe('POST /api/booking/quote', () => {
 
     expect(payload.fare).toBe(100);
     expect(payload.minimumFare).toBe(100);
+    expect(payload.minimumFareApplied).toBe(true);
   });
 
   it('does not reduce a fare that is already above the minimum', async () => {
@@ -234,5 +235,31 @@ describe('POST /api/booking/quote', () => {
     // With the beforeEach distance/duration mock (10 mi, 40 min traffic): 20 + 10*2 + 40*0.5 = 60,
     // well above the 30 floor — the floor must not clamp it down to 30.
     expect(payload.fare).toBe(60);
+    expect(payload.minimumFareApplied).toBe(false);
+  });
+
+  it('rounds a fractional minimumFare up to a whole dollar (regression: Math.max(ceiledFare, minimumFare) could return a fractional final fare if minimumFare itself was fractional and won the comparison, breaking the "always whole dollars" invariant every other fare respects)', async () => {
+    const pickupTime = new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString();
+    mockGetSettings.mockResolvedValue({
+      baseFare: 5,
+      perMile: 0,
+      perMinute: 0,
+      airportReturnMultiplier: 1.15,
+      personalDiscountPercent: 0,
+      minimumFare: 99.5,
+    });
+
+    const response = await POST(
+      buildRequest({
+        origin: 'Fairfield Station, Fairfield, CT',
+        destination: 'JFK Airport, Queens, NY',
+        fareType: 'business',
+        pickupTime,
+      })
+    );
+    const payload = await response.json();
+
+    expect(payload.fare).toBe(100);
+    expect(Number.isInteger(payload.fare)).toBe(true);
   });
 });

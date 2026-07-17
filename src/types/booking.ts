@@ -200,7 +200,9 @@ export interface QuoteData {
   fareType: 'personal' | 'business';
   expiresAt: string;  // ISO datetime string
   expiresInMinutes: number;
-  // The minimum fare floor applied to this quote (0 if none configured) — surfaced so the
-  // booking flow can tell the customer up front, not just silently clamp a short ride's price.
+  // The minimum fare floor configured at quote time, and whether it actually clamped THIS fare —
+  // surfaced so the booking flow can tell the customer only when it's actually relevant, not show
+  // a blanket "minimum fare applies" note on every quote regardless of whether it took effect.
   minimumFare?: number;
+  minimumFareApplied?: boolean;
 }

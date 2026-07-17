@@ -11,9 +11,13 @@ vi.mock('@googlemaps/google-maps-services-js', () => ({
   }),
 }));
 
-vi.mock('@/lib/business/pricing-config', () => ({
-  getPricingConfig: mockGetPricingConfig,
-}));
+vi.mock('@/lib/business/pricing-config', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/business/pricing-config')>();
+  return {
+    ...actual,
+    getPricingConfig: mockGetPricingConfig,
+  };
+});
 
 vi.mock('@/lib/utils/auth-server', () => ({
   requireAdmin: mockRequireAdmin,
