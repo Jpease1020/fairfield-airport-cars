@@ -6,15 +6,9 @@ import {
   validatePhaseResponseSchema,
 } from '@/lib/contracts/booking-api';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
+import { isValidUSPhone } from '@/lib/validation/phone';
 
 const phaseSchema = z.enum(['trip-details', 'contact-info', 'payment', 'quick-booking']);
-
-const isValidUSPhone = (phone: string): boolean => {
-  const digitsOnly = phone.replace(/\D/g, '');
-  if (digitsOnly.length === 10) return true;
-  if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) return true;
-  return false;
-};
 
 const checkTripRules = (
   formData: z.infer<typeof validatePhaseRequestSchema>['formData'],

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isValidUSPhone } from '@/lib/validation/phone';
 
 export const coordinatesSchema = z.object({
   lat: z.number().gte(-90).lte(90),
@@ -94,9 +95,9 @@ export const submitBookingRequestSchema = z.object({
   fare: z.number().min(1),
   exceptionCode: z.string().optional(),
   customer: z.object({
-    name: z.string().min(1),
-    email: z.string().email(),
-    phone: z.string().min(1),
+    name: z.string().trim().min(1),
+    email: z.string().trim().email(),
+    phone: z.string().trim().refine(isValidUSPhone, { message: 'Please enter a valid US phone number' }),
     notes: z.string().optional().nullable(),
     smsOptIn: z.boolean().optional().default(false),
   }),
@@ -128,6 +129,23 @@ export const submitBookingRequestSchema = z.object({
         flightNumber: z.string(),
         arrivalTime: z.string(),
         terminal: z.string(),
+      })
+      // Flight info is explicitly optional in the booking flow (see FlightInfoPhase's copy), so
+      // this doesn't reject an incomplete submission — but hasFlight:true with every detail
+      // field blank is a distinct, meaningless state that used to reach the driver-notification
+      // email as "Airline: N/A / Flight#: N/A / Time: N/A" instead of the plain "no flight info"
+      // case. Normalize it back to false rather than storing a misleading "yes, but nothing"
+      // record. Mirrors the same normalization in PUT /api/booking/[bookingId].
+      .transform((flightInfo) => {
+        if (
+          flightInfo.hasFlight &&
+          !flightInfo.airline.trim() &&
+          !flightInfo.flightNumber.trim() &&
+          !flightInfo.arrivalTime.trim()
+        ) {
+          return { ...flightInfo, hasFlight: false };
+        }
+        return flightInfo;
       })
       .optional(),
   }),
