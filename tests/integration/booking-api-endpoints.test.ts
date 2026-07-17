@@ -497,6 +497,27 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
       expect(updatePayload.trip.flightInfo.hasFlight).toBe(false);
     });
 
+    it('does not crash when a flight detail field arrives as a non-string value (regression: this route has no schema validation on `updates`, so a malformed JSON body with e.g. flightInfo.airline as a number used to hit `.trim()` on a non-string and throw a 500 instead of a controlled response)', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
+      mockBookingDb();
+
+      const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+      const response = ensureResponse(
+        await PUT(
+          makeNextRequest('http://localhost/api/booking/booking-1?token=track-abc', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              flightInfo: { hasFlight: true, airline: 12345, flightNumber: null, arrivalTime: {}, terminal: '' },
+            }),
+          }) as any,
+          { params: Promise.resolve({ bookingId: 'booking-1' }) }
+        )
+      );
+
+      expect(response.status).toBe(200);
+    });
+
     it('rejects tracking-token access trying to change fields other than flightInfo', async () => {
       requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
       const { docUpdate } = mockBookingDb();

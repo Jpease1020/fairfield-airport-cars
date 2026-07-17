@@ -244,11 +244,18 @@ export async function PUT(
       // that used to reach the driver-notification email as "Airline: N/A / Flight#: N/A /
       // Time: N/A" instead of the plain "no flight info" case. Normalize it back to false rather
       // than storing a misleading "yes, but nothing" record.
+      //
+      // This route has no schema validation on `updates` at all, so a detail field can arrive as
+      // any JSON type (a number, an object, etc.) — treat anything that isn't a non-blank string
+      // as blank rather than calling .trim() on it directly, which throws on a non-string value.
+      const isBlankFlightDetail = (value: unknown): boolean =>
+        typeof value !== 'string' || value.trim().length === 0;
+
       if (
         mergedFlightInfo.hasFlight &&
-        !mergedFlightInfo.airline?.trim() &&
-        !mergedFlightInfo.flightNumber?.trim() &&
-        !mergedFlightInfo.arrivalTime?.trim()
+        isBlankFlightDetail(mergedFlightInfo.airline) &&
+        isBlankFlightDetail(mergedFlightInfo.flightNumber) &&
+        isBlankFlightDetail(mergedFlightInfo.arrivalTime)
       ) {
         mergedFlightInfo.hasFlight = false;
       }
