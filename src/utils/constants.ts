@@ -165,53 +165,65 @@ export const SUCCESS_MESSAGES = {
   bookingCancelled: 'Booking cancelled successfully!',
 } as const;
 
+// `aliases` covers common colloquial names customers actually type (vs. the full official name
+// or IATA code) so address-text matching doesn't miss real airports. Kept narrow and specific
+// ("newark airport", not just "newark") to avoid reintroducing false positives on unrelated
+// addresses — see isAirportLocation in service-area-validation.ts.
 export const KNOWN_AIRPORTS = [
   {
     code: 'JFK',
     name: 'John F. Kennedy International Airport',
     coordinates: { lat: 40.6413111, lng: -73.7781391 },
     radiusMiles: 5,
+    aliases: ['kennedy airport'],
   },
   {
     code: 'LGA',
     name: 'LaGuardia Airport',
     coordinates: { lat: 40.7769271, lng: -73.8739659 },
     radiusMiles: 4,
+    aliases: ['la guardia airport'],
   },
   {
     code: 'EWR',
     name: 'Newark Liberty International Airport',
     coordinates: { lat: 40.6895314, lng: -74.1744624 },
     radiusMiles: 5,
+    aliases: ['newark airport', 'newark liberty airport'],
   },
   {
     code: 'HPN',
     name: 'Westchester County Airport',
     coordinates: { lat: 41.067005, lng: -73.707574 },
     radiusMiles: 3,
+    aliases: ['westchester airport'],
   },
   {
     code: 'BDL',
     name: 'Bradley International Airport',
     coordinates: { lat: 41.938889, lng: -72.683056 },
     radiusMiles: 5,
+    aliases: ['bradley airport'],
   },
   {
     code: 'HVN',
     name: 'Tweed New Haven Airport',
     coordinates: { lat: 41.263889, lng: -72.886667 },
     radiusMiles: 3,
+    aliases: ['tweed airport', 'new haven airport'],
   },
   {
     code: 'BDR',
     name: 'Igor I. Sikorsky Memorial Airport',
     coordinates: { lat: 41.163467, lng: -73.126168 },
     radiusMiles: 2,
+    aliases: ['sikorsky airport', 'bridgeport airport'],
   },
   {
     code: 'ISP',
     name: 'Long Island MacArthur Airport',
     coordinates: { lat: 40.789319, lng: -73.100211 },
     radiusMiles: 3,
+    aliases: ['macarthur airport', 'islip airport'],
   },
 ] as const;

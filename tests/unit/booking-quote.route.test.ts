@@ -127,4 +127,58 @@ describe('POST /api/booking/quote', () => {
     expect(mockDistanceMatrix).toHaveBeenCalledTimes(1);
     expect(mockCreateQuote).toHaveBeenCalledTimes(1);
   });
+
+  it('always geocodes the address text for the Distance Matrix call, ignoring client-supplied coordinates (regression: a client could keep the displayed address the same while substituting coordinates for a much shorter route, collapsing the fare)', async () => {
+    const pickupTime = new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString();
+
+    await POST(
+      buildRequest({
+        origin: 'Fairfield Station, Fairfield, CT',
+        destination: 'JFK Airport, Queens, NY',
+        fareType: 'personal',
+        pickupTime,
+        // Coordinates for two points a few feet apart, nowhere near the real addresses above —
+        // if these were used for the Distance Matrix call, the fare would collapse to near-zero.
+        pickupCoords: { lat: 41.1000, lng: -73.2000 },
+        dropoffCoords: { lat: 41.1001, lng: -73.2001 },
+      })
+    );
+
+    expect(mockDistanceMatrix).toHaveBeenCalledWith(
+      expect.objectContaining({
+        params: expect.objectContaining({
+          origins: ['Fairfield Station, Fairfield, CT'],
+          destinations: ['JFK Airport, Queens, NY'],
+        }),
+      })
+    );
+  });
+
+  it('rounds the fare once at the end instead of compounding Math.ceil across each pipeline stage (regression: ceiling the base fare and then separately ceiling the airport-multiplier result overcharged versus a single combined rounding)', async () => {
+    const pickupTime = new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString();
+    // perMile/perMinute zeroed out so distance/duration don't contribute — raw fare is exactly
+    // baseFare (10.01), chosen so ceil(10.01) = 11 overshoots enough that ceil(11 * 1.09) = 12
+    // diverges from the correct ceil(10.01 * 1.09) = 11.
+    mockGetSettings.mockResolvedValue({
+      baseFare: 10.01,
+      perMile: 0,
+      perMinute: 0,
+      airportReturnMultiplier: 1.09,
+      personalDiscountPercent: 0,
+    });
+    mockIsAirportLocation.mockImplementation((address: string) => address === 'JFK Airport, Queens, NY');
+
+    const response = await POST(
+      buildRequest({
+        origin: 'JFK Airport, Queens, NY',
+        destination: 'Fairfield Station, Fairfield, CT',
+        fareType: 'business',
+        pickupTime,
+      })
+    );
+    const payload = await response.json();
+
+    // Old per-stage-ceil behavior would have produced ceil(ceil(10.01) * 1.09) = ceil(11.99) = 12.
+    expect(payload.fare).toBe(11);
+  });
 });

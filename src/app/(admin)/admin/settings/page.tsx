@@ -279,6 +279,13 @@ export default function AdminSettingsPage() {
 
         <Box variant="outlined" padding="lg">
           <Text weight="bold" marginBottom="md">Deposit</Text>
+          <Alert variant="warning">
+            <Text size="sm">
+              Not yet wired up: saving this doesn&apos;t currently change what customers are
+              charged. Bookings still charge the full fare upfront — ask an engineer before
+              relying on this to change real behavior.
+            </Text>
+          </Alert>
           <Stack spacing="md">
             <label>
               <input

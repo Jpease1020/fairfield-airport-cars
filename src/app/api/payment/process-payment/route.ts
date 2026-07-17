@@ -6,7 +6,7 @@ import { sendBookingProblem } from '@/lib/services/notification-service';
 import { getAuthContext, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
 import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
 import { paymentProcessRequestSchema } from '@/lib/contracts/booking-api';
-import { createPaidBookingAndNotify } from '@/lib/services/booking-orchestrator';
+import { createPaidBookingAndNotify, isAtLeastMinimumAdvanceNotice } from '@/lib/services/booking-orchestrator';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
@@ -88,6 +88,21 @@ export async function POST(request: Request) {
           expectedAmountCents: expectedCents,
           providedAmountCents: amountCents,
         }, { status: 409 });
+      }
+    }
+
+    // createPaidBookingAndNotify (called below, after the charge) also enforces this, but only
+    // as a backstop — by the time it throws there, the card has already been charged and this
+    // route has no refund handling for that failure. Check it here too, before any money moves,
+    // for the actual new-booking path this endpoint creates.
+    if (!existingBookingId && bookingData) {
+      const pickupDateTimeValue = bookingData.pickupDateTime || bookingData.trip?.pickupDateTime;
+      const parsedPickupDateTime = new Date(pickupDateTimeValue || Date.now());
+      if (!Number.isNaN(parsedPickupDateTime.getTime()) && !isAtLeastMinimumAdvanceNotice(parsedPickupDateTime)) {
+        return NextResponse.json({
+          error: 'Please book at least 24 hours in advance',
+          code: 'MINIMUM_ADVANCE_NOTICE',
+        }, { status: 400 });
       }
     }
 

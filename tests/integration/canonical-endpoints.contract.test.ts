@@ -81,6 +81,7 @@ vi.mock('@/lib/services/booking-orchestrator', () => ({
     bookingId: 'booking_456',
     emailWarning: null,
   }),
+  isAtLeastMinimumAdvanceNotice: vi.fn().mockReturnValue(true),
 }));
 
 vi.mock('@/lib/services/square-service', () => ({
