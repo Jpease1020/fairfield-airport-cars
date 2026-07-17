@@ -8,6 +8,7 @@ const getAuthContext = vi.fn();
 const getAdminDb = vi.fn();
 const checkBookingConflicts = vi.fn();
 const getAvailableDriversForTimeSlot = vi.fn();
+const rescheduleBookingAtomic = vi.fn();
 const submitBookingOrchestration = vi.fn();
 
 class MockBookingApiError extends Error {
@@ -41,6 +42,7 @@ vi.mock('@/lib/services/driver-scheduling-service', () => ({
   driverSchedulingService: {
     checkBookingConflicts,
     getAvailableDriversForTimeSlot,
+    rescheduleBookingAtomic,
   },
 }));
 
@@ -85,6 +87,7 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
       suggestedTimeSlots: [],
     });
     getAvailableDriversForTimeSlot.mockResolvedValue([{ id: 'gregg-driver-001' }]);
+    rescheduleBookingAtomic.mockResolvedValue({ success: true });
 
     submitBookingOrchestration.mockResolvedValue({
       success: true,
@@ -513,6 +516,78 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
 
       expect(response.status).toBe(401);
       expect(docUpdate).not.toHaveBeenCalled();
+    });
+
+    describe('reschedule (admin access)', () => {
+      beforeEach(() => {
+        requireOwnerAdminOrTrackingToken.mockResolvedValue({
+          ok: true,
+          auth: { role: 'admin', uid: 'admin-1' },
+          access: 'admin',
+        });
+      });
+
+      it('reschedules atomically via rescheduleBookingAtomic using business-local (not UTC) date/time, and only writes the booking record once the schedule move succeeds', async () => {
+        const { docUpdate } = mockBookingDb();
+        // 9:30 PM Eastern (EDT) — after midnight UTC, the exact case the timezone-bucketing fix
+        // targets: a naive toISOString()-based bucket would land this on the wrong UTC day.
+        const newPickupDateTimeIso = '2026-08-02T01:30:00.000Z';
+
+        const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+        const response = ensureResponse(
+          await PUT(
+            makeNextRequest('http://localhost/api/booking/booking-1', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ pickupDateTime: newPickupDateTimeIso }),
+            }) as any,
+            { params: Promise.resolve({ bookingId: 'booking-1' }) }
+          )
+        );
+
+        expect(response.status).toBe(200);
+        expect(rescheduleBookingAtomic).toHaveBeenCalledWith(
+          expect.objectContaining({
+            driverId: 'gregg-driver-001',
+            bookingId: 'booking-1',
+            oldDate: '2026-04-01',
+            newDate: '2026-08-01', // business-local day, not the UTC day (2026-08-02)
+            startTime: '21:30',
+          })
+        );
+        expect(docUpdate).toHaveBeenCalled();
+        const updatePayload = docUpdate.mock.calls[0][0] as any;
+        expect(updatePayload.trip.pickupDateTime.toISOString()).toBe(newPickupDateTimeIso);
+      });
+
+      it('returns 409 and does not write the booking record when the atomic reschedule finds a conflict (regression: the old flow wrote the new pickupDateTime to the booking record BEFORE touching the driver schedule, so a conflict discovered only at the scheduling step left the booking showing a time that was never actually secured)', async () => {
+        rescheduleBookingAtomic.mockResolvedValue({
+          success: false,
+          conflict: {
+            hasConflict: true,
+            conflictingBookings: [{ bookingId: 'other', customerName: 'Other', timeSlot: '21:00-22:00', driverName: 'Driver' }],
+            suggestedTimeSlots: ['22:00-23:00'],
+          },
+        });
+        const { docUpdate } = mockBookingDb();
+
+        const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+        const response = ensureResponse(
+          await PUT(
+            makeNextRequest('http://localhost/api/booking/booking-1', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ pickupDateTime: '2026-08-01T21:30:00.000Z' }),
+            }) as any,
+            { params: Promise.resolve({ bookingId: 'booking-1' }) }
+          )
+        );
+
+        expect(response.status).toBe(409);
+        const body = await response.json();
+        expect(body.suggestedTimes).toEqual(['22:00-23:00']);
+        expect(docUpdate).not.toHaveBeenCalled();
+      });
     });
   });
 });

@@ -58,9 +58,9 @@ function normalizeIso(value: Date | string): string {
   return parsed.toISOString();
 }
 
-async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<void> {
+async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<{ estimatedMinutes?: number } | null> {
   if (!payload.quoteId) {
-    return;
+    return null;
   }
 
   const quote = await getQuote(payload.quoteId);
@@ -120,6 +120,8 @@ async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<vo
       providedFare: payload.fare,
     });
   }
+
+  return quote;
 }
 
 function parseTimeSlotConflict(errorMessage: string): string[] {
@@ -215,7 +217,7 @@ export async function submitBookingOrchestration(
     }
   }
 
-  await validateQuoteForSubmit(payload);
+  const matchedQuote = await validateQuoteForSubmit(payload);
 
   try {
     getAdminDb();
@@ -247,6 +249,7 @@ export async function submitBookingOrchestration(
       tipAmount: 0,
       tipPercent: 0,
       totalFare: fare,
+      estimatedMinutes: matchedQuote?.estimatedMinutes,
     },
     customer: {
       name: customer.name,

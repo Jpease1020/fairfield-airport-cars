@@ -1,6 +1,7 @@
-import { collection, doc, getDoc, getDocs, query, setDoc, where, updateDoc, serverTimestamp, orderBy } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where, updateDoc, serverTimestamp, orderBy } from 'firebase/firestore';
 import { db as clientDb } from '@/lib/utils/firebase-server';
 import { getAdminDb } from '@/lib/utils/firebase-admin';
+import { timeRangesOverlap } from '@/lib/utils/time-range-overlap';
 
 // Use Admin SDK for server-side operations (API routes), client SDK for client-side
 const getDb = () => {
@@ -175,7 +176,11 @@ export class DriverSchedulingService {
   }
 
   /**
-   * Check for booking conflicts across all drivers
+   * Check for booking conflicts across all drivers.
+   * Deliberately not scoped by driverId: correct today because the business is single-driver
+   * only (one schedule doc ever exists per date), but would need a driverId filter added if a
+   * second driver is ever introduced, since two drivers' schedules could otherwise be checked
+   * against each other's slots.
    */
   async checkBookingConflicts(
     date: string,
@@ -237,33 +242,23 @@ export class DriverSchedulingService {
       const prepStartTime = this.subtractHours(startTime, 1);
       const prepStart = this.timeToMinutes(prepStartTime);
       const prepEnd = requestedStart;
-      // When pickup is in the first hour after midnight (e.g. 00:30), prep spans previous day 23:30 -> 00:30
-      const prepSpansMidnight = prepStart > prepEnd;
-
-      const prepOverlapsSlot = (slotStart: number, slotEnd: number): boolean => {
-        if (!prepSpansMidnight) {
-          return prepStart < slotEnd && prepEnd > slotStart;
-        }
-        // Prep is two segments: [0, prepEnd] and [prepStart, MINUTES_PER_DAY]
-        const overlapsFirst = slotStart < prepEnd && slotEnd > 0;
-        const overlapsSecond = slotStart < MINUTES_PER_DAY && slotEnd > prepStart;
-        return overlapsFirst || overlapsSecond;
-      };
 
       // Handle both Admin SDK (docs array) and Client SDK (docs array) formats
       const docs = scheduleSnapshot.docs || [];
       for (const scheduleDoc of docs) {
         const scheduleData = scheduleDoc.data ? scheduleDoc.data() : scheduleDoc;
         const schedule = scheduleData as DriverSchedule;
-        
+
         for (const slot of schedule.timeSlots) {
           // Check both booked and prep slots for conflicts
           if ((slot.status === 'booked' || slot.status === 'prep') && slot.bookingId !== excludeBookingId) {
             const slotStart = this.timeToMinutes(slot.startTime);
             const slotEnd = this.timeToMinutes(slot.endTime);
-            
-            // Check for overlap with actual ride time
-            if (requestedStart < slotEnd && requestedEnd > slotStart) {
+
+            // Check for overlap with actual ride time. Both sides may span midnight (a slot
+            // ending after midnight, or — since ride duration now reflects the real quoted trip
+            // length, not a flat 2 hours — the requested range itself for a late-evening pickup).
+            if (timeRangesOverlap(requestedStart, requestedEnd, slotStart, slotEnd, MINUTES_PER_DAY)) {
               conflicts.push({
                 bookingId: slot.bookingId!,
                 customerName: slot.customerName!,
@@ -271,9 +266,9 @@ export class DriverSchedulingService {
                 driverName: schedule.driverName
               });
             }
-            
-            // Check for overlap with prep time (handles prep spanning midnight)
-            if (prepOverlapsSlot(slotStart, slotEnd)) {
+
+            // Check for overlap with prep time (handles prep, slot, or both spanning midnight)
+            if (timeRangesOverlap(prepStart, prepEnd, slotStart, slotEnd, MINUTES_PER_DAY)) {
               conflicts.push({
                 bookingId: slot.bookingId!,
                 customerName: slot.customerName!,
@@ -316,144 +311,6 @@ export class DriverSchedulingService {
     // Handle negative hours (previous day)
     const finalHours = newHours < 0 ? 24 + newHours : newHours;
     return `${String(finalHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
-  }
-
-  /**
-   * Book a time slot for a driver
-   * Also blocks 1 hour before pickup time for driver prep
-   */
-  async bookTimeSlot(
-    driverId: string,
-    driverName: string,
-    date: string,
-    startTime: string,
-    endTime: string,
-    bookingId: string,
-    customerName: string,
-    pickupLocation: string,
-    dropoffLocation: string
-  ): Promise<void> {
-    try {
-      const db = getDb();
-      if (!db) throw new Error('Database not initialized');
-
-      // Get or create driver schedule for the date
-      let schedule = await this.getDriverSchedule(driverId, date);
-      const scheduleDocId = this.getScheduleDocId(driverId, date);
-      
-      if (!schedule) {
-        // Create new schedule
-        schedule = {
-          id: scheduleDocId,
-          driverId,
-          driverName,
-          date,
-          timeSlots: this.generateTimeSlots(),
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-      }
-
-      // Block 1 hour before pickup for driver prep
-      const prepStartTime = this.subtractHours(startTime, 1);
-      const prepEndTime = startTime;
-      const prepSlotId = `${prepStartTime}-${prepEndTime}`;
-      
-      // Block prep time slot
-      const prepSlotIndex = schedule.timeSlots.findIndex(slot => slot.id === prepSlotId);
-      if (prepSlotIndex === -1) {
-        schedule.timeSlots.push({
-          id: prepSlotId,
-          startTime: prepStartTime,
-          endTime: prepEndTime,
-          isAvailable: false,
-          status: 'prep',
-          bookingId,
-          customerName,
-          pickupLocation,
-          dropoffLocation,
-          notes: 'Driver prep time'
-        });
-      } else {
-        schedule.timeSlots[prepSlotIndex] = {
-          ...schedule.timeSlots[prepSlotIndex],
-          isAvailable: false,
-          status: 'prep',
-          bookingId,
-          customerName,
-          pickupLocation,
-          dropoffLocation,
-          notes: 'Driver prep time'
-        };
-      }
-
-      // Update the actual ride time slot
-      const slotId = `${startTime}-${endTime}`;
-      const slotIndex = schedule.timeSlots.findIndex(slot => slot.id === slotId);
-      
-      if (slotIndex === -1) {
-        schedule.timeSlots.push({
-          id: slotId,
-          startTime,
-          endTime,
-          isAvailable: false,
-          status: 'booked',
-          bookingId,
-          customerName,
-          pickupLocation,
-          dropoffLocation
-        });
-      } else {
-        schedule.timeSlots[slotIndex] = {
-          ...schedule.timeSlots[slotIndex],
-          isAvailable: false,
-          status: 'booked',
-          bookingId,
-          customerName,
-          pickupLocation,
-          dropoffLocation
-        };
-      }
-
-      schedule.updatedAt = new Date();
-
-      // Save to database - use Admin SDK if available, otherwise client SDK
-      if (typeof window === 'undefined' && db.collection) {
-        // Admin SDK (server-side)
-        const FieldValue = (await import('firebase-admin/firestore')).FieldValue;
-        if (schedule.id) {
-          await db.collection('driverSchedules').doc(schedule.id).update({
-            timeSlots: schedule.timeSlots,
-            updatedAt: FieldValue.serverTimestamp()
-          });
-        } else {
-          await db.collection('driverSchedules').doc(scheduleDocId).set({
-            ...schedule,
-            createdAt: FieldValue.serverTimestamp(),
-            updatedAt: FieldValue.serverTimestamp()
-          });
-          schedule.id = scheduleDocId;
-        }
-      } else {
-        // Client SDK
-        if (schedule.id) {
-          await updateDoc(doc(db, 'driverSchedules', schedule.id), {
-            timeSlots: schedule.timeSlots,
-            updatedAt: serverTimestamp()
-          });
-        } else {
-          await setDoc(doc(db, 'driverSchedules', scheduleDocId), {
-            ...schedule,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          });
-          schedule.id = scheduleDocId;
-        }
-      }
-    } catch (error) {
-      console.error('Error booking time slot:', error);
-      throw error;
-    }
   }
 
   /**
@@ -521,6 +378,153 @@ export class DriverSchedulingService {
       console.error('Error canceling booking:', error);
       throw error;
     }
+  }
+
+  /**
+   * Atomically move a booking from its old time slot to a new one: reads the affected
+   * driver-schedule document(s), re-checks for conflicts against the freshest data, and writes
+   * the change — all inside one Firestore transaction. This replaces a check-then-cancel-then-
+   * book sequence of three separate reads/writes, which let two concurrent reschedules (or a
+   * reschedule racing a new booking) both pass the conflict check before either had written,
+   * silently double-booking the slot. Always uses the Admin SDK: this only runs from a server
+   * API route (see /api/booking/[bookingId]), never client-side.
+   */
+  async rescheduleBookingAtomic(params: {
+    driverId: string;
+    driverName: string;
+    oldDate: string;
+    newDate: string;
+    startTime: string;
+    endTime: string;
+    bookingId: string;
+    customerName: string;
+    pickupLocation: string;
+    dropoffLocation: string;
+  }): Promise<{ success: true } | { success: false; conflict: BookingConflict }> {
+    const db = getAdminDb();
+    const oldDocId = this.getScheduleDocId(params.driverId, params.oldDate);
+    const newDocId = this.getScheduleDocId(params.driverId, params.newDate);
+    const sameDoc = oldDocId === newDocId;
+
+    return db.runTransaction(async (transaction: any) => {
+      const oldRef = db.collection('driverSchedules').doc(oldDocId);
+      const oldSnap = await transaction.get(oldRef);
+      const newRef = sameDoc ? oldRef : db.collection('driverSchedules').doc(newDocId);
+      const newSnap = sameDoc ? oldSnap : await transaction.get(newRef);
+
+      const oldTimeSlots: any[] = Array.isArray(oldSnap.data()?.timeSlots) ? [...oldSnap.data().timeSlots] : [];
+      const clearedOldSlots = oldTimeSlots.map((slot) =>
+        slot.bookingId === params.bookingId
+          ? {
+              ...slot,
+              isAvailable: true,
+              status: 'available' as const,
+              bookingId: undefined,
+              customerName: undefined,
+              pickupLocation: undefined,
+              dropoffLocation: undefined,
+            }
+          : slot
+      );
+
+      // The working set for the new slot: if it's the same day, start from the old-slot-cleared
+      // array (which already reflects this booking's removal), falling back to a fresh day if no
+      // schedule doc existed at all yet; otherwise start from the new day's own existing slots.
+      const newDaySlots: any[] = sameDoc
+        ? (oldSnap.exists ? clearedOldSlots : this.generateTimeSlots())
+        : Array.isArray(newSnap.data()?.timeSlots)
+          ? [...newSnap.data()!.timeSlots]
+          : this.generateTimeSlots();
+
+      const requestedStart = this.timeToMinutes(params.startTime);
+      const requestedEnd = this.timeToMinutes(params.endTime);
+      const prepStartTime = this.subtractHours(params.startTime, 1);
+      const prepStart = this.timeToMinutes(prepStartTime);
+      const prepEnd = requestedStart;
+      const MINUTES_PER_DAY = 24 * 60;
+
+      for (const slot of newDaySlots) {
+        if ((slot.status === 'booked' || slot.status === 'prep' || slot.status === 'blocked') && slot.bookingId !== params.bookingId) {
+          const slotStart = this.timeToMinutes(slot.startTime);
+          const slotEnd = this.timeToMinutes(slot.endTime);
+          const overlapsRide = timeRangesOverlap(requestedStart, requestedEnd, slotStart, slotEnd, MINUTES_PER_DAY);
+          const overlapsPrep = timeRangesOverlap(prepStart, prepEnd, slotStart, slotEnd, MINUTES_PER_DAY);
+          if (overlapsRide || overlapsPrep) {
+            return {
+              success: false as const,
+              conflict: {
+                hasConflict: true,
+                conflictingBookings: [{
+                  bookingId: slot.bookingId!,
+                  customerName: slot.customerName!,
+                  timeSlot: `${slot.startTime}-${slot.endTime}`,
+                  driverName: params.driverName,
+                }],
+                suggestedTimeSlots: this.generateSuggestedTimeSlots(params.newDate, params.startTime, params.endTime),
+              },
+            };
+          }
+        }
+      }
+
+      const upsertSlot = (slotId: string, slotStart: string, slotEnd: string, status: 'prep' | 'booked', notes?: string) => {
+        const index = newDaySlots.findIndex((slot) => slot.id === slotId);
+        const nextSlot = {
+          id: slotId,
+          startTime: slotStart,
+          endTime: slotEnd,
+          isAvailable: false,
+          status,
+          bookingId: params.bookingId,
+          customerName: params.customerName,
+          pickupLocation: params.pickupLocation,
+          dropoffLocation: params.dropoffLocation,
+          ...(notes ? { notes } : {}),
+        };
+        if (index === -1) newDaySlots.push(nextSlot);
+        else newDaySlots[index] = { ...newDaySlots[index], ...nextSlot };
+      };
+
+      upsertSlot(`${prepStartTime}-${params.startTime}`, prepStartTime, params.startTime, 'prep', 'Driver prep time');
+      upsertSlot(`${params.startTime}-${params.endTime}`, params.startTime, params.endTime, 'booked');
+
+      const FieldValue = (await import('firebase-admin/firestore')).FieldValue;
+
+      if (sameDoc) {
+        if (oldSnap.exists) {
+          transaction.update(oldRef, { timeSlots: newDaySlots, updatedAt: FieldValue.serverTimestamp() });
+        } else {
+          transaction.set(oldRef, {
+            id: oldDocId,
+            driverId: params.driverId,
+            driverName: params.driverName,
+            date: params.oldDate,
+            timeSlots: newDaySlots,
+            createdAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+        }
+      } else {
+        if (oldSnap.exists) {
+          transaction.update(oldRef, { timeSlots: clearedOldSlots, updatedAt: FieldValue.serverTimestamp() });
+        }
+        if (newSnap.exists) {
+          transaction.update(newRef, { timeSlots: newDaySlots, updatedAt: FieldValue.serverTimestamp() });
+        } else {
+          transaction.set(newRef, {
+            id: newDocId,
+            driverId: params.driverId,
+            driverName: params.driverName,
+            date: params.newDate,
+            timeSlots: newDaySlots,
+            createdAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+        }
+      }
+
+      return { success: true as const };
+    });
   }
 
   /**
@@ -697,8 +701,8 @@ export class DriverSchedulingService {
   }
 
   /**
-   * Check if a slot [slotStart, slotEnd] (possibly spanning midnight when slotStart > slotEnd)
-   * overlaps with [rangeStart, rangeEnd]. All values in minutes since midnight.
+   * Check if a slot [slotStart, slotEnd] overlaps with [rangeStart, rangeEnd]. All values in
+   * minutes since midnight; either interval may span midnight (start > end).
    */
   private slotOverlapsRange(
     slotStart: number,
@@ -707,13 +711,7 @@ export class DriverSchedulingService {
     rangeEnd: number,
     minutesPerDay: number = 24 * 60
   ): boolean {
-    if (slotStart <= slotEnd) {
-      return rangeStart < slotEnd && rangeEnd > slotStart;
-    }
-    // Slot spans midnight: [0, slotEnd] and [slotStart, minutesPerDay]
-    const overlapsFirst = rangeStart < slotEnd && rangeEnd > 0;
-    const overlapsSecond = rangeStart < minutesPerDay && rangeEnd > slotStart;
-    return overlapsFirst || overlapsSecond;
+    return timeRangesOverlap(slotStart, slotEnd, rangeStart, rangeEnd, minutesPerDay);
   }
 
   /**

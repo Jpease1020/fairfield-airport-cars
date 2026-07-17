@@ -7,9 +7,11 @@ import { BookingCreateData } from '@/types/booking';
 import { getDriver } from './driver-service';
 import { driverSchedulingService } from './driver-scheduling-service';
 import { generateShortBookingId } from '@/utils/booking-id-generator';
+import { getBusinessDateString, getBusinessTimeString } from '@/lib/utils/booking-date-time';
+import { resolveRideDurationMinutes } from '@/lib/utils/ride-duration';
+import { timeRangesOverlap } from '@/lib/utils/time-range-overlap';
 import type { Booking } from './booking-types';
 export type { Booking, Driver } from './booking-types';
-export { isTimeSlotAvailable, getAvailableDrivers } from './booking-availability';
 export { cancelBooking } from './booking-cancellation';
 export type { CancelBookingOptions } from './booking-cancellation';
 
@@ -60,15 +62,6 @@ const safeToOptionalDate = (dateField: any): Date | undefined => {
 const timeToMinutes = (time: string): number => {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
-};
-
-const slotOverlapsRange = (slotStart: number, slotEnd: number, rangeStart: number, rangeEnd: number): boolean => {
-  if (slotStart <= slotEnd) {
-    return rangeStart < slotEnd && rangeEnd > slotStart;
-  }
-  const overlapsFirst = rangeStart < slotEnd && rangeEnd > 0;
-  const overlapsSecond = rangeStart < 24 * 60 && rangeEnd > slotStart;
-  return overlapsFirst || overlapsSecond;
 };
 
 const subtractOneHour = (time: string): string => {
@@ -122,9 +115,10 @@ export const assignDriverToBooking = async (bookingId: string, driverId: string)
 export const createBookingAtomic = async (bookingData: BookingCreateData): Promise<{ bookingId: string }> => {
   const db = getAdminDb();
   const pickupDate = bookingData.trip.pickupDateTime as unknown as Date;
-  const dateStr = pickupDate.toISOString().split('T')[0]; // YYYY-MM-DD
-  const startTime = pickupDate.toTimeString().slice(0, 5); // HH:MM
-  const endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5); // +2 hours
+  const rideDurationMinutes = resolveRideDurationMinutes(bookingData.trip.estimatedMinutes);
+  const dateStr = getBusinessDateString(pickupDate); // YYYY-MM-DD, business-local (not UTC)
+  const startTime = getBusinessTimeString(pickupDate); // HH:MM, business-local (not server-local)
+  const endTime = getBusinessTimeString(new Date(pickupDate.getTime() + rideDurationMinutes * 60 * 1000));
   const prepStartTime = subtractOneHour(startTime);
 
   // 1. Check for conflicts and get drivers OUTSIDE transaction (recommended for Firestore)
@@ -202,21 +196,17 @@ export const createBookingAtomic = async (bookingData: BookingCreateData): Promi
       const requestedEnd = timeToMinutes(endTime);
       const prepStart = timeToMinutes(prepStartTime);
       const prepEnd = requestedStart;
-      const prepSpansMidnight = prepStart > prepEnd;
-      const prepOverlaps = (slotStart: number, slotEnd: number): boolean => {
-        if (!prepSpansMidnight) return prepStart < slotEnd && prepEnd > slotStart;
-        const overlapsFirst = slotStart < prepEnd && slotEnd > 0;
-        const overlapsSecond = slotStart < 24 * 60 && slotEnd > prepStart;
-        return overlapsFirst || overlapsSecond;
-      };
 
       for (const slot of timeSlots) {
         if (slot?.status === 'booked' || slot?.status === 'prep' || slot?.status === 'blocked') {
           const slotStart = timeToMinutes(slot.startTime);
           const slotEnd = timeToMinutes(slot.endTime);
+          // Both sides may span midnight — a slot ending after midnight, or (since ride duration
+          // now reflects the real quoted trip length, not a flat 2 hours) the requested range
+          // itself for a late-evening pickup.
           if (
-            slotOverlapsRange(slotStart, slotEnd, requestedStart, requestedEnd) ||
-            prepOverlaps(slotStart, slotEnd)
+            timeRangesOverlap(requestedStart, requestedEnd, slotStart, slotEnd) ||
+            timeRangesOverlap(prepStart, prepEnd, slotStart, slotEnd)
           ) {
             throw new Error('Time slot conflicts with existing bookings.');
           }

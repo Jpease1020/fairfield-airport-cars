@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { z } from 'zod';
+import { getBusinessDateString, getBusinessTimeString } from '@/lib/utils/booking-date-time';
+import { resolveRideDurationMinutes } from '@/lib/utils/ride-duration';
 
 const requestSchema = z
   .object({
@@ -8,6 +10,7 @@ const requestSchema = z
     date: z.string().optional(),
     startTime: z.string().optional(),
     endTime: z.string().optional(),
+    estimatedMinutes: z.number().optional(),
   })
   .refine(
     (data) => !!data.pickupDateTime || (!!data.date && !!data.startTime && !!data.endTime),
@@ -33,9 +36,11 @@ export async function POST(request: NextRequest) {
       if (Number.isNaN(pickupDate.getTime())) {
         return NextResponse.json({ error: 'Invalid pickupDateTime' }, { status: 400 });
       }
-      date = pickupDate.toISOString().split('T')[0];
-      startTime = pickupDate.toTimeString().slice(0, 5);
-      endTime = new Date(pickupDate.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
+      // Business-local date/time, not server-local — see getBusinessDateString for why.
+      date = getBusinessDateString(pickupDate);
+      startTime = getBusinessTimeString(pickupDate);
+      const rideDurationMinutes = resolveRideDurationMinutes(parsed.data.estimatedMinutes);
+      endTime = getBusinessTimeString(new Date(pickupDate.getTime() + rideDurationMinutes * 60 * 1000));
     }
 
     // Check for booking conflicts
