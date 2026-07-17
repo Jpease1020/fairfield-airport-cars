@@ -8,7 +8,7 @@ import {
 import CancelPageClient from './CancelPageClient';
 
 // Enable ISR for dynamic content updates
-export const revalidate = 3600; // Revalidate every hour
+export const dynamic = 'force-dynamic';
 
 // Main page component (Server Component)
 export default function CancelPage() {

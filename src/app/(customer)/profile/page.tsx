@@ -6,7 +6,7 @@ export async function generateStaticParams() {
 }
 
 // Enable ISR for dynamic content updates
-export const revalidate = 3600; // Revalidate every hour
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata() {
   return {

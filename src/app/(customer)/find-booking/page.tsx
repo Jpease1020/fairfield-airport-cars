@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: 'Look up your booking using your email or phone number',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function FindBookingPage() {
   return <FindBookingClient />;
 }
