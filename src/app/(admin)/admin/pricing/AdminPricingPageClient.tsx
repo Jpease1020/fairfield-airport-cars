@@ -12,6 +12,7 @@ interface PricingForm {
   perMinute: number;
   airportReturnMultiplier: number;
   personalDiscountPercent: number;
+  minimumFare: number;
   updatedAt?: string;
   version?: number;
 }
@@ -29,6 +30,8 @@ interface TestQuoteResult {
     personalDiscount: number | null;
     returnMultiplier: number | null;
     preMultiplierFare: number | null;
+    minimumFare: number;
+    minimumFareApplied: boolean;
   };
   isAirportPickup: boolean;
   isAirportDropoff: boolean;
@@ -41,6 +44,7 @@ const DEFAULT_FORM: PricingForm = {
   perMinute: 0.20,
   airportReturnMultiplier: 1.15,
   personalDiscountPercent: 10,
+  minimumFare: 100,
 };
 
 export default function AdminPricingPageClient() {
@@ -70,6 +74,7 @@ export default function AdminPricingPageClient() {
           perMinute: data.perMinute ?? DEFAULT_FORM.perMinute,
           airportReturnMultiplier: data.airportReturnMultiplier ?? DEFAULT_FORM.airportReturnMultiplier,
           personalDiscountPercent: data.personalDiscountPercent ?? DEFAULT_FORM.personalDiscountPercent,
+          minimumFare: data.minimumFare ?? DEFAULT_FORM.minimumFare,
           updatedAt: data.updatedAt as string | undefined,
           version: data.version as number | undefined,
         });
@@ -91,6 +96,7 @@ export default function AdminPricingPageClient() {
         perMinute: form.perMinute,
         airportReturnMultiplier: form.airportReturnMultiplier,
         personalDiscountPercent: form.personalDiscountPercent,
+        minimumFare: form.minimumFare,
       }),
     })
       .then((res) => res.ok ? undefined : res.json().then((e) => Promise.reject(new Error(e.error || 'Save failed'))))
@@ -128,6 +134,7 @@ export default function AdminPricingPageClient() {
           perMinute: form.perMinute,
           airportReturnMultiplier: form.airportReturnMultiplier,
           personalDiscountPercent: form.personalDiscountPercent,
+          minimumFare: form.minimumFare,
         },
       }),
     })
@@ -174,6 +181,9 @@ export default function AdminPricingPageClient() {
               </Text>
               <Text size="sm">
                 <Text as="span" weight="bold">Return trips</Text> (airport pickup to home): fare multiplied by x{form.airportReturnMultiplier.toFixed(2)}
+              </Text>
+              <Text size="sm">
+                <Text as="span" weight="bold">Minimum fare:</Text> ${form.minimumFare.toFixed(2)} — applied last, after any discount or multiplier above. No ride is ever charged less than this.
               </Text>
             </Stack>
           </Stack>
@@ -241,7 +251,17 @@ export default function AdminPricingPageClient() {
                   onChange={(e) => updateField('personalDiscountPercent', Number(e.target.value) || 0)}
                 />
               </div>
-              <div style={{ flex: 1 }} />
+              <div style={{ flex: 1 }}>
+                <Label>Minimum fare ($)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={500}
+                  step={5}
+                  value={String(form.minimumFare)}
+                  onChange={(e) => updateField('minimumFare', Number(e.target.value) || 0)}
+                />
+              </div>
             </Stack>
             <Stack spacing="md" direction="horizontal">
               <Button variant="primary" onClick={handleSave} disabled={saving} text={saving ? 'Saving...' : 'Save pricing'} />
@@ -341,6 +361,11 @@ export default function AdminPricingPageClient() {
                       {testResult.breakdown.returnMultiplier != null && (
                         <Text size="sm" style={{ fontFamily: 'monospace', color: '#d97706' }}>
                           Return trip (x{testResult.breakdown.returnMultiplier}): ${testResult.breakdown.preMultiplierFare?.toFixed(2)} → ${testResult.fare.toFixed(2)}
+                        </Text>
+                      )}
+                      {testResult.breakdown.minimumFareApplied && (
+                        <Text size="sm" style={{ fontFamily: 'monospace', color: '#d97706' }}>
+                          Minimum fare (${testResult.breakdown.minimumFare.toFixed(2)}) applied — calculated fare was below the floor
                         </Text>
                       )}
                     </Stack>

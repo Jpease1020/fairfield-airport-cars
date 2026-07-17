@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Client } from '@googlemaps/google-maps-services-js';
 import { getSettings } from '@/lib/business/settings-service';
+import { applyMinimumFare } from '@/lib/business/pricing-config';
 import { createQuote } from '@/lib/services/quote-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { classifyTrip, isAirportLocation } from '@/lib/services/service-area-validation';
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
     perMinute: PER_MINUTE_RATE,
     personalDiscountPercent,
     airportReturnMultiplier,
+    minimumFare: MINIMUM_FARE,
   } = settings;
 
   // Validate pickup time is in the future
@@ -143,7 +145,9 @@ export async function POST(request: Request) {
     rawFare = rawFare * multiplier;
   }
 
-  let fare = Math.ceil(rawFare);
+  // Floor applies last, after every discount/multiplier — it's the absolute minimum a customer
+  // is ever charged, not another input to the formula above it.
+  const { fare, minimumFareApplied } = applyMinimumFare(Math.ceil(rawFare), MINIMUM_FARE);
 
   // Check availability for the requested time slot
   let availabilityWarning: string | null = null;
@@ -207,7 +211,9 @@ export async function POST(request: Request) {
       expiresAt: expiresAt.toISOString(),
       expiresInMinutes: 15,
       availabilityWarning,
-      suggestedTimes
+      suggestedTimes,
+      minimumFare: MINIMUM_FARE,
+      minimumFareApplied,
     });
     return NextResponse.json(responseBody);
   } catch (error) {
@@ -220,7 +226,9 @@ export async function POST(request: Request) {
       expiresAt: expiresAt.toISOString(),
       expiresInMinutes: 15,
       availabilityWarning,
-      suggestedTimes
+      suggestedTimes,
+      minimumFare: MINIMUM_FARE,
+      minimumFareApplied,
     });
     return NextResponse.json(responseBody);
   }

@@ -122,6 +122,8 @@ export function TripDetailsPhase({
           fareType={tripData.fareType}
           cmsData={cmsData}
           error={fareError}
+          minimumFare={currentQuote?.minimumFare}
+          minimumFareApplied={currentQuote?.minimumFareApplied}
         />
 
         {/* Error States */}

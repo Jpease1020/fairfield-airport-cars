@@ -11,6 +11,15 @@ export const pricingConfigSchema = z.object({
   perMinute: z.number().min(0).max(10),
   airportReturnMultiplier: z.number().min(1).max(5),
   personalDiscountPercent: z.number().min(0).max(100),
+  // The absolute minimum a customer is ever charged, applied after every other stage (base +
+  // mileage + time, personal discount, airport multiplier) — a short or nearby ride must never
+  // price out below this floor regardless of what the formula above it computes. Defaults to
+  // DEFAULT_PRICING_CONFIG's value below (not 0) so an existing config/pricing doc that predates
+  // this field gets the floor applied too, not silently no floor until an admin happens to
+  // re-save the pricing page. Whole dollars only — every other fare in the pipeline is ceil'd to
+  // a whole dollar exactly once at the end, and a fractional floor could otherwise win Math.max
+  // and produce a fractional final fare (see applyMinimumFare, which also ceils defensively).
+  minimumFare: z.number().int().min(0).max(500).default(100),
   updatedAt: z.union([z.date(), z.string()]).optional(),
   updatedBy: z.string().optional(),
   version: z.number().int().min(1).optional(),
@@ -24,6 +33,7 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   perMinute: 0.20,
   airportReturnMultiplier: 1.15,
   personalDiscountPercent: 10,
+  minimumFare: 100,
   version: 1,
 };
 
@@ -78,6 +88,25 @@ export async function getPricingConfig(): Promise<PricingConfig> {
  */
 export function invalidatePricingCache(): void {
   cached = null;
+}
+
+/**
+ * Apply the minimum-fare floor to an already-ceil'd whole-dollar fare. Shared by the real quote
+ * endpoint and the admin test-quote preview so the two can't silently drift on how the floor is
+ * applied (they previously each computed and rounded the pre-floor pipeline independently, which
+ * is exactly the class of bug the "single ceil at the end" fix elsewhere in this file addresses).
+ * Ceils minimumFare defensively — the schema already requires a whole-dollar int, but this keeps
+ * the "final fare is always a whole dollar" guarantee even if that ever changes.
+ */
+export function applyMinimumFare(
+  fare: number,
+  minimumFare: number
+): { fare: number; minimumFareApplied: boolean } {
+  const flooredMinimum = Math.ceil(minimumFare);
+  if (flooredMinimum > 0 && fare < flooredMinimum) {
+    return { fare: flooredMinimum, minimumFareApplied: true };
+  }
+  return { fare, minimumFareApplied: false };
 }
 
 /**

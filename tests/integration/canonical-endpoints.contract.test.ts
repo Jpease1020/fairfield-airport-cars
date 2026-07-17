@@ -34,6 +34,7 @@ vi.mock('@/lib/business/settings-service', () => ({
     perMile: 2,
     perMinute: 1,
     airportReturnMultiplier: 1.8,
+    minimumFare: 0,
   }),
 }));
 
