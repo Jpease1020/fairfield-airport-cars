@@ -1,5 +1,9 @@
 rules_version = '2';
 
+// NOTE: this file is NOT deployed — firebase.json points "firestore.rules" at the root-level
+// ./firestore.rules, not this one. Kept in sync anyway so this copy doesn't read as current if
+// someone edits the wrong file. See ./firestore.rules for the real (deployed) rules and why.
+
 service cloud.firestore {
   match /databases/{database}/documents {
     // Business rules config: only admin users (users/{uid}.role == 'admin') may read/write
@@ -7,7 +11,27 @@ service cloud.firestore {
       allow read, write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-    // Relaxed rules for local development (seeding, etc.)
+
+    // A signed-in user may read/update their own profile, but never their own `role` or
+    // `permissions` — those are the exact fields requireAdmin() (server-side) trusts, and
+    // updateCustomerProfile()'s client-side setDoc(..., {merge:true}) had no field allow-list, so
+    // any customer could set their own role to 'admin' and pass every admin check afterward.
+    // Role/permission changes must happen server-side (Admin SDK bypasses these rules entirely).
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.role == 'customer';
+      allow update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.permissions == resource.data.permissions;
+      allow read, write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Everything else is still relaxed (see docs/BACKLOG.md — a real least-privilege rewrite
+    // needs a handful of server routes migrated off the client Firestore SDK first: review
+    // submission and driver lookup currently run server-side with no Firebase Auth session at
+    // all, and would be denied outright under stricter rules without that migration).
     match /{document=**} {
       allow read, write: if true;
     }

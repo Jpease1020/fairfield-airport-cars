@@ -28,6 +28,20 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
   
   const pathname = usePathname();
   const currentPath = pathname ?? '';
+
+  const handleLogout = async () => {
+    // auth.signOut() only clears Firebase client auth state — the app's own booking_session
+    // cookie (set by the OTP/magic-link flow) is separate and must be cleared server-side too,
+    // or the session stays valid for up to 30 days despite the user believing they logged out.
+    try {
+      await Promise.all([
+        auth.signOut(),
+        fetch('/api/auth/logout', { method: 'POST' }),
+      ]);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
   const { isAdmin } = useAdminStatus();
   const { isLoggedIn } = useAuth();
   const navigationItems: NavigationItem[] = [
@@ -70,7 +84,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => auth.signOut()}
+          onClick={handleLogout}
           data-testid="nav-logout-button"
           id="nav-logout-button"
           text={cmsData?.['navigation-logout'] || 'Sign Out'}
@@ -95,7 +109,7 @@ export const CustomerNavigation: React.FC<CustomerNavigationProps> = ({ width })
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => auth.signOut()}
+          onClick={handleLogout}
           data-testid="nav-mobile-logout-button"
           id="nav-mobile-logout-button"
           text={cmsData?.['navigation-mobile-logout'] || 'Sign Out'}
