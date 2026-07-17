@@ -6,8 +6,19 @@ import {
   normalizeEmail,
   setSessionCookie,
 } from '@/lib/utils/auth-session';
+import { enforceRateLimit } from '@/lib/security/rate-limit';
 
 export async function POST(request: NextRequest) {
+  // Unlike verify-otp (a short guessable code), a magic link token has enough entropy that
+  // brute-forcing it isn't realistic — this is for consistency and basic abuse/DoS protection,
+  // matching every other auth route now that request-otp/request-link/verify-otp all have one.
+  const limited = await enforceRateLimit(request, {
+    bucket: 'api:auth:verify-link',
+    limit: 20,
+    windowMs: 60 * 60_000,
+  });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const token = body?.token;

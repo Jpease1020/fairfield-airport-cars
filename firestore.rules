@@ -7,9 +7,35 @@ service cloud.firestore {
       allow read, write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-    // Relaxed rules for local development (seeding, etc.)
-    match /{document=**} {
-      allow read, write: if true;
+
+    // A signed-in user may read/update their own profile, but never their own `role` or
+    // `permissions` — those are the exact fields requireAdmin() (server-side) trusts, and
+    // updateCustomerProfile()'s client-side setDoc(..., {merge:true}) had no field allow-list, so
+    // any customer could set their own role to 'admin' and pass every admin check afterward.
+    // Role/permission changes must happen server-side (Admin SDK bypasses these rules entirely).
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.role == 'customer';
+      allow update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.permissions == resource.data.permissions;
+      allow read, write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Everything else is still relaxed (see docs/BACKLOG.md — a real least-privilege rewrite
+    // needs a handful of server routes migrated off the client Firestore SDK first: review
+    // submission and driver lookup currently run server-side with no Firebase Auth session at
+    // all, and would be denied outright under stricter rules without that migration).
+    //
+    // Firestore grants access if ANY matching rule allows it — a flat `match /{document=**}`
+    // here also matches `users/**` and `config/**`, so an unconditional `allow if true` on this
+    // catch-all completely overrides the restrictive rules above for those two collections,
+    // regardless of what they say. Explicitly excluding both by collection name is what actually
+    // makes those restrictive rules the authoritative ones for their own paths.
+    match /{collection}/{document=**} {
+      allow read, write: if collection != 'users' && collection != 'config';
     }
   }
 }
